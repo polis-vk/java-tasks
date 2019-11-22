@@ -1,0 +1,7 @@
+# Compiled class file
+
+# Mobile Tools for Java (J2ME)
+.idea/
+.gradle/
+out/
+homework2.iml
