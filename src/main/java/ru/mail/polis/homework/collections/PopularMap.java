@@ -5,9 +5,12 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * Написать структуру данных, реализующую интерфейс мапы + набор дополнительных методов.
@@ -172,15 +175,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        int max = 0;
-        K maxKey = null;
-        for (Map.Entry<K, Integer> entry : usedKeyMap.entrySet()) {
-            if (entry.getValue() >= max) {
-                max = entry.getValue();
-                maxKey = entry.getKey();
-            }
-        }
-        return maxKey;
+        return usedKeyMap.entrySet().stream().max(Comparator.comparing(Entry::getValue)).get().getKey();
     }
 
 
@@ -218,7 +213,13 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        return sortValues().iterator();
+        return usedValueMap
+            .entrySet()
+            .stream()
+            .sorted(Comparator.comparing(Entry::getValue))
+            .map(Entry::getKey)
+            .collect(Collectors.toList())
+            .iterator();
     }
 
     private void updateKey(K key) {
@@ -235,14 +236,6 @@ public class PopularMap<K, V> implements Map<K, V> {
         } else {
             usedValueMap.put(value, 1);
         }
-    }
-
-    private List<V> sortValues() {
-        List<Entry<V, Integer>> list = new ArrayList<>(usedValueMap.entrySet());
-        list.sort(Comparator.comparingInt(Entry::getValue));
-        List<V> valuesList = new ArrayList<>();
-        list.forEach(entry -> valuesList.add(entry.getKey()));
-        return valuesList;
     }
 
     private void removeValues(List<V> removedValues, K key) {
