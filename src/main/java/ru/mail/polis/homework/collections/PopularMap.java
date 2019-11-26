@@ -21,13 +21,13 @@ import java.util.stream.Collectors;
  * Вы можете использовать любые коллекции, которые есть в java.
  * <p>
  * Помните, что по мапе тоже можно итерироваться
- * <p>
- * for (Map.Entry<K, V> entry : map.entrySet()) {
- * entry.getKey();
- * entry.getValue();
- * }
- * <p>
- * <p>
+ *
+ *         for (Map.Entry<K, V> entry : map.entrySet()) {
+ *             entry.getKey();
+ *             entry.getValue();
+ *         }
+ *
+ *
  * Дополнительное задание описано будет ниже
  *
  * @param <K> - тип ключа
