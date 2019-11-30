@@ -93,37 +93,31 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public boolean containsKey(Object key) {
         updateKey((K) key);
-        if (map.containsKey(key)) {
-            updateValue(map.get(key));
-            return true;
-        }
-        return false;
+        return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
         updateValue((V) value);
-        for (K key : map.keySet()) {
-            if (map.get(key).equals(value)) {
-                updateKey(key);
-            }
-        }
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
         updateKey((K) key);
-        if (map.containsKey(key)) {
-            updateValue(map.get(key));
-            return map.get(key);
+        V tempV = map.get(key);
+        if (tempV != null) {
+            usedValueMap.put(tempV, usedValueMap.get(tempV) + 1);
         }
-        return map.get(key);
+        return tempV;
     }
 
     @Override
     public V put(K key, V value) {
         list.add(new PairKeyValue(key, value));
+        if (map.containsKey(key)) {
+            updateValue(map.get(key));
+        }
         updateKey(key);
         updateValue(value);
         return map.put(key, value);
@@ -132,15 +126,11 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public V remove(Object key) {
         updateKey((K) key);
-        List<V> removedValues = new ArrayList<>();
-        if (map.containsKey(key)) {
-            removeValues(removedValues, (K) key);
-            V removedValue = map.remove(key);
-            list.remove(new PairKeyValue((K) key, removedValue));
-            return removedValue;
+        V removedValue = map.remove(key);
+        if (removedValue != null) {
+            updateValue(removedValue);
         }
-        removeValues(removedValues, (K) key);
-        return map.remove(key);
+        return removedValue;
     }
 
     @Override
@@ -172,7 +162,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return usedKeyMap.entrySet().stream().max(Comparator.comparing(Entry::getValue)).get().getKey();
+        return usedKeyMap.entrySet().stream().max(Entry.comparingByValue()).get().getKey();
     }
 
 
@@ -213,7 +203,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         return usedValueMap
             .entrySet()
             .stream()
-            .sorted(Comparator.comparing(Entry::getValue))
+            .sorted(Entry.comparingByValue())
             .map(Entry::getKey)
             .collect(Collectors.toList())
             .iterator();
@@ -233,15 +223,5 @@ public class PopularMap<K, V> implements Map<K, V> {
         } else {
             usedValueMap.put(value, 1);
         }
-    }
-
-    private void removeValues(List<V> removedValues, K key) {
-        for (PairKeyValue pairKeyValue : list) {
-            if (pairKeyValue.key.equals(key)) {
-                updateValue(pairKeyValue.value);
-                removedValues.add(pairKeyValue.value);
-            }
-        }
-        removedValues.forEach(value -> list.remove(new PairKeyValue((K) key, value)));
     }
 }

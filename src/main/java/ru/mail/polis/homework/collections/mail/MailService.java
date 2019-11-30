@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * Нужно создать сервис, который умеет обрабатывать письма и зарплату.
@@ -18,7 +19,7 @@ import java.util.function.Consumer;
  *
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  */
-public class MailService<T extends List<AbstractSentReceivedObject>> implements Consumer<T> {
+public class MailService<T extends AbstractSentReceivedObject> implements Consumer<List<T>> {
 
     private Map<Person, List<AbstractSentReceivedObject<?>>> receivers;
     private Map<Person, List<AbstractSentReceivedObject<?>>> senders;
@@ -33,23 +34,15 @@ public class MailService<T extends List<AbstractSentReceivedObject>> implements 
      * 1 балл
      */
     @Override
-    public void accept(T o) {
-        o.forEach((object -> {
+    public void accept(List<T> o) {
+        for (AbstractSentReceivedObject<?> object : o) {
+
             Person receiver = object.getReceiver();
 
-            if (senders.containsKey(object.getSender())) {
-                senders.get(object.getSender()).add(object);
-            } else {
-                senders.put(object.getSender(), new ArrayList<>());
-                senders.get(object.getSender()).add(object);
-            }
-
-            if (!receivers.containsKey(receiver)) {
-                receivers.put(receiver, new ArrayList<>());
-            }
-            receivers.get(receiver).add(object);
+            senders.computeIfAbsent(object.getSender(), key -> new ArrayList<>()).add(object);
+            receivers.computeIfAbsent(receiver, key -> new ArrayList<>()).add(object);
             receiver.receive(object.getSender().send(object));
-        }));
+        }
     }
 
     /**
@@ -86,7 +79,10 @@ public class MailService<T extends List<AbstractSentReceivedObject>> implements 
     /**
      * Метод должен заставить обработать service все mails.
      */
-    public static void process(MailService<List<AbstractSentReceivedObject>> service, List<AbstractSentReceivedObject> mails) {
+    public static void process(
+        MailService<AbstractSentReceivedObject<?>> service,
+        List<AbstractSentReceivedObject<?>> mails
+    ) {
         service.accept(mails);
     }
 }

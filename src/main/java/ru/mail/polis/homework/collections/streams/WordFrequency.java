@@ -1,8 +1,11 @@
 package ru.mail.polis.homework.collections.streams;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,10 +32,8 @@ public class WordFrequency {
             .collect(Collectors.toMap(key -> String.valueOf(key).toLowerCase(), key -> 1, Integer::sum))
             .entrySet()
             .stream()
-            .sorted((set1, set2) -> {
-                int result = set2.getValue() - set1.getValue();
-                return result == 0 ? set1.getKey().compareTo(set2.getKey()) : result;
-            })
+            .sorted(((Comparator<Map.Entry<String, Integer>>) (set1, set2) -> set2.getValue() - set1.getValue())
+                .thenComparing(Entry::getKey))
             .limit(10)
             .map(Map.Entry::getKey)
             .collect(Collectors.toList());

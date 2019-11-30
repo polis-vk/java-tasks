@@ -9,19 +9,9 @@ import java.util.Objects;
 public class Person implements AbleToReceive, AbleToSend {
 
     private List<AbstractSentReceivedObject<?>> listOfReceivedObjects;
-    private List<AbstractSentReceivedObject<?>> listObjects;
     private String fio;
     private boolean isMan;
     private int age;
-
-    public Person(String fio, boolean isMan, int age, AbstractSentReceivedObject<?>... objects) {
-        this(fio, isMan, age, List.of(objects));
-    }
-
-    public Person(String fio, boolean isMan, int age, List<AbstractSentReceivedObject<?>> listObjects) {
-        this(fio, isMan, age);
-        this.listObjects = listObjects;
-    }
 
     public Person(String fio, boolean isMan, int age) {
         this.listOfReceivedObjects = new ArrayList<>();
@@ -37,9 +27,6 @@ public class Person implements AbleToReceive, AbleToSend {
 
     @Override
     public AbstractSentReceivedObject<?> send(AbstractSentReceivedObject<?> object) {
-        if (!listObjects.contains(object)) {
-            throw new IllegalArgumentException(toString() + " cannot send " + object.toString());
-        }
         return object;
     }
 
@@ -53,6 +40,10 @@ public class Person implements AbleToReceive, AbleToSend {
 
     public int getAge() {
         return age;
+    }
+
+    public List<AbstractSentReceivedObject<?>> getListOfReceivedObjects() {
+        return listOfReceivedObjects;
     }
 
     @Override
