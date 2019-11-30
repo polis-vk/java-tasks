@@ -30,16 +30,9 @@ public class MailService<T extends AbstractMailMessage> implements Consumer<T> {
      */
 
     public void accept(T o) {
-        if (!senders.containsKey(o.getSender())){
-            senders.put(o.getSender(), new LinkedList<>());
-        }
-        senders.get(o.getSender()).add((T) o);
-        if (!recievers.containsKey(o.getDestination())){
-            recievers.put(o.getDestination(), new LinkedList<>());
-        }
-        recievers.get(o.getDestination()).add((T) o);
+        senders.computeIfAbsent(o.getSender(), k -> new LinkedList<>()).add(o);
+        recievers.computeIfAbsent(o.getDestination(), k -> new LinkedList<>()).add(o);
     }
-
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      */

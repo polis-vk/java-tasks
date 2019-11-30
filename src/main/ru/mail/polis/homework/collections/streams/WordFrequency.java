@@ -29,29 +29,17 @@ public class WordFrequency {
                 .map(x -> x.replaceAll("\\p{Punct}", " "))
                 .map(x -> x.split(" "))
                 .flatMap(Arrays::stream)
-                .collect(
-                        Collectors.groupingBy(
-                                Function.identity(),
-                                Collectors.counting()
-                        )
-                )
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet()
                 .stream()
-                .filter(
-                        x -> !x.getKey().replaceAll("\\p{Punct}", "")
-                        .isEmpty()
-                )
-                .sorted(
-                        Comparator.comparing(
-                                (Function<Map.Entry<String, Long>, Long>) Map.Entry::getValue)
-                                .reversed()
-                                .thenComparing(Map.Entry::getKey)
+                .filter(x -> !x.getKey().replaceAll("\\p{Punct}", "").isEmpty())
+                .sorted(Comparator.comparing((Function<Map.Entry<String, Long>, Long>) Map.Entry::getValue)
+                        .reversed()
+                        .thenComparing(Map.Entry::getKey)
                 )
                 .limit(10)
                 .map(entry -> String.format( "%s", entry.getKey()))
-                .collect(
-                        Collectors.toList()
-                );
+                .collect(Collectors.toList());
     }
 
 

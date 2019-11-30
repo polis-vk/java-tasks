@@ -66,7 +66,10 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public V get(Object key) {
         V value = map.get((K)key);
-        addPopularity((K)key, value);
+        addPopularityKey((K)key);
+        if (value != null){
+            addPopularityValue(value);
+        }
         return value;
     }
 
@@ -126,9 +129,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         }
         return popularKeyMap.entrySet()
                 .stream()
-                .max(
-                        Entry.comparingByValue()
-                )
+                .max(Entry.comparingByValue())
                 .get()
                 .getKey();
     }
@@ -148,13 +149,10 @@ public class PopularMap<K, V> implements Map<K, V> {
         if (popularValueMap.isEmpty()){
             return null;
         }
-
         return popularValueMap.entrySet()
                 .stream()
-                .sorted(
-                        Comparator.comparing(
-                                (Function<Entry<V, Integer>, Integer>) Entry::getValue)
-                                .reversed()
+                .sorted(Comparator.comparing(
+                                (Function<Entry<V, Integer>, Integer>) Entry::getValue).reversed()
                 )
                 .findFirst()
                 .get()
@@ -175,9 +173,8 @@ public class PopularMap<K, V> implements Map<K, V> {
     public Iterator<V> popularIterator() {
         return popularValueMap.entrySet()
                 .stream()
-                .sorted(
-                        Comparator.comparing(
-                                (Function<Entry<V, Integer>, Integer>) Entry::getValue)
+                .sorted(Comparator.comparing(
+                        Entry::getValue)
                 )
                 .map(Entry::getKey)
                 .iterator();
@@ -188,12 +185,12 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private void addPopularityValue(V value){
-        popularValueMap.put(value, popularKeyMap.getOrDefault(value, 0)+1);
+        popularValueMap.put(value, popularValueMap.getOrDefault(value, 0)+1);
     }
 
     private void addPopularity(K key, V value){
         popularKeyMap.put(key, popularKeyMap.getOrDefault(key, 0)+1);
-        popularValueMap.put(value, popularKeyMap.getOrDefault(value, 0)+1);
+        popularValueMap.put(value, popularValueMap.getOrDefault(value, 0)+1);
     }
 
     @Override
