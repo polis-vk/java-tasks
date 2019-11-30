@@ -4,6 +4,7 @@ package ru.mail.polis.homework.collections.mail;
 import ru.mail.polis.homework.collections.PopularMap;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -29,12 +30,14 @@ public class MailService<T extends AbstractMailMessage> implements Consumer<T> {
      */
 
     public void accept(T o) {
-        List<AbstractMailMessage> lstSend = senders.get(o.getSender());
-        lstSend.add((T) o);
-        senders.put(o.getSender(), lstSend);
-        List<AbstractMailMessage> lstRec = recievers.get(o.getSender());
-        lstRec.add((T) o);
-        recievers.put(o.getSender(), lstRec);
+        if (!senders.containsKey(o.getSender())){
+            senders.put(o.getSender(), new LinkedList<>());
+        }
+        senders.get(o.getSender()).add((T) o);
+        if (!recievers.containsKey(o.getDestination())){
+            recievers.put(o.getDestination(), new LinkedList<>());
+        }
+        recievers.get(o.getDestination()).add((T) o);
     }
 
     /**
@@ -42,6 +45,10 @@ public class MailService<T extends AbstractMailMessage> implements Consumer<T> {
      */
     public Map<String, List<AbstractMailMessage>> getMailBox() {
         return recievers;
+    }
+
+    public List<AbstractMailMessage> getMailBox(String reciever) {
+        return recievers.get(reciever);
     }
 
     /**

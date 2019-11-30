@@ -22,4 +22,13 @@ public abstract class AbstractMailMessage<T> {
     public T getContent() {
         return content;
     }
+
+    @Override
+    public String toString() {
+        return "AbstractMailMessage{" +
+                "sender='" + sender + '\'' +
+                ", destination='" + destination + '\'' +
+                ", content=" + content +
+                '}';
+    }
 }
