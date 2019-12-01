@@ -55,26 +55,6 @@ public class PopularMap<K, V> implements Map<K, V> {
         }
     }
 
-    private class PopularValueIterator implements Iterator<V> {
-
-        public PopularValueIterator(ArrayList<Entry<V, Integer>> sortedArray) {
-            this.sortedArray = sortedArray;
-        }
-
-        ArrayList<Entry<V, Integer>> sortedArray;
-        int index = 0;
-
-        @Override
-        public boolean hasNext() {
-            return index < sortedArray.size();
-        }
-
-        @Override
-        public V next() {
-            return sortedArray.get(index++).getKey();
-        }
-    }
-
     public PopularMap() {
         this.map = new HashMap<>();
     }
@@ -233,8 +213,9 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        ArrayList<Entry<V, Integer>> arrayList = new ArrayList<>(popularityValue.entrySet());
-        arrayList.sort(Comparator.comparingInt(Entry::getValue));
-        return new PopularValueIterator(arrayList);
+        return popularityValue.entrySet().stream()
+                .sorted(Comparator.comparingInt(Entry::getValue))
+                .map(Entry::getKey)
+                .iterator();
     }
 }
