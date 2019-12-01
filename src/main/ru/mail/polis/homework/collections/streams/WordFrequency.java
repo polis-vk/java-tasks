@@ -26,13 +26,11 @@ public class WordFrequency {
     public static List<String> wordFrequency(Stream<String> lines) {
         return lines
                 .map(String::toLowerCase)
-                .map(x -> x.replaceAll("\\p{Punct}", " "))
-                .map(x -> x.split(" "))
+                .map(x -> x.split("[ ,.\\-?!:;]+"))
                 .flatMap(Arrays::stream)
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet()
                 .stream()
-                .filter(x -> !x.getKey().replaceAll("\\p{Punct}", "").isEmpty())
                 .sorted(Comparator.comparing((Function<Map.Entry<String, Long>, Long>) Map.Entry::getValue)
                         .reversed()
                         .thenComparing(Map.Entry::getKey)
