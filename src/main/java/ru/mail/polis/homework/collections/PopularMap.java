@@ -1,11 +1,8 @@
 package ru.mail.polis.homework.collections;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,50 +31,20 @@ import java.util.stream.Collectors;
  */
 public class PopularMap<K, V> implements Map<K, V> {
 
-    private class PairKeyValue {
-        private K key;
-        private V value;
-
-        PairKeyValue(K key, V value) {
-            this.key = key;
-            this.value = value;
-        }
-
-        @Override
-        public int hashCode() {
-            return super.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            PairKeyValue pairKeyValue = (PairKeyValue) o;
-            return pairKeyValue.key.equals(key) && pairKeyValue.value.equals(value);
-        }
-    }
-
     private final Map<K, V> map;
     private final Map<K, Integer> usedKeyMap;
     private final Map<V, Integer> usedValueMap;
-    private final List<PairKeyValue> list;
 
     public PopularMap() {
         this.map = new HashMap<>();
         usedKeyMap = new HashMap<>();
         usedValueMap = new HashMap<>();
-        list = new ArrayList<>();
     }
 
     public PopularMap(Map<K, V> map) {
         this.map = map;
         usedKeyMap = new HashMap<>();
         usedValueMap = new HashMap<>();
-        list = new ArrayList<>();
     }
 
     @Override
@@ -114,7 +81,6 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
-        list.add(new PairKeyValue(key, value));
         if (map.containsKey(key)) {
             updateValue(map.get(key));
         }
@@ -162,7 +128,12 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return usedKeyMap.entrySet().stream().max(Entry.comparingByValue()).get().getKey();
+        return usedKeyMap
+            .entrySet()
+            .stream()
+            .max(Entry.comparingByValue())
+            .get()
+            .getKey();
     }
 
 

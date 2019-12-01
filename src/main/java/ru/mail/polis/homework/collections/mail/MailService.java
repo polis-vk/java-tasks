@@ -81,8 +81,8 @@ public class MailService<T extends AbstractSentReceivedObject> implements Consum
      */
     public static void process(
         MailService<AbstractSentReceivedObject<?>> service,
-        List<AbstractSentReceivedObject<?>> mails
-    ) {
+        List<AbstractSentReceivedObject<?>> mails) {
+
         service.accept(mails);
     }
 }
