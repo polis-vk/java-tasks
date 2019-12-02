@@ -1,6 +1,11 @@
 package ru.mail.polis.homework.collections.streams;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -21,7 +26,22 @@ public class WordFrequency {
      * Если будут использоваться условные операторы, то оценка максимальная оценка 2 балла.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-        return null;
+        return lines
+                .map(String::toLowerCase).filter(word -> !word.trim().isEmpty())
+
+                .flatMap(line -> Arrays.stream(line.split("[,;:.!?\\s]+")))
+
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+
+                .entrySet().stream()
+
+                .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(Map.Entry::getValue).reversed().thenComparing(Map.Entry::getKey))
+
+                .limit(10)
+
+                .map(s -> s.getKey())
+
+                .collect(Collectors.toList());
     }
 
 
