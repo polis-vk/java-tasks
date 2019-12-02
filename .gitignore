@@ -5,3 +5,8 @@
 .gradle/
 out/
 homework2.iml
+
+build/
+gradle/
+
+gradlew.bat
