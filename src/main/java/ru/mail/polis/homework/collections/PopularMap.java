@@ -2,7 +2,6 @@ package ru.mail.polis.homework.collections;
 
 
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 
@@ -29,6 +28,7 @@ import java.util.stream.Collectors;
  * @param <K> - тип ключа
  * @param <V> - тип значения
  */
+
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
@@ -37,8 +37,8 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     public PopularMap() {
         this.map = new HashMap<>();
-        this.keys = new HashMap<>();
-        this.values = new HashMap<>();
+        keys = new HashMap<>();
+        values = new HashMap<>();
     }
 
     public PopularMap(Map<K, V> map) {
@@ -72,23 +72,25 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public V get(Object key) {
         V value = map.get(key);
+        if (value != null) increasePopularityValue(value);
         increasePopularityKey((K) key);
-        increasePopularityValue(value);
-        return map.get(value);
+        return value;
     }
 
     @Override
     public V put(K key, V value) {
+        if (map.containsKey(key)) increasePopularityValue(map.get(key));
         increasePopularityKey(key);
         increasePopularityValue(value);
-        return map.put(key,value);
+        return map.put(key, value);
     }
 
     @Override
     public V remove(Object key) {
+        V value = map.remove(key);
         increasePopularityKey((K) key);
-        increasePopularityValue(map.get(key));
-        return map.remove(key);
+        if (value != null) increasePopularityValue(value);
+        return value;
     }
 
     @Override
@@ -120,14 +122,12 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return keys
-                .entrySet()
+        return keys.entrySet()
                 .stream()
                 .max(Entry.comparingByValue())
                 .get()
                 .getKey();
     }
-
 
     /**
      * Возвращает количество использование ключа
@@ -137,7 +137,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     /**
-     * Возвращает самое популярное, на данный момент, значение. Надо учесть что значений может быть более одного
+     * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
         return values
@@ -160,25 +160,26 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        return map.values().stream()
-                .collect(Collectors.groupingBy(value->value, Collectors.counting()))
-                .entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
+        return values
+                .entrySet()
+                .stream()
+                .sorted(Entry.comparingByValue())
+                .map(Entry::getKey)
                 .collect(Collectors.toList())
                 .iterator();
     }
 
-    private void increasePopularityKey(K key){
+    private void increasePopularityKey(K key) {
         if (keys.containsKey(key)) {
-            keys.compute(key, (k,v) -> v+1);
+            keys.put(key, keys.get(key) + 1);
         } else {
             keys.put(key, 1);
         }
     }
-    private void increasePopularityValue(V value){
+
+    private void increasePopularityValue(V value) {
         if (values.containsKey(value)) {
-            values.compute(value, (k,v) -> v+1);
+            values.put(value, values.get(value) + 1);
         } else {
             values.put(value, 1);
         }
