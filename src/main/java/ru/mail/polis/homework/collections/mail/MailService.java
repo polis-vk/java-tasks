@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.collections.mail;
 
 
-import org.graalvm.compiler.api.replacements.Snippet;
-
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -18,6 +16,7 @@ import java.util.stream.Collectors;
 public class MailService implements Consumer<Mail> {
 
     private final Map<String, List<Mail>> mailBox = new HashMap<>();
+    private final Map<String, List<Mail>> mailSend = new HashMap<>();
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
@@ -25,15 +24,8 @@ public class MailService implements Consumer<Mail> {
      */
     @Override
     public void accept(Mail o) {
-        List<Mail> list = mailBox.remove(o.getRecipient());
-        if (list == null) {
-            List<Mail> temp = new ArrayList<>(1);
-            temp.add(o);
-            mailBox.put(o.getRecipient(), temp);
-        } else {
-            list.add(o);
-            mailBox.put(o.getRecipient(), list);
-        }
+        mailBox.computeIfAbsent(o.getRecipient(), k -> new ArrayList<>(1)).add(o);
+        mailSend.computeIfAbsent(o.getSender(), k -> new ArrayList<>(1)).add(o);
     }
 
     /**
@@ -47,15 +39,11 @@ public class MailService implements Consumer<Mail> {
      * Возвращает самого популярного отправителя
      */
     public String getPopularSender() {
-        if (mailBox.isEmpty())
+        if (mailSend.isEmpty())
             return null;
-        return mailBox.entrySet()
+        return mailSend.entrySet()
                 .stream()
-                .flatMap(entry -> entry.getValue().stream().map(Mail::getSender))
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                .entrySet()
-                .stream()
-                .max(Comparator.comparingLong(Map.Entry::getValue))
+                .max(Comparator.comparing(entry -> entry.getValue().size()))
                 .get()
                 .getKey();
     }
@@ -68,7 +56,7 @@ public class MailService implements Consumer<Mail> {
             return null;
         return mailBox.entrySet()
                 .stream()
-                .max(Comparator.comparingLong(a -> a.getValue().size()))
+                .max(Comparator.comparingLong(entry -> entry.getValue().size()))
                 .get()
                 .getKey();
     }
