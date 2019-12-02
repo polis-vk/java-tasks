@@ -122,7 +122,8 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return keys.entrySet()
+        return keys
+                .entrySet()
                 .stream()
                 .max(Entry.comparingByValue())
                 .get()

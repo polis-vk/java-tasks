@@ -27,7 +27,7 @@ public class WordFrequency {
         return lines
                 .flatMap(str -> Arrays.stream(str.split("(\\p{Punct}|\\p{Space})+")))
                 .map(String::toLowerCase)
-                .collect(Collectors.groupingBy(w->w, Collectors.counting()))
+                .collect(Collectors.groupingBy(word->word, Collectors.counting()))
                 .entrySet().stream()
                 .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(entry->-entry.getValue())
                         .thenComparing(Map.Entry::getKey))

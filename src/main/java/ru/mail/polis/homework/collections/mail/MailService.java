@@ -47,7 +47,9 @@ public class MailService<T extends Mail<?>> implements Consumer<T> {
      * Возвращает самого популярного отправителя
      */
     public String getPopularSender() {
-        return senders.entrySet().stream()
+        return senders
+                .entrySet()
+                .stream()
                 .max(Comparator.comparingInt(e -> e.getValue().size()))
                 .orElseThrow(NullPointerException::new)
                 .getKey();
@@ -57,7 +59,9 @@ public class MailService<T extends Mail<?>> implements Consumer<T> {
      * Возвращает самого популярного получателя
      */
     public String getPopularRecipient() {
-        return receivers.entrySet().stream()
+        return receivers
+                .entrySet()
+                .stream()
                 .max(Comparator.comparingInt(e -> e.getValue().size()))
                 .orElseThrow(NullPointerException::new)
                 .getKey();
