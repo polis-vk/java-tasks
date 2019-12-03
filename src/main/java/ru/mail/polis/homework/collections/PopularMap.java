@@ -1,7 +1,12 @@
 package ru.mail.polis.homework.collections;
 
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 

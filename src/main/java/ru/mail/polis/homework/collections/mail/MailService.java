@@ -1,7 +1,11 @@
 package ru.mail.polis.homework.collections.mail;
 
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -14,7 +18,7 @@ import java.util.stream.Collectors;
  */
 public class MailService implements Consumer<Mail> {
 
-    Map<String, List<Mail>> mailBox = new HashMap<>();
+    private Map<String, List<Mail>> mailBox = new HashMap<>();
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
      * 1 балл
