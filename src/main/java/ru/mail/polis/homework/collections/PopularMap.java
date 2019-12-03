@@ -46,20 +46,26 @@ public class PopularMap<K, V> implements Map<K, V> {
       this.map = map;
     }
 
-    public void incKey(K k) {
-      if (k == null) {
+    private void incKey(K key) {
+      if (key == null) {
         return;
       }
-      keyPopularity.computeIfPresent(k, (key, value) -> value + 1);
-      keyPopularity.computeIfAbsent(k, key -> Integer.valueOf(1));
+      if (keyPopularity.containsKey(key)) {
+        keyPopularity.put(key, keyPopularity.get(key) + 1);
+      } else {
+        keyPopularity.put(key, 1);
+      }
     }
 
-    public void incValue(V v) {
-      if (v == null) {
+    private void incValue(V value) {
+      if (value == null) {
         return;
       }
-      valuePopularity.computeIfPresent(v, (key, value) -> value + 1);
-      valuePopularity.computeIfAbsent(v, key -> Integer.valueOf(1));
+      if (valuePopularity.containsKey(value)) {
+        valuePopularity.put(value, valuePopularity.get(value) + 1);
+      } else {
+        valuePopularity.put(value, 1);
+      }
     }
 
     @Override

@@ -28,7 +28,8 @@ public class WordFrequency {
     public static List<String> wordFrequency(Stream<String> lines) {
 
       return lines
-              .flatMap(line -> Arrays.stream(line.split("[ .,!:-?;]+")))
+              .map(line -> line.split("[ .,!:-?;]+"))
+              .flatMap(Arrays::stream)
               .map(String::toLowerCase)
               .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
               .entrySet().stream()

@@ -26,7 +26,7 @@ public class MailService implements Consumer<Mail> {
     @Override
     public void accept(Mail o) {
       mailBox.computeIfPresent(o.getReciever(), (key, value) -> {
-        List<Mail> list = mailBox.remove(key);
+        List<Mail> list = mailBox.get(key);
         list.add(o);
         return list;
       });
