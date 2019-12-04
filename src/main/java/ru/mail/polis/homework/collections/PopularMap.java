@@ -30,6 +30,9 @@ import java.util.stream.Collectors;
  * Дополнительное задание описано будет ниже
  * @param <K> - тип ключа
  * @param <V> - тип значения
+ *
+ * modified by БорискинМА
+ * 03.12.19
  */
 public class PopularMap<K, V> implements Map<K, V> {
 
