@@ -57,12 +57,14 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        return false;
+        encourageKey((K) key);
+        return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        return false;
+        encourageValue((V) value);
+        return map.containsValue(value);
     }
 
     @Override
@@ -71,10 +73,10 @@ public class PopularMap<K, V> implements Map<K, V> {
             V value = map.get(key);
 
             if (value != null) {
-                increaseValue(value);
+                encourageValue(value);
             }
 
-            increaseKey((K) key);
+            encourageKey((K) key);
 
             return value;
 
@@ -83,7 +85,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         }
     }
 
-    private void increaseKey(K key) {
+    private void encourageKey(K key) {
         if (K.containsKey(key)) {
             K.put(key, K.get(key) + 1);
         }
@@ -92,7 +94,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         }
     }
 
-    private void increaseValue(V value) {
+    private void encourageValue(V value) {
         if (V.containsKey(value)) {
             V.put(value, V.get(value) + 1);
         }
