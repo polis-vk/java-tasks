@@ -42,8 +42,8 @@ public class MailService implements Consumer<MailWorker> {
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      */
-    public Map<String, List> getMailBox() {
-        return null;
+    public Map<String, List<MailWorker>> getMailBox() {
+        return mailWorker;
     }
 
     /**
