@@ -45,36 +45,50 @@ public class MailService implements Consumer<MailWorker> {
         return mailWorker;
     }
 
+    private boolean isEmpty() {
+        return mailWorker.isEmpty();
+    }
+
     /**
      * Возвращает самого популярного отправителя
      */
     public String getPopularSender() {
-        return mailWorker.entrySet().stream()
-                .flatMap(e -> e.getValue().stream())
-                .collect(Collectors.groupingBy(MailWorker::getTalker, Collectors.counting()))
-                .entrySet().stream()
-                .max(Comparator.comparingLong(Map.Entry<String, Long>::getValue))
-                .get()
-                .getKey();
+        if (!isEmpty()) {
+            return mailWorker.entrySet().stream()
+                    .flatMap(e -> e.getValue().stream())
+                    .collect(Collectors.groupingBy(MailWorker::getTalker, Collectors.counting()))
+                    .entrySet().stream()
+                    .max(Comparator.comparingLong(Map.Entry<String, Long>::getValue))
+                    .get()
+                    .getKey();
+        }
+        else {
+            return null;
+        }
     }
 
     /**
      * Возвращает самого популярного получателя
      */
     public String getPopularRecipient() {
-        return mailWorker.entrySet().stream()
-                .flatMap(e -> e.getValue().stream())
-                .collect(Collectors.groupingBy(MailWorker::getListener, Collectors.counting()))
-                .entrySet().stream()
-                .max(Comparator.comparingLong(Map.Entry<String, Long>::getValue))
-                .get()
-                .getKey();
+        if (!isEmpty()) {
+            return mailWorker.entrySet().stream()
+                    .flatMap(e -> e.getValue().stream())
+                    .collect(Collectors.groupingBy(MailWorker::getListener, Collectors.counting()))
+                    .entrySet().stream()
+                    .max(Comparator.comparingLong(Map.Entry<String, Long>::getValue))
+                    .get()
+                    .getKey();
+        }
+        else {
+            return null;
+        }
     }
 
     /**
      * Метод должен заставить обработать service все mails.
      */
     public static void process(MailService service, List mails) {
-
+        mails.forEach(service);
     }
 }
