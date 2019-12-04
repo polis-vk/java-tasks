@@ -15,7 +15,7 @@ import java.util.function.Consumer;
  */
 public class MailService implements Consumer {
 
-    private Map<String, List<MyMail>> myMail = new HashMap<>();
+    private Map<String, List<MailWorker>> mailWorker = new HashMap<>();
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты

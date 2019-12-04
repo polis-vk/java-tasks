@@ -1,10 +1,10 @@
 package ru.mail.polis.homework.collections.mail;
 
-abstract public class MyMail {
+abstract public class MailWorker {
     private String talker;
     private String listener;
 
-    public MyMail(String talker, String listener) {
+    MailWorker(String talker, String listener) {
         this.talker = talker;
         this.listener = listener;
     }
