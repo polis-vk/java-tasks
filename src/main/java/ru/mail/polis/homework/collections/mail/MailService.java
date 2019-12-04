@@ -1,11 +1,10 @@
 package ru.mail.polis.homework.collections.mail;
 
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * Нужно создать сервис, который умеет обрабатывать письма и зарплату.
@@ -50,7 +49,13 @@ public class MailService implements Consumer<MailWorker> {
      * Возвращает самого популярного отправителя
      */
     public String getPopularSender() {
-        return null;
+        return mailWorker.entrySet().stream()
+                .flatMap(e -> e.getValue().stream())
+                .collect(Collectors.groupingBy(MailWorker::getTalker, Collectors.counting()))
+                .entrySet().stream()
+                .max(Comparator.comparingLong(Map.Entry<String, Long>::getValue))
+                .get()
+                .getKey();
     }
 
     /**
