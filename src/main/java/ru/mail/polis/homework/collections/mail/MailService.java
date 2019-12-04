@@ -62,7 +62,13 @@ public class MailService implements Consumer<MailWorker> {
      * Возвращает самого популярного получателя
      */
     public String getPopularRecipient() {
-        return null;
+        return mailWorker.entrySet().stream()
+                .flatMap(e -> e.getValue().stream())
+                .collect(Collectors.groupingBy(MailWorker::getListener, Collectors.counting()))
+                .entrySet().stream()
+                .max(Comparator.comparingLong(Map.Entry<String, Long>::getValue))
+                .get()
+                .getKey();
     }
 
     /**
