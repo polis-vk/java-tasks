@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.collections.mail;
 
-abstract public class MailWorker {
+abstract class MailWorker {
     private String talker;
     private String listener;
 
@@ -9,11 +9,11 @@ abstract public class MailWorker {
         this.listener = listener;
     }
 
-    public String getTalker() {
+    String getTalker() {
         return talker;
     }
 
-    public String getListener() {
+    String getListener() {
         return listener;
     }
 }

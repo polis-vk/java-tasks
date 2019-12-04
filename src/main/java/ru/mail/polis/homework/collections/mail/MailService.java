@@ -3,7 +3,6 @@ package ru.mail.polis.homework.collections.mail;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -12,6 +11,9 @@ import java.util.stream.Collectors;
  * Зарплата состоит из получателя, отправителя и суммы.
  *
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
+ *
+ * modified by БорискинМА
+ * 04.12.19
  */
 public class MailService implements Consumer<MailWorker> {
 
