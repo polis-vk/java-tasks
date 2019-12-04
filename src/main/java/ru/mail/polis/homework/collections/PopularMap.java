@@ -105,12 +105,27 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
-        return null;
+        if (map.containsKey(key)) {
+            encourageValue(map.get(key));
+        }
+
+        encourageKey(key);
+        encourageValue(value);
+
+        return map.put(key, value);
     }
 
     @Override
     public V remove(Object key) {
-        return null;
+        V value = map.remove(key);
+
+        encourageKey((K) key);
+
+        if (value != null) {
+            encourageValue(value);
+        }
+
+        return value;
     }
 
     @Override
