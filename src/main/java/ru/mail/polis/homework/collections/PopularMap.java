@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -52,7 +53,7 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean isEmpty() {
-        return this.size() == 0;
+        return map.isEmpty();
     }
 
     @Override
@@ -159,9 +160,13 @@ public class PopularMap<K, V> implements Map<K, V> {
     public K getPopularKey() {
         return K
                 .entrySet()
+
                 .stream()
+
                 .max(Entry.comparingByValue())
+
                 .get()
+
                 .getKey();
     }
 
@@ -174,15 +179,21 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     /**
-     * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
+     * Возвращает самое популярное, на данный момент, значение. Надо учесть что значений может быть более одного
      */
     public V getPopularValue() {
-        return V
-                .entrySet()
-                .stream()
-                .max(Entry.comparingByValue())
-                .get()
-                .getKey();
+        int max = 0;
+        V maxValue = null;
+
+        for (Map.Entry<V, Integer> entry : V.entrySet()) {
+            if (entry.getValue() >= max) {
+                max = entry.getValue();
+
+                maxValue = entry.getKey();
+            }
+        }
+
+        return maxValue;
     }
 
     /**
@@ -197,6 +208,17 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        return null;
+        return V
+                .entrySet()
+
+                .stream()
+
+                .sorted(Entry.comparingByValue())
+
+                .map(Entry::getKey)
+
+                .collect(Collectors.toList())
+
+                .iterator();
     }
 }
