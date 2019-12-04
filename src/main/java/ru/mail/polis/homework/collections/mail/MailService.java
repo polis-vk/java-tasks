@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.mail;
 
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -13,6 +14,8 @@ import java.util.function.Consumer;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  */
 public class MailService implements Consumer {
+
+    private Map<String, List<MyMail>> myMail = new HashMap<>();
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
