@@ -20,9 +20,16 @@ public class WordFrequency {
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      * Если будут использоваться условные операторы, то оценка максимальная оценка 2 балла.
      */
-    public static List<String> wordFrequency(Stream<String> lines) {
-        return null;
+    public static List<String> wordFrequency(Stream<String> lines){
+        return lines
+                .flatMap(line -> Arrays.stream(line.split("[.,!:-?;]+")))
+                .collect(Collectors.toMap(key -> String.valueOf(key).toLowerCase(), key -> 1, Integer::sum))
+                .entrySet()
+                .stream()
+                .sorted(((Comparator<Map.Entry<String, Integer>>) (set1, set2) -> set2.getValue() - set1.getValue())
+                        .thenComparing(Map.Entry::getKey))
+                .limit(10)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
-
-
 }
