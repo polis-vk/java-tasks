@@ -25,17 +25,14 @@ public class MailService implements Consumer<MailWorker> {
      */
     @Override
     public void accept(MailWorker obj) {
-        // Если нам необходимо произвести какое-то действие со значением в мапе,
-        // если оно там есть (2 params expected in lambda):
-        mailWorker.computeIfPresent(obj.getListener(), (K, V) -> {
-            List<MailWorker> array = mailWorker.get(K);
+        // Метод добавит новый элемент в Map, но только в том случае, если элемент с таким ключом там отсутствует.
+        // В качестве value ему будет присвоен результат выполнения лямбда-выражения.
+        // Если же элемент с таким ключом уже есть — он не будет перезаписан, а останется на месте.
+        // Для указанного ключа key этот метод устанавливает в качестве value результат выполнения лямбда-выражения.
+        mailWorker.compute(obj.getListener(), (key, value) -> {
+            List<MailWorker> array = mailWorker.getOrDefault(key, new ArrayList<>());
             array.add(obj);
-            return array;
-        });
-        // Действие произойдет в том случае, если значения нет:
-        mailWorker.computeIfAbsent(obj.getListener(), K -> {
-            List<MailWorker> array = new Vector<>();
-            array.add(obj);
+
             return array;
         });
     }
@@ -56,7 +53,8 @@ public class MailService implements Consumer<MailWorker> {
      */
     public String getPopularSender() {
         if (!isEmpty()) {
-            return mailWorker.entrySet().stream()
+            return mailWorker.entrySet()
+                    .stream()
                     .flatMap(e -> e.getValue().stream())
                     .collect(Collectors.groupingBy(MailWorker::getTalker, Collectors.counting()))
                     .entrySet().stream()
@@ -74,7 +72,8 @@ public class MailService implements Consumer<MailWorker> {
      */
     public String getPopularRecipient() {
         if (!isEmpty()) {
-            return mailWorker.entrySet().stream()
+            return mailWorker.entrySet()
+                    .stream()
                     .flatMap(e -> e.getValue().stream())
                     .collect(Collectors.groupingBy(MailWorker::getListener, Collectors.counting()))
                     .entrySet().stream()
