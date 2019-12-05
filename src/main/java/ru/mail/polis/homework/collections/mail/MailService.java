@@ -1,7 +1,10 @@
 package ru.mail.polis.homework.collections.mail;
 
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -21,6 +24,15 @@ public class MailService<T extends Mail<?>> implements Consumer<T> {
     }
 
     /**
+     * Метод должен заставить обработать service все mails.
+     */
+    public static void process(MailService<Mail<?>> service, List<Mail<?>> mails) {
+        for (Mail<?> mail : mails) {
+            service.accept(mail);
+        }
+    }
+
+    /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
      * 1 балл
      */
@@ -30,10 +42,14 @@ public class MailService<T extends Mail<?>> implements Consumer<T> {
         String receiver = mail.getReceiver();
         if (senders.containsKey(sender)) {
             senders.put(sender, List.of(mail));
-        } else senders.get(sender).add(mail);
+        } else {
+            senders.get(sender).add(mail);
+        }
         if (receivers.containsKey(receiver)) {
             receivers.put(receiver, List.of(mail));
-        } else receivers.get(receiver).add(mail);
+        } else {
+            receivers.get(receiver).add(mail);
+        }
     }
 
     /**
@@ -65,14 +81,5 @@ public class MailService<T extends Mail<?>> implements Consumer<T> {
                 .max(Comparator.comparingInt(e -> e.getValue().size()))
                 .orElseThrow(NullPointerException::new)
                 .getKey();
-    }
-
-    /**
-     * Метод должен заставить обработать service все mails.
-     */
-    public static void process(MailService<Mail<?>> service, List<Mail<?>> mails) {
-        for (Mail<?> mail : mails) {
-            service.accept(mail);
-        }
     }
 }

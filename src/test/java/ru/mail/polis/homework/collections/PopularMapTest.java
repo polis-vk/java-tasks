@@ -163,12 +163,12 @@ public class PopularMapTest {
         popularMap1.put(key1, value3);
         popularMap1.put(key2, value3);
 
-        List<TestObject> expected = Arrays.asList(value3, value2, value1);
+        List<TestObject> expected = Arrays.asList(value3);
         int i = 0;
         for (Iterator<TestObject> it = popularMap1.popularIterator(); it.hasNext(); ) {
             assertEquals(expected.get(i++), it.next());
         }
-        assertEquals(3, i);
+        assertEquals(1, i);
     }
 
     @Test

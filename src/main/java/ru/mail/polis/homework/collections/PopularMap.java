@@ -72,14 +72,18 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public V get(Object key) {
         V value = map.get(key);
-        if (value != null) increasePopularityValue(value);
+        if (value != null) {
+            increasePopularityValue(value);
+        }
         increasePopularityKey((K) key);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
-        if (map.containsKey(key)) increasePopularityValue(map.get(key));
+        if (map.containsKey(key)) {
+            increasePopularityValue(map.get(key));
+        }
         increasePopularityKey(key);
         increasePopularityValue(value);
         return map.put(key, value);
@@ -89,7 +93,9 @@ public class PopularMap<K, V> implements Map<K, V> {
     public V remove(Object key) {
         V value = map.remove(key);
         increasePopularityKey((K) key);
-        if (value != null) increasePopularityValue(value);
+        if (value != null) {
+            increasePopularityValue(value);
+        }
         return value;
     }
 
@@ -161,9 +167,11 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        return values
+        return map
                 .entrySet()
                 .stream()
+                .collect(Collectors.groupingBy(Entry::getValue, Collectors.counting()))
+                .entrySet().stream()
                 .sorted(Entry.comparingByValue())
                 .map(Entry::getKey)
                 .collect(Collectors.toList())
