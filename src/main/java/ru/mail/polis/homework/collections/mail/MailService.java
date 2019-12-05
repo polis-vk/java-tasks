@@ -45,16 +45,18 @@ public class MailService implements Consumer<Mail> {
      * Возвращает самого популярного отправителя
      */
     public String getPopularSender() {
-       return mailBox
-                .entrySet()
+        final String[] result = {null};
+
+        mailBox.entrySet()
                 .stream()
                 .flatMap(entry -> entry.getValue().stream())
                 .collect(Collectors.groupingBy(Mail::getSender, Collectors.counting()))
                 .entrySet()
                 .stream()
                 .max(Comparator.comparing(Map.Entry<String, Long>::getValue))
-                .orElse(new EmptyEntry())
-                .getKey();
+                .ifPresent(entry -> result[0] = entry.getKey());
+
+        return result[0];
     }
 
     /**
@@ -69,23 +71,5 @@ public class MailService implements Consumer<Mail> {
      */
     public static void process(MailService service, List<Mail> mails) {
         mails.forEach(service);
-    }
-
-    /* Prevention NullPointerException for getPopularSender() method */
-    private static class EmptyEntry implements Map.Entry<String, Long> {
-        @Override
-        public String getKey() {
-            return null;
-        }
-
-        @Override
-        public Long getValue() {
-            return null;
-        }
-
-        @Override
-        public Long setValue(Long aLong) {
-            return null;
-        }
     }
 }
