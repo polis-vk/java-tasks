@@ -1,11 +1,13 @@
 package ru.mail.polis.homework.collections;
 
 
+import java.sql.SQLOutput;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -105,13 +107,27 @@ public class PopularMap<K, V> implements Map<K, V> {
     public V put(K key, V value) {
         setValuePopularity(value);
         setKeyPopularity(key);
+        V oldValue = this.map.get(key);
+
+        if (oldValue != null && oldValue.equals(value)) {
+            setValuePopularity(value);
+            return value;
+        }
+
         return this.map.put(key, value);
     }
 
     @Override
     public V remove(Object key) {
+        System.out.println("key: " + key);
         setKeyPopularity((K) key);
-        return this.map.remove(key);
+        V value = this.map.remove(key);
+        System.out.println("value: " + value);
+        if (value != null) {
+            setValuePopularity(value);
+            return this.map.remove(key);
+        }
+        return null;
     }
 
     @Override
@@ -172,21 +188,15 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        int maxPopularity = -1;
-        V maxValue = null;
-
-        for (Map.Entry<V, Integer> entry : popularValueMap.entrySet()) {
-            int popularity = entry.getValue();
-
-            if (popularity < maxPopularity) {
-
-                maxPopularity = popularity;
-                maxValue = entry.getKey();
-
-            }
-        }
-
-        return maxValue;
+        return popularValueMap
+                .keySet()
+                .stream()
+                .max((key_1, key_2) -> {
+                    Integer value_1 = popularValueMap.get(key_1);
+                    Integer value_2 = popularValueMap.get(key_2);
+                    return value_1.compareTo(value_2);
+                })
+                .get();
     }
 
     /**
@@ -203,6 +213,12 @@ public class PopularMap<K, V> implements Map<K, V> {
      */
     public Iterator<V> popularIterator() {
         // TODO implement the iterator
-        return null;
+        return popularValueMap
+                .entrySet()
+                .stream()
+                .sorted(Entry.comparingByValue())
+                .map(Entry::getKey)
+                .collect(Collectors.toList())
+                .iterator();
     }
 }
