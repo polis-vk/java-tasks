@@ -146,6 +146,20 @@ public class PopularMapTest {
     }
 
     @Test
+    public void myTest() {
+        TestObject key1 = new TestObject("key1");
+        TestObject key2 = new TestObject("key1");
+        TestObject value1 = new TestObject("value1");
+        TestObject value2 = new TestObject("value1");
+        popularMap1.put(key1, value1);
+        popularMap1.remove(key1);
+        assertEquals(popularMap1.getPopularKey(), key1);
+        assertEquals(popularMap1.getPopularValue(), value1);
+        assertEquals(popularMap1.getKeyPopularity(key1), 2);
+        assertEquals(popularMap1.getValuePopularity(value1), 2);
+    }
+
+    @Test
     public void popularIterator() {
         TestObject key1 = new TestObject("key1");
         TestObject key2 = new TestObject("key2");

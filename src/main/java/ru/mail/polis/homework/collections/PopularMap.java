@@ -1,11 +1,7 @@
 package ru.mail.polis.homework.collections;
 
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -32,81 +28,132 @@ import java.util.Set;
  */
 public class PopularMap<K, V> implements Map<K, V> {
 
+
+    private static class ObservedElement<T> implements Comparable {
+        T value;
+        Integer count;
+
+        ObservedElement(T value) {
+            this.value = value;
+            this.count = 1;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            return ((ObservedElement) o).count.compareTo(count);
+        }
+    }
+
+    private HashMap<K, ObservedElement<K>> keyReferenceCount;
+//    private TreeSet<ObservedElement<K>> keyReferenceCountSet;
+    private ObservedElement<K> maxKeyReferenceCount;
+
+    private HashMap<V, ObservedElement<V>> valueReferenceCount;
+    private TreeSet<ObservedElement<V>> valueReferenceCountSet;
+
     private final Map<K, V> map;
 
     public PopularMap() {
         this.map = new HashMap<>();
+        this.keyReferenceCount = new HashMap<>();
+        this.valueReferenceCount = new HashMap<>();
+        this.valueReferenceCountSet = new TreeSet<>();
     }
 
     public PopularMap(Map<K, V> map) {
         this.map = map;
+        this.keyReferenceCount = new HashMap<>();
+        this.valueReferenceCount = new HashMap<>();
+        this.valueReferenceCountSet = new TreeSet<>();
     }
 
     @Override
     public int size() {
-        return 0;
+        return map.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return map.isEmpty();
     }
 
     @Override
     public boolean containsKey(Object key) {
-        return false;
+        updateKeyPopularity(key);
+        return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        return false;
+        updateValuePopularity(value);
+        return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        return null;
+        updateKeyPopularity(key);
+        V value = map.get(key);
+        if (value != null) {
+            updateValuePopularity(value);
+        }
+        return value;
     }
 
     @Override
     public V put(K key, V value) {
-        return null;
+        if (map.containsKey(key)) {
+            updateValuePopularity(map.get(key));
+        }
+        updateKeyPopularity(key);
+        updateValuePopularity(value);
+        return map.put(key, value);
     }
 
     @Override
     public V remove(Object key) {
-        return null;
+        updateKeyPopularity(key);
+
+        V value = map.remove(key);
+        if (value != null) {
+            updateValuePopularity(value);
+        }
+        return value;
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-        throw new UnsupportedOperationException("putAll");
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            updateKeyPopularity(entry.getKey());
+            updateValuePopularity(entry.getValue());
+        }
+        map.putAll(m);
     }
 
     @Override
     public void clear() {
-
+        map.clear();
     }
 
     @Override
     public Set<K> keySet() {
-        return null;
+        return map.keySet();
     }
 
     @Override
     public Collection<V> values() {
-        return null;
+        return map.values();
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return null;
+        return map.entrySet();
     }
 
     /**
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return null;
+        return maxKeyReferenceCount.value;
     }
 
 
@@ -114,6 +161,10 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
+        final ObservedElement result = keyReferenceCount.get(key);
+        if (result != null) {
+            return result.count;
+        }
         return 0;
     }
 
@@ -121,7 +172,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        return null;
+        return valueReferenceCountSet.first().value;
     }
 
     /**
@@ -129,6 +180,10 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
+        final ObservedElement result = valueReferenceCount.get(value);
+        if (result != null) {
+            return result.count;
+        }
         return 0;
     }
 
@@ -136,6 +191,37 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        return null;
+        return valueReferenceCountSet
+                .descendingSet()
+                .stream()
+                .map((vObservedElement -> vObservedElement.value))
+                .iterator();
+    }
+
+    private void updateKeyPopularity(Object key) {
+        keyReferenceCount.compute((K) key, (k, element) -> {
+            if (element != null) {
+                element.count++;
+            } else {
+                element = new ObservedElement<>(k);
+            }
+            if (maxKeyReferenceCount == null || maxKeyReferenceCount.count < element.count) {
+                maxKeyReferenceCount = element;
+            }
+            return element;
+        });
+    }
+
+    private void updateValuePopularity(Object value) {
+        valueReferenceCount.compute((V) value, (v, element) -> {
+            if (element != null) {
+                valueReferenceCountSet.remove(element);
+                element.count++;
+            } else {
+                element = new ObservedElement<>(v);
+            }
+            valueReferenceCountSet.add(element);
+            return element;
+        });
     }
 }
