@@ -45,17 +45,14 @@ public class MailService implements Consumer<Mail> {
      * Возвращает самого популярного отправителя
      */
     public String getPopularSender() {
-        final String[] result = {null};
-
-        mailBox.entrySet().stream()
+        return mailBox.entrySet().stream()
                 .flatMap(entry -> entry.getValue().stream())
                 .collect(Collectors.groupingBy(Mail::getSender, Collectors.counting()))
                 .entrySet()
                 .stream()
                 .max(Comparator.comparing(Map.Entry<String, Long>::getValue))
-                .ifPresent(entry -> result[0] = entry.getKey());
-
-        return result[0];
+                .get()
+                .getKey();
     }
 
     /**
