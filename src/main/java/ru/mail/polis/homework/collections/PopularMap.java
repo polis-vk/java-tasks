@@ -71,7 +71,12 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public V get(Object key) {
         incrementKey(key);
-        return map.get(key);
+        V value = map.get(key);
+        if (value != null) {
+            int count = popularValue.getOrDefault(value, 0);
+            popularValue.put(value, count + 1);
+        }
+        return value;
     }
 
     @Override
@@ -79,7 +84,14 @@ public class PopularMap<K, V> implements Map<K, V> {
         incrementKey(key);
         int count = popularValue.getOrDefault(value, 0);
         if (value.equals(map.get(key))) popularValue.put(value, count + 2);
-        else popularValue.put(value, count + 1);
+        else {
+            popularValue.put(value, count + 1);
+            V keyValue = map.get(key);
+            if (keyValue != null) {
+                count = popularValue.getOrDefault(keyValue, 0);
+                popularValue.put(keyValue, count + 1);
+            }
+        }
         return map.put(key, value);
     }
 
@@ -129,7 +141,15 @@ public class PopularMap<K, V> implements Map<K, V> {
      */
     public int getKeyPopularity(K key) {
         if (!popularKey.containsKey(key)) return 0;
-        return getEntry(popularKey).getValue();
+        return popularKey.get(key);
+    }
+
+    private Map.Entry<Object, Integer> getEntry(Map<Object, Integer> map){
+        Map.Entry<Object, Integer> maxEntry = null;
+        for (Map.Entry<Object, Integer> entry : map.entrySet())
+            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0)
+                maxEntry = entry;
+        return maxEntry;
     }
 
     /**
@@ -145,15 +165,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      */
     public int getValuePopularity(V value) {
         if (!popularValue.containsKey(value)) return 0;
-        return getEntry(popularValue).getValue();
-    }
-
-    private Map.Entry<Object, Integer> getEntry(Map<Object, Integer> map){
-        Map.Entry<Object, Integer> maxEntry = null;
-        for (Map.Entry<Object, Integer> entry : map.entrySet())
-            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0)
-                maxEntry = entry;
-        return maxEntry;
+        return popularValue.get(value);
     }
 
     /**
