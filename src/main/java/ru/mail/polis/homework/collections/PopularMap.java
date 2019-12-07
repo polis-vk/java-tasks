@@ -97,6 +97,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         if (checkedValue != null) {
             updateValue(checkedValue);
         }
+
         updateKey(key);
         updateValue(value);
         return map.put(key, value);

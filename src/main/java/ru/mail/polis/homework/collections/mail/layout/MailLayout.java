@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.collections.mail.layout;
 
-public abstract class MailLayout<T> {
+public class MailLayout<T> {
     private String sender;
     private String recipient;
     private T message;
