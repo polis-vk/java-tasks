@@ -1,11 +1,7 @@
 package ru.mail.polis.homework.collections;
 
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -73,19 +69,15 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V get(Object key) {
-        if (key != null) {
-            V value = map.get(key);
-
-            if (value != null) {
-                encourageValue(value);
-            }
-
-            encourageKey((K) key);
-
-            return value;
-        } else {
+        if (key == null) {
             return null;
         }
+        V value = map.get(key);
+        if (value != null) {
+            encourageValue(value);
+        }
+        encourageKey((K) key);
+        return value;
     }
 
     private void encourageKey(K key) {
@@ -106,26 +98,22 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
-        if (map.containsKey(key)) {
-            encourageValue(map.get(key));
-        }
-
         encourageKey(key);
         encourageValue(value);
-
-        return map.put(key, value);
+        V prevValue = map.put(key, value);
+        if (prevValue != null) {
+            encourageValue(map.get(key));
+        }
+        return prevValue;
     }
 
     @Override
     public V remove(Object key) {
         V value = map.remove(key);
-
         encourageKey((K) key);
-
         if (value != null) {
             encourageValue(value);
         }
-
         return value;
     }
 
@@ -178,18 +166,11 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значений может быть более одного
      */
     public V getPopularValue() {
-        int max = 0;
-        V maxValue = null;
-
-        for (Map.Entry<V, Integer> entry : values.entrySet()) {
-            if (entry.getValue() >= max) {
-                max = entry.getValue();
-
-                maxValue = entry.getKey();
-            }
-        }
-
-        return maxValue;
+        Optional<Entry<V, Integer>> entry = values
+                .entrySet()
+                .stream()
+                .max(Comparator.comparing(Entry::getValue));
+        return entry.map(Entry::getKey).orElse(null);
     }
 
     /**
