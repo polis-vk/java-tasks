@@ -92,7 +92,8 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
-        V checkedValue = map.get(key);
+
+        V checkedValue =  map.put(key, value);
 
         if (checkedValue != null) {
             updateValue(checkedValue);
@@ -100,7 +101,7 @@ public class PopularMap<K, V> implements Map<K, V> {
 
         updateKey(key);
         updateValue(value);
-        return map.put(key, value);
+        return checkedValue;
     }
 
     @Override
