@@ -162,7 +162,9 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private <T> void increasePopularity(T key, Map<T, Integer> map) {
-        if (key == null) return;
+        if (key == null) {
+            return;
+        }
         map.put(key, map.getOrDefault(key, 0) + 1);
     }
 
