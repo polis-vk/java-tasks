@@ -4,6 +4,7 @@ import ru.mail.polis.homework.collections.PopularMap;
 import ru.mail.polis.homework.collections.mail.layout.MailLayout;
 
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +21,8 @@ public class MailService<T extends MailLayout> implements Consumer<T> {
      */
 
     public void accept(T o) {
-        senders.computeIfAbsent(o.getSender(), k -> new LinkedList<>()).add(o);
-        recipient.computeIfAbsent(o.getRecipient(), k -> new LinkedList<>()).add(o);
+        senders.computeIfAbsent(o.getSender(), k -> new ArrayList<>()).add(o);
+        recipient.computeIfAbsent(o.getRecipient(), k -> new ArrayList<>()).add(o);
     }
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис

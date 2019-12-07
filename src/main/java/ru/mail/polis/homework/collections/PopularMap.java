@@ -92,8 +92,10 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
-        if (map.containsKey(key)) {
-            updateValue(map.get(key));
+        V checkedValue = map.get(key);
+
+        if (checkedValue != null) {
+            updateValue(checkedValue);
         }
         updateKey(key);
         updateValue(value);

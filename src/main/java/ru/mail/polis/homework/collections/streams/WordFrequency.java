@@ -36,7 +36,7 @@ public class WordFrequency {
                 .stream()
                 .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(Map.Entry::getValue)
                         .reversed()
-                            .thenComparing(Map.Entry::getKey))
+                        .thenComparing(Map.Entry::getKey))
                 .limit(10)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
