@@ -47,8 +47,7 @@ public class MailService implements Consumer<Mail> {
     public String getPopularSender() {
         final String[] result = {null};
 
-        mailBox.entrySet()
-                .stream()
+        mailBox.entrySet().stream()
                 .flatMap(entry -> entry.getValue().stream())
                 .collect(Collectors.groupingBy(Mail::getSender, Collectors.counting()))
                 .entrySet()

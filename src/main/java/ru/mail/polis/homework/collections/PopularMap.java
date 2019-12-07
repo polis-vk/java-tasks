@@ -155,9 +155,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        return valuePopularity
-                .entrySet()
-                .stream()
+        return valuePopularity.entrySet().stream()
                 .sorted(Comparator.comparing(Entry::getValue))
                 .map(Entry::getKey)
                 .iterator();
@@ -169,9 +167,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private <T> Entry<T, Integer> getMostPopularityEntry(Map<T, Integer> map) {
-        return map
-                .entrySet()
-                .stream()
+        return map.entrySet().stream()
                 .max(Comparator.comparing(Entry<T, Integer>::getValue))
                 .orElse(null);
     }
