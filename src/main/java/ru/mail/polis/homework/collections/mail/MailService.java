@@ -25,14 +25,12 @@ public class MailService implements Consumer<MailWorker> {
      */
     @Override
     public void accept(MailWorker obj) {
-        // Метод добавит новый элемент в Map, но только в том случае, если элемент с таким ключом там отсутствует.
-        // В качестве value ему будет присвоен результат выполнения лямбда-выражения.
-        // Если же элемент с таким ключом уже есть — он не будет перезаписан, а останется на месте.
-        // Для указанного ключа key этот метод устанавливает в качестве value результат выполнения лямбда-выражения.
-        mailWorker.compute(obj.getListener(), (key, value) -> {
-            List<MailWorker> array = mailWorker.getOrDefault(key, new ArrayList<>());
+        // Проверяем наличие ключа в мапе. Если ключ есть и значение по ключу не равно null, то ничего не делаем.
+        // Иначе (нет ключа или значение по ключу равно null) считаем значение, применяя лямбда-выражение к key.
+        // Если итоговое значение не равно null, то записываем пару ключ-значение в map:
+        mailWorker.computeIfAbsent(obj.getListener(), (key) -> {
+            List<MailWorker> array = new ArrayList<>();
             array.add(obj);
-
             return array;
         });
     }
@@ -52,38 +50,35 @@ public class MailService implements Consumer<MailWorker> {
      * Возвращает самого популярного отправителя
      */
     public String getPopularSender() {
-        if (!isEmpty()) {
-            return mailWorker.entrySet()
-                    .stream()
-                    .flatMap(e -> e.getValue().stream())
-                    .collect(Collectors.groupingBy(MailWorker::getTalker, Collectors.counting()))
-                    .entrySet().stream()
-                    .max(Comparator.comparingLong(Map.Entry<String, Long>::getValue))
-                    .get()
-                    .getKey();
-        }
-        else {
+        if (isEmpty()) {
             return null;
         }
+
+        return mailWorker.entrySet()
+                .stream()
+                .flatMap(e -> e.getValue().stream())
+                .collect(Collectors.groupingBy(MailWorker::getTalker, Collectors.counting()))
+                .entrySet().stream()
+                .max(Comparator.comparingLong(Map.Entry<String, Long>::getValue))
+                .get()
+                .getKey();
     }
 
     /**
      * Возвращает самого популярного получателя
      */
     public String getPopularRecipient() {
-        if (!isEmpty()) {
-            return mailWorker.entrySet()
-                    .stream()
-                    .flatMap(e -> e.getValue().stream())
-                    .collect(Collectors.groupingBy(MailWorker::getListener, Collectors.counting()))
-                    .entrySet().stream()
-                    .max(Comparator.comparingLong(Map.Entry<String, Long>::getValue))
-                    .get()
-                    .getKey();
-        }
-        else {
+        if (isEmpty()) {
             return null;
         }
+        return mailWorker.entrySet()
+                .stream()
+                .flatMap(e -> e.getValue().stream())
+                .collect(Collectors.groupingBy(MailWorker::getListener, Collectors.counting()))
+                .entrySet().stream()
+                .max(Comparator.comparingLong(Map.Entry<String, Long>::getValue))
+                .get()
+                .getKey();
     }
 
     /**
