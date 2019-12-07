@@ -1,12 +1,6 @@
 package ru.mail.polis.homework.collections.mail;
 
-
-import ru.mail.polis.homework.collections.PopularMap;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -19,7 +13,7 @@ import java.util.stream.Collectors;
  */
 public class MailService implements Consumer<Mail> {
 
-    private PopularMap<String, List<Mail>> mailBox = new PopularMap<>();
+    private Map<String, List<Mail>> mailBox = new HashMap<>();
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
@@ -27,11 +21,7 @@ public class MailService implements Consumer<Mail> {
      */
     @Override
     public void accept(Mail mail) {
-        mailBox.compute(mail.getReceiver(), (key, value) -> {
-            List<Mail> list = mailBox.getOrDefault(key, new ArrayList<>());
-            list.add(mail);
-            return list;
-        });
+        mailBox.computeIfAbsent(mail.getReceiver(), value -> new ArrayList<>()).add(mail);
     }
 
     /**
@@ -59,7 +49,14 @@ public class MailService implements Consumer<Mail> {
      * Возвращает самого популярного получателя
      */
     public String getPopularRecipient() {
-        return mailBox.getPopularKey();
+        return mailBox.entrySet().stream()
+                .flatMap(entry -> entry.getValue().stream())
+                .collect(Collectors.groupingBy(Mail::getReceiver, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .max(Comparator.comparing(Map.Entry<String, Long>::getValue))
+                .get()
+                .getKey();
     }
 
     /**
