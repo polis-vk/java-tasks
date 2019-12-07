@@ -1,10 +1,7 @@
 package ru.mail.polis.homework.collections.mail;
 
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -25,7 +22,14 @@ public class MailService implements Consumer<Mail> {
      */
     @Override
     public void accept(Mail o) {
-        map.compute(o.getReceiver(), (key, value) -> {
+        map.computeIfAbsent(o.getReceiver(), (key) -> {
+            List<Mail> list = new LinkedList<>();
+            list.add(o);
+
+            return list;
+        });
+
+        map.computeIfPresent(o.getReceiver(), (key, value) -> {
             List<Mail> list = map.get(key);
             list.add(o);
 

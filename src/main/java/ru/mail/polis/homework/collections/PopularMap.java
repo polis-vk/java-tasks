@@ -33,24 +33,29 @@ public class PopularMap<K, V> implements Map<K, V> {
     private Map<K, Integer> popularityKeyMap = new HashMap<>();
     private Map<V, Integer> popularityValueMap = new HashMap<>();
 
-    private void addKey(K key)
-    {
-        if (key == null)
+    private void addKey(K key) {
+        if (key == null) {
             return;
-        if (popularityKeyMap.containsKey(key))
+        }
+        if (popularityKeyMap.containsKey(key)) {
             popularityKeyMap.put(key, popularityKeyMap.get(key) + 1);
-        else
+        }
+        else {
             popularityKeyMap.put(key, 1);
+        }
     }
 
     private void addValue(V value)
     {
-        if (value == null)
+        if (value == null) {
             return;
-        if (popularityValueMap.containsKey(value))
+        }
+        if (popularityValueMap.containsKey(value)) {
             popularityValueMap.put(value, popularityValueMap.get(value) + 1);
-        else
+        }
+        else {
             popularityValueMap.put(value, 1);
+        }
     }
 
     public PopularMap() {
@@ -94,13 +99,14 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
-        if (map.containsKey(key))
-            addValue(map.get(key));
 
         addKey(key);
         addValue(value);
 
-        return map.put(key, value);
+        V valueForPut = map.put(key, value);
+        addValue(valueForPut);
+
+        return valueForPut;
     }
 
     @Override

@@ -31,8 +31,7 @@ public class WordFrequency {
             .flatMap(line -> Arrays.stream(line.split("[ .,!:-?;]+")))
             .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
             .entrySet().stream()
-            .sorted(Comparator.comparingLong(Map.Entry<String, Long>::getValue).reversed()
-            .thenComparing(Map.Entry::getKey))
+            .sorted(Comparator.comparingLong(Map.Entry<String, Long>::getValue).reversed().thenComparing(Map.Entry::getKey))
             .limit(10)
             .map(Map.Entry::getKey)
             .collect(Collectors.toList());

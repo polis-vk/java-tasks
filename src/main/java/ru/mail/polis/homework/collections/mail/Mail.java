@@ -1,7 +1,8 @@
 package ru.mail.polis.homework.collections.mail;
 
 public class Mail {
-    private String sender, receiver;
+    private final String sender;
+    private final String receiver;
 
 
     public Mail(String sender, String receiver) {
