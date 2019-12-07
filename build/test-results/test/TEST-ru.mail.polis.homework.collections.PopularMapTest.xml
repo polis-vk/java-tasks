@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ru.mail.polis.homework.collections.PopularMapTest" tests="1" skipped="1" failures="0" errors="0" timestamp="2019-12-07T06:48:43" hostname="DESKTOP-P3JGV8I" time="21.438">
+  <properties/>
+  <testcase name="popularIterator" classname="ru.mail.polis.homework.collections.PopularMapTest" time="21.438">
+    <skipped/>
+  </testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
