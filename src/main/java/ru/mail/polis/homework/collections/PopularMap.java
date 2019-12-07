@@ -50,10 +50,14 @@ public class PopularMap<K, V> implements Map<K, V> {
         return map.isEmpty();
     }
 
-    @Override
-    public boolean containsKey(Object key) {
+    private void incrementKey(Object key){
         int count = popularKey.getOrDefault(key, 0);
         popularKey.put(key, count + 1);
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        incrementKey(key);
         return map.containsKey(key);
     }
 
@@ -66,16 +70,14 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V get(Object key) {
-        int count = popularKey.getOrDefault(key, 0);
-        popularKey.put(key, count + 1);
+        incrementKey(key);
         return map.get(key);
     }
 
     @Override
     public V put(K key, V value) {
-        int count = popularKey.getOrDefault(key, 0);
-        popularKey.put(key, count + 1);
-        count = popularValue.getOrDefault(value, 0);
+        incrementKey(key);
+        int count = popularValue.getOrDefault(value, 0);
         if (value.equals(map.get(key))) popularValue.put(value, count + 2);
         else popularValue.put(value, count + 1);
         return map.put(key, value);
@@ -83,11 +85,10 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V remove(Object key) {
-        int count = popularKey.getOrDefault(key, 0);
-        popularKey.put(key, count + 1);
+        incrementKey(key);
         V value = map.get(key);
         if (value != null) {
-            count = popularValue.getOrDefault(value, 0);
+            int count = popularValue.getOrDefault(value, 0);
             popularValue.put(value, count + 1);
         }
         return map.remove(key);
