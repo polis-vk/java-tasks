@@ -2,7 +2,7 @@ package ru.mail.polis.homework.collections.mail;
 
 import java.util.LinkedList;
 
-public class test {
+public class TestMail {
     public static void main(String[] args) {
         MailService service = new MailService();
 
