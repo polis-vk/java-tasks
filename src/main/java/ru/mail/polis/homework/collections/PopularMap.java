@@ -169,8 +169,9 @@ public class PopularMap<K, V> implements Map<K, V> {
         return values
                 .entrySet()
                 .stream()
-                .max(Comparator.comparing(Entry::getValue))
-                .map(Entry::getKey).orElse(null);
+                .max(Entry.comparingByValue())
+                .get()
+                .getKey();
     }
 
     /**
