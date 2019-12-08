@@ -18,12 +18,11 @@ public class Directories {
      * Написать двумя способами. С использованием File
      */
     public static int removeWithFile(String path) {
-        File file = new File(path);
+        final File file = new File(path);
         int res = 0;
         if (file.isDirectory()){
             for (File f: file.listFiles()){
                 res+= removeWithFile(f.getPath());
-                //System.out.println(res);
             }
         }
         if (file.delete()) {
@@ -39,11 +38,11 @@ public class Directories {
      * С использованием Path
      */
     public static int removeWithPath(String path) {
-        Path p = Path.of(path);
+        final Path p = Path.of(path);
         int res = 0;
         if (Files.isDirectory(p)) {
             try {
-                List<Path> s = Files.list(p).collect(Collectors.toList());
+                final List<Path> s = Files.list(p).collect(Collectors.toList());
                 for (Path i: s){
                     res+=removeWithPath(i.toString());
                 }

@@ -14,19 +14,16 @@ public class CopyFile {
      * Файлы копировать ручками через стримы.
      */
     public static String copySmallFiles(String pathFrom, String pathTo) throws IOException {
-       Path pFrom = Path.of(pathFrom).toAbsolutePath();
-       Path pTo = Path.of(pathTo).toAbsolutePath();
+       final Path pFrom = Path.of(pathFrom).toAbsolutePath();
+       final Path pTo = Path.of(pathTo).toAbsolutePath();
 
        if (Files.isDirectory(pFrom)){
            try {
-               System.out.println(Paths.get(pTo.toString()));
                Files.createDirectory(Paths.get(pTo.toString()));
-               List<Path> s = Files.list(pFrom).collect(Collectors.toList());
+               final List<Path> s = Files.list(pFrom).collect(Collectors.toList());
                for (Path i: s){
-                   System.out.println(Paths.get(pTo.toString(), i.getFileName().toString()).toString());
                   copySmallFiles(i.toString(), Paths.get(pTo.toString(), i.getFileName().toString()).toString());
                }
-               System.out.println();
            } catch (IOException e) {
                e.printStackTrace();
            }
@@ -51,6 +48,7 @@ public class CopyFile {
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
+
         }
 
     }
