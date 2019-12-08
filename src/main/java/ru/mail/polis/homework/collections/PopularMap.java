@@ -39,13 +39,6 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     public PopularMap(Map<K, V> map) {
         this.map = map;
-        for (K k:map.keySet()) {
-            popularKeyMap.put(k,1);
-        }
-        for(V v:map.values())
-        {
-            popularValueMap.put(v,1);
-        }
     }
 
     @Override
@@ -62,6 +55,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     public boolean containsKey(Object key) {
         if(popularKeyMap.containsKey(key))
             popularKeyMap.put((K) key,popularKeyMap.get(key)+1);
+        else  popularKeyMap.put((K) key,1);
         return map.containsKey(key);
     }
 
@@ -69,6 +63,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     public boolean containsValue(Object value) {
         if(popularValueMap.containsKey(value))
             popularValueMap.put((V) value,popularValueMap.get(value)+1);
+        else  popularValueMap.put((V) value,1);
         return map.containsValue(value);
     }
 
@@ -76,6 +71,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     public V get(Object key) {
         if(popularKeyMap.containsKey(key))
             popularKeyMap.put((K) key,popularKeyMap.get(key)+1);
+        else popularKeyMap.put((K) key,1);
         if(popularValueMap.containsKey(map.get(key)))
             popularValueMap.put(map.get(key),popularValueMap.get(map.get(key))+1);
         return map.getOrDefault(key, null);
@@ -83,36 +79,40 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
+        V containsKey=map.put(key, value);
+        if(containsKey!=null) {
+            if (popularValueMap.containsKey(containsKey))
+                popularValueMap.put(containsKey, popularValueMap.get(containsKey) + 1);
+            else popularValueMap.put(containsKey, 1);
+        }
         if(popularKeyMap.containsKey(key))
             popularKeyMap.put( key,popularKeyMap.get(key)+1);
         else popularKeyMap.put(key,1);
-        if(popularValueMap.containsKey(value))
-            popularValueMap.put(value,popularValueMap.get(value)+1);
+        if (popularValueMap.containsKey(value))
+            popularValueMap.put(value, popularValueMap.get(value) + 1);
         else popularValueMap.put(value,1);
-        return map.put(key, value);
+        return containsKey;
     }
 
     @Override
     public V remove(Object key) {
+
         if(popularKeyMap.containsKey(key))
             popularKeyMap.put((K) key,popularKeyMap.get(key)+1);
-        if(popularValueMap.containsKey(map.get(key)))
-            popularValueMap.put(map.get(key),popularValueMap.get(map.get(key))+1);
-        return map.remove(key);
+        else popularKeyMap.put((K) key,1);
+        V containsKey=map.remove(key);
+        if(containsKey!=null) {
+            if (popularValueMap.containsKey(map.get(key)))
+                popularValueMap.put(map.get(key), popularValueMap.get(map.get(key)) + 1);
+            else popularValueMap.put(map.get(key),  1);
+        }
+        return containsKey;
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
         //throw new UnsupportedOperationException("putAll");
-        for (K k:m.keySet()) {
-            if(popularKeyMap.containsKey(k))
-                popularKeyMap.put(k,popularKeyMap.get(k)+1);
-            else popularKeyMap.put(k,1);
-        }
-        for(V v:m.values())
-            if(popularValueMap.containsKey(v))
-                popularValueMap.put(v,popularValueMap.get(v)+1);
-            else popularValueMap.put(v,1);
+
         map.putAll(m);
     }
 
