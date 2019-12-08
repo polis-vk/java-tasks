@@ -156,8 +156,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-      Integer count = keyPopularity.get(key);
-      return count == null ? 0 : count;
+      return keyPopularity.getOrDefault(key, 0);//count == null ? 0 : count;
     }
 
     /**
@@ -176,8 +175,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        Integer count = valuePopularity.get(value);
-        return count == null ? 0 : count;
+        return valuePopularity.getOrDefault(value, 0);
     }
 
     /**
