@@ -1,6 +1,13 @@
 package ru.mail.polis.homework.collections.streams;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -20,9 +27,32 @@ public class WordFrequency {
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      * Если будут использоваться условные операторы, то оценка максимальная оценка 2 балла.
      */
+    /*public static List<String> wordFrequency(Stream<String> lines) {
+        return lines
+                .flatMap(line -> Arrays.stream(line.split("[.,!:-?; ]+")))
+                .map(String::toLowerCase)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .stream()
+                .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(Map.Entry::getValue)
+                        .reversed()
+                        .thenComparing(Map.Entry::getKey))
+                .limit(10)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }*/
     public static List<String> wordFrequency(Stream<String> lines) {
-        return null;
+        return lines
+                .flatMap(line -> Arrays.stream(line.split("[.,!:-?; ]+")))
+                .map(String::toLowerCase)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .stream()
+                .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(Map.Entry::getValue)
+                        .reversed()
+                        .thenComparing(Map.Entry::getKey))
+                .limit(10)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
-
-
 }
