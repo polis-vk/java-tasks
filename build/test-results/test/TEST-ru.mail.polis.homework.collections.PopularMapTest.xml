@@ -1,9 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ru.mail.polis.homework.collections.PopularMapTest" tests="1" skipped="1" failures="0" errors="0" timestamp="2019-12-07T06:48:43" hostname="DESKTOP-P3JGV8I" time="21.438">
+<testsuite name="ru.mail.polis.homework.collections.PopularMapTest" tests="18" skipped="0" failures="0" errors="0" timestamp="2019-12-08T07:40:38" hostname="DESKTOP-P3JGV8I" time="0.124">
   <properties/>
-  <testcase name="popularIterator" classname="ru.mail.polis.homework.collections.PopularMapTest" time="21.438">
-    <skipped/>
-  </testcase>
+  <testcase name="entrySet" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.099"/>
+  <testcase name="containsValue" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.002"/>
+  <testcase name="keySet" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.001"/>
+  <testcase name="popularKey_operationCount" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.003"/>
+  <testcase name="putAll" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.001"/>
+  <testcase name="remove" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.0"/>
+  <testcase name="popularIterator" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.001"/>
+  <testcase name="values" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.001"/>
+  <testcase name="popularKey_manyKeys" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.001"/>
+  <testcase name="popularKey_manyValues" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.001"/>
+  <testcase name="popularKey_OnlyPutOne" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.001"/>
+  <testcase name="get" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.001"/>
+  <testcase name="put" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.0"/>
+  <testcase name="clear" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.001"/>
+  <testcase name="containsKey" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.001"/>
+  <testcase name="popularValue_OnlyPutOne" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.001"/>
+  <testcase name="popularValue_operationCount" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.0"/>
+  <testcase name="isEmpty" classname="ru.mail.polis.homework.collections.PopularMapTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

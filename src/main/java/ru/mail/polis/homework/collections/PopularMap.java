@@ -55,6 +55,19 @@ public class PopularMap<K, V> implements Map<K, V> {
         popularKey.put(key, count + 1);
     }
 
+    private void incrementValue(Object value){
+        int count = popularValue.getOrDefault(value, 0);
+        popularValue.put(value, count + 1);
+    }
+
+    private V checkNullValue(Object key){
+        V value = map.get(key);
+        if (value != null) {
+            incrementValue(value);
+        }
+        return value;
+    }
+
     @Override
     public boolean containsKey(Object key) {
         incrementKey(key);
@@ -63,34 +76,26 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsValue(Object value) {
-        int count = popularValue.getOrDefault(value, 0);
-        popularValue.put(value, count + 1);
+        incrementValue(value);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
         incrementKey(key);
-        V value = map.get(key);
-        if (value != null) {
-            int count = popularValue.getOrDefault(value, 0);
-            popularValue.put(value, count + 1);
-        }
-        return value;
+        return checkNullValue(key);
     }
 
     @Override
     public V put(K key, V value) {
         incrementKey(key);
         int count = popularValue.getOrDefault(value, 0);
-        if (value.equals(map.get(key))) popularValue.put(value, count + 2);
+        if (value.equals(map.get(key))){
+            popularValue.put(value, count + 2);
+        }
         else {
             popularValue.put(value, count + 1);
-            V keyValue = map.get(key);
-            if (keyValue != null) {
-                count = popularValue.getOrDefault(keyValue, 0);
-                popularValue.put(keyValue, count + 1);
-            }
+            checkNullValue(key);
         }
         return map.put(key, value);
     }
@@ -98,11 +103,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public V remove(Object key) {
         incrementKey(key);
-        V value = map.get(key);
-        if (value != null) {
-            int count = popularValue.getOrDefault(value, 0);
-            popularValue.put(value, count + 1);
-        }
+        checkNullValue(key);
         return map.remove(key);
     }
 
@@ -133,30 +134,30 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return (K) getEntry(popularKey).getKey();
+        Optional<Entry<Object, Integer>> maxEntry = popularKey.entrySet()
+                .stream()
+                .max(Entry.comparingByValue());
+        return (K) maxEntry.get().getKey();
     }
 
     /**
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        if (!popularKey.containsKey(key)) return 0;
+        if (!popularKey.containsKey(key)){
+            return 0;
+        }
         return popularKey.get(key);
-    }
-
-    private Map.Entry<Object, Integer> getEntry(Map<Object, Integer> map){
-        Map.Entry<Object, Integer> maxEntry = null;
-        for (Map.Entry<Object, Integer> entry : map.entrySet())
-            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0)
-                maxEntry = entry;
-        return maxEntry;
     }
 
     /**
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        return (V) getEntry(popularValue).getKey();
+        Optional<Entry<Object, Integer>> maxEntry = popularValue.entrySet()
+                .stream()
+                .max(Entry.comparingByValue());
+        return (V) maxEntry.get().getKey();
     }
 
     /**
@@ -164,7 +165,9 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        if (!popularValue.containsKey(value)) return 0;
+        if (!popularValue.containsKey(value)){
+            return 0;
+        }
         return popularValue.get(value);
     }
 
