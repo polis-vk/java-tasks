@@ -166,11 +166,11 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значений может быть более одного
      */
     public V getPopularValue() {
-        Optional<Entry<V, Integer>> entry = values
+        return values
                 .entrySet()
                 .stream()
-                .max(Comparator.comparing(Entry::getValue));
-        return entry.map(Entry::getKey).orElse(null);
+                .max(Comparator.comparing(Entry::getValue))
+                .map(Entry::getKey).orElse(null);
     }
 
     /**
