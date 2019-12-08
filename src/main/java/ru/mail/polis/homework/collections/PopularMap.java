@@ -102,9 +102,9 @@ public class PopularMap<K, V> implements Map<K, V> {
         else popularKeyMap.put((K) key,1);
         V containsKey=map.remove(key);
         if(containsKey!=null) {
-            if (popularValueMap.containsKey(map.get(key)))
-                popularValueMap.put(map.get(key), popularValueMap.get(map.get(key)) + 1);
-            else popularValueMap.put(map.get(key),  1);
+            if (popularValueMap.containsKey(containsKey))
+                popularValueMap.put(containsKey, popularValueMap.get(containsKey) + 1);
+            else popularValueMap.put(containsKey,  1);
         }
         return containsKey;
     }
