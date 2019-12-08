@@ -4,7 +4,7 @@ import ru.mail.polis.homework.collections.mail.person.Person;
 
 import java.util.Objects;
 
-public abstract class AbstractSentReceivedObject<T> {
+public class AbstractSentReceivedObject<T> {
 
     private final Person receiver;
     private final Person sender;

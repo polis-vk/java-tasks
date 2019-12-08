@@ -32,8 +32,7 @@ public class WordFrequency {
             .collect(Collectors.toMap(key -> String.valueOf(key).toLowerCase(), key -> 1, Integer::sum))
             .entrySet()
             .stream()
-            .sorted(((Comparator<Map.Entry<String, Integer>>) (set1, set2) -> set2.getValue() - set1.getValue())
-                .thenComparing(Entry::getKey))
+            .sorted((Entry.<String, Integer>comparingByValue()).reversed().thenComparing(Entry.comparingByKey()))
             .limit(10)
             .map(Map.Entry::getKey)
             .collect(Collectors.toList());
