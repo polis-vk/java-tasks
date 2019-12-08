@@ -2,8 +2,9 @@ package ru.mail.polis.homework.collections.mail;
 
 @SuppressWarnings("WeakerAccess")
 public class Mail {
-    private String sender;
-    private String receiver;
+
+    private final String sender;
+    private final String receiver;
 
     protected Mail(String sender, String receiver) {
         this.sender = sender;
