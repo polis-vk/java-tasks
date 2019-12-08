@@ -1,5 +1,12 @@
 package ru.mail.polis.homework.files;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Directories {
 
 
@@ -10,13 +17,44 @@ public class Directories {
      * Написать двумя способами. С использованием File
      */
     public static int removeWithFile(String path) {
-        return 0;
+        File file = new File(path);
+        if (!file.exists()) {
+            return 0;
+        }
+        if (file.isFile()) {
+            file.delete();
+            return 1;
+        }
+        int count = 0;
+        for (File subFile : file.listFiles()) {
+            count += removeWithFile(subFile.getAbsolutePath());
+        }
+        file.delete();
+        return count + 1;
     }
 
     /**
      * С использованием Path
      */
-    public static int removeWithPath(String path) {
-        return 0;
+    public static int removeWithPath(String path) throws IOException {
+        Path file = Paths.get(path);
+        if (!Files.exists(file)) {
+            return 0;
+        }
+        if (file.toFile().isFile()) {
+            Files.delete(file);
+            return 1;
+        }
+
+        AtomicInteger count = new AtomicInteger(0);
+        Files.list(file).forEach(tempPath -> {
+            try {
+                count.addAndGet(removeWithPath(tempPath.toString()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        Files.delete(file);
+        return count.get() + 1;
     }
 }
