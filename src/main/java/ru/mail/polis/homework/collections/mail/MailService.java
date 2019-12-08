@@ -28,11 +28,7 @@ public class MailService implements Consumer<MailWorker> {
         // Проверяем наличие ключа в мапе. Если ключ есть и значение по ключу не равно null, то ничего не делаем.
         // Иначе (нет ключа или значение по ключу равно null) считаем значение, применяя лямбда-выражение к key.
         // Если итоговое значение не равно null, то записываем пару ключ-значение в map:
-        mailWorker.computeIfAbsent(obj.getListener(), (key) -> {
-            List<MailWorker> array = new ArrayList<>();
-            array.add(obj);
-            return array;
-        });
+        mailWorker.computeIfAbsent(obj.getListener(), key -> new ArrayList<>()).add(obj);
     }
 
     /**
