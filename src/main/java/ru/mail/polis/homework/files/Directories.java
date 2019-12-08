@@ -41,7 +41,7 @@ public class Directories {
         if (!Files.exists(file)) {
             return 0;
         }
-        if (file.toFile().isFile()) {
+        if (Files.isRegularFile(file)) {
             Files.delete(file);
             return 1;
         }
