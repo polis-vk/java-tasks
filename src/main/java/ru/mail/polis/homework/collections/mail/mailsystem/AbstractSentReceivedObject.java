@@ -6,9 +6,9 @@ import java.util.Objects;
 
 public abstract class AbstractSentReceivedObject<T> {
 
-    private Person receiver;
-    private Person sender;
-    private T data;
+    private final Person receiver;
+    private final Person sender;
+    private final T data;
 
     public AbstractSentReceivedObject(Person receiver, Person sender, T data) {
         this.receiver = receiver;

@@ -9,14 +9,14 @@ import java.util.Objects;
 public class Person implements AbleToReceive, AbleToSend {
 
     private List<AbstractSentReceivedObject<?>> listOfReceivedObjects;
-    private String fio;
-    private boolean isMan;
-    private int age;
+    private final String fio;
+    private final boolean man;
+    private final int age;
 
-    public Person(String fio, boolean isMan, int age) {
+    public Person(String fio, boolean man, int age) {
         this.listOfReceivedObjects = new ArrayList<>();
         this.fio = fio;
-        this.isMan = isMan;
+        this.man = man;
         this.age = age;
     }
 
@@ -35,7 +35,7 @@ public class Person implements AbleToReceive, AbleToSend {
     }
 
     public boolean isMan() {
-        return isMan;
+        return man;
     }
 
     public int getAge() {

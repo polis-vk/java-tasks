@@ -72,28 +72,25 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public V get(Object key) {
         updateKey((K) key);
-        V tempV = map.get(key);
-        if (tempV != null) {
-            usedValueMap.put(tempV, usedValueMap.get(tempV) + 1);
-        }
-        return tempV;
+        return updateValue(map.get(key));
     }
 
     @Override
     public V put(K key, V value) {
-        if (map.containsKey(key)) {
-            updateValue(map.get(key));
+        V previousValue = map.put(key, value);
+        if (previousValue != null) {
+            updateValue(previousValue);
         }
         updateKey(key);
         updateValue(value);
-        return map.put(key, value);
+        return previousValue;
     }
 
     @Override
     public V remove(Object key) {
         updateKey((K) key);
         V removedValue = map.remove(key);
-        if (removedValue != null) {
+        if (removedValue != null && usedValueMap.containsKey(removedValue)) {
             updateValue(removedValue);
         }
         return removedValue;
@@ -148,15 +145,12 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        int max = 0;
-        V maxValue = null;
-        for (Map.Entry<V, Integer> entry : usedValueMap.entrySet()) {
-            if (entry.getValue() >= max) {
-                max = entry.getValue();
-                maxValue = entry.getKey();
-            }
-        }
-        return maxValue;
+        return usedValueMap
+            .entrySet()
+            .stream()
+            .max(Entry.comparingByValue())
+            .get()
+            .getKey();
     }
 
     /**
@@ -180,19 +174,21 @@ public class PopularMap<K, V> implements Map<K, V> {
             .iterator();
     }
 
-    private void updateKey(K key) {
+    private K updateKey(K key) {
         if (usedKeyMap.containsKey(key)) {
             usedKeyMap.put(key, usedKeyMap.get(key) + 1);
         } else {
             usedKeyMap.put(key, 1);
         }
+        return key;
     }
 
-    private void updateValue(V value) {
+    private V updateValue(V value) {
         if (usedValueMap.containsKey(value)) {
             usedValueMap.put(value, usedValueMap.get(value) + 1);
         } else {
             usedValueMap.put(value, 1);
         }
+        return value;
     }
 }
