@@ -1,8 +1,7 @@
-package ru.mail.polis.homework.collections.mail;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Нужно создать сервис, который умеет обрабатывать письма и зарплату.
@@ -27,12 +26,6 @@ public class MailService implements Consumer<Mail> {
     public void accept(Mail email){
         mailBox.computeIfAbsent(email.getRecipient(), (key) -> {
             List<Mail> emailList = new ArrayList<>();
-            emailList.add(email);
-            return emailList;
-        });
-
-        mailBox.computeIfPresent(email.getRecipient(), (key, value) -> {
-            List<Mail> emailList = mailBox.get(key);
             emailList.add(email);
             return emailList;
         });

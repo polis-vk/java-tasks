@@ -1,11 +1,6 @@
-package ru.mail.polis.homework.collections;
 
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -96,12 +91,13 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value){
-        if (map.containsKey(key)) {
-            updateValue(map.get(key));
-        }
         updateKey(key);
+        V tmpV = map.put(key, value);
+        if (tmpV != null) {
+            updateValue(tmpV);
+        }
         updateValue(value);
-        return map.put(key, value);
+        return tmpV;
     }
 
     @Override
@@ -143,10 +139,9 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey(){
-        return keyMapPopularity
-                .entrySet()
+        return keyMapPopularity.entrySet()
                 .stream()
-                .max(Entry.comparingByValue())
+                .max(Comparator.comparing(Entry::getValue))
                 .get()
                 .getKey();
     }
@@ -156,23 +151,19 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key){
-        Integer counter = keyMapPopularity.get(key);
-        return counter == null ? 0 : counter;
+        return keyMapPopularity.getOrDefault(key, 0);
     }
 
     /**
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue(){
-        int max = 0;
-        V maxValue = null;
-        for (Map.Entry<V, Integer> entry : valueMapPopularity.entrySet()) {
-            if (entry.getValue() >= max) {
-                max = entry.getValue();
-                maxValue = entry.getKey();
-            }
-        }
-        return maxValue;
+        return valueMapPopularity
+                .entrySet()
+                .stream()
+                .max(Entry.comparingByValue())
+                .get()
+                .getKey();
     }
 
     /**
@@ -180,8 +171,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value){
-        Integer counter = valueMapPopularity.get(value);
-        return counter == null ? 0 : counter;
+        return valueMapPopularity.getOrDefault(value, 0);
     }
 
     /**
