@@ -35,7 +35,7 @@ public class PopularMap<K, V> implements Map<K, V> {
 
         ObservedElement(T value) {
             this.value = value;
-            this.count = 1;
+            this.count = value == null ? 0 : 1;
         }
 
         @Override
@@ -44,7 +44,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         }
     }
 
-    private HashMap<K, ObservedElement<K>> keyReferenceCount;
+    private HashMap<K, Integer> keyReferenceCount;
     private ObservedElement<K> maxKeyReferenceCount;
 
     private HashMap<V, ObservedElement<V>> valueReferenceCount;
@@ -55,6 +55,8 @@ public class PopularMap<K, V> implements Map<K, V> {
     public PopularMap() {
         this.map = new HashMap<>();
         this.keyReferenceCount = new HashMap<>();
+        maxKeyReferenceCount = new ObservedElement<>(null);
+
         this.valueReferenceCount = new HashMap<>();
         this.valueReferenceCountSet = new TreeSet<>();
     }
@@ -62,6 +64,8 @@ public class PopularMap<K, V> implements Map<K, V> {
     public PopularMap(Map<K, V> map) {
         this.map = map;
         this.keyReferenceCount = new HashMap<>();
+        maxKeyReferenceCount = new ObservedElement<>(null);
+
         this.valueReferenceCount = new HashMap<>();
         this.valueReferenceCountSet = new TreeSet<>();
     }
@@ -157,11 +161,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        final ObservedElement result = keyReferenceCount.get(key);
-        if (result != null) {
-            return result.count;
-        }
-        return 0;
+        return keyReferenceCount.getOrDefault(key, 0);
     }
 
     /**
@@ -197,12 +197,13 @@ public class PopularMap<K, V> implements Map<K, V> {
     private void updateKeyPopularity(Object key) {
         keyReferenceCount.compute((K) key, (k, element) -> {
             if (element != null) {
-                element.count++;
+                element++;
             } else {
-                element = new ObservedElement<>(k);
+                element = 1;
             }
-            if (maxKeyReferenceCount == null || maxKeyReferenceCount.count < element.count) {
-                maxKeyReferenceCount = element;
+            if (maxKeyReferenceCount.count < element) {
+                maxKeyReferenceCount.count = element;
+                maxKeyReferenceCount.value = k;
             }
             return element;
         });
