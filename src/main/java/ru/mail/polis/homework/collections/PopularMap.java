@@ -40,17 +40,17 @@ public class PopularMap<K, V> implements Map<K, V> {
 
         @Override
         public int compareTo(Object o) {
-            return ((ObservedElement) o).count.compareTo(count);
+            return count.compareTo(((ObservedElement) o).count);
         }
     }
 
-    private HashMap<K, Integer> keyReferenceCount;
+    private final Map<K, V> map;
+
+    private Map<K, Integer> keyReferenceCount;
     private ObservedElement<K> maxKeyReferenceCount;
 
-    private HashMap<V, ObservedElement<V>> valueReferenceCount;
-    private TreeSet<ObservedElement<V>> valueReferenceCountSet;
-
-    private final Map<K, V> map;
+    private Map<V, ObservedElement<V>> valueReferenceCount;
+    private NavigableSet<ObservedElement<V>> valueReferenceCountSet;
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -168,7 +168,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        return valueReferenceCountSet.first().value;
+        return valueReferenceCountSet.last().value;
     }
 
     /**
@@ -188,7 +188,6 @@ public class PopularMap<K, V> implements Map<K, V> {
      */
     public Iterator<V> popularIterator() {
         return valueReferenceCountSet
-                .descendingSet()
                 .stream()
                 .map((vObservedElement -> vObservedElement.value))
                 .iterator();
