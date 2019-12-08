@@ -156,7 +156,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-      return keyPopularity.getOrDefault(key, 0);//count == null ? 0 : count;
+      return keyPopularity.getOrDefault(key, 0);
     }
 
     /**
