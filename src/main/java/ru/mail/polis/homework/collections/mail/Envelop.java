@@ -1,21 +1,21 @@
 package ru.mail.polis.homework.collections.mail;
 
-class Envelop<T> {
-    private final String sender;
-    private final String recipient;
+public class Envelop<T> {
+    private final Client sender;
+    private final Client recipient;
     private final T content;
 
-    Envelop(String sender, String recipient, T content) {
+    Envelop(Client sender, Client recipient, T content) {
         this.sender = sender;
         this.recipient = recipient;
         this.content = content;
     }
 
-    String getSender() {
+    Client getSender() {
         return sender;
     }
 
-    String getRecipient() {
+    Client getRecipient() {
         return recipient;
     }
 

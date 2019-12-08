@@ -45,7 +45,6 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private HashMap<K, ObservedElement<K>> keyReferenceCount;
-//    private TreeSet<ObservedElement<K>> keyReferenceCountSet;
     private ObservedElement<K> maxKeyReferenceCount;
 
     private HashMap<V, ObservedElement<V>> valueReferenceCount;
@@ -101,12 +100,13 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
-        if (map.containsKey(key)) {
-            updateValuePopularity(map.get(key));
-        }
         updateKeyPopularity(key);
+        V oldValue = map.put(key, value);
+        if (oldValue != null) {
+            updateValuePopularity(oldValue);
+        }
         updateValuePopularity(value);
-        return map.put(key, value);
+        return oldValue;
     }
 
     @Override
@@ -122,10 +122,6 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-        for (Map.Entry<K, V> entry : map.entrySet()) {
-            updateKeyPopularity(entry.getKey());
-            updateValuePopularity(entry.getValue());
-        }
         map.putAll(m);
     }
 
