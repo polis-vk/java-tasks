@@ -34,7 +34,7 @@ public class MailService implements Consumer<Envelop> {
         if (envelop == null) {
             return;
         }
-        envelop.getSender().incrementMailsCount();
+        envelop.getSender().incrementMailsSent();
         envelop.getRecipient().incrementMailsCount();
 
         mails.computeIfAbsent(envelop.getRecipient(), recipient -> new ArrayList<>()).add(envelop);
@@ -43,7 +43,7 @@ public class MailService implements Consumer<Envelop> {
             mostPopularReceiver = envelop.getRecipient();
         }
 
-        if (envelop.getSender().getMailsCount() > mostPopularSender.getMailsCount()) {
+        if (envelop.getSender().getMailsSent() > mostPopularSender.getMailsSent()) {
             mostPopularSender = envelop.getSender();
         }
     }
