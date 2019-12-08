@@ -22,19 +22,7 @@ public class MailService implements Consumer<Mail> {
      */
     @Override
     public void accept(Mail o) {
-        map.computeIfAbsent(o.getReceiver(), (key) -> {
-            List<Mail> list = new LinkedList<>();
-            list.add(o);
-
-            return list;
-        });
-
-        map.computeIfPresent(o.getReceiver(), (key, value) -> {
-            List<Mail> list = map.get(key);
-            list.add(o);
-
-            return list;
-        });
+        map.computeIfAbsent(o.getReceiver(), key ->  new LinkedList<>()).add(o);
     }
 
     /**

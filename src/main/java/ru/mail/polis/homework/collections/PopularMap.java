@@ -39,21 +39,18 @@ public class PopularMap<K, V> implements Map<K, V> {
         }
         if (popularityKeyMap.containsKey(key)) {
             popularityKeyMap.put(key, popularityKeyMap.get(key) + 1);
-        }
-        else {
+        } else {
             popularityKeyMap.put(key, 1);
         }
     }
 
-    private void addValue(V value)
-    {
+    private void addValue(V value) {
         if (value == null) {
             return;
         }
         if (popularityValueMap.containsKey(value)) {
             popularityValueMap.put(value, popularityValueMap.get(value) + 1);
-        }
-        else {
+        } else {
             popularityValueMap.put(value, 1);
         }
     }
