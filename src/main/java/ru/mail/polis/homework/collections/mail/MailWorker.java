@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.collections.mail;
 
 public class MailWorker {
-    private String talker;
-    private String listener;
+    private final String talker;
+    private final String listener;
 
     public MailWorker(String talker, String listener) {
         this.talker = talker;
