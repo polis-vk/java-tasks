@@ -1,11 +1,10 @@
 package ru.mail.polis.homework.collections;
 
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -32,81 +31,99 @@ import java.util.Set;
  */
 public class PopularMap<K, V> implements Map<K, V> {
 
+    private final Map<K, Integer> popularityMap;
     private final Map<K, V> map;
 
     public PopularMap() {
-        this.map = new HashMap<>();
+        this(new HashMap<>());
     }
 
     public PopularMap(Map<K, V> map) {
         this.map = map;
+        popularityMap = new HashMap<>();
     }
 
     @Override
     public int size() {
-        return 0;
+        return map.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return map.isEmpty();
     }
 
     @Override
     public boolean containsKey(Object key) {
-        return false;
+        increaseCounter((K) key);
+        return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        return false;
+        return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        return null;
+        increaseCounter((K) key);
+        return map.get(key);
     }
 
     @Override
     public V put(K key, V value) {
-        return null;
+        increaseCounter(key);
+        return map.put(key, value);
     }
 
     @Override
     public V remove(Object key) {
-        return null;
+        increaseCounter((K) key);
+        return map.remove(key);
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-        throw new UnsupportedOperationException("putAll");
+        map.putAll(m);
     }
 
     @Override
     public void clear() {
-
+        map.clear();
     }
 
     @Override
     public Set<K> keySet() {
-        return null;
+        return map.keySet();
     }
 
     @Override
     public Collection<V> values() {
-        return null;
+        return map.values();
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return null;
+        return map.entrySet();
     }
 
     /**
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return null;
+
+         return popularityMap
+                 .entrySet()
+                 .stream()
+                 .sorted(new Comparator<Entry<K, Integer>>() {
+                     @Override
+                     public int compare(Entry<K, Integer> kIntegerEntry, Entry<K, Integer> t1) {
+                         return kIntegerEntry.getValue() - t1.getValue();
+                     }
+                 })
+                 .collect(Collectors.toList())
+                 .get(0)
+                 .getKey();
     }
 
 
@@ -114,14 +131,15 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        return 0;
+        return popularityMap.get(key);
     }
 
     /**
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        return null;
+        K key = getPopularKey();
+        return map.get(key);
     }
 
     /**
@@ -129,13 +147,32 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        return 0;
+        Set<K> l = new HashSet<>();
+        map.forEach((k, v) -> {
+            if (v == value) l.add(k);
+        });
+
+        final int[] sum = {0};
+        l.forEach(k -> sum[0] += popularityMap.get(k));
+
+        return sum[0];
     }
 
     /**
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        return null;
+        throw new NotImplementedException();
+    }
+
+
+
+    private void increaseCounter(K key) {
+        Integer i = popularityMap.get(key);
+        if (i != null) {
+            popularityMap.put(key, ++i);
+        } else {
+            popularityMap.put(key, 1);
+        }
     }
 }
