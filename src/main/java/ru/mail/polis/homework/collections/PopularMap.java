@@ -56,6 +56,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public boolean containsKey(Object key) {
         increaseKey((K) key);
+        increaseValue(map.get(key));
         return map.containsKey(key);
     }
 
