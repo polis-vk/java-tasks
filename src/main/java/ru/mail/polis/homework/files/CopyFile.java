@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.files;
 
+import java.io.File;
+
 public class CopyFile {
 
     /**
@@ -7,7 +9,8 @@ public class CopyFile {
      * Файлы копировать ручками через стримы.
      */
     public static String copySmallFiles(String pathFrom, String pathTo) {
-        return null;
+        //Пока сдаю толко Directories, для этой ещё надо написать тесты :))))
+        File files = new File(pathFrom);
+        return files.getAbsolutePath();
     }
-
 }

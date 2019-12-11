@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ru.mail.polis.homework.files.DirectoriesTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2019-12-11T17:53:24" hostname="DESKTOP-DVOEA2C" time="0.03">
+  <properties/>
+  <testcase name="onlyDirectoriesPath" classname="ru.mail.polis.homework.files.DirectoriesTest" time="0.03"/>
+  <system-out><![CDATA[pre visit dir:src\test\resources\directories\second
+pre visit dir:src\test\resources\directories\second\dir1
+pre visit dir:src\test\resources\directories\second\dir1\dir1dir1
+pre visit dir:src\test\resources\directories\second\dir1\dir1dir2
+pre visit dir:src\test\resources\directories\second\dir2
+pre visit dir:src\test\resources\directories\second\dir2\dir2dir1
+pre visit dir:src\test\resources\directories\second\dir2\dir2dir1\dirdir
+pre visit dir:src\test\resources\directories\second\dir2\dir2dir2
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

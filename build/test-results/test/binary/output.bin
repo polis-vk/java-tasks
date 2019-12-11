@@ -1,0 +1,8 @@
+5pre visit dir:src\test\resources\directories\second
+:pre visit dir:src\test\resources\directories\second\dir1
+Cpre visit dir:src\test\resources\directories\second\dir1\dir1dir1
+Cpre visit dir:src\test\resources\directories\second\dir1\dir1dir2
+:pre visit dir:src\test\resources\directories\second\dir2
+Cpre visit dir:src\test\resources\directories\second\dir2\dir2dir1
+Jpre visit dir:src\test\resources\directories\second\dir2\dir2dir1\dirdir
+Cpre visit dir:src\test\resources\directories\second\dir2\dir2dir2
