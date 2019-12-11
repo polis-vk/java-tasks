@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Directories {
 
@@ -15,6 +14,9 @@ public class Directories {
      * Если директории по существующему пути нет, то возвращаем 0.
      * Написать двумя способами.
      * С использованием File
+     *
+     * modified by БорискинМА
+     * 11.12.19
      */
     public static int removeWithFile(String path) {
          return recursiveDelete(new File(path));

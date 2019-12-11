@@ -9,6 +9,9 @@ public class CopyFile {
     /**
      * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
      * Файлы копировать ручками через стримы.
+     *
+     * modified by БорискинМА
+     * 11.12.19
      */
     public static String copySmallFiles(String pathFrom, String pathTo) {
         File folder_in = new File(pathFrom);
@@ -22,7 +25,7 @@ public class CopyFile {
                     folder_out.mkdir();
                 }
 
-                try (FileOutputStream outputStream = new FileOutputStream(new File(folder_out + File.separator + fileName))) {
+                try (FileOutputStream outputStream = new FileOutputStream(folder_out + File.separator + fileName)) {
                     byte[] bytes = new byte[inputStream.available()];
                     int length;
 
