@@ -32,7 +32,7 @@ public class CopyFile {
         }
         if (Files.isDirectory(pathFrom)) {
             try {
-                Files.createDirectory(Paths.get(pathTo.toSring()));
+                Files.createDirectory(Paths.get(pathTo.toString()));
                 Files.list(pathFrom)
                         .forEach(
                                 path-> copySmallFiles(path, Paths.get(pathTo.toString(), path.getFileName().toString()))
