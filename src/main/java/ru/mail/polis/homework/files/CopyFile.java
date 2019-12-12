@@ -41,8 +41,6 @@ public class CopyFile {
     }
 
     private static void copyFile(final File from, final File to) throws IOException {
-//        final File from = new File(fileFrom);
-//        final File to = new File(pathTo);
         if (from.exists() && from.isFile()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(from));
                  BufferedWriter writer = new BufferedWriter(new FileWriter(to))) {
