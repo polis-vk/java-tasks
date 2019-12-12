@@ -30,33 +30,29 @@ public class Directories {
             file.delete();
             return 1;
         }
-        int total_f = 0;
+        int total = 0;
         if (file.isDirectory()) {
             for (File f : file.listFiles()) {
-                total_f += recursiveDelete(f);
+                total += recursiveDelete(f);
             }
         }
         file.delete();
-        return total_f + 1;
+        return total + 1;
     }
 
     private static int recursiveDelete(Path file) throws IOException {
         if (!Files.exists(file)) {
             return 0;
         }
-        int total_p = 0;
-        if (Files.exists(file)) {
-            if (Files.isDirectory(file)) {
-                total_p = Files.list(file).mapToInt(Directories::removeFolder).sum();
-            }
+        if (Files.isRegularFile(file)) {
             Files.delete(file);
-            total_p++;
+            return 1;
         }
-        return total_p;
-    }
-
-    private static int removeFolder(Path tempPath) {
-        return removeWithFile(tempPath.toString());
+        AtomicInteger total = new AtomicInteger(0);
+        Files.list(file).forEach(tempPath ->
+                total.addAndGet(removeWithPath(tempPath.toString())));
+        Files.delete(file);
+        return total.get() + 1;
     }
 
     /**
@@ -67,7 +63,7 @@ public class Directories {
             return recursiveDelete(Paths.get(path));
         } catch (IOException e) {
             e.printStackTrace();
-            return 0;
         }
+        return 0;
     }
 }
