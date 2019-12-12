@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 public class Directories {
 
@@ -47,13 +48,15 @@ public class Directories {
         }
 
         AtomicInteger count = new AtomicInteger(0);
-        Files.list(file).forEach(tempPath -> {
-            try {
-                count.addAndGet(removeWithPath(tempPath.toString()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        try (Stream<Path> paths = Files.list(file)) {
+            paths.forEach(tempPath -> {
+                try {
+                    count.addAndGet(removeWithPath(tempPath.toString()));
+                } catch (IOException e) {
+//                    throw e;
+                }
+            });
+        }
         Files.delete(file);
         return count.get() + 1;
     }
