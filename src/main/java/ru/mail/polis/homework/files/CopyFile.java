@@ -22,10 +22,9 @@ public class CopyFile {
             if (fileFrom.isDirectory()) {
                 fileTo.mkdirs();
                 for (final File fileName : fileFrom.listFiles()) {
-                    String subFileFrom = fileFrom.getAbsolutePath() + File.separator + fileName;
                     String subFileTo = fileTo.getAbsolutePath() + File.separator + fileName.getName();
-                    if (Files.isDirectory(Paths.get(subFileFrom))) {
-                        copySmallFiles(subFileFrom, subFileTo);
+                    if (Files.isDirectory(Paths.get(fileName.getAbsolutePath()))) {
+                        copySmallFiles(fileName.getAbsolutePath(), subFileTo);
                     } else {
                         copyFile(fileName, new File(subFileTo));
                     }
@@ -48,6 +47,7 @@ public class CopyFile {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     writer.write(line);
+                    writer.newLine();
                 }
             }
         }
