@@ -12,15 +12,21 @@ public class CopyFile {
         final File from = new File(pathFrom);
         final File to = new File(pathTo);
 
+        copySmallFiles(from, to);
+
+        return pathTo;
+    }
+
+    private static void copySmallFiles(File from, File to) {
         if (from.isDirectory()) {
             if (!to.exists()) {
                 to.mkdirs();
             }
-            for (File file : from.listFiles()) {
-                String childFrom = file.getAbsolutePath();
-                String childTo = to.getAbsolutePath() + File.separator + file.getName();
+            for (File childFrom : from.listFiles()) {
+                String childToPath = to.getAbsolutePath() + File.separator + childFrom.getName();
+                File childTo = new File(childToPath);
 
-                if (file.isDirectory()) {
+                if (childFrom.isDirectory()) {
                     copySmallFiles(childFrom, childTo);
                 } else {
                     try {
@@ -38,14 +44,12 @@ public class CopyFile {
                         parent.mkdirs();
                         to.createNewFile();
                     }
-                    copyFile(pathFrom, pathTo);
+                    copyFile(from, to);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
-
-        return pathTo;
     }
 
     private static void copyFile(String pathFrom, String pathTo) throws IOException {
