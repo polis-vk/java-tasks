@@ -34,7 +34,9 @@ public class CopyFile {
             if (from.exists() && from.isFile()) {
                 try {
                     if (!to.exists()) {
-                        to.mkdirs();
+                        File parent = new File(to.getParent());
+                        parent.mkdirs();
+                        to.createNewFile();
                     }
                     copyFile(pathFrom, pathTo);
                 } catch (IOException e) {
