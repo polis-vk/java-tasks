@@ -52,19 +52,16 @@ public class CopyFile {
         }
     }
 
-    private static void copyFile(String pathFrom, String pathTo) throws IOException {
-        final File from = new File(pathFrom);
-        final File to = new File(pathTo);
+    private static void copyFile(File from, File to) throws IOException {
+        try (InputStream in = new BufferedInputStream(new FileInputStream(from))) {
+            try (OutputStream out = new BufferedOutputStream(new FileOutputStream(to))) {
+                byte[] buffer = new byte[1024];
+                int lengthRead;
 
-        try (InputStream in = new BufferedInputStream(new FileInputStream(from));
-             OutputStream out = new BufferedOutputStream(new FileOutputStream(to))
-        ) {
-            byte[] buffer = new byte[1024];
-            int lengthRead;
-
-            while ((lengthRead = in.read(buffer)) > 0) {
-                out.write(buffer, 0, lengthRead);
-                out.flush();
+                while ((lengthRead = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, lengthRead);
+                    out.flush();
+                }
             }
         }
     }
