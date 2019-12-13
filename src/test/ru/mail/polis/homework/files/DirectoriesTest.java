@@ -23,7 +23,7 @@ public class DirectoriesTest {
 
     @After
     public void tearDown() throws Exception {
-        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "first").toFile());
+        //FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "first").toFile());
         FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "second").toFile());
         FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "third").toFile());
         FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "fourth").toFile());
