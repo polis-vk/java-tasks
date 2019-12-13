@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 public class Directories {
 
@@ -53,9 +54,8 @@ public class Directories {
     public static int removeWithPath(String path) {
         AtomicInteger count = new AtomicInteger();
 
-        try {
-            Files.walk(Paths.get(path))
-                    .sorted(Comparator.reverseOrder())
+        try (Stream<Path> walk = Files.walk(Paths.get(path))) {
+            walk.sorted(Comparator.reverseOrder())
                     .map(Path::toFile)
                     .forEach(file -> {
                         file.delete();
