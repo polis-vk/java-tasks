@@ -17,8 +17,6 @@ import static org.junit.Assert.assertEquals;
 public class DeleteWithPathTest {
 
 
-
-
     @Test
     public void onlyFiles() throws IOException {
         Path dir = Paths.get("src", "test", "resources", "directories", "first");
@@ -119,7 +117,6 @@ public class DeleteWithPathTest {
                 "шарах, у Яка-цедрака-цедрака-цедрони с Цыпой-дрыпой-дрымпампони — Шах-шарах-шарах-широни.");
         Files.write(path, strings, StandardOpenOption.CREATE_NEW);
     }
-
 
 
 }

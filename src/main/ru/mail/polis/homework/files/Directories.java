@@ -1,17 +1,10 @@
 package ru.mail.polis.homework.files;
 
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Node;
-import org.w3c.dom.traversal.NodeFilter;
-import org.w3c.dom.traversal.TreeWalker;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Directories {
 
@@ -26,21 +19,21 @@ public class Directories {
         return removeWithFile(new File(path));
 
     }
-    private static int removeWithFile(File file){
+
+    private static int removeWithFile(File file) {
         int res = 0;
         if (file.isDirectory()) {
             File[] listOfFiles = file.listFiles();
-            if (listOfFiles != null){
-                for (File f: listOfFiles) {
+            if (listOfFiles != null) {
+                for (File f : listOfFiles) {
                     res += removeWithFile(f.getPath());
                 }
             }
         }
         if (file.delete()) {
             res += 1;
-        }
-        else {
-            System.out.println("Не удалось удалить файл "+file.toString());
+        } else {
+            System.out.println("Не удалось удалить файл " + file.toString());
         }
         return res;
     }
@@ -49,9 +42,9 @@ public class Directories {
      * С использованием Path
      */
     public static int removeWithPath(String path) throws IOException {
-       Path directory = Paths.get(path);
-        final int[] count = {0}; // Idea сама предложила так сделать, почему так - не знаю
-        Files.walkFileTree(directory, new FileVisitor<>() {
+        Path directory = Paths.get(path);
+        AtomicInteger count = new AtomicInteger(0);
+        Files.walkFileTree(directory, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                 return FileVisitResult.CONTINUE;
@@ -60,7 +53,7 @@ public class Directories {
             @Override
             public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
                 Files.delete(path);
-                count[0]++;
+                count.incrementAndGet();
                 return FileVisitResult.CONTINUE;
             }
 
@@ -72,10 +65,10 @@ public class Directories {
             @Override
             public FileVisitResult postVisitDirectory(Path path, IOException e) throws IOException {
                 Files.delete(path);
-                count[0]++;
+                count.incrementAndGet();
                 return FileVisitResult.CONTINUE;
             }
         });
-        return count[0];
+        return count.get();
     }
 }
