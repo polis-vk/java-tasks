@@ -19,12 +19,12 @@ public class Directories {
         File file = new File(path);
         int count = 0;
 
-        if (file.exists() && file.isDirectory()) {
+        if (file.isDirectory()) {
             count += purgeDirectory(file);
             file.delete();
             count++;
         } else {
-            if (file.exists() && file.isFile()) {
+            if (file.isFile()) {
                 file.delete();
                 count++;
             }

@@ -12,7 +12,7 @@ public class CopyFile {
         final File from = new File(pathFrom);
         final File to = new File(pathTo);
 
-        if (from.exists() && from.isDirectory()) {
+        if (from.isDirectory()) {
             if (!to.exists()) {
                 to.mkdirs();
             }
@@ -31,7 +31,7 @@ public class CopyFile {
                 }
             }
         } else {
-            if (from.exists() && from.isFile()) {
+            if (from.isFile()) {
                 try {
                     if (!to.exists()) {
                         File parent = new File(to.getParent());
