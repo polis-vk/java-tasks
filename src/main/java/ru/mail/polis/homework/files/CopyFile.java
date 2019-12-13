@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.files;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 public class CopyFile {
 
@@ -11,41 +15,52 @@ public class CopyFile {
     public static String copySmallFiles(String pathFrom, String pathTo) {
         File dirFrom = new File(pathFrom);
         File dirTo = new File(pathTo);
-        if (dirFrom.isDirectory() && dirFrom.exists())
-            if (!dirTo.exists()) {
-                dirTo.mkdirs();
-            }
-        for (String file : dirFrom.list()) {
-            File fileFrom = new File(dirFrom + File.separator + file);
-            File fileTo = new File(dirTo + File.separator + file);
-            if (fileFrom.isDirectory()) {
-                copySmallFiles(fileFrom.getAbsolutePath(), fileTo.getAbsolutePath());
+        if (dirFrom.exists()) {
+            File[] files = dirFrom.listFiles();
+            if (files != null) {
+                if (!dirTo.exists()) {
+                    dirTo.mkdirs();
+                }
+                for (File fileFrom : files) {
+                    File fileTo = new File(dirTo + File.separator + fileFrom.getName());
+                    copySmallFiles(fileFrom.getAbsolutePath(), fileTo.getAbsolutePath());
+                }
+                return pathTo;
             } else {
-                InputStream inputStream = null;
-                OutputStream outputStream = null;
                 try {
-                    inputStream = new FileInputStream(fileFrom);
-                    outputStream = new FileOutputStream(fileTo);
-                    byte[] buffer = new byte[1024];
-                    int length;
-                    while ((length = inputStream.read(buffer)) > 0) {
-                        outputStream.write(buffer, 0, length);
-                    }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    createFile(dirTo);
                 } catch (IOException e) {
                     e.printStackTrace();
-                } finally {
-                    try {
-                        inputStream.close();
-                        outputStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
+                copyFile(dirFrom, dirTo);
             }
-            return pathTo;
         }
         return null;
+    }
+
+    private static void createFile(File file) throws IOException {
+        File parent = file.getParentFile();
+        if (!parent.exists()) {
+            parent.mkdirs();
+            file.createNewFile();
+        } else if (file.exists()) {
+            file.createNewFile();
+        }
+    }
+
+    private static void copyFile(File fileFrom, File fileTo) {
+        try (BufferedReader from = Files.newBufferedReader(fileFrom.toPath());
+             BufferedWriter to = Files.newBufferedWriter(fileTo.toPath())) {
+            from.lines()
+                    .forEach(str -> {
+                        try {
+                            to.write(str);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+        } catch (IOException ignored) {
+        }
     }
 }

@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 public class Directories {
 
@@ -32,16 +36,21 @@ public class Directories {
     /**
      * С использованием Path
      */
-    public static int removeWithPath(String path) throws IOException {
-        int count = 0;
-        Path dir = Path.of(path);
-        if (Files.exists(dir)) {
-            if (Files.isDirectory(dir)) {
-                count = Files.list(dir).mapToInt(dirPath -> removeWithFile(dirPath.toString())).sum();
-            }
-            Files.delete(dir);
-            count++;
+    public static int removeWithPath(String path) {
+        AtomicInteger count = new AtomicInteger(0);
+        try (Stream<Path> tree = Files.walk(Paths.get(path))) {
+            tree.sorted(Comparator.reverseOrder())
+                    .forEach(p -> {
+                        try {
+                            Files.deleteIfExists(p);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        count.getAndIncrement();
+                    });
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return count;
+        return count.get();
     }
 }
