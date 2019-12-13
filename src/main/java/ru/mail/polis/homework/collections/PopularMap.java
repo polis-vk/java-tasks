@@ -2,7 +2,6 @@ package ru.mail.polis.homework.collections;
 
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 /**
