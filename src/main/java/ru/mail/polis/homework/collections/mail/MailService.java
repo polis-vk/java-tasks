@@ -1,9 +1,7 @@
 package ru.mail.polis.homework.collections.mail;
 
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -14,11 +12,11 @@ import java.util.function.Consumer;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  */
 public class MailService implements Consumer<Mail> {
-    private Map<String, List<Mail>> receivers;
+    private Map<String, List<Mail>> recipients;
     private Map<String, List<Mail>> senders;
 
     public MailService() {
-        this.receivers = new HashMap<>();
+        this.recipients = new HashMap<>();
         this.senders = new HashMap<>();
     }
 
@@ -28,34 +26,45 @@ public class MailService implements Consumer<Mail> {
      */
     @Override
     public void accept(Mail mail) {
-
+        recipients.computeIfAbsent(mail.getRecipient(), x -> new ArrayList<>()).add(mail);
+        senders.computeIfAbsent(mail.getSender(), x -> new ArrayList<>()).add(mail);
     }
 
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      */
-    public Map<String, List> getMailBox() {
-        return null;
+    public Map<String, List<Mail>> getMailBox() {
+        return recipients;
     }
 
     /**
      * Возвращает самого популярного отправителя
      */
     public String getPopularSender() {
-        return null;
+        return senders
+                .entrySet()
+                .stream()
+                .max(Comparator.comparing(x -> x.getValue().size()))
+                .get()
+                .getKey();
     }
 
     /**
      * Возвращает самого популярного получателя
      */
     public String getPopularRecipient() {
-        return null;
+        return recipients
+                .entrySet()
+                .stream()
+                .max(Comparator.comparing(x -> x.getValue().size()))
+                .get()
+                .getKey();
     }
 
     /**
      * Метод должен заставить обработать service все mails.
      */
-    public static void process(MailService service, List mails) {
-
+    public static void process(MailService service, List<Mail> mails) {
+        mails.forEach(service);
     }
 }

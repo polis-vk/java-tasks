@@ -3,8 +3,8 @@ package ru.mail.polis.homework.collections.mail;
 public class MailMessage extends Mail {
     private final String message;
 
-    public MailMessage(String sender, String receiver, String message) {
-        super(sender, receiver);
+    public MailMessage(String sender, String recipient, String message) {
+        super(sender, recipient);
         this.message = message;
     }
 

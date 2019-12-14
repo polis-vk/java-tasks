@@ -2,18 +2,18 @@ package ru.mail.polis.homework.collections.mail;
 
 public class Mail {
     private final String sender;
-    private final String receiver;
+    private final String recipient;
 
     public Mail(String sender, String receiver) {
         this.sender = sender;
-        this.receiver = receiver;
+        this.recipient = receiver;
     }
 
     public String getSender() {
         return sender;
     }
 
-    public String getReceiver() {
-        return receiver;
+    public String getRecipient() {
+        return recipient;
     }
 }
