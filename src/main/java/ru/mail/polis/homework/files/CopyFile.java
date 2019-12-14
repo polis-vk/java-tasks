@@ -60,7 +60,6 @@ public class CopyFile {
 
                 while ((lengthRead = in.read(buffer)) > 0) {
                     out.write(buffer, 0, lengthRead);
-                    out.flush();
                 }
             }
         }
