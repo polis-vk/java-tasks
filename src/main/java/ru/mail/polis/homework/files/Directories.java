@@ -56,10 +56,13 @@ public class Directories {
 
         try (Stream<Path> walk = Files.walk(Paths.get(path))) {
             walk.sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(file -> {
-                        file.delete();
-                        count.getAndIncrement();
+                    .forEach(currentPath -> {
+                        try {
+                            Files.delete(currentPath);
+                            count.getAndIncrement();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     });
         } catch (IOException e) {
             e.printStackTrace();
