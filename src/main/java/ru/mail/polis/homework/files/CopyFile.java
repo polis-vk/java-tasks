@@ -27,7 +27,7 @@ public class CopyFile {
                 return null;
             }
         }  else {
-            if (!dest.subpath(0, dest.getNameCount() - 1).toFile().mkdirs()) {
+            if (!dest.getParent().toFile().mkdirs()) {
                 return null;
             }
         }
