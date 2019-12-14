@@ -5,7 +5,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -105,7 +104,7 @@ public class CopyFileTest {
         Path file = Paths.get("src", "test", "resources", "directories", "copy", "first", "file.txt");
         Path dest = Paths.get("src", "test", "resources", "directories", "copy1", "first", "file.txt");
         CopyFile.copySmallFiles(file.toString(), dest.toString());
-        checkCopy(file, dest);
+        checkCopy(file, dest, false);
     }
 
     @Test
@@ -113,7 +112,7 @@ public class CopyFileTest {
         Path source = Paths.get("src", "test", "resources", "directories", "copy", "second");
         Path dest = Paths.get("src", "test", "resources", "directories", "copy1", "second");
         CopyFile.copySmallFiles(source.toString(), dest.toString());
-        checkCopy(source, dest);
+        checkCopy(source, dest, true);
     }
 
     @Test
@@ -121,7 +120,7 @@ public class CopyFileTest {
         Path source = Paths.get("src", "test", "resources", "directories", "copy", "third");
         Path dest = Paths.get("src", "test", "resources", "directories", "copy1", "third");
         CopyFile.copySmallFiles(source.toString(), dest.toString());
-        checkCopy(source, dest);
+        checkCopy(source, dest, true);
     }
 
     @Test
@@ -142,7 +141,7 @@ public class CopyFileTest {
         Path source = Paths.get("src", "test", "resources", "directories", "copy", "fifth");
         Path dest = Paths.get("src", "test", "resources", "directories", "copy1", "fifth");
         CopyFile.copySmallFiles(source.toString(), dest.toString());
-        checkCopy(source, dest);
+        checkCopy(source, dest, true);
     }
 
     private void createFile(Path path) throws IOException {
@@ -155,7 +154,11 @@ public class CopyFileTest {
         Files.write(path, strings, StandardOpenOption.CREATE_NEW);
     }
 
-    private void checkCopy(Path source, Path dest) throws IOException {
+    private void checkCopy(Path source, Path dest, boolean isDirectory) throws IOException {
+        assertTrue(Files.exists(source));
+        assertTrue(Files.exists(dest));
+        assertTrue(isDirectory ? Files.isDirectory(source) : Files.isRegularFile(source));
+        assertTrue(isDirectory ? Files.isDirectory(dest) : Files.isRegularFile(dest));
         List<Path> sourcePaths = Files.walk(source).collect(Collectors.toList());
         List<Path> destPaths = Files.walk(dest).collect(Collectors.toList());
         assertEquals(sourcePaths.size(), destPaths.size());
