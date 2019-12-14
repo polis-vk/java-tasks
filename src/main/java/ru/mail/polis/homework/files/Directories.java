@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 public class Directories {
 
@@ -49,8 +51,10 @@ public class Directories {
             return 1;
         }
         AtomicInteger total = new AtomicInteger(0);
-        Files.list(file).forEach(tempPath ->
-                total.addAndGet(removeWithPath(tempPath.toString())));
+        try (Stream<Path> paths = Files.list(file)) {
+            paths.forEach(tempPath ->
+                    total.addAndGet(removeWithPath(tempPath.toString())));
+        }
         Files.delete(file);
         return total.get() + 1;
     }
