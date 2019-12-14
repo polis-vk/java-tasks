@@ -61,13 +61,16 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsValue(Object value) {
+        addPopularUseForValue((V) value);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
         addPopularUseForKey((K) key);
-        return map.get(key);
+        V value = map.get(key);
+        addPopularUseForValue(value);
+        return value;
     }
 
     @Override
@@ -79,6 +82,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         addPopularUseForValue(value);
         return map.put(key, value);
     }
+
 
     @Override
     public V remove(Object key) {
@@ -114,20 +118,22 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private void addPopularUseForKey(K key) {
-        if (popularKey.containsValue(key)) {
+        //if (Objects.nonNull(key)) return;
+        if (popularKey.containsKey(key)) {
             Integer popular = popularKey.get(key);
-            popularKey.put(key, popular);
+            popularKey.put(key, popular + 1);
         } else {
             popularKey.put(key, 1);
         }
     }
 
     private void addPopularUseForValue(V value) {
-        if (popularValue.containsValue(value)) {
+        //if (Objects.nonNull(value)) return;
+        if (popularValue.containsKey(value)) {
             Integer popular = popularValue.get(value);
-            popularValue.put(value, popular);
+            popularValue.put(value, popular + 1 );
         } else {
-            popularValue.put(value, 0); // value 1
+            popularValue.put(value, 1);
         }
     }
 
