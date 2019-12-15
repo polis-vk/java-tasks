@@ -24,9 +24,10 @@ public class CopyFile {
     }
 
     private static void copySmallFiles(Path pathFrom, Path pathTo) {
-        new File(pathTo.toString()).mkdirs();
+
 
         if (Files.isDirectory(pathFrom)) {
+            new File(pathTo.toString()).mkdir();
             try {
                 Files.list(pathFrom)
                         .forEach(
@@ -36,6 +37,7 @@ public class CopyFile {
                 e.printStackTrace();
             }
         } else {
+            new File(pathTo.getParent().toString()).mkdir(); // создаем папку-родителя
             copyFile(pathFrom, pathTo);
         }
     }

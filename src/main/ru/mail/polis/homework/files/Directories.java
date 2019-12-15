@@ -45,20 +45,11 @@ public class Directories {
         Path directory = Paths.get(path);
         AtomicInteger count = new AtomicInteger(0);
         Files.walkFileTree(directory, new SimpleFileVisitor<>() {
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                return FileVisitResult.CONTINUE;
-            }
 
             @Override
             public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
                 Files.delete(path);
                 count.incrementAndGet();
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult visitFileFailed(Path path, IOException e) {
                 return FileVisitResult.CONTINUE;
             }
 
