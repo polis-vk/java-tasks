@@ -42,6 +42,10 @@ public class Directories {
      */
     public static int removeWithPath(String path) throws IOException {
         Path directory = Paths.get(path);
+        if (!Files.exists(directory)) {
+            return 0;
+        }
+
         AtomicInteger count = new AtomicInteger(0);
         Files.walkFileTree(directory, new SimpleFileVisitor<>() {
 
