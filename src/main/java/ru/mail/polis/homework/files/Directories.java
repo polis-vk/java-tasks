@@ -9,6 +9,7 @@ import java.util.Comparator;
 
 public class Directories {
 
+    private static int result = 0;
 
     /**
      * Реализовать рекурсивное удаление всех файлов и директорий из директории по заданному пути.
@@ -18,16 +19,18 @@ public class Directories {
      */
     public static int removeWithFile(String path) {
         File dirFile = new File(path);
-        if (dirFile.isDirectory()) {
-            File[] children = dirFile.listFiles();
+        removeFile(dirFile);
+        return result;
+    }
+
+    private static void removeFile(File path){
+        if (path.isDirectory()) {
+            File[] children = path.listFiles();
             for (File child : children) {
-                int success = removeWithFile(child.getName());
-                if (success == -1) {
-                    return -1;
-                }
+                result++;
+                removeFile(path);
             }
         }
-        return 0;
     }
 
     /**
@@ -39,11 +42,14 @@ public class Directories {
             Files.walk(dirPath)
                     .sorted(Comparator.reverseOrder())
                     .map(Path::toFile)
-                    .forEach(File::delete);
+                    .forEach(file -> {
+                        result++;
+                        file.delete();
+                    });
         }
         catch (IOException ex){
             ex.printStackTrace();
         }
-        return 0;
+        return result;
     }
 }
