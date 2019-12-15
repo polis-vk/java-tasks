@@ -20,6 +20,9 @@ public class Directories {
             count = recursiveDeleteWithFile(files, count);
             files.delete();
             return ++count;
+        } else if (files.delete()) {
+            files.delete();
+            count++;
         }
         return count;
     }
