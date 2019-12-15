@@ -45,35 +45,41 @@ public class Directories {
      * С использованием Path
      */
     public static int removeWithPath(String path) throws IOException {
-        //Костыль...
-        //Подскажите: как исправить?
-        final int[] count = {0};
+        int count = 0;
         Path file = Paths.get(path);
-        Files.walkFileTree(file, new FileVisitor<Path>() {
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                return FileVisitResult.CONTINUE;
-            }
+        Files.walkFileTree(file, new Visitor(count));
+        return count;
+    }
+}
 
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
-                count[0]++;
-                return FileVisitResult.CONTINUE;
-            }
+class Visitor extends SimpleFileVisitor<Path> {
+    int count;
 
-            @Override
-            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                return FileVisitResult.CONTINUE;
-            }
+    public Visitor(int count) {
+        this.count = count;
+    }
 
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                Files.delete(dir);
-                count[0]++;
-                return FileVisitResult.CONTINUE;
-            }
-        });
-        return count[0];
+    @Override
+    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+        return FileVisitResult.CONTINUE;
+    }
+
+    @Override
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        Files.delete(file);
+        count++;
+        return FileVisitResult.CONTINUE;
+    }
+
+    @Override
+    public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+        return FileVisitResult.CONTINUE;
+    }
+
+    @Override
+    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+        Files.delete(dir);
+        count++;
+        return FileVisitResult.CONTINUE;
     }
 }
