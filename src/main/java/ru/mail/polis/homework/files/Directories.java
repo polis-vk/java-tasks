@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.files;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,18 +20,21 @@ public class Directories {
      */
     public static int removeWithFile(String path) {
         File dirFile = new File(path);
+        if (!dirFile.exists()) return 0;
         removeFile(dirFile);
+        result++;
         return result;
     }
 
-    private static void removeFile(File path){
-        if (path.isDirectory()) {
-            File[] children = path.listFiles();
-            for (File child : children) {
+    private static boolean removeFile(File path){
+        boolean ret = true;
+        if (path.isDirectory()){
+            for (File f : path.listFiles()){
                 result++;
-                removeFile(path);
+                ret = ret && removeFile(f);
             }
         }
+        return ret && path.delete();
     }
 
     /**
