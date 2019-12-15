@@ -24,8 +24,6 @@ public class CopyFile {
     }
 
     private static void copySmallFiles(Path pathFrom, Path pathTo) {
-
-
         if (Files.isDirectory(pathFrom)) {
             new File(pathTo.toString()).mkdir();
             try {

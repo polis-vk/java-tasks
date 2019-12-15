@@ -17,7 +17,6 @@ public class Directories {
      */
     public static int removeWithFile(String path) {
         return removeWithFile(new File(path));
-
     }
 
     private static int removeWithFile(File file) {
