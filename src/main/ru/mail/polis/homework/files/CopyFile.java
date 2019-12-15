@@ -35,7 +35,6 @@ public class CopyFile {
                 e.printStackTrace();
             }
         } else {
-            new File(pathTo.getParent().toString()).mkdir(); // создаем папку-родителя
             copyFile(pathFrom, pathTo);
         }
     }
