@@ -1,5 +1,12 @@
 package ru.mail.polis.homework.files;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
+
 public class Directories {
 
 
@@ -10,6 +17,16 @@ public class Directories {
      * Написать двумя способами. С использованием File
      */
     public static int removeWithFile(String path) {
+        File dirFile = new File(path);
+        if (dirFile.isDirectory()) {
+            File[] children = dirFile.listFiles();
+            for (File child : children) {
+                int success = removeWithFile(child.getName());
+                if (success == -1) {
+                    return -1;
+                }
+            }
+        }
         return 0;
     }
 
@@ -17,6 +34,16 @@ public class Directories {
      * С использованием Path
      */
     public static int removeWithPath(String path) {
+        Path dirPath = Paths.get(path);
+        try {
+            Files.walk(dirPath)
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+        }
+        catch (IOException ex){
+            ex.printStackTrace();
+        }
         return 0;
     }
 }

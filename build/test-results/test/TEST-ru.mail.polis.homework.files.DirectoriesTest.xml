@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ru.mail.polis.homework.files.DirectoriesTest" tests="1" skipped="1" failures="0" errors="0" timestamp="2019-12-15T09:39:37" hostname="DESKTOP-P3JGV8I" time="4350.716">
+  <properties/>
+  <testcase name="onlyFiles" classname="ru.mail.polis.homework.files.DirectoriesTest" time="4350.716">
+    <skipped/>
+  </testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
