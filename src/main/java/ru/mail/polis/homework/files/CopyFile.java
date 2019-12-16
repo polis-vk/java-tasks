@@ -18,21 +18,17 @@ public class CopyFile {
         final Path dest = Paths.get(pathTo);
         dest.normalize();
 
-        if (!source.toFile().exists()) {
+        if (!Files.exists(source)) {
             return null;
         }
 
-        if (source.toFile().isDirectory()) {
-            if (!dest.toFile().mkdirs()) {
-                return null;
-            }
-        }  else {
-            if (!dest.getParent().toFile().mkdirs()) {
-                return null;
-            }
-        }
-
         try {
+            if (Files.isDirectory(source)) {
+                Files.createDirectories(dest);
+            }  else {
+                Files.createDirectories(dest.getParent());
+            }
+
             Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -58,22 +54,19 @@ public class CopyFile {
             });
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
 
         return dest.toString();
     }
 
     private static void copyFile(final Path source, final Path dest, final Path relativePath) throws IOException {
-        final File sourceFile = source.toFile();
-        final File destinationFile = dest.resolve(relativePath).toFile();
-        try (
-                InputStream in = new FileInputStream(sourceFile);
-                OutputStream out = new FileOutputStream(destinationFile)
-        ) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = in.read(buffer)) > 0) {
-                out.write(buffer, 0, length);
+        try (BufferedReader in = Files.newBufferedReader(source)) {
+            try (BufferedWriter out = Files.newBufferedWriter(dest.resolve(relativePath))) {
+                int next;
+                while ((next = in.read()) != -1) {
+                    out.write(next);
+                }
             }
         }
     }

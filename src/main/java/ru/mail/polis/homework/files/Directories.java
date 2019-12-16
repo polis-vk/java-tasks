@@ -17,13 +17,10 @@ public class Directories {
      */
     public static int removeWithFile(String path) {
         final File directory;
-        if (path == null // метод removeWithFile() не бросает исключения, а new File() бросит, если path==null
+        if (path == null
                 || !(directory = new File(path)).exists()/* || directory.isFile()*/) {
             return 0;
         }
-        // В задании сказано "Реализовать рекурсивное удаление всех файлов и дерикторий из ДИРЕКТОРИИ по заданному пути",
-        // но в тесте filesOneFile() считается, что при аргументе-файле функция должна удалить его и вернуть 1.
-        // Подогнал под тесты, но здесь явно противоречие заданию.
         return directory.isDirectory()
                 ? recursivelyRemove(directory)
                 : (directory.delete() ? 1 : 0);
@@ -71,7 +68,9 @@ public class Directories {
                     }
                 }
             });
-        } catch (IOException | NullPointerException ignored) { }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return count.intValue();
     }
 }
