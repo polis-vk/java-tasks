@@ -25,7 +25,11 @@ public class CopyFile {
 
     private static void copySmallFiles(Path pathFrom, Path pathTo) {
         if (Files.isDirectory(pathFrom)) {
-            new File(pathTo.toString()).mkdir();
+            try {
+                Files.createDirectories(pathTo);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             try {
                 Files.list(pathFrom)
                         .forEach(
@@ -35,6 +39,11 @@ public class CopyFile {
                 e.printStackTrace();
             }
         } else {
+            try {
+                Files.createDirectories(pathTo.getParent());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             copyFile(pathFrom, pathTo);
         }
     }
