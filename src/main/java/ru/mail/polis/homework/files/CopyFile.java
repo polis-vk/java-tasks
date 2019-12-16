@@ -43,10 +43,14 @@ public class CopyFile {
     public static void copyFile(String pathFrom, String pathTo) {
         File file = new File(pathTo);
         if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
+            //if file isn't created we will try to do it 2 more times
+            for (int i = 0; i < 3; ++i) {
+                try {
+                    file.createNewFile();
+                    break;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
         try (BufferedReader in = new BufferedReader(new FileReader(new File(pathFrom)))) {
