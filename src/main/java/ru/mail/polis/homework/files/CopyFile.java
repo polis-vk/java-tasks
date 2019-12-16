@@ -42,7 +42,7 @@ public class CopyFile {
           } else {
             copySmallFiles(
                     nextFile.getAbsolutePath(),
-                    nextFile.getAbsolutePath() + File.separator + nextFile.getName()
+                    fileTo + File.separator + nextFile.getName()
             );
           }
         }
@@ -56,7 +56,7 @@ public class CopyFile {
         if (!file.exists()) {
           file.createNewFile();
         }
-        try (BufferedWriter out = new BufferedWriter(new FileWriter(new File(pathTo)))) {
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
           String nextLine;
           while (null != (nextLine = in.readLine())) {
             out.append(nextLine).append("\n");
