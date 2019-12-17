@@ -20,7 +20,9 @@ public class Directories {
     public static int removeWithFile(String path) {
         File file = new File(path);
 
-        if (file == null || !file.exists()) return 0;
+        if (file == null || !file.exists()) {
+            return 0;
+        }
         if (file.isFile()) {
             file.delete();
             return 1;
@@ -38,27 +40,26 @@ public class Directories {
     /**
      * С использованием Path
      */
-    public static int removeWithPath(Path path) throws IOException {
-        if (!Files.exists(path)) return 0;
-        if (Files.isRegularFile(path)) Files.delete(path);
+    public static int removeWithPath(String path) throws IOException {
+        Path p = Paths.get(path);
+        if (!Files.exists(p)) {
+            return 0;
+        }
+        if (Files.isRegularFile(p)) Files.delete(p);
 
         AtomicInteger result = new AtomicInteger();
-        try (Stream<Path> stream = Files.list(path)) {
+        try (Stream<Path> stream = Files.list(p)) {
             stream.forEach(file -> {
                 try {
-                    removeWithPath(file);
+                    removeWithPath(file.toUri().toString());
+                    System.out.println(file.toUri().toString());
                     result.getAndIncrement();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
         }
-        Files.delete(path);
+        Files.delete(p);
         return result.get() + 1;
-    }
-
-    public static void main(String[] args) throws IOException {
-        Path p = Paths.get("C:\\Users\\null\\Desktop\\java-tasks\\src\\main\\java\\ru\\mail\\polis\\homework\\files\\test\\test.java");
-        removeWithPath(p);
     }
 }

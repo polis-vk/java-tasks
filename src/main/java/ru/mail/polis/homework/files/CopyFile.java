@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.files;
 
 import java.io.*;
-import java.nio.file.*;
 
 public class CopyFile {
 
@@ -9,40 +8,59 @@ public class CopyFile {
      * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
      * Файлы копировать ручками через стримы.
      */
-    public static String copySmallFiles(String pathFrom, String pathTo) throws IOException {
-        File copyFrom = Paths.get(pathFrom).toFile();
-        File copyTo = Paths.get(pathTo).toFile();
+    public static String copySmallFiles(String pathFrom, String pathTo) {
+        File copyFrom = new File(pathFrom);
+        File copyTo = new File(pathTo);
 
-        if (!copyFrom.exists() && !copyFrom.isDirectory() && copyTo.isFile()) return null;
-        if (!copyTo.exists()) copyTo.mkdir();
-
-        BufferedReader reader;
-        BufferedWriter writer;
-
-        File[] files = copyFrom.listFiles();
-
-        for (File f : files) {
-            if (f.isFile()) {
-                String buff;
+        if (copyFrom.isFile()) {
+            if (!copyTo.exists()) {
+                new File(copyTo.getParent()).mkdirs();
                 try {
-                    reader = new BufferedReader(new FileReader(f));
-                    writer = new BufferedWriter(new FileWriter(copyTo));
-                    while ((buff = reader.readLine()) != null) writer.write(buff);
-                    reader.close();
-                    writer.close();
-                } catch (IOException e) {}
-            } else if (f.isDirectory()) {
-                String nameDir = f.getName();
-                File dirTo = new File(copyTo.getAbsolutePath() + File.separator + nameDir);
-                copySmallFiles(dirTo.getParent(), dirTo.getAbsolutePath());
+                    copyTo.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            cp(copyFrom, copyTo);
+        } else if (copyFrom.isDirectory()) {
+            if (!copyTo.exists()) {
+                copyTo.mkdirs();
+            }
+            File[] files = copyFrom.listFiles();
+            for (File f : files) {
+                File cpTo = new File(copyTo.getAbsolutePath() + File.separator + f.getName());
+                if (f.isFile()) {
+                    cp(f, copyTo);
+                } else if (f.isDirectory()) {
+                    copySmallFiles(f.getAbsolutePath() + File.separator + f.getName(),
+                            cpTo.getAbsolutePath() + File.separator + cpTo.getName());
+                }
             }
         }
-        return null;
+
+        return pathTo;
     }
 
-    public static void main(String[] args) throws IOException {
-        copySmallFiles("C:\\Users\\null\\Desktop\\java-tasks\\src\\main\\java\\ru\\mail\\polis\\homework\\files\\cp", "C:\\Users\\null\\Desktop\\java-tasks\\src\\main\\java\\ru\\mail\\polis\\homework\\files\\cpTo");
-
+    private static void cp(File from, File to) {
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream(from);
+            os = new FileOutputStream(to);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+                os.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
-
 }
