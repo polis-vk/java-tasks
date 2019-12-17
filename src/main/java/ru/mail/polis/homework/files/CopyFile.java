@@ -29,10 +29,11 @@ public class CopyFile {
 
                 for (final File fileName : fileFrom.listFiles()) {
                     String subFileTo = fileTo.getAbsolutePath() + File.separator + fileName.getName();
-                    if (Files.isDirectory(Paths.get(fileName.getAbsolutePath()))) {
+                    File subFile = new File(subFileTo);
+                    if (subFile.isDirectory()) {
                         copySmallFiles(fileName.getAbsolutePath(), subFileTo);
                     } else {
-                        copyFile(fileName, new File(subFileTo));
+                        copyFile(fileName, subFile);
                     }
                 }
                 return pathTo;
