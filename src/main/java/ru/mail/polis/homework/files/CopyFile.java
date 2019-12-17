@@ -36,7 +36,7 @@ public class CopyFile {
                     Objects.requireNonNull(attrs);
 
                     final Path relativePath = source.relativize(dir);
-                    dest.resolve(relativePath).toFile().mkdir();
+                    Files.createDirectory(dest.resolve(relativePath));
 
                     return FileVisitResult.CONTINUE;
                 }
@@ -63,8 +63,8 @@ public class CopyFile {
     private static void copyFile(final Path source, final Path dest, final Path relativePath) throws IOException {
         try (BufferedReader in = Files.newBufferedReader(source)) {
             try (BufferedWriter out = Files.newBufferedWriter(dest.resolve(relativePath))) {
-                int next;
-                while ((next = in.read()) != -1) {
+                String next;
+                while ((next = in.readLine()) != null) {
                     out.write(next);
                 }
             }
