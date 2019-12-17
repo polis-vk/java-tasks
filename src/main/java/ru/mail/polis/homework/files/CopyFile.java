@@ -1,12 +1,6 @@
 package ru.mail.polis.homework.files;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import java.io.*;
 
 public class CopyFile {
 
@@ -14,7 +8,7 @@ public class CopyFile {
      * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
      * Файлы копировать ручками через стримы.
      */
-    public static String copySmallFiles(String pathFrom, String pathTo) {
+    /*public static String copySmallFiles(String pathFrom, String pathTo) {
         Path src = Paths.get(pathFrom);
         Path dest = Paths.get(pathTo);
         try {
@@ -43,6 +37,49 @@ public class CopyFile {
             ex.printStackTrace();
         }
         return null;
+    }*/
+
+    public static String copySmallFiles(String pathFrom, String pathTo) {
+        File src = new File(pathFrom);
+        File dst = new File(pathTo);
+        if (src.exists()) {
+            try {
+                copy(src, dst);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
+    private static void copy(File src, File dst) throws IOException{
+        if (src.isDirectory()){
+            if (!dst.exists()){
+                dst.mkdirs();
+            }
+            String[] files = src.list();
+            for (String file : files){
+                File srcFile = new File(src, file);
+                File dstFile = new File(dst, file);
+                copy(srcFile, dstFile);
+            }
+        }
+        else{
+            InputStream in = new FileInputStream(src);
+            File parent = dst.getParentFile();
+            if (!parent.exists()){
+                parent.mkdirs();
+                dst.createNewFile();
+            }
+            OutputStream out = new FileOutputStream(dst);
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = in.read(buffer)) > 0){
+                out.write(buffer, 0, length);
+            }
+            in.close();
+            out.close();
+        }
+    }
 }

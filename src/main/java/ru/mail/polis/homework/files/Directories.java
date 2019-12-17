@@ -1,16 +1,16 @@
 package ru.mail.polis.homework.files;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 public class Directories {
-
-    private static int result = 0;
 
     /**
      * Реализовать рекурсивное удаление всех файлов и директорий из директории по заданному пути.
@@ -20,18 +20,21 @@ public class Directories {
      */
     public static int removeWithFile(String path) {
         File dirFile = new File(path);
-        if (!dirFile.exists()) return 0;
-        removeFile(dirFile);
-        result++;
-        return result;
+        if (!dirFile.exists()) {
+            return 0;
+        }
+        ArrayList<File> files = new ArrayList<>();
+        files.add(dirFile);
+        removeFile(dirFile, files);
+        return files.size();
     }
 
-    private static boolean removeFile(File path){
+    private static boolean removeFile(File path, ArrayList<File> files){
         boolean ret = true;
         if (path.isDirectory()){
             for (File f : path.listFiles()){
-                result++;
-                ret = ret && removeFile(f);
+                files.add(f);
+                ret = ret && removeFile(f, files);
             }
         }
         return ret && path.delete();
@@ -42,18 +45,18 @@ public class Directories {
      */
     public static int removeWithPath(String path) {
         Path dirPath = Paths.get(path);
-        try {
-            Files.walk(dirPath)
-                    .sorted(Comparator.reverseOrder())
+        AtomicInteger result = new AtomicInteger(0);
+        try (Stream<Path> paths = Files.walk(dirPath)){
+            paths.sorted(Comparator.reverseOrder())
                     .map(Path::toFile)
                     .forEach(file -> {
-                        result++;
+                        result.getAndIncrement();
                         file.delete();
                     });
         }
-        catch (IOException ex){
+        catch (IOException | IllegalStateException ex){
             ex.printStackTrace();
         }
-        return result;
+        return result.get();
     }
 }
