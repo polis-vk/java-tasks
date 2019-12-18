@@ -90,14 +90,14 @@ public class CopyFileTest {
 
     }
 
-    @After
-    public void tearDown() throws Exception {
-        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1", "first").toFile());
-        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1", "second").toFile());
-        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1", "third").toFile());
-        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1", "fourth").toFile());
-        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1", "fifth").toFile());
-    }
+//    @After
+//    public void tearDown() throws Exception {
+//        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1", "first").toFile());
+//        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1", "second").toFile());
+//        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1", "third").toFile());
+//        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1", "fourth").toFile());
+//        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1", "fifth").toFile());
+//    }
 
     @Test
     public void copyOnlyFile() throws IOException {
@@ -149,7 +149,7 @@ public class CopyFileTest {
                 "Жили-были три китайки: Цыпа, Цыпа-дрыпа, Цыпа-дрыпа-дрымпампони.",
                 "Все они переженились: Як на Цыпе, Як-цедрак на Цыпе-дрыпе,",
                 "Як-цедрак-цедрак-цедрони на Цыпе-дрыпе-дрымпампони.",
-                "И у них родились дети. У Яка с Цыпой — Шах, у Яка-цедрака с Цыпой-дрыпой — Шах-",
+                ": у них родились дети. У Яка с Цыпой — Шах, у Яка-цедрака с Цыпой-дрыпой — Шах-",
                 "шарах, у Яка-цедрака-цедрака-цедрони с Цыпой-дрыпой-дрымпампони — Шах-шарах-шарах-широни.");
         Files.write(path, strings, StandardOpenOption.CREATE_NEW);
     }
