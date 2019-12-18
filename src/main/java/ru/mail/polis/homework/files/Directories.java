@@ -5,12 +5,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 public class Directories {
+
+    private static int result;
 
     /**
      * Реализовать рекурсивное удаление всех файлов и директорий из директории по заданному пути.
@@ -23,18 +25,17 @@ public class Directories {
         if (!dirFile.exists()) {
             return 0;
         }
-        ArrayList<File> files = new ArrayList<>();
-        files.add(dirFile);
-        removeFile(dirFile, files);
-        return files.size();
+        result = 1;
+        removeFile(dirFile);
+        return result;
     }
 
-    private static boolean removeFile(File path, ArrayList<File> files){
+    private static boolean removeFile(File path){
         boolean ret = true;
         if (path.isDirectory()){
-            for (File f : path.listFiles()){
-                files.add(f);
-                ret = ret && removeFile(f, files);
+            for (File f : Objects.requireNonNull(path.listFiles())){
+                result++;
+                ret = ret && removeFile(f);
             }
         }
         return ret && path.delete();
@@ -50,11 +51,11 @@ public class Directories {
             paths.sorted(Comparator.reverseOrder())
                     .map(Path::toFile)
                     .forEach(file -> {
-                        result.getAndIncrement();
+                        result.incrementAndGet();
                         file.delete();
                     });
         }
-        catch (IOException | IllegalStateException ex){
+        catch (IOException ex){
             ex.printStackTrace();
         }
         return result.get();
