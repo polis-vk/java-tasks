@@ -22,7 +22,7 @@ public class Directories {
 
         if (dir.exists()) {
             if (dir.isDirectory())
-                for (File subFile : dir.listFiles())
+                for (final File subFile : dir.listFiles())
                     count += removeWithFile(subFile.getAbsolutePath());
 
             dir.delete();
