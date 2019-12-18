@@ -4,30 +4,15 @@ import java.io.*;
 
 public class CopyFile {
 
-    /**
-     * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
-     * Файлы копировать ручками через стримы.
-     */
     public static String copySmallFiles(String pathFrom, String pathTo) {
         File copyFrom = new File(pathFrom);
         File copyTo = new File(pathTo);
-
-//        if (copyFrom.isFile()) {
-//            if (!copyTo.exists()) {
-//                new File(copyTo.getParent()).mkdirs();
-//                try {
-//                    copyTo.createNewFile();
-//                    copy(copyFrom, copyTo);
-//                } catch (IOException e) {}
-//
-//            }
-//        }
 
         if (copyFrom.isFile()) {
             if (!copyTo.exists()) {
                 String cpt = copyTo.getParent();
                 File f = new File(cpt);
-                        f.mkdirs();
+                f.mkdirs();
                 try {
                     copyTo.createNewFile();
                 } catch (IOException e) {
@@ -48,13 +33,13 @@ public class CopyFile {
                 File cpTo = new File(copyTo.getAbsolutePath() + File.separator + f.getName());
                 if (f.isFile()) {
                     try {
-                        copy(copyFrom, copyTo);
+                        copy(f, cpTo);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 } else if (f.isDirectory()) {
-                    copySmallFiles(f.getAbsolutePath() + File.separator + f.getName(),
-                            cpTo.getAbsolutePath() + File.separator + cpTo.getName());
+                    copySmallFiles(f.getAbsolutePath(),
+                            cpTo.getAbsolutePath());
                 }
             }
         }
