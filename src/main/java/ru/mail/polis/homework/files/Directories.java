@@ -45,14 +45,16 @@ public class Directories {
         if (!Files.exists(p)) {
             return 0;
         }
-        if (Files.isRegularFile(p)) Files.delete(p);
+        if (Files.isRegularFile(p)) {
+            Files.delete(p);
+            return 1;
+        }
 
         AtomicInteger result = new AtomicInteger();
         try (Stream<Path> stream = Files.list(p)) {
             stream.forEach(file -> {
                 try {
-                    removeWithPath(file.toUri().toString());
-                    System.out.println(file.toUri().toString());
+                    removeWithPath(file.toString());
                     result.getAndIncrement();
                 } catch (IOException e) {
                     e.printStackTrace();

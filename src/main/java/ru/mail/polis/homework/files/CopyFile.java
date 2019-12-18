@@ -12,16 +12,33 @@ public class CopyFile {
         File copyFrom = new File(pathFrom);
         File copyTo = new File(pathTo);
 
+//        if (copyFrom.isFile()) {
+//            if (!copyTo.exists()) {
+//                new File(copyTo.getParent()).mkdirs();
+//                try {
+//                    copyTo.createNewFile();
+//                    copy(copyFrom, copyTo);
+//                } catch (IOException e) {}
+//
+//            }
+//        }
+
         if (copyFrom.isFile()) {
             if (!copyTo.exists()) {
-                new File(copyTo.getParent()).mkdirs();
+                String cpt = copyTo.getParent();
+                File f = new File(cpt);
+                        f.mkdirs();
                 try {
                     copyTo.createNewFile();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            cp(copyFrom, copyTo);
+            try {
+                copy(copyFrom, copyTo);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else if (copyFrom.isDirectory()) {
             if (!copyTo.exists()) {
                 copyTo.mkdirs();
@@ -30,7 +47,11 @@ public class CopyFile {
             for (File f : files) {
                 File cpTo = new File(copyTo.getAbsolutePath() + File.separator + f.getName());
                 if (f.isFile()) {
-                    cp(f, copyTo);
+                    try {
+                        copy(copyFrom, copyTo);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } else if (f.isDirectory()) {
                     copySmallFiles(f.getAbsolutePath() + File.separator + f.getName(),
                             cpTo.getAbsolutePath() + File.separator + cpTo.getName());
@@ -41,26 +62,16 @@ public class CopyFile {
         return pathTo;
     }
 
-    private static void cp(File from, File to) {
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            is = new FileInputStream(from);
-            os = new FileOutputStream(to);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = is.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                is.close();
-                os.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+    private static void copy(File from, File to) throws IOException {
+        try (InputStream is = new BufferedInputStream(new FileInputStream(from))) {
+            try (OutputStream os = new BufferedOutputStream(new FileOutputStream(to))) {
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = is.read(buffer)) > 0) {
+                    os.write(buffer, 0, length);
+                }
             }
         }
     }
+
 }
