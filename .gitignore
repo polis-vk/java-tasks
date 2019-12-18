@@ -5,3 +5,6 @@
 .gradle/
 out/
 homework2.iml
+build
+gradle
+src/test/resources
