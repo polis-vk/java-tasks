@@ -22,32 +22,50 @@ public class CopyFile {
         return null;
     }
 
-    private static void copy(File src, File dst) throws IOException{
-        if (src.isDirectory()){
-            if (!dst.exists()){
+    private static void copy(File src, File dst) throws IOException {
+        if (src.isDirectory()) {
+            if (!dst.exists()) {
                 dst.mkdirs();
             }
             String[] files = src.list();
-            for (String file : files){
+            for (String file : files) {
                 File srcFile = new File(src, file);
                 File dstFile = new File(dst, file);
                 copy(srcFile, dstFile);
             }
-        } else{
+        } else {
             File parent = dst.getParentFile();
-            if (!parent.exists()){
+            if (!parent.exists()) {
                 parent.mkdirs();
                 dst.createNewFile();
             }
-            BufferedInputStream in = new BufferedInputStream(new FileInputStream(src));
-            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(dst));
-            while (in.available() > 0){
-                int length = in.read();
-                out.write(length);
-                out.flush();
+            BufferedInputStream in = null;
+            BufferedOutputStream out = null;
+            try {
+                in = new BufferedInputStream(new FileInputStream(src));
+                out = new BufferedOutputStream(new FileOutputStream(dst));
+                while (in.available() > 0) {
+                    int length = in.read();
+                    out.write(length);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                if (out != null) {
+                    try {
+                        out.close();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
             }
-            in.close();
-            out.close();
         }
     }
 }

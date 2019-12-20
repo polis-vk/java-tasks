@@ -12,8 +12,6 @@ import java.util.stream.Stream;
 
 public class Directories {
 
-    private static int result;
-
     /**
      * Реализовать рекурсивное удаление всех файлов и директорий из директории по заданному пути.
      * Метод должен возвращать количество удаленных файла и директорий.
@@ -25,20 +23,18 @@ public class Directories {
         if (!dirFile.exists()) {
             return 0;
         }
-        result = 1;
-        removeFile(dirFile);
-        return result;
+        return removeFile(dirFile, 1);
     }
 
-    private static boolean removeFile(File path){
-        boolean ret = true;
-        if (path.isDirectory()){
-            for (File f : Objects.requireNonNull(path.listFiles())){
-                result++;
-                ret = ret && removeFile(f);
+    private static int removeFile(File path, int result) {
+        int ret = result;
+        if (path.isDirectory()) {
+            for (File f : Objects.requireNonNull(path.listFiles())) {
+                ret = removeFile(f, ++ret);
             }
         }
-        return ret && path.delete();
+        path.delete();
+        return ret;
     }
 
     /**
@@ -47,15 +43,14 @@ public class Directories {
     public static int removeWithPath(String path) {
         Path dirPath = Paths.get(path);
         AtomicInteger result = new AtomicInteger(0);
-        try (Stream<Path> paths = Files.walk(dirPath)){
+        try (Stream<Path> paths = Files.walk(dirPath)) {
             paths.sorted(Comparator.reverseOrder())
                     .map(Path::toFile)
                     .forEach(file -> {
-                        result.incrementAndGet();
                         file.delete();
+                        result.getAndIncrement();
                     });
-        }
-        catch (IOException ex){
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
         return result.get();
