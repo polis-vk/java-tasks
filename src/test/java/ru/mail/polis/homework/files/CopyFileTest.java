@@ -23,21 +23,13 @@ public class CopyFileTest {
 
     @Before
     public void setUp() throws Exception {
-        // --------------------------------------- create source for copyOnlyFile --------------------------------------
+
 //        Path dir = Paths.get("src", "test", "resources", "directories", "copy", "first");
 //        Path file = Paths.get("src", "test", "resources", "directories", "copy", "first", "file.txt");
 //        Files.createDirectories(dir);
 //        createFile(file);
-        // --------------------------------------- create source for copyOnlyFile --------------------------------------
-
-
-        // --------------------------------------- create source for copyOnlyDir ---------------------------------------
 //        Path dir2 = Paths.get("src", "test", "resources", "directories", "copy", "second");
 //        Files.createDirectories(dir2);
-        // --------------------------------------- create source for copyOnlyDir ---------------------------------------
-
-
-        // ------------------------------------- create source for copyDirWithFiles ------------------------------------
 //        Path dir3 = Paths.get("src", "test", "resources", "directories", "copy", "third");
 //        Path file1 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file1.txt");
 //        Path file2 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file2.txt");
@@ -48,10 +40,6 @@ public class CopyFileTest {
 //        createFile(file2);
 //        createFile(file3);
 //        createFile(file4);
-        // ------------------------------------- create source for copyDirWithFiles ------------------------------------
-
-
-        // --------------------------------------- create source for copyDirHard ---------------------------------------
 //        Path dir5 = Paths.get("src", "test", "resources", "directories", "copy", "fifth");
 //        Files.createDirectories(dir5);
 //        for (int i = 0; i < 10; i++) {
@@ -86,7 +74,6 @@ public class CopyFileTest {
 //            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1", "dirdir",
 //                    "file" + i + ".txt"));
 //        }
-        // --------------------------------------- create source for copyDirHard ---------------------------------------
 
     }
 
