@@ -1,8 +1,7 @@
 package ru.mail.polis.homework.collections.mail;
 
 
-import ru.mail.polis.homework.collections.mail.transmissions.TrasmissionObject;
-import ru.mail.polis.homework.collections.mail.users.User;
+import ru.mail.polis.homework.collections.PopularMap;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -14,14 +13,14 @@ import java.util.function.Consumer;
  *
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  */
-public class MailService<T extends TrasmissionObject> implements Consumer<List<T>> {
+class MailService<T extends Mail<?>> implements Consumer<T> {
 
-    private Map<User, List<TrasmissionObject<?>>> receivers;
-    private Map<User, List<TrasmissionObject<?>>> senders;
+    private PopularMap<String, List<T>> recipients;
+    private PopularMap<String, List<T>> senders;
 
-    public MailService() {
-        receivers = new HashMap<>();
-        senders = new HashMap<>();
+    MailService() {
+        recipients = new PopularMap<>();
+        senders = new PopularMap<>();
     }
 
     /**
@@ -29,53 +28,36 @@ public class MailService<T extends TrasmissionObject> implements Consumer<List<T
      * 1 балл
      */
     @Override
-    public void accept(List<T> o) {
-        for (TrasmissionObject<?> object : o) {
-            User receiver = object.getReceiver();
-            senders.computeIfAbsent(object.getSender(), key -> new ArrayList<>()).add(object);
-            receivers.computeIfAbsent(receiver, key -> new ArrayList<>()).add(object);
-            receiver.receive(object.getSender().send(object));
-        }
+    public void accept(T mail) {
+        senders.computeIfAbsent(mail.getSender(), key -> new ArrayList<>()).add(mail);
+        recipients.computeIfAbsent(mail.getRecipient(), key -> new ArrayList<>()).add(mail);
     }
 
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      */
-    public Map<User, List<TrasmissionObject<?>>> getMailBox() {
-        return receivers;
+    Map<String, List<T>> getMailBox() {
+        return recipients;
     }
 
     /**
      * Возвращает самого популярного отправителя
      */
-    public User getPopularSender() {
-        return senders
-                .entrySet()
-                .stream()
-                .max(Comparator.comparingInt(entry -> entry.getValue().size()))
-                .get()
-                .getKey();
+    String getPopularSender() {
+        return senders.getPopularKey();
     }
 
     /**
      * Возвращает самого популярного получателя
      */
-    public User getPopularRecipient() {
-        return receivers
-                .entrySet()
-                .stream()
-                .max(Comparator.comparingInt(entry -> entry.getValue().size()))
-                .get()
-                .getKey();
+    String getPopularRecipient() {
+        return recipients.getPopularKey();
     }
 
     /**
      * Метод должен заставить обработать service все mails.
      */
-    public static void process(
-            MailService<TrasmissionObject<?>> service,
-            List<TrasmissionObject<?>> mails) {
-
-        service.accept(mails);
+    void process(MailService<T> mailService, List<T> mail) {
+        mail.forEach(mailService);
     }
 }
