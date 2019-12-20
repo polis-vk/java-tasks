@@ -30,11 +30,12 @@ public class CopyFile {
                 for (final File fileName : fileFrom.listFiles()) {
                     String subFileTo = fileTo.getAbsolutePath() + File.separator + fileName.getName();
                     File subFile = new File(subFileTo);
-                    if (subFile.isDirectory()) {
+                    if (subFile.isDirectory() || !subFile.getName().contains(".")) {
                         copySmallFiles(fileName.getAbsolutePath(), subFileTo);
                     } else {
                         copyFile(fileName, subFile);
                     }
+
                 }
                 return pathTo;
             }
