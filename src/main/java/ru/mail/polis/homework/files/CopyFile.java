@@ -25,7 +25,6 @@ public class CopyFile {
             }
 
             for (File subFile: sourcePath.listFiles()) {
-//                copySmallFiles(subFile, destinationPath);
                 String childPath = destinationPath.getAbsolutePath() + File.separator + subFile.getName();
                 File childTo = new File(childPath);
 
