@@ -2,7 +2,6 @@ package ru.mail.polis.homework.files;
 
 import java.io.*;
 import java.util.Arrays;
-import java.util.stream.Stream;
 
 public class CopyFile {
 
@@ -22,8 +21,7 @@ public class CopyFile {
             if (!fileTo.exists()) {
                 fileTo.mkdirs();
             }
-            Stream<File> files = Arrays.stream(fileFrom.listFiles());
-            files.forEach(file -> {
+            Arrays.stream(fileFrom.listFiles()).forEach(file -> {
                 if (file.isDirectory()) {
                     copy(file, new File(fileTo.getAbsolutePath() + File.separator + file.getName()));
                 } else {
@@ -46,25 +44,18 @@ public class CopyFile {
         File parentFile = to.getParentFile();
         if (!parentFile.exists()){
             parentFile.mkdirs();
-            try {
-                to.createNewFile();
-            } catch (IOException e){
-                e.printStackTrace();
-            }
-        } else {
-            try {
+            to.createNewFile();
+        } else
                 parentFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         try (
-                InputStream in = new BufferedInputStream(new FileInputStream(from));
+            InputStream in = new BufferedInputStream(new FileInputStream(from))) {
+            try (
                 OutputStream out = new BufferedOutputStream(new FileOutputStream(to))) {
-            byte[] buffer = new byte[1024];
-            int lengthRead;
-            while ((lengthRead = in.read(buffer)) > 0) {
-                out.write(buffer, 0, lengthRead);
+                byte[] buffer = new byte[1024];
+                int lengthRead;
+                while ((lengthRead = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, lengthRead);
+                }
             }
         }
     }
