@@ -53,6 +53,7 @@ public class CopyFile {
 
                 while ((next = in.readLine()) != null) {
                     out.write(next);
+                    out.write("\n");
                 }
             }
 
