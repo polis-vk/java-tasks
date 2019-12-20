@@ -1,6 +1,11 @@
+package ru.mail.polis.homework.collections;
 
-import java.util.*;
-import java.util.stream.Collectors;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -28,162 +33,109 @@ import java.util.stream.Collectors;
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
-    private final Map<K, Integer> keyMapPopularity;
-    private final Map<V, Integer> valueMapPopularity;
 
-    public PopularMap(){
+    public PopularMap() {
         this.map = new HashMap<>();
-        keyMapPopularity = new HashMap<>();
-        valueMapPopularity = new HashMap<>();
     }
 
-    public PopularMap(Map<K, V> map){
+    public PopularMap(Map<K, V> map) {
         this.map = map;
-        keyMapPopularity = new HashMap<>();
-        valueMapPopularity = new HashMap<>();
-    }
-
-    private void updateKey(K key){
-        if (keyMapPopularity.containsKey(key)) {
-            keyMapPopularity.put(key, keyMapPopularity.get(key) + 1);
-        } else {
-            keyMapPopularity.put(key, 1);
-        }
-    }
-
-    private void updateValue(V value){
-        if (valueMapPopularity.containsKey(value)) {
-            valueMapPopularity.put(value, valueMapPopularity.get(value) + 1);
-        } else {
-            valueMapPopularity.put(value, 1);
-        }
     }
 
     @Override
-    public int size(){
-        return map.size();
+    public int size() {
+        return 0;
     }
 
     @Override
-    public boolean isEmpty(){
-        return map.isEmpty();
+    public boolean isEmpty() {
+        return false;
     }
 
     @Override
-    public boolean containsKey(Object key){
-        updateKey((K) key);
-        return map.containsKey(key);
+    public boolean containsKey(Object key) {
+        return false;
     }
 
     @Override
-    public boolean containsValue(Object value){
-        updateValue((V) value);
-        return map.containsValue(value);
+    public boolean containsValue(Object value) {
+        return false;
     }
 
     @Override
-    public V get(Object key){
-        updateKey((K) key);
-        V tmpV = map.get(key);
-        updateValue(tmpV);
-        return tmpV;
+    public V get(Object key) {
+        return null;
     }
 
     @Override
-    public V put(K key, V value){
-        updateKey(key);
-        V tmpV = map.put(key, value);
-        if (tmpV != null) {
-            updateValue(tmpV);
-        }
-        updateValue(value);
-        return tmpV;
+    public V put(K key, V value) {
+        return null;
     }
 
     @Override
-    public V remove(Object key){
-        updateKey((K) key);
-        V removed = map.remove(key);
-        if (removed != null) {
-            updateValue(removed);
-        }
-        return removed;
+    public V remove(Object key) {
+        return null;
     }
 
     @Override
-    public void putAll(Map<? extends K, ? extends V> m){
-        map.putAll(m);
+    public void putAll(Map<? extends K, ? extends V> m) {
+        throw new UnsupportedOperationException("putAll");
     }
 
     @Override
-    public void clear(){
-        map.clear();
+    public void clear() {
+
     }
 
     @Override
-    public Set<K> keySet(){
-        return map.keySet();
+    public Set<K> keySet() {
+        return null;
     }
 
     @Override
-    public Collection<V> values(){
-        return map.values();
+    public Collection<V> values() {
+        return null;
     }
 
     @Override
-    public Set<Entry<K, V>> entrySet(){
-        return map.entrySet();
+    public Set<Entry<K, V>> entrySet() {
+        return null;
     }
 
     /**
      * Возвращает самый популярный, на данный момент, ключ
      */
-    public K getPopularKey(){
-        return keyMapPopularity.entrySet()
-                .stream()
-                .max(Comparator.comparing(Entry::getValue))
-                .get()
-                .getKey();
+    public K getPopularKey() {
+        return null;
     }
 
 
     /**
      * Возвращает количество использование ключа
      */
-    public int getKeyPopularity(K key){
-        return keyMapPopularity.getOrDefault(key, 0);
+    public int getKeyPopularity(K key) {
+        return 0;
     }
 
     /**
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
-    public V getPopularValue(){
-        return valueMapPopularity
-                .entrySet()
-                .stream()
-                .max(Entry.comparingByValue())
-                .get()
-                .getKey();
+    public V getPopularValue() {
+        return null;
     }
 
     /**
      * Возвращает количество использований значений в методах: containsValue, get, put (учитывается 2 раза, если
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
-    public int getValuePopularity(V value){
-        return valueMapPopularity.getOrDefault(value, 0);
+    public int getValuePopularity(V value) {
+        return 0;
     }
 
     /**
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
-    public Iterator<V> popularIterator(){
-        return valueMapPopularity
-                .entrySet()
-                .stream()
-                .sorted(Entry.comparingByValue())
-                .map(Entry::getKey)
-                .collect(Collectors.toList())
-                .iterator();
+    public Iterator<V> popularIterator() {
+        return null;
     }
 }
