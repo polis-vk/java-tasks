@@ -9,7 +9,11 @@ import java.nio.file.Paths;
 
 public class Directories {
 
-    private static int deleted = 0;
+    private int deleted;
+
+    private Directories() {
+        deleted = 0;
+    }
     /**
      * Реализовать рекурсивное удаление всех файлов и директорий из директороии по заданному пути.
      * Метод должен возвращать количество удаленных файлов и директорий.
@@ -17,7 +21,7 @@ public class Directories {
      * Написать двумя способами. С использованием File
      */
     public static int removeWithFile(String path) {
-        deleted = 0;
+        Directories instance = new Directories();
         File file = new File(path);
         if (!file.exists()) {
             return 0;
@@ -25,32 +29,32 @@ public class Directories {
 
         if (file.isFile()) {
             if (file.delete()) {
-                deleted++;
+                instance.deleted++;
             }
         } else if (file.isDirectory()) {
-            removeWithFile(file);
+            removeWithFile(file, instance);
         }
 
-        return deleted;
+        return instance.deleted;
     }
 
-    private static void removeWithFile(File file) {
+    private static void removeWithFile(File file, Directories instance) {
 
         File[] children = file.listFiles();
         if (children != null) {
             for (File child : children) {
                 if (child.isFile()) {
                     if (child.delete()) {
-                        deleted++;
+                        instance.deleted++;
                     }
                 } else if (child.isDirectory()) {
-                    removeWithFile(child);
+                    removeWithFile(child, instance);
                 }
             }
         }
 
         if (file.delete()) {
-            deleted++;
+            instance.deleted++;
         }
     }
 
@@ -58,7 +62,7 @@ public class Directories {
      * С использованием Path
      */
     public static int removeWithPath(String path) {
-        deleted = 0;
+        Directories instance = new Directories();
         Path p = Paths.get(path);
         if (Files.notExists(p)) {
             return 0;
@@ -66,26 +70,26 @@ public class Directories {
 
         if (Files.isRegularFile(p)) {
             deleteFile(p);
-            deleted++;
+            instance.deleted++;
         } else if (Files.isDirectory(p)) {
-            removeWithPath(p);
+            removeWithPath(p, instance);
         }
 
-        return deleted;
+        return instance.deleted;
     }
 
-    private static void removeWithPath(Path p) {
+    private static void removeWithPath(Path p, Directories instance) {
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(p)) {
             for (Path child : ds) {
                 if (Files.isRegularFile(child)) {
                     Files.delete(child);
-                    deleted++;
+                    instance.deleted++;
                 } else if (Files.isDirectory(child)) {
-                    removeWithPath(child);
+                    removeWithPath(child, instance);
                 }
             }
             deleteFile(p);
-            deleted++;
+            instance.deleted++;
         } catch (IOException e) {
             e.printStackTrace();
         }
