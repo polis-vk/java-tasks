@@ -5,3 +5,7 @@
 .gradle/
 out/
 homework2.iml
+gradle
+*.bat
+src/test/
+build/
