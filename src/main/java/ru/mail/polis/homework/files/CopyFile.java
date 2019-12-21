@@ -24,13 +24,7 @@ public class CopyFile {
                 if (child.isDirectory()) {
                     copySmallFiles(child.getAbsolutePath(), newFile.getAbsolutePath());
                 } else {
-                    try {
-                        InputStream is = new FileInputStream(child);
-                        OutputStream os = new FileOutputStream(newFile);
-                        writeToFile(is, os);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    writeToFile(child, newFile);
                 }
             }
         } else {
@@ -40,21 +34,22 @@ public class CopyFile {
             if (!to.getParentFile().exists()) {
                 to.getParentFile().mkdirs();
             }
-            InputStream is = null;
-            try {
-                is = new FileInputStream(from);
-                OutputStream os = new FileOutputStream(to);
-                writeToFile(is, os);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            writeToFile(from, to);
         }
     }
 
-    private static void writeToFile(InputStream is, OutputStream os) throws IOException {
-        int a;
-        while ((a = is.read()) != -1) {
-            os.write(a);
+    private static void writeToFile(File one, File two) {
+
+        InputStream is;
+        try {
+            is = new FileInputStream(one);
+            OutputStream os = new FileOutputStream(two);
+            int a;
+            while ((a = is.read()) != -1) {
+                os.write(a);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
