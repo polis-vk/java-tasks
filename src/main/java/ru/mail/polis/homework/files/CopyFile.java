@@ -8,42 +8,30 @@ public class CopyFile {
         File copyFrom = new File(pathFrom);
         File copyTo = new File(pathTo);
 
-        if (copyFrom.isFile()) {
-            if (!copyTo.exists()) {
-                String cpt = copyTo.getParent();
-                File f = new File(cpt);
-                f.mkdirs();
-                try {
+        try {
+            if (copyFrom.isFile()) {
+                if (!copyTo.exists()) {
+                    new File(copyTo.getParent()).mkdirs();
                     copyTo.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
-            }
-            try {
                 copy(copyFrom, copyTo);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else if (copyFrom.isDirectory()) {
-            if (!copyTo.exists()) {
-                copyTo.mkdirs();
-            }
-            File[] files = copyFrom.listFiles();
-            for (File f : files) {
-                File cpTo = new File(copyTo.getAbsolutePath() + File.separator + f.getName());
-                if (f.isFile()) {
-                    try {
+            } else if (copyFrom.isDirectory()) {
+                if (!copyTo.exists()) {
+                    copyTo.mkdirs();
+                }
+                File[] files = copyFrom.listFiles();
+                for (File f : files) {
+                    File cpTo = new File(copyTo.getAbsolutePath() + File.separator + f.getName());
+                    if (f.isFile()) {
                         copy(f, cpTo);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    } else if (f.isDirectory()) {
+                        copySmallFiles(f.getAbsolutePath(), cpTo.getAbsolutePath());
                     }
-                } else if (f.isDirectory()) {
-                    copySmallFiles(f.getAbsolutePath(),
-                            cpTo.getAbsolutePath());
                 }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
         return pathTo;
     }
 
