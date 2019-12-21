@@ -40,10 +40,9 @@ public class CopyFile {
 
     private static void writeToFile(File one, File two) {
 
-        InputStream is;
-        try {
-            is = new FileInputStream(one);
-            OutputStream os = new FileOutputStream(two);
+
+        try (InputStream is = new FileInputStream(one);
+             OutputStream os = new FileOutputStream(two)) {
             int a;
             while ((a = is.read()) != -1) {
                 os.write(a);
