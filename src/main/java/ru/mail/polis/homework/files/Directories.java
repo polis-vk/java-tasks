@@ -23,7 +23,7 @@ public class Directories {
     private static int remove(File file){
         int result = 0;
         if(file == null || !file.exists()){
-            return -1;
+            return 0;
         }
 
         if (file.isFile()){
