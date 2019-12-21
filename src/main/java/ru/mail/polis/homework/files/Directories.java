@@ -21,9 +21,10 @@ public class Directories {
         int count = 0;
 
         if (dir.exists()) {
-            if (dir.isDirectory())
+            if (dir.isDirectory()) {
                 for (final File subFile : dir.listFiles())
                     count += removeWithFile(subFile.getAbsolutePath());
+            }
 
             dir.delete();
             count++;
@@ -37,13 +38,18 @@ public class Directories {
 
         try (Stream<Path> paths = Files.walk(Paths.get(path))) {
             paths.sorted(Comparator.reverseOrder())
-                    .forEach(_path -> {
-                        _path.toFile().delete();
-                        count.getAndIncrement();
+                    .forEach(currPath -> {
+                        try {
+                            Files.delete(currPath);
+                            count.incrementAndGet();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     });
         } catch (IOException e) {
-            if (count.get() != 0)
+            if (count.get() != 0) {
                 e.printStackTrace();
+            }
         }
 
         return count.get();

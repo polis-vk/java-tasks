@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.files;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 @SuppressWarnings({"ConstantConditions", "UnusedReturnValue", "ResultOfMethodCallIgnored"})
 public class CopyFile {
@@ -18,22 +15,24 @@ public class CopyFile {
     }
 
     private static void copySmallFiles(File fileFrom, File fileTo) {
-        if (fileFrom.exists())
+        if (fileFrom.exists()) {
             if (fileFrom.isDirectory()) {
-                if (!fileTo.exists())
+                if (!fileTo.exists()) {
                     fileTo.mkdirs();
-                else if (fileTo.isFile())
+                } else if (fileTo.isFile()) {
                     return;
+                }
 
                 for (final File subFileFrom : fileFrom.listFiles()) {
                     final String subFileToPath = fileTo.getAbsolutePath() + File.separator + subFileFrom.getName();
 
                     final File subFileTo = new File(subFileToPath);
 
-                    if (subFileFrom.isDirectory())
+                    if (subFileFrom.isDirectory()) {
                         copySmallFiles(subFileFrom, subFileTo);
-                    else
+                    } else {
                         copyFile(subFileFrom, subFileTo);
+                    }
                 }
 
             } else if (fileFrom.isFile()) {
@@ -48,16 +47,18 @@ public class CopyFile {
 
                 copyFile(fileFrom, fileTo);
             }
+        }
     }
 
     private static void copyFile(File fileFrom, File fileTo) {
-        try (FileInputStream in = new FileInputStream(fileFrom)) {
-            try (FileOutputStream out = new FileOutputStream(fileTo)) {
+        try (InputStream in = new BufferedInputStream(new FileInputStream(fileFrom))) {
+            try (OutputStream out = new BufferedOutputStream(new FileOutputStream(fileTo))) {
                 final byte[] buffer = new byte[4096];
                 int length;
 
-                while ((length = in.read(buffer)) > 0)
+                while ((length = in.read(buffer)) > 0) {
                     out.write(buffer, 0, length);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
