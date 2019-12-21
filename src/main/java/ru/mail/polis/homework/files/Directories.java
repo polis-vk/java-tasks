@@ -64,22 +64,18 @@ public class Directories {
             return 0;
         }
 
-        try {
-            if (Files.isRegularFile(p)) {
-                Files.delete(p);
-                deleted++;
-            } else if (Files.isDirectory(p)) {
-                removeWithPath(p);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (Files.isRegularFile(p)) {
+            deleteFile(p);
+            deleted++;
+        } else if (Files.isDirectory(p)) {
+            removeWithPath(p);
         }
 
         return deleted;
     }
 
-    private static void removeWithPath(Path p) throws IOException {
-            DirectoryStream<Path> ds = Files.newDirectoryStream(p);
+    private static void removeWithPath(Path p) {
+        try (DirectoryStream<Path> ds = Files.newDirectoryStream(p)) {
             for (Path child : ds) {
                 if (Files.isRegularFile(child)) {
                     Files.delete(child);
@@ -88,10 +84,19 @@ public class Directories {
                     removeWithPath(child);
                 }
             }
-            ds.close();
-
-            Files.delete(p);
+            deleteFile(p);
             deleted++;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void deleteFile(Path path) {
+        try {
+            Files.delete(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
