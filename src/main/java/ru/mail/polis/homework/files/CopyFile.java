@@ -18,6 +18,10 @@ public class CopyFile {
     }
 
     private static void copySmallFiles(File sourcePath, File destinationPath) {
+        if (!sourcePath.exists()) {
+            return;
+        }
+
         if (sourcePath.isDirectory()) {
 
             if (!destinationPath.exists()) {
@@ -30,43 +34,30 @@ public class CopyFile {
 
                 if (subFile.isDirectory()) {
                     copySmallFiles(subFile, childTo);
+                } else {
+                    copyFile(subFile, childTo);
                 }
-                else {
+            }
+
+        } else {
+                if (!destinationPath.exists()) {
+                    File parent = new File(destinationPath.getParent());
+                    parent.mkdirs();
                     try {
-                        copyFile(subFile, childTo);
+                        destinationPath.createNewFile();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-            }
-
-        }
-        else {
-            if (sourcePath.isFile()) {
-                    if (!destinationPath.exists()) {
-                        File parent = new File(destinationPath.getParent());
-                        parent.mkdirs();
-                        try {
-                            destinationPath.createNewFile();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                try {
-                    copyFile(sourcePath, destinationPath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            copyFile(sourcePath, destinationPath);
         }
     }
 
-    private static void copyFile(File sourcePath, File destinationPath) throws IOException {
+    private static void copyFile(File sourcePath, File destinationPath) {
         try (InputStream in = new BufferedInputStream(new FileInputStream(sourcePath))) {
             try (OutputStream out = new BufferedOutputStream(new FileOutputStream(destinationPath))) {
                 byte[] buffer = new byte[1024];
-                int readLength;
-                readLength = in.read(buffer);
+                int readLength = in.read(buffer);
 
                 while (readLength > 0) {
                     out.write(buffer, 0, readLength);
@@ -74,6 +65,10 @@ public class CopyFile {
                 }
 
             }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
