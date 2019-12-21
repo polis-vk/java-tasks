@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Stack;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Directories {
 
@@ -48,34 +48,30 @@ public class Directories {
             return 0;
         }
 
-        Stack<Path> stack = new Stack<>();
-        int count = 0;
+        AtomicInteger counter = new AtomicInteger();
 
         SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
             @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                stack.push(dir);
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                counter.incrementAndGet();
                 return FileVisitResult.CONTINUE;
             }
 
             @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                stack.push(file);
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.delete(dir);
+                counter.incrementAndGet();
                 return FileVisitResult.CONTINUE;
             }
         };
 
         try {
             Files.walkFileTree(filePath, visitor);
-
-            while (!stack.empty()) {
-                Files.delete(stack.pop());
-                count++;
-            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
 
-        return count;
+        return counter.get();
     }
 }
