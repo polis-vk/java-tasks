@@ -17,26 +17,28 @@ public class CopyFile {
     }
 
     private static void copy(File fileFrom, File fileTo) {
-        if (fileFrom.exists() && fileFrom.isDirectory()){
-            if (!fileTo.exists()) {
-                fileTo.mkdirs();
-            }
-            Arrays.stream(fileFrom.listFiles()).forEach(file -> {
-                if (file.isDirectory()) {
-                    copy(file, new File(fileTo.getAbsolutePath() + File.separator + file.getName()));
-                } else {
-                    try {
-                        copyFile(file, new File(fileTo.getAbsolutePath() + File.separator + file.getName()));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+        if (fileFrom.exists()) {
+             if (fileFrom.isDirectory()){
+                if (!fileTo.exists()) {
+                    fileTo.mkdirs();
                 }
-            });
-        } else {
-            try {
-                copyFile(fileFrom, fileTo);
-            } catch (IOException e){
-                e.printStackTrace();
+                Arrays.stream(fileFrom.listFiles()).forEach(file -> {
+                    if (file.isDirectory()) {
+                        copy(file, new File(fileTo.getAbsolutePath() + File.separator + file.getName()));
+                    } else {
+                        try {
+                            copyFile(file, new File(fileTo.getAbsolutePath() + File.separator + file.getName()));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            } else {
+                try {
+                    copyFile(fileFrom, fileTo);
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
             }
         }
     }
