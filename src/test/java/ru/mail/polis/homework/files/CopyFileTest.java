@@ -1,23 +1,15 @@
 package ru.mail.polis.homework.files;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class CopyFileTest {
 
@@ -145,12 +137,12 @@ public class CopyFileTest {
     }
 
     private void createFile(Path path) throws IOException {
-        List<String> strings = Arrays.asList("Жили-были три китайца: Як, Як-цедрак, Як-цедрак-цедрак-цедрони.",
-                "Жили-были три китайки: Цыпа, Цыпа-дрыпа, Цыпа-дрыпа-дрымпампони.",
-                "Все они переженились: Як на Цыпе, Як-цедрак на Цыпе-дрыпе,",
-                "Як-цедрак-цедрак-цедрони на Цыпе-дрыпе-дрымпампони.",
-                ": у них родились дети. У Яка с Цыпой — Шах, у Яка-цедрака с Цыпой-дрыпой — Шах-",
-                "шарах, у Яка-цедрака-цедрака-цедрони с Цыпой-дрыпой-дрымпампони — Шах-шарах-шарах-широни.");
+        List<String> strings = Arrays.asList("Java (Indonesian: Jawa) is an island of Indonesia, bordered by the Indian Ocean on the south and the Java Sea on the north.",
+                "With a population of over 141 million (Java only) or 145 million (including the inhabitants of its surrounding islands),",
+                "Java has 56.7 percent of the Indonesian population and is the world's most populous island.[1] The Indonesian capital city,",
+                "Jakarta, is located on its northwestern coast. Much of Indonesian history took place on Java.",
+                "It was the centre of powerful Hindu-Buddhist empires, the Islamic sultanates, and the core of the colonial Dutch East Indies.",
+                "Java was also the center of the Indonesian struggle for independence during the 1930s and 1940s.");
         Files.write(path, strings, StandardOpenOption.CREATE_NEW);
     }
 

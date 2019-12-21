@@ -12,9 +12,13 @@ public class CopyFile {
         File to = new File(pathTo);
 
         if (from.isDirectory() && from.exists()) {
-            if (!to.exists()) to.mkdirs();
+            if (!to.exists()) {
+                to.mkdirs();
+            }
             File[] children = from.listFiles();
-            if (children == null) return;
+            if (children == null) {
+                return;
+            }
             for(File child: children) {
                 File newFile = new File(to, child.getName());
                 if (child.isDirectory()) {
@@ -30,8 +34,12 @@ public class CopyFile {
                 }
             }
         } else {
-            if (!from.exists()) return;
-            if (!to.getParentFile().exists()) to.getParentFile().mkdirs();
+            if (!from.exists()) {
+                return;
+            }
+            if (!to.getParentFile().exists()) {
+                to.getParentFile().mkdirs();
+            }
             InputStream is = null;
             try {
                 is = new FileInputStream(from);

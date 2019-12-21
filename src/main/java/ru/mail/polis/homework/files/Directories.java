@@ -19,12 +19,17 @@ public class Directories {
     public static int removeWithFile(String path) {
         deleted = 0;
         File file = new File(path);
-        if (!file.exists()) return 0;
+        if (!file.exists()) {
+            return 0;
+        }
 
         if (file.isFile()) {
-            if (file.delete()) deleted++;
-        } else if (file.isDirectory())
+            if (file.delete()) {
+                deleted++;
+            }
+        } else if (file.isDirectory()) {
             removeWithFile(file);
+        }
 
         return deleted;
     }
@@ -35,14 +40,18 @@ public class Directories {
         if (children != null) {
             for (File child : children) {
                 if (child.isFile()) {
-                    if (child.delete()) deleted++;
+                    if (child.delete()) {
+                        deleted++;
+                    }
                 } else if (child.isDirectory()) {
                     removeWithFile(child);
                 }
             }
         }
 
-        if (file.delete()) deleted++;
+        if (file.delete()) {
+            deleted++;
+        }
     }
 
     /**
@@ -51,14 +60,17 @@ public class Directories {
     public static int removeWithPath(String path) {
         deleted = 0;
         Path p = Paths.get(path);
-        if (Files.notExists(p)) return 0;
+        if (Files.notExists(p)) {
+            return 0;
+        }
 
         try {
             if (Files.isRegularFile(p)) {
                 Files.delete(p);
                 deleted++;
-            } else if (Files.isDirectory(p))
+            } else if (Files.isDirectory(p)) {
                 removeWithPath(p);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
