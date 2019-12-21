@@ -14,8 +14,8 @@ public class CopyFile {
      * Файлы копировать ручками через стримы.
      */
     public static String copySmallFiles(final String pathFrom, final String pathTo) {
-        File from = new File(pathFrom);
-        File to = new File(pathTo);
+        final File from = new File(pathFrom);
+        final File to = new File(pathTo);
 
         if (!from.exists()) {
             return null;
@@ -34,7 +34,7 @@ public class CopyFile {
         }
 
         for (final File file : from.listFiles()) {
-            File sub = new File(to.getAbsolutePath() + File.separator + file.getName());
+            final File sub = new File(to.getAbsolutePath() + File.separator + file.getName());
 
             if (sub.isFile()) {
                 copyFile(file, sub);
@@ -52,8 +52,8 @@ public class CopyFile {
         }
 
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(from));
-            BufferedWriter writer = new BufferedWriter(new FileWriter(to));
+            final BufferedReader reader = new BufferedReader(new FileReader(from));
+            final BufferedWriter writer = new BufferedWriter(new FileWriter(to));
 
             String line;
             while ((line = reader.readLine()) != null) {
