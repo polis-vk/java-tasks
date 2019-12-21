@@ -45,12 +45,11 @@ public class CopyFile {
         if (!parentFile.exists()){
             parentFile.mkdirs();
             to.createNewFile();
-        } else
-                parentFile.createNewFile();
-        try (
-            InputStream in = new BufferedInputStream(new FileInputStream(from))) {
-            try (
-                OutputStream out = new BufferedOutputStream(new FileOutputStream(to))) {
+        } else {
+            parentFile.createNewFile();
+        }
+        try (InputStream in = new BufferedInputStream(new FileInputStream(from))) {
+            try (OutputStream out = new BufferedOutputStream(new FileOutputStream(to))) {
                 byte[] buffer = new byte[1024];
                 int lengthRead;
                 while ((lengthRead = in.read(buffer)) > 0) {
