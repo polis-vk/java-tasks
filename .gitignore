@@ -8,4 +8,4 @@ homework2.iml
 build/
 gradle/
 gradlew.bat
-src/test/
+/src/test/
