@@ -42,7 +42,7 @@ public class CopyFile {
                 copySmallFiles(file.getAbsolutePath(), sub.getAbsolutePath());
             }
         }
-        
+
         return pathTo;
     }
 
@@ -57,7 +57,7 @@ public class CopyFile {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                writer.write(line+"\n");
+                writer.write(line + "\n");
             }
 
             reader.close();
