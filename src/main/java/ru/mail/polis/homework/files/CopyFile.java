@@ -22,7 +22,7 @@ public class CopyFile {
         }
 
         if (from.isFile()) {
-            File parent = to.getParentFile();
+            final File parent = to.getParentFile();
             parent.mkdirs();
             copyFile(from, to);
 
