@@ -16,15 +16,15 @@ public class CopyFile {
     public static String copySmallFiles(String pathFrom, String pathTo) {
         File srcFile = new File(pathFrom);
         File dstFile = new File(pathTo);
-        if (!srcFile.exists() || dstFile.exists()){
+        if (!srcFile.exists() || dstFile.exists()) {
             return null;
         }
-        copyDir(srcFile,dstFile);
+        copyDir(srcFile, dstFile);
         return null;
     }
 
-    private static void copyDir(File srcFile, File dstFile){
-        if (srcFile.isDirectory()){
+    private static void copyDir(File srcFile, File dstFile) {
+        if (srcFile.isDirectory()) {
             dstFile.mkdirs();
             Arrays.stream(srcFile.listFiles())
                     .sorted(Comparator.reverseOrder())
@@ -38,32 +38,31 @@ public class CopyFile {
                     });
         } else {
             File dstParentFile = dstFile.getParentFile();
-            if(!dstParentFile.exists()){
+            if (!dstParentFile.exists()) {
                 dstParentFile.mkdirs();
             }
-            copyFile(srcFile,dstFile);
+            copyFile(srcFile, dstFile);
         }
     }
 
     private static void copyFile(File srcFile, File dstFile) {
-        if (!srcFile.exists() && !srcFile.isFile() && dstFile.exists()){
+        if (!srcFile.exists() && !srcFile.isFile() && dstFile.exists()) {
             return;
         }
-        try (BufferedReader readFile = Files.newBufferedReader(srcFile.toPath())){
-           try (BufferedWriter writeFile = Files.newBufferedWriter(dstFile.toPath())){
-            readFile
-                    .lines()
-                    .forEachOrdered(line -> {
-                        try{
-                            writeFile.write(line + "\n");
-                        } catch (IOException e){
-                            e.printStackTrace();
-                        }
-                    });
+        try (BufferedReader readFile = Files.newBufferedReader(srcFile.toPath())) {
+            try (BufferedWriter writeFile = Files.newBufferedWriter(dstFile.toPath())) {
+                readFile.lines()
+                        .forEachOrdered(line -> {
+                            try {
+                                writeFile.write(line + "\n");
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

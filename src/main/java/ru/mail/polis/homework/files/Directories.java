@@ -22,16 +22,16 @@ public class Directories {
     }
 
     private static int removeFiles(File file) {
-        if (file==null || !file.exists()){
+        if (file == null || !file.exists()) {
             return 0;
         }
-        if (file.isFile()){
+        if (file.isFile()) {
             file.delete();
             return 1;
         }
-        int result =0;
-        for (File temp : file.listFiles()){
-            result+=removeFiles(temp);
+        int result = 0;
+        for (File temp : file.listFiles()) {
+            result += removeFiles(temp);
         }
         file.delete();
         return result + 1;
@@ -42,18 +42,17 @@ public class Directories {
      */
     public static int removeWithPath(String path) {
         AtomicInteger atomicCount = new AtomicInteger();
-        try(Stream<Path> walk = Files.walk(Paths.get(path))){
-            walk
-                    .sorted(Comparator.reverseOrder())
+        try (Stream<Path> walk = Files.walk(Paths.get(path))) {
+            walk.sorted(Comparator.reverseOrder())
                     .forEachOrdered(file -> {
-                        atomicCount.incrementAndGet();
                         try {
                             Files.deleteIfExists(file);
+                            atomicCount.incrementAndGet();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     });
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return atomicCount.get();
