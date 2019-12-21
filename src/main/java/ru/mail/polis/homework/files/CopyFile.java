@@ -7,17 +7,17 @@ public class CopyFile {
      * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
      * Файлы копировать ручками через стримы.
      */
-    public static void copySmallFiles(String pathFrom, String pathTo) {
+    public static String copySmallFiles(String pathFrom, String pathTo) {
         File from = new File(pathFrom);
         File to = new File(pathTo);
 
         if (from.isDirectory() && from.exists()) {
-            if (!to.exists()) {
-                to.mkdirs();
+            if (!to.exists() && !to.mkdirs()) {
+                return null;
             }
             File[] children = from.listFiles();
             if (children == null) {
-                return;
+                return null;
             }
             for(File child: children) {
                 File newFile = new File(to, child.getName());
@@ -29,13 +29,14 @@ public class CopyFile {
             }
         } else {
             if (!from.exists()) {
-                return;
+                return null;
             }
-            if (!to.getParentFile().exists()) {
-                to.getParentFile().mkdirs();
+            if (!to.getParentFile().exists() && !to.getParentFile().mkdirs()) {
+                return null;
             }
             writeToFile(from, to);
         }
+        return pathTo;
     }
 
     private static void writeToFile(File one, File two) {
