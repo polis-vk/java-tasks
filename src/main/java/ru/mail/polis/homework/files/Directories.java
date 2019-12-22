@@ -1,5 +1,15 @@
 package ru.mail.polis.homework.files;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
+
 public class Directories {
 
 
@@ -10,13 +20,46 @@ public class Directories {
      * Написать двумя способами. С использованием File
      */
     public static int removeWithFile(String path) {
-        return 0;
+        File file = new File(path);
+
+        if (!file.exists()) {
+            return 0;
+        }
+        if (file.isFile()) {
+            file.delete();
+            return 1;
+        } else {
+            AtomicInteger counter = new AtomicInteger(1);
+            Arrays.stream(Objects.requireNonNull(file.listFiles()))
+                    .forEach(tmpFile -> {
+                        counter.addAndGet(removeWithFile(tmpFile.getAbsolutePath()));
+                    });
+            file.delete();
+            return counter.get();
+        }
     }
 
     /**
      * С использованием Path
      */
-    public static int removeWithPath(String path) {
-        return 0;
+    public static int removeWithPath(String path) throws IOException {
+        Path file = Paths.get(path);
+        AtomicInteger counter = new AtomicInteger(1);
+        if (!Files.exists(file)) {
+            return 0;
+        }
+        try (Stream<Path> paths = Files.list(file)) {
+            paths.forEach(tmpFile -> {
+                try {
+                    counter.addAndGet(removeWithPath(tmpFile.toString()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Files.delete(file);
+        return counter.get();
     }
 }
