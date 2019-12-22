@@ -5,11 +5,7 @@ import org.junit.After;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,9 +15,8 @@ import static org.junit.Assert.fail;
 
 public class DirectoriesTest {
 
-
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "first").toFile());
         FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "second").toFile());
         FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "third").toFile());
