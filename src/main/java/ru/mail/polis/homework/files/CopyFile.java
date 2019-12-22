@@ -50,12 +50,13 @@ public class CopyFile {
             Files.createDirectories(dstPath.getParent());
         }
 
-        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(pathFrom));
-             BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(pathTo))) {
-            byte[] buffer = new byte[8192];
-            while (inputStream.available() > 0) {
-                int count = inputStream.read(buffer);
-                outputStream.write(buffer, 0, count);
+        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(pathFrom))) {
+            try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(pathTo))) {
+                byte[] buffer = new byte[8192];
+                while (inputStream.available() > 0) {
+                    int count = inputStream.read(buffer);
+                    outputStream.write(buffer, 0, count);
+                }
             }
         }
     }
