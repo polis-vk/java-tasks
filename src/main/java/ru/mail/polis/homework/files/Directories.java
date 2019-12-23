@@ -56,7 +56,6 @@ public class Directories {
                     .forEach(subPath -> {
                         deleted[0] += removeWithPath(subPath.toString());
                     });
-                Files.setAttribute(filePath, "dos:readonly", false);
                 Files.delete(filePath);
                 return ++deleted[0];
             }
