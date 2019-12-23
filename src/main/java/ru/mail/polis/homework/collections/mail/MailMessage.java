@@ -1,5 +1,5 @@
 package ru.mail.polis.homework.collections.mail;
 
-public class MailMessage {
+public class MailMessage implements Mail {
 
 }

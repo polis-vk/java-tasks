@@ -179,7 +179,6 @@ public class PopularMapTest {
 
     @Test
     public void containsKey() {
-
         popularMap2.containsKey(new TestObject("key"));
         verify(map, times(1)).containsKey(new TestObject("key"));
     }
