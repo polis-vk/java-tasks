@@ -37,28 +37,27 @@ public class CopyFile {
                 }
                 copyFile(pathFrom, pathTo);
                 return pathTo.toString();
-            } else if (Files.isDirectory(pathFrom)) {
-                if (!Files.exists(pathTo)) {
-                    Files.createDirectories(pathTo);
-                }
-                Files.list(pathFrom).forEach(oldPath -> {
-                    Path newPath = Paths.get(pathTo.toString(), oldPath.getFileName().toString());
-                    if (Files.isDirectory(oldPath)) {
-                        try {
-                            copySmallFilesWithPaths(oldPath, newPath);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else if (Files.isRegularFile(oldPath)) {
-                        try {
-                            copyFile(oldPath, newPath);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                return pathTo.toString();
             }
+            if (!Files.exists(pathTo)) {
+                Files.createDirectories(pathTo);
+            }
+            Files.list(pathFrom).forEach(oldPath -> {
+                Path newPath = Paths.get(pathTo.toString(), oldPath.getFileName().toString());
+                if (Files.isDirectory(oldPath)) {
+                    try {
+                        copySmallFilesWithPaths(oldPath, newPath);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (Files.isRegularFile(oldPath)) {
+                    try {
+                        copyFile(oldPath, newPath);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            return pathTo.toString();
         }
 
         return null;
