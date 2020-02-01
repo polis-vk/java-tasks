@@ -2,6 +2,7 @@ package ru.mail.polis.homework.collections;
 
 
 import java.util.*;
+import java.util.function.Function;
 
 
 /**
@@ -33,6 +34,12 @@ public class PopularMap<K, V> implements Map<K, V> {
     private final List<PopularityNode<K>> keyPopularityTable;
     private final List<PopularityNode<V>> valuePopularityTable;
 
+    public final static int COUNTING_TYPE_READING = 1;
+    public final static int COUNTING_TYPE_WRITING = 2;
+    public final static int COUNTING_TYPE_REMOVING = 4;
+
+    private int countingType = 7;
+
     public PopularMap() {
         this.map = new HashMap<>();
         keyPopularityTable = new LinkedList<>();
@@ -43,6 +50,10 @@ public class PopularMap<K, V> implements Map<K, V> {
         this.map = map;
         keyPopularityTable = new LinkedList<>();
         valuePopularityTable = new LinkedList<>();
+    }
+
+    public void setCountingType(int countingType) {
+        this.countingType = countingType;
     }
 
     @Override
@@ -57,22 +68,28 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        incrementKeyPopularity((K)key);
+        if ((countingType & COUNTING_TYPE_READING) == COUNTING_TYPE_READING) {
+            incrementKeyPopularity((K)key);
+        }
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        incrementValuePopularity((V)value);
+        if ((countingType & COUNTING_TYPE_READING) == COUNTING_TYPE_READING) {
+            incrementValuePopularity((V)value);
+        }
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
         V value = map.get(key);
-        incrementKeyPopularity((K)key);
-        if (value != null) {
-            incrementValuePopularity(value);
+        if ((countingType & COUNTING_TYPE_READING) == COUNTING_TYPE_READING) {
+            incrementKeyPopularity((K)key);
+            if (value != null) {
+                incrementValuePopularity(value);
+            }
         }
         return value;
     }
@@ -80,28 +97,28 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public V put(K key, V value) {
         V previous = map.put(key, value);
-        if (previous != null) {
-            incrementValuePopularity(previous);
+        if ((countingType & COUNTING_TYPE_WRITING) == COUNTING_TYPE_WRITING) {
+            if (previous != null) {
+                incrementValuePopularity(previous);
+            }
+            incrementKeyPopularity(key);
+            incrementValuePopularity(value);
         }
-        incrementKeyPopularity(key);
-        incrementValuePopularity(value);
         return previous;
     }
 
     @Override
     public V remove(Object key) {
         V value = map.remove(key);
-        incrementKeyPopularity((K)key);
-        incrementValuePopularity(value);
+        if ((countingType & COUNTING_TYPE_REMOVING) == COUNTING_TYPE_REMOVING) {
+            incrementKeyPopularity((K)key);
+            incrementValuePopularity(value);
+        }
         return value;
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-        for (Map.Entry<? extends K, ? extends V> entry : m.entrySet()) {
-            incrementKeyPopularity(entry.getKey());
-            incrementValuePopularity(entry.getValue());
-        }
         map.putAll(m);
     }
 
@@ -123,6 +140,18 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public Set<Entry<K, V>> entrySet() {
         return map.entrySet();
+    }
+
+    @Override
+    public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
+        V value = map.computeIfAbsent(key, mappingFunction);
+        if ((countingType & COUNTING_TYPE_WRITING) == COUNTING_TYPE_WRITING) {
+            incrementKeyPopularity(key);
+            if (value != null) {
+                incrementValuePopularity(value);
+            }
+        }
+        return value;
     }
 
     /**
