@@ -10,16 +10,40 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        function.applyAsDouble(4d);
-        return 0;
+        double integral = 0.;
+
+        for (double i = a; i < b; i += delta) {
+            integral += delta * function.applyAsDouble(i);
+        }
+
+        return integral;
     }
 
     /**
      * Вывести номер максимальной цифры. Счет начинается слева направо,
      * выводим номер первой максимальной цифры (если их несколько)
      */
-    public static byte maxNumber(long a) {
-        return 0;
+    public static byte maxNumber(long a) { // Ready without tests
+        long tempA = a;
+        int counterNumbers = 0;
+
+        while (tempA != 0) {
+            counterNumbers++;
+            tempA /= 10;
+        }
+
+        long maxNumber = -1;
+        byte index = 1;
+
+        for (byte i = 1; i <= counterNumbers; i++) {
+            System.out.println((a / (long) Math.pow(10, (counterNumbers - i))));
+            if ((a / (long) Math.pow(10, (counterNumbers - i))) % 10 > maxNumber) {
+                maxNumber = (a / (long) Math.pow(10, (counterNumbers - i))) % 10;
+                index = i;
+            }
+        }
+
+        return index;
     }
 
 
@@ -28,7 +52,10 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        double k = (y1 - y2) / (double) (x1 - x2);
+        double b = y1 - k * x1;
+
+        return k * x3 + b;
     }
 
     /**
@@ -37,7 +64,16 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        double d1 = Math.sqrt(Math.pow((x3 - x1), 2) + Math.pow((y3 - y1), 2));
+        double d2 = Math.sqrt(Math.pow((x4 - x2), 2) + Math.pow((y4 - y2), 2));
+
+        if (d1 == 0 || d2 == 0) {
+            return 0.;
+        }
+
+        double cosY = ((x3 - x1) * (x4 - x2) + (y3 - y1) * (y4 - y2)) / (d1 * d2);
+
+        return (0.5) * d1 * d2 * Math.sqrt(1 - Math.pow(cosY, 2));
     }
 
 }
