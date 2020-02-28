@@ -7,6 +7,6 @@ public class Main {
     }
 
     static String hello() {
-        return "Hello world! I am а first program";
+        return "Hello world! I am a first program"; //Русская буква а вместо английской
     }
 }
