@@ -11,7 +11,11 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         function.applyAsDouble(4d);
-        return 0;
+        double square = 0;
+        for (double i = a; i <= b; i += delta) {
+            square += function.applyAsDouble(i) * delta;
+        }
+        return square;
     }
 
     /**
@@ -19,7 +23,19 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        int count = 1;
+        int ind = 0;
+        long max = -1;
+        while (a != 0) {
+            long curr = a % 10;
+            if (curr >= max) {
+                max = curr;
+                ind = count;
+            }
+            a /= 10;
+            count++;
+        }
+        return (byte) (count - ind);
     }
 
 
@@ -28,7 +44,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        return (double) (x1 * y2 - x2 * y1 + (y1 - y2) * x3) / (x1 - x2);
     }
 
     /**
@@ -37,7 +53,14 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        double AB = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+        double BC = Math.sqrt((x3 - x2) * (x3 - x2) + (y3 - y2) * (y3 - y2));
+        double CD = Math.sqrt((x4 - x3) * (x4 - x3) + (y4 - y3) * (y4 - y3));
+        double DA = Math.sqrt((x1 - x4) * (x1 - x4) + (y1 - y4) * (y1 - y4));
+        double AC = Math.sqrt((x1 - x3) * (x1 - x3) + (y1 - y3) * (y1 - y3));
+        double p1 = (AB + BC + AC)/2;
+        double p2 = (CD + DA + AC)/2;
+        return Math.sqrt(p1 * (p1 - AB) * (p1 - BC) * (p1 - AC)) + Math.sqrt(p2 * (p2 - CD) * (p2 - DA) * (p2 - AC));
     }
 
 }
