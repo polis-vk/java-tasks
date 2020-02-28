@@ -32,13 +32,13 @@ public class IntegerTask {
         if ((top < height) && ((top - bottom) <= 0)) {
             return Integer.MAX_VALUE;
         }
-        int n = 0;
-        while (n < height) {
-            n += top;
-            if (n >= height) {
+        int step = 0;
+        while (step < height) {
+            step += top;
+            if (step >= height) {
                 return ++stepNumber;
             }
-            n -= bottom;
+            step -= bottom;
             ++stepNumber;
 
         }

@@ -14,7 +14,7 @@ public class HomeworkTask {
         function.applyAsDouble(4d);
         double s = 0;
         for (double i = a; i < b; i += delta) {
-            s = s + delta * function.applyAsDouble(i);
+            s += delta * function.applyAsDouble(i);
         }
         return s;
     }
@@ -24,16 +24,29 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        char[] number = Long.toString(a).toCharArray();
-
-        byte maxIndex = 0;
-        for (byte i = 1; i < number.length; i++) {
-            if (number[i] > number[maxIndex]) {
-                maxIndex = i;
-            }
+        long b = a;
+        if (a == 0) {
+            return 1;
         }
+        byte i = 0;
+        int maxNumber = -1;
+        while (b != 0) {
+            long digit = b % 10;
+            if (maxNumber < digit) {
+                maxNumber = (int) digit;
+            }
+            b /= 10;
+            i++;
+        }
+        for (byte j = i; j > 0; j--) {
+            long digit = (long) (a / Math.pow(10, j));
+            if (digit == maxNumber) {
+                return (byte) (i - j);
+            }
+            a %= Math.pow(10, j);
 
-        return ++maxIndex;
+        }
+        return i;
     }
 
     /**
@@ -43,8 +56,7 @@ public class HomeworkTask {
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
         double k = (double) (y2 - y1) / (x2 - x1);
         double b = y1 - (double) (y2 - y1) / (x2 - x1) * x1;
-        double y = k * x3 + b;
-        return y;
+        return k * x3 + b;
     }
 
     /**
