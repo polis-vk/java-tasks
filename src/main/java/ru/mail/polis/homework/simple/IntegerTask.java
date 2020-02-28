@@ -1,4 +1,5 @@
 package ru.mail.polis.homework.simple;
+import java.lang.Math.*;
 
 
 /**
@@ -14,7 +15,11 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return 0;
+        int res = 0;
+        for (int i = 1; i <= n; i++) {
+            res += i;
+        }
+        return res;
     }
 
     /**
@@ -24,23 +29,42 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        return 0;
+        int res = 0;
+        int i = 0;
+        while (res < height){
+            i++;
+            res += top;
+            if (res >= height) return i;
+            res -= bottom;
+            if (res <= 0) return Integer.MAX_VALUE;
+        }
+        return i;
     }
 
-    /**
-     * Дано число n и номер разряда order. Выведите цифру стояющую на нужном разряде
-     * Пример: (454355, 3) -> 3
-     */
-    public static int kDecimal(int n, int order) {
-        return 0;
-    }
+        /**
+         * Дано число n и номер разряда order. Выведите цифру стояющую на нужном разряде
+         * Пример: (454355, 3) -> 3
+         */
+
+        public static int kDecimal(int n, int order) {
+            double mod = Math.pow(10, order);
+            double div = Math.pow(10, order - 1);
+            return Math.abs((int) ((int) (n % mod) / div));
+        }
 
 
-    /**
-     * Выведите факториал от числа n
-     * Пример: (5) -> 120
-     */
-    public static long factorial(byte n) {
-        return 0;
-    }
+
+        /**
+         * Выведите факториал от числа n
+         * Пример: (5) -> 120
+         */
+        public static long factorial( byte n){
+            long res = 1;
+            for (int i = 1; i <= n; i++ ) {
+                res *= i;
+            }
+            return res;
+        }
+
+
 }
