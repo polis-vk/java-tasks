@@ -31,7 +31,6 @@ public class HomeworkTask {
         }
         if (i - cur == 0) return 1;
         return (byte) (i - cur);
-
     }
 
 
