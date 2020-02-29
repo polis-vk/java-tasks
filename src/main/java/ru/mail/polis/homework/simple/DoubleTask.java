@@ -16,6 +16,15 @@ public class DoubleTask {
     public static String equation(int a, int b, int c) {
         double x1 = 0;
         double x2 = 0;
+        double swap;
+        double d = Math.sqrt(b * b - 4 * a * c);
+        x1 = (-b + d) / (2 * a);
+        x2 = (-b - d) / (2 * a);
+        if (x1 < x2){
+            swap = x2;
+            x2 = x1;
+            x1 = swap;
+        }
         return x1 + ", " + x2;
     }
 
