@@ -57,7 +57,7 @@ public class HomeworkTask {
         b=Len(x2,x3,y2,y3);
         p=(d1+a+b)/2;
         s=Math.sqrt(p*(p-a)*(p-b)*(p-d1));
-        
+
         a=Len(x3,x4,y3,y4);
         b=Len(x4,x1,y4,y1);
         p=(d1+a+b)/2;
