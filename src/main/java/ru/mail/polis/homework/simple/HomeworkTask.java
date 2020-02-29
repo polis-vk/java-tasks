@@ -10,8 +10,11 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        function.applyAsDouble(4d);
-        return 0;
+        double integral=0;
+        for (double i=a;i<=b;i+=delta){
+            integral+=delta*function.applyAsDouble(i);
+        }
+        return integral;
     }
 
     /**
@@ -19,8 +22,16 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        while ()
-        return 0;
+        byte k=0, max=0, len=1;
+        while (a>0){
+            if (a%10>=max){
+                max= (byte) (a%10);
+                k=len;
+            }
+            len++;
+            a/=10;
+        }
+        return (byte) (len-k);
     }
 
 
@@ -29,7 +40,9 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        double k;
+        k=(y2-y1)*1.0/(x2-x1);
+        return k*(x3-x1)+y1;
     }
 
     /**
@@ -38,7 +51,22 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        double s,d1,a,b,p;
+        d1=Len(x1,x3,y1,y3);
+        a=Len(x1,x2,y1,y2);
+        b=Len(x2,x3,y2,y3);
+        p=(d1+a+b)/2;
+        s=Math.sqrt(p*(p-a)*(p-b)*(p-d1));
+        
+        a=Len(x3,x4,y3,y4);
+        b=Len(x4,x1,y4,y1);
+        p=(d1+a+b)/2;
+        s+=Math.sqrt(p*(p-a)*(p-b)*(p-d1));
+        return s;
+    }
+
+    private static double Len(int x1,int x2,int y1,int y2) {
+        return Math.sqrt(Math.pow((x2-x1),2)+Math.pow((y2-y1),2));
     }
 
 }
