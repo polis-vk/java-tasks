@@ -7,6 +7,10 @@ public class Main {
     }
 
     static String hello() {
-        return "Hello world! I am а first program";
+        return "Hello world! I am a first program";
+        /*
+         * Тест выдавал false, потому что в выводимой строке I am a first...
+         * был неверный символ 'a'. При замене его на английскую букву, тест был пройден
+         */
     }
 }
