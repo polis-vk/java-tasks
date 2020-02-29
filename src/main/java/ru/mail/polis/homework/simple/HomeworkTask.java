@@ -19,6 +19,7 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
+        while ()
         return 0;
     }
 
