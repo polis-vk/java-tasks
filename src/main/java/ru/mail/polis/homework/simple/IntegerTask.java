@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.simple;
 
 
+import javax.imageio.ImageTranscoder;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -14,7 +16,11 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return 0;
+        int sum = 0;
+        for (int i = 1; i <= n; i++) {
+            sum += i;
+        }
+        return sum;
     }
 
     /**
@@ -24,7 +30,16 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        return 0;
+        int curheight = top, k = 1;
+        if (top - bottom > 0 || top >= height) {
+            while (curheight < height){
+                curheight += (top - bottom);
+                k++;
+            }
+            return k;
+        } else {
+            return Integer.MAX_VALUE;
+        }
     }
 
     /**
@@ -32,7 +47,9 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return 0;
+        n = Math.abs((int) (n % Math.pow(10, order)));
+        n = Math.abs((int) (n / Math.pow(10, order - 1)));
+        return n;
     }
 
 
@@ -41,6 +58,14 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        long fact = 1;
+        if (n != 0){
+            for (int i = 1; i <= n; i++) {
+                fact *= i;
+            }
+            return fact;
+        } else {
+            return 1;
+        }
     }
 }
