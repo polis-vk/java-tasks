@@ -11,15 +11,32 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         function.applyAsDouble(4d);
-        return 0;
+        double answer=0; double x=a; int i=0;
+        while (x+delta<b) { i++;
+             x=x+delta;
+            answer=answer+(delta*function.applyAsDouble(x));
+        }
+
+        return answer;
     }
 
     /**
      * Вывести номер максимальной цифры. Счет начинается слева направо,
      * выводим номер первой максимальной цифры (если их несколько)
      */
-    public static byte maxNumber(long a) {
-        return 0;
+    public static byte maxNumber(long a)
+    { long max=0;
+      byte n=1;
+      while (a!=0) {
+
+          if (a%10>=max){
+              n=1;
+              max=a%10;
+                       }
+          else {n++;}
+          a=a/10;
+                   }
+        return n;
     }
 
 
@@ -28,7 +45,13 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        double k;
+         k=     (double)(y2-y1)/
+                (double)(x2-x1);
+
+        double b;
+        b=y2-k*x2;
+        return k*x3+b;
     }
 
     /**

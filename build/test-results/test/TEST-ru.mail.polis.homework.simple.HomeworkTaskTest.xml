@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ru.mail.polis.homework.simple.HomeworkTaskTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2020-02-29T21:28:42" hostname="PC-ПК" time="0.003">
+  <properties/>
+  <testcase name="lineFunction" classname="ru.mail.polis.homework.simple.HomeworkTaskTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
