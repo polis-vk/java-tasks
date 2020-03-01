@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-import sun.jvm.hotspot.utilities.HeapHprofBinWriter;
-
 public class Main {
 
     public static void main(String[] args) {
