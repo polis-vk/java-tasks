@@ -37,7 +37,6 @@ public class DoubleTask {
     public static float length(double x1, double y1, double x2, double y2) {
         double x1x2 = x2 - x1;
         double y1y2 = y2 - y1;
-        float distance = (float) Math.sqrt((x1x2 * x1x2) + (y1y2 * y1y2));
-        return distance;
+        return (float) Math.sqrt((x1x2 * x1x2) + (y1y2 * y1y2));
     }
 }
