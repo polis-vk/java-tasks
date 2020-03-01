@@ -33,7 +33,6 @@ public class DoubleTask {
      * Пример: (0, 0, 3, 4) -> 5.0
      */
     public static float length(double x1, double y1, double x2, double y2) {
-        float length = (float)Math.sqrt((Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)));
-        return length;
+        return (float) Math.sqrt((Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)));
     }
 }

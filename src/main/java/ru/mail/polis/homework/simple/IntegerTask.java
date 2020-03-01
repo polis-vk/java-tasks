@@ -30,10 +30,10 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        int curheight = top, k = 1;
+        int currentHeight = top, k = 1;
         if (top - bottom > 0 || top >= height) {
-            while (curheight < height){
-                curheight += (top - bottom);
+            while (currentHeight < height){
+                currentHeight += (top - bottom);
                 k++;
             }
             return k;
@@ -47,9 +47,8 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        n = Math.abs((int) (n % Math.pow(10, order)));
-        n = Math.abs((int) (n / Math.pow(10, order - 1)));
-        return n;
+        int digit = Math.abs((int) (n % Math.pow(10, order)));
+        return Math.abs((int) (digit / Math.pow(10, order - 1)));
     }
 
 
@@ -59,13 +58,9 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long fact = 1;
-        if (n != 0){
-            for (int i = 1; i <= n; i++) {
-                fact *= i;
-            }
-            return fact;
-        } else {
-            return 1;
+        for (int i = 1; i <= n; i++) {
+            fact *= i;
         }
+        return fact;
     }
 }
