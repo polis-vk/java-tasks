@@ -32,13 +32,14 @@ public class IntegerTask {
             return Integer.MAX_VALUE;
         }
         int day = 0;
-        while (height > 0) {
-            height -= top;
+        int distance = height;
+        while (distance > 0) {
+            distance -= top;
             day++;
-            if (height <= 0) {
+            if (distance <= 0) {
                 return day;
             }
-            height += bottom;
+            distance += bottom;
         }
         return day;
     }
@@ -48,10 +49,11 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
+        int number = n;
         for (int i = 0; i < order - 1; i++) {
-            n /= 10;
+            number /= 10;
         }
-        return Math.abs(n %= 10);
+        return Math.abs(number %= 10);
     }
 
     /**

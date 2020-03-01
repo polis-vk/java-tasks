@@ -11,8 +11,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integ = 0;
-        for (double i = a; i <= b; i += delta) {
-            integ += function.applyAsDouble(i) * delta;
+        for (double d = a; d <= b; d += delta) {
+            integ += function.applyAsDouble(d) * delta;
         }
         return integ;
     }
@@ -22,12 +22,12 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        int digit = 0;
-        long max = 0;
-        int count = 0;
         if (a == 0) {
             return 1;
         }
+        int digit = 0;
+        long max = 0;
+        int count = 0;
         while (a > 0) {
             if ((a % 10) >= max) {
                 max = a % 10;
@@ -45,7 +45,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return (double)((x2 * y1 - x1 * y2) + (y2 - y1) * x3) / (x2 - x1);
+        return (double) ((x2 * y1 - x1 * y2) + (y2 - y1) * x3) / (x2 - x1);
     }
 
     /**
@@ -55,7 +55,7 @@ public class HomeworkTask {
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
         //Метод Гаусса
-        return (double)Math.abs(x1 * y2 + x2 * y3 + x3 * y4 + x4 * y1 - x2 * y1 - x3 * y2 - x4 * y3 - x1 * y4) / 2;
+        return (double) Math.abs(x1 * y2 + x2 * y3 + x3 * y4 + x4 * y1 - x2 * y1 - x3 * y2 - x4 * y3 - x1 * y4) / 2;
     }
 
 }
