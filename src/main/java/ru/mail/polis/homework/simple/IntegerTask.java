@@ -7,7 +7,7 @@ package ru.mail.polis.homework.simple;
  * Чтобы увидеть все методы класса Math, достаточно написать Math. и среда вам сама покажет возможные методы.
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
-public class IntegerTask {
+public class IntegerTask  {
 
     /**
      * Сумма чисел от 1 до n (1 + 2 + 3 + ... + n)

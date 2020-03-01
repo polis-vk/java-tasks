@@ -13,7 +13,7 @@ public class DoubleTask {
      * Вывод менять не нужно, надо только посчитать x1 и x2, где x1 > x2
      * Пример: (1, 5, 4) -> "-1.0, -4.0"
      */
-    public static String equation(int a, int b, int c) {
+    public static String equation(int a, int b, int c ) {
         double x1 = 0;
         double x2 = 0;
         double D= Math.pow(b,2) - 4*a*c;

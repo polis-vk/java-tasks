@@ -24,7 +24,7 @@ public class HomeworkTask {
      * Вывести номер максимальной цифры. Счет начинается слева направо,
      * выводим номер первой максимальной цифры (если их несколько)
      */
-    public static byte maxNumber(long a)
+    public static byte maxNumber(long a )
     { long max=0;
       byte n=1;
       while (a!=0) {
