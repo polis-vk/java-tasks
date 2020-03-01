@@ -14,10 +14,10 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        if(n==0) {
+        if (n == 0) {
             return 0;
-                 }
-        return sum(n-1)+n ;
+        }
+        return (sum(n - 1) + n);
     }
 
     /**
@@ -28,37 +28,38 @@ public class IntegerTask {
      */
     public static int snake(int height, int top, int bottom) {
         if (top >= height) {
-                       return 1;
-                           }
+            return 1;
+        }
 
         if (bottom >= top) {
             return Integer.MAX_VALUE;
-                           }
-        int current_height = 0, day = 0;
+        }
+        int currentHeight = 0, day = 0;
         for (; ; ) {
             day++;
-            current_height = current_height + top;
-            if (current_height >= height) {
-                                    return day;
-                                          }
-            current_height = current_height - bottom;
-                  }
+            currentHeight = currentHeight + top;
+            if (currentHeight >= height) {
+                return day;
+            }
+            currentHeight = currentHeight - bottom;
+        }
     }
+
     /**
      * Дано число n и номер разряда order. Выведите цифру стояющую на нужном разряде
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        for(; ; ) {
+        int answer;
+        for (; ; ) {
             n = Math.abs(n);
-            int answer;
             answer = n % 10;
             n = n / 10;
             order--;
             if (order == 0) {
-                      return answer;
-                            }
-                  }
+                return answer;
+            }
+        }
     }
 
 
@@ -67,7 +68,9 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        if (n==0) return 1;
-        return factorial((byte) (n-1))* n;
+        if (n == 0) {
+            return 1;
+        }
+        return (factorial((byte) (n - 1)) * n);
     }
 }
