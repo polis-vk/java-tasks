@@ -18,7 +18,9 @@ public class DoubleTask {
         double x1 = 0;
         double x2 = 0;
         double d = Math.pow(b, 2) - 4 * a * c;
-        if (d > 0) {
+        if (d < 0) {
+            return "Нет вещественных корней";
+        } else if (d > 0) {
             x1 = (-b + Math.sqrt(d)) / (2 * a);
             x2 = (-b - Math.sqrt(d)) / (2 * a);
         } else {
