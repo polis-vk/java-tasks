@@ -19,16 +19,35 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
-    }
+        byte num;
+        byte maxNum = 0;
+        byte index = 0;
+        byte maxNumIndex = 0;
+        while (a!=0){
+            num = (byte)(a%10);
+            if (num>=maxNum){
+                maxNum = num;
+                maxNumIndex = index;
+            }
+            index++;
+            a/=10;
+        }
+        byte result =  (byte) (index - maxNumIndex);
+        if (result == 0){
+            result++;
+        }
 
+        return result;
+    }
 
     /**
      * Даны две точки в пространстве (x1, y1) и (x2, y2). Вам нужно найти Y координату третьей точки (x3, y3),
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        double tg = (y2-y1)/(x2-x1);
+        double y3 = (x3-x1)*tg + y1;
+        return y3;
     }
 
     /**
