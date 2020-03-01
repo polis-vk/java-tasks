@@ -12,7 +12,7 @@ public class HomeworkTask {
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         function.applyAsDouble(4d);
         double answer=0; double x=a; int i=0;
-        while (x+delta<b) { i++;
+        while (x+delta<b) {
              x=x+delta;
             answer=answer+(delta*function.applyAsDouble(x));
         }
