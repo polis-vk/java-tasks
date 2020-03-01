@@ -7,7 +7,10 @@ public class MainTask {
      * Так же, надо сделать так, что бы при запуске этого класса печаталась строка "It is work."
      * @param args
      */
-//    private static main(String args) {
-//        System.out.println("It is work.");
-//    }
+    public static void main(String[] args)  {
+        System.out.println("It is work."); /* модификатор доступа сменен на public, потому что метод
+       вызывается из другого класса, метод main переопределен как void, так как не возвращает никаких значений
+       для получения аргументов командной строки обращаемся к массиву строк */
+
+    }
 }
