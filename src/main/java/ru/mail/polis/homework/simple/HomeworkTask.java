@@ -10,8 +10,13 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        function.applyAsDouble(4d);
-        return 0;
+        double x = a;
+        double integral = 0;
+        while (x+delta<b){
+            x += delta;
+            integral += delta*(function.applyAsDouble(x)+function.applyAsDouble(x-delta))/2;
+        }
+        return integral;
     }
 
     /**
@@ -19,7 +24,19 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        byte i = 1; long max = 0; // Хотел сделать byte max, но тогда в условном операторе не
+        while (a>0){              // позволяет нормально присвоить  max = a%10. Приходится делать
+            if (a%10 >= max){     // двойное приведение к байту: (byte)((byte)a%10). Как это понимать?
+                max = a%10;
+
+                i = 1;
+            }
+            else{
+                i++;
+            }
+            a /= 10;
+        }
+        return i;
     }
 
 
@@ -28,7 +45,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        return (double)(y2-y1)/(double)(x2-x1)*x3 + (y1 - (double)(y2-y1)/(double)(x2-x1)*x1);
     }
 
     /**
@@ -37,7 +54,12 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
-    }
+        double d1 = DoubleTask.length(x1, y1, x3, y3);
+        double d2 = DoubleTask.length(x2, y2, x4, y4);
+        if ((d1 < 1e-2) || (d2 < 1e-2)) {
+            return 0.0;
+        };
+        return 0.5*d1*d2*Math.abs((double)((x3 - x1)*(y4 - y2) - (x4-x2)*(y3-y1)))/(d1*d2);
+    }   // Последнее выражение в произведении -- синус угла между диагоналями
 
 }
