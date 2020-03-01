@@ -42,6 +42,7 @@ public class IntegerTask {
         } else {
             days = 1;
         }
+
         return days;
     }
 
