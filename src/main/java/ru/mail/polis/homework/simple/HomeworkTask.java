@@ -11,8 +11,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double res = 0;
-        for (double i = a; i <b; i+=delta){
-            res += function.applyAsDouble(i)*delta;
+        for (double i = a; i < b; i += delta) {
+            res += function.applyAsDouble(i) * delta;
         }
         return res;
     }
@@ -24,21 +24,21 @@ public class HomeworkTask {
     public static byte maxNumber(long a) {
         if (a == 0) {
             return 1;
-        };
+        }
         int max = -1;
         int indexOfMax = -1;
         long temp;
         int i = 0;
-        while ( a != 0){
-            i ++;
-            temp =  a % 10;
-            if (temp >= max){
-                max = (int)temp;
+        while (a != 0) {
+            i++;
+            temp = a % 10;
+            if (temp >= max) {
+                max = (int) temp;
                 indexOfMax = i;
-            };
+            }
             a /= 10;
-        };
-        return (byte)(i + 1 - indexOfMax);
+        }
+        return (byte) (i + 1 - indexOfMax);
     }
 
 
@@ -47,7 +47,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return y1 + (double)((x3-x1)*(y2-y1))/(x2-x1);
+        return y1 + (double) ((x3 - x1) * (y2 - y1)) / (x2 - x1);
     }
 
     /**
@@ -56,7 +56,7 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-       return 0.5*Math.abs(x1*y2 + x2*y3 + x3*y4 + x4*y1-x2*y1-x3*y2-x4*y3-x1*y4); //по формуле Гаусса
+        return 0.5 * Math.abs(x1 * y2 + x2 * y3 + x3 * y4 + x4 * y1 - x2 * y1 - x3 * y2 - x4 * y3 - x1 * y4); //по формуле Гаусса
     }
 
 }
