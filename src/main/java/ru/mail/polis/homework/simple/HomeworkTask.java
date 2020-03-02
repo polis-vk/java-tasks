@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.nio.ByteBuffer;
+import java.util.*;
 import java.util.function.ToDoubleFunction;
 
 public class HomeworkTask {
@@ -10,8 +12,12 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        function.applyAsDouble(4d);
-        return 0;
+
+        double result = 0;
+        for (double i = a; i < b; i += delta) {
+            result += function.applyAsDouble(i) * delta;
+        }
+        return result;
     }
 
     /**
@@ -19,7 +25,21 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        int maxValue = 0; //наибольшая цифра
+        int totalDigits = 0;    //всего цифр в числе
+        int maxNumPos = 0; //порядковый номер наибольшей цифры справа налево
+
+        long value = Math.abs(a);
+        while (value > 0){
+            int cut = (int)Math.abs(value % 10);    // обрезаем число на одну цифру
+            totalDigits++;
+            if(cut >= maxValue){
+                maxValue = cut;
+                maxNumPos = totalDigits;
+            }
+            value /= 10;
+        }
+        return (byte) (Math.abs(totalDigits - maxNumPos) + 1);
     }
 
 
@@ -28,7 +48,8 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        double tang = (double) (y2 - y1) / (x2 - x1);
+        return y2 + (x3 - x2) * tang;
     }
 
     /**
@@ -37,7 +58,15 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        double firstHalf = triangle(x1, y1, x2, y2, x3, y3);
+        double secondHalf = triangle(x1, y1, x3, y3, x4, y4);
+        return firstHalf + secondHalf;
+    }
+
+    /*площадь треугольника*/
+    private  static  double triangle(int x1, int y1, int x2, int y2, int x3, int y3){
+        double det = ((x1 - x3) * (y2 - y3)) - ((x2 - x3)*(y1 - y3));   // удвоенная s треугольника
+        return Math.abs(det / 2);
     }
 
 }
