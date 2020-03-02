@@ -8,7 +8,7 @@ package ru.mail.polis.homework.simple;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class IntegerTask {
-
+    
     /**
      * Сумма чисел от 1 до n (1 + 2 + 3 + ... + n)
      * Пример: (5) -> 15
@@ -16,7 +16,7 @@ public class IntegerTask {
     public static int sum(int n) {
         return (1 + n) * n / 2;
     }
-
+    
     /**
      * Гусеница поднимается по стене длиной height на высоту top за день, ночью гусеница сползает на bottom.
      * Сколько дней понадобится гусенице, чтобы доползти до потолка. Если она этого никогда не сможет сделать,
@@ -24,12 +24,13 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        float dayStep = top - bottom;
-        return top < height
-                ? dayStep > 0
-                ? (int) Math.ceil((height - top) / dayStep) + 1
-                : Integer.MAX_VALUE
-                : 1;
+        if (top >= height) {
+            return 1;
+        }
+        if (top <= bottom) {
+            return Integer.MAX_VALUE;
+        }
+        return (int) Math.ceil((double) (height - top) / (top - bottom) + 1);
     }
     
     /**
@@ -39,13 +40,13 @@ public class IntegerTask {
     public static int kDecimal(int n, int order) {
         return order == 1 ? Math.abs(n % 10) : kDecimal(n / 10, order - 1);
     }
-
-
+    
+    
     /**
      * Выведите факториал от числа n
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return n < 1 ? 1 : n * factorial((byte) (n - 1));
+        return n <= 1 ? 1 : n * factorial((byte) (n - 1));
     }
 }

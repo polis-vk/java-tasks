@@ -10,10 +10,11 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        double integral = 0D;
-        while (a < b) {
-            integral += function.applyAsDouble(a);
-            a += delta;
+        double integral = 0.0;
+        double tempNum = a;
+        while (tempNum < b) {
+            integral += function.applyAsDouble(tempNum);
+            tempNum += delta;
         }
         return integral * delta;
     }
@@ -23,13 +24,13 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        a = Math.abs(a);
+        long tempNum = Math.abs(a);
         long max = 0;
         byte numberOfMax = 1;
-        while (a != 0) {
-            max = Math.max(max, a % 10);
-            numberOfMax = max == a % 10 ? 1 : ++numberOfMax;
-            a /= 10;
+        while (tempNum != 0) {
+            max = Math.max(max, tempNum % 10);
+            numberOfMax = max == tempNum % 10 ? 1 : ++numberOfMax;
+            tempNum /= 10;
         }
         return numberOfMax;
     }
@@ -48,19 +49,11 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      * Это дополнительное задание, необязательное для выполнения
      */
-    
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
         return (Math.abs(x1 * y2 + x2 * y3 + x3 * y1 - x2 * y1 - x3 * y2 - x1 * y3)
                 + Math.abs(x4 * y2 + x2 * y3 + x3 * y4 - x2 * y4 - x3 * y2 - x4 * y3)
                 + Math.abs(x4 * y1 + x1 * y3 + x3 * y4 - x1 * y4 - x3 * y1 - x4 * y3)
                 + Math.abs(x4 * y1 + x1 * y2 + x2 * y4 - x1 * y4 - x2 * y1 - x4 * y2))
                 / 4.0;
-        /*return Math.abs((x1 + x2) * (y1 - y2) + (x2 + x3) * (y2 - y3)
-                + (x3 + x4) * (y3 - y4) + (x4 + x1) * (y4 - y1))
-                / 2.0;*/
     }
-    /**
-     * Вариант выычисления площади сразу для четырёхугольника более ёмкий,
-     * но результат зависит от порядка передачи точек в метод (Оба варианта тесты прошли)
-     */
 }
