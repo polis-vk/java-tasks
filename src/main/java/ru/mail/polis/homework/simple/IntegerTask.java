@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -15,7 +14,6 @@ public class IntegerTask {
      */
     public static int sum(int n) {
         int sum = 0;
-
         for (int i = 1; i <= n; i++) {
             sum += i;
         }
@@ -40,6 +38,7 @@ public class IntegerTask {
 
         int step = top - bottom;
         int numberOfSteps = (height - top) / step;
+
         if (numberOfSteps * step + top < height) {
             numberOfSteps++;
         }
@@ -54,7 +53,6 @@ public class IntegerTask {
     public static int kDecimal(int n, int order) {
         return Math.abs((n / (int) Math.pow(10, (order - 1))) % 10);
     }
-
 
     /**
      * Выведите факториал от числа n
