@@ -11,7 +11,7 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double sum = 0;
-        for (double i = a; i < b; i+=delta) {
+        for (double i = a; i < b; i += delta) {
             sum += delta * function.applyAsDouble(i);
         }
         return sum;
@@ -23,24 +23,25 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
         byte maxDig = -1;
-        int i=0,iMax = 0;
+        int i = 0;
+        int iMax = 0;
         long num;
+        long aEdit = a;
 
-        while (a>0){
+        while (aEdit > 0) {
 
-            num = a % 10;
-            if (maxDig<=num){
+            num = aEdit % 10;
+            if (maxDig <= num) {
                 maxDig = (byte) num;
                 iMax = i;
             }
-            a/=10;
+            aEdit /= 10;
             i++;
         }
-        if (i==0){
+        if (i == 0) {
             return 1;
         } else {
-            iMax = i - iMax;
-            return (byte) iMax;
+            return (byte) (i - iMax);
         }
 
 
@@ -52,8 +53,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        double y3 = (double) ((x3 - x1)*(y2 - y1))/(x2-x1) + y1;
-        return y3;
+        return (double) ((x3 - x1) * (y2 - y1)) / (x2 - x1) + y1;
     }
 
     /**
@@ -62,9 +62,8 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        double det = x1*y2+x2*y3+x3*y4+x4*y1-x2*y1-x3*y2-x4*y3-x1*y4;//определитель
-        double result = Math.abs(det*0.5);//площадь
-        return result;
+        double det = x1 * y2 + x2 * y3 + x3 * y4 + x4 * y1 - x2 * y1 - x3 * y2 - x4 * y3 - x1 * y4;//определитель
+        return Math.abs(det * 0.5);
     }
 
 }
