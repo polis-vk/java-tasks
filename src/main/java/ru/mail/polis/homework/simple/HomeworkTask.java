@@ -11,7 +11,11 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         function.applyAsDouble(4d);
-        return 0;
+        double sum = 0;
+        for (double i = a; i < b; i += delta) {
+            sum += delta * function.applyAsDouble(i);
+        }
+        return sum;
     }
 
     /**
