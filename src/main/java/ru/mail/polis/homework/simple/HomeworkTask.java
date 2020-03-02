@@ -17,9 +17,23 @@ public class HomeworkTask {
     /**
      * Вывести номер максимальной цифры. Счет начинается слева направо,
      * выводим номер первой максимальной цифры (если их несколько)
+     * @return
      */
-    public static byte maxNumber(long a) {
-        return 0;
+    public static int maxNumber(long a) {
+        int maxNumber= (int) a%10;
+        int numOfMaxNumber=-1;
+        int quantityOfNum=0;
+        while(a!=0)
+        {
+            if (maxNumber<=a%10)
+            {
+                maxNumber=(int)a%10;
+                numOfMaxNumber=quantityOfNum;
+            }
+            quantityOfNum++;
+            a/=10;
+        }
+        return quantityOfNum-numOfMaxNumber;
     }
 
 
@@ -28,7 +42,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        return((double)((y2-y1)*(x3-x1))/(double)(x2-x1))+(double)y1;
     }
 
     /**
