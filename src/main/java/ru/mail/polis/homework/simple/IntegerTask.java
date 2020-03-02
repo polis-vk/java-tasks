@@ -14,14 +14,14 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        if (n>0){
+        if (n > 0) {
             int amount = 0;
-            while(n>0){
-                amount+=n;
-                n-=1;
+            while (n > 0) {
+                amount += n;
+                n -= 1;
             }
             return amount;
-        }else{
+        } else {
             System.out.println("Error...Incorrect input");
             return 0;
         }
@@ -34,11 +34,11 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        if (top>height){
+        if (top > height) {
             return 1;
-        }else if(top>bottom){
-            return (height-top)/(top-bottom)+1;
-        }else{
+        } else if (top > bottom) {
+            return (height - top) / (top - bottom) + 1;
+        } else {
             return Integer.MAX_VALUE;
         }
     }
@@ -48,7 +48,7 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        n = (int) Math.abs((n / Math.pow(10, (order - 1)))%10);
+        n = (int) Math.abs((n / Math.pow(10, (order - 1))) % 10);
         return n;
     }
 
@@ -58,16 +58,14 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        if (n>0) {
+        if (n >= 0) {
             long fac = 1;
             while (n != 0) {
                 fac *= n;
                 n -= 1;
             }
             return fac;
-        }else if(n==0){
-            return 1;
-        }else{
+        } else {
             System.out.println("Error...Incorrect input");
             return 0;
         }

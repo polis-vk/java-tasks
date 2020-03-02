@@ -21,20 +21,20 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        a=Math.abs(a);
-        int max=-1;
-        int len=0;
-        int flipNum=0;
+        long moda = Math.abs(a);
+        int max = -1;
+        int len = 0;
+        int flipNum = 0;
 
-        while(a>0){
+        while (moda > 0) {
             len++;
-            if(a%10>=max){
-                max= (int) (a%10);
-                flipNum=len;
+            if (moda % 10 >= max) {
+                max = (int) (moda % 10);
+                flipNum = len;
             }
-            a/=10;
+            moda /= 10;
         }
-        flipNum=(len-flipNum)+1;
+        flipNum = (len - flipNum) + 1;
 
         return (byte) flipNum;
     }
@@ -61,9 +61,9 @@ public class HomeworkTask {
         double BC = Math.sqrt((x2 - x3) * (x2 - x3) + (y2 - y3) * (y2 - y3));
         double CD = Math.sqrt((x3 - x4) * (x3 - x4) + (y3 - y4) * (y3 - y4));
         double DA = Math.sqrt((x4 - x1) * (x4 - x1) + (y4 - y1) * (y4 - y1));
-        double p = (AB+BC+CD+DA)/2;
+        double p = (AB + BC + CD + DA) / 2;
 
-        return Math.sqrt((p-AB)*(p-BC)*(p-CD)*(p-DA));
+        return Math.sqrt((p - AB) * (p - BC) * (p - CD) * (p - DA));
     }
 
 }
