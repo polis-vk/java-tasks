@@ -14,11 +14,9 @@ public class DoubleTask {
      * Пример: (1, 5, 4) -> "-1.0, -4.0"
      */
     public static String equation(int a, int b, int c) {
-        double x1 = 0;
-        double x2 = 0;
         double dis = b * b - 4 * a * c;
-        x1 = (-b - Math.sqrt(dis)) / (2 * a);
-        x2 = (-b + Math.sqrt(dis)) / (2 * a);
+        double x1 = (-b - Math.sqrt(dis)) / (2 * a);
+        double x2 = (-b + Math.sqrt(dis)) / (2 * a);
         if (x1 < x2) {
             double buf = x1;
             x1 = x2;

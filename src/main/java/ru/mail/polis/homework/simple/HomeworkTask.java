@@ -12,8 +12,8 @@ public class HomeworkTask {
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         function.applyAsDouble(4d);
         double square = 0;
-        for (double t = a; t <= b; t += delta) {
-            square += function.applyAsDouble(t) * delta;
+        for (double k = a; k <= b; k += delta) {
+            square += function.applyAsDouble(k) * delta;
         }
         return square;
     }
@@ -26,13 +26,14 @@ public class HomeworkTask {
         int count = 1;
         int index = 0;
         long max = -1;
-        while (a != 0) {
-            long current = a % 10;
+        long date = a;
+        while (date != 0) {
+            long current = date % 10;
             if (current >= max) {
                 max = current;
                 index = count;
             }
-            a /= 10;
+            date /= 10;
             count++;
         }
         return (byte) (count - index);
