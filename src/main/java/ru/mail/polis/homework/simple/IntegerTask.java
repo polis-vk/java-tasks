@@ -34,8 +34,8 @@ public class IntegerTask {
             return Integer.MAX_VALUE;
         }
 
-        float deltaRaise = top - bottom;      // подъем за сутки
-        float remainder = height - top;       // нужно пройти гусенице без последнего подъема
+        double deltaRaise = top - bottom;      // подъем за сутки
+        double remainder = height - top;       // нужно пройти гусенице без последнего подъема
 
         return (int) Math.ceil((remainder / deltaRaise) + 1);    // кол-во дней
     }
