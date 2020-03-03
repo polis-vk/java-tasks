@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ru.mail.polis.homework.simple.MainTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2020-03-03T12:37:46" hostname="DESKTOP-IDD7QL6" time="0.0">
+  <properties/>
+  <testcase name="hello" classname="ru.mail.polis.homework.simple.MainTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
