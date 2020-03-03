@@ -10,8 +10,12 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        function.applyAsDouble(4d);
-        return 0;
+        double res=0;
+        for(double i=a;i<b-delta;i+=delta){
+            res+=function.applyAsDouble(i+delta/2);
+        }
+        res*=delta;
+        return res;
     }
 
     /**
@@ -19,7 +23,18 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        byte Index=1, max=0;
+        while(a>0){
+            if(a %10>=max){
+                Index = 1;
+                max = (byte)(a%10);
+            }
+            else{
+                Index++;
+            }
+            a=a/10;
+        }
+        return Index;
     }
 
 
@@ -28,9 +43,9 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        double deriv = (double)(y1-y2)/(x1-x2);
+        return deriv*(x3-x1)+y1;
     }
-
     /**
      * Даны 4 точки в пространстве A(x1, y1), B(x2, y2), C(x3, y3), D(x4, y4). Найдите площадь выпуклого
      * четырехуголька ABCD.

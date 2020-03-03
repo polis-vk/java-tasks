@@ -48,4 +48,27 @@ public class HomeworkTaskTest {
         assertEquals( 17.5, HomeworkTask.square(1, 4, 3, 2, 8, 11, 6, 10),  1e-2);
         assertEquals( 16, HomeworkTask.square(2, 4, 4, 7, 9, 13, 6, 5),  1e-2);
     }
+
+    @Test
+    public void testCalcIntegral() {
+    }
+
+    @Test
+    public void testMaxNumber() {
+        assertEquals( 2, HomeworkTask.maxNumber(892347384743343L));
+        assertEquals( 1, HomeworkTask.maxNumber(99999999999999L));
+        assertEquals( 1, HomeworkTask.maxNumber(0L));
+        assertEquals( 1, HomeworkTask.maxNumber(1L));
+        assertEquals( 2, HomeworkTask.maxNumber(12L));
+        assertEquals( 7, HomeworkTask.maxNumber(62467293));
+        assertEquals( 5, HomeworkTask.maxNumber(62467237));
+    }
+
+    @Test
+    public void testLineFunction() {
+    }
+
+    @Test
+    public void testSquare() {
+    }
 }
