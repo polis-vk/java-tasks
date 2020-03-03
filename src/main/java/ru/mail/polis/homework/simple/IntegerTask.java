@@ -30,13 +30,11 @@ public class IntegerTask {
     public static int snake(int height, int top, int bottom) {
         int count = 0;
         int day = 0;
-        if (top - bottom < 1) {
+        if (bottom >= top) {
             if (bottom >= height) {
-                count = 1;
-                return count;
+                return 1;
             } else {
-                count = Integer.MAX_VALUE;
-                return count;
+                return Integer.MAX_VALUE;
             }
         }
         while (day < height) {
@@ -55,14 +53,14 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        n = Math.abs(n);
+        int temp = Math.abs(n);
         int count = 1;
         int num = 0;
-        while (n > 0) {
+        while (temp > 0) {
             if (count == order) {
-                num = n % 10;
+                num = temp % 10;
             }
-            n = n / 10;
+            temp = temp / 10;
             count += 1;
         }
         return num;

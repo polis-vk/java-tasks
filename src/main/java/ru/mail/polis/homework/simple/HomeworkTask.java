@@ -12,8 +12,8 @@ public class HomeworkTask {
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         function.applyAsDouble(4d);
         double sum = 0;
-        for (double i = a; i < b; i += delta) {
-            sum += delta * function.applyAsDouble(i);
+        for (double count = a; count < b; count += delta) {
+            sum += delta * function.applyAsDouble(count);
         }
         return sum;
     }
@@ -23,16 +23,17 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        long max = a % 10;
-        a = a / 10;
+        long numb = a;
+        long max = numb % 10;
+        numb = numb / 10;
         int count = 1;
         int position = 0;
-        while (a > 0) {
-            if (a % 10 >= max) {
-                max = a % 10;
+        while (numb > 0) {
+            if (numb % 10 >= max) {
+                max = numb % 10;
                 position = count;
             }
-            a = a / 10;
+            numb = numb / 10;
             count += 1;
         }
         return (byte) (count - position);
@@ -44,8 +45,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        double y3 = (double) ((y2 - y1) * (x3 - x1)) / (x2 - x1) + y1;
-        return y3;
+        return (double) ((y2 - y1) * (x3 - x1)) / (x2 - x1) + y1;
     }
 
     /**
@@ -54,8 +54,7 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        double square = 0.5 * Math.abs((x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)) + 0.5 * Math.abs((x4 - x1) * (y3 - y1) - (y4 - y1) * (x3 - x1));
-        return square;
+        return (double) 0.5 * Math.abs((x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)) + 0.5 * Math.abs((x4 - x1) * (y3 - y1) - (y4 - y1) * (x3 - x1));
     }
 
 }
