@@ -12,8 +12,11 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        function.applyAsDouble(4d);
-        return 0;
+        double integral = 0.;
+        for (double i = a; i < b; i += delta) {
+            integral += delta * function.applyAsDouble(i);
+        }
+        return integral;
     }
 
     /**
