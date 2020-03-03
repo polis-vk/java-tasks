@@ -29,6 +29,7 @@ public class DoubleTask {
             x1 = x2;
             x2 = temp;
         }
+
         return x1 + ", " + x2;
     }
 
