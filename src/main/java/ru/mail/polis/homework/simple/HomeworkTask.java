@@ -12,17 +12,12 @@ public class HomeworkTask {
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integral = 0;
         double ds = 0;
-        double x = a;
+        double x = a + delta;
         while (x < b) {
-            double yPrev = function.applyAsDouble(x);
-            x = x + (delta);
-            double y = function.applyAsDouble(x);
-            ds = (y + yPrev) / 2 * delta;
-            integral = integral + ds;
+            ds = (function.applyAsDouble(x) + function.applyAsDouble(x - delta)) / 2 * delta;
+            x += delta;
+            integral += ds;
         }
-/*
-        function.applyAsDouble(4d);
-*/
         return integral;
     }
 
