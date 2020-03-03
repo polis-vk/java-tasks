@@ -29,7 +29,7 @@ public class IntegerTask {
      */
     public static int snake(int height, int top, int bottom) {
         int stepNumber = 0;
-        if ((top < height) && ((top - bottom) <= 0)) {
+        if ((top < height) && (top <= bottom)) {
             return Integer.MAX_VALUE;
         }
         int step = 0;
@@ -50,11 +50,12 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
+        int number = n;
         for (int i = 1; i < order; i++) {
-            n = n / 10;
+            number = number / 10;
         }
-        n = Math.abs(n % 10);
-        return n;
+        number = Math.abs(number % 10);
+        return number;
     }
 
 

@@ -12,11 +12,11 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         function.applyAsDouble(4d);
-        double s = 0;
+        double square = 0;
         for (double x = a; x < b; x += delta) {
-            s += delta * function.applyAsDouble(x);
+            square += delta * function.applyAsDouble(x);
         }
-        return s;
+        return square;
     }
 
     /**
@@ -27,17 +27,17 @@ public class HomeworkTask {
         if (a == 0) {
             return 1;
         }
-        long b = a;
+        long number = a;
         byte i = 1;
         byte j = 0;
-        int maxNumber = -1;
-        while (b != 0) {
-            long digit = b % 10;
-            if (maxNumber <= digit) {
-                maxNumber = (int) digit;
+        int maxDigit = 0;
+        while (number != 0) {
+            long digit = number % 10;
+            if (maxDigit <= digit) {
+                maxDigit = (int) digit;
                 j = i;
             }
-            b /= 10;
+            number /= 10;
             i++;
         }
         return (byte) (i - j);
