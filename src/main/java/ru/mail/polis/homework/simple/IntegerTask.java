@@ -34,7 +34,8 @@ public class IntegerTask {
         if (bottom >= top) {
             return Integer.MAX_VALUE;
         }
-        int currentHeight = 0, day = 0;
+        int currentHeight = 0,
+                day = 0;
         for (; ; ) {
             day++;
             currentHeight = currentHeight + top;

@@ -34,6 +34,6 @@ public class DoubleTask {
      */
     public static float length(double x1, double y1, double x2, double y2) {
 
-        return (float) ( Math.sqrt( Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2) ) );
+        return (float) (Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2)));
     }
 }
