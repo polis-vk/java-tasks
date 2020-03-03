@@ -12,8 +12,8 @@ public class HomeworkTask {
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         function.applyAsDouble(4d);
         double sum = 0;
-        for (double i = a; i < b; i += delta) {
-            sum += delta * function.applyAsDouble(i);
+        for (double counter = a; counter < b; counter += delta) {
+            sum += delta * function.applyAsDouble(counter);
         }
         return sum;
     }
@@ -21,23 +21,22 @@ public class HomeworkTask {
     /**
      * Вывести номер максимальной цифры. Счет начинается слева направо,
      * выводим номер первой максимальной цифры (если их несколько)
+     *
      * @return
      */
     public static int maxNumber(long a) {
-        int maxNumber= (int) a%10;
-        int numOfMaxNumber=-1;
-        int quantityOfNum=0;
-        while(a!=0)
-        {
-            if (maxNumber<=a%10)
-            {
-                maxNumber=(int)a%10;
-                numOfMaxNumber=quantityOfNum;
+        int maxNumber = (int) a % 10;
+        int numOfMaxNumber = -1;
+        int quantityOfNum = 0;
+        while (a != 0) {
+            if (maxNumber <= a % 10) {
+                maxNumber = (int) a % 10;
+                numOfMaxNumber = quantityOfNum;
             }
             quantityOfNum++;
-            a/=10;
+            a /= 10;
         }
-        return quantityOfNum-numOfMaxNumber;
+        return quantityOfNum - numOfMaxNumber;
     }
 
 
@@ -46,7 +45,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return((double)((y2-y1)*(x3-x1))/(double)(x2-x1))+(double)y1;
+        return ((double) ((y2 - y1) * (x3 - x1)) / (double) (x2 - x1)) + (double) y1;
     }
 
     /**
@@ -55,7 +54,7 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        double det = x1 * y2 + x2 * y3 + x3 * y4 + x4 * y1 - x2 * y1 - x3 * y2 - x4 * y3 - x1 * y4;
+        return Math.abs(det * 0.5);
     }
-
 }
