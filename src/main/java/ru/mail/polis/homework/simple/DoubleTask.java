@@ -14,8 +14,24 @@ public class DoubleTask {
      * Пример: (1, 5, 4) -> "-1.0, -4.0"
      */
     public static String equation(int a, int b, int c) {
+        if (a == 0) {
+            return "не квадратное уравнение";
+        }
         double x1 = 0;
         double x2 = 0;
+        double dis = Math.pow(b, 2) - 4 * a * c;
+        if (dis >= 0) {
+            dis = Math.sqrt(dis);
+            x1 = (-b - dis) / (2 * a);
+            x2 = (-b + dis) / (2 * a);
+            if (x1 < x2) {
+                double tmp = x1;
+                x1 = x2;
+                x2 = tmp;
+            }
+        } else {
+            return "решений нет";
+        }
         return x1 + ", " + x2;
     }
 
@@ -24,6 +40,6 @@ public class DoubleTask {
      * Пример: (0, 0, 3, 4) -> 5.0
      */
     public static float length(double x1, double y1, double x2, double y2) {
-        return 0;
+        return (float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 }
