@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-import sun.security.util.Length;
-
 import java.util.function.ToDoubleFunction;
 
 public class HomeworkTask {
@@ -13,8 +11,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integral = 0.;
-        for (double i = a; i < b; i += delta) {
-            integral += delta * function.applyAsDouble(i);
+        for (double x = a; x < b; x += delta) {
+            integral += delta * function.applyAsDouble(x);
         }
         return integral;
     }

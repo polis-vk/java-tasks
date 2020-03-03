@@ -14,11 +14,12 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        if (n > 0) {
+        int nclone=n;
+        if (nclone > 0) {
             int amount = 0;
-            while (n > 0) {
-                amount += n;
-                n -= 1;
+            while (nclone > 0) {
+                amount += nclone;
+                nclone -= 1;
             }
             return amount;
         } else {
@@ -36,7 +37,7 @@ public class IntegerTask {
     public static int snake(int height, int top, int bottom) {
         if (top > height) {
             return 1;
-        } else if (top > bottom) {
+        }if (top > bottom) {
             return (height - top) / (top - bottom) + 1;
         } else {
             return Integer.MAX_VALUE;
