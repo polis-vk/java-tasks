@@ -30,16 +30,16 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        int currentHeight = top, k = 1;
+        int currentHeight = top;
+        int k = 1;
         if (top - bottom > 0 || top >= height) {
             while (currentHeight < height){
                 currentHeight += (top - bottom);
                 k++;
             }
             return k;
-        } else {
-            return Integer.MAX_VALUE;
         }
+        return Integer.MAX_VALUE;
     }
 
     /**
@@ -47,7 +47,7 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int digit = Math.abs((int) (n % Math.pow(10, order)));
+        double digit = Math.abs(n % Math.pow(10, order));
         return Math.abs((int) (digit / Math.pow(10, order - 1)));
     }
 
