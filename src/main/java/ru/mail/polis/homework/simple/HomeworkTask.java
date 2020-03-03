@@ -30,10 +30,10 @@ public class HomeworkTask {
         int maxNumPos = 0; //порядковый номер наибольшей цифры справа налево
 
         long value = Math.abs(a);
-        while (value > 0){
-            int cut = (int)Math.abs(value % 10);    // обрезаем число на одну цифру
+        while (value > 0) {
+            int cut = (int) Math.abs(value % 10);    // обрезаем число на одну цифру
             totalDigits++;
-            if(cut >= maxValue){
+            if (cut >= maxValue) {
                 maxValue = cut;
                 maxNumPos = totalDigits;
             }
@@ -64,8 +64,8 @@ public class HomeworkTask {
     }
 
     /*площадь треугольника*/
-    private  static  double triangle(int x1, int y1, int x2, int y2, int x3, int y3){
-        double det = ((x1 - x3) * (y2 - y3)) - ((x2 - x3)*(y1 - y3));   // удвоенная s треугольника
+    private static double triangle(int x1, int y1, int x2, int y2, int x3, int y3) {
+        double det = ((x1 - x3) * (y2 - y3)) - ((x2 - x3) * (y1 - y3));   // удвоенная s треугольника
         return Math.abs(det / 2);
     }
 

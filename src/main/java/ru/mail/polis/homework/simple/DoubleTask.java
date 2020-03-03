@@ -17,17 +17,17 @@ public class DoubleTask {
         double x1 = 0;
         double x2 = 0;
 
-        double dis = Math.pow(b,2) - 4 * a * c;     // дискриминант
-        if(dis >= 0){
+        double dis = Math.pow(b, 2) - 4 * a * c;     // дискриминант
+        if (dis >= 0) {
             dis = Math.sqrt(dis);
-            if(a != 0){
-                x1 = (-b + dis) / (2*a);
-                double fix = (-b - dis) / (2*a);    // карман для сравнения двух корней
-                if(x1 < fix){
+            if (a != 0) {
+                x1 = (-b + dis) / (2 * a);
+                double temp = (-b - dis) / (2 * a);    // карман для сравнения двух корней
+                if (x1 < temp) {
                     x2 = x1;
-                    x1 = fix;
+                    x1 = temp;
                 } else {
-                    x2 = fix;
+                    x2 = temp;
                 }
             }
         }
@@ -40,6 +40,6 @@ public class DoubleTask {
      * Пример: (0, 0, 3, 4) -> 5.0
      */
     public static float length(double x1, double y1, double x2, double y2) {
-        return (float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) );
+        return (float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 }

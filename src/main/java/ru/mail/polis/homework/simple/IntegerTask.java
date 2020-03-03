@@ -14,7 +14,7 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return  (n * (n+1)) / 2;
+        return (n * (n + 1)) / 2;
     }
 
     /**
@@ -25,19 +25,19 @@ public class IntegerTask {
      */
     public static int snake(int height, int top, int bottom) {
 
-        if (top > height)       // если подъем гусеницы больше высоты, сразу возвращаем 1
-        {
+        if (top >= height) {      // если подъем гусеницы больше высоты, сразу возвращаем 1
+
             return 1;
         }
 
-        if (top <= bottom && top < height) {    // краевые условия
+        if (top <= bottom) {    // краевые условия
             return Integer.MAX_VALUE;
         }
 
         float deltaRaise = top - bottom;      // подъем за сутки
         float remainder = height - top;       // нужно пройти гусенице без последнего подъема
 
-        return (int)Math.ceil((remainder / deltaRaise) + 1);    // кол-во дней
+        return (int) Math.ceil((remainder / deltaRaise) + 1);    // кол-во дней
     }
 
     /**
@@ -46,23 +46,18 @@ public class IntegerTask {
      */
     public static int kDecimal(int n, int order) {
         double mod = Math.abs(n % Math.pow(10, order));
-
-        return (int)(mod / Math.pow(10, order - 1));
+        return (int) (mod / Math.pow(10, order - 1));
     }
-
 
     /**
      * Выведите факториал от числа n
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-
         long result = 1;
-
-        for (int ii = 2; ii <= n; ii++) {
-            result *= ii;
+        for (int i = 2; i <= n; i++) {
+            result *= i;
         }
-
         return result;
     }
 }
