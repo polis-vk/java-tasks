@@ -10,8 +10,19 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        function.applyAsDouble(4d);
-        return 0;
+        double h = (b-a)/((Math.abs(a)+Math.abs(b))/delta);
+        double rez = 0;
+        double x = 0;
+        x = a + h;
+        while (x < b){
+            rez = rez+4*function.applyAsDouble(x);
+            x = x+h;
+            rez = rez+2*function.applyAsDouble(x);
+            x = x+h;
+        }
+        rez = h/3 * (rez + function.applyAsDouble(a) - function.applyAsDouble(b));
+//        function.applyAsDouble(4d);
+        return rez;
     }
 
     /**
@@ -19,7 +30,26 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        int[] arr;
+        int count =0;
+        long b = a;
+        while (b!=0){
+            count++;
+            b/=10;
+        }
+        arr = new int[count];
+        int max = 0;
+        for (int i = arr.length-1; i >=0; i--){
+            arr[i] = (int) a%10;
+            a/=10;
+        }
+        for (int j = 0; j < arr.length; j++){
+            if (arr[j] > max){
+                max = arr[j];
+                count = j;
+            }
+        }
+        return (byte) (count+1);
     }
 
 
@@ -28,7 +58,8 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        double y3 = (double)((x3-x1)*(y2-y1))/(x2-x1)+y1;
+        return y3;
     }
 
     /**
@@ -37,7 +68,41 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        double ab = tPif(x1,y1,x2,y2);
+        double bc = tPif(x2,y2,x3,y3);
+        double cd = tPif(x3,y3,x4,y4);
+        double ad = tPif(x4,y4,x1,y1);
+
+        double ac = tPif(x3,y3,x1,y1);
+
+
+        double p1 = halfPerim(ab,bc,ac);
+        double s1 = square(p1,ab,bc,ac);
+
+        double p2 = halfPerim(ad,cd,ac);
+        double s2 = square(p2,ad,cd,ac);
+
+        return s1+s2;
+    }
+
+    private static double square(double p, double ab, double bc, double ac) {
+        return Math.sqrt(p*(p-ab)*(p-bc)*(p-ac));
+    }
+
+    private static double halfPerim(double ab, double bc, double ac) {
+        return (ab+bc+ac)/2;
+    }
+
+    public static double tPif(int x1, int y1, int x2, int y2){
+        if (x2 == x1)
+        {
+            return Math.abs(y2 - y1);
+        }
+        if (y2 == y1)
+        {
+            return Math.abs(x2 - x1);
+        }
+        return Math.sqrt((double)Math.pow(Math.abs(x2 - x1),2)+(double)Math.pow(Math.abs(y2 - y1),2));
     }
 
 }
