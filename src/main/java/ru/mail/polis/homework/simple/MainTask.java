@@ -8,7 +8,7 @@ public class MainTask {
      *
      * @param args
      */
-    private static void main(String[] args) {
+    public static void main(String[] args) {
         System.out.println("It is work.");
     }
 }

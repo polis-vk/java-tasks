@@ -33,8 +33,8 @@ public class DoubleTask {
      */
     public static float length(double x1, double y1, double x2, double y2) {
 
-        double side1 = Math.abs(x2 - x1);
-        double side2 = Math.abs(y2 - y1);
+        double side1 = x2 - x1;
+        double side2 = y2 - y1;
         return (float) Math.sqrt(side1 * side1 + side2 * side2);
     }
 }
