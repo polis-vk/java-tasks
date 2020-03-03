@@ -15,9 +15,9 @@ public class DoubleTask {
      */
     public static String equation(int a, int b, int c) {
         double discriminantSqrt = Math.sqrt(b * b - 4 * a * c);
-        double x1 = (-b + discriminantSqrt) / (2 * a);
-        double x2 = (-b - discriminantSqrt) / (2 * a);
-        return Math.max(x1, x2) + ", " + Math.min(x1, x2);
+        double x1 = (double) -b / (2 * a) + (discriminantSqrt / Math.abs(2 * a));
+        double x2 = (double) -b / (2 * a) - (discriminantSqrt / Math.abs(2 * a));
+        return x1 + ", " + x2;
     }
 
     /**
