@@ -6,12 +6,24 @@ public class HomeworkTask {
 
     /**
      * Нужно численно посчитать интеграл от a до b с шагом delta от функции function
-     * Для того, что бы получить значение по Y для точки X, надо просто написать function.applyAsDouble(t)
+     * Для того, чтобы получить значение по Y для точки X, надо просто написать function.applyAsDouble(t)
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
+        double integral = 0;
+        double ds = 0;
+        double x = a;
+        while (x < b) {
+            double yPrev = function.applyAsDouble(x);
+            x = x + (delta);
+            double y = function.applyAsDouble(x);
+            ds = (y + yPrev) / 2 * delta;
+            integral = integral + ds;
+        }
+/*
         function.applyAsDouble(4d);
-        return 0;
+*/
+        return integral;
     }
 
     /**
@@ -19,7 +31,21 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        byte max = 0;
+        byte m = 0;
+        byte i = 1;
+        byte maxCount = 0;
+        while (a != 0) {
+            m = (byte) (a % 10);
+            a /= 10;
+            if (m >= max) {
+                max = m;
+                maxCount = i;
+            }
+            i++;
+        }
+        byte maxNumber = (byte) (i - maxCount);
+        return maxNumber;
     }
 
 
@@ -28,7 +54,8 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        double y3 = (double) (x3 * (y1 - y2) + (x1 * y2 - y1 * x2)) / (x1 - x2);
+        return y3;
     }
 
     /**

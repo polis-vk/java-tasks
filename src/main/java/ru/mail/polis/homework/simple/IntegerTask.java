@@ -15,7 +15,7 @@ public class IntegerTask {
      */
     public static int sum(int n) {
         int sum = 0;
-        for (int i=1; i<=n; i++) {
+        for (int i = 1; i <= n; i++) {
             sum = i + sum;
         }
         return sum;
@@ -52,7 +52,7 @@ public class IntegerTask {
      */
     public static int kDecimal(int n, int order) {
         int modTens = 1;
-        for(int i = 1; i < order; i++){
+        for (int i = 1; i < order; i++) {
             modTens *= 10;
         }
         int number = (Math.abs(n) / modTens) % 10;
