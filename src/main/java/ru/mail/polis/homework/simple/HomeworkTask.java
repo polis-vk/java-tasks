@@ -11,8 +11,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integral = 0;
-        for (double i = a; i < b; i += delta){
-            integral += function.applyAsDouble(i) * delta;
+        for (double x = a; x < b; x += delta){
+            integral += function.applyAsDouble(x) * delta;
         }
         return integral;
     }
@@ -26,8 +26,8 @@ public class HomeworkTask {
         byte maxIndex = -1;
         byte index = 0;
         byte value;
-        for (long i = a; i > 0; i /= 10) {
-            value = (byte) (i % 10);
+        for (long dischargeNumber = a; dischargeNumber > 0; dischargeNumber /= 10) {
+            value = (byte) (dischargeNumber % 10);
             if (value >= maxValue) {
                 maxIndex = index;
                 maxValue = value;
@@ -43,7 +43,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 1.0 * (x3 - x1) * (y2 - y1) / (x2 - x1) + y1;
+        return (double) (x3 - x1) * (y2 - y1) / (x2 - x1) + y1;
     }
 
     /**
