@@ -7,7 +7,14 @@ public class MainTask {
      * Так же, надо сделать так, что бы при запуске этого класса печаталась строка "It is work."
      * @param args
      */
-//    private static main(String args) {
+
+//    public static void main(String[] args) {
 //        System.out.println("It is work.");
 //    }
+    /**
+     * Вместо модификатора доступа private - public
+     * добавляем void
+     * также входной аргумент должен быть массивом строк => String[]
+     * */
 }
+

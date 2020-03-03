@@ -6,7 +6,10 @@ public class Main {
         System.out.println(hello());
     }
 
+    /**
+     * Проблема заключалась в том, что в строке использовались и русские и английские символы
+     */
     static String hello() {
-        return "Hello world! I am а first program";
+        return "Hello world! I am a first program";
     }
 }
