@@ -14,10 +14,7 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        if (n == 0){
-            return 0;
-        }
-        return sum(n-1)+n;
+        return (1+n)*n/2;
     }
 
     /**
@@ -27,17 +24,16 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        if (top>=height){
+        if (top >= height) {
             return 1;
         }
-        if (top <= bottom){
+        if (top <= bottom) {
             return Integer.MAX_VALUE;
         }
-        if ((height - top)%(top - bottom) == 0){
-            return (height - top)/(top - bottom) + 1;
-        }
-        else{
-            return (height - top)/(top - bottom) + 2;
+        if ((height - top) % (top - bottom) == 0) {
+            return (height - top) / (top - bottom) + 1;
+        } else {
+            return (height - top) / (top - bottom) + 2;
         }
     }
 
@@ -47,7 +43,7 @@ public class IntegerTask {
      */
     public static int kDecimal(int n, int order) {
         n = Math.abs(n);
-        return (int)((n % (Math.pow(10, order))/Math.pow(10,order-1)));
+        return (int) ((n % (Math.pow(10, order)) / Math.pow(10, order - 1)));
         //   return (n % (10^order))/10^(order-1); почему так не робит?
     }
 
@@ -58,8 +54,8 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long f = 1;
-        for (int i = 1; i <= n; i++){
-            f*=i;
+        for (int i = 1; i <= n; i++) {
+            f *= i;
         }
         return f;
     }
