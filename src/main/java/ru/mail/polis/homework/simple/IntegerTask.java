@@ -15,7 +15,9 @@ public class IntegerTask {
      */
     public static int sum(int n) {
         int sum = 0;
-        for (int i = 1; i <= n; i++) sum += i;
+        for (int i = 1; i <= n; i++) {
+            sum += i;
+        }
         return sum;
     }
 
@@ -28,12 +30,14 @@ public class IntegerTask {
     public static int snake(int height, int top, int bottom) {
         int days = 1;
 
-        if (height <= top) return days;
-
-        if (bottom >= top) return Integer.MAX_VALUE;
+        if (height <= top) {
+            return days;
+        }
+        if (bottom >= top) {
+            return Integer.MAX_VALUE;
+        }
 
         days += Math.ceil((float) (height - top) / (top - bottom));
-
         return days;
     }
 
@@ -45,7 +49,9 @@ public class IntegerTask {
         n = Math.abs(n);
         while (n > 0) {
             order--;
-            if (order == 0) return n % 10;
+            if (order == 0) {
+                return n % 10;
+            }
             n = (n - n % 10) / 10;
         }
         return 0;

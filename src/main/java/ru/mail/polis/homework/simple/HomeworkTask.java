@@ -24,12 +24,12 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte size = 0;
-        byte pos = 0;
-        byte max = -1;
+        int size = 0;
+        int pos = 0;
+        int max = -1;
 
         while (a > 0) {
-            byte num = (byte) (a % 10);
+            int num = (int) (a % 10);
             size++;
 
             if (num >= max) {
