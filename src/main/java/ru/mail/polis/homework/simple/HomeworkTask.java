@@ -22,12 +22,12 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        int length = (int) Math.ceil(Math.log10(a + 0.01));
-        int max = (int) (a / Math.pow(10, length - 1));
+        int length = getLength(a);
+        double max = (a / Math.pow(10, length - 1));
         byte index = 1;
         if (max != 9) {
             for (int i = 2; i <= length; i++) {
-                int numb = (int) (a / Math.pow(10, length - i)) % 10;
+                double numb = (a / Math.pow(10, length - i)) % 10;
                 if (numb > max) {
                     max = numb;
                     index = (byte) i;
@@ -37,6 +37,19 @@ public class HomeworkTask {
             return index;
         }
         return index;
+    }
+
+    public static int getLength(long a) {
+        long numb = Math.abs(a);
+        long compare = 10;
+        for (int i = 1; i < 19; i++) {
+            if (numb < compare) {
+                return i;
+            } else {
+                compare *= 10;
+            }
+        }
+        return 19;
     }
 
 
@@ -50,8 +63,7 @@ public class HomeworkTask {
         if (y == 0) {
             return y1;
         } else {
-            double y3 = y2 - ((y * (x2 - x3)) / x);
-            return y3;
+            return y2 - ((y * (x2 - x3)) / x);
         }
     }
 
@@ -61,9 +73,7 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        double squareResult = Math.abs((x1 * y2 - y1 * x2) + (x2 * y3 - y2 * x3) + (x3 * y4 - y3 * x4) + (x4 * y1 - y4 * x1));
-        squareResult /= 2;
-        return squareResult;
+        return (Math.abs((x1 * y2 - y1 * x2) + (x2 * y3 - y2 * x3) + (x3 * y4 - y3 * x4) + (x4 * y1 - y4 * x1))) / 2.0;
     }
 
 }

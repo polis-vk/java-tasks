@@ -30,10 +30,8 @@ public class DoubleTask {
      * Пример: (0, 0, 3, 4) -> 5.0
      */
     public static float length(double x1, double y1, double x2, double y2) {
-        double leg1, leg2;
-        leg1 = x2 - x1;
-        leg2 = y2 - y1;
-        float hypotenuse = (float) Math.sqrt(leg1 * leg1 + leg2 * leg2);
-        return hypotenuse;
+        double leg1 = x2 - x1;
+        double leg2 = y2 - y1;
+        return (float) Math.sqrt(leg1 * leg1 + leg2 * leg2);
     }
 }
