@@ -56,9 +56,9 @@ public class HomeworkTask {
     }
 
     private static double triangleSquare(int x1, int y1, int x2, int y2, int x3, int y3){
-        double lengthA = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-        double lengthB = Math.sqrt(Math.pow(x3 - x2, 2) + Math.pow(y3 - y2, 2));
-        double lengthC = Math.sqrt(Math.pow(x1 - x3, 2) + Math.pow(y1 - y3, 2));
+        double lengthA = DoubleTask.length(x1, y1, x2, y2);
+        double lengthB = DoubleTask.length(x2, y2, x3, y3);
+        double lengthC = DoubleTask.length(x1, y1, x3, y3);
 
         double p = (lengthA + lengthB + lengthC) / 2;
         return Math.sqrt(p * (p - lengthA) * (p - lengthB) * (p - lengthC));
