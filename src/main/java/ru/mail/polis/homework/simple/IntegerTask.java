@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.simple;
 
 
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -14,7 +15,11 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return 0;
+        int result = 0;
+        for (int i = 1; i<=n; i++){
+            result += i;
+        }
+        return result;
     }
 
     /**
@@ -24,7 +29,22 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        return 0;
+        int totalHeight = 0;
+        int days = 0;
+        if (top >= height) {
+            return  1;
+        }
+        if (bottom >= top) {
+            return Integer.MAX_VALUE;
+        }
+        while (totalHeight < height) {
+            totalHeight += top;
+            days++;
+            if (totalHeight != height) {
+                totalHeight -= bottom;
+            }
+        }
+        return days;
     }
 
     /**
@@ -32,15 +52,23 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return 0;
+        int result = 0;
+        for (int i = 1; i < order; i++) {
+            n /= 10;
+        }
+        result = Math.abs(n%10);
+        return result;
     }
-
 
     /**
      * Выведите факториал от числа n
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        long result = 1;
+        for(int i = 2;i <= n;i++) {
+            result*=i;
+        }
+        return result;
     }
 }
