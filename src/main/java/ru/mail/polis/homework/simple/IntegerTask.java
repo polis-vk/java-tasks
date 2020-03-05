@@ -61,10 +61,10 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        long fac = 1;
+        long factorial = 1;
         for (int i = 1; i <= n; i++) {
-            fac *= i;
+            factorial *= i;
         }
-        return fac;
+        return factorial;
     }
 }
