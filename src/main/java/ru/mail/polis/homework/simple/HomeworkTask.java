@@ -27,9 +27,10 @@ public class HomeworkTask {
         int size = 0;
         int pos = 0;
         int max = -1;
+        long arg = a;
 
-        while (a > 0) {
-            int num = (int) (a % 10);
+        while (arg > 0) {
+            int num = (int) arg % 10;
             size++;
 
             if (num >= max) {
@@ -37,7 +38,7 @@ public class HomeworkTask {
                 pos = size;
             }
 
-            a = (a - a % 10) / 10;
+            arg = (arg - arg % 10) / 10;
         }
 
         return (byte) (size - pos + 1);

@@ -46,13 +46,13 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        n = Math.abs(n);
-        while (n > 0) {
+        int num = Math.abs(n);
+        while (num > 0) {
             order--;
             if (order == 0) {
-                return n % 10;
+                return num % 10;
             }
-            n = (n - n % 10) / 10;
+            num = (num - num % 10) / 10;
         }
         return 0;
     }
