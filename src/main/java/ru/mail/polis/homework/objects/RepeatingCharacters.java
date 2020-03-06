@@ -23,9 +23,11 @@ public class RepeatingCharacters {
         int repeat = 0;
         for (char currentChar : str.toCharArray()) {
             repeat = (previousChar == currentChar) ? (repeat + 1) : 1;
-            if (repeat > maxRepeat) {
+            if (repeat > maxRepeat && mostRepeated != currentChar) {
                 maxRepeat = repeat;
                 mostRepeated = currentChar;
+            } else if (repeat > maxRepeat) {
+                maxRepeat = repeat;
             }
             previousChar = currentChar;
         }
