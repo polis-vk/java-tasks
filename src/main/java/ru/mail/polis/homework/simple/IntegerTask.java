@@ -30,10 +30,10 @@ public class IntegerTask {
     public static int snake(int height, int top, int bottom) {
         if (height <= top) {
             return 1;
-        } else if (top <= bottom){
+        } else if (top <= bottom) {
             return Integer.MAX_VALUE;
         }
-        return (int) Math.ceil( (double)(height - top) / (top - bottom)) + 1;
+        return (int) Math.ceil((double) (height - top) / (top - bottom)) + 1;
     }
 
     /**
