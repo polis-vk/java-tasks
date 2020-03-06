@@ -43,7 +43,7 @@ public class HomeworkTask {
         if (a > -10 && a < 10) {
             return 1;
         }
-        long max = Long.MIN_VALUE;
+        long maxDigit = Long.MIN_VALUE;
         long b;
         long tmp = a;
         byte i = 0;
@@ -52,8 +52,8 @@ public class HomeworkTask {
         while (tmp > 0) {
             b = tmp % 10;
             tmp = tmp / 10;
-            if (b >= max) {
-                max = b;
+            if (b >= maxDigit) {
+                maxDigit = b;
                 res = i;
             }
             i++;
