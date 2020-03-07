@@ -14,7 +14,11 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return 0;
+       int s = 0;
+        for (int i = 1; i <= n; ++i) {
+            s += i;
+        }
+        return s;
     }
 
     /**
@@ -32,7 +36,10 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return 0;
+        for (int i = 1; i < order; i++) {
+            n /= 10;
+        }
+        return Math.abs(n) % 10;
     }
 
 
@@ -41,6 +48,10 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        long f = 1;
+        for (byte i = 1; i <= n; ++i) {
+            f *= i;
+        }
+        return f;
     }
 }
