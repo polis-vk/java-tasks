@@ -24,19 +24,19 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        long max = 0;
-        byte n = 1;
-        for (long i = a; i != 0; i = i / 10) {
-
-            if (i % 10 >= max) {    /*Существует какая-то возможность сделать вложенность более читаемой? Не очень удобно,
-                                      открывающая и закрывающая фигурная скобки на разном отступе*/
-                n = 1;
-                max = i % 10;
+        int i = 1;
+        int n = 0;
+        int currentMax = (int) (a % Math.pow(10, 1));
+        do {
+            n++;
+            if ((a % Math.pow(10, n) / Math.pow(10, n - 1)) >= currentMax) {
+                currentMax = (int) (a % Math.pow(10, n) / Math.pow(10, n - 1));
+                i = 1;
             } else {
-                n++;
+                i = i + 1;
             }
-        }
-        return n;
+        } while ((int) (a / Math.pow(10, n)) != 0);
+        return (byte) i;
     }
 
 
@@ -45,8 +45,8 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        double k = ((double) (y2 - y1)) / ((double) (x2 - x1)),
-                b = y2 - k * x2;
+        double k = ((double) (y2 - y1)) / ((double) (x2 - x1));
+        double b = y2 - k * x2;
         return (k * x3 + b);
     }
 

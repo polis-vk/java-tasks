@@ -6,21 +6,12 @@ import static org.junit.Assert.assertEquals;
 
 public class IntegerTaskTest {
 
-    @Test(expected = StackOverflowError.class)
+    @Test
     public void sum() {
         assertEquals(0, IntegerTask.sum(0));
         assertEquals(15, IntegerTask.sum(5));
         assertEquals(55, IntegerTask.sum(10));
         assertEquals(50005000, IntegerTask.sum(10000));
-        assertEquals(1, IntegerTask.sum(Integer.MAX_VALUE));
-        /*тест с sum(Integer.MAX_VALUE) пытался писать отделбным классом
-        в таком виде. Почему не работает?:
-        @Test(expected = StackOverflowError.class)
-        public void sum1() {
-        IntegerTask MyObject=new IntegerTask;
-        MyObject.sum(Integer.MAX_VALUE);
-        }
-         */
     }
 
 
