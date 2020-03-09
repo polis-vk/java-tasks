@@ -28,12 +28,12 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        int x = 0;
+        int position = 0;
         int days = 0;
         if (top < height) {
             if (top > bottom) {
-                while (x < height - bottom) {
-                    x = x + top - bottom;
+                while (position < height - bottom) {
+                    position = position + top - bottom;
                     days++;
                 }
             } else {
@@ -42,7 +42,6 @@ public class IntegerTask {
         } else {
             days = 1;
         }
-
         return days;
     }
 
@@ -55,8 +54,7 @@ public class IntegerTask {
         for (int i = 1; i < order; i++) {
             modTens *= 10;
         }
-        int number = (Math.abs(n) / modTens) % 10;
-        return number;
+        return (int) (Math.abs(n) / modTens) % 10;
     }
 
 
