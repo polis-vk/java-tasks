@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.simple;
 
 
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -16,7 +15,7 @@ public class IntegerTask {
      */
     public static int sum(int n) {
         int result = 0;
-        for (int i = 1; i<=n; i++){
+        for (int i = 1; i <= n; i++) {
             result += i;
         }
         return result;
@@ -32,7 +31,7 @@ public class IntegerTask {
         int totalHeight = 0;
         int days = 0;
         if (top >= height) {
-            return  1;
+            return 1;
         }
         if (bottom >= top) {
             return Integer.MAX_VALUE;
@@ -40,7 +39,7 @@ public class IntegerTask {
         while (totalHeight < height) {
             totalHeight += top;
             days++;
-            if (totalHeight != height) {
+            if (totalHeight < height) {
                 totalHeight -= bottom;
             }
         }
@@ -52,12 +51,10 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int result = 0;
         for (int i = 1; i < order; i++) {
             n /= 10;
         }
-        result = Math.abs(n%10);
-        return result;
+        return Math.abs(n % 10);
     }
 
     /**
@@ -66,8 +63,8 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long result = 1;
-        for(int i = 2;i <= n;i++) {
-            result*=i;
+        for (int i = 2; i <= n; i++) {
+            result *= i;
         }
         return result;
     }
