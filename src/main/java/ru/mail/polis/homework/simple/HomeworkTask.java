@@ -15,7 +15,7 @@ public class HomeworkTask {
         double numberOfIntervals = (b - a) / delta;
 
         for (int i = 0; i < numberOfIntervals; i++) {
-            result +=  function.applyAsDouble(a + delta * (i + 0.5));
+            result += function.applyAsDouble(a + delta * (i + 0.5));
         }
         result *= delta;
 
@@ -28,15 +28,18 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
         long max = 0;
-        byte index = 1, length = (byte) (Math.log10(a)+1);
-        while (a > 0) {
-            long remainder = a % 10;
+        byte index = 1;
+        byte length = (byte) (Math.log10(a) + 1);
+        long num = a;
+        long remainder;
+        while (num > 0) {
+            remainder = num % 10;
             if (remainder >= max) {
                 max = remainder;
                 index = length;
             }
             length--;
-            a /= 10;
+            num /= 10;
         }
 
         return index;

@@ -14,7 +14,8 @@ public class DoubleTask {
      * Пример: (1, 5, 4) -> "-1.0, -4.0"
      */
     public static String equation(int a, int b, int c) {
-        double x1, x2;
+        double x1;
+        double x2;
         double discriminant = Math.pow(b, 2) - (4 * a * c);
 
         if (discriminant > 0) {
@@ -25,14 +26,10 @@ public class DoubleTask {
                 x2 = x1;
                 x1 = tmp;
             }
-        }
-        else if (discriminant == 0)
-        {
+        } else if (discriminant == 0) {
             x1 = -b / (2 * a);
             x2 = x1;
-        }
-        else
-        {
+        } else {
             x1 = Double.NaN;
             x2 = Double.NaN;
         }
