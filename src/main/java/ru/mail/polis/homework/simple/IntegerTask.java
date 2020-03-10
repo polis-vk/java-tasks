@@ -14,13 +14,11 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        int s = 0;
-
+        int sum = 0;
         for (int i = 1; i <= n; i++) {
-            s += i;
+            sum += i;
         }
-
-        return s;
+        return sum;
     }
 
     /**
@@ -32,11 +30,10 @@ public class IntegerTask {
     public static int snake(int height, int top, int bottom) {
         if (height <= top) {
             return 1;
-        } else if (top <= bottom){
+        } else if (top <= bottom) {
             return Integer.MAX_VALUE;
-        } else {
-            return (int) Math.ceil( (double)(height - top) / (top - bottom)) + 1;
         }
+        return (int) Math.ceil((double) (height - top) / (top - bottom)) + 1;
     }
 
     /**

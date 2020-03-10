@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ru.mail.polis.homework.simple.IntegerTaskTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2020-03-03T12:37:46" hostname="DESKTOP-IDD7QL6" time="0.002">
+  <properties/>
+  <testcase name="factorial" classname="ru.mail.polis.homework.simple.IntegerTaskTest" time="0.001"/>
+  <testcase name="sum" classname="ru.mail.polis.homework.simple.IntegerTaskTest" time="0.0"/>
+  <testcase name="snake" classname="ru.mail.polis.homework.simple.IntegerTaskTest" time="0.001"/>
+  <testcase name="kDecimal" classname="ru.mail.polis.homework.simple.IntegerTaskTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
