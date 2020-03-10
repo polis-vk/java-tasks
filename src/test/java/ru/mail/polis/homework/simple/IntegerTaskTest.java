@@ -17,6 +17,7 @@ public class IntegerTaskTest {
     @Test
     public void snake() {
         assertEquals(8, IntegerTask.snake(10, 3, 2));
+        assertEquals(1, IntegerTask.snake(1, 2, 2));
         assertEquals(Integer.MAX_VALUE, IntegerTask.snake(10, 2, 2));
         assertEquals(Integer.MAX_VALUE, IntegerTask.snake(100, 10, 20));
         assertEquals(1, IntegerTask.snake(10, 10, 199));

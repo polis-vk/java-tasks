@@ -30,14 +30,14 @@ public class IntegerTask {
      */
     public static int snake(int height, int top, int bottom) {
 
-        int rez = 0;
+        int result = 0;
         int count = 0;
-        if (top == bottom) return Integer.MAX_VALUE;
-        while (height >= rez){
-            rez += top;
+        if (top == bottom && height > top) return Integer.MAX_VALUE;
+        while (height >= result){
+            result += top;
             count++;
-            if (rez >= height) return count;
-            rez -= bottom;
+            if (result >= height) return count;
+            result -= bottom;
         }
         return Integer.MAX_VALUE;
     }

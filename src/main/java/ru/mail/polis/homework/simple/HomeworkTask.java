@@ -10,19 +10,19 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
+        //Метод Симпсона
         double h = (b-a)/((Math.abs(a)+Math.abs(b))/delta);
-        double rez = 0;
+        double result = 0;
         double x = 0;
         x = a + h;
         while (x < b){
-            rez = rez+4*function.applyAsDouble(x);
+            result = result+4*function.applyAsDouble(x);
             x = x+h;
-            rez = rez+2*function.applyAsDouble(x);
+            result = result+2*function.applyAsDouble(x);
             x = x+h;
         }
-        rez = h/3 * (rez + function.applyAsDouble(a) - function.applyAsDouble(b));
-//        function.applyAsDouble(4d);
-        return rez;
+        result = h/3 * (result + function.applyAsDouble(a) - function.applyAsDouble(b));
+        return result;
     }
 
     /**
