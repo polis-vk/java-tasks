@@ -12,9 +12,9 @@ public class HomeworkTask {
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double sum = 0;
 
-        //r - real (вещественное)
-        for (double r = a; r < b; r += delta) {
-            sum += delta * function.applyAsDouble(r);
+
+        for (double x = a; x < b; x += delta) {
+            sum += delta * function.applyAsDouble(x);
         }
         return sum;
     }
