@@ -12,8 +12,8 @@ public class HomeworkTask {
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         function.applyAsDouble(4d);
         double sum = 0;
-        for (double counter = a; counter < b; counter += delta) {
-            sum += delta * function.applyAsDouble(counter);
+        for (double dCounter = a; dCounter < b; dCounter += delta) {
+            sum += delta * function.applyAsDouble(dCounter);
         }
         return sum;
     }
@@ -28,13 +28,14 @@ public class HomeworkTask {
         int maxNumber = (int) a % 10;
         int numOfMaxNumber = -1;
         int quantityOfNum = 0;
+        long temp = a;
         while (a != 0) {
             if (maxNumber <= a % 10) {
                 maxNumber = (int) a % 10;
                 numOfMaxNumber = quantityOfNum;
             }
             quantityOfNum++;
-            a /= 10;
+            temp /= 10;
         }
         return quantityOfNum - numOfMaxNumber;
     }
