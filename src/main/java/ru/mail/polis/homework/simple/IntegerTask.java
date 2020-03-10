@@ -50,8 +50,8 @@ public class IntegerTask {
         int count = 0;
         while (n != 0){
             ++count;
-            if (count == order) return Math.abs(n%10);
-            n /=10;
+            if (count == order) return Math.abs(n % 10);
+            n /= 10;
         }
         return 0;
     }
@@ -62,8 +62,8 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        if (n >1)
-            return factorial((byte) (n-1))*n;
+        if (n > 1)
+            return factorial((byte) (n-1)) * n;
         else
             return 1;
     }
