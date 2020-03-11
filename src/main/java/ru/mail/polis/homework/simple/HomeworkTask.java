@@ -10,9 +10,9 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        int j = (int)((b-a)/delta);
+        int counter = (int)((b-a)/delta);
         double integral = function.applyAsDouble(a);
-        for (int i =1; i<=j; i++) {
+        for (int i =1; i<=counter; i++) {
             integral = integral + function.applyAsDouble(a+i*delta);
         }
         integral = integral*delta;
@@ -25,26 +25,25 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
 
-        int num =0;
-        int x = (int)Math.log10((double)a);
-        long d = 1;
-        for (int i =1; i<=x; i++) {
-            d = d*10;
+        long count = (long)Math.log10((double)a);
+        if (count>0) {
+            count = (long)Math.pow(10, count);
+            int max =0;
+            int tempNumber =0;
+            byte i =0;
+            byte answer=1;
+            do {
+                tempNumber = (int) ((a/count)%10);
+                i++;
+                if (tempNumber>max) {
+                    max=tempNumber;
+                    answer = i;
+                }
+                count=count/10;
+            } while ((max<9)&&(count>=1));
+            return answer;
         }
-        int max =0;
-        int y =0;
-        byte i =0;
-        byte n=1;
-        do {
-            y = (int) ((a/d)%10);
-            i++;
-            if (y>max) {
-                max=y;
-                n = i;
-            }
-            d=d/10;
-        } while ((max<9)&&(d>=1));
-        return n;
+        return (byte) 1;
     }
 
 
@@ -59,8 +58,7 @@ public class HomeworkTask {
         } else {
             double k = ((double) (y1-y2))/((double) (x1-x2));
             double b = y1 - x1*k;
-            double y3 = k*x3+b;
-            return y3;
+            return (k*x3+b);
         }
 
     }
