@@ -14,6 +14,87 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        return null;
+
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+        int pointCounts = getSymbolCounts(str, ".");
+        int expCounts = getSymbolCounts(str, "e");
+        if (pointCounts > 1
+                || expCounts > 1
+                || getSymbolCounts(str, "-") > 2) {
+            return null;
+        }
+
+        StringBuilder strBuild = new StringBuilder();
+        for (char symbol : str.toCharArray()) {
+            if (Character.isDigit(symbol)
+                    || symbol == 'e'
+                    || symbol == '-'
+                    || symbol == '.') {
+                strBuild.append(symbol);
+            }
+        }
+        String digitStr = strBuild.toString();
+        if (getSymbolCounts(digitStr, "--") > 0
+                || getSymbolCounts(digitStr, "-e") > 0
+                || getSymbolCounts(digitStr, "-.") > 0
+                || digitStr.endsWith("-")
+                || digitStr.endsWith("e")
+                || digitStr.endsWith(".")) {
+            return null;
+        }
+        pointCounts = getSymbolCounts(digitStr, ".");
+        expCounts = getSymbolCounts(digitStr, "e");
+        if (pointCounts == 0 && expCounts == 0) {
+            long result = stringToInteger(digitStr);
+            if (result == (int) result) {
+                return (int) result;
+            } else {
+                return result;
+            }
+        }
+
+        String toPointStr;
+        String afterPointStr;
+        String afterExpStr;
+        if (pointCounts == 0) {
+            toPointStr = digitStr.substring(0, digitStr.indexOf("e"));
+            afterPointStr = "0";
+            afterExpStr = digitStr.substring(digitStr.indexOf("e") + 1);
+        } else {
+            toPointStr = digitStr.substring(0, digitStr.indexOf("."));
+            if (expCounts == 0) {
+                afterPointStr = digitStr.substring(digitStr.indexOf(".") + 1);
+                afterExpStr = "0";
+            } else {
+                afterPointStr = digitStr.substring(digitStr.indexOf(".") + 1, digitStr.indexOf("e"));
+                afterExpStr = digitStr.substring(digitStr.indexOf("e") + 1);
+            }
+        }
+        long toPointNumb = stringToInteger(toPointStr);
+        long afterPointNumb = stringToInteger(afterPointStr);
+        long exponentNumb = stringToInteger(afterExpStr);
+
+        return (toPointNumb + afterPointNumb * Math.pow(10, -1 * afterPointStr.length()))
+                * Math.pow(10, exponentNumb);
+    }
+
+    private static int getSymbolCounts(String str, String symbol) {
+        return str.length() - str.replace(symbol, "").length();
+    }
+
+    private static long stringToInteger(String digitStr) {
+        String absDigitStr = (digitStr);
+        int sign = 10;
+        if (digitStr.charAt(0) == '-') {
+            sign = -10;
+            absDigitStr = absDigitStr.replace("-", "");
+        }
+        long result = 0;
+        for (char numeral : absDigitStr.toCharArray()) {
+            result = (result + (numeral - '0')) * 10;
+        }
+        return result / sign;
     }
 }
