@@ -8,10 +8,25 @@ public class MaxTask {
      * Если длина массива меньше count, то вернуть null
      * Например ({1, 3, 10, 11, 22, 0}, 2) -> {22, 11}
      * ({1, 3, 22, 11, 22, 0}, 3) -> {22, 22, 11}
-     *
      */
     public static int[] getMaxArray(int[] array, int count) {
-        return null;
+        if (array.length < count) {
+            return null;
+        }
+        int[] copyOfArray = array.clone(); // тк нельзя изменять парамтеры метода
+        int[] tmpArray = new int[count];
+        for (int i = 0; i < count; i++) {
+            int maxNumber = 0;
+            int zeroingIndex = 0;
+            for (int j = 0; j < array.length; j++) {
+                if (copyOfArray[j] >= maxNumber) {
+                    maxNumber = copyOfArray[j];
+                    zeroingIndex = j;
+                }
+            }
+            tmpArray[i] = maxNumber;
+            copyOfArray[zeroingIndex] = 0;
+        }
+        return tmpArray;
     }
-
 }
