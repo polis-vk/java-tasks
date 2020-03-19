@@ -93,12 +93,6 @@ public class StringTasks {
     private static long parseNumber(String str) {
         long number = 0;
         for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == 'e') {
-                if (str.charAt(i + 1) != '-') {
-                    number = (long) (number * Math.pow(10, parseNumber(str.substring(i + 1))));
-                    return number;
-                }
-            }
             number *= 10;
             number += str.charAt(i) - '0';
         }
