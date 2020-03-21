@@ -39,7 +39,7 @@ public class IntegerTask {
         int step = top - bottom;
         int numberOfSteps = (height - top) / step + 1;
 
-        if (numberOfSteps * step + top < height) {
+        if ((numberOfSteps - 1) * step + top < height) {
             numberOfSteps++;
         }
 
