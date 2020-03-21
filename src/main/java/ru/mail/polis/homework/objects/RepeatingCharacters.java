@@ -18,20 +18,20 @@ public class RepeatingCharacters {
         }
         char[] arrSymbols = str.toCharArray();
         int resultLenght = 1;
+        int lenght;
         char resultSymbol = arrSymbols[0];
         for (int i = 0; i < arrSymbols.length - 1; i++) {
             if (arrSymbols[i] == arrSymbols[i + 1]) {
-                int lenght = 2;
-                int j = i + 1;
-                while (j < arrSymbols.length - 1 && arrSymbols[j] == arrSymbols[j + 1]) {
+                lenght = 2;
+                i++;
+                while (i < arrSymbols.length - 1 && arrSymbols[i] == arrSymbols[i + 1]) {
                     lenght++;
-                    j++;
+                    i++;
                 }
                 if (lenght > resultLenght) {
                     resultLenght = lenght;
                     resultSymbol = arrSymbols[i];
                 }
-                i = j;
             }
         }
         return new Pair<>(resultSymbol, resultLenght);

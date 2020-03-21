@@ -33,9 +33,7 @@ public class MaxTask {
     }
 
     public static void swap(int[] resultArray, int index, int newElement) {
-        for (int i = 0; i < index; i++) {
-            resultArray[i] = resultArray[i + 1];
-        }
+        System.arraycopy(resultArray, 1, resultArray, 0, index);
         resultArray[index] = newElement;
     }
 

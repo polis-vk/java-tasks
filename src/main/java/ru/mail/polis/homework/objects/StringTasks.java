@@ -25,17 +25,7 @@ public class StringTasks {
                 || getSymbolCounts(str, "-") > 2) {
             return null;
         }
-
-        StringBuilder strBuild = new StringBuilder();
-        for (char symbol : str.toCharArray()) {
-            if (Character.isDigit(symbol)
-                    || symbol == 'e'
-                    || symbol == '-'
-                    || symbol == '.') {
-                strBuild.append(symbol);
-            }
-        }
-        String digitStr = strBuild.toString();
+        String digitStr = stringToDigitString(str);
         if (getSymbolCounts(digitStr, "--") > 0
                 || getSymbolCounts(digitStr, "-e") > 0
                 || getSymbolCounts(digitStr, "-.") > 0
@@ -44,17 +34,38 @@ public class StringTasks {
                 || digitStr.endsWith(".")) {
             return null;
         }
-        pointCounts = getSymbolCounts(digitStr, ".");
-        expCounts = getSymbolCounts(digitStr, "e");
+
         if (pointCounts == 0 && expCounts == 0) {
-            long result = stringToInteger(digitStr);
+            long result = stringToLong(digitStr);
             if (result == (int) result) {
                 return (int) result;
             } else {
                 return result;
             }
+        } else {
+            return stringToDouble(digitStr, pointCounts, expCounts);
         }
+    }
 
+    private static int getSymbolCounts(String str, String symbol) {
+        return str.length() - str.replace(symbol, "").length();
+    }
+
+    private static long stringToLong(String digitStr) {
+        String absDigitStr = (digitStr);
+        int sign = 1;
+        if (digitStr.charAt(0) == '-') {
+            sign = -1;
+            absDigitStr = absDigitStr.replace("-", "");
+        }
+        long result = 0;
+        for (char numeral : absDigitStr.toCharArray()) {
+            result = (result + (numeral - '0')) * 10;
+        }
+        return result / sign / 10;
+    }
+
+    private static double stringToDouble(String digitStr, int pointCounts, int expCounts) {
         String toPointStr;
         String afterPointStr;
         String afterExpStr;
@@ -72,29 +83,22 @@ public class StringTasks {
                 afterExpStr = digitStr.substring(digitStr.indexOf("e") + 1);
             }
         }
-        long toPointNumb = stringToInteger(toPointStr);
-        long afterPointNumb = stringToInteger(afterPointStr);
-        long exponentNumb = stringToInteger(afterExpStr);
-
+        long toPointNumb = stringToLong(toPointStr);
+        long afterPointNumb = stringToLong(afterPointStr);
+        long exponentNumb = stringToLong(afterExpStr);
         return (toPointNumb + afterPointNumb * Math.pow(10, -1 * afterPointStr.length()))
                 * Math.pow(10, exponentNumb);
     }
-
-    private static int getSymbolCounts(String str, String symbol) {
-        return str.length() - str.replace(symbol, "").length();
-    }
-
-    private static long stringToInteger(String digitStr) {
-        String absDigitStr = (digitStr);
-        int sign = 10;
-        if (digitStr.charAt(0) == '-') {
-            sign = -10;
-            absDigitStr = absDigitStr.replace("-", "");
+    private static String stringToDigitString(String str) {
+        StringBuilder strBuild = new StringBuilder();
+        for (char symbol : str.toCharArray()) {
+            if (Character.isDigit(symbol)
+                    || symbol == 'e'
+                    || symbol == '-'
+                    || symbol == '.') {
+                strBuild.append(symbol);
+            }
         }
-        long result = 0;
-        for (char numeral : absDigitStr.toCharArray()) {
-            result = (result + (numeral - '0')) * 10;
-        }
-        return result / sign;
+        return strBuild.toString();
     }
 }
