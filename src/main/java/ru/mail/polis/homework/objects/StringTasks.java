@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class StringTasks {
 
     /**
@@ -21,32 +24,34 @@ public class StringTasks {
         int pointCounts = getSymbolCounts(str, ".");
         int eCounts = getSymbolCounts(str, "e");
         int minusCounts = getSymbolCounts(str, "-");
-        int doubleSeparators = pointCounts + eCounts;
+
         if (pointCounts > 1 || eCounts > 1 || minusCounts > 2) {
             return null;
         }
 
-        StringBuilder digitStringBuild = new StringBuilder();
+        StringBuilder digitStringBuilder = new StringBuilder();
         for (char c : str.toCharArray()) {
             if (Character.isDigit(c) || c == 'e' || c == '-' || c == '.') {
-                digitStringBuild.append(c);
+                digitStringBuilder.append(c);
             }
         }
-        String digitString = digitStringBuild.toString();
+        String digitString = digitStringBuilder.toString();
 
         if (getSymbolCounts(digitString, "--") != 0
                 || getSymbolCounts(digitString, "-e") != 0
                 || getSymbolCounts(digitString, "-.") != 0
-                || digitString.endsWith("-")) {
+                || digitString.endsWith("-")
+                || digitString.endsWith("e")) {
             return null;
         }
 
+        int doubleSeparators = pointCounts + eCounts;
         if (doubleSeparators == 0) {
             long longResult = longValueOf(digitString);
             if (longResult <= Integer.MAX_VALUE && longResult >= Integer.MIN_VALUE) {
                 return (int) longResult;
             }
-            return longValueOf(digitString);
+            return longResult;
         }
 
         return doubleValueOf(digitString);
@@ -73,55 +78,42 @@ public class StringTasks {
 
     private static Double doubleValueOf(String digitString) {
         String absValue = getAbsValue(digitString);
-        int order = 0;
-        double result = 0.0;
-        boolean isE = false;
         boolean isPoint = false;
-        boolean isMinusAfterE = false;
+        int eIndex = absValue.indexOf('e');
+        eIndex = eIndex == -1 ? absValue.length() : eIndex;
+        long order = 0;
+        long mantissa = 0;
 
-        for (int i = 0; i < absValue.length(); i++) {
-            if (isE) {
-                order += absValue.charAt(i) - '0';
-                if (i + 1 < absValue.length()) {
-                    order *= 10;
-                }
-            } else if (absValue.charAt(i) == '.') {
+        for (int i = 0; i < eIndex; i++) {
+            if (absValue.charAt(i) == '.') {
                 isPoint = true;
-            } else if (absValue.charAt(i) == 'e') {
-                isE = true;
-                isPoint = false;
-                result /= Math.pow(10, order);
-                order = 0;
-                if (absValue.charAt(i + 1) == '-') {
-                    isMinusAfterE = true;
-                    i++;
+                if (i + 1 == absValue.length()){
+                    mantissa /= 10;
                 }
             } else {
-                result += absValue.charAt(i) - '0';
-                if (i + 1 < absValue.length() && absValue.charAt(i + 1) != 'e') {
-                    result *= 10;
+                mantissa += absValue.charAt(i) - '0';
+                if (i + 1 < eIndex) {
+                    mantissa *= 10;
                 }
                 if (isPoint) {
-                    order += 1;
+                    order -= 1;
                 }
             }
         }
 
-        if (isE) {
-            if (isMinusAfterE) {
-                result /= Math.pow(10, order);
-            } else {
-                result *= Math.pow(10, order);
-            }
-        } else {
-            result /= Math.pow(10, order);
+        if (eIndex != absValue.length()) {
+            order += longValueOf(absValue.substring(eIndex + 1));
         }
 
         if (digitString.startsWith("-")) {
-            result *= -1;
+            mantissa *= -1;
         }
 
-        return result;
+        if (order < 0) {
+            return mantissa / Math.pow(10, Math.abs(order));
+        } else {
+            return mantissa * Math.pow(10, order);
+        }
     }
 
     private static String getAbsValue(String digitString) {
