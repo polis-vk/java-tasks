@@ -17,7 +17,6 @@ public class RepeatingCharacters {
             return null;
 
         char[] charArray = str.toCharArray();
-
         int tempRepeatCount = 1;
         char repeating = charArray[0];
         int repeatCount = 1;
