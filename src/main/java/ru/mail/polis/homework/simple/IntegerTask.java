@@ -30,13 +30,10 @@ public class IntegerTask {
     public static int snake(int height, int top, int bottom) {
         int days = 1;
         int currentHeight;
-
         if ((top <= bottom) && (height > top)) {
             return Integer.MAX_VALUE;
         }
-
         currentHeight = top;
-
         while (currentHeight < height) {
             currentHeight += top - bottom;
             days++;
@@ -50,7 +47,6 @@ public class IntegerTask {
      */
     public static int kDecimal(int n, int order) {
         int number = n;
-
         for (int i = 1; i < order; i++) {
             number /= 10;
         }
