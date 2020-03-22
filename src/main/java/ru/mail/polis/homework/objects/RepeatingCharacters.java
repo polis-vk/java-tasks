@@ -18,14 +18,13 @@ public class RepeatingCharacters {
             return null;
         }
 
-        StringBuilder strBuild = new StringBuilder(str);
         Pair<Character, Integer> answer = new Pair<>(null, null);
         int count = 1;
 
-        for (int i = 1; i <= strBuild.length(); i++, count++) {
-            if (i == strBuild.length() || strBuild.charAt(i) != strBuild.charAt(i - 1)) {
+        for (int i = 1; i <= str.length(); i++, count++) {
+            if (i == str.length() || str.charAt(i) != str.charAt(i - 1)) {
                 if (answer.getSecond() == null || count > answer.getSecond()) {
-                    answer = new Pair<>(strBuild.charAt(i - 1), count);
+                    answer = new Pair<>(str.charAt(i - 1), count);
                 }
                 count = 0;
             }

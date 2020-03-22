@@ -18,6 +18,11 @@ public class MaxTask {
         }
         int[] result = new int[count];
         int temp;
+
+        for (int i = 0; i < count; i++) {
+            result[i] = Integer.MIN_VALUE;
+        }
+
         for (int element : array) {
             for (int j = count - 1; j >= 0 && element > result[j]; j--) {
                 if (j == count - 1) {
@@ -29,6 +34,7 @@ public class MaxTask {
                 }
             }
         }
+
         return result;
     }
 }
