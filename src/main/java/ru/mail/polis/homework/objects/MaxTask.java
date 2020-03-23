@@ -11,7 +11,8 @@ public class MaxTask {
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копиии
      */
     public static int[] getMaxArray(int[] array, int count) {
-        if (array.length < count) {
+        int[] newArray = array.clone();
+        if (newArray.length < count) {
             return null;
         }
 
@@ -22,16 +23,16 @@ public class MaxTask {
         for (int i = 0; i < count; i++) {
             int maxIndex = 0;
             int currentMaxElement = Integer.MIN_VALUE;
-            for (int j = 0; j < array.length; j++) {
-                if (array[j] > currentMaxElement && array[j] <= lastMaxNumber) {
-                    currentMaxElement = array[j];
+            for (int j = 0; j < newArray.length; j++) {
+                if (newArray[j] > currentMaxElement && newArray[j] <= lastMaxNumber) {
+                    currentMaxElement = newArray[j];
                     maxIndex = j;
                 }
             }
 
             lastMaxNumber = currentMaxElement;
             maxNumbers[indexMaxNumberArray++] = currentMaxElement;
-            array[maxIndex] = Integer.MIN_VALUE;
+            newArray[maxIndex] = Integer.MIN_VALUE;
         }
 
         return maxNumbers;

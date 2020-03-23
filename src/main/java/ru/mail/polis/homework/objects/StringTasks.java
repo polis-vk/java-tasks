@@ -28,7 +28,7 @@ public class StringTasks {
         int exponentIndex = findFirstIndexOfElement(correctExpression, 'e');
         int pointIndex = findFirstIndexOfElement(correctExpression, '.');
         if (exponentIndex != -1 && pointIndex != -1) {
-            return countExponentPointExpression(correctExpression, pointIndex, exponentIndex);
+            return countExponentPointExpression(correctExpression, pointIndex,exponentIndex);
         }
 
         if (exponentIndex != -1) {
@@ -38,16 +38,18 @@ public class StringTasks {
         if (pointIndex != -1) {
             return countDoubleExpression(correctExpression, pointIndex);
         }
-        return countNonExponentExpression(correctExpression);
+        return countNonDoubleExpression(correctExpression, correctExpression.length() - 1, 0);
     }
 
     public static Number countExponentPointExpression(String correctExpression, int pointIndex, int exponentIndex) {
         return (double) countDoubleExpression(correctExpression.substring(0, exponentIndex), pointIndex)
-                * countExponent(correctExpression.substring(exponentIndex), 0);
+                * Math.pow(10, (int) countNonDoubleExpression(correctExpression
+                , correctExpression.length() -1,
+                exponentIndex + 1));
     }
 
     public static Number countDoubleExpression(String correctExpression, int pointIndex) {
-        return countBeforePointExpression(correctExpression, pointIndex)
+        return (int) countNonDoubleExpression(correctExpression, pointIndex - 1, 0)
                 + countAfterPointExpression(correctExpression, pointIndex);
     }
 
@@ -60,23 +62,10 @@ public class StringTasks {
         return exponent;
     }
 
-    public static int countBeforePointExpression(String correctExpression, int pointIndex) {
-        int mantissa = 0;
-        int rank = 1;
-        for (int i = pointIndex - 1; i >= 0; i--, rank *= 10) {
-            if (correctExpression.charAt(i) == '-') {
-                mantissa *= -1;
-                continue;
-            }
-            mantissa += (correctExpression.charAt(i) - 48) * rank;
-        }
-        return mantissa;
-    }
-
-    public static Number countNonExponentExpression(String correctExpression) {
+    public static Number countNonDoubleExpression(String correctExpression, int startIndex, int endIndex) {
         long number = 0;
         long rank = 1;
-        for (int i = correctExpression.length() - 1; i >= 0; i--, rank *= 10) {
+        for (int i = startIndex; i >= endIndex; i--, rank *= 10) {
             if (correctExpression.charAt(i) == '-') {
                 number *= -1;
                 continue;
@@ -90,33 +79,11 @@ public class StringTasks {
     }
 
     public static Number countExponentExpression(String correctExpression, int exponentIndex) {
-        return (countMantissa(correctExpression, exponentIndex) * countExponent(correctExpression, exponentIndex));
-    }
-
-    public static int countMantissa(String correctExpression, int exponentIndex) {
-        int mantissa = 0;
-        int rank = 1;
-        for (int i = exponentIndex - 1; i >= 0; i--, rank *= 10) {
-            if (correctExpression.charAt(i) == '-') {
-                mantissa *= -1;
-                continue;
-            }
-            mantissa += (correctExpression.charAt(i) - 48) * rank;
-        }
-        return mantissa;
-    }
-
-    public static double countExponent(String correctExpression, int exponentIndex) {
-        double exponent = 0.0;
-        int rank = 1;
-        for (int i = correctExpression.length() - 1; i > exponentIndex; i--, rank *= 10) {
-            if (correctExpression.charAt(i) == '-') {
-                exponent *= -1;
-                continue;
-            }
-            exponent += (correctExpression.charAt(i) - 48) * rank;
-        }
-        return Math.pow(10, exponent);
+        double tempExp = Math.pow(10, (int) countNonDoubleExpression(correctExpression
+                , correctExpression.length() - 1
+                , exponentIndex + 1));
+        return (int) countNonDoubleExpression(correctExpression, exponentIndex - 1, 0)
+                * tempExp;
     }
 
     public static int findFirstIndexOfElement(String str, char element) {
@@ -130,36 +97,50 @@ public class StringTasks {
 
     //Возвращает Null если выражение содержит лишние знаки (.., -- и тд)
     public static String correctExpression(String str) {
+        String newStr = str;
         int countPoints = 0;
         int countMinuses = 0;
         int countExponent = 0;
         char sign;
-        for (int i = 0; i < str.length(); i++) {
-            sign = str.charAt(i);
-            if (sign == '.') {
-                if (++countPoints > 1) {
-                    return null;
-                }
-            } else if (sign == '-') {
-                if (++countMinuses > 2) {
-                    return null;
-                }
-                if (i != 0 && (str.charAt(i - 1) == '-' || str.charAt(i - 1) != 'e')) {
-                    return null;
-                }
-            } else if (sign == 'e') {
-                if (++countExponent > 1) {
-                    return null;
-                }
-                if (i != 0 && str.charAt(i - 1) == '-') {
-                    return null;
-                }
-            } else if (!(Character.isDigit(sign))) {
-                str = replaceSign(str, i);
-                i--;
+        for (int i = 0; i < newStr.length(); i++) {
+            sign = newStr.charAt(i);
+            switch (sign) {
+                case '.':
+                    if (++countPoints > 1) {
+                        return null;
+                    }
+                    break;
+                case '-':
+                    if (++countMinuses > 2) {
+                        return null;
+                    }
+                    if (i != 0 && (newStr.charAt(i - 1) == '-'
+                            || newStr.charAt(i - 1) != 'e')) {
+                        return null;
+                    }
+                    if (i == newStr.length() - 1) {
+                        return null;
+                    }
+                    break;
+                case 'e':
+                    if (++countExponent > 1 || i == 0) {
+                        return null;
+                    }
+                    if (newStr.charAt(i - 1) == '-') {
+                        return null;
+                    }
+                    if (i == newStr.length() - 1) {
+                        return null;
+                    }
+                    break;
+                default:
+                    if (!(Character.isDigit(sign))) {
+                        newStr = replaceSign(newStr, i);
+                        i--;
+                    }
             }
         }
-        return str;
+        return newStr;
     }
 
     public static String replaceSign(String str, int index) {
