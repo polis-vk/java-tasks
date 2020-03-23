@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.objects;
 
-
 import java.util.Objects;
 
 /**
@@ -13,7 +12,30 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        return new Pair<>('s', 4);
+
+        if ((str == null) || (str.length() == 0)) {
+            return null;
+        }
+
+        Pair<Character, Integer> answer = new Pair<>('a', 0);
+        char charValue;
+        int repetitions;
+        int index = 0;
+
+        while (index < str.length()) {
+            charValue = str.charAt(index++);
+            repetitions = 1;
+
+            while (index < str.length() && str.charAt(index) == charValue) {
+                index++;
+                repetitions++;
+            }
+
+            if (answer.getSecond() < repetitions) {
+                answer = new Pair<>(charValue, repetitions);
+            }
+        }
+        return answer;
     }
 
     public static class Pair<T, V> {
