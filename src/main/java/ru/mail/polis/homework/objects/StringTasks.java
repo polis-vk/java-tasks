@@ -64,21 +64,39 @@ public class StringTasks {
         return parseNumber(str);
     }
 
+    /*    private static double toDouble(String str) {
+            int dotPosition = str.indexOf(".");
+            int ePosition = str.indexOf("e");
+            if (dotPosition != -1 && ePosition != -1) {
+                double numberBeforeDot = parseDouble(str.substring(0, dotPosition));
+                double numberAfterDot = parseDouble(str.substring(dotPosition + 1, ePosition)) / Math.pow(10, str.substring(dotPosition + 1, ePosition).length());
+                double eNumber = parseDouble(str.substring(ePosition));
+                if (numberBeforeDot < 0) {
+                    numberAfterDot *= -1;
+                }
+                return (numberBeforeDot + numberAfterDot) * eNumber;
+            } else if (dotPosition != -1) {
+                double numberBeforeDot = parseDouble(str.substring(0, dotPosition));
+                double numberAfterDot = parseDouble(str.substring(dotPosition + 1)) / Math.pow(10, str.substring(dotPosition + 1).length());
+                return numberBeforeDot + numberAfterDot;
+            }
+            return parseDouble(str);
+        }  */
     private static double toDouble(String str) {
         int dotPosition = str.indexOf(".");
         int ePosition = str.indexOf("e");
-        if (dotPosition != -1 && ePosition != -1) {
-            double numberBeforeDot = parseDouble(str.substring(0, dotPosition));
-            double numberAfterDot = parseDouble(str.substring(dotPosition + 1, ePosition)) / Math.pow(10, str.substring(dotPosition + 1, ePosition).length());
-            double eNumber = parseDouble(str.substring(ePosition));
-            if (numberBeforeDot < 0) {
-                numberAfterDot *= -1;
-            }
-            return (numberBeforeDot + numberAfterDot) * eNumber;
-        } else if (dotPosition != -1) {
+        if (dotPosition != -1) {
             double numberBeforeDot = parseDouble(str.substring(0, dotPosition));
             double numberAfterDot = parseDouble(str.substring(dotPosition + 1)) / Math.pow(10, str.substring(dotPosition + 1).length());
-            return numberBeforeDot + numberAfterDot;
+            double eNumber = 1;
+            if (ePosition != -1) {
+                numberAfterDot = parseDouble(str.substring(dotPosition + 1, ePosition)) / Math.pow(10, str.substring(dotPosition + 1, ePosition).length());
+                eNumber = parseDouble(str.substring(ePosition));
+                if (numberBeforeDot < 0) {
+                    numberAfterDot *= -1;
+                }
+            }
+            return (numberBeforeDot + numberAfterDot) * eNumber;
         }
         return parseDouble(str);
     }
