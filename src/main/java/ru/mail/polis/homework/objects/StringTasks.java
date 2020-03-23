@@ -36,7 +36,7 @@ public class StringTasks {
         if (!isReal) {
             long longResult = toLong(digitString);
             if (longResult <= Integer.MAX_VALUE && longResult >= Integer.MIN_VALUE) {
-                return toInt(digitString);
+                return (int) longResult;
             }
             return longResult;
         }
@@ -62,13 +62,6 @@ public class StringTasks {
             return (-1 * parseNumber(str.substring(1)));
         }
         return parseNumber(str);
-    }
-
-    private static int toInt(String str) {
-        if (str.charAt(0) == '-') {
-            return (int) (-1 * parseNumber(str.substring(1)));
-        }
-        return (int) parseNumber(str);
     }
 
     private static double toDouble(String str) {
