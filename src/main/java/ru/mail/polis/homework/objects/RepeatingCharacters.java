@@ -1,7 +1,8 @@
 package ru.mail.polis.homework.objects;
 
-
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Нужно найти символ, который встречается подряд в строке чаще всего, и указать количество повторений.
@@ -13,7 +14,24 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        return new Pair<>('s', 4);
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+
+        int maxLength = 0;
+        String resultSubstring = "";
+        Matcher matcher = Pattern.compile("(.)\\1*").matcher(str);
+
+        while (matcher.find()) {
+            String substring = matcher.group();
+
+            if (substring.length() > maxLength) {
+                maxLength = substring.length();
+                resultSubstring = substring;
+            }
+        }
+
+        return new Pair<>(resultSubstring.charAt(0), maxLength);
     }
 
     public static class Pair<T, V> {
