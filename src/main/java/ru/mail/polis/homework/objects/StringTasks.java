@@ -17,15 +17,15 @@ public class StringTasks {
         if (str == null || str.isEmpty()) {
             return null;
         }
-
         int pointCounts = getSymbolCounts(str, ".");
         int eCounts = getSymbolCounts(str, "e");
         int minusCounts = getSymbolCounts(str, "-");
-        boolean isReal = pointCounts + eCounts == 0;
+        boolean isReal = pointCounts + eCounts > 0;
 
         if (pointCounts > 1 || eCounts > 1 || minusCounts > 2) {
             return null;
         }
+
         StringBuilder digitStringBuilder = new StringBuilder();
 
         for (char c : str.toCharArray()) {
@@ -36,13 +36,13 @@ public class StringTasks {
 
         String digitString = digitStringBuilder.toString();
 
-        if (getSymbolCounts(str, "--") != 0 || getSymbolCounts(str, "-e") != 0
-                || getSymbolCounts(str, "-.") != 0 || digitString.endsWith("-")) {
+        if (getSymbolCounts(digitString, "--") != 0 || getSymbolCounts(digitString, "-e") != 0
+                || getSymbolCounts(str, "-.") != 0 || digitString.endsWith("-") || digitString.endsWith("e")) {
 
             return null;
         }
 
-        if (isReal) {
+        if (!isReal) {
             long longResult = getLongFormat(digitString);
             if (longResult <= Integer.MAX_VALUE && longResult >= Integer.MIN_VALUE) {
                 return (int) longResult;
@@ -61,50 +61,46 @@ public class StringTasks {
     public static double getDoubleFormat(String strRealNumber) {
 
         boolean sign = strRealNumber.startsWith("-");
-        boolean expForm = strRealNumber.contains("e");
-        boolean minusExpForm = strRealNumber.contains("e-");
+        boolean signE = strRealNumber.contains("e-");
 
         String strUnsigned = sign ? (strRealNumber.substring(1)) : strRealNumber;
-
+        int indexE = strUnsigned.indexOf('e');
+        int indexPoint = strUnsigned.indexOf('.');
         double result;
-        long exponent;
 
-        if (expForm) {
-            double resultExponentPart;
-            int indexExp = strUnsigned.indexOf('e');
 
-            String strNotExp = strUnsigned.substring(0, indexExp);
-            String strWithExp = minusExpForm ? strUnsigned.substring(indexExp + 2) : strUnsigned.substring(indexExp + 1);
+        if (indexE!=-1) {
 
-            result = getNumberFromChar(strNotExp)[0];
-            exponent = getNumberFromChar(strNotExp)[1];
-            result = result * Math.pow(10, -(exponent - 1));
-            result = getRound(result, exponent);
+            String partBeforeE = strUnsigned.substring(0, indexE);
+            String partAfterE = signE ? strUnsigned.substring(indexE + 2) : strUnsigned.substring(indexE + 1);
 
-            resultExponentPart = getNumberFromChar(strWithExp)[0];
-            if (minusExpForm) {
-                resultExponentPart = -resultExponentPart;
+            double number = getNumberFromChar(partBeforeE);
+            long exponent = getNumberFromChar(partAfterE);
+
+            if (indexPoint!=-1){
+                number/=Math.pow(10, partBeforeE.length() - 1 - indexPoint);
+
             }
 
-            result *= Math.pow(10, resultExponentPart);
+            if (signE) {
+                number/=Math.pow(10, exponent);
+
+            } else {
+                number*=Math.pow(10, exponent);
+
+            }
+            result = number;
         } else {
 
-            result = getNumberFromChar(strUnsigned)[0];
-            exponent = getNumberFromChar(strUnsigned)[1];
-            result = result * Math.pow(10, -(exponent - 1));
-            result = getRound(result, exponent);
+            result = getNumberFromChar(strUnsigned);
+            result/=Math.pow(10, strUnsigned.length() - 1 - indexPoint);
         }
 
         return sign ? -result : result;
     }
 
-    public static double getRound(double result, long countDigits) {
-        double scale = Math.pow(10, countDigits);
-        result = Math.round(result * scale) / scale;
-        return result;
-    }
 
-    public static long[] getNumberFromChar(String strDigits) {
+    public static long getNumberFromChar(String strDigits) {
         long exponent = 0;
         long result = 0;
         for (int i = strDigits.length() - 1; i >= 0; i--) {
@@ -114,7 +110,7 @@ public class StringTasks {
             result += ((long) strDigits.charAt(i) - '0') * ((long) Math.pow(10, exponent));
             exponent++;
         }
-        return new long[]{result, exponent};
+        return result;
     }
 
 
@@ -123,7 +119,7 @@ public class StringTasks {
         boolean sign = strIntegerNumber.startsWith("-");
         String strUnsigned = sign ? (strIntegerNumber.substring(1)) : strIntegerNumber;
 
-        long result = getNumberFromChar(strUnsigned)[0];
+        long result = getNumberFromChar(strUnsigned);
         return sign ? -result : result;
 
     }

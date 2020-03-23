@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.objects;
 
-import java.util.ArrayList;
-
 
 public class MaxTask {
 
@@ -19,29 +17,26 @@ public class MaxTask {
             return null;
         }
 
-        ArrayList<Integer> arrayList = new ArrayList<Integer>();
-        for (int arrItem : array) {
-            arrayList.add(arrItem);
-        }
-        int[] resultArr = new int[count];
-        for (int i = 0; i < resultArr.length; i++) {
-            resultArr[i] = arrayList.remove(getMax(arrayList));
-        }
+        int[] resultArray = new int[count];
 
-        return resultArr;
-    }
+        int currentMaxBoundIndex = 0;
+        int currentMaxBound = Integer.MAX_VALUE;
 
-    public static int getMax(ArrayList<Integer> arrayList) {
-        if (arrayList.size() == 1) {
-            return 0;
-        }
-        int maxIndex = 0;
-        for (int i = 1; i < arrayList.size(); i++) {
-            if (arrayList.get(i) > arrayList.get(maxIndex)) {
-                maxIndex = i;
+        for (int j = 0; j < resultArray.length; j++) {
+
+            int tempMaxIndex = 0;
+            for (int i = 1; i < array.length; i++) {
+                if (array[tempMaxIndex] < array[i]
+                        && (array[i] < currentMaxBound || (array[i] == currentMaxBound && currentMaxBoundIndex < i))) {
+                    tempMaxIndex = i;
+                }
             }
+            resultArray[j] = array[tempMaxIndex];
+            currentMaxBound = array[tempMaxIndex];
+            currentMaxBoundIndex = tempMaxIndex;
+
         }
-        return maxIndex;
+        return resultArray;
     }
 
 }
