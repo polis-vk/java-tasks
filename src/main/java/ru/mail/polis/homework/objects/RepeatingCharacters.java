@@ -11,28 +11,44 @@ import java.util.Objects;
  * Пример abbasbdlbdbfklsssbb -> (s, 3)
  */
 public class RepeatingCharacters {
-
+    
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        return new Pair<>('s', 4);
+        if (str == null || str.length() == 0) {
+            return null;
+        }
+        
+        char symbolOfMaxSequence = str.charAt(0);
+        int sequence = 1;
+        int maxSequence = sequence;
+        
+        for (int i = 1; i < str.length(); i++) {
+            sequence = str.charAt(i) == str.charAt(i - 1) ? sequence + 1 : 1;
+            if (sequence > maxSequence) {
+                symbolOfMaxSequence = str.charAt(i);
+                maxSequence = sequence;
+            }
+        }
+        
+        return new Pair<>(symbolOfMaxSequence, maxSequence);
     }
-
+    
     public static class Pair<T, V> {
         private final T first;
         private final V second;
-
+        
         public Pair(T first, V second) {
             this.first = first;
             this.second = second;
         }
-
+        
         public T getFirst() {
             return first;
         }
-
+        
         public V getSecond() {
             return second;
         }
-
+        
         @Override
         public boolean equals(Object o) {
             if (this == o) {
@@ -44,6 +60,6 @@ public class RepeatingCharacters {
             Pair<?, ?> pair = (Pair<?, ?>) o;
             return Objects.equals(first, pair.first) && Objects.equals(second, pair.second);
         }
-
+        
     }
 }
