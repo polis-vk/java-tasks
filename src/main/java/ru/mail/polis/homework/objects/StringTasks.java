@@ -22,7 +22,7 @@ public class StringTasks {
         if (numericString == null || numericString.isEmpty()) {
             return null;
         }
-        if (isReal(numericString)) {
+        if (numericString.contains("e") || numericString.contains(".")) {
             return getDouble(numericString);
         }
         
@@ -99,10 +99,6 @@ public class StringTasks {
             number += Character.digit(str.charAt(0), 10) * Math.pow(10, length - 1);
         }
         return number;
-    }
-    
-    private static boolean isReal(String str) {
-        return str.contains("e") || str.contains(".");
     }
     
     private static double getDouble(String str) {
