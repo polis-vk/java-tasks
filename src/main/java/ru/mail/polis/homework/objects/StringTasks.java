@@ -14,6 +14,10 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
+        char minus = '-';
+        char point = '.';
+        char e = 'e';
+        //if (str.contains())
         return null;
     }
 }
