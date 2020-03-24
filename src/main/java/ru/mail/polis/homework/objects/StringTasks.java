@@ -72,6 +72,35 @@ public class StringTasks {
     }
 
     private static double strToDouble(String str) {
-        return Double.valueOf(str);
+        int pointPos = str.indexOf(".");
+        int ePos = str.indexOf("e");
+        double pow = strToLong(str.substring(ePos + 1));
+        double number;
+        double numberBeforePoint;
+        double numberAfterPoint = 0;
+        double afterPointPow = 0;
+        if (pointPos == -1) {
+            number = strToLong(str.substring(0, ePos));
+        } else {
+            if (ePos != -1) {
+                for (int i = pointPos + 1; i < ePos; i++) {
+                    numberAfterPoint *= 10;
+                    numberAfterPoint += str.charAt(i) - 48;
+                    afterPointPow--;
+                }
+            } else {
+                pow = 0;
+                for (int i = pointPos + 1; i < str.length(); i++) {
+                    numberAfterPoint *= 10;
+                    numberAfterPoint += str.charAt(i) - 48;
+                    afterPointPow--;
+                }
+            }
+            numberBeforePoint = strToLong((str.substring(0, pointPos)));
+            number = numberBeforePoint + numberAfterPoint * Math.pow(10, afterPointPow);
+        }
+        return number * Math.pow(10, pow);
     }
+
+
 }
