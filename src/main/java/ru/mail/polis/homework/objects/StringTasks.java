@@ -33,6 +33,9 @@ public class StringTasks {
         }
 
         String digitString = digitStringBuilder.toString();
+        if (digitString.isEmpty()){
+            return null;
+        }
         if (digitString.length() - digitString.replace("--", "").length() != 0
                 ||digitString.length() - digitString.replace("-e", "").length() != 0
                 ||digitString.length() - digitString.replace("-.", "").length() != 0
