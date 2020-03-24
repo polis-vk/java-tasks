@@ -14,6 +14,64 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        return null;
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+        int pointCounts = symbolCount(str, ".");
+        int eCounts = symbolCount(str, "e");
+        int minusCounts = symbolCount(str, "-");
+        int doubleSeparators = pointCounts + eCounts;
+        if (pointCounts > 1 || eCounts > 1 || doubleSeparators > 2 || minusCounts > 2) {
+            return null;
+        }
+        StringBuilder digitStringBuilder = new StringBuilder();
+        for (char c : str.toCharArray()) {
+            if (Character.isDigit(c) || c == 'e' || c == '-' || c == '.') {
+                digitStringBuilder.append(c);
+            }
+        }
+        String digitString = digitStringBuilder.toString();
+        if ((symbolCount(digitString, "--") != 0)
+                || (symbolCount(digitString, "-e") != 0)
+                || (symbolCount(digitString, ".e") != 0)) {
+            return null;
+        }
+        if (digitString.indexOf("-") == (digitString.length() - 1)) {
+            return null;
+        }
+
+        if (doubleSeparators == 0) {
+            long longResult = strToLong(digitString);
+            if (longResult <= Integer.MAX_VALUE && longResult >= Integer.MIN_VALUE) {
+                return (int) longResult;
+            }
+            return longResult;
+        }
+        return strToDouble(digitString);
+
+    }
+
+    private static int symbolCount(String str, String symbol) {
+        return str.length() - str.replace(symbol, "").length();
+    }
+
+    private static long strToLong(String str) {
+        long result = 0;
+        if (str.charAt(0) == '-') {
+            for (int i = 1; i < str.length(); i++) {
+                result *= 10;
+                result += str.charAt(i) - 48;
+            }
+            return result * -1;
+        }
+        for (int i = 0; i < str.length(); i++) {
+            result *= 10;
+            result += str.charAt(i) - 48;
+        }
+        return result;
+    }
+
+    private static double strToDouble(String str) {
+        return Double.valueOf(str);
     }
 }
