@@ -101,6 +101,4 @@ public class StringTasks {
         }
         return number * Math.pow(10, pow);
     }
-
-
 }
