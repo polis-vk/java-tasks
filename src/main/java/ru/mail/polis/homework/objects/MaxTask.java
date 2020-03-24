@@ -1,11 +1,6 @@
 package ru.mail.polis.homework.objects;
 
-import com.sun.org.apache.xerces.internal.xs.ItemPSVI;
-
-import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 
 public class MaxTask {
     
