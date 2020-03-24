@@ -26,8 +26,7 @@ public class RepeatingCharacters {
                     maxRepeatSymbol = str.charAt(i);
                     maxCountOfRepeats = currentCountOfRepeats;
                 }
-            }
-            else {
+            } else {
                 currentCountOfRepeats = 1;
             }
         }
