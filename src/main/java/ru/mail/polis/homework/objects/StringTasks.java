@@ -73,7 +73,7 @@ public class StringTasks {
     }
 
     private static double doubleResult(String str) {
-//прошу прощения, немного не успел
+//прошу прощения, немного не успел доделать
         return 10;
     }
 

@@ -26,7 +26,8 @@ public class RepeatingCharacters {
                 currentCount = 1;
             }
 
-            if (currentCount > maxSize) {
+            if (currentCount > maxSize)
+            {
                 maxSize = currentCount;
                 element = str.charAt(i);
             }

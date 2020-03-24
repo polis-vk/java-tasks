@@ -20,11 +20,9 @@ public class MaxTask {
         int MaxElement = Integer.MAX_VALUE;
 
         int i = 0;
-        while (i < count)
-        {
+        while (i < count) {
             int currentMaxIndex = 0;
-            for (int j = 1; j < array.length; j++)
-            {
+            for (int j = 1; j < array.length; j++) {
                 if (array[currentMaxIndex] < array[j] && ((MaxIndex < j && array[j] == MaxElement) || array[j] < MaxElement))
                     currentMaxIndex = j;
             }
