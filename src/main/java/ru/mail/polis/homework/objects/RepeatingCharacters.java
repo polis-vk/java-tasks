@@ -11,9 +11,26 @@ import java.util.Objects;
  * Пример abbasbdlbdbfklsssbb -> (s, 3)
  */
 public class RepeatingCharacters {
-
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        return new Pair<>('s', 4);
+        if ((str == null) || (str == "")) {
+            return null;
+        }
+
+        int amount = 1;
+        int maxAmount = 1;
+        char currentMax = str.charAt(0);
+        for (int i = 0; i < str.length() - 1; i++) {
+            if (str.charAt(i) == str.charAt(i + 1)) {
+                amount++;
+            } else {
+                amount = 1;
+            }
+            if (amount > maxAmount) {
+                maxAmount = amount;
+                currentMax = str.charAt(i);
+            }
+        }
+        return new Pair<>(currentMax, maxAmount);
     }
 
     public static class Pair<T, V> {
