@@ -62,10 +62,10 @@ public class StringTasks {
             if (resultString.startsWith("e") || resultString.endsWith("e")) {
                 return null;
             }
-            if(!(Character.isDigit(resultStringChars[resultString.indexOf('e') - 1])
-                        && (Character.isDigit(resultStringChars[resultString.indexOf('e') + 1])
-                            || resultStringChars[resultString.indexOf('e') + 1] == '-'))) {
-                    return null;
+            if (!(Character.isDigit(resultStringChars[resultString.indexOf('e') - 1])
+                    && (Character.isDigit(resultStringChars[resultString.indexOf('e') + 1])
+                    || resultStringChars[resultString.indexOf('e') + 1] == '-'))) {
+                return null;
             }
         }
         if (dotCount == 1) {
@@ -87,8 +87,8 @@ public class StringTasks {
             if (mantissaString.contains(".")) {
                 if (mantissaString.startsWith("-")) {
                     for (int i = 1; i < mantissaString.indexOf('.'); ++i) {
-                            mantissa -= (mantissaStringChars[i] - 48)
-                                    * Math.pow(10, mantissaString.indexOf('.') - i - 1);
+                        mantissa -= (mantissaStringChars[i] - 48)
+                                * Math.pow(10, mantissaString.indexOf('.') - i - 1);
                     }
                     for (int i = mantissaString.indexOf('.') + 1; i < mantissaStringChars.length; ++i) {
                         mantissa -= (mantissaStringChars[i] - 48)
@@ -166,7 +166,7 @@ public class StringTasks {
                     }
                 }
                 if (result <= Integer.MAX_VALUE && result >= Integer.MIN_VALUE) {
-                    return (int)result;
+                    return (int) result;
                 }
                 return result;
             }
