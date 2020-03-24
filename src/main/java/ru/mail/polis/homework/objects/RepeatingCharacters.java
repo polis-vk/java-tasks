@@ -24,9 +24,9 @@ public class RepeatingCharacters {
         Integer maxCount = 0;
         Integer tmpCount = 1;
         Character character = null;
-        Character tmpCharacter = null;
+        Character tmpCharacter = null;      // временный символ для перебора в строке
 
-        for (int i = 1; i <= str.length(); i++) {
+        for (int i = 1; i <= str.length(); i++) {       // перебираем строку
             if (i < str.length() && str.charAt(i) == str.charAt(i - 1)) {
                 tmpCharacter = str.charAt(i);
                 tmpCount++;
@@ -39,7 +39,7 @@ public class RepeatingCharacters {
             }
         }
         if (character == null) {
-            character = str.charAt(0); //нет повторов
+            character = str.charAt(0);      // нет повторов
         }
         return new Pair(character, maxCount);
     }

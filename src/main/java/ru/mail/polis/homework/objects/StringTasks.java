@@ -14,6 +14,23 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        return null;
+        if (str == null || str.length() == 0) {
+            return null;
+        }
+        String clean = str.replaceAll("[^e.\\- 0-9]", "");      // удаляем все лишние символы кроме нужных
+        try {
+            long num = Long.parseLong(clean);
+            if (num <= Integer.MAX_VALUE & num >= Integer.MIN_VALUE) {   // приводим к int
+                return (int) num;
+            } else {
+                return num;
+            }
+        } catch (Exception e) {
+            try {
+                return Double.parseDouble(clean);   // если не удалось привести ни к одному из видов, выводим null
+            } catch (Exception i) {
+                return null;
+            }
+        }
     }
 }

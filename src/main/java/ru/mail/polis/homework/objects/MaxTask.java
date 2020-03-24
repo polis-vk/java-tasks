@@ -11,7 +11,7 @@ public class MaxTask {
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копиии
      */
     public static int[] getMaxArray(int[] array, int count) {
-        if (array.length < count) {
+        if (array.length < count) {         // исключения
             return null;
         }
         int[] result = new int[count];
@@ -22,12 +22,12 @@ public class MaxTask {
         int index = 0;
         int newMaxValue;
         int oldMaxValue = Integer.MAX_VALUE;
-        boolean continuation = true;
+        boolean continuity = true;
 
-        while (continuation) {
+        while (continuity) {
             int counter = 0;
             newMaxValue = -Integer.MAX_VALUE;
-            for (int j = 0; j < array.length; j++) {
+            for (int j = 0; j < array.length; j++) {        // ищем максимальный элемент и кол-во его повторов
                 if (array[j] > newMaxValue & array[j] < oldMaxValue) {
                     newMaxValue = array[j];
                     counter = 0;
@@ -36,11 +36,11 @@ public class MaxTask {
                     counter++;
                 }
             }
-            for (int k = 0; k < counter; k++) {
+            for (int k = 0; k < counter; k++) {     // записываем результат в массив
                 result[index] = newMaxValue;
                 index++;
                 if (index >= result.length) {
-                    continuation = false;
+                    continuity = false;
                     break;
                 }
             }
