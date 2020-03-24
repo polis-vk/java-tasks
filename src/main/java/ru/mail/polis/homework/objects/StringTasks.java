@@ -14,6 +14,86 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        return null;
+        if (str == null || str.length() == 0) {
+            return null;
+        }
+        String clean = str.replaceAll("[^e\\.\\-\\ 0-9]", "");
+        int points = clean.replaceAll("[^.]", "").length();
+        int e = clean.replaceAll("[^e]", "").length();
+        int minuses = clean.replaceAll("[^-]", "").length();
+        if (points > 1 || e > 1 || minuses > 2) {
+            return null;
+        }
+        int ePosition = 0;
+        for (int i = 0; i < clean.length(); i++) {
+            if (clean.charAt(i) == 'e') {
+                ePosition = i;
+            }
+            if (clean.charAt(i) == '-' && i != 0 && clean.charAt(i - 1) != 'e') {
+                return null;
+            }
+        }
+
+        String intagerValue;
+        String expValue;
+        if (e != 0) {
+
+            intagerValue = clean.substring(0, ePosition);
+            expValue = clean.substring(ePosition + 1, clean.length());
+
+            double num = getDouble(intagerValue);
+            double eNum = getLong(expValue);
+
+            if (eNum > 0) {
+                return num * (Math.pow(10, eNum));
+            } else {
+                return num / (Math.pow(10, -eNum));
+            }
+        } else {
+            if (points == 0) {
+                long num = getLong(clean);
+                if (num <= Integer.MAX_VALUE & num >= Integer.MIN_VALUE & num % 1 == 0) {
+                    return (int) num;
+                }
+                return num;
+            } else {
+                return getDouble(clean);
+            }
+        }
+    }
+
+
+
+    private static double getDouble(String pStr) {
+        double result = 0;
+        if (pStr.replaceAll("[^.]", "").length() != 0) {
+            int countToEnd = 0;
+            for (int i = 0; i < pStr.length(); i++) {
+                if (pStr.charAt(i) == '.') {
+                    countToEnd = pStr.length() - i;
+                }
+            }
+            pStr = pStr.replaceAll("[.]", "");
+            result = (double) (getLong(pStr) / (Math.pow(10, countToEnd - 1)));
+        } else {
+            result = getLong(pStr);
+        }
+        return result;
+    }
+
+    private static long getLong(String pStr) {
+        int minuses = pStr.replaceAll("[^-]", "").length();
+        pStr = pStr.replaceAll("[-]", "");
+        long result = 0L;
+        for (int i = 0; i < pStr.length(); i++) {
+            result += pStr.charAt(i) - '0';
+            if (i + 1 < pStr.length()) {
+                result *= 10;
+            }
+        }
+        if (minuses != 0) {
+            result = -result;
+        }
+        return result;
     }
 }
