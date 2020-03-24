@@ -17,6 +17,9 @@ public class StringTasksTest {
         assertEquals(null, StringTasks.valueOf("--a1"));
         assertEquals(-12, StringTasks.valueOf("-a1bsc2"));
         assertEquals(-132, StringTasks.valueOf("a-132a"));
+        assertEquals(null, StringTasks.valueOf("a1-32a"));
+        assertEquals(null, StringTasks.valueOf("a-a"));
+        assertEquals(null, StringTasks.valueOf("aba"));
         assertEquals(-2147483648, StringTasks.valueOf("a-d21s474asd83648sad"));
         assertEquals(2147483649L, StringTasks.valueOf("asddgsdf2fg1474asdfg8364asd9asd"));
         assertEquals(-2147483649L, StringTasks.valueOf("asd-dgsdf2fg1474asdfg8364asd9asd"));
@@ -28,6 +31,9 @@ public class StringTasksTest {
         assertEquals(null, StringTasks.valueOf("--1easdsad3"));
         assertEquals(null, StringTasks.valueOf("-1e-asdsad3-"));
         assertEquals(null, StringTasks.valueOf("1easdsad3-"));
+        assertEquals(null, StringTasks.valueOf("1easds.ad3-"));
+        assertEquals(null, StringTasks.valueOf("1easdsad3."));
+        assertEquals(null, StringTasks.valueOf(".1easdsad3"));
         assertEquals(1.2e-3, StringTasks.valueOf("ccz1asd.zc2deg-h3j"));
         assertEquals(null, StringTasks.valueOf("ccz1asd.zc2de.g-h3j"));
         assertEquals(1.3, StringTasks.valueOf("fff1fdf.asdsad3"));
