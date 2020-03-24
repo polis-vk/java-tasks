@@ -76,12 +76,11 @@ public class StringTasks {
         int ePos = str.indexOf("e");
         double pow = strToLong(str.substring(ePos + 1));
         double number;
-        double numberBeforePoint;
-        double numberAfterPoint = 0;
-        double afterPointPow = 0;
         if (pointPos == -1) {
             number = strToLong(str.substring(0, ePos));
         } else {
+            double numberAfterPoint = 0;
+            double afterPointPow = 0;
             if (ePos != -1) {
                 for (int i = pointPos + 1; i < ePos; i++) {
                     numberAfterPoint *= 10;
@@ -96,7 +95,7 @@ public class StringTasks {
                     afterPointPow--;
                 }
             }
-            numberBeforePoint = strToLong((str.substring(0, pointPos)));
+            double numberBeforePoint = strToLong((str.substring(0, pointPos)));
             number = numberBeforePoint + numberAfterPoint * Math.pow(10, afterPointPow);
         }
         return number * Math.pow(10, pow);
