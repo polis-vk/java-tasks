@@ -31,5 +31,6 @@ public class StringTasksTest {
         assertEquals(1.2e-3, StringTasks.valueOf("ccz1asd.zc2deg-h3j"));
         assertEquals(null, StringTasks.valueOf("ccz1asd.zc2de.g-h3j"));
         assertEquals(1.3, StringTasks.valueOf("fff1fdf.asdsad3"));
+        assertEquals(1.2e3, StringTasks.valueOf("ccz1asd.zc2degh3j"));
     }
 }

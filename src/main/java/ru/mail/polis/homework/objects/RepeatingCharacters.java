@@ -18,20 +18,25 @@ public class RepeatingCharacters {
             return null;
         }
 
-        int maxLength = 0;
-        String resultSubstring = "";
-        Matcher matcher = Pattern.compile("(.)\\1*").matcher(str);
+        int numberOfRepeats = 1;
+        int numberOfRepeatsOfMaxElement = 1;
+        char currentElement;
+        char maxElement = str.charAt(0);
 
-        while (matcher.find()) {
-            String substring = matcher.group();
-
-            if (substring.length() > maxLength) {
-                maxLength = substring.length();
-                resultSubstring = substring;
+        for (int i = 0; i < str.length() - 1; i++) {
+            currentElement = str.charAt(i);
+            if (currentElement == str.charAt(i+1)) {
+                numberOfRepeats++;
+                if (numberOfRepeats > numberOfRepeatsOfMaxElement) {
+                    maxElement = currentElement;
+                    numberOfRepeatsOfMaxElement = numberOfRepeats;
+                }
+            } else {
+                numberOfRepeats = 1;
             }
         }
 
-        return new Pair<>(resultSubstring.charAt(0), maxLength);
+        return new Pair<>(maxElement, numberOfRepeatsOfMaxElement);
     }
 
     public static class Pair<T, V> {

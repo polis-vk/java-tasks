@@ -30,7 +30,7 @@ public class MaxTask {
         return resultArray;
     }
 
-    public static int[] removeAtIndex(int[] array, int index) {
+    private static int[] removeAtIndex(int[] array, int index) {
         int[] anotherArray = new int[array.length - 1];
 
         for (int i = 0, k = 0; i < array.length; i++) {
@@ -44,7 +44,7 @@ public class MaxTask {
         return anotherArray;
     }
 
-    public static int getMaxElementIndex(int[] array) {
+    private static int getMaxElementIndex(int[] array) {
         int max = -1;
         int maxElementIndex = 0;
 

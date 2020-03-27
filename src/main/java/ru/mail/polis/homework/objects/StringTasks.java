@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.objects;
 
-import static java.lang.Character.isLetter;
 
 public class StringTasks {
 
@@ -24,7 +23,7 @@ public class StringTasks {
         stringCopy = removeAllLettersExceptE(stringCopy);
 
         if (stringCopy.matches("[-]?[0-9]+[.]?[0-9]*[e][-][0-9]+")
-                || stringCopy.matches("[-]?[0-9][e][0-9]+")
+                || stringCopy.matches("[-]?[0-9]*[.]?[0-9][e][0-9]+")
                 || stringCopy.matches("[-]?[0-9]*[.]?[0-9]+")) {
             return stringToNumber(stringCopy);
         }
@@ -33,17 +32,16 @@ public class StringTasks {
     }
 
     private static String removeAllLettersExceptE(String string) {
+        StringBuilder str = new StringBuilder();
         for (int i = 0; i < string.length(); i++) {
             char symbol = string.charAt(i);
 
-            if (isLetter(symbol) && symbol != 'e') {
-                String symbolString = Character.toString(symbol);
-                string = string.replace(symbolString, "");
-                i--;
+            if (Character.isDigit(symbol) || symbol == 'e' || symbol == '.' || symbol == '-') {
+                str.append(symbol);
             }
         }
 
-        return string;
+        return str.toString();
     }
 
     private static Number stringToNumber(String string) {
@@ -52,13 +50,12 @@ public class StringTasks {
 
         if (eCount == 0 && pointCount == 0) {
             long longResult = stringToLong(string);
-            int intResult = stringToInteger(string);
 
-            if (longResult - intResult == 0) {
-                return intResult;
-            } else {
-                return longResult;
+            if (longResult >= Integer.MIN_VALUE && longResult <= Integer.MAX_VALUE) {
+                return (int) longResult;
             }
+
+            return longResult;
         }
 
         if (eCount == 0 && pointCount == 1) {
@@ -72,10 +69,10 @@ public class StringTasks {
             if (pointCount != 0) {
                 beforeE = stringToDouble(stringSplitByE[0]);
             } else {
-                beforeE = stringToInteger(stringSplitByE[0]);
+                beforeE = stringToLong(stringSplitByE[0]);
             }
 
-            double afterE = stringToInteger(stringSplitByE[1]);
+            double afterE = stringToLong(stringSplitByE[1]);
             return beforeE * Math.pow(10, afterE);
         }
 
@@ -84,7 +81,7 @@ public class StringTasks {
 
     private static double stringToDouble(String string) {
         String[] stringSplitByPoint = string.split("\\.");
-        double beforePoint = stringToInteger(stringSplitByPoint[0]);
+        double beforePoint = stringToLong(stringSplitByPoint[0]);
         double afterPoint = getNumberFromFraction(stringSplitByPoint[1]);
 
         return beforePoint + afterPoint;
@@ -104,23 +101,6 @@ public class StringTasks {
     private static long stringToLong(String string) {
         int power = 0;
         long resultNumber = 0;
-
-        if (string.charAt(0) == '-') {
-            for (int i = string.length() - 1; i > 0; i--) {
-                resultNumber -= charToNumber(string.charAt(i)) * Math.pow(10, power++);
-            }
-        } else {
-            for (int i = string.length() - 1; i >= 0; i--) {
-                resultNumber += charToNumber(string.charAt(i)) * Math.pow(10, power++);
-            }
-        }
-
-        return resultNumber;
-    }
-
-    private static int stringToInteger(String string) {
-        int power = 0;
-        int resultNumber = 0;
 
         if (string.charAt(0) == '-') {
             for (int i = string.length() - 1; i > 0; i--) {
