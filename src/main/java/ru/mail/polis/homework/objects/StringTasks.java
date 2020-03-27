@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.objects;
 
+import java.net.Inet4Address;
+
 public class StringTasks {
 
     /**
@@ -14,6 +16,44 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        return null;
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+        int pointCounts = getSymbolCounts(str, ".");
+        int eCounts = getSymbolCounts(str, "e");
+        int minusCounts = getSymbolCounts(str, "-");
+        boolean isReal = pointCounts + eCounts == 0;
+        if (pointCounts > 1 || eCounts > 1 || minusCounts > 2) {
+            return null;
+        }
+
+        StringBuilder digitStringBuilder = new StringBuilder();
+        for (char c : str.toCharArray()) {
+            if (Character.isDigit(c) || c == 'e' || c == '-' || c == '.') {
+                digitStringBuilder.append(c);
+            }
+        }
+        String digitString = digitStringBuilder.toString();
+
+        if (getSymbolCounts(digitString, "--") != 0
+                || getSymbolCounts(digitString, "-e") != 0
+                || getSymbolCounts(digitString, "-.") != 0
+                || digitString.endsWith("-")) {
+            return null;
+        }
+
+        if (!isReal) {
+            long longResult = Long.parseLong(digitString);
+            if (longResult <= Integer.MAX_VALUE && longResult >= Integer.MIN_VALUE) {
+                return Integer.valueOf(digitString);
+            }
+            return longResult;
+        }
+
+        return Double.valueOf(digitString);
+    }
+
+    private static int getSymbolCounts(String str, String s) {
+        return str.length() - str.replace(s, "").length();
     }
 }
