@@ -1,19 +1,8 @@
 package ru.mail.polis.homework.objects;
 
-public class MaxTask {
-    public static int[] findMax(int[] table) {
-        int maxValue = table[0];
-        int indexOfMax = 0;
-        for (int i = 1; i < table.length; i++) {
-            if (table[i] >= maxValue) {
-                indexOfMax = i;
-                maxValue = table[i];
-            }
-        }
-        int[] arrayExport = {maxValue, indexOfMax};
-        return arrayExport;
-    }
+import java.util.Arrays;
 
+public class MaxTask {
     /**
      * Вам дан массив и количество элементов в возвращаемом массиве
      * Вернуть нужно массив из count максимальных элементов array, упорядоченный по убыванию.
@@ -28,12 +17,27 @@ public class MaxTask {
         }
 
         int[] maxArray = new int[count];
-        int[] copyArray = array;
+        int[] copyArray = array.clone();
+        int[] temp = new int[2];
         for (int i = 0; i < count; i++) {
-            maxArray[i] = findMax(copyArray)[0];
-            copyArray[findMax(copyArray)[1]] = Integer.MIN_VALUE;
+            temp = findMax(copyArray);
+            maxArray[i] = temp[0];
+            copyArray[temp[1]] = Integer.MIN_VALUE;
         }
         return maxArray;
+    }
+
+    private static int[] findMax(int[] table) {
+        int maxValue = table[0];
+        int indexOfMax = 0;
+        for (int i = 1; i < table.length; i++) {
+            if (table[i] >= maxValue) {
+                indexOfMax = i;
+                maxValue = table[i];
+            }
+        }
+        int[] arrayExport = {maxValue, indexOfMax};
+        return arrayExport;
     }
 }
 
