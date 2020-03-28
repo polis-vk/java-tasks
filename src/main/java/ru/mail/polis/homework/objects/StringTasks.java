@@ -18,7 +18,6 @@ public class StringTasks {
         if (str == null || str.isEmpty()){
             return null;
         }
-
         int docCount = str.length() - str.replace(".", "").length();
         int eCount = str.length() - str.replace("e", "").length();
         int minusCount = str.length() - str.replace("-", "").length();

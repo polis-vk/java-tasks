@@ -30,6 +30,12 @@ public class RepeatingCharacters {
                 }
                 sequenceCharactersCount = 1;
             }
+            if (i == str.length() - 2 && str.charAt(i) == str.charAt(i+1)){
+                if (sequenceCharactersCount > maxCharactersCount){
+                    desiredCharacter = str.charAt(i);
+                    maxCharactersCount = sequenceCharactersCount;
+                }
+            }
         }
         return new Pair<>(desiredCharacter, maxCharactersCount);
     }
