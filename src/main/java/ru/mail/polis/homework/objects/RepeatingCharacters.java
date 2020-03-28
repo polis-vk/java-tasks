@@ -23,13 +23,21 @@ public class RepeatingCharacters {
             if (str.charAt(i) == str.charAt(i + 1)) {
                 amount++;
             } else {
+                if (amount > maxAmount) {
+                    maxAmount = amount;
+                    currentMax = str.charAt(i);
+                }
                 amount = 1;
             }
-            if (amount > maxAmount) {
-                maxAmount = amount;
-                currentMax = str.charAt(i);
+
+            if (i == str.length() - 2) {
+                if (amount > maxAmount) {
+                    maxAmount = amount;
+                    currentMax = str.charAt(i);
+                }
             }
         }
+
         return new Pair<>(currentMax, maxAmount);
     }
 
