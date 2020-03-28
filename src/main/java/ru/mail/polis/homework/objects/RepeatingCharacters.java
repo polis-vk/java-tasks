@@ -15,23 +15,22 @@ public class RepeatingCharacters {
         if (str == null || str.length() == 0) {
             return null;
         }
-        int strLength = str.length();
         char maxCharacter = '\0';
         int maxNumberOfMeeting = 0;
         char currentCharacter = str.charAt(0);
         int currentNumberOfMeeting = 1;
-        for (int i = 1; i < strLength; i++) {
-            if (str.charAt(i) != currentCharacter) {
-                if (maxNumberOfMeeting < currentNumberOfMeeting) {
-                    maxNumberOfMeeting = currentNumberOfMeeting;
-                    maxCharacter = currentCharacter;
-                }
-
-                currentNumberOfMeeting = 1;
-                currentCharacter = str.charAt(i);
+        for (int i = 1; i < str.length(); i++) {
+            if (str.charAt(i) == currentCharacter) {
+                currentNumberOfMeeting++;
                 continue;
             }
-            currentNumberOfMeeting++;
+            if (maxNumberOfMeeting < currentNumberOfMeeting) {
+                maxNumberOfMeeting = currentNumberOfMeeting;
+                maxCharacter = currentCharacter;
+            }
+            currentNumberOfMeeting = 1;
+            currentCharacter = str.charAt(i);
+
         }
         if (currentNumberOfMeeting > maxNumberOfMeeting) {
             maxCharacter = currentCharacter;

@@ -25,10 +25,10 @@ public class StringTasks {
     }
 
     public static Number countExpression(String correctExpression) {
-        int exponentIndex = findFirstIndexOfElement(correctExpression, 'e');
-        int pointIndex = findFirstIndexOfElement(correctExpression, '.');
+        int exponentIndex = correctExpression.indexOf('e');
+        int pointIndex = correctExpression.indexOf('.');
         if (exponentIndex != -1 && pointIndex != -1) {
-            return countExponentPointExpression(correctExpression, pointIndex,exponentIndex);
+            return countExponentPointExpression(correctExpression, pointIndex, exponentIndex);
         }
 
         if (exponentIndex != -1) {
@@ -44,7 +44,7 @@ public class StringTasks {
     public static Number countExponentPointExpression(String correctExpression, int pointIndex, int exponentIndex) {
         return (double) countDoubleExpression(correctExpression.substring(0, exponentIndex), pointIndex)
                 * Math.pow(10, (int) countNonDoubleExpression(correctExpression
-                , correctExpression.length() -1,
+                , correctExpression.length() - 1,
                 exponentIndex + 1));
     }
 
@@ -84,15 +84,6 @@ public class StringTasks {
                 , exponentIndex + 1));
         return (int) countNonDoubleExpression(correctExpression, exponentIndex - 1, 0)
                 * tempExp;
-    }
-
-    public static int findFirstIndexOfElement(String str, char element) {
-        for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == element) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     //Возвращает Null если выражение содержит лишние знаки (.., -- и тд)
