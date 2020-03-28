@@ -19,7 +19,7 @@ public class MaxTask {
         
         int[] tempArray = array.clone();
         
-        for (int i = 0; i < count; ++i) {
+        for (int i = 0; i < count; i++) {
             int max = tempArray[i];
             int indexOfMax = i;
             for (int j = i; j < tempArray.length; j++) {

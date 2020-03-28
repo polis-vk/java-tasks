@@ -20,12 +20,15 @@ public class RepeatingCharacters {
         char symbolOfMaxSequence = str.charAt(0);
         int sequence = 1;
         int maxSequence = sequence;
-        
-        for (int i = 1; i < str.length(); i++) {
-            sequence = str.charAt(i) == str.charAt(i - 1) ? sequence + 1 : 1;
-            if (sequence > maxSequence) {
-                symbolOfMaxSequence = str.charAt(i);
-                maxSequence = sequence;
+        for (int i = 1; i <= str.length(); i++) {
+            if (i < str.length() && str.charAt(i) == str.charAt(i - 1)) {
+                sequence++;
+            } else {
+                if (sequence > maxSequence) {
+                    symbolOfMaxSequence = str.charAt(i - 1);
+                    maxSequence = sequence;
+                }
+                sequence = 1;
             }
         }
         
