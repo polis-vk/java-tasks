@@ -14,16 +14,22 @@ public class MaxTask {
      *
      */
     public static int[] getMaxArray(int[] array, int count) {
-        if (array.length < count){
+        if (array.length < count) {
             return null;
         }
-        int[] arrayClone = array.clone();
-        Arrays.sort(arrayClone);
         int[] resultArray = new int [count];
         for (int i = 0; i < count; i++){
-            resultArray[i] = arrayClone[arrayClone.length - 1 - i];
+            int k = i;
+            for (int j = i; j < array.length; j++) {
+                if (array[j] > array[k]){
+                    k = j;
+                }
+            }
+            int temp = array[i];
+            array[i] = array[k];
+            resultArray[i] = array[k];
+            array[k] = temp;
         }
         return resultArray;
     }
-
 }
