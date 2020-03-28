@@ -17,7 +17,84 @@ public class StringTasks {
         if (str == null || str.length() == 0) {
             return null;
         }
-        String clean = str.replaceAll("[^e\\.\\-\\ 0-9]", "");
+
+        String clean = str.replaceAll("[^\\- e .  0-9]", "");   //очистка от лишних симолов
+        if (clean.replaceAll("[^.]", "").length() > 1
+                || clean.replaceAll("[^e]", "").length() > 1) {
+            return null;
+        }
+
+        int pointPosition = clean.indexOf('.');
+        int ePosition = clean.indexOf('e');
+
+        String mantisa;                                                             //мантиса
+        String power;                                                               //порядок
+
+        if (ePosition != -1) {                                                      //если есть е, то
+            mantisa = clean.substring(0, ePosition);                                //получаем мантиссу
+            power = clean.substring(ePosition + 1);                                 //получаем порядок
+        } else {                                                                    //иначе
+            mantisa = clean;                                                        //все мантисса
+            power = "";
+        }
+
+        if (chekMinus(mantisa) || chekMinus(power)) {                               //--3 не валидно. -3e-1 валдино
+            return null;
+        }
+
+        if (pointPosition != -1 || ePosition != -1) {                               //если есть . или e то
+            return getDouble(mantisa, pointPosition) * Math.pow(10, getLong(power));//возвращаем double
+        } else {                                                                    //иначе
+            long result = getLong(mantisa);                                         //получаем long
+            if (result <= Integer.MAX_VALUE && result >= Integer.MIN_VALUE) {       //если можно, то
+                return (int) result;                                                //приводим long к int, возвращаем
+            }                                                                       //если нельзя, то
+            return result;                                                          //возвращаем long
+        }
+    }
+
+    private static boolean chekMinus(String str) {
+        if (str.replaceAll("[^-]", "").length() > 1) {
+            return true;
+        }
+        if (str.indexOf('-') > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    private static double getDouble(String str, int pointPos) {
+        str = str.replaceAll("[.]", "");
+        if (pointPos != -1) {
+            return (double) (getLong(str) / (Math.pow(10, str.length() - pointPos)));
+        }
+        return (double) (getLong(str));
+    }
+
+    private static long getLong(String str) {
+        long result = 0;
+        for (int i = str.length() - 1; i >= 0; i--) {
+            if (str.charAt(i) != '-') {
+                result += (str.charAt(i) - 48) * Math.pow(10, str.length() - i - 1);
+            } else {
+                result = -result;
+            }
+        }
+        return result;
+    }
+}
+
+
+
+
+
+
+
+
+/*
+
+
+
         int points = clean.replaceAll("[^.]", "").length();
         int e = clean.replaceAll("[^e]", "").length();
         int minuses = clean.replaceAll("[^-]", "").length();
@@ -97,3 +174,4 @@ public class StringTasks {
         return result;
     }
 }
+*/

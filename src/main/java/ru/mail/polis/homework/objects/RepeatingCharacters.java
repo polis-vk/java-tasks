@@ -16,19 +16,23 @@ public class RepeatingCharacters {
         if (str == null || str.length() == 0) {
             return null;
         }
-        Pair<Character, Integer> maxPair = new Pair<>(str.charAt(0), 0);
-        Pair<Character, Integer> tmpPair = new Pair<>(str.charAt(0), 0);
+        char maxChar = str.charAt(0);
+        char tmpChar = str.charAt(0);
+        int tmpCounter = 0;
+        int maxCounter = 0;
         for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) != tmpPair.getFirst()) {
-                tmpPair = new Pair(str.charAt(i), 1);
+            if (str.charAt(i) != tmpChar) {
+                tmpChar = str.charAt(i);
+                tmpCounter = 1;
             } else {
-                tmpPair = new Pair(tmpPair.getFirst(), tmpPair.getSecond() + 1);
+                tmpCounter++;
             }
-            if (tmpPair.getSecond() > maxPair.getSecond()) {
-                maxPair = tmpPair;
+            if (tmpCounter > maxCounter) {
+                maxChar = tmpChar;
+                maxCounter = tmpCounter;
             }
         }
-        return maxPair;
+        return new Pair<>(maxChar, maxCounter);
     }
 
     public static class Pair<T, V> {
