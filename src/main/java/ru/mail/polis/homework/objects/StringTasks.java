@@ -69,7 +69,7 @@ public class StringTasks {
         double result;
 
 
-        if (indexE!=-1) {
+        if (indexE != -1) {
 
             String partBeforeE = strUnsigned.substring(0, indexE);
             String partAfterE = signE ? strUnsigned.substring(indexE + 2) : strUnsigned.substring(indexE + 1);
@@ -77,23 +77,23 @@ public class StringTasks {
             double number = getNumberFromChar(partBeforeE);
             long exponent = getNumberFromChar(partAfterE);
 
-            if (indexPoint!=-1){
-                number/=Math.pow(10, partBeforeE.length() - 1 - indexPoint);
+            if (indexPoint != -1) {
+                number /= Math.pow(10, partBeforeE.length() - 1 - indexPoint);
 
             }
 
             if (signE) {
-                number/=Math.pow(10, exponent);
+                number /= Math.pow(10, exponent);
 
             } else {
-                number*=Math.pow(10, exponent);
+                number *= Math.pow(10, exponent);
 
             }
             result = number;
         } else {
 
             result = getNumberFromChar(strUnsigned);
-            result/=Math.pow(10, strUnsigned.length() - 1 - indexPoint);
+            result /= Math.pow(10, strUnsigned.length() - 1 - indexPoint);
         }
 
         return sign ? -result : result;
@@ -107,7 +107,7 @@ public class StringTasks {
             if (strDigits.charAt(i) == '.') {
                 continue;
             }
-            result += ((long) strDigits.charAt(i) - '0') * ((long) Math.pow(10, exponent));
+            result += ((int) strDigits.charAt(i) - '0') * ((int) Math.pow(10, exponent));
             exponent++;
         }
         return result;

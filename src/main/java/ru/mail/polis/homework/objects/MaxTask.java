@@ -25,9 +25,11 @@ public class MaxTask {
         for (int j = 0; j < resultArray.length; j++) {
 
             int tempMaxIndex = 0;
-            for (int i = 1; i < array.length; i++) {
-                if (array[tempMaxIndex] < array[i]
+            int min = Integer.MIN_VALUE;
+            for (int i = 0; i < array.length; i++) {
+                if (min < array[i]
                         && (array[i] < currentMaxBound || (array[i] == currentMaxBound && currentMaxBoundIndex < i))) {
+                    min = array[i];
                     tempMaxIndex = i;
                 }
             }

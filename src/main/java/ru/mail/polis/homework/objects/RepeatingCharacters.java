@@ -23,14 +23,23 @@ public class RepeatingCharacters {
 
         for (int i = 0; i < str.length() - 1; i++) {
             if (str.charAt(i) == str.charAt(i + 1)) {
+
                 countRepeating++;
+
             } else {
+                if (countRepeating > maxCountRepeating) {
+                    maxCountRepeating = countRepeating;
+                    maxRepeatingChar = str.charAt(i);
+                }
                 countRepeating = 1;
             }
-            if (countRepeating > maxCountRepeating) {
-                maxCountRepeating = countRepeating;
-                maxRepeatingChar = str.charAt(i);
-            }
+
+        }
+
+        //чтобы проверить если вся строка одинаковая и смен не было
+        if (countRepeating > maxCountRepeating) {
+            maxCountRepeating = countRepeating;
+            maxRepeatingChar = str.charAt(str.length() - 1);
         }
 
         return new Pair<>(maxRepeatingChar, maxCountRepeating);
