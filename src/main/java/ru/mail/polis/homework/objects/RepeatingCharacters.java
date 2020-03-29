@@ -19,12 +19,14 @@ public class RepeatingCharacters {
         int maxCountOfRepeats = 1;
         char maxRepeatSymbol = str.charAt(0);
         int currentCountOfRepeats = 1;
+        char currentSymbol;
         for (int i = 0; i < str.length() - 1; i++) {
+            currentSymbol = str.charAt(i);
             if (str.charAt(i) == str.charAt(i + 1)) {
                 currentCountOfRepeats++;
                 if (currentCountOfRepeats > maxCountOfRepeats) {
-                    maxRepeatSymbol = str.charAt(i);
                     maxCountOfRepeats = currentCountOfRepeats;
+                    maxRepeatSymbol = currentSymbol;
                 }
             } else {
                 currentCountOfRepeats = 1;

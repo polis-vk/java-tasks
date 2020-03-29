@@ -36,7 +36,7 @@ public class StringTasks {
                 || (symbolCount(digitString, ".e") != 0)) {
             return null;
         }
-        if (digitString.indexOf("-") == (digitString.length() - 1)) {
+        if (digitString.endsWith("-")) {
             return null;
         }
 
@@ -60,13 +60,13 @@ public class StringTasks {
         if (str.charAt(0) == '-') {
             for (int i = 1; i < str.length(); i++) {
                 result *= 10;
-                result += str.charAt(i) - 48;
+                result += str.charAt(i) - '0';
             }
             return result * -1;
         }
         for (int i = 0; i < str.length(); i++) {
             result *= 10;
-            result += str.charAt(i) - 48;
+            result += str.charAt(i) - '0';
         }
         return result;
     }
@@ -84,14 +84,14 @@ public class StringTasks {
             if (ePos != -1) {
                 for (int i = pointPos + 1; i < ePos; i++) {
                     numberAfterPoint *= 10;
-                    numberAfterPoint += str.charAt(i) - 48;
+                    numberAfterPoint += str.charAt(i) - '0';
                     afterPointPow--;
                 }
             } else {
                 pow = 0;
                 for (int i = pointPos + 1; i < str.length(); i++) {
                     numberAfterPoint *= 10;
-                    numberAfterPoint += str.charAt(i) - 48;
+                    numberAfterPoint += str.charAt(i) - '0';
                     afterPointPow--;
                 }
             }
