@@ -22,16 +22,16 @@ public class RepeatingCharacters {
         int repeatCount = 1;
 
         for (int i = 1; i < charArray.length; i++) {
-            if (charArray[i] == charArray[i-1]) {
+            if (charArray[i] == charArray[i - 1]) {
                 tempRepeatCount++;
-            }
-            else {
+            } else {
+                if (tempRepeatCount > repeatCount) {
+                    repeating = charArray[i - 1];
+                    repeatCount = tempRepeatCount;
+                }
                 tempRepeatCount = 1;
             }
-            if (tempRepeatCount > repeatCount) {
-                repeating = charArray[i - 1];
-                repeatCount = tempRepeatCount;
-            }
+
         }
 
         return new Pair<>(repeating, repeatCount);

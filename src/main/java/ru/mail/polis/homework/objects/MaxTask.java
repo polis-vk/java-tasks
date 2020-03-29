@@ -9,7 +9,6 @@ public class MaxTask {
      * Например ({1, 3, 10, 11, 22, 0}, 2) -> {22, 11}
      * ({1, 3, 22, 11, 22, 0}, 3) -> {22, 22, 11}
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копиии
-     *
      */
     public static int[] getMaxArray(int[] array, int count) {
         if (count > array.length) {
@@ -17,13 +16,13 @@ public class MaxTask {
         }
 
         int[] maxArray = new int[count];
-        if (count == 0){
+        if (count == 0) {
             return maxArray;
         }
         maxArray[0] = array[0];
         int insertIndex;
         for (int i = 0; i < array.length; i++) {
-            if (i < count){
+            if (i < count) {
                 maxArray[i] = Integer.MIN_VALUE;
             }
             insertIndex = 0;
@@ -33,12 +32,12 @@ public class MaxTask {
                     break;
                 }
             }
-            if (insertIndex >= maxArray.length){
+            if (insertIndex >= maxArray.length) {
                 continue;
             }
 
-            for (int j = maxArray.length-1; j > insertIndex; j--){
-                maxArray[j] = maxArray[j-1];
+            for (int j = maxArray.length - 1; j > insertIndex; j--) {
+                maxArray[j] = maxArray[j - 1];
             }
             maxArray[insertIndex] = array[i];
         }
