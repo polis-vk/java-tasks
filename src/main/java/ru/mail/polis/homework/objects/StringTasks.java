@@ -67,22 +67,22 @@ public class StringTasks {
             expIsSigned = true;
         }
 
-        String uString;
+        String unsignedString;
         if (isSigned){
-            uString = str.substring(1);
+            unsignedString = str.substring(1);
         } else{
-            uString = str;
+            unsignedString = str;
         }
-        int indexOfExp = uString.indexOf('e');
-        int indexOfPoint = uString.indexOf('.');
+        int indexOfExp = unsignedString.indexOf('e');
+        int indexOfPoint = unsignedString.indexOf('.');
         double result;
         if (indexOfExp >=0) {
-            double mantissa = stringToDouble(uString.substring(0, indexOfExp));
+            double mantissa = stringToDouble(unsignedString.substring(0, indexOfExp));
             long exponent;
             if (expIsSigned){
-                exponent = stringToLong(uString.substring(indexOfExp+2));
+                exponent = stringToLong(unsignedString.substring(indexOfExp+2));
             } else {
-                exponent = stringToLong(uString.substring(indexOfExp+1));
+                exponent = stringToLong(unsignedString.substring(indexOfExp+1));
             }
             if (expIsSigned) {
                 result = mantissa / Math.pow(10, exponent);
@@ -90,8 +90,8 @@ public class StringTasks {
                 result = mantissa * Math.pow(10, exponent);
             }
         } else {
-            long temp = stringToLong(uString);
-            result = (double) temp / Math.pow(10, uString.length() - indexOfPoint - 1);
+            long temp = stringToLong(unsignedString);
+            result = (double) temp / Math.pow(10, unsignedString.length() - indexOfPoint - 1);
         }
         if (isSigned) {
             return -result;
@@ -126,9 +126,7 @@ public class StringTasks {
         char[] charArr = str.toCharArray();
         int exponent = 0;
         for (int i = str.length()-1; i >= 0 ; i--) {
-            if (charArr[i] != '.') {
-                number += (long) (charArr[i] - '0') * Math.pow(10, exponent++);
-            }
+            number += (long) (charArr[i] - '0') * Math.pow(10, exponent++);
         }
         return number;
     }

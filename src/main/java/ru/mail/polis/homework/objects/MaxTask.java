@@ -15,13 +15,17 @@ public class MaxTask {
         if (count > array.length) {
             return null;
         }
+
         int[] maxArray = new int[count];
         if (count == 0){
             return maxArray;
         }
-
+        maxArray[0] = array[0];
         int insertIndex;
         for (int i = 0; i < array.length; i++) {
+            if (i < count){
+                maxArray[i] = Integer.MIN_VALUE;
+            }
             insertIndex = 0;
             while (array[i] <= maxArray[insertIndex]) {
                 insertIndex++;
