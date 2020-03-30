@@ -19,13 +19,13 @@ public class MaxTask {
         }
         int[] maxElem = new int[count];
         for (int elem : array) {
-            if (elem>maxElem[count-1]){
-                int min=elem;
-                for(int i=0; i<count; i++){
-                    if (min>maxElem[i]){
-                        int temp=maxElem[i];
-                        maxElem[i]=min;
-                        min=temp;
+            if (elem > maxElem[count - 1]) {
+                int min = elem;
+                for (int i = 0; i < count; i++) {
+                    if (min > maxElem[i]) {
+                        int temp = maxElem[i];
+                        maxElem[i] = min;
+                        min = temp;
                     }
                 }
             }
