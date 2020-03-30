@@ -12,9 +12,27 @@ import java.util.Objects;
  */
 public class RepeatingCharacters {
 
-    public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        return new Pair<>('s', 4);
-    }
+    public static Pair<Character, Integer> getMaxRepeatingCharacters(String str){
+        if (str==null) {//Если строка равна null
+            return null;
+        }
+        if ((str.length()==0)) {//Если строка пустая
+            return null;
+        }
+        int maxChar = 0;//Номер максимального элемента
+        int maxCount = 0;//Число вхождений подряд элемента в строку
+        for (int i =0; i<str.length(); i++) {
+            int count = i;
+            while ((count<str.length())&&(str.charAt(i)==str.charAt(count))) {
+                count++;
+            }
+            if (maxCount<count-i) {
+                maxCount = count-i;
+                maxChar = i;
+            }
+            i=count-1;
+        }
+        return new Pair<>(str.charAt(maxChar), maxCount); }
 
     public static class Pair<T, V> {
         private final T first;
