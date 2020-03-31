@@ -33,9 +33,7 @@ public class StringTasks {
 
     private static String removeAllLettersExceptE(String string) {
         StringBuilder str = new StringBuilder();
-        for (int i = 0; i < string.length(); i++) {
-            char symbol = string.charAt(i);
-
+        for (char symbol : string.toCharArray()) {
             if (Character.isDigit(symbol) || symbol == 'e' || symbol == '.' || symbol == '-') {
                 str.append(symbol);
             }

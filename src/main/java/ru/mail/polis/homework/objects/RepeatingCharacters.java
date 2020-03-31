@@ -20,20 +20,25 @@ public class RepeatingCharacters {
 
         int numberOfRepeats = 1;
         int numberOfRepeatsOfMaxElement = 1;
-        char currentElement;
-        char maxElement = str.charAt(0);
+        char currentElement = str.charAt(0);
+        char maxElement = currentElement;
 
         for (int i = 0; i < str.length() - 1; i++) {
             currentElement = str.charAt(i);
-            if (currentElement == str.charAt(i+1)) {
+            if (currentElement == str.charAt(i + 1)) {
                 numberOfRepeats++;
+            } else {
                 if (numberOfRepeats > numberOfRepeatsOfMaxElement) {
                     maxElement = currentElement;
                     numberOfRepeatsOfMaxElement = numberOfRepeats;
                 }
-            } else {
+
                 numberOfRepeats = 1;
             }
+        }
+        if (numberOfRepeats > numberOfRepeatsOfMaxElement) {
+            maxElement = currentElement;
+            numberOfRepeatsOfMaxElement = numberOfRepeats;
         }
 
         return new Pair<>(maxElement, numberOfRepeatsOfMaxElement);
