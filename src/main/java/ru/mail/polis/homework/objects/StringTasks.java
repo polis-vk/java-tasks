@@ -49,32 +49,31 @@ public class StringTasks {
         
         for (int i = 0; i < str.length(); i++) {
             char symbol = str.charAt(i);
-            
-            if (symbol == '.') {
-                if (dotIsHere || eIsHere || prevSymbolType != SymbolType.DIGIT) {
-                    return null;
+            if (Character.isDigit(symbol) || symbol == '.' || symbol == 'e' || symbol == '-') {
+                switch (symbol) {
+                    case '.':
+                        if (dotIsHere || eIsHere || prevSymbolType != SymbolType.DIGIT) {
+                            return null;
+                        }
+                        dotIsHere = true;
+                        prevSymbolType = SymbolType.DOT;
+                        break;
+                    case 'e':
+                        if (eIsHere || prevSymbolType != SymbolType.DIGIT) {
+                            return null;
+                        }
+                        eIsHere = true;
+                        prevSymbolType = SymbolType.E;
+                        break;
+                    case '-':
+                        if (prevSymbolType != SymbolType.DEFAULT && prevSymbolType != SymbolType.E) {
+                            return null;
+                        }
+                        prevSymbolType = SymbolType.MINUS;
+                        break;
+                    default:
+                        prevSymbolType = SymbolType.DIGIT;
                 }
-                dotIsHere = true;
-                prevSymbolType = SymbolType.DOT;
-                numericStringBuilder.append(symbol);
-                
-            } else if (symbol == 'e') {
-                if (eIsHere || prevSymbolType != SymbolType.DIGIT) {
-                    return null;
-                }
-                eIsHere = true;
-                prevSymbolType = SymbolType.E;
-                numericStringBuilder.append(symbol);
-                
-            } else if (symbol == '-') {
-                if (prevSymbolType != SymbolType.DEFAULT && prevSymbolType != SymbolType.E) {
-                    return null;
-                }
-                prevSymbolType = SymbolType.MINUS;
-                numericStringBuilder.append(symbol);
-                
-            } else if (Character.isDigit(symbol)) {
-                prevSymbolType = SymbolType.DIGIT;
                 numericStringBuilder.append(symbol);
             }
         }
