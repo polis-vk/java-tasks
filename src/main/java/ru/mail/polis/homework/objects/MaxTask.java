@@ -16,20 +16,20 @@ public class MaxTask {
         }
         int[] sortedArray = new int[count];
 
-        int MaxIndex = 0;
-        int MaxElement = Integer.MAX_VALUE;
+        int maxIndex = 0;
+        int maxElement = Integer.MAX_VALUE;
 
         int i = 0;
         while (i < count) {
-            int currentMaxIndex = 0;
-            for (int j = 1; j < array.length; j++) {
-                if (array[currentMaxIndex] < array[j] && ((MaxIndex < j && array[j] == MaxElement) || array[j] < MaxElement))
-                    currentMaxIndex = j;
+            int currentmaxIndex = array.length - 1;
+            for (int j = array.length - 2; j >= 0; j--) {
+                if (array[currentmaxIndex] <= array[j]  && ((maxIndex < j && array[j] == maxElement) || array[j] < maxElement))
+                    currentmaxIndex = j;
             }
 
-            sortedArray[i] = array[currentMaxIndex];
-            MaxElement = array[currentMaxIndex];
-            MaxIndex = currentMaxIndex;
+            sortedArray[i] = array[currentmaxIndex];
+            maxElement = array[currentmaxIndex];
+            maxIndex = currentmaxIndex;
             i++;
         }
         return sortedArray;

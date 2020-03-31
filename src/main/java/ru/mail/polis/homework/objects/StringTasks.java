@@ -42,7 +42,7 @@ public class StringTasks {
         }
 
         if (pointCounts + eCounts == 0) {
-            long longResult = signOfLong(digitString);
+            long longResult = forLong(digitString);
             if (longResult <= Integer.MAX_VALUE && longResult >= Integer.MIN_VALUE) {
                 return (int) longResult;
             }
@@ -52,7 +52,7 @@ public class StringTasks {
         return doubleResult(digitString);
     }
 
-    private static long signOfLong(String str) {
+    private static long forLong(String str) {
         String dublicate = str;
         int sign = 1;
         if (dublicate.charAt(0) == '-') {
@@ -73,9 +73,31 @@ public class StringTasks {
     }
 
     private static double doubleResult(String str) {
-//прошу прощения, немного не успел доделать
-        return 10;
+        int pointPosition = str.indexOf('.');
+        int ePosition = str.indexOf('e');
+
+        if (pointPosition == -1 && ePosition != -1)  {
+            long number = forLong(str.substring(0, ePosition));
+            long mantissa = forLong(str.substring(ePosition + 1));
+            return number * Math.pow(10, mantissa);
+        } else {
+            if (ePosition == -1) {
+                long beforePoint = forLong(str.substring(0, pointPosition));
+                long afterPoint = forLong(str.substring(pointPosition + 1));
+                double readyAfterP = afterPoint;
+                for (int i = 0 ; i < str.length() - pointPosition - 1; i++) {
+                    readyAfterP *= 0.1;
+                }
+                return beforePoint + readyAfterP;
+        }
+        }
+        long mantissa = forLong(str.substring(ePosition + 1));
+        long beforePoint = forLong(str.substring(0, pointPosition));
+        long afterPoint = forLong(str.substring(pointPosition + 1, ePosition));
+        double readyAfterP = afterPoint;
+        for (int i = 0 ; i < ePosition - pointPosition - 1; i++) {
+            readyAfterP *= 0.1;
+        }
+        return (beforePoint + readyAfterP) * Math.pow(10, mantissa);
     }
-
-
 }

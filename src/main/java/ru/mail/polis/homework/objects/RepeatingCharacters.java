@@ -16,21 +16,23 @@ public class RepeatingCharacters {
         if (str == null || str.length() == 0) {
             return null;
         }
-        int maxSize = 0;
+        int maxSize = 1;
         char element = ' ';
         int currentCount = 1;
-        for (int i = 0; i < str.length() - 1; i++) {
-            if (str.charAt(i) == str.charAt(i + 1)) {
+        for (int i = 1; i < str.length(); i++) {
+            if (str.charAt(i) == str.charAt(i - 1)) {
                 currentCount++;
             } else {
+                if (currentCount > maxSize) {
+                    maxSize = currentCount;
+                    element = str.charAt(i - 1);
+                }
                 currentCount = 1;
             }
-
-            if (currentCount > maxSize)
-            {
-                maxSize = currentCount;
-                element = str.charAt(i);
-            }
+        }
+        if (currentCount > maxSize) {
+            maxSize = currentCount;
+            element = str.charAt(str.length() - 1);
         }
         return new Pair<>(element, maxSize);
     }
