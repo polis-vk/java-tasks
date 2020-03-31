@@ -39,7 +39,12 @@ public class StringTasks {
         if (digitString.length() - digitString.replace("--", "").length() != 0
                 || digitString.length() - digitString.replace("-e", "").length() != 0
                 || digitString.length() - digitString.replace("-.", "").length() != 0
-                || digitString.endsWith("-")) {
+                || digitString.endsWith("-") || digitString.endsWith(".")
+                || digitString.startsWith(".")
+                || (digitString.indexOf("-") > 0 && !digitString.contains("e-"))
+                || digitString.equals("e")
+                || digitString.equals(".")
+                || digitString.equals("-")) {
             return null;
         }
 
@@ -53,7 +58,7 @@ public class StringTasks {
         return doubleValueOfString(digitString);
     }
 
-    public static double doubleValueOfString(String str) {
+    private static double doubleValueOfString(String str) {
         if (str == null || str.isEmpty()) {
             return 0;
         }
@@ -67,22 +72,22 @@ public class StringTasks {
             expIsSigned = true;
         }
 
-        String unsignedString;
+        String uString;
         if (isSigned) {
-            unsignedString = str.substring(1);
+            uString = str.substring(1);
         } else {
-            unsignedString = str;
+            uString = str;
         }
-        int indexOfExp = unsignedString.indexOf('e');
-        int indexOfPoint = unsignedString.indexOf('.');
+        int indexOfExp = uString.indexOf('e');
+        int indexOfPoint = uString.indexOf('.');
         double result;
         if (indexOfExp >= 0) {
-            double mantissa = stringToDouble(unsignedString.substring(0, indexOfExp));
+            double mantissa = stringToDouble(uString.substring(0, indexOfExp));
             long exponent;
             if (expIsSigned) {
-                exponent = stringToLong(unsignedString.substring(indexOfExp + 2));
+                exponent = stringToLong(uString.substring(indexOfExp + 2));
             } else {
-                exponent = stringToLong(unsignedString.substring(indexOfExp + 1));
+                exponent = stringToLong(uString.substring(indexOfExp + 1));
             }
             if (expIsSigned) {
                 result = mantissa / Math.pow(10, exponent);
@@ -90,8 +95,8 @@ public class StringTasks {
                 result = mantissa * Math.pow(10, exponent);
             }
         } else {
-            long temp = stringToLong(unsignedString);
-            result = (double) temp / Math.pow(10, unsignedString.length() - indexOfPoint - 1);
+            long temp = stringToLong(uString);
+            result = (double) temp / Math.pow(10, uString.length() - indexOfPoint - 1);
         }
         if (isSigned) {
             return -result;
@@ -99,7 +104,7 @@ public class StringTasks {
         return result;
     }
 
-    public static long longValueOfString(String str) {
+    private static long longValueOfString(String str) {
         if (str == null || str.isEmpty()) {
             return 0;
         }
@@ -109,7 +114,7 @@ public class StringTasks {
         return stringToLong(str);
     }
 
-    public static double stringToDouble(String str) {
+    private static double stringToDouble(String str) {
         int indexOfPoint = str.indexOf('.');
         if (indexOfPoint < 0) {
             return (double) stringToLong(str);
@@ -117,7 +122,7 @@ public class StringTasks {
         return (double) stringToLong(str) / Math.pow(10, str.length() - indexOfPoint - 1);
     }
 
-    public static long stringToLong(String str) {
+    private static long stringToLong(String str) {
         if (str == null || str.isEmpty()) {
             return 0;
         }
@@ -126,7 +131,9 @@ public class StringTasks {
         char[] charArr = str.toCharArray();
         int exponent = 0;
         for (int i = str.length() - 1; i >= 0; i--) {
-            number += (long) (charArr[i] - '0') * Math.pow(10, exponent++);
+            if (charArr[i] != '.') {
+                number += (long) (charArr[i] - '0') * Math.pow(10, exponent++);
+            }
         }
         return number;
     }
