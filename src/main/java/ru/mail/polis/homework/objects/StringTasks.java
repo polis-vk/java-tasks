@@ -38,18 +38,19 @@ public class StringTasks {
         if (pointIndex != -1) {
             return countDoubleExpression(correctExpression, pointIndex);
         }
-        return countNonDoubleExpression(correctExpression, correctExpression.length() - 1, 0);
+        return convertNonDoubleExpression(countNonDoubleExpression(correctExpression,
+                correctExpression.length() - 1, 0));
     }
 
     public static Number countExponentPointExpression(String correctExpression, int pointIndex, int exponentIndex) {
         return (double) countDoubleExpression(correctExpression.substring(0, exponentIndex), pointIndex)
-                * Math.pow(10, (int) countNonDoubleExpression(correctExpression
+                * Math.pow(10, countNonDoubleExpression(correctExpression
                 , correctExpression.length() - 1,
                 exponentIndex + 1));
     }
 
     public static Number countDoubleExpression(String correctExpression, int pointIndex) {
-        return (int) countNonDoubleExpression(correctExpression, pointIndex - 1, 0)
+        return countNonDoubleExpression(correctExpression, pointIndex - 1, 0)
                 + countAfterPointExpression(correctExpression, pointIndex);
     }
 
@@ -62,7 +63,7 @@ public class StringTasks {
         return exponent;
     }
 
-    public static Number countNonDoubleExpression(String correctExpression, int startIndex, int endIndex) {
+    public static double countNonDoubleExpression(String correctExpression, int startIndex, int endIndex) {
         long number = 0;
         long rank = 1;
         for (int i = startIndex; i >= endIndex; i--, rank *= 10) {
@@ -72,6 +73,12 @@ public class StringTasks {
             }
             number += (correctExpression.charAt(i) - 48) * rank;
         }
+
+        return (double) number;
+    }
+
+    public static Number convertNonDoubleExpression(double expression) {
+        long number = (long) expression;
         if (number <= Integer.MAX_VALUE && number >= Integer.MIN_VALUE) {
             return (int) number;
         }
@@ -79,10 +86,10 @@ public class StringTasks {
     }
 
     public static Number countExponentExpression(String correctExpression, int exponentIndex) {
-        double tempExp = Math.pow(10, (int) countNonDoubleExpression(correctExpression
+        double tempExp = Math.pow(10, countNonDoubleExpression(correctExpression
                 , correctExpression.length() - 1
                 , exponentIndex + 1));
-        return (int) countNonDoubleExpression(correctExpression, exponentIndex - 1, 0)
+        return countNonDoubleExpression(correctExpression, exponentIndex - 1, 0)
                 * tempExp;
     }
 
@@ -126,28 +133,12 @@ public class StringTasks {
                     break;
                 default:
                     if (!(Character.isDigit(sign))) {
-                        newStr = replaceSign(newStr, i);
+                        newStr = newStr.substring(0, i).concat(newStr.substring(i + 1));
                         i--;
                     }
             }
         }
         return newStr;
-    }
-
-    public static String replaceSign(String str, int index) {
-        StringBuilder newString = new StringBuilder();
-
-        int i = 0;
-        while (i < index) {
-            newString.append(str.charAt(i));
-            i++;
-        }
-        i++;
-        while (i < str.length()) {
-            newString.append(str.charAt(i));
-            i++;
-        }
-        return newString.toString();
     }
 
 }
