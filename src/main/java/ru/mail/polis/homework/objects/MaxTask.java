@@ -18,13 +18,21 @@ public class MaxTask {
         if (array.length == 0) {
             return arr;
         }
-        int max, index;
+        int max;
+        int index;
         boolean next;
         boolean[] checkList = new boolean[array.length];
 
         for (int i = 0; i < count; i++) {
             max = array[0];
             index = 0;
+            for (int z = 1; z < checkList.length; z++) {
+                if(!checkList[z]){
+                    max = array[z];
+                    index = z;
+                    break;
+                }
+            }
             for (int j = 0; j < array.length; j++) {
                 if (!checkList[j] && array[j] > max) {
                     max = array[j];

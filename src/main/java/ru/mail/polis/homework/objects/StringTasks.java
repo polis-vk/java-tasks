@@ -20,10 +20,10 @@ public class StringTasks {
         String string = toClear(str);
 
         if (string != null) {
-            if (isNotContain(string, 'e')) {
-                if (isNotContain(string, '.')) {
+            if (string.indexOf('e') == -1) {
+                if (string.indexOf('.') == -1) {
                     long num = strToLong(string);
-                    if (num < -2147483648 || num > 2147483647) {
+                    if (num < Integer.MIN_VALUE || num > Integer.MAX_VALUE) {
                         return num;
                     }
                     return (int) num;
@@ -34,34 +34,16 @@ public class StringTasks {
         return null;
     }
 
-    private static boolean isNotContain(String string, char symbol) {
-        int countInside = 0;
-        for (char ch : string.toCharArray()) {
-            if (ch == symbol) {
-                countInside++;
-            }
-        }
-        return countInside == 0;
-    }
-
-    private static int howMuchContain(String string) {
-        int countInside = 0;
-        for (char ch : string.toCharArray()) {
-            if (ch == '-') {
-                countInside++;
-            }
-        }
-        return countInside;
-    }
-
     private static String toClear(String string) {
         boolean flagMinus = false;
         boolean flagE = false;
         boolean flagDot = false;
+        int countMinus = 0;
         StringBuilder stringBuilder = new StringBuilder();
         for (char c : string.toCharArray()) {
-            if (Character.isDigit(c) || c == '-' || c == '.' || c == 'e') {
-                if (c == '-') {
+            switch (c) {
+                case ('-'):
+                    countMinus++;
                     if (flagMinus || flagDot) {
                         return null;
                     }
@@ -70,18 +52,7 @@ public class StringTasks {
                     flagDot = false;
                     flagE = false;
                     continue;
-                }
-                if (c == 'e') {
-                    if (flagE || flagDot || flagMinus) {
-                        return null;
-                    }
-                    flagE = true;
-                    stringBuilder.append(c);
-                    flagDot = false;
-                    flagMinus = false;
-                    continue;
-                }
-                if (c == '.') {
+                case ('.'):
                     if (flagDot || flagMinus || flagE) {
                         return null;
                     }
@@ -90,15 +61,34 @@ public class StringTasks {
                     flagE = false;
                     flagMinus = false;
                     continue;
-                }
-                stringBuilder.append(c);
-                flagDot = false;
-                flagE = false;
-                flagMinus = false;
+                case ('e'):
+                    if (flagE || flagDot || flagMinus) {
+                        return null;
+                    }
+                    flagE = true;
+                    stringBuilder.append(c);
+                    flagDot = false;
+                    flagMinus = false;
+                    continue;
+                case ('0'):
+                case ('1'):
+                case ('2'):
+                case ('3'):
+                case ('4'):
+                case ('5'):
+                case ('6'):
+                case ('7'):
+                case ('8'):
+                case ('9'):
+                    stringBuilder.append(c);
+                    flagDot = false;
+                    flagE = false;
+                    flagMinus = false;
+
             }
         }
         String s = stringBuilder.toString();
-        if (howMuchContain(s) > 2 || s.charAt(s.length() - 1) == '-') {
+        if (countMinus > 2 || s.charAt(s.length() - 1) == '-') {
             return null;
         }
         return s;
@@ -108,19 +98,22 @@ public class StringTasks {
         long temp = 0L; // число
         int i = 0;
         int sign = 0; // знак числа 0- положительное, 1 — отрицательное
-        if (s.charAt(i) == '-') {
+        char[] str = s.toCharArray();
+        if (str[i] == '-') {
             sign = 1;
             i++;
         }
-        while (i < s.length() && s.charAt(i) >= 0x30 && s.charAt(i) <= 0x39) {
-            temp = temp + (long) (s.charAt(i) & 0x0F);
+
+        while (i < str.length && str[i] >= '0' && str[i] <= '9') {
+            temp = temp + (long) (str[i] - '0');
             temp = temp * 10L;
             i++;
         }
         temp = temp / 10;
-        if (sign == 1)
+        if (sign == 1) {
             temp = -temp;
-        return (temp);
+        }
+        return temp;
     }
 
     private static double strToDouble(String str) {
