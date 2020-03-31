@@ -11,41 +11,30 @@ public class MaxTask {
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копиии
      */
     public static int[] getMaxArray(int[] array, int count) {
-        if (array.length < count) {         // исключения
+        int[] result = new int[count];
+        // сразу обработаем исключения
+        if (array.length < count) {
             return null;
         }
-        int[] result = new int[count];
         if (count == 0) {
             return result;
         }
 
-        int index = 0;
-        int newMaxValue;
-        int oldMaxValue = Integer.MAX_VALUE;
-        boolean continuity = true;
-
-        while (continuity) {
-            int counter = 0;
-            newMaxValue = -Integer.MAX_VALUE;
-            for (int j = 0; j < array.length; j++) {        // ищем максимальный элемент и кол-во его повторов
-                if (array[j] > newMaxValue & array[j] < oldMaxValue) {
-                    newMaxValue = array[j];
-                    counter = 0;
-                }
-                if (array[j] == newMaxValue) {
-                    counter++;
+        int[] tempArray = array.clone();    // клонируем array
+        int maxValue = Integer.MIN_VALUE;
+        int index = 0;      // индекс максимального элемента
+        for (int i = 0; i < count; i++) {
+            for (int j = 0; j < tempArray.length; j++) {
+                if (maxValue < tempArray[j]) {
+                    maxValue = tempArray[j];
+                    index = j;
                 }
             }
-            for (int k = 0; k < counter; k++) {     // записываем результат в массив
-                result[index] = newMaxValue;
-                index++;
-                if (index >= result.length) {
-                    continuity = false;
-                    break;
-                }
-            }
-            oldMaxValue = newMaxValue;
+            result[i] = maxValue;
+            tempArray[index] = Integer.MIN_VALUE;
+            maxValue = Integer.MIN_VALUE;
         }
+
         return result;
     }
 
