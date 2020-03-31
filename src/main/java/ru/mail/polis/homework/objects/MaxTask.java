@@ -17,32 +17,26 @@ public class MaxTask {
             return null;
         }
 
-        int lengthArray = array.length;
-        int[] tempArray = new int[lengthArray];
+        int[] tempArray = array.clone();
         int[] maxArray = new int[count];
-        int i, j;
-        int maxElement;
-        int index;
+        int currentMaxElement;
+        int indexMaxElement;
         int temp;
 
-        for (i = 0; i < lengthArray; i++) {
-            tempArray[i] = array[i];
-        }
-
-        for (i = 0; i < count; i++) {
-            maxElement = tempArray[i];
-            index = i;
-            for (j = i + 1; j < lengthArray; j++) {
-                if (maxElement < tempArray[j]) {
-                    maxElement = tempArray[j];
-                    index = j;
+        for (int i = 0; i < count; i++) {
+            currentMaxElement = tempArray[i];
+            indexMaxElement = i;
+            for (int j = i + 1; j < array.length; j++) {
+                if (currentMaxElement < tempArray[j]) {
+                    currentMaxElement = tempArray[j];
+                    indexMaxElement = j;
                 }
             }
-            maxArray[i] = maxElement;
-            if (index != i) {
+            maxArray[i] = currentMaxElement;
+            if (indexMaxElement != i) {
                 temp = tempArray[i];
-                tempArray[i] = tempArray[index];
-                tempArray[index] = temp;
+                tempArray[i] = tempArray[indexMaxElement];
+                tempArray[indexMaxElement] = temp;
             }
         }
         return maxArray;

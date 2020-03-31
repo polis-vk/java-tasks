@@ -46,12 +46,13 @@ public class StringTasks {
             if (!checkMinuses(minusCounts, digitString)) {
                 return null;
             }
-            long longResult = Long.valueOf(digitString);
+            long longResult = getLongFormat(digitString);
             if (longResult <= Integer.MAX_VALUE && longResult >= Integer.MIN_VALUE) {
-                return Integer.valueOf(digitString);
+                return (int) longResult;
             }
             return longResult;
         }
+        //Все последующие операции для Double
 
         if (eCounts == 0) {
             if (!checkMinuses(minusCounts, digitString)) {
@@ -63,7 +64,7 @@ public class StringTasks {
             if (digitString.charAt(digitString.length() - 1) == '.') {
                 return null;
             }
-            return Double.valueOf(digitString);
+            return getDoubleFormat(digitString);
         }
 
         if (pointCounts == 0 || pointCounts + eCounts == 2) {
@@ -86,10 +87,80 @@ public class StringTasks {
                     return null;
                 }
             }
-            return Double.valueOf(digitString);
+        }
+        return getDoubleFormat(digitString);
+    }
+
+    public static double getDoubleFormat(String strDigit) {
+        boolean sign = strDigit.charAt(0) == '-';
+        boolean signE = strDigit.contains("e-");
+        String unsignedStr = strDigit;
+
+        if (sign) {
+            unsignedStr = strDigit.substring(1);
         }
 
-        return Double.valueOf(digitString);
+        double result;
+        int indexOfE = unsignedStr.indexOf('e');
+        int indexOfPoint = unsignedStr.indexOf('.');
+
+        if (indexOfE != -1) {
+            String numberBeforeE = unsignedStr.substring(0, indexOfE);
+            String numberAfterE;
+            result = getDoubleFromString(numberBeforeE);
+
+            if (signE) {
+                numberAfterE = unsignedStr.substring(indexOfE + 2);
+            } else {
+                numberAfterE = unsignedStr.substring(indexOfE + 1);
+            }
+
+            double exponent = getDoubleFromString(numberAfterE);
+
+            if (indexOfPoint != -1) {
+                result /= Math.pow(10, numberBeforeE.length() - indexOfPoint - 1);
+            }
+
+            if (signE) {
+                result /= Math.pow(10, exponent);
+            } else {
+                result *= Math.pow(10, exponent);
+            }
+
+        } else {
+            result = getDoubleFromString(unsignedStr);
+            result /= Math.pow(10, unsignedStr.length() - indexOfPoint - 1);
+        }
+
+        if (sign) return -result;
+        return result;
+    }
+
+    public static double getDoubleFromString(String strDigits) {
+        int exponent = 0;
+        double result = 0;
+        for (int i = strDigits.length() - 1; i >= 0; i--) {
+            if (strDigits.charAt(i) == '.') {
+                continue;
+            }
+            result += (strDigits.charAt(i) - '0') * Math.pow(10, exponent);
+            exponent++;
+        }
+        return result;
+    }
+
+    public static long getLongFormat(String strDigit) {
+        boolean sign = strDigit.charAt(0) == '-';
+        double result = 0;
+        String unsignedStr = strDigit;
+
+        if (sign) {
+            unsignedStr = strDigit.substring(1);
+        }
+        result = getDoubleFromString(unsignedStr);
+
+        if (sign) return -(long) result;
+        return (long) result;
     }
 
     public static boolean checkMinuses(int minusCounts, String digitString) {

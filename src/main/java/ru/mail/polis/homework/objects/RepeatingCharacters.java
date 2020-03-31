@@ -17,25 +17,27 @@ public class RepeatingCharacters {
             return null;
         }
 
-        Pair<Character, Integer> answer = new Pair<>('a', 0);
-        char charValue;
-        int repetitions;
+        char currentCharValue;
+        char charValue = str.charAt(0);
+        int currentRepetitions;
+        int repetitions = 1;
         int index = 0;
 
         while (index < str.length()) {
-            charValue = str.charAt(index++);
-            repetitions = 1;
+            currentCharValue = str.charAt(index++);
+            currentRepetitions = 1;
 
-            while (index < str.length() && str.charAt(index) == charValue) {
+            while (index < str.length() && str.charAt(index) == currentCharValue) {
                 index++;
-                repetitions++;
+                currentRepetitions++;
             }
 
-            if (answer.getSecond() < repetitions) {
-                answer = new Pair<>(charValue, repetitions);
+            if (currentRepetitions > repetitions) {
+                repetitions = currentRepetitions;
+                charValue = currentCharValue;
             }
         }
-        return answer;
+        return new Pair<>(charValue, repetitions);
     }
 
     public static class Pair<T, V> {
