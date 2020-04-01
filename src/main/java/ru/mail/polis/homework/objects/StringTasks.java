@@ -51,7 +51,9 @@ public class StringTasks {
     }
 
     private static double strToDouble(String newString, int pointCounter, int eCounter) {
-        String beforeSeparator, afterPoint, afterExp;
+        String beforeSeparator;
+        String afterPoint;
+        String afterExp;
         if (pointCounter == 0) {
             beforeSeparator = newString.substring(0, newString.indexOf('e'));
             afterPoint = "0";
@@ -75,12 +77,13 @@ public class StringTasks {
 
     private static long strToLong(String newString) {
         int sign = 1;
-        if (newString.charAt(0) == '-') {
+        String tempString = newString;
+        if (tempString.charAt(0) == '-') {
             sign *= -1;
-            newString = newString.substring(1);
+            tempString = tempString.substring(1);
         }
         long result = 0;
-        for (char symbol : newString.toCharArray()) {
+        for (char symbol : tempString.toCharArray()) {
             result *= 10;
             result += symbol - '0';
         }

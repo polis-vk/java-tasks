@@ -5,7 +5,7 @@ import java.util.Objects;
 
 /**
  * Нужно найти символ, который встречается подряд в строке чаще всего, и указать количество повторений.
- * Если более одного символа с максимальным значением, то нужно вернуть тот символ,
+ * Если более одного символа с максимальным значением, т    о нужно вернуть тот символ,
  * который первый встречается в строчке
  * Если строка пустая или null, то вернуть null
  * Пример abbasbdlbdbfklsssbb -> (s, 3)
@@ -21,15 +21,13 @@ public class RepeatingCharacters {
         int resAmount = 1;
         for (int i = 0; i < arrChar.length - 1; i++) {
             int amount = 1;
-            if (arrChar[i] == arrChar[i + 1]) {
-                while (i < arrChar.length - 1 && arrChar[i + 1] == arrChar[i]) {
-                    amount++;
-                    i++;
-                }
-                if (amount > resAmount) {
-                    resAmount = amount;
-                    resChar = arrChar[i];
-                }
+            while (i < arrChar.length - 1 && arrChar[i + 1] == arrChar[i]) {
+                amount++;
+                i++;
+            }
+            if (amount > resAmount) {
+                resAmount = amount;
+                resChar = arrChar[i];
             }
         }
         return new Pair<>(resChar, resAmount);
