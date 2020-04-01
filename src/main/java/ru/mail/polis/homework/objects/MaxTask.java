@@ -18,9 +18,8 @@ public class MaxTask {
 
         int[] maxArray = new int[count];
         int[] copyArray = array.clone();
-        int[] temp = new int[2];
         for (int i = 0; i < count; i++) {
-            temp = findMax(copyArray);
+            int temp[] = findMax(copyArray); // разве не лучше один раз создать объект перед циклом, чем создавать и удалять ссылку на каждой итераци?
             maxArray[i] = temp[0];
             copyArray[temp[1]] = Integer.MIN_VALUE;
         }
@@ -36,8 +35,7 @@ public class MaxTask {
                 maxValue = table[i];
             }
         }
-        int[] arrayExport = {maxValue, indexOfMax};
-        return arrayExport;
+        return new int[]{maxValue, indexOfMax};
     }
 }
 
