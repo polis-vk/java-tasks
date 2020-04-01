@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.objects;
 
 public class StringTasks {
-    public static final int UNICODE_FORMAT = 48;
-
     /**
      * Убрать все лишние символы из строки и вернуть получившееся число.
      * Разрешенные символы: цифры, '-', '.', 'e'
@@ -65,7 +63,7 @@ public class StringTasks {
     private static long extractDigit(String str, int i, int maxIndex) {
         long longNumber = 0;
         for (; i <= maxIndex; i++) {
-            longNumber += (long) ((((byte) str.charAt(i)) - UNICODE_FORMAT) * Math.pow(10, maxIndex - i));
+            longNumber += (long) (((byte) ((str.charAt(i)) - '0')) * Math.pow(10, maxIndex - i));
         }
         return longNumber;
     }
