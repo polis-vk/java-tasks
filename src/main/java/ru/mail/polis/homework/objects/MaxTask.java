@@ -19,19 +19,18 @@ public class MaxTask {
             return null;
         }
 
-        int minNumber = Integer.MIN_VALUE;
         int[] indexMax = new int[count];
         int[] copyArray = array.clone();
 
         for (int j = 0; j < count; j++) {
-            int maxNumber = minNumber;
+            int maxNumber = Integer.MIN_VALUE;
             for (int i = 0; i < copyArray.length; i++) {
                 if (copyArray[i] > maxNumber) {
                     maxNumber = copyArray[i];
                     indexMax[j] = i;
                 }
             }
-            copyArray[indexMax[j]] = minNumber;
+            copyArray[indexMax[j]] = Integer.MIN_VALUE;
         }
 
         int[] maxOfArray = new int[count];
