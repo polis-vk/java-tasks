@@ -11,13 +11,26 @@ public class MaxTask {
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копиии
      */
     public static int[] getMaxArray(int[] array, int count) {
-        int[] res = new int[count];
         if (array.length < count) {
             return null;
         }
-        for (int i = 0; i < array.length; i++) {
+        int[] res = new int[count];
+
+        for (int i = 0; i < count; i++) {
+            for (int j = 0; j <= i; j++) {
+                if (array[i] > res[j] || j == i) {
+                    for (int k = i; k > j; k--) {
+                        res[k] = res[k - 1];
+                    }
+                    res[j] = array[i];
+                    break;
+                }
+            }
+        }
+
+        for (int i = count; i < array.length; i++) {
             for (int j = 0; j < count; j++) {
-                if ((array[i] > res[j]) || ((j >= i) && ((i < count)))) {
+                if ((array[i] > res[j])) {
                     for (int k = count - 1; k > j; k--) {
                         res[k] = res[k - 1];
                     }
@@ -27,5 +40,6 @@ public class MaxTask {
             }
         }
         return res;
+
     }
 }

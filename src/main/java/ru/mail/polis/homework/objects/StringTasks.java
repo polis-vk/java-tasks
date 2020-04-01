@@ -14,44 +14,58 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        if ((str == null)||(str.length() == 0)){
+        /* Я пробовал сделать это задание в более приемлемом виде, но это единственный получившийся рабочий вариант.
+         *  Я не рассчитываю получить баллы за этот код, но хотел бы узнать более корректное и красивое решение данной задачи
+         */
+        if ((str == null) || (str.length() == 0)) {
             return null;
         }
         Character symbol = null;
-        int num = 0;
-        int order = 0;
-        boolean e = false;
+        long num = 0;                   //Мантисса числа
+        int order = 0;                  //Ордината числа
+        int digitsAfterPoint = 0;       //Кол-во цифр после запятой (чтобы уменьшить порядок при выводе числа)
+        boolean e = false;              //Условие, встречался ли в строке символ 'e'
         boolean isNumNegative = false;
         boolean isOrderNegative = false;
+        boolean point = false;          //Условие, встречался ли в строке символ '.'
         for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == '-') {
-                if (e) {
-                    if (!isOrderNegative) {
-                        isOrderNegative = true;
-                    } else {
-                        return null;
-                    }
-                } else {
-                    if (!isNumNegative) {
-                        isNumNegative = true;
-                    } else {
-                        return null;
-                    }
-                }
-            }
             if (symbol.isDigit(str.charAt(i))) {
                 if (e) {
                     order = order * 10 + (str.charAt(i) - '0');
                 } else {
+                    if (point) digitsAfterPoint++;
                     num = num * 10 + (str.charAt(i) - '0');
                 }
             }
-            if (str.charAt(i) == 'e') {
-                if (e) {
-                    return null;
-                } else {
+            switch (str.charAt(i)) {
+                case '-':
+                    if (e) {
+                        if (!isOrderNegative && order == 0) {
+                            isOrderNegative = true;
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        if (!isNumNegative && num == 0) {
+                            isNumNegative = true;
+                        } else {
+                            return null;
+                        }
+                    }
+                    break;
+                case '.':
+                    if (!(e || point)) {
+                        point = true;
+                    } else {
+                        return null;
+                    }
+                    break;
+                case 'e':
+                    if (e) {
+                        return null;
+                    }
                     e = true;
-                }
+                    break;
             }
         }
         if (isNumNegative) {
@@ -60,6 +74,28 @@ public class StringTasks {
         if (isOrderNegative) {
             order *= -1;
         }
-        return Math.pow(num, order);
+        if (e || point) {
+
+            if (order == 0) {
+                return num / (Math.pow(10, digitsAfterPoint));
+            }
+
+            int pow = 1; //Я не использую Math.pow(), потому что результатом в одном из тестов будет 0.00120000001, а не 0.0012
+            for (int i = 0; i < Math.abs(order - digitsAfterPoint); i++) {
+                pow *= 10;
+            }
+            if (order - digitsAfterPoint >= 0) {    // С Math.pow() я бы мог просто умножить число на степень, но тогда возникнет погрещность и не пройдут тесты
+                return (double) num * pow;          //return num*Math.pow(10,order-digitsAfterPoint)
+            } else {
+                return (double) num / pow;
+            }
+
+        } else {
+            //При вывохде корректного числа, но типа данных Long тест не проходитЮ поэтому стоит проверка, переводящая его в int
+            if (num > Integer.MAX_VALUE || num < Integer.MIN_VALUE) {
+                return num;
+            }
+            return (int) num;
+        }
     }
 }

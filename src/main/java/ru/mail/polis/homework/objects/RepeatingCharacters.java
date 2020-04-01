@@ -13,7 +13,9 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if ((str == null) || (str.length() == 0)) return null;
+        if ((str == null) || (str.length() == 0)) {
+            return null;
+        }
         int maxLength = 0;
         int length;
         char maxChar = str.charAt(1);
