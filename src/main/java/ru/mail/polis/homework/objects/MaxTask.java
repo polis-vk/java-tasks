@@ -16,7 +16,7 @@ public class MaxTask {
             return null;
         }
 
-        int[] givenArray = array;
+        int[] givenArray = array.clone();
         int[] resultArray = new int[count];
         for (int i = 0; i < count; i++) {
             int maxElement = Integer.MIN_VALUE;
