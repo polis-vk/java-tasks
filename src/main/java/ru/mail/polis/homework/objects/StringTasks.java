@@ -74,12 +74,14 @@ public class StringTasks {
             String partBeforeE = strUnsigned.substring(0, indexE);
             String partAfterE = signE ? strUnsigned.substring(indexE + 2) : strUnsigned.substring(indexE + 1);
 
-            double number = getNumberFromChar(partBeforeE);
+            double number;
             long exponent = getNumberFromChar(partAfterE);
 
             if (indexPoint != -1) {
-                number /= Math.pow(10, partBeforeE.length() - 1 - indexPoint);
+                number = getNumberWithPoint(indexPoint, partBeforeE);
 
+            } else {
+                number = getNumberFromChar(partBeforeE);
             }
 
             if (signE) {
@@ -92,11 +94,24 @@ public class StringTasks {
             result = number;
         } else {
 
-            result = getNumberFromChar(strUnsigned);
-            result /= Math.pow(10, strUnsigned.length() - 1 - indexPoint);
+            result = getNumberWithPoint(indexPoint, strUnsigned);
+
         }
 
         return sign ? -result : result;
+    }
+
+    private static double getNumberWithPoint(int indexPoint, String strWithPoint) {
+        String partBeforePoint;
+        String partAfterPoint;
+        double number;
+
+        partBeforePoint = strWithPoint.substring(0, indexPoint);
+        partAfterPoint = strWithPoint.substring(indexPoint + 1);
+
+        number = getNumberFromChar(partAfterPoint) / Math.pow(10, partAfterPoint.length());
+        number += getNumberFromChar(partBeforePoint);
+        return number;
     }
 
 
@@ -104,10 +119,7 @@ public class StringTasks {
         long exponent = 0;
         long result = 0;
         for (int i = strDigits.length() - 1; i >= 0; i--) {
-            if (strDigits.charAt(i) == '.') {
-                continue;
-            }
-            result += ((int) strDigits.charAt(i) - '0') * ((int) Math.pow(10, exponent));
+            result += ((long) strDigits.charAt(i) - '0') * ((long) Math.pow(10, exponent));
             exponent++;
         }
         return result;
