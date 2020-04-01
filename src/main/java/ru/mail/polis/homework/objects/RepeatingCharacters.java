@@ -13,30 +13,29 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
+
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+
         char repeatedChar = str.charAt(0);
         char mostRepeatedChar = str.charAt(0);
         int repeatNumber = 1;
         int maxRepeatNumber = 1;
 
-        if (str == null || str.isEmpty()) {
-            return null;
-        }
-        else {
-            for (int i = 1; i < str.length(); i++) {
-                if (str.charAt(i-1) == str.charAt(i)) {
-                    repeatedChar = str.charAt(i);
-                    repeatNumber += 1;
-                    if (repeatNumber > maxRepeatNumber) {
-                        maxRepeatNumber = repeatNumber;
-                        mostRepeatedChar = repeatedChar;
-                    }
+        for (int i = 1; i < str.length(); i++) {
+            if (str.charAt(i - 1) == str.charAt(i)) {
+                repeatedChar = str.charAt(i);
+                repeatNumber += 1;
+                if (repeatNumber > maxRepeatNumber) {
+                    maxRepeatNumber = repeatNumber;
+                    mostRepeatedChar = repeatedChar;
                 }
-                else {
-                    repeatNumber = 1;
-                }
+            } else {
+                repeatNumber = 1;
             }
-            return new Pair<>(mostRepeatedChar, maxRepeatNumber);
         }
+        return new Pair<>(mostRepeatedChar, maxRepeatNumber);
     }
 
     public static class Pair<T, V> {
