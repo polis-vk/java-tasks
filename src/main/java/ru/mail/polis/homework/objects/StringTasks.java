@@ -42,7 +42,7 @@ public class StringTasks {
             return null;
         }
 
-        if (!isReal) {
+        if (isReal) {
             long longResult = Long.parseLong(digitString);
             if (longResult <= Integer.MAX_VALUE && longResult >= Integer.MIN_VALUE) {
                 return Integer.valueOf(digitString);
