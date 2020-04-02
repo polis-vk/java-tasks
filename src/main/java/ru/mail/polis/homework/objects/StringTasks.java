@@ -53,12 +53,15 @@ public class StringTasks {
             return longResult;
         }
         //Все последующие операции для Double
+        int indexE = digitString.indexOf('e');
+        int indexPoint = digitString.indexOf('.');
+        int indexMinus = digitString.indexOf('-');
 
         if (eCounts == 0) {
             if (!checkMinuses(minusCounts, digitString)) {
                 return null;
             }
-            if (digitString.charAt(digitString.indexOf('-') + 1) == '.') {
+            if (digitString.charAt(indexMinus + 1) == '.') {
                 return null;
             }
             if (digitString.charAt(digitString.length() - 1) == '.') {
@@ -69,21 +72,21 @@ public class StringTasks {
 
         if (pointCounts == 0 || pointCounts + eCounts == 2) {
             if (minusCounts == 2) {
-                if (digitString.charAt(0) != '-' || digitString.charAt(digitString.indexOf('e') + 1) != '-') {
+                if (digitString.charAt(0) != '-' || digitString.charAt(indexE + 1) != '-') {
                     return null;
                 }
             }
             if (minusCounts == 1) {
-                if (digitString.charAt(0) != '-' && digitString.charAt(digitString.indexOf('e') + 1) != '-') {
+                if (digitString.charAt(0) != '-' && digitString.charAt(indexE + 1) != '-') {
                     return null;
                 }
             }
-            if (digitString.charAt(digitString.indexOf('-') + 1) == 'e' || digitString.indexOf('-') == digitString.length()) {
+            if (digitString.charAt(indexMinus + 1) == 'e' || indexMinus == digitString.length()) {
                 return null;
             }
             if (pointCounts == 1) {
-                if (digitString.indexOf('.') > digitString.indexOf('e')
-                        || digitString.indexOf('.') == 0) {
+                if (indexPoint > indexE
+                        || indexPoint == 0) {
                     return null;
                 }
             }
@@ -107,7 +110,7 @@ public class StringTasks {
         if (indexOfE != -1) {
             String numberBeforeE = unsignedStr.substring(0, indexOfE);
             String numberAfterE;
-            result = getDoubleFromString(numberBeforeE);
+            result = getNumberFromString(numberBeforeE);
 
             if (signE) {
                 numberAfterE = unsignedStr.substring(indexOfE + 2);
@@ -115,7 +118,7 @@ public class StringTasks {
                 numberAfterE = unsignedStr.substring(indexOfE + 1);
             }
 
-            double exponent = getDoubleFromString(numberAfterE);
+            double exponent = getNumberFromString(numberAfterE);
 
             if (indexOfPoint != -1) {
                 result /= Math.pow(10, numberBeforeE.length() - indexOfPoint - 1);
@@ -128,15 +131,17 @@ public class StringTasks {
             }
 
         } else {
-            result = getDoubleFromString(unsignedStr);
+            result = getNumberFromString(unsignedStr);
             result /= Math.pow(10, unsignedStr.length() - indexOfPoint - 1);
         }
 
-        if (sign) return -result;
+        if (sign) {
+            return -result;
+        }
         return result;
     }
 
-    public static double getDoubleFromString(String strDigits) {
+    public static double getNumberFromString(String strDigits) {
         int exponent = 0;
         double result = 0;
         for (int i = strDigits.length() - 1; i >= 0; i--) {
@@ -157,9 +162,11 @@ public class StringTasks {
         if (sign) {
             unsignedStr = strDigit.substring(1);
         }
-        result = getDoubleFromString(unsignedStr);
+        result = getNumberFromString(unsignedStr);
 
-        if (sign) return -(long) result;
+        if (sign) {
+            return -(long) result;
+        }
         return (long) result;
     }
 
