@@ -16,26 +16,27 @@ public class RepeatingCharacters {
         if (str == null || str.isEmpty()) {
             return null;
         }
-        Integer maxCounter = 1;
-        Character maxCharacter = str.charAt(0);
-        Integer currentCounter = 1;
-        Character currentChar;
+        int maxCounter = 1;
+        int currentCounter = 1;
+        Character maxChar = str.charAt(0);
 
         for (int i = 0; i < str.length() - 1; i++) {
-            currentChar = str.charAt(i);
-            if (str.charAt(i + 1) == currentChar) {
+            if (str.charAt(i) == str.charAt(i + 1) && i != str.length() - 2) {
                 currentCounter++;
             } else {
+                currentCounter = (i == str.length() - 2 && str.charAt(i) == str.charAt(i + 1)) ? currentCounter + 1 : currentCounter;
                 if (currentCounter > maxCounter) {
                     maxCounter = currentCounter;
-                    currentCounter = 1;
-                    maxCharacter = currentChar;
+                    maxChar = str.charAt(i);
                 }
+                currentCounter = 1;
             }
-        }         
-        
-        return new Pair<Character, Integer>(maxCharacter, maxCounter);
+
+        }
+
+        return new Pair<>(maxChar, maxCounter);
     }
+
 
     public static class Pair<T, V> {
         private final T first;

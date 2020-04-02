@@ -61,10 +61,12 @@ public class StringTasks {
             }
             if (c == '.') {
                 tenDegree = (ePosition == -1) ? (mathStr.length() - 1 - pointPosition) : (ePosition - pointPosition - 1);
+                result = number;
+                number = 0;
                 continue;
             }
             if (c == 'e') {
-                result = minus * number / Math.pow(10, tenDegree);
+                result = minus * (result + number / Math.pow(10, tenDegree));
                 number = 0;
                 minus = 1;
                 continue;
@@ -76,7 +78,7 @@ public class StringTasks {
             return result * Math.pow(10, minus * number);
         }
         if (pointPosition != -1) {
-            return number / Math.pow(10, tenDegree);
+            return minus * (result + number / Math.pow(10, tenDegree));
         }
         if (number * minus >= Integer.MIN_VALUE && number * minus <= Integer.MAX_VALUE) {
             return (int) number * minus;
