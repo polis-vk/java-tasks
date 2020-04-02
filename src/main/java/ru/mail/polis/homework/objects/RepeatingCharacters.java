@@ -18,34 +18,22 @@ public class RepeatingCharacters {
         if (str == null || str.isEmpty()) {
             return null;
         }
-        Map<Character, Integer> map = new HashMap<>();
-        int max = Integer.MIN_VALUE;
-        while (!str.isEmpty()) {
-            int count = 0;
-            for (int i = 0; i < str.length(); i++) {
-                if (str.charAt(i) == str.charAt(0)) {
-                    count++;
-                }
+        int maxSubstring = 0;
+        Character maxChar = null;
+        int substring;
+        for (int i = 0; i < str.length(); i++) {
+            substring = 1;
+            while (i < str.length() - 1 && str.charAt(i) == str.charAt(i + 1)) {
+                substring++;
+                i++;
             }
-            if (count > max) {
-                max = count;
-            }
-            Character character = str.charAt(0);
-            map.put(character, count);
-            StringBuilder stringBuilder = new StringBuilder();
-            for (int i = 0; i < str.length(); i++) {
-                if (str.charAt(i) != str.charAt(0)) {
-                    stringBuilder.append(str.charAt(i));
-                }
-            }
-            str = stringBuilder.toString();
-        }
-        for (Map.Entry<Character, Integer> entry : map.entrySet()) {
-            if (entry.getValue() == max) {
-                return new Pair<>(entry.getKey(), entry.getValue());
+            if (substring > maxSubstring) {
+                maxSubstring = substring;
+                maxChar = str.charAt(i);
             }
         }
-        return new Pair<>('d', 4);
+
+        return new Pair<>(maxChar.charValue(), maxSubstring);
     }
 
 
