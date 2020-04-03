@@ -12,6 +12,7 @@ public class TextFilterManagerTest {
     @Test
     public void analyzeEmptyFilters() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[0]);
+
         assertEquals("GOOD", manager.analyze("Привет, я Петя :(").toString());
         assertEquals("GOOD", manager.analyze("").toString());
         assertEquals("GOOD", manager.analyze(null).toString());

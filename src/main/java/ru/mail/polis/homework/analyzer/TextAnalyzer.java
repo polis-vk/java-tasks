@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
 
+import ru.mail.polis.homework.analyzer.filters.TooLongAnalyzer;
+
 /**
  * Базовый интерефейс фильтра, наследники этого интерефейса должны инкапсулировать в себе всю логику
  * анализа текста.
@@ -16,8 +18,10 @@ package ru.mail.polis.homework.analyzer;
  */
 public interface TextAnalyzer {
 
+    FilterType getResult(String text);
+
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return null;
+        return new TooLongAnalyzer(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
