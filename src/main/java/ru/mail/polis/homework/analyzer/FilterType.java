@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 /**
- * РўРёРїС‹ С„РёР»СЊС‚СЂРѕРІ (2 Р±Р°Р»Р»Р°)
+ * Типы фильтров (2 балла)
  */
 public enum FilterType {
     SPAM(0),
