@@ -125,7 +125,7 @@ public class StringTasks {
     }
 
 
-    private static int getSymbolCounts(String str, String s) {
+    public static int getSymbolCounts(String str, String s) {
         return str.length() - str.replace(s, "").length();
     }
 }

@@ -40,7 +40,7 @@ public class TextFilterManager {
      */
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filters = filters;
-
+        // TODO: 03.04.2020 Добавить сортировку фильтров
     }
 
     /**
@@ -50,14 +50,14 @@ public class TextFilterManager {
         if (text == null) {
             return FilterType.GOOD;
         }
-
-        FilterType result = FilterType.GOOD;
+        FilterType result;
         for (TextAnalyzer filter : filters) {
             result = filter.getResult(text);
             if (result != FilterType.GOOD) {
-                break;
+                return result;
             }
         }
-        return result;
+
+        return FilterType.GOOD;
     }
 }

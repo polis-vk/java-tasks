@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 
+import ru.mail.polis.homework.analyzer.filters.SpamAnalyzer;
 import ru.mail.polis.homework.analyzer.filters.TooLongAnalyzer;
 
 /**
@@ -19,13 +20,14 @@ import ru.mail.polis.homework.analyzer.filters.TooLongAnalyzer;
 public interface TextAnalyzer {
 
     FilterType getResult(String text);
+    int getIdResult();
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
         return new TooLongAnalyzer(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return null;
+        return new SpamAnalyzer(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {

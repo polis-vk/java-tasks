@@ -18,4 +18,9 @@ public class TooLongAnalyzer implements TextAnalyzer {
         }
         return FilterType.GOOD;
     }
+
+    @Override
+    public int getIdResult() {
+        return 2;
+    }
 }
