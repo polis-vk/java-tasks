@@ -94,6 +94,7 @@ public class TextFilterManagerTest {
                 TextAnalyzer.createNegativeTextAnalyzer(),
                 TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
                 TextAnalyzer.createTooLongAnalyzer(20)});
+        // TODO: 03.04.2020 добвать Custom
         assertEquals("GOOD", manager.analyze("Привет, я Петя :-(").toString());
         assertEquals("GOOD", manager.analyze("").toString());
         assertEquals("GOOD", manager.analyze(null).toString());
@@ -107,6 +108,7 @@ public class TextFilterManagerTest {
                 TextAnalyzer.createNegativeTextAnalyzer(),
                 TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
                 TextAnalyzer.createTooLongAnalyzer(20)});
+        // TODO: 03.04.2020 добавить Custom
         assertEquals("NEGATIVE_TEXT", manager.analyze("Привет, я Петя :(").toString());
         assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :-(").toString());
         assertEquals("SPAM", manager.analyze("смс пожалуйста ;|").toString());
@@ -132,6 +134,7 @@ public class TextFilterManagerTest {
             assertEquals("SPAM", manager.analyze("Привет, я Петя вот мой cvv").toString());
             assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :(").toString());
             assertEquals("SPAM", manager.analyze("смс пожалуйста           :|").toString());
+            // TODO: 03.04.2020 2 теста для Custom
         } else {
             assertTrue(Arrays.asList("SPAM", "TOO_LONG").contains(
                     manager.analyze("Привет, я Петя вот мой cvv").toString()));
@@ -139,6 +142,7 @@ public class TextFilterManagerTest {
                     manager.analyze("Скажите Код Из Смс :(").toString()));
             assertTrue(Arrays.asList("NEGATIVE_TEXT", "TOO_LONG", "SPAM").contains(
                     manager.analyze("смс пожалуйста           =(").toString()));
+            // TODO: 03.04.2020 2 теста для Custom
         }
     }
 

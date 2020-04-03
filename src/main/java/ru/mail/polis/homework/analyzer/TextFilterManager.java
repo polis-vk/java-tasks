@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
 
+import java.util.Arrays;
+
 /**
  * Задание написать систему фильтрации комментариев.
  * Надо реализовать три типа обязательных фильтров
@@ -40,7 +42,11 @@ public class TextFilterManager {
      */
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filters = filters;
-        // TODO: 03.04.2020 Добавить сортировку фильтров
+        Arrays.sort(filters, (filter1, filter2) -> {
+            Integer id1 = filter1.getIdResult();
+            Integer id2 = filter2.getIdResult();
+            return id1.compareTo(id2);
+        });
     }
 
     /**

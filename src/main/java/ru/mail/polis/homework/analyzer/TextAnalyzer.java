@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 
+import ru.mail.polis.homework.analyzer.filters.NegativeTextAnalyzer;
 import ru.mail.polis.homework.analyzer.filters.SpamAnalyzer;
 import ru.mail.polis.homework.analyzer.filters.TooLongAnalyzer;
 
@@ -31,7 +32,7 @@ public interface TextAnalyzer {
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return null;
+        return new NegativeTextAnalyzer();
     }
 
     /**
