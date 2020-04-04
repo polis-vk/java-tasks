@@ -8,12 +8,7 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
 
     @Override
     public FilterType getResult(String text) {
-        SpamAnalyzer spamAnalyzer = new SpamAnalyzer(NEGATIVE_TEXT);
-        FilterType result = spamAnalyzer.getResult(text);
-        if (result == FilterType.SPAM) {
-            return FilterType.NEGATIVE_TEXT;
-        }
-        return result;
+        return SpamAnalyzer.analysisText(text, NEGATIVE_TEXT) ? FilterType.NEGATIVE_TEXT : FilterType.GOOD;
     }
 
     @Override
