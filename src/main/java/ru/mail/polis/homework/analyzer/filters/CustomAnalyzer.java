@@ -5,11 +5,11 @@ import ru.mail.polis.homework.analyzer.TextAnalyzer;
 
 
 /**
- * Фильтр проверяющий наличие запятых перед союзами
+ * Р¤РёР»СЊС‚СЂ РїСЂРѕРІРµСЂСЏСЋС‰РёР№ РЅР°Р»РёС‡РёРµ Р·Р°РїСЏС‚С‹С… РїРµСЂРµРґ СЃРѕСЋР·Р°РјРё
  */
 public class CustomAnalyzer implements TextAnalyzer {
-    private static final String[] GRAMMAR = {", а", ", но", ", что", ", когда", ", потому что"};
-    private static final String[] UNIONS = {" а ", " но ", " что ", " когда ", " потому что "};
+    private static final String[] GRAMMAR = {", Р°", ", РЅРѕ", ", С‡С‚Рѕ", ", РєРѕРіРґР°", ", РїРѕС‚РѕРјСѓ С‡С‚Рѕ"};
+    private static final String[] UNIONS = {" Р° ", " РЅРѕ ", " С‡С‚Рѕ ", " РєРѕРіРґР° ", " РїРѕС‚РѕРјСѓ С‡С‚Рѕ "};
     private boolean isGrammar;
 
     public CustomAnalyzer(boolean isGrammar) {
