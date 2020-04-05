@@ -88,13 +88,25 @@ public class TextFilterManagerTest {
     }
 
     @Test
+    public void analyzeOnlyCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer()});
+        assertEquals("CUSTOM", manager.analyze("Putin").toString());
+        assertEquals("GOOD", manager.analyze("not Putin").toString());
+        assertEquals("GOOD", manager.analyze("Half Putina").toString());
+        assertEquals("GOOD", manager.analyze("Great leader").toString());
+        assertEquals("GOOD", manager.analyze(".").toString());
+    }
+
+    @Test
     public void analyzeAllFiltersGood() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
                 TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
-                TextAnalyzer.createTooLongAnalyzer(20)});
+                TextAnalyzer.createTooLongAnalyzer(20),
+                TextAnalyzer.createCustomAnalyzer()});
         assertEquals("GOOD", manager.analyze("Привет, я Петя :-(").toString());
         assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(".").toString());
         assertEquals("GOOD", manager.analyze(null).toString());
         assertEquals("GOOD", manager.analyze("СкажитеКодИзСмс:-(").toString());
         assertEquals("GOOD", manager.analyze("сМс пожалуйста ;|").toString());
@@ -105,17 +117,18 @@ public class TextFilterManagerTest {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
                 TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
-                TextAnalyzer.createTooLongAnalyzer(20)});
+                TextAnalyzer.createTooLongAnalyzer(20),
+                TextAnalyzer.createCustomAnalyzer()});
         assertEquals("NEGATIVE_TEXT", manager.analyze("Привет, я Петя :(").toString());
         assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :-(").toString());
         assertEquals("SPAM", manager.analyze("смс пожалуйста ;|").toString());
+        assertEquals("CUSTOM", manager.analyze("Putin").toString());
     }
 
     @Test
     public void analyzeAllFiltersMany() {
         manyFilters(false);
     }
-
 
     @Test
     public void analyzeAllFiltersManyWithPriority() {
@@ -126,11 +139,13 @@ public class TextFilterManagerTest {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
                 TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
-                TextAnalyzer.createTooLongAnalyzer(20)});
+                TextAnalyzer.createTooLongAnalyzer(20),
+                TextAnalyzer.createCustomAnalyzer()});
         if (withPriority) {
             assertEquals("SPAM", manager.analyze("Привет, я Петя вот мой cvv").toString());
             assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :(").toString());
             assertEquals("SPAM", manager.analyze("смс пожалуйста           :|").toString());
+            assertEquals("CUSTOM", manager.analyze("Putin").toString());
         } else {
             assertTrue(Arrays.asList("SPAM", "TOO_LONG").contains(
                     manager.analyze("Привет, я Петя вот мой cvv").toString()));
@@ -140,6 +155,4 @@ public class TextFilterManagerTest {
                     manager.analyze("смс пожалуйста           =(").toString()));
         }
     }
-
-
 }
