@@ -15,9 +15,12 @@ public class MaxTask {
         }
         int[] copyOfArray = array.clone(); // тк нельзя изменять парамтеры метода
         int[] tmpArray = new int[count];
+        int maxNumber;
+        int zeroingIndex;
+
         for (int i = 0; i < count; i++) {
-            int maxNumber = Integer.MIN_VALUE;
-            int zeroingIndex = 0;
+            maxNumber = Integer.MIN_VALUE;
+            zeroingIndex = 0;
             for (int j = 0; j < array.length; j++) {
                 if (copyOfArray[j] >= maxNumber) {
                     maxNumber = copyOfArray[j];
