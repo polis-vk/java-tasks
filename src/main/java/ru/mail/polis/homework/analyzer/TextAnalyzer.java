@@ -35,5 +35,7 @@ public interface TextAnalyzer {
         return new CustomTextFilter();
     }
 
+    FilterType typePriority = FilterType.GOOD;  //default
+    FilterType getTypePriority();
     FilterType getTypeOfFilter(String str);
 }

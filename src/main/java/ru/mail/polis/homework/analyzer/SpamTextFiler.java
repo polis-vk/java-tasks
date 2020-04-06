@@ -1,8 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
-import java.util.ArrayList;
-
 public class SpamTextFiler implements TextAnalyzer {
+    private FilterType typePriority = FilterType.SPAM;
     private String[] spamWords;
 
     public SpamTextFiler(String[] spamWords) {
@@ -10,7 +9,12 @@ public class SpamTextFiler implements TextAnalyzer {
     }
 
     @Override
+    public FilterType getTypePriority() {
+        return FilterType.SPAM;
+    }
+
+    @Override
     public FilterType getTypeOfFilter(String str) {
-        return FindInText.find(spamWords, str, FilterType.SPAM);
+        return FindInText.find(spamWords, str, typePriority);
     }
 }

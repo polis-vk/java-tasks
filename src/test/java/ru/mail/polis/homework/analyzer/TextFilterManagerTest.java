@@ -142,11 +142,11 @@ public class TextFilterManagerTest {
             TextAnalyzer.createNegativeTextAnalyzer(),
             TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
             TextAnalyzer.createTooLongAnalyzer(20),
-        TextAnalyzer.createCustomAnalyzer()});
+            TextAnalyzer.createCustomAnalyzer()});
         if (withPriority) {
-            //assertEquals("SPAM", manager.analyze("Привет, я Петя вот мой cvv").toString());
-            //assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :(").toString());
-            //assertEquals("SPAM", manager.analyze("смс пожалуйста           :|").toString());
+            assertEquals("SPAM", manager.analyze("Привет, я Петя вот мой cvv").toString());
+            assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :(").toString());
+            assertEquals("SPAM", manager.analyze("смс пожалуйста           :|").toString());
             assertEquals("CUSTOM", manager.analyze("вот это тег </p>").toString());
         } else {
             assertTrue(Arrays.asList("SPAM", "TOO_LONG").contains(

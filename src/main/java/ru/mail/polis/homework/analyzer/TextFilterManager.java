@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
+import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Задание написать систему фильтрации комментариев.
@@ -32,6 +34,7 @@ package ru.mail.polis.homework.analyzer;
 public class TextFilterManager {
 
     private TextAnalyzer[] filters;
+    private HashMap<FilterType, Integer> mapPriority = new HashMap<>();
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -40,12 +43,24 @@ public class TextFilterManager {
      */
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filters = filters;
+        // приоритет задается через enum, в каком порядке расположены, так и снижается приоритет
+        this.mapPriority = setPriority();
+
+        Arrays.sort(this.filters, (filter1, filter2) -> {
+            if (mapPriority.get(filter1.getTypePriority()) < mapPriority.get(filter2.getTypePriority())) {
+                return -1;
+            } else if (mapPriority.get(filter1.getTypePriority()).equals(mapPriority.get(filter2.getTypePriority()))) {
+                return 0;
+            }
+            return 1;
+        });
     }
 
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
+
         if (text == null || text.equals("")) {
             return FilterType.GOOD;
         }
@@ -57,5 +72,15 @@ public class TextFilterManager {
             }
         }
         return FilterType.GOOD;
+    }
+
+    private HashMap<FilterType, Integer> setPriority() {
+        HashMap<FilterType, Integer> tmpMap = new HashMap<>();
+        int value = 1;
+        for (FilterType item : FilterType.values()) {
+            tmpMap.put(item, value);
+            value++;
+        }
+        return tmpMap;
     }
 }
