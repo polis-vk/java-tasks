@@ -3,13 +3,21 @@ package ru.mail.polis.homework.analyzer;
 public class CustomFilter implements TextAnalyzer {
 
 
-    //проверка, что текст состоит только из букв и знаков препинания
+    public static long priority;
+
+
+    //проверка, того что ни один сивол не составляет более 60% текста
     @Override
     public FilterType analyze(String str) {
-        String punctuationMarks = "!,.?;:'\" ";
-
+        int counSameSymbol;
         for (char c : str.toCharArray()) {
-            if (!(Character.isLetter(c) || punctuationMarks.indexOf(c) != -1)) {
+            counSameSymbol = 0;
+            for (int i = 0; i < str.length(); i++) {
+                if (c == str.charAt(i)) {
+                    counSameSymbol++;
+                }
+            }
+            if ((double) counSameSymbol / str.length() >= 0.6) {
                 return FilterType.CUSTOM;
             }
         }
@@ -17,7 +25,9 @@ public class CustomFilter implements TextAnalyzer {
     }
 
     @Override
-    public FilterType getPriority() {
-        return FilterType.CUSTOM;
+    public long getPriority() {
+        return priority;
     }
+
+
 }

@@ -4,24 +4,28 @@ import java.util.Arrays;
 
 public class SpamFilter implements TextAnalyzer {
 
-    private String[] spam;
+    public static long priority;
+    private final String[] spam;
+    protected FilterType type = FilterType.SPAM;
 
     public SpamFilter(String[] spam) {
+
         this.spam = Arrays.copyOf(spam, spam.length);
+    }
+
+    @Override
+    public long getPriority() {
+        return priority;
     }
 
     @Override
     public FilterType analyze(String str) {
         for (String word : spam) {
             if (str.contains(word)) {
-                return FilterType.SPAM;
+                return type;
             }
         }
         return null;
     }
 
-    @Override
-    public FilterType getPriority() {
-        return FilterType.SPAM;
-    }
 }

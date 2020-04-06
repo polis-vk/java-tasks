@@ -33,8 +33,7 @@ import java.util.Arrays;
  */
 public class TextFilterManager {
 
-    TextAnalyzer[] filtersInput;
-    FilterType result;
+    private final TextAnalyzer[] filtersInput;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -44,10 +43,12 @@ public class TextFilterManager {
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filtersInput = Arrays.copyOf(filters, filters.length);
 
+        TextAnalyzer.setPriority(4, 3, 2, 1);
+
         Arrays.sort(filtersInput, (filter1, filter2) -> {
-            if (filter1.getPriority().ordinal() < filter2.getPriority().ordinal()) {
+            if (filter1.getPriority() > filter2.getPriority()) {
                 return -1;
-            } else if (filter1.getPriority().ordinal() == filter2.getPriority().ordinal()) {
+            } else if (filter1.getPriority() == filter2.getPriority()) {
                 return 0;
             }
             return 1;
@@ -59,6 +60,7 @@ public class TextFilterManager {
      */
     public FilterType analyze(String text) {
         if (text != null && !text.equals("")) {
+            FilterType result;
             for (TextAnalyzer txtAnalyzer : filtersInput) {
                 result = txtAnalyzer.analyze(text);
                 if (result != null) {

@@ -16,7 +16,6 @@ package ru.mail.polis.homework.analyzer;
  */
 public interface TextAnalyzer {
 
-
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
         return new TooLongFilter(maxLength);
     }
@@ -38,9 +37,15 @@ public interface TextAnalyzer {
         return new CustomFilter();
     }
 
+    long getPriority();
+
+    //установить приоритет для фильтров: чем больше число, тем выше приоритет
+    static void setPriority(long spam, long tooLong, long negative, long custom) {
+        SpamFilter.priority = spam;
+        TooLongFilter.priority = tooLong;
+        NegativeFilter.priority = negative;
+        CustomFilter.priority = custom;
+    }
 
     FilterType analyze(String str);
-
-    //получение типа анализатора, на основе которого производиться сортировка по приоритету
-    FilterType getPriority();
 }
