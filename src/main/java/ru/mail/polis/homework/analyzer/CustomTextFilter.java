@@ -7,8 +7,8 @@ public class CustomTextFilter implements TextAnalyzer {
 
     @Override
     public FilterType getTypeOfFilter(String str) {
-        if ((FindInText.find(openedHtmlTags, str, FilterType.CUSTOM) == FilterType.CUSTOM) &&
-            (FindInText.find(openedHtmlTags, str, FilterType.CUSTOM) == FilterType.CUSTOM)) {
+        if ((FindInText.find(openedHtmlTags, str, FilterType.CUSTOM) == FilterType.CUSTOM) ||
+            (FindInText.find(closedHtmlTags, str, FilterType.CUSTOM) == FilterType.CUSTOM)) {
             return FilterType.CUSTOM;
         }
         return FilterType.GOOD;
