@@ -14,12 +14,12 @@ public class SpamAnalyzer implements TextAnalyzer {
     }
     
     @Override
-    public boolean isCorrect(String text) {
+    public boolean isTriggered(String text) {
         for (String spamWord : spamWords) {
-            if (text.contains(spamWord)){
-                return false;
+            if (text.contains(spamWord)) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 }

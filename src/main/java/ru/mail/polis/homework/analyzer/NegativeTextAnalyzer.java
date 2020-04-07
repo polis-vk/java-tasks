@@ -10,12 +10,12 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
     }
     
     @Override
-    public boolean isCorrect(String text) {
+    public boolean isTriggered(String text) {
         for (String smile : negativeSmiles) {
-            if (text.contains(smile)){
-                return false;
+            if (text.contains(smile)) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 }

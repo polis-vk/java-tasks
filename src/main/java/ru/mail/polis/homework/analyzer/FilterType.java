@@ -7,5 +7,6 @@ public enum FilterType {
     GOOD,
     SPAM,
     TOO_LONG,
-    NEGATIVE_TEXT
+    NEGATIVE_TEXT,
+    REFERENCE
 }
