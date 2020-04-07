@@ -41,7 +41,7 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = filters.clone();
+        this.filters = filters == null ? new TextAnalyzer[0] : filters.clone();
     }
     
     /**

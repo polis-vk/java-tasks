@@ -5,7 +5,7 @@ public class SpamAnalyzer implements TextAnalyzer {
     private final String[] spamWords;
     
     SpamAnalyzer(String[] spam) {
-        this.spamWords = spam.clone();
+        this.spamWords = spam == null ? new String[0] : spam.clone();
     }
     
     @Override
@@ -15,6 +15,9 @@ public class SpamAnalyzer implements TextAnalyzer {
     
     @Override
     public boolean isTriggered(String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
         for (String spamWord : spamWords) {
             if (text.contains(spamWord)) {
                 return true;

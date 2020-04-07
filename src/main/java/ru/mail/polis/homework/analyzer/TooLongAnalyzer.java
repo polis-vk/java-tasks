@@ -16,6 +16,9 @@ public class TooLongAnalyzer implements TextAnalyzer {
     
     @Override
     public boolean isTriggered(String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
         return text.length() > maxLength;
     }
 }

@@ -9,6 +9,9 @@ public class ReferenceAnalyzer implements TextAnalyzer {
     
     @Override
     public boolean isTriggered(String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
         String regex = new String("^https?://([\\w]+(-)?[\\w]+\\.)+[\\w]+(/([\\?\\.\\_\\=\\#]?[\\w])+)*/?$");
         String[] words = text.split("(\\s)+");
         for (String word : words) {
