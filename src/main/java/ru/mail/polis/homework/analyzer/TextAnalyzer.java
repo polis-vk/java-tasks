@@ -16,16 +16,19 @@ package ru.mail.polis.homework.analyzer;
  */
 public interface TextAnalyzer {
 
+    FilterType analyze(String arg);
+    int getPriority();
+
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return null;
+        return new IsTooLong(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return null;
+        return new IsSpam(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return null;
+        return new IsNegative();
     }
 
     /**
