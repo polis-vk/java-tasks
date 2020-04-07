@@ -6,6 +6,8 @@ public class SpamAnalyzer implements TextAnalyzer {
     public SpamAnalyzer(String[] spam){
         this.spam = spam.clone();
     }
+
+    @Override
     public FilterType analyze(String text){
         for(String s:spam){
             if (text.contains(s)){

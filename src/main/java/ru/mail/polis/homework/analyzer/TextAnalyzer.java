@@ -29,10 +29,10 @@ public interface TextAnalyzer {
     }
 
     /**
-     * придумать свой фильтр
+     * Срабатывает на строки с заглавными буквами
      */
-    static <T> TextAnalyzer createCustomAnalyzer(T something) {
-        return null;
+    static TextAnalyzer createCustomAnalyzer() {
+        return new CustomAnalyzer();
     }
 
     public FilterType analyze(String text);

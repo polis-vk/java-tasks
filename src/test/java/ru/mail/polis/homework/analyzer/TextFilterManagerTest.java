@@ -141,5 +141,14 @@ public class TextFilterManagerTest {
         }
     }
 
+    @Test
+    public void analyzeOnlyCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
+                TextAnalyzer.createCustomAnalyzer()});
+        assertEquals("CUSTOM", manager.analyze("Привет, я Петя :(").toString());
+        assertEquals("CUSTOM", manager.analyze("Скажите Код Из Смс :-(").toString());
+        assertEquals("GOOD", manager.analyze("смс пожалуйста ;|").toString());
+        assertEquals("CUSTOM", manager.analyze("Hello, world!").toString());
+    }
 
 }
