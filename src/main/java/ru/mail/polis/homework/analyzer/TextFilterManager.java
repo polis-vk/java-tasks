@@ -42,9 +42,6 @@ public class TextFilterManager {
      */
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filters = filters.clone();
-        Arrays.sort(this.filters, (filter1, filter2) -> {
-            return filter1.getFilterType().compareTo(filter2.getFilterType());
-        });
     }
     
     /**
@@ -54,6 +51,11 @@ public class TextFilterManager {
         if (text == null || text.isEmpty()) {
             return FilterType.GOOD;
         }
+        
+        Arrays.sort(this.filters, (filter1, filter2) -> {
+            return Integer.compare(filter1.getFilterType().getPriority(), filter2.getFilterType().getPriority());
+        });
+        
         for (TextAnalyzer filter : filters) {
             if (filter.isTriggered(text)) {
                 return filter.getFilterType();

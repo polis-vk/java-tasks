@@ -161,6 +161,11 @@ public class TextFilterManagerTest {
                 TextAnalyzer.createTooLongAnalyzer(20),
                 TextAnalyzer.createReferenceAnalyzer()});
         if (withPriority) {
+            FilterType.SPAM.setPriority(0);
+            FilterType.TOO_LONG.setPriority(1);
+            FilterType.NEGATIVE_TEXT.setPriority(2);
+            FilterType.REFERENCE.setPriority(3);
+            FilterType.GOOD.setPriority(4);
             assertEquals("SPAM", manager.analyze("Привет, я Петя вот мой https://www.google.com/ cvv :(").toString());
             assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :( https://www.google.com/").toString());
             assertEquals("NEGATIVE_TEXT", manager.analyze("https://vk.com/ :|").toString());
