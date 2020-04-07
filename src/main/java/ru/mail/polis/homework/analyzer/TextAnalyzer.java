@@ -17,17 +17,49 @@ package ru.mail.polis.homework.analyzer;
 public interface TextAnalyzer {
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return null;
+        return new TextAnalyzer() {
+            @Override
+            public FilterType Analyze(String str) {
+                if(str.length()>maxLength){
+                    return FilterType.TOO_LONG;
+                }
+                return FilterType.GOOD;
+            }
+        };
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return null;
+        return new TextAnalyzer() {
+            @Override
+            public FilterType Analyze(String str) {
+                for (String spamWord:
+                     spam) {
+                    if(str.contains(spamWord)){
+                        return FilterType.SPAM;
+                    }
+                }
+                return FilterType.GOOD;
+            }
+        };
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return null;
+        return new TextAnalyzer() {
+            @Override
+            public FilterType Analyze(String str) {
+                String[] negWords = {"=(", ":(", ":|"};
+                for (String spamWord:
+                        negWords) {
+                    if(str.contains(spamWord)){
+                        return FilterType.NEGATIVE_TEXT;
+                    }
+                }
+                return FilterType.GOOD;
+            }
+        };
     }
 
+    public FilterType Analyze(String str);
     /**
      * придумать свой фильтр
      */
