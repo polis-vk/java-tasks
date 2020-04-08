@@ -130,7 +130,7 @@ public class TextFilterManagerTest {
 
     @Test
     public void analyzeAllFiltersManyWithPriority() {
-      //  manyFilters(true);
+       manyFilters(true);
     }
 
     private void manyFilters(boolean withPriority) {

@@ -42,7 +42,7 @@ public class TextFilterManager {
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filters = Arrays.copyOf(filters, filters.length);
         TextAnalyzer.setFiltersPriority(filters);
-        Arrays.sort(filters, new TextAnalyzer.SortByPriority());
+        Arrays.sort(this.filters, new TextAnalyzer.SortByPriority());
         /*
          *  Arrays.sort(filters, (filter1, filter2) -> {
          *                      Integer filter1Priority = filter1.getFilterPriority();
