@@ -5,7 +5,7 @@ import ru.mail.polis.homework.analyzer.TextAnalyzer;
 
 public class CustomFilter implements TextAnalyzer {
 
-    private static final short VALUE = 3;
+    private static final FilterType VALUE = FilterType.CUSTOM;
 
     @Override
     public FilterType analyze(String str) {
@@ -17,7 +17,7 @@ public class CustomFilter implements TextAnalyzer {
     }
 
     @Override
-    public short getValue() {
+    public FilterType getValue() {
         return VALUE;
     }
 }

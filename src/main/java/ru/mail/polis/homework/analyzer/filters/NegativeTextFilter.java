@@ -5,9 +5,9 @@ import ru.mail.polis.homework.analyzer.TextAnalyzer;
 
 public class NegativeTextFilter implements TextAnalyzer {
 
-    private static final short VALUE = 2;
+    private static final FilterType VALUE = FilterType.NEGATIVE_TEXT;
 
-    private String[] args = {"=(", ":(", ":|"};
+    private static final String[] args = {"=(", ":(", ":|"};
 
     @Override
     public FilterType analyze(String str) {
@@ -20,7 +20,7 @@ public class NegativeTextFilter implements TextAnalyzer {
     }
 
     @Override
-    public short getValue() {
+    public FilterType getValue() {
         return VALUE;
     }
 }

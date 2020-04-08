@@ -5,9 +5,9 @@ import ru.mail.polis.homework.analyzer.TextAnalyzer;
 
 public class TooLongFilter implements TextAnalyzer {
 
-    private static final short VALUE = 1;
+    private static final FilterType VALUE = FilterType.TOO_LONG;
 
-    private long maxLength;
+    private final long maxLength;
 
     public TooLongFilter(long maxLength) {
         this.maxLength = maxLength;
@@ -22,7 +22,7 @@ public class TooLongFilter implements TextAnalyzer {
     }
 
     @Override
-    public short getValue() {
+    public FilterType getValue() {
         return VALUE;
     }
 }

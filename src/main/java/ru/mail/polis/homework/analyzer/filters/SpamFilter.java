@@ -7,18 +7,18 @@ import java.util.Arrays;
 
 public class SpamFilter implements TextAnalyzer {
 
-    private static final short VALUE = 0;
+    private static final FilterType VALUE = FilterType.SPAM;
 
-    private String[] args;
+    private final String[] spamWords;
 
     public SpamFilter(String[] spam) {
-        args = Arrays.copyOf(spam, spam.length);
+        spamWords = Arrays.copyOf(spam, spam.length);
     }
 
     @Override
     public FilterType analyze(String str) {
-        for (String arg : args) {
-            if (str.contains(arg)) {
+        for (String word : spamWords) {
+            if (str.contains(word)) {
                 return FilterType.SPAM;
             }
         }
@@ -26,7 +26,7 @@ public class SpamFilter implements TextAnalyzer {
     }
 
     @Override
-    public short getValue() {
+    public FilterType getValue() {
         return VALUE;
     }
 }
