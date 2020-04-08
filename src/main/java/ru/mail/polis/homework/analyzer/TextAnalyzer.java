@@ -30,14 +30,8 @@ public interface TextAnalyzer {
         return new NegativeFilter();
     }
 
-    static TextAnalyzer createCustomAnalyzer(String[] domains) {
-        return new CustomFilter(domains);
-    }
-
-    static void setFiltersPriority(TextAnalyzer[] textAnalyzers) {
-        for (TextAnalyzer textAnalyzer : textAnalyzers) {
-            textAnalyzer.setFilterPriority(textAnalyzer.getFilterType().ordinal());
-        }
+    static TextAnalyzer createLinksAnalyzer(String[] domains) {
+        return new LinksFilter(domains);
     }
 
     void setFilterPriority(int priority);
@@ -46,9 +40,9 @@ public interface TextAnalyzer {
 
     FilterType getFilterType();
 
-    FilterType Analysis(String str);
+    FilterType analysis(String str);
 
-    class SortByPriority implements Comparator<TextAnalyzer> {
+    class CompareByPriority implements Comparator<TextAnalyzer> {
         public int compare(TextAnalyzer a, TextAnalyzer b) {
             return a.getFilterPriority() - b.getFilterPriority();
         }

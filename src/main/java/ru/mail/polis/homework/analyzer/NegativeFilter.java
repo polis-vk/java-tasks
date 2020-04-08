@@ -1,16 +1,12 @@
 package ru.mail.polis.homework.analyzer;
 
-import java.util.Arrays;
-
-public class NegativeFilter implements TextAnalyzer {
+public class NegativeFilter extends SpamFilter {
     private static int priority;
-    private static FilterType filterType = FilterType.NEGATIVE_TEXT;
-    private static final String[] negative = {"=(", ":(", ":|"};
+    private static final FilterType FILTER_TYPE = FilterType.NEGATIVE_TEXT;
+    private static final String[] NEGATIVE = {"=(", ":(", ":|"};
 
-
-    @Override
-    public void setFilterPriority(int priority) {
-        this.priority = priority;
+    public NegativeFilter() {
+        super(NEGATIVE);
     }
 
     @Override
@@ -19,23 +15,20 @@ public class NegativeFilter implements TextAnalyzer {
     }
 
     @Override
-    public FilterType getFilterType() {
-        return filterType;
+    public void setFilterPriority(int priority) {
+        this.priority = priority;
     }
 
     @Override
-    public FilterType Analysis(String str) {
-        if (str == null || str.isEmpty()) {
-            return FilterType.GOOD;
-        }
+    public FilterType getFilterType() {
+        return FILTER_TYPE;
+    }
 
-        for (String negativeWord : negative) {
-            if (str.contains(negativeWord)) {
-                return filterType;
-            }
+    @Override
+    public FilterType analysis(String str) {
+        if (wordSearch(str)) {
+            return FILTER_TYPE;
         }
         return FilterType.GOOD;
     }
-
-
 }

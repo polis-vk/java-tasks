@@ -1,17 +1,17 @@
 package ru.mail.polis.homework.analyzer;
 
-public class CustomFilter implements TextAnalyzer {
+public class LinksFilter implements TextAnalyzer {
     /**
      * находит в тексте ссылки
      */
     private static int priority;
-    private static FilterType filterType = FilterType.CUSTOM;
-    private static final String[] protocols = {"https://", "http://"};
-    private final String[] domains;
+    private static final FilterType FILTER_TYPE = FilterType.CUSTOM;
+    private static final String[] PROTOCOLS = {"https://", "http://"};
     private static final int MIN_LENGTH_OF_LINK = 5; // после протокола
+    private final String[] DOMAINS;
 
-    public CustomFilter(String[] domains) {
-        this.domains = domains.clone();
+    public LinksFilter(String[] domains) {
+        this.DOMAINS = domains.clone();
     }
 
     @Override
@@ -26,23 +26,23 @@ public class CustomFilter implements TextAnalyzer {
 
     @Override
     public FilterType getFilterType() {
-        return filterType;
+        return FILTER_TYPE;
     }
 
     @Override
-    public FilterType Analysis(String str) {
+    public FilterType analysis(String str) {
         if (str == null || str.isEmpty()) {
             return FilterType.GOOD;
         }
 
         if (searchForLinks(str)) {
-            return filterType;
+            return FILTER_TYPE;
         }
         return FilterType.GOOD;
     }
 
     private boolean searchForLinks(String str) {
-        for (String protocol : protocols) {
+        for (String protocol : PROTOCOLS) {
             if (str.contains(protocol)) {
                 // если протокол найден, начинается поиск домена
                 int indexAfterProtocol = str.indexOf(protocol) + protocol.length();
@@ -64,7 +64,7 @@ public class CustomFilter implements TextAnalyzer {
                 }
 
                 String potentialLinks = str.substring(indexAfterProtocol, endIndexOfPotentialLink);
-                for (String domain : domains) {
+                for (String domain : DOMAINS) {
                     if (potentialLinks.contains(domain)) {
                         return true;
                     }

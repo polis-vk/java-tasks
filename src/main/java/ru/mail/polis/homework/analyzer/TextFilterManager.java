@@ -32,7 +32,7 @@ import java.util.Arrays;
  * Итого 15 баллов + 2 дополнительных
  */
 public class TextFilterManager {
-    private final TextAnalyzer[] filters;
+    private final TextAnalyzer[] FILTERS;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -40,15 +40,21 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = Arrays.copyOf(filters, filters.length);
-        TextAnalyzer.setFiltersPriority(filters);
-        Arrays.sort(this.filters, new TextAnalyzer.SortByPriority());
+        this.FILTERS = Arrays.copyOf(filters, filters.length);
+        setFiltersPriority(this.FILTERS);
+        Arrays.sort(this.FILTERS, new TextAnalyzer.CompareByPriority());
         //или же через обертку
         //   Arrays.sort(filters, (filter1, filter2) -> {
         //                       Integer filter1Priority = filter1.getFilterPriority();
         //                       Integer filter2Priority = filter2.getFilterPriority();
         //                      return filter1Priority.compareTo(filter2Priority);
         //           });
+    }
+
+    static void setFiltersPriority(TextAnalyzer[] textAnalyzers) {
+        for (TextAnalyzer textAnalyzer : textAnalyzers) {
+            textAnalyzer.setFilterPriority(textAnalyzer.getFilterType().ordinal());
+        }
     }
 
     /**
@@ -60,8 +66,8 @@ public class TextFilterManager {
         }
 
         FilterType result;
-        for (TextAnalyzer textAnalyzer : filters) {
-            result = textAnalyzer.Analysis(text);
+        for (TextAnalyzer textAnalyzer : FILTERS) {
+            result = textAnalyzer.analysis(text);
             if (result != FilterType.GOOD) {
                 return result;
             }
