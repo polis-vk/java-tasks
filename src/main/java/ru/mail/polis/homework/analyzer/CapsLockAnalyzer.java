@@ -1,9 +1,9 @@
 package ru.mail.polis.homework.analyzer;
 
 public class CapsLockAnalyzer implements TextAnalyzer {
-    public static final double ALLOW_PERSNT_OF_CAPS = 0.5;
+    private static final double ALLOW_PERSNT_OF_CAPS = 0.5;
 
-    public FilterType check(String txt) {
+    public boolean check(String txt) {
         char[] txtArray = txt.toCharArray();
         int counter = 0;
         for (char symbol : txtArray) {
@@ -12,8 +12,12 @@ public class CapsLockAnalyzer implements TextAnalyzer {
             }
         }
         if (counter >= txtArray.length * ALLOW_PERSNT_OF_CAPS) {
-            return FilterType.CAPS;
+            return true;
         }
-        return null;
+        return false;
+    }
+
+    public FilterType getFilterType() {
+        return FilterType.CAPS;
     }
 }

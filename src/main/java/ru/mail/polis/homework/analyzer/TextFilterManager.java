@@ -1,10 +1,9 @@
 package ru.mail.polis.homework.analyzer;
 
-
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-
 
 /**
  * Задание написать систему фильтрации комментариев.
@@ -35,24 +34,13 @@ import java.util.Map;
  * Итого 15 баллов + 2 дополнительных
  */
 public class TextFilterManager {
-    private TextAnalyzer[] usbleFilters;
+    private final TextAnalyzer[] usbleFilters;
 
     public TextFilterManager(TextAnalyzer[] filters) {
         this.usbleFilters = Arrays.copyOf(filters, filters.length);
 
-        Map<Object, Integer> priorityMap = new HashMap<>();
-        priorityMap.put(CapsLockAnalyzer.class, 0);
-        priorityMap.put(SpamAnalyzer.class, 1);
-        priorityMap.put(TooLongAnalyzer.class, 2);
-        priorityMap.put(NegativeTextAnalyzer.class, 3);
-
         Arrays.sort(usbleFilters, (filter1, filter2) -> {
-            if (priorityMap.get(filter1.getClass()) < priorityMap.get(filter2.getClass())) {
-                return -1;
-            } else if (priorityMap.get(filter1.getClass()) == priorityMap.get(filter2.getClass())) {
-                return 0;
-            }
-            return 1;
+            return Integer.compare(filter1.getFilterType().getPriority(), filter2.getFilterType().getPriority());
         });
     }
 
@@ -69,14 +57,12 @@ public class TextFilterManager {
      */
 
     public FilterType analyze(String text) {
-        if ((text == "") || (text == null)) {
+        if (text == null || text.isEmpty()) {
             return FilterType.GOOD;
         }
-        FilterType resultType;
         for (TextAnalyzer analyzer : usbleFilters) {
-            resultType = analyzer.check(text);
-            if (resultType != null) {
-                return resultType;
+            if (analyzer.check(text)) {
+                return analyzer.getFilterType();
             }
         }
         return FilterType.GOOD;

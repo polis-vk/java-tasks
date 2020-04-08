@@ -1,16 +1,25 @@
 package ru.mail.polis.homework.analyzer;
-
 public class SpamAnalyzer implements TextAnalyzer {
-    private String[] badWords;
+    private final String[] badWords;
 
-    public SpamAnalyzer(String[] badWords) {
-        this.badWords = badWords;
+    public SpamAnalyzer(String[] targetWords) {
+        this.badWords = targetWords;
     }
 
-    public FilterType check(String txt) {
-        if (TextAnalyzer.find(badWords, txt)) {
-            return FilterType.SPAM;
+    public boolean check(String txt) {
+        for (String currentSymb : badWords) {
+            if (txt.contains(currentSymb)) {
+                return true;
+            }
         }
-        return null;
+        return false;
+    }
+
+    public FilterType getFilterType() {
+        return FilterType.SPAM;
     }
 }
+
+
+
+

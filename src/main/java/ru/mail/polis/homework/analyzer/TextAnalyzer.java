@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
 
+import javax.xml.soap.Text;
+
 /**
  * Базовый интерефейс фильтра, наследники этого интерефейса должны инкапсулировать в себе всю логику
  * анализа текста.
@@ -34,14 +36,8 @@ public interface TextAnalyzer {
         return new CapsLockAnalyzer();
     }
 
-    FilterType check(String txt);
+    boolean check(String txt);
 
-    static boolean find(String[] targetSymb, String txt) {
-        for (String currentSymb : targetSymb) {
-            if (txt.contains(currentSymb)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    FilterType getFilterType();
+
 }

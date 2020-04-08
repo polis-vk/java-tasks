@@ -1,13 +1,19 @@
 package ru.mail.polis.homework.analyzer;
 
-public class NegativeTextAnalyzer implements TextAnalyzer {
-    public static final String[] NEG_EMOTION = {"=(", ":(", ":|"};
+public class NegativeTextAnalyzer extends SpamAnalyzer {
+    private static final String[] NEG_EMOTION = {"=(", ":(", ":|"};
 
-    public FilterType check(String txt) {
-        if (TextAnalyzer.find(NEG_EMOTION, txt)) {
-            return FilterType.NEGATIVE_TEXT;
-        }
-        return null;
+    public NegativeTextAnalyzer() {
+        super(NEG_EMOTION);
+    }
+
+    public boolean check(String text) {
+        return super.check(text);
+    }
+
+    public FilterType getFilterType() {
+        return FilterType.NEGATIVE_TEXT;
     }
 }
+
 
