@@ -88,6 +88,17 @@ public class TextFilterManagerTest {
     }
 
     @Test
+    public void analyzeOnlyCapslockOnFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCapslockOnAnalyzer()});
+        assertEquals("CAPS", manager.analyze("ПРИВЕТ, Я ПЕТЯ :(").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("Скажите код из смс :-( ").toString());
+        assertEquals("CAPS", manager.analyze("СКАЖИТЕ КОД ИЗ СМС ПОЖАЛУЙСТА :|").toString());
+        assertEquals("GOOD", manager.analyze("Ооооооочень длиннннннаааааяяяя стрроооооооккккаааааа").toString());
+    }
+
+    @Test
     public void analyzeAllFiltersGood() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
