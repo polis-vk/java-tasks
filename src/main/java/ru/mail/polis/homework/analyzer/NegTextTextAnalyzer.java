@@ -4,7 +4,7 @@ import java.io.File;
 
 public class NegTextTextAnalyzer implements TextAnalyzer {
 
-    private String[] negWords = {"=(", ":(", ":|"};
+    static private String[] negWords = {"=(", ":(", ":|"};
 
     @Override
     public FilterType analyze(String str) {
