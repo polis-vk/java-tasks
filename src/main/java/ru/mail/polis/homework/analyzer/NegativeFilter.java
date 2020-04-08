@@ -9,8 +9,8 @@ public class NegativeFilter extends SpamFilter {
     }
 
     @Override
-    public FilterType getFilterType() {
-        return FILTER_TYPE;
+    public int getFilterPriority() {
+        return FILTER_TYPE.getPriority();
     }
 
     @Override

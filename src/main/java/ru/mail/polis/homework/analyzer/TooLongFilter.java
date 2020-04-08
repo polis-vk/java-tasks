@@ -9,8 +9,8 @@ public class TooLongFilter implements TextAnalyzer {
     }
 
     @Override
-    public FilterType getFilterType() {
-        return FILTER_TYPE;
+    public int getFilterPriority() {
+        return FILTER_TYPE.getPriority();
     }
 
     @Override
