@@ -43,7 +43,7 @@ public class TextFilterManager {
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filters = filters == null ? new TextAnalyzer[0] : filters.clone();
         Arrays.sort(this.filters, (filter1, filter2) -> {
-            return Integer.compare(filter1.getFilterType().getPriority(), filter2.getFilterType().getPriority());
+            return -Integer.compare(filter1.getFilterType().getPriority(), filter2.getFilterType().getPriority());
         });
     }
     
