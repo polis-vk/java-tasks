@@ -8,17 +8,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TextFilterManagerTest {
-   @Test
-   public void customTest(){
-       TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer(new String[]{".ru", ".com", ".org", ".su"})});
-       assertEquals("GOOD", manager.analyze("").toString());
-       assertEquals("GOOD", manager.analyze("Основой http является технология «клиент-сервер»").toString());
-       assertEquals("CUSTOM", manager.analyze("Чтобы выиграть афйон переходи по ссылке https://lohotron.ru").toString());
-       assertEquals("GOOD", manager.analyze("Не стоит переходить по незнакомым ссылкам типа http://бла бла бла .ru").toString());
-       assertEquals("CUSTOM", manager.analyze("Лучшие открытые курсы по Java! https://polis.mail.ru").toString());
-       assertEquals("GOOD", manager.analyze("Не стоит переходить по незнакомым ссылкам типа http://бла бла бла .ru").toString());
+    @Test
+    public void customTest() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer(new String[]{".ru", ".com", ".org", ".su"})});
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze("Основой http является технология «клиент-сервер»").toString());
+        assertEquals("CUSTOM", manager.analyze("Чтобы выиграть афйон переходи по ссылке https://lohotron.ru").toString());
+        assertEquals("GOOD", manager.analyze("Не стоит переходить по незнакомым ссылкам типа http://бла бла бла .ru").toString());
+        assertEquals("CUSTOM", manager.analyze("Лучшие открытые курсы по Java! https://polis.mail.ru").toString());
+        assertEquals("GOOD", manager.analyze("Не стоит переходить по незнакомым ссылкам типа http://бла бла бла .ru").toString());
 
-   }
+    }
 
     @Test
     public void analyzeEmptyFilters() {
@@ -130,18 +130,21 @@ public class TextFilterManagerTest {
 
     @Test
     public void analyzeAllFiltersManyWithPriority() {
-       manyFilters(true);
+        manyFilters(true);
     }
 
     private void manyFilters(boolean withPriority) {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
                 TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
-                TextAnalyzer.createTooLongAnalyzer(20)});
+                TextAnalyzer.createTooLongAnalyzer(20),
+                TextAnalyzer.createCustomAnalyzer(new String[]{".ru", ".com"})});
         if (withPriority) {
             assertEquals("SPAM", manager.analyze("Привет, я Петя вот мой cvv").toString());
             assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :(").toString());
             assertEquals("SPAM", manager.analyze("смс пожалуйста           :|").toString());
+            assertEquals("TOO_LONG", manager.analyze("Девачки записываемся на ноготочки!!! https://www.instagram.com/mamaotlichnika/").toString());
+            assertEquals("CUSTOM", manager.analyze("http://government.ru").toString());
         } else {
             assertTrue(Arrays.asList("SPAM", "TOO_LONG").contains(
                     manager.analyze("Привет, я Петя вот мой cvv").toString()));
