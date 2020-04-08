@@ -13,8 +13,7 @@ public class SpamTextAnalyzer implements TextAnalyzer {
         if (str == null) {
             return FilterType.GOOD;
         }
-        for (String spamWord :      //ƒанный формат записи foreach предлагает IDEA. ћогу писать в одну строку, если так правильно
-                spam) {
+        for (String spamWord : spam) {
             if (str.contains(spamWord)) {
                 return getFilterType();
             }

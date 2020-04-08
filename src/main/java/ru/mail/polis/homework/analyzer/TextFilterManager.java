@@ -56,8 +56,7 @@ public class TextFilterManager {
      */
     public FilterType analyze(String text) {
         FilterType type;
-        for (TextAnalyzer filter :
-                filters) {
+        for (TextAnalyzer filter : filters) {
             type = filter.analyze(text);
             if (type != FilterType.GOOD) return type;
         }

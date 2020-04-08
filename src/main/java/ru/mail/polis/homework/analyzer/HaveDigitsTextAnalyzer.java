@@ -7,8 +7,7 @@ public class HaveDigitsTextAnalyzer implements TextAnalyzer {
         if (str == null) {
             return FilterType.GOOD;
         }
-        for (char ch:
-             str.toCharArray()) {
+        for (char ch : str.toCharArray()) {
             if (Character.isDigit(ch)) {
                 return getFilterType();
             }

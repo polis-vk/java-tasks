@@ -11,8 +11,7 @@ public class NegTextTextAnalyzer implements TextAnalyzer {
         if (str == null) {
             return FilterType.GOOD;
         }
-        for (String negWord :           //ƒанный формат записи foreach предлагает IDEA. ћогу писать в одну строку, если так правильно
-                negWords) {
+        for (String negWord : negWords) {
             if (str.contains(negWord)) {
                 return getFilterType();
             }
