@@ -19,19 +19,17 @@ public class IsInCyrillic implements TextAnalyzer {
                         "\\d" +         //цифры
                         "\\s" +         //знаки-разделители (пробел, табул€ци€ и т.д.)
                         "\\p{Punct}" +  //знаки пунктуации
-                "]" +                   //конец списка допустимых символов
+                        "]" +           //конец списка допустимых символов
                         "*");           //допускаетс€ наличие указанных символов в любом количестве
 
         Matcher matcher = pattern.matcher(arg);
         if (matcher.matches()) {
             return FilterType.GOOD;
         }
-
         return FilterType.NOT_CYRILLIC;
     }
 
     private int priority = 3;
-
     public int getPriority() {
         return priority;
     }

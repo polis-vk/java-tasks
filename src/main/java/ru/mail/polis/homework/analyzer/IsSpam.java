@@ -8,13 +8,11 @@ public class IsSpam implements TextAnalyzer {
     }
 
     public FilterType analyze(String arg) {
-
         for (String s : textSpam) {
             if (arg.contains(s)) {
                 return FilterType.SPAM;
             }
         }
-
         return FilterType.GOOD;
     }
 

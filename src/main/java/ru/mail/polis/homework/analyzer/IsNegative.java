@@ -4,13 +4,11 @@ public class IsNegative implements TextAnalyzer {
 
     String[] emotions = new String[]{"=(", ":(", ":|"};
     public FilterType analyze(String arg) {
-
         for (String s : emotions) {
             if (arg.contains(s)) {
                 return FilterType.NEGATIVE_TEXT;
             }
         }
-
         return FilterType.GOOD;
     }
 
