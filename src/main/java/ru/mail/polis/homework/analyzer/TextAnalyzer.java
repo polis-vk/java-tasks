@@ -34,19 +34,14 @@ public interface TextAnalyzer {
         return new LinksFilter(domains);
     }
 
-    void setFilterPriority(int priority);
-
-    int getFilterPriority();
-
     FilterType getFilterType();
 
     FilterType analysis(String str);
 
     class CompareByPriority implements Comparator<TextAnalyzer> {
         public int compare(TextAnalyzer a, TextAnalyzer b) {
-            return a.getFilterPriority() - b.getFilterPriority();
+            return a.getFilterType().getFilterPriority() - b.getFilterType().getFilterPriority();
         }
-
     }
 
 }

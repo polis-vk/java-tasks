@@ -5,20 +5,9 @@ import java.util.Arrays;
 public class SpamFilter implements TextAnalyzer {
     private final String[] SPAM;
     private final static FilterType FILTER_TYPE = FilterType.SPAM;
-    private static int priority;
 
     public SpamFilter(String[] spam) {
         this.SPAM = Arrays.copyOf(spam, spam.length);
-    }
-
-    @Override
-    public int getFilterPriority() {
-        return priority;
-    }
-
-    @Override
-    public void setFilterPriority(int priority) {
-        this.priority = priority;
     }
 
     @Override
