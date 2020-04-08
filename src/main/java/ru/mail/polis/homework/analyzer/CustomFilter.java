@@ -11,7 +11,7 @@ public class CustomFilter implements TextAnalyzer {
     private static final int MIN_LENGTH_OF_LINK = 5; // после протокола
 
     public CustomFilter(String[] domains) {
-        this.domains = domains;
+        this.domains = domains.clone();
     }
 
     @Override
