@@ -8,7 +8,7 @@ public enum FilterType {
     TOO_LONG(1),
     NEGATIVE_TEXT(2),
     REFERENCE(3),
-    GOOD(4);
+    GOOD(Integer.MAX_VALUE);
     
     private final int priority;
     
