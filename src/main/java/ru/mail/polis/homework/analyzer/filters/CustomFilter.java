@@ -3,34 +3,33 @@ package ru.mail.polis.homework.analyzer.filters;
 import ru.mail.polis.homework.analyzer.FilterType;
 import ru.mail.polis.homework.analyzer.TextAnalyzer;
 
-
 /**
  * Фильтр проверяющий наличие запятых перед союзами
  */
-public class CustomAnalyzer implements TextAnalyzer {
+public class CustomFilter implements TextAnalyzer {
     private static final String[] GRAMMAR = {", а", ", но", ", что", ", когда", ", потому что"};
     private static final String[] UNIONS = {" а ", " но ", " что ", " когда ", " потому что "};
+    private SimpleTextFilter grammarFilter;
+    private SimpleTextFilter unionsFilter;
     private boolean isGrammar;
 
-    public CustomAnalyzer(boolean isGrammar) {
+    public CustomFilter(boolean isGrammar) {
         this.isGrammar = isGrammar;
+        grammarFilter = new SimpleTextFilter(GRAMMAR);
+        unionsFilter = new SimpleTextFilter(UNIONS);
     }
 
     @Override
-    public FilterType getResult(String text) {
-        if (text == null || text.isEmpty()) {
-            return FilterType.GOOD;
+    public boolean getResult(String text) {
+        if (isGrammar && unionsFilter.analysisText(text)) {
+            return !grammarFilter.analysisText(text);
         }
 
-        if (isGrammar && SpamAnalyzer.analysisText(text, UNIONS)) {
-            return SpamAnalyzer.analysisText(text, GRAMMAR) ? FilterType.GOOD : FilterType.CUSTOM;
-        }
-
-        return FilterType.GOOD;
+        return false;
     }
 
     @Override
-    public int getIdResult() {
-        return 4;
+    public FilterType getReturnedValue() {
+        return FilterType.CUSTOM;
     }
 }

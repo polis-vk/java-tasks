@@ -1,10 +1,10 @@
 package ru.mail.polis.homework.analyzer;
 
 
-import ru.mail.polis.homework.analyzer.filters.CustomAnalyzer;
-import ru.mail.polis.homework.analyzer.filters.NegativeTextAnalyzer;
-import ru.mail.polis.homework.analyzer.filters.SpamAnalyzer;
-import ru.mail.polis.homework.analyzer.filters.TooLongAnalyzer;
+import ru.mail.polis.homework.analyzer.filters.CustomFilter;
+import ru.mail.polis.homework.analyzer.filters.NegativeTextFilter;
+import ru.mail.polis.homework.analyzer.filters.SpamFilter;
+import ru.mail.polis.homework.analyzer.filters.TooLongFilter;
 
 /**
  * Базовый интерефейс фильтра, наследники этого интерефейса должны инкапсулировать в себе всю логику
@@ -22,25 +22,25 @@ import ru.mail.polis.homework.analyzer.filters.TooLongAnalyzer;
 public interface TextAnalyzer {
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return new TooLongAnalyzer(maxLength);
+        return new TooLongFilter(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return new SpamAnalyzer(spam);
+        return new SpamFilter(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return new NegativeTextAnalyzer();
+        return new NegativeTextFilter();
     }
 
     /**
      * придумать свой фильтр
      */
     static TextAnalyzer createCustomAnalyzer(boolean something) {
-        return new CustomAnalyzer(something);
+        return new CustomFilter(something);
     }
 
-    FilterType getResult(String text);
+    boolean getResult(String text);
 
-    int getIdResult();
+    FilterType getReturnedValue();
 }
