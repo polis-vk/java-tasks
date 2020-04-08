@@ -31,6 +31,10 @@ public interface TextAnalyzer {
         return new IsNegative();
     }
 
+    static TextAnalyzer createCyrillicTextAnalyzer() {
+        return new IsInCyrillic();
+    }
+
     /**
      * придумать свой фильтр
      */

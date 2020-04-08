@@ -124,6 +124,7 @@ public class TextFilterManagerTest {
 
     private void manyFilters(boolean withPriority) {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
+                TextAnalyzer.createCyrillicTextAnalyzer(),
                 TextAnalyzer.createNegativeTextAnalyzer(),
                 TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
                 TextAnalyzer.createTooLongAnalyzer(20)});
@@ -131,6 +132,9 @@ public class TextFilterManagerTest {
             assertEquals("SPAM", manager.analyze("Привет, я Петя вот мой cvv").toString());
             assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :(").toString());
             assertEquals("SPAM", manager.analyze("смс пожалуйста           :|").toString());
+            assertEquals("GOOD", manager.analyze("Это русский текст!").toString());
+            assertEquals("NOT_CYRILLIC", manager.analyze("Это nerussky текст!").toString());
+            assertEquals("SPAM", manager.analyze("Это nerussky текстcvv!").toString());
         } else {
             assertTrue(Arrays.asList("SPAM", "TOO_LONG").contains(
                     manager.analyze("Привет, я Петя вот мой cvv").toString()));
@@ -141,5 +145,17 @@ public class TextFilterManagerTest {
         }
     }
 
+    @Test
+    public void analyzeOnlyCyrillicFilter() {
+        TextFilterManager manager = new TextFilterManager(
+                new TextAnalyzer[]{TextAnalyzer.createCyrillicTextAnalyzer()});
+        assertEquals("GOOD", manager.analyze("Это русский текст!").toString());
+        assertEquals("NOT_CYRILLIC", manager.analyze("Etot tekst napisan translitom!").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("Этот текст с запятыми ,,,,,, ").toString());
+        assertEquals("NOT_CYRILLIC", manager.analyze("А eto smeshannyi текст").toString());
+        assertEquals("GOOD", manager.analyze("133521").toString());
+        assertEquals("GOOD", manager.analyze("Это русский текст с цифрами 1432").toString());
+    }
 
 }

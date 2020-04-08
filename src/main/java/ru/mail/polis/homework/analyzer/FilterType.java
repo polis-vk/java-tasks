@@ -8,5 +8,5 @@ public enum FilterType {
     TOO_LONG,
     SPAM,
     NEGATIVE_TEXT,
-    CUSTOM
+    NOT_CYRILLIC
 }
