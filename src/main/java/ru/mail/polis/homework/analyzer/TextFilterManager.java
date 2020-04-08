@@ -43,14 +43,13 @@ public class TextFilterManager {
         this.filters = Arrays.copyOf(filters, filters.length);
         TextAnalyzer.setFiltersPriority(filters);
         Arrays.sort(filters, new TextAnalyzer.SortByPriority());
-        /**
-         * или же через обертку
-         * Arrays.sort(filters, (filter1, filter2) -> {
-         *             Integer filter1Priority = filter1.getFilterPriority();
-         *             Integer filter2Priority = filter2.getFilterPriority();
-         *             return filter1Priority.compareTo(filter2Priority);
-         *         });
-         * */
+        /*
+         *  Arrays.sort(filters, (filter1, filter2) -> {
+         *                      Integer filter1Priority = filter1.getFilterPriority();
+         *                      Integer filter2Priority = filter2.getFilterPriority();
+         *                     return filter1Priority.compareTo(filter2Priority);
+         *          });
+         * или же через обертку */
     }
 
     /**
