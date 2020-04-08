@@ -2,7 +2,6 @@ package ru.mail.polis.homework.analyzer;
 
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 /**
  * Задание написать систему фильтрации комментариев.
@@ -42,7 +41,7 @@ public class TextFilterManager {
      */
     public TextFilterManager(TextAnalyzer[] filters) {
         this.FILTERS = Arrays.copyOf(filters, filters.length);
-        Arrays.sort(this.FILTERS, new TextAnalyzer.CompareByPriority());
+        Arrays.sort(this.FILTERS, new TextAnalyzer.FiltersComparator());
         //или же через обертку
         //   Arrays.sort(filters, (filter1, filter2) -> {
         //                       Integer filter1Priority = filter1.getFilterPriority();

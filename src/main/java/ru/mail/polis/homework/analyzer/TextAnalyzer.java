@@ -38,7 +38,7 @@ public interface TextAnalyzer {
 
     FilterType analysis(String str);
 
-    class CompareByPriority implements Comparator<TextAnalyzer> {
+    class FiltersComparator implements Comparator<TextAnalyzer> {
         public int compare(TextAnalyzer a, TextAnalyzer b) {
             return a.getFilterPriority() - b.getFilterPriority();
         }

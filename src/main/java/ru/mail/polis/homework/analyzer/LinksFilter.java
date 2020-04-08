@@ -13,10 +13,8 @@ public class LinksFilter implements TextAnalyzer {
         this.DOMAINS = domains.clone();
     }
 
-
     @Override
     public int getFilterPriority() {
-
         return FILTER_TYPE.getPriority();
     }
 
