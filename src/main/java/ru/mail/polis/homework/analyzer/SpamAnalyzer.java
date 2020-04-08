@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.analyzer;
 
-public class SpamAnalyzer extends NegativeAnalyzer{
+public class SpamAnalyzer
+        extends MatchSearcher
+        implements TextAnalyzer {
+
     private final String[] spam;
 
     public SpamAnalyzer(String[] spam) {

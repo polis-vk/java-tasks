@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
-public class NegativeAnalyzer implements TextAnalyzer {
+public class NegativeAnalyzer
+        extends MatchSearcher
+        implements TextAnalyzer {
 
     private static final String[] ILLEGAL_SYMBOLS = {"=(", ":(", ":|"};
 
@@ -12,14 +14,5 @@ public class NegativeAnalyzer implements TextAnalyzer {
     @Override
     public FilterType getFilterType() {
         return FilterType.NEGATIVE_TEXT;
-    }
-
-    public boolean textContainsSthFromArray(String text, String[] array){
-        for (String s : array) {
-            if (text.contains(s)) {
-                return true;
-            }
-        }
-        return false;
     }
 }
