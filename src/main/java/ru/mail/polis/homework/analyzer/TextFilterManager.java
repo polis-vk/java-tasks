@@ -2,6 +2,7 @@ package ru.mail.polis.homework.analyzer;
 
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * Задание написать систему фильтрации комментариев.
@@ -33,7 +34,7 @@ import java.util.Arrays;
  */
 public class TextFilterManager {
     private TextAnalyzer[] filters;
-    private final static Object[] priority = {CustomAnalyzer.class, NegativeAnalyzer.class, TooLongAnalyzer.class, SpamAnalyzer.class};
+    //private final static Object[] priority = {CapitalCharacterAnalyzer.class, NegativeAnalyzer.class, TooLongAnalyzer.class, SpamAnalyzer.class};
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
@@ -41,26 +42,19 @@ public class TextFilterManager {
      */
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filters = filters.clone();
-        Arrays.sort(this.filters, (filter1, filter2) -> {
-            if (Arrays.asList(priority).indexOf(filter1.getClass()) > Arrays.asList(priority).indexOf(filter2.getClass())) {
-                return -1;
-            } else if (Arrays.asList(priority).indexOf(filter1.getClass()) == Arrays.asList(priority).indexOf(filter2.getClass())) {
-                return 0;
-            }
-            return 1;
-        });
+        Arrays.sort(this.filters, Comparator.comparing(TextAnalyzer::getFilterType));
     }
 
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-        if (text == null){
+        if (text == null) {
             return FilterType.GOOD;
         }
-        for (TextAnalyzer a:filters){
-            if (a.analyze(text) != FilterType.GOOD){
-                return a.analyze(text);
+        for (TextAnalyzer a : filters) {
+            if (a.problemDetected(text)) {
+                return a.getFilterType();
             }
         }
         return FilterType.GOOD;

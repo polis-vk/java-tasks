@@ -5,8 +5,8 @@ package ru.mail.polis.homework.analyzer;
  */
 public enum FilterType {
     GOOD,
-    TOO_LONG,
     SPAM,
+    TOO_LONG,
     NEGATIVE_TEXT,
-    CUSTOM
+    CAPITAL_CHAR,
 }

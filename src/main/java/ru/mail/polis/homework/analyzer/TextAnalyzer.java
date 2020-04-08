@@ -32,8 +32,9 @@ public interface TextAnalyzer {
      * Срабатывает на строки с заглавными буквами
      */
     static TextAnalyzer createCustomAnalyzer() {
-        return new CustomAnalyzer();
+        return new CapitalCharacterAnalyzer();
     }
 
-    public FilterType analyze(String text);
+    public boolean problemDetected(String text);
+    public FilterType getFilterType();
 }

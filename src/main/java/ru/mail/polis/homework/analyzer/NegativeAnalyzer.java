@@ -1,15 +1,20 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeAnalyzer implements TextAnalyzer {
-    final private static String[] ILLEGAL_SYMBOLS = {"=(", ":(", ":|"};
+    private static final String[] ILLEGAL_SYMBOLS = {"=(", ":(", ":|"};
 
     @Override
-    public FilterType analyze(String text){
-        for(String s:ILLEGAL_SYMBOLS){
-            if (text.contains(s)){
-                return FilterType.NEGATIVE_TEXT;
+    public boolean problemDetected(String text) {
+        for (String s : ILLEGAL_SYMBOLS) {
+            if (text.contains(s)) {
+                return true;
             }
         }
-        return FilterType.GOOD;
+        return false;
+    }
+
+    @Override
+    public FilterType getFilterType() {
+        return FilterType.NEGATIVE_TEXT;
     }
 }
