@@ -10,14 +10,14 @@ public enum FilterType {
     CUSTOM(4),
     GOOD(5);
 
-    private final int priority;
+    private final int PRIORITY;
 
     FilterType(int priority) {
-        this.priority = priority;
+        this.PRIORITY = priority;
     }
 
     public int getPriority() {
-        return priority;
+        return PRIORITY;
     }
 
 }
