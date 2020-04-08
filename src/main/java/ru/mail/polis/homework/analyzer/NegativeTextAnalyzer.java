@@ -11,14 +11,7 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
     
     @Override
     public boolean isTriggered(String text) {
-        if (text == null || text.isEmpty()) {
-            return false;
-        }
-        for (String smile : negativeSmiles) {
-            if (text.contains(smile)) {
-                return true;
-            }
-        }
-        return false;
+        SpamAnalyzer spamAnalyzer = new SpamAnalyzer(negativeSmiles);
+        return spamAnalyzer.isTriggered(text);
     }
 }
