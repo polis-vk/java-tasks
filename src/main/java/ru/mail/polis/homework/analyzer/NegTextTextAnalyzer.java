@@ -3,15 +3,18 @@ package ru.mail.polis.homework.analyzer;
 import java.io.File;
 
 public class NegTextTextAnalyzer implements TextAnalyzer {
-    String[] negWords = {"=(", ":(", ":|"};
+
+    private String[] negWords = {"=(", ":(", ":|"};
 
     @Override
     public FilterType analyze(String str) {
-        if (str == null) return FilterType.GOOD;
-        for (String spamWord :
+        if (str == null) {
+            return FilterType.GOOD;
+        }
+        for (String negWord :           //ƒанный формат записи foreach предлагает IDEA. ћогу писать в одну строку, если так правильно
                 negWords) {
-            if (str.contains(spamWord)) {
-                return FilterType.NEGATIVE_TEXT;
+            if (str.contains(negWord)) {
+                return getFilterType();
             }
         }
         return FilterType.GOOD;
