@@ -9,7 +9,7 @@ public class NegativeAnalyzer implements TextAnalyzer {
     }
 
     public FilterType analysis(String text) {
-        for (String face: gloomyFaces) {
+        for (String face : gloomyFaces) {
             if (text.contains(face)) {
                 return FilterType.NEGATIVE_TEXT;
             }

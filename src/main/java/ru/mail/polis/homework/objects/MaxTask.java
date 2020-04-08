@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.objects;
 
-import java.util.Arrays;
-
 public class MaxTask {
 
     /**
@@ -10,39 +8,11 @@ public class MaxTask {
      * Если длина массива меньше count, то вернуть null
      * Например ({1, 3, 10, 11, 22, 0}, 2) -> {22, 11}
      * ({1, 3, 22, 11, 22, 0}, 3) -> {22, 22, 11}
+     * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копиии
+     *
      */
     public static int[] getMaxArray(int[] array, int count) {
-        if (array.length < count) {
-            return null;
-        }
-        if (count == 0) {
-            return new int[0];
-        }
-        int[] resultArray = Arrays.copyOf(array, count);
-        Arrays.sort(resultArray);
-        for (int i = count; i < array.length; i++) {
-            if (array[i] > resultArray[0]) {
-                int j = 0;
-                while (j < count - 1 && array[i] > resultArray[j + 1]) {
-                    j++;
-                }
-                swap(resultArray, j, array[i]);
-            }
-        }
-        return reverse(resultArray);
+        return null;
     }
 
-    public static void swap(int[] resultArray, int index, int newElement) {
-        System.arraycopy(resultArray, 1, resultArray, 0, index);
-        resultArray[index] = newElement;
-    }
-
-    public static int[] reverse(int[] resultArray) {
-        for (int i = 0; i < resultArray.length / 2; i++) {
-            int buf = resultArray[i];
-            resultArray[i] = resultArray[resultArray.length - 1 - i];
-            resultArray[resultArray.length - 1 - i] = buf;
-        }
-        return resultArray;
-    }
 }

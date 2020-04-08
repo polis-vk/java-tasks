@@ -13,9 +13,9 @@ public class CustomAnalyzer implements TextAnalyzer {
 
     public FilterType analysis(String text) {
         int i = 0;
-        for (String symbol: symbols) {
+        for (String symbol : symbols) {
             if (getSymbolCounts(text, symbol) > maxSymbolCount[i]) {
-                return  FilterType.CUSTOM;
+                return FilterType.CUSTOM;
             }
             i++;
         }

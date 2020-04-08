@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
-public class SpamAnalyzer implements TextAnalyzer{
+public class SpamAnalyzer implements TextAnalyzer {
     private String[] spam;
     private Integer priority;
 
@@ -10,12 +10,12 @@ public class SpamAnalyzer implements TextAnalyzer{
     }
 
     public FilterType analysis(String text) {
-        for (String word: spam) {
+        for (String word : spam) {
             if (text.contains(word)) {
                 return FilterType.SPAM;
             }
         }
-        return  FilterType.GOOD;
+        return FilterType.GOOD;
     }
 
     public Integer getPriority() {
