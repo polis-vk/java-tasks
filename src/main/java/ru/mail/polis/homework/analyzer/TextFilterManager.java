@@ -2,7 +2,8 @@ package ru.mail.polis.homework.analyzer;
 
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -34,24 +35,26 @@ import java.util.List;
  * Итого 15 баллов + 2 дополнительных
  */
 public class TextFilterManager {
-    /*private TextAnalyzer[] priorityTable = {CapsLockAnalyzer.class, SpamAnalyzer.class, TooLongAnalyzer.class, NegativeTextAnalyzer.class};
-    почему так не работает? или такой принцип действует только для переменных класса-родителя, ссылающихся на образец класса-потомка?
-     */
     private TextAnalyzer[] usbleFilters;
 
     public TextFilterManager(TextAnalyzer[] filters) {
         this.usbleFilters = Arrays.copyOf(filters, filters.length);
-       /* List<Object> priorityList = Arrays.asList(priorityTable);
+
+        Map<Object, Integer> priorityMap = new HashMap<>();
+        priorityMap.put(CapsLockAnalyzer.class, 0);
+        priorityMap.put(SpamAnalyzer.class, 1);
+        priorityMap.put(TooLongAnalyzer.class, 2);
+        priorityMap.put(NegativeTextAnalyzer.class, 3);
+
         Arrays.sort(usbleFilters, (filter1, filter2) -> {
-            if (Arrays.asList(priorityTable).indexOf(filter1.getClass()) < Arrays.asList(priorityTable).indexOf(filter2.getClass())) {
+            if (priorityMap.get(filter1.getClass()) < priorityMap.get(filter2.getClass())) {
                 return -1;
-            } else if ((Arrays.asList(priorityTable).indexOf(filter1.getClass()) == Arrays.asList(priorityTable).indexOf(filter2.getClass()))) {
+            } else if (priorityMap.get(filter1.getClass()) == priorityMap.get(filter2.getClass())) {
                 return 0;
             }
             return 1;
-        });*/
+        });
     }
-
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
