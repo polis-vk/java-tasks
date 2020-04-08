@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
-public class SpamAnalyzer implements TextAnalyzer {
+public class SpamAnalyzer extends NegativeAnalyzer{
     private final String[] spam;
 
     public SpamAnalyzer(String[] spam) {
@@ -9,12 +9,7 @@ public class SpamAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean problemDetected(String text) {
-        for (String s : spam) {
-            if (text.contains(s)) {
-                return true;
-            }
-        }
-        return false;
+        return textContainsSthFromArray(text, spam);
     }
 
     @Override
@@ -22,13 +17,4 @@ public class SpamAnalyzer implements TextAnalyzer {
         return FilterType.SPAM;
     }
 
-    //понятно, что такой метод срежет копипасту, но куда его вставить?
-//    public boolean textContainsSthFromArray(String text, String[] array){
-//        for (String s : array) {
-//            if (text.contains(s)) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 }
