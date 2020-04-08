@@ -19,4 +19,11 @@ public class HaveDigitsTextAnalyzer implements TextAnalyzer {
     public FilterType getFilterType() {
         return FilterType.CUSTOM;
     }
+    /* Код для второй версии компаратора */
+    private int priority = 4;
+
+    public int getPriority() {
+        return priority;
+    }
+    /*----------------------------*/
 }

@@ -23,4 +23,11 @@ public class NegTextTextAnalyzer implements TextAnalyzer {
     public FilterType getFilterType() {
         return FilterType.NEGATIVE_TEXT;
     }
+    /* Код для второй версии компаратора */
+    private int priority = 3;
+
+    public int getPriority() {
+        return priority;
+    }
+    /*----------------------------*/
 }

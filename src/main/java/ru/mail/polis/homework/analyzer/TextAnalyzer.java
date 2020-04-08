@@ -38,4 +38,5 @@ public interface TextAnalyzer {
     static TextAnalyzer createCustomAnalyzer() {
         return new HaveDigitsTextAnalyzer();
     }
+    public int getPriority(); //Метод для второй версии компаратора
 }

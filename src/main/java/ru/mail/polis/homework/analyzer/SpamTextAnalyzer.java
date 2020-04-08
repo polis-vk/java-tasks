@@ -25,4 +25,11 @@ public class SpamTextAnalyzer implements TextAnalyzer {
     public FilterType getFilterType() {
         return FilterType.SPAM;
     }
+    /* Код для второй версии компаратора */
+    private int priority = 1;
+
+    public int getPriority() {
+        return priority;
+    }
+    /*----------------------------*/
 }
