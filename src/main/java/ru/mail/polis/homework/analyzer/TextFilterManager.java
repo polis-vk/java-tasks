@@ -4,6 +4,7 @@ package ru.mail.polis.homework.analyzer;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Задание написать систему фильтрации комментариев.
@@ -34,6 +35,7 @@ import java.util.HashMap;
  * Итого 15 баллов + 2 дополнительных
  */
 public class TextFilterManager {
+    private Map<FilterType,Integer> priorities;
     private TextAnalyzer[] filters;
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -41,6 +43,13 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
+
+        priorities = new HashMap<>();
+        priorities.put(FilterType.SPAM, 1);
+        priorities.put(FilterType.TOO_LONG, 2);
+        priorities.put(FilterType.NEGATIVE_TEXT, 3);
+        priorities.put(FilterType.CUSTOM, 4);
+
         this.filters = filters.clone();
         sortFilters1(this.filters);
         //sortFilters2(this.filters);
@@ -61,7 +70,8 @@ public class TextFilterManager {
     }
     /* (Old)
     *  Первая версия компаратора. Используется порядок типов фильтров в enum FilterType
-    *  Минусы - зависимость от порядка элементов в перечислении
+    *  Минусы:  зависимость от порядка элементов в перечислении
+    *  Плюсы:   минимум кода
     * */
     private void sortFilters1(TextAnalyzer[] filters){
         Arrays.sort(filters, (filter1, filter2) -> {
@@ -76,6 +86,7 @@ public class TextFilterManager {
     /*
      *  Вторая версия компаратора. Используется поле priority в классах сравниваемых фильтров.
      *  Минусы: Изменение фильтров - необходимость добавления поля и метода к каждому сравниваемому классу.
+     *  Плюсы:  Не использует enum FilterType для сравнения
      * */
     private void sortFilters2(TextAnalyzer[] filters){
         Arrays.sort(filters, (filter1, filter2) -> {
@@ -88,10 +99,9 @@ public class TextFilterManager {
         });
     }
     /*  (В порядке бреда)
-     *  Третья версия компаратора. Используется метод с забитыми магическими константами, возвращающий число, отражающее приоритет фильтра.
-     *  Минусы: Приоритеты записаны хардкодом. Решение в лоб.
+     *  Третья версия компаратора. Используется метод, возвращающий число, отражающее приоритет фильтра.
      *  Плюсы:  Пока единственное решение, никак не затрагивающее другие классы
-     * */
+     */
     private void sortFilters3(TextAnalyzer[] filters){
         Arrays.sort(filters, (filter1, filter2) -> {
             if (filter1.getPriority() > filter2.getPriority()) {
@@ -102,7 +112,15 @@ public class TextFilterManager {
             return -1;
         });
     }
-    private int getPriority(FilterType type) {
+    /* По сути это перенос порядка из enum FilterType в метод в TextFilterManager */
+
+    /* Вариант с map'ой приоритетов */
+    private int getPriority(FilterType type){
+        return priorities.get(type);
+    }
+
+    /* Вариант со строковыми константами в методе (Можно удалить) */
+    private int getPriority2(FilterType type) {
         switch (type.toString()){
             case "SPAM":
                 return 1;
