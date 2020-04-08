@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 public class SpamFilter implements TextAnalyzer {
 
-    private final FilterType spamFilterType = FilterType.SPAM;
+    private static final FilterType type = FilterType.SPAM;
     private final String[] spam;
 
     public SpamFilter(String[] spam) {
@@ -16,16 +16,16 @@ public class SpamFilter implements TextAnalyzer {
 
     @Override
     public FilterType analyze(String text) {
-        for (String spamElement: spam) {
+        for (String spamElement : spam) {
             if (text.contains(spamElement)) {
-                return spamFilterType;
+                return type;
             }
         }
-        return FilterType.GOOD;
+        return defaultType;
     }
 
     @Override
     public FilterType getType() {
-        return spamFilterType;
+        return type;
     }
 }

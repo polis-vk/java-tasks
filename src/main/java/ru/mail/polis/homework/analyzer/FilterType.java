@@ -4,9 +4,19 @@ package ru.mail.polis.homework.analyzer;
  * Типы фильтров (2 балла)
  */
 public enum FilterType {
-    SPAM,
-    TOO_LONG,
-    NEGATIVE_TEXT,
-    CUSTOM,
-    GOOD
+    SPAM(4),
+    TOO_LONG(3),
+    NEGATIVE_TEXT(2),
+    CUSTOM(1),
+    GOOD(0);
+
+    private int priority;
+
+    private FilterType(int priority){
+        this.priority = priority;
+    }
+
+    public int getPriority(){
+        return priority;
+    }
 }

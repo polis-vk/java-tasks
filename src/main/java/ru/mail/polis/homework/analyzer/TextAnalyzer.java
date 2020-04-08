@@ -7,6 +7,7 @@ import ru.mail.polis.homework.analyzer.filters.SpamFilter;
 import ru.mail.polis.homework.analyzer.filters.TooLongFilter;
 
 public interface TextAnalyzer {
+    static final FilterType defaultType = FilterType.GOOD;
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
         return new TooLongFilter(maxLength);
