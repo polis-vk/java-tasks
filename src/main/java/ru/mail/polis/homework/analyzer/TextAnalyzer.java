@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
 
+import java.util.Comparator;
+
 /**
  * Базовый интерефейс фильтра, наследники этого интерефейса должны инкапсулировать в себе всю логику
  * анализа текста.
@@ -28,19 +30,29 @@ public interface TextAnalyzer {
         return new NegativeFilter();
     }
 
-    static TextAnalyzer createCustomAnalyzer() {
-        return new CustomFilter();
+    static TextAnalyzer createCustomAnalyzer(String[] domains) {
+        return new CustomFilter(domains);
     }
 
-    static void setFilterPriority(int spamFilterPriority, int tooLongFilterPriority, int negativeTextFilterPriority, int customFilterPriority){
-        SpamFilter.priority = spamFilterPriority;
-        TooLongFilter.priority = tooLongFilterPriority;
-        NegativeFilter.priority = negativeTextFilterPriority;
-        CustomFilter.priority = customFilterPriority;
+    static void setFiltersPriority(TextAnalyzer[] textAnalyzers){
+        for (TextAnalyzer textAnalyzer:textAnalyzers) {
+            textAnalyzer.setFilterPriority(textAnalyzer.getFilterType().ordinal());
+        }
     }
+
+    void setFilterPriority(int priority);
 
     int getFilterPriority();
 
+    FilterType getFilterType();
+
     FilterType Analysis(String str);
+
+    class SortByPriority implements Comparator<TextAnalyzer> {
+        public int compare (TextAnalyzer a, TextAnalyzer b){
+            return a.getFilterPriority() - b.getFilterPriority();
+        }
+
+    }
 
 }

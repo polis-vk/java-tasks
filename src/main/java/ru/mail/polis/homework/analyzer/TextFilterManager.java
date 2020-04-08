@@ -40,16 +40,17 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = filters;
-        TextAnalyzer.setFilterPriority(1, 2, 3, 4);
-        Arrays.sort(filters, (filter1, filter2) -> {
-            if (filter1.getFilterPriority() < filter2.getFilterPriority()) {
-                return -1;
-            } else if (filter1.getFilterPriority() == filter2.getFilterPriority()) {
-                return 0;
-            }
-            return 1;
-        });
+        this.filters = Arrays.copyOf(filters, filters.length);
+        TextAnalyzer.setFiltersPriority(filters);
+        Arrays.sort(filters, new TextAnalyzer.SortByPriority());
+        /**
+         * или же через обертку
+         * Arrays.sort(filters, (filter1, filter2) -> {
+         *             Integer filter1Priority = filter1.getFilterPriority();
+         *             Integer filter2Priority = filter2.getFilterPriority();
+         *             return filter1Priority.compareTo(filter2Priority);
+         *         });
+         * */
     }
 
     /**
@@ -61,11 +62,11 @@ public class TextFilterManager {
         }
 
         FilterType result;
-        for (TextAnalyzer textAnalyzer : filters){
-          result = textAnalyzer.Analysis(text);
-          if (result != FilterType.GOOD){
-              return result;
-          }
+        for (TextAnalyzer textAnalyzer : filters) {
+            result = textAnalyzer.Analysis(text);
+            if (result != FilterType.GOOD) {
+                return result;
+            }
         }
         return FilterType.GOOD;
     }

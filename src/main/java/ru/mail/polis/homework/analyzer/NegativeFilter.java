@@ -3,14 +3,24 @@ package ru.mail.polis.homework.analyzer;
 import java.util.Arrays;
 
 public class NegativeFilter implements TextAnalyzer {
-    protected static int priority;
+    private static int priority;
     private static FilterType filterType = FilterType.NEGATIVE_TEXT;
     private static final String[] negative = {"=(", ":(", ":|"};
 
 
     @Override
+    public void setFilterPriority(int priority) {
+        this.priority = priority;
+    }
+
+    @Override
     public int getFilterPriority() {
         return priority;
+    }
+
+    @Override
+    public FilterType getFilterType() {
+        return filterType;
     }
 
     @Override

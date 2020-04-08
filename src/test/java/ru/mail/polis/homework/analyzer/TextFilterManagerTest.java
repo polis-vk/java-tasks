@@ -8,6 +8,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TextFilterManagerTest {
+   @Test
+   public void customTest(){
+       TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer(new String[]{".ru", ".com", ".org", ".su"})});
+       assertEquals("GOOD", manager.analyze("").toString());
+       assertEquals("GOOD", manager.analyze("Основой http является технология «клиент-сервер»").toString());
+       assertEquals("CUSTOM", manager.analyze("Чтобы выиграть афйон переходи по ссылке https://lohotron.ru").toString());
+   }
 
     @Test
     public void analyzeEmptyFilters() {
