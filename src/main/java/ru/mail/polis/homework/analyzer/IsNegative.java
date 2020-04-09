@@ -2,7 +2,6 @@ package ru.mail.polis.homework.analyzer;
 
 public class IsNegative implements TextAnalyzer {
 
-    private int priority = 2;
     private static final String[] emotions = new String[]{"=(", ":(", ":|"};
 
     @Override
@@ -16,12 +15,7 @@ public class IsNegative implements TextAnalyzer {
     }
 
     @Override
-    public int getPriority() {
-        return priority;
-    }
-
-    @Override
-    public void setPriority(int newPriority) {
-        this.priority = newPriority;
+    public FilterType getFilterAnswer() {
+        return FilterType.NEGATIVE_TEXT;
     }
 }

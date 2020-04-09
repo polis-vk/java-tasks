@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 
 public class IsInCyrillic implements TextAnalyzer {
 
-    private int priority = 3;
     private static Pattern pattern = Pattern.compile(
             "[" +                   //начало списка допустимых символов
                     "а-€ј-яЄ®" +    //буквы русского алфавита
@@ -34,12 +33,7 @@ public class IsInCyrillic implements TextAnalyzer {
     }
 
     @Override
-    public int getPriority() {
-        return priority;
-    }
-
-    @Override
-    public void setPriority(int newPriority) {
-        this.priority = newPriority;
+    public FilterType getFilterAnswer() {
+        return FilterType.NOT_CYRILLIC;
     }
 }

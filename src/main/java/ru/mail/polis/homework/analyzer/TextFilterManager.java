@@ -44,7 +44,7 @@ public class TextFilterManager {
     public TextFilterManager(TextAnalyzer[] filters) {
         textAnalyzers = filters.clone();
         // использовал Integer.Compare(), в итоге IntelliJ сама упростила до такого ¯\_(ツ)_/¯
-        Arrays.sort(textAnalyzers, Comparator.comparingInt(TextAnalyzer::getPriority));
+        Arrays.sort(textAnalyzers, Comparator.comparingInt(TextAnalyzer::filterPriority));
     }
 
     /**
