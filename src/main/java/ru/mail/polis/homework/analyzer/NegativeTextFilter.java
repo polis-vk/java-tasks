@@ -1,9 +1,13 @@
 package ru.mail.polis.homework.analyzer;
 
-public class NegativeTextFilter implements TextAnalyzer {
+public class NegativeTextFilter extends SpamTextFiler {
 
     private final static FilterType typeFilter = FilterType.NEGATIVE_TEXT;
     private final static String[] negativeWords = {"=(", ":(", ":|"};
+
+    public NegativeTextFilter() {
+        super(negativeWords);
+    }
 
     @Override
     public FilterType getFilterType() {
@@ -12,7 +16,7 @@ public class NegativeTextFilter implements TextAnalyzer {
 
     @Override
     public FilterType analyze(String str) {
-        return FindInText.find(negativeWords, str, typeFilter);
+        return findInText(negativeWords, str, typeFilter);
     }
 
 }
