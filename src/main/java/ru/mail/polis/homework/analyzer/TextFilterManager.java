@@ -16,10 +16,12 @@ public class TextFilterManager {
         if (text == null) {
             return FilterType.GOOD;
         }
+        FilterType tmpFilterType;
         //Для работы с каждым элементом массива, нужно использовать цикл for-each
         for (TextAnalyzer analyzer : allFilters) {
-            if (analyzer.analyze(text) != FilterType.GOOD) {
-                return analyzer.analyze(text);
+            tmpFilterType = analyzer.analyze(text);
+            if (tmpFilterType != FilterType.GOOD) {
+                return tmpFilterType;
             }
         }
         return FilterType.GOOD;
