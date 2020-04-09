@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
+import com.sun.org.apache.xml.internal.dtm.ref.DTMDefaultBaseIterators;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,16 +14,18 @@ import java.util.regex.Pattern;
 
 public class IsInCyrillic implements TextAnalyzer {
 
-    public FilterType analyze(String arg) {
-        Pattern pattern = Pattern.compile(
-                "[" +                   //начало списка допустимых символов
-                        "а-€ј-яЄ®" +    //буквы русского алфавита
-                        "\\d" +         //цифры
-                        "\\s" +         //знаки-разделители (пробел, табул€ци€ и т.д.)
-                        "\\p{Punct}" +  //знаки пунктуации
-                        "]" +           //конец списка допустимых символов
-                        "*");           //допускаетс€ наличие указанных символов в любом количестве
+    private int priority = 3;
+    private static Pattern pattern = Pattern.compile(
+            "[" +                   //начало списка допустимых символов
+                    "а-€ј-яЄ®" +    //буквы русского алфавита
+                    "\\d" +         //цифры
+                    "\\s" +         //знаки-разделители (пробел, табул€ци€ и т.д.)
+                    "\\p{Punct}" +  //знаки пунктуации
+                    "]" +           //конец списка допустимых символов
+                    "*");           //допускаетс€ наличие указанных символов в любом количестве
 
+    @Override
+    public FilterType analyze(String arg) {
         Matcher matcher = pattern.matcher(arg);
         if (matcher.matches()) {
             return FilterType.GOOD;
@@ -29,8 +33,13 @@ public class IsInCyrillic implements TextAnalyzer {
         return FilterType.NOT_CYRILLIC;
     }
 
-    private int priority = 3;
+    @Override
     public int getPriority() {
         return priority;
+    }
+
+    @Override
+    public void setPriority(int newPriority) {
+        this.priority = newPriority;
     }
 }

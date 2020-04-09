@@ -19,6 +19,7 @@ public interface TextAnalyzer {
     FilterType analyze(String arg);
 
     int getPriority();
+    void setPriority(int priority);
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
         return new IsTooLong(maxLength);

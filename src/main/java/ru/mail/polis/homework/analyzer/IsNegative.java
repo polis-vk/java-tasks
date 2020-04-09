@@ -2,7 +2,10 @@ package ru.mail.polis.homework.analyzer;
 
 public class IsNegative implements TextAnalyzer {
 
-    String[] emotions = new String[]{"=(", ":(", ":|"};
+    private int priority = 2;
+    private static final String[] emotions = new String[]{"=(", ":(", ":|"};
+
+    @Override
     public FilterType analyze(String arg) {
         for (String s : emotions) {
             if (arg.contains(s)) {
@@ -12,8 +15,13 @@ public class IsNegative implements TextAnalyzer {
         return FilterType.GOOD;
     }
 
-    private int priority = 2;
+    @Override
     public int getPriority() {
         return priority;
+    }
+
+    @Override
+    public void setPriority(int newPriority) {
+        this.priority = newPriority;
     }
 }

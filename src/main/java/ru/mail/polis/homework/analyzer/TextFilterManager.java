@@ -2,6 +2,7 @@ package ru.mail.polis.homework.analyzer;
 
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * Задание написать систему фильтрации комментариев.
@@ -26,7 +27,7 @@ import java.util.Arrays;
  * }
  * return 1;
  * }
- * где вместо сравнение самих фильтров должно быть стравнение каких-то количественных параметров фильтра
+ * где вместо сравнения самих фильтров должно быть сравнение каких-то количественных параметров фильтра
  * <p>
  * 2 балла ( + 2 балла за доп приоритет)
  * Итого 15 баллов + 2 дополнительных
@@ -38,18 +39,12 @@ public class TextFilterManager {
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
      * что в них реализован интерфейс TextAnalyzer
      */
-    private TextAnalyzer[] tFilters;
+    private TextAnalyzer[] textAnalyzers;
 
     public TextFilterManager(TextAnalyzer[] filters) {
-        tFilters = filters.clone();
-        Arrays.sort(tFilters, (filter1, filter2) -> {
-            if (filter1.getPriority() < filter2.getPriority()) {
-                return -1;
-            } else if (filter1.getPriority() == filter2.getPriority()) {
-                return 0;
-            }
-            return 1;
-        });
+        textAnalyzers = filters.clone();
+        // использовал Integer.Compare(), в итоге IntelliJ сама упростила до такого ¯\_(ツ)_/¯
+        Arrays.sort(textAnalyzers, Comparator.comparingInt(TextAnalyzer::getPriority));
     }
 
     /**
@@ -59,9 +54,10 @@ public class TextFilterManager {
         if (text == null) {
             return FilterType.GOOD;
         }
-        for (TextAnalyzer tn : tFilters) {
-            if (tn.analyze(text) != FilterType.GOOD) {
-                return tn.analyze(text);
+        for (TextAnalyzer tn : textAnalyzers) {
+            FilterType tempAnalysis = tn.analyze(text);
+            if (tempAnalysis != FilterType.GOOD) {
+                return tempAnalysis;
             }
         }
         return FilterType.GOOD;
