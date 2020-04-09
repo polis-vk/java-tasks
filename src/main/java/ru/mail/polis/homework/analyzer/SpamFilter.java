@@ -3,8 +3,8 @@ package ru.mail.polis.homework.analyzer;
 import java.util.Arrays;
 
 public class SpamFilter implements TextAnalyzer {
-    private final String[] SPAM;
     private final static FilterType FILTER_TYPE = FilterType.SPAM;
+    private final String[] SPAM;
 
     public SpamFilter(String[] spam) {
         this.SPAM = Arrays.copyOf(spam, spam.length);
