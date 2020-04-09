@@ -33,8 +33,8 @@ import java.util.HashMap;
  */
 public class TextFilterManager {
 
-    private TextAnalyzer[] filters;
-    private HashMap<FilterType, Integer> mapPriority = new HashMap<>();
+    private final TextAnalyzer[] filters;
+    private HashMap<FilterType, Integer> mapPriority;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -47,9 +47,9 @@ public class TextFilterManager {
         this.mapPriority = setPriority();
 
         Arrays.sort(this.filters, (filter1, filter2) -> {
-            if (mapPriority.get(filter1.getTypePriority()) < mapPriority.get(filter2.getTypePriority())) {
+            if (mapPriority.get(filter1.getFilterType()) < mapPriority.get(filter2.getFilterType())) {
                 return -1;
-            } else if (mapPriority.get(filter1.getTypePriority()).equals(mapPriority.get(filter2.getTypePriority()))) {
+            } else if (mapPriority.get(filter1.getFilterType()).equals(mapPriority.get(filter2.getFilterType()))) {
                 return 0;
             }
             return 1;
@@ -66,7 +66,7 @@ public class TextFilterManager {
         }
         FilterType result;
         for (TextAnalyzer filter : filters) {
-            result = filter.getTypeOfFilter(text);
+            result = filter.analyze(text);
             if (result != FilterType.GOOD) {
                 return result;
             }

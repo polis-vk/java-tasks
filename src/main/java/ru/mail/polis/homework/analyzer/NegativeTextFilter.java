@@ -2,17 +2,17 @@ package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextFilter implements TextAnalyzer {
 
-    private FilterType typePriority = FilterType.NEGATIVE_TEXT;
-    private String[] negativeWords = {"=(", ":(", ":|"};
+    private final static FilterType typeFilter = FilterType.NEGATIVE_TEXT;
+    private final static String[] negativeWords = {"=(", ":(", ":|"};
 
     @Override
-    public FilterType getTypePriority() {
-        return typePriority;
+    public FilterType getFilterType() {
+        return typeFilter;
     }
 
     @Override
-    public FilterType getTypeOfFilter(String str) {
-        return FindInText.find(negativeWords, str, typePriority);
+    public FilterType analyze(String str) {
+        return FindInText.find(negativeWords, str, typeFilter);
     }
 
 }

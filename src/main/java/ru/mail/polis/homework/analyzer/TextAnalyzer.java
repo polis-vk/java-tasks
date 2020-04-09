@@ -32,10 +32,9 @@ public interface TextAnalyzer {
      * придумать свой фильтр
      */
     static TextAnalyzer createCustomAnalyzer() {
-        return new CustomTextFilter();
+        return new ContainsHtmlTagsTextFilter();
     }
 
-    FilterType typePriority = FilterType.GOOD;  //default
-    FilterType getTypePriority();
-    FilterType getTypeOfFilter(String str);
+    FilterType getFilterType();
+    FilterType analyze(String str);
 }
