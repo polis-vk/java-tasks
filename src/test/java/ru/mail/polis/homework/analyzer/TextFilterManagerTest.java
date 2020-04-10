@@ -89,11 +89,11 @@ public class TextFilterManagerTest {
 
     @Test
     public void analyzeOnlyCustomFilter() {
-        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer()});
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createTooMuchSymbolAnalyzer()});
         assertEquals("GOOD", manager.analyze("Привет, я Петя").toString());
         assertEquals("GOOD", manager.analyze("").toString());
         assertEquals("GOOD", manager.analyze(null).toString());
-        assertEquals("GOOD", manager.analyze("cccccc123 ccccccc").toString());
+        assertEquals("TOO_MUCH_SYMBOL", manager.analyze("cccccc123 ccccccc").toString());
         assertEquals("GOOD", manager.analyze("Скажите код из смс пожалуйста :|").toString());
         assertEquals("GOOD", manager.analyze("Ооооооочень длиннннннаааааяяяя стрроооооооккккаааааа").toString());
     }
@@ -117,11 +117,11 @@ public class TextFilterManagerTest {
                 TextAnalyzer.createNegativeTextAnalyzer(),
                 TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
                 TextAnalyzer.createTooLongAnalyzer(20),
-                TextAnalyzer.createCustomAnalyzer()});
+                TextAnalyzer.createTooMuchSymbolAnalyzer()});
         assertEquals("NEGATIVE_TEXT", manager.analyze("Привет, я Петя :(").toString());
         assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :-(").toString());
         assertEquals("SPAM", manager.analyze("смс пожалуйста ;|").toString());
-        assertEquals("CUSTOM", manager.analyze("с %%%%луйс%%%%%!%%").toString());
+        assertEquals("TOO_MUCH_SYMBOL", manager.analyze("с %%%%луйс%%%%%!%%").toString());
     }
 
     @Test
@@ -140,10 +140,10 @@ public class TextFilterManagerTest {
                 TextAnalyzer.createNegativeTextAnalyzer(),
                 TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
                 TextAnalyzer.createTooLongAnalyzer(20),
-                TextAnalyzer.createCustomAnalyzer()});
+                TextAnalyzer.createTooMuchSymbolAnalyzer()});
         if (withPriority) {
             assertEquals("SPAM", manager.analyze("Привет, я Петя вот мой cvv").toString());
-            assertEquals("CUSTOM", manager.analyze("@@@@,я@@@ Петя@@@@").toString());
+            assertEquals("TOO_MUCH_SYMBOL", manager.analyze("@@@@,я@@@ Петя@@@@").toString());
             assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :(").toString());
             assertEquals("SPAM", manager.analyze("смс пожалуйста           :|").toString());
         } else {

@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
-public class CustomFilter implements TextAnalyzer {
-
-
-    public static long priority;
+public class TooMuchSymbolFilter implements TextAnalyzer {
 
 
     //проверка, того что ни один сивол не составляет более 60% текста
@@ -18,7 +15,7 @@ public class CustomFilter implements TextAnalyzer {
                 }
             }
             if ((double) counSameSymbol / str.length() >= 0.6) {
-                return FilterType.CUSTOM;
+                return FilterType.TOO_MUCH_SYMBOL;
             }
         }
         return null;
@@ -26,8 +23,7 @@ public class CustomFilter implements TextAnalyzer {
 
     @Override
     public long getPriority() {
-        return priority;
+        return FilterType.TOO_MUCH_SYMBOL.getPriority();
     }
-
 
 }

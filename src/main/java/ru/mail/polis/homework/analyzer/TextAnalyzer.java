@@ -33,19 +33,12 @@ public interface TextAnalyzer {
     /**
      * придумать свой фильтр
      */
-    static TextAnalyzer createCustomAnalyzer() {
-        return new CustomFilter();
+    static TextAnalyzer createTooMuchSymbolAnalyzer() {
+        return new TooMuchSymbolFilter();
     }
 
-    long getPriority();
-
-    //установить приоритет для фильтров: чем больше число, тем выше приоритет
-    static void setPriority(long spam, long tooLong, long negative, long custom) {
-        SpamFilter.priority = spam;
-        TooLongFilter.priority = tooLong;
-        NegativeFilter.priority = negative;
-        CustomFilter.priority = custom;
-    }
 
     FilterType analyze(String str);
+
+    long getPriority();
 }

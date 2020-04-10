@@ -43,15 +43,11 @@ public class TextFilterManager {
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filtersInput = Arrays.copyOf(filters, filters.length);
 
-        TextAnalyzer.setPriority(4, 3, 2, 1);
 
         Arrays.sort(filtersInput, (filter1, filter2) -> {
-            if (filter1.getPriority() > filter2.getPriority()) {
-                return -1;
-            } else if (filter1.getPriority() == filter2.getPriority()) {
-                return 0;
-            }
-            return 1;
+            Long filter1Priority = filter1.getPriority();
+            Long filter2Priority = filter2.getPriority();
+            return filter2Priority.compareTo(filter1Priority);
         });
     }
 

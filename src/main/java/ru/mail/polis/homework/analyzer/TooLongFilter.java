@@ -2,7 +2,6 @@ package ru.mail.polis.homework.analyzer;
 
 public class TooLongFilter implements TextAnalyzer {
 
-    public static long priority;
     private final long maxLength;
 
 
@@ -10,10 +9,6 @@ public class TooLongFilter implements TextAnalyzer {
         this.maxLength = maxLen;
     }
 
-    @Override
-    public long getPriority() {
-        return priority;
-    }
 
     @Override
     public FilterType analyze(String str) {
@@ -21,6 +16,11 @@ public class TooLongFilter implements TextAnalyzer {
             return FilterType.TOO_LONG;
         }
         return null;
+    }
+
+    @Override
+    public long getPriority() {
+        return FilterType.TOO_LONG.getPriority();
     }
 
 
