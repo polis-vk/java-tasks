@@ -27,12 +27,3 @@ public class SpamTextFiler implements TextAnalyzer {
         return FilterType.GOOD;
     }
 }
-/*
-*     public static FilterType find(String[] templateArray, String str, FilterType neededType) {
-        for (String item : templateArray) {
-            if (str.contains(item)) {
-                return neededType;
-            }
-        }
-        return FilterType.GOOD;
-    }*/
