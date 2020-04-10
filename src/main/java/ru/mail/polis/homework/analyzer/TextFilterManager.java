@@ -28,13 +28,14 @@ public class TextFilterManager {
     }
 
     private int getPriority(TextAnalyzer analyzer) {
-        if (analyzer.getFilterType() == FilterType.SPAM) {
+        FilterType tmpFilter = analyzer.getFilterType();
+        if (tmpFilter == FilterType.SPAM) {
             return 0;
-        } else if (analyzer.getFilterType() == FilterType.TOO_LONG) {
+        } else if (tmpFilter == FilterType.TOO_LONG) {
             return 1;
-        } else if (analyzer.getFilterType() == FilterType.NEGATIVE_TEXT) {
+        } else if (tmpFilter == FilterType.NEGATIVE_TEXT) {
             return 2;
-        } else if (analyzer.getFilterType() == FilterType.CUSTOM) {
+        } else if (tmpFilter == FilterType.CUSTOM) {
             return 3;
         }
         return 4;
