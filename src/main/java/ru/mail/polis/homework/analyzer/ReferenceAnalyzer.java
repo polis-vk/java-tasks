@@ -12,7 +12,7 @@ public class ReferenceAnalyzer implements TextAnalyzer {
         if (text == null || text.isEmpty()) {
             return false;
         }
-        String regex = new String("^https?://([\\w]+(-)?[\\w]+\\.)+[\\w]+(/([\\?\\.\\_\\=\\#]?[\\w])+)*/?$");
+        String regex = "^https?://([\\w]+(-)?[\\w]+\\.)+[\\w]+(/([\\?\\.\\_\\=\\#]?[\\w])+)*/?$";
         String[] words = text.split("(\\s)+");
         for (String word : words) {
             if (word.matches(regex)) {

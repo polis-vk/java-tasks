@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
-public class NegativeTextAnalyzer implements TextAnalyzer {
+public class NegativeTextAnalyzer extends BadWordsAnalyzer {
     
-    private static final String[] negativeSmiles = {"=(", ":(", ":|"};
+    private static final String[] NEGATIVE_SMILES = {"=(", ":(", ":|"};
     
     @Override
     public FilterType getFilterType() {
@@ -10,8 +10,7 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
     }
     
     @Override
-    public boolean isTriggered(String text) {
-        SpamAnalyzer spamAnalyzer = new SpamAnalyzer(negativeSmiles);
-        return spamAnalyzer.isTriggered(text);
+    protected String[] getBadWords() {
+        return NEGATIVE_SMILES;
     }
 }

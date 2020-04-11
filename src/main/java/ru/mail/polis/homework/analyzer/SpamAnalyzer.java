@@ -1,10 +1,10 @@
 package ru.mail.polis.homework.analyzer;
 
-public class SpamAnalyzer implements TextAnalyzer {
+public class SpamAnalyzer extends BadWordsAnalyzer {
     
     private final String[] spamWords;
     
-    SpamAnalyzer(String[] spam) {
+    public SpamAnalyzer(String[] spam) {
         this.spamWords = spam == null ? new String[0] : spam.clone();
     }
     
@@ -14,15 +14,7 @@ public class SpamAnalyzer implements TextAnalyzer {
     }
     
     @Override
-    public boolean isTriggered(String text) {
-        if (text == null || text.isEmpty()) {
-            return false;
-        }
-        for (String spamWord : spamWords) {
-            if (text.contains(spamWord)) {
-                return true;
-            }
-        }
-        return false;
+    protected String[] getBadWords() {
+        return spamWords;
     }
 }
