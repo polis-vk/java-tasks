@@ -1,13 +1,13 @@
 package ru.mail.polis.homework.analyzer;
 
 public class SpamFilter implements TextAnalyzer {
-    private String[] unacceptableElem;
+    private final String[] unacceptableElem;
 
     public SpamFilter(String[] spam) {
         this.unacceptableElem = spam;
     }
 
-    public static boolean searchUnacceptableElem(String text, String[] unacceptableElem) {
+    protected static boolean searchUnacceptableElem(String text, String[] unacceptableElem) {
         for (String elem : unacceptableElem) {
             if (text.contains(elem)) {
                 return true;
@@ -25,7 +25,7 @@ public class SpamFilter implements TextAnalyzer {
     }
 
     @Override
-    public FilterType priority() {
+    public FilterType getType() {
         return FilterType.SPAM;
     }
 }

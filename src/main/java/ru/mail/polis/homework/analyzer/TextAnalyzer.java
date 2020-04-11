@@ -42,5 +42,5 @@ public interface TextAnalyzer {
 
     FilterType analyze(String text);
 
-    FilterType priority();
+    FilterType getType();
 }

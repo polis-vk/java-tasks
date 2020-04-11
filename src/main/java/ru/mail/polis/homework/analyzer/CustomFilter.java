@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 public class CustomFilter implements TextAnalyzer {
-    private String firstWord;
+    private final String firstWord;
 
     public CustomFilter(String beginning) {
         this.firstWord = beginning;
@@ -16,7 +16,7 @@ public class CustomFilter implements TextAnalyzer {
     }
 
     @Override
-    public FilterType priority() {
+    public FilterType getType() {
         return FilterType.CUSTOM;
     }
 }
