@@ -3,11 +3,11 @@ package ru.mail.polis.homework.analyzer;
 import java.util.Arrays;
 
 public class SpamFilter implements TextAnalyzer {
-    private final static FilterType FILTER_TYPE = FilterType.SPAM;
-    private final String[] SPAM;
+    final static FilterType FILTER_TYPE = FilterType.SPAM;
+    private final String[] spam;
 
     public SpamFilter(String[] spam) {
-        this.SPAM = Arrays.copyOf(spam, spam.length);
+        this.spam = Arrays.copyOf(spam, spam.length);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class SpamFilter implements TextAnalyzer {
             return false;
         }
 
-        for (String spamWord : SPAM) {
+        for (String spamWord : spam) {
             if (str.contains(spamWord)) {
                 return true;
             }

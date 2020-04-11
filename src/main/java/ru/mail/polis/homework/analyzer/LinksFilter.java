@@ -4,13 +4,14 @@ public class LinksFilter implements TextAnalyzer {
     /**
      * находит в тексте ссылки
      */
+
     private static final FilterType FILTER_TYPE = FilterType.CUSTOM;
     private static final String[] PROTOCOLS = {"https://", "http://"};
     private static final int MIN_LENGTH_OF_LINK = 5; // после протокола
-    private final String[] DOMAINS;
+    private final String[] domains;
 
     public LinksFilter(String[] domains) {
-        this.DOMAINS = domains.clone();
+        this.domains = domains.clone();
     }
 
     @Override
@@ -53,7 +54,7 @@ public class LinksFilter implements TextAnalyzer {
                 }
 
                 String potentialLinks = str.substring(indexAfterProtocol, endIndexOfPotentialLink);
-                for (String domain : DOMAINS) {
+                for (String domain : domains) {
                     if (potentialLinks.contains(domain)) {
                         return true;
                     }

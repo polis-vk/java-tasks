@@ -43,5 +43,4 @@ public interface TextAnalyzer {
             return a.getFilterPriority() - b.getFilterPriority();
         }
     }
-
 }
