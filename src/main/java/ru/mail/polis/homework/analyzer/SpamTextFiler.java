@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 public class SpamTextFiler implements TextAnalyzer {
-    private final static FilterType typeFilter = FilterType.SPAM;
+    private final static FilterType TYPE_FILTER = FilterType.SPAM;
     private final String[] spamWords;
 
     public SpamTextFiler(String[] spamWords) {
@@ -15,7 +15,7 @@ public class SpamTextFiler implements TextAnalyzer {
 
     @Override
     public FilterType analyze(String str) {
-        return findInText(spamWords, str, typeFilter);
+        return findInText(spamWords, str, TYPE_FILTER);
     }
 
     public FilterType findInText(String[] templateArray, String str, FilterType neededType) {
