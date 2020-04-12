@@ -5,7 +5,7 @@ import ru.mail.polis.homework.analyzer.TextAnalyzer;
 
 //Проверяю начинается ли предложение с большой буквой и оканчивается ли точкой.
 public class CorrectCaseFilter implements TextAnalyzer {
-    public static final FilterType type = FilterType.CUSTOM;
+
 
     @Override
     public FilterType analyze(String text) {
@@ -15,19 +15,19 @@ public class CorrectCaseFilter implements TextAnalyzer {
             if (literal == ' ') {
                 continue;
             } else if (isAfterPoint && !isUppercase(literal)) {
-                return type;
+                return FilterType.CUSTOM;
             } else if (endLiterals.contains(Character.toString(literal))) {
                 isAfterPoint = true;
                 continue;
             }
             isAfterPoint = false;
         }
-        return defaultType;
+        return FilterType.GOOD;
     }
 
     @Override
     public FilterType getType() {
-        return type;
+        return FilterType.CUSTOM;
     }
 
     private boolean isUppercase(char literal) {

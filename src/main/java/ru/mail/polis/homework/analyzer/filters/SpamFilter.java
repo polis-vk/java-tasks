@@ -1,13 +1,11 @@
 package ru.mail.polis.homework.analyzer.filters;
 
 import ru.mail.polis.homework.analyzer.FilterType;
-import ru.mail.polis.homework.analyzer.TextAnalyzer;
 
 import java.util.Arrays;
 
-public class SpamFilter implements TextAnalyzer {
+public class SpamFilter extends ContainsAbstractFilter {
 
-    private static final FilterType type = FilterType.SPAM;
     private final String[] spam;
 
     public SpamFilter(String[] spam) {
@@ -16,16 +14,11 @@ public class SpamFilter implements TextAnalyzer {
 
     @Override
     public FilterType analyze(String text) {
-        for (String spamElement : spam) {
-            if (text.contains(spamElement)) {
-                return type;
-            }
-        }
-        return defaultType;
+        return analyze(spam,text) ==FilterType.GOOD ? FilterType.GOOD : FilterType.SPAM;
     }
 
     @Override
     public FilterType getType() {
-        return type;
+        return FilterType.SPAM;
     }
 }

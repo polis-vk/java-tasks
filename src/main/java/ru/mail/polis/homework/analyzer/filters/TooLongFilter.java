@@ -6,7 +6,7 @@ import ru.mail.polis.homework.analyzer.TextAnalyzer;
 public class TooLongFilter implements TextAnalyzer {
 
     private final long maxLength;
-    public static final FilterType type = FilterType.TOO_LONG;
+
 
     public TooLongFilter(long maxLength) {
         this.maxLength = maxLength;
@@ -15,13 +15,13 @@ public class TooLongFilter implements TextAnalyzer {
     @Override
     public FilterType analyze(String text) {
         if (text.length() > maxLength) {
-            return type;
+            return FilterType.TOO_LONG;
         }
-        return defaultType;
+        return FilterType.GOOD;
     }
 
     @Override
     public FilterType getType() {
-        return type;
+        return FilterType.TOO_LONG;
     }
 }
