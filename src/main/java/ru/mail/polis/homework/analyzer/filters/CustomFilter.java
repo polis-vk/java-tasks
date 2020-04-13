@@ -9,9 +9,9 @@ import ru.mail.polis.homework.analyzer.TextAnalyzer;
 public class CustomFilter implements TextAnalyzer {
     private static final String[] GRAMMAR = {", а", ", но", ", что", ", когда", ", потому что"};
     private static final String[] UNIONS = {" а ", " но ", " что ", " когда ", " потому что "};
-    private SimpleTextFilter grammarFilter;
-    private SimpleTextFilter unionsFilter;
-    private boolean isGrammar;
+    private final SimpleTextFilter grammarFilter;
+    private final SimpleTextFilter unionsFilter;
+    private final boolean isGrammar;
 
     public CustomFilter(boolean isGrammar) {
         this.isGrammar = isGrammar;
@@ -20,7 +20,7 @@ public class CustomFilter implements TextAnalyzer {
     }
 
     @Override
-    public boolean getResult(String text) {
+    public boolean analysis(String text) {
         if (isGrammar && unionsFilter.analysisText(text)) {
             return !grammarFilter.analysisText(text);
         }
@@ -29,7 +29,7 @@ public class CustomFilter implements TextAnalyzer {
     }
 
     @Override
-    public FilterType getReturnedValue() {
+    public FilterType getFilterType() {
         return FilterType.CUSTOM;
     }
 }

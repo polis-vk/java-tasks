@@ -40,7 +40,7 @@ public interface TextAnalyzer {
         return new CustomFilter(something);
     }
 
-    boolean getResult(String text);
+    boolean analysis(String text);
 
-    FilterType getReturnedValue();
+    FilterType getFilterType();
 }

@@ -33,7 +33,7 @@ import java.util.Arrays;
  */
 public class TextFilterManager {
 
-    private TextAnalyzer[] filters;
+    private final TextAnalyzer[] filters;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -44,8 +44,8 @@ public class TextFilterManager {
         this.filters = filters.clone();
 
         Arrays.sort(this.filters, (filter1, filter2) -> {
-            Integer priority1 = filter1.getReturnedValue().getPriority();
-            Integer priority2 = filter2.getReturnedValue().getPriority();
+            Integer priority1 = filter1.getFilterType().getPriority();
+            Integer priority2 = filter2.getFilterType().getPriority();
             return priority1.compareTo(priority2);
         });
     }
@@ -60,9 +60,9 @@ public class TextFilterManager {
 
         boolean result;
         for (TextAnalyzer filter : filters) {
-            result = filter.getResult(text);
+            result = filter.analysis(text);
             if (result) {
-                return filter.getReturnedValue();
+                return filter.getFilterType();
             }
         }
 

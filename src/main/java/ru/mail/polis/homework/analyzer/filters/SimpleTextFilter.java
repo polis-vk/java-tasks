@@ -3,7 +3,7 @@ package ru.mail.polis.homework.analyzer.filters;
 import ru.mail.polis.homework.objects.StringTasks;
 
 public class SimpleTextFilter {
-    private String[] templates;
+    private final String[] templates;
 
     public SimpleTextFilter(String[] templates) {
         this.templates = templates;
