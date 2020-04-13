@@ -1,17 +1,12 @@
 package ru.mail.polis.homework.analyzer;
 
-public class IsNegative implements TextAnalyzer {
+public class IsNegative extends StringAnalyzer implements TextAnalyzer {
 
-    private static final String[] emotions = new String[]{"=(", ":(", ":|"};
+    private static final String[] EMOTIONS = new String[]{"=(", ":(", ":|"};
 
     @Override
     public FilterType analyze(String arg) {
-        for (String s : emotions) {
-            if (arg.contains(s)) {
-                return FilterType.NEGATIVE_TEXT;
-            }
-        }
-        return FilterType.GOOD;
+        return stringAnalyzer(arg, EMOTIONS, FilterType.NEGATIVE_TEXT);
     }
 
     @Override

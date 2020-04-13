@@ -1,20 +1,15 @@
 package ru.mail.polis.homework.analyzer;
 
-public class IsSpam implements TextAnalyzer {
+public class IsSpam extends StringAnalyzer implements TextAnalyzer {
 
-    private String[] textSpam;
+    private final String[] SPAM_TEXT;
     public IsSpam(String[] spam) {
-        textSpam = spam;
+        SPAM_TEXT = spam;
     }
 
     @Override
     public FilterType analyze(String arg) {
-        for (String s : textSpam) {
-            if (arg.contains(s)) {
-                return FilterType.SPAM;
-            }
-        }
-        return FilterType.GOOD;
+        return stringAnalyzer(arg, SPAM_TEXT, FilterType.SPAM);
     }
 
     @Override

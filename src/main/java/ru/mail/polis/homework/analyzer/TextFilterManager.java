@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.analyzer;
 
-
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -39,12 +38,12 @@ public class TextFilterManager {
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
      * что в них реализован интерфейс TextAnalyzer
      */
-    private TextAnalyzer[] textAnalyzers;
+    private final TextAnalyzer[] TEXT_ANALYZERS;
 
     public TextFilterManager(TextAnalyzer[] filters) {
-        textAnalyzers = filters.clone();
+        TEXT_ANALYZERS = filters.clone();
         // использовал Integer.Compare(), в итоге IntelliJ сама упростила до такого ¯\_(ツ)_/¯
-        Arrays.sort(textAnalyzers, Comparator.comparingInt(TextAnalyzer::filterPriority));
+        Arrays.sort(TEXT_ANALYZERS, Comparator.comparingInt(FilterPriority::getFilterPriority));
     }
 
     /**
@@ -54,7 +53,7 @@ public class TextFilterManager {
         if (text == null) {
             return FilterType.GOOD;
         }
-        for (TextAnalyzer tn : textAnalyzers) {
+        for (TextAnalyzer tn : TEXT_ANALYZERS) {
             FilterType tempAnalysis = tn.analyze(text);
             if (tempAnalysis != FilterType.GOOD) {
                 return tempAnalysis;
