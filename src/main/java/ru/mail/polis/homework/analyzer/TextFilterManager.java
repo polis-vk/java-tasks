@@ -43,9 +43,9 @@ public class TextFilterManager {
         this.filters = Arrays.copyOf(filters, filters.length);
 
         Arrays.sort(this.filters, (filter1, filter2) -> {
-            if (filter1.getValue().ordinal() < filter2.getValue().ordinal()) {
+            if (filter1.getType().getValue() < filter2.getType().getValue()) {
                 return -1;
-            } else if (filter1.getValue() == filter2.getValue()) {
+            } else if (filter1.getType() == filter2.getType()) {
                 return 0;
             }
             return 1;

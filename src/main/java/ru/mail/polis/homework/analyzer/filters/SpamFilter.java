@@ -5,10 +5,7 @@ import ru.mail.polis.homework.analyzer.TextAnalyzer;
 
 import java.util.Arrays;
 
-public class SpamFilter implements TextAnalyzer {
-
-    private static final FilterType VALUE = FilterType.SPAM;
-
+public class SpamFilter extends Search implements TextAnalyzer {
     private final String[] spamWords;
 
     public SpamFilter(String[] spam) {
@@ -17,16 +14,11 @@ public class SpamFilter implements TextAnalyzer {
 
     @Override
     public FilterType analyze(String str) {
-        for (String word : spamWords) {
-            if (str.contains(word)) {
-                return FilterType.SPAM;
-            }
-        }
-        return null;
+        return check(str, spamWords, FilterType.SPAM);
     }
 
     @Override
-    public FilterType getValue() {
-        return VALUE;
+    public FilterType getType() {
+        return FilterType.SPAM;
     }
 }

@@ -39,5 +39,5 @@ public interface TextAnalyzer {
 
     FilterType analyze(String str);
 
-    FilterType getValue();
+    FilterType getType();
 }

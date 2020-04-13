@@ -3,21 +3,14 @@ package ru.mail.polis.homework.analyzer.filters;
 import ru.mail.polis.homework.analyzer.FilterType;
 import ru.mail.polis.homework.analyzer.TextAnalyzer;
 
-public class CustomFilter implements TextAnalyzer {
-
-    private static final FilterType VALUE = FilterType.CUSTOM;
-
+public class CustomFilter extends Search implements TextAnalyzer {
     @Override
     public FilterType analyze(String str) {
-        String arg = "Putin";
-        if (str.equals(arg)) {
-            return FilterType.CUSTOM;
-        }
-        return null;
+        return check(str, new String[]{"Putin"}, FilterType.CUSTOM);
     }
 
     @Override
-    public FilterType getValue() {
-        return VALUE;
+    public FilterType getType() {
+        return FilterType.CUSTOM;
     }
 }
