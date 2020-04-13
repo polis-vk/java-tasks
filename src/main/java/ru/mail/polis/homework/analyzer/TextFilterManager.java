@@ -40,7 +40,7 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = filters;
+        this.filters = Arrays.copyOf(filters, filters.length);
 
         Arrays.sort(this.filters, (filter1, filter2) -> {
             if (filter1.getFilterType().getValue() < filter2.getFilterType().getValue()) {

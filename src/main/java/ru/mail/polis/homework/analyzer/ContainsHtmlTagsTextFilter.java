@@ -1,27 +1,26 @@
 package ru.mail.polis.homework.analyzer;
 
+import java.util.Arrays;
+
 public class ContainsHtmlTagsTextFilter extends SpamTextFiler {
     private final static FilterType TYPE_FILTER = FilterType.CUSTOM;
     private final static String[] openedHtmlTags = {"<br>", "<i>", "<p>", "<html>", "<body>", "<head>", "href", "img", "title",
         "style", "<h1>", "<h2>", "<h3>", "<h4>", "<h5>", "<h6>", "<b>", "<td>", "<tr>"};
+
+    private final static String[] tags = Arrays.copyOf(openedHtmlTags, openedHtmlTags.length * 2);
     private final static String[] closedHtmlTags = getClosedTags();
 
+    static {
+        System.arraycopy(closedHtmlTags, 0, tags, openedHtmlTags.length, closedHtmlTags.length);
+    }
+
     public ContainsHtmlTagsTextFilter() {
-        super(openedHtmlTags);
+        super(tags);
     }
 
     @Override
     public FilterType getFilterType() {
-        return FilterType.CUSTOM;
-    }
-
-    @Override
-    public FilterType analyze(String str) {
-        if ((findInText( str, TYPE_FILTER) == TYPE_FILTER) ||
-            (findInText( str, TYPE_FILTER) == TYPE_FILTER)) {
-            return TYPE_FILTER;
-        }
-        return FilterType.GOOD;
+        return TYPE_FILTER;
     }
 
     private static String[] getClosedTags() {

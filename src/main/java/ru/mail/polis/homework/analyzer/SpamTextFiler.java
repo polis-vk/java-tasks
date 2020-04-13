@@ -4,21 +4,18 @@ public class SpamTextFiler implements TextAnalyzer {
     private final static FilterType TYPE_FILTER = FilterType.SPAM;
     private final String[] spamWords;
 
-    public SpamTextFiler(String[] spamWords) {
+    public SpamTextFiler(final String[] spamWords) {
         this.spamWords = spamWords;
     }
 
     @Override
     public FilterType getFilterType() {
-        return FilterType.SPAM;
+        return TYPE_FILTER;
     }
 
     @Override
     public FilterType analyze(String str) {
-        return findInText(str, TYPE_FILTER);
-    }
-
-    public FilterType findInText( String str, FilterType neededType) {
+        final FilterType neededType = getFilterType();
         for (String item : spamWords) {
             if (str.contains(item)) {
                 return neededType;

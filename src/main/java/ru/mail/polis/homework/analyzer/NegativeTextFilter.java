@@ -13,11 +13,4 @@ public class NegativeTextFilter extends SpamTextFiler {
     public FilterType getFilterType() {
         return TYPE_FILTER;
     }
-
-
-    @Override
-    public FilterType analyze(String str) {
-        return findInText(str, TYPE_FILTER);
-    }
-
 }
