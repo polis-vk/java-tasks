@@ -2,7 +2,7 @@ package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextFilter extends SpamTextFiler {
 
-    private final static FilterType typeFilter = FilterType.NEGATIVE_TEXT;
+    private final static FilterType TYPE_FILTER = FilterType.NEGATIVE_TEXT;
     private final static String[] negativeWords = {"=(", ":(", ":|"};
 
     public NegativeTextFilter() {
@@ -11,12 +11,13 @@ public class NegativeTextFilter extends SpamTextFiler {
 
     @Override
     public FilterType getFilterType() {
-        return typeFilter;
+        return TYPE_FILTER;
     }
+
 
     @Override
     public FilterType analyze(String str) {
-        return findInText(negativeWords, str, typeFilter);
+        return findInText(str, TYPE_FILTER);
     }
 
 }

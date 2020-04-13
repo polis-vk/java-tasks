@@ -17,8 +17,8 @@ public class ContainsHtmlTagsTextFilter extends SpamTextFiler {
 
     @Override
     public FilterType analyze(String str) {
-        if ((findInText(openedHtmlTags, str, TYPE_FILTER) == TYPE_FILTER) ||
-            (findInText(closedHtmlTags, str, TYPE_FILTER) == TYPE_FILTER)) {
+        if ((findInText( str, TYPE_FILTER) == TYPE_FILTER) ||
+            (findInText( str, TYPE_FILTER) == TYPE_FILTER)) {
             return TYPE_FILTER;
         }
         return FilterType.GOOD;
