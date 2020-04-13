@@ -2,13 +2,12 @@ package ru.mail.polis.homework.analyzer.filters;
 
 import ru.mail.polis.homework.analyzer.FilterType;
 
-public class NegativeTextFilter extends ContainsAbstractFilter {
+public class NegativeTextFilter extends SpamFilter {
 
     private final static String[] NEGATIVE_LITERALS = new String[]{"=(", ":(", ":|"};
 
-    @Override
-    public FilterType analyze(String text) {
-        return analyze(NEGATIVE_LITERALS, text) == FilterType.GOOD ? FilterType.GOOD : FilterType.NEGATIVE_TEXT;
+    public NegativeTextFilter() {
+        super(NEGATIVE_LITERALS);
     }
 
     @Override

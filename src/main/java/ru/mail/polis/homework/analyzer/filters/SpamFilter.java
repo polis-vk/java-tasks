@@ -1,10 +1,11 @@
 package ru.mail.polis.homework.analyzer.filters;
 
 import ru.mail.polis.homework.analyzer.FilterType;
+import ru.mail.polis.homework.analyzer.TextAnalyzer;
 
 import java.util.Arrays;
 
-public class SpamFilter extends ContainsAbstractFilter {
+public class SpamFilter implements TextAnalyzer {
 
     private final String[] spam;
 
@@ -14,7 +15,12 @@ public class SpamFilter extends ContainsAbstractFilter {
 
     @Override
     public FilterType analyze(String text) {
-        return analyze(spam,text) ==FilterType.GOOD ? FilterType.GOOD : FilterType.SPAM;
+        for (String spamElement : spam) {
+            if (text.contains(spamElement)) {
+                return getType();
+            }
+        }
+        return FilterType.GOOD;
     }
 
     @Override
