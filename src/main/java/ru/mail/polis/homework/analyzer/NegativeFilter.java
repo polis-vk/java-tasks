@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeFilter extends SpamFilter {
-    static final FilterType FILTER_TYPE = FilterType.NEGATIVE_TEXT;
+    private static final FilterType FILTER_TYPE = FilterType.NEGATIVE_TEXT;
     private static final String[] NEGATIVE = {"=(", ":(", ":|"};
 
     public NegativeFilter() {

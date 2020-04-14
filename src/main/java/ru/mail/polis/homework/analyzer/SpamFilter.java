@@ -3,7 +3,7 @@ package ru.mail.polis.homework.analyzer;
 import java.util.Arrays;
 
 public class SpamFilter implements TextAnalyzer {
-    final static FilterType FILTER_TYPE = FilterType.SPAM;
+    private final static FilterType FILTER_TYPE = FilterType.SPAM;
     private final String[] spam;
 
     public SpamFilter(String[] spam) {
