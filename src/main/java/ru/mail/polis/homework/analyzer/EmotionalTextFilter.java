@@ -1,17 +1,11 @@
 package ru.mail.polis.homework.analyzer;
 //Проверяет эмоционально ли произносят предложение
-public class EmotionalTextFilter implements TextAnalyzer {
+public class EmotionalTextFilter extends Analyzing implements TextAnalyzer {
 
-    private static final FilterType type = FilterType.EMOTIONAL;
-    private static final String[] sign = {"!", "?", "..."};
+    private static final String[] SIGN = {"!", "?", "..."};
 
     @Override
     public FilterType analyze(String text) {
-        for (String emoteSign : sign) {
-            if (text.contains(emoteSign)) {
-                return type;
-            }
-        }
-        return good;
+        return analyzing(text, SIGN, FilterType.EMOTIONAL);
     }
 }

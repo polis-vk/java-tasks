@@ -16,7 +16,7 @@ package ru.mail.polis.homework.analyzer;
  */
 public interface TextAnalyzer {
 
-    static final FilterType good = FilterType.GOOD;
+     FilterType good = FilterType.GOOD;
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
         return new TooLongTextFilter(maxLength);

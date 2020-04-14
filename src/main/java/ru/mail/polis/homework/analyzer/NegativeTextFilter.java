@@ -1,18 +1,12 @@
 package ru.mail.polis.homework.analyzer;
 
-public class NegativeTextFilter implements TextAnalyzer {
+public class NegativeTextFilter extends Analyzing implements TextAnalyzer {
 
-    private static final FilterType type = FilterType.NEGATIVE_TEXT;
-    private static final String[] negativeSmiles = {"=(", ":(", ":|"};
+    private static final String[] NEGATIVE_SMILES = {"=(", ":(", ":|"};
 
 
     @Override
     public FilterType analyze(String text) {
-        for (String negativeText : negativeSmiles) {
-            if (text.contains(negativeText)) {
-                return type;
-            }
-        }
-        return good;
+        return analyzing(text, NEGATIVE_SMILES, FilterType.NEGATIVE_TEXT);
     }
 }
