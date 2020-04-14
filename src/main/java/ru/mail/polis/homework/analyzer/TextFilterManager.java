@@ -31,6 +31,7 @@ import java.util.Arrays;
  * Итого 15 баллов + 2 дополнительных
  */
 public class TextFilterManager {
+
     private final TextAnalyzer[] filters;
 
     /**
@@ -66,6 +67,4 @@ public class TextFilterManager {
         }
         return FilterType.GOOD;
     }
-
-
 }

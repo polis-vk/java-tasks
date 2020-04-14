@@ -4,8 +4,6 @@ public class LinksFilter implements TextAnalyzer {
     /**
      * находит в тексте ссылки
      */
-
-    private static final FilterType FILTER_TYPE = FilterType.CUSTOM;
     private static final String[] PROTOCOLS = {"https://", "http://"};
     private static final int MIN_LENGTH_OF_LINK = 5; // после протокола
     private final String[] domains;
@@ -16,7 +14,7 @@ public class LinksFilter implements TextAnalyzer {
 
     @Override
     public int getFilterPriority() {
-        return FILTER_TYPE.getPriority();
+        return FilterType.CUSTOM.getPriority();
     }
 
     @Override
@@ -26,7 +24,7 @@ public class LinksFilter implements TextAnalyzer {
         }
 
         if (searchForLinks(str)) {
-            return FILTER_TYPE;
+            return FilterType.CUSTOM;
         }
         return FilterType.GOOD;
     }
@@ -63,6 +61,4 @@ public class LinksFilter implements TextAnalyzer {
         }
         return false;
     }
-
-
 }

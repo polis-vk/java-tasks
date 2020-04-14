@@ -3,7 +3,7 @@ package ru.mail.polis.homework.analyzer;
 import java.util.Arrays;
 
 public class SpamFilter implements TextAnalyzer {
-    private final static FilterType FILTER_TYPE = FilterType.SPAM;
+
     private final String[] spam;
 
     public SpamFilter(String[] spam) {
@@ -12,13 +12,13 @@ public class SpamFilter implements TextAnalyzer {
 
     @Override
     public int getFilterPriority() {
-        return FILTER_TYPE.getPriority();
+        return FilterType.SPAM.getPriority();
     }
 
     @Override
     public FilterType analysis(String str) {
         if (wordSearch(str)) {
-            return FILTER_TYPE;
+            return FilterType.SPAM;
         }
         return FilterType.GOOD;
     }
@@ -35,6 +35,4 @@ public class SpamFilter implements TextAnalyzer {
         }
         return false;
     }
-
-
 }

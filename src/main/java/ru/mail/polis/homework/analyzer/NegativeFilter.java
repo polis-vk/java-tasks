@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeFilter extends SpamFilter {
-    private static final FilterType FILTER_TYPE = FilterType.NEGATIVE_TEXT;
+
     private static final String[] NEGATIVE = {"=(", ":(", ":|"};
 
     public NegativeFilter() {
@@ -10,13 +10,13 @@ public class NegativeFilter extends SpamFilter {
 
     @Override
     public int getFilterPriority() {
-        return FILTER_TYPE.getPriority();
+        return FilterType.NEGATIVE_TEXT.getPriority();
     }
 
     @Override
     public FilterType analysis(String str) {
         if (wordSearch(str)) {
-            return FILTER_TYPE;
+            return FilterType.NEGATIVE_TEXT;
         }
         return FilterType.GOOD;
     }

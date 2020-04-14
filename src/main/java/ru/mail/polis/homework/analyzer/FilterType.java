@@ -19,5 +19,4 @@ public enum FilterType {
     public int getPriority() {
         return priority;
     }
-
 }
