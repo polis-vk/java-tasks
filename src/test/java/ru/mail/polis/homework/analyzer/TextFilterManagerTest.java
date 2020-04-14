@@ -140,4 +140,16 @@ public class TextFilterManagerTest {
                     manager.analyze("смс пожалуйста           =(").toString()));
         }
     }
+
+    @Test
+    public void analyzeOnlyCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
+                TextAnalyzer.createNegativeTextAnalyzer(),
+                TextAnalyzer.createCustomAnalyzer()});
+        assertEquals("CUSTOM", manager.analyze("привет, я Петя :").toString());
+        assertEquals("GOOD", manager.analyze("Привет, я Петя").toString());
+        assertEquals("GOOD", manager.analyze("Скажите Код Из Смс :-(").toString());
+        assertEquals("CUSTOM", manager.analyze("смс пожалуйста ;|").toString());
+
+    }
 }

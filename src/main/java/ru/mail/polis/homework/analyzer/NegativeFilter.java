@@ -1,10 +1,10 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeFilter implements TextAnalyzer {
-    private final String[] EMOTIONS = {"=(", ":(", ":|"};
+    final String[] EMOTIONS = {"=(", ":(", ":|"};
 
     @Override
-    public boolean getResult(String text) {
+    public boolean filterIsPassed(String text) {
         for (String negativeEmotion : EMOTIONS) {
             if (text.contains(negativeEmotion)) {
                 return true;

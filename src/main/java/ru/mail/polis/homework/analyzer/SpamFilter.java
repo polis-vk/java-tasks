@@ -1,14 +1,14 @@
 package ru.mail.polis.homework.analyzer;
 
 public class SpamFilter implements TextAnalyzer {
-    private String[] spam;
+    String[] spam;
 
     public SpamFilter(String[] spam) {
         this.spam = spam;
     }
 
     @Override
-    public boolean getResult(String text) {
+    public boolean filterIsPassed(String text) {
         for (String negativeEmotion : spam) {
             if (text.contains(negativeEmotion)) {
                 return true;

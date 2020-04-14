@@ -1,10 +1,11 @@
 package ru.mail.polis.homework.analyzer;
 
-public class ÑustomFilter implements TextAnalyzer {
+public class CustomFilter implements TextAnalyzer {
 
     @Override
-    public boolean getResult(String text) {
-        if (text.toLowerCase().equals(text)) {
+    public boolean filterIsPassed(String text) {
+        String str = text.substring(0, 1);
+        if (str.toLowerCase().equals(str)) {
             return true;
         }
         return false;
