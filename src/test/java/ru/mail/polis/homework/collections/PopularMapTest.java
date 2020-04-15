@@ -1,27 +1,27 @@
 package ru.mail.polis.homework.collections;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PopularMapTest {
 
+    @Mock
+    Map<TestObject, TestObject> putAllMap;
     private PopularMap<TestObject, TestObject> popularMap1;
     private PopularMap<TestObject, TestObject> popularMap2;
-
     @Mock
     private Map<TestObject, TestObject> map;
 
@@ -30,7 +30,6 @@ public class PopularMapTest {
         popularMap1 = new PopularMap<>();
         popularMap2 = spy(new PopularMap<>(map));
     }
-
 
     @Test
     public void popularKey_OnlyPutOne() {
@@ -84,8 +83,6 @@ public class PopularMapTest {
         assertEquals(0, popularMap1.getKeyPopularity(key5));
     }
 
-
-
     @Test
     public void popularValue_OnlyPutOne() {
 
@@ -96,7 +93,6 @@ public class PopularMapTest {
         assertTrue(popular.getStr().startsWith("value"));
         assertEquals(1, popularMap1.getValuePopularity(new TestObject("value2")));
     }
-
 
     @Test
     public void popularValue_operationCount() {
@@ -115,7 +111,6 @@ public class PopularMapTest {
         assertEquals(value, popularMap1.getPopularValue());
         assertEquals(7, popularMap1.getValuePopularity(value));
     }
-
 
     @Test
     public void popularKey_manyValues() {
@@ -210,9 +205,6 @@ public class PopularMapTest {
         popularMap2.remove(new TestObject("key"));
         verify(map, times(1)).remove(new TestObject("key"));
     }
-
-    @Mock
-    Map<TestObject, TestObject> putAllMap;
 
     @Test
     public void putAll() {
