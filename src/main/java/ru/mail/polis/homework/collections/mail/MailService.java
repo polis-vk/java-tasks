@@ -4,7 +4,6 @@ package ru.mail.polis.homework.collections.mail;
 import ru.mail.polis.homework.collections.PopularMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -17,8 +16,8 @@ import java.util.function.Consumer;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  */
 public class MailService<T extends SimpleMessage> implements Consumer<T> {
-     private final PopularMap<String, List<SimpleMessage>> recipients = new PopularMap<>();
-    private final PopularMap<String, List<SimpleMessage>> senders = new PopularMap<>();
+     private final PopularMap<String, List<T>> recipients = new PopularMap<>();
+    private final PopularMap<String, List<T>> senders = new PopularMap<>();
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
@@ -26,14 +25,14 @@ public class MailService<T extends SimpleMessage> implements Consumer<T> {
      */
     @Override
     public void accept(T t) {
-        updateRecipients(t, recipients, t.getRecipient());
-        updateRecipients(t, senders, t.getSender());
+        updateUser(t, recipients, t.getRecipient());
+        updateUser(t, senders, t.getSender());
     }
 
     /**
      * Метод должен заставить обработать service все mails.
      */
-    public static void process(MailService service, List<SimpleMessage> mails) {
+    public static void process(MailService service, List<? extends SimpleMessage> mails) {
         for (SimpleMessage mail : mails) {
             service.accept(mail);
         }
@@ -42,7 +41,7 @@ public class MailService<T extends SimpleMessage> implements Consumer<T> {
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      */
-    public Map<String, List<SimpleMessage>> getMailBox() {
+    public Map<String, List<T>> getMailBox() {
         return recipients;
     }
 
@@ -60,13 +59,8 @@ public class MailService<T extends SimpleMessage> implements Consumer<T> {
         return recipients.getPopularKey();
     }
 
-    private void updateRecipients(T t, PopularMap<String, List<SimpleMessage>> updateProperty, String client) {
-        List<SimpleMessage> messages;
-        if (updateProperty.containsKey(client)) {
-            messages = updateProperty.get(client);
-        } else {
-            messages = new ArrayList<>();
-        }
+    private void updateUser(T t, PopularMap<String, List<T>> updateProperty, String client) {
+        List<T> messages = updateProperty.getOrDefault(client, new ArrayList<>());
         messages.add(t);
         updateProperty.put(client, messages);
     }
