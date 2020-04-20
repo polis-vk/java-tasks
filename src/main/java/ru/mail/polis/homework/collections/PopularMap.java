@@ -36,8 +36,8 @@ import java.util.Set;
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
-    private final Map<K, Integer> popularityKeyMap;
-    private final Map<V, Integer> popularityValueMap;
+    private final Map<Object, Integer> popularityKeyMap;
+    private final Map<Object, Integer> popularityValueMap;
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -51,14 +51,8 @@ public class PopularMap<K, V> implements Map<K, V> {
         this.popularityValueMap = new HashMap<>();
     }
 
-    private void updateKeyPopularity(Object key) {
-        int priority = popularityKeyMap.get((K) key) == null ? 1 : popularityKeyMap.get((K) key) + 1;
-        popularityKeyMap.put((K) key, priority);
-    }
-
-    private void updateValuePopularity(Object value) {
-        int priority = popularityValueMap.get((V) value) == null ? 1 : popularityValueMap.get((V) value) + 1;
-        popularityValueMap.put((V) value, priority);
+    private void updatePopularity(Object object, Map<Object,Integer> popularityMap) {
+        popularityMap.put(object, popularityMap.getOrDefault(object,0) + 1);
     }
 
     @Override
@@ -73,45 +67,46 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        updateKeyPopularity(key);
+        updatePopularity(key, popularityKeyMap);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        updateValuePopularity(value);
+        updatePopularity(value, popularityValueMap);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        updateKeyPopularity(key);
+        updatePopularity(key, popularityKeyMap);
         V value = map.get(key);
         if (value != null) {
-            updateValuePopularity(value);
+            updatePopularity(value, popularityValueMap);
         }
         return value;
     }
 
     @Override
     public V put(K key, V value) {
-        updateKeyPopularity(key);
-        V oldValue = map.get(key);
+        updatePopularity(key, popularityKeyMap);
+        V oldValue = map.put(key, value);
 
         if (oldValue != null) {
-            updateValuePopularity(oldValue);
+            updatePopularity(oldValue, popularityValueMap);
         }
-        updateValuePopularity(value);
-        return map.put(key, value);
+        updatePopularity(value, popularityValueMap);
+        return oldValue;
     }
 
     @Override
     public V remove(Object key) {
-        updateKeyPopularity(key);
-        if (map.get(key) != null) {
-            updateValuePopularity(map.get(key));
+        updatePopularity(key, popularityKeyMap);
+        V value = map.remove(key);
+        if (value != null) {
+            updatePopularity(value, popularityValueMap);
         }
-        return map.remove(key);
+        return value;
     }
 
     @Override
@@ -145,39 +140,33 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        int maxPopularity = -1;
-        K popularKey = null;
+        return (K)getPopular(popularityKeyMap);
+    }
 
-        for (Map.Entry<K, Integer> entry : popularityKeyMap.entrySet()) {
+    private Object getPopular(Map<Object, Integer> popularityMap) {
+        int maxPopularity = -1;
+        Object object = null;
+        for (Map.Entry<Object, Integer> entry : popularityMap.entrySet()) {
             if (entry.getValue() > maxPopularity) {
                 maxPopularity = entry.getValue();
-                popularKey = entry.getKey();
+                object = entry.getKey();
             }
         }
-        return popularKey;
+        return object;
     }
 
     /**
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        return popularityKeyMap.get(key) == null ? 0 : popularityKeyMap.get(key);
+        return popularityKeyMap.getOrDefault(key, 0);
     }
 
     /**
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        int maxPopularity = -1;
-        V popularValue = null;
-
-        for (Map.Entry<V, Integer> entry : popularityValueMap.entrySet()) {
-            if (entry.getValue() > maxPopularity) {
-                maxPopularity = entry.getValue();
-                popularValue = entry.getKey();
-            }
-        }
-        return popularValue;
+        return (V)getPopular(popularityValueMap);
     }
 
     /**
@@ -185,7 +174,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        return popularityValueMap.get(value) == null ? 0 : popularityValueMap.get(value);
+        return popularityValueMap.getOrDefault(value, 0);
     }
 
     /**
@@ -193,8 +182,8 @@ public class PopularMap<K, V> implements Map<K, V> {
      */
     public Iterator<V> popularIterator() {
         List<V> valuesArray = new ArrayList<>();
-        for (Map.Entry<V, Integer> entry : popularityValueMap.entrySet()) {
-            valuesArray.add(entry.getKey());
+        for (Map.Entry<Object, Integer> entry : popularityValueMap.entrySet()) {
+            valuesArray.add((V)entry.getKey());
         }
         valuesArray.sort(Comparator.comparing(popularityValueMap::get));
         return valuesArray.iterator();

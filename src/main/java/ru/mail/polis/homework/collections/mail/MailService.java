@@ -17,8 +17,8 @@ import java.util.function.Consumer;
  */
 public class MailService<T extends Mail> implements Consumer<T> {
 
-    private final PopularMap<String, List<Mail>> recipients;
-    private final PopularMap<String, List<Mail>> senders;
+    private final PopularMap<String, List<T>> recipients;
+    private final PopularMap<String, List<T>> senders;
 
     public MailService() {
         this.recipients = new PopularMap<>();
@@ -35,11 +35,8 @@ public class MailService<T extends Mail> implements Consumer<T> {
         acceptHuman(mail, senders, mail.getSender());
     }
 
-    private void acceptHuman(T mail, PopularMap<String, List<Mail>> map, String human) {
-        List<Mail> mails = map.get(human);
-        if (mails == null) {
-            mails = new ArrayList<>();
-        }
+    private void acceptHuman(T mail, PopularMap<String, List<T>> map, String human) {
+        List<T> mails = map.getOrDefault(human, new ArrayList<>());
         mails.add(mail);
         map.put(human, mails);
     }
@@ -47,7 +44,7 @@ public class MailService<T extends Mail> implements Consumer<T> {
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      */
-    public Map<String, List<Mail>> getMailBox() {
+    public Map<String, List<T>> getMailBox() {
         return recipients;
     }
 
