@@ -141,5 +141,14 @@ public class TextFilterManagerTest {
         }
     }
 
-
+    @Test
+    public void analyzeOnlyCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[] {TextAnalyzer.createCustomAnalyzer()});
+        assertEquals("VALID_EMAIL", manager.analyze("ivanov.ivan@edu.spbstu.ru").toString());
+        assertEquals("GOOD", manager.analyze("ivanov.ivan@edu.spbstu.com").toString());
+        assertEquals("GOOD", manager.analyze("ivan.Sr@mail.ru").toString());
+        assertEquals("GOOD", manager.analyze("iva.nov.ivan@edu.spbstu.ru").toString());
+        assertEquals("GOOD", manager.analyze("ivanov.ivan@@@.spbstu.ru").toString());
+        assertEquals("GOOD", manager.analyze("Ivanov.ivan@edu.spbstu.ru").toString());
+    }
 }
