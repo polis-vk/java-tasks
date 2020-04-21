@@ -3,10 +3,7 @@ package ru.mail.polis.homework.collections.mail;
 
 import ru.mail.polis.homework.collections.PopularMap;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -16,13 +13,13 @@ import java.util.function.Consumer;
  * <p>
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  */
-public class MailService implements Consumer {
+public class MailService <T extends Mail> implements Consumer<T> {
 
-    private Map<String, List> mailBox;
-    private PopularMap popMap;
+    private final Map<String, List<T>> mailBox;
+    private final PopularMap<String, String> popMap;
 
-    MailService() {
-        this.mailBox = new HashMap<String, List>();
+    public MailService() {
+        this.mailBox = new HashMap<String, List<T>>();
         this.popMap = new PopularMap<String, String>();
     }
 
@@ -31,20 +28,47 @@ public class MailService implements Consumer {
      * 1 балл
      */
     @Override
-    public void accept(Object o) {
-        Mail mail = (Mail) o;
-        if (mailBox.containsKey(mail.getReceiver())) {
-            mailBox.get(mail.getReceiver()).add(mail);
-        } else {
-            mailBox.put(mail.getReceiver(), new ArrayList<Mail>());
+    public void accept(T mail) {
+        /* Более прилично выглядящий вариант
+          Минус - 2 обращения к методам mailBox
+         */
+        mailBox.putIfAbsent(mail.getReceiver(), new ArrayList<T>());
+        mailBox.get(mail.getReceiver()).add(mail);
+        popMap.put(mail.getSender(), mail.getReceiver());
+
+        /* Менее приличный вариант
+        + - одно обращение к методу mailbox
+        - - Мы в одной строке объявляем список, добавляем список в карту, инициализируя его с помощью создания списка из массива из одного элемента
+        List<T> list = mailBox.putIfAbsent(mail.getReceiver(), new ArrayList<T>(Arrays.asList(mail)));
+        if(list!=null) {
+            list.add(mail);
         }
         popMap.put(mail.getSender(), mail.getReceiver());
+        */
+
+        /* Старый способ добавления элемента
+        if (!mailBox.containsKey(mail.getReceiver())) {
+            mailBox.put(mail.getReceiver(), new ArrayList<Mail>());
+        }
+        mailBox.get(mail.getReceiver()).add(mail);
+
+        popMap.put(mail.getSender(), mail.getReceiver());
+        */
+
+        /* Я не знаю, зачем я это оставил, но оно выглядит весело.
+        try {
+            mailBox.putIfAbsent(mail.getReceiver(), new ArrayList<Mail>()).add(mail);
+        }
+        catch(NullPointerException e){
+            mailBox.get(mail.getReceiver()).add(mail);
+        }
+         */
     }
 
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      */
-    public Map<String, List> getMailBox() {
+    public Map<String, List<T>> getMailBox() {
         return mailBox;
     }
 
@@ -52,21 +76,21 @@ public class MailService implements Consumer {
      * Возвращает самого популярного отправителя
      */
     public String getPopularSender() {
-        return (String) popMap.getPopularKey();
+        return popMap.getPopularKey();
     }
 
     /**
      * Возвращает самого популярного получателя
      */
     public String getPopularRecipient() {
-        return (String) popMap.getPopularValue();
+        return popMap.getPopularValue();
     }
 
     /**
      * Метод должен заставить обработать service все mails.
      */
-    public static void process(MailService service, List mails) {
-        for (Object mail : mails) {
+    public static void process(MailService service, List<? extends Mail> mails) {
+        for (Mail mail : mails) {
             service.accept(mail);
         }
     }

@@ -1,9 +1,7 @@
 package ru.mail.polis.homework.collections.mail;
 
 public class Salary extends Mail{
-    private int salary;
-
-    public int getSalary() {
-        return salary;
+    public Salary(String sender, String receiver, int salary){
+        super(sender,receiver, salary);
     }
 }

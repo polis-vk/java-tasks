@@ -125,11 +125,17 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private <T> void increasePop(Map<T,Integer> map, Object key){
+        Integer pop = map.putIfAbsent((T)key, 1);
+        if(pop!=null){
+            map.put((T)key,pop+1);
+        }
+        /* Старая версия
         if (map.containsKey(key)) {
             map.replace((T) key, map.get(key) + 1);
         } else {
             map.put((T) key, 1);
         }
+        */
     }
 
     /**

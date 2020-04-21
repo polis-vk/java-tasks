@@ -1,14 +1,24 @@
 package ru.mail.polis.homework.collections.mail;
 
-public class Mail {
-    private String Sender;
-    private String Receiver;
+public class  Mail <C> {
+    private C messageContent;
+    private String sender;
+    private String receiver;
 
+    public  Mail(String sender, String receiver, C content){
+        this.messageContent = content;
+        this.sender=sender;
+        this.receiver=receiver;
+    }
     public String getReceiver() {
-        return Receiver;
+        return receiver;
     }
 
     public String getSender() {
-        return Sender;
+        return sender;
+    }
+
+    public C getMessageContent() {
+        return messageContent;
     }
 }
