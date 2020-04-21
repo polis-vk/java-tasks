@@ -208,7 +208,6 @@ public class PopularMap<K, V> implements Map<K, V> {
                     }
                 }
             }
-
         }
 
         @Override
@@ -220,8 +219,6 @@ public class PopularMap<K, V> implements Map<K, V> {
         public V next() {
             return values.get(curIndex++);
         }
-
-
     }
 
 
