@@ -11,15 +11,15 @@ public class MailSomething<T> {
         this.sentThing = sentThing;
     }
 
-    public String getMailReceiver(){
+    public String getMailReceiver() {
         return this.mailReceiver;
     }
 
-    public String getMailSender(){
+    public String getMailSender() {
         return this.mailSender;
     }
 
-    public T getSentThing(){
+    public T getSentThing() {
         return this.sentThing;
     }
 
