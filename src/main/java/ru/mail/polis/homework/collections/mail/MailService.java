@@ -2,7 +2,6 @@ package ru.mail.polis.homework.collections.mail;
 
 
 import ru.mail.polis.homework.collections.PopularMap;
-import sun.net.www.content.text.Generic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,17 +13,19 @@ import java.util.function.Consumer;
  * Нужно создать сервис, который умеет обрабатывать письма и зарплату.
  * Письма состоят из получателя, отправителя, текста сообщения
  * Зарплата состоит из получателя, отправителя и суммы.
- *
+ * <p>
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  */
 public class MailService implements Consumer {
 
-    private Map<String, List> map;
+    private Map<String, List> mailBox;
     private PopularMap popMap;
-    MailService(){
-        map = new HashMap<String, List>();
-        popMap = new PopularMap<String, String>();
+
+    MailService() {
+        this.mailBox = new HashMap<String, List>();
+        this.popMap = new PopularMap<String, String>();
     }
+
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
      * 1 балл
@@ -32,33 +33,33 @@ public class MailService implements Consumer {
     @Override
     public void accept(Object o) {
         Mail mail = (Mail) o;
-        if(map.containsKey(mail.Receiver)){
-            map.get(mail.Receiver).add(mail);
+        if (mailBox.containsKey(mail.getReceiver())) {
+            mailBox.get(mail.getReceiver()).add(mail);
         } else {
-            map.put(mail.Receiver, new ArrayList<Mail>());
+            mailBox.put(mail.getReceiver(), new ArrayList<Mail>());
         }
-        popMap.put(mail.Sender,mail.Receiver);
+        popMap.put(mail.getSender(), mail.getReceiver());
     }
 
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      */
     public Map<String, List> getMailBox() {
-        return map;
+        return mailBox;
     }
 
     /**
      * Возвращает самого популярного отправителя
      */
     public String getPopularSender() {
-        return (String)popMap.getPopularKey();
+        return (String) popMap.getPopularKey();
     }
 
     /**
      * Возвращает самого популярного получателя
      */
     public String getPopularRecipient() {
-        return (String)popMap.getPopularValue();
+        return (String) popMap.getPopularValue();
     }
 
     /**

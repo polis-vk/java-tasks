@@ -5,6 +5,8 @@ import javafx.util.Pair;
 
 import java.util.*;
 
+import static javafx.scene.input.KeyCode.T;
+
 
 /**
  * Написать структуру данных, реализующую интерфейс мапы + набор дополнительных методов.
@@ -30,9 +32,9 @@ import java.util.*;
  * @param <V> - тип значения
  */
 public class PopularMap<K, V> implements Map<K, V> {
-    private Map<K, V> map;
-    private Map<K, Integer> keyPopularity;
-    private Map<V, Integer> valuePopularity;
+    private final Map<K, V> map;
+    private final Map<K, Integer> keyPopularity;
+    private final Map<V, Integer> valuePopularity;
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -58,50 +60,46 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        increaseKeyPop(keyPopularity,key);
+        increasePop(keyPopularity, key);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        increaseValuePop(valuePopularity, value);
+        increasePop(valuePopularity, value);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        increaseKeyPop(keyPopularity, key);
+        increasePop(keyPopularity, key);
         V value = map.get(key);
-        increaseValuePop(valuePopularity, value);
+        if(value!=null)
+        increasePop(valuePopularity, value);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
-        increaseKeyPop(keyPopularity, key);
-        if(map.containsKey(key)){
-            increaseValuePop(valuePopularity, map.get(key));
-        }
-        increaseValuePop(valuePopularity,value);
-        return map.put(key,value);
+        increasePop(keyPopularity, key);
+        increasePop(valuePopularity, value);
+        V oldValue = map.put(key, value);
+        if(oldValue !=null)
+        increasePop(valuePopularity, oldValue);
+        return oldValue;
     }
 
     @Override
     public V remove(Object key) {
-        increaseKeyPop(keyPopularity, key);
-        increaseValuePop(valuePopularity, map.get(key));
-        return map.remove(key);
+        increasePop(keyPopularity, key);
+        V value = map.remove(key);
+        increasePop(valuePopularity, value);
+        return map.remove(value);
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
         map.putAll(m);
-        for (Object key : m.keySet()) {
-            increaseKeyPop(keyPopularity, key);
-        }
-        for (Object value : m.values()) {
-            increaseValuePop(valuePopularity, value);
-        }
     }
 
     @Override
@@ -126,18 +124,11 @@ public class PopularMap<K, V> implements Map<K, V> {
         return map.entrySet();
     }
 
-    private void increaseKeyPop(Map<K, Integer> map, Object key) {
+    private <T> void increasePop(Map<T,Integer> map, Object key){
         if (map.containsKey(key)) {
-            map.replace((K)key, map.get(key) + 1);
+            map.replace((T) key, map.get(key) + 1);
         } else {
-            map.put((K)key, 1);
-        }
-    }
-    private void increaseValuePop(Map<V, Integer> map, Object key) {
-        if (map.containsKey(key)) {
-            map.replace((V)key, map.get(key) + 1);
-        } else {
-            map.put((V)key, 1);
+            map.put((T) key, 1);
         }
     }
 
@@ -145,54 +136,40 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        int maxPopularity = 0;
-        K popularKey = null;
-        for (Map.Entry<K, Integer> entry : keyPopularity.entrySet()) {
-            if(entry.getValue()>maxPopularity){
-                maxPopularity = entry.getValue();
-                popularKey = entry.getKey();
-            }
-        }
-        return popularKey;
+        return getPopular(keyPopularity);
     }
-
 
     /**
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        if(keyPopularity.containsKey(key)) {
-            return keyPopularity.get(key);
-        } else {
-            return 0;
-        }
+            return keyPopularity.getOrDefault(key,0);
     }
 
     /**
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
+        return getPopular(valuePopularity);
+    }
+
+    public <T> T getPopular(Map<T,Integer> map){
         int maxPopularity = 0;
-        V popularValue = null;
-        for (Map.Entry<V, Integer> entry : valuePopularity.entrySet()) {
-            if(entry.getValue()>maxPopularity){
+        T popularValue = null;
+        for (Map.Entry<T, Integer> entry : map.entrySet()) {
+            if (entry.getValue() > maxPopularity) {
                 maxPopularity = entry.getValue();
                 popularValue = entry.getKey();
             }
         }
         return popularValue;
     }
-
     /**
      * Возвращает количество использований значений в методах: containsValue, get, put (учитывается 2 раза, если
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        if(valuePopularity.containsKey(value)) {
-            return valuePopularity.get(value);
-        } else {
-            return 0;
-        }
+        return valuePopularity.getOrDefault(value,0);
     }
 
     /**
