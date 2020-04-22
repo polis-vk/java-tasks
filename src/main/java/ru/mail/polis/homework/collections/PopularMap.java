@@ -1,141 +1,209 @@
 package ru.mail.polis.homework.collections;
 
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
- * РќР°РїРёСЃР°С‚СЊ СЃС‚СЂСѓРєС‚СѓСЂСѓ РґР°РЅРЅС‹С…, СЂРµР°Р»РёР·СѓСЋС‰СѓСЋ РёРЅС‚РµСЂС„РµР№СЃ РјР°РїС‹ + РЅР°Р±РѕСЂ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹С… РјРµС‚РѕРґРѕРІ.
- * 2 РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹С… РјРµС‚РѕРґР° РґРѕР»Р¶РЅС‹ РІРѕРІР·СЂР°С‰Р°С‚СЊ СЃР°РјС‹Р№ РїРѕРїСѓР»СЏСЂРЅС‹Р№ РєР»СЋС‡ Рё РµРіРѕ РїРѕРїСѓР»СЏСЂРЅРѕСЃС‚СЊ.
- * РџРѕРїСѓР»СЏСЂРЅРѕСЃС‚СЊ - СЌС‚Рѕ РєРѕР»РёС‡РµСЃС‚РІРѕ СЂР°Р·, РєРѕС‚РѕСЂС‹Р№ СЌС‚РѕС‚ РєР»СЋС‡ СѓС‡Р°РІСЃС‚РІРѕРІР°Р» РІ РґСЂСѓРіРёС… РјРµС‚РѕРґР°С… РјР°РїС‹, С‚Р°РєРёРµ РєР°Рє
+ * Написать структуру данных, реализующую интерфейс мапы + набор дополнительных методов.
+ * 2 дополнительных метода должны вовзращать самый популярный ключ и его популярность.
+ * Популярность - это количество раз, который этот ключ учавствовал в других методах мапы, такие как
  * containsKey, get, put, remove.
- * РЎС‡РёС‚Р°РµРј, С‡С‚Рѕ null СЏ РІР°Рј РЅРµ РїРµСЂРµРґСЋ РЅРё РІ РєР°С‡РµСЃС‚РІРµ РєР»СЋС‡Р°, РЅРё РІ РєР°С‡РµСЃС‚РІРµ Р·РЅР°С‡РµРЅРёСЏ
+ * Считаем, что null я вам не передю ни в качестве ключа, ни в качестве значения
+ * <p>
+ * Важный момент, вам не надо реализовывать мапу, вы должны использовать композицию.
+ * Вы можете использовать любые коллекции, которые есть в java.
+ * <p>
+ * Помните, что по мапе тоже можно итерироваться
+ * <p>
+ * for (Map.Entry<K, V> entry : map.entrySet()) {
+ * entry.getKey();
+ * entry.getValue();
+ * }
+ * <p>
+ * <p>
+ * Дополнительное задание описано будет ниже
  *
- * Р’Р°Р¶РЅС‹Р№ РјРѕРјРµРЅС‚, РІР°Рј РЅРµ РЅР°РґРѕ СЂРµР°Р»РёР·РѕРІС‹РІР°С‚СЊ РјР°РїСѓ, РІС‹ РґРѕР»Р¶РЅС‹ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РєРѕРјРїРѕР·РёС†РёСЋ.
- * Р’С‹ РјРѕР¶РµС‚Рµ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ Р»СЋР±С‹Рµ РєРѕР»Р»РµРєС†РёРё, РєРѕС‚РѕСЂС‹Рµ РµСЃС‚СЊ РІ java.
- *
- * РџРѕРјРЅРёС‚Рµ, С‡С‚Рѕ РїРѕ РјР°РїРµ С‚РѕР¶Рµ РјРѕР¶РЅРѕ РёС‚РµСЂРёСЂРѕРІР°С‚СЊСЃСЏ
- *
- *         for (Map.Entry<K, V> entry : map.entrySet()) {
- *             entry.getKey();
- *             entry.getValue();
- *         }
- *
- *
- * Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕРµ Р·Р°РґР°РЅРёРµ РѕРїРёСЃР°РЅРѕ Р±СѓРґРµС‚ РЅРёР¶Рµ
- * @param <K> - С‚РёРї РєР»СЋС‡Р°
- * @param <V> - С‚РёРї Р·РЅР°С‡РµРЅРёСЏ
+ * @param <K> - тип ключа
+ * @param <V> - тип значения
  */
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
+    private Map<Object, Integer> popularKeyMap;
+    private Map<Object, Integer> popularValueMap;
 
     public PopularMap() {
         this.map = new HashMap<>();
+        popularKeyMap = new HashMap<>();
+        popularValueMap = new HashMap<>();
     }
 
     public PopularMap(Map<K, V> map) {
         this.map = map;
+        popularKeyMap = new HashMap<>();
+        popularValueMap = new HashMap<>();
     }
 
     @Override
     public int size() {
-        return 0;
+        return map.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return map.isEmpty();
     }
 
     @Override
     public boolean containsKey(Object key) {
-        return false;
+        calculatePopularity(key, popularKeyMap);
+        return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        return false;
+        calculatePopularity(value, popularValueMap);
+        return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        return null;
+        V value = map.get(key);
+        calculatePopularity(key, popularKeyMap);
+        calculatePopularity(value, popularValueMap);
+        return value;
     }
 
     @Override
     public V put(K key, V value) {
-        return null;
+        V oldValue = map.put(key, value);
+        if (oldValue != null && oldValue.equals(value)) {
+            calculatePopularity(value, popularValueMap);
+            calculatePopularity(value, popularValueMap);
+        } else {
+            calculatePopularity(value, popularValueMap);
+        }
+        calculatePopularity(key, popularKeyMap);
+        return oldValue;
     }
 
     @Override
     public V remove(Object key) {
-        return null;
+        calculatePopularity(key, popularKeyMap);
+        calculatePopularity(map.get(key), popularValueMap);
+        return map.remove(key);
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-        throw new UnsupportedOperationException("putAll");
+        map.putAll(m);
     }
 
     @Override
     public void clear() {
-
+        map.clear();
     }
 
     @Override
     public Set<K> keySet() {
-        return null;
+        return map.keySet();
     }
 
     @Override
     public Collection<V> values() {
-        return null;
+        return map.values();
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return null;
+        return map.entrySet();
+    }
+
+    public void calculatePopularity(Object key, Map<Object, Integer> mapPopularity) {
+        if (key == null) return;
+        if (mapPopularity.containsKey(key)) {
+            mapPopularity.put(key, mapPopularity.remove(key) + 1);
+        } else {
+            mapPopularity.put(key, 1);
+        }
     }
 
     /**
-     * Р’РѕР·РІСЂР°С‰Р°РµС‚ СЃР°РјС‹Р№ РїРѕРїСѓР»СЏСЂРЅС‹Р№, РЅР° РґР°РЅРЅС‹Р№ РјРѕРјРµРЅС‚, РєР»СЋС‡
+     * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
+        if (!popularKeyMap.isEmpty()) {
+            int maxValue = 0;
+            Object key = null;
+
+            for (Entry<Object, Integer> entry : popularKeyMap.entrySet()) {
+                if (entry.getValue() > maxValue) {
+                    maxValue = entry.getValue();
+                    key = entry.getKey();
+                }
+            }
+            return (K) key;
+        }
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            return entry.getKey();
+        }
         return null;
     }
 
-
     /**
-     * Р’РѕР·РІСЂР°С‰Р°РµС‚ РєРѕР»РёС‡РµСЃС‚РІРѕ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ РєР»СЋС‡Р°
+     * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
+        if (!popularKeyMap.isEmpty() && popularKeyMap.containsKey(key)) {
+            return popularKeyMap.get(key);
+        }
         return 0;
     }
 
     /**
-     * Р’РѕР·РІСЂР°С‰Р°РµС‚ СЃР°РјРѕРµ РїРѕРїСѓР»СЏСЂРЅРѕРµ, РЅР° РґР°РЅРЅС‹Р№ РјРѕРјРµРЅС‚, Р·РЅР°С‡РµРЅРёРµ. РќР°РґРѕ СѓС‡РµСЃС‚СЊ С‡С‚Рѕ Р·РЅР°С‡РµРЅРё РјРѕР¶РµС‚ Р±С‹С‚СЊ Р±РѕР»РµРµ РѕРґРЅРѕРіРѕ
+     * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
+        if (!popularValueMap.isEmpty()) {
+            int maxValue = 0;
+            Object value = null;
+
+            for (Entry<Object, Integer> entry : popularValueMap.entrySet()) {
+                if (entry.getValue() > maxValue) {
+                    maxValue = entry.getValue();
+                    value = entry.getKey();
+                }
+            }
+            return (V) value;
+        }
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            return entry.getValue();
+        }
         return null;
     }
 
     /**
-     * Р’РѕР·РІСЂР°С‰Р°РµС‚ РєРѕР»РёС‡РµСЃС‚РІРѕ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёР№ Р·РЅР°С‡РµРЅРёР№ РІ РјРµС‚РѕРґР°С…: containsValue, get, put (СѓС‡РёС‚С‹РІР°РµС‚СЃСЏ 2 СЂР°Р·Р°, РµСЃР»Рё
-     * СЃС‚Р°СЂРѕРµ Р·РЅР°С‡РµРЅРёРµ Рё РЅРѕРІРѕРµ - РѕРґРЅРѕ Рё С‚РѕР¶Рµ), remove (СЃС‡РёС‚Р°РµРј РїРѕ СЃС‚Р°СЂРѕРјСѓ Р·РЅР°С‡РµРЅРёСЋ).
+     * Возвращает количество использований значений в методах: containsValue, get, put (учитывается 2 раза, если
+     * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
+        if (!popularValueMap.isEmpty() && popularValueMap.containsKey(value)) {
+            return popularValueMap.get(value);
+        }
         return 0;
     }
 
     /**
-     * Р’РµСЂРЅСѓС‚СЊ РёС‚РµСЂР°С‚РѕСЂ, РєРѕС‚РѕСЂС‹Р№ РёС‚РµСЂРёСЂСѓРµС‚СЃСЏ РїРѕ Р·РЅР°С‡РµРЅРёСЏРј (РѕС‚ СЃР°РјС‹С… РќР• РїРѕРїСѓР»СЏСЂРЅС‹С…, Рє СЃР°РјС‹Рј РїРѕРїСѓР»СЏСЂРЅС‹Рј)
+     * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        return null;
+        List<V> values = new ArrayList<>();
+        for (Object value : popularValueMap.keySet()) {
+            values.add((V) value);
+        }
+        //Здаем компаратору сравнение по методу get в мапе
+        values.sort(Comparator.comparingInt(popularValueMap::get));
+        return values.iterator();
     }
 }

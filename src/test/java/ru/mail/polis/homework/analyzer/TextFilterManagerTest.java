@@ -124,9 +124,9 @@ public class TextFilterManagerTest {
 
     private void manyFilters(boolean withPriority) {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
-                TextAnalyzer.createNegativeTextAnalyzer(),
-                TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
-                TextAnalyzer.createTooLongAnalyzer(20)});
+                new NegativeFilter(),
+                new SpamFilter(new String[]{"пинкод", "смс", "cvv"}),
+                new TooLongFilter(20)});
         if (withPriority) {
             assertEquals("SPAM", manager.analyze("Привет, я Петя вот мой cvv").toString());
             assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :(").toString());
@@ -144,8 +144,8 @@ public class TextFilterManagerTest {
     @Test
     public void analyzeOnlyCustomFilter() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
-                TextAnalyzer.createNegativeTextAnalyzer(),
-                TextAnalyzer.createCustomAnalyzer()});
+                new NegativeFilter(),
+                new CustomFilter()});
         assertEquals("CUSTOM", manager.analyze("привет, я Петя :").toString());
         assertEquals("GOOD", manager.analyze("Привет, я Петя").toString());
         assertEquals("GOOD", manager.analyze("Скажите Код Из Смс :-(").toString());
