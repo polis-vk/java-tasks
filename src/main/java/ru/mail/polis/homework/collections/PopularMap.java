@@ -1,11 +1,9 @@
 package ru.mail.polis.homework.collections;
 
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -14,99 +12,120 @@ import java.util.Set;
  * Популярность - это количество раз, который этот ключ учавствовал в других методах мапы, такие как
  * containsKey, get, put, remove.
  * Считаем, что null я вам не передю ни в качестве ключа, ни в качестве значения
- *
+ * <p>
  * Важный момент, вам не надо реализовывать мапу, вы должны использовать композицию.
  * Вы можете использовать любые коллекции, которые есть в java.
- *
+ * <p>
  * Помните, что по мапе тоже можно итерироваться
- *
- *         for (Map.Entry<K, V> entry : map.entrySet()) {
- *             entry.getKey();
- *             entry.getValue();
- *         }
- *
- *
+ * <p>
+ * for (Map.Entry<K, V> entry : map.entrySet()) {
+ * entry.getKey();
+ * entry.getValue();
+ * }
+ * <p>
+ * <p>
  * Дополнительное задание описано будет ниже
+ *
  * @param <K> - тип ключа
  * @param <V> - тип значения
  */
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
+    private final Map<Object, Integer> keyPopularityMap;
+    private final Map<Object, Integer> valuePopularityMap;
 
     public PopularMap() {
         this.map = new HashMap<>();
+        this.keyPopularityMap = new HashMap<>();
+        this.valuePopularityMap = new HashMap<>();
     }
 
     public PopularMap(Map<K, V> map) {
         this.map = map;
+        this.keyPopularityMap = new HashMap<>();
+        this.valuePopularityMap = new HashMap<>();
     }
 
     @Override
     public int size() {
-        return 0;
+        return map.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return map.isEmpty();
     }
 
     @Override
     public boolean containsKey(Object key) {
-        return false;
+        increasePopularityMap(key, keyPopularityMap);
+        return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        return false;
+        increasePopularityMap(value, valuePopularityMap);
+        return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        return null;
+        V value = map.get(key);
+        increaseAllPopularityMap(key, value);
+        return value;
     }
 
     @Override
     public V put(K key, V value) {
-        return null;
+        increaseAllPopularityMap(key, value);
+        V valueBefore = map.put(key, value);
+
+        if (valueBefore != null) {
+            increasePopularityMap(valueBefore, valuePopularityMap);
+        }
+        return valueBefore;
     }
 
     @Override
     public V remove(Object key) {
-        return null;
+        V value = map.remove(key);
+        increaseAllPopularityMap(key, value);
+        return map.remove(value);
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-        throw new UnsupportedOperationException("putAll");
+        map.putAll(m);
     }
 
     @Override
     public void clear() {
-
+        map.clear();
+        keyPopularityMap.clear();
+        valuePopularityMap.clear();
     }
 
     @Override
     public Set<K> keySet() {
-        return null;
+        return map.keySet();
     }
 
     @Override
     public Collection<V> values() {
-        return null;
+        return map.values();
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return null;
+        return map.entrySet();
     }
 
     /**
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return null;
+        return (K) getPopularity(keyPopularityMap);
     }
 
 
@@ -114,14 +133,14 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        return 0;
+        return keyPopularityMap.getOrDefault(key, 0);
     }
 
     /**
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        return null;
+        return (V) getPopularity(valuePopularityMap);
     }
 
     /**
@@ -129,7 +148,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        return 0;
+        return valuePopularityMap.getOrDefault(value, 0);
     }
 
     /**
@@ -137,5 +156,26 @@ public class PopularMap<K, V> implements Map<K, V> {
      */
     public Iterator<V> popularIterator() {
         return null;
+    }
+
+    private <T> void increasePopularityMap(T key, Map<T, Integer> popularityMap) {
+        popularityMap.put(key, popularityMap.getOrDefault(key, 0) + 1);
+    }
+
+    private <T1, T2> void increaseAllPopularityMap(T1 key, T2 value) {
+        increasePopularityMap(key, keyPopularityMap);
+        increasePopularityMap(value, valuePopularityMap);
+    }
+
+    private <T> T getPopularity(Map<T, Integer> popularityMap) {
+        int maxPopularity = 0;
+        T value = null;
+        for (Map.Entry<T, Integer> entry : popularityMap.entrySet()) {
+            if (entry.getValue() >= maxPopularity) {
+                maxPopularity = entry.getValue();
+                value = entry.getKey();
+            }
+        }
+        return value;
     }
 }
