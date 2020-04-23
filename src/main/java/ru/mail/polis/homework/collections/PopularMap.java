@@ -5,7 +5,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
 /**
  * Написать структуру данных, реализующую интерфейс мапы + набор дополнительных методов.
  * 2 дополнительных метода должны вовзращать самый популярный ключ и его популярность.
@@ -32,8 +31,8 @@ import java.util.stream.Stream;
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
-    private final Map<Object, Integer> keyPopularityMap;
-    private final Map<Object, Integer> valuePopularityMap;
+    private final Map<K, Integer> keyPopularityMap;
+    private final Map<V, Integer> valuePopularityMap;
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -59,20 +58,20 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        increasePopularityMap(key, keyPopularityMap);
+        increasePopularityMap((K) key, keyPopularityMap);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        increasePopularityMap(value, valuePopularityMap);
+        increasePopularityMap((V) value, valuePopularityMap);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
         V value = map.get(key);
-        increaseAllPopularityMap(key, value);
+        increaseAllPopularityMap((K) key, value);
         return value;
     }
 
@@ -90,7 +89,11 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public V remove(Object key) {
         V value = map.remove(key);
-        increaseAllPopularityMap(key, value);
+        increasePopularityMap((K) key, keyPopularityMap);
+
+        if (value != null) {
+            increasePopularityMap(value, valuePopularityMap);
+        }
         return map.remove(value);
     }
 
@@ -155,14 +158,22 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        return null;
+        List<V> arr = new ArrayList<>();
+        for (Map.Entry<V, Integer> entry : valuePopularityMap.entrySet()) {
+            arr.add((V) entry.getKey());
+        }
+
+        List<V> sortedList = arr.stream()
+            .sorted(Comparator.comparing(valuePopularityMap::get))
+            .collect(Collectors.toList());
+        return sortedList.iterator();
     }
 
     private <T> void increasePopularityMap(T key, Map<T, Integer> popularityMap) {
         popularityMap.put(key, popularityMap.getOrDefault(key, 0) + 1);
     }
 
-    private <T1, T2> void increaseAllPopularityMap(T1 key, T2 value) {
+    private <T> void increaseAllPopularityMap(K key, V value) {
         increasePopularityMap(key, keyPopularityMap);
         increasePopularityMap(value, valuePopularityMap);
     }
