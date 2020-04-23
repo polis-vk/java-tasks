@@ -129,54 +129,39 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        if (!popularKeyMap.isEmpty()) {
-            int maxValue = 0;
-            Object key = null;
+        int maxValue = 0;
+        Object key = null;
 
-            for (Entry<Object, Integer> entry : popularKeyMap.entrySet()) {
-                if (entry.getValue() > maxValue) {
-                    maxValue = entry.getValue();
-                    key = entry.getKey();
-                }
+        for (Entry<Object, Integer> entry : popularKeyMap.entrySet()) {
+            if (entry.getValue() > maxValue) {
+                maxValue = entry.getValue();
+                key = entry.getKey();
             }
-            return (K) key;
         }
-        for (Map.Entry<K, V> entry : map.entrySet()) {
-            return entry.getKey();
-        }
-        return null;
+        return (K) key;
     }
 
     /**
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        if (!popularKeyMap.isEmpty() && popularKeyMap.containsKey(key)) {
-            return popularKeyMap.get(key);
-        }
-        return 0;
+        return popularKeyMap.getOrDefault(key,0);
     }
 
     /**
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        if (!popularValueMap.isEmpty()) {
-            int maxValue = 0;
-            Object value = null;
+        int maxValue = 0;
+        Object value = null;
 
-            for (Entry<Object, Integer> entry : popularValueMap.entrySet()) {
-                if (entry.getValue() > maxValue) {
-                    maxValue = entry.getValue();
-                    value = entry.getKey();
-                }
+        for (Entry<Object, Integer> entry : popularValueMap.entrySet()) {
+            if (entry.getValue() > maxValue) {
+                maxValue = entry.getValue();
+                value = entry.getKey();
             }
-            return (V) value;
         }
-        for (Map.Entry<K, V> entry : map.entrySet()) {
-            return entry.getValue();
-        }
-        return null;
+        return (V) value;
     }
 
     /**
@@ -184,10 +169,8 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        if (!popularValueMap.isEmpty() && popularValueMap.containsKey(value)) {
-            return popularValueMap.get(value);
-        }
-        return 0;
+        return popularValueMap.getOrDefault(value,0);
+
     }
 
     /**
