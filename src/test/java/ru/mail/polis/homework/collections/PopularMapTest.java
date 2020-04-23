@@ -132,14 +132,14 @@ public class PopularMapTest {
         popularMap1.put(key2, value2);
         popularMap1.get(key2);
         popularMap1.remove(key2);
-        popularMap1.remove(key1);//Здесь вернется null => popularMap1.getValuePopularity(value1) = 4
+        popularMap1.remove(key1);
         popularMap1.put(key1, value3);
         popularMap1.put(key2, value3);
         popularMap1.get(key2);
         popularMap1.remove(key1);
 
-        //assertEquals(value1, popularMap1.getPopularValue());
-        assertEquals(4, popularMap1.getValuePopularity(value1));
+        assertEquals(value1, popularMap1.getPopularValue());
+        assertEquals(5, popularMap1.getValuePopularity(value1));
         assertEquals(3, popularMap1.getValuePopularity(value2));
         assertEquals(4, popularMap1.getValuePopularity(value3));
         assertEquals(0, popularMap1.getValuePopularity(value4));

@@ -78,12 +78,8 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public V put(K key, V value) {
         V oldValue = map.put(key, value);
-        if (oldValue != null && oldValue.equals(value)) {
-            calculatePopularity(value, popularValueMap);
-            calculatePopularity(value, popularValueMap);
-        } else {
-            calculatePopularity(value, popularValueMap);
-        }
+        calculatePopularity(oldValue, popularValueMap);
+        calculatePopularity(value, popularValueMap);
         calculatePopularity(key, popularKeyMap);
         return oldValue;
     }
