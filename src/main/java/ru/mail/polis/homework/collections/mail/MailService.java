@@ -12,32 +12,33 @@ import java.util.function.Consumer;
  * Нужно создать сервис, который умеет обрабатывать письма и зарплату.
  * Письма состоят из получателя, отправителя, текста сообщения
  * Зарплата состоит из получателя, отправителя и суммы.
- *
+ * <p>
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  */
 public class MailService<T extends Message> implements Consumer<T> {
 
-    public final PopularMap<String,List<T>> recipients;
-    public final PopularMap<String,List<T>> senders;
+    public final PopularMap<String, List<T>> recipients;
+    public final PopularMap<String, List<T>> senders;
 
-    public MailService(){
-        this.recipients=new PopularMap<>();
-        this.senders=new PopularMap<>();
+    public MailService() {
+        this.recipients = new PopularMap<>();
+        this.senders = new PopularMap<>();
     }
+
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
      * 1 балл
      */
     @Override
     public void accept(T mail) {
-        processClient(mail,mail.getRecipient(),recipients);
-        processClient(mail,mail.getSender(),senders);
+        processClient(mail, mail.getRecipient(), recipients);
+        processClient(mail, mail.getSender(), senders);
     }
 
     private void processClient(T mail, String client, PopularMap<String, List<T>> clients) {
-        List<T> mails =clients.getOrDefault(client, new ArrayList<>());
+        List<T> mails = clients.getOrDefault(client, new ArrayList<>());
         mails.add(mail);
-        clients.put(client,mails);
+        clients.put(client, mails);
     }
 
     /**
@@ -65,7 +66,7 @@ public class MailService<T extends Message> implements Consumer<T> {
      * Метод должен заставить обработать service все mails.
      */
     public static void process(MailService service, List<? extends Message> mails) {
-        for (Message mail:mails) {
+        for (Message mail : mails) {
             service.accept(mail);
         }
     }
