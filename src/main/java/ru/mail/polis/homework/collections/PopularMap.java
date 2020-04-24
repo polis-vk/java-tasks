@@ -82,11 +82,9 @@ public class PopularMap<K, V> implements Map<K, V> {
     public V put(K key, V value) {
         updateKeyPopularity(key);
         updateValuePopularity(value);
-        if (map.get(key) == value) {
-            mapValuePopularity.put(value, mapValuePopularity.get(value) + 1);
-        }
-
-        return map.put(key, value);
+        V oldValue =  map.put(key, value);
+        updateValuePopularity(oldValue);
+        return oldValue;
     }
 
     @Override
