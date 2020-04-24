@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.collections.mail;
 
 
+import ru.mail.polis.homework.collections.PopularMap;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -12,42 +15,52 @@ import java.util.function.Consumer;
  *
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  */
-public class MailService implements Consumer {
-
+public class MailService implements Consumer<BasicTransfer> {
+    
+    private PopularMap<String, List<BasicTransfer>> senders = new PopularMap<>();
+    private PopularMap<String, List<BasicTransfer>> recipients = new PopularMap<>();
+    
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
      * 1 балл
      */
     @Override
-    public void accept(Object o) {
-
+    public void accept(BasicTransfer basicTransfer) {
+        List<BasicTransfer> recipientsList = new ArrayList<>();
+        recipientsList = recipients.getOrDefault(basicTransfer.getRecipient(), recipientsList);
+        recipientsList.add(basicTransfer);
+        recipients.put(basicTransfer.getRecipient(), recipientsList);
+        
+        List<BasicTransfer> sendersList = new ArrayList<>();
+        sendersList = senders.getOrDefault(basicTransfer.getSender(), sendersList);
+        sendersList.add(basicTransfer);
+        senders.put(basicTransfer.getSender(), sendersList);
     }
-
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      */
-    public Map<String, List> getMailBox() {
-        return null;
+    public Map<String, List<BasicTransfer>> getMailBox() {
+        return recipients;
     }
 
     /**
      * Возвращает самого популярного отправителя
      */
     public String getPopularSender() {
-        return null;
+        return senders.getPopularKey();
     }
 
     /**
      * Возвращает самого популярного получателя
      */
     public String getPopularRecipient() {
-        return null;
+        return recipients.getPopularKey();
     }
 
     /**
      * Метод должен заставить обработать service все mails.
      */
-    public static void process(MailService service, List mails) {
-
+    public static void process(MailService service, List<BasicTransfer> mails) {
+        mails.forEach(service);
     }
 }
