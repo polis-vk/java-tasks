@@ -54,40 +54,36 @@ public class PopularMap<K, V> implements Map<K, V> {
     
     @Override
     public boolean containsKey(Object key) {
-        if (map.containsKey(key)) {
-            updateMapPopularity((K) key, keyMap);
-            updateMapPopularity(map.get(key), valueMap);
-            return true;
-        }
-        return false;
+        updateMapPopularity((K) key, keyMap);
+        return map.containsKey(key);
     }
     
     @Override
     public boolean containsValue(Object value) {
-        if (map.containsValue(value)) {
-            updateMapPopularity((V) value, valueMap);
-            return true;
-        }
-        return false;
+        updateMapPopularity((V) value, valueMap);
+        return map.containsValue(value);
     }
     
     @Override
     public V get(Object key) {
+        updateMapPopularity((K) key, keyMap);
         V value = map.get(key);
-        updateMapsPopularity((K) key);
+        updateMapPopularity(value, valueMap);
         return value;
     }
     
     @Override
     public V put(K key, V value) {
         updateMapPopularity(value, valueMap);
-        updateMapsPopularity(key);
+        updateMapPopularity(key, keyMap);
+        updateMapPopularity(map.get(key), valueMap);
         return map.put(key, value);
     }
     
     @Override
     public V remove(Object key) {
-        updateMapsPopularity((K) key);
+        updateMapPopularity((K) key, keyMap);
+        updateMapPopularity(map.get(key), valueMap);
         return map.remove(key);
     }
     
@@ -155,13 +151,8 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
     
     private <T> void updateMapPopularity(T key, Map<T, Integer> map) {
-        map.put(key, map.getOrDefault(key, 0) + 1);
-    }
-    
-    private void updateMapsPopularity(K key) {
-        updateMapPopularity(key, keyMap);
-        if (map.containsKey(key)) {
-            updateMapPopularity(map.get(key), valueMap);
+        if (key != null) {
+            map.put(key, map.getOrDefault(key, 0) + 1);
         }
     }
 }

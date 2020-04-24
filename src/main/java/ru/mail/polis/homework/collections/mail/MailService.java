@@ -26,15 +26,8 @@ public class MailService implements Consumer<BasicTransfer> {
      */
     @Override
     public void accept(BasicTransfer basicTransfer) {
-        List<BasicTransfer> recipientsList = new ArrayList<>();
-        recipientsList = recipients.getOrDefault(basicTransfer.getRecipient(), recipientsList);
-        recipientsList.add(basicTransfer);
-        recipients.put(basicTransfer.getRecipient(), recipientsList);
-        
-        List<BasicTransfer> sendersList = new ArrayList<>();
-        sendersList = senders.getOrDefault(basicTransfer.getSender(), sendersList);
-        sendersList.add(basicTransfer);
-        senders.put(basicTransfer.getSender(), sendersList);
+        recipients.computeIfAbsent(basicTransfer.getRecipient(), k -> new ArrayList<>()).add(basicTransfer);
+        senders.computeIfAbsent(basicTransfer.getSender(), k -> new ArrayList<>()).add(basicTransfer);
     }
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
