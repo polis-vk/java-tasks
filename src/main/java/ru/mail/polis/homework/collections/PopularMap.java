@@ -37,15 +37,15 @@ public class PopularMap<K, V> implements Map<K, V> {
     public PopularMap() {
 
         this.map = new HashMap<>();
-        keyPopular = new HashMap();
-        valuePopular = new HashMap();
+        this.keyPopular = new HashMap();
+        this.valuePopular = new HashMap();
     }
 
     public PopularMap(Map<K, V> map) {
 
         this.map = map;
-        keyPopular = new HashMap();
-        valuePopular = new HashMap();
+        this.keyPopular = new HashMap();
+        this.valuePopular = new HashMap();
     }
 
 
@@ -75,9 +75,8 @@ public class PopularMap<K, V> implements Map<K, V> {
     public V get(Object key) {
         calculatePopular((K) key, keyPopular);
         V value = map.get(key);
-        if (value != null) {
-            calculatePopular(value, valuePopular);
-        }
+        calculatePopular(value, valuePopular);
+
         return value;
     }
 
@@ -86,10 +85,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         calculatePopular(key, keyPopular);
         calculatePopular(value, valuePopular);
         V valueBefore = map.put(key, value);
-        if (valueBefore != null) {
-            calculatePopular(valueBefore, valuePopular);
-        }
-
+        calculatePopular(valueBefore, valuePopular);
         return valueBefore;
     }
 
@@ -99,9 +95,8 @@ public class PopularMap<K, V> implements Map<K, V> {
 
         V value = map.remove(key);
         calculatePopular((K) key, keyPopular);
-        if (value != null) {
-            calculatePopular(value, valuePopular);
-        }
+        calculatePopular(value, valuePopular);
+
 
         return value;
     }
@@ -119,36 +114,24 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public Set<K> keySet() {
-        Set<K> setKey = map.keySet();
-        for (K item : setKey) {
-            calculatePopular(item, keyPopular);
-        }
-        return setKey;
+        return map.keySet();
     }
 
     @Override
     public Collection<V> values() {
-        Collection<V> setKey = map.values();
-        for (V item : setKey) {
-            calculatePopular(item, valuePopular);
-        }
-        return setKey;
+        return map.values();
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        Set<Entry<K, V>> setKey = map.entrySet();
-        for (Entry<K, V> item : setKey) {
-            calculatePopular(item.getKey(), keyPopular);
-            calculatePopular(item.getValue(), valuePopular);
-
-        }
-        return setKey;
+        return map.entrySet();
     }
 
     public <T> void calculatePopular(T parameterPopular, Map<T, Integer> mapPopular) {
-        Integer countKey = mapPopular.getOrDefault(parameterPopular, 0);
-        mapPopular.put(parameterPopular, countKey + 1);
+        if (parameterPopular != null) {
+            int countKey = mapPopular.getOrDefault(parameterPopular, 0);
+            mapPopular.put(parameterPopular, countKey + 1);
+        }
     }
 
     /**
@@ -200,51 +183,9 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        return new CustomIterator(this.valuePopular);
-    }
-
-    class CustomIterator implements Iterator<V> {
-
-        List<V> lstValues;
-        List<Integer> lst;
-        Integer current;
-
-        public CustomIterator(Map<V, Integer> keyPopular) {
-            lstValues = new ArrayList<>();
-            lst = new ArrayList<>();
-            for (Entry<V, Integer> entry : keyPopular.entrySet()) {
-                lst.add(entry.getValue());
-                lstValues.add(entry.getKey());
-            }
-
-            //сортировка списка значений по пулярности
-            for (int i = lst.size() - 1; i > 0; i--) {
-                for (int j = 0; j < i; j++) {
-
-                    if (lst.get(j) > lst.get(j + 1)) {
-                        V tmp = lstValues.get(j);
-                        lstValues.set(j, lstValues.get(j + 1));
-                        lstValues.set(j + 1, tmp);
-
-                    }
-                }
-            }
-
-            current = 0;
-
-        }
-
-        public boolean hasNext() {
-            return current < lstValues.size();
-        }
-
-
-        public V next() {
-            V result = lstValues.get(current);
-            current++;
-            return result;
-        }
-
+        List<V> valueList = new ArrayList(this.valuePopular.keySet());
+        valueList.sort(Comparator.comparing(valuePopular::get));
+        return valueList.iterator();
     }
 }
 

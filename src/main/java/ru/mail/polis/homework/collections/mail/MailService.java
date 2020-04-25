@@ -15,14 +15,14 @@ import java.util.function.Consumer;
  * <p>
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  */
-public class MailService<T extends MailSomething> implements Consumer<T> {
+public class MailService<U, T extends Mail<U>> implements Consumer<T> {
 
-    private final PopularMap<String, List<T>> receiver;
-    private final PopularMap<String, List<T>> sender;
+    private final PopularMap<String, List<T>> recipients;
+    private final PopularMap<String, List<T>> senders;
 
-    public MailService(PopularMap<String, List<T>> receiver, PopularMap<String, List<T>> sender) {
-        this.receiver = receiver;
-        this.sender = sender;
+    public MailService() {
+        this.recipients = new PopularMap();
+        this.senders = new PopularMap();
     }
 
     /**
@@ -30,11 +30,15 @@ public class MailService<T extends MailSomething> implements Consumer<T> {
      * 1 балл
      */
     @Override
-    public void accept(T sentThing) {
-        ArrayList<T> lst = new ArrayList<T>();
-        lst.add(sentThing);
-        receiver.put(sentThing.getMailReceiver(), lst);
-        sender.put(sentThing.getMailSender(), lst);
+    public void accept(T sentContent) {
+        setNewMail(sentContent, sentContent.getRecipient(), this.recipients);
+        setNewMail(sentContent, sentContent.getSender(), this.senders);
+    }
+
+    public void setNewMail(T sentContent, String name, PopularMap<String, List<T>> mapTypeUsers) {
+        List<T> list = mapTypeUsers.computeIfAbsent(sentContent.getRecipient(), key -> new ArrayList());
+        list.add(sentContent);
+        mapTypeUsers.put(name, list);
     }
 
     /**
@@ -42,7 +46,7 @@ public class MailService<T extends MailSomething> implements Consumer<T> {
      */
     public Map<String, List<T>> getMailBox() {
 
-        return receiver;
+        return recipients;
     }
 
     /**
@@ -50,7 +54,7 @@ public class MailService<T extends MailSomething> implements Consumer<T> {
      */
     public String getPopularSender() {
 
-        return receiver.getPopularKey();
+        return recipients.getPopularKey();
     }
 
     /**
@@ -58,14 +62,14 @@ public class MailService<T extends MailSomething> implements Consumer<T> {
      */
     public String getPopularRecipient() {
 
-        return sender.getPopularKey();
+        return senders.getPopularKey();
     }
 
     /**
      * Метод должен заставить обработать service все mails.
      */
-    public static void process(MailService service, List<MailSomething> mails) {
-        for (MailSomething mail : mails) {
+    public static void process(MailService service, List<Mail> mails) {
+        for (Mail mail : mails) {
             service.accept(mail);
         }
     }
