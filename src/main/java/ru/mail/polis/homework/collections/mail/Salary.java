@@ -1,4 +1,9 @@
 package ru.mail.polis.homework.collections.mail;
 
-public class Salary {
+public class Salary extends Mail {
+
+    public Salary(Integer content, String sender, String recipient) {
+        super(content, sender, recipient);
+    }
+
 }
