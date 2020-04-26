@@ -179,14 +179,13 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        Iterator<V> iterator = popularityValueMap
+        return popularityValueMap
                 .entrySet()
                 .stream()
-                .sorted(Comparator.comparing(popularityValueMap::get))
+                .sorted(Entry.comparingByValue())
                 .map(Entry::getKey)
                 .collect(Collectors.toList())
                 .iterator();
-        return iterator;
     }
 
 }
