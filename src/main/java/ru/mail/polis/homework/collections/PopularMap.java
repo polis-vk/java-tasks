@@ -56,6 +56,7 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
+        refreshPopularity(keyPopularityMap, key);
         return map.containsKey(key);
     }
 
@@ -133,7 +134,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        return keyPopularityMap.getOrDefault(getPopularObj(keyPopularityMap), 0);
+        return keyPopularityMap.getOrDefault(key, 0);
     }
 
     /**
