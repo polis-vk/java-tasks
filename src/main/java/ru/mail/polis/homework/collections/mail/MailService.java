@@ -15,7 +15,7 @@ import java.util.function.Consumer;
  * <p>
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  */
-public class MailService<T extends SimpleMessage> implements Consumer<T> {
+public class MailService<T extends SimpleMessage<?>> implements Consumer<T> {
      private final PopularMap<String, List<T>> recipients = new PopularMap<>();
     private final PopularMap<String, List<T>> senders = new PopularMap<>();
 
@@ -32,8 +32,8 @@ public class MailService<T extends SimpleMessage> implements Consumer<T> {
     /**
      * Метод должен заставить обработать service все mails.
      */
-    public static void process(MailService service, List<? extends SimpleMessage> mails) {
-        for (SimpleMessage mail : mails) {
+    public static void process(MailService<SimpleMessage<?>> service, List<? extends SimpleMessage<?>> mails) {
+        for (SimpleMessage<?> mail : mails) {
             service.accept(mail);
         }
     }
