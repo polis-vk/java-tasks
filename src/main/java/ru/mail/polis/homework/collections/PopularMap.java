@@ -56,38 +56,38 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        calculateKeyPopularity((K) key, popularKeyMap);
+        calculatePopularity((K) key, popularKeyMap);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        calculateValuePopularity((V) value, popularValueMap);
+        calculatePopularity((V) value, popularValueMap);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
         V value = map.get(key);
-        calculateKeyPopularity((K) key, popularKeyMap);
-        calculateValuePopularity(value, popularValueMap);
+        calculatePopularity((K) key, popularKeyMap);
+        calculatePopularity(value, popularValueMap);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
         V oldValue = map.put(key, value);
-        calculateValuePopularity(oldValue, popularValueMap);
-        calculateValuePopularity(value, popularValueMap);
-        calculateKeyPopularity(key, popularKeyMap);
+        calculatePopularity(oldValue, popularValueMap);
+        calculatePopularity(value, popularValueMap);
+        calculatePopularity(key, popularKeyMap);
         return oldValue;
     }
 
     @Override
     public V remove(Object key) {
         V oldValue = map.remove(key);
-        calculateKeyPopularity((K) key, popularKeyMap);
-        calculateValuePopularity(oldValue, popularValueMap);
+        calculatePopularity((K) key, popularKeyMap);
+        calculatePopularity(oldValue, popularValueMap);
         return oldValue;
     }
 
@@ -116,18 +116,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         return map.entrySet();
     }
 
-    public void calculateValuePopularity(V key, Map<V, Integer> mapPopularity) {
-        if (key == null) {
-            return;
-        }
-        if (mapPopularity.containsKey(key)) {
-            mapPopularity.put(key, mapPopularity.get(key) + 1);
-        } else {
-            mapPopularity.put(key, 1);
-        }
-    }
-
-    public void calculateKeyPopularity(K key, Map<K, Integer> mapPopularity) {
+    public <T> void calculatePopularity(T key, Map<T, Integer> mapPopularity) {
         if (key == null) {
             return;
         }
@@ -142,42 +131,21 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        int maxValue = 0;
-        Object key = null;
-
-        for (Entry<K, Integer> entry : popularKeyMap.entrySet()) {
-            if (entry.getValue() > maxValue) {
-                maxValue = entry.getValue();
-                key = entry.getKey();
-            }
-        }
-        return (K) key;
+        return findPopularElement(popularKeyMap);
     }
 
     /**
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        if (popularKeyMap.containsKey(key)) {
-            return popularKeyMap.get(key);
-        }
-        return 0;
+        return popularKeyMap.getOrDefault(key, 0);
     }
 
     /**
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        int maxValue = 0;
-        Object value = null;
-
-        for (Entry<V, Integer> entry : popularValueMap.entrySet()) {
-            if (entry.getValue() > maxValue) {
-                maxValue = entry.getValue();
-                value = entry.getKey();
-            }
-        }
-        return (V) value;
+        return findPopularElement(popularValueMap);
     }
 
     /**
@@ -185,10 +153,21 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        if (popularValueMap.containsKey(value)) {
-            return popularValueMap.get(value);
+        return popularValueMap.getOrDefault(value,0);
+    }
+
+    public <T> T findPopularElement(Map<T,Integer> popularMap){
+        int maxValue = 0;
+        T value = null;
+
+        for (Map.Entry<T, Integer> entry : popularMap.entrySet()) {
+            if (entry.getValue() > maxValue) {
+                maxValue = entry.getValue();
+                value = entry.getKey();
+            }
         }
-        return 0;
+
+        return value;
     }
 
     /**
