@@ -36,7 +36,7 @@ public class MailService<U, T extends Mail<U>> implements Consumer<T> {
     }
 
     public void setNewMail(T sentContent, String name, PopularMap<String, List<T>> mapTypeUsers) {
-        List<T> list = mapTypeUsers.computeIfAbsent(sentContent.getRecipient(), key -> new ArrayList());
+        List<T> list = mapTypeUsers.computeIfAbsent(name, key -> new ArrayList());
         list.add(sentContent);
         mapTypeUsers.put(name, list);
     }
@@ -68,8 +68,8 @@ public class MailService<U, T extends Mail<U>> implements Consumer<T> {
     /**
      * Метод должен заставить обработать service все mails.
      */
-    public static void process(MailService service, List<Mail> mails) {
-        for (Mail mail : mails) {
+    public static <U,T extends Mail<U>> void process(MailService<U,T> service, List<T> mails) {
+        for (T mail : mails) {
             service.accept(mail);
         }
     }
