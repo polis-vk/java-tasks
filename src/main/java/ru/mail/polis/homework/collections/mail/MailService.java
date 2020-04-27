@@ -25,8 +25,8 @@ public class MailService<T extends SimpleMessage<?>> implements Consumer<T> {
      */
     @Override
     public void accept(T t) {
-        updateUser(t, recipients, t.getRecipient());
-        updateUser(t, senders, t.getSender());
+        recipients.computeIfAbsent(t.getRecipient(), k -> new ArrayList<>()).add(t);
+        senders.computeIfAbsent(t.getSender(), k -> new ArrayList<>()).add(t);
     }
 
     /**
@@ -57,11 +57,5 @@ public class MailService<T extends SimpleMessage<?>> implements Consumer<T> {
      */
     public String getPopularRecipient() {
         return recipients.getPopularKey();
-    }
-
-    private void updateUser(T t, PopularMap<String, List<T>> updateProperty, String client) {
-        List<T> messages = updateProperty.getOrDefault(client, new ArrayList<>());
-        messages.add(t);
-        updateProperty.put(client, messages);
     }
 }
