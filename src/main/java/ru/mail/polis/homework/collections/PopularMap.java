@@ -47,10 +47,12 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private <T> void updatePopular(Map<T, Integer> map, Object key) {
-        if (map.containsKey(key)) {
-            map.replace((T)key,map.get(key)+1);
-        } else {
-            map.put((T) key, 1);
+        if (key != null) {
+            if (map.containsKey(key)) {
+                map.replace((T) key, map.get(key) + 1);
+            } else {
+                map.put((T) key, 1);
+            }
         }
     }
 
@@ -127,7 +129,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         return map.entrySet();
     }
 
-    public <T> T getMax(Map<T,Integer> map){
+    private <T> T getMax(Map<T, Integer> map) {
         int max = -1;
         T maxKey = null;
         for (Map.Entry<T, Integer> entry : map.entrySet()) {
@@ -138,6 +140,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         }
         return maxKey;
     }
+
     /**
      * Возвращает самый популярный, на данный момент, ключ
      */
@@ -149,7 +152,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        return mapK.getOrDefault(key,0);
+        return mapK.getOrDefault(key, 0);
     }
 
     /**
@@ -165,7 +168,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        return mapV.getOrDefault(value,0);
+        return mapV.getOrDefault(value, 0);
     }
 
     /**
