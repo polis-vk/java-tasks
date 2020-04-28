@@ -20,4 +20,7 @@ public class Mail<T> {
         return sender;
     }
 
+    public T getContent() {
+        return content;
+    }
 }
