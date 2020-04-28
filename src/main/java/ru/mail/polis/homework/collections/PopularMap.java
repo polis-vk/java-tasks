@@ -74,8 +74,9 @@ public class PopularMap<K, V> implements Map<K, V> {
     public V get(Object key) {
         increasePop(keyPopularity, key);
         V value = map.get(key);
-        if(value!=null)
-        increasePop(valuePopularity, value);
+        if (value != null){
+            increasePop(valuePopularity, value);
+        }
         return value;
     }
 
@@ -84,8 +85,9 @@ public class PopularMap<K, V> implements Map<K, V> {
         increasePop(keyPopularity, key);
         increasePop(valuePopularity, value);
         V oldValue = map.put(key, value);
-        if(oldValue !=null)
-        increasePop(valuePopularity, oldValue);
+        if (oldValue != null) {
+            increasePop(valuePopularity, oldValue);
+        }
         return oldValue;
     }
 
@@ -93,7 +95,9 @@ public class PopularMap<K, V> implements Map<K, V> {
     public V remove(Object key) {
         increasePop(keyPopularity, key);
         V value = map.remove(key);
-        increasePop(valuePopularity, value);
+        if(value!=null) {
+            increasePop(valuePopularity, value);
+        }
         return map.remove(value);
     }
 
@@ -124,18 +128,8 @@ public class PopularMap<K, V> implements Map<K, V> {
         return map.entrySet();
     }
 
-    private <T> void increasePop(Map<T,Integer> map, Object key){
-        Integer pop = map.putIfAbsent((T)key, 1);
-        if(pop!=null){
-            map.put((T)key,pop+1);
-        }
-        /* Старая версия
-        if (map.containsKey(key)) {
-            map.replace((T) key, map.get(key) + 1);
-        } else {
-            map.put((T) key, 1);
-        }
-        */
+    private <T> void increasePop(Map<T, Integer> map, Object key) {
+        map.put((T) key, map.getOrDefault(key, 0) + 1);
     }
 
     /**
@@ -149,7 +143,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-            return keyPopularity.getOrDefault(key,0);
+        return keyPopularity.getOrDefault(key, 0);
     }
 
     /**
@@ -159,7 +153,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         return getPopular(valuePopularity);
     }
 
-    public <T> T getPopular(Map<T,Integer> map){
+    public <T> T getPopular(Map<T, Integer> map) {
         int maxPopularity = 0;
         T popularValue = null;
         for (Map.Entry<T, Integer> entry : map.entrySet()) {
@@ -170,12 +164,13 @@ public class PopularMap<K, V> implements Map<K, V> {
         }
         return popularValue;
     }
+
     /**
      * Возвращает количество использований значений в методах: containsValue, get, put (учитывается 2 раза, если
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        return valuePopularity.getOrDefault(value,0);
+        return valuePopularity.getOrDefault(value, 0);
     }
 
     /**
