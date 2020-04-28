@@ -40,8 +40,8 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     public PopularMap(Map<K, V> map) {
         this.map = map;
-        keyPopularity = new HashMap<>();
-        valuePopularity = new HashMap<>();
+        this.keyPopularity = new HashMap<>();
+        this.valuePopularity = new HashMap<>();
     }
 
     @Override
@@ -79,9 +79,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         incrementPopularity(key, keyPopularity);
         incrementPopularity(value, valuePopularity);
         V exValue = map.put(key, value);
-        if (exValue != null) {
-            incrementPopularity(exValue, valuePopularity);
-        }
+        incrementPopularity(exValue, valuePopularity);
         return exValue;
     }
 
@@ -90,7 +88,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         V value = map.remove(key);
         incrementPopularity((K) key, keyPopularity);
         incrementPopularity(value, valuePopularity);
-        return map.remove(key);
+        return value;
     }
 
     @Override
@@ -105,22 +103,16 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public Set<K> keySet() {
-        map.keySet().forEach(key -> incrementPopularity(key, keyPopularity));
         return map.keySet();
     }
 
     @Override
     public Collection<V> values() {
-        map.values().forEach(value -> incrementPopularity(value, valuePopularity));
-        return map.values();
+       return map.values();
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        map.forEach((key, value) -> {
-            incrementPopularity(key, keyPopularity);
-            incrementPopularity(value, valuePopularity);
-        });
         return map.entrySet();
     }
 
@@ -157,6 +149,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     private <T> T getPopularElement(Map<T, Integer> popularityMap) {
         T popular = null;
         int max = 0;
+
         for (Entry<T, Integer> elem : popularityMap.entrySet()) {
             if (elem.getValue() > max) {
                 max = elem.getValue();
@@ -170,56 +163,14 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        return new PopularityIterator(this.valuePopularity);
+        List<V> list = new ArrayList<>(this.valuePopularity.keySet());
+        list.sort(Comparator.comparing(valuePopularity::get));
+        return list.iterator();
     }
 
     private <T> void incrementPopularity(T key, Map<T, Integer> popularMap) {
-        popularMap.put(key, popularMap.getOrDefault(key, 0) + 1);
-    }
-
-    class PopularityIterator implements Iterator<V> {
-
-        private Integer curIndex;
-        private List<V> values;
-        private List<Integer> keys;
-
-        public PopularityIterator(Map<V, Integer> keyPopularity) {
-            curIndex = 0;
-            values = new ArrayList<>();
-            keys = new ArrayList<>();
-            for (Entry<V, Integer> entry : keyPopularity.entrySet()) {
-                values.add(entry.getKey());
-                keys.add(entry.getValue());
-            }
-            ;
-
-            V vTemp;
-            Integer iTemp;
-
-            for (int i = 0; i < keys.size(); i++) {
-                for (int j = i + 1; j < keys.size(); j++) {
-                    if (keys.get(i) > keys.get(j)) {
-                        vTemp = values.get(i);
-                        values.set(i, values.get(j));
-                        values.set(j, vTemp);
-                        iTemp = keys.get(i);
-                        keys.set(i, keys.get(j));
-                        keys.set(j, iTemp);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public boolean hasNext() {
-            return curIndex - values.size() > 0;
-        }
-
-        @Override
-        public V next() {
-            return values.get(curIndex++);
+        if (key != null) {
+            popularMap.put(key, popularMap.getOrDefault(key, 0) + 1);
         }
     }
-
-
 }
