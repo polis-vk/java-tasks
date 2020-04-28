@@ -12,13 +12,13 @@ import java.util.function.Consumer;
  * Нужно создать сервис, который умеет обрабатывать письма и зарплату.
  * Письма состоят из получателя, отправителя, текста сообщения
  * Зарплата состоит из получателя, отправителя и суммы.
- *
+ * <p>
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  */   //PECS
 public class MailService<M, T extends Mail<M>> implements Consumer<T> {
 
     private final PopularMap<String, List<T>> addressee;
-    private final  PopularMap<String, List<T>> senders;
+    private final PopularMap<String, List<T>> senders;
 
     public MailService() {
         this.addressee = new PopularMap();
@@ -35,9 +35,10 @@ public class MailService<M, T extends Mail<M>> implements Consumer<T> {
         manageMail(senders, sent, sent.getSender());
     }
 
-    private void manageMail(Map<String, List<T>> map, T message, String sender){
-         map.computeIfAbsent(sender, s -> new ArrayList<>()).add(message);
+    private void manageMail(Map<String, List<T>> map, T message, String sender) {
+        map.computeIfAbsent(sender, s -> new ArrayList<>()).add(message);
     }
+
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      */
@@ -63,7 +64,7 @@ public class MailService<M, T extends Mail<M>> implements Consumer<T> {
      * Метод должен заставить обработать service все mails.
      */
     public static void process(MailService service, List<? extends Mail> mails) {
-        for (Mail mail:mails) {
+        for (Mail mail : mails) {
             service.accept(mail);
         }
     }

@@ -108,7 +108,7 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public Collection<V> values() {
-       return map.values();
+        return map.values();
     }
 
     @Override
