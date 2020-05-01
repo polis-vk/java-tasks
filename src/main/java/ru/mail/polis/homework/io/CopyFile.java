@@ -44,8 +44,8 @@ public class CopyFile {
         }
         Files.createFile(fileOut);
 
-        try (InputStream inputStream = new BufferedInputStream(new FileInputStream(fileIn.toFile()));
-             OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(fileOut.toFile()))) {
+        try (InputStream inputStream = new BufferedInputStream(Files.newInputStream(fileIn));
+             OutputStream outputStream = new BufferedOutputStream(Files.newOutputStream(fileOut))) {
             byte[] buffer = new byte[1024];
             int lengthRead;
             while ((lengthRead = inputStream.read(buffer)) > 0) {

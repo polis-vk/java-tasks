@@ -1,5 +1,12 @@
 package ru.mail.polis.homework.io.objects;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,28 +22,53 @@ public class Serializer {
     /**
      * 1 балл
      * Реализовать простую сериализацию, с помощью специального потока для сериализации объектов
-     * @param animals Список животных для сериализации
+     *
+     * @param animals  Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void defaultSerialize(List<Animal> animals, String fileName) {
+    public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
+        Path outputFile = Paths.get(fileName);
+        if (Files.notExists(outputFile)) {
+            Files.createFile(outputFile);
+        }
 
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(outputFile))) {
+            objectOutputStream.writeInt(animals.size());
+            for (Animal animal : animals) {
+                objectOutputStream.writeObject(animal);
+            }
+        }
     }
 
     /**
      * 1 балл
      * Реализовать простую дисериализацию, с помощью специального потока для дисериализации объектов
+     *
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
+    public List<Animal> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
+        Path inputFile = Paths.get(fileName);
+        if (Files.notExists(inputFile)) {
+            return Collections.emptyList();
+        }
+        List<Animal> animals = new ArrayList<>();
+
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(inputFile))) {
+            int length = objectInputStream.readInt();
+            for (int i = 0; i < length; i++) {
+                animals.add((Animal) objectInputStream.readObject());
+            }
+        }
+        return animals;
     }
 
 
     /**
      * 2 балла
      * Реализовать ручную сериализацию, с помощью высокоровневых потоков
-     * @param animals Список животных для сериализации
+     *
+     * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
@@ -46,6 +78,7 @@ public class Serializer {
     /**
      * 2 балла
      * Реализовать ручную дисериализацию, с помощью высокоровневых потоков
+     *
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
