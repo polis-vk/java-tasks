@@ -33,7 +33,7 @@ public class Directories {
     }
 
     private static int deleteWithFile(File file, int count) {
-        return file.delete()? count + 1 : count;
+        return file.delete() ? count + 1 : count;
     }
 
     /**
@@ -45,12 +45,14 @@ public class Directories {
         if (Files.notExists(dir)) {
             return 0;
         }
+        if (Files.isRegularFile(dir)) {
+            Files.delete(dir);
+            return 1;
+        }
         int count = 0;
-        if (Files.isDirectory(dir)) {
-            try (DirectoryStream<Path> entries = Files.newDirectoryStream(dir)) {
-                for (Path entry : entries) {
-                    count += removeWithPath(entry.toString());
-                }
+        try (DirectoryStream<Path> entries = Files.newDirectoryStream(dir)) {
+            for (Path entry : entries) {
+                count += removeWithPath(entry.toString());
             }
         }
         Files.delete(dir);

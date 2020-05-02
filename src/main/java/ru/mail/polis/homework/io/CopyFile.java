@@ -34,7 +34,6 @@ public class CopyFile {
                 copyFiles(entry.toString(), directoryOut.resolve(entry.getFileName()).toString());
             }
         }
-
         return null;
     }
 
@@ -44,8 +43,8 @@ public class CopyFile {
         }
         Files.createFile(fileOut);
 
-        try (InputStream inputStream = new BufferedInputStream(Files.newInputStream(fileIn));
-             OutputStream outputStream = new BufferedOutputStream(Files.newOutputStream(fileOut))) {
+        try (InputStream inputStream = Files.newInputStream(fileIn);
+             OutputStream outputStream = Files.newOutputStream(fileOut)) {
             byte[] buffer = new byte[1024];
             int lengthRead;
             while ((lengthRead = inputStream.read(buffer)) > 0) {
