@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.collections.streams;
 
-import java.util.List;
+import java.util.*;
+import java.util.function.ToIntFunction;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -21,8 +23,13 @@ public class WordFrequency {
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-        return null;
+        Map<String,Integer> countElements = new HashMap<>();
+        return lines.flatMap(line -> Arrays.stream(line.split("[.,!:\\-?;\\s]+")))
+                .map(String::toLowerCase)
+                .peek(element -> countElements.put(element, countElements.getOrDefault(element, 0) + 1))
+                .distinct()
+                .sorted(Comparator.comparingInt((ToIntFunction<String>) countElements::get).reversed().thenComparing(String::toString))
+                .limit(10)
+                .collect(Collectors.toList());
     }
-
-
 }

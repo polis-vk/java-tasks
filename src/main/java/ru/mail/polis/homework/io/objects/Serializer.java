@@ -1,14 +1,15 @@
 package ru.mail.polis.homework.io.objects;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
+
+import static ru.mail.polis.homework.io.objects.Type.parseType;
 
 /**
  * Нужно создать тесты для этого файла
@@ -71,8 +72,18 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
-    public void customSerialize(List<Animal> animals, String fileName) {
+    public void customSerialize(List<Animal> animals, String fileName) throws IOException {
+        Path outputFile = Paths.get(fileName);
+        if (Files.notExists(outputFile)) {
+            Files.createFile(outputFile);
+        }
 
+        try (PrintStream outputStream = new PrintStream(Files.newOutputStream(outputFile))) {
+            for (Animal animal : animals) {
+                outputStream.print(animal);
+                outputStream.print(';');
+            }
+        }
     }
 
     /**
@@ -82,7 +93,54 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+    public List<Animal> customDeserialize(String fileName) throws IOException {
+        Path inputFile = Paths.get(fileName);
+        if (Files.notExists(inputFile)) {
+            return Collections.emptyList();
+        }
+        List<Animal> animals = new ArrayList<>();
+        try (Scanner scanner = new Scanner(Files.newInputStream(inputFile))) {
+            if (!scanner.hasNext()) {
+                return animals;
+            }
+            String[] inputString = scanner.nextLine().split(";");
+            Animal animalObj;
+            for (String animal : inputString) {
+                animalObj = parseAnimal(animal);
+                animals.add(animalObj);
+            }
+        }
+        return animals;
+    }
+
+    private Animal parseAnimal(String animal) {
+        Animal dad = null;
+        Animal mum = null;
+        // TODO: 01.05.2020 изменить парсинг строки, чтобы обработанное удалялось
+        int firstIndex = animal.indexOf('\'') + 1;
+        int lastIndex = animal.indexOf('\'', firstIndex);
+        String name = animal.substring(firstIndex, lastIndex);
+
+        firstIndex = animal.indexOf('=', lastIndex) + 1;
+        lastIndex = animal.indexOf(',', firstIndex);
+        int age = Integer.parseInt(animal.substring(firstIndex, lastIndex));
+
+        firstIndex = animal.indexOf('{', lastIndex) + 1;
+        lastIndex = animal.indexOf('}', firstIndex) + 1;
+        if (firstIndex != 0) {
+            dad = parseAnimal(animal.substring(firstIndex, lastIndex));
+        }
+
+        firstIndex = animal.indexOf('{', lastIndex) + 1;
+        lastIndex = animal.indexOf('}', firstIndex) + 1;
+        if (firstIndex != 0) {
+            mum = parseAnimal(animal.substring(firstIndex, lastIndex));
+        }
+
+        lastIndex = animal.lastIndexOf('}');
+        firstIndex = animal.lastIndexOf('=') + 1;
+        Type type = parseType(animal.substring(firstIndex, lastIndex));
+
+        return new Animal(name, age, dad, mum, type);
     }
 }

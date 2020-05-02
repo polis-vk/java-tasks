@@ -33,10 +33,7 @@ public class Directories {
     }
 
     private static int deleteWithFile(File file, int count) {
-        if (file.delete()) {
-            count++;
-        }
-        return count;
+        return file.delete()? count + 1 : count;
     }
 
     /**

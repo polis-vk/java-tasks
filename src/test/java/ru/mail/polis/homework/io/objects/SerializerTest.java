@@ -122,7 +122,7 @@ public class SerializerTest {
     }
 
     @Test
-    public void writeReadEmptyListCustom() throws IOException, ClassNotFoundException {
+    public void writeReadEmptyListCustom() throws IOException {
         Path file = Paths.get("src", "test", "resources", "serializer", "animal1C.bin");
         serializer.customSerialize(Collections.emptyList(), file.toString());
         List<Animal> outputAnimals = serializer.customDeserialize(file.toString());
@@ -130,16 +130,16 @@ public class SerializerTest {
     }
 
     @Test
-    public void writeReadEqualListCustom() throws IOException, ClassNotFoundException {
+    public void writeReadEqualListCustom() throws IOException {
         Path file = Paths.get("src", "test", "resources", "serializer", "animal2C.bin");
 
-        serializer.customSerialize(allAnimals, file.toString());
+        serializer.customSerialize(fishes, file.toString());
         List<Animal> outputAnimals = serializer.customDeserialize(file.toString());
-        assertEquals(allAnimals, outputAnimals);
+        assertEquals(fishes, outputAnimals);
     }
 
     @Test
-    public void writeReadEqualManyListsCustom() throws IOException, ClassNotFoundException {
+    public void writeReadEqualManyListsCustom() throws IOException {
         Path file1 = Paths.get("src", "test", "resources", "serializer", "animal3C.bin");
         Path file2 = Paths.get("src", "test", "resources", "serializer", "animal4C.bin");
         Path file3 = Paths.get("src", "test", "resources", "serializer", "animal5C.bin");
