@@ -1,4 +1,4 @@
-package ru.mail.polis.homework.files;
+package ru.mail.polis.homework.io;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
