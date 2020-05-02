@@ -9,24 +9,6 @@ import java.io.*;
  */
 public class Animal implements Serializable {
     
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
-        
-        Animal animal = new Animal(1, "Sigismund", new Kind("Fish", 10000000L), Owner.PERSON);
-        System.out.println("Before Serialize: " + "\n" + animal);
-        
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(
-                new FileOutputStream("output.txt"));
-        objectOutputStream.writeObject(animal);
-        objectOutputStream.close();
-    
-        ObjectInputStream objectInputStream = new ObjectInputStream(
-                new FileInputStream("output.txt"));
-        Animal animalRestored = (Animal) objectInputStream.readObject();
-        objectInputStream.close();
-    
-        System.out.println("After Restored From Byte: " + "\n" + animalRestored);
-    }
-    
     private int age;
     private final String name;
     private final Kind kind;
@@ -73,15 +55,15 @@ public class Animal implements Serializable {
             this.name = name;
             this.populationSize = populationSize;
         }
-    
+        
         public String getName() {
             return name;
         }
-    
+        
         public long getPopulationSize() {
             return populationSize;
         }
-    
+        
         @Override
         public String toString() {
             return "Kind{" +
