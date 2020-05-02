@@ -133,9 +133,9 @@ public class SerializerTest {
     public void writeReadEqualListCustom() throws IOException {
         Path file = Paths.get("src", "test", "resources", "serializer", "animal2C.bin");
 
-        serializer.customSerialize(fishes, file.toString());
+        serializer.customSerialize(simpleAnimal, file.toString());
         List<Animal> outputAnimals = serializer.customDeserialize(file.toString());
-        assertEquals(fishes, outputAnimals);
+        assertEquals(simpleAnimal, outputAnimals);
     }
 
     @Test

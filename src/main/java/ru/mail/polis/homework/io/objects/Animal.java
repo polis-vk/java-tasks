@@ -51,11 +51,11 @@ public class Animal implements Serializable {
     @Override
     public String toString() {
         return "Animal{" +
-                "name='" + name + '\'' +
+                "name=" + name +
                 ", age=" + age +
+                ", type=" + type +
                 ", dad=" + dad +
                 ", mam=" + mum +
-                ", type=" + type +
                 '}';
     }
 }

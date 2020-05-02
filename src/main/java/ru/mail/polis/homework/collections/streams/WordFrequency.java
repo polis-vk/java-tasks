@@ -28,7 +28,7 @@ public class WordFrequency {
                 .map(String::toLowerCase)
                 .peek(element -> countElements.put(element, countElements.getOrDefault(element, 0) + 1))
                 .distinct()
-                .sorted(Comparator.comparingInt((ToIntFunction<String>) countElements::get).reversed().thenComparing(String::toString))
+                .sorted(Comparator.comparing(countElements::get).reversed().thenComparing(Object::toString))
                 .limit(10)
                 .collect(Collectors.toList());
     }
