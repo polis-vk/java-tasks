@@ -35,9 +35,6 @@ public class Directories {
      * 2 балла
      */
     public static int removeWithPath(String stringPath) throws IOException {
-        if (stringPath == null) {
-            return 0;
-        }
         AtomicInteger count = new AtomicInteger(0);
         Files.walkFileTree(Paths.get(stringPath), new SimpleFileVisitor<Path>() {
             @Override
