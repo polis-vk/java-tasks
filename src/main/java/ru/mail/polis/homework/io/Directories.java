@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.io;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Directories {
 
@@ -13,7 +17,25 @@ public class Directories {
      * 2 балла
      */
     public static int removeWithFile(String path) {
-        return 0;
+        int countRemoved = 0;
+        File file = new File(path);
+        if (file.exists()) {
+            File[] listFiles = file.listFiles();
+            if (listFiles != null) {
+                for (File insideFile : listFiles) {
+                    if (insideFile.isFile()) {
+                        countRemoved++;
+                        insideFile.delete();
+                    } else {
+                        countRemoved += removeWithFile(insideFile.toString());
+                    }
+                }
+            }
+            countRemoved++;
+            file.delete();
+            return countRemoved;
+        }
+        return countRemoved;
     }
 
     /**
@@ -21,6 +43,26 @@ public class Directories {
      * 2 балла
      */
     public static int removeWithPath(String path) throws IOException {
-        return 0;
+        AtomicInteger countRemoved = new AtomicInteger();
+        if (Files.exists(Paths.get(path))) {
+            Files.walkFileTree(Paths.get(path), new SimpleFileVisitor<Path>() {
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    countRemoved.incrementAndGet();
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    countRemoved.incrementAndGet();
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+
+            });
+            return countRemoved.get();
+        }
+        return countRemoved.get();
     }
 }
