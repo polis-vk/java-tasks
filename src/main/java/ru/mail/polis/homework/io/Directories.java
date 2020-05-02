@@ -18,24 +18,16 @@ public class Directories {
      * 2 балла
      */
     public static int removeWithFile(String path) {
-        if (path == null) {
-            return 0;
-        }
         File file = new File(path);
-        
+        int count = 0;
         if (!file.exists()) {
-            return 0;
+            return count;
         } else if (file.isDirectory()) {
-            int count = 0;
             for (String tmpPath : Objects.requireNonNull(file.list())) {
                 count += removeWithFile(path + File.separator + tmpPath);
             }
-            file.delete();
-            return ++count;
-        } else {
-            file.delete();
-            return 1;
         }
+        return file.delete() ? count + 1 : count;
     }
     
     /**
@@ -56,7 +48,7 @@ public class Directories {
             }
             
             @Override
-            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+            public FileVisitResult visitFileFailed(Path file, IOException exc) {
                 return FileVisitResult.CONTINUE;
             }
             
