@@ -10,7 +10,7 @@ public class CopyFile {
      * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
      * Файлы копировать ручками через стримы.
      * В тесте для создания нужных файлов для первого запуска надо расскоментировать код в setUp()
-     *
+     * <p>
      * 6 баллов
      */
     public static String copyFiles(String pathFrom, String pathTo) throws IOException {
@@ -41,9 +41,7 @@ public class CopyFile {
     }
 
 
-
-
-   public static void copyFileStream(File fromFile, File toFile) throws IOException {
+    public static void copyFileStream(File fromFile, File toFile) throws IOException {
 
         try (InputStream is = new FileInputStream(fromFile); OutputStream os = new FileOutputStream(toFile)) {
             byte[] buffer = new byte[1024];
