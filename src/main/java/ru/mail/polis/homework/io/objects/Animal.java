@@ -38,6 +38,21 @@ public class Animal implements Serializable {
     }
     
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Animal that = (Animal) obj;
+        return this.age == that.age
+                && this.name.equals(that.name)
+                && this.owner.equals(that.owner)
+                && this.kind.equals(that.kind);
+    }
+    
+    @Override
     public String toString() {
         return "Animal{" +
                 "age=" + age +
@@ -63,7 +78,20 @@ public class Animal implements Serializable {
         public long getPopulationSize() {
             return populationSize;
         }
-        
+    
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || getClass() != obj.getClass()) {
+                return false;
+            }
+            Kind that = (Kind) obj;
+            return this.populationSize == that.populationSize
+                    && this.name.equals(that.name);
+        }
+    
         @Override
         public String toString() {
             return "Kind{" +
