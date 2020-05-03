@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.io.objects;
 
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,8 +20,14 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void defaultSerialize(List<Animal> animals, String fileName) {
-
+    public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
+        try (ObjectOutput objectOutputStream = new ObjectOutputStream(
+                new FileOutputStream(fileName))) {
+            for (Animal animal : animals) {
+                objectOutputStream.writeObject(animal);
+            }
+            objectOutputStream.flush();
+        }
     }
 
     /**
@@ -28,11 +36,19 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
+    public List<Animal> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
+        List<Animal> animals = new ArrayList<>();
+        try (ObjectInput objectInputStream = new ObjectInputStream(
+                new FileInputStream(fileName))) {
+            while (true) {
+                Animal animal = (Animal) objectInputStream.readObject();
+                animals.add(animal);
+            }
+        } catch (EOFException ignored) {
+        }
+        return animals;
     }
-
-
+    
     /**
      * 2 балла
      * Реализовать ручную сериализацию, с помощью высокоровневых потоков
@@ -40,7 +56,7 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
-
+    
     }
 
     /**
