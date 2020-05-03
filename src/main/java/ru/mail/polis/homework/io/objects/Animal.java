@@ -6,4 +6,13 @@ package ru.mail.polis.homework.io.objects;
  * 1 балл
  */
 public class Animal {
+    private final String name;
+    private final AnimalType type;
+    private final AnimalOwner owner;
+
+    public Animal(String name, AnimalType type, AnimalOwner owner) {
+        this.name = name;
+        this.type = type;
+        this.owner = owner;
+    }
 }
