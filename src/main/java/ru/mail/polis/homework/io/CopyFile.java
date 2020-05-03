@@ -1,10 +1,10 @@
 package ru.mail.polis.homework.io;
 
 import java.io.*;
-import java.util.Objects;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 
 public class CopyFile {
-    
     /**
      * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
      * Файлы копировать ручками через стримы.
@@ -12,27 +12,31 @@ public class CopyFile {
      * <p>
      * 6 баллов
      */
-    public static String copyFiles(String pathFrom, String pathTo) throws IOException {
-        File fileFrom = new File(pathFrom);
-        File fileTo = new File(pathTo);
-        File parent = new File(fileTo.getParent());
-        if (!parent.exists()) {
-            parent.mkdirs();
+    public static String copyFiles(String pathFromString, String pathToString) throws IOException {
+        final Path source = Paths.get(pathFromString);
+        final Path dest = Paths.get(pathToString);
+    
+        if (Files.notExists(source)) {
+            return pathToString;
         }
-        if (fileFrom.isDirectory()) {
-            fileTo.mkdir();
-            for (String tmpPath : Objects.requireNonNull(fileFrom.list())) {
-                String addedPath = File.separator + tmpPath;
-                copyFiles(pathFrom + addedPath, pathTo + addedPath);
+        Files.createDirectories(dest.getParent());
+        Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                Files.copy(dir, dest.resolve(source.relativize(dir)), StandardCopyOption.REPLACE_EXISTING);
+                return FileVisitResult.CONTINUE;
             }
-        } else if (fileFrom.isFile()) {
-            fileTo.createNewFile();
-            copyFileData(fileFrom, fileTo);
-        }
-        return pathTo;
+        
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                copyFileData(file.toString(), dest.resolve(source.relativize(file)).toString());
+                return FileVisitResult.CONTINUE;
+            }
+        });
+        return pathToString;
     }
     
-    private static void copyFileData(File fileFrom, File fileTo) {
+    private static void copyFileData(String fileFrom, String fileTo) {
         try (InputStream in = new FileInputStream(fileFrom);
              OutputStream out = new FileOutputStream(fileTo)) {
             byte[] bytes = new byte[4096];
