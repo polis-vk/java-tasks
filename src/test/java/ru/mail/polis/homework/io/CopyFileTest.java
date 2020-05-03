@@ -1,4 +1,4 @@
-package ru.mail.polis.homework.files;
+package ru.mail.polis.homework.io;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -92,18 +92,14 @@ public class CopyFileTest {
 
     @After
     public void tearDown() throws Exception {
-        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1", "first").toFile());
-        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1", "second").toFile());
-        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1", "third").toFile());
-        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1", "fourth").toFile());
-        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1", "fifth").toFile());
+        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1").toFile());
     }
 
     @Test
     public void copyOnlyFile() throws IOException {
         Path file = Paths.get("src", "test", "resources", "directories", "copy", "first", "file.txt");
         Path dest = Paths.get("src", "test", "resources", "directories", "copy1", "first", "file.txt");
-        CopyFile.copySmallFiles(file.toString(), dest.toString());
+        CopyFile.copyFiles(file.toString(), dest.toString());
         checkCopy(file, dest, false);
     }
 
@@ -111,7 +107,7 @@ public class CopyFileTest {
     public void copyOnlyDir() throws IOException {
         Path source = Paths.get("src", "test", "resources", "directories", "copy", "second");
         Path dest = Paths.get("src", "test", "resources", "directories", "copy1", "second");
-        CopyFile.copySmallFiles(source.toString(), dest.toString());
+        CopyFile.copyFiles(source.toString(), dest.toString());
         checkCopy(source, dest, true);
     }
 
@@ -119,15 +115,15 @@ public class CopyFileTest {
     public void copyDirWithFiles() throws IOException {
         Path source = Paths.get("src", "test", "resources", "directories", "copy", "third");
         Path dest = Paths.get("src", "test", "resources", "directories", "copy1", "third");
-        CopyFile.copySmallFiles(source.toString(), dest.toString());
+        CopyFile.copyFiles(source.toString(), dest.toString());
         checkCopy(source, dest, true);
     }
 
     @Test
-    public void copyDirEmpty()  {
+    public void copyDirEmpty() {
         Path source = Paths.get("src", "test", "resources", "directories", "copy", "forth");
         Path dest = Paths.get("src", "test", "resources", "directories", "copy1", "forth");
-        CopyFile.copySmallFiles(source.toString(), dest.toString());
+        CopyFile.copyFiles(source.toString(), dest.toString());
         try {
             Files.walk(dest).collect(Collectors.toList());
             fail();
@@ -140,7 +136,7 @@ public class CopyFileTest {
     public void copyDirHard() throws IOException {
         Path source = Paths.get("src", "test", "resources", "directories", "copy", "fifth");
         Path dest = Paths.get("src", "test", "resources", "directories", "copy1", "fifth");
-        CopyFile.copySmallFiles(source.toString(), dest.toString());
+        CopyFile.copyFiles(source.toString(), dest.toString());
         checkCopy(source, dest, true);
     }
 
