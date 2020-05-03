@@ -67,7 +67,7 @@ public class SerializerTest {
         
         serializer.defaultSerialize(animals, FILE_PATH_2.toString());
         List<Animal> animalsFromFile = serializer.defaultDeserialize(FILE_PATH_2.toString());
-        assertTrue(isEqual(animals, animalsFromFile));
+        assertEquals(animals, animalsFromFile);
     }
     
     @Test
@@ -97,27 +97,14 @@ public class SerializerTest {
         List<Animal> animals2FromFile = serializer.defaultDeserialize(FILE_PATH_4.toString());
         List<Animal> animals3FromFile = serializer.defaultDeserialize(FILE_PATH_5.toString());
         List<Animal> animals4FromFile = serializer.defaultDeserialize(FILE_PATH_6.toString());
-        
-        assertTrue(isEqual(animals1, animals4));
-        assertTrue(isEqual(animals1, animals1FromFile));
-        assertTrue(isEqual(animals4, animals4FromFile));
-        assertFalse(isEqual(animals1, animals2));
-        assertFalse(isEqual(animals1, animals3));
-        assertTrue(isEqual(animals2, animals2FromFile));
-        assertTrue(isEqual(animals3, animals3FromFile));
-    }
     
-    private boolean isEqual(List<Animal> list1, List<Animal> list2) {
-        if (list1 == null || list2 == null
-                || list1.size() != list2.size()) {
-            return false;
-        }
-        for (int i = 0; i < list1.size(); i++) {
-            if (!list1.get(i).equals(list2.get(i))) {
-                return false;
-            }
-        }
-        return true;
+        assertEquals(animals1, animals4);
+        assertEquals(animals1, animals1FromFile);
+        assertEquals(animals4, animals4FromFile);
+        assertNotEquals(animals1, animals2);
+        assertNotEquals(animals1, animals3);
+        assertEquals(animals2, animals2FromFile);
+        assertEquals(animals3, animals3FromFile);
     }
 }
 
