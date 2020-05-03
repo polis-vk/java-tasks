@@ -43,7 +43,6 @@ public class CopyFile {
             while (in.read(bytes) != -1) {
                 out.write(bytes);
             }
-            out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
