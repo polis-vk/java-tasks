@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.io.objects;
 
 import java.io.Serializable;
-import java.nio.file.Files;
+import java.util.Objects;
 
 /**
  * Класс должен содержать несколько полей с примитивами, строками, энамами и некоторыми сапомисными объектами.
@@ -19,6 +19,10 @@ public class Animal implements Serializable {
         this(age, name, null, null, Type.unidentifiedAnimal);
     }
 
+    public Animal(int age, String name, Type type) {
+        this(age, name, null, null, type);
+    }
+
     public Animal(int age, String name, Animal mom, Animal dad, Type type) {
         this.age = age;
         this.name = name;
@@ -28,42 +32,30 @@ public class Animal implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Animal animal = (Animal) o;
+        return age == animal.age &&
+                Objects.equals(name, animal.name) &&
+                Objects.equals(mom, animal.mom) &&
+                Objects.equals(dad, animal.dad) &&
+                type == animal.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(age, name, mom, dad, type);
+    }
+
+    @Override
     public String toString() {
         return "Animal{" +
                 "age=" + age +
-                ", name='" + name +
+                ", name=" + name +
                 ", mom=" + mom +
                 ", dad=" + dad +
                 ", type=" + type +
                 '}';
-    }
-}
-
-enum Type {
-    Dog,
-    Cat,
-    Lion,
-    Crocodile,
-    Fish,
-    Chicken,
-    unidentifiedAnimal;
-
-    public static Type parseType(String type) {
-        switch (type) {
-            case "Dog":
-                return Dog;
-            case "Cat":
-                return Cat;
-            case "Lion:":
-                return Lion;
-            case "Crocodile":
-                return Crocodile;
-            case "Fish":
-                return Fish;
-            case "Chicken":
-                return Chicken;
-            default:
-                return unidentifiedAnimal;
-        }
     }
 }

@@ -24,8 +24,8 @@ public class CopyFileTest {
     @Before
     public void setUp() throws Exception {
         // --------------------------------------- create source for copyOnlyFile --------------------------------------
-        Path dir = Paths.get("src", "test", "resources", "directories.copy", "first");
-        Path file = Paths.get("src", "test", "resources", "directories.copy", "first", "file.txt");
+        Path dir = Paths.get("src", "test", "resources", "directories", "copy", "first");
+        Path file = Paths.get("src", "test", "resources", "directories", "copy", "first", "file.txt");
         Files.createDirectories(dir);
         createFile(file);
         // --------------------------------------- create source for copyOnlyFile --------------------------------------

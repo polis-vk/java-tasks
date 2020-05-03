@@ -2,7 +2,6 @@ package ru.mail.polis.homework.io;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -45,11 +44,11 @@ public class CopyFile {
         }
         Files.createDirectory(dirOut);
 
-        try(BufferedInputStream bufferedInputStream = new BufferedInputStream(Files.newInputStream(dirIn));
-            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(Files.newOutputStream(dirOut))) {
+        try (BufferedInputStream bufferedInputStream = new BufferedInputStream(Files.newInputStream(dirIn));
+             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(Files.newOutputStream(dirOut))) {
             byte[] buffer = new byte[1024];
             int lengthRead = 0;
-            while((lengthRead = bufferedInputStream.read(buffer)) > 0) {
+            while ((lengthRead = bufferedInputStream.read(buffer)) > 0) {
                 bufferedOutputStream.write(buffer, 0, lengthRead);
             }
             bufferedOutputStream.flush();
