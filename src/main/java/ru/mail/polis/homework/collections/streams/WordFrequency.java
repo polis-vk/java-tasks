@@ -1,9 +1,9 @@
 package ru.mail.polis.homework.collections.streams;
 
-import java.lang.reflect.Array;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+        import java.lang.reflect.Array;
+        import java.util.*;
+        import java.util.stream.Collectors;
+        import java.util.stream.Stream;
 
 /**
  * Написать программу, которая из текста (стрим строк), возвращает 10 самых популярных слов (В порядке убывания частоты).
@@ -24,26 +24,18 @@ public class WordFrequency {
      */
     public static List<String> wordFrequency(Stream<String> lines) {
 
-        List<String> listResult = new ArrayList<>();
-        String input = lines.collect(Collectors.joining(", "));
-        Stream<String> stream = Arrays.stream(input.split("[,.!:\\-?; ]"));
-
-        Map<String, Long> popularMap = stream
+        return lines
+                .map(line -> line.split("[,.!:\\-?; ]"))
+                .flatMap(Arrays::stream)
                 .filter(word -> word.length() > 0)
-                .collect(Collectors.groupingBy(String::toLowerCase, Collectors.counting()));
-
-        popularMap
-                .keySet()
+                .collect(Collectors.groupingBy(String::toLowerCase, Collectors.counting()))//;
+                .entrySet()
                 .stream()
-                .sorted(Comparator
-                        .comparing(popularMap::get)
-                        .thenComparing((word1, word2) -> word2.toString().compareTo(word1.toString()))
-                        .reversed())
+                .sorted(Map.Entry.<String, Long>comparingByValue()
+                        .reversed()
+                        .thenComparing(Map.Entry.comparingByKey()))
                 .limit(10)
-                .forEach(listResult::add);
-
-        return listResult;
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
-
-
 }

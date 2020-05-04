@@ -19,6 +19,7 @@ public class SerializerTest {
     private List<Animal> listAnimalBefore2;
     private List<Animal> listAnimalAfter2;
 
+    private Serializer serializer = new Serializer();
 
     public static List<Animal> makeList() {
         AnimalOwner animalOwner1 = new AnimalOwner("Petr", "1234567890");
@@ -52,108 +53,73 @@ public class SerializerTest {
     }
 
     @Test
-    public void defaultSerializeOnlyList() throws IOException, ClassNotFoundException {
+    public void defaultSerializeOnlyList() {
         listAnimalBefore1 = makeList();
-        Serializer.defaultSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
-        listAnimalAfter1 = new ArrayList<>(Serializer.defaultDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
-        for (int i = 0; i < 5; i++) {
-            assertEquals(listAnimalBefore1.get(i).getName(), listAnimalAfter1.get(i).getName());
-            assertEquals(listAnimalBefore1.get(i).getType(), listAnimalAfter1.get(i).getType());
-            assertEquals(listAnimalBefore1.get(i).getOwner().getName(), listAnimalAfter1.get(i).getOwner().getName());
-            assertEquals(listAnimalBefore1.get(i).getOwner().getPhoneNumber(), listAnimalAfter1.get(i).getOwner().getPhoneNumber());
-        }
+        serializer.defaultSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
+        listAnimalAfter1 = new ArrayList<>(serializer.defaultDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
 
+        assertEquals(listAnimalBefore1, listAnimalAfter1);
     }
 
     @Test
-    public void defaultSerializeEmptyList() throws IOException, ClassNotFoundException {
+    public void defaultSerializeEmptyList() {
         listAnimalBefore1 = new ArrayList<>();
-        Serializer.defaultSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
-        listAnimalAfter1 = new ArrayList<>(Serializer.defaultDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
+        serializer.defaultSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
+        listAnimalAfter1 = new ArrayList<>(serializer.defaultDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
 
         assertEquals(listAnimalBefore1.isEmpty(), listAnimalAfter1.isEmpty());
     }
 
     @Test
-    public void defaultSerializeManyList() throws IOException, ClassNotFoundException {
+    public void defaultSerializeManyList() {
         listAnimalBefore1 = makeList();
         listAnimalBefore2 = makeList2();
-        Serializer.defaultSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
-        listAnimalAfter1 = new ArrayList<>(Serializer.defaultDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
+        serializer.defaultSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
+        listAnimalAfter1 = new ArrayList<>(serializer.defaultDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
 
-        Serializer.defaultSerialize(listAnimalBefore2, Paths.get("src", "test", "resources", "amimals", "animals2.bin").toString());
-        listAnimalAfter2 = new ArrayList<>(Serializer.defaultDeserialize(Paths.get("src", "test", "resources", "amimals", "animals2.bin").toString()));
+        serializer.defaultSerialize(listAnimalBefore2, Paths.get("src", "test", "resources", "amimals", "animals2.bin").toString());
+        listAnimalAfter2 = new ArrayList<>(serializer.defaultDeserialize(Paths.get("src", "test", "resources", "amimals", "animals2.bin").toString()));
 
-        for (int i = 0; i < 5; i++) {
-            assertEquals(listAnimalBefore1.get(i).getName(), listAnimalAfter1.get(i).getName());
-            assertEquals(listAnimalBefore1.get(i).getType(), listAnimalAfter1.get(i).getType());
-            assertEquals(listAnimalBefore1.get(i).getOwner().getName(), listAnimalAfter1.get(i).getOwner().getName());
-            assertEquals(listAnimalBefore1.get(i).getOwner().getPhoneNumber(), listAnimalAfter1.get(i).getOwner().getPhoneNumber());
-        }
+        assertEquals(listAnimalBefore1, listAnimalAfter1);
+        assertEquals(listAnimalBefore2, listAnimalAfter2);
+        assertNotEquals(listAnimalBefore1, listAnimalAfter2);
 
-        for (int i = 0; i < 5; i++) {
-            assertEquals(listAnimalBefore2.get(i).getName(), listAnimalAfter2.get(i).getName());
-            assertEquals(listAnimalBefore2.get(i).getType(), listAnimalAfter2.get(i).getType());
-            assertEquals(listAnimalBefore2.get(i).getOwner().getName(), listAnimalAfter2.get(i).getOwner().getName());
-            assertEquals(listAnimalBefore2.get(i).getOwner().getPhoneNumber(), listAnimalAfter2.get(i).getOwner().getPhoneNumber());
-        }
-
-        for (int i = 0; i < 5; i++) {
-            assertNotEquals(listAnimalBefore1.get(i).getName(), listAnimalAfter2.get(i).getName());
-        }
     }
 
 
     @Test
-    public void customSerializeOnlyList() throws IOException {
+    public void customSerializeOnlyList() {
         listAnimalBefore1 = makeList();
-        Serializer.customSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
-        listAnimalAfter1 = new ArrayList<>(Serializer.customDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
-        for (int i = 0; i < 5; i++) {
-            assertEquals(listAnimalBefore1.get(i).getName(), listAnimalAfter1.get(i).getName());
-            assertEquals(listAnimalBefore1.get(i).getType(), listAnimalAfter1.get(i).getType());
-            assertEquals(listAnimalBefore1.get(i).getOwner().getName(), listAnimalAfter1.get(i).getOwner().getName());
-            assertEquals(listAnimalBefore1.get(i).getOwner().getPhoneNumber(), listAnimalAfter1.get(i).getOwner().getPhoneNumber());
-        }
+        serializer.customSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
+        listAnimalAfter1 = new ArrayList<>(serializer.customDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
+
+        assertEquals(listAnimalBefore1, listAnimalAfter1);
 
     }
 
     @Test
-    public void customSerializeEmptyList() throws IOException {
+    public void customSerializeEmptyList() {
         listAnimalBefore1 = new ArrayList<>();
-        Serializer.customSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
-        listAnimalAfter1 = new ArrayList<>(Serializer.customDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
+        serializer.customSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
+        listAnimalAfter1 = new ArrayList<>(serializer.customDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
 
         assertEquals(listAnimalBefore1.isEmpty(), listAnimalAfter1.isEmpty());
     }
 
 
     @Test
-    public void customSerializeManyList() throws IOException, ClassNotFoundException {
+    public void customSerializeManyList() {
         listAnimalBefore1 = makeList();
         listAnimalBefore2 = makeList2();
-        Serializer.customSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
-        listAnimalAfter1 = new ArrayList<>(Serializer.customDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
+        serializer.customSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
+        listAnimalAfter1 = new ArrayList<>(serializer.customDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
 
-        Serializer.customSerialize(listAnimalBefore2, Paths.get("src", "test", "resources", "amimals", "animals2.bin").toString());
-        listAnimalAfter2 = new ArrayList<>(Serializer.customDeserialize(Paths.get("src", "test", "resources", "amimals", "animals2.bin").toString()));
+        serializer.customSerialize(listAnimalBefore2, Paths.get("src", "test", "resources", "amimals", "animals2.bin").toString());
+        listAnimalAfter2 = new ArrayList<>(serializer.customDeserialize(Paths.get("src", "test", "resources", "amimals", "animals2.bin").toString()));
 
-        for (int i = 0; i < 5; i++) {
-            assertEquals(listAnimalBefore1.get(i).getName(), listAnimalAfter1.get(i).getName());
-            assertEquals(listAnimalBefore1.get(i).getType(), listAnimalAfter1.get(i).getType());
-            assertEquals(listAnimalBefore1.get(i).getOwner().getName(), listAnimalAfter1.get(i).getOwner().getName());
-            assertEquals(listAnimalBefore1.get(i).getOwner().getPhoneNumber(), listAnimalAfter1.get(i).getOwner().getPhoneNumber());
-        }
+        assertEquals(listAnimalBefore1, listAnimalAfter1);
+        assertEquals(listAnimalBefore2, listAnimalAfter2);
+        assertNotEquals(listAnimalBefore1, listAnimalAfter2);
 
-        for (int i = 0; i < 5; i++) {
-            assertEquals(listAnimalBefore2.get(i).getName(), listAnimalAfter2.get(i).getName());
-            assertEquals(listAnimalBefore2.get(i).getType(), listAnimalAfter2.get(i).getType());
-            assertEquals(listAnimalBefore2.get(i).getOwner().getName(), listAnimalAfter2.get(i).getOwner().getName());
-            assertEquals(listAnimalBefore2.get(i).getOwner().getPhoneNumber(), listAnimalAfter2.get(i).getOwner().getPhoneNumber());
-        }
-
-        for (int i = 0; i < 5; i++) {
-            assertNotEquals(listAnimalBefore1.get(i).getName(), listAnimalAfter2.get(i).getName());
-        }
     }
 }

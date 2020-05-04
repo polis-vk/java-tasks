@@ -18,4 +18,17 @@ public class AnimalOwner implements Serializable {
     public String getPhoneNumber() {
         return phoneNumber;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        AnimalOwner other = (AnimalOwner) obj;
+        return other.name.equals(this.name)
+                && other.phoneNumber.equals(this.phoneNumber);
+    }
 }

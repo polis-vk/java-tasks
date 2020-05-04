@@ -19,22 +19,24 @@ public class Directories {
     public static int removeWithFile(String path) {
         int countRemoved = 0;
         File file = new File(path);
-        if (file.exists()) {
-            File[] listFiles = file.listFiles();
-            if (listFiles != null) {
-                for (File insideFile : listFiles) {
-                    if (insideFile.isFile()) {
-                        countRemoved++;
-                        insideFile.delete();
-                    } else {
-                        countRemoved += removeWithFile(insideFile.toString());
-                    }
-                }
-            }
-            countRemoved++;
-            file.delete();
+        if (!file.exists()) {
             return countRemoved;
         }
+
+        File[] listFiles = file.listFiles();
+        if (listFiles != null) {
+            for (File insideFile : listFiles) {
+                if (insideFile.isFile()) {
+                    countRemoved++;
+                    insideFile.delete();
+                } else {
+                    countRemoved += removeWithFile(insideFile.toString());
+                }
+            }
+        }
+        countRemoved++;
+        file.delete();
+
         return countRemoved;
     }
 
@@ -44,25 +46,27 @@ public class Directories {
      */
     public static int removeWithPath(String path) throws IOException {
         AtomicInteger countRemoved = new AtomicInteger();
-        if (Files.exists(Paths.get(path))) {
-            Files.walkFileTree(Paths.get(path), new SimpleFileVisitor<Path>() {
-
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    countRemoved.incrementAndGet();
-                    Files.delete(file);
-                    return FileVisitResult.CONTINUE;
-                }
-
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    countRemoved.incrementAndGet();
-                    Files.delete(dir);
-                    return FileVisitResult.CONTINUE;
-                }
-
-            });
+        if (!Files.exists(Paths.get(path))) {
             return countRemoved.get();
         }
+        Files.walkFileTree(Paths.get(path), new SimpleFileVisitor<Path>() {
+
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                countRemoved.incrementAndGet();
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
+
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                countRemoved.incrementAndGet();
+                Files.delete(dir);
+                return FileVisitResult.CONTINUE;
+            }
+
+        });
         return countRemoved.get();
     }
+
 }
+

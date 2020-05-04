@@ -22,11 +22,25 @@ public class Animal implements Serializable {
         return name;
     }
 
-    public int getType() {
-        return type.ordinal();
+    public AnimalType getType() {
+        return type;
     }
 
     public AnimalOwner getOwner() {
         return owner;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Animal other = (Animal) obj;
+        return other.name.equals(this.name)
+                && other.type.equals(this.type)
+                && other.owner.equals(this.owner);
     }
 }

@@ -13,43 +13,54 @@ public class CopyFile {
      * <p>
      * 6 баллов
      */
-    public static String copyFiles(String pathFrom, String pathTo) throws IOException {
+    public static String copyFiles(String pathFrom, String pathTo) {
 
-        File fromDirectory = new File(pathFrom);
-        File toDirectory = new File(pathTo);
-        if (fromDirectory.exists()) {
-            if (fromDirectory.isDirectory()) {
-                if (!toDirectory.exists()) {
+        Path fromDirectory = Paths.get(pathFrom);
+        Path toDirectory = Paths.get(pathTo);
+        if (!Files.exists(fromDirectory)) {
+            return null;
+        }
+        if (Files.isDirectory(fromDirectory)) {
+            if (!Files.exists(toDirectory)) {
+                try {
                     Files.createDirectories(Paths.get(toDirectory.toString()));
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+            }
 
-                String[] files = fromDirectory.list();
-
-                for (String file : files) {
-                    String fromFile = new File(fromDirectory, file).toString();
-                    String toFile = new File(toDirectory, file).toString();
-                    copyFiles(fromFile, toFile);
+            try (DirectoryStream<Path> files = Files.newDirectoryStream(fromDirectory)) {
+                for (Path path : files) {
+                    Path toFile = Paths.get(toDirectory.toString(), path.getFileName().toString());
+                    copyFiles(String.valueOf(path), toFile.toString());
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-            } else {
-                Files.createDirectories(Paths.get(toDirectory.getParent()));
-                Files.createFile(toDirectory.toPath());
-                copyFileStream(fromDirectory, toDirectory);
+        } else {
+            try {
+                Files.createDirectories(toDirectory.getParent());
+                Files.createFile(toDirectory);
+                copyFileStream(fromDirectory.toString(), toDirectory.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         return null;
     }
 
 
-    public static void copyFileStream(File fromFile, File toFile) throws IOException {
+    public static void copyFileStream(String fromFile, String toFile) throws IOException {
 
-        try (InputStream is = new FileInputStream(fromFile); OutputStream os = new FileOutputStream(toFile)) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = is.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
+        try (InputStream inputStream = new FileInputStream(fromFile)) {
+            try (OutputStream outputStream = new FileOutputStream(toFile)) {
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, length);
+                }
             }
         }
     }
-
 }
