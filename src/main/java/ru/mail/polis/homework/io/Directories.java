@@ -22,7 +22,8 @@ public class Directories {
         int count = 0;
         if (!file.exists()) {
             return count;
-        } else if (file.isDirectory()) {
+        }
+        if (file.isDirectory()) {
             for (String tmpPath : Objects.requireNonNull(file.list())) {
                 count += removeWithFile(path + File.separator + tmpPath);
             }
@@ -36,16 +37,15 @@ public class Directories {
      */
     public static int removeWithPath(String stringPath) throws IOException {
         AtomicInteger count = new AtomicInteger(0);
-        Files.walkFileTree(Paths.get(stringPath), new SimpleFileVisitor<Path>() {
+        Path path = Paths.get(stringPath);
+        if (Files.notExists(path)) {
+            return 0;
+        }
+        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 Files.delete(file);
                 count.incrementAndGet();
-                return FileVisitResult.CONTINUE;
-            }
-            
-            @Override
-            public FileVisitResult visitFileFailed(Path file, IOException exc) {
                 return FileVisitResult.CONTINUE;
             }
             
