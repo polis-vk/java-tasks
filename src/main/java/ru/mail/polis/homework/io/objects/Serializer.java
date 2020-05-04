@@ -13,38 +13,41 @@ import java.util.List;
  * а разные списки до и после процедуры должны быть не равны)
  */
 public class Serializer {
-
+    
     /**
      * 1 балл
      * Реализовать простую сериализацию, с помощью специального потока для сериализации объектов
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
-        try (ObjectOutput objectOutputStream = new ObjectOutputStream(
-                new FileOutputStream(fileName))) {
+    public void defaultSerialize(List<Animal> animals, String fileName) {
+        try (ObjectOutput objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            objectOutputStream.writeInt(animals.size());
             for (Animal animal : animals) {
                 objectOutputStream.writeObject(animal);
             }
-            objectOutputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
-
+    
     /**
      * 1 балл
      * Реализовать простую дисериализацию, с помощью специального потока для дисериализации объектов
+     *
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
+    public List<Animal> defaultDeserialize(String fileName) {
         List<Animal> animals = new ArrayList<>();
-        try (ObjectInput objectInputStream = new ObjectInputStream(
-                new FileInputStream(fileName))) {
-            while (true) {
+        try (ObjectInput objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
+            int size = objectInputStream.readInt();
+            for (int i = 0; i < size; i++) {
                 Animal animal = (Animal) objectInputStream.readObject();
                 animals.add(animal);
             }
-        } catch (EOFException ignored) {
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
         return animals;
     }
@@ -58,7 +61,7 @@ public class Serializer {
     public void customSerialize(List<Animal> animals, String fileName) {
     
     }
-
+    
     /**
      * 2 балла
      * Реализовать ручную дисериализацию, с помощью высокоровневых потоков
