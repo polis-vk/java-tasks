@@ -31,4 +31,9 @@ public class AnimalOwner implements Serializable {
         return other.name.equals(this.name)
                 && other.phoneNumber.equals(this.phoneNumber);
     }
+
+    @Override
+    public String toString() {
+        return "{ \"name\" : \"" + this.name + "\", \"phoneNumber\" : \"" + this.phoneNumber + "\" }";
+    }
 }

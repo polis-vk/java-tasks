@@ -43,4 +43,9 @@ public class Animal implements Serializable {
                 && other.type.equals(this.type)
                 && other.owner.equals(this.owner);
     }
+
+    @Override
+    public String toString() {
+        return "{ \"name\" : \"" + this.name + "\", \"type\" : \"" + this.type + "\", \"" + this.owner + "\" }";
+    }
 }

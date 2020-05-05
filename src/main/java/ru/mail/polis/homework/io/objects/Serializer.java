@@ -77,13 +77,15 @@ public class Serializer {
         }
 
 
-        try (DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(fileName))) {
-            for (Animal animal : animals) {
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
 
-                outputStream.writeUTF(animal.getName());
-                outputStream.writeInt((animal.getType().ordinal()));
-                outputStream.writeUTF(animal.getOwner().getName());
-                outputStream.writeUTF(animal.getOwner().getPhoneNumber());
+            for (Animal animal : animals) {
+                byte[] buffer = animal.toString().getBytes();
+                byteArrayOutputStream.write(buffer);
+            }
+
+            try (FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
+                byteArrayOutputStream.writeTo(fileOutputStream);
             }
 
         } catch (IOException e) {
@@ -105,21 +107,69 @@ public class Serializer {
         }
 
         List<Animal> animals = new ArrayList<>();
-        try (DataInputStream inputStream = new DataInputStream(new FileInputStream(fileName))) {
-            while (inputStream.available() > 0) {
 
-                String name = inputStream.readUTF();
-                int type = inputStream.readInt();
-                String nameOwner = inputStream.readUTF();
-                String phoneOwner = inputStream.readUTF();
-                animals.add(new Animal(
-                        name,
-                        AnimalType.values()[type],
-                        new AnimalOwner(nameOwner, phoneOwner)));
+        try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
+            byte[] buffer = new byte[fileInputStream.available()];
+            while (fileInputStream.available() > 0) {
+                fileInputStream.read(buffer);
+                int b;
+                try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buffer)) {
+                    Animal animal;
+                    String word = "";
+                    String name = "";
+                    String type = "";
+                    String nameOwner = "";
+                    String phoneOwner = "";
+                    while ((b = byteArrayInputStream.read()) != -1) {
+
+                        word += (char) b;
+                        if (isFieldObject(word, "{ \"name\" : \"", "\", \"type\" : \"")) {
+                            name = doWord(word, "{ \"name\" : \"", "\", \"type\" : \"");
+                            word = word.substring(word.indexOf("\", \"type\" : \""));
+                        }
+
+                        if (isFieldObject(word, "\", \"type\" : \"", "\", \"{ \"name\" : \"")) {
+                            type = doWord(word, "\", \"type\" : \"", "\", \"{ \"name\" : \"");
+                            word = word.substring(word.indexOf("\", \"{ \"name\" : \""));
+                        }
+
+                        if (isFieldObject(word, "\", \"{ \"name\" : \"", "\", \"phoneNumber\" : \"")) {
+                            nameOwner = doWord(word, "\", \"{ \"name\" : \"", "\", \"phoneNumber\" : \"");
+                            word = word.substring(word.indexOf("\", \"phoneNumber\" : \""));
+                        }
+
+                        if (isFieldObject(word, "\", \"phoneNumber\" : \"", "\" }\" }")) {
+                            phoneOwner = doWord(word, "\", \"phoneNumber\" : \"", "\" }\" }");
+                            word = "";
+                            animal = new Animal(name, AnimalType.valueOf(type), new AnimalOwner(nameOwner, phoneOwner));
+                            animals.add(animal);
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
         return animals;
+    }
+
+    public boolean isFieldObject(String word, String s, String s2) {
+        return word.startsWith(s) && word.endsWith(s2);
+    }
+
+    public static String doWord(String word, String start, String end) {
+        StringBuilder result = new StringBuilder();
+        int startIndex = word.indexOf(start);
+        int endIndex = word.indexOf(end);
+        for (int i = startIndex + start.length(); i < endIndex; i++) {
+            result.append(word.charAt(i));
+        }
+        return result.toString();
     }
 }

@@ -1,9 +1,9 @@
 package ru.mail.polis.homework.collections.streams;
 
-        import java.lang.reflect.Array;
-        import java.util.*;
-        import java.util.stream.Collectors;
-        import java.util.stream.Stream;
+import java.lang.reflect.Array;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Написать программу, которая из текста (стрим строк), возвращает 10 самых популярных слов (В порядке убывания частоты).
