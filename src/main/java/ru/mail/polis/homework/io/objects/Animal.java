@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.io.objects;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -10,10 +12,11 @@ import java.util.Objects;
  */
 public class Animal implements Serializable {
     private final String name;
-    private int age;
+    private final int age;
     private final Animal dad;
     private final Animal mum;
     private final Type type;
+    public final List<Food> foods;
 
     public Animal(String name, int age, Type type) {
         this(name, age, null, null, type);
@@ -29,6 +32,27 @@ public class Animal implements Serializable {
         this.dad = dad;
         this.mum = mum;
         this.type = type;
+        foods = new ArrayList<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public Animal getDad() {
+        return dad;
+    }
+
+    public Animal getMum() {
+        return mum;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     @Override

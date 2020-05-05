@@ -17,29 +17,111 @@ import static org.junit.Assert.*;
 
 public class SerializerTest {
     private Serializer serializer;
-    private List<Animal> allAnimals = new ArrayList<>();
-    private List<Animal> simpleAnimal = new ArrayList<>();
-    private List<Animal> parrots = new ArrayList<>();
-    private List<Animal> fishes = new ArrayList<>();
 
     @Before
     public void setUp() throws IOException {
         serializer = new Serializer();
         Path mainDirectory = Paths.get("src", "test", "resources", "serializer");
         Files.createDirectories(mainDirectory);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "serializer").toFile());
+    }
+
+
+    @Test
+    public void writeReadEmptyList() throws IOException, ClassNotFoundException {
+        Path file = Paths.get("src", "test", "resources", "serializer", "animal1.bin");
+        serializer.defaultSerialize(Collections.emptyList(), file.toString());
+        List<Animal> outputAnimals = serializer.defaultDeserialize(file.toString());
+        assertTrue(outputAnimals.isEmpty());
+    }
+
+    @Test
+    public void writeReadEqualList() throws IOException, ClassNotFoundException {
+        Food grass = new Food("Grass", 10);
+        Food meat = new Food("Meat", 1000);
+        Food fish = new Food("Fish", 100);
+        Food milk = new Food("Milk", 1);
 
         Animal cat = new Animal("Pushok", Type.Cat);
+        cat.foods.add(meat);
+        cat.foods.add(milk);
+        cat.foods.add(fish);
         Animal cow = new Animal("Burenka", Type.Cow);
+        cow.foods.add(grass);
         Animal dog = new Animal("Sharick", 10, Type.Dog);
+        dog.foods.add(meat);
+        dog.foods.add(milk);
         Animal parrotDad = new Animal("KeshaDad", 1, Type.Parrot);
+        parrotDad.foods.add(grass);
         Animal parrotMum = new Animal("KeshaMum", 1, Type.Parrot);
+        parrotMum.foods.add(grass);
         Animal parrotChild = new Animal("KeshaChild", 1, parrotDad, parrotMum, Type.Parrot);
+        parrotChild.foods.add(grass);
         Animal fish1 = new Animal("White", Type.Fish);
         Animal fish2 = new Animal("Blue", 1, Type.Fish);
         Animal fish3 = new Animal("Red", 0, fish1, fish2, Type.Fish);
         Animal fish4 = new Animal("Black", 1, fish1, fish2, Type.Fish);
         Animal fish5 = new Animal("Orange", 0, fish2, fish3, Type.Fish);
         Animal fish6 = new Animal("Yellow", 1, fish5, fish1, Type.Fish);
+
+        List<Animal> allAnimals = new ArrayList<>();
+
+        allAnimals.add(cat);
+        allAnimals.add(cow);
+        allAnimals.add(dog);
+        allAnimals.add(parrotDad);
+        allAnimals.add(parrotMum);
+        allAnimals.add(parrotChild);
+        allAnimals.add(fish1);
+        allAnimals.add(fish2);
+        allAnimals.add(fish3);
+        allAnimals.add(fish4);
+        allAnimals.add(fish5);
+        allAnimals.add(fish6);
+
+        Path file = Paths.get("src", "test", "resources", "serializer", "animal2.bin");
+        serializer.defaultSerialize(allAnimals, file.toString());
+        List<Animal> outputAnimals = serializer.defaultDeserialize(file.toString());
+        assertEquals(allAnimals, outputAnimals);
+    }
+
+    @Test
+    public void writeReadEqualManyLists() throws IOException, ClassNotFoundException {
+        Food grass = new Food("Grass", 10);
+        Food meat = new Food("Meat", 1000);
+        Food fish = new Food("Fish", 100);
+        Food milk = new Food("Milk", 1);
+
+        Animal cat = new Animal("Pushok", Type.Cat);
+        cat.foods.add(meat);
+        cat.foods.add(milk);
+        cat.foods.add(fish);
+        Animal cow = new Animal("Burenka", Type.Cow);
+        cow.foods.add(grass);
+        Animal dog = new Animal("Sharick", 10, Type.Dog);
+        dog.foods.add(meat);
+        dog.foods.add(milk);
+        Animal parrotDad = new Animal("KeshaDad", 1, Type.Parrot);
+        parrotDad.foods.add(grass);
+        Animal parrotMum = new Animal("KeshaMum", 1, Type.Parrot);
+        parrotMum.foods.add(grass);
+        Animal parrotChild = new Animal("KeshaChild", 1, parrotDad, parrotMum, Type.Parrot);
+        parrotChild.foods.add(grass);
+        Animal fish1 = new Animal("White", Type.Fish);
+        Animal fish2 = new Animal("Blue", 1, Type.Fish);
+        Animal fish3 = new Animal("Red", 0, fish1, fish2, Type.Fish);
+        Animal fish4 = new Animal("Black", 1, fish1, fish2, Type.Fish);
+        Animal fish5 = new Animal("Orange", 0, fish2, fish3, Type.Fish);
+        Animal fish6 = new Animal("Yellow", 1, fish5, fish1, Type.Fish);
+
+        List<Animal> allAnimals = new ArrayList<>();
+        List<Animal> simpleAnimal = new ArrayList<>();
+        List<Animal> parrots = new ArrayList<>();
+        List<Animal> fishes = new ArrayList<>();
 
         allAnimals.add(cat);
         allAnimals.add(cow);
@@ -68,33 +150,7 @@ public class SerializerTest {
         fishes.add(fish4);
         fishes.add(fish5);
         fishes.add(fish6);
-    }
 
-    @After
-    public void tearDown() throws Exception {
-        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "serializer").toFile());
-    }
-
-
-    @Test
-    public void writeReadEmptyList() throws IOException, ClassNotFoundException {
-        Path file = Paths.get("src", "test", "resources", "serializer", "animal1.bin");
-        serializer.defaultSerialize(Collections.emptyList(), file.toString());
-        List<Animal> outputAnimals = serializer.defaultDeserialize(file.toString());
-        assertTrue(outputAnimals.isEmpty());
-    }
-
-    @Test
-    public void writeReadEqualList() throws IOException, ClassNotFoundException {
-        Path file = Paths.get("src", "test", "resources", "serializer", "animal2.bin");
-
-        serializer.defaultSerialize(allAnimals, file.toString());
-        List<Animal> outputAnimals = serializer.defaultDeserialize(file.toString());
-        assertEquals(allAnimals, outputAnimals);
-    }
-
-    @Test
-    public void writeReadEqualManyLists() throws IOException, ClassNotFoundException {
         Path file1 = Paths.get("src", "test", "resources", "serializer", "animal3.bin");
         Path file2 = Paths.get("src", "test", "resources", "serializer", "animal4.bin");
         Path file3 = Paths.get("src", "test", "resources", "serializer", "animal5.bin");
@@ -132,6 +188,24 @@ public class SerializerTest {
     @Test
     public void writeReadEqualListCustom() throws IOException {
         Path file = Paths.get("src", "test", "resources", "serializer", "animal2C.bin");
+        Food grass = new Food("Grass", 10);
+        Food meat = new Food("Meat", 1000);
+        Food fish = new Food("Fish", 100);
+        Food milk = new Food("Milk", 1);
+
+        Animal cat = new Animal("Pushok", Type.Cat);
+        cat.foods.add(meat);
+        cat.foods.add(milk);
+        cat.foods.add(fish);
+        Animal cow = new Animal("Burenka", Type.Cow);
+        cow.foods.add(grass);
+        Animal dog = new Animal("Sharick", 10, Type.Dog);
+        dog.foods.add(meat);
+        dog.foods.add(milk);
+        List<Animal> simpleAnimal = new ArrayList<>();
+        simpleAnimal.add(cat);
+        simpleAnimal.add(cow);
+        simpleAnimal.add(dog);
 
         serializer.customSerialize(simpleAnimal, file.toString());
         List<Animal> outputAnimals = serializer.customDeserialize(file.toString());
@@ -140,6 +214,66 @@ public class SerializerTest {
 
     @Test
     public void writeReadEqualManyListsCustom() throws IOException {
+        Food grass = new Food("Grass", 10);
+        Food meat = new Food("Meat", 1000);
+        Food fish = new Food("Fish", 100);
+        Food milk = new Food("Milk", 1);
+
+        Animal cat = new Animal("Pushok", Type.Cat);
+        cat.foods.add(meat);
+        cat.foods.add(milk);
+        cat.foods.add(fish);
+        Animal cow = new Animal("Burenka", Type.Cow);
+        cow.foods.add(grass);
+        Animal dog = new Animal("Sharick", 10, Type.Dog);
+        dog.foods.add(meat);
+        dog.foods.add(milk);
+        Animal parrotDad = new Animal("KeshaDad", 1, Type.Parrot);
+        parrotDad.foods.add(grass);
+        Animal parrotMum = new Animal("KeshaMum", 1, Type.Parrot);
+        parrotMum.foods.add(grass);
+        Animal parrotChild = new Animal("KeshaChild", 1, parrotDad, parrotMum, Type.Parrot);
+        parrotChild.foods.add(grass);
+        Animal fish1 = new Animal("White", Type.Fish);
+        Animal fish2 = new Animal("Blue", 1, Type.Fish);
+        Animal fish3 = new Animal("Red", 0, fish1, fish2, Type.Fish);
+        Animal fish4 = new Animal("Black", 1, fish1, fish2, Type.Fish);
+        Animal fish5 = new Animal("Orange", 0, fish2, fish3, Type.Fish);
+        Animal fish6 = new Animal("Yellow", 1, fish5, fish1, Type.Fish);
+
+        List<Animal> allAnimals = new ArrayList<>();
+        List<Animal> simpleAnimal = new ArrayList<>();
+        List<Animal> parrots = new ArrayList<>();
+        List<Animal> fishes = new ArrayList<>();
+
+        allAnimals.add(cat);
+        allAnimals.add(cow);
+        allAnimals.add(dog);
+        allAnimals.add(parrotDad);
+        allAnimals.add(parrotMum);
+        allAnimals.add(parrotChild);
+        allAnimals.add(fish1);
+        allAnimals.add(fish2);
+        allAnimals.add(fish3);
+        allAnimals.add(fish4);
+        allAnimals.add(fish5);
+        allAnimals.add(fish6);
+
+        simpleAnimal.add(cat);
+        simpleAnimal.add(cow);
+        simpleAnimal.add(dog);
+
+        parrots.add(parrotDad);
+        parrots.add(parrotMum);
+        parrots.add(parrotChild);
+
+        fishes.add(fish1);
+        fishes.add(fish2);
+        fishes.add(fish3);
+        fishes.add(fish4);
+        fishes.add(fish5);
+        fishes.add(fish6);
+
         Path file1 = Paths.get("src", "test", "resources", "serializer", "animal3C.bin");
         Path file2 = Paths.get("src", "test", "resources", "serializer", "animal4C.bin");
         Path file3 = Paths.get("src", "test", "resources", "serializer", "animal5C.bin");

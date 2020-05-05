@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.io;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,7 +17,7 @@ public class CopyFile {
      * <p>
      * 6 баллов
      */
-    public static String copyFiles(String pathFrom, String pathTo) throws IOException {
+    public static String copyFiles(String pathFrom, String pathTo) {
         Path directoryIn = Paths.get(pathFrom);
         Path directoryOut = Paths.get(pathTo);
         if (Files.notExists(directoryIn)) {
@@ -26,31 +28,41 @@ public class CopyFile {
             return null;
         }
         if (Files.notExists(directoryOut)) {
-            Files.createDirectories(directoryOut);
+            try {
+                Files.createDirectories(directoryOut);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         try (DirectoryStream<Path> entries = Files.newDirectoryStream(directoryIn)) {
             for (Path entry : entries) {
                 copyFiles(entry.toString(), directoryOut.resolve(entry.getFileName()).toString());
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
-    private static void copyFile(Path fileIn, Path fileOut) throws IOException {
-        if (Files.notExists(fileOut)) {
-            Files.createDirectories(fileOut.getParent());
-        }
-        Files.createFile(fileOut);
-
-        try (InputStream inputStream = Files.newInputStream(fileIn);
-             OutputStream outputStream = Files.newOutputStream(fileOut)) {
-            byte[] buffer = new byte[1024];
-            int lengthRead;
-            while ((lengthRead = inputStream.read(buffer)) > 0) {
-                outputStream.write(buffer, 0, lengthRead);
+    private static void copyFile(Path fileIn, Path fileOut) {
+        try {
+            if (Files.notExists(fileOut)) {
+                Files.createDirectories(fileOut.getParent());
             }
-            outputStream.flush();
+            Files.createFile(fileOut);
+
+            try (InputStream inputStream = Files.newInputStream(fileIn)) {
+                try (OutputStream outputStream = Files.newOutputStream(fileOut)) {
+                    byte[] buffer = new byte[1024];
+                    int lengthRead;
+                    while ((lengthRead = inputStream.read(buffer)) > 0) {
+                        outputStream.write(buffer, 0, lengthRead);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

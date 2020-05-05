@@ -6,8 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static ru.mail.polis.homework.io.objects.Type.parseType;
-
 /**
  * Нужно создать тесты для этого файла
  * 1) тест на чтение и запись пустого списка
@@ -26,9 +24,6 @@ public class Serializer {
      */
     public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
         Path outputFile = Paths.get(fileName);
-        if (Files.notExists(outputFile)) {
-            Files.createFile(outputFile);
-        }
 
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(outputFile))) {
             objectOutputStream.writeInt(animals.size());
@@ -75,6 +70,7 @@ public class Serializer {
             Files.createFile(outputFile);
         }
 
+
         try (PrintStream outputStream = new PrintStream(Files.newOutputStream(outputFile))) {
             for (Animal animal : animals) {
                 outputStream.print(animal);
@@ -90,38 +86,40 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) throws IOException {
-        Path inputFile = Paths.get(fileName);
-        if (Files.notExists(inputFile)) {
-            return Collections.emptyList();
-        }
-        List<Animal> animals = new ArrayList<>();
-        try (Scanner scanner = new Scanner(Files.newInputStream(inputFile))) {
-            while (scanner.hasNext()) {
-                animals.add(parseAnimal(scanner.nextLine()));
-            }
-        }
-        return animals;
+    public List<Animal> customDeserialize(String fileName){
+//        Path inputFile = Paths.get(fileName);
+//        if (Files.notExists(inputFile)) {
+//            return Collections.emptyList();
+//        }
+//        List<Animal> animals = new ArrayList<>();
+//        try (Scanner scanner = new Scanner(Files.newInputStream(inputFile))) {
+//            while (scanner.hasNext()) {
+//                animals.add(parseAnimal(scanner.nextLine()));
+//
+//            }
+//        }
+//        return animals;
+        return Collections.emptyList();
     }
 
-    private Animal parseAnimal(String animal) {
-        if (animal.substring(1, animal.length() - 1).equals("null")) {
-            return null;
-        }
-        int firstIndex = animal.indexOf("=") + 1;
-        int lastIndex = animal.indexOf(",");
-        String name = animal.substring(firstIndex, lastIndex);
-        animal = animal.substring(lastIndex + 1);
-
-        firstIndex = animal.indexOf("=") + 1;
-        lastIndex = animal.indexOf(",");
-        int age = Integer.parseInt(animal.substring(firstIndex, lastIndex));
-        animal = animal.substring(lastIndex + 1);
-
-        firstIndex = animal.indexOf("=") + 1;
-        lastIndex = animal.indexOf(",");
-        Type type = parseType(animal.substring(firstIndex, lastIndex));
-
-        return new Animal(name, age, null, null, type);
-    }
+//    private Animal parseAnimal(String animal) {
+//        if (animal.substring(1, animal.length() - 1).equals("null")) {
+//            return null;
+//        }
+//        int firstIndex = animal.indexOf("=") + 1;
+//        int lastIndex = animal.indexOf(",");
+//        String name = animal.substring(firstIndex, lastIndex);
+//        animal = animal.substring(lastIndex + 1);
+//
+//        firstIndex = animal.indexOf("=") + 1;
+//        lastIndex = animal.indexOf(",");
+//        int age = Integer.parseInt(animal.substring(firstIndex, lastIndex));
+//        animal = animal.substring(lastIndex + 1);
+//
+//        firstIndex = animal.indexOf("=") + 1;
+//        lastIndex = animal.indexOf(",");
+//        Type type = Type.valueOf(animal.substring(firstIndex, lastIndex));
+//
+//        return new Animal(name, age, null, null, type);
+//    }
 }
