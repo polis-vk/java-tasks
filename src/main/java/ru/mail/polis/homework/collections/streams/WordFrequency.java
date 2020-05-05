@@ -23,15 +23,16 @@ public class WordFrequency {
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-        Map<String,Integer> countElements = new HashMap<>();
         return lines.flatMap(line -> Arrays.stream(line.split("[.,!:\\-?;\\s]+")))
                 .map(String::toLowerCase)
-                .peek(element -> countElements.put(element, countElements.getOrDefault(element, 0) + 1))
-                .distinct()
-                .sorted(Comparator
-                        .comparing(countElements::get)
+                .collect(Collectors.toMap(String::toString, key -> 1, Integer::sum))
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry
+                        .<String, Integer>comparingByValue()
                         .reversed()
-                        .thenComparing(Object::toString))
+                        .thenComparing(Map.Entry.comparingByKey()))
+                .map(Map.Entry::getKey)
                 .limit(10)
                 .collect(Collectors.toList());
     }

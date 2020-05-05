@@ -70,11 +70,9 @@ public class Serializer {
             Files.createFile(outputFile);
         }
 
-
-        try (PrintStream outputStream = new PrintStream(Files.newOutputStream(outputFile))) {
+        try (OutputStream outputStream = Files.newOutputStream(outputFile)) {
             for (Animal animal : animals) {
-                outputStream.print(animal);
-                outputStream.print('\n');
+                outputStream.write(animal.toString().getBytes());
             }
         }
     }
@@ -87,39 +85,6 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> customDeserialize(String fileName){
-//        Path inputFile = Paths.get(fileName);
-//        if (Files.notExists(inputFile)) {
-//            return Collections.emptyList();
-//        }
-//        List<Animal> animals = new ArrayList<>();
-//        try (Scanner scanner = new Scanner(Files.newInputStream(inputFile))) {
-//            while (scanner.hasNext()) {
-//                animals.add(parseAnimal(scanner.nextLine()));
-//
-//            }
-//        }
-//        return animals;
         return Collections.emptyList();
     }
-
-//    private Animal parseAnimal(String animal) {
-//        if (animal.substring(1, animal.length() - 1).equals("null")) {
-//            return null;
-//        }
-//        int firstIndex = animal.indexOf("=") + 1;
-//        int lastIndex = animal.indexOf(",");
-//        String name = animal.substring(firstIndex, lastIndex);
-//        animal = animal.substring(lastIndex + 1);
-//
-//        firstIndex = animal.indexOf("=") + 1;
-//        lastIndex = animal.indexOf(",");
-//        int age = Integer.parseInt(animal.substring(firstIndex, lastIndex));
-//        animal = animal.substring(lastIndex + 1);
-//
-//        firstIndex = animal.indexOf("=") + 1;
-//        lastIndex = animal.indexOf(",");
-//        Type type = Type.valueOf(animal.substring(firstIndex, lastIndex));
-//
-//        return new Animal(name, age, null, null, type);
-//    }
 }
