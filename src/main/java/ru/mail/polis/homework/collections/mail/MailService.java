@@ -16,7 +16,7 @@ import java.util.function.Consumer;
  * <p>
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  */
-public class MailService<T extends Mail> implements Consumer<T> {
+public class MailService<T extends Mail<?>> implements Consumer<T> {
     private final PopularMap<String, List<T>> recipient;
     private final PopularMap<String, List<T>> sender;
 
@@ -64,7 +64,7 @@ public class MailService<T extends Mail> implements Consumer<T> {
     }
 
     // это метод спецслужб
-    private void readMails(List<Mail> mails) {
+    private void readMails(List<Mail<?>> mails) {
         mails
             .forEach(System.out::print);
     }
@@ -72,9 +72,9 @@ public class MailService<T extends Mail> implements Consumer<T> {
     /**
      * Метод должен заставить обработать service все mails.
      */
-    public static void process(MailService<Mail> service, List<Mail> mails) {
+    public static void process(MailService<Mail<?>> service, List<Mail<?>> mails) {
         service.readMails(mails);
-        for (Mail mail : mails) {
+        for (Mail<?> mail : mails) {
             service.accept(mail);
         }
 

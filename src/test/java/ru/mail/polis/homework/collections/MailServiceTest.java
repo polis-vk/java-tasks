@@ -14,8 +14,8 @@ import static org.junit.Assert.*;
 public class MailServiceTest {
     @Test
     public void getPopularRecipient() {
-        List<Mail> mails = new ArrayList<>();
-        MailService<Mail> serverAlpha = new MailService();
+        List<Mail<?>> mails = new ArrayList<>();
+        MailService<Mail<?>> serverAlpha = new MailService<>();
 
         Mail<Integer> m1 = new Mail<>("Daniil", "Anton", 100);
         Mail<Integer> m2 = new Mail<>("Ant", "Ser", 30);
@@ -33,8 +33,8 @@ public class MailServiceTest {
 
     @Test
     public void getPopularSender() {
-        List<Mail> mails = new ArrayList<>();
-        MailService<Mail> serverAlpha = new MailService();
+        List<Mail<?>> mails = new ArrayList<>();
+        MailService<Mail<?>> serverAlpha = new MailService<>();
 
         Mail<Integer> m1 = new Mail<>("Daniil", "Anton", 100);
         Mail<Integer> m2 = new Mail<>("Ant", "Ser", 30);
@@ -52,8 +52,8 @@ public class MailServiceTest {
 
     @Test
     public void getMailBox() {
-        List<Mail> mails = new ArrayList<>();
-        MailService<Mail> serverAlpha = new MailService();
+        List<Mail<?>> mails = new ArrayList<>();
+        MailService<Mail<?>> serverAlpha = new MailService<>();
 
         Mail<Integer> m1 = new Mail<>("Daniil", "Anton", 100);
         Mail<Integer> m2 = new Mail<>("Ant", "Ser", 30);
@@ -64,18 +64,18 @@ public class MailServiceTest {
         mails.add(m3);
 
         MailService.process(serverAlpha, mails);
-        Map<String, List<Mail>> map1 = serverAlpha.getMailBox();
+        Map<String, List<Mail<?>>> map1 = serverAlpha.getMailBox();
         assertTrue(map1.containsKey("Daniil") && map1.containsKey("Ant") && map1.containsKey("Roma"));
     }
 
     @Test
     public void getMailBoxNull() {
-        List<Mail> mails = new ArrayList<>();
-        MailService<Mail> serverAlpha = new MailService();
+        List<Mail<?>> mails = new ArrayList<>();
+        MailService<Mail<?>> serverAlpha = new MailService<>();
 
 
         MailService.process(serverAlpha, mails);
-        Map<String, List<Mail>> map1 = serverAlpha.getMailBox();
+        Map<String, List<Mail<?>>> map1 = serverAlpha.getMailBox();
         assertNotNull(map1);
     }
 }
