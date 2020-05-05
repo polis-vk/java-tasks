@@ -56,7 +56,7 @@ public class SerializerTest {
         Files.deleteIfExists(FILE_PATH);
     }
     
-    public void someList(BiConsumer<List<Animal>, String> serialize, Function<String, List<Animal>> deserialize) throws IOException {
+    private void someList(BiConsumer<List<Animal>, String> serialize, Function<String, List<Animal>> deserialize) throws IOException {
         Files.createFile(FILE_PATH);
         List<Animal> animals = new ArrayList<>();
         List<Integer> weightByLastTenDays = Arrays.asList(12, 2, 3, 4, 2, 1, 34, 5, 3, 2);
@@ -71,7 +71,7 @@ public class SerializerTest {
         Files.deleteIfExists(FILE_PATH);
     }
     
-    public void differentLists(BiConsumer<List<Animal>, String> serialize, Function<String, List<Animal>> deserialize) throws IOException {
+    private void differentLists(BiConsumer<List<Animal>, String> serialize, Function<String, List<Animal>> deserialize) throws IOException {
         List<Animal> animals1 = new ArrayList<>();
         List<Integer> weightByLastTenDays = Arrays.asList(12, 2, 3, 4, 2, 1, 34, 5, 3, 2);
         animals1.add(new Animal(10, "first", weightByLastTenDays, new Kind("firstKind", 1000), Animal.Owner.OWNER_LESS));
