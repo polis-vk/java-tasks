@@ -1,10 +1,15 @@
 package ru.mail.polis.homework.io.objects;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Нужно создать тесты для этого файла
@@ -22,7 +27,7 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
+    public void defaultSerialize(List<Animal> animals, String fileName) {
         Path outputFile = Paths.get(fileName);
 
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(outputFile))) {
@@ -30,6 +35,8 @@ public class Serializer {
             for (Animal animal : animals) {
                 objectOutputStream.writeObject(animal);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -40,7 +47,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
+    public List<Animal> defaultDeserialize(String fileName) {
         Path inputFile = Paths.get(fileName);
         if (Files.notExists(inputFile)) {
             return Collections.emptyList();
@@ -52,6 +59,8 @@ public class Serializer {
             for (int i = 0; i < length; i++) {
                 animals.add((Animal) objectInputStream.readObject());
             }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
         return animals;
     }
@@ -64,16 +73,15 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
-    public void customSerialize(List<Animal> animals, String fileName) throws IOException {
+    public void customSerialize(List<Animal> animals, String fileName) {
         Path outputFile = Paths.get(fileName);
-        if (Files.notExists(outputFile)) {
-            Files.createFile(outputFile);
-        }
 
         try (OutputStream outputStream = Files.newOutputStream(outputFile)) {
             for (Animal animal : animals) {
                 outputStream.write(animal.toString().getBytes());
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -84,7 +92,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName){
+    public List<Animal> customDeserialize(String fileName) {
         return Collections.emptyList();
     }
 }

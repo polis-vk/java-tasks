@@ -32,7 +32,7 @@ public class SerializerTest {
 
 
     @Test
-    public void writeReadEmptyList() throws IOException, ClassNotFoundException {
+    public void writeReadEmptyList()  {
         Path file = Paths.get("src", "test", "resources", "serializer", "animal1.bin");
         serializer.defaultSerialize(Collections.emptyList(), file.toString());
         List<Animal> outputAnimals = serializer.defaultDeserialize(file.toString());
@@ -40,7 +40,7 @@ public class SerializerTest {
     }
 
     @Test
-    public void writeReadEqualList() throws IOException, ClassNotFoundException {
+    public void writeReadEqualList()  {
         Food grass = new Food("Grass", 10);
         Food meat = new Food("Meat", 1000);
         Food fish = new Food("Fish", 100);
@@ -90,7 +90,7 @@ public class SerializerTest {
     }
 
     @Test
-    public void writeReadEqualManyLists() throws IOException, ClassNotFoundException {
+    public void writeReadEqualManyLists() {
         Food grass = new Food("Grass", 10);
         Food meat = new Food("Meat", 1000);
         Food fish = new Food("Fish", 100);
@@ -178,7 +178,7 @@ public class SerializerTest {
     }
 
     @Test
-    public void writeReadEmptyListCustom() throws IOException {
+    public void writeReadEmptyListCustom() {
         Path file = Paths.get("src", "test", "resources", "serializer", "animal1C.bin");
         serializer.customSerialize(Collections.emptyList(), file.toString());
         List<Animal> outputAnimals = serializer.customDeserialize(file.toString());
@@ -186,7 +186,7 @@ public class SerializerTest {
     }
 
     @Test
-    public void writeReadEqualListCustom() throws IOException {
+    public void writeReadEqualListCustom() {
         Path file = Paths.get("src", "test", "resources", "serializer", "animal2C.bin");
         Food grass = new Food("Grass", 10);
         Food meat = new Food("Meat", 1000);
@@ -213,7 +213,7 @@ public class SerializerTest {
     }
 
     @Test
-    public void writeReadEqualManyListsCustom() throws IOException {
+    public void writeReadEqualManyListsCustom() {
         Food grass = new Food("Grass", 10);
         Food meat = new Food("Meat", 1000);
         Food fish = new Food("Fish", 100);

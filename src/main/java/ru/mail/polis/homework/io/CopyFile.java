@@ -18,26 +18,25 @@ public class CopyFile {
      * 6 баллов
      */
     public static String copyFiles(String pathFrom, String pathTo) {
-        Path directoryIn = Paths.get(pathFrom);
-        Path directoryOut = Paths.get(pathTo);
-        if (Files.notExists(directoryIn)) {
-            return null;
-        }
-        if (Files.isRegularFile(directoryIn)) {
-            copyFile(directoryIn, directoryOut);
-            return null;
-        }
-        if (Files.notExists(directoryOut)) {
-            try {
-                Files.createDirectories(directoryOut);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        try {
+            Path directoryIn = Paths.get(pathFrom);
+            Path directoryOut = Paths.get(pathTo);
 
-        try (DirectoryStream<Path> entries = Files.newDirectoryStream(directoryIn)) {
-            for (Path entry : entries) {
-                copyFiles(entry.toString(), directoryOut.resolve(entry.getFileName()).toString());
+            if (Files.notExists(directoryIn)) {
+                return null;
+            }
+            if (Files.isRegularFile(directoryIn)) {
+                copyFile(directoryIn, directoryOut);
+                return null;
+            }
+            if (Files.notExists(directoryOut)) {
+                Files.createDirectories(directoryOut);
+            }
+
+            try (DirectoryStream<Path> paths = Files.newDirectoryStream(directoryIn)) {
+                for (Path path : paths) {
+                    copyFiles(path.toString(), directoryOut.resolve(path.getFileName()).toString());
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

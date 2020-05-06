@@ -55,6 +55,10 @@ public class Animal implements Serializable {
         return type;
     }
 
+    public List<Food> getFoods() {
+        return foods;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -75,11 +79,12 @@ public class Animal implements Serializable {
     @Override
     public String toString() {
         return "Animal{" +
-                "name=" + name +
+                "name='" + name + '\'' +
                 ", age=" + age +
-                ", type=" + type +
                 ", dad=" + dad +
-                ", mam=" + mum +
+                ", mum=" + mum +
+                ", type=" + type +
+                ", foods=" + foods +
                 '}';
     }
 }

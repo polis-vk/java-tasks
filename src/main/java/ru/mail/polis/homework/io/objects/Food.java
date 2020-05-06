@@ -10,4 +10,12 @@ public class Food implements Serializable {
         this.name = name;
         this.calorie = calorie;
     }
+
+    @Override
+    public String toString() {
+        return "Food{" +
+                "name='" + name + '\'' +
+                ", calorie=" + calorie +
+                '}';
+    }
 }
