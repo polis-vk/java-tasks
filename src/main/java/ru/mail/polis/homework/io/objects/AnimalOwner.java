@@ -34,6 +34,6 @@ public class AnimalOwner implements Serializable {
 
     @Override
     public String toString() {
-        return "{ \"name\" : \"" + this.name + "\", \"phoneNumber\" : \"" + this.phoneNumber + "\" }";
+        return "{ name : " + this.name + ", phoneNumber : " + this.phoneNumber + " }";
     }
 }

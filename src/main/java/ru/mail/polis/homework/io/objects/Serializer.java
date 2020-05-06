@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -26,14 +27,12 @@ public class Serializer {
     public void defaultSerialize(List<Animal> animals, String fileName) {
         Path pathToFile = Paths.get(fileName);
 
+
         try {
             Files.createDirectories(pathToFile.getParent());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(pathToFile))) {
-            outputStream.writeObject(animals);
+            try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(pathToFile))) {
+                outputStream.writeObject(animals);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -72,22 +71,21 @@ public class Serializer {
 
         try {
             Files.createDirectories(Paths.get(fileName).getParent());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
+            try (DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(fileName))) {
+                for (Animal animal : animals) {
+                    outputStream.writeUTF(animal.getName());
+                    outputStream.writeUTF(animal.getType().toString());
+                    outputStream.writeUTF(animal.getOwner().getName());
+                    outputStream.writeUTF(animal.getOwner().getPhoneNumber());
+                    outputStream.writeLong(animal.getListFood().size());
 
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+                    for (String food : animal.getListFood()) {
+                        outputStream.writeUTF(food);
+                    }
 
-            for (Animal animal : animals) {
-                byte[] buffer = animal.toString().getBytes();
-                byteArrayOutputStream.write(buffer);
+                }
             }
-
-            try (FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
-                byteArrayOutputStream.writeTo(fileOutputStream);
-            }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -106,70 +104,26 @@ public class Serializer {
             return null;
         }
 
-        List<Animal> animals = new ArrayList<>();
+        List<Animal> animals = new ArrayList();
 
-        try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
-            byte[] buffer = new byte[fileInputStream.available()];
-            while (fileInputStream.available() > 0) {
-                fileInputStream.read(buffer);
-                int b;
-                try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buffer)) {
-                    Animal animal;
-                    String word = "";
-                    String name = "";
-                    String type = "";
-                    String nameOwner = "";
-                    String phoneOwner = "";
-                    while ((b = byteArrayInputStream.read()) != -1) {
+        try (DataInputStream inputStream = new DataInputStream(new FileInputStream(fileName))) {
+            while (inputStream.available() > 0) {
 
-                        word += (char) b;
-                        if (isFieldObject(word, "{ \"name\" : \"", "\", \"type\" : \"")) {
-                            name = doWord(word, "{ \"name\" : \"", "\", \"type\" : \"");
-                            word = word.substring(word.indexOf("\", \"type\" : \""));
-                        }
-
-                        if (isFieldObject(word, "\", \"type\" : \"", "\", \"{ \"name\" : \"")) {
-                            type = doWord(word, "\", \"type\" : \"", "\", \"{ \"name\" : \"");
-                            word = word.substring(word.indexOf("\", \"{ \"name\" : \""));
-                        }
-
-                        if (isFieldObject(word, "\", \"{ \"name\" : \"", "\", \"phoneNumber\" : \"")) {
-                            nameOwner = doWord(word, "\", \"{ \"name\" : \"", "\", \"phoneNumber\" : \"");
-                            word = word.substring(word.indexOf("\", \"phoneNumber\" : \""));
-                        }
-
-                        if (isFieldObject(word, "\", \"phoneNumber\" : \"", "\" }\" }")) {
-                            phoneOwner = doWord(word, "\", \"phoneNumber\" : \"", "\" }\" }");
-                            word = "";
-                            animal = new Animal(name, AnimalType.valueOf(type), new AnimalOwner(nameOwner, phoneOwner));
-                            animals.add(animal);
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                String name = inputStream.readUTF();
+                AnimalType type = AnimalType.valueOf(inputStream.readUTF());
+                String nameOwner = inputStream.readUTF();
+                String phoneOwner = inputStream.readUTF();
+                List<String> listFood = new ArrayList();
+                long listFoodSize = inputStream.readLong();
+                for (int i = 0; i < listFoodSize; i++) {
+                    listFood.add(inputStream.readUTF());
                 }
-
+                animals.add(new Animal(name, type, new AnimalOwner(nameOwner, phoneOwner), listFood));
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
         return animals;
-    }
 
-    public boolean isFieldObject(String word, String s, String s2) {
-        return word.startsWith(s) && word.endsWith(s2);
-    }
-
-    public static String doWord(String word, String start, String end) {
-        StringBuilder result = new StringBuilder();
-        int startIndex = word.indexOf(start);
-        int endIndex = word.indexOf(end);
-        for (int i = startIndex + start.length(); i < endIndex; i++) {
-            result.append(word.charAt(i));
-        }
-        return result.toString();
     }
 }

@@ -4,9 +4,9 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -25,12 +25,15 @@ public class SerializerTest {
         AnimalOwner animalOwner1 = new AnimalOwner("Petr", "1234567890");
         AnimalOwner animalOwner2 = new AnimalOwner("Vladimir", "+75555555");
         AnimalOwner animalOwner3 = new AnimalOwner("Maria", "893333121");
-        List<Animal> list = new ArrayList<>();
-        list.add(new Animal("animal1", AnimalType.CAT, animalOwner1));
-        list.add(new Animal("animal2", AnimalType.BIRD, animalOwner1));
-        list.add(new Animal("animal3", AnimalType.DOG, animalOwner2));
-        list.add(new Animal("animal4", AnimalType.DOG, animalOwner3));
-        list.add(new Animal("animal5", AnimalType.CAT, animalOwner2));
+        List<String> listFood1 = new ArrayList(Arrays.asList("potato"));
+        List<String> listFood2 = new ArrayList(Arrays.asList("potato","carrot"));
+        List<String> listFood3 = new ArrayList(Arrays.asList("meat","milk"));
+        List<Animal> list = new ArrayList();
+        list.add(new Animal("animal1", AnimalType.CAT, animalOwner1, listFood1));
+        list.add(new Animal("animal2", AnimalType.BIRD, animalOwner1, listFood3));
+        list.add(new Animal("animal3", AnimalType.DOG, animalOwner2, listFood2));
+        list.add(new Animal("animal4", AnimalType.DOG, animalOwner3, listFood2));
+        list.add(new Animal("animal5", AnimalType.CAT, animalOwner2, listFood1));
         return list;
     }
 
@@ -38,12 +41,15 @@ public class SerializerTest {
         AnimalOwner animalOwner1 = new AnimalOwner("Fedor", "88005553535");
         AnimalOwner animalOwner2 = new AnimalOwner("Vladimir", "+75555555");
         AnimalOwner animalOwner3 = new AnimalOwner("Elena", "893333121");
-        List<Animal> list = new ArrayList<>();
-        list.add(new Animal("animal6", AnimalType.CAT, animalOwner1));
-        list.add(new Animal("animal7", AnimalType.DOG, animalOwner1));
-        list.add(new Animal("animal8", AnimalType.BIRD, animalOwner2));
-        list.add(new Animal("animal9", AnimalType.CAT, animalOwner2));
-        list.add(new Animal("animal10", AnimalType.DOG, animalOwner3));
+        List<String> listFood1 = new ArrayList(Arrays.asList("juice"));
+        List<String> listFood2 = new ArrayList(Arrays.asList("tomato","carrot"));
+        List<String> listFood3 = new ArrayList(Arrays.asList("cheese","milk"));
+        List<Animal> list = new ArrayList();
+        list.add(new Animal("animal6", AnimalType.CAT, animalOwner1, listFood1));
+        list.add(new Animal("animal7", AnimalType.DOG, animalOwner1, listFood1));
+        list.add(new Animal("animal8", AnimalType.BIRD, animalOwner2, listFood3));
+        list.add(new Animal("animal9", AnimalType.CAT, animalOwner2, listFood3));
+        list.add(new Animal("animal10", AnimalType.DOG, animalOwner3, listFood2));
         return list;
     }
 

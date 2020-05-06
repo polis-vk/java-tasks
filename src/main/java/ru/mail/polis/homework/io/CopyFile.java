@@ -17,44 +17,38 @@ public class CopyFile {
 
         Path fromDirectory = Paths.get(pathFrom);
         Path toDirectory = Paths.get(pathTo);
+
         if (!Files.exists(fromDirectory)) {
             return null;
         }
-        if (Files.isDirectory(fromDirectory)) {
-            if (!Files.exists(toDirectory)) {
-                try {
-                    Files.createDirectories(Paths.get(toDirectory.toString()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
+        try {
+            Files.createDirectories(toDirectory.getParent());
+
+            if (Files.isRegularFile(fromDirectory)) {
+                Files.createFile(toDirectory);
+                copyFileStream(fromDirectory, toDirectory);
+                return pathTo;
             }
 
+            Files.createDirectory(toDirectory);
             try (DirectoryStream<Path> files = Files.newDirectoryStream(fromDirectory)) {
                 for (Path path : files) {
-                    Path toFile = Paths.get(toDirectory.toString(), path.getFileName().toString());
-                    copyFiles(String.valueOf(path), toFile.toString());
+                    copyFiles(path.toString(), toDirectory.resolve(path.getFileName()).toString());
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
-        } else {
-            try {
-                Files.createDirectories(toDirectory.getParent());
-                Files.createFile(toDirectory);
-                copyFileStream(fromDirectory.toString(), toDirectory.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return null;
+        return pathTo;
     }
 
 
-    public static void copyFileStream(String fromFile, String toFile) throws IOException {
+    public static void copyFileStream(Path fromFile, Path toFile) throws IOException {
 
-        try (InputStream inputStream = new FileInputStream(fromFile)) {
-            try (OutputStream outputStream = new FileOutputStream(toFile)) {
+        try (InputStream inputStream = Files.newInputStream(fromFile)) {
+            try (OutputStream outputStream = Files.newOutputStream(toFile)) {
                 byte[] buffer = new byte[1024];
                 int length;
                 while ((length = inputStream.read(buffer)) > 0) {

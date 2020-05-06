@@ -27,7 +27,7 @@ public class WordFrequency {
         return lines
                 .map(line -> line.split("[,.!:\\-?; ]"))
                 .flatMap(Arrays::stream)
-                .filter(word -> word.length() > 0)
+                .filter(word -> !word.isEmpty())
                 .collect(Collectors.groupingBy(String::toLowerCase, Collectors.counting()))//;
                 .entrySet()
                 .stream()
