@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.collections.streams;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
