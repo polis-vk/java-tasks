@@ -17,41 +17,44 @@ public class CopyFile {
      * <p>
      * 6 баллов
      */
-    public static String copyFiles(String pathFrom, String pathTo) throws IOException {
+    public static String copyFiles(String pathFrom, String pathTo) {
         Path dirIn = Paths.get(pathFrom);
         Path dirOut = Paths.get(pathTo);
         if (Files.notExists(dirIn)) {
             return null;
         }
-        if (Files.isRegularFile(dirIn)) {
-            copyFile(dirIn, dirOut);
-            return null;
-        }
-        if (Files.notExists(dirOut)) {
-            Files.createDirectory(dirOut);
+        try {
+            if (Files.isRegularFile(dirIn)) {
+                copyFile(dirIn, dirOut);
+            } else if (Files.notExists(dirOut)) {
+                Files.createDirectory(dirOut);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         try (DirectoryStream<Path> files = Files.newDirectoryStream(dirIn)) {
             for (Path path : files) {
                 copyFiles(dirIn.toString(), dirOut.resolve(path.getFileName()).toString());
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
     private static void copyFile(Path dirIn, Path dirOut) throws IOException {
         if (Files.notExists(dirOut)) {
-            Files.createDirectory(dirOut.getParent());
+            Files.createFile(dirOut);
         }
-        Files.createDirectory(dirOut);
 
-        try (BufferedInputStream bufferedInputStream = new BufferedInputStream(Files.newInputStream(dirIn));
-             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(Files.newOutputStream(dirOut))) {
-            byte[] buffer = new byte[1024];
-            int lengthRead = 0;
-            while ((lengthRead = bufferedInputStream.read(buffer)) > 0) {
-                bufferedOutputStream.write(buffer, 0, lengthRead);
+        try (BufferedInputStream bufferedInputStream = new BufferedInputStream(Files.newInputStream(dirIn))) {
+            try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(Files.newOutputStream(dirOut))) {
+                byte[] buffer = new byte[1024];
+                int lengthRead = 0;
+                while ((lengthRead = bufferedInputStream.read(buffer)) > 0) {
+                    bufferedOutputStream.write(buffer, 0, lengthRead);
+                }
             }
-            bufferedOutputStream.flush();
         }
     }
 }

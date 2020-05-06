@@ -12,8 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
-import static ru.mail.polis.homework.io.objects.Type.parseType;
-
 /**
  * Нужно создать тесты для этого файла
  * 1) тест на чтение и запись пустого списка
@@ -30,16 +28,22 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
+    public void defaultSerialize(List<Animal> animals, String fileName) {
         Path pathFile = Paths.get(fileName);
         if (Files.notExists(pathFile)) {
-            Files.createFile(pathFile);
+            try {
+                Files.createFile(pathFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(pathFile))) {
             objectOutputStream.writeInt(animals.size());
             for (Animal animal : animals) {
                 objectOutputStream.writeObject(animal);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -50,7 +54,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
+    public List<Animal> defaultDeserialize(String fileName) {
         if (Files.notExists(Paths.get(fileName))) {
             return Collections.emptyList();
         }
@@ -61,6 +65,8 @@ public class Serializer {
             for (int i = 0; i < size; i++) {
                 animalsList.add((Animal) objectInputStream.readObject());
             }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
         return animalsList;
     }
@@ -73,15 +79,21 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
-    public void customSerialize(List<Animal> animals, String fileName) throws IOException {
+    public void customSerialize(List<Animal> animals, String fileName) {
         Path pathFile = Paths.get(fileName);
         if (Files.notExists(pathFile)) {
-            Files.createFile(pathFile);
+            try {
+                Files.createFile(pathFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         try (PrintStream printStream = new PrintStream(Files.newOutputStream(pathFile))) {
             for (Animal animal : animals) {
                 printStream.println(animal);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -92,7 +104,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) throws IOException {
+    public List<Animal> customDeserialize(String fileName) {
         Path path = Paths.get(fileName);
         if (Files.notExists(path)) {
             return Collections.emptyList();
@@ -106,6 +118,9 @@ public class Serializer {
                 }
             }
             return animalList;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -142,7 +157,7 @@ public class Serializer {
         line = line.substring(endIndex + 1);
         startIndex = line.indexOf("=") + 1;
         endIndex = line.indexOf("}");
-        Type type = parseType(line.substring(startIndex, endIndex));
+        Type type = Type.valueOf(line.substring(startIndex, endIndex));
 
         return new Animal(age, name, mom, dad, type);
     }

@@ -27,15 +27,14 @@ public class Directories {
         }
 
         int count = 0;
-        if (files.isDirectory()) {
-            for (File file : files.listFiles()) {
-                count += removeWithFile(file.getPath());
-            }
+
+        for (File file : files.listFiles()) {
+            count += removeWithFile(file.getPath());
         }
+
 
         return files.delete() ? ++count : count;
     }
-
 
     /**
      * С использованием Path

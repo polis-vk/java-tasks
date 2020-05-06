@@ -33,12 +33,11 @@ public class WordFrequency {
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet()
                 .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .sorted(Map.Entry.<String, Long>comparingByValue()
+                        .reversed()
+                        .thenComparing(Map.Entry.comparingByKey()))
                 .map(Map.Entry::getKey)
                 .limit(10)
                 .collect(Collectors.toList());
     }
-
-
 }
