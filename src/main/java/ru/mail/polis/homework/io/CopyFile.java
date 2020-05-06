@@ -30,7 +30,7 @@ public class CopyFile {
             
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    copyFileData(file.toString(), dest.resolve(source.relativize(file)).toString());
+                    copyFileData(file, dest.resolve(source.relativize(file)));
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -40,10 +40,10 @@ public class CopyFile {
         return pathToString;
     }
     
-    private static void copyFileData(String fileFrom, String fileTo) {
+    private static void copyFileData(Path pathFrom, Path pathTo) {
         byte[] bytes = new byte[4096];
-        try (InputStream in = new FileInputStream(fileFrom)) {
-            try (OutputStream out = new FileOutputStream(fileTo)) {
+        try (InputStream in = Files.newInputStream(pathFrom)) {
+            try (OutputStream out = Files.newOutputStream(pathTo)) {
                 while (in.read(bytes) != -1) {
                     out.write(bytes);
                 }
