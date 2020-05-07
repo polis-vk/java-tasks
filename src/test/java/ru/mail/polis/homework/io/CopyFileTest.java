@@ -23,21 +23,21 @@ public class CopyFileTest {
 
     @Before
     public void setUp() throws Exception {
-        // --------------------------------------- create source for copyOnlyFile --------------------------------------
+//         --------------------------------------- create source for copyOnlyFile --------------------------------------
 //        Path dir = Paths.get("src", "test", "resources", "directories", "copy", "first");
 //        Path file = Paths.get("src", "test", "resources", "directories", "copy", "first", "file.txt");
 //        Files.createDirectories(dir);
 //        createFile(file);
-        // --------------------------------------- create source for copyOnlyFile --------------------------------------
-
-
-        // --------------------------------------- create source for copyOnlyDir ---------------------------------------
+//         --------------------------------------- create source for copyOnlyFile --------------------------------------
+//
+//
+//         --------------------------------------- create source for copyOnlyDir ---------------------------------------
 //        Path dir2 = Paths.get("src", "test", "resources", "directories", "copy", "second");
 //        Files.createDirectories(dir2);
-        // --------------------------------------- create source for copyOnlyDir ---------------------------------------
-
-
-        // ------------------------------------- create source for copyDirWithFiles ------------------------------------
+//         --------------------------------------- create source for copyOnlyDir ---------------------------------------
+//
+//
+//         ------------------------------------- create source for copyDirWithFiles ------------------------------------
 //        Path dir3 = Paths.get("src", "test", "resources", "directories", "copy", "third");
 //        Path file1 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file1.txt");
 //        Path file2 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file2.txt");
@@ -48,10 +48,10 @@ public class CopyFileTest {
 //        createFile(file2);
 //        createFile(file3);
 //        createFile(file4);
-        // ------------------------------------- create source for copyDirWithFiles ------------------------------------
-
-
-        // --------------------------------------- create source for copyDirHard ---------------------------------------
+//         ------------------------------------- create source for copyDirWithFiles ------------------------------------
+//
+//
+//         --------------------------------------- create source for copyDirHard ---------------------------------------
 //        Path dir5 = Paths.get("src", "test", "resources", "directories", "copy", "fifth");
 //        Files.createDirectories(dir5);
 //        for (int i = 0; i < 10; i++) {
@@ -86,7 +86,7 @@ public class CopyFileTest {
 //            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1", "dirdir",
 //                    "file" + i + ".txt"));
 //        }
-        // --------------------------------------- create source for copyDirHard ---------------------------------------
+//         --------------------------------------- create source for copyDirHard ---------------------------------------
 
     }
 
@@ -141,12 +141,12 @@ public class CopyFileTest {
     }
 
     private void createFile(Path path) throws IOException {
-        List<String> strings = Arrays.asList("Р–РёР»Рё-Р±С‹Р»Рё С‚СЂРё РєРёС‚Р°Р№С†Р°: РЇРє, РЇРє-С†РµРґСЂР°Рє, РЇРє-С†РµРґСЂР°Рє-С†РµРґСЂР°Рє-С†РµРґСЂРѕРЅРё.",
-                "Р–РёР»Рё-Р±С‹Р»Рё С‚СЂРё РєРёС‚Р°Р№РєРё: Р¦С‹РїР°, Р¦С‹РїР°-РґСЂС‹РїР°, Р¦С‹РїР°-РґСЂС‹РїР°-РґСЂС‹РјРїР°РјРїРѕРЅРё.",
-                "Р’СЃРµ РѕРЅРё РїРµСЂРµР¶РµРЅРёР»РёСЃСЊ: РЇРє РЅР° Р¦С‹РїРµ, РЇРє-С†РµРґСЂР°Рє РЅР° Р¦С‹РїРµ-РґСЂС‹РїРµ,",
-                "РЇРє-С†РµРґСЂР°Рє-С†РµРґСЂР°Рє-С†РµРґСЂРѕРЅРё РЅР° Р¦С‹РїРµ-РґСЂС‹РїРµ-РґСЂС‹РјРїР°РјРїРѕРЅРё.",
-                "Р Сѓ РЅРёС… СЂРѕРґРёР»РёСЃСЊ РґРµС‚Рё. РЈ РЇРєР° СЃ Р¦С‹РїРѕР№ вЂ” РЁР°С…, Сѓ РЇРєР°-С†РµРґСЂР°РєР° СЃ Р¦С‹РїРѕР№-РґСЂС‹РїРѕР№ вЂ” РЁР°С…-",
-                "С€Р°СЂР°С…, Сѓ РЇРєР°-С†РµРґСЂР°РєР°-С†РµРґСЂР°РєР°-С†РµРґСЂРѕРЅРё СЃ Р¦С‹РїРѕР№-РґСЂС‹РїРѕР№-РґСЂС‹РјРїР°РјРїРѕРЅРё вЂ” РЁР°С…-С€Р°СЂР°С…-С€Р°СЂР°С…-С€РёСЂРѕРЅРё.");
+        List<String> strings = Arrays.asList("Жили-были три китайца: Як, Як-цедрак, Як-цедрак-цедрак-цедрони.",
+                "Жили-были три китайки: Цыпа, Цыпа-дрыпа, Цыпа-дрыпа-дрымпампони.",
+                "Все они переженились: Як на Цыпе, Як-цедрак на Цыпе-дрыпе,",
+                "Як-цедрак-цедрак-цедрони на Цыпе-дрыпе-дрымпампони.",
+                "И у них родились дети. У Яка с Цыпой — Шах, у Яка-цедрака с Цыпой-дрыпой — Шах-",
+                "шарах, у Яка-цедрака-цедрака-цедрони с Цыпой-дрыпой-дрымпампони — Шах-шарах-шарах-широни.");
         Files.write(path, strings, StandardOpenOption.CREATE_NEW);
     }
 
