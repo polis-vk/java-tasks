@@ -22,24 +22,13 @@ public class CopyFile {
             return null;
         }
 
-        if (Files.isRegularFile(source)) {
-            if (!Files.exists(destination)) {
-                try {
-                    Files.createDirectories(destination.getParent());
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            copyFile(source, destination);
-            return null;
-        }
-
         if (!Files.exists(destination)) {
-            try {
-                Files.createDirectories(destination);
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            if (Files.isRegularFile(source)) {
+                createDir(destination.getParent());
+                copyFile(source, destination);
+                return null;
             }
+            createDir(destination);
         }
 
         try (DirectoryStream<Path> entries = Files.newDirectoryStream(source)) {
@@ -54,8 +43,8 @@ public class CopyFile {
 
     private static void copyFile(final Path pathFrom, final Path pathTo) {
         byte[] bytes = new byte[1024];
-        try (InputStream inputStream = new FileInputStream(String.valueOf(pathFrom))) {
-            try (OutputStream outStream = new FileOutputStream(String.valueOf(pathTo))) {
+        try (InputStream inputStream = Files.newInputStream(pathFrom)) {
+            try (OutputStream outStream = Files.newOutputStream(pathTo)) {
                 while (inputStream.read(bytes) > 0) {
                     outStream.write(bytes);
                 }
@@ -64,4 +53,13 @@ public class CopyFile {
             ex.printStackTrace();
         }
     }
+
+    private static void createDir(final Path destination) {
+        try {
+            Files.createDirectories(destination);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
 }

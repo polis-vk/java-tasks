@@ -6,7 +6,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
 
 public class Directories {
 
@@ -29,7 +28,7 @@ public class Directories {
             return files.delete() ? 1 : 0;
         }
 
-        for (File tmp : Objects.requireNonNull(files.listFiles())) {
+        for (File tmp : files.listFiles()) {
             count += removeWithFile(tmp.getPath());
         }
         return files.delete() ? count + 1 : count;
