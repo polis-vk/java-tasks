@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.io.objects;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 /**
  * Нужно создать тесты для этого файла
@@ -88,9 +86,10 @@ public class Serializer {
                 e.printStackTrace();
             }
         }
-        try (PrintStream printStream = new PrintStream(Files.newOutputStream(pathFile))) {
+        try (DataOutputStream outputStream = new DataOutputStream(Files.newOutputStream(pathFile))) {
+            outputStream.writeInt(animals.size());
             for (Animal animal : animals) {
-                printStream.println(animal);
+                animal.writeAnimal(outputStream);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -111,10 +110,11 @@ public class Serializer {
         }
 
         List<Animal> animalList = new ArrayList<>();
-        try (Scanner scanner = new Scanner(Files.newInputStream(path))) {
+        try (DataInputStream dataInputStream = new DataInputStream(Files.newInputStream(path))) {
             {
-                while (scanner.hasNext()) {
-                    animalList.add(parseAnimal(scanner.nextLine()));
+                int size = dataInputStream.readInt();
+                for (int i = 0; i < size; i++) {
+                    animalList.add(Animal.parseAnimal(dataInputStream));
                 }
             }
             return animalList;
@@ -124,41 +124,5 @@ public class Serializer {
         }
     }
 
-    private static Animal parseAnimal(String line) {
-        if (line.equals("null")) {
-            return null;
-        }
 
-        int startIndex = line.indexOf('=') + 1;
-        int endIndex = line.indexOf(',');
-        int age = Integer.parseInt(line.substring(startIndex, endIndex));
-
-        line = line.substring(endIndex + 1);
-        startIndex = line.indexOf("=") + 1;
-        endIndex = line.indexOf(",");
-        String name = line.substring(startIndex, endIndex);
-
-        line = line.substring(endIndex + 1);
-        startIndex = line.indexOf("=") + 1;
-        endIndex = line.indexOf(",");
-        if (!line.substring(startIndex, endIndex).equals("null")) {
-            endIndex = line.indexOf("}") + 1;
-        }
-        Animal mom = parseAnimal(line.substring(startIndex, endIndex));
-
-        line = line.substring(endIndex + 1);
-        startIndex = line.indexOf("=") + 1;
-        endIndex = line.indexOf(",");
-        if (!line.substring(startIndex, endIndex).equals("null")) {
-            endIndex = line.indexOf("}") + 1;
-        }
-        Animal dad = parseAnimal(line.substring(startIndex, endIndex));
-
-        line = line.substring(endIndex + 1);
-        startIndex = line.indexOf("=") + 1;
-        endIndex = line.indexOf("}");
-        Type type = Type.valueOf(line.substring(startIndex, endIndex));
-
-        return new Animal(age, name, mom, dad, type);
-    }
 }

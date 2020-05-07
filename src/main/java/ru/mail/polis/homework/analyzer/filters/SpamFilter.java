@@ -14,6 +14,19 @@ public class SpamFilter implements TextAnalyzer {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SpamFilter that = (SpamFilter) o;
+        return Arrays.equals(spam, that.spam);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(spam);
+    }
+
+    @Override
     public FilterType analyze(String text) {
         for (String spamElement : spam) {
             if (text.contains(spamElement)) {

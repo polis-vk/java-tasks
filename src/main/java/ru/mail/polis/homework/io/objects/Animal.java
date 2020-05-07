@@ -1,7 +1,12 @@
 package ru.mail.polis.homework.io.objects;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Scanner;
+import java.util.regex.Pattern;
 
 /**
  * Класс должен содержать несколько полей с примитивами, строками, энамами и некоторыми сапомисными объектами.
@@ -31,6 +36,26 @@ public class Animal implements Serializable {
         this.type = type;
     }
 
+    public int getAge() {
+        return age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Animal getMom() {
+        return mom;
+    }
+
+    public Animal getDad() {
+        return dad;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -57,5 +82,37 @@ public class Animal implements Serializable {
                 ", dad=" + dad +
                 ", type=" + type +
                 '}';
+    }
+
+    public void writeAnimal(DataOutputStream outputStream) throws IOException {
+        outputStream.writeInt(age);
+        outputStream.writeUTF(name);
+        writeParent(outputStream, mom);
+        writeParent(outputStream, dad);
+        outputStream.writeUTF(type.toString());
+    }
+
+    private void writeParent(DataOutputStream outputStream, Animal animal) throws IOException {
+        if (animal == null) {
+            outputStream.writeBoolean(false);
+            return;
+        }
+        outputStream.writeBoolean(true);
+        animal.writeAnimal(outputStream);
+    }
+
+    public static Animal parseAnimal(DataInputStream dataInputStream) throws IOException {
+        int age = dataInputStream.readInt();
+        String name = dataInputStream.readUTF();
+        Animal mom = null;
+        if (dataInputStream.readBoolean()) {
+            mom = parseAnimal(dataInputStream);
+        }
+        Animal dad = null;
+        if (dataInputStream.readBoolean()) {
+            dad = parseAnimal(dataInputStream);
+        }
+        Type type = Type.valueOf(dataInputStream.readUTF());
+        return new Animal(age, name, mom, dad, type);
     }
 }
