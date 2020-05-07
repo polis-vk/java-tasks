@@ -36,8 +36,17 @@ public class Animal implements Serializable {
         return cattery;
     }
 
-    public boolean equals (Animal animal) {
-        if (this.nickname == animal.nickname
+    @Override
+    public boolean equals (Object o) {
+        if(o == this){
+            return true;
+        }
+
+        if(o.getClass() != getClass() || o == null){
+            return false;
+        }
+        Animal animal = (Animal)o;
+        if (this.nickname.equals(animal.nickname)
                 && this.isTrained == animal.isTrained
                 && this.breed.equals(animal.breed)
                 && this.cattery.equals(animal.cattery)) {

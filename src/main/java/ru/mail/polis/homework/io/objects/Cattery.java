@@ -21,7 +21,16 @@ public class Cattery implements Serializable{
         return address;
     }
 
-    public boolean equals (Cattery cattery) {
+    @Override
+    public boolean equals (Object o) {
+        if(o == this){
+            return true;
+        }
+
+        if(o.getClass() != getClass() || o == null){
+            return false;
+        }
+        Cattery cattery = (Cattery)o;
         if (this.catteryName.equals(cattery.getCatteryName())
                 && this.address.equals(cattery.getAddress())) {
             return true;
