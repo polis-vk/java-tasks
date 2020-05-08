@@ -11,9 +11,9 @@ import java.util.stream.Stream;
  * Написать программу, которая из текста (стрим строк), возвращает 10 самых популярных слов (В порядке убывания частоты).
  * Словом считается последовательность символов из букв и цифр от пробела до пробела или знака препинания (.,!:-?;).
  * (Посмотрите статические методы в классе Character)
- *
+ * <p>
  * В исходном стриме строка - это строка из книги, которая может содержать в себе много слов.
- *
+ * <p>
  * Если слов в стриме меньше 10, то вывести все слова. Если слова имеют одинаковое количество упоминаний, то выводить
  * в лексикографическом порядеке.
  * Слова надо сравнивать без учета регистра.
@@ -27,11 +27,9 @@ public class WordFrequency {
     public static List<String> wordFrequency(Stream<String> lines) {
         return lines
                 .flatMap((line) -> Arrays.stream(line.split("[.,!:\\-?;\\s]+")))
-//                .flatMap(Arrays::stream)
-//                .map(String::toLowerCase)
                 .collect(Collectors.toMap(
-                        str->str.toLowerCase(),
-                        value->1,
+                        str -> str.toLowerCase(),
+                        value -> 1,
                         Integer::sum))
                 .entrySet()
                 .stream()
