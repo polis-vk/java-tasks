@@ -3,7 +3,6 @@ package ru.mail.polis.homework.io.objects;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -74,15 +73,6 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
-        Path outputFile = Paths.get(fileName);
-
-        try (OutputStream outputStream = Files.newOutputStream(outputFile)) {
-            for (Animal animal : animals) {
-                outputStream.write(animal.toString().getBytes());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     /**

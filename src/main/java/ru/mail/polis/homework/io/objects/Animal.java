@@ -11,12 +11,12 @@ import java.util.Objects;
  * 1 балл
  */
 public class Animal implements Serializable {
+    public final List<Food> foods;
     private final String name;
     private final int age;
     private final Animal dad;
     private final Animal mum;
     private final Type type;
-    public final List<Food> foods;
 
     public Animal(String name, int age, Type type) {
         this(name, age, null, null, type);
@@ -65,15 +65,16 @@ public class Animal implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
         return age == animal.age &&
-                name.equals(animal.name) &&
+                Objects.equals(name, animal.name) &&
                 Objects.equals(dad, animal.dad) &&
                 Objects.equals(mum, animal.mum) &&
-                type == animal.type;
+                type == animal.type &&
+                Objects.equals(foods, animal.foods);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, age, dad, mum, type);
+        return Objects.hash(name, age, dad, mum, type, foods);
     }
 
     @Override
