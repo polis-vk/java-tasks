@@ -52,7 +52,7 @@ public class Serializer {
     public List<Animal> defaultDeserialize(String fileName) {
         Path dataFile = Paths.get(fileName);
 
-        if (!Files.exists(dataFile)) {
+        if (Files.notExists(dataFile)) {
             return null;
         }
 
@@ -84,8 +84,16 @@ public class Serializer {
                     dataOutputStream.write(animal.getBirthdate());
                     dataOutputStream.writeUTF(animal.getArea());
                     dataOutputStream.writeUTF(animal.getType().toString());
+
                     dataOutputStream.writeUTF(animal.getFather().getName());
+                    dataOutputStream.write(animal.getFather().getBirthdate());
+                    dataOutputStream.writeUTF(animal.getFather().getType().toString());
+
                     dataOutputStream.writeUTF(animal.getMother().getName());
+                    dataOutputStream.write(animal.getMother().getBirthdate());
+                    dataOutputStream.writeUTF(animal.getMother().getType().toString());
+
+                    dataOutputStream.write(animal.getVaccinations().size());
 
                     for (Vaccination vaccination : animal.getVaccinations()) {
                         dataOutputStream.writeUTF(vaccination.getClinic());
@@ -109,7 +117,31 @@ public class Serializer {
      */
     public List<Animal> customDeserialize(String fileName) {
         Path dataFile = Paths.get(fileName);
+        if (Files.notExists(dataFile)) {
+            return null;
+        }
         List<Animal> animals = new ArrayList();
+        try (DataInputStream dataInputStream = new DataInputStream(new FileInputStream(fileName))) {
+            while (dataInputStream.available() > 0) {
+                String name = dataInputStream.readUTF();
+                int birthdate = dataInputStream.read();
+                String area = dataInputStream.readUTF();
+                AnimalTypes type = AnimalTypes.valueOf(dataInputStream.readUTF());
+
+                Animal father = new Animal(dataInputStream.readUTF(), dataInputStream.read(), AnimalTypes.valueOf(dataInputStream.readUTF()));
+                Animal mother = new Animal(dataInputStream.readUTF(), dataInputStream.read(), AnimalTypes.valueOf(dataInputStream.readUTF()));
+
+                int size = dataInputStream.read();
+                List<Vaccination> vaccinations = new ArrayList();
+                for (int i = 0; i < size; i++) {
+                    vaccinations.add(new Vaccination(dataInputStream.read(), dataInputStream.readUTF(), dataInputStream.readUTF(), dataInputStream.readUTF()));
+                }
+                animals.add(new Animal(name, birthdate, type, mother, father, vaccinations, null, area));
+            }
+            dataInputStream.close();
+        } catch (IOException ex) {
+            return null;
+        }
         return animals;
     }
 }

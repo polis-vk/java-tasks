@@ -20,6 +20,14 @@ public class Animal implements Serializable {
     private List<Animal> children;
     private String area;
 
+    public Animal(String name, int birthdate, AnimalTypes type) {
+        this.name = name;
+        this.birthdate = birthdate;
+        this.type = type;
+        this.mother = null;
+        this.father = null;
+    }
+
     public Animal(String name, int birthdate, AnimalTypes type, Animal mother, Animal father, List<Vaccination> vaccinations, List<Animal> children, String area) {
         this.name = name;
         this.birthdate = birthdate;
