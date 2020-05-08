@@ -15,7 +15,7 @@ import java.util.function.Consumer;
  * <p>
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  */
-public class MailService<V extends Mail<? super Mail>> implements Consumer<V> {
+public class MailService<V extends Mail<?>> implements Consumer<V> {
     private final PopularMap<String, List<V>> senders;
     private final PopularMap<String, List<V>> recipients;
 
