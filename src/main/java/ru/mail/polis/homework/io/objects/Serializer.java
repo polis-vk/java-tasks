@@ -1,12 +1,10 @@
 package ru.mail.polis.homework.io.objects;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -80,6 +78,23 @@ public class Serializer {
                 Files.createFile(dataFile);
             }
 
+            try (DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(fileName))) {
+                for (Animal animal : animals) {
+                    dataOutputStream.writeUTF(animal.getName());
+                    dataOutputStream.write(animal.getBirthdate());
+                    dataOutputStream.writeUTF(animal.getArea());
+                    dataOutputStream.writeUTF(animal.getType().toString());
+                    dataOutputStream.writeUTF(animal.getFather().getName());
+                    dataOutputStream.writeUTF(animal.getMother().getName());
+
+                    for (Vaccination vaccination : animal.getVaccinations()) {
+                        dataOutputStream.writeUTF(vaccination.getClinic());
+                        dataOutputStream.writeUTF(vaccination.getDoctor());
+                        dataOutputStream.write(vaccination.getDate());
+                        dataOutputStream.writeUTF(vaccination.getType());
+                    }
+                }
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -94,6 +109,7 @@ public class Serializer {
      */
     public List<Animal> customDeserialize(String fileName) {
         Path dataFile = Paths.get(fileName);
-        return Collections.emptyList();
+        List<Animal> animals = new ArrayList();
+        return animals;
     }
 }
