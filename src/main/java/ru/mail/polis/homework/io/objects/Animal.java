@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class Animal implements Serializable {
     private final String name;
-    private final int birthdate;
+    private final String birthdate;
     private final AnimalTypes type;
     private final Animal mother;
     private final Animal father;
@@ -20,7 +20,7 @@ public class Animal implements Serializable {
     private List<Animal> children;
     private String area;
 
-    public Animal(String name, int birthdate, AnimalTypes type) {
+    public Animal(String name, String birthdate, AnimalTypes type) {
         this.name = name;
         this.birthdate = birthdate;
         this.type = type;
@@ -28,7 +28,7 @@ public class Animal implements Serializable {
         this.father = null;
     }
 
-    public Animal(String name, int birthdate, AnimalTypes type, Animal mother, Animal father, List<Vaccination> vaccinations, List<Animal> children, String area) {
+    public Animal(String name, String birthdate, AnimalTypes type, Animal mother, Animal father, List<Vaccination> vaccinations, List<Animal> children, String area) {
         this.name = name;
         this.birthdate = birthdate;
         this.type = type;
@@ -43,7 +43,7 @@ public class Animal implements Serializable {
         return name;
     }
 
-    public int getBirthdate() {
+    public String getBirthdate() {
         return birthdate;
     }
 
