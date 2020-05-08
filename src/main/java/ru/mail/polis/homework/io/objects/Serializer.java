@@ -107,43 +107,8 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> customDeserialize(String fileName) {
-        filePath = Path.of(fileName);
-        if (!Files.exists(filePath)) {
-            return Collections.emptyList();
-        }
-        List<Animal> animalList = new ArrayList<>();
-        try (DataInputStream dataInputStream = new DataInputStream(Files.newInputStream(filePath))) {
-            int count = dataInputStream.readInt();
-            for (int i = 0; i < count; i++) {
-                String name = dataInputStream.readUTF();
-                Eats eats = Eats.valueOf(dataInputStream.readUTF());
-                int personalNumber = dataInputStream.readInt();
-                int age = dataInputStream.readInt();
 
-                String ownerName = dataInputStream.readUTF();
-                int ownerAge = dataInputStream.readInt();
-                Owner owner = new Owner(ownerName, ownerAge);
-
-                int listCount = dataInputStream.readInt();
-                List<Food> foodList = new ArrayList<>();
-                for (int j = 0; i < listCount; i++) {
-                    String foodTitle = dataInputStream.readUTF();
-                    double foodWeight = dataInputStream.readDouble();
-                    Date date = toDate(dataInputStream.readUTF());
-                    foodList.add(new Food(foodTitle, foodWeight, date));
-                }
-
-                Animal animal = new Animal(name, age, owner, eats);
-                animal.setPersonalNumber(personalNumber);
-                for (Food item : foodList) {
-                    animal.addEaten(item);
-                }
-                animalList.add(animal);
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        return animalList;
+        return Collections.emptyList();
     }
 
     private void createFile(Path filePath) {
