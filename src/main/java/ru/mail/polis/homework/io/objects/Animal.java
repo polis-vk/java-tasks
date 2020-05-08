@@ -59,7 +59,7 @@ public class Animal implements Serializable {
 
     @Override
     public String toString() {
-        return  "Name - " + name +
+        return "Name - " + name +
                 ", birthdate - " + birthdate +
                 ", type - " + type +
                 ", mother - " + mother +

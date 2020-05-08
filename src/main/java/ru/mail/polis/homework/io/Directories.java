@@ -22,7 +22,7 @@ public class Directories {
         int count = 0;
 
         if (!directory.exists()) {
-            return  count;
+            return count;
         }
 
         File[] files = directory.listFiles();
@@ -31,8 +31,7 @@ public class Directories {
             for (File file : files) {
                 if (file.isDirectory()) {
                     count += removeWithFile(file.toString());
-                }
-                else {
+                } else {
                     file.delete();
                     count++;
                 }
@@ -50,7 +49,7 @@ public class Directories {
     public static int removeWithPath(String path) throws IOException {
         AtomicInteger count = new AtomicInteger();
 
-        if (!Files.exists(Paths.get(path))) {
+        if (Files.notExists(Paths.get(path))) {
             return count.get();
         }
 
