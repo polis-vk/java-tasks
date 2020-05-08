@@ -3,6 +3,7 @@ package ru.mail.polis.homework.io.objects;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Класс должен содержать несколько полей с примитивами, строками, энамами и некоторыми сапомисными объектами.
@@ -97,5 +98,25 @@ public class Animal implements Serializable {
                 ", father - " + father +
                 ", vaccinations - " + vaccinations +
                 ", area - " + area;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Animal animal = (Animal) o;
+        return name.equals(animal.name) &&
+                birthdate.equals(animal.birthdate) &&
+                type == animal.type &&
+                Objects.equals(mother, animal.mother) &&
+                Objects.equals(father, animal.father) &&
+                Objects.equals(vaccinations, animal.vaccinations) &&
+                Objects.equals(children, animal.children) &&
+                Objects.equals(area, animal.area);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(father);
     }
 }

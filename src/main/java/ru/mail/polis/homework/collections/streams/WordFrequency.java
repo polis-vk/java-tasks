@@ -37,7 +37,8 @@ public class WordFrequency {
                                 .Entry
                                 .comparingByKey()))
                 .map(Map.Entry::getKey)
-                .limit(10).collect(Collectors.toList());
+                .limit(10)
+                .collect(Collectors.toList());
     }
 
 
