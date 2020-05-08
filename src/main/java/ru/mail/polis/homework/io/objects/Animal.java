@@ -11,12 +11,12 @@ import java.util.Objects;
  * 1 балл
  */
 public class Animal implements Serializable {
-    public final List<Food> foods;
     private final String name;
     private final int age;
     private final Animal dad;
     private final Animal mum;
     private final Type type;
+    public final List<Food> foods;
 
     public Animal(String name, int age, Type type) {
         this(name, age, null, null, type);

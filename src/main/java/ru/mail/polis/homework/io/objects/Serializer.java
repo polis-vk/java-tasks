@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.io.objects;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -73,6 +71,34 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
+        Path outputFile = Paths.get(fileName);
+
+        try (DataOutputStream outputStream = new DataOutputStream(Files.newOutputStream(outputFile))) {
+            outputStream.writeInt(animals.size());
+            for (Animal animal : animals) {
+                animalSerialize(outputStream, animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void animalSerialize(DataOutputStream outputStream, Animal animal) throws IOException {
+        if (animal == null) {
+            outputStream.writeInt(0);
+            return;
+        }
+        outputStream.writeInt(1);
+        outputStream.writeUTF(animal.getName());
+        outputStream.writeInt(animal.getAge());
+        animalSerialize(outputStream, animal.getDad());
+        animalSerialize(outputStream, animal.getMum());
+        outputStream.writeUTF(animal.getType().toString());
+        outputStream.writeInt(animal.foods.size());
+        for (Food food : animal.getFoods()) {
+            outputStream.writeUTF(food.name);
+            outputStream.writeInt(food.calorie);
+        }
     }
 
     /**
@@ -83,6 +109,42 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+        Path inputFile = Paths.get(fileName);
+        if (Files.notExists(inputFile)) {
+            return Collections.emptyList();
+        }
+        List<Animal> animals = new ArrayList<>();
+
+        try (DataInputStream inputStream = new DataInputStream(Files.newInputStream(inputFile))) {
+            int length = inputStream.readInt();
+            for (int i = 0; i < length; i++) {
+                animals.add(animalDeserialize(inputStream));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return animals;
+    }
+
+    private Animal animalDeserialize(DataInputStream inputStream) throws IOException {
+        if (inputStream.readInt() == 0) {
+            return null;
+        }
+
+        String name = inputStream.readUTF();
+        int age = inputStream.readInt();
+        Animal dad = animalDeserialize(inputStream);
+        Animal mum = animalDeserialize(inputStream);
+        Type type = Type.valueOf(inputStream.readUTF());
+        Animal animal = new Animal(name, age, dad, mum, type);
+        int length = inputStream.readInt();
+        String nameFood;
+        int calorie;
+        for (int i = 0; i < length; i++) {
+            nameFood = inputStream.readUTF();
+            calorie = inputStream.readInt();
+            animal.foods.add(new Food(nameFood, calorie));
+        }
+        return animal;
     }
 }
