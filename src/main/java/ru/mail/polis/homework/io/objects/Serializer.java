@@ -1,5 +1,13 @@
 package ru.mail.polis.homework.io.objects;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,7 +27,16 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
+        Path outputFile = Paths.get(fileName);
 
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(outputFile))) {
+            objectOutputStream.writeInt(animals.size());
+            for (Animal animal : animals) {
+                objectOutputStream.writeObject(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -29,7 +46,21 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
+        Path inputFile = Paths.get(fileName);
+        if (Files.notExists(inputFile)) {
+            return Collections.emptyList();
+        }
+        List<Animal> animals = new ArrayList<>();
+
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(inputFile))) {
+            int length = objectInputStream.readInt();
+            for (int i = 0; i < length; i++) {
+                animals.add((Animal) objectInputStream.readObject());
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return animals;
     }
 
 
@@ -40,7 +71,6 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
-
     }
 
     /**
@@ -53,3 +83,4 @@ public class Serializer {
         return Collections.emptyList();
     }
 }
+
