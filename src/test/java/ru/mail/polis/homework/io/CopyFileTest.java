@@ -93,6 +93,7 @@ public class CopyFileTest {
     @After
     public void tearDown() throws Exception {
         FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1").toFile());
+        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy").toFile());
     }
 
     @Test

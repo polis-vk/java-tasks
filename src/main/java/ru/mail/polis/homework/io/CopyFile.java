@@ -18,23 +18,25 @@ public class CopyFile {
      * 6 баллов
      */
     public static String copyFiles(String pathFrom, String pathTo) {
-        Path dirIn = Paths.get(pathFrom);
-        Path dirOut = Paths.get(pathTo);
-        if (Files.notExists(dirIn)) {
-            return null;
-        }
         try {
-            if (Files.isRegularFile(dirIn)) {
-                copyFile(dirIn, dirOut);
-            } else if (Files.notExists(dirOut)) {
-                Files.createDirectory(dirOut);
+            Path directoryIn = Paths.get(pathFrom);
+            Path directoryOut = Paths.get(pathTo);
+
+            if (Files.notExists(directoryIn)) {
+                return null;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try (DirectoryStream<Path> files = Files.newDirectoryStream(dirIn)) {
-            for (Path path : files) {
-                copyFiles(dirIn.toString(), dirOut.resolve(path.getFileName()).toString());
+            if (Files.isRegularFile(directoryIn)) {
+                copyFile(directoryIn, directoryOut);
+                return null;
+            }
+            if (Files.notExists(directoryOut)) {
+                Files.createDirectories(directoryOut);
+            }
+
+            try (DirectoryStream<Path> paths = Files.newDirectoryStream(directoryIn)) {
+                for (Path path : paths) {
+                    copyFiles(path.toString(), directoryOut.resolve(path.getFileName()).toString());
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -44,8 +46,9 @@ public class CopyFile {
 
     private static void copyFile(Path dirIn, Path dirOut) throws IOException {
         if (Files.notExists(dirOut)) {
-            Files.createFile(dirOut);
+            Files.createDirectories(dirOut.getParent());
         }
+        Files.createFile(dirOut);
 
         try (BufferedInputStream bufferedInputStream = new BufferedInputStream(Files.newInputStream(dirIn))) {
             try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(Files.newOutputStream(dirOut))) {

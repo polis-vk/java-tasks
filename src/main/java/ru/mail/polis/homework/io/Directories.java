@@ -25,13 +25,10 @@ public class Directories {
         } else if (files.isFile()) {
             return files.delete() ? 1 : 0;
         }
-
         int count = 0;
-
         for (File file : files.listFiles()) {
             count += removeWithFile(file.getPath());
         }
-
 
         return files.delete() ? ++count : count;
     }
@@ -49,13 +46,10 @@ public class Directories {
             Files.delete(filePath);
             return 1;
         }
-
         int count = 0;
-        if (Files.isDirectory(filePath)) {
-            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(filePath)) {
-                for (Path pathFile : directoryStream) {
-                    count += removeWithPath(pathFile.toString());
-                }
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(filePath)) {
+            for (Path pathFile : directoryStream) {
+                count += removeWithPath(pathFile.toString());
             }
         }
         Files.delete(filePath);

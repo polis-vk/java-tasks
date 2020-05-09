@@ -28,13 +28,6 @@ public class Serializer {
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
         Path pathFile = Paths.get(fileName);
-        if (Files.notExists(pathFile)) {
-            try {
-                Files.createFile(pathFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(pathFile))) {
             objectOutputStream.writeInt(animals.size());
             for (Animal animal : animals) {
@@ -79,17 +72,10 @@ public class Serializer {
      */
     public void customSerialize(List<Animal> animals, String fileName) {
         Path pathFile = Paths.get(fileName);
-        if (Files.notExists(pathFile)) {
-            try {
-                Files.createFile(pathFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         try (DataOutputStream outputStream = new DataOutputStream(Files.newOutputStream(pathFile))) {
             outputStream.writeInt(animals.size());
             for (Animal animal : animals) {
-                animal.writeAnimal(outputStream);
+                writeAnimal(animal, outputStream);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -114,7 +100,7 @@ public class Serializer {
             {
                 int size = dataInputStream.readInt();
                 for (int i = 0; i < size; i++) {
-                    animalList.add(Animal.parseAnimal(dataInputStream));
+                    animalList.add(parseAnimal(dataInputStream));
                 }
             }
             return animalList;
@@ -124,5 +110,35 @@ public class Serializer {
         }
     }
 
+    private static void writeAnimal(Animal animal, DataOutputStream outputStream) throws IOException {
+        outputStream.writeInt(animal.getAge());
+        outputStream.writeUTF(animal.getName());
+        writeParent(animal.getMom(), outputStream);
+        writeParent(animal.getDad(), outputStream);
+        outputStream.writeUTF(animal.getType().toString());
+    }
 
+    private static void writeParent(Animal animal, DataOutputStream outputStream) throws IOException {
+        if (animal == null) {
+            outputStream.writeBoolean(false);
+            return;
+        }
+        outputStream.writeBoolean(true);
+        writeAnimal(animal, outputStream);
+    }
+
+    private static Animal parseAnimal(DataInputStream dataInputStream) throws IOException {
+        int age = dataInputStream.readInt();
+        String name = dataInputStream.readUTF();
+        Animal mom = null;
+        if (dataInputStream.readBoolean()) {
+            mom = parseAnimal(dataInputStream);
+        }
+        Animal dad = null;
+        if (dataInputStream.readBoolean()) {
+            dad = parseAnimal(dataInputStream);
+        }
+        Type type = Type.valueOf(dataInputStream.readUTF());
+        return new Animal(age, name, mom, dad, type);
+    }
 }

@@ -83,36 +83,4 @@ public class Animal implements Serializable {
                 ", type=" + type +
                 '}';
     }
-
-    public void writeAnimal(DataOutputStream outputStream) throws IOException {
-        outputStream.writeInt(age);
-        outputStream.writeUTF(name);
-        writeParent(outputStream, mom);
-        writeParent(outputStream, dad);
-        outputStream.writeUTF(type.toString());
-    }
-
-    private void writeParent(DataOutputStream outputStream, Animal animal) throws IOException {
-        if (animal == null) {
-            outputStream.writeBoolean(false);
-            return;
-        }
-        outputStream.writeBoolean(true);
-        animal.writeAnimal(outputStream);
-    }
-
-    public static Animal parseAnimal(DataInputStream dataInputStream) throws IOException {
-        int age = dataInputStream.readInt();
-        String name = dataInputStream.readUTF();
-        Animal mom = null;
-        if (dataInputStream.readBoolean()) {
-            mom = parseAnimal(dataInputStream);
-        }
-        Animal dad = null;
-        if (dataInputStream.readBoolean()) {
-            dad = parseAnimal(dataInputStream);
-        }
-        Type type = Type.valueOf(dataInputStream.readUTF());
-        return new Animal(age, name, mom, dad, type);
-    }
 }
