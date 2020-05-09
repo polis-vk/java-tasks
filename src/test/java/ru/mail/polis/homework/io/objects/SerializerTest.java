@@ -124,7 +124,7 @@ public class SerializerTest {
         assertEquals(animals4, animalsRes4);
 
         assertNotEquals(animals1, animals3);
-        assertNotEquals(animals2, animalsRes4);
+        assertNotEquals(animalsRes1, animalsRes3);
     }
 
 }

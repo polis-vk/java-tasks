@@ -26,6 +26,20 @@ public class Habitat implements Serializable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Habitat habitat = (Habitat) obj;
+        return this.country.equals(habitat.country) &&
+                this.area == habitat.area &&
+                this.climate.equals(habitat.climate);
+    }
+
+    @Override
     public String toString() {
         return "Species{" +
                 "country=" + country +
