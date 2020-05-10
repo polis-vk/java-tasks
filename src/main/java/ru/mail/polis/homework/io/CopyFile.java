@@ -26,7 +26,6 @@ public class CopyFile {
             Files.createDirectories(toDirectory.getParent());
 
             if (Files.isRegularFile(fromDirectory)) {
-                Files.createFile(toDirectory);
                 copyFileStream(fromDirectory, toDirectory);
                 return pathTo;
             }

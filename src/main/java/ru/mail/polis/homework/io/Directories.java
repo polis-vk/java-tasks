@@ -24,19 +24,22 @@ public class Directories {
         }
 
         File[] listFiles = file.listFiles();
-        if (listFiles != null) {
-            for (File insideFile : listFiles) {
-                if (insideFile.isFile()) {
-                    countRemoved++;
-                    insideFile.delete();
-                } else {
-                    countRemoved += removeWithFile(insideFile.toString());
-                }
+        if (listFiles == null) {
+            countRemoved++;
+            file.delete();
+            return countRemoved;
+        }
+        for (File insideFile : listFiles) {
+            if (insideFile.isFile()) {
+                countRemoved++;
+                insideFile.delete();
+            } else {
+                countRemoved += removeWithFile(insideFile.toString());
             }
         }
+
         countRemoved++;
         file.delete();
-
         return countRemoved;
     }
 
