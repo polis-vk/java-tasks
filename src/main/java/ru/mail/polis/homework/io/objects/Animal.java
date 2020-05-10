@@ -10,9 +10,9 @@ import java.util.List;
  */
 public class Animal implements Serializable {
     public final String name;
-    public int age;
+    public final int age;
     public final Species species;
-    public List<Habitat> habitats;
+    public final List<Habitat> habitats;
 
     public Animal(String name, int age, Species species, List<Habitat> habitats) {
         this.name = name;
