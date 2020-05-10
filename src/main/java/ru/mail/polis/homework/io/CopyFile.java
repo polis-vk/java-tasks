@@ -16,37 +16,48 @@ public class CopyFile {
      * 6 баллов
      */
     public static String copyFiles(String pathFrom, String pathTo) {
-        Path fromDirectory = Paths.get(pathFrom);
-        Path toDirectory = Paths.get(pathTo);
-        if (Files.notExists(fromDirectory)) {
-            return pathTo;
-        }
-        if (Files.isRegularFile(fromDirectory)) {
-            copyFile(fromDirectory, toDirectory);
-            return pathTo;
-        }
         try {
-            Files.createDirectories(toDirectory.getParent());
-            DirectoryStream<Path> files = Files.newDirectoryStream(fromDirectory);
-            for (Path file : files) {
-                copyFiles(file.toString(), toDirectory.resolve(file.getFileName()).toString());
+            Path fromDirectory = Paths.get(pathFrom);
+            Path toDirectory = Paths.get(pathTo);
+            if (Files.notExists(fromDirectory)) {
+                return null;
+            }
+            if (Files.isRegularFile(fromDirectory)) {
+                copyFile(fromDirectory, toDirectory);
+                return null;
+            }
+            if (Files.notExists(toDirectory)) {
+                Files.createDirectories(toDirectory);
+            }
+            try (DirectoryStream<Path> files = Files.newDirectoryStream(fromDirectory)) {
+                for (Path file : files) {
+                    copyFiles(file.toString(), toDirectory.resolve(file.getFileName()).toString());
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return pathTo;
+        return null;
     }
 
 
     private static void copyFile(Path fileFrom, Path fileTo) {
-        try (InputStream inputStream = Files.newInputStream(fileFrom)) {
-            try (OutputStream outputStream = Files.newOutputStream(fileTo)) {
-                byte[] buffer = new byte[1024];
-                int lengthRead;
-                while ((lengthRead = inputStream.read(buffer)) > 0) {
-                    outputStream.write(buffer, 0, lengthRead);
+        try {
+            if (Files.notExists(fileTo)) {
+                Files.createDirectories(fileTo.getParent());
+            }
+
+            Files.createFile(fileTo);
+            try (InputStream inputStream = Files.newInputStream(fileFrom)) {
+                try (OutputStream outputStream = Files.newOutputStream(fileTo)) {
+                    byte[] buffer = new byte[1024];
+                    int lengthRead;
+                    while ((lengthRead = inputStream.read(buffer)) > 0) {
+                        outputStream.write(buffer, 0, lengthRead);
+                    }
                 }
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
