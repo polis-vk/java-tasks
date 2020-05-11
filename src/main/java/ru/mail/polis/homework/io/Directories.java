@@ -22,15 +22,19 @@ public class Directories {
         return removeFiles(file);
     }
 
-    private static int removeFiles (File file) {
+    private static int removeFiles(File file) {
         if (!file.exists()) {
             return 0;
         } else if (file.isFile()) {
             return file.delete() ? 1 : 0;
-        }else {
+        } else {
             int result = 1;
-            for (File f : Objects.requireNonNull(file.listFiles())) {
-                result += removeFiles(f);
+            File[] filesList = file.listFiles();
+
+            if (filesList != null) {
+                for (File f : filesList) {
+                    result += removeFiles(f);
+                }
             }
             file.delete();
             return result;
@@ -46,12 +50,12 @@ public class Directories {
         return removeFiles(filePath);
     }
 
-    private static int removeFiles (Path path) throws IOException {
+    private static int removeFiles(Path path) throws IOException {
         if (Files.notExists(path)) {
             return 0;
         } else if (Files.isRegularFile(path)) {
             return Files.deleteIfExists(path) ? 1 : 0;
-        }else {
+        } else {
             int result = 1;
             for (Path p : Objects.requireNonNull(Files.newDirectoryStream(path))) {
                 result += removeFiles(p);

@@ -27,8 +27,8 @@ public class WordFrequency {
     public static List<String> wordFrequency(Stream<String> lines) {
         return lines
                 .map(String::toLowerCase)
-                .map(X -> X.replaceAll("\\p{Punct}", " ")) // убираем мусор
-                .map(X -> X.replaceAll("[\\s]{2,}", " ")) // убираем мусор
+                .map(str -> str.replaceAll("\\p{Punct}", " ")) // убираем мусор
+                .map(str -> str.replaceAll("[\\s]{2,}", " ")) // убираем мусор
                 .flatMap((string) -> Arrays.stream(string.split(" "))) // делим на слова по пробелу
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting())) // запихиваем в мапу (key - слово, value - количество повторов)
                 .entrySet() // получаем массив пар (ключ, значение)

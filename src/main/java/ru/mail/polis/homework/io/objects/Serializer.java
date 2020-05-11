@@ -26,13 +26,6 @@ public class Serializer {
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
         Path filePath = Paths.get(fileName);
-        if (!Files.exists(filePath)) {
-            try {
-                Files.createFile(filePath);
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
-        }
 
         try {
             ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(filePath));
@@ -59,8 +52,7 @@ public class Serializer {
             return null;
         }
         List<Animal> animalList = new ArrayList<>();
-        try {
-            ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(filePath));
+        try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(filePath))) {
             int numberOfAnimals = inputStream.readInt();
             for (int i = 0; i < numberOfAnimals; i++) {
                 animalList.add((Animal) inputStream.readObject());
@@ -82,16 +74,8 @@ public class Serializer {
      */
     public void customSerialize(List<Animal> animals, String fileName) {
         Path filePath = Paths.get(fileName);
-        if (!Files.exists(filePath)) {
-            try {
-                Files.createFile(filePath);
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
-        }
 
-        try {
-            DataOutputStream outputStream = new DataOutputStream(Files.newOutputStream(filePath));
+        try (DataOutputStream outputStream = new DataOutputStream(Files.newOutputStream(filePath))) {
             outputStream.writeInt(animals.size());
 
             for (Animal animal : animals) {
@@ -121,8 +105,8 @@ public class Serializer {
             return null;
         }
         List<Animal> animalList = new ArrayList<>();
-        try {
-            DataInputStream inputStream = new DataInputStream(Files.newInputStream(filePath));
+        try (DataInputStream inputStream = new DataInputStream(Files.newInputStream(filePath))) {
+
             int numberOfAnimals = inputStream.readInt();
             for (int i = 0; i < numberOfAnimals; i++) {
                 animalList.add(
