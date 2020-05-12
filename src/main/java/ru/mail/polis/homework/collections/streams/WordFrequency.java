@@ -27,9 +27,10 @@ public class WordFrequency {
         return lines.map(l -> l.split("[.,!?\\s()\\-:;]+"))
                 .flatMap(Arrays::stream)
                 .collect(Collectors.groupingBy(String::toLowerCase, Collectors.counting()))
-                .entrySet()
-                .stream()
-                .sorted(Map.Entry.<String, Long>comparingByValue().reversed().thenComparing(Map.Entry.comparingByKey()))
+                .entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue()
+                        .reversed()
+                        .thenComparing(Map.Entry.comparingByKey()))
                 .map(Map.Entry::getKey)
                 .limit(10)
                 .collect(Collectors.toList());

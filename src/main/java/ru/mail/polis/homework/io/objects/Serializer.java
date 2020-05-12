@@ -26,6 +26,7 @@ public class Serializer {
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
         Path dataFile = Paths.get(fileName);
+
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(dataFile))) {
             for (Animal animal : animals) {
                 objectOutputStream.writeObject(animal);
@@ -66,6 +67,7 @@ public class Serializer {
      */
     public void customSerialize(List<Animal> animals, String fileName) {
         Path dataFile = Paths.get(fileName);
+
         try {
             if (Files.notExists(dataFile)) {
                 Files.createFile(dataFile);
@@ -110,10 +112,13 @@ public class Serializer {
      */
     public List<Animal> customDeserialize(String fileName) {
         Path dataFile = Paths.get(fileName);
+
         if (Files.notExists(dataFile)) {
             return null;
         }
+
         List<Animal> animals = new ArrayList();
+
         try (DataInputStream dataInputStream = new DataInputStream(new FileInputStream(fileName))) {
             while (dataInputStream.available() > 0) {
                 String name = dataInputStream.readUTF();
@@ -131,10 +136,10 @@ public class Serializer {
                 }
                 animals.add(new Animal(name, birthdate, type, mother, father, vaccinations, null, area));
             }
-            dataInputStream.close();
         } catch (IOException ex) {
             return null;
         }
+
         return animals;
     }
 }
