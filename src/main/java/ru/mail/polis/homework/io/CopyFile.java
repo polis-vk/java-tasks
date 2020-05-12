@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.io;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 public class CopyFile {
 
@@ -12,14 +16,11 @@ public class CopyFile {
      * 6 баллов
      */
     public static String copyFiles(String pathFrom, String pathTo) {
-        File fromDir = new File(pathFrom);
-        File toDir = new File(pathTo);
-
-        if (fromDir.isFile() && !toDir.getParentFile().exists()) {
-            toDir.getParentFile().mkdirs();
-        }
+        Path fromDir = Paths.get(pathFrom);
+        Path toDir = Paths.get(pathTo);
 
         try {
+            Files.createDirectories(toDir.getParent());
             copyFolder(fromDir, toDir);
         } catch (IOException e) {
             e.printStackTrace();
@@ -27,30 +28,34 @@ public class CopyFile {
         return null;
     }
 
-    private static void copyFolder(File from, File to) throws IOException {
-        if (!from.exists()) {
+    private static void copyFolder(Path from, Path to) throws IOException {
+        if (Files.notExists(from)) {
             return;
         }
-        if (from.isDirectory()) {                                     //если источник - каталог
-            if (!to.exists()) {                                           //если финальная деректория не существует
-                to.mkdirs();                                                 //создаем ее
+        if (Files.isDirectory(from)) {
+            if (Files.notExists(to)) {
+                Files.createDirectories(to);
             }
-            String[] files = from.list();                               //список всех айлов в дериктории источнике
-            for (String file : files) {                                 //проходимся по списку
-                File srcFile = new File(from, file);                        //откуда копируем
-                File destFile = new File(to, file);                         //куда копируем
-                copyFolder(srcFile, destFile);                               //уходим в рекурсию
+            Stream<Path> pathStream = Files.list(from);
+            if (pathStream == null) {
+                return;
             }
-        } else {                                                    //если источник - файл
-            InputStream in = new FileInputStream(from);                 //стрим вх открыть
-            OutputStream out = new FileOutputStream(to);                //стрим вых открыть
-            byte[] buffer = new byte[1024];                             //буфер содержимого
-            int length;
-            while ((length = in.read(buffer)) > 0) {                     //цикл
-                out.write(buffer, 0, length);                           //запись
+            pathStream.forEach(path -> {
+                try {
+                    copyFolder(path, to.resolve(path.getFileName()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            try (InputStream in = new FileInputStream(String.valueOf(from));
+                 OutputStream out = new FileOutputStream(String.valueOf(to))) {
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, length);
+                }
             }
-            in.close();                                                 //стрим вх закрыть
-            out.close();                                                //стрим вых закрыть
         }
     }
 }

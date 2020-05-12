@@ -18,18 +18,18 @@ public class Directories {
      * 2 балла
      */
     public static int removeWithFile(String path) {
-        return distr(new File(path));
+        return remove(new File(path));
     }
 
-    private static int distr(File file){
-        if (!file.exists()){
+    private static int remove(File file) {
+        if (!file.exists()) {
             return 0;
         }
         int result = 1;
-        if(file.isDirectory()){
+        if (file.isDirectory()) {
             File[] files = file.listFiles();
             for (File tmp : files) {
-                result += distr(tmp);
+                result += remove(tmp);
             }
         }
         file.delete();

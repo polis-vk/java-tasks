@@ -23,13 +23,6 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public static void defaultSerialize(List<Animal> animals, String fileName) {
-        if (!Files.exists(Paths.get(fileName))) {
-            try {
-                Files.createDirectories(Paths.get(fileName).getParent());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
             outputStream.writeObject(animals);
         } catch (IOException e) {
@@ -45,14 +38,6 @@ public class Serializer {
      * @return список животных
      */
     public static List<Animal> defaultDeserialize(String fileName) {
-        if (!Files.exists(Paths.get(fileName))) {
-            try {
-                Files.createDirectories(Paths.get(fileName).getParent());
-                Files.createFile(Paths.get(fileName));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
             return (List<Animal>) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -69,15 +54,6 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public static void customSerialize(List<Animal> animals, String fileName) {
-        if (!Files.exists(Paths.get(fileName))) {
-            try {
-                Files.createDirectories(Paths.get(fileName).getParent());
-                Files.createFile(Paths.get(fileName));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         try (DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(fileName))) {
             outputStream.writeInt(animals.size());
             for (Animal animal : animals) {

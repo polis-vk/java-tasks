@@ -21,19 +21,19 @@ public class SerializerTest {
         Path filePath = Paths.get("src", "test", "resources", "serializer");
         List<Animal> animalList = Collections.emptyList();
 
-        Serializer serializer = new Serializer();
+        //Serializer serializer = new Serializer();
 
-        serializer.customSerialize(animalList, filePath.toString());
-        List<Animal> Animals = serializer.customDeserialize(filePath.toString());
+        Serializer.customSerialize(animalList, filePath.toString());
+        List<Animal> Animals = Serializer.customDeserialize(filePath.toString());
         Assert.assertTrue(Animals.isEmpty());//дефолт, пустой
 
-        serializer.defaultSerialize(animalList, filePath.toString());
-        List<Animal> Animals2 = serializer.customDeserialize(filePath.toString());
+        Serializer.defaultSerialize(animalList, filePath.toString());
+        List<Animal> Animals2 = Serializer.customDeserialize(filePath.toString());
         Assert.assertTrue(Animals2.isEmpty());//кастом, пустой
     }
 
     @Test
-    public void OneFile() {
+    public void oneFile() {
         Path filePath = Paths.get("src", "test", "resources", "serializer");
         List<Animal> myAnimalList = new ArrayList<>();
 
@@ -47,14 +47,14 @@ public class SerializerTest {
         myAnimalList.add(baby);
         myAnimalList.add(baby2);
 
-        Serializer serializer = new Serializer();
+        //Serializer serializer = new Serializer();
 
-        serializer.defaultSerialize(myAnimalList, filePath.toString());
-        List<Animal> myDeserializeAnimals = serializer.defaultDeserialize(filePath.toString());
+        Serializer.defaultSerialize(myAnimalList, filePath.toString());
+        List<Animal> myDeserializeAnimals = Serializer.defaultDeserialize(filePath.toString());
         assertEquals(myAnimalList, myDeserializeAnimals);
 
-        serializer.customSerialize(myAnimalList, filePath.toString());
-        List<Animal> myDeserializeAnimals2 = serializer.customDeserialize(filePath.toString());
+        Serializer.customSerialize(myAnimalList, filePath.toString());
+        List<Animal> myDeserializeAnimals2 = Serializer.customDeserialize(filePath.toString());
         assertEquals(myAnimalList, myDeserializeAnimals2);
     }
 
@@ -73,20 +73,20 @@ public class SerializerTest {
         myAnimalList.add(dad);
         myAnimalList.add(baby);
 
-        Serializer serializer = new Serializer();
+        //Serializer serializer = new Serializer();
 
-        serializer.defaultSerialize(myAnimalList, filePath.toString());
-        List<Animal> myDeserializeAnimals = serializer.defaultDeserialize(filePath.toString());
-        serializer.defaultSerialize(myAnimalList, filePath2.toString());
-        List<Animal> myDeserializeAnimals2 = serializer.defaultDeserialize(filePath2.toString());
+        Serializer.defaultSerialize(myAnimalList, filePath.toString());
+        List<Animal> myDeserializeAnimals = Serializer.defaultDeserialize(filePath.toString());
+        Serializer.defaultSerialize(myAnimalList, filePath2.toString());
+        List<Animal> myDeserializeAnimals2 = Serializer.defaultDeserialize(filePath2.toString());
         assertEquals(myDeserializeAnimals, myDeserializeAnimals2);
         assertEquals(myAnimalList, myDeserializeAnimals2);
         assertEquals(myDeserializeAnimals, myAnimalList);
 
-        serializer.customSerialize(myAnimalList, filePath.toString());
-        myDeserializeAnimals = serializer.customDeserialize(filePath.toString());
-        serializer.customSerialize(myAnimalList, filePath2.toString());
-        myDeserializeAnimals2 = serializer.customDeserialize(filePath2.toString());
+        Serializer.customSerialize(myAnimalList, filePath.toString());
+        myDeserializeAnimals = Serializer.customDeserialize(filePath.toString());
+        Serializer.customSerialize(myAnimalList, filePath2.toString());
+        myDeserializeAnimals2 = Serializer.customDeserialize(filePath2.toString());
         assertEquals(myDeserializeAnimals, myDeserializeAnimals2);
         assertEquals(myAnimalList, myDeserializeAnimals2);
         assertEquals(myDeserializeAnimals, myAnimalList);

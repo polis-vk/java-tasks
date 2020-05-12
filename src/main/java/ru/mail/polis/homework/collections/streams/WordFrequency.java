@@ -25,8 +25,8 @@ public class WordFrequency {
 
         return lines
                 .map(String::toLowerCase)
-                .map(X -> X.replaceAll("\\p{Punct}", " "))
-                .map(X -> X.replaceAll("[\\s]{2,}", " "))
+                .map(string -> string.replaceAll("\\p{Punct}", " "))
+                .map(string -> string.replaceAll("[\\s]{2,}", " "))
                 .flatMap((string) -> Arrays.stream(string.split(" ")))
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet()
