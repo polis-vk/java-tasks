@@ -1,12 +1,10 @@
 package ru.mail.polis.homework.io;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.*;
+import java.nio.file.*;
+
+import static java.nio.file.Files.newInputStream;
+import static java.nio.file.Files.newOutputStream;
 
 public class CopyFile {
 
@@ -29,7 +27,7 @@ public class CopyFile {
             Files.createDirectories(destinationDirectory.getParent());
 
             if (Files.isRegularFile(sourceDirectory)) {
-                copy(sourceDirectory, destinationDirectory);
+                filesCopy(sourceDirectory, destinationDirectory);
                 return "";
             }
 
@@ -48,21 +46,17 @@ public class CopyFile {
         return "";
     }
 
-    private static void copy(Path source, Path destination) {
-        try {
-            Files.createFile(destination);
-            try (InputStream inputStream = Files.newInputStream(source);
-                 OutputStream outputStream = Files.newOutputStream(destination)) {
+    private static void filesCopy(Path source, Path destination) throws IOException {
+        try (InputStream inputStream = newInputStream(source)) {
+            try (OutputStream outputStream = newOutputStream(destination)) {
                 byte[] buffer = new byte[1024];
-                int length;
+                int length = 0;
                 while ((length = inputStream.read(buffer)) > 0) {
                     outputStream.write(buffer, 0, length);
                 }
-
             }
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
     }
-
 }
+
+

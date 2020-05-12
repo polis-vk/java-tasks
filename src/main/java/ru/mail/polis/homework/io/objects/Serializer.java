@@ -26,16 +26,9 @@ public class Serializer {
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
         Path dataFile = Paths.get(fileName);
-
-        try {
-            if (Files.notExists(dataFile)) {
-                Files.createFile(dataFile);
-            }
-
-            try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(dataFile))) {
-                for (Animal animal : animals) {
-                    objectOutputStream.writeObject(animal);
-                }
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(dataFile))) {
+            for (Animal animal : animals) {
+                objectOutputStream.writeObject(animal);
             }
         } catch (IOException ex) {
             ex.printStackTrace();
