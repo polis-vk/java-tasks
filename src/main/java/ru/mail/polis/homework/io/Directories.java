@@ -24,8 +24,11 @@ public class Directories {
             return 0;
         }
 
-        if (directory.isFile() && directory.delete()) {
-            return 1;
+        if (directory.isFile()) {
+            if (directory.delete()) {
+                return 1;
+            }
+            return 0;
         }
 
         File[] listFiles = directory.listFiles();
@@ -52,9 +55,9 @@ public class Directories {
         }
 
         if (Files.isDirectory(directory)) {
-            try (DirectoryStream<Path> entries = Files.newDirectoryStream(directory)) {
-                for (Path entry : entries) {
-                    count += removeWithPath(entry.toString());
+            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
+                for (Path dir : directoryStream) {
+                    count += removeWithPath(dir.toString());
                 }
             }
         }

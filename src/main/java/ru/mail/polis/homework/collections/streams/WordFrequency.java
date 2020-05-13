@@ -33,8 +33,7 @@ public class WordFrequency {
                         Integer::sum))
                 .entrySet()
                 .stream()
-                .sorted(Map
-                        .Entry
+                .sorted(Map.Entry
                         .<String, Integer>comparingByValue()
                         .reversed()
                         .thenComparing(Map.Entry.comparingByKey()))
