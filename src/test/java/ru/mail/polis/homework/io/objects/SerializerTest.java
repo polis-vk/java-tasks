@@ -26,8 +26,8 @@ public class SerializerTest {
         AnimalOwner animalOwner2 = new AnimalOwner("Vladimir", "+75555555");
         AnimalOwner animalOwner3 = new AnimalOwner("Maria", "893333121");
         List<String> listFood1 = new ArrayList(Arrays.asList("potato"));
-        List<String> listFood2 = new ArrayList(Arrays.asList("potato","carrot"));
-        List<String> listFood3 = new ArrayList(Arrays.asList("meat","milk"));
+        List<String> listFood2 = new ArrayList(Arrays.asList("potato", "carrot"));
+        List<String> listFood3 = new ArrayList(Arrays.asList("meat", "milk"));
         List<Animal> list = new ArrayList();
         list.add(new Animal("animal1", AnimalType.CAT, animalOwner1, listFood1));
         list.add(new Animal("animal2", AnimalType.BIRD, animalOwner1, listFood3));
@@ -42,8 +42,8 @@ public class SerializerTest {
         AnimalOwner animalOwner2 = new AnimalOwner("Vladimir", "+75555555");
         AnimalOwner animalOwner3 = new AnimalOwner("Elena", "893333121");
         List<String> listFood1 = new ArrayList(Arrays.asList("juice"));
-        List<String> listFood2 = new ArrayList(Arrays.asList("tomato","carrot"));
-        List<String> listFood3 = new ArrayList(Arrays.asList("cheese","milk"));
+        List<String> listFood2 = new ArrayList(Arrays.asList("tomato", "carrot"));
+        List<String> listFood3 = new ArrayList(Arrays.asList("cheese", "milk"));
         List<Animal> list = new ArrayList();
         list.add(new Animal("animal6", AnimalType.CAT, animalOwner1, listFood1));
         list.add(new Animal("animal7", AnimalType.DOG, animalOwner1, listFood1));
@@ -62,7 +62,7 @@ public class SerializerTest {
     public void defaultSerializeOnlyList() {
         listAnimalBefore1 = makeList();
         serializer.defaultSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
-        listAnimalAfter1 = new ArrayList<>(serializer.defaultDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
+        listAnimalAfter1 = serializer.defaultDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
 
         assertEquals(listAnimalBefore1, listAnimalAfter1);
     }
@@ -71,7 +71,7 @@ public class SerializerTest {
     public void defaultSerializeEmptyList() {
         listAnimalBefore1 = new ArrayList<>();
         serializer.defaultSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
-        listAnimalAfter1 = new ArrayList<>(serializer.defaultDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
+        listAnimalAfter1 = serializer.defaultDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
 
         assertEquals(listAnimalBefore1.isEmpty(), listAnimalAfter1.isEmpty());
     }
@@ -81,10 +81,10 @@ public class SerializerTest {
         listAnimalBefore1 = makeList();
         listAnimalBefore2 = makeList2();
         serializer.defaultSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
-        listAnimalAfter1 = new ArrayList<>(serializer.defaultDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
+        listAnimalAfter1 = serializer.defaultDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
 
         serializer.defaultSerialize(listAnimalBefore2, Paths.get("src", "test", "resources", "amimals", "animals2.bin").toString());
-        listAnimalAfter2 = new ArrayList<>(serializer.defaultDeserialize(Paths.get("src", "test", "resources", "amimals", "animals2.bin").toString()));
+        listAnimalAfter2 = serializer.defaultDeserialize(Paths.get("src", "test", "resources", "amimals", "animals2.bin").toString());
 
         assertEquals(listAnimalBefore1, listAnimalAfter1);
         assertEquals(listAnimalBefore2, listAnimalAfter2);
@@ -97,7 +97,7 @@ public class SerializerTest {
     public void customSerializeOnlyList() {
         listAnimalBefore1 = makeList();
         serializer.customSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
-        listAnimalAfter1 = new ArrayList<>(serializer.customDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
+        listAnimalAfter1 = serializer.customDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
 
         assertEquals(listAnimalBefore1, listAnimalAfter1);
 
@@ -107,7 +107,7 @@ public class SerializerTest {
     public void customSerializeEmptyList() {
         listAnimalBefore1 = new ArrayList<>();
         serializer.customSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
-        listAnimalAfter1 = new ArrayList<>(serializer.customDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
+        listAnimalAfter1 = serializer.customDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
 
         assertEquals(listAnimalBefore1.isEmpty(), listAnimalAfter1.isEmpty());
     }
@@ -118,10 +118,10 @@ public class SerializerTest {
         listAnimalBefore1 = makeList();
         listAnimalBefore2 = makeList2();
         serializer.customSerialize(listAnimalBefore1, Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
-        listAnimalAfter1 = new ArrayList<>(serializer.customDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString()));
+        listAnimalAfter1 = serializer.customDeserialize(Paths.get("src", "test", "resources", "amimals", "animals1.bin").toString());
 
         serializer.customSerialize(listAnimalBefore2, Paths.get("src", "test", "resources", "amimals", "animals2.bin").toString());
-        listAnimalAfter2 = new ArrayList<>(serializer.customDeserialize(Paths.get("src", "test", "resources", "amimals", "animals2.bin").toString()));
+        listAnimalAfter2 = serializer.customDeserialize(Paths.get("src", "test", "resources", "amimals", "animals2.bin").toString());
 
         assertEquals(listAnimalBefore1, listAnimalAfter1);
         assertEquals(listAnimalBefore2, listAnimalAfter2);

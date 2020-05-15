@@ -20,22 +20,20 @@ public class Directories {
         int countRemoved = 0;
         File file = new File(path);
         if (!file.exists()) {
-            return countRemoved;
+            return 0;
         }
 
-        File[] listFiles = file.listFiles();
-        if (listFiles == null) {
+        if (file.isFile()) {
             countRemoved++;
             file.delete();
             return countRemoved;
         }
+        File[] listFiles = file.listFiles();
+
         for (File insideFile : listFiles) {
-            if (insideFile.isFile()) {
-                countRemoved++;
-                insideFile.delete();
-            } else {
-                countRemoved += removeWithFile(insideFile.toString());
-            }
+
+            countRemoved += removeWithFile(insideFile.toString());
+
         }
 
         countRemoved++;
@@ -50,7 +48,7 @@ public class Directories {
     public static int removeWithPath(String path) throws IOException {
         AtomicInteger countRemoved = new AtomicInteger();
         if (!Files.exists(Paths.get(path))) {
-            return countRemoved.get();
+            return 0;
         }
         Files.walkFileTree(Paths.get(path), new SimpleFileVisitor<Path>() {
 
