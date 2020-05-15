@@ -44,22 +44,18 @@ public class CopyFile {
         return "";
     }
 
-    private static void copyFile(Path fileFrom, Path fileTo) {
-        try {
-            Files.createFile(fileTo);
-            try (InputStream inputStream = Files.newInputStream(fileFrom)) {
-                try (OutputStream outputStream = Files.newOutputStream(fileTo)) {
-                    byte[] buffer = new byte[1024];
-                    int blockSize = inputStream.read(buffer);
+    private static void copyFile(Path fileFrom, Path fileTo) throws IOException {
+        Files.createFile(fileTo);
+        try (InputStream inputStream = Files.newInputStream(fileFrom)) {
+            try (OutputStream outputStream = Files.newOutputStream(fileTo)) {
+                byte[] buffer = new byte[1024];
+                int blockSize = inputStream.read(buffer);
 
-                    while (blockSize > 0) {
-                        outputStream.write(buffer, 0, blockSize);
-                        blockSize = inputStream.read(buffer);
-                    }
+                while (blockSize > 0) {
+                    outputStream.write(buffer, 0, blockSize);
+                    blockSize = inputStream.read(buffer);
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

@@ -33,7 +33,7 @@ public class Directories {
 
         File[] listFiles = directory.listFiles();
         if (listFiles == null) {
-            return count;
+            return 0;
         }
 
         for (File file : listFiles) {

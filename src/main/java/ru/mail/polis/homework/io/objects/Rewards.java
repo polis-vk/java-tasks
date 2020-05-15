@@ -2,6 +2,7 @@ package ru.mail.polis.homework.io.objects;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 public class Rewards implements Serializable {
     private final int date;

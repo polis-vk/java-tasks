@@ -4,7 +4,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import sun.nio.cs.UTF_32;
 
 import java.io.IOException;
 import java.nio.file.Files;
