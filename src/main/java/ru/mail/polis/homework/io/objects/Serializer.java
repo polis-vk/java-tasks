@@ -89,10 +89,10 @@ public class Serializer {
                     dataOutputStream.writeInt(animal.getVaccinations().size());
 
                     for (Vaccination vaccination : animal.getVaccinations()) {
-                        dataOutputStream.writeUTF(vaccination.getClinic());
-                        dataOutputStream.writeUTF(vaccination.getDoctor());
                         dataOutputStream.writeUTF(vaccination.getDate());
                         dataOutputStream.writeUTF(vaccination.getType());
+                        dataOutputStream.writeUTF(vaccination.getClinic());
+                        dataOutputStream.writeUTF(vaccination.getDoctor());
                     }
                 }
             }

@@ -1,25 +1,23 @@
 package ru.mail.polis.homework.io.objects;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
 public class SerializerTest {
 
-
     private Serializer serializer = new Serializer();
 
     private static List<Animal> generate() {
+
         List<Animal> animals = new ArrayList();
 
         List<Vaccination> vaccinations = new ArrayList();
@@ -76,13 +74,27 @@ public class SerializerTest {
         return animals;
     }
 
+    /*
+    //если нужно создавать директорию и файл не ручками
+    @Before
+    public void create() {
+        try {
+            Files.createDirectories(Paths.get("src", "test", "resources", "serializer"));
+            Files.createFile(Paths.get("src", "test", "resources", "serializer", "animal.txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @After
     public void remove() throws IOException {
         Files.delete(Paths.get("src", "test", "resources", "serializer", "animal.txt"));
+        Files.delete(Paths.get("src", "test", "resources", "serializer"));
     }
+    */
 
     @Test
-    public void defaultSerializationJustList() throws IOException {
+    public void defaultSerializationJustList() {
         List<Animal> animalListBefore = generate();
         serializer.defaultSerialize(animalListBefore, Paths.get("src", "test", "resources", "serializer", "animal.txt").toString());
         List<Animal> animalListAfter = serializer.defaultDeserialize(Paths.get("src", "test", "resources", "serializer", "animal.txt").toString());
@@ -107,6 +119,38 @@ public class SerializerTest {
         List<Animal> animalListBeforeSecond = generateForMany();
         serializer.defaultSerialize(animalListBeforeSecond, Paths.get("src", "test", "resources", "serializer", "animal.txt").toString());
         List<Animal> animalListAfterSecond = serializer.defaultDeserialize(Paths.get("src", "test", "resources", "serializer", "animal.txt").toString());
+
+        assertEquals(animalListBeforeFirst, animalListAfterFirst);
+        assertEquals(animalListBeforeSecond, animalListAfterSecond);
+        assertNotEquals(animalListBeforeFirst, animalListAfterSecond);
+    }
+
+    @Test
+    public void customSerializationJustList() {
+        List<Animal> animalListBefore = generate();
+        serializer.customSerialize(animalListBefore, Paths.get("src", "test", "resources", "serializer", "animal.txt").toString());
+        List<Animal> animalListAfter = serializer.customDeserialize(Paths.get("src", "test", "resources", "serializer", "animal.txt").toString());
+        assertEquals(animalListBefore, animalListAfter);
+    }
+
+    @Test
+    public void customSerializationEmptyList() {
+        List<Animal> animalListBefore = new ArrayList<>();
+        serializer.customSerialize(animalListBefore, Paths.get("src", "test", "resources", "serializer", "animal.txt").toString());
+        List<Animal> animalListAfter = serializer.customDeserialize(Paths.get("src", "test", "resources", "serializer", "animal.txt").toString());
+        assertEquals(animalListBefore, animalListAfter);
+    }
+
+    @Test
+    public void customSerializationManyLists() {
+
+        List<Animal> animalListBeforeFirst = generate();
+        serializer.customSerialize(animalListBeforeFirst, Paths.get("src", "test", "resources", "serializer", "animal.txt").toString());
+        List<Animal> animalListAfterFirst = serializer.customDeserialize(Paths.get("src", "test", "resources", "serializer", "animal.txt").toString());
+
+        List<Animal> animalListBeforeSecond = generateForMany();
+        serializer.customSerialize(animalListBeforeSecond, Paths.get("src", "test", "resources", "serializer", "animal.txt").toString());
+        List<Animal> animalListAfterSecond = serializer.customDeserialize(Paths.get("src", "test", "resources", "serializer", "animal.txt").toString());
 
         assertEquals(animalListBeforeFirst, animalListAfterFirst);
         assertEquals(animalListBeforeSecond, animalListAfterSecond);
