@@ -86,7 +86,7 @@ public class Serializer {
                     dataOutputStream.writeUTF(animal.getMother().getBirthdate());
                     dataOutputStream.writeUTF(animal.getMother().getType().toString());
 
-                    dataOutputStream.write(animal.getVaccinations().size());
+                    dataOutputStream.writeInt(animal.getVaccinations().size());
 
                     for (Vaccination vaccination : animal.getVaccinations()) {
                         dataOutputStream.writeUTF(vaccination.getClinic());
