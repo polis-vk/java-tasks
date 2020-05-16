@@ -28,9 +28,7 @@ public class Serializer {
         Path dataFile = Paths.get(fileName);
 
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(dataFile))) {
-            for (Animal animal : animals) {
-                objectOutputStream.writeObject(animal);
-            }
+            objectOutputStream.writeObject(animals);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
