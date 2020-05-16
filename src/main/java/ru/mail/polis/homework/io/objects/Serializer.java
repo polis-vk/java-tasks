@@ -127,7 +127,7 @@ public class Serializer {
                 Animal father = new Animal(dataInputStream.readUTF(), dataInputStream.readUTF(), AnimalTypes.valueOf(dataInputStream.readUTF()));
                 Animal mother = new Animal(dataInputStream.readUTF(), dataInputStream.readUTF(), AnimalTypes.valueOf(dataInputStream.readUTF()));
 
-                int size = dataInputStream.read();
+                int size = dataInputStream.readInt();
                 List<Vaccination> vaccinations = new ArrayList();
                 for (int i = 0; i < size; i++) {
                     vaccinations.add(new Vaccination(dataInputStream.readUTF(), dataInputStream.readUTF(), dataInputStream.readUTF(), dataInputStream.readUTF()));
