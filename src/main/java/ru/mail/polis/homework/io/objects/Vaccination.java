@@ -2,6 +2,7 @@ package ru.mail.polis.homework.io.objects;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 public class Vaccination implements Serializable {
     private final String date;
@@ -31,6 +32,18 @@ public class Vaccination implements Serializable {
     public String getDoctor() {
         return doctor;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Vaccination that = (Vaccination) o;
+        return Objects.equals(date, that.date) &&
+                Objects.equals(type, that.type) &&
+                Objects.equals(clinic, that.clinic) &&
+                Objects.equals(doctor, that.doctor);
+    }
+
 
     @Override
     public String toString() {
