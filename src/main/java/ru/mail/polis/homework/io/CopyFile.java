@@ -16,12 +16,12 @@ public class CopyFile {
      * 6 баллов
      */
     public static String copyFiles(String pathFrom, String pathTo) {
+        Path fromDirectory = Paths.get(pathFrom);
+        Path toDirectory = Paths.get(pathTo);
+        if (Files.notExists(fromDirectory)) {
+            return null;
+        }
         try {
-            Path fromDirectory = Paths.get(pathFrom);
-            Path toDirectory = Paths.get(pathTo);
-            if (Files.notExists(fromDirectory)) {
-                return null;
-            }
             if (Files.isRegularFile(fromDirectory)) {
                 copyFile(fromDirectory, toDirectory);
                 return null;
@@ -41,25 +41,20 @@ public class CopyFile {
     }
 
 
-    private static void copyFile(Path fileFrom, Path fileTo) {
-        try {
-            if (Files.notExists(fileTo)) {
-                Files.createDirectories(fileTo.getParent());
-            }
+    private static void copyFile(Path fileFrom, Path fileTo) throws IOException {
+        if (Files.notExists(fileTo)) {
+            Files.createDirectories(fileTo.getParent());
+        }
 
-            Files.createFile(fileTo);
-            try (InputStream inputStream = Files.newInputStream(fileFrom)) {
-                try (OutputStream outputStream = Files.newOutputStream(fileTo)) {
-                    byte[] buffer = new byte[1024];
-                    int lengthRead;
-                    while ((lengthRead = inputStream.read(buffer)) > 0) {
-                        outputStream.write(buffer, 0, lengthRead);
-                    }
+        Files.createFile(fileTo);
+        try (InputStream inputStream = Files.newInputStream(fileFrom)) {
+            try (OutputStream outputStream = Files.newOutputStream(fileTo)) {
+                byte[] buffer = new byte[1024];
+                int lengthRead;
+                while ((lengthRead = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, lengthRead);
                 }
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

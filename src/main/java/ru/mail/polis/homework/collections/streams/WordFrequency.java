@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.collections.streams;
 
+import jdk.vm.ci.meta.Value;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -28,10 +30,10 @@ public class WordFrequency {
     public static List<String> wordFrequency(Stream<String> lines) {
         return lines
                 .flatMap(line -> Arrays.stream(line.split("[.,!:\\-?;\\s]+")))
-                .collect(Collectors.toMap(String::toLowerCase, key -> 1, Integer::sum))
+                .collect(Collectors.groupingBy(String::toLowerCase, Collectors.counting()))
                 .entrySet()
                 .stream()
-                .sorted(Map.Entry.<String, Integer>comparingByValue()
+                .sorted(Map.Entry.<String, Long>comparingByValue()
                         .reversed()
                         .thenComparing(Map.Entry.comparingByKey()))
                 .map(Map.Entry::getKey)
