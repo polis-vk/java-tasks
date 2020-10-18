@@ -18,7 +18,9 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
-    interface TerFunction {
+    interface TerFunction<T, U, R> {
+
+        R apply(T t, U u);
 
     }
 
@@ -28,8 +30,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
-        return null;
+    static <T, U, R> R curring(TerFunction<T, U, R> terFunction, T t, U u) {
+        return terFunction.apply(t, u);
     }
 
 
