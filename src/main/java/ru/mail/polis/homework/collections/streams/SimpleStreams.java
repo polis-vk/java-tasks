@@ -1,11 +1,17 @@
 package ru.mail.polis.homework.collections.streams;
 
-import java.util.Collections;
+
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
+import java.util.stream.Stream;
 
 public class SimpleStreams {
+    public static void main(String[] args) {
+        System.out.println(createBadWordsDetectingStream("hello my name is Vadim, fg! hhg s hello!&", List.of("hello")));
+    }
 
     /**
      * Реализуйте проверку на простоту входящего числа с помощью стримов.
@@ -13,7 +19,7 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return false;
+        return Stream.iterate(2, x -> x < Math.sqrt(n), x -> x + 1).noneMatch(x -> n % x == 0);
     }
 
     /**
@@ -22,7 +28,16 @@ public class SimpleStreams {
      * 1 балл
      */
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
-        return Collections.emptyMap();
+        Map<String, Integer> out = new HashMap<>();
+        Arrays.stream(text.split("[^aA-zZ]+")).forEach(x -> {
+            if (badWords.contains(x)) {
+                if (out.containsKey(x)){
+                    int count = out.get(x);
+                    out.put(x, ++count);
+                } else out.put(x, 1);
+            }
+        });
+        return out;
     }
 
 
