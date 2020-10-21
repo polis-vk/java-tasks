@@ -43,10 +43,13 @@ public class SimpleStreams {
      * <p>
      * 3 балла
      */
+    //TODO: переделать
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
         final double G = 9.8;
 
-//        return IntStream.range(1, n).reduce(0, h -> changeV.applyAsDouble(h) * v * g);
-        return 0;
+        return IntStream.range(1, n)
+                .mapToDouble(x -> x)
+                .reduce(0,
+                        (sum, h) -> sum + (changeV.applyAsDouble(h) * v * G * alpha));
     }
 }
