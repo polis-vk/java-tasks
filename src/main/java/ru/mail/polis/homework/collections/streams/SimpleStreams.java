@@ -1,19 +1,26 @@
 package ru.mail.polis.homework.collections.streams;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class SimpleStreams {
-
     /**
      * Реализуйте проверку на простоту входящего числа с помощью стримов.
      * Никаких циклов.
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return false;
+        if (n < 2) {
+            return false;
+        }
+
+        return IntStream
+                .range(2, (int) Math.round(Math.sqrt(n)))
+                .mapToObj(v -> n % v != 0)
+                .reduce(true, (acc, v) -> acc && v);
     }
 
     /**
@@ -22,22 +29,24 @@ public class SimpleStreams {
      * 1 балл
      */
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
-        return Collections.emptyMap();
+        return badWords.stream().collect(Collectors.toMap(x -> x, x -> text.split(x).length - 1));
     }
-
 
     /**
      * Маленький мальчик кидает мячик n раз в поле силы тяжести под углом alpha к поверхности земли.
      * Так же известно, что мальчик устает с каждым броском все больше. Дана начальная скорость v - скорость
      * при первом броске и функция изменения скорости от номера броска - changeV
-     *
+     * <p>
      * Посчитать расстояние на которое улетит мячик.
      * Для расчета дальности броска можно пользоваться физическими формулами движения и законом сохранения энергии.
      * g = 9.8
-     *
+     * <p>
      * 3 балла
      */
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
+        final double G = 9.8;
+
+//        return IntStream.range(1, n).reduce(0, h -> changeV.applyAsDouble(h) * v * g);
         return 0;
     }
 }

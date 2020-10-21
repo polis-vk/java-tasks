@@ -18,8 +18,8 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
-    interface TerFunction {
-
+    interface TerFunction<F, S, T, R> {
+        R apply(F arg1, S arg2, T arg3);
     }
 
     /**
@@ -28,8 +28,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
-        return null;
+    static <A, B, C, D> Function<A, Function<B, Function<C, D>>> curring(TerFunction<A, B, C, D> terFunction) {
+        return a -> b -> c -> terFunction.apply(a, b, c);
     }
 
 
@@ -40,17 +40,20 @@ public class SimpleFunction {
      * 4 балла
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            a -> null;
-
+            list -> numbers -> numbers.stream()
+                    .map(d -> list.stream()
+                            .reduce(x -> x,
+                                    (op1, op2) -> x -> op1.applyAsInt(op2.applyAsInt(x))).applyAsInt(d)).collect(Collectors.toList());
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
      * которая на заданном интервале (входящие аргументы результирующей функции) считает преобразование всех целых чисел
      * на заданном интервале.
-     *
+     * <p>
      * Пример хотим просуммировать числа от 2 до 10:
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 3 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (startValue, biFunction) ->
+            (a, b) -> IntStream.range(a, b).reduce(startValue, biFunction);
 }
