@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.collections.streams.account;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.math.BigInteger;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Task {
 
@@ -10,8 +10,16 @@ public class Task {
      * Метод должен вернуть сумму всех исходящих транзакций с аккаунта
      * 2 балла
      */
-    public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
-        return Collections.emptyMap();
+    public static Map<Long, BigInteger> paymentsSumByAccount(List<Transaction> transactions) {
+        return transactions
+                .stream()
+                .map(Transaction::getSender)
+                .distinct()
+                .collect(Collectors
+                        .toMap(Account::getId, account -> account
+                                        .getOutTransactions()
+                                        .stream().map(Transaction::getSum)
+                                        .reduce(new BigInteger("0"), BigInteger::add)));
     }
 
     /**
@@ -36,7 +44,13 @@ public class Task {
      * (обойтись без циклов и условий)
      * 3 балла
      */
-    public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
-        return Collections.emptyList();
+    public static List<Long> paymentsSumByAccount(List<Account> accounts, Date t, int n) {
+        return accounts
+                .stream()
+                .sorted(Comparator.comparing(o -> o.getBalanceToDate(t)))
+                .skip(1)
+                .limit(n)
+                .map(Account::getId)
+                .collect(Collectors.toList());
     }
 }
