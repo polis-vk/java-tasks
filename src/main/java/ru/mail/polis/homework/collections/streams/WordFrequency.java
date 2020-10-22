@@ -16,6 +16,8 @@ import java.util.stream.Stream;
  * Слова надо сравнивать без учета регистра.
  * 3 балла
  */
+
+//TODO: СДэЛат
 public class WordFrequency {
 
     /**

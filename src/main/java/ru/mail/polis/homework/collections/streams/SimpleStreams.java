@@ -19,8 +19,7 @@ public class SimpleStreams {
 
         return IntStream
                 .range(2, (int) Math.round(Math.sqrt(n)))
-                .mapToObj(v -> n % v != 0)
-                .reduce(true, (acc, v) -> acc && v);
+                .noneMatch(x -> n % x == 0);
     }
 
     /**
@@ -45,10 +44,11 @@ public class SimpleStreams {
      */
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
         final double G = 9.8;
+        final double SIN = Math.sin(alpha * 2);
 
         return IntStream.range(1, n)
                 .mapToDouble(x -> x)
                 .reduce(0,
-                        (sum, h) -> sum + (Math.pow(changeV.applyAsDouble(h) * v, 2) * Math.sin(alpha * 2) / G));
+                        (sum, h) -> sum + (Math.pow(changeV.applyAsDouble(h) * v, 2) * SIN / G));
     }
 }
