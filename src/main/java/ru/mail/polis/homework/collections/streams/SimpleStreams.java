@@ -1,9 +1,13 @@
 package ru.mail.polis.homework.collections.streams;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class SimpleStreams {
 
@@ -13,7 +17,7 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return false;
+        return n > 1 && IntStream.rangeClosed(2, n / 2).noneMatch(value -> n % value == 0);
     }
 
     /**
@@ -22,7 +26,13 @@ public class SimpleStreams {
      * 1 балл
      */
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
-        return Collections.emptyMap();
+        return Arrays
+                .stream(text.split("[\n .,;:!?]"))
+                .filter(badWords::contains)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, stringLongEntry -> stringLongEntry.getValue().intValue()));
     }
 
 
@@ -38,6 +48,11 @@ public class SimpleStreams {
      * 3 балла
      */
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return 0;
+        final double g = 9.8;
+        double sin = Math.sin(alpha * 2);
+
+        return IntStream.rangeClosed(1, n)
+                .mapToDouble(x -> x)
+                .reduce(0, (sum, value) -> sum + (Math.pow(changeV.applyAsDouble(value) * v, 2) * sin / g));
     }
 }
