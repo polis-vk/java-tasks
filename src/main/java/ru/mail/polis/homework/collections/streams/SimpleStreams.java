@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class SimpleStreams {
 
@@ -13,7 +15,11 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return false;
+        return IntStream.rangeClosed(2, n - 1).noneMatch(i -> n % i == 0);
+    }
+
+    public static void main(String[] args) {
+        createBadWordsDetectingStream("qwe,qqwe qwe , qwe qwe !", null);
     }
 
     /**
@@ -22,6 +28,12 @@ public class SimpleStreams {
      * 1 балл
      */
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
+        Stream<String> stream = Stream.of(text.split("[\\s.,;:!?]+"));
+
+        stream.map(String::toLowerCase)
+                .forEach(System.out::println);
+
+
         return Collections.emptyMap();
     }
 
