@@ -3,6 +3,7 @@ package ru.mail.polis.homework.functions;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
@@ -18,8 +19,35 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
-    interface TerFunction {
 
+    interface TerFunction<T, U, F, R> {
+
+        /**
+         * Applies this function to the given arguments.
+         *
+         * @param t the first function argument
+         * @param u the second function argument
+         * @return the function result
+         */
+        R apply(T t, U u, F f);
+
+        /**
+         * Returns a composed function that first applies this function to
+         * its input, and then applies the {@code after} function to the result.
+         * If evaluation of either function throws an exception, it is relayed to
+         * the caller of the composed function.
+         *
+         * @param <V> the type of output of the {@code after} function, and of the
+         *           composed function
+         * @param after the function to apply after this function is applied
+         * @return a composed function that first applies this function and then
+         * applies the {@code after} function
+         * @throws NullPointerException if after is null
+         */
+        default <V> TerFunction<T, U, F, V> andThen(Function<? super R, ? extends V> after) {
+            Objects.requireNonNull(after);
+            return (T t, U u, F f) -> after.apply(apply(t, u, f));
+        }
     }
 
     /**
@@ -28,8 +56,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
-        return null;
+    static <T, U, F, R> Function<T, Function<U, Function<F, R>>> curring(TerFunction<T, U, F, R> terFunction) {
+        return t -> u -> f -> terFunction.apply(t, u, f);
     }
 
 
@@ -40,7 +68,11 @@ public class SimpleFunction {
      * 4 балла
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            a -> null;
+            operators -> numbers -> numbers.stream()
+                    .map(value -> operators.stream()
+                            .reduce(operand -> operand, IntUnaryOperator::andThen)
+                            .applyAsInt(value))
+                    .collect(Collectors.toList());
 
 
     /**
@@ -52,5 +84,6 @@ public class SimpleFunction {
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 3 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
+        (startValue, function) -> (start, end) -> IntStream.rangeClosed(start, end).reduce(startValue, function);
 }
