@@ -18,7 +18,7 @@ public class SimpleStreams {
         }
 
         return IntStream
-                .range(2, (int) Math.round(Math.sqrt(n)))
+                .range(2, n / 2)
                 .noneMatch(x -> n % x == 0);
     }
 
