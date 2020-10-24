@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.collections.streams.account;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Task {
 
@@ -11,7 +11,12 @@ public class Task {
      * 2 балла
      */
     public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
-        return Collections.emptyMap();
+
+        return transactions.stream()
+                .collect(Collectors.toMap(
+                        Transaction::getOutgoingAccountIdAsStr,
+                        Transaction::getSum,
+                        Long::sum));
     }
 
     /**
@@ -38,5 +43,23 @@ public class Task {
      */
     public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
         return Collections.emptyList();
+    }
+
+
+
+    public static void main(String[] args) {
+        Account acc1 = new Account();
+        Account acc2 = new Account();
+        Account acc3 = new Account();
+        Account acc4 = new Account();
+        List<Transaction> transactions = new ArrayList<>();
+        transactions.add(new Transaction(new Date(), acc1, acc2, 100L));
+        transactions.add(new Transaction(new Date(), acc1, acc3, 200L));
+        transactions.add(new Transaction(new Date(), acc1, acc4, 300L));
+        transactions.add(new Transaction(new Date(), acc2, acc4, 600L));
+        transactions.add(new Transaction(new Date(), acc3, acc4, 500L));
+        transactions.add(new Transaction(new Date(), acc3, acc4, 1000L));
+
+        System.out.println(paymentsSumByAccount(transactions));
     }
 }

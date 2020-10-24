@@ -1,9 +1,9 @@
 package ru.mail.polis.homework.collections.streams;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.DoubleUnaryOperator;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -15,26 +15,27 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return IntStream.rangeClosed(2, n - 1).noneMatch(i -> n % i == 0);
+        return IntStream.rangeClosed(2, (int)Math.sqrt(n)).noneMatch(i -> n % i == 0);
     }
 
-    public static void main(String[] args) {
-        createBadWordsDetectingStream("qwe,qqwe qwe , qwe qwe !", null);
-    }
 
     /**
      * Вам передается текст и список плохих слов. Вам нужно вернуть мапу (слово -> количество упоминаний в тексте)
      * Слово - набор символ между началом строки/ концом строки / пробелами / знаками препинания (.,;:!?)
      * 1 балл
      */
-    public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
-        Stream<String> stream = Stream.of(text.split("[\\s.,;:!?]+"));
+//    public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
+    public static Map<String, Long> createBadWordsDetectingStream(String text, List<String> badWords) {
 
-        stream.map(String::toLowerCase)
-                .forEach(System.out::println);
-
-
-        return Collections.emptyMap();
+        Map<String, Long> map = new HashMap<>();
+        for (String word : badWords) {
+            Stream<String> stream = Stream.of(text.split("[\\s.,;:!?]+"));
+            Long count = stream.map(String::toLowerCase)
+                    .filter(word::equals).count();
+            map.put(word, count);
+        }
+        return map;
+        //вероятно стоит найти более красивое решение
     }
 
 
@@ -51,5 +52,20 @@ public class SimpleStreams {
      */
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
         return 0;
+    }
+
+
+    public static void main(String[] args) {
+        System.out.println(isPrime(5));
+        System.out.println(isPrime(0));
+        System.out.println(isPrime(1));
+        System.out.println(isPrime(2));
+        System.out.println(isPrime(6));
+
+        List<String> badWords = new ArrayList<>();
+        badWords.add("типа");
+        badWords.add("ну");
+        badWords.add("блин");
+        System.out.println(createBadWordsDetectingStream("блин, ну как бы типа много слов блин паразитов ну", badWords));
     }
 }

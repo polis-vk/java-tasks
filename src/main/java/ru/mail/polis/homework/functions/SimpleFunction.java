@@ -1,16 +1,9 @@
 package ru.mail.polis.homework.functions;
 
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.IntBinaryOperator;
-import java.util.function.IntUnaryOperator;
-import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.function.*;
 
 public class SimpleFunction {
 
@@ -34,8 +27,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
-        return null;
+    static <T, U, X, R> Function<T, Function<U, Function<X, R>>> curring(TerFunction<T, U, X, R> terFunction) {
+        return t -> u -> x -> terFunction.apply(t, u, x);
     }
 
 
