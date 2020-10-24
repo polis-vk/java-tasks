@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.functions;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -43,21 +44,22 @@ public class SimpleFunction {
      * Пример: multifunctionalMapper.apply([x -> x, x -> x + 1, x -> x * x]).apply([1, 2]) = [1, 2, 4, 2, 3, 9]
      * 4 балла
      */
+    
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            operators -> ints -> ints.stream()
-                    .map(number -> operators.stream()
+            operators -> numbers -> numbers.stream()
+                    .map(number -> IntStream.range(1, operators.size() + 1)
+                            .mapToObj(index -> operators.stream()
+                                    .limit(index)
+                                    .reduce(operator -> operator, IntUnaryOperator::andThen))
                             .mapToInt(operator -> operator.applyAsInt(number))
                             .boxed()
                             .collect(Collectors.toList()))
                     .flatMap(List::stream)
                     .collect(Collectors.toList());
     
-    public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper1 =
-            operators -> ints -> ints.stream()
-                    .map(number -> operators.stream()
-                            .reduce(operator -> operator, IntUnaryOperator::andThen)
-                            .applyAsInt(number))
-                    .collect(Collectors.toList());
+    public static void main(String[] args) {
+        multifunctionalMapper.apply(Arrays.asList(x -> x, x -> x + 1, x -> x * x)).apply(Arrays.asList(1, 2)).forEach(System.out::println);
+    }
     
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
