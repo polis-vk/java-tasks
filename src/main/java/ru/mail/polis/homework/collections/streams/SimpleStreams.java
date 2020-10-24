@@ -2,9 +2,12 @@ package ru.mail.polis.homework.collections.streams;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.DoubleUnaryOperator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class SimpleStreams {
     /**
@@ -28,7 +31,12 @@ public class SimpleStreams {
      * 1 балл
      */
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
-        return badWords.stream().collect(Collectors.toMap(x -> x, x -> text.split(x).length - 1));
+        return Stream.of(text.split("[\n.,;:!?]"))
+                .filter(badWords::contains)
+                .collect(Collectors.groupingBy(x -> x, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, x -> x.getValue().intValue()));
     }
 
     /**
