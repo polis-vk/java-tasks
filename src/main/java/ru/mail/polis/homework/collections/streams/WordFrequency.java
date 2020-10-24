@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.collections.streams;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,17 +17,25 @@ import java.util.stream.Stream;
  * 3 балла
  */
 
-//TODO: СДэЛат
 public class WordFrequency {
 
     /**
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-//        lines.map(s -> s.split(" ")).collect(Collectors.toMap(s -> s, ))
+        return Stream.of(lines
+                .reduce("", (a, l) -> a + " " + l)
+                .split("[\\s.,!:-?;]+"))
+                .map(String::toLowerCase)
+                .collect(Collectors.groupingBy(x -> x, Collectors.counting()))
+                .entrySet()
+                .stream().
+                        sorted(Map.Entry.<String, Long>comparingByValue().reversed()
+                                .thenComparing(Map.Entry.comparingByKey()))
+                .limit(10)
+                .map(Map.Entry::getKey)
+                .distinct()
+                .collect(Collectors.toList());
 
-        return null;
     }
-
-
 }

@@ -10,15 +10,11 @@ import java.util.List;
  * баланс
  * 1 балл
  */
-
-// 2 варианта, для ДТО я не считаю зазорным сделать все поля публичными
-
 public class Account {
     private Long id;
-    // Выделял бы отдельный класс - баланс, в котором представлял бы интами миллионы, тысячи, сотни и т.д.
-    // Дробные числа использовать для баланса не безопасно
-    private int balance;
-    private List<Transaction> transactions;
+    private Long balance;
+    private List<Transaction> inTransactions;
+    private List<Transaction> outTransactions;
 
     public Account() {
 
@@ -26,51 +22,40 @@ public class Account {
 
     public Account(Long id) {
         this.id = id;
-        this.balance = 0;
-        this.transactions = new ArrayList<>();
+        this.balance = 0L;
+        this.inTransactions = new ArrayList<>();
+        this.outTransactions = new ArrayList<>();
     }
 
-    public Account(Long id, int balance, List<Transaction> transactions) {
+    public Account(Long id, Long balance, List<Transaction> inTransactions, List<Transaction> outTransactions) {
         this.id = id;
         this.balance = balance;
-        this.transactions = transactions;
+        this.inTransactions = inTransactions;
+        this.outTransactions = outTransactions;
     }
 
     public Long getId() {
         return id;
     }
 
-    public int getBalance() {
+    public Long getBalance() {
         return balance;
     }
 
-    public void setBalance(int balance) {
+    public void setBalance(Long balance) {
         this.balance = balance;
     }
 
-    public List<Transaction> getTransactions() {
-        return transactions;
+    public List<Transaction> getInTransactions() {
+        return inTransactions;
+    }
+
+    public List<Transaction> getOutTransactions() {
+        return outTransactions;
+    }
+
+    @Override
+    public String toString() {
+        return "Account: " + id;
     }
 }
-
-
-//public class Account {
-//    public Long id;
-//    public int balance;
-//    public List<Transaction> transactions;
-//
-//    public Account() {
-//    }
-//
-//    public Account(Long id) {
-//        this.id = id;
-//        this.balance = 0;
-//        this.transactions = new ArrayList<>();
-//    }
-//
-//    public Account(Long id, int balance, List<Transaction> transactions) {
-//        this.id = id;
-//        this.balance = balance;
-//        this.transactions = transactions;
-//    }
-//}
