@@ -3,7 +3,6 @@ package ru.mail.polis.homework.collections.streams.account;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -16,10 +15,9 @@ import java.util.TreeMap;
 public class Account {
     private final long id;
     private final List<Transaction> transactionList = new ArrayList<>();
-    private final Map<Date, Long> balanceOnDate = new TreeMap<>();
+    private final TreeMap<Date, Long> balanceOnDate = new TreeMap<>();
     private long curBalance = 0L;
     private static long idCounter = 1;
-    
     
     public Account() {
         this.id = idCounter++;
@@ -35,7 +33,7 @@ public class Account {
                 return;
             } else if (isDest && !isSrc) {
                 curBalance += transaction.getSum();
-            } else {
+            } else if (!isDest){
                 curBalance -= transaction.getSum();
             }
             transactionList.add(transaction);
@@ -44,9 +42,7 @@ public class Account {
     }
     
     public long getBalanceOnDate(Date date) {
-        return balanceOnDate.entrySet().stream()
-                .filter(e -> e.getKey().compareTo(date) <= 0)
-                .reduce(0L, (first, second) -> second.getValue(), (x, y) -> y);
+        return balanceOnDate.floorEntry(date).getValue();
     }
     
     public long getCurBalance() {
