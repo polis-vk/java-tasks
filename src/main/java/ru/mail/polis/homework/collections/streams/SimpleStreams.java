@@ -19,7 +19,7 @@ public class SimpleStreams {
         }
 
         return IntStream
-                .range(2, n / 2)
+                .range(2, n / 2 + 1)
                 .noneMatch(x -> n % x == 0);
     }
 
