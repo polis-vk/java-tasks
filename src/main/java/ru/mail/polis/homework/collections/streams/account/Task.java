@@ -39,6 +39,8 @@ public class Task {
      * (обойтись без циклов и условий)
      * 3 балла
      */
+
+    //TODO: Понять причем тут время вообще, дата?
     public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
         return accounts.stream()
                 .collect(Collectors.toMap(Account::getId, Task::getTotalBalanceOf))
