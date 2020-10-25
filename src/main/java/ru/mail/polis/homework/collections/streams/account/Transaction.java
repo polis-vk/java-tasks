@@ -18,12 +18,8 @@ public class Transaction {
     private Account targetAccount;
     private Long sum;
 
-    public Account getSourceAccount() {
-        return sourceAccount;
-    }
-
-    public Account getTargetAccount() {
-        return targetAccount;
+    public Long getId() {
+        return id;
     }
 
     public LocalDate getDate() {
@@ -32,6 +28,14 @@ public class Transaction {
 
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public Account getSourceAccount() {
+        return sourceAccount;
+    }
+
+    public Account getTargetAccount() {
+        return targetAccount;
     }
 
     public Long getSum() {

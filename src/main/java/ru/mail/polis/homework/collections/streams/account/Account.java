@@ -53,9 +53,4 @@ public class Account {
     public List<Transaction> getOutTransactions() {
         return outTransactions;
     }
-
-    @Override
-    public String toString() {
-        return "Account: " + id;
-    }
 }
