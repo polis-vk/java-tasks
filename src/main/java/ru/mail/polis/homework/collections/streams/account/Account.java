@@ -14,15 +14,13 @@ import java.util.ListIterator;
  */
 public class Account {
     private final String id;
-    private List<Transaction> inTransactions;   //входящие транзакции
-    private List<Transaction> outTransactions;  //исходящие транзакции
+    private final List<Transaction> inTransactions = new ArrayList<>();   //входящие транзакции
+    private final List<Transaction> outTransactions = new ArrayList<>();  //исходящие транзакции
     private long balance;
-    private long beginBalance;
+    private final long beginBalance;
 
     Account(String id, List<Transaction> transactions, long balance) {
         this.id = id;
-        this.inTransactions = new ArrayList<>();
-        this.outTransactions = new ArrayList<>();
         this.balance = balance;
         this.beginBalance = balance;
     }
@@ -51,9 +49,13 @@ public class Account {
 
     public long getBalanceBeforeDate(Date date) {
         long sum = balance;
-        sum = inTransactions.stream().filter(transaction -> transaction.getDate().before(date)).map(Transaction::getSum)
+        sum = inTransactions.stream()
+                .filter(transaction -> transaction.getDate().before(date))
+                .map(Transaction::getSum)
                 .reduce(sum, Long::sum);
-        return inTransactions.stream().filter(transaction -> transaction.getDate().before(date)).map(Transaction::getOutSum)
+        return outTransactions.stream()
+                .filter(transaction -> transaction.getDate().before(date))
+                .map(Transaction::getOutSum)
                 .reduce(sum, Long::sum);
     }
 

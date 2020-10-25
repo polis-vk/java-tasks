@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.collections.streams;
 
-import sun.util.resources.Bundles;
-
 import java.util.*;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
@@ -18,7 +16,10 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return Stream.iterate(2, k -> k + 1).filter(k -> n % k == 0).findFirst().get() == n;
+        return Stream.iterate(2, k -> k + 1)
+                .filter(k -> n % k == 0)
+                .findFirst()
+                .get() == n;
     }
 
     /**
@@ -27,15 +28,14 @@ public class SimpleStreams {
      * 1 балл
      */
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
-        String delimiters = new String("[ .,;:!? \\n]");
+        String delimiters = "[ .,;:!? \\n]";
 
-        IntStream stream = text.chars();
         List<String> streamString = new ArrayList<String>(Arrays.asList(text.split(delimiters)));
-        Map<String, Integer> countWords = streamString.stream().map(String::toLowerCase)
+
+        return streamString.stream()
+                .map(String::toLowerCase)
                 .filter(badWords::contains)
                 .collect(Collectors.toMap(Function.identity(), p -> 1, Integer::sum));
-
-        return countWords;
     }
 
 
@@ -50,13 +50,15 @@ public class SimpleStreams {
      * <p>
      * 3 балла
      */
+    static final double G = 9.8;
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
         //дальность полета s = v*v*Math.sin(2*alpha)/g
 
-        final double g = 9.8;
         final double twiceSin = Math.sin(alpha * 2);
 
-        return DoubleStream.iterate(v, changeV).reduce(0, (sum, current) -> sum + current * current * twiceSin / g);
+        return DoubleStream.iterate(v, changeV)
+                .limit(n)
+                .reduce(0,
+                        (sum, current) -> sum + current * current * twiceSin / G);
     }
 }
-//5

@@ -25,13 +25,16 @@ public class WordFrequency {
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-        Stream<String> sortedWords = lines
-                .map(it -> Arrays.stream(it.toLowerCase().split("[\n .,;:!?]")))
-                .reduce(Stream.empty(), Stream::concat).sorted();
-        return sortedWords.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                .entrySet().stream().sorted(Map.Entry.comparingByValue()).limit(10)
-                .map(Map.Entry::getKey).collect(Collectors.toList());
+        Stream<String> words = lines
+                .map(String::toLowerCase)
+                .flatMap((it) -> Arrays.stream(it.split("[\n .,;:!?]")))
+                .sorted();
+        return words.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .limit(10)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
-
-
 }

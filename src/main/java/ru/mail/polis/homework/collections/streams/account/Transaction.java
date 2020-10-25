@@ -14,15 +14,11 @@ import java.util.Date;
  */
 public class Transaction {
 
-    private String id;
-    private Date date;
-    private Account outgoing;
-    private Account incoming;
-    private long sum;
-
-    public Account getAccount() {
-        return null;
-    }
+    private final String id;
+    private final Date date;
+    private final Account outgoing;
+    private final Account incoming;
+    private final long sum;
 
     public Long getSum() {
         return sum;
@@ -36,11 +32,12 @@ public class Transaction {
         return outgoing.getId();
     }
 
-    Transaction(String id, Date date, Account incoming, Account outgoing) {
+    Transaction(String id, Date date, Account incoming, Account outgoing, long sum) {
         this.id = id;
         this.date = date;
         this.incoming = incoming;
         this.outgoing = outgoing;
+        this.sum = sum;
 
         incoming.addIncomingTransaction(this);
         outgoing.addOutgoingTransaction(this);
@@ -52,9 +49,5 @@ public class Transaction {
 
     public Account getOutgoingAccount() {
         return outgoing;
-    }
-
-    public String getId() {
-        return id;
     }
 }
