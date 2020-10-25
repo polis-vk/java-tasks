@@ -18,7 +18,7 @@ public class Account {
 
     public Account(int id) {
         this.id = id;
-        this.transactions = new ArrayList<Transaction>();
+        this.transactions = new ArrayList<>();
         this.balance = 0;
     }
 
@@ -26,23 +26,20 @@ public class Account {
         return balance;
     }
 
-    public void setBalance(int balance) {
-        this.balance = balance;
+    public void setBalance(int sum) {
+        balance += sum;
     }
 
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
+    public Transaction getTransactions(int number) throws Exception {
 
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
+        if (number < transactions.size())
+            return transactions.get(number);
+
+        else throw new Exception();
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 }
