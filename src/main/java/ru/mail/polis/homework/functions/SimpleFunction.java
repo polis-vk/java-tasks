@@ -1,8 +1,7 @@
 package ru.mail.polis.homework.functions;
 
-
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
@@ -18,8 +17,13 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
-    interface TerFunction {
+    public interface TerFunction<F, S, T, R> {
+        R apply(F f, S s, T t);
 
+        default <V> TerFunction<F, S, T, V> andThen(Function<? super R, ? extends V> after) {
+            Objects.requireNonNull(after);
+            return (F f, S s, T t) -> after.apply(apply(f, s, t));
+        }
     }
 
     /**
@@ -28,10 +32,10 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
-        return null;
+    static <F, S, T, R> Function<F, Function<S, Function<T, R>>>
+            curring(TerFunction<F, S, T, R> terFunction) {
+        return f -> s -> t -> terFunction.apply(f, s, t);
     }
-
 
     /**
      * Превращает список унарных операторов в один унарный оператор для списка чисел. Получившийся оператор
@@ -40,8 +44,16 @@ public class SimpleFunction {
      * 4 балла
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            a -> null;
-
+            operators -> numbers -> numbers.stream()
+                    .map(num -> IntStream.rangeClosed(1, operators.size())
+                            .mapToObj(opNum -> operators.stream()
+                                    .limit(opNum)
+                                    .reduce(IntUnaryOperator.identity(), IntUnaryOperator::andThen))
+                            .mapToInt(op -> op.applyAsInt(num))
+                            .boxed()
+                            .collect(Collectors.toList()))
+            .flatMap(list -> list.stream())
+            .collect(Collectors.toList());
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
@@ -52,5 +64,6 @@ public class SimpleFunction {
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 3 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
+            (a, b) -> (first, last) -> IntStream.rangeClosed(first, last).reduce(a, b);
 }
