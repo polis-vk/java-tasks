@@ -1,14 +1,14 @@
 package ru.mail.polis.homework.collections.streams;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SimpleStreams {
-    public static void main(String[] args) {
-    }
 
     /**
      * Реализуйте проверку на простоту входящего числа с помощью стримов.
@@ -44,7 +44,10 @@ public class SimpleStreams {
      * <p>
      * 3 балла
      */
+    static final double G = 9.8;
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return 0;
+        return IntStream.range(1, n)
+                .asDoubleStream()
+                .reduce(0, (sum, h) -> sum + (Math.pow(changeV.applyAsDouble(h) * v, 2) * Math.sin(alpha * 2) / G));
     }
 }

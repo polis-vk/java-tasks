@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.functions;
 
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -12,10 +10,6 @@ import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
 
 public class SimpleFunction {
-
-    public static void main(String[] args) {
-
-    }
 
     /**
      * Функция от трех аргументов. Не забудьте добавить дженерики.
@@ -48,7 +42,7 @@ public class SimpleFunction {
      * Пример: multifunctionalMapper.apply([x -> x, x -> x + 1, x -> x * x]).apply([1, 2]) = [1, 2, 4, 2, 3, 9]
      * 4 балла
      */
-    public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper = x -> null;
+    public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper = null;
 
 
     /**
