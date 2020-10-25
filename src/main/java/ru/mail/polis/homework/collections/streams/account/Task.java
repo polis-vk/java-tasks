@@ -39,7 +39,11 @@ public class Task {
      * 3 балла
      */
     public static List<String> paymentsSumByAccount(List<Account> accounts, Date t, int n) {
-       return accounts.stream().sorted(Comparator.comparing(o -> o.getBalanceBeforeDate(t)))
-                .skip(1).limit(n).map(Account::getId).collect(Collectors.toList());
+       return accounts.stream()
+               .sorted(Comparator.comparing(o -> o.getBalanceBeforeDate(t)))
+                .skip(1)
+               .limit(n)
+               .map(Account::getId)
+               .collect(Collectors.toList());
     }
 }
