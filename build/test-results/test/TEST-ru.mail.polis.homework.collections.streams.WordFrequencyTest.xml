@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ru.mail.polis.homework.collections.streams.WordFrequencyTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2020-10-24T19:28:55" hostname="MacBook-Pro-Stepan.local" time="0.015">
+<testsuite name="ru.mail.polis.homework.collections.streams.WordFrequencyTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2020-10-25T09:06:11" hostname="MacBook-Pro-Stepan.local" time="0.018">
   <properties/>
-  <testcase name="standard" classname="ru.mail.polis.homework.collections.streams.WordFrequencyTest" time="0.015"/>
+  <testcase name="simple" classname="ru.mail.polis.homework.collections.streams.WordFrequencyTest" time="0.018"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

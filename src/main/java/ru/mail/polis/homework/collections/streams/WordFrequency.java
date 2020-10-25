@@ -24,7 +24,7 @@ public class WordFrequency {
      */
     public static List<String> wordFrequency(Stream<String> lines) {
         return Stream.of(lines
-                .reduce("", (a, l) -> a + " " + l)
+                .reduce("", (a, l) -> a + l)
                 .split("[\\s.,!:-?;]+"))
                 .map(String::toLowerCase)
                 .collect(Collectors.groupingBy(x -> x, Collectors.counting()))
@@ -32,6 +32,7 @@ public class WordFrequency {
                 .stream().
                         sorted(Map.Entry.<String, Long>comparingByValue().reversed()
                                 .thenComparing(Map.Entry.comparingByKey()))
+
                 .limit(10)
                 .map(Map.Entry::getKey)
                 .distinct()
