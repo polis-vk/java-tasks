@@ -1,13 +1,12 @@
 package ru.mail.polis.homework.functions;
 
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
 import java.util.function.IntUnaryOperator;
 import java.util.function.UnaryOperator;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -18,8 +17,14 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
-    interface TerFunction {
+    interface TerFunction<T, U, S, R> {
+        
+        R apply(T t, U u, S s);
 
+        default <V> TerFunction<T, U, S, V> andThen(Function<? super R, ? extends V> after) {
+            Objects.requireNonNull(after);
+            return (T t, U u, S s) -> after.apply(apply(t, u, s));
+        }
     }
 
     /**
@@ -28,8 +33,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
-        return null;
+    static <T, U, S, R> Function<T, Function<U, Function<S, R>>> curring(TerFunction<T, U, S, R> terFunction) {
+        return t -> u -> s -> terFunction.apply(t, u, s);
     }
 
 
@@ -40,7 +45,10 @@ public class SimpleFunction {
      * 4 балла
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            a -> null;
+        operators -> numbers -> numbers.stream()
+        .map(number -> operators.stream()
+            .reduce(x -> x, (op1, op2) -> x -> op2.applyAsInt(op1.applyAsInt(x))).applyAsInt(number))
+        .collect(Collectors.toList());
 
 
     /**
@@ -52,5 +60,6 @@ public class SimpleFunction {
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 3 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = 
+        (identity, op) -> (a, b) -> IntStream.rangeClosed(a, b).reduce(identity, op);
 }
