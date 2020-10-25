@@ -12,8 +12,9 @@ import java.util.List;
  */
 public class Account {
     private Long id;
-    private List<Transaction> transactions;
-    private int balance;
+    private List<Transaction> inTransactions;
+    private List<Transaction> outTransactions;
+    private Long balance;
 
     public Account(){
 
@@ -21,37 +22,47 @@ public class Account {
 
     public Account(Long id){
         this.id = id;
-        this.balance = 0;
-        this.transactions = new ArrayList<>();
+        this.balance = 0L;
+        this.inTransactions = new ArrayList<>();
+        this.outTransactions = new ArrayList<>();
     }
 
-    public Account(Long id, List<Transaction> transactions, int balance){
+    public Account(Long id, List<Transaction> inTransactions, List<Transaction> outTransactions, Long balance){
         this.id = id;
-        this.transactions = transactions;
+        this.inTransactions = inTransactions;
+        this.outTransactions = outTransactions;
         this.balance = balance;
     }
 
-    public int getBalance() {
+    public Long getBalance() {
         return balance;
     }
 
-    public void setBalance(int balance) {
+    public void setBalance(Long balance) {
         this.balance = balance;
     }
 
-    public Long getId() {
-        return id;
+    public String getId() {
+        return id.toString();
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public List<Transaction> getTransactions() {
-        return transactions;
+    public List<Transaction> getInTransactions() {
+        return inTransactions;
     }
 
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
+    public List<Transaction> getOutTransactions() {
+        return outTransactions;
+    }
+
+    public void setInTransactions(List<Transaction> inTransactions) {
+        this.inTransactions = inTransactions;
+    }
+
+    public void setOutTransactions(List<Transaction> outTransactions) {
+        this.outTransactions = outTransactions;
     }
 }
