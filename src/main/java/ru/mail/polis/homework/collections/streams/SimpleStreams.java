@@ -3,14 +3,11 @@ package ru.mail.polis.homework.collections.streams;
 import java.util.*;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SimpleStreams {
     public static void main(String[] args) {
-        System.out.println(createBadWordsDetectingStream("Hello, my name is Vadim! And I am, is 20 years. Old", Arrays.asList("is", "Old")));
     }
 
     /**
@@ -30,14 +27,7 @@ public class SimpleStreams {
      * 1 балл
      */
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
-        List<String> wordsList = new ArrayList<>();
-        Matcher matcher = Pattern.compile("[aA-zZ]+")
-                .matcher(text);
-        while (matcher.find()) {
-            wordsList.add(matcher.group());
-        }
-        return wordsList.stream()
-                .map(String::toLowerCase)
+        return Arrays.stream(text.split("[.,;:!? ]+"))
                 .filter(badWords::contains)
                 .collect(Collectors.toMap(Function.identity(), e -> 1, Integer::sum));
     }
