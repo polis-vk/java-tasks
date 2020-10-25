@@ -69,9 +69,14 @@ public class SimpleFunction {
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
             operators -> numbers -> numbers.stream()
-                    .map(value -> operators.stream()
-                            .reduce(operand -> operand, IntUnaryOperator::andThen)
-                            .applyAsInt(value))
+                    .map(number -> IntStream.range(1, operators.size() + 1)
+                            .mapToObj(index -> operators.stream()
+                                    .limit(index)
+                                    .reduce(operator -> operator, IntUnaryOperator::andThen))
+                            .mapToInt(operator -> operator.applyAsInt(number))
+                            .boxed()
+                            .collect(Collectors.toList()))
+                    .flatMap(List::stream)
                     .collect(Collectors.toList());
 
 
