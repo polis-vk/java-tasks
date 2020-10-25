@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.collections.streams.account;
 
-import java.time.temporal.TemporalField;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -43,7 +41,7 @@ public class Task {
      */
     public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
         return accounts.stream()
-                .collect(Collectors.toMap(Account::getId, Task::getBalance))
+                .collect(Collectors.toMap(Account::getId, Task::getTotalBalanceOf))
                 .entrySet()
                 .stream()
                 .sorted(Map.Entry.<Long, Long>comparingByValue().reversed())
@@ -54,7 +52,7 @@ public class Task {
                 .collect(Collectors.toList());
     }
 
-    private static long getBalance(Account account) {
+    private static long getTotalBalanceOf(Account account) {
         long positive = account.getInTransactions()
                 .stream()
                 .map(Transaction::getSum)
