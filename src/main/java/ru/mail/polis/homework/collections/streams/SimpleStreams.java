@@ -44,12 +44,14 @@ public class SimpleStreams {
      * <p>
      * 3 балла
      */
+    private static final double G = 9.8;
+    
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
         final double sin = Math.sin(2 * alpha);
-        final double g = 9.8;
+        
         return DoubleStream.iterate(v, changeV)
                 .limit(n)
                 .reduce(0.0,
-                        (fullDist, vPrev) -> fullDist + vPrev * vPrev * sin / g);
+                        (fullDist, vPrev) -> fullDist + vPrev * vPrev * sin / G);
     }
 }
