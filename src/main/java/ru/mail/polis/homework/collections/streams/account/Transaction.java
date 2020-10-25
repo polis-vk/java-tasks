@@ -26,6 +26,14 @@ public class Transaction {
         return targetAccount;
     }
 
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
     public Long getSum() {
         return sum;
     }
