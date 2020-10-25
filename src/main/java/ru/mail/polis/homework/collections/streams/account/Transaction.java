@@ -18,18 +18,9 @@ public class Transaction {
     private final Account destAcc;
     private final long sum;
     private static long idCounter = 1;
-    private static Date lastTransactionDate = new Date(0L);
     
     public Transaction(Date date, Account srcAcc, Account destAcc, long sum) {
-        this(idCounter++, date, srcAcc, destAcc, sum);
-    }
-    
-    private Transaction(long id, Date date, Account srcAcc, Account destAcc, long sum) {
-        if (lastTransactionDate.after(date)) {
-            throw new IllegalStateException("Illegal transaction date");
-        }
-        lastTransactionDate = date;
-        this.id = id;
+        this.id = idCounter++;
         this.date = date;
         this.srcAcc = srcAcc;
         this.destAcc = destAcc;
