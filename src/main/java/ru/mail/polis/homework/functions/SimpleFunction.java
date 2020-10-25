@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.functions;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -48,11 +49,17 @@ public class SimpleFunction {
      * 4 балла
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            list -> numbers -> numbers.stream()
-                    .map(number -> list.stream()
-                            .reduce(x -> x, (a, b) -> x -> b.applyAsInt(a.applyAsInt(x))).applyAsInt(number))
+            operators -> numbers -> numbers.stream()
+                    .map(number -> {
+                        int bound = operators.size() + 1;
+                        return IntStream.range(1, bound)
+                                .mapToObj(i -> operators.stream()
+                                        .limit(i)
+                                        .reduce(operator -> operator, IntUnaryOperator::andThen).applyAsInt(number))
+                                .collect(Collectors.toList());
+                    })
+                    .flatMap(List::stream)
                     .collect(Collectors.toList());
-
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
@@ -64,6 +71,9 @@ public class SimpleFunction {
      * 3 балла
      */
     public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
-            (x0, y) -> (a, b) -> IntStream.rangeClosed(a, b).reduce(x0, y);
+            (initValue, function) -> (intervalStart, intervalEnd) -> IntStream.rangeClosed(intervalStart, intervalEnd).reduce(initValue, function);
 
+    public static void main(String[] args) {
+        multifunctionalMapper.apply(Arrays.asList(x -> x, x -> x + 1, x -> x * x)).apply(Arrays.asList(1, 2)).forEach(System.out::println);
+    }
 }

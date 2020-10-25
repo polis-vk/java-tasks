@@ -11,7 +11,7 @@ public class Task {
      */
     public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
         return transactions.stream()
-                .collect(Collectors.toMap(Transaction::getOutgoingAccountIDAndBalance, Transaction::getSum, Long::sum));
+                .collect(Collectors.groupingBy(Transaction::getOutgoingAccountIDAndBalance, Collectors.summingLong(Transaction::getSum)));
     }
 
     /**
@@ -38,8 +38,9 @@ public class Task {
      */
     public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
         return accounts.stream()
-                .limit(n)
                 .sorted(Comparator.comparing(account -> -account.getBalanceByDate(t)))
+                .skip(1)
+                .limit(n)
                 .map(Account::toString)
                 .collect(Collectors.toList());
     }
@@ -47,47 +48,29 @@ public class Task {
     public static void main(String[] args) {
         Account account1 = new Account();
         Account account2 = new Account();
+        Account account3 = new Account();
+
         Date date1 = new Date(1);
         Date date2 = new Date(1000);
         Date date3 = new Date(10000);
         Date date4 = new Date(200000);
         Date date5 = new Date(3000000);
+        Date date6 = new Date(50000000);
 
         Transaction transaction1 = new Transaction(date1, account1, account2, 100);
         Transaction transaction2 = new Transaction(date2, account1, account2, 200);
         Transaction transaction3 = new Transaction(date3, account1, account2, 500);
         Transaction transaction4 = new Transaction(date4, account2, account1, 1000);
         Transaction transaction5 = new Transaction(date5, account2, account1, 200);
+        Transaction transaction6 = new Transaction(date6, account1, account3, 5000000);
 
-        List<Transaction> outTransactions1 = new LinkedList<>();
-        outTransactions1.add(transaction1);
-        outTransactions1.add(transaction2);
-        outTransactions1.add(transaction3);
-
-        List<Transaction> inTransactions1 = new LinkedList<>();
-        inTransactions1.add(transaction4);
-
-        account1.setOutgoingTransactions(outTransactions1);
-        account1.setIncomingTransactions(inTransactions1);
-
-        List<Transaction> outTransactions2 = new LinkedList<>();
-        outTransactions2.add(transaction4);
-        outTransactions2.add(transaction5);
-
-        List<Transaction> inTransactions2 = new LinkedList<>();
-        inTransactions2.add(transaction1);
-        inTransactions2.add(transaction2);
-        inTransactions2.add(transaction3);
-
-        account2.setIncomingTransactions(inTransactions2);
-        account2.setOutgoingTransactions(outTransactions2);
-
-        System.out.println(paymentsSumByAccount(outTransactions1));
+        System.out.println(paymentsSumByAccount(account1.getOutgoingTransactions()));
 
         List<Account> accounts = new LinkedList<>();
         accounts.add(account1);
         accounts.add(account2);
+        accounts.add(account3);
 
-        System.out.println(paymentsSumByAccount(accounts, 10000000, 2));
+        System.out.println(paymentsSumByAccount(accounts, 1000000000, 2));
     }
 }

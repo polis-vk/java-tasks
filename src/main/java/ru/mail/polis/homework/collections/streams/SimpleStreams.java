@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -49,10 +50,11 @@ public class SimpleStreams {
      * 3 балла
      */
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return IntStream.rangeClosed(0, n)
-                .asDoubleStream()
-                .map(changeV)
-                .reduce((a, y) -> Math.pow(changeV.applyAsDouble(v), 2) * Math.sin(2 * alpha) / 9.8).orElse(0);
+        final double G = 9.8;
+        final double SIN = Math.sin(2 * alpha) / G;
+        return DoubleStream.iterate(v, changeV)
+                .limit(n)
+                .reduce((S, V) -> S + Math.pow(V, 2) * SIN).orElse(0);
     }
 
     public static void main(String[] args) {

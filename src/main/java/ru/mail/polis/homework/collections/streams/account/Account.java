@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.streams.account;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -10,32 +11,14 @@ import java.util.List;
  * 1 балл
  */
 public class Account {
-    private long id;
+    private final long id;
     private static long currentID;
-    private List<Transaction> incomingTransactions;
-    private List<Transaction> outgoingTransactions;
+    private final List<Transaction> incomingTransactions = new LinkedList<>();
+    private final List<Transaction> outgoingTransactions = new LinkedList<>();
     private long balance;
 
     public Account() {
-        generateID();
-    }
-
-    public Account(List<Transaction> incomingTransactions, List<Transaction> outgoingTransactions, long balance) {
-        generateID();
-        this.incomingTransactions = incomingTransactions;
-        this.outgoingTransactions = outgoingTransactions;
-        this.balance = balance;
-        updateBalance();
-    }
-
-    public void setIncomingTransactions(List<Transaction> incomingTransactions) {
-        this.incomingTransactions = incomingTransactions;
-        updateBalance();
-    }
-
-    public void setOutgoingTransactions(List<Transaction> outgoingTransactions) {
-        this.outgoingTransactions = outgoingTransactions;
-        updateBalance();
+        this.id = generateID();
     }
 
     public void addTransaction(Transaction transaction) {
@@ -69,44 +52,38 @@ public class Account {
     }
 
     public long getBalanceByDate(long date) {
-        boolean isIn = (this.incomingTransactions == null);
-        boolean isOut = (this.outgoingTransactions == null);
+        boolean isIn = (this.incomingTransactions.isEmpty());
+        boolean isOut = (this.outgoingTransactions.isEmpty());
 
-        if (isIn && !isOut)
+        if (isIn && !isOut) {
             return balance = -this.outgoingTransactions.stream().filter(t -> t.getDate().getTime() < date)
-                    .map(Transaction::getSum).reduce((long) 0, Long::sum);
+                    .map(Transaction::getSum)
+                    .reduce((long) 0, Long::sum);
+        }
 
 
-        if (!isIn && isOut)
+        if (!isIn && isOut) {
             return balance = this.incomingTransactions.stream().filter(t -> t.getDate().getTime() < date)
-                    .map(Transaction::getSum).reduce((long) 0, Long::sum);
+                    .map(Transaction::getSum)
+                    .reduce((long) 0, Long::sum);
+        }
 
-        if (!isIn && !isOut)
-            return balance = this.incomingTransactions.stream().filter(t -> t.getDate().getTime() < date)
-                    .map(Transaction::getSum).reduce((long) 0, Long::sum) -
-                    this.outgoingTransactions.stream().filter(t -> t.getDate().getTime() < date)
-                            .map(Transaction::getSum).reduce((long) 0, Long::sum);
-
+        if (!isIn) {
+            return balance = this.incomingTransactions.stream()
+                    .filter(t -> t.getDate().getTime() < date)
+                    .map(Transaction::getSum)
+                    .reduce((long) 0, Long::sum) -
+                    this.outgoingTransactions.stream()
+                            .filter(t -> t.getDate().getTime() < date)
+                            .map(Transaction::getSum)
+                            .reduce((long) 0, Long::sum);
+        }
         return 0;
     }
 
-    private void generateID() {
+    private long generateID() {
         currentID++;
-        this.id = currentID;
-    }
-
-    private void updateBalance() {
-        boolean isIn = (this.incomingTransactions == null);
-        boolean isOut = (this.outgoingTransactions == null);
-
-        if (isIn && !isOut)
-            balance = -this.outgoingTransactions.stream().map(Transaction::getSum).reduce((long) 0, Long::sum);
-        if (!isIn && isOut)
-            balance = this.incomingTransactions.stream().map(Transaction::getSum).reduce((long) 0, Long::sum);
-        if (!isIn && !isOut)
-            balance = this.incomingTransactions.stream().map(Transaction::getSum).reduce((long) 0, Long::sum) -
-                    this.outgoingTransactions.stream().map(Transaction::getSum).reduce((long) 0, Long::sum);
-
+        return currentID;
     }
 
     @Override

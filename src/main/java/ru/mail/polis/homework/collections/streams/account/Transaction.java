@@ -12,19 +12,21 @@ import java.util.Date;
  * 1 балл
  */
 public class Transaction {
-    private long id;
+    private final long id;
     private static long currentID;
-    private Date date;
-    private Account outgoingAccount;
-    private Account incomingAccount;
-    private long sum;
+    private final Date date;
+    private final Account outgoingAccount;
+    private final Account incomingAccount;
+    private final long sum;
 
     public Transaction(Date date, Account outgoingAccount, Account incomingAccount, long sum) {
-        generateID();
+        this.id = generateID();
         this.date = date;
         this.outgoingAccount = outgoingAccount;
         this.incomingAccount = incomingAccount;
         this.sum = sum;
+        this.outgoingAccount.addTransaction(this);
+        this.incomingAccount.addTransaction(this);
     }
 
     public long getId() {
@@ -55,8 +57,8 @@ public class Transaction {
         return sum;
     }
 
-    private void generateID() {
+    private long generateID() {
         currentID++;
-        this.id = currentID;
+        return currentID;
     }
 }
