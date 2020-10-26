@@ -47,11 +47,11 @@ public class Account {
     }
 
     public List<Transaction> getInTransactions() {
-        return new ArrayList<>(inTransactions);
+        return Collections.unmodifiableList(inTransactions);
     }
 
     public List<Transaction> getOutTransactions() {
-        return new ArrayList<>(outTransactions);
+        return Collections.unmodifiableList(outTransactions);
     }
 
     public synchronized boolean addTransaction(Transaction transaction) {
@@ -63,21 +63,26 @@ public class Account {
             outTransactions.add(transaction);
             balance = balance.subtract(transaction.getSum());
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     public List<Transaction> getAllTransactions() {
-        List<Transaction> buffer = getInTransactions();
+        List<Transaction> buffer = new ArrayList<>(inTransactions);
         buffer.addAll(outTransactions);
         return buffer;
     }
 
     public BigInteger getBalanceToDate(Date date) {
         BigInteger sum = startBalance;
-        sum = inTransactions.stream().filter(transaction -> transaction.getDate().before(date)).map(Transaction::getSum).reduce(sum, BigInteger::add);
-        return outTransactions.stream().filter(transaction -> transaction.getDate().before(date)).map(Transaction::getSum).reduce(sum, BigInteger::subtract);
+        sum = inTransactions.stream()
+                .filter(transaction -> transaction.getDate().before(date))
+                .map(Transaction::getSum)
+                .reduce(sum, BigInteger::add);
+        return outTransactions.stream()
+                .filter(transaction -> transaction.getDate().before(date))
+                .map(Transaction::getSum)
+                .reduce(sum, BigInteger::subtract);
     }
 
     @Override

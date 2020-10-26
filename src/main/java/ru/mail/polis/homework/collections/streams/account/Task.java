@@ -1,7 +1,14 @@
 package ru.mail.polis.homework.collections.streams.account;
 
+import com.sun.java.accessibility.util.Translator;
+
 import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.ToLongFunction;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class Task {
@@ -11,15 +18,11 @@ public class Task {
      * 2 балла
      */
     public static Map<Long, BigInteger> paymentsSumByAccount(List<Transaction> transactions) {
-        return transactions
-                .stream()
-                .map(Transaction::getSender)
-                .distinct()
-                .collect(Collectors
-                        .toMap(Account::getId, account -> account
-                                        .getOutTransactions()
-                                        .stream().map(Transaction::getSum)
-                                        .reduce(new BigInteger("0"), BigInteger::add)));
+        return transactions.stream()
+                .collect(Collectors.groupingBy(
+                        transaction -> transaction.getSender().getId(),
+                        Collectors.reducing(new BigInteger("0"), Transaction::getSum, BigInteger::add)
+                ));
     }
 
     /**
@@ -45,8 +48,7 @@ public class Task {
      * 3 балла
      */
     public static List<Long> paymentsSumByAccount(List<Account> accounts, Date t, int n) {
-        return accounts
-                .stream()
+        return accounts.stream()
                 .sorted(Comparator.comparing(o -> o.getBalanceToDate(t)))
                 .skip(1)
                 .limit(n)

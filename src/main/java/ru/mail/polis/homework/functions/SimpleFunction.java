@@ -20,6 +20,8 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
+
+    @FunctionalInterface
     interface TerFunction<F, S, T, R> {
         R apply(F first, S second, T third);
 
@@ -47,15 +49,26 @@ public class SimpleFunction {
      * 4 балла
      */
 
-    // Должно ли оно выводить все стадии выполнения в списке? (правильный ли пример?)
-    // Данное решение формирует функцию, которая применяет все операции к каждому числу, и выводит список
-    // multifunctionalMapper.apply([x -> x, x -> x + 1, x -> x * x]).apply([1, 2]) = [4, 9]
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
             operators -> numbers -> numbers.stream()
-                    .map(value -> operators.stream()
-                            .reduce(operand -> operand, IntUnaryOperator::andThen)
-                            .applyAsInt(value))
+                    .flatMap(value -> IntStream
+                            .range(0, operators.size())
+                            .mapToObj(it -> operators.stream()
+                                    .limit(it + 1)
+                                    .reduce(operator -> operator, IntUnaryOperator::andThen))
+                            .map(operator -> operator.applyAsInt(value)))
                     .collect(Collectors.toList());
+
+    public static void main(String[] args) {
+        List<IntUnaryOperator> ops = new ArrayList<>();
+        List<Integer> vals = new ArrayList<>();
+        ops.add(x -> x);
+        ops.add(x -> x + 1);
+        ops.add(x -> x * x);
+        vals.add(1);
+        vals.add(2);
+        System.out.println(multifunctionalMapper.apply(ops).apply(vals));
+    }
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
@@ -67,5 +80,6 @@ public class SimpleFunction {
      * 3 балла
      */
     public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
-            (startValue, function) -> (start, end) -> IntStream.rangeClosed(start, end).reduce(startValue, function);
+            (startValue, function) -> (start, end) -> IntStream.rangeClosed(start, end)
+                    .reduce(startValue, function);
 }
