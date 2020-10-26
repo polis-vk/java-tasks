@@ -1,17 +1,32 @@
 package ru.mail.polis.homework.collections.streams.account;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Task {
+
+    public static void main(String[] args) throws InterruptedException {
+        Account account1= new Account(1000);
+        Account account2= new Account(2000);
+        Account account3= new Account(3000);
+        Date t = new Date();
+        account1.translateTo(account2, 100);
+        account1.translateTo(account2, 100);
+        account1.translateTo(account2, 100);
+        account1.translateTo(account2, 100);
+        account2.translateTo(account3, 2000);
+        System.out.println(paymentsSumByAccount(List.of(account2, account3, account1), t.getTime(), 5));
+    }
 
     /**
      * Метод должен вернуть сумму всех исходящих транзакций с аккаунта
      * 2 балла
      */
     public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
-        return Collections.emptyMap();
+        return transactions.stream()
+                .collect(HashMap::new,
+                        (map, v) -> map.merge(v.getOutAccount().getId(), v.getSum(), Long::sum),
+                        HashMap::putAll);
     }
 
     /**
@@ -37,6 +52,26 @@ public class Task {
      * 3 балла
      */
     public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
-        return Collections.emptyList();
+        return accounts.stream()
+                .sorted(Comparator.comparingLong(account ->
+                                account.getTransactionList().stream()
+                                        .filter(transaction -> transaction.getDate().getTime() >= t)
+                                        .collect(
+                                                Collectors.groupingBy(Transaction::getOutAccount,
+                                                        Collectors.summingLong(Transaction::getSum))
+                                        )
+                                        .entrySet().stream()
+                                        .reduce( - account.getBalance(),
+                                                (aLong, accountLongEntry) ->
+                                                        (aLong + (accountLongEntry.getKey() == account ?
+                                                                - accountLongEntry.getValue() :
+                                                                accountLongEntry.getValue())),
+                                                Long::sum)
+                        )
+                )
+                .map(Account::getId)
+                .skip(1)
+                .limit(n)
+                .collect(Collectors.toList());
     }
 }
