@@ -42,7 +42,7 @@ public class Transaction {
     }
 
     public String getOutgoingAccountIDAndBalance() {
-        return outgoingAccount.toString();
+        return outgoingAccount.getAccountId();
     }
 
     public Account getIncomingAccount() {
@@ -50,7 +50,7 @@ public class Transaction {
     }
 
     public String getIncomingAccountIDAndBalance() {
-        return incomingAccount.toString();
+        return incomingAccount.getAccountId();
     }
 
     public long getSum() {

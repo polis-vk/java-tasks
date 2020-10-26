@@ -41,7 +41,7 @@ public class Task {
                 .sorted(Comparator.comparing(account -> -account.getBalanceByDate(t)))
                 .skip(1)
                 .limit(n)
-                .map(Account::toString)
+                .map(Account::getAccountId)
                 .collect(Collectors.toList());
     }
 
@@ -71,6 +71,6 @@ public class Task {
         accounts.add(account2);
         accounts.add(account3);
 
-        System.out.println(paymentsSumByAccount(accounts, 1000000000, 2));
+        System.out.println(paymentsSumByAccount(accounts, 1000000, 2));
     }
 }

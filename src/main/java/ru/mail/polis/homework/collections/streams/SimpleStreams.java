@@ -49,12 +49,13 @@ public class SimpleStreams {
      * <p>
      * 3 балла
      */
+    private static final double G = 9.8;
+
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        final double G = 9.8;
-        final double SIN = Math.sin(2 * alpha) / G;
+        final double sin = Math.sin(2 * alpha) / G;
         return DoubleStream.iterate(v, changeV)
                 .limit(n)
-                .reduce((S, V) -> S + Math.pow(V, 2) * SIN).orElse(0);
+                .reduce((s, vNext) -> s + Math.pow(vNext, 2) * sin).orElse(0);
     }
 
     public static void main(String[] args) {

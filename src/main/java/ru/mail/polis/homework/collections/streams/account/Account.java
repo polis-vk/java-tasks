@@ -56,20 +56,19 @@ public class Account {
         boolean isOut = (this.outgoingTransactions.isEmpty());
 
         if (isIn && !isOut) {
-            return balance = -this.outgoingTransactions.stream().filter(t -> t.getDate().getTime() < date)
+            return -this.outgoingTransactions.stream().filter(t -> t.getDate().getTime() < date)
                     .map(Transaction::getSum)
                     .reduce((long) 0, Long::sum);
         }
 
-
         if (!isIn && isOut) {
-            return balance = this.incomingTransactions.stream().filter(t -> t.getDate().getTime() < date)
+            return this.incomingTransactions.stream().filter(t -> t.getDate().getTime() < date)
                     .map(Transaction::getSum)
                     .reduce((long) 0, Long::sum);
         }
 
         if (!isIn) {
-            return balance = this.incomingTransactions.stream()
+            return this.incomingTransactions.stream()
                     .filter(t -> t.getDate().getTime() < date)
                     .map(Transaction::getSum)
                     .reduce((long) 0, Long::sum) -
@@ -78,6 +77,7 @@ public class Account {
                             .map(Transaction::getSum)
                             .reduce((long) 0, Long::sum);
         }
+
         return 0;
     }
 
@@ -86,11 +86,7 @@ public class Account {
         return currentID;
     }
 
-    @Override
-    public String toString() {
-        return "Account{" +
-                "id=" + id +
-                ", balance=" + balance +
-                '}';
+    public String getAccountId() {
+        return "{" + "id=" + id + '}';
     }
 }
