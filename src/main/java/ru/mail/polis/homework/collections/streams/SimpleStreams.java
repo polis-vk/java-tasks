@@ -1,10 +1,17 @@
 package ru.mail.polis.homework.collections.streams;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.DoubleUnaryOperator;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static java.lang.Math.sin;
 
 public class SimpleStreams {
 
@@ -23,8 +30,16 @@ public class SimpleStreams {
      * Слово - набор символ между началом строки/ концом строки / пробелами / знаками препинания (.,;:!?)
      * 1 балл
      */
-    public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
-        return Collections.emptyMap();
+    public static Map<String, Long> createBadWordsDetectingStream(String text, List<String> badWords) {
+        String textWithoutSigns = text.replaceAll("[.,;:!?]", "").toLowerCase();
+        List<String> textWords = Arrays.asList(textWithoutSigns.split(" "));
+
+        return badWords.stream()
+                .collect(Collectors.toMap(value -> value, valueBadWords -> {
+                    return textWords.stream()
+                            .filter(value -> value.equals(valueBadWords))
+                            .count();
+                }));
     }
 
 
@@ -39,7 +54,17 @@ public class SimpleStreams {
      *
      * 3 балла
      */
+
+    /*
+        Я так понял что нужно посчитать сумму расстрояний его бросков?
+        Не очень понятно что делает функция changeV, если она выдает скорость от броска, то зачем нам начальная скорость?
+     */
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return 0;
+        DoubleUnaryOperator distant = velocity -> velocity*velocity*Math.sin(2*alpha)/9.8;
+        return IntStream.rangeClosed(1, n)
+                .asDoubleStream()
+                .map(changeV)
+                .map(distant)
+                .sum();
     }
 }
