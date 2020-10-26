@@ -81,11 +81,4 @@ public class Account {
     public long getId() {
         return id;
     }
-    
-    @Override
-    public String toString() {
-        return "Account{" +
-                "id=" + id +
-                '}';
-    }
 }

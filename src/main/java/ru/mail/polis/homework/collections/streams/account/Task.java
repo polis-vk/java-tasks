@@ -13,9 +13,8 @@ public class Task {
      */
     public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
         return transactions.stream()
-                .collect(Collectors
-                        .groupingBy(
-                                t -> t.getSrcAcc().toString(),
+                .collect(
+                        Collectors.groupingBy(t -> String.format("Account{id=%d}", t.getSrcAcc().getId()),
                                 Collectors.summingLong(Transaction::getSum)
                         ));
     }
@@ -48,7 +47,7 @@ public class Task {
                 .sorted((a, b) -> -Double.compare(a.getBalanceOnDate(new Date(t)), b.getBalanceOnDate(new Date(t))))
                 .skip(1)
                 .limit(n)
-                .map(Account::toString)
+                .map(acc -> String.format("Account{id=%d}", acc.getId()))
                 .collect(Collectors.toList());
     }
 }
