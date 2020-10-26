@@ -1,8 +1,7 @@
 package ru.mail.polis.homework.collections.streams.account;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Task {
 
@@ -10,8 +9,10 @@ public class Task {
      * Метод должен вернуть сумму всех исходящих транзакций с аккаунта
      * 2 балла
      */
-    public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
-        return Collections.emptyMap();
+    public static Long paymentsSumByAccount(Account account) {
+        return account.getAllTransactions().stream()
+                .filter(transaction -> transaction.getOutAccount() == account)
+                .map(Transaction::getSum).reduce(Long::sum).get();
     }
 
     /**
@@ -36,7 +37,21 @@ public class Task {
      * (обойтись без циклов и условий)
      * 3 балла
      */
-    public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
-        return Collections.emptyList();
+    public static List<Integer> paymentsSumByAccount(List<Account> accounts, long t, int n) {
+        for(Account account : accounts){
+            account.getAllTransactions().stream()
+                    .filter(transaction -> transaction.getOutAccount() == account)
+                    .filter(transaction -> transaction.getData() > t)
+                    .map(Transaction::getObrTransaction)
+                    .forEach(Transaction::makeTransaction);
+        }
+
+        return accounts.stream()
+                .sorted((a,b) -> b.getBalanse().compareTo(a.getBalanse()))
+                .skip(1)
+                .limit(n > accounts.size() ? accounts.size()-1 : n)
+                .map(Account::getId)
+                .collect(Collectors.toList());
+
     }
 }

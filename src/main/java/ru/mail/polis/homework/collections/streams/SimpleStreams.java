@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
+import java.util.stream.IntStream;
 
 public class SimpleStreams {
 
@@ -13,7 +14,8 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return false;
+        return IntStream.range(2, n-1)
+                .allMatch(value -> n % value != 0);
     }
 
     /**
