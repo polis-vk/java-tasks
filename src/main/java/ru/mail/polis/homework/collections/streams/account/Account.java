@@ -34,7 +34,7 @@ public class Account {
     }
 
     public long getBalanceInTime(long t) {
-        return balance +=
+        return balance +
                 getInTransactions().stream()
                         .filter(e -> e.getDate().getTime() >= t)
                         .map(Transaction::getSum)

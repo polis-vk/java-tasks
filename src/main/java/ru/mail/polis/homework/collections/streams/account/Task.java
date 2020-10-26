@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Task {
-
     /**
      * Метод должен вернуть сумму всех исходящих транзакций с аккаунта
      * 2 балла
