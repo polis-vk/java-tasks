@@ -1,8 +1,10 @@
 package ru.mail.polis.homework.collections.mail;
 
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -13,6 +15,8 @@ import java.util.function.Consumer;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  */
 public class MailService implements Consumer {
+    Map<String, Integer> sendlers = new HashMap<>();
+    Map<String, Integer> recipient = new HashMap<>();
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
@@ -20,7 +24,6 @@ public class MailService implements Consumer {
      */
     @Override
     public void accept(Object o) {
-
     }
 
     /**
@@ -34,14 +37,26 @@ public class MailService implements Consumer {
      * Возвращает самого популярного отправителя
      */
     public String getPopularSender() {
-        return null;
+        if ((sendlers.isEmpty())){
+            return "";
+        }
+        return sendlers.entrySet().stream()
+                .max(Map.Entry.<String, Integer>comparingByValue())
+                .get()
+                .getKey();
     }
 
     /**
      * Возвращает самого популярного получателя
      */
     public String getPopularRecipient() {
-        return null;
+        if(recipient.isEmpty() ){
+            return "";
+        }
+        return recipient.entrySet().stream()
+                .max(Map.Entry.<String, Integer>comparingByValue())
+                .get()
+                .getKey();
     }
 
     /**
