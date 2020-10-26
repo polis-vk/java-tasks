@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.functions;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -7,6 +8,7 @@ import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
 import java.util.function.IntUnaryOperator;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SimpleFunction {
@@ -33,7 +35,7 @@ public class SimpleFunction {
      * 2 балла
      */
     static <F, S, T, R> R curring(TerFunction<F, S, T, R> f, F x, S y, T z) {
-        return f.apply(x, y ,z);
+        return f.apply(x, y, z);
     }
 
     /**
@@ -42,7 +44,17 @@ public class SimpleFunction {
      * Пример: multifunctionalMapper.apply([x -> x, x -> x + 1, x -> x * x]).apply([1, 2]) = [1, 2, 4, 2, 3, 9]
      * 4 балла
      */
-    public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper = null;
+    public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
+            operators -> numbers -> numbers.stream()
+                    .map(number -> IntStream.rangeClosed(1, operators.size())
+                            .mapToObj(opNum -> operators.stream()
+                                    .limit(opNum)
+                                    .reduce(op -> op, IntUnaryOperator::andThen))
+                            .mapToInt(op -> op.applyAsInt(number))
+                            .boxed()
+                            .collect(Collectors.toList()))
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList());
 
 
     /**
@@ -55,6 +67,7 @@ public class SimpleFunction {
      * 3 балла
      */
     public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
-            (integer, intBinaryOperator) -> (start, end) -> IntStream.range(start, end)
+            (integer, intBinaryOperator) -> (start, end) -> IntStream
+                    .range(start, end)
                     .reduce(integer, intBinaryOperator);
 }
