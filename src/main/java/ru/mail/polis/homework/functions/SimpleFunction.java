@@ -40,10 +40,15 @@ public class SimpleFunction {
      * 4 балла
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            list -> numbers -> numbers.stream()
-                    .map(d -> list.stream()
-                            .reduce(x -> x,
-                                    (op1, op2) -> x -> op1.applyAsInt(op2.applyAsInt(x))).applyAsInt(d)).collect(Collectors.toList());
+            list -> numbers ->
+                    numbers.stream()
+                            .map(d -> list.stream()
+                                    .reduce(
+                                            x -> x,
+                                            (op1, op2) -> x ->
+                                                    op2.applyAsInt(op1.applyAsInt(x)))
+                                    .applyAsInt(d))
+                            .collect(Collectors.toList());
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,

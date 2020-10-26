@@ -13,8 +13,10 @@ public class Task {
      */
     public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
         return transactions.stream()
-                .collect(Collectors
-                        .toMap(t -> t.getSourceAccount().toString(), Transaction::getSum, Long::sum));
+                .collect(Collectors.toMap(
+                        t -> t.getSourceAccount().toString(),
+                        Transaction::getSum, Long::sum)
+                );
     }
 
     /**

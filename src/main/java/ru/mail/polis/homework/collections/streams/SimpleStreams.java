@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class SimpleStreams {
+    private static final double G = 9.8;
+
     /**
      * Реализуйте проверку на простоту входящего числа с помощью стримов.
      * Никаких циклов.
@@ -49,12 +52,11 @@ public class SimpleStreams {
      * 3 балла
      */
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        final double G = 9.8;
-        final double SIN = Math.sin(alpha * 2);
+        final double sin = Math.sin(alpha * 2);
 
-        return IntStream.range(1, n)
-                .mapToDouble(x -> x)
-                .reduce(0,
-                        (sum, h) -> sum + (Math.pow(changeV.applyAsDouble(h) * v, 2) * SIN / G));
+        return DoubleStream
+                .iterate(v, changeV)
+                .limit(n)
+                .reduce(0, (acc, vi) -> Math.pow(vi, 2) * sin / G);
     }
 }

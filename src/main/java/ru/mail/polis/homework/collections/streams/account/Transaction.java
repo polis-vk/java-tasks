@@ -12,11 +12,25 @@ import java.time.LocalDate;
  * 1 балл
  */
 public class Transaction {
-    private Long id;
+    private final Long id;
     private LocalDate date;
-    private Account sourceAccount;
-    private Account targetAccount;
-    private Long sum;
+    private final Account sourceAccount;
+    private final Account targetAccount;
+    private final Long sum;
+
+    public Transaction(
+            Long id,
+            LocalDate date,
+            Account sourceAccount,
+            Account targetAccount,
+            Long sum
+    ) {
+        this.id = id;
+        this.date = date;
+        this.sourceAccount = sourceAccount;
+        this.targetAccount = targetAccount;
+        this.sum = sum;
+    }
 
     public Long getId() {
         return id;
