@@ -71,11 +71,14 @@ public class SimpleFunction {
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
             list -> numbers -> numbers.stream()
                     .flatMap(number ->
-                            IntStream.rangeClosed(1, list.size()).map(count -> list.stream()
-                                    .limit(count)
-                                    .reduce(x -> x, (op1, op2) -> x -> op2.applyAsInt(op1.applyAsInt(x)))
-                                    .applyAsInt(number))
-                            .boxed()
+                            IntStream.rangeClosed(1, list.size())
+                                    .map(count ->
+                                            list.stream()
+                                            .limit(count)
+                                            .reduce(x -> x, (op1, op2) -> x -> op2.applyAsInt(op1.applyAsInt(x)))
+                                            .applyAsInt(number)
+                                    )
+                                    .boxed()
                     )
                     .collect(Collectors.toList());
 
@@ -89,11 +92,8 @@ public class SimpleFunction {
      * 3 балла
      */
     public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (seed, bi) ->
-            (a, b) -> IntStream.rangeClosed(a, b).reduce(seed, bi);
+            (a, b) -> IntStream.rangeClosed(a, b)
+                    .reduce(seed, bi);
 
-    public static final IntBinaryOperator sumOperator = reduceIntOperator.apply(0, (a, b) -> a + b);
-
-    public static void main(String[] args) {
-        System.out.println(sumOperator.applyAsInt(2, 10));
-    }
+    public static final IntBinaryOperator sumOperator = reduceIntOperator.apply(0, Integer::sum);
 }

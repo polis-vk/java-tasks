@@ -9,10 +9,10 @@ public class Task {
      * Метод должен вернуть сумму всех исходящих транзакций с аккаунта
      * 2 балла
      */
-    public static Map<Account, Long> paymentsSumByAccount(List<Transaction> transactions) {
+    public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
         return transactions.stream()
                 .collect(Collectors.groupingBy(
-                                Transaction::getSenderAccount,
+                                Transaction::getSenderId,
                                 Collectors.summingLong(Transaction::getCost)
                         )
                 );
@@ -41,6 +41,11 @@ public class Task {
      * 3 балла
      */
     public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
-        return Collections.emptyList();
+        return accounts.stream()
+                .sorted(Comparator.comparingLong(account -> account.getBalanceAtTime(t)))
+                .map(Account::getId)
+                .skip(1)
+                .limit(n)
+                .collect(Collectors.toList());
     }
 }

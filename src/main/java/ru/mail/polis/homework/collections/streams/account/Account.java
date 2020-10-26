@@ -1,9 +1,9 @@
 package ru.mail.polis.homework.collections.streams.account;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 /**
  * Реализуйте класс Account с полями:
@@ -14,7 +14,7 @@ import java.util.Queue;
  */
 public class Account {
     final private String id;
-    private final Queue<Transaction> transactions = new PriorityQueue<>();
+    private final List<Transaction> transactionHistory = new LinkedList<>();
     private final Map<Transaction, TransactionType> transactionTypeMap = new HashMap<>();
     private Long balance;
 
@@ -37,13 +37,18 @@ public class Account {
         return id;
     }
 
-    public Queue<Transaction> getTransactions() {
-        return transactions;
+    public List<Transaction> getTransactionHistory() {
+        return transactionHistory;
     }
 
     public void addTransaction(Transaction transaction, TransactionType transactionType) {
-        transactions.add(transaction);
+        transactionHistory.add(transaction);
         transactionTypeMap.put(transaction, transactionType);
+        if (transactionType == TransactionType.INCOMING) {
+            balance += transaction.getCost();
+        } else {
+            balance -= transaction.getCost();
+        }
     }
 
     public Long getBalance() {
@@ -55,7 +60,19 @@ public class Account {
         return transactionTypeMap.get(transaction);
     }
 
-    public void setBalance(Long balance) {
-        this.balance = balance;
+    public Long getBalanceAtTime(long time) {
+        return getBalance() -
+                transactionHistory.stream()
+                        .filter(transaction ->
+                                transaction.getDate().getTime() > time &&
+                                        transactionTypeMap.get(transaction) == TransactionType.INCOMING)
+                        .map(Transaction::getCost)
+                        .reduce(0L, Long::sum) +
+                transactionHistory.stream()
+                        .filter(transaction ->
+                                transaction.getDate().getTime() > time &&
+                                        transactionTypeMap.get(transaction) == TransactionType.OUTGOING)
+                        .map(Transaction::getCost)
+                        .reduce(0L, Long::sum);
     }
 }

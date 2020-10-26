@@ -45,4 +45,12 @@ public class Transaction {
     public Long getCost() {
         return cost;
     }
+
+    public String getSenderId() {
+        return senderAccount.getId();
+    }
+
+    public String getRecipientId() {
+        return recipientAccount.getId();
+    }
 }

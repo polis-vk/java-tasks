@@ -1,10 +1,11 @@
 package ru.mail.polis.homework.collections.streams;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
-import java.util.logging.StreamHandler;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -16,7 +17,10 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return IntStream.rangeClosed(2, n / 2).mapToObj(i -> n % i != 0).reduce(true, (a, b) -> a && b);
+        return IntStream
+                .rangeClosed(2, n / 2)
+                .mapToObj(i -> n % i != 0)
+                .reduce(true, (a, b) -> a && b);
     }
 
     /**
@@ -25,10 +29,16 @@ public class SimpleStreams {
      * 1 балл
      */
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
-        //List<String> list = text.split("![\s\n\r.,;:!?]");
-        return Collections.emptyMap();
+        return  Arrays.stream(text.split("[\\s\\n\\r.,;:!?]"))
+                .filter(badWords::contains)
+                .collect(
+                        Collectors.toMap(
+                                Function.identity(),
+                                e -> 1,
+                                Integer::sum
+                        )
+                );
     }
-
 
     /**
      * Маленький мальчик кидает мячик n раз в поле силы тяжести под углом alpha к поверхности земли.
@@ -41,7 +51,13 @@ public class SimpleStreams {
      *
      * 3 балла
      */
+    public final static double FREE_FALL_ACCELERATION = 9.8;
+
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return 0;
+        return Stream
+                .iterate(v, changeV::applyAsDouble)
+                .limit(n)
+                .reduce(0.0, Double::sum)
+                * Math.sin(2 * alpha) / FREE_FALL_ACCELERATION;
     }
 }
