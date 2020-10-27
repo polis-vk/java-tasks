@@ -1,9 +1,8 @@
 package ru.mail.polis.homework.collections.streams.account;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Реализуйте класс Account с полями:
@@ -13,9 +12,8 @@ import java.util.Map;
  * 1 балл
  */
 public class Account {
-    final private String id;
-    private final List<Transaction> transactionHistory = new LinkedList<>();
-    private final Map<Transaction, TransactionType> transactionTypeMap = new HashMap<>();
+    private final String id;
+    private final Map<Transaction, TransactionType> transactionHistory = new HashMap<>();
     private Long balance;
 
     private enum TransactionType {
@@ -37,13 +35,12 @@ public class Account {
         return id;
     }
 
-    public List<Transaction> getTransactionHistory() {
-        return transactionHistory;
+    public Set<Transaction> getTransactionHistory() {
+        return transactionHistory.keySet();
     }
 
     public void addTransaction(Transaction transaction, TransactionType transactionType) {
-        transactionHistory.add(transaction);
-        transactionTypeMap.put(transaction, transactionType);
+        transactionHistory.put(transaction, transactionType);
         if (transactionType == TransactionType.INCOMING) {
             balance += transaction.getCost();
         } else {
@@ -56,23 +53,27 @@ public class Account {
     }
 
     public TransactionType getTransactionType(Transaction transaction) throws IllegalArgumentException {
-        if (!transactionTypeMap.containsKey(transaction)) throw new IllegalArgumentException();
-        return transactionTypeMap.get(transaction);
+        if (!transactionHistory.containsKey(transaction)) {
+            throw new IllegalArgumentException();
+        }
+        return transactionHistory.get(transaction);
     }
 
     public Long getBalanceAtTime(long time) {
         return getBalance() -
-                transactionHistory.stream()
+                transactionHistory.entrySet().stream()
                         .filter(transaction ->
-                                transaction.getDate().getTime() > time &&
-                                        transactionTypeMap.get(transaction) == TransactionType.INCOMING)
-                        .map(Transaction::getCost)
+                                transaction.getValue() == TransactionType.INCOMING)
+                        .filter(transaction ->
+                                transaction.getKey().getDate().getTime() > time)
+                        .map(transaction -> transaction.getKey().getCost())
                         .reduce(0L, Long::sum) +
-                transactionHistory.stream()
+                transactionHistory.entrySet().stream()
                         .filter(transaction ->
-                                transaction.getDate().getTime() > time &&
-                                        transactionTypeMap.get(transaction) == TransactionType.OUTGOING)
-                        .map(Transaction::getCost)
+                                transaction.getValue() == TransactionType.OUTGOING)
+                        .filter(transaction ->
+                                transaction.getKey().getDate().getTime() > time)
+                        .map(transaction -> transaction.getKey().getCost())
                         .reduce(0L, Long::sum);
     }
 }

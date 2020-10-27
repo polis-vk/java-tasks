@@ -12,11 +12,11 @@ import java.util.Date;
  * 1 балл
  */
 public class Transaction {
-    final private String id;
-    final private Date date;
-    final private Account recipientAccount;
-    final private Account senderAccount;
-    final private Long cost;
+    private final String id;
+    private final Date date;
+    private final Account recipientAccount;
+    private final Account senderAccount;
+    private final Long cost;
 
     public Transaction(String id, Date date, Account recipientAccount, Account senderAccount, Long cost) {
         this.id = id;
@@ -44,13 +44,5 @@ public class Transaction {
 
     public Long getCost() {
         return cost;
-    }
-
-    public String getSenderId() {
-        return senderAccount.getId();
-    }
-
-    public String getRecipientId() {
-        return recipientAccount.getId();
     }
 }

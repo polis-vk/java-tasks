@@ -25,24 +25,14 @@ public class WordFrequency {
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-        return lines.flatMap(
-                line -> Arrays.stream(line.split("[\\s\\n\\r.,;:!\\-?]+")))
+        return lines.flatMap(line -> Arrays.stream(line.split("[\\s\\n\\r.,;:!\\-?]+")))
                 .map(String::toLowerCase)
                 .collect(Collectors.groupingBy(word -> word, Collectors.counting()))
                 .entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .limit(10)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
-
-    public static void main(String[] args) {
-        wordFrequency(
-                Stream.of(
-                        "abcd abc ab a c d e f g h",
-                        "z x u j k o p J J J J J J; J"
-                )
-        ).forEach(System.out::println);
-    }
-
 }
