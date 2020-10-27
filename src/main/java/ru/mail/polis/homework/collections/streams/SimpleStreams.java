@@ -34,8 +34,7 @@ public class SimpleStreams {
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
         return Stream.of(text.split("[\\s\\n.,;:!?]+"))
                 .filter(badWords::contains)
-                .collect(Collectors.groupingBy(x -> x, Collectors.counting()))
-                .entrySet()
+                .collect(Collectors.groupingBy(x -> x, Collectors.counting())).entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, x -> x.getValue().intValue()));
     }
@@ -55,8 +54,7 @@ public class SimpleStreams {
         final double sin = Math.sin(alpha * 2);
 
         return DoubleStream
-                .iterate(v, changeV)
-                .limit(n)
+                .iterate(v, changeV).limit(n)
                 .reduce(0, (acc, vi) -> Math.pow(vi, 2) * sin / G);
     }
 }

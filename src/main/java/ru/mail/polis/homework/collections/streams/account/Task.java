@@ -14,7 +14,7 @@ public class Task {
     public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
         return transactions.stream()
                 .collect(Collectors.toMap(
-                        t -> t.getSourceAccount().toString(),
+                        t -> "Account: " + t.getId(),
                         Transaction::getSum, Long::sum)
                 );
     }
@@ -41,11 +41,9 @@ public class Task {
      * (обойтись без циклов и условий)
      * 3 балла
      */
-
-    //TODO: Понять причем тут время вообще, дата?
     public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
         return accounts.stream()
-                .collect(Collectors.toMap(Account::getId, Task::getTotalBalanceOf))
+                .collect(Collectors.toMap(Account::getId, a -> getTotalBalanceOf(a, t)))
                 .entrySet()
                 .stream()
                 .sorted(Map.Entry.<Long, Long>comparingByValue().reversed())
@@ -56,14 +54,16 @@ public class Task {
                 .collect(Collectors.toList());
     }
 
-    private static long getTotalBalanceOf(Account account) {
+    private static long getTotalBalanceOf(Account account, long t) {
         long positive = account.getInTransactions()
                 .stream()
+                .filter(time -> time.getDate().getSecond() < t)
                 .map(Transaction::getSum)
                 .reduce(0L, Long::sum);
 
         long negative = account.getOutTransactions()
                 .stream()
+                .filter(time -> time.getDate().getSecond() < t)
                 .map(Transaction::getSum)
                 .reduce(0L, (a, b) -> a - b);
 

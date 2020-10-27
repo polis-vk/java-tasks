@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.functions;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -18,6 +19,7 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
+    @FunctionalInterface
     interface TerFunction<F, S, T, R> {
         R apply(F arg1, S arg2, T arg3);
     }
@@ -39,16 +41,14 @@ public class SimpleFunction {
      * Пример: multifunctionalMapper.apply([x -> x, x -> x + 1, x -> x * x]).apply([1, 2]) = [1, 2, 4, 2, 3, 9]
      * 4 балла
      */
+    
+    //TODO: не готово
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            list -> numbers ->
+            operators -> numbers ->
                     numbers.stream()
-                            .map(d -> list.stream()
-                                    .reduce(
-                                            x -> x,
-                                            (op1, op2) -> x ->
-                                                    op2.applyAsInt(op1.applyAsInt(x)))
-                                    .applyAsInt(d))
-                            .collect(Collectors.toList());
+                            .map(n -> operators
+                                    .stream()
+                                    .reduce(x -> x, (op1, op2) -> x -> op1.applyAsInt(op2.applyAsInt(x))).applyAsInt(n)).collect(Collectors.toList());
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,

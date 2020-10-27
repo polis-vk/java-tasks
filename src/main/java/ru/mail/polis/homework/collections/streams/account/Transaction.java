@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.streams.account;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Реализуйте класс Transaction с полями:
@@ -13,18 +14,16 @@ import java.time.LocalDate;
  */
 public class Transaction {
     private final Long id;
-    private LocalDate date;
+    private final LocalDateTime date;
     private final Account sourceAccount;
     private final Account targetAccount;
     private final Long sum;
 
-    public Transaction(
-            Long id,
-            LocalDate date,
-            Account sourceAccount,
-            Account targetAccount,
-            Long sum
-    ) {
+    public Transaction(Long id,
+                       LocalDateTime date,
+                       Account sourceAccount,
+                       Account targetAccount,
+                       Long sum) {
         this.id = id;
         this.date = date;
         this.sourceAccount = sourceAccount;
@@ -36,12 +35,8 @@ public class Transaction {
         return id;
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
     }
 
     public Account getSourceAccount() {
