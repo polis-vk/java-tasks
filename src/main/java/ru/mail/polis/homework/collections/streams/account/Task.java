@@ -9,9 +9,9 @@ public class Task {
      * Метод должен вернуть сумму всех исходящих транзакций с аккаунта
      * 2 балла
      */
-    public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
+    public static Map<Long, Long> paymentsSumByAccount(List<Transaction> transactions) {
         return transactions.stream()
-                .collect(Collectors.groupingBy(Transaction::getOutgoingAccountIDAndBalance, Collectors.summingLong(Transaction::getSum)));
+                .collect(Collectors.groupingBy(Transaction::getId, Collectors.summingLong(Transaction::getSum)));
     }
 
     /**
@@ -36,12 +36,12 @@ public class Task {
      * (обойтись без циклов и условий)
      * 3 балла
      */
-    public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
+    public static List<Long> paymentsSumByAccount(List<Account> accounts, long t, int n) {
         return accounts.stream()
                 .sorted(Comparator.comparing(account -> -account.getBalanceByDate(t)))
                 .skip(1)
                 .limit(n)
-                .map(Account::getAccountId)
+                .map(Account::getId)
                 .collect(Collectors.toList());
     }
 
@@ -71,6 +71,6 @@ public class Task {
         accounts.add(account2);
         accounts.add(account3);
 
-        System.out.println(paymentsSumByAccount(accounts, 1000000, 2));
+        System.out.println(paymentsSumByAccount(accounts, 10000, 2));
     }
 }

@@ -41,16 +41,8 @@ public class Transaction {
         return outgoingAccount;
     }
 
-    public String getOutgoingAccountIDAndBalance() {
-        return outgoingAccount.getAccountId();
-    }
-
     public Account getIncomingAccount() {
         return incomingAccount;
-    }
-
-    public String getIncomingAccountIDAndBalance() {
-        return incomingAccount.getAccountId();
     }
 
     public long getSum() {

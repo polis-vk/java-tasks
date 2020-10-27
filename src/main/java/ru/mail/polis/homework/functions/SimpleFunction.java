@@ -50,15 +50,11 @@ public class SimpleFunction {
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
             operators -> numbers -> numbers.stream()
-                    .map(number -> {
-                        int bound = operators.size() + 1;
-                        return IntStream.range(1, bound)
-                                .mapToObj(i -> operators.stream()
-                                        .limit(i)
-                                        .reduce(operator -> operator, IntUnaryOperator::andThen).applyAsInt(number))
-                                .collect(Collectors.toList());
-                    })
-                    .flatMap(List::stream)
+                    .flatMap(number -> IntStream.range(1, operators.size() + 1)
+                            .mapToObj(index -> operators.stream()
+                                    .limit(index)
+                                    .reduce(operator -> operator, IntUnaryOperator::andThen))
+                            .map(operator -> operator.applyAsInt(number)))
                     .collect(Collectors.toList());
 
     /**

@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.collections.streams.account;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,8 +13,8 @@ import java.util.List;
 public class Account {
     private final long id;
     private static long currentID;
-    private final List<Transaction> incomingTransactions = new LinkedList<>();
-    private final List<Transaction> outgoingTransactions = new LinkedList<>();
+    private final List<Transaction> incomingTransactions = new ArrayList<>();
+    private final List<Transaction> outgoingTransactions = new ArrayList<>();
     private long balance;
 
     public Account() {
@@ -52,41 +52,18 @@ public class Account {
     }
 
     public long getBalanceByDate(long date) {
-        boolean isIn = (this.incomingTransactions.isEmpty());
-        boolean isOut = (this.outgoingTransactions.isEmpty());
-
-        if (isIn && !isOut) {
-            return -this.outgoingTransactions.stream().filter(t -> t.getDate().getTime() < date)
-                    .map(Transaction::getSum)
-                    .reduce((long) 0, Long::sum);
-        }
-
-        if (!isIn && isOut) {
-            return this.incomingTransactions.stream().filter(t -> t.getDate().getTime() < date)
-                    .map(Transaction::getSum)
-                    .reduce((long) 0, Long::sum);
-        }
-
-        if (!isIn) {
-            return this.incomingTransactions.stream()
-                    .filter(t -> t.getDate().getTime() < date)
-                    .map(Transaction::getSum)
-                    .reduce((long) 0, Long::sum) -
-                    this.outgoingTransactions.stream()
-                            .filter(t -> t.getDate().getTime() < date)
-                            .map(Transaction::getSum)
-                            .reduce((long) 0, Long::sum);
-        }
-
-        return 0;
+        return incomingTransactions.stream()
+                .filter(t -> t.getDate().getTime() < date)
+                .map(Transaction::getSum)
+                .reduce((long) 0, Long::sum) -
+                outgoingTransactions.stream()
+                        .filter(t -> t.getDate().getTime() < date)
+                        .map(Transaction::getSum)
+                        .reduce((long) 0, Long::sum);
     }
 
     private long generateID() {
         currentID++;
         return currentID;
-    }
-
-    public String getAccountId() {
-        return "{" + "id=" + id + '}';
     }
 }

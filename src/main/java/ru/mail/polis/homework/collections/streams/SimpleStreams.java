@@ -52,10 +52,10 @@ public class SimpleStreams {
     private static final double G = 9.8;
 
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        final double sin = Math.sin(2 * alpha) / G;
+        final double sin2Alpha = Math.sin(2 * alpha);
         return DoubleStream.iterate(v, changeV)
                 .limit(n)
-                .reduce((s, vNext) -> s + Math.pow(vNext, 2) * sin).orElse(0);
+                .reduce((s, vNext) -> s + Math.pow(vNext, 2) * sin2Alpha / G).orElse(0);
     }
 
     public static void main(String[] args) {
