@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.streams;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -12,10 +13,22 @@ public class WordFrequencyTest {
 
     @Test
     public void simple() {
-        Stream<String> innerStream = Arrays.stream(new String[]{"Мама мыла мыла мыла раму!"});
-        List<String> expected = Arrays.asList("мыла", "мама", "раму");
+        Stream<String> innerStream = Arrays.stream(new String[]{"Mother wash wash wash window!"});
+        List<String> expected = Arrays.asList("wash", "mother", "window");
         List<String> actual = WordFrequency.wordFrequency(innerStream);
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void simpleTwo(){
+        Stream<String> innerStream = Arrays.stream(new String[]{"Mother wash wash wash window!",
+                "mother! mother! mother!",
+                "i can see window"});
+
+        List<String> obtained = WordFrequency.wordFrequency(innerStream);
+
+        List<String> expected = Arrays.asList("mother", "wash", "window", "can", "i", "see");
+        Assert.assertEquals(expected, obtained);
     }
 
     @Test
@@ -35,8 +48,8 @@ public class WordFrequencyTest {
     @Test
     public void Oops() {
         Stream<String> innerStream = Arrays.stream(new String[]{
-                "Шел я шел,а потом еще шел,и наконец,дошел"});
-        List<String> expected = Arrays.asList("шел", "а", "дошел", "еще", "и", "наконец", "потом", "я");
+                "Go i go,but then still go,and finally,reached"});
+        List<String> expected = Arrays.asList("go", "and", "but", "finally", "i", "reached", "still", "then");
         List<String> actual = WordFrequency.wordFrequency(innerStream);
         assertEquals(expected, actual);
     }
