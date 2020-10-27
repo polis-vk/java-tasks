@@ -44,16 +44,21 @@ public class SimpleFunction {
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
             intUnaryOperators -> integers -> integers.stream()
-                                .peek(System.out::println)
-                                .map(integer -> intUnaryOperators.stream()
-                                                    .map(intUnaryOperator ->
-                                                        intUnaryOperator.applyAsInt(integer)
-                                                    )
-                                                    .collect(Collectors.toList()))
-                                .map(Collection::stream)
-                                .reduce(Stream::concat)
-                                .get()
+                                //.peek(System.out::println)
+                                .map(integer -> IntStream.rangeClosed(1, intUnaryOperators.size())
+                                                        .mapToObj(value -> intUnaryOperators.stream()
+                                                                .limit(value)
+                                                                //.peek(System.out::println)
+                                                                .reduce(operator -> operator, IntUnaryOperator::andThen))
+                                                                .map(intUnaryOperator -> intUnaryOperator.applyAsInt(integer))
+                                                        //.peek(System.out::println)
+                                                        .collect(Collectors.toList()))
+                                                        //.peek(integers1 -> System.out.println(Arrays.toString(integers1.toArray())))
+                                .flatMap(Collection::stream)
+                                //.peek(System.out::println)
                                 .collect(Collectors.toList());
+
+
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
