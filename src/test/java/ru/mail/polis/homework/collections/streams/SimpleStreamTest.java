@@ -9,6 +9,13 @@ import java.util.function.DoubleUnaryOperator;
 public class SimpleStreamTest {
 
     @Test
+    public void isPrimeTest_Get1_ReturnFalse(){
+        boolean obtained = SimpleStreams.isPrime(1);
+
+        Assert.assertFalse(obtained);
+    }
+
+    @Test
     public void isPrimeTest_ReturnTrue(){
         boolean obtained = SimpleStreams.isPrime(17);
 

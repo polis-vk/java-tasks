@@ -21,6 +21,9 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
+        if(n == 1){
+            return false;
+        }
         return IntStream.range(2, n-1)
                 .allMatch(value -> n % value != 0);
     }
