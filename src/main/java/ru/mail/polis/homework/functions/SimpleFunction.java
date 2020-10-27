@@ -55,6 +55,7 @@ public class SimpleFunction {
                     .collect(Collectors.toList());
 
 
+
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
      * которая на заданном интервале (входящие аргументы результирующей функции) считает преобразование всех целых чисел
@@ -68,4 +69,5 @@ public class SimpleFunction {
             (seed, bi) -> (start, end) -> IntStream.iterate(start, x -> x <= end, x -> x += 1).reduce(seed, bi);
 
     public static final IntBinaryOperator sumOperator = reduceIntOperator.apply(0, (a, b) -> a * b);
+
 }
