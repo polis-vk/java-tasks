@@ -18,7 +18,12 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
-    interface TerFunction {
+    interface TerFunction<T, U, V, R> {
+        R apply(T arg1, U arg2, V arg3);
+
+        default <K> TerFunction<T, U, V, K> andThen(Function<? super R, ? extends K> after) {
+            return (t, u, v) -> after.apply(this.apply(t, u, v));
+        }
 
     }
 
@@ -28,8 +33,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
-        return null;
+    static <T, U, V, R> Function<T, Function<U, Function<V, R>>> curring(TerFunction<T, U, V, R> terFunction) {
+        return  (T var1) -> (U var2) -> (V var3) -> terFunction.apply(var1, var2, var3);
     }
 
 
@@ -40,7 +45,16 @@ public class SimpleFunction {
      * 4 балла
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            a -> null;
+            (operatorList) -> (intList) -> {
+                List<Integer> result = Arrays.asList();
+                for (Integer number : intList) {
+                    for (IntUnaryOperator operator : operatorList) {
+                        number = operator.applyAsInt(number);
+                        result.add(number);
+                    }
+                }
+                return result;
+            };
 
 
     /**
@@ -52,5 +66,11 @@ public class SimpleFunction {
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 3 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (start, function) -> (a, b) ->  {
+        Integer value = start;
+        for (int i = a; i <= b; ++i) {
+            value = function.applyAsInt(value, i);
+        }
+        return value;
+    };
 }
