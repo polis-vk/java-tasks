@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.collections.streams.account;
 
+import java.util.Date;
+
 /**
  * Реализуйте класс Transaction с полями:
  * id
@@ -10,10 +12,37 @@ package ru.mail.polis.homework.collections.streams.account;
  * 1 балл
  */
 public class Transaction {
-    public Account getAccount() {
-        return null;
+    private final String id;
+    private final Date data;
+    private final String incomingId;
+    private final String outgoingId;
+    private final Long sum;
+
+    public Transaction(String id, Date data, String incomingAcc, String outgoingAcc, Long sum) {
+        this.id = id;
+        this.data = data;
+        this.incomingId = incomingAcc;
+        this.outgoingId = outgoingAcc;
+        this.sum = sum;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public Date getData() {
+        return data;
+    }
+
     public Long getSum() {
-        return null;
+        return sum;
+    }
+
+    public String getIncomingId() {
+        return incomingId;
+    }
+
+    public String getOutgoingId() {
+        return outgoingId;
     }
 }
