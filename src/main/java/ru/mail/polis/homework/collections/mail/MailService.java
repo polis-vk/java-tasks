@@ -15,9 +15,6 @@ import java.util.function.Consumer;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  */
 public class MailService implements Consumer {
-    Map<String, Integer> sendlers = new HashMap<>();
-    Map<String, Integer> recipient = new HashMap<>();
-
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
      * 1 балл
@@ -37,26 +34,14 @@ public class MailService implements Consumer {
      * Возвращает самого популярного отправителя
      */
     public String getPopularSender() {
-        if ((sendlers.isEmpty())){
-            return "";
-        }
-        return sendlers.entrySet().stream()
-                .max(Map.Entry.<String, Integer>comparingByValue())
-                .get()
-                .getKey();
+        return null;
     }
 
     /**
      * Возвращает самого популярного получателя
      */
     public String getPopularRecipient() {
-        if(recipient.isEmpty() ){
-            return "";
-        }
-        return recipient.entrySet().stream()
-                .max(Map.Entry.<String, Integer>comparingByValue())
-                .get()
-                .getKey();
+        return null;
     }
 
     /**
