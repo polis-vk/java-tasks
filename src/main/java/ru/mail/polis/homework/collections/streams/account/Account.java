@@ -2,7 +2,6 @@ package ru.mail.polis.homework.collections.streams.account;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Реализуйте класс Account с полями:
