@@ -27,19 +27,15 @@ public class Account {
     private BigInteger balance;
 
     public Account(BigInteger startBalance) {
-        this.id = generateId();
+        id = generateId();
         inTransactions = new ArrayList<>();
         outTransactions = new ArrayList<>();
         this.startBalance = startBalance;
-        this.balance = startBalance;
+        balance = startBalance;
     }
 
     public Account() {
-        this.id = generateId();
-        inTransactions = new ArrayList<>();
-        outTransactions = new ArrayList<>();
-        this.startBalance = new BigInteger("0");
-        this.balance = this.startBalance;
+        this(new BigInteger("0"));
     }
 
     public long getId() {

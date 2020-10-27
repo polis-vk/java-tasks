@@ -51,8 +51,7 @@ public class SimpleFunction {
 
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
             operators -> numbers -> numbers.stream()
-                    .flatMap(value -> IntStream
-                            .range(0, operators.size())
+                    .flatMap(value -> IntStream.range(0, operators.size())
                             .mapToObj(it -> operators.stream()
                                     .limit(it + 1)
                                     .reduce(operator -> operator, IntUnaryOperator::andThen))
@@ -60,13 +59,8 @@ public class SimpleFunction {
                     .collect(Collectors.toList());
 
     public static void main(String[] args) {
-        List<IntUnaryOperator> ops = new ArrayList<>();
-        List<Integer> vals = new ArrayList<>();
-        ops.add(x -> x);
-        ops.add(x -> x + 1);
-        ops.add(x -> x * x);
-        vals.add(1);
-        vals.add(2);
+        List<IntUnaryOperator> ops = Arrays.asList(x -> x, x -> x + 1, x -> x * x);
+        List<Integer> vals = Arrays.asList(1, 2);
         System.out.println(multifunctionalMapper.apply(ops).apply(vals));
     }
 
