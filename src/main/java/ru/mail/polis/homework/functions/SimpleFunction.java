@@ -20,7 +20,6 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
-    @FunctionalInterface
     interface TerFunction <T, U, G, R>{
         /**
          * Applies this function to the given arguments.
