@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.streams.account;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class Account {
     public Account() {
         this.id = currentId++;
         this.balance = 0;
+        this.transactions = new ArrayList<>();
     }
 
     public Account(long balance, List<Transaction> transactions) {
@@ -33,6 +35,7 @@ public class Account {
     public Account(Long balance) {
         this.id = currentId++;
         this.balance = balance;
+        this.transactions = new ArrayList<>();
     }
 
     public void newTransaction(Date date, Account outgoing,
@@ -56,5 +59,20 @@ public class Account {
 
     public List<Transaction> getTransactions() {
         return transactions;
+    }
+
+    public List<Transaction> getTransactionsAfter(long time) {
+        List<Transaction> transactionsBeforeCertainTime = new ArrayList<>();
+        for (Transaction transaction : transactions) {
+            if (transaction.getDate().getTime() > time) {
+                transactionsBeforeCertainTime.add(transaction);
+            }
+        }
+        return transactionsBeforeCertainTime;
+    }
+
+    //да, наверное, можно было бы задать айдишники сразу как строки, но так неудобнооо
+    public String getStrId() {
+        return getId().toString();
     }
 }

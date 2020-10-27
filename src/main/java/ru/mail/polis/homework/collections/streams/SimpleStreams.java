@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -24,18 +25,10 @@ public class SimpleStreams {
      * Слово - набор символ между началом строки/ концом строки / пробелами / знаками препинания (.,;:!?)
      * 1 балл
      */
-//    public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
-    public static Map<String, Long> createBadWordsDetectingStream(String text, List<String> badWords) {
-
-        Map<String, Long> map = new HashMap<>();
-        for (String word : badWords) {
-            Stream<String> stream = Stream.of(text.split("[\\s.,;:!?]+"));
-            Long count = stream.map(String::toLowerCase)
-                    .filter(word::equals).count();
-            map.put(word, count);
-        }
-        return map;
-        //вероятно стоит найти более красивое решение
+    public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
+            return Stream.of(text.split("[\\s.,;:!?]+"))
+                    .filter(badWords::contains)
+                    .collect(Collectors.groupingBy(Function.identity(), Collectors.summingInt(a -> 1)));
     }
 
 
@@ -51,16 +44,15 @@ public class SimpleStreams {
      * 3 балла
      */
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return 0;
+        return DoubleStream.iterate(v, changeV)
+                .limit(n)
+                .map(speed -> (2 * speed * speed * Math.cos(alpha) * Math.sin(alpha) / 9.8))
+                .reduce(0, Double::sum);
     }
 
 
     public static void main(String[] args) {
         System.out.println(isPrime(5));
-        System.out.println(isPrime(0));
-        System.out.println(isPrime(1));
-        System.out.println(isPrime(2));
-        System.out.println(isPrime(6));
 
         List<String> badWords = new ArrayList<>();
         badWords.add("типа");

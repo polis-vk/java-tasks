@@ -25,6 +25,19 @@ public class WordFrequency {
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-        return null;
+
+        return lines.flatMap(str -> (Arrays.stream(str.split("[\\s.,;:!?]+"))))
+                .map(String::toLowerCase)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .stream()
+                .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+                .limit(10)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
+
+    public static void main(String[] args) {
+        System.out.println(wordFrequency(Stream.of("qwe", "qw", "qwe", "b", "x", "c", "aaa")));
     }
 }

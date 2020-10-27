@@ -2,7 +2,6 @@ package ru.mail.polis.homework.collections.streams.account;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Task {
 
@@ -42,7 +41,12 @@ public class Task {
      * 3 балла
      */
     public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
-        return Collections.emptyList();
+
+//        return accounts.stream()
+//                .collect(Collectors.toMap(Account::getStrId, a -> a.getTransactionsAfter(t)))
+//                .entrySet()
+//                .stream()
+        return null;
     }
 
 
@@ -61,5 +65,6 @@ public class Task {
         transactions.add(new Transaction(new Date(), acc3, acc4, 1000L));
 
         System.out.println(paymentsSumByAccount(transactions));
+
     }
 }

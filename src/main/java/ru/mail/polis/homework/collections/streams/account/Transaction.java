@@ -52,6 +52,6 @@ public class Transaction {
     }
 
     public String getOutgoingAccountIdAsStr() {
-        return outgoingAccount.getId().toString();
+        return outgoingAccount.getStrId();
     }
 }
