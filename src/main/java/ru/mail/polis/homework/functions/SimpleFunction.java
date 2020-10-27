@@ -12,15 +12,12 @@ import java.util.stream.Stream;
 
 public class SimpleFunction {
 
-    public static void main(String[] args) {
-        System.out.println(multifunctionalMapper.apply(List.of(x -> x, x -> x + 1, x -> x * x)).apply(List.of(1, 2)));
-    }
-
     /**
      * Функция от трех аргументов. Не забудьте добавить дженерики.
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
+    @FunctionalInterface
     interface TerFunction<T, U, B, R> {
 
         R apply(T t, U u, B b);

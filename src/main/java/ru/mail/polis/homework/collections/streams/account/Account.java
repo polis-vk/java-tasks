@@ -1,11 +1,11 @@
 package ru.mail.polis.homework.collections.streams.account;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -15,12 +15,13 @@ import java.util.stream.Collectors;
  * баланс
  * 1 балл
  */
+@EqualsAndHashCode(exclude = "transactionList")
 public class Account {
 
-    private static                int               count = 0; // to create id
-    private final @Getter         String            id;
-    private       @Getter @Setter List<Transaction> transactionList;
-    private       @Getter @Setter long              balance;
+                    private static int               count = 0; // to create id
+    @Getter         private final  String            id;
+    @Getter         private final  List<Transaction> transactionList;
+    @Getter @Setter private        long              balance;
 
     public Account(int balance) {
         this.id = String.valueOf(count++);
@@ -50,15 +51,6 @@ public class Account {
         return transactionList.stream()
                 .filter(transaction -> transaction.getInAccount() == this)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Account account = (Account) o;
-        return balance == account.balance &&
-                Objects.equals(id, account.id);
     }
 
     @Override

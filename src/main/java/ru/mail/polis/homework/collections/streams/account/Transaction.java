@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.collections.streams.account;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Date;
 import java.util.Objects;
@@ -14,34 +16,24 @@ import java.util.Objects;
  * сумма
  * 1 балл
  */
+@EqualsAndHashCode()
 public class Transaction {
 
-    private static         int     count = 0; // to create id
-    private final  @Getter String  id;
-    private final  @Getter Date    date;
-    private final  @Getter Account outAccount;
-    private final  @Getter Account inAccount;
-    private final  @Getter long    sum;
+            private static  int     count = 0; // to create id
+    @Getter private final   String  id;
+    @Getter private final   Date    date;
+    @Getter private final   Account outAccount;
+    @Getter private final   Account inAccount;
+    @Getter private final   long    sum;
 
     public Transaction(Account outAccount, Account inAccount, long sum) {
-        if (outAccount.equals(inAccount)) throw new IllegalArgumentException();
+        if (outAccount.equals(inAccount))
+            throw new IllegalArgumentException();
         this.id = String.valueOf(count++);
         this.date = new Date();
         this.outAccount = outAccount;
         this.inAccount = inAccount;
         this.sum = sum;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Transaction that = (Transaction) o;
-        return sum == that.sum &&
-                Objects.equals(id, that.id) &&
-                Objects.equals(date, that.date) &&
-                Objects.equals(outAccount, that.outAccount) &&
-                Objects.equals(inAccount, that.inAccount);
     }
 
     @Override

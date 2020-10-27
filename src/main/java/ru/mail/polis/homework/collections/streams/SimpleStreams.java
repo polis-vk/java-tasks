@@ -5,13 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class SimpleStreams {
-    public static void main(String[] args) {
-        System.out.println(createBadWordsDetectingStream("hello my name is Vadim, fg! hhg s hello!&", List.of("hello", "SIK")));
-    }
 
     /**
      * Реализуйте проверку на простоту входящего числа с помощью стримов.
@@ -19,7 +16,7 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return Stream.iterate(2, x -> x < Math.sqrt(n), x -> x += 1)
+        return IntStream.iterate(2, x -> x < Math.sqrt(n), x -> x += 1)
                 .noneMatch(x -> n % x == 0);
     }
 
@@ -73,12 +70,11 @@ public class SimpleStreams {
      *
      */
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        final double g = 9.8;
+        final double G = 9.8;
         final double sinTwoAlpha = Math.sin(2 * alpha);
-        return IntStream.iterate(1, x-> x <= n, x -> x += 1)
-                .mapToDouble(x -> x)
-                .reduce(0, (left, operand) ->
-                        Math.pow(changeV.applyAsDouble(operand) * v, 2))
-                * sinTwoAlpha / g;
+        return DoubleStream.iterate(1, x-> x <= n, x -> x += 1)
+                .reduce(0, (left, mutableV) ->
+                        Math.pow(changeV.applyAsDouble(v), 2))
+                * sinTwoAlpha / G;
     }
 }

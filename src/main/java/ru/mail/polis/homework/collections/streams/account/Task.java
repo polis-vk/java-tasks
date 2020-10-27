@@ -25,7 +25,8 @@ public class Task {
     public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
         return transactions.stream()
                 .collect(HashMap::new,
-                        (map, v) -> map.merge(v.getOutAccount().getId(), v.getSum(), Long::sum),
+                        (map, transaction) ->
+                                map.merge(transaction.getOutAccount().getId(), transaction.getSum(), Long::sum),
                         HashMap::putAll);
     }
 
@@ -56,16 +57,11 @@ public class Task {
                 .sorted(Comparator.comparingLong(account ->
                                 account.getTransactionList().stream()
                                         .filter(transaction -> transaction.getDate().getTime() >= t)
-                                        .collect(
-                                                Collectors.groupingBy(Transaction::getOutAccount,
-                                                        Collectors.summingLong(Transaction::getSum))
-                                        )
-                                        .entrySet().stream()
                                         .reduce( - account.getBalance(),
-                                                (aLong, accountLongEntry) ->
-                                                        (aLong + (accountLongEntry.getKey() == account ?
-                                                                - accountLongEntry.getValue() :
-                                                                accountLongEntry.getValue())),
+                                                (aLong, transaction) ->
+                                                        aLong + (transaction.getOutAccount() == account ?
+                                                                - transaction.getSum() :
+                                                                transaction.getSum()),
                                                 Long::sum)
                         )
                 )
