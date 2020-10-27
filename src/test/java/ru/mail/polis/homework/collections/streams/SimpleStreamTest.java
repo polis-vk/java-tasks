@@ -45,6 +45,22 @@ public class SimpleStreamTest {
     }
 
     @Test
+    public void createBadWordsDetectingStreamTest_HardLvl(){
+        String text = "Hello,my name is Saveliy.And I like my name.";
+        List<String> badWords = Arrays.asList("my", "name", "is", "straus");
+
+        Map<String, Long> obtained = SimpleStreams.createBadWordsDetectingStream(text, badWords);
+
+        Map<String, Long> expected = new HashMap<>(4);
+        expected.put("my", 2L);
+        expected.put("name", 2L);
+        expected.put("is", 1L);
+        expected.put("straus", 0L);
+        Assert.assertEquals(obtained, expected);
+    }
+
+
+    @Test
     public void calcDistanceTest(){
         DoubleUnaryOperator velocity = n -> {
             if(n == 1){

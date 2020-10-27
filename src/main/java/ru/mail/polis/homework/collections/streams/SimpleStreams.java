@@ -34,7 +34,7 @@ public class SimpleStreams {
      * 1 балл
      */
     public static Map<String, Long> createBadWordsDetectingStream(String text, List<String> badWords) {
-        String textWithoutSigns = text.replaceAll("[.,;:!?]", "").toLowerCase();
+        String textWithoutSigns = text.replaceAll("[.,;:!?]", " ").toLowerCase();
         List<String> textWords = Arrays.asList(textWithoutSigns.split(" "));
 
         return badWords.stream()
