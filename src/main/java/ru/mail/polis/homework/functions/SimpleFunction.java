@@ -21,6 +21,12 @@ public class SimpleFunction {
      */
     @FunctionalInterface
     interface TerFunction<T, U, Y, R> {
+
+        R apply(T t, U u, Y y);
+
+        default <V> TerFunction<T, U, Y, V> andThen(Function<? super R, ? extends V> after) {
+            Objects.requireNonNull(after);
+            return (T t, U u, Y y) -> after.apply(apply(t, u, y));
         }
     }
 
@@ -30,8 +36,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
-        return null;
+    static <T, U, V, R> Function<T, Function<U, Function<V, R>>> curring(TerFunction<T, U, V, R> terFunction) {
+        return t -> u -> v -> terFunction.apply(t, u, v);
     }
 
 
@@ -42,17 +48,25 @@ public class SimpleFunction {
      * 4 балла
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            a -> null;
+            list -> numbers -> numbers.stream()
+                    .flatMap(number -> IntStream.rangeClosed(1, list.size())
+                                    .map(count -> list.stream()
+                                            .limit(count)
+                                            .reduce(x -> x, (op1, op2) -> x -> op2.applyAsInt(op1.applyAsInt(x)))
+                                            .applyAsInt(number))
+                                    .boxed())
+                    .collect(Collectors.toList());
 
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
      * которая на заданном интервале (входящие аргументы результирующей функции) считает преобразование всех целых чисел
      * на заданном интервале.
-     *
+     * <p>
      * Пример хотим просуммировать числа от 2 до 10:
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 3 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
+            (a, b) -> (start, end) -> IntStream.rangeClosed(start, end).reduce(a, b);
 }
