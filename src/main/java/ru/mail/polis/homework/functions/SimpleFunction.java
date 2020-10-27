@@ -42,11 +42,7 @@ public class SimpleFunction {
      * 4 балла
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            list -> numbers -> numbers.stream()
-                    .map(number -> list.stream()
-                            .reduce(x -> x, (op1, op2) -> x -> op2.applyAsInt(op1.applyAsInt(x)))
-                            .applyAsInt(number))
-                    .collect(Collectors.toList());
+            a -> null;
 
 
     /**
@@ -58,8 +54,5 @@ public class SimpleFunction {
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 3 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (seed, bi) ->
-            (a, b) -> IntStream.rangeClosed(a, b).reduce(seed, bi);
-
-    public static final IntBinaryOperator sumOperator = reduceIntOperator.apply(0, (a, b) -> a * b);
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
 }
