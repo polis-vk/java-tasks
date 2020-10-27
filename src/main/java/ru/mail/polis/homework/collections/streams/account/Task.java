@@ -47,7 +47,7 @@ public class Task {
                         .forEach(Transaction::makeTransaction))
                 .sorted((o1, o2) -> o2.getBalanse().compareTo(o1.getBalanse()))
                 .skip(1)
-                .limit(n > accounts.size() ? accounts.size()-1 : n)
+                .limit(n)
                 .map(Account::getId)
                 .collect(Collectors.toList());
     }
