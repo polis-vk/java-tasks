@@ -3,6 +3,7 @@ package ru.mail.polis.homework.functions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -11,6 +12,7 @@ import java.util.function.IntUnaryOperator;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class SimpleFunction {
 
@@ -41,14 +43,18 @@ public class SimpleFunction {
      * Пример: multifunctionalMapper.apply([x -> x, x -> x + 1, x -> x * x]).apply([1, 2]) = [1, 2, 4, 2, 3, 9]
      * 4 балла
      */
-
-    //TODO: не готово
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            operators -> numbers ->
-                    numbers.stream()
-                            .map(n -> operators
-                                    .stream()
-                                    .reduce(x -> x, (op1, op2) -> x -> op1.applyAsInt(op2.applyAsInt(x))).applyAsInt(n)).collect(Collectors.toList());
+            operators -> numbers -> numbers.stream()
+                    .map(number -> IntStream.range(1, operators.size() + 1)
+                            .mapToObj(index -> operators.stream()
+                                    .limit(index)
+                                    .reduce(x -> x, IntUnaryOperator::andThen))
+                            .mapToInt(op -> op.applyAsInt(number))
+                            .boxed()
+                            .collect(Collectors.toList()))
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
+
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
@@ -61,8 +67,4 @@ public class SimpleFunction {
      */
     public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (startValue, biFunction) ->
             (a, b) -> IntStream.range(a, b).reduce(startValue, biFunction);
-
-    public static void main(String[] args) {
-
-    }
 }
