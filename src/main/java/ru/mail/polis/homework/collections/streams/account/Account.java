@@ -11,58 +11,56 @@ import java.util.List;
  * 1 балл
  */
 public class Account {
-    private Long id;
-    private List<Transaction> inTransactions;
-    private List<Transaction> outTransactions;
-    private Long balance;
+    private final long id;
+    private static long lastId;
+    private final List<Transaction> inTransactions = new ArrayList<>();
+    private final List<Transaction> outTransactions = new ArrayList<>();
+    private long balance;
+
+    private long createId() {
+        lastId++;
+        return lastId;
+    }
 
     public Account(){
-
+        this.id = createId();
     }
 
-    public Account(Long id){
-        this.id = id;
-        this.balance = 0L;
-        this.inTransactions = new ArrayList<>();
-        this.outTransactions = new ArrayList<>();
+    long getId() {
+        return id;
     }
 
-    public Account(Long id, List<Transaction> inTransactions, List<Transaction> outTransactions, Long balance){
-        this.id = id;
-        this.inTransactions = inTransactions;
-        this.outTransactions = outTransactions;
-        this.balance = balance;
-    }
-
-    public Long getBalance() {
+    public long getBalance() {
         return balance;
-    }
-
-    public void setBalance(Long balance) {
-        this.balance = balance;
-    }
-
-    public String getId() {
-        return id.toString();
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public List<Transaction> getInTransactions() {
-        return inTransactions;
     }
 
     public List<Transaction> getOutTransactions() {
         return outTransactions;
     }
 
-    public void setInTransactions(List<Transaction> inTransactions) {
-        this.inTransactions = inTransactions;
+    public List<Transaction> getInTransactions() {
+        return inTransactions;
     }
 
-    public void setOutTransactions(List<Transaction> outTransactions) {
-        this.outTransactions = outTransactions;
+    void setTransaction(Transaction transaction){
+        if (transaction.getSourceAccount() == this && transaction.getRecipientAccount() != this){ // проверка, что транзакция списания
+            balance -= transaction.getSum();
+            outTransactions.add(transaction);
+        } else if (transaction.getSourceAccount() != this && transaction.getRecipientAccount() == this) { // проверка, что транзакция пополнения
+            balance += transaction.getSum();
+            inTransactions.add(transaction);
+        }
+    }
+
+    long getBalanceByDate(long date){
+        long balanceIn =  inTransactions.stream()
+                .filter(t -> t.getDate().getTime() < date)
+                .map(Transaction::getSum)
+                .reduce((long) 0, Long::sum);
+        long balanceOut = outTransactions.stream()
+                        .filter(t -> t.getDate().getTime() < date)
+                        .map(Transaction::getSum)
+                        .reduce((long) 0, Long::sum);
+        return balanceIn - balanceOut;
     }
 }

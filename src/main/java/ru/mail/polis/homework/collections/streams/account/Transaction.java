@@ -12,40 +12,45 @@ import java.util.Date;
  * 1 балл
  */
 public class Transaction {
-    private Long id;
-    private Date date;
-    private Account sourceAccount;
-    private Account recipientAccount;
-    private Long sum;
+    private final long id;
+    private static long lastId;
+    private final Date date;
+    private final Account sourceAccount;
+    private final Account recipientAccount;
+    private final Long sum;
 
-    public Transaction(Long id, Date date, Account sourceAccount, Account recipientAccount){
-        this.id = id;
+    private long createId() {
+        lastId++;
+        return lastId;
+    }
+
+    public Transaction(Date date, Account sourceAccount, Account recipientAccount, long sum){
+        this.id = createId();
         this.date = date;
         this.recipientAccount = recipientAccount;
         this.sourceAccount = sourceAccount;
+        this.sum = sum;
+        this.sourceAccount.setTransaction(this);
+        this.recipientAccount.setTransaction(this);
     }
 
-    public Long getSum(){
+    Long getSum(){
         return sum;
     }
 
-    public Date getDate() {
+    Date getDate() {
         return date;
     }
 
-    public String getSourceAccountId(){
-        return sourceAccount.getId();
-    }
-
-    public Long getId() {
+    Long getId() {
         return id;
     }
 
-    public Account getSourceAccount() {
+    Account getSourceAccount() {
         return sourceAccount;
     }
 
-    public Account getRecipientAccount() {
+    Account getRecipientAccount() {
         return recipientAccount;
     }
 }
