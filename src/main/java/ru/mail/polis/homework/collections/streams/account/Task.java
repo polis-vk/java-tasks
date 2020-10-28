@@ -12,10 +12,7 @@ public class Task {
      */
     public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
         return transactions.stream()
-                .collect(Collectors
-                        .groupingBy(
-                                Transaction::getFromId, Collectors.summingLong(Transaction::getSum)
-                        ));
+                .collect(Collectors.groupingBy(Transaction::getFromId, Collectors.summingLong(Transaction::getSum)));
     }
 
     /**

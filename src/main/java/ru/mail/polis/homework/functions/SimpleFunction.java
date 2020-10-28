@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SimpleFunction {
-
     /**
      * Функция от трех аргументов. Не забудьте добавить дженерики.
      * Функция должна походить на {@link java.util.function.BiFunction}
@@ -34,8 +33,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static <F, S, T, R> R curring(TerFunction<F, S, T, R> f, F x, S y, T z) {
-        return f.apply(x, y, z);
+    static <F, S, T, R> Function<F, Function<S, Function<T, R>>> curring(TerFunction<F, S, T, R> f) {
+        return x -> y -> z -> f.apply(x, y, z);
     }
 
     /**

@@ -39,10 +39,10 @@ public class Account {
                         .filter(e -> e.getDate().getTime() >= t)
                         .map(Transaction::getSum)
                         .reduce(0L, Long::sum) -
-                        getOutTransactions().stream()
-                                .filter(e -> e.getDate().getTime() >= t)
-                                .map(Transaction::getSum)
-                                .reduce(0L, Long::sum);
+                getOutTransactions().stream()
+                        .filter(e -> e.getDate().getTime() >= t)
+                        .map(Transaction::getSum)
+                        .reduce(0L, Long::sum);
     }
 
     public String getId() {

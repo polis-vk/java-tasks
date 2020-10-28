@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
 public class SimpleStreams {
@@ -16,8 +17,7 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return IntStream
-                .rangeClosed(2, (int) Math.sqrt(n))
+        return n > 1 && IntStream.rangeClosed(2, (int) Math.sqrt(n))
                 .noneMatch(i -> n % i == 0);
     }
 
@@ -46,8 +46,8 @@ public class SimpleStreams {
      */
     static final double G = 9.8;
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return IntStream.range(1, n)
-                .asDoubleStream()
-                .reduce(0, (sum, h) -> sum + (Math.pow(changeV.applyAsDouble(h) * v, 2) * Math.sin(alpha * 2) / G));
+        return DoubleStream.iterate(1, changeV)
+                .limit(n)
+                .reduce(0.0, (dist, prev) -> dist + prev * prev * Math.sin(alpha * 2) / G);
     }
 }
