@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
 public class SimpleStreams {
@@ -26,12 +27,10 @@ public class SimpleStreams {
      * 1 балл
      */
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
-        return Arrays
-                .stream(text.split("[\n .,;:!?]"))
+        return Arrays.stream(text.split("[\n .,;:!?]"))
                 .filter(badWords::contains)
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                .entrySet()
-                .stream()
+                .entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, stringLongEntry -> stringLongEntry.getValue().intValue()));
     }
 
@@ -51,8 +50,8 @@ public class SimpleStreams {
         final double g = 9.8;
         double sin = Math.sin(alpha * 2);
 
-        return IntStream.rangeClosed(1, n)
-                .mapToDouble(x -> x)
+        return DoubleStream.iterate(v, changeV)
+                .limit(n)
                 .reduce(0, (sum, value) -> sum + (Math.pow(changeV.applyAsDouble(value) * v, 2) * sin / g));
     }
 }

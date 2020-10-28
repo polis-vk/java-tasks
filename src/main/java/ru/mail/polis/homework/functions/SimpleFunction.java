@@ -47,11 +47,12 @@ public class SimpleFunction {
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
         operators -> numbers -> numbers.stream()
-                .map(number -> operators.stream()
-                .reduce(operand -> operand, IntUnaryOperator::andThen)
-                .applyAsInt(number))
+                .flatMap(value -> IntStream.range(0, operators.size())
+                        .mapToObj(it -> operators.stream()
+                                .limit(it + 1)
+                                .reduce(operator -> operator, IntUnaryOperator::andThen))
+                .map(operator -> operator.applyAsInt(value)))
                 .collect(Collectors.toList());
-
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
