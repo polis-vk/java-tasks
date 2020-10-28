@@ -41,7 +41,7 @@ public class SimpleFunction {
      * Пример: multifunctionalMapper.apply([x -> x, x -> x + 1, x -> x * x]).apply([1, 2]) = [1, 2, 4, 2, 3, 9]
      * 4 балла
      */
-    
+
     //TODO: не готово
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
             operators -> numbers ->
