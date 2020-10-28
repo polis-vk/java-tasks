@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.streams.account;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,6 +40,11 @@ public class Task {
      * 3 балла
      */
     public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
-        return Collections.emptyList();
+        return accounts.stream()
+                .sorted(Comparator.comparingLong(e -> e.getBalanceInTime(t)))
+                .map(Account::getId)
+                .skip(1)
+                .limit(n)
+                .collect(Collectors.toList());
     }
 }
