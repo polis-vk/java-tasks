@@ -13,22 +13,23 @@ import java.util.Date;
  */
 public class Transaction {
 
-    private final long id;
+    private final String id;
     private final Date date;
-    private final Account recipientAccount;
-    private final Account senderAccount;
+    private final String recipientAccount;
+    private final String senderAccount;
     private final Long cost;
-    private static long counter = 1;
+    private long sum;
 
-    public Transaction(Date date, Account recipientAccount, Account senderAccount, Long cost) {
-        this.id = counter++;
+    public Transaction(String id, Date date, String recipientAccount, String senderAccount, Long cost, long sum) {
+        this.id = id;
         this.date = date;
         this.recipientAccount = recipientAccount;
         this.senderAccount = senderAccount;
         this.cost = cost;
+        this.sum = sum;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
@@ -36,15 +37,19 @@ public class Transaction {
         return date;
     }
 
-    public Account getRecipientAccount() {
+    public String getRecipientAccount() {
         return recipientAccount;
     }
 
-    public Account getSenderAccount() {
+    public String getSenderAccount() {
         return senderAccount;
     }
 
     public Long getCost() {
         return cost;
+    }
+
+    public long getSum() {
+        return sum;
     }
 }
