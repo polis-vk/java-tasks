@@ -47,14 +47,11 @@ public class SimpleFunction {
     
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
             operators -> numbers -> numbers.stream()
-                    .map(number -> IntStream.range(1, operators.size() + 1)
+                    .flatMap(number -> IntStream.range(1, operators.size() + 1)
                             .mapToObj(index -> operators.stream()
                                     .limit(index)
                                     .reduce(operator -> operator, IntUnaryOperator::andThen))
-                            .mapToInt(operator -> operator.applyAsInt(number))
-                            .boxed()
-                            .collect(Collectors.toList()))
-                    .flatMap(List::stream)
+                            .map(operator -> operator.applyAsInt(number)))
                     .collect(Collectors.toList());
     
     public static void main(String[] args) {
