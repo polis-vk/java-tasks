@@ -61,4 +61,8 @@ public class SimpleFunction {
      */
     public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (startValue, biFunction) ->
             (a, b) -> IntStream.range(a, b).reduce(startValue, biFunction);
+
+    public static void main(String[] args) {
+
+    }
 }

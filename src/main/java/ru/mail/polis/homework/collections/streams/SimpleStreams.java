@@ -55,6 +55,6 @@ public class SimpleStreams {
 
         return DoubleStream
                 .iterate(v, changeV).limit(n)
-                .reduce(0, (acc, vi) -> Math.pow(vi, 2) * sin / G);
+                .reduce(0, (acc, vi) -> acc + Math.pow(vi, 2) * sin / G);
     }
 }
