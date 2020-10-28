@@ -3,6 +3,7 @@ package ru.mail.polis.homework.functions;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
@@ -18,8 +19,13 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
-    interface TerFunction {
+    interface TerFunction<F, S, T, R> {
+        R apply(F f, S s, T t);
 
+        default <V> TerFunction<F, S, T, V> andThen(Function<? super R, ? extends V> after) {
+            Objects.requireNonNull(after);
+            return (F f, S s, T t) -> after.apply(apply(f, s, t));
+        }
     }
 
     /**
@@ -28,8 +34,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
-        return null;
+    static <F, S, T, R> Function<F, Function<S, Function<T, R>>> curring(TerFunction<F, S, T, R> terFunction) {
+        return f -> s -> t -> terFunction.apply(f, s, t);
     }
 
 
@@ -47,10 +53,13 @@ public class SimpleFunction {
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
      * которая на заданном интервале (входящие аргументы результирующей функции) считает преобразование всех целых чисел
      * на заданном интервале.
-     *
+     * <p>
      * Пример хотим просуммировать числа от 2 до 10:
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 3 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
+            (integer, intBinaryOperator) -> (begin, end) -> IntStream
+                    .rangeClosed(begin, end)
+                    .reduce(integer, intBinaryOperator);
 }
