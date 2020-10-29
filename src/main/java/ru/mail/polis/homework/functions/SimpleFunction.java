@@ -3,6 +3,7 @@ package ru.mail.polis.homework.functions;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
@@ -18,8 +19,15 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
-    interface TerFunction {
 
+    @FunctionalInterface
+    interface TerFunction<A, B, C, R> {
+        R apply(A a, B b, C c);
+
+        default <V> TerFunction<A, B, C, V> andThen(Function<? super R, ? extends V> after) {
+            Objects.requireNonNull(after);
+            return (A a, B b, C c) -> after.apply(apply(a, b, c));
+        }
     }
 
     /**
@@ -28,8 +36,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
-        return null;
+    static <A, B, C, V> Function <A, Function<B, Function<C, V>>> curring(TerFunction<A, B, C, V> terFunction) {
+        return a -> b -> c -> terFunction.apply(a, b, c);
     }
 
 
@@ -52,5 +60,6 @@ public class SimpleFunction {
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 3 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
+            (number, function) -> (start, end) -> IntStream.rangeClosed(start, end).reduce(number, function);
 }
