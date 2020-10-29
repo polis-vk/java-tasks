@@ -15,7 +15,15 @@ public class SimpleStreams {
      * Никаких циклов.
      * 1 балл
      */
+    public static void main(String[] args) {
+        System.out.println(isPrime(1));
+
+    }
+
     public static boolean isPrime(int n) {
+        if (n == 1) {
+            return true;
+        }
         return Stream.iterate(2, k -> k + 1)
                 .filter(k -> n % k == 0)
                 .findFirst()
@@ -30,9 +38,8 @@ public class SimpleStreams {
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
         String delimiters = "[ .,;:!? \\n]";
 
-        List<String> streamString = new ArrayList<String>(Arrays.asList(text.split(delimiters)));
-
-        return streamString.stream()
+        return Arrays.asList(text.split(delimiters))
+                .stream()
                 .map(String::toLowerCase)
                 .filter(badWords::contains)
                 .collect(Collectors.toMap(Function.identity(), p -> 1, Integer::sum));
@@ -51,6 +58,7 @@ public class SimpleStreams {
      * 3 балла
      */
     static final double G = 9.8;
+
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
         //дальность полета s = v*v*Math.sin(2*alpha)/g
 

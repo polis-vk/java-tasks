@@ -20,6 +20,17 @@ public class Transaction {
     private final Account incoming;
     private final long sum;
 
+    public Transaction(String id, Date date, Account incoming, Account outgoing, long sum) {
+        this.id = id;
+        this.date = date;
+        this.incoming = incoming;
+        this.outgoing = outgoing;
+        this.sum = sum;
+
+        incoming.addIncomingTransaction(this);
+        outgoing.addOutgoingTransaction(this);
+    }
+
     public Long getSum() {
         return sum;
     }
@@ -30,17 +41,6 @@ public class Transaction {
 
     public String getOutgoingId() {
         return outgoing.getId();
-    }
-
-    Transaction(String id, Date date, Account incoming, Account outgoing, long sum) {
-        this.id = id;
-        this.date = date;
-        this.incoming = incoming;
-        this.outgoing = outgoing;
-        this.sum = sum;
-
-        incoming.addIncomingTransaction(this);
-        outgoing.addOutgoingTransaction(this);
     }
 
     public Date getDate() {

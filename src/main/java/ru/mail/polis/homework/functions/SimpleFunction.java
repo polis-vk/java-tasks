@@ -23,6 +23,7 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
+    @FunctionalInterface
     interface TerFunction<A, B, C, R> {
         R apply(A a, B b, C c);
 

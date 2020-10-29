@@ -19,7 +19,7 @@ public class Account {
     private long balance;
     private final long beginBalance;
 
-    Account(String id, List<Transaction> transactions, long balance) {
+    public Account(String id, List<Transaction> transactions, long balance) {
         this.id = id;
         this.balance = balance;
         this.beginBalance = balance;
@@ -29,21 +29,13 @@ public class Account {
         return id;
     }
 
-    private void incomingTransactions(Transaction transaction) {
-        this.balance += transaction.getSum();
-    }
-
-    private void outgoingTransaction(Transaction transaction) {
-        this.balance -= transaction.getSum();
-    }
-
     public void addIncomingTransaction(Transaction transaction) {
-        incomingTransactions(transaction);
+        this.balance += transaction.getSum();
         inTransactions.add(transaction);
     }
 
     public void addOutgoingTransaction(Transaction transaction) {
-        incomingTransactions(transaction);
+        this.balance -= transaction.getSum();
         outTransactions.add(transaction);
     }
 
