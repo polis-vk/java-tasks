@@ -1,0 +1,52 @@
+ru/mail/polis/homework/io/CopyFile.java
+ ru.mail.polis.homework.io.CopyFile
+ru/mail/polis/homework/objects/RepeatingCharacters.java
+ ru.mail.polis.homework.objects.RepeatingCharacters
+ ru.mail.polis.homework.objects.RepeatingCharacters$Pair
+ru/mail/polis/homework/simple/HomeworkTask.java
+ ru.mail.polis.homework.simple.HomeworkTask
+ru/mail/polis/homework/collections/mail/Salary.java
+ ru.mail.polis.homework.collections.mail.Salary
+ru/mail/polis/homework/collections/streams/account/Transaction.java
+ ru.mail.polis.homework.collections.streams.account.Transaction
+ru/mail/polis/homework/simple/MainTask.java
+ ru.mail.polis.homework.simple.MainTask
+ru/mail/polis/homework/simple/Main.java
+ ru.mail.polis.homework.simple.Main
+ru/mail/polis/homework/simple/IntegerTask.java
+ ru.mail.polis.homework.simple.IntegerTask
+ru/mail/polis/homework/analyzer/FilterType.java
+ ru.mail.polis.homework.analyzer.FilterType
+ru/mail/polis/homework/analyzer/TextAnalyzer.java
+ ru.mail.polis.homework.analyzer.TextAnalyzer
+ru/mail/polis/homework/collections/streams/WordFrequency.java
+ ru.mail.polis.homework.collections.streams.WordFrequency
+ru/mail/polis/homework/collections/mail/MailService.java
+ ru.mail.polis.homework.collections.mail.MailService
+ru/mail/polis/homework/io/objects/Serializer.java
+ ru.mail.polis.homework.io.objects.Serializer
+ru/mail/polis/homework/io/Directories.java
+ ru.mail.polis.homework.io.Directories
+ru/mail/polis/homework/simple/DoubleTask.java
+ ru.mail.polis.homework.simple.DoubleTask
+ru/mail/polis/homework/functions/SimpleFunction.java
+ ru.mail.polis.homework.functions.SimpleFunction
+ ru.mail.polis.homework.functions.SimpleFunction$TerFunction
+ru/mail/polis/homework/collections/PopularMap.java
+ ru.mail.polis.homework.collections.PopularMap
+ru/mail/polis/homework/objects/StringTasks.java
+ ru.mail.polis.homework.objects.StringTasks
+ru/mail/polis/homework/io/objects/Animal.java
+ ru.mail.polis.homework.io.objects.Animal
+ru/mail/polis/homework/collections/mail/MailMessage.java
+ ru.mail.polis.homework.collections.mail.MailMessage
+ru/mail/polis/homework/objects/MaxTask.java
+ ru.mail.polis.homework.objects.MaxTask
+ru/mail/polis/homework/collections/streams/account/Account.java
+ ru.mail.polis.homework.collections.streams.account.Account
+ru/mail/polis/homework/analyzer/TextFilterManager.java
+ ru.mail.polis.homework.analyzer.TextFilterManager
+ru/mail/polis/homework/collections/streams/account/Task.java
+ ru.mail.polis.homework.collections.streams.account.Task
+ru/mail/polis/homework/collections/streams/SimpleStreams.java
+ ru.mail.polis.homework.collections.streams.SimpleStreams
