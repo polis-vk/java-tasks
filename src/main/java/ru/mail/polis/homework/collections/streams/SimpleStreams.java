@@ -29,7 +29,7 @@ public class SimpleStreams {
      * 1 балл
      */
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
-        return Arrays.stream(text.split("[ .,;:!?\n]"))
+        return Arrays.stream(text.split("[ .,;:!?\n]+"))
                 .filter(badWords::contains)
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.summingInt(x -> 1)));
     }

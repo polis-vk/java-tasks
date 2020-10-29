@@ -3,6 +3,8 @@ package ru.mail.polis.homework.collections.streams.account;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Task {
 
@@ -11,7 +13,8 @@ public class Task {
      * 2 балла
      */
     public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
-        return Collections.emptyMap();
+        return transactions.stream()
+                .collect(Collectors.groupingBy(x -> x.getReciever().getId(), Collectors.summingLong(Transaction::getSum)));
     }
 
     /**
@@ -37,6 +40,30 @@ public class Task {
      * 3 балла
      */
     public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
-        return Collections.emptyList();
+        return accounts.stream()
+                .collect(Collectors.toMap(Account::getId, x -> getBalanceAtTime(x, t)))
+                .entrySet()
+                .stream()
+                .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+                .skip(1)
+                .limit(10)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
+
+    private static long getBalanceAtTime(Account account, long t) {
+        List<Transaction> transactions = account.getTransactions();
+        Long value = transactions.stream()
+                .filter(a -> a.getSender() == account)
+                .filter(a -> a.getDate() > t)
+                .map(Transaction::getSum)
+                .reduce(account.getBalance(), Long::sum);
+
+        value = transactions.stream()
+                .filter(a -> a.getReciever() == account)
+                .filter(a -> a.getDate() > t)
+                .map(Transaction::getSum)
+                .reduce(value, (a, b) -> a - b);
+        return value;
     }
 }
