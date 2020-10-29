@@ -3,6 +3,7 @@ package ru.mail.polis.homework.functions;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
@@ -18,8 +19,13 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
-    interface TerFunction {
+    interface TerFunction<T, U, V, R> {
+        R apply (T t, U u, V v);
 
+        default <X> TerFunction<T, U, V, X> andThen(Function<? super R, ? extends X> after) {
+            Objects.requireNonNull(after);
+            return (T t, U u, V v) -> after.apply(apply(t, u, v));
+        }
     }
 
     /**
@@ -28,8 +34,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
-        return null;
+    static <T, U, V, R> Function<T, Function<U, Function<V, R>>> curring(TerFunction<T, U, V, R> terFunction) {
+        return t -> u -> v -> terFunction.apply(t, u, v);
     }
 
 
@@ -40,8 +46,13 @@ public class SimpleFunction {
      * 4 балла
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            a -> null;
-
+            operators -> ints -> ints.stream()
+                    .map(number -> operators.stream()
+                            .mapToInt(operator -> operator.applyAsInt(number))
+                            .boxed()
+                            .collect(Collectors.toList()))
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
@@ -52,5 +63,7 @@ public class SimpleFunction {
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 3 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator
+            = (initNumber, function) -> (startInc, endInc) -> IntStream.rangeClosed(startInc, endInc)
+            .reduce(initNumber, function);
 }
