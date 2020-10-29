@@ -1,17 +1,18 @@
 package ru.mail.polis.homework.collections.streams.account;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Task {
 
     /**
      * Метод должен вернуть сумму всех исходящих транзакций с аккаунта
      * 2 балла
+     * @return
      */
-    public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
-        return Collections.emptyMap();
+    public static Map<Long, Long> paymentsSumByAccount(List<Transaction> transactions) {
+        return transactions.stream().collect(Collectors.toMap(i->i.getAccount().getId(), Transaction::getSum));
     }
 
     /**
@@ -36,7 +37,8 @@ public class Task {
      * (обойтись без циклов и условий)
      * 3 балла
      */
-    public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
-        return Collections.emptyList();
+    public static List<Long> paymentsSumByAccount(List<Account> accounts, long t, int n) {
+        // TODO: 29.10.2020
+        return null;
     }
 }

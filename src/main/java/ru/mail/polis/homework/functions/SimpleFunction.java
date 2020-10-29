@@ -1,14 +1,15 @@
 package ru.mail.polis.homework.functions;
 
 
-import java.util.Arrays;
+import sun.tools.jstat.Operator;
+
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
 import java.util.function.IntUnaryOperator;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SimpleFunction {
@@ -18,9 +19,15 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
-    interface TerFunction {
+    interface TerFunction<F, S, T, R> {
+        R apply(F f, S s, T t);
 
+        default <V> TerFunction<F, S, T, V> andThen(Function<? super R, ? extends V> after) {
+            Objects.requireNonNull(after);
+            return (F f, S s, T t) -> after.apply(apply(f, s, t));
+        }
     }
+
 
     /**
      * Реализуйте каррирование для функции от трех аргументов.
@@ -28,8 +35,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
-        return null;
+    static <F, S, T, R> Function<F, Function<S, Function<T, R>>> curring(TerFunction<F, S, T, R> terFunction) {
+        return f -> s -> t -> terFunction.apply(f, s, t);
     }
 
 
@@ -39,12 +46,9 @@ public class SimpleFunction {
      * Пример: multifunctionalMapper.apply([x -> x, x -> x + 1, x -> x * x]).apply([1, 2]) = [1, 2, 4, 2, 3, 9]
      * 4 балла
      */
-    public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            list -> numbers -> numbers.stream()
-                    .map(number -> list.stream()
-                            .reduce(x -> x, (op1, op2) -> x -> op2.applyAsInt(op1.applyAsInt(x)))
-                            .applyAsInt(number))
-                    .collect(Collectors.toList());
+    public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper () {
+        return null;
+    }
 
 
     /**
@@ -59,5 +63,4 @@ public class SimpleFunction {
     public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (seed, bi) ->
             (a, b) -> IntStream.rangeClosed(a, b).reduce(seed, bi);
 
-    public static final IntBinaryOperator sumOperator = reduceIntOperator.apply(0, (a, b) -> a * b);
 }

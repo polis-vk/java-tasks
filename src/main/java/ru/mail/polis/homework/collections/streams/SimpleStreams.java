@@ -1,9 +1,11 @@
 package ru.mail.polis.homework.collections.streams;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class SimpleStreams {
 
@@ -13,18 +15,17 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return false;
+        if(n == 1 || n == 0) return false;
+        return IntStream.rangeClosed(2, (int) Math.sqrt(n)).noneMatch(i -> n % i == 0);
     }
-
     /**
      * Вам передается текст и список плохих слов. Вам нужно вернуть мапу (слово -> количество упоминаний в тексте)
      * Слово - набор символ между началом строки/ концом строки / пробелами / знаками препинания (.,;:!?)
      * 1 балл
      */
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
-        return Collections.emptyMap();
+        return  badWords.stream().collect(Collectors.toMap(x -> x, x -> text.split(x).length - 1));
     }
-
 
     /**
      * Маленький мальчик кидает мячик n раз в поле силы тяжести под углом alpha к поверхности земли.
@@ -38,6 +39,8 @@ public class SimpleStreams {
      * 3 балла
      */
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return 0;
+        double vy = Math.sin(alpha) * v;
+        double g = 9.8;
+        return IntStream.rangeClosed(1, n).mapToDouble(x -> Math.pow(vy * changeV.applyAsDouble(x), 2) / 2 * g).sum();
     }
 }
