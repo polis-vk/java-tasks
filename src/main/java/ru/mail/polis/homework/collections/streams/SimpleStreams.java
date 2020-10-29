@@ -15,8 +15,8 @@ public class SimpleStreams {
      */
     public static boolean isPrime(int n) {
         return IntStream.rangeClosed(2, (int) Math.ceil(Math.sqrt(n)))
-                .takeWhile(divisor -> divisor <= Math.ceil(Math.sqrt(n)) && n % divisor != 0)
-                .count() == (int) Math.ceil(Math.sqrt(n)) - 1;
+                .limit((long) Math.ceil(Math.sqrt(n)))
+                .allMatch(divisor -> n % divisor != 0);
     }
 
     /**
@@ -34,6 +34,9 @@ public class SimpleStreams {
 
 
     /**
+    public static void main(String[] args) {
+        System.out.println(isPrime(542));
+    }
      * Маленький мальчик кидает мячик n раз в поле силы тяжести под углом alpha к поверхности земли.
      * Так же известно, что мальчик устает с каждым броском все больше. Дана начальная скорость v - скорость
      * при первом броске и функция изменения скорости от номера броска - changeV
