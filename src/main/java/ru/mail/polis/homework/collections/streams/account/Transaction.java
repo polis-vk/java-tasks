@@ -10,10 +10,36 @@ package ru.mail.polis.homework.collections.streams.account;
  * 1 балл
  */
 public class Transaction {
-    public Account getAccount() {
-        return null;
+    private final String id;
+    private final long date;
+    private final Account sender, receiver;
+    private final long sum;
+
+    public Transaction(String id, long date, Account sender, Account receiver, long sum) {
+        this.id = id;
+        this.date = date;
+        this.sender = sender;
+        this.receiver = receiver;
+        this.sum = sum;
     }
-    public Long getSum() {
-        return null;
+
+    public String id() {
+        return id;
+    }
+
+    public Account receiver() {
+        return receiver;
+    }
+
+    public Account sender() {
+        return sender;
+    }
+
+    public Long sum() {
+        return sum;
+    }
+
+    public Long date() {
+        return date;
     }
 }

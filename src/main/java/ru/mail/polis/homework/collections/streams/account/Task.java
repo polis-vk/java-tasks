@@ -1,8 +1,10 @@
 package ru.mail.polis.homework.collections.streams.account;
 
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Task {
 
@@ -11,7 +13,10 @@ public class Task {
      * 2 балла
      */
     public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
-        return Collections.emptyMap();
+        return transactions.stream()
+                .collect(Collectors.groupingBy(
+                        Transaction::id,
+                        Collectors.summingLong(Transaction::sum)));
     }
 
     /**
@@ -37,6 +42,23 @@ public class Task {
      * 3 балла
      */
     public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
-        return Collections.emptyList();
+        return accounts.stream()
+                .sorted(Comparator.comparingLong(account -> -account.balance()
+                        + relatedSum(accounts, Transaction::sender, account, t)
+                        - relatedSum(accounts, Transaction::receiver, account, t)))
+                .limit(n)
+                .skip(1)
+                .map(Account::id)
+                .collect(Collectors.toList());
+    }
+
+    private static Long relatedSum(List<Account> accounts, Function<Transaction, Account> accountExtractor,
+                                   Account targetAccount, long t) {
+        return accounts.stream()
+                .flatMap(Account::transactions)
+                .filter(transaction -> transaction.date() <= t)
+                .filter(transaction -> accountExtractor.apply(transaction).equals(targetAccount))
+                .mapToLong(Transaction::sum)
+                .sum();
     }
 }

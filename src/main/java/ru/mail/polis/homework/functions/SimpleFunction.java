@@ -18,8 +18,8 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
-    interface TerFunction {
-
+    interface TerFunction<T1, T2, T3, R> {
+        R apply(T1 t1, T2 t2, T3 t3);
     }
 
     /**
@@ -28,8 +28,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
-        return null;
+    static <T1, T2, T3, R> Function<T1, Function<T2, Function<T3, R>>> curring(TerFunction<T1, T2, T3, R> terFunction) {
+        return t1 -> t2 -> t3 -> terFunction.apply(t1, t2, t3);
     }
 
 
@@ -39,9 +39,14 @@ public class SimpleFunction {
      * Пример: multifunctionalMapper.apply([x -> x, x -> x + 1, x -> x * x]).apply([1, 2]) = [1, 2, 4, 2, 3, 9]
      * 4 балла
      */
-    public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            a -> null;
-
+    public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper
+            = opList -> argList -> argList.stream()
+                    .flatMap(arg -> IntStream.range(0, opList.size())
+                            .mapToObj(i -> opList.subList(0, i + 1))
+                            .map(opSubList -> opSubList.stream()
+                                    .reduce(opSubList.get(0), IntUnaryOperator::andThen)
+                                    .applyAsInt(arg)))
+                    .collect(Collectors.toList());
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
@@ -52,5 +57,6 @@ public class SimpleFunction {
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 3 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator
+            = (initValue, op) -> (lo, hi) -> IntStream.rangeClosed(lo, hi).reduce(initValue, op);
 }
