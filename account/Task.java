@@ -44,8 +44,8 @@ public class Task {
 
 
     public static List<String> paymentsSumByAccount(List<Account> accounts, Date t, int n) {
-        return  accounts.stream()
-                .sorted((o1, o2) -> (int)(o1.balanceBefore(t) - o2.balanceBefore(t)))
+        return accounts.stream()
+                .sorted(Comparator.comparing(x -> x.balanceBefore(t)))
                 .skip(1)
                 .limit(Math.min(n, accounts.size() - 1))
                 .map(Account::getId)

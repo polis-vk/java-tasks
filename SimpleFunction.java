@@ -46,10 +46,9 @@ public class SimpleFunction {
         public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
                 opers -> numbers -> numbers.stream()
                         .map(x -> opers.stream()
-                                .reduce(current -> current, IntUnaryOperator::andThen)
+                                        .reduce(current -> current, IntUnaryOperator::andThen)
                                 .applyAsInt(x))
                         .collect(Collectors.toList());
-
 
 
         /**
@@ -65,5 +64,7 @@ public class SimpleFunction {
                 IntStream.rangeClosed(first, last)
                 .reduce(start, operator);
     }
+
+;
 
 }
