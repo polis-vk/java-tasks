@@ -31,7 +31,7 @@ public class Account {
     return balance;
   }
 
-  public void setBalance(int balance) {
+  private void setBalance(int balance) {
     this.balance = balance;
   }
 }
