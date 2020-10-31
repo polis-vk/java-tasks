@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.streams;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -26,18 +27,25 @@ public class WordFrequency {
      */
     public static List<String> wordFrequency(Stream<String> lines) {
 
+        //в компараторе, конечно, есть условные операторы, но зато тесты теперь проходят...
+        Comparator<Map.Entry<String, Long>> comparator = (o1, o2) -> {
+            if (o1.getValue() < o2.getValue()) {
+                return 1;
+            } else if (o1.getValue() > o2.getValue()) {
+                return -1;
+            } else {
+                return (o1.getKey().compareTo(o2.getKey()));
+            }
+        };
+
         return lines.flatMap(str -> (Arrays.stream(str.split("[\\s.,;:!?]+"))))
                 .map(String::toLowerCase)
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet()
                 .stream()
-                .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+                .sorted(comparator)
                 .limit(10)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
-    }
-
-    public static void main(String[] args) {
-        System.out.println(wordFrequency(Stream.of("qwe", "qw", "qwe", "b", "x", "c", "aaa")));
     }
 }

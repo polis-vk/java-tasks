@@ -16,7 +16,7 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return IntStream.rangeClosed(2, (int)Math.sqrt(n)).noneMatch(i -> n % i == 0);
+        return n > 1 && IntStream.rangeClosed(2, (int)Math.sqrt(n)).noneMatch(i -> n % i == 0);
     }
 
 
@@ -52,12 +52,6 @@ public class SimpleStreams {
 
 
     public static void main(String[] args) {
-        System.out.println(isPrime(5));
-
-        List<String> badWords = new ArrayList<>();
-        badWords.add("типа");
-        badWords.add("ну");
-        badWords.add("блин");
-        System.out.println(createBadWordsDetectingStream("блин, ну как бы типа много слов блин паразитов ну", badWords));
+        System.out.println(isPrime(1));
     }
 }
