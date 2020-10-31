@@ -3,6 +3,7 @@ package ru.mail.polis.homework.collections.streams.account;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Реализуйте класс Account с полями:
@@ -18,7 +19,7 @@ public class Account {
 
     private final long id;
     private long balance;
-    private List<Transaction> transactions;
+    private final List<Transaction> transactions;
 
     public Account() {
         this.id = currentId++;
@@ -57,18 +58,29 @@ public class Account {
         return balance;
     }
 
+    public void setBalance(long balance) {
+        this.balance = balance;
+    }
+
     public List<Transaction> getTransactions() {
         return transactions;
     }
 
     public List<Transaction> getTransactionsAfter(long time) {
-        List<Transaction> transactionsBeforeCertainTime = new ArrayList<>();
-        for (Transaction transaction : transactions) {
-            if (transaction.getDate().getTime() > time) {
-                transactionsBeforeCertainTime.add(transaction);
-            }
-        }
-        return transactionsBeforeCertainTime;
+        return transactions.stream()
+                .filter(transaction -> transaction.getDate().getTime() > time)
+                .collect(Collectors.toList());
+    }
+
+    public long getBalanceBefore(long time) {
+        long incomingSum = this.getTransactionsAfter(time).stream()
+                .filter(a -> a.getIncomingAccount().equals(this))
+                .mapToLong(Transaction::getSum).sum();
+        long outgoingSum = this.getTransactionsAfter(time).stream()
+                .filter(a -> a.getOutgoingAccount().equals(this))
+                .mapToLong(Transaction::getSum).sum();
+
+        return this.getBalance() - incomingSum + outgoingSum;
     }
 
     //да, наверное, можно было бы задать айдишники сразу как строки, но так неудобнооо

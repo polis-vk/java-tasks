@@ -42,13 +42,15 @@ public class Task {
      */
     public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
 
-//        return accounts.stream()
-//                .collect(Collectors.toMap(Account::getStrId, a -> a.getTransactionsAfter(t)))
-//                .entrySet()
-//                .stream()
-        return null;
+        return accounts.stream()
+                .collect(Collectors.toMap(Account::getStrId, a -> a.getBalanceBefore(t)))
+                .entrySet().stream()
+                .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+                .skip(1)
+                .limit(n)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
-
 
 
     public static void main(String[] args) {
@@ -66,5 +68,34 @@ public class Task {
 
         System.out.println(paymentsSumByAccount(transactions));
 
+        try {
+            long time = new Date().getTime();
+            Thread.sleep(500);
+            Date t1 = new Date();
+            Thread.sleep(500);
+            Date t2 = new Date();
+            Thread.sleep(500);
+            Date t3 = new Date();
+
+            acc1.newTransaction(t1, acc1, acc2, 300L);
+            acc1.newTransaction(t2, acc1, acc2, 300L);
+            acc1.newTransaction(t3, acc2, acc1, 200L);
+            acc1.setBalance(500L);
+
+            acc2.newTransaction(t1, acc1, acc2, 300L);
+            acc2.newTransaction(t2, acc1, acc2, 300L);
+            acc2.newTransaction(t3, acc2, acc1, 200L);
+            acc2.setBalance(1000L);
+
+            List<Account> accounts = Arrays.asList(acc1, acc2);
+
+            System.out.println(acc1.getBalanceBefore(time));
+            System.out.println(acc2.getBalanceBefore(time));
+
+            System.out.println(paymentsSumByAccount(accounts, time, 1));
+
+        } catch (InterruptedException e) {
+            System.out.println("please don't be mad, once i'll start writing normal tests");
+        }
     }
 }

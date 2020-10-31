@@ -16,7 +16,8 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return n > 1 && IntStream.rangeClosed(2, (int)Math.sqrt(n)).noneMatch(i -> n % i == 0);
+        return n > 1 && IntStream.rangeClosed(2, (int)Math.sqrt(n))
+                .noneMatch(i -> n % i == 0);
     }
 
 
