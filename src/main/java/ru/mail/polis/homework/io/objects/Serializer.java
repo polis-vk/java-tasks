@@ -56,9 +56,11 @@ public class Serializer {
     List<Animal> animals = new ArrayList<>();
 
     try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
+
       while (objectInputStream.available() != 0) {
         animals.add((Animal) objectInputStream.readObject());
       }
+
     } catch (Exception ignored) {
     }
 
@@ -80,7 +82,6 @@ public class Serializer {
         try {
           objectOutputStream.writeObject(a);
         } catch (Exception ignored) {
-
         }
       });
     } catch (Exception ignored) {
@@ -99,9 +100,11 @@ public class Serializer {
     List<AnimalWithMethods> animals = new ArrayList<>();
 
     try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
+
       while (objectInputStream.available() != 0) {
         animals.add((AnimalWithMethods) objectInputStream.readObject());
       }
+
     } catch (Exception ignored) {
     }
 
@@ -141,7 +144,6 @@ public class Serializer {
     List<AnimalExternalizable> animals = new ArrayList<>();
 
     try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
-
       while (objectInputStream.available() != 0) {
         AnimalExternalizable animal = new AnimalExternalizable();
 
