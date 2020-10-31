@@ -55,7 +55,8 @@ public class SimpleStreams {
         final double sin2Alpha = Math.sin(2 * alpha);
         return DoubleStream.iterate(v, changeV)
                 .limit(n)
-                .reduce((s, vNext) -> s + Math.pow(vNext, 2) * sin2Alpha / G).orElse(0);
+                .reduce((s, vNext) -> s + Math.pow(vNext, 2) * sin2Alpha / G)
+                .orElse(0);
     }
 
     public static void main(String[] args) {

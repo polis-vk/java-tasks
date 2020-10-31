@@ -38,7 +38,7 @@ public class Task {
      */
     public static List<Long> paymentsSumByAccount(List<Account> accounts, long t, int n) {
         return accounts.stream()
-                .sorted(Comparator.comparing(account -> -account.getBalanceByDate(t)))
+                .sorted(Comparator.comparing((Account account) -> account.getBalanceByDate(t)).reversed())
                 .skip(1)
                 .limit(n)
                 .map(Account::getId)
