@@ -2,6 +2,7 @@ package ru.mail.polis.homework.io.objects;
 
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,7 +33,13 @@ public class Serializer {
   public void defaultSerialize(List<Animal> animals, String fileName) {
     try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
 
-      objectOutputStream.writeObject(animals);
+      animals.forEach(a -> {
+        try {
+          objectOutputStream.writeObject(a);
+        } catch (Exception ignored) {
+        }
+      });
+
       objectOutputStream.flush();
     } catch (Exception ignored) {
     }
@@ -46,10 +53,12 @@ public class Serializer {
    * @return список животных
    */
   public List<Animal> defaultDeserialize(String fileName) {
-    List<Animal> animals = Collections.emptyList();
+    List<Animal> animals = new ArrayList<>();
 
     try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
-      animals = (List<Animal>) objectInputStream.readObject();
+      while (objectInputStream.available() != 0) {
+        animals.add((Animal) objectInputStream.readObject());
+      }
     } catch (Exception ignored) {
     }
 
@@ -67,8 +76,13 @@ public class Serializer {
   public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
     try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
 
-      objectOutputStream.writeObject(animals);
-      objectOutputStream.flush();
+      animals.forEach(a -> {
+        try {
+          objectOutputStream.writeObject(a);
+        } catch (Exception ignored) {
+
+        }
+      });
     } catch (Exception ignored) {
     }
   }
@@ -82,10 +96,12 @@ public class Serializer {
    * @return список животных
    */
   public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
-    List<AnimalWithMethods> animals = Collections.emptyList();
+    List<AnimalWithMethods> animals = new ArrayList<>();
 
     try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
-      animals = (List<AnimalWithMethods>) objectInputStream.readObject();
+      while (objectInputStream.available() != 0) {
+        animals.add((AnimalWithMethods) objectInputStream.readObject());
+      }
     } catch (Exception ignored) {
     }
 
@@ -111,7 +127,6 @@ public class Serializer {
       });
     } catch (Exception ignored) {
     }
-
   }
 
   /**
@@ -123,7 +138,7 @@ public class Serializer {
    * @return список животных
    */
   public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-    List<AnimalExternalizable> animals = Collections.emptyList();
+    List<AnimalExternalizable> animals = new ArrayList<>();
 
     try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
 
@@ -148,7 +163,22 @@ public class Serializer {
    * @param fileName файл, в который "пишем" животных
    */
   public void customSerialize(List<Animal> animals, String fileName) {
+    try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
 
+      animals.forEach(a -> {
+        try {
+          objectOutputStream.writeInt(a.age);
+          objectOutputStream.writeUTF(a.name);
+          objectOutputStream.writeObject(a.demon);
+          objectOutputStream.writeObject(a.friendNames);
+          objectOutputStream.writeObject(a.diet);
+          objectOutputStream.writeBoolean(a.isAlive);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      });
+    } catch (Exception ignored) {
+    }
   }
 
   /**
@@ -160,6 +190,25 @@ public class Serializer {
    * @return список животных
    */
   public List<Animal> customDeserialize(String fileName) {
-    return Collections.emptyList();
+    List<Animal> animals = new ArrayList<>();
+
+    try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
+
+      while (objectInputStream.available() != 0) {
+        Animal animal = new Animal(
+            objectInputStream.readInt(),
+            objectInputStream.readUTF(),
+            (InnerDemon) objectInputStream.readObject(),
+            (List<String>) objectInputStream.readObject(),
+            (Animal.Diet) objectInputStream.readObject(),
+            objectInputStream.readBoolean()
+        );
+
+        animals.add(animal);
+      }
+    } catch (Exception ignored) {
+    }
+
+    return animals;
   }
 }
