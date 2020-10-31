@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.streams;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -30,9 +31,14 @@ public class WordFrequency {
                 .split("[\n .,;:!?]")))
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
+                .sorted((c1, c2) -> c2.getValue().compareTo(c1.getValue()))
                 .limit(10)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
+    }
+
+    public static void main(String[] args) {
+        String[] arr = new String[] { "b", "b", "c", "d", "f", "g", "a", "a", "a", "c", "b"};
+        System.out.println(wordFrequency(Arrays.stream(arr)));
     }
 }
