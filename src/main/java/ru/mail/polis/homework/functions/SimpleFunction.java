@@ -48,7 +48,9 @@ public class SimpleFunction {
                                     .map(count -> list.stream()
                                             .limit(count)
                                             .reduce(x -> x, (op1, op2) -> x -> op2.applyAsInt(op1.applyAsInt(x)))
-                                            .applyAsInt(number)))
+                                            .applyAsInt(number)
+                                    )
+                    )
                     .collect(Collectors.toList());
 
 

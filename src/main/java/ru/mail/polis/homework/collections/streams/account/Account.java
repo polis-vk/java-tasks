@@ -18,10 +18,13 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(exclude = "transactionList")
 public class Account {
 
-                    private static int               count = 0; // to create id
-    @Getter         private final  String            id;
-    @Getter         private final  List<Transaction> transactionList;
-    @Getter @Setter private        long              balance;
+    private static int               count = 0; // to create id
+    @Getter
+    private final  String            id;
+    @Getter
+    private final  List<Transaction> transactionList;
+    @Getter @Setter
+    private        long              balance;
 
     public Account(int balance) {
         this.id = String.valueOf(count++);
@@ -43,13 +46,13 @@ public class Account {
 
     public List<Transaction> getOutTranslation() {
         return transactionList.stream()
-                .filter(transaction -> transaction.getOutAccount() == this)
+                .filter(transaction -> transaction.getOutAccount().equals(this))
                 .collect(Collectors.toList());
     }
 
     public List<Transaction> getInTranslation() {
         return transactionList.stream()
-                .filter(transaction -> transaction.getInAccount() == this)
+                .filter(transaction -> transaction.getInAccount().equals(this))
                 .collect(Collectors.toList());
     }
 

@@ -6,15 +6,21 @@ import java.util.stream.Collectors;
 public class Task {
 
     public static void main(String[] args) throws InterruptedException {
-        Account account1= new Account(1000);
-        Account account2= new Account(2000);
-        Account account3= new Account(3000);
+        Account account1= new Account(1001);
+        Account account2= new Account(1002);
+        Account account3= new Account(1003);
+
+        account2.translateTo(account1, 200);
+
+        account1.translateTo(account3, 200);
         Date t = new Date();
-        account1.translateTo(account2, 100);
-        account1.translateTo(account2, 100);
-        account1.translateTo(account2, 100);
-        account1.translateTo(account2, 100);
-        account2.translateTo(account3, 2000);
+        Thread.sleep(1);
+//        account2.translateTo(account3, 300);
+//
+//        account1.translateTo(account2, 400);
+
+//        account2.translateTo(account3, 2000);
+//        System.out.println(account2.equals(account1));
         System.out.println(paymentsSumByAccount(List.of(account2, account3, account1), t.getTime(), 5));
     }
 
@@ -56,13 +62,14 @@ public class Task {
         return accounts.stream()
                 .sorted(Comparator.comparingLong(account ->
                                 account.getTransactionList().stream()
-                                        .filter(transaction -> transaction.getDate().getTime() >= t)
+                                        .filter(transaction -> transaction.getDate().getTime() > t)
                                         .reduce( - account.getBalance(),
                                                 (aLong, transaction) ->
-                                                        aLong + (transaction.getOutAccount() == account ?
+                                                        aLong + (transaction.getOutAccount().equals(account) ?
                                                                 - transaction.getSum() :
                                                                 transaction.getSum()),
-                                                Long::sum)
+                                                Long::sum
+                                        )
                         )
                 )
                 .map(Account::getId)
