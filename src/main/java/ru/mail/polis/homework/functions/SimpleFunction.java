@@ -40,7 +40,7 @@ public class SimpleFunction {
                     .map(num -> IntStream.rangeClosed(1, list.size())
                             .map(d -> list.stream()
                                     .limit(d)
-                                    .reduce(x -> x, (op1, op2) -> x -> op2.applyAsInt(op1.applyAsInt(x)))
+                                    .reduce(IntUnaryOperator.identity(), IntUnaryOperator::andThen)
                                     .applyAsInt(num))
                             .boxed()
                             .collect(Collectors.toList()))
