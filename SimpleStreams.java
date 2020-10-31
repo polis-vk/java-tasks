@@ -7,7 +7,6 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static java.util.stream.DoubleStream.*;
 
 public class SimpleStreams {
 
@@ -43,10 +42,13 @@ public class SimpleStreams {
      *
      * 3 балла
      */
+
+    static final double G = 9.8;
+
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return iterate(1, x -> x <= n, x -> x + 1)
+        return DoubleStream.iterate(1, x -> x <= n, x -> x + 1)
                 .limit(n)
-                .map(number -> Math.pow(v + changeV.applyAsDouble(number), 2) * Math.sin(2 * alpha) / 9.8)
+                .map(number -> Math.pow(v + changeV.applyAsDouble(number), 2) * Math.sin(2 * alpha) / G)
                 .sum();
     }
     
