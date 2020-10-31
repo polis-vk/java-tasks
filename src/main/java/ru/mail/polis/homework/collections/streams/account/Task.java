@@ -1,12 +1,9 @@
 package ru.mail.polis.homework.collections.streams.account;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Task {
 
@@ -42,6 +39,26 @@ public class Task {
    * 3 балла
    */
   public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
-    return Collections.emptyList();
+    return accounts.stream()
+            .collect(Collectors.toMap(x -> String.valueOf(x.getId()), x -> getCurrentBalance(x.getBalance(), x.getIncomingTransactions(), x.getOutgoingTransactions(), t)))
+            .entrySet().stream()
+            .sorted(Map.Entry.<String, Long>comparingByValue())
+            .skip(1)
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toList());
+  }
+
+  private static Long getCurrentBalance(int balance, List<Transaction> incomingTransactions, List<Transaction> outgoingTransactions, long t) {
+    Long incomingSum = getTransactionSum(incomingTransactions.stream(), t);
+
+    Long outgoingSum = getTransactionSum(outgoingTransactions.stream(), t);
+
+    return balance + incomingSum - outgoingSum;
+  }
+
+  private static Long getTransactionSum(Stream<Transaction> transactionStream, long t) {
+    return transactionStream.filter(x -> t < x.getDate().toEpochDay())
+            .map(Transaction::getSum)
+            .reduce(Long::sum).get();
   }
 }
