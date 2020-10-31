@@ -30,9 +30,18 @@ public class Transaction {
         return id;
     }
 
-    public Account getAccount() {
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public Account getOutgoingAcc() {
         return outgoingAcc;
     }
+
+    public Account getReceiverAcc() {
+        return receiverAcc;
+    }
+
     public Long getSum() {
         return sum;
     }

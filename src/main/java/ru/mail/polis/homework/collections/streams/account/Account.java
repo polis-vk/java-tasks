@@ -13,8 +13,8 @@ public class Account {
   private final int id;
   private int balance;
 
-  private List<Transaction> incomingTransactions;
-  private List<Transaction> outgoingTransactions;
+  private final List<Transaction> incomingTransactions;
+  private final List<Transaction> outgoingTransactions;
 
   public Account(int id, int balance, List<Transaction> incomingTransactions, List<Transaction> outgoingTransactions) {
     this.id = id;
@@ -33,5 +33,13 @@ public class Account {
 
   private void setBalance(int balance) {
     this.balance = balance;
+  }
+
+  public List<Transaction> getIncomingTransactions() {
+    return incomingTransactions;
+  }
+
+  public List<Transaction> getOutgoingTransactions() {
+    return outgoingTransactions;
   }
 }
