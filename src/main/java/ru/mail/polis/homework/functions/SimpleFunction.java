@@ -49,14 +49,12 @@ public class SimpleFunction {
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
             list -> numbers -> numbers.stream()
-                    .flatMap(number -> IntStream.rangeClosed(1, list.size())
-                                    .map(count -> list.stream()
+                    .flatMap(number -> IntStream.rangeClosed(1, list.size() + 1)
+                                    .mapToObj(count -> list.stream()
                                             .limit(count)
-                                            .reduce(x -> x, (op1, op2) -> x -> op2.applyAsInt(op1.applyAsInt(x)))
-                                            .applyAsInt(number))
-                                    .boxed())
+                                            .reduce(x -> x, IntUnaryOperator::andThen))
+                                            .map(x -> x.applyAsInt(number)))
                     .collect(Collectors.toList());
-
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
