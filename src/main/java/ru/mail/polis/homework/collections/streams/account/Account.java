@@ -31,11 +31,11 @@ public class Account {
     }
 
     public long getBalanceBeforeDate(long t) {
-        return balance +
+        return balance -
                 getIncomingTransactions().stream()
                         .filter(transaction -> transaction.getDate().getTime() >= t)
                         .map(Transaction::getSum)
-                        .reduce(0L, Long::sum) -
+                        .reduce(0L, Long::sum) +
                 getOutgoingTransactions().stream()
                         .filter(transaction -> transaction.getDate().getTime() >= t)
                         .map(Transaction::getSum)
@@ -58,7 +58,7 @@ public class Account {
 
     public List<Transaction> getOutgoingTransactions() {
         return transactions.stream()
-                .filter(e -> !e.getSenderId().equals(this.id))
+                .filter(e -> !e.getSenderId().equals(id))
                 .collect(Collectors.toList());
     }
 

@@ -17,6 +17,8 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
+
+    @FunctionalInterface
     interface TerFunction<F, S, T, R> {
         R apply(F first, S second, T third);
 
@@ -47,7 +49,7 @@ public class SimpleFunction {
             .flatMap(val -> IntStream.range(0, operations.size())
                     .mapToObj(i -> operations.subList(0, i + 1))
                     .map(opSubList -> opSubList.stream()
-                            .reduce(opSubList.get(0), IntUnaryOperator::andThen)
+                            .reduce(operation -> operation, IntUnaryOperator::andThen)
                             .applyAsInt(val)))
             .collect(Collectors.toList());
 
