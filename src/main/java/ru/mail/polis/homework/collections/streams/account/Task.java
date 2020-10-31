@@ -14,7 +14,7 @@ public class Task {
   public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
     return transactions.stream()
         .collect(Collectors.toMap(
-            t -> "Account: " + t.getId(),
+            t -> t.getId().toString(),
             Transaction::getSum, Long::sum)
         );
   }
