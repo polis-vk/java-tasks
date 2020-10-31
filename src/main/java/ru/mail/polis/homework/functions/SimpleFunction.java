@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.functions;
 
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -11,7 +11,6 @@ import java.util.function.IntUnaryOperator;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class SimpleFunction {
 
@@ -52,7 +51,7 @@ public class SimpleFunction {
 
     /**
      * Реализуйте каррирование для функции от трех аргументов.
-     * Вам нужно правильно определить тип возвращаемого значения и реализовать метод.
+     * Вам нужно правильно определить тип возращаемого значения и реализовать метод.
      * Не забывайте использовать дженерики.
      * 2 балла
      */
@@ -73,13 +72,14 @@ public class SimpleFunction {
                             IntStream.rangeClosed(1, list.size())
                                     .map(count ->
                                             list.stream()
-                                            .limit(count)
-                                            .reduce(x -> x, (op1, op2) -> x -> op2.applyAsInt(op1.applyAsInt(x)))
-                                            .applyAsInt(number)
+                                                    .limit(count)
+                                                    .reduce(x -> x, (op1, op2) -> x -> op2.applyAsInt(op1.applyAsInt(x)))
+                                                    .applyAsInt(number)
                                     )
                                     .boxed()
                     )
                     .collect(Collectors.toList());
+
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,

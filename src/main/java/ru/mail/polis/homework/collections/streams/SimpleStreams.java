@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -17,7 +18,7 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return n > 0 &&
+        return n > 1 &&
                 IntStream.rangeClosed(2, n / 2)
                 .allMatch(i -> n % i != 0);
     }
@@ -33,7 +34,7 @@ public class SimpleStreams {
                 .collect(
                         Collectors.toMap(
                                 Function.identity(),
-                                e -> 1,
+                                word -> 1,
                                 Integer::sum
                         )
                 );
@@ -53,7 +54,7 @@ public class SimpleStreams {
     public final static double FREE_FALL_ACCELERATION = 9.8;
 
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return Stream.iterate(v, changeV::applyAsDouble)
+        return DoubleStream.iterate(v, changeV)
                 .limit(n)
                 .reduce(0.0, Double::sum)
                 * Math.sin(2 * alpha) / FREE_FALL_ACCELERATION;

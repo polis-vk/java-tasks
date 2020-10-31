@@ -14,14 +14,14 @@ import java.util.Set;
 public class Account {
     private final String id;
     private final Map<Transaction, TransactionType> transactionHistory = new HashMap<>();
-    private Long balance;
+    private long balance;
 
     private enum TransactionType {
         INCOMING,
         OUTGOING
     }
 
-    public Account(String id, Long balance) {
+    public Account(String id, long balance) {
         this.id = id;
         this.balance = balance;
     }
@@ -48,7 +48,7 @@ public class Account {
         }
     }
 
-    public Long getBalance() {
+    public long getBalance() {
         return balance;
     }
 
@@ -59,7 +59,7 @@ public class Account {
         return transactionHistory.get(transaction);
     }
 
-    public Long getBalanceAtTime(long time) {
+    public long getBalanceAtTime(long time) {
         return getBalance() -
                 transactionHistory.entrySet().stream()
                         .filter(transaction ->

@@ -16,9 +16,9 @@ public class Transaction {
     private final Date date;
     private final Account recipientAccount;
     private final Account senderAccount;
-    private final Long cost;
+    private final long cost;
 
-    public Transaction(String id, Date date, Account recipientAccount, Account senderAccount, Long cost) {
+    public Transaction(String id, Date date, Account recipientAccount, Account senderAccount, long cost) {
         this.id = id;
         this.date = date;
         this.recipientAccount = recipientAccount;
@@ -42,7 +42,7 @@ public class Transaction {
         return senderAccount;
     }
 
-    public Long getCost() {
+    public long getCost() {
         return cost;
     }
 }
