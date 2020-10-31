@@ -56,6 +56,7 @@ public class SimpleStreams {
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
         return DoubleStream.iterate(v, changeV)
                 .limit(n)
+                .map(currentV -> currentV * currentV)
                 .reduce(0.0, Double::sum)
                 * Math.sin(2 * alpha) / FREE_FALL_ACCELERATION;
     }
