@@ -44,6 +44,7 @@ public class Task {
             .entrySet().stream()
             .sorted(Map.Entry.<String, Long>comparingByValue())
             .skip(1)
+            .limit(n)
             .map(Map.Entry::getKey)
             .collect(Collectors.toList());
   }
