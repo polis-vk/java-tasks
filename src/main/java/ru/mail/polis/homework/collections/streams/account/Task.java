@@ -16,7 +16,7 @@ public class Task {
    */
   public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
     return transactions.stream()
-            .collect(Collectors.toMap(x -> String.valueOf(x.getAccount().getId()), Transaction::getSum, Long::sum));
+            .collect(Collectors.toMap(x -> String.valueOf(x.getOutgoingAcc().getId()), Transaction::getSum, Long::sum));
   }
 
   /**
