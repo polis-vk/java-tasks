@@ -48,7 +48,7 @@ public class SimpleFunction {
                     .map(number -> IntStream.range(1, operators.size() + 1)
                             .mapToObj(index -> operators.stream()
                                     .limit(index)
-                                    .reduce(x -> x, IntUnaryOperator::andThen))
+                                    .reduce(IntUnaryOperator.identity(), IntUnaryOperator::andThen))
                             .mapToInt(op -> op.applyAsInt(number))
                             .boxed()
                             .collect(Collectors.toList()))

@@ -13,41 +13,41 @@ import java.time.LocalDateTime;
  * 1 балл
  */
 public class Transaction {
-    private final Long id;
-    private final LocalDateTime date;
-    private final Account sourceAccount;
-    private final Account targetAccount;
-    private final Long sum;
+  private final Long id;
+  private final LocalDateTime date;
+  private final Account sourceAccount;
+  private final Account targetAccount;
+  private final long sum;
 
-    public Transaction(Long id,
-                       LocalDateTime date,
-                       Account sourceAccount,
-                       Account targetAccount,
-                       Long sum) {
-        this.id = id;
-        this.date = date;
-        this.sourceAccount = sourceAccount;
-        this.targetAccount = targetAccount;
-        this.sum = sum;
-    }
+  public Transaction(Long id,
+                     LocalDateTime date,
+                     Account sourceAccount,
+                     Account targetAccount,
+                     long sum) {
+    this.id = id;
+    this.date = date;
+    this.sourceAccount = sourceAccount;
+    this.targetAccount = targetAccount;
+    this.sum = sum;
+  }
 
-    public Long getId() {
-        return id;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public LocalDateTime getDate() {
-        return date;
-    }
+  public LocalDateTime getDate() {
+    return date;
+  }
 
-    public Account getSourceAccount() {
-        return sourceAccount;
-    }
+  public Account getSourceAccount() {
+    return sourceAccount;
+  }
 
-    public Account getTargetAccount() {
-        return targetAccount;
-    }
+  public Account getTargetAccount() {
+    return targetAccount;
+  }
 
-    public Long getSum() {
-        return sum;
-    }
+  public long getSum() {
+    return sum;
+  }
 }
