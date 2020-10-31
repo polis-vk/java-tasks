@@ -8,4 +8,6 @@ package ru.mail.polis.homework.io.objects;
  * 1 балл
  */
 public class Animal {
+  private long age;
+  private String name;
 }
