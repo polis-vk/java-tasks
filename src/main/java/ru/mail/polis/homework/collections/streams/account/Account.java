@@ -23,7 +23,8 @@ public class Account {
     private final  String            id;
     @Getter
     private final  List<Transaction> transactionList;
-    @Getter @Setter
+    @Getter
+    @Setter
     private        long              balance;
 
     public Account(int balance) {
