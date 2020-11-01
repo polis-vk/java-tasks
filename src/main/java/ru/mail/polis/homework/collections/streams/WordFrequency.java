@@ -28,14 +28,15 @@ public class WordFrequency {
          return lines.map(String::toLowerCase)
                  .flatMap(x -> Arrays.stream(x.split("[ .,;:!?\n]+")))
                  .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                 .entrySet()
-                 .stream()
-                 .sorted((a, b) -> (int) (a.getValue() - b.getValue()))
+                 .entrySet().stream()
+                 .sorted((a, b) -> (int) (b.getValue() - a.getValue()))
                  .limit(10)
                  .map(Map.Entry::getKey)
                  .collect(Collectors.toList());
 
     }
 
-
+    public static void main(String[] args) {
+        System.out.println(wordFrequency(Stream.of("AAA BBB CCC EEE FFF", "BBB EEE FFF")));
+    }
 }

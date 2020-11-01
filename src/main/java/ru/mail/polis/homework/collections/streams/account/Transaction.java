@@ -12,19 +12,37 @@ import java.util.Date;
  * 1 балл
  */
 public class Transaction {
-    private String id;
-    private Long date;
-    private Account sender;
-    private Account reciever;
-    private Long sum;
+    private final String id;
+    private final long date;
+    private final Account sender;
+    private final Account reciever;
+    private final long sum;
 
-    public String getId() { return id; }
-    public Long getDate() { return date; }
+    public Transaction(String id, long date, Account sender, Account reciever, long sum) {
+        this.id = id;
+        this.date = date;
+        this.sender = sender;
+        this.reciever = reciever;
+        this.sum = sum;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public long getDate() {
+        return date;
+    }
+
     public Account getReciever() {
+        return reciever;
+    }
+
+    public Account getSender() {
         return sender;
     }
-    public Account getSender() { return sender; }
-    public Long getSum() {
+
+    public long getSum() {
         return sum;
     }
 }

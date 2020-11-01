@@ -18,8 +18,9 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return Stream.iterate(2, x -> x + 1)
+        return Stream.iterate(1, x -> x + 1)
                 .limit(n / 2)
+                .skip(1)
                 .noneMatch(x -> n % x == 0);
     }
 
@@ -47,10 +48,9 @@ public class SimpleStreams {
      * 3 балла
      */
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        final double g = 9.8;
         return DoubleStream.iterate(v, changeV)
                 .limit(n)
-                .map(x -> ((x * Math.sin(alpha) / g * 2) * (x * Math.cos(alpha))))
+                .map(velocity -> ((velocity * Math.sin(alpha) / 9.8 * 2) * (velocity * Math.cos(alpha))))
                 .reduce(0, Double::sum);
     }
 }

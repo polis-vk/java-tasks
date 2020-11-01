@@ -10,11 +10,17 @@ import java.util.List;
  * 1 балл
  */
 public class Account {
-    private String id;
-    private List<Transaction> transactions;
-    private Long balance;
+    private final String id;
+    private final Transaction[] transactions;
+    private final long balance;
+
+    public Account(String id, Transaction[] transactions, long balance) {
+        this.id = id;
+        this.transactions = transactions;
+        this.balance = balance;
+    }
 
     public String getId() { return id; }
-    public List<Transaction> getTransactions() { return transactions; }
-    public Long getBalance() { return balance; }
+    public Transaction[] getTransactions() { return transactions; }
+    public long getBalance() { return balance; }
 }

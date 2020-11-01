@@ -1,7 +1,9 @@
 package ru.mail.polis.homework.functions;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -10,6 +12,7 @@ import java.util.function.IntUnaryOperator;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class SimpleFunction {
 
@@ -18,6 +21,7 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
+    @FunctionalInterface
     interface TerFunction<T, U, V, R> {
         R apply(T arg1, U arg2, V arg3);
 
@@ -46,7 +50,7 @@ public class SimpleFunction {
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
             (operatorList) -> (intList) -> {
-                List<Integer> result = Arrays.asList();
+                List<Integer> result = new ArrayList<>();
                 for (Integer number : intList) {
                     for (IntUnaryOperator operator : operatorList) {
                         number = operator.applyAsInt(number);
@@ -55,7 +59,6 @@ public class SimpleFunction {
                 }
                 return result;
             };
-
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
@@ -66,11 +69,8 @@ public class SimpleFunction {
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 3 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (start, function) -> (a, b) ->  {
-        Integer value = start;
-        for (int i = a; i <= b; ++i) {
-            value = function.applyAsInt(value, i);
-        }
-        return value;
-    };
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (start, function) ->
+            (a, b) -> Stream.iterate(a, x -> x + 1)
+                    .limit(b - a + 1)
+                    .reduce(start, function::applyAsInt);
 }

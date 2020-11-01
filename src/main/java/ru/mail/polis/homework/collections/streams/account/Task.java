@@ -1,10 +1,12 @@
 package ru.mail.polis.homework.collections.streams.account;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Task {
 
@@ -42,8 +44,7 @@ public class Task {
     public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
         return accounts.stream()
                 .collect(Collectors.toMap(Account::getId, x -> getBalanceAtTime(x, t)))
-                .entrySet()
-                .stream()
+                .entrySet().stream()
                 .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
                 .skip(1)
                 .limit(10)
@@ -52,15 +53,14 @@ public class Task {
     }
 
     private static long getBalanceAtTime(Account account, long t) {
-        List<Transaction> transactions = account.getTransactions();
-        Long value = transactions.stream()
-                .filter(a -> a.getSender() == account)
+        Long value = Arrays.stream(account.getTransactions())
+                .filter(a -> a.getSender().getId().equals(account.getId()))
                 .filter(a -> a.getDate() > t)
                 .map(Transaction::getSum)
                 .reduce(account.getBalance(), Long::sum);
 
-        value = transactions.stream()
-                .filter(a -> a.getReciever() == account)
+        value = Arrays.stream(account.getTransactions())
+                .filter(a -> a.getReciever().getId().equals(account.getId()) )
                 .filter(a -> a.getDate() > t)
                 .map(Transaction::getSum)
                 .reduce(value, (a, b) -> a - b);
