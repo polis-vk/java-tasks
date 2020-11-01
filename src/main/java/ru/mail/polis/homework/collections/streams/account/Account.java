@@ -11,9 +11,9 @@ import java.util.List;
  * 1 балл
  */
 public class Account {
-    private int id;
-    private List<Transaction> transactions;
-    private int balance;
+    private final int id;
+    private final List<Transaction> transactions;
+    private  int balance;
 
 
     public Account(int id) {
@@ -30,12 +30,15 @@ public class Account {
         balance += sum;
     }
 
-    public Transaction getTransactions(int number) throws Exception {
+    public Transaction getTransaction(int number) throws Exception {
 
-        if (number < transactions.size())
+        if (number < transactions.size()) {
             return transactions.get(number);
+        }
 
-        else throw new Exception();
+        else {
+            throw new Exception();
+        }
     }
 
     public int getId() {

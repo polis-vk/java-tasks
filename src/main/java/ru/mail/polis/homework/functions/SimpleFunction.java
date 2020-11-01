@@ -20,6 +20,7 @@ public class SimpleFunction {
      * 1 балл
      */
 
+    @FunctionalInterface
     interface TerFunction<T, U, F, R> {
 
         /**
@@ -68,10 +69,10 @@ public class SimpleFunction {
      * 4 балла
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            operators -> numbers -> numbers.stream()
-                    .map(number -> IntStream.range(1, operators.size() + 1)
-                            .mapToObj(index -> operators.stream()
-                                    .limit(index)
+            listOfOperators -> numbers -> numbers.stream()
+                    .map(number -> IntStream.range(1, listOfOperators.size() + 1)
+                            .mapToObj(countOfOperators -> listOfOperators.stream()
+                                    .limit(countOfOperators)
                                     .reduce(operator -> operator, IntUnaryOperator::andThen))
                             .mapToInt(operator -> operator.applyAsInt(number))
                             .boxed()
