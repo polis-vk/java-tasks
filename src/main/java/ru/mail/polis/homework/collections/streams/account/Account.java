@@ -40,7 +40,7 @@ public class Account {
     }
 
     public long getBalanceBeforeDate(Date date) {
-        long sum = balance;
+        long sum = beginBalance;
         sum = inTransactions.stream()
                 .filter(transaction -> transaction.getDate().before(date))
                 .map(Transaction::getSum)

@@ -46,8 +46,4 @@ public class Transaction {
     public Date getDate() {
         return date;
     }
-
-    public Account getOutgoingAccount() {
-        return outgoing;
-    }
 }

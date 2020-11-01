@@ -13,11 +13,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SimpleFunction {
-
-
-    public static void main(String[] args) {
-        System.out.println(reduceIntOperator.apply(2, Integer::sum));
-    }
     /**
      * Функция от трех аргументов. Не забудьте добавить дженерики.
      * Функция должна походить на {@link java.util.function.BiFunction}

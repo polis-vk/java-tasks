@@ -15,14 +15,10 @@ public class SimpleStreams {
      * Никаких циклов.
      * 1 балл
      */
-    public static void main(String[] args) {
-        System.out.println(isPrime(1));
-
-    }
 
     public static boolean isPrime(int n) {
-        if (n == 1) {
-            return true;
+        if (n <= 1) {
+            return false;
         }
         return Stream.iterate(2, k -> k + 1)
                 .filter(k -> n % k == 0)
@@ -38,11 +34,10 @@ public class SimpleStreams {
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
         String delimiters = "[ .,;:!? \\n]";
 
-        return Arrays.asList(text.split(delimiters))
-                .stream()
+        return Arrays.asList(text.split(delimiters)).stream()
                 .map(String::toLowerCase)
                 .filter(badWords::contains)
-                .collect(Collectors.toMap(Function.identity(), p -> 1, Integer::sum));
+                .collect(Collectors.toMap(Function.identity(), i -> 1, Integer::sum));
     }
 
 
