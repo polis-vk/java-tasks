@@ -26,7 +26,7 @@ public class Account {
         this.id = createId();
     }
 
-    long getId() {
+    public long getId() {
         return id;
     }
 
@@ -42,11 +42,15 @@ public class Account {
         return inTransactions;
     }
 
-    void setTransaction(Transaction transaction){
-        if (transaction.getSourceAccount() == this && transaction.getRecipientAccount() != this){ // проверка, что транзакция списания
+    public void addTransaction(Transaction transaction){
+        boolean in = transaction.getRecipientAccount().equals(this);
+        boolean out = transaction.getSourceAccount().equals(this);
+
+
+        if (out && !in){ // проверка, что транзакция списания
             balance -= transaction.getSum();
             outTransactions.add(transaction);
-        } else if (transaction.getSourceAccount() != this && transaction.getRecipientAccount() == this) { // проверка, что транзакция пополнения
+        } else if (!out && in) { // проверка, что транзакция пополнения
             balance += transaction.getSum();
             inTransactions.add(transaction);
         }

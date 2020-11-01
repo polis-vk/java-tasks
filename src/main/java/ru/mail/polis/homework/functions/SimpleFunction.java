@@ -14,6 +14,8 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
+
+    @FunctionalInterface
     interface TerFunction<F, S, T, R> {
         R apply(F first, S second, T third);
 
@@ -40,13 +42,14 @@ public class SimpleFunction {
      * Пример: multifunctionalMapper.apply([x -> x, x -> x + 1, x -> x * x]).apply([1, 2]) = [1, 2, 4, 2, 3, 9]
      * 4 балла
      */
+
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
         operators -> numbers -> numbers.stream()
                 .flatMap(value -> IntStream.range(0, operators.size())
                         .mapToObj(it -> operators.stream()
                                 .limit(it + 1)
-                                .reduce(operator -> operator, IntUnaryOperator::andThen))
-                .map(operator -> operator.applyAsInt(value)))
+                                .reduce(IntUnaryOperator.identity(), IntUnaryOperator::andThen))
+                        .map(operator -> operator.applyAsInt(value)))
                 .collect(Collectors.toList());
 
     /**

@@ -45,8 +45,10 @@ public class SimpleStreams {
      *
      * 3 балла
      */
+
+    private static final double g = 9.8;
+
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        final double g = 9.8;
         double sin = Math.sin(alpha * 2);
 
         return DoubleStream.iterate(v, changeV)

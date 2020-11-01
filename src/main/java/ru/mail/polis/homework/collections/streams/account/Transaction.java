@@ -30,27 +30,27 @@ public class Transaction {
         this.recipientAccount = recipientAccount;
         this.sourceAccount = sourceAccount;
         this.sum = sum;
-        this.sourceAccount.setTransaction(this);
-        this.recipientAccount.setTransaction(this);
+        this.sourceAccount.addTransaction(this);
+        this.recipientAccount.addTransaction(this);
     }
 
-    Long getSum(){
+    public Long getSum(){
         return sum;
     }
 
-    Date getDate() {
+    public Date getDate() {
         return date;
     }
 
-    Long getId() {
+    public Long getId() {
         return id;
     }
 
-    Account getSourceAccount() {
+    public Account getSourceAccount() {
         return sourceAccount;
     }
 
-    Account getRecipientAccount() {
+    public Account getRecipientAccount() {
         return recipientAccount;
     }
 }

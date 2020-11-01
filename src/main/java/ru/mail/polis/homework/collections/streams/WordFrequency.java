@@ -29,7 +29,7 @@ public class WordFrequency {
                 .split("[\n.,!:;-?]")))
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
+                .sorted(((x, y) -> y.getValue().compareTo(x.getValue())))
                 .limit(10)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
