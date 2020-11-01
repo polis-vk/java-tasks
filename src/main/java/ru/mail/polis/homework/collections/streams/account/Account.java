@@ -3,6 +3,7 @@ package ru.mail.polis.homework.collections.streams.account;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.*;
 
 /**
@@ -14,21 +15,24 @@ import java.util.stream.*;
  */
 
 public class Account {
-    final private long id;
-    private List<Transaction> transactions;
+    private static long idCounter = 0;
+    private static boolean idCounterIsSet = false;
+    private final long id;
+    private final List<Transaction> transactions = new ArrayList<>();
     private long balance;
-    private AccountList accounts;
 
-    public Account(AccountList accounts) throws NullPointerException {
-        if (accounts != null) {
-            this.accounts = accounts;
-            id = accounts.getIdCounter() + 1;
-            transactions = new ArrayList<>();
-            balance = 0;
-            accounts.add(this);
-        } else {
-            throw new NullPointerException();
+    public Account() {
+        id = ++idCounter;
+        idCounterIsSet = true;
+    }
+
+    public Account(long firstId) {
+        if (idCounterIsSet) {
+            throw new IllegalArgumentException();
         }
+        idCounter = firstId;
+        idCounterIsSet = true;
+        id = firstId;
     }
 
     public long getId() {
@@ -39,13 +43,16 @@ public class Account {
         return balance;
     }
 
-    public Transaction getTransactionByIndex(int index) {
-        return transactions.get(index);
+    public Optional<Transaction> getTransactionById(long searchId) {
+        return transactions.stream()
+                .filter(transaction -> transaction.getId() == searchId)
+                .findFirst();
+
     }
 
-    public List<Transaction> getTransactionByDate(Date date) {
+    public List<Transaction> getTransactionByDate(Date searchDate) {
         return transactions.stream()
-                .filter(transaction -> transaction.getDate().before(date))
+                .filter(transaction -> transaction.getDate().before(searchDate))
                 .collect(Collectors.toList());
     }
 
@@ -53,37 +60,14 @@ public class Account {
         return String.valueOf(id);
     }
 
-    public long getLastTransactionId() {
-        int size = transactions.size();
-        if (size > 0) {
-            return transactions.get(transactions.size() - 1).getId();
-        } else {
-            return 0;
-        }
-    }
-
-    public int getTransactionsSize() {
-        return transactions.size();
-    }
-
-    public Account getAccountFromListByIndex(int index) {
-        return accounts.getByIndex(index);
-    }
-
-    public void addTransaction(Transaction newItem) throws NullPointerException, IllegalArgumentException {
-        if (newItem != null) {
-            if (newItem.getId() > getLastTransactionId()) {
-                transactions.add(newItem);
-                addToBalance(newItem);
-            } else {
-                throw new IllegalArgumentException();
-            }
-        } else {
+    public void addTransaction(Transaction newItem, boolean isOut) {
+        if (newItem == null) {
             throw new NullPointerException();
         }
-    }
-
-    private void addToBalance(Transaction transaction) {
-        balance += transaction.getSum();
+        if (newItem.ADDED_TO_ACCOUNT) {
+            throw new IllegalArgumentException();
+        }
+        transactions.add(newItem);
+        balance += isOut ? -1*newItem.getSum() : newItem.getSum();
     }
 }
