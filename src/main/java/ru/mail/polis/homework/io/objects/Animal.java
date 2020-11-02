@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  * Всего должно быть минимум 6 полей с разными типами.
  * 1 балл
  */
-public class Animal {
+public class Animal implements Serializable {
 
   public enum Habitation {
     WATER,
@@ -17,12 +18,16 @@ public class Animal {
     SOIL
   }
 
-  private final Brain brain;
-  private final List<String> listName;
+  private Brain brain;
+  private List<String> listName;
   private int weight;
-  private final String name;
-  private final Habitation habitation;
+  private String name;
+  private Habitation habitation;
   private long distanceTraveled;
+
+  public Animal() {
+
+  }
 
   public Animal(Brain brain, List<String> listName, int weight, String name, Habitation habitation, long distanceTraveled) {
     this.brain = brain;
@@ -57,11 +62,39 @@ public class Animal {
     return distanceTraveled;
   }
 
+  public void setBrain(Brain brain) {
+    this.brain = brain;
+  }
+
+  public void setListName(List<String> listName) {
+    this.listName = listName;
+  }
+
   public void setWeight(int weight) {
     this.weight = weight;
   }
 
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setHabitation(Habitation habitation) {
+    this.habitation = habitation;
+  }
+
   public void setDistanceTraveled(long distanceTraveled) {
     this.distanceTraveled = distanceTraveled;
+  }
+
+  @Override
+  public String toString() {
+    return "Animal{" +
+            "brain=" + brain +
+            ", listName=" + listName +
+            ", weight=" + weight +
+            ", name='" + name + '\'' +
+            ", habitation=" + habitation +
+            ", distanceTraveled=" + distanceTraveled +
+            '}';
   }
 }
