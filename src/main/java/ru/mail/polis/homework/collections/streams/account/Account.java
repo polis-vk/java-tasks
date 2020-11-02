@@ -11,22 +11,22 @@ import java.util.List;
  * 1 балл
  */
 public class Account {
-    private final long id;
+    private final String id;
     private static long lastId;
     private final List<Transaction> inTransactions = new ArrayList<>();
     private final List<Transaction> outTransactions = new ArrayList<>();
     private long balance;
 
-    private long createId() {
+    private String createId() {
         lastId++;
-        return lastId;
+        return String.valueOf(lastId);
     }
 
     public Account(){
         this.id = createId();
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 

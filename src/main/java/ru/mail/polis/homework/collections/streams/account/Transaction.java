@@ -12,16 +12,16 @@ import java.util.Date;
  * 1 балл
  */
 public class Transaction {
-    private final long id;
+    private final String id;
     private static long lastId;
     private final Date date;
     private final Account sourceAccount;
     private final Account recipientAccount;
     private final Long sum;
 
-    private long createId() {
+    private String createId() {
         lastId++;
-        return lastId;
+        return String.valueOf(lastId);
     }
 
     public Transaction(Date date, Account sourceAccount, Account recipientAccount, long sum){
@@ -42,7 +42,7 @@ public class Transaction {
         return date;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
