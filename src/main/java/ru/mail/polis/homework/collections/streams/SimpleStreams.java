@@ -1,9 +1,13 @@
 package ru.mail.polis.homework.collections.streams;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class SimpleStreams {
 
@@ -13,7 +17,7 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return false;
+        return IntStream.rangeClosed(2, n/2).noneMatch(i -> n % i == 0);
     }
 
     /**
@@ -22,7 +26,12 @@ public class SimpleStreams {
      * 1 балл
      */
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
-        return Collections.emptyMap();
+        Map<String, Integer> map = new HashMap<>();
+        Stream.of(text.split(" .,;:!?")).filter(badWords::contains).forEach(str -> {
+            int count = map.getOrDefault(str, 0);
+            map.put(str, count + 1);
+        });
+        return map;
     }
 
 
@@ -37,7 +46,7 @@ public class SimpleStreams {
      *
      * 3 балла
      */
-    public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return 0;
+    public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n){
+        return DoubleStream.iterate(v, i -> v).limit(n).map(changeV).map(i -> i * i * Math.sin(2 * alpha) / 9.8f).sum();
     }
 }

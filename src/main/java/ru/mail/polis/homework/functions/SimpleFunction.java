@@ -18,8 +18,13 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
-    interface TerFunction {
+    @FunctionalInterface
+    public interface TerFunction<T, U, V, R> {
+        R apply(T t, U u, V v);
 
+        default<W, X> TerFunction<T, U, V, W> andThen(Function<? super R, ? extends W> after){
+            return (T t, U u, V v) -> after.apply(apply(t, u, v));
+        }
     }
 
     /**
@@ -28,8 +33,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
-        return null;
+    static <A,B,C,D> Function<A, Function<B, Function<C,D>>> curring(TerFunction<A,B,C,D> terFunction) {
+        return a -> b -> c -> terFunction.apply(a, b, c);
     }
 
 

@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.collections.streams.account;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +13,15 @@ public class Task {
      * 2 балла
      */
     public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
-        return Collections.emptyMap();
+        Map<String, Long> map = new HashMap<>();
+        transactions.forEach(transaction -> {
+            Long val = map.getOrDefault(transaction.getSender().getId(), 0L);
+            map.put(transaction.getSender().getId(), val + transaction.getSum());
+        });
+
+        return map;
+
+
     }
 
     /**
@@ -36,7 +46,15 @@ public class Task {
      * (обойтись без циклов и условий)
      * 3 балла
      */
+
+    public static long getAccountBalanceAtTime(Account account, long time){
+        account.
+    }
+
     public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
+
+        List<String> list = new ArrayList<>();
+
         return Collections.emptyList();
     }
 }
