@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,13 +15,12 @@ public class SerializerTest {
 
   private final int numberToSerialize = 100;
 
-  private final List<Animal> animalList;
-  private final List<AnimalWithMethods> animalWithMethodsList;
-  private final List<AnimalExternalizable> animalExternalizableList;
+  private final List<Animal> animalList = new ArrayList<>();
+  private final List<AnimalWithMethods> animalWithMethodsList = new ArrayList<>();
+  private final List<AnimalExternalizable> animalExternalizableList = new ArrayList<>();
   private final Serializer serializer = new Serializer();
 
   public SerializerTest() {
-    animalList = new ArrayList<>();
     animalList.add(new Animal(new Brain(10), Arrays.asList("bear", "tiger"), 22, "Frek", Animal.Habitation.LAND, 2222));
     animalList.add(new Animal(new Brain(3), Arrays.asList("lion"), 1, "Frik", Animal.Habitation.LAND, 211));
     animalList.add(new Animal(new Brain(4), Arrays.asList("bear", "tiger", "rabbit"), 20, "Frak", Animal.Habitation.WATER, 11));
@@ -32,30 +32,18 @@ public class SerializerTest {
     animalList.add(new Animal(new Brain(2), Arrays.asList("elephant"), 77, "Freok", Animal.Habitation.WATER, 414));
     animalList.add(new Animal(new Brain(33), Arrays.asList("tiger", "elephant"), 16, "Freak", Animal.Habitation.LAND, 812));
 
-    animalWithMethodsList = new ArrayList<>();
-    animalExternalizableList = new ArrayList<>();
+    for (int i = 0; i < animalList.size(); i++) {
+      Animal animal = animalList.get(i);
+      Brain brain = animal.getBrain();
+      List<String> listName = animal.getListName();
+      int weight = animal.getWeight();
+      String name = animal.getName();
+      Animal.Habitation habitation = animal.getHabitation();
+      Long distanceTraveled = animal.getDistanceTraveled();
+      animalWithMethodsList.add(new AnimalWithMethods(brain, listName, weight, name, habitation, distanceTraveled));
+      animalExternalizableList.add(new AnimalExternalizable(brain, listName, weight, name, habitation, distanceTraveled));
+    }
 
-    animalWithMethodsList.add(new AnimalWithMethods(new Brain(10), Arrays.asList("bear", "tiger"), 22, "Frek", Animal.Habitation.LAND, 2222));
-    animalWithMethodsList.add(new AnimalWithMethods(new Brain(3), Arrays.asList("lion"), 1, "Frik", Animal.Habitation.LAND, 211));
-    animalWithMethodsList.add(new AnimalWithMethods(new Brain(4), Arrays.asList("bear", "tiger", "rabbit"), 20, "Frak", Animal.Habitation.WATER, 11));
-    animalWithMethodsList.add(new AnimalWithMethods(new Brain(14), Arrays.asList("dog"), 23, "Frek", Animal.Habitation.SOIL, 333));
-    animalWithMethodsList.add(new AnimalWithMethods(new Brain(1), Arrays.asList("cat", "tiger"), 66, "Freek", Animal.Habitation.WATER, 444));
-    animalWithMethodsList.add(new AnimalWithMethods(new Brain(20), Arrays.asList("dog", "cat"), 12, "Fruk", Animal.Habitation.LAND, 555));
-    animalWithMethodsList.add(new AnimalWithMethods(new Brain(110), Arrays.asList("cat"), 55, "Frok", Animal.Habitation.SOIL, 212));
-    animalWithMethodsList.add(new AnimalWithMethods(new Brain(11), Arrays.asList("tiger"), 21, "Frak", Animal.Habitation.SOIL, 33));
-    animalWithMethodsList.add(new AnimalWithMethods(new Brain(2), Arrays.asList("elephant"), 77, "Freok", Animal.Habitation.WATER, 414));
-    animalWithMethodsList.add(new AnimalWithMethods(new Brain(33), Arrays.asList("tiger", "elephant"), 16, "Freak", Animal.Habitation.LAND, 812));
-
-    animalExternalizableList.add(new AnimalExternalizable(new Brain(10), Arrays.asList("bear", "tiger"), 22, "Frek", Animal.Habitation.LAND, 2222));
-    animalExternalizableList.add(new AnimalExternalizable(new Brain(3), Arrays.asList("lion"), 1, "Frik", Animal.Habitation.LAND, 211));
-    animalExternalizableList.add(new AnimalExternalizable(new Brain(4), Arrays.asList("bear", "tiger", "rabbit"), 20, "Frak", Animal.Habitation.WATER, 11));
-    animalExternalizableList.add(new AnimalExternalizable(new Brain(14), Arrays.asList("dog"), 23, "Frek", Animal.Habitation.SOIL, 333));
-    animalExternalizableList.add(new AnimalExternalizable(new Brain(1), Arrays.asList("cat", "tiger"), 66, "Freek", Animal.Habitation.WATER, 444));
-    animalExternalizableList.add(new AnimalExternalizable(new Brain(20), Arrays.asList("dog", "cat"), 12, "Fruk", Animal.Habitation.LAND, 555));
-    animalExternalizableList.add(new AnimalExternalizable(new Brain(110), Arrays.asList("cat"), 55, "Frok", Animal.Habitation.SOIL, 212));
-    animalExternalizableList.add(new AnimalExternalizable(new Brain(11), Arrays.asList("tiger"), 21, "Frak", Animal.Habitation.SOIL, 33));
-    animalExternalizableList.add(new AnimalExternalizable(new Brain(2), Arrays.asList("elephant"), 77, "Freok", Animal.Habitation.WATER, 414));
-    animalExternalizableList.add(new AnimalExternalizable(new Brain(33), Arrays.asList("tiger", "elephant"), 16, "Freak", Animal.Habitation.LAND, 812));
   }
 
   @Test
@@ -85,6 +73,8 @@ public class SerializerTest {
       compareFields(animalList, deserializedList);
 
       System.out.println("Serialize time: " + serialisedTime + "\n" + "Deserialize time: " + deserializeTime + "\n" + "File size:" + fileSize);
+
+      deleteFile(Paths.get(fileForFirstTest));
     }
     catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
@@ -118,8 +108,9 @@ public class SerializerTest {
       compareFields(animalList, deserializedList);
 
       System.out.println("Serialize time: " + serialisedTime + "\n" + "Deserialize time: " + deserializeTime + "\n" + "File size:" + fileSize);
-    }
 
+      deleteFile(Paths.get(fileForSecondTest));
+    }
     catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
     }
@@ -151,8 +142,9 @@ public class SerializerTest {
       compareFields(animalList, deserializedList);
 
       System.out.println("Serialize time: " + serialisedTime + "\n" + "Deserialize time: " + deserializeTime + "\n" + "File size:" + fileSize);
-    }
 
+      deleteFile(Paths.get(fileForThirdTest));
+    }
     catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
     }
@@ -161,11 +153,11 @@ public class SerializerTest {
   @Test
   public void customSerializeTest() {
     try {
-      String fileForThirdTest = "test4.txt";
+      String fileForFourthTest = "test4.txt";
       long startTime = System.currentTimeMillis();
 
       for (int i = 0; i < numberToSerialize; i++) {
-        serializer.customSerialize(animalList, fileForThirdTest);
+        serializer.customSerialize(animalList, fileForFourthTest);
       }
       long endTime = System.currentTimeMillis();
 
@@ -174,19 +166,19 @@ public class SerializerTest {
       startTime = System.currentTimeMillis();
       List<Animal> deserializedList = new ArrayList<>();
       for (int i = 0; i < numberToSerialize; i++) {
-        deserializedList = serializer.customDeserialize(fileForThirdTest);
+        deserializedList = serializer.customDeserialize(fileForFourthTest);
       }
       endTime = System.currentTimeMillis();
 
       long deserializeTime = endTime - startTime;
 
-      long fileSize = Files.size(Paths.get(fileForThirdTest));
+      long fileSize = Files.size(Paths.get(fileForFourthTest));
 
       compareFields(animalList, deserializedList);
 
       System.out.println("Serialize time: " + serialisedTime + "\n" + "Deserialize time: " + deserializeTime + "\n" + "File size:" + fileSize);
+      deleteFile(Paths.get(fileForFourthTest));
     }
-
     catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
     }
@@ -200,6 +192,15 @@ public class SerializerTest {
       Assert.assertEquals(startList.get(i).getName(), deserializedList.get(i).getName());
       Assert.assertEquals(startList.get(i).getHabitation(), deserializedList.get(i).getHabitation());
       Assert.assertEquals(startList.get(i).getDistanceTraveled(), deserializedList.get(i).getDistanceTraveled());
+    }
+  }
+
+  private void deleteFile(Path path) {
+    try {
+      Files.delete(path);
+    }
+    catch (IOException e) {
+      e.printStackTrace();
     }
   }
 }
