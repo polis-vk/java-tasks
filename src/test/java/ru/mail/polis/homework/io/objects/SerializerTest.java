@@ -39,7 +39,7 @@ public class SerializerTest {
       int weight = animal.getWeight();
       String name = animal.getName();
       Animal.Habitation habitation = animal.getHabitation();
-      Long distanceTraveled = animal.getDistanceTraveled();
+      long distanceTraveled = animal.getDistanceTraveled();
       animalWithMethodsList.add(new AnimalWithMethods(brain, listName, weight, name, habitation, distanceTraveled));
       animalExternalizableList.add(new AnimalExternalizable(brain, listName, weight, name, habitation, distanceTraveled));
     }
