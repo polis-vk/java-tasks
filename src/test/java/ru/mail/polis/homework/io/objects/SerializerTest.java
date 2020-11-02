@@ -72,7 +72,7 @@ public class SerializerTest {
 
       compareFields(animalList, deserializedList);
 
-      System.out.println("Serialize time: " + serialisedTime + "\n" + "Deserialize time: " + deserializeTime + "\n" + "File size:" + fileSize);
+      printInfo(serialisedTime, deserializeTime, fileSize);
 
       deleteFile(Paths.get(fileForFirstTest));
     }
@@ -107,7 +107,7 @@ public class SerializerTest {
 
       compareFields(animalList, deserializedList);
 
-      System.out.println("Serialize time: " + serialisedTime + "\n" + "Deserialize time: " + deserializeTime + "\n" + "File size:" + fileSize);
+      printInfo(serialisedTime, deserializeTime, fileSize);
 
       deleteFile(Paths.get(fileForSecondTest));
     }
@@ -141,7 +141,7 @@ public class SerializerTest {
 
       compareFields(animalList, deserializedList);
 
-      System.out.println("Serialize time: " + serialisedTime + "\n" + "Deserialize time: " + deserializeTime + "\n" + "File size:" + fileSize);
+      printInfo(serialisedTime, deserializeTime, fileSize);
 
       deleteFile(Paths.get(fileForThirdTest));
     }
@@ -176,7 +176,8 @@ public class SerializerTest {
 
       compareFields(animalList, deserializedList);
 
-      System.out.println("Serialize time: " + serialisedTime + "\n" + "Deserialize time: " + deserializeTime + "\n" + "File size:" + fileSize);
+      printInfo(serialisedTime, deserializeTime, fileSize);
+
       deleteFile(Paths.get(fileForFourthTest));
     }
     catch (IOException | ClassNotFoundException e) {
@@ -202,5 +203,9 @@ public class SerializerTest {
     catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  private void printInfo(Long serialisedTime, Long deserializeTime, Long fileSize) {
+    System.out.println("Serialize time: " + serialisedTime + "\n" + "Deserialize time: " + deserializeTime + "\n" + "File size:" + fileSize + "\n");
   }
 }
