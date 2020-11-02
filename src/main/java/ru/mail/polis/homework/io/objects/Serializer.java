@@ -206,11 +206,4 @@ public class Serializer {
       return animalList;
     }
   }
-
-  private void serialize(List<Animal> animalList, Path path) {
-  }
-
-  private List<? extends Animal> deserialize() {
-    return Collections.emptyList();
-  }
 }
