@@ -1,14 +1,9 @@
 package ru.mail.polis.homework.collections.streams;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class SimpleStreams {
 
@@ -18,9 +13,7 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return n > 1 &&
-                IntStream.rangeClosed(2, n / 2)
-                .allMatch(i -> n % i != 0);
+        return false;
     }
 
     /**
@@ -29,16 +22,9 @@ public class SimpleStreams {
      * 1 балл
      */
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
-        return  Arrays.stream(text.split("[\\s\\n\\r.,;:!?]+"))
-                .filter(badWords::contains)
-                .collect(
-                        Collectors.toMap(
-                                Function.identity(),
-                                word -> 1,
-                                Integer::sum
-                        )
-                );
+        return Collections.emptyMap();
     }
+
 
     /**
      * Маленький мальчик кидает мячик n раз в поле силы тяжести под углом alpha к поверхности земли.
@@ -51,13 +37,7 @@ public class SimpleStreams {
      *
      * 3 балла
      */
-    public final static double FREE_FALL_ACCELERATION = 9.8;
-
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return DoubleStream.iterate(v, changeV)
-                .limit(n)
-                .map(currentV -> currentV * currentV)
-                .reduce(0.0, Double::sum)
-                * Math.sin(2 * alpha) / FREE_FALL_ACCELERATION;
+        return 0;
     }
 }
