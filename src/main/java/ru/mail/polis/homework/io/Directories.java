@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.io;
 
+import java.io.File;
 import java.io.IOException;
 
 public class Directories {
@@ -12,8 +13,26 @@ public class Directories {
      * Написать двумя способами. С использованием File
      * 2 балла
      */
+    private static int counter = 0;
+
     public static int removeWithFile(String path) {
-        return 0;
+        File dirToBeRemoved = new File(path);
+        if (dirToBeRemoved.isDirectory()) {
+            if (dirToBeRemoved.list().length == 0) {
+                dirToBeRemoved.delete();
+                counter++;
+            } else {
+                String[] filesInside = dirToBeRemoved.list();
+                for (String file : filesInside) {
+                    removeWithFile(dirToBeRemoved + "\\" + file);
+                    counter++;
+                }
+                dirToBeRemoved.delete();
+                counter++;
+            }
+        }
+        dirToBeRemoved.delete();
+        return counter;
     }
 
     /**

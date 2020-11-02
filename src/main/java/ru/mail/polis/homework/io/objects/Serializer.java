@@ -1,6 +1,11 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,8 +32,10 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void defaultSerialize(List<Animal> animals, String fileName) {
-
+    public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            out.writeObject(animals);
+        }
     }
 
     /**
@@ -38,10 +45,13 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
+    public List<Animal> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
+        List<Animal> animals = new ArrayList<>();
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
+            animals = (List<Animal>)in.readObject();
+        }
+        return animals;
     }
-
 
     /**
      * 1 балл
@@ -71,8 +81,10 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
-
+    public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) throws IOException {
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            objectOutputStream.writeObject(animals);
+        }
     }
 
     /**
@@ -83,8 +95,12 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-        return Collections.emptyList();
+    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) throws IOException, ClassNotFoundException {
+        List<AnimalExternalizable> animals = new ArrayList<>();
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
+            animals = (List<AnimalExternalizable>)in.readObject();
+        }
+        return animals;
     }
 
     /**
