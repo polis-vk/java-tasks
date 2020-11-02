@@ -56,7 +56,6 @@ public class SerializerTest {
         serializer.defaultSerialize(animalList, fileForFirstTest);
       }
       long endTime = System.currentTimeMillis();
-
       long serialisedTime = endTime - startTime;
 
       startTime = System.currentTimeMillis();
@@ -65,7 +64,6 @@ public class SerializerTest {
         deserializedList = serializer.defaultDeserialize(fileForFirstTest);
       }
       endTime = System.currentTimeMillis();
-
       long deserializeTime = endTime - startTime;
 
       long fileSize = Files.size(Paths.get(fileForFirstTest));
@@ -90,7 +88,6 @@ public class SerializerTest {
         serializer.serializeWithMethods(animalWithMethodsList, fileForSecondTest);
       }
       long endTime = System.currentTimeMillis();
-
       long serialisedTime = endTime - startTime;
 
       startTime = System.currentTimeMillis();
@@ -100,7 +97,6 @@ public class SerializerTest {
         deserializedList = serializer.deserializeWithMethods(fileForSecondTest);
       }
       endTime = System.currentTimeMillis();
-
       long deserializeTime = endTime - startTime;
 
       long fileSize = Files.size(Paths.get(fileForSecondTest));
@@ -125,7 +121,6 @@ public class SerializerTest {
         serializer.serializeWithExternalizable(animalExternalizableList, fileForThirdTest);
       }
       long endTime = System.currentTimeMillis();
-
       long serialisedTime = endTime - startTime;
 
       startTime = System.currentTimeMillis();
@@ -134,7 +129,6 @@ public class SerializerTest {
         deserializedList = serializer.deserializeWithExternalizable(fileForThirdTest);
       }
       endTime = System.currentTimeMillis();
-
       long deserializeTime = endTime - startTime;
 
       long fileSize = Files.size(Paths.get(fileForThirdTest));
@@ -160,7 +154,6 @@ public class SerializerTest {
         serializer.customSerialize(animalList, fileForFourthTest);
       }
       long endTime = System.currentTimeMillis();
-
       long serialisedTime = endTime - startTime;
 
       startTime = System.currentTimeMillis();
@@ -169,7 +162,6 @@ public class SerializerTest {
         deserializedList = serializer.customDeserialize(fileForFourthTest);
       }
       endTime = System.currentTimeMillis();
-
       long deserializeTime = endTime - startTime;
 
       long fileSize = Files.size(Paths.get(fileForFourthTest));
