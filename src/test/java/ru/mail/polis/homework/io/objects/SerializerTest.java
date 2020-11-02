@@ -34,12 +34,14 @@ public class SerializerTest {
 
     for (int i = 0; i < animalList.size(); i++) {
       Animal animal = animalList.get(i);
+
       Brain brain = animal.getBrain();
       List<String> listName = animal.getListName();
       int weight = animal.getWeight();
       String name = animal.getName();
       Animal.Habitation habitation = animal.getHabitation();
       long distanceTraveled = animal.getDistanceTraveled();
+      
       animalWithMethodsList.add(new AnimalWithMethods(brain, listName, weight, name, habitation, distanceTraveled));
       animalExternalizableList.add(new AnimalExternalizable(brain, listName, weight, name, habitation, distanceTraveled));
     }
