@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 /**
@@ -29,14 +30,17 @@ public class Animal implements Serializable {
         out.writeUTF(name);
         out.writeInt(age);
         out.writeInt(weight);
+        out.writeUTF(locationsList.toString());
         colour.writeObject(out);
     }
 
-    void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    void readObject(ObjectInputStream in) throws IOException {
         animalKind = animalKind.readObject(in);
         name = in.readUTF();
         age = in.readInt();
         weight = in.readInt();
+        locationsList = new ArrayList<>();
+        locationsList.add(in.readUTF());
         colour = colour.readObject(in);
     }
 

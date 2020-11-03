@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Дубль класса Animal, для Serializer.serializeWithMethods
@@ -14,14 +15,32 @@ import java.util.List;
  */
 public class AnimalWithMethods implements Serializable {
 
-    private AnimalKind animalKind;
-    private String name;
+    private AnimalKind animalKind = AnimalKind.UNKNOWN;
+    private String name = "unknown";
     private int age;
     private int weight;
     private List<String> locationsList = new ArrayList<>();
-    private Colour colour;
+    private Colour colour = Colour.UNKNOWN;
 
-    private AnimalWithMethods() {
+    AnimalWithMethods() {
+    }
+
+    void writeObject(ObjectOutputStream out) throws IOException {
+        animalKind.writeObject(out);
+        out.writeUTF(name);
+        out.writeInt(age);
+        out.writeInt(weight);
+        out.writeObject(locationsList);
+        colour.writeObject(out);
+    }
+
+    void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        animalKind = animalKind.readObject(in);
+        name = in.readUTF();
+        age = in.readInt();
+        weight = in.readInt();
+        locationsList = (List<String>) in.readObject();
+        colour = colour.readObject(in);
     }
 
     public static Builder newBuilder() {
@@ -40,12 +59,22 @@ public class AnimalWithMethods implements Serializable {
                 '}';
     }
 
-    public void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AnimalWithMethods animal = (AnimalWithMethods) o;
+        return age == animal.age &&
+                weight == animal.weight &&
+                animalKind == animal.animalKind &&
+                Objects.equals(name, animal.name) &&
+                Objects.equals(locationsList, animal.locationsList) &&
+                colour == animal.colour;
     }
 
-    public void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
+    @Override
+    public int hashCode() {
+        return Objects.hash(animalKind, name, age, weight, locationsList, colour);
     }
 
     public class Builder {

@@ -66,7 +66,13 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) throws IOException {
-
+        Path path = Paths.get(fileName);
+        try (ObjectOutputStream output =
+                     new ObjectOutputStream(Files.newOutputStream(path))) {
+            for (AnimalWithMethods animal : animals) {
+                animal.writeObject(output);
+            }
+        }
     }
 
     /**
@@ -78,7 +84,21 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) throws IOException, ClassNotFoundException {
-        return Collections.emptyList();
+        Path path = Paths.get(fileName);
+        List<AnimalWithMethods> resultList = new ArrayList<>();
+        try (ObjectInputStream input =
+                     new ObjectInputStream(Files.newInputStream(path))) {
+            while (true) {
+                try {
+                    AnimalWithMethods animal = new AnimalWithMethods();
+                    animal.readObject(input);
+                    resultList.add(animal);
+                } catch (IOException e) {
+                    break;
+                }
+            }
+        }
+        return resultList;
     }
 
     /**
@@ -134,10 +154,15 @@ public class Serializer {
      */
     public void customSerialize(List<Animal> animals, String fileName) throws IOException {
         Path path = Paths.get(fileName);
-        try (ObjectOutputStream output =
+        try (ObjectOutputStream out =
                      new ObjectOutputStream(Files.newOutputStream(path))) {
             for (Animal animal : animals) {
-                animal.writeObject(output);
+//                animalKind.writeObject(out);
+//                out.writeUTF(name);
+//                out.writeInt(age);
+//                out.writeInt(weight);
+//                out.writeUTF(locationsList.toString());
+//                colour.writeObject(out);
             }
         }
     }
@@ -158,7 +183,7 @@ public class Serializer {
             while (true) {
                 try {
                     Animal animal = new Animal();
-                    animal.readObject(input); // это кастомный readObject
+                    animal.readObject(input);
                     resultList.add(animal);
                 } catch (IOException e) {
                     break;

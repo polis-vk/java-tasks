@@ -33,10 +33,19 @@ public class SerializerTest {
             AnimalExternalizable.newBuilder().setName("Vadim").setAge(15).setColour(Colour.BLUE).build()
     ));
 
+    private final List<AnimalWithMethods> animalsWithMethods = new ArrayList<>(Arrays.asList(
+            AnimalWithMethods.newBuilder().setAge(15).setAnimalKind(AnimalKind.ELEPHANT).build(),
+            AnimalWithMethods.newBuilder().setName("Yarik").setAge(13).build(),
+            AnimalWithMethods.newBuilder().addLocations("Tokyo", "St.Petersburg").build(),
+            AnimalWithMethods.newBuilder().setName("Vadim").setAge(15).setColour(Colour.BLUE).build()
+    ));
+
     private final Serializer serializer = new Serializer();
 
     private final String BIN_DEFAULT = "default.bin";
+    private final String BIN_METHODS = "methods.bin";
     private final String BIN_EXTERNAL = "externalizable.bin";
+    private final String BIN_CUSTOM = "custom.bin";
 
     @Test
     @Order(1)
@@ -52,12 +61,15 @@ public class SerializerTest {
 
     @Test
     @Order(3)
-    public void serializeWithMethods() {
+    public void serializeWithMethods() throws IOException {
+        serializer.serializeWithMethods(animalsWithMethods, BIN_METHODS);
     }
 
     @Test
     @Order(4)
-    public void deserializeWithMethods() {
+    public void deserializeWithMethods() throws IOException, ClassNotFoundException {
+        List<AnimalWithMethods> animalWithMethods = serializer.deserializeWithMethods(BIN_METHODS);
+        assertEquals(animalsWithMethods, animalWithMethods);
     }
 
     @Test
