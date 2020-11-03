@@ -192,7 +192,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) throws IOException, ClassNotFoundException {
+    public List<Animal> customDeserialize(String fileName) throws IOException {
         try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
             try (ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
                 ArrayList<Animal> animals = new ArrayList<>();

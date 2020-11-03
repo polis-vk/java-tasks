@@ -208,7 +208,7 @@ public class SerializerTest {
         startTime = System.currentTimeMillis();
         try {
             animalsAfter = serializer.customDeserialize(fileName);
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         endTime = System.currentTimeMillis();
