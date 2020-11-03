@@ -8,6 +8,5 @@
 # Mobile Tools for Java (J2ME)
 .gradle/
 out/
-homework2.iml
 build/
 target/
