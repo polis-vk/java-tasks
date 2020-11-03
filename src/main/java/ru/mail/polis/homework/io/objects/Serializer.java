@@ -1,7 +1,13 @@
 package ru.mail.polis.homework.io.objects;
 
 
-import java.util.Collections;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,8 +33,14 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void defaultSerialize(List<Animal> animals, String fileName) {
+    public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
+        Path path = Paths.get(fileName);
 
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))){
+            for (Animal animal: animals){
+                objectOutputStream.writeObject(animal);
+            }
+        }
     }
 
     /**
@@ -38,8 +50,19 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
+    public List<Animal> defaultDeserialize(String fileName) throws IOException{
+        List<Animal> animals = new ArrayList<>();
+        Path path = Paths.get(fileName);
+
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))) {
+            while (Files.isReadable(path)) {
+                animals.add((Animal) objectInputStream.readObject());
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return animals;
     }
 
 
@@ -50,7 +73,14 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
+        Path path = Paths.get(fileName);
 
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
+            for (Animal animal: animals){
+                objectOutputStream.writeObject(animal);
+            }
+        } catch (Exception ignored) {
+        }
     }
 
     /**
@@ -62,7 +92,18 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
-        return Collections.emptyList();
+        Path path = Paths.get(fileName);
+        List<AnimalWithMethods> animals = new ArrayList<>();
+
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))) {
+            while (Files.isReadable(path)) {
+                animals.add((AnimalWithMethods) objectInputStream.readObject());
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return animals;
     }
 
     /**
@@ -72,7 +113,15 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
+        Path path = Paths.get(fileName);
 
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
+            for (Object animalExternalizable : animals) {
+                objectOutputStream.writeObject(animalExternalizable);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -84,7 +133,18 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-        return Collections.emptyList();
+        Path path = Paths.get(fileName);
+        List<AnimalExternalizable> animals = new ArrayList<>();
+
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))){
+            while (Files.isReadable(path)) {
+                animals.add((AnimalExternalizable) objectInputStream.readObject());
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return animals;
     }
 
     /**
@@ -96,7 +156,20 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
+        Path path = Paths.get(fileName);
 
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))){
+            for (Animal animal: animals){
+                objectOutputStream.writeUTF(animal.getName());
+                objectOutputStream.writeObject(animal.getHabitat());
+                objectOutputStream.writeInt(animal.getWeight());
+                objectOutputStream.writeInt(animal.getAge());
+                objectOutputStream.writeBoolean(animal.isPredator());
+                objectOutputStream.writeObject(animal.getFood());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -108,6 +181,26 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+        Path path = Paths.get(fileName);
+        List<Animal> animals = new ArrayList<>();
+
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))) {
+            while (Files.isReadable(path)) {
+                Animal animal = new Animal(
+                        objectInputStream.readUTF(),
+                        (Habitat) objectInputStream.readObject(),
+                        objectInputStream.readInt(),
+                        objectInputStream.readInt(),
+                        objectInputStream.readBoolean(),
+                        (List<String>) objectInputStream.readObject()
+                );
+
+                animals.add(animal);
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return animals;
     }
 }
