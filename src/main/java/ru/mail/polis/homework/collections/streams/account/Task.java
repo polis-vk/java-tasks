@@ -13,7 +13,8 @@ public class Task {
     public static long paymentsSumByAccount(Account account) {
         return account.getTransactions().stream()
         .filter(transaction -> transaction.getRecipientId() != account.getId())
-        .mapToLong(Transaction::getSum).sum();
+        .mapToLong(Transaction::getSum)
+        .sum();
     }
 
     /**
@@ -40,7 +41,8 @@ public class Task {
      */
     public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
         return accounts.stream()
-                .sorted(Comparator.comparing(account -> account.getBalanceByDate(t)))                
+                .sorted(Comparator.comparing(account -> account.getBalanceByDate(t)))
+                .skip(1)                
                 .limit(n)
                 .map(account -> String.valueOf(account.getId()))
                 .collect(Collectors.toList());

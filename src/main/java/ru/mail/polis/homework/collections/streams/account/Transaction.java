@@ -13,11 +13,11 @@ import java.util.Date;
  */
 public class Transaction {
     private static int idSeq;
-    private long id;
-    private Date date;
-    private long senderId;
-    private long recipientId;
-    private long sum;
+    private final long id;
+    private final Date date;
+    private final long senderId;
+    private final long recipientId;
+    private final long sum;
 
     public Transaction(Date date, long senderId, long recipientId, long sum) {
         id = idNextValue();

@@ -12,8 +12,8 @@ import java.util.List;
  */
 public class Account {
     private static int idSeq;
-    private int id;
-    private List<Transaction> transactions;
+    private final int id;
+    private final List<Transaction> transactions;
     private long balance;
 
     public Account() {
@@ -46,11 +46,17 @@ public class Account {
     }
 
     public long getBalanceByDate(long date) {
-        long tmpBalance = 0;
-        tmpBalance += transactions.stream().filter(transaction -> transaction.getDate().getTime() < date).filter(transaction -> transaction.getRecipientId() == this.id)
-        .mapToLong(Transaction::getSum).sum();
-        tmpBalance -= transactions.stream().filter(transaction -> transaction.getDate().getTime() < date).filter(transaction -> transaction.getSenderId() == this.id)
-        .mapToLong(Transaction::getSum).sum();
+        long tmpBalance = 0;        
+        tmpBalance += transactions.stream()
+        .filter(transaction -> transaction.getDate().getTime() < date)
+        .mapToLong(transaction -> {
+            if(transaction.getSenderId() == this.id) {
+                return -transaction.getSum();
+            } else {
+                return transaction.getSum();
+            }
+        })
+        .sum();
         return tmpBalance;
     }
 
