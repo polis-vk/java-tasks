@@ -10,23 +10,26 @@ import java.util.List;
  * 3 балла
  */
 public class AnimalWithMethods implements Serializable {
+
     enum FoodPreferences { //не знаю как это по-научному назвать
         CARNIVOROUS,
         HERBIVOROUS,
         OMNIVOROUS
     }
 
-    private final String kind;
+    private String kind;
 
-    private final Tail tail;
+    private Tail tail;
 
     private double energy;
 
-    private final Animal.FoodPreferences foodPreferences;
+    private Animal.FoodPreferences foodPreferences;
 
-    private final int averageLifeExpectancy;
+    private int averageLifeExpectancy;
 
     private List<String> habitats;
+
+    public AnimalWithMethods() {}
 
     public AnimalWithMethods(String kind, boolean isTailLong,
                              Animal.FoodPreferences foodPreferences, int averageLifeExpectancy) {
@@ -69,11 +72,4 @@ public class AnimalWithMethods implements Serializable {
         this.habitats = habitats;
     }
 
-    public void eat() {
-        if (energy < 90) {
-            setEnergy(energy + 10);
-        } else {
-            setEnergy(100);
-        }
-    }
 }

@@ -49,10 +49,12 @@ public class SerializerTest {
             File file = new File(fileName);
             System.out.println("File size: " + file.length());
 
+            System.out.println(deserializedAnimals);
+
             file.delete();
 
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -93,6 +95,8 @@ public class SerializerTest {
 
             File file = new File(fileName);
             System.out.println("File size: " + file.length());
+
+            file.delete();
 
         } catch (IOException | ClassNotFoundException e) {
             System.out.println(e.getMessage());

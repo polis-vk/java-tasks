@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,10 +34,11 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName, true))) {
             out.writeObject(animals);
         }
     }
+
 
     /**
      * 1 балл
@@ -45,6 +47,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
+
     public List<Animal> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
         List<Animal> animals = new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
@@ -82,7 +85,7 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) throws IOException {
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName, true))) {
             objectOutputStream.writeObject(animals);
         }
     }
