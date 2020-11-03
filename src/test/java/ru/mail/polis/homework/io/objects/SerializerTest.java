@@ -41,7 +41,7 @@ public class SerializerTest {
       String name = animal.getName();
       Animal.Habitation habitation = animal.getHabitation();
       long distanceTraveled = animal.getDistanceTraveled();
-      
+
       animalWithMethodsList.add(new AnimalWithMethods(brain, listName, weight, name, habitation, distanceTraveled));
       animalExternalizableList.add(new AnimalExternalizable(brain, listName, weight, name, habitation, distanceTraveled));
     }
@@ -70,8 +70,7 @@ public class SerializerTest {
 
       long fileSize = Files.size(Paths.get(fileForFirstTest));
 
-      compareFields(animalList, deserializedList);
-
+      Assert.assertEquals(animalList, deserializedList);
       printInfo(serialisedTime, deserializeTime, fileSize);
 
       deleteFile(Paths.get(fileForFirstTest));
@@ -103,7 +102,7 @@ public class SerializerTest {
 
       long fileSize = Files.size(Paths.get(fileForSecondTest));
 
-      compareFields(animalList, deserializedList);
+      Assert.assertEquals(animalList, deserializedList);
 
       printInfo(serialisedTime, deserializeTime, fileSize);
 
@@ -135,7 +134,7 @@ public class SerializerTest {
 
       long fileSize = Files.size(Paths.get(fileForThirdTest));
 
-      compareFields(animalList, deserializedList);
+      Assert.assertEquals(animalList, deserializedList);
 
       printInfo(serialisedTime, deserializeTime, fileSize);
 
@@ -168,7 +167,7 @@ public class SerializerTest {
 
       long fileSize = Files.size(Paths.get(fileForFourthTest));
 
-      compareFields(animalList, deserializedList);
+      Assert.assertEquals(animalList, deserializedList);
 
       printInfo(serialisedTime, deserializeTime, fileSize);
 
@@ -176,17 +175,6 @@ public class SerializerTest {
     }
     catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
-    }
-  }
-
-  private void compareFields(List<Animal> startList, List<? extends Animal> deserializedList) {
-    for (int i = 0; i < startList.size(); i++) {
-      Assert.assertEquals(startList.get(i).getBrain().getSize(), deserializedList.get(i).getBrain().getSize());
-      Assert.assertEquals(startList.get(i).getListName(), deserializedList.get(i).getListName());
-      Assert.assertEquals(startList.get(i).getWeight(), deserializedList.get(i).getWeight());
-      Assert.assertEquals(startList.get(i).getName(), deserializedList.get(i).getName());
-      Assert.assertEquals(startList.get(i).getHabitation(), deserializedList.get(i).getHabitation());
-      Assert.assertEquals(startList.get(i).getDistanceTraveled(), deserializedList.get(i).getDistanceTraveled());
     }
   }
 
