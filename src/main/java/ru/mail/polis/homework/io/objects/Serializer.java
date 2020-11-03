@@ -80,7 +80,7 @@ public class Serializer {
     Path path = Paths.get(fileName);
 
     try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
-      for (Object animalWithMethods : animals) {
+      for (AnimalWithMethods animalWithMethods : animals) {
         outputStream.writeObject(animalWithMethods);
       }
     }
@@ -123,8 +123,8 @@ public class Serializer {
     Path path = Paths.get(fileName);
 
     try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
-      for (Object animalExternalizable : animals) {
-        outputStream.writeObject(animalExternalizable);
+      for (AnimalExternalizable animalExternalizable : animals) {
+        animalExternalizable.writeExternal(outputStream);
       }
     }
   }
@@ -144,7 +144,9 @@ public class Serializer {
     try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(path))) {
       try {
         while (Files.isReadable(path)) {
-          animalList.add((AnimalExternalizable) inputStream.readObject());
+          AnimalExternalizable animalExternalizable = new AnimalExternalizable();
+          animalExternalizable.readExternal(inputStream);
+          animalList.add(animalExternalizable);
         }
       }
       catch (EOFException ignored) {
