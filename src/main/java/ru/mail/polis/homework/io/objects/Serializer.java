@@ -158,13 +158,23 @@ public class Serializer {
     public void customSerialize(List<Animal> animals, String fileName) throws IOException {
         try (FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
             try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
+                objectOutputStream.writeInt(animals.size());
+
                 animals.forEach(animal -> {
                     try {
                         objectOutputStream.writeUTF(animal.getName());
                         objectOutputStream.writeBoolean(animal.isPredator());
-                        objectOutputStream.writeObject(animal.getType());
-                        objectOutputStream.writeObject(animal.getFood());
-                        objectOutputStream.writeObject(animal.getHabitat());
+                        objectOutputStream.writeInt(animal.getType().ordinal());
+
+                        List<String> food = animal.getFood();
+                        objectOutputStream.writeInt(food.size());
+
+                        for (String f : food) {
+                            objectOutputStream.writeUTF(f);
+                        }
+
+                        objectOutputStream.writeUTF(animal.getHabitat().getArea());
+
                         objectOutputStream.writeInt(animal.getSpeed());
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -186,13 +196,22 @@ public class Serializer {
         try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
             try (ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
                 ArrayList<Animal> animals = new ArrayList<>();
-                while (fileInputStream.available() > 0) {
+                int size = objectInputStream.readInt();
+                for (int i = 0; i < size; ++i) {
                     Animal animal = new Animal();
                     animal.setName(objectInputStream.readUTF());
                     animal.setPredator(objectInputStream.readBoolean());
-                    animal.setType((AnimalType) objectInputStream.readObject());
-                    animal.setFood((List<String>) objectInputStream.readObject());
-                    animal.setHabitat((Habitat) objectInputStream.readObject());
+                    animal.setType(AnimalType.values()[objectInputStream.readInt()]);
+
+                    List<String> food = new ArrayList<>();
+                    int sizeFood = objectInputStream.readInt();
+                    for (int j = 0; j < sizeFood; j++) {
+                        food.add(objectInputStream.readUTF());
+                    }
+                    animal.setFood(food);
+
+                    animal.setHabitat(new Habitat(objectInputStream.readUTF()));
+
                     animal.setSpeed(objectInputStream.readInt());
                     animals.add(animal);
                 }
