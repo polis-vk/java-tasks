@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.List;
 
@@ -19,5 +22,13 @@ public class AnimalWithMethods extends Animal implements Serializable {
   }
 
   public AnimalWithMethods() {
+  }
+
+  private void writeObject(ObjectOutputStream objectStream) throws IOException {
+    objectStream.defaultWriteObject();
+  }
+
+  private void readObject(ObjectInputStream objectStream) throws IOException, ClassNotFoundException {
+    objectStream.defaultReadObject();
   }
 }

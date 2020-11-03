@@ -2,9 +2,11 @@ package ru.mail.polis.homework.io.objects;
 
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.nio.file.Path;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 
 /**
  * Нужно реализовать методы этого класса и реализовать тестирование 4-ех способов записи.
@@ -31,7 +33,8 @@ public class Serializer {
    * @param fileName файл в который "пишем" животных
    */
   public void defaultSerialize(List<Animal> animals, String fileName) {
-    try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+    Path path = Paths.get(fileName);
+    try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
 
       animals.forEach(a -> {
         try {
@@ -53,11 +56,12 @@ public class Serializer {
    * @return список животных
    */
   public List<Animal> defaultDeserialize(String fileName) {
+    Path path = Paths.get(fileName);
     List<Animal> animals = new ArrayList<>();
 
-    try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
+    try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))) {
 
-      while (objectInputStream.available() != 0) {
+      while (Files.isReadable(path)) {
         animals.add((Animal) objectInputStream.readObject());
       }
 
@@ -76,7 +80,9 @@ public class Serializer {
    * @param fileName файл в который "пишем" животных
    */
   public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
-    try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+    Path path = Paths.get(fileName);
+
+    try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
 
       animals.forEach(a -> {
         try {
@@ -97,11 +103,12 @@ public class Serializer {
    * @return список животных
    */
   public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
+    Path path = Paths.get(fileName);
     List<AnimalWithMethods> animals = new ArrayList<>();
 
-    try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
+    try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))) {
 
-      while (objectInputStream.available() != 0) {
+      while (Files.isReadable(path)) {
         animals.add((AnimalWithMethods) objectInputStream.readObject());
       }
 
@@ -141,10 +148,11 @@ public class Serializer {
    * @return список животных
    */
   public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
+    Path path = Paths.get(fileName);
     List<AnimalExternalizable> animals = new ArrayList<>();
 
-    try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
-      while (objectInputStream.available() != 0) {
+    try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))) {
+      while (Files.isReadable(path)) {
         AnimalExternalizable animal = new AnimalExternalizable();
 
         animal.readExternal(objectInputStream);
@@ -165,7 +173,8 @@ public class Serializer {
    * @param fileName файл, в который "пишем" животных
    */
   public void customSerialize(List<Animal> animals, String fileName) {
-    try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+    Path path = Paths.get(fileName);
+    try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
 
       animals.forEach(a -> {
         try {
@@ -192,11 +201,12 @@ public class Serializer {
    * @return список животных
    */
   public List<Animal> customDeserialize(String fileName) {
+    Path path = Paths.get(fileName);
     List<Animal> animals = new ArrayList<>();
 
-    try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
+    try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))) {
 
-      while (objectInputStream.available() != 0) {
+      while (Files.isReadable(path)) {
         Animal animal = new Animal(
             objectInputStream.readInt(),
             objectInputStream.readUTF(),
