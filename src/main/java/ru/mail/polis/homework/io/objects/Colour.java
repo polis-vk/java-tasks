@@ -1,19 +1,36 @@
 package ru.mail.polis.homework.io.objects;
 
-public enum Colour {
-    WHITE(0, 0, 0),
-    BLACK(255, 255, 255),
-    RED(255, 0, 0),
-    GREEN(0, 255, 0),
-    BLUE(0, 0, 255);
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
-    private final int r;
-    private final int g;
-    private final int b;
+public enum Colour implements Serializable {
+    WHITE("WHITE"),
+    BLACK("BLACK"),
+    RED("RED"),
+    GREEN("GREEN"),
+    BLUE("BLUE"),
+    UNKNOWN("UNKNOWN");
 
-    Colour(int r, int g, int b) {
-        this.r = r;
-        this.g = g;
-        this.b = b;
+    private String value;
+
+    Colour(String value) {
+        this.value = value;
+    }
+
+    void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeUTF(value);
+    }
+
+    Colour readObject(ObjectInputStream in) throws IOException {
+        return valueOf(in.readUTF());
+    }
+
+    @Override
+    public String toString() {
+        return "Colour{" +
+                "value='" + value + '\'' +
+                '}';
     }
 }
