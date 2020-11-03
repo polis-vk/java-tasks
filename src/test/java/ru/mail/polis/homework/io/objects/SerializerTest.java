@@ -1,11 +1,11 @@
 package ru.mail.polis.homework.io.objects;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +19,8 @@ public class SerializerTest {
   private final List<AnimalWithMethods> animalWithMethodsList = new ArrayList<>();
   private final List<AnimalExternalizable> animalExternalizableList = new ArrayList<>();
   private final Serializer serializer = new Serializer();
+
+  private final String fileForTest = "test.txt";
 
   public SerializerTest() {
     animalList.add(new Animal(new Brain(10), Arrays.asList("bear", "tiger"), 22, "Frek", Animal.Habitation.LAND, 2222));
@@ -50,12 +52,11 @@ public class SerializerTest {
 
   @Test
   public void defaultSerializationTest() {
-    String fileForFirstTest = "test1.txt";
 
     try {
       long startTime = System.currentTimeMillis();
       for (int i = 0; i < numberToSerialize; i++) {
-        serializer.defaultSerialize(animalList, fileForFirstTest);
+        serializer.defaultSerialize(animalList, fileForTest);
       }
       long endTime = System.currentTimeMillis();
       long serialisedTime = endTime - startTime;
@@ -63,17 +64,15 @@ public class SerializerTest {
       startTime = System.currentTimeMillis();
       List<Animal> deserializedList = new ArrayList<>();
       for (int i = 0; i < numberToSerialize; i++) {
-        deserializedList = serializer.defaultDeserialize(fileForFirstTest);
+        deserializedList = serializer.defaultDeserialize(fileForTest);
       }
       endTime = System.currentTimeMillis();
       long deserializeTime = endTime - startTime;
 
-      long fileSize = Files.size(Paths.get(fileForFirstTest));
+      long fileSize = Files.size(Paths.get(fileForTest));
 
       Assert.assertEquals(animalList, deserializedList);
       printInfo(serialisedTime, deserializeTime, fileSize);
-
-      deleteFile(Paths.get(fileForFirstTest));
     }
     catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
@@ -83,10 +82,9 @@ public class SerializerTest {
   @Test
   public void serializationWithMethodsTest() {
     try {
-      String fileForSecondTest = "test2.txt";
       long startTime = System.currentTimeMillis();
       for (int i = 0; i < numberToSerialize; i++) {
-        serializer.serializeWithMethods(animalWithMethodsList, fileForSecondTest);
+        serializer.serializeWithMethods(animalWithMethodsList, fileForTest);
       }
       long endTime = System.currentTimeMillis();
       long serialisedTime = endTime - startTime;
@@ -95,18 +93,16 @@ public class SerializerTest {
 
       List<AnimalWithMethods> deserializedList = new ArrayList<>();
       for (int i = 0; i < numberToSerialize; i++) {
-        deserializedList = serializer.deserializeWithMethods(fileForSecondTest);
+        deserializedList = serializer.deserializeWithMethods(fileForTest);
       }
       endTime = System.currentTimeMillis();
       long deserializeTime = endTime - startTime;
 
-      long fileSize = Files.size(Paths.get(fileForSecondTest));
+      long fileSize = Files.size(Paths.get(fileForTest));
 
       Assert.assertEquals(animalList, deserializedList);
 
       printInfo(serialisedTime, deserializeTime, fileSize);
-
-      deleteFile(Paths.get(fileForSecondTest));
     }
     catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
@@ -116,10 +112,9 @@ public class SerializerTest {
   @Test
   public void serializeWithExternalizableTest() {
     try {
-      String fileForThirdTest = "test3.txt";
       long startTime = System.currentTimeMillis();
       for (int i = 0; i < numberToSerialize; i++) {
-        serializer.serializeWithExternalizable(animalExternalizableList, fileForThirdTest);
+        serializer.serializeWithExternalizable(animalExternalizableList, fileForTest);
       }
       long endTime = System.currentTimeMillis();
       long serialisedTime = endTime - startTime;
@@ -127,18 +122,16 @@ public class SerializerTest {
       startTime = System.currentTimeMillis();
       List<AnimalExternalizable> deserializedList = new ArrayList<>();
       for (int i = 0; i < numberToSerialize; i++) {
-        deserializedList = serializer.deserializeWithExternalizable(fileForThirdTest);
+        deserializedList = serializer.deserializeWithExternalizable(fileForTest);
       }
       endTime = System.currentTimeMillis();
       long deserializeTime = endTime - startTime;
 
-      long fileSize = Files.size(Paths.get(fileForThirdTest));
+      long fileSize = Files.size(Paths.get(fileForTest));
 
       Assert.assertEquals(animalList, deserializedList);
 
       printInfo(serialisedTime, deserializeTime, fileSize);
-
-      deleteFile(Paths.get(fileForThirdTest));
     }
     catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
@@ -148,11 +141,10 @@ public class SerializerTest {
   @Test
   public void customSerializeTest() {
     try {
-      String fileForFourthTest = "test4.txt";
       long startTime = System.currentTimeMillis();
 
       for (int i = 0; i < numberToSerialize; i++) {
-        serializer.customSerialize(animalList, fileForFourthTest);
+        serializer.customSerialize(animalList, fileForTest);
       }
       long endTime = System.currentTimeMillis();
       long serialisedTime = endTime - startTime;
@@ -160,27 +152,26 @@ public class SerializerTest {
       startTime = System.currentTimeMillis();
       List<Animal> deserializedList = new ArrayList<>();
       for (int i = 0; i < numberToSerialize; i++) {
-        deserializedList = serializer.customDeserialize(fileForFourthTest);
+        deserializedList = serializer.customDeserialize(fileForTest);
       }
       endTime = System.currentTimeMillis();
       long deserializeTime = endTime - startTime;
 
-      long fileSize = Files.size(Paths.get(fileForFourthTest));
+      long fileSize = Files.size(Paths.get(fileForTest));
 
       Assert.assertEquals(animalList, deserializedList);
 
       printInfo(serialisedTime, deserializeTime, fileSize);
-
-      deleteFile(Paths.get(fileForFourthTest));
     }
     catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
     }
   }
 
-  private void deleteFile(Path path) {
+  @After
+  public void deleteFile() {
     try {
-      Files.delete(path);
+      Files.delete(Paths.get(fileForTest));
     }
     catch (IOException e) {
       e.printStackTrace();
