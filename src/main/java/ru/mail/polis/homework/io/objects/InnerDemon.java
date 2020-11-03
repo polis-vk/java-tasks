@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.io.objects;
 
-public class InnerDemon {
+import java.io.Serializable;
+import java.util.Objects;
+
+public class InnerDemon implements Serializable {
   private boolean active;
 
   public InnerDemon(boolean active) {
@@ -13,5 +16,18 @@ public class InnerDemon {
 
   public void setActive(boolean active) {
     this.active = active;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof InnerDemon)) return false;
+    InnerDemon that = (InnerDemon) o;
+    return isActive() == that.isActive();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(isActive());
   }
 }
