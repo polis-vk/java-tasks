@@ -1,8 +1,10 @@
 package ru.mail.polis.homework.io.objects;
 
 
+
 import java.io.Serializable;
 import java.util.List;
+
 
 /**
  * Дубль класса Animal, для Serializer.serializeWithMethods
@@ -14,5 +16,6 @@ public class AnimalWithMethods extends Animal implements Serializable {
                              boolean gender, double height, Heart heart) {
         super(age, name, habitat, food, gender, height, heart);
     }
+
 
 }

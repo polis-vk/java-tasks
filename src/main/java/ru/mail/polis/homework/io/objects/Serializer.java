@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+
 import java.util.List;
 
 /**
@@ -15,12 +16,14 @@ import java.util.List;
  * Потом получившийся список записать в один и тот же файл 10 раз (100 раз и более, если у вас это происходит очень быстро).
  * Далее этот список надо прочитать из файла.
  * Записывать в существующий файл можно с помощью специального конструктора для файловых потоков
+
  * <p>
  * Результатом теста должно быть следующее: размер файла, время записи и время чтения.
  * Время считать через System.currentTimeMillis().
  * В итоговом пулРеквесте должна быть информация об этих значениях для каждого теста. (всего 4 теста, за каждый тест 1 балл)
  * Для тестов создайте классы в соотвествующем пакете в папке тестов. спользуйте существующие тесты, как примеры.
  * <p>
+
  * В конце теста по чтению данных, не забывайте удалять файлы
  */
 public class Serializer {
@@ -77,6 +80,7 @@ public class Serializer {
 
         } catch (IOException ignored) {
         }
+
     }
 
     /**
@@ -97,6 +101,7 @@ public class Serializer {
         } catch (ClassNotFoundException | IOException ignored) {
         }
         return animals;
+
     }
 
     /**
@@ -112,6 +117,7 @@ public class Serializer {
             oos.flush();
         } catch (IOException ignored) {
         }
+
     }
 
     /**
@@ -131,6 +137,7 @@ public class Serializer {
         } catch (ClassNotFoundException | IOException ignored) {
         }
         return animals;
+
     }
 
     /**
