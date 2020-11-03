@@ -29,6 +29,30 @@ public class AnimalExternalizable implements Externalizable {
         this.speed = speed;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public boolean isPredator() {
+        return isPredator;
+    }
+
+    public AnimalType getType() {
+        return type;
+    }
+
+    public List<String> getFood() {
+        return food;
+    }
+
+    public Habitat getHabitat() {
+        return habitat;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeUTF(name);
@@ -57,20 +81,32 @@ public class AnimalExternalizable implements Externalizable {
     }
 
     @Override
+    public String toString() {
+        return "AnimalExternalizable{" +
+                "name='" + name + '\'' +
+                ", isPredator=" + isPredator +
+                ", type=" + type +
+                ", food=" + food +
+                ", habitat=" + habitat +
+                ", speed=" + speed +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AnimalExternalizable that = (AnimalExternalizable) o;
-        return isPredator == that.isPredator &&
-                speed == that.speed &&
-                Objects.equals(name, that.name) &&
-                type == that.type &&
-                Objects.equals(food, that.food) &&
-                Objects.equals(habitat, that.habitat);
+        return isPredator() == that.isPredator() &&
+                getSpeed() == that.getSpeed() &&
+                Objects.equals(getName(), that.getName()) &&
+                getType() == that.getType() &&
+                Objects.equals(getFood(), that.getFood()) &&
+                Objects.equals(getHabitat(), that.getHabitat());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, isPredator, type, food, habitat, speed);
+        return Objects.hash(getName(), isPredator(), getType(), getFood(), getHabitat(), getSpeed());
     }
 }

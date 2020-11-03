@@ -49,7 +49,7 @@ public class SerializerTest {
         animalWithMethodsList = new ArrayList<>();
         animalExternalizableList = new ArrayList<>();
 
-        int numberOfElements = 200;
+        int numberOfElements = 10000;
 
         for (int i = 0; i < numberOfElements; i++) {
             String name = names.get(random.nextInt(names.size()));
