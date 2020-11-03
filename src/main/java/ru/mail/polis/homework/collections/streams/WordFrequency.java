@@ -26,14 +26,10 @@ public class WordFrequency {
      */
     public static List<String> wordFrequency(Stream<String> lines) {
         return lines
-            .map(elem -> Arrays.stream(elem.toLowerCase().split("[\n .,!:-?;]")))
-            .reduce(Stream.empty(), Stream::concat)
-            .sorted()
+            .flatMap(elem -> Arrays.stream(elem.toLowerCase().split("[\n .,!:-?;]")))
             .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-            .entrySet()
-            .stream()
-            .sorted(Map.Entry.<String, Long>comparingByValue().reversed()
-            .thenComparing(Map.Entry.comparingByKey()))
+            .entrySet().stream()
+            .sorted((c1, c2) -> c2.getValue().compareTo(c1.getValue()))
             .limit(10)
             .map(Map.Entry::getKey)
             .collect(Collectors.toList());
