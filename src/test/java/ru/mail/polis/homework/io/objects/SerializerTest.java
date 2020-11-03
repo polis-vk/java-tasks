@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.io.objects;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -13,14 +14,15 @@ import java.util.Random;
 import static org.junit.Assert.assertEquals;
 
 public class SerializerTest {
-    private String fileName;
-    private final List<Animal> animalList;
-    private final List<AnimalWithMethods> animalWithMethodsList;
-    private final List<AnimalExternalizable> animalExternalizableList;
-    private final Serializer serializer;
+    private static final String fileName = "testFile";
+    private List<Animal> animalList;
+    private List<AnimalWithMethods> animalWithMethodsList;
+    private List<AnimalExternalizable> animalExternalizableList;
+    private Serializer serializer;
+    private static final Random random = new Random();
 
-    public SerializerTest() {
-
+    @Before
+    public void setUp() {
         List<String> food = new ArrayList<>();
         food.add("apples");
         food.add("oranges");
@@ -43,12 +45,11 @@ public class SerializerTest {
         habitats.add("Japan");
 
         AnimalType[] animalTypes = AnimalType.values();
-        Random random = new Random();
         animalList = new ArrayList<>();
         animalWithMethodsList = new ArrayList<>();
         animalExternalizableList = new ArrayList<>();
 
-        int numberOfElements = 100000;
+        int numberOfElements = 200;
 
         for (int i = 0; i < numberOfElements; i++) {
             String name = names.get(random.nextInt(names.size()));
@@ -81,151 +82,38 @@ public class SerializerTest {
     }
 
     @Test
-    public void checkDefaultSerialize() {
-        System.out.println("Default serialize");
-        fileName = "default";
-
-        List<Animal> animalsBefore = animalList;
-
-        long startTime = System.currentTimeMillis();
-        try {
-            serializer.defaultSerialize(animalsBefore, fileName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        long endTime = System.currentTimeMillis();
-        System.out.println("serialize: " + (endTime - startTime));
-
-        List<Animal> animalsAfter = new ArrayList<>();
-
-        startTime = System.currentTimeMillis();
-        try {
-            animalsAfter = serializer.defaultDeserialize(fileName);
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        endTime = System.currentTimeMillis();
-
-        System.out.println("deserialize: " + (endTime - startTime));
-
-        assertEquals(animalsAfter, animalsBefore);
-
+    public void checkDefaultSerialize() throws IOException, ClassNotFoundException {
+        serializer.defaultSerialize(animalList, fileName);
+        List<Animal> animalsAfter = serializer.defaultDeserialize(fileName);
+        assertEquals(animalList, animalsAfter);
         deleteFile(Paths.get(fileName));
-        System.out.println();
     }
 
     @Test
-    public void checkSerializeWithMethods() {
-        System.out.println("Serialize with methods");
-        fileName = "with_methods";
-
-        List<AnimalWithMethods> animalsBefore = animalWithMethodsList;
-
-        long startTime = System.currentTimeMillis();
-        try {
-            serializer.serializeWithMethods(animalsBefore, fileName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        long endTime = System.currentTimeMillis();
-
-        System.out.println("serialize: " + (endTime - startTime));
-
-        List<AnimalWithMethods> animalsAfter = new ArrayList<>();
-
-        startTime = System.currentTimeMillis();
-        try {
-            animalsAfter = serializer.deserializeWithMethods(fileName);
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        endTime = System.currentTimeMillis();
-
-        System.out.println("deserialize: " + (endTime - startTime));
-
-        assertEquals(animalsAfter, animalsBefore);
-
+    public void checkSerializeWithMethods() throws IOException, ClassNotFoundException {
+        serializer.serializeWithMethods(animalWithMethodsList, fileName);
+        List<AnimalWithMethods> animalsAfter = serializer.deserializeWithMethods(fileName);
+        assertEquals(animalWithMethodsList, animalsAfter);
         deleteFile(Paths.get(fileName));
-        System.out.println();
     }
-
 
     @Test
-    public void checkSerializeWithExternalizable() {
-        System.out.println("Externalizable serialize");
-        fileName = "externalizable";
-
-        List<AnimalExternalizable> animalsBefore = animalExternalizableList;
-
-        long startTime = System.currentTimeMillis();
-        try {
-            serializer.serializeWithExternalizable(animalsBefore, fileName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        long endTime = System.currentTimeMillis();
-
-        System.out.println("serialize: " + (endTime - startTime));
-
-        List<AnimalExternalizable> animalsAfter = new ArrayList<>();
-
-        startTime = System.currentTimeMillis();
-        try {
-            animalsAfter = serializer.deserializeWithExternalizable(fileName);
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        endTime = System.currentTimeMillis();
-
-        System.out.println("deserialize: " + (endTime - startTime));
-
-        assertEquals(animalsAfter, animalsBefore);
-
+    public void checkSerializeWithExternalizable() throws IOException, ClassNotFoundException {
+        serializer.serializeWithExternalizable(animalExternalizableList, fileName);
+        List<AnimalExternalizable> animalsAfter = serializer.deserializeWithExternalizable(fileName);
+        assertEquals(animalExternalizableList, animalsAfter);
         deleteFile(Paths.get(fileName));
-        System.out.println();
     }
-
 
     @Test
-    public void checkCustomSerialize() {
-        System.out.println("Custom serialize");
-        fileName = "custom";
-
-        List<Animal> animalsBefore = animalList;
-
-        long startTime = System.currentTimeMillis();
-        try {
-            serializer.customSerialize(animalsBefore, fileName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        long endTime = System.currentTimeMillis();
-
-        System.out.println("serialize: " + (endTime - startTime));
-
-        List<Animal> animalsAfter = new ArrayList<>();
-
-        startTime = System.currentTimeMillis();
-        try {
-            animalsAfter = serializer.customDeserialize(fileName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        endTime = System.currentTimeMillis();
-
-        System.out.println("deserialize: " + (endTime - startTime));
-
-        assertEquals(animalsAfter, animalsBefore);
-
+    public void checkCustomSerialize() throws IOException {
+        serializer.customSerialize(animalList, fileName);
+        List<Animal> animalsAfter = serializer.customDeserialize(fileName);
+        assertEquals(animalList, animalsAfter);
         deleteFile(Paths.get(fileName));
-        System.out.println();
     }
 
-    private void deleteFile(Path filePath) {
-        try {
-            Files.delete(filePath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void deleteFile(Path filePath) throws IOException {
+        Files.delete(filePath);
     }
 }

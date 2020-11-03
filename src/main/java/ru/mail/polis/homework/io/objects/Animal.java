@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.io.objects;
 
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
