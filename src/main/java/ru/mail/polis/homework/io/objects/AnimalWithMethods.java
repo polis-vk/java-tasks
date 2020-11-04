@@ -109,5 +109,8 @@ public class AnimalWithMethods implements Serializable {
         }
         habitat = (Habitat) in.readObject();
         speed = in.readInt();
+        if (speed <= 0) {
+            throw new IllegalArgumentException();
+        }
     }
 }
