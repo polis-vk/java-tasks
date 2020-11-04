@@ -18,54 +18,61 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class SerializerTest {
   private final static int AMOUNT = 200;
   private final static String fileName = "./src/test/resources/serializeTest.ser";
-  private static Serializer serializer = new Serializer();
+  private static final Serializer serializer = new Serializer();
 
-  private static List<Animal> justAnimals = new ArrayList<Animal>() {{
+  private static final List<Animal> justAnimals = new ArrayList<Animal>() {{
+    Random rand = new Random();
+
     for (int i = 0; i < AMOUNT; i++) {
       int finalI = i;
       add(new Animal(10 + i,
           "Subj #" + i,
-          new SerializableInnerDemon(i % 2 == 0 ? false : true),
+          new SerializableInnerDemon(rand.nextBoolean()),
           new ArrayList<String>() {{
             add("Friend #" + finalI);
             add("Friend #" + finalI + 1);
           }},
-          i % 2 == 0 ? Animal.Diet.MEAT_EATER : Animal.Diet.OMNIVOROUS,
-          i % 2 == 0 ? false : true));
+          rand.nextBoolean() ? Animal.Diet.MEAT_EATER : Animal.Diet.OMNIVOROUS,
+          rand.nextBoolean()));
     }
   }};
 
-  private static List<AnimalWithMethods> animalsWithMethods = new ArrayList<AnimalWithMethods>() {{
+  private static final List<AnimalWithMethods> animalsWithMethods = new ArrayList<AnimalWithMethods>() {{
+    Random rand = new Random();
+
     for (int i = 0; i < AMOUNT; i++) {
       int finalI = i;
       add(new AnimalWithMethods(10 + i,
           "Subj #" + i,
-          new SerializableInnerDemon(i % 2 == 0 ? false : true),
+          new SerializableInnerDemon(rand.nextBoolean()),
           new ArrayList<String>() {{
             add("Friend #" + finalI);
             add("Friend #" + finalI + 1);
           }},
-          i % 2 == 0 ? Animal.Diet.MEAT_EATER : Animal.Diet.OMNIVOROUS,
-          i % 2 == 0 ? false : true));
+          rand.nextBoolean() ? Animal.Diet.MEAT_EATER : Animal.Diet.OMNIVOROUS,
+          rand.nextBoolean()));
     }
   }};
 
-  private static List<AnimalExternalizable> animalsExtern = new ArrayList<AnimalExternalizable>() {{
+  private static final List<AnimalExternalizable> animalsExtern = new ArrayList<AnimalExternalizable>() {{
+    Random rand = new Random();
+
     for (int i = 0; i < AMOUNT; i++) {
       int finalI = i;
       add(new AnimalExternalizable(10 + i,
           "Subj #" + i,
-          new ExternalizableInnerDemon(i % 2 == 0 ? false : true),
+          new ExternalizableInnerDemon(rand.nextBoolean()),
           new ArrayList<String>() {{
             add("Friend #" + finalI);
             add("Friend #" + finalI + 1);
           }},
-          i % 2 == 0 ? Animal.Diet.MEAT_EATER : Animal.Diet.OMNIVOROUS,
-          i % 2 == 0 ? false : true));
+          rand.nextBoolean() ? Animal.Diet.MEAT_EATER : Animal.Diet.OMNIVOROUS,
+          rand.nextBoolean()));
     }
   }};
 
