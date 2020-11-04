@@ -136,7 +136,7 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) throws IOException {
-        try (DataOutputStream out = new DataOutputStream(new FileOutputStream(fileName))) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
             out.writeInt(animals.size());
             for (Animal animal : animals) {
                 out.writeInt(animal.getGroup().ordinal());
@@ -185,7 +185,7 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> customDeserialize(String fileName) throws IOException {
-        try (DataInputStream in = new DataInputStream(new FileInputStream(fileName))) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
             List<Animal> animals = new ArrayList<>();
             int animalsCount = in.readInt();
             for (int i = 0; i < animalsCount; i++) {
