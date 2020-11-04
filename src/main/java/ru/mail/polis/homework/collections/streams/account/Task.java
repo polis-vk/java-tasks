@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 public class Task {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         Account account1= new Account(1001);
         Account account2= new Account(1002);
         Account account3= new Account(1003);
