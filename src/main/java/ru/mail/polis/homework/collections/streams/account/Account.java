@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.streams.account;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -11,6 +12,11 @@ import java.util.List;
  */
 public class Account {
     private String id;
+
+    public long getBalance() {
+        return balance;
+    }
+
     private Long balance;
     private List<Transaction> transactionsList;
 
@@ -18,6 +24,17 @@ public class Account {
         this.id = id;
         this.balance = balance;
         this.transactionsList = transactionsList;
+    }
+
+    public void addTransaction(Transaction tr){
+        transactionsList.add(tr);
+    }
+    public void makeTransaction(Account to, long amount){
+        Transaction tr = new Transaction(Transaction.getNextID(), Calendar.getInstance().getTimeInMillis(), this, to, amount);
+        this.balance -= amount;
+        to.balance += amount;
+        this.addTransaction(tr);
+        to.addTransaction(tr);
     }
 
     public String getId() {

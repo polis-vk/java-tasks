@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.LongSummaryStatistics;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Task {
 
@@ -13,15 +15,13 @@ public class Task {
      * 2 балла
      */
     public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
-        Map<String, Long> map = new HashMap<>();
+        Map<String, Long> map = new HashMap<String, Long>();
         transactions.forEach(transaction -> {
             Long val = map.getOrDefault(transaction.getSender().getId(), 0L);
             map.put(transaction.getSender().getId(), val + transaction.getSum());
         });
 
         return map;
-
-
     }
 
     /**
@@ -48,13 +48,29 @@ public class Task {
      */
 
     public static long getAccountBalanceAtTime(Account account, long time){
-        account.
+        LongSummaryStatistics longS = account.getTransactionsList().stream()
+                .filter(transaction -> transaction.getTimestamp() >= time)
+                .collect(Collectors.summarizingLong(transaction ->{
+                    long amount = transaction.getSum();
+                    return transaction.getSender().getId().equals(account.getId()) ? amount : -amount;
+                }));
+        return account.getBalance() + longS.getSum();
     }
 
     public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
+        return
+            accounts.stream()
+                    .sorted( (a1, a2) -> {
+                long a1Balance = getAccountBalanceAtTime(a1, t);
+                long a2Balance = getAccountBalanceAtTime(a2, t);
+                if(a1Balance > a2Balance) return -1;
+                else if(a1Balance < a2Balance) return 1;
+                return 0;
+            })
+                    .map(Account::getId)
+                    .skip(1)
+                    .limit(n)
+                    .collect(Collectors.toList());
 
-        List<String> list = new ArrayList<>();
-
-        return Collections.emptyList();
     }
 }

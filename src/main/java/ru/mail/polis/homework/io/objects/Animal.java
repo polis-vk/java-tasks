@@ -7,5 +7,14 @@ package ru.mail.polis.homework.io.objects;
  * Всего должно быть минимум 6 полей с разными типами.
  * 1 балл
  */
+
+class Color{
+    int r;
+    int g;
+    int b;
+}
+
 public class Animal {
+    String name;
+    int legs;
 }
