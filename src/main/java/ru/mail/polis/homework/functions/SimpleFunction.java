@@ -3,7 +3,6 @@ package ru.mail.polis.homework.functions;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
@@ -13,19 +12,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SimpleFunction {
+
     /**
      * Функция от трех аргументов. Не забудьте добавить дженерики.
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
-    @FunctionalInterface
-    interface TerFunction<A, B, C, R> {
-        R apply(A a, B b, C c);
+    interface TerFunction {
 
-        default <V> TerFunction<A, B, C, V> andThen(Function<? super R, ? extends V> after) {
-            Objects.requireNonNull(after);
-            return (A a, B b, C c) -> after.apply(apply(a, b, c));
-        }
     }
 
     /**
@@ -34,8 +28,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static <A, B, C, R> Function<A, Function<B, Function<C, R>>> curring(TerFunction<A, B, C, R> terFunction) {
-        return a -> b -> c -> terFunction.apply(a, b, c);
+    static Object curring(TerFunction terFunction) {
+        return null;
     }
 
 
@@ -46,27 +40,17 @@ public class SimpleFunction {
      * 4 балла
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            listOfOperators -> numbers -> numbers.stream()
-                    .map(number -> IntStream.range(1, listOfOperators.size() + 1)
-                            .mapToObj(countOfOperators -> listOfOperators.stream()
-                                    .limit(countOfOperators)
-                                    .reduce(operator -> operator, IntUnaryOperator::andThen))
-                            .mapToInt(operator -> operator.applyAsInt(number))
-                            .boxed()
-                            .collect(Collectors.toList()))
-                    .flatMap(List::stream)
-                    .collect(Collectors.toList());
+            a -> null;
 
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
      * которая на заданном интервале (входящие аргументы результирующей функции) считает преобразование всех целых чисел
      * на заданном интервале.
-     * <p>
+     *
      * Пример хотим просуммировать числа от 2 до 10:
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 3 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = ((integer, intBinaryOperator) ->
-            (start, end) -> IntStream.range(start, end).reduce(integer, intBinaryOperator));
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
 }
