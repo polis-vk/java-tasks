@@ -25,6 +25,10 @@ public class AnimalExternalizable implements Externalizable {
     AnimalExternalizable() {
     }
 
+    public static AnimalExternalizable getRandom() {
+        return newBuilder().getRandom();
+    }
+
     public static Builder newBuilder() {
         return new AnimalExternalizable().new Builder();
     }
@@ -46,7 +50,7 @@ public class AnimalExternalizable implements Externalizable {
         name = in.readUTF();
         age = in.readInt();
         weight = in.readInt();
-        if (weight > 100)
+        if (age > 100)
             throw new IllegalArgumentException();
         locationsList = (List<String>) in.readObject();
         colour = (Colour) in.readObject();
@@ -83,6 +87,17 @@ public class AnimalExternalizable implements Externalizable {
     }
 
     public class Builder {
+
+        private AnimalExternalizable getRandom() {
+            setAnimalKind(AnimalKind.getRandom(Utils.random));
+            setName(Utils.getRandomString(Utils.random, 10));
+            setAge(Utils.random.nextInt(99));
+            setWeight(Utils.random.nextInt(500));
+            for (int i = 0; i < Utils.random.nextInt(20); i++)
+                addLocations(Utils.getRandomString(Utils.random, 12));
+            setColour(Colour.getRandom(Utils.random));
+            return build();
+        }
 
         private Builder() {
         }

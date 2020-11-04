@@ -43,6 +43,10 @@ public class AnimalWithMethods implements Serializable {
         colour = colour.readObject(in);
     }
 
+    public static AnimalWithMethods getRandom() {
+        return newBuilder().getRandom();
+    }
+
     public static Builder newBuilder() {
         return new AnimalWithMethods().new Builder();
     }
@@ -80,6 +84,17 @@ public class AnimalWithMethods implements Serializable {
     public class Builder {
 
         private Builder() {
+        }
+
+        private AnimalWithMethods getRandom() {
+            setAnimalKind(AnimalKind.getRandom(Utils.random));
+            setName(Utils.getRandomString(Utils.random, 10));
+            setAge(Utils.random.nextInt(99));
+            setWeight(Utils.random.nextInt(500));
+            for (int i = 0; i < Utils.random.nextInt(20); i++)
+                addLocations(Utils.getRandomString(Utils.random, 12));
+            setColour(Colour.getRandom(Utils.random));
+            return build();
         }
 
         public Builder setAnimalKind(AnimalKind animalKind) {

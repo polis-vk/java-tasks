@@ -1,11 +1,14 @@
 package ru.mail.polis.homework.io.objects;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Random;
 
 
 /**
@@ -44,8 +47,36 @@ public class Animal implements Serializable {
         colour = colour.readObject(in);
     }
 
+    public static Animal getRandom() {
+        return newBuilder().getRandom();
+    }
+
     public static Builder newBuilder() {
         return new Animal().new Builder();
+    }
+
+    public AnimalKind getAnimalKind() {
+        return animalKind;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public List<String> getLocationsList() {
+        return locationsList;
+    }
+
+    public Colour getColour() {
+        return colour;
     }
 
     @Override
@@ -79,6 +110,17 @@ public class Animal implements Serializable {
     }
 
     public class Builder {
+
+        private Animal getRandom() {
+            setAnimalKind(AnimalKind.getRandom(Utils.random));
+            setName(Utils.getRandomString(Utils.random, 10));
+            setAge(Utils.random.nextInt(99));
+            setWeight(Utils.random.nextInt(500));
+            for (int i = 0; i < Utils.random.nextInt(20); i++)
+                addLocations(Utils.getRandomString(Utils.random, 12));
+            setColour(Colour.getRandom(Utils.random));
+            return build();
+        }
 
         private Builder() {
         }

@@ -8,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -157,12 +156,15 @@ public class Serializer {
         try (ObjectOutputStream out =
                      new ObjectOutputStream(Files.newOutputStream(path))) {
             for (Animal animal : animals) {
-//                animalKind.writeObject(out);
-//                out.writeUTF(name);
-//                out.writeInt(age);
-//                out.writeInt(weight);
-//                out.writeUTF(locationsList.toString());
-//                colour.writeObject(out);
+                out.writeUTF(animal.getAnimalKind().name());
+                out.writeUTF(animal.getName());
+                out.writeInt(animal.getAge());
+                out.writeInt(animal.getWeight());
+                List<String> locationList= animal.getLocationsList();
+                out.writeInt(locationList.size());
+                for (String location : locationList)
+                    out.writeUTF(location);
+                out.writeUTF(animal.getColour().name());
             }
         }
     }
@@ -178,13 +180,23 @@ public class Serializer {
     public List<Animal> customDeserialize(String fileName) throws IOException, ClassNotFoundException {
         Path path = Paths.get(fileName);
         List<Animal> resultList = new ArrayList<>();
-        try (ObjectInputStream input =
+        try (ObjectInputStream in =
                      new ObjectInputStream(Files.newInputStream(path))) {
             while (true) {
                 try {
-                    Animal animal = new Animal();
-                    animal.readObject(input);
-                    resultList.add(animal);
+                    Animal.Builder animal = Animal.newBuilder();
+                    animal.setAnimalKind(AnimalKind.valueOf(in.readUTF()));
+                    animal.setName(in.readUTF());
+                    animal.setAge(in.readInt());
+                    animal.setWeight(in.readInt());
+                    List<String> locationList = new ArrayList<>();
+                    int size = in.readInt();
+                    for (int i = 0; i < size; i++) {
+                        locationList.add(in.readUTF());
+                    }
+                    animal.setLocationList(locationList);
+                    animal.setColour(Colour.valueOf(in.readUTF()));
+                    resultList.add(animal.build());
                 } catch (IOException e) {
                     break;
                 }
