@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+//    id 'io.freefair.lombok' version '3.8.4'
 }
 
 group 'ru.mail.polis.homework'
@@ -15,5 +16,12 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.23.0'
     testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
+    compileJava.options.encoding = 'UTF-8'
+    compileTestJava.options.encoding = 'UTF-8'
+    //lombok
+    compileOnly 'org.projectlombok:lombok:1.18.16'
+    annotationProcessor 'org.projectlombok:lombok:1.18.16'
 
+    testCompileOnly 'org.projectlombok:lombok:1.18.16'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
 }

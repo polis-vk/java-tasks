@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.functions;
 
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -10,6 +8,7 @@ import java.util.function.IntUnaryOperator;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class SimpleFunction {
 
@@ -18,7 +17,10 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
-    interface TerFunction {
+    @FunctionalInterface
+    interface TerFunction<T, U, B, R> {
+
+        R apply(T t, U u, B b);
 
     }
 
@@ -28,8 +30,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
-        return null;
+    static <T, U, B, R> Function<T, Function<U, Function<B, R>>> curring(TerFunction<T, U, B, R> terFunction) {
+        return t -> u -> b -> terFunction.apply(t, u, b);
     }
 
 
@@ -40,7 +42,17 @@ public class SimpleFunction {
      * 4 балла
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            a -> null;
+            list -> numbers -> numbers.stream()
+                    .flatMap(number ->
+                            Stream.iterate(1, x -> x <= list.size(), x -> x += 1)
+                                    .map(count -> list.stream()
+                                            .limit(count)
+                                            .reduce(x -> x, (op1, op2) -> x -> op2.applyAsInt(op1.applyAsInt(x)))
+                                            .applyAsInt(number)
+                                    )
+                    )
+                    .collect(Collectors.toList());
+
 
 
     /**
@@ -52,5 +64,9 @@ public class SimpleFunction {
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 3 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
+            (seed, bi) -> (start, end) -> IntStream.iterate(start, x -> x <= end, x -> x += 1).reduce(seed, bi);
+
+    public static final IntBinaryOperator sumOperator = reduceIntOperator.apply(0, (a, b) -> a * b);
+
 }
