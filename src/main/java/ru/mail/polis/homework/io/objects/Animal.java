@@ -19,16 +19,12 @@ public class Animal implements Serializable {
     SOIL
   }
 
-  private Brain brain;
-  private List<String> listName;
-  private int weight;
-  private String name;
-  private Habitation habitation;
-  private long distanceTraveled;
-
-  public Animal() {
-
-  }
+  private final Brain brain;
+  private final List<String> listName;
+  private final int weight;
+  private final String name;
+  private final Habitation habitation;
+  private final long distanceTraveled;
 
   public Animal(Brain brain, List<String> listName, int weight, String name, Habitation habitation, long distanceTraveled) {
     this.brain = brain;
@@ -61,30 +57,6 @@ public class Animal implements Serializable {
 
   public long getDistanceTraveled() {
     return distanceTraveled;
-  }
-
-  public void setBrain(Brain brain) {
-    this.brain = brain;
-  }
-
-  public void setListName(List<String> listName) {
-    this.listName = listName;
-  }
-
-  public void setWeight(int weight) {
-    this.weight = weight;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public void setHabitation(Habitation habitation) {
-    this.habitation = habitation;
-  }
-
-  public void setDistanceTraveled(long distanceTraveled) {
-    this.distanceTraveled = distanceTraveled;
   }
 
   @Override
