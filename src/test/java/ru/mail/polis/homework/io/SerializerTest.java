@@ -26,28 +26,46 @@ public class SerializerTest {
 
   private static List<Animal> justAnimals = new ArrayList<Animal>() {{
     for (int i = 0; i < AMOUNT; i++) {
-      add(new Animal(21, i % 2 == 0 ? "Kek" : "Lol", new SerializableInnerDemon(i % 2 == 0 ? false : true), new ArrayList<String>() {{
-        add("Kek");
-        add("lol");
-      }}, i % 2 == 0 ? Animal.Diet.MEAT_EATER : Animal.Diet.OMNIVOROUS, i % 2 == 0 ? false : true));
+      int finalI = i;
+      add(new Animal(10 + i,
+          "Subj #" + i,
+          new SerializableInnerDemon(i % 2 == 0 ? false : true),
+          new ArrayList<String>() {{
+            add("Friend #" + finalI);
+            add("Friend #" + finalI + 1);
+          }},
+          i % 2 == 0 ? Animal.Diet.MEAT_EATER : Animal.Diet.OMNIVOROUS,
+          i % 2 == 0 ? false : true));
     }
   }};
 
   private static List<AnimalWithMethods> animalsWithMethods = new ArrayList<AnimalWithMethods>() {{
     for (int i = 0; i < AMOUNT; i++) {
-      add(new AnimalWithMethods(21, i % 2 == 0 ? "Kek" : "Lol", new SerializableInnerDemon(i % 2 == 0 ? false : true), new ArrayList<String>() {{
-        add("Kek");
-        add("lol");
-      }}, i % 2 == 0 ? Animal.Diet.MEAT_EATER : Animal.Diet.OMNIVOROUS, i % 2 == 0 ? false : true));
+      int finalI = i;
+      add(new AnimalWithMethods(10 + i,
+          "Subj #" + i,
+          new SerializableInnerDemon(i % 2 == 0 ? false : true),
+          new ArrayList<String>() {{
+            add("Friend #" + finalI);
+            add("Friend #" + finalI + 1);
+          }},
+          i % 2 == 0 ? Animal.Diet.MEAT_EATER : Animal.Diet.OMNIVOROUS,
+          i % 2 == 0 ? false : true));
     }
   }};
 
   private static List<AnimalExternalizable> animalsExtern = new ArrayList<AnimalExternalizable>() {{
     for (int i = 0; i < AMOUNT; i++) {
-      add(new AnimalExternalizable(21, i % 2 == 0 ? "Kek" : "Lol", new ExternalizableInnerDemon(i % 2 == 0 ? false : true), new ArrayList<String>() {{
-        add("Kek");
-        add("lol");
-      }}, i % 2 == 0 ? Animal.Diet.MEAT_EATER : Animal.Diet.OMNIVOROUS, i % 2 == 0 ? false : true));
+      int finalI = i;
+      add(new AnimalExternalizable(10 + i,
+          "Subj #" + i,
+          new ExternalizableInnerDemon(i % 2 == 0 ? false : true),
+          new ArrayList<String>() {{
+            add("Friend #" + finalI);
+            add("Friend #" + finalI + 1);
+          }},
+          i % 2 == 0 ? Animal.Diet.MEAT_EATER : Animal.Diet.OMNIVOROUS,
+          i % 2 == 0 ? false : true));
     }
   }};
 
