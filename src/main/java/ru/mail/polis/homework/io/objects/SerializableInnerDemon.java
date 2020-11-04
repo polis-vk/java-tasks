@@ -3,10 +3,10 @@ package ru.mail.polis.homework.io.objects;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class InnerDemon implements Serializable {
+public class SerializableInnerDemon implements Serializable {
   private boolean active;
 
-  public InnerDemon(boolean active) {
+  public SerializableInnerDemon(boolean active) {
     this.active = active;
   }
 
@@ -21,8 +21,8 @@ public class InnerDemon implements Serializable {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof InnerDemon)) return false;
-    InnerDemon that = (InnerDemon) o;
+    if (!(o instanceof SerializableInnerDemon)) return false;
+    SerializableInnerDemon that = (SerializableInnerDemon) o;
     return isActive() == that.isActive();
   }
 

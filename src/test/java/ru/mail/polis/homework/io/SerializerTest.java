@@ -7,7 +7,7 @@ import org.junit.Test;
 import ru.mail.polis.homework.io.objects.Animal;
 import ru.mail.polis.homework.io.objects.AnimalExternalizable;
 import ru.mail.polis.homework.io.objects.AnimalWithMethods;
-import ru.mail.polis.homework.io.objects.InnerDemon;
+import ru.mail.polis.homework.io.objects.SerializableInnerDemon;
 import ru.mail.polis.homework.io.objects.Serializer;
 
 
@@ -25,7 +25,7 @@ public class SerializerTest {
 
   private static List<Animal> justAnimals = new ArrayList<Animal>() {{
     for (int i = 0; i < AMOUNT; i++) {
-      add(new Animal(21, i % 2 == 0 ? "Kek" : "Lol", new InnerDemon(i % 2 == 0 ? false : true), new ArrayList<String>() {{
+      add(new Animal(21, i % 2 == 0 ? "Kek" : "Lol", new SerializableInnerDemon(i % 2 == 0 ? false : true), new ArrayList<String>() {{
         add("Kek");
         add("lol");
       }}, i % 2 == 0 ? Animal.Diet.MEAT_EATER : Animal.Diet.OMNIVOROUS, i % 2 == 0 ? false : true));
@@ -34,7 +34,7 @@ public class SerializerTest {
 
   private static List<AnimalWithMethods> animalsWithMethods = new ArrayList<AnimalWithMethods>() {{
     for (int i = 0; i < AMOUNT; i++) {
-      add(new AnimalWithMethods(21, i % 2 == 0 ? "Kek" : "Lol", new InnerDemon(i % 2 == 0 ? false : true), new ArrayList<String>() {{
+      add(new AnimalWithMethods(21, i % 2 == 0 ? "Kek" : "Lol", new SerializableInnerDemon(i % 2 == 0 ? false : true), new ArrayList<String>() {{
         add("Kek");
         add("lol");
       }}, i % 2 == 0 ? Animal.Diet.MEAT_EATER : Animal.Diet.OMNIVOROUS, i % 2 == 0 ? false : true));
@@ -43,7 +43,7 @@ public class SerializerTest {
 
   private static List<AnimalExternalizable> animalsExtern = new ArrayList<AnimalExternalizable>() {{
     for (int i = 0; i < AMOUNT; i++) {
-      add(new AnimalExternalizable(21, i % 2 == 0 ? "Kek" : "Lol", new InnerDemon(i % 2 == 0 ? false : true), new ArrayList<String>() {{
+      add(new AnimalExternalizable(21, i % 2 == 0 ? "Kek" : "Lol", new SerializableInnerDemon(i % 2 == 0 ? false : true), new ArrayList<String>() {{
         add("Kek");
         add("lol");
       }}, i % 2 == 0 ? Animal.Diet.MEAT_EATER : Animal.Diet.OMNIVOROUS, i % 2 == 0 ? false : true));

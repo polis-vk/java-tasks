@@ -210,7 +210,7 @@ public class Serializer {
         Animal animal = new Animal(
             objectInputStream.readInt(),
             objectInputStream.readUTF(),
-            (InnerDemon) objectInputStream.readObject(),
+            (SerializableInnerDemon) objectInputStream.readObject(),
             (List<String>) objectInputStream.readObject(),
             (Animal.Diet) objectInputStream.readObject(),
             objectInputStream.readBoolean()

@@ -12,12 +12,12 @@ import java.util.Objects;
  * 1 балл
  */
 public class Animal implements Serializable {
-  protected int age;
-  protected String name;
-  protected InnerDemon demon;
-  protected List<String> friendNames;
-  protected Diet diet;
-  protected boolean isAlive;
+  private int age;
+  private String name;
+  private SerializableInnerDemon demon;
+  private List<String> friendNames;
+  private Diet diet;
+  private boolean isAlive;
 
   public enum Diet {
     VEGAN,
@@ -25,7 +25,7 @@ public class Animal implements Serializable {
     OMNIVOROUS
   }
 
-  public Animal(int age, String name, InnerDemon demon, List<String> friendNames, Diet diet, boolean isAlive) {
+  public Animal(int age, String name, SerializableInnerDemon demon, List<String> friendNames, Diet diet, boolean isAlive) {
     this.age = age;
     this.name = name;
     this.demon = demon;
@@ -36,6 +36,54 @@ public class Animal implements Serializable {
 
   public Animal() {
 
+  }
+
+  public int getAge() {
+    return age;
+  }
+
+  public void setAge(int age) {
+    this.age = age;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public SerializableInnerDemon getDemon() {
+    return demon;
+  }
+
+  public void setDemon(SerializableInnerDemon demon) {
+    this.demon = demon;
+  }
+
+  public List<String> getFriendNames() {
+    return friendNames;
+  }
+
+  public void setFriendNames(List<String> friendNames) {
+    this.friendNames = friendNames;
+  }
+
+  public Diet getDiet() {
+    return diet;
+  }
+
+  public void setDiet(Diet diet) {
+    this.diet = diet;
+  }
+
+  public boolean isAlive() {
+    return isAlive;
+  }
+
+  public void setAlive(boolean alive) {
+    isAlive = alive;
   }
 
   @Override
