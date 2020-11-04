@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -11,13 +14,13 @@ import java.util.Objects;
  */
 public class AnimalWithMethods implements Serializable {
 
-    protected int age;
-    protected String name;
-    protected Habitat habitat;
-    protected List<String> food;
-    protected boolean sexIsMale;
-    protected double height;
-    protected Heart heart;
+    private int age;
+    private String name;
+    private Habitat habitat;
+    private List<String> food;
+    private boolean sexIsMale;
+    private double height;
+    private Heart heart;
 
     public enum Habitat {
         WATER,
@@ -38,6 +41,26 @@ public class AnimalWithMethods implements Serializable {
 
     public AnimalWithMethods() {
 
+    }
+
+    public void myWriteObject(ObjectOutputStream oos) throws IOException {
+        oos.writeInt(age);
+        oos.writeUTF(name);
+        oos.writeObject(habitat);
+        oos.writeObject(food);
+        oos.writeBoolean(sexIsMale);
+        oos.writeDouble(height);
+        oos.writeObject(heart);
+    }
+
+    public void myReadObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        age = ois.readInt();
+        name = ois.readUTF();
+        habitat = (Habitat) ois.readObject();
+        food = (List<String>) ois.readObject();
+        sexIsMale = ois.readBoolean();
+        height = ois.readDouble();
+        heart = (Heart) ois.readObject();
     }
 
     @Override

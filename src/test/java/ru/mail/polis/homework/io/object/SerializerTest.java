@@ -19,50 +19,47 @@ public class SerializerTest {
     Serializer serializer = new Serializer();
 
     private static final List<Animal> animals = new ArrayList<Animal>() {{
+        Animal animal;
         for (int i = 0; i < QUANTITY; i++) {
-            add(
-                    new Animal(random.nextInt(),
-                            String.valueOf(random.nextInt()),
-                            Animal.Habitat.values()[random.nextInt(2)],
-                            Arrays.asList(foodList.get(random.nextInt(4)), foodList.get(random.nextInt(4))),
-                            random.nextBoolean(),
-                            random.nextDouble() * 100,
-                            new Heart(random.nextBoolean())
-                    )
+            animal = new Animal(random.nextInt(),
+                    String.valueOf(random.nextInt()),
+                    Animal.Habitat.values()[random.nextInt(2)],
+                    Arrays.asList(foodList.get(random.nextInt(4)), foodList.get(random.nextInt(4))),
+                    random.nextBoolean(),
+                    random.nextDouble() * 100,
+                    new Heart(random.nextBoolean())
             );
-
+            add(animal);
         }
     }};
 
     private static final List<AnimalWithMethods> animalsWithMethods = new ArrayList<AnimalWithMethods>() {{
+        AnimalWithMethods animalWithMethods;
         for (int i = 0; i < QUANTITY; i++) {
-            add(
-                    new AnimalWithMethods(random.nextInt(),
-                            String.valueOf(random.nextInt()),
-                            AnimalWithMethods.Habitat.values()[random.nextInt(2)],
-                            Arrays.asList(foodList.get(random.nextInt(4)), foodList.get(random.nextInt(4))),
-                            random.nextBoolean(),
-                            random.nextDouble() * 100,
-                            new Heart(random.nextBoolean())
-                    )
+            animalWithMethods = new AnimalWithMethods(random.nextInt(),
+                    String.valueOf(random.nextInt()),
+                    AnimalWithMethods.Habitat.values()[random.nextInt(2)],
+                    Arrays.asList(foodList.get(random.nextInt(4)), foodList.get(random.nextInt(4))),
+                    random.nextBoolean(),
+                    random.nextDouble() * 100,
+                    new Heart(random.nextBoolean())
             );
-
+            add(animalWithMethods);
         }
     }};
 
     private static final List<AnimalExternalizable> animalsExternalizable = new ArrayList<AnimalExternalizable>() {{
+        AnimalExternalizable animalExternalizable;
         for (int i = 0; i < QUANTITY; i++) {
-            add(
-                    new AnimalExternalizable(random.nextInt(),
-                            String.valueOf(random.nextInt()),
-                            AnimalExternalizable.Habitat.values()[random.nextInt(2)],
-                            Arrays.asList(foodList.get(random.nextInt(4)), foodList.get(random.nextInt(4))),
-                            random.nextBoolean(),
-                            random.nextDouble() * 100,
-                            new Heart(random.nextBoolean())
-                    )
+            animalExternalizable = new AnimalExternalizable(random.nextInt(),
+                    String.valueOf(random.nextInt()),
+                    AnimalExternalizable.Habitat.values()[random.nextInt(2)],
+                    Arrays.asList(foodList.get(random.nextInt(4)), foodList.get(random.nextInt(4))),
+                    random.nextBoolean(),
+                    random.nextDouble() * 100,
+                    new HeartExternalizable(random.nextBoolean())
             );
-
+            add(animalExternalizable);
         }
     }};
 
@@ -94,7 +91,7 @@ public class SerializerTest {
     }
 
     @Test
-    public void customSerialize() {
+    public void customSerialize() throws IOException {
         serializer.customSerialize(animals, fileName);
 
         List<Animal> animalsSerializer = serializer.customDeserialize(fileName);

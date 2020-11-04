@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import lombok.Getter;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -12,15 +14,16 @@ import java.util.Objects;
  * Всего должно быть минимум 6 полей с разными типами.
  * 1 балл
  */
+@Getter
 public class Animal implements Serializable {
 
-    protected int age;
-    protected String name;
-    protected Habitat habitat;
-    protected List<String> food;
-    protected boolean sexIsMale;
-    protected double height;
-    protected Heart heart;
+    private int age;
+    private String name;
+    private Habitat habitat;
+    private List<String> food;
+    private boolean sexIsMale;
+    private double height;
+    private Heart heart;
 
     public enum Habitat {
         WATER,

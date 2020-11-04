@@ -20,25 +20,23 @@ public class AnimalExternalizable implements Externalizable {
     protected List<String> food;
     protected boolean sexIsMale;
     protected double height;
-    protected Heart heart;
+    protected HeartExternalizable heartExternalizable;
 
     public enum Habitat {
         WATER,
         LAND,
         AIR
     }
-    //ru.mail.polis.homework.io.objects.AnimalExternalizable<AnimalExternalizable{age=-1009076293, name='1884428859', habitat=LAND, food=[leaves, mushroom], sexIsMale=true, height=56.718519401064384, heart=Heart{isAlive=true}}>
-    //ru.mail.polis.homework.io.objects.AnimalExternalizable<AnimalExternalizable{age=-1009076293, name='1884428859', habitat=LAND, food=[leaves, mushroom], sexIsMale=true, height=56.718519401064384, heart=Heart{isAlive=true}}>
 
     public AnimalExternalizable(int age, String name, Habitat habitat, List<String> food,
-                  boolean gender, double height, Heart heart) {
+                  boolean gender, double height, HeartExternalizable heartExternalizable) {
         this.age = age;
         this.name = name;
         this.habitat = habitat;
         this.food = food;
         this.sexIsMale = gender;
         this.height = height;
-        this.heart = heart;
+        this.heartExternalizable = heartExternalizable;
     }
 
     public AnimalExternalizable() {
@@ -53,7 +51,7 @@ public class AnimalExternalizable implements Externalizable {
         out.writeObject(food);
         out.writeBoolean(sexIsMale);
         out.writeDouble(height);
-        out.writeObject(heart);
+        out.writeObject(heartExternalizable);
     }
 
     @Override
@@ -64,7 +62,7 @@ public class AnimalExternalizable implements Externalizable {
         food = (List<String>) in.readObject();
         sexIsMale = in.readBoolean();
         height = in.readDouble();
-        heart = (Heart) in.readObject();
+        heartExternalizable = (HeartExternalizable) in.readObject();
     }
 
     @Override
@@ -78,12 +76,12 @@ public class AnimalExternalizable implements Externalizable {
                 Objects.equals(name, that.name) &&
                 habitat == that.habitat &&
                 Objects.equals(food, that.food) &&
-                Objects.equals(heart, that.heart);
+                Objects.equals(heartExternalizable, that.heartExternalizable);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(age, name, habitat, food, sexIsMale, height, heart);
+        return Objects.hash(age, name, habitat, food, sexIsMale, height, heartExternalizable);
     }
 
     @Override
@@ -95,7 +93,7 @@ public class AnimalExternalizable implements Externalizable {
                 ", food=" + food +
                 ", sexIsMale=" + sexIsMale +
                 ", height=" + height +
-                ", heart=" + heart +
+                ", heart=" + heartExternalizable +
                 '}';
     }
 }
