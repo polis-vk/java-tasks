@@ -1,20 +1,20 @@
 Serialize With Methods Test
 Animal amount: 200
-File size:  20762
-Time in millis: 277
+File size in bytes:  20762
+Time in millis: 92
 
 #Serialize With Externalizable Test
 Animal amount: 200
-File size:  23378
-Time in millis: 41
+File size in bytes:  23378
+Time in millis: 54
 
 Default Serialize Test
 Animal amount: 200
-File size:  19951
-Time in millis: 68
+File size in bytes:  19951
+Time in millis: 35
 
 Custom Serialize Test
 Animal amount: 200
-File size:  25443
+File size in bytes:  25443
 Time in millis: 35
 
