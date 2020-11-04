@@ -45,11 +45,12 @@ public class SerializerTest {
         habitats.add("Japan");
 
         AnimalType[] animalTypes = AnimalType.values();
-        animalList = new ArrayList<>();
-        animalWithMethodsList = new ArrayList<>();
-        animalExternalizableList = new ArrayList<>();
 
-        int numberOfElements = 10000;
+        int numberOfElements = 100;
+
+        animalList = new ArrayList<>(numberOfElements);
+        animalWithMethodsList = new ArrayList<>(numberOfElements);
+        animalExternalizableList = new ArrayList<>(numberOfElements);
 
         for (int i = 0; i < numberOfElements; i++) {
             String name = names.get(random.nextInt(names.size()));
@@ -57,12 +58,14 @@ public class SerializerTest {
             boolean isPredator = random.nextBoolean();
 
             AnimalType animalType = animalTypes[random.nextInt(animalTypes.length)];
-            String food1 = food.get(random.nextInt(food.size()));
-            String food2 = food.get(random.nextInt(food.size()));
 
-            ArrayList<String> animalFood = new ArrayList<>();
-            animalFood.add(food1);
-            animalFood.add(food2);
+            int foodSize = random.nextInt(10);
+            ArrayList<String> animalFood = new ArrayList<>(foodSize);
+
+            for (int j = 0; j < foodSize; j++) {
+                String f = food.get(random.nextInt(food.size()));
+                animalFood.add(f);
+            }
 
             Habitat habitat = new Habitat(habitats.get(random.nextInt(habitats.size())));
 
