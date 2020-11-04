@@ -1,11 +1,14 @@
 package ru.mail.polis.homework.io.objects;
 
+import lombok.Getter;
+
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Objects;
 
+@Getter
 public class HeartExternalizable implements Externalizable {
 
     private boolean isAlive;
@@ -37,7 +40,7 @@ public class HeartExternalizable implements Externalizable {
 
     @Override
     public String toString() {
-        return "Heart{" +
+        return "HeartExternalizable{" +
                 "isAlive=" + isAlive +
                 '}';
     }

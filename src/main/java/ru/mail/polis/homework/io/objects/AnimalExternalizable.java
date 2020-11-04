@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import lombok.Getter;
+
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -12,6 +14,7 @@ import java.util.Objects;
  * Дубль класса Animal, для Serializer.serializeWithExternalizable
  * 3 балла
  */
+@Getter
 public class AnimalExternalizable implements Externalizable {
 
     protected int age;
