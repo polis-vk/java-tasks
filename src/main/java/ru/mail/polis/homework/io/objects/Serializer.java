@@ -2,11 +2,7 @@ package ru.mail.polis.homework.io.objects;
 
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-
 import java.util.List;
 
 /**
@@ -16,14 +12,14 @@ import java.util.List;
  * Потом получившийся список записать в один и тот же файл 10 раз (100 раз и более, если у вас это происходит очень быстро).
  * Далее этот список надо прочитать из файла.
  * Записывать в существующий файл можно с помощью специального конструктора для файловых потоков
-
+ *
  * <p>
  * Результатом теста должно быть следующее: размер файла, время записи и время чтения.
  * Время считать через System.currentTimeMillis().
  * В итоговом пулРеквесте должна быть информация об этих значениях для каждого теста. (всего 4 теста, за каждый тест 1 балл)
  * Для тестов создайте классы в соотвествующем пакете в папке тестов. спользуйте существующие тесты, как примеры.
  * <p>
-
+ * <p>
  * В конце теста по чтению данных, не забывайте удалять файлы
  */
 public class Serializer {
@@ -37,10 +33,7 @@ public class Serializer {
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
-
             oos.writeObject(animals);
-            oos.flush();
-
         } catch (IOException ignored) {
         }
     }
@@ -56,9 +49,7 @@ public class Serializer {
 
         List<Animal> animals = new ArrayList<>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
-
             animals = (List<Animal>) ois.readObject();
-
         } catch (ClassNotFoundException | IOException ignored) {
         }
         return animals;
@@ -74,10 +65,7 @@ public class Serializer {
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
-
             oos.writeObject(animals);
-            oos.flush();
-
         } catch (IOException ignored) {
         }
 
@@ -95,9 +83,7 @@ public class Serializer {
 
         List<AnimalWithMethods> animals = new ArrayList<>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
-
             animals = (List<AnimalWithMethods>) ois.readObject();
-
         } catch (ClassNotFoundException | IOException ignored) {
         }
         return animals;
@@ -113,8 +99,13 @@ public class Serializer {
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            oos.writeObject(animals);
-            oos.flush();
+            animals.forEach(animalExternalizable -> {
+                try {
+                    animalExternalizable.writeExternal(oos);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         } catch (IOException ignored) {
         }
 
@@ -131,9 +122,12 @@ public class Serializer {
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
         List<AnimalExternalizable> animals = new ArrayList<>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
-
-            animals = (List<AnimalExternalizable>) ois.readObject();
-
+            AnimalExternalizable animalExternalizable;
+            while (ois.available() != 0) {
+                animalExternalizable = new AnimalExternalizable();
+                animalExternalizable.readExternal(ois);
+                animals.add(animalExternalizable);
+            }
         } catch (ClassNotFoundException | IOException ignored) {
         }
         return animals;
@@ -177,20 +171,20 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> customDeserialize(String fileName) {
-        List<Animal> animals = new ArrayList<>();Path path = Paths.get(fileName);
+        List<Animal> animals = new ArrayList<>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
-            while (Files.isReadable(path)) {
-                animals.add(
-                        new Animal(
-                                ois.readInt(),
-                                ois.readUTF(),
-                                (Animal.Habitat) ois.readObject(),
-                                (List<String>) ois.readObject(),
-                                ois.readBoolean(),
-                                ois.readDouble(),
-                                (Heart) ois.readObject()
-                        )
+            Animal animal;
+            while (ois.available() != 0) {
+                animal = new Animal(
+                        ois.readInt(),
+                        ois.readUTF(),
+                        (Animal.Habitat) ois.readObject(),
+                        (List<String>) ois.readObject(),
+                        ois.readBoolean(),
+                        ois.readDouble(),
+                        (Heart) ois.readObject()
                 );
+                animals.add(animal);
             }
         } catch (ClassNotFoundException | IOException ignored) {
         }

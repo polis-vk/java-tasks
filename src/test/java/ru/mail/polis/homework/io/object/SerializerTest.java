@@ -8,28 +8,23 @@ import ru.mail.polis.homework.io.objects.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class SerializerTest {
 
-    private final static int QUANTITY = 100;
-    private final static List<String> foodList = Arrays.asList("mushroom", "animal", "bark", "leaves", "berries");
-    private final String fileName = "src/test/java/ru/mail/polis/homework/io/object/serialize.txt";
+    private static final int QUANTITY = 100;
+    private static final Random random = new Random();
+    private static final List<String> foodList = Arrays.asList("mushroom", "animal", "bark", "leaves", "berries");
+    private final String fileName = "src/test/java/ru/mail/polis/homework/io/object/serialize";
     Serializer serializer = new Serializer();
 
     private static final List<Animal> animals = new ArrayList<Animal>() {{
-        Random random = new Random();
         for (int i = 0; i < QUANTITY; i++) {
             add(
                     new Animal(random.nextInt(),
                             String.valueOf(random.nextInt()),
                             Animal.Habitat.values()[random.nextInt(2)],
-                            new ArrayList<String>() {{
-                                add(foodList.get(random.nextInt(4)));
-                            }},
+                            Arrays.asList(foodList.get(random.nextInt(4)), foodList.get(random.nextInt(4))),
                             random.nextBoolean(),
                             random.nextDouble() * 100,
                             new Heart(random.nextBoolean())
@@ -40,15 +35,12 @@ public class SerializerTest {
     }};
 
     private static final List<AnimalWithMethods> animalsWithMethods = new ArrayList<AnimalWithMethods>() {{
-        Random random = new Random();
         for (int i = 0; i < QUANTITY; i++) {
             add(
                     new AnimalWithMethods(random.nextInt(),
                             String.valueOf(random.nextInt()),
-                            Animal.Habitat.values()[random.nextInt(2)],
-                            new ArrayList<String>() {{
-                                add(foodList.get(random.nextInt(4)));
-                            }},
+                            AnimalWithMethods.Habitat.values()[random.nextInt(2)],
+                            Arrays.asList(foodList.get(random.nextInt(4)), foodList.get(random.nextInt(4))),
                             random.nextBoolean(),
                             random.nextDouble() * 100,
                             new Heart(random.nextBoolean())
@@ -59,16 +51,12 @@ public class SerializerTest {
     }};
 
     private static final List<AnimalExternalizable> animalsExternalizable = new ArrayList<AnimalExternalizable>() {{
-        Random random = new Random();
         for (int i = 0; i < QUANTITY; i++) {
             add(
                     new AnimalExternalizable(random.nextInt(),
                             String.valueOf(random.nextInt()),
-                            Animal.Habitat.values()[random.nextInt(2)],
-                            new ArrayList<String>() {{
-                                add(foodList.get(random.nextInt(4)));
-                                add(foodList.get(random.nextInt(4)));
-                            }},
+                            AnimalExternalizable.Habitat.values()[random.nextInt(2)],
+                            Arrays.asList(foodList.get(random.nextInt(4)), foodList.get(random.nextInt(4))),
                             random.nextBoolean(),
                             random.nextDouble() * 100,
                             new Heart(random.nextBoolean())
@@ -87,17 +75,6 @@ public class SerializerTest {
         Assert.assertArrayEquals(animals.toArray(), animalsSerializer.toArray());
     }
 
-
-    @Test
-    public void serializeWithMethodsTest() {
-        serializer.serializeWithMethods(animalsWithMethods, fileName);
-
-        List<AnimalWithMethods> animalsSerializer = serializer.deserializeWithMethods(fileName);
-
-        Assert.assertArrayEquals(animalsWithMethods.toArray(), animalsSerializer.toArray());
-    }
-
-
     @Test
     public void serializeWithExternalizableTest() {
         serializer.serializeWithExternalizable(animalsExternalizable, fileName);
@@ -107,6 +84,14 @@ public class SerializerTest {
         Assert.assertArrayEquals(animalsExternalizable.toArray(), animalsSerializer.toArray());
     }
 
+    @Test
+    public void serializeWithMethodsTest() {
+        serializer.serializeWithMethods(animalsWithMethods, fileName);
+
+        List<AnimalWithMethods> animalsSerializer = serializer.deserializeWithMethods(fileName);
+
+        Assert.assertArrayEquals(animalsWithMethods.toArray(), animalsSerializer.toArray());
+    }
 
     @Test
     public void customSerialize() {

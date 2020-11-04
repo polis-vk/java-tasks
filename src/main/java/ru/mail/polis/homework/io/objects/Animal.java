@@ -53,12 +53,13 @@ public class Animal implements Serializable {
                 Double.compare(animal.height, height) == 0 &&
                 Objects.equals(name, animal.name) &&
                 habitat == animal.habitat &&
-                Objects.equals(food, animal.food);
+                Objects.equals(food, animal.food) &&
+                Objects.equals(heart, animal.heart);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(age, name, habitat, food, sexIsMale, height);
+        return Objects.hash(age, name, habitat, food, sexIsMale, height, heart);
     }
 
     @Override
@@ -70,6 +71,7 @@ public class Animal implements Serializable {
                 ", food=" + food +
                 ", sexIsMale=" + sexIsMale +
                 ", height=" + height +
+                ", heart=" + heart +
                 '}';
     }
 }
