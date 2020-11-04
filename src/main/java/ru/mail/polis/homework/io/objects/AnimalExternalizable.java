@@ -4,10 +4,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Дубль класса Animal, для Serializer.serializeWithExternalizable
@@ -25,8 +22,8 @@ public class AnimalExternalizable implements Externalizable {
     AnimalExternalizable() {
     }
 
-    public static AnimalExternalizable getRandom() {
-        return newBuilder().getRandom();
+    public static AnimalExternalizable getRandom(Random random) {
+        return newBuilder().getRandom(random);
     }
 
     public static Builder newBuilder() {
@@ -88,14 +85,14 @@ public class AnimalExternalizable implements Externalizable {
 
     public class Builder {
 
-        private AnimalExternalizable getRandom() {
-            setAnimalKind(AnimalKind.getRandom(Utils.random));
-            setName(Utils.getRandomString(Utils.random, 10));
-            setAge(Utils.random.nextInt(99));
-            setWeight(Utils.random.nextInt(500));
-            for (int i = 0; i < Utils.random.nextInt(20); i++)
-                addLocations(Utils.getRandomString(Utils.random, 12));
-            setColour(Colour.getRandom(Utils.random));
+        private AnimalExternalizable getRandom(Random random) {
+            setAnimalKind(AnimalKind.getRandom(random));
+            setName(Utils.getRandomString(random, 10));
+            setAge(random.nextInt(99));
+            setWeight(random.nextInt(500));
+            for (int i = 0; i < random.nextInt(20); i++)
+                addLocations(Utils.getRandomString(random, 12));
+            setColour(Colour.getRandom(random));
             return build();
         }
 

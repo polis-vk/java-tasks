@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Дубль класса Animal, для Serializer.serializeWithMethods
@@ -43,8 +40,8 @@ public class AnimalWithMethods implements Serializable {
         colour = colour.readObject(in);
     }
 
-    public static AnimalWithMethods getRandom() {
-        return newBuilder().getRandom();
+    public static AnimalWithMethods getRandom(Random random) {
+        return newBuilder().getRandom(random);
     }
 
     public static Builder newBuilder() {
@@ -86,14 +83,14 @@ public class AnimalWithMethods implements Serializable {
         private Builder() {
         }
 
-        private AnimalWithMethods getRandom() {
-            setAnimalKind(AnimalKind.getRandom(Utils.random));
-            setName(Utils.getRandomString(Utils.random, 10));
-            setAge(Utils.random.nextInt(99));
-            setWeight(Utils.random.nextInt(500));
-            for (int i = 0; i < Utils.random.nextInt(20); i++)
-                addLocations(Utils.getRandomString(Utils.random, 12));
-            setColour(Colour.getRandom(Utils.random));
+        private AnimalWithMethods getRandom(Random random) {
+            setAnimalKind(AnimalKind.getRandom(random));
+            setName(Utils.getRandomString(random, 10));
+            setAge(random.nextInt(99));
+            setWeight(random.nextInt(500));
+            for (int i = 0; i < random.nextInt(20); i++)
+                addLocations(Utils.getRandomString(random, 12));
+            setColour(Colour.getRandom(random));
             return build();
         }
 

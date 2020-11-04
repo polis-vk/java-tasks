@@ -160,7 +160,7 @@ public class Serializer {
                 out.writeUTF(animal.getName());
                 out.writeInt(animal.getAge());
                 out.writeInt(animal.getWeight());
-                List<String> locationList= animal.getLocationsList();
+                List<String> locationList = animal.getLocationsList();
                 out.writeInt(locationList.size());
                 for (String location : locationList)
                     out.writeUTF(location);

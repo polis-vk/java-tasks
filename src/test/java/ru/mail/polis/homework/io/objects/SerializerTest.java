@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,10 +39,13 @@ public class SerializerTest {
 
     @BeforeAll
     public static void init() {
+        Random animalsRandom = new Random(Utils.SEED);
+        Random animalsExternRandom = new Random(Utils.SEED);
+        Random animalsMethodRandom = new Random(Utils.SEED);
         for (int i = 0; i < LIST_SIZE; i++) {
-            animals.add(Animal.getRandom());
-            animalsExternalizable.add(AnimalExternalizable.getRandom());
-            animalsWithMethods.add(AnimalWithMethods.getRandom());
+            animals.add(Animal.getRandom(animalsRandom));
+            animalsExternalizable.add(AnimalExternalizable.getRandom(animalsExternRandom));
+            animalsWithMethods.add(AnimalWithMethods.getRandom(animalsMethodRandom));
         }
     }
 
@@ -56,32 +60,6 @@ public class SerializerTest {
 
     @Test
     @Order(1)
-    public void serializeWithMethods() throws IOException {
-        long start = System.currentTimeMillis();
-        serializer.serializeWithMethods(animalsWithMethods, BIN_METHODS);
-        String info = "Size: " + Files.size(Path.of(BIN_METHODS)) + " bytes; Execution time: " + (System.currentTimeMillis() - start) + " ms";
-        logger.log(Level.INFO, info);
-    }
-
-    @Test
-    @Order(2)
-    public void serializeWithExternalizable() throws IOException {
-        long start = System.currentTimeMillis();
-        serializer.serializeWithExternalizable(animalsExternalizable, BIN_EXTERNAL);
-        String info = "Size: " + Files.size(Path.of(BIN_EXTERNAL)) + " bytes; Execution time: " + (System.currentTimeMillis() - start) + " ms";
-        logger.log(Level.INFO, info);
-    }
-
-    @Test
-    @Order(3)
-    public void customSerialize() throws IOException {
-        long start = System.currentTimeMillis();
-        serializer.customSerialize(animals, BIN_CUSTOM);
-        String info = "Size: " + Files.size(Path.of(BIN_CUSTOM)) + " bytes; Execution time: " + (System.currentTimeMillis() - start) + " ms";
-        logger.log(Level.INFO, info);
-    }
-
-    @Test
     public void defaultDeserialize() throws IOException, ClassNotFoundException {
         long start = System.currentTimeMillis();
         assertEquals(animals, serializer.defaultDeserialize(BIN_DEFAULT));
@@ -90,15 +68,34 @@ public class SerializerTest {
     }
 
     @Test
-    public void deserializeWithMethods() throws IOException, ClassNotFoundException {
+    @Order(2)
+    public void serializeWithMethods() throws IOException {
         long start = System.currentTimeMillis();
-        List<AnimalWithMethods> animalWithMethods = serializer.deserializeWithMethods(BIN_METHODS);
-        String info = "Execution time: " + (System.currentTimeMillis() - start) + " ms";
+        serializer.serializeWithMethods(animalsWithMethods, BIN_METHODS);
+        String info = "Size: " + Files.size(Path.of(BIN_METHODS)) + " bytes; Execution time: " + (System.currentTimeMillis() - start) + " ms";
         logger.log(Level.INFO, info);
-        assertEquals(animalsWithMethods, animalWithMethods);
     }
 
     @Test
+    @Order(3)
+    public void deserializeWithMethods() throws IOException, ClassNotFoundException {
+        long start = System.currentTimeMillis();
+        assertEquals(animalsWithMethods, serializer.deserializeWithMethods(BIN_METHODS));
+        String info = "Execution time: " + (System.currentTimeMillis() - start) + " ms";
+        logger.log(Level.INFO, info);
+    }
+
+    @Test
+    @Order(4)
+    public void serializeWithExternalizable() throws IOException {
+        long start = System.currentTimeMillis();
+        serializer.serializeWithExternalizable(animalsExternalizable, BIN_EXTERNAL);
+        String info = "Size: " + Files.size(Path.of(BIN_EXTERNAL)) + " bytes; Execution time: " + (System.currentTimeMillis() - start) + " ms";
+        logger.log(Level.INFO, info);
+    }
+
+    @Test
+    @Order(5)
     public void deserializeWithExternalizable() throws IOException, ClassNotFoundException {
         long start = System.currentTimeMillis();
         assertEquals(animalsExternalizable, serializer.deserializeWithExternalizable(BIN_EXTERNAL));
@@ -111,6 +108,7 @@ public class SerializerTest {
      * {@link ru.mail.polis.homework.io.objects.AnimalExternalizable#readExternal(ObjectInput)}
      */
     @Test
+    @Order(6)
     public void deserializeWithExternalizableException() throws IOException {
         List<AnimalExternalizable> animalsExternalizableException = Collections.singletonList(
                 AnimalExternalizable.newBuilder().setName("Oleg").setColour(Colour.RED).setAnimalKind(AnimalKind.ELEPHANT).setAge(101).build()
@@ -121,14 +119,23 @@ public class SerializerTest {
         );
     }
 
+    @Test
+    @Order(7)
+    public void customSerialize() throws IOException {
+        long start = System.currentTimeMillis();
+        serializer.customSerialize(animals, BIN_CUSTOM);
+        String info = "Size: " + Files.size(Path.of(BIN_CUSTOM)) + " bytes; Execution time: " + (System.currentTimeMillis() - start) + " ms";
+        logger.log(Level.INFO, info);
+    }
 
     @Test
+    @Order(8)
     public void customDeserialize() throws IOException, ClassNotFoundException {
         long start = System.currentTimeMillis();
-        List<Animal> list = serializer.customDeserialize(BIN_CUSTOM);
-        assertEquals(animals, list);
+        assertEquals(animals, serializer.customDeserialize(BIN_CUSTOM));
         String info = "Execution time: " + (System.currentTimeMillis() - start) + " ms";
         logger.log(Level.INFO, info);
     }
+
 
 }
