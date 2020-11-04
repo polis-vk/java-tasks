@@ -100,8 +100,13 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
-
+    public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) throws FileNotFoundException, IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            oos.writeInt(animals.size());
+            for (AnimalExternalizable animal : animals) {
+                oos.writeObject(animal);
+            }
+        }
     }
 
     /**
@@ -112,8 +117,15 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-        return Collections.emptyList();
+    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) throws FileNotFoundException, IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
+            int objectsCount = ois.readInt();
+            List<AnimalExternalizable> animals = new ArrayList<>();
+            for (int i = 0; i < objectsCount; i++) {
+                animals.add((AnimalExternalizable) ois.readObject());
+            }
+            return animals;
+        }
     }
 
     /**

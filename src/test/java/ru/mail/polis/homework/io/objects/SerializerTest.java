@@ -20,6 +20,7 @@ public class SerializerTest {
     private static final Path TEST_DIRECTORY = Paths.get("testResources");
     private static final Path DEFAULT_SERIALIZE_OUTPUT_FILE = TEST_DIRECTORY.resolve("defaultSerialize.out");
     private static final Path SERIALIZE_WITH_METHODS_OUTPUT_FILE = TEST_DIRECTORY.resolve("serializeWithMethods.out");
+    private static final Path SERIALIZE_WITH_EXTERNALIZABLE_OUTPUT_FILE = TEST_DIRECTORY.resolve("serializeWithExternalizable.out");
 
     private static final List<String> CREATURES_NAMES = List.of("Dog", "Cat", "Human", "Dolphin", "Whale", "Parrot",
             "Frog", "Camel", "Bear", "Turtle", "Scorpion", "Snake", "Tiger", "Crocodile", "Spider", "Ant", "Bee",
@@ -33,6 +34,7 @@ public class SerializerTest {
 
     private List<Animal> animals;
     private List<AnimalWithMethods> animalsWithMethods;
+    private List<AnimalExternalizable> animalsExternalizable;
     private Serializer serializer;
 
     @Before
@@ -47,12 +49,18 @@ public class SerializerTest {
                 .map(SerializerTest::animalToAnimalWithMethods)
                 .collect(Collectors.toList());
 
+        animalsExternalizable = IntStream.range(0, 10)
+                .mapToObj(i -> generateRandomAnimal(random))
+                .map(SerializerTest::animalToAnimalExternalizable)
+                .collect(Collectors.toList());
+
         if (Files.exists(TEST_DIRECTORY)) {
             FileUtils.deleteDirectory(TEST_DIRECTORY.toFile());
         }
         Files.createDirectories(TEST_DIRECTORY);
         Files.createFile(DEFAULT_SERIALIZE_OUTPUT_FILE);
         Files.createFile(SERIALIZE_WITH_METHODS_OUTPUT_FILE);
+        Files.createFile(SERIALIZE_WITH_EXTERNALIZABLE_OUTPUT_FILE);
 
         serializer = new Serializer();
     }
@@ -76,6 +84,14 @@ public class SerializerTest {
         serializer.serializeWithMethods(animalsWithMethods, filePath);
         List<AnimalWithMethods> deserializedAnimalsWithMethods = serializer.deserializeWithMethods(filePath);
         assertEquals(animalsWithMethods, deserializedAnimalsWithMethods);
+    }
+
+    @Test
+    public void serializeWithExternalizable() throws IOException, FileNotFoundException, ClassNotFoundException {
+        String filePath = SERIALIZE_WITH_EXTERNALIZABLE_OUTPUT_FILE.toAbsolutePath().toString();
+        serializer.serializeWithExternalizable(animalsExternalizable, filePath);
+        List<AnimalExternalizable> deserializedAnimalsExternalizable = serializer.deserializeWithExternalizable(filePath);
+        assertEquals(animalsExternalizable, deserializedAnimalsExternalizable);
     }
 
     private static Animal generateRandomAnimal(Random random) {
@@ -134,6 +150,20 @@ public class SerializerTest {
     private static AnimalWithMethods animalToAnimalWithMethods(Animal animal) {
         Animal.Behavior behavior = animal.getBehavior();
         return new AnimalWithMethods.Builder(animal.getGroup(), animal.getName(), animal.isWarmBlooded(),
+                behavior.canBeTamed(), behavior.isPredator(), behavior.getMovementType())
+                .withAge(animal.getAge())
+                .withColor(animal.getColor())
+                .withWeight(animal.getWeight())
+                .withHabitatEnvironments(animal.habitatEnvironments().toArray(HabitatEnvironment[]::new))
+                .withFriends(behavior.friends().toArray(String[]::new))
+                .withEnemies(behavior.enemies().toArray(String[]::new))
+                .withFavouriteFood(behavior.favouriteFoodStream().toArray(String[]::new))
+                .build();
+    }
+
+    private static AnimalExternalizable animalToAnimalExternalizable(Animal animal) {
+        Animal.Behavior behavior = animal.getBehavior();
+        return new AnimalExternalizable.Builder(animal.getGroup(), animal.getName(), animal.isWarmBlooded(),
                 behavior.canBeTamed(), behavior.isPredator(), behavior.getMovementType())
                 .withAge(animal.getAge())
                 .withColor(animal.getColor())
