@@ -140,8 +140,7 @@ public class Serializer {
             out.writeInt(animals.size());
             for (Animal animal : animals) {
                 out.writeInt(animal.getGroup().ordinal());
-                out.writeInt(animal.getName().length());
-                out.writeChars(animal.getName());
+                out.writeUTF(animal.getName());
                 out.writeBoolean(animal.isWarmBlooded());
 
                 // Behavior serialization
@@ -152,20 +151,17 @@ public class Serializer {
 
                 out.writeInt(behavior.enemies().size());
                 for (String enemy : behavior.enemies()) {
-                    out.writeInt(enemy.length());
-                    out.writeChars(enemy);
+                    out.writeUTF(enemy);
                 }
 
                 out.writeInt(behavior.friends().size());
                 for (String friend : behavior.friends()) {
-                    out.writeInt(friend.length());
-                    out.writeChars(friend);
+                    out.writeUTF(friend);
                 }
 
                 out.writeInt(behavior.favouriteFoodList().size());
                 for (String foodItem : behavior.favouriteFoodList()) {
-                    out.writeInt(foodItem.length());
-                    out.writeChars(foodItem);
+                    out.writeUTF(foodItem);
                 }
 
                 out.writeInt(animal.habitatEnvironments().size());
@@ -194,7 +190,7 @@ public class Serializer {
             int animalsCount = in.readInt();
             for (int i = 0; i < animalsCount; i++) {
                 AnimalGroup group = AnimalGroup.values()[in.readInt()];
-                String name = readString(in);
+                String name = in.readUTF();
                 boolean isWarmBlooded = in.readBoolean();
                 boolean canBeTamed = in.readBoolean();
                 boolean isPredator = in.readBoolean();
@@ -204,15 +200,15 @@ public class Serializer {
 
                 int enemiesCount = in.readInt();
                 for (int j = 0; j < enemiesCount; j++) {
-                    builder.withEnemies(readString(in));
+                    builder.withEnemies(in.readUTF());
                 }
                 int friendsCount = in.readInt();
                 for (int j = 0; j < friendsCount; j++) {
-                    builder.withFriends(readString(in));
+                    builder.withFriends(in.readUTF());
                 }
                 int favouriteFoodItemsCount = in.readInt();
                 for (int j = 0; j < favouriteFoodItemsCount; j++) {
-                    builder.withFavouriteFood(readString(in));
+                    builder.withFavouriteFood(in.readUTF());
                 }
                 int habitatEnvironmentsCount = in.readInt();
                 for (int j = 0; j < habitatEnvironmentsCount; j++) {
@@ -227,14 +223,5 @@ public class Serializer {
 
             return animals;
         }
-    }
-
-    private static String readString(DataInputStream in) throws IOException {
-        int stringLength = in.readInt();
-        char[] charArray = new char[stringLength];
-        for (int i = 0; i < stringLength; i++) {
-            charArray[i] = in.readChar();
-        }
-        return String.valueOf(charArray);
     }
 }

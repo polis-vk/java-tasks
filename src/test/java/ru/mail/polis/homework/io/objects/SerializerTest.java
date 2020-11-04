@@ -31,7 +31,7 @@ public class SerializerTest {
     private static final int ANIMAL_MAX_AGE = 100;
 
     private static final int LIST_SIZE = 10;
-    private static final int TRIALS_COUNT = 1000;
+    private static final int TRIALS_COUNT = 3000;
 
     private static List<Animal> animals;
     private static List<AnimalWithMethods> animalsWithMethods;
