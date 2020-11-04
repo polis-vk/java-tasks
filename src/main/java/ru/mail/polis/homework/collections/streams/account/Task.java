@@ -9,19 +9,14 @@ public class Task {
         Account account1= new Account(1001);
         Account account2= new Account(1002);
         Account account3= new Account(1003);
+        Account account4= new Account(1004);
+        Account account5= new Account(1005);
+        Account account6= new Account(1006);
+        Account account7= new Account(1007);
+        Account account8= new Account(1008);
 
-        account2.translateTo(account1, 200);
-
-        account1.translateTo(account3, 200);
-        Date t = new Date();
-        Thread.sleep(1);
-//        account2.translateTo(account3, 300);
-//
-//        account1.translateTo(account2, 400);
-
-//        account2.translateTo(account3, 2000);
-//        System.out.println(account2.equals(account1));
-        System.out.println(paymentsSumByAccount(List.of(account2, account3, account1), t.getTime(), 5));
+        System.out.println(paymentsSumByAccount(List.of(account2, account3, account1, account6, account4, account5, account7, account8),
+                new Date().getTime(), 5));
     }
 
     /**
