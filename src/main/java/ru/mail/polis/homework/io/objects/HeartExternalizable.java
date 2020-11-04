@@ -52,6 +52,6 @@ public class HeartExternalizable implements Externalizable {
 
     @Override
     public void readExternal(ObjectInput in) throws IOException {
-        isAlive = in.readBoolean();
+        this.isAlive = in.readBoolean();
     }
 }

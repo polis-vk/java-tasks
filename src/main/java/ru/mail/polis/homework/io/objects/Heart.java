@@ -2,6 +2,9 @@ package ru.mail.polis.homework.io.objects;
 
 import lombok.Getter;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -20,6 +23,15 @@ public class Heart implements Serializable {
 
     public void kill() {
         isAlive = false;
+    }
+
+    public void myWriteObject(ObjectOutputStream oos) throws IOException {
+        oos.writeBoolean(isAlive);
+    }
+
+    public Heart myReadObject(ObjectInputStream ois) throws IOException {
+        this.isAlive = ois.readBoolean();
+        return this;
     }
 
     @Override

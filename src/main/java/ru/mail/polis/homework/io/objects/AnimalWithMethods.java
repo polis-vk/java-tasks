@@ -53,7 +53,7 @@ public class AnimalWithMethods implements Serializable {
         oos.writeObject(food);
         oos.writeBoolean(sexIsMale);
         oos.writeDouble(height);
-        oos.writeObject(heart);
+        heart.myWriteObject(oos);
     }
 
     public void myReadObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -63,7 +63,7 @@ public class AnimalWithMethods implements Serializable {
         food = (List<String>) ois.readObject();
         sexIsMale = ois.readBoolean();
         height = ois.readDouble();
-        heart = (Heart) ois.readObject();
+        heart = new Heart().myReadObject(ois);
     }
 
     @Override

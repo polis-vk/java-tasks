@@ -13,9 +13,8 @@ import java.util.*;
 
 public class SerializerTest {
 
-    private static final int QUANTITY = 100;
+    private static final int QUANTITY = 100000;
     private static final long SEED = 2001;
-    private static final Random random = new Random(SEED);
     private static final List<String> foodList = Arrays.asList("mushroom", "animal", "bark", "leaves", "berries");
     private final String fileName = "src/test/java/ru/mail/polis/homework/io/object/serialize";
     Serializer serializer = new Serializer();
@@ -32,7 +31,6 @@ public class SerializerTest {
                     random1.nextDouble() * 100,
                     new Heart(random1.nextBoolean())
             );
-            System.out.println(animal);
             add(animal);
         }
     }};
@@ -49,8 +47,6 @@ public class SerializerTest {
                     random1.nextDouble() * 100,
                     new Heart(random1.nextBoolean())
             );
-
-            System.out.println(animalWithMethods);
             add(animalWithMethods);
         }
     }};
@@ -67,8 +63,6 @@ public class SerializerTest {
                     random1.nextDouble() * 100,
                     new HeartExternalizable(random1.nextBoolean())
             );
-
-            System.out.println(animalExternalizable);
             add(animalExternalizable);
         }
     }};

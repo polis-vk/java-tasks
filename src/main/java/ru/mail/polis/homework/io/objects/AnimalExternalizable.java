@@ -54,7 +54,7 @@ public class AnimalExternalizable implements Externalizable {
         out.writeObject(food);
         out.writeBoolean(sexIsMale);
         out.writeDouble(height);
-        out.writeObject(heartExternalizable);
+        heartExternalizable.writeExternal(out);
     }
 
     @Override
@@ -65,7 +65,8 @@ public class AnimalExternalizable implements Externalizable {
         food = (List<String>) in.readObject();
         sexIsMale = in.readBoolean();
         height = in.readDouble();
-        heartExternalizable = (HeartExternalizable) in.readObject();
+        heartExternalizable = new HeartExternalizable();
+        heartExternalizable.readExternal(in);
     }
 
     @Override

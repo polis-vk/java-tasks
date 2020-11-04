@@ -147,7 +147,7 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
-        try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(fileName))) {
+        try (ObjectOutputStream dos = new ObjectOutputStream(new FileOutputStream(fileName))) {
             dos.writeInt(animals.size());
             for (Animal animal : animals) {
                 try {
@@ -179,7 +179,7 @@ public class Serializer {
      */
     public List<Animal> customDeserialize(String fileName) {
         List<Animal> animals = Collections.emptyList();
-        try (DataInputStream dis = new DataInputStream(new FileInputStream(fileName))) {
+        try (ObjectInputStream dis = new ObjectInputStream(new FileInputStream(fileName))) {
             int sizeAnimals = dis.readInt();
             animals = new ArrayList<>(sizeAnimals);
             for (int i = 0; i < sizeAnimals; i++) {
