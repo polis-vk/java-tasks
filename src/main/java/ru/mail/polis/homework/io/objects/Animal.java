@@ -30,6 +30,9 @@ public class Animal implements Serializable {
     }
 
     public Animal(String name, boolean isPredator, AnimalType type, List<String> food, Habitat habitat, int speed) {
+        if (speed <= 0) {
+            throw new IllegalArgumentException();
+        }
         this.name = name;
         this.isPredator = isPredator;
         this.type = type;
@@ -59,6 +62,9 @@ public class Animal implements Serializable {
     }
 
     public void setSpeed(int speed) {
+        if (speed <= 0) {
+            throw new IllegalArgumentException();
+        }
         this.speed = speed;
     }
 

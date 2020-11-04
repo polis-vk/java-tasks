@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.io.objects;
 
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -15,14 +16,17 @@ import static org.junit.Assert.assertEquals;
 
 public class SerializerTest {
     private static final String fileName = "testFile";
-    private List<Animal> animalList;
-    private List<AnimalWithMethods> animalWithMethodsList;
-    private List<AnimalExternalizable> animalExternalizableList;
-    private Serializer serializer;
+    private static List<Animal> animalList;
+    private static List<AnimalWithMethods> animalWithMethodsList;
+    private static List<AnimalExternalizable> animalExternalizableList;
+    private static Serializer serializer;
     private static final Random random = new Random();
 
-    @Before
-    public void setUp() {
+    private static long startTime = 0;
+    private static long finishTime = 0;
+
+    @BeforeClass
+    public static void setUp() {
         List<String> food = new ArrayList<>();
         food.add("apples");
         food.add("oranges");
@@ -46,7 +50,7 @@ public class SerializerTest {
 
         AnimalType[] animalTypes = AnimalType.values();
 
-        int numberOfElements = 100;
+        int numberOfElements = 10000;
 
         animalList = new ArrayList<>(numberOfElements);
         animalWithMethodsList = new ArrayList<>(numberOfElements);
@@ -69,7 +73,7 @@ public class SerializerTest {
 
             Habitat habitat = new Habitat(habitats.get(random.nextInt(habitats.size())));
 
-            int speed = random.nextInt(100);
+            int speed = random.nextInt(100) + 1;
 
             Animal animal = new Animal(name, isPredator, animalType, animalFood, habitat, speed);
             animalList.add(animal);
@@ -82,7 +86,73 @@ public class SerializerTest {
         }
 
         serializer = new Serializer();
+        System.out.println("Number of serializing elements: " + numberOfElements + "\n");
     }
+
+    @AfterClass
+    public static void findDefaultSerializeTimeAndFileSize() throws IOException, ClassNotFoundException {
+        System.out.println("Default serialize:");
+        startTime = System.currentTimeMillis();
+        serializer.defaultSerialize(animalList, fileName);
+        finishTime = System.currentTimeMillis();
+        System.out.println("time of serializing: " + (finishTime - startTime) + " ms");
+        startTime = System.currentTimeMillis();
+        serializer.defaultDeserialize(fileName);
+        finishTime = System.currentTimeMillis();
+        System.out.println("time of deserializing: " + (finishTime - startTime) + " ms");
+        System.out.println("size of file: " + Files.size(Paths.get(fileName)) + " bytes");
+        deleteFile(Paths.get(fileName));
+        System.out.println();
+    }
+
+    @AfterClass
+    public static void findSerializeWithMethodsTimeAndFileSize() throws IOException, ClassNotFoundException {
+        System.out.println("Serialize with methods:");
+        startTime = System.currentTimeMillis();
+        serializer.serializeWithMethods(animalWithMethodsList, fileName);
+        finishTime = System.currentTimeMillis();
+        System.out.println("time of serializing: " + (finishTime - startTime) + " ms");
+        startTime = System.currentTimeMillis();
+        serializer.deserializeWithMethods(fileName);
+        finishTime = System.currentTimeMillis();
+        System.out.println("time of deserializing: " + (finishTime - startTime) + " ms");
+        System.out.println("size of file: " + Files.size(Paths.get(fileName)) + " bytes");
+        deleteFile(Paths.get(fileName));
+        System.out.println();
+    }
+
+    @AfterClass
+    public static void findSerializeWithExternalizableTimeAndFileSize() throws IOException, ClassNotFoundException {
+        System.out.println("External serialize:");
+        startTime = System.currentTimeMillis();
+        serializer.serializeWithExternalizable(animalExternalizableList, fileName);
+        finishTime = System.currentTimeMillis();
+        System.out.println("time of serializing: " + (finishTime - startTime) + " ms");
+        startTime = System.currentTimeMillis();
+        serializer.deserializeWithExternalizable(fileName);
+        finishTime = System.currentTimeMillis();
+        System.out.println("time of deserializing: " + (finishTime - startTime) + " ms");
+        System.out.println("size of file: " + Files.size(Paths.get(fileName)) + " bytes");
+        deleteFile(Paths.get(fileName));
+        System.out.println();
+    }
+
+    @AfterClass
+    public static void findCustomSerializeTimeAndFileSize() throws IOException {
+        System.out.println("Custom serialize:");
+        startTime = System.currentTimeMillis();
+        serializer.customSerialize(animalList, fileName);
+        finishTime = System.currentTimeMillis();
+        System.out.println("time of serializing: " + (finishTime - startTime) + " ms");
+        startTime = System.currentTimeMillis();
+        serializer.customDeserialize(fileName);
+        finishTime = System.currentTimeMillis();
+        System.out.println("time of deserializing: " + (finishTime - startTime) + " ms");
+        System.out.println("size of file: " + Files.size(Paths.get(fileName)) + " bytes");
+        deleteFile(Paths.get(fileName));
+        System.out.println();
+    }
+
 
     @Test
     public void checkDefaultSerialize() throws IOException, ClassNotFoundException {
@@ -116,7 +186,7 @@ public class SerializerTest {
         deleteFile(Paths.get(fileName));
     }
 
-    private void deleteFile(Path filePath) throws IOException {
+    private static void deleteFile(Path filePath) throws IOException {
         Files.delete(filePath);
     }
 }

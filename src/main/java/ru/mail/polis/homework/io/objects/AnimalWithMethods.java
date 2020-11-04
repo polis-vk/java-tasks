@@ -11,8 +11,6 @@ import java.util.List;
  * 3 балла
  */
 public class AnimalWithMethods extends Animal {
-    public AnimalWithMethods() {
-    }
 
     public AnimalWithMethods(String name, boolean isPredator, AnimalType type, List<String> food, Habitat habitat, int speed) {
         super(name, isPredator, type, food, habitat, speed);

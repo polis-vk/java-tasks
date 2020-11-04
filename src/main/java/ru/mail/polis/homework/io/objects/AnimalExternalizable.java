@@ -21,6 +21,9 @@ public class AnimalExternalizable implements Externalizable {
     }
 
     public AnimalExternalizable(String name, boolean isPredator, AnimalType type, List<String> food, Habitat habitat, int speed) {
+        if (speed <= 0) {
+            throw new IllegalArgumentException();
+        }
         this.name = name;
         this.isPredator = isPredator;
         this.type = type;
@@ -78,6 +81,9 @@ public class AnimalExternalizable implements Externalizable {
         }
         habitat = (Habitat) in.readObject();
         speed = in.readInt();
+        if (speed <= 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Override
