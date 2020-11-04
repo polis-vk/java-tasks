@@ -20,9 +20,6 @@ public class AnimalWithMethods implements Serializable {
     private Habitat habitat;
     private int speed;
 
-    public AnimalWithMethods() {
-    }
-
     public AnimalWithMethods(String name, boolean isPredator, AnimalType type, List<String> food, Habitat habitat, int speed) {
         if (speed <= 0) {
             throw new IllegalArgumentException();
