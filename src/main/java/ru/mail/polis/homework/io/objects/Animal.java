@@ -91,16 +91,16 @@ public class Animal implements Serializable {
     if (this == o) return true;
     if (!(o instanceof Animal)) return false;
     Animal animal = (Animal) o;
-    return age == animal.age &&
-        isAlive == animal.isAlive &&
-        name.equals(animal.name) &&
-        demon.equals(animal.demon) &&
-        friendNames.equals(animal.friendNames) &&
-        diet == animal.diet;
+    return getAge() == animal.getAge() &&
+        isAlive() == animal.isAlive() &&
+        getName().equals(animal.getName()) &&
+        getDemon().equals(animal.getDemon()) &&
+        getFriendNames().equals(animal.getFriendNames()) &&
+        getDiet() == animal.getDiet();
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(age, name, demon, friendNames, diet, isAlive);
+    return Objects.hash(getAge(), getName(), getDemon(), getFriendNames(), getDiet(), isAlive());
   }
 }

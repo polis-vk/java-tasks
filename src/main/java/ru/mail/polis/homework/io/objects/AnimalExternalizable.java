@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Дубль класса Animal, для Serializer.serializeWithExternalizable
@@ -93,9 +94,28 @@ public class AnimalExternalizable implements Externalizable {
   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
     age = in.readInt();
     name = in.readUTF();
+    demon = new ExternalizableInnerDemon();
     demon.readExternal(in);
     friendNames = (List<String>) in.readObject();
     diet = (Animal.Diet) in.readObject();
     isAlive = in.readBoolean();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof AnimalExternalizable)) return false;
+    AnimalExternalizable that = (AnimalExternalizable) o;
+    return getAge() == that.getAge() &&
+        isAlive() == that.isAlive() &&
+        getName().equals(that.getName()) &&
+        getDemon().equals(that.getDemon()) &&
+        getFriendNames().equals(that.getFriendNames()) &&
+        getDiet() == that.getDiet();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getAge(), getName(), getDemon(), getFriendNames(), getDiet(), isAlive());
   }
 }

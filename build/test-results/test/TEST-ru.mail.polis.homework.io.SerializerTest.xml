@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ru.mail.polis.homework.io.SerializerTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2020-11-03T13:23:04" hostname="MacBook-Pro-Stepan.local" time="0.279">
+<testsuite name="ru.mail.polis.homework.io.SerializerTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2020-11-04T12:42:13" hostname="MacBook-Pro-Stepan.local" time="0.134">
   <properties/>
-  <testcase name="serializeWithMethodsTest" classname="ru.mail.polis.homework.io.SerializerTest" time="0.09"/>
-  <testcase name="serializeWithExternalizableTest" classname="ru.mail.polis.homework.io.SerializerTest" time="0.078"/>
-  <testcase name="defaultSerializeTest" classname="ru.mail.polis.homework.io.SerializerTest" time="0.065"/>
-  <testcase name="customSerializeTest" classname="ru.mail.polis.homework.io.SerializerTest" time="0.042"/>
+  <testcase name="serializeWithMethodsTest" classname="ru.mail.polis.homework.io.SerializerTest" time="0.061"/>
+  <testcase name="serializeWithExternalizableTest" classname="ru.mail.polis.homework.io.SerializerTest" time="0.028"/>
+  <testcase name="defaultSerializeTest" classname="ru.mail.polis.homework.io.SerializerTest" time="0.025"/>
+  <testcase name="customSerializeTest" classname="ru.mail.polis.homework.io.SerializerTest" time="0.018"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

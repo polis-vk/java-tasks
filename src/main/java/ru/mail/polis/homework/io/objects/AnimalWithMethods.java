@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Дубль класса Animal, для Serializer.serializeWithMethods
@@ -81,10 +82,38 @@ public class AnimalWithMethods implements Serializable {
   }
 
   private void writeObject(ObjectOutputStream objectStream) throws IOException {
-    objectStream.defaultWriteObject();
+    objectStream.writeInt(age);
+    objectStream.writeUTF(name);
+    objectStream.writeObject(demon);
+    objectStream.writeObject(friendNames);
+    objectStream.writeObject(diet);
+    objectStream.writeBoolean(isAlive);
   }
 
-  private void readObject(ObjectInputStream objectStream) throws IOException, ClassNotFoundException {
-    objectStream.defaultReadObject();
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    age = in.readInt();
+    name = in.readUTF();
+    demon = (SerializableInnerDemon) in.readObject();
+    friendNames = (List<String>) in.readObject();
+    diet = (Animal.Diet) in.readObject();
+    isAlive = in.readBoolean();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof AnimalWithMethods)) return false;
+    AnimalWithMethods that = (AnimalWithMethods) o;
+    return getAge() == that.getAge() &&
+        isAlive() == that.isAlive() &&
+        getName().equals(that.getName()) &&
+        getDemon().equals(that.getDemon()) &&
+        getFriendNames().equals(that.getFriendNames()) &&
+        getDiet() == that.getDiet();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getAge(), getName(), getDemon(), getFriendNames(), getDiet(), isAlive());
   }
 }

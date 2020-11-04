@@ -7,6 +7,7 @@ import org.junit.Test;
 import ru.mail.polis.homework.io.objects.Animal;
 import ru.mail.polis.homework.io.objects.AnimalExternalizable;
 import ru.mail.polis.homework.io.objects.AnimalWithMethods;
+import ru.mail.polis.homework.io.objects.ExternalizableInnerDemon;
 import ru.mail.polis.homework.io.objects.SerializableInnerDemon;
 import ru.mail.polis.homework.io.objects.Serializer;
 
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class SerializerTest {
   private final static int AMOUNT = 100;
-  private final static String fileName = "./src/test/resources/serializeTest.txt";
+  private final static String fileName = "./src/test/resources/serializeTest.ser";
   private static Serializer serializer = new Serializer();
 
 
@@ -43,7 +44,7 @@ public class SerializerTest {
 
   private static List<AnimalExternalizable> animalsExtern = new ArrayList<AnimalExternalizable>() {{
     for (int i = 0; i < AMOUNT; i++) {
-      add(new AnimalExternalizable(21, i % 2 == 0 ? "Kek" : "Lol", new SerializableInnerDemon(i % 2 == 0 ? false : true), new ArrayList<String>() {{
+      add(new AnimalExternalizable(21, i % 2 == 0 ? "Kek" : "Lol", new ExternalizableInnerDemon(i % 2 == 0 ? false : true), new ArrayList<String>() {{
         add("Kek");
         add("lol");
       }}, i % 2 == 0 ? Animal.Diet.MEAT_EATER : Animal.Diet.OMNIVOROUS, i % 2 == 0 ? false : true));

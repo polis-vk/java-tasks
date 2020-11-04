@@ -13,25 +13,16 @@ public class ExternalizableInnerDemon implements Externalizable {
     this.active = active;
   }
 
+  public ExternalizableInnerDemon() {
+
+  }
+
   public boolean isActive() {
     return active;
   }
 
   public void setActive(boolean active) {
     this.active = active;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof SerializableInnerDemon)) return false;
-    SerializableInnerDemon that = (SerializableInnerDemon) o;
-    return isActive() == that.isActive();
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(isActive());
   }
 
   @Override
@@ -42,5 +33,18 @@ public class ExternalizableInnerDemon implements Externalizable {
   @Override
   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
     active = in.readBoolean();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof ExternalizableInnerDemon)) return false;
+    ExternalizableInnerDemon that = (ExternalizableInnerDemon) o;
+    return isActive() == that.isActive();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(isActive());
   }
 }
