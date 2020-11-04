@@ -2,7 +2,6 @@ package ru.mail.polis.homework.io.objects;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * Класс должен содержать несколько полей с примитивами, строками, энамами и некоторыми сапомисными объектами.
@@ -67,8 +66,8 @@ public class Animal implements Serializable {
         return behavior;
     }
 
-    public Stream<HabitatEnvironment> habitatEnvironments() {
-        return habitatEnvironments.stream();
+    public List<HabitatEnvironment> habitatEnvironments() {
+        return habitatEnvironments;
     }
 
     public int getAge() {
@@ -148,16 +147,16 @@ public class Animal implements Serializable {
             return movementType;
         }
 
-        public Stream<String> enemies() {
-            return enemies.stream();
+        public List<String> enemies() {
+            return enemies;
         }
 
-        public Stream<String> friends() {
-            return friends.stream();
+        public List<String> friends() {
+            return friends;
         }
 
-        public Stream<String> favouriteFoodStream() {
-            return favouriteFood.stream();
+        public List<String> favouriteFoodList() {
+            return favouriteFood;
         }
 
         @Override

@@ -5,7 +5,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,6 +20,7 @@ public class SerializerTest {
     private static final Path DEFAULT_SERIALIZE_OUTPUT_FILE = TEST_DIRECTORY.resolve("defaultSerialize.out");
     private static final Path SERIALIZE_WITH_METHODS_OUTPUT_FILE = TEST_DIRECTORY.resolve("serializeWithMethods.out");
     private static final Path SERIALIZE_WITH_EXTERNALIZABLE_OUTPUT_FILE = TEST_DIRECTORY.resolve("serializeWithExternalizable.out");
+    private static final Path CUSTOM_SERIALIZE_OUTPUT_FILE = TEST_DIRECTORY.resolve("customSerialize.out");
 
     private static final List<String> CREATURES_NAMES = List.of("Dog", "Cat", "Human", "Dolphin", "Whale", "Parrot",
             "Frog", "Camel", "Bear", "Turtle", "Scorpion", "Snake", "Tiger", "Crocodile", "Spider", "Ant", "Bee",
@@ -61,6 +61,7 @@ public class SerializerTest {
         Files.createFile(DEFAULT_SERIALIZE_OUTPUT_FILE);
         Files.createFile(SERIALIZE_WITH_METHODS_OUTPUT_FILE);
         Files.createFile(SERIALIZE_WITH_EXTERNALIZABLE_OUTPUT_FILE);
+        Files.createFile(CUSTOM_SERIALIZE_OUTPUT_FILE);
 
         serializer = new Serializer();
     }
@@ -71,7 +72,7 @@ public class SerializerTest {
     }
 
     @Test
-    public void defaultSerializeTest() throws IOException, FileNotFoundException, ClassNotFoundException {
+    public void defaultSerializeTest() throws IOException, ClassNotFoundException {
         String filePath = DEFAULT_SERIALIZE_OUTPUT_FILE.toAbsolutePath().toString();
         serializer.defaultSerialize(animals, filePath);
         List<Animal> deserializedAnimals = serializer.defaultDeserialize(filePath);
@@ -79,7 +80,7 @@ public class SerializerTest {
     }
 
     @Test
-    public void serializeWithMethodsTest() throws IOException, FileNotFoundException, ClassNotFoundException {
+    public void serializeWithMethodsTest() throws IOException, ClassNotFoundException {
         String filePath = SERIALIZE_WITH_METHODS_OUTPUT_FILE.toAbsolutePath().toString();
         serializer.serializeWithMethods(animalsWithMethods, filePath);
         List<AnimalWithMethods> deserializedAnimalsWithMethods = serializer.deserializeWithMethods(filePath);
@@ -87,11 +88,19 @@ public class SerializerTest {
     }
 
     @Test
-    public void serializeWithExternalizable() throws IOException, FileNotFoundException, ClassNotFoundException {
+    public void serializeWithExternalizable() throws IOException, ClassNotFoundException {
         String filePath = SERIALIZE_WITH_EXTERNALIZABLE_OUTPUT_FILE.toAbsolutePath().toString();
         serializer.serializeWithExternalizable(animalsExternalizable, filePath);
         List<AnimalExternalizable> deserializedAnimalsExternalizable = serializer.deserializeWithExternalizable(filePath);
         assertEquals(animalsExternalizable, deserializedAnimalsExternalizable);
+    }
+
+    @Test
+    public void customSerialize() throws IOException {
+        String filePath = CUSTOM_SERIALIZE_OUTPUT_FILE.toAbsolutePath().toString();
+        serializer.customSerialize(animals, filePath);
+        List<Animal> deserializedAnimals = serializer.customDeserialize(filePath);
+        assertEquals(animals, deserializedAnimals);
     }
 
     private static Animal generateRandomAnimal(Random random) {
@@ -154,10 +163,10 @@ public class SerializerTest {
                 .withAge(animal.getAge())
                 .withColor(animal.getColor())
                 .withWeight(animal.getWeight())
-                .withHabitatEnvironments(animal.habitatEnvironments().toArray(HabitatEnvironment[]::new))
-                .withFriends(behavior.friends().toArray(String[]::new))
-                .withEnemies(behavior.enemies().toArray(String[]::new))
-                .withFavouriteFood(behavior.favouriteFoodStream().toArray(String[]::new))
+                .withHabitatEnvironments(animal.habitatEnvironments().toArray(new HabitatEnvironment[0]))
+                .withFriends(behavior.friends().toArray(new String[0]))
+                .withEnemies(behavior.enemies().toArray(new String[0]))
+                .withFavouriteFood(behavior.favouriteFoodList().toArray(new String[0]))
                 .build();
     }
 
@@ -168,10 +177,10 @@ public class SerializerTest {
                 .withAge(animal.getAge())
                 .withColor(animal.getColor())
                 .withWeight(animal.getWeight())
-                .withHabitatEnvironments(animal.habitatEnvironments().toArray(HabitatEnvironment[]::new))
-                .withFriends(behavior.friends().toArray(String[]::new))
-                .withEnemies(behavior.enemies().toArray(String[]::new))
-                .withFavouriteFood(behavior.favouriteFoodStream().toArray(String[]::new))
+                .withHabitatEnvironments(animal.habitatEnvironments().toArray(new HabitatEnvironment[0]))
+                .withFriends(behavior.friends().toArray(new String[0]))
+                .withEnemies(behavior.enemies().toArray(new String[0]))
+                .withFavouriteFood(behavior.favouriteFoodList().toArray(new String[0]))
                 .build();
     }
 }

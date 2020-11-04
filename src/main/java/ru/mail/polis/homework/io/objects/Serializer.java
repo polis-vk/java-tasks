@@ -3,7 +3,6 @@ package ru.mail.polis.homework.io.objects;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,7 +29,7 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void defaultSerialize(List<Animal> animals, String fileName) throws FileNotFoundException, IOException {
+    public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
             oos.writeInt(animals.size());
             for (Animal animal : animals) {
@@ -46,7 +45,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> defaultDeserialize(String fileName) throws FileNotFoundException, IOException, ClassNotFoundException {
+    public List<Animal> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
             int objectsCount = ois.readInt();
             List<Animal> animals = new ArrayList<>();
@@ -65,7 +64,7 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) throws FileNotFoundException, IOException {
+    public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
             oos.writeInt(animals.size());
             for (AnimalWithMethods animal : animals) {
@@ -82,7 +81,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<AnimalWithMethods> deserializeWithMethods(String fileName) throws FileNotFoundException, IOException, ClassNotFoundException {
+    public List<AnimalWithMethods> deserializeWithMethods(String fileName) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
             int objectsCount = ois.readInt();
             List<AnimalWithMethods> animals = new ArrayList<>();
@@ -100,7 +99,7 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) throws FileNotFoundException, IOException {
+    public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
             oos.writeInt(animals.size());
             for (AnimalExternalizable animal : animals) {
@@ -117,7 +116,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) throws FileNotFoundException, IOException, ClassNotFoundException {
+    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
             int objectsCount = ois.readInt();
             List<AnimalExternalizable> animals = new ArrayList<>();
@@ -136,8 +135,49 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
-    public void customSerialize(List<Animal> animals, String fileName) {
+    public void customSerialize(List<Animal> animals, String fileName) throws IOException {
+        try (DataOutputStream out = new DataOutputStream(new FileOutputStream(fileName))) {
+            out.writeInt(animals.size());
+            for (Animal animal : animals) {
+                out.writeInt(animal.getGroup().ordinal());
+                out.writeInt(animal.getName().length());
+                out.writeChars(animal.getName());
+                out.writeBoolean(animal.isWarmBlooded());
 
+                // Behavior serialization
+                Animal.Behavior behavior = animal.getBehavior();
+                out.writeBoolean(behavior.canBeTamed());
+                out.writeBoolean(behavior.isPredator());
+                out.writeInt(behavior.getMovementType().ordinal());
+
+                out.writeInt(behavior.enemies().size());
+                for (String enemy : behavior.enemies()) {
+                    out.writeInt(enemy.length());
+                    out.writeChars(enemy);
+                }
+
+                out.writeInt(behavior.friends().size());
+                for (String friend : behavior.friends()) {
+                    out.writeInt(friend.length());
+                    out.writeChars(friend);
+                }
+
+                out.writeInt(behavior.favouriteFoodList().size());
+                for (String foodItem : behavior.favouriteFoodList()) {
+                    out.writeInt(foodItem.length());
+                    out.writeChars(foodItem);
+                }
+
+                out.writeInt(animal.habitatEnvironments().size());
+                for (HabitatEnvironment environment : animal.habitatEnvironments()) {
+                    out.writeInt(environment.ordinal());
+                }
+
+                out.writeInt(animal.getAge());
+                out.writeInt(animal.getColor());
+                out.writeDouble(animal.getWeight());
+            }
+        }
     }
 
     /**
@@ -148,7 +188,53 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+    public List<Animal> customDeserialize(String fileName) throws IOException {
+        try (DataInputStream in = new DataInputStream(new FileInputStream(fileName))) {
+            List<Animal> animals = new ArrayList<>();
+            int animalsCount = in.readInt();
+            for (int i = 0; i < animalsCount; i++) {
+                AnimalGroup group = AnimalGroup.values()[in.readInt()];
+                String name = readString(in);
+                boolean isWarmBlooded = in.readBoolean();
+                boolean canBeTamed = in.readBoolean();
+                boolean isPredator = in.readBoolean();
+                AnimalMovementType movementType = AnimalMovementType.values()[in.readInt()];
+
+                Animal.Builder builder = new Animal.Builder(group, name, isWarmBlooded, canBeTamed, isPredator, movementType);
+
+                int enemiesCount = in.readInt();
+                for (int j = 0; j < enemiesCount; j++) {
+                    builder.withEnemies(readString(in));
+                }
+                int friendsCount = in.readInt();
+                for (int j = 0; j < friendsCount; j++) {
+                    builder.withFriends(readString(in));
+                }
+                int favouriteFoodItemsCount = in.readInt();
+                for (int j = 0; j < favouriteFoodItemsCount; j++) {
+                    builder.withFavouriteFood(readString(in));
+                }
+                int habitatEnvironmentsCount = in.readInt();
+                for (int j = 0; j < habitatEnvironmentsCount; j++) {
+                    builder.withHabitatEnvironments(HabitatEnvironment.values()[in.readInt()]);
+                }
+                builder.withAge(in.readInt());
+                builder.withColor(in.readInt());
+                builder.withWeight(in.readDouble());
+
+                animals.add(builder.build());
+            }
+
+            return animals;
+        }
+    }
+
+    private static String readString(DataInputStream in) throws IOException {
+        int stringLength = in.readInt();
+        char[] charArray = new char[stringLength];
+        for (int i = 0; i < stringLength; i++) {
+            charArray[i] = in.readChar();
+        }
+        return String.valueOf(charArray);
     }
 }
