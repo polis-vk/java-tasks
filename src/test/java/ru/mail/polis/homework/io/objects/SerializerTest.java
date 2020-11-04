@@ -50,7 +50,7 @@ public class SerializerTest {
 
         AnimalType[] animalTypes = AnimalType.values();
 
-        int numberOfElements = 10000;
+        int numberOfElements = 100000;
 
         animalList = new ArrayList<>(numberOfElements);
         animalWithMethodsList = new ArrayList<>(numberOfElements);
@@ -63,7 +63,8 @@ public class SerializerTest {
 
             AnimalType animalType = animalTypes[random.nextInt(animalTypes.length)];
 
-            int foodSize = random.nextInt(10);
+            int foodSizeBound = 10;
+            int foodSize = random.nextInt(foodSizeBound);
             ArrayList<String> animalFood = new ArrayList<>(foodSize);
 
             for (int j = 0; j < foodSize; j++) {
@@ -73,7 +74,8 @@ public class SerializerTest {
 
             Habitat habitat = new Habitat(habitats.get(random.nextInt(habitats.size())));
 
-            int speed = random.nextInt(100) + 1;
+            int speedBound = 100;
+            int speed = random.nextInt(speedBound) + 1;
 
             Animal animal = new Animal(name, isPredator, animalType, animalFood, habitat, speed);
             animalList.add(animal);

@@ -74,9 +74,9 @@ public class AnimalExternalizable implements Externalizable {
         name = in.readUTF();
         isPredator = in.readBoolean();
         type = (AnimalType) in.readObject();
-        int size = in.readInt();
-        food = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
+        int foodSize = in.readInt();
+        food = new ArrayList<>(foodSize);
+        for (int i = 0; i < foodSize; i++) {
             food.add(in.readUTF());
         }
         habitat = (Habitat) in.readObject();
