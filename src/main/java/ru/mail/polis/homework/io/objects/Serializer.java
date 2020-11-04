@@ -180,38 +180,27 @@ public class Serializer {
     public List<Animal> customDeserialize(String fileName) {
         List<Animal> animals = Collections.emptyList();
         try (DataInputStream dis = new DataInputStream(new FileInputStream(fileName))) {
-
             int sizeAnimals = dis.readInt();
             animals = new ArrayList<>(sizeAnimals);
-
-            Animal animal;
-            int age;
-            String name;
-            Animal.Habitat habitat;
-            int sizeFood;
-            List<String> food;
-            boolean sexIsMale;
-            double height;
-            Heart heart;
-
             for (int i = 0; i < sizeAnimals; i++) {
-                age = dis.readInt();
-                name = dis.readUTF();
-                habitat = Animal.Habitat.values()[dis.readInt()];
-                sizeFood = dis.readInt();
-                food = new ArrayList<>();
+                Animal.Builder animalBuilder = new Animal().createBuilder();
+                animalBuilder.setAge(dis.readInt());
+                animalBuilder.setName(dis.readUTF());
+                animalBuilder.setHabitat(Animal.Habitat.values()[dis.readInt()]);
+
+                int sizeFood = dis.readInt();
+                List<String >food = new ArrayList<>();
                 for (int j = 0; j < sizeFood; j++) {
                     food.add(dis.readUTF());
                 }
-                sexIsMale = dis.readBoolean();
-                height = dis.readDouble();
-                heart = new Heart(dis.readBoolean());
 
-                animal = new Animal(age, name, habitat, food, sexIsMale, height, heart);
-                animals.add(animal);
+                animalBuilder.setFood(food);
+                animalBuilder.setSex(dis.readBoolean());
+                animalBuilder.setHeight(dis.readDouble());
+                animalBuilder.setHeart(new Heart(dis.readBoolean()));
+
+                animals.add(animalBuilder.build());
             }
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }

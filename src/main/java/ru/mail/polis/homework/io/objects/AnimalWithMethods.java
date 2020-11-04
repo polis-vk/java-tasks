@@ -32,12 +32,12 @@ public class AnimalWithMethods implements Serializable {
     }
 
     public AnimalWithMethods(int age, String name, Habitat habitat, List<String> food,
-                  boolean gender, double height, Heart heart) {
+                  boolean sexIsMale, double height, Heart heart) {
         this.age = age;
         this.name = name;
         this.habitat = habitat;
         this.food = food;
-        this.sexIsMale = gender;
+        this.sexIsMale = sexIsMale;
         this.height = height;
         this.heart = heart;
     }

@@ -32,12 +32,12 @@ public class AnimalExternalizable implements Externalizable {
     }
 
     public AnimalExternalizable(int age, String name, Habitat habitat, List<String> food,
-                  boolean gender, double height, HeartExternalizable heartExternalizable) {
+                  boolean sexIsMale, double height, HeartExternalizable heartExternalizable) {
         this.age = age;
         this.name = name;
         this.habitat = habitat;
         this.food = food;
-        this.sexIsMale = gender;
+        this.sexIsMale = sexIsMale;
         this.height = height;
         this.heartExternalizable = heartExternalizable;
     }

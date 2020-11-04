@@ -32,6 +32,7 @@ public class SerializerTest {
                     random1.nextDouble() * 100,
                     new Heart(random1.nextBoolean())
             );
+            System.out.println(animal);
             add(animal);
         }
     }};
@@ -48,6 +49,8 @@ public class SerializerTest {
                     random1.nextDouble() * 100,
                     new Heart(random1.nextBoolean())
             );
+
+            System.out.println(animalWithMethods);
             add(animalWithMethods);
         }
     }};
@@ -64,6 +67,8 @@ public class SerializerTest {
                     random1.nextDouble() * 100,
                     new HeartExternalizable(random1.nextBoolean())
             );
+
+            System.out.println(animalExternalizable);
             add(animalExternalizable);
         }
     }};
@@ -81,7 +86,7 @@ public class SerializerTest {
 
         System.out.println("  Default");
         System.out.println("Serialize wasted time = " + (endSerialize - startTime) + "ms.");
-        System.out.println("Deserialize wasted time = " + (endDeserialize - startTime) + "ms.");
+        System.out.println("Deserialize wasted time = " + (endDeserialize - endSerialize) + "ms.");
         System.out.println("File size = " + fileSize + "kb.");
     }
 
@@ -98,7 +103,7 @@ public class SerializerTest {
 
         System.out.println("  Externalizable");
         System.out.println("Serialize wasted time = " + (endSerialize - startTime) + "ms.");
-        System.out.println("Deserialize wasted time = " + (endDeserialize - startTime) + "ms.");
+        System.out.println("Deserialize wasted time = " + (endDeserialize - endSerialize) + "ms.");
         System.out.println("File size = " + fileSize + "kb.");
     }
 
@@ -115,7 +120,7 @@ public class SerializerTest {
 
         System.out.println("  With methods");
         System.out.println("Serialize wasted time = " + (endSerialize - startTime) + "ms.");
-        System.out.println("Deserialize wasted time = " + (endDeserialize - startTime) + "ms.");
+        System.out.println("Deserialize wasted time = " + (endDeserialize - endSerialize) + "ms.");
         System.out.println("File size = " + fileSize + "kb.");
     }
 
@@ -132,7 +137,7 @@ public class SerializerTest {
 
         System.out.println("  Custom");
         System.out.println("Serialize wasted time = " + (endSerialize - startTime) + "ms.");
-        System.out.println("Deserialize wasted time = " + (endDeserialize - startTime) + "ms.");
+        System.out.println("Deserialize wasted time = " + (endDeserialize - endSerialize) + "ms.");
         System.out.println("File size = " + fileSize + "kb.");
     }
 
