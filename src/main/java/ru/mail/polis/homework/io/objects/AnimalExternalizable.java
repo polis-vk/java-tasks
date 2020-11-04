@@ -90,7 +90,7 @@ public class AnimalExternalizable implements Externalizable {
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeObject(group);
-        out.writeObject(name);
+        out.writeUTF(name);
         out.writeBoolean(isWarmBlooded);
         out.writeObject(behavior);
 
@@ -106,7 +106,7 @@ public class AnimalExternalizable implements Externalizable {
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         group = (AnimalGroup) in.readObject();
-        name = (String) in.readObject();
+        name = in.readUTF();
         isWarmBlooded = in.readBoolean();
         behavior = (Behavior) in.readObject();
 
@@ -187,17 +187,17 @@ public class AnimalExternalizable implements Externalizable {
 
             out.writeInt(enemies.size());
             for (String enemy : enemies) {
-                out.writeObject(enemy);
+                out.writeUTF(enemy);
             }
 
             out.writeInt(friends.size());
             for (String friend : friends) {
-                out.writeObject(friend);
+                out.writeUTF(friend);
             }
 
             out.writeInt(favouriteFood.size());
             for (String favouriteFoodItem : favouriteFood) {
-                out.writeObject(favouriteFoodItem);
+                out.writeUTF(favouriteFoodItem);
             }
         }
 
@@ -209,19 +209,19 @@ public class AnimalExternalizable implements Externalizable {
 
             int enemiesCount = in.readInt();
             for (int i = 0; i < enemiesCount; i++) {
-                enemies.add((String) in.readObject());
+                enemies.add(in.readUTF());
             }
             enemies = Collections.unmodifiableList(enemies);
 
             int friendsCount = in.readInt();
             for (int i = 0; i < friendsCount; i++) {
-                friends.add((String) in.readObject());
+                friends.add(in.readUTF());
             }
             friends = Collections.unmodifiableList(friends);
 
             int favouriteFoodItemsCount = in.readInt();
             for (int i = 0; i < favouriteFoodItemsCount; i++) {
-                favouriteFood.add((String) in.readObject());
+                favouriteFood.add(in.readUTF());
             }
             favouriteFood = Collections.unmodifiableList(favouriteFood);
         }

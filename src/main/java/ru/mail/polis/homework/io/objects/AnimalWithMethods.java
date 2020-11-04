@@ -41,7 +41,7 @@ public class AnimalWithMethods implements Serializable {
 
     private void writeObject(ObjectOutputStream oos) throws IOException {
         oos.writeObject(group);
-        oos.writeObject(name);
+        oos.writeUTF(name);
         oos.writeBoolean(isWarmBlooded);
         oos.writeObject(behavior);
 
@@ -56,7 +56,7 @@ public class AnimalWithMethods implements Serializable {
 
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
         group = (AnimalGroup) ois.readObject();
-        name = (String) ois.readObject();
+        name = ois.readUTF();
         isWarmBlooded = ois.readBoolean();
         behavior = (Behavior) ois.readObject();
 
@@ -143,17 +143,17 @@ public class AnimalWithMethods implements Serializable {
 
             oos.writeInt(enemies.size());
             for (String enemy : enemies) {
-                oos.writeObject(enemy);
+                oos.writeUTF(enemy);
             }
 
             oos.writeInt(friends.size());
             for (String friend : friends) {
-                oos.writeObject(friend);
+                oos.writeUTF(friend);
             }
 
             oos.writeInt(favouriteFood.size());
             for (String favouriteFoodItem : favouriteFood) {
-                oos.writeObject(favouriteFoodItem);
+                oos.writeUTF(favouriteFoodItem);
             }
         }
 
@@ -165,21 +165,21 @@ public class AnimalWithMethods implements Serializable {
             int enemiesCount = ois.readInt();
             enemies = new ArrayList<>();
             for (int i = 0; i < enemiesCount; i++) {
-                enemies.add((String) ois.readObject());
+                enemies.add(ois.readUTF());
             }
             enemies = Collections.unmodifiableList(enemies);
 
             int friendsCount = ois.readInt();
             friends = new ArrayList<>();
             for (int i = 0; i < friendsCount; i++) {
-                friends.add((String) ois.readObject());
+                friends.add(ois.readUTF());
             }
             friends = Collections.unmodifiableList(friends);
 
             int favouriteFoodItemsCount = ois.readInt();
             favouriteFood = new ArrayList<>();
             for (int i = 0; i < favouriteFoodItemsCount; i++) {
-                favouriteFood.add((String) ois.readObject());
+                favouriteFood.add(ois.readUTF());
             }
             favouriteFood = Collections.unmodifiableList(favouriteFood);
         }
