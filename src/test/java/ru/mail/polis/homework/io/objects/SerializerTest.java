@@ -1,9 +1,7 @@
 package ru.mail.polis.homework.io.objects;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,10 +15,10 @@ import static org.junit.Assert.assertEquals;
 
 public class SerializerTest {
     private static final Path TEST_DIRECTORY = Paths.get("testResources");
-    private static final Path DEFAULT_SERIALIZE_OUTPUT_FILE = TEST_DIRECTORY.resolve("defaultSerialize.out");
-    private static final Path SERIALIZE_WITH_METHODS_OUTPUT_FILE = TEST_DIRECTORY.resolve("serializeWithMethods.out");
-    private static final Path SERIALIZE_WITH_EXTERNALIZABLE_OUTPUT_FILE = TEST_DIRECTORY.resolve("serializeWithExternalizable.out");
-    private static final Path CUSTOM_SERIALIZE_OUTPUT_FILE = TEST_DIRECTORY.resolve("customSerialize.out");
+    private static final Path DEFAULT_SERIALIZE_OUTPUT_FILE = TEST_DIRECTORY.resolve("defaultSerialize.ser");
+    private static final Path SERIALIZE_WITH_METHODS_OUTPUT_FILE = TEST_DIRECTORY.resolve("serializeWithMethods.ser");
+    private static final Path SERIALIZE_WITH_EXTERNALIZABLE_OUTPUT_FILE = TEST_DIRECTORY.resolve("serializeWithExternalizable.ser");
+    private static final Path CUSTOM_SERIALIZE_OUTPUT_FILE = TEST_DIRECTORY.resolve("customSerialize.ser");
 
     private static final List<String> CREATURES_NAMES = List.of("Dog", "Cat", "Human", "Dolphin", "Whale", "Parrot",
             "Frog", "Camel", "Bear", "Turtle", "Scorpion", "Snake", "Tiger", "Crocodile", "Spider", "Ant", "Bee",
@@ -32,24 +30,27 @@ public class SerializerTest {
     private static final double ANIMAL_MAX_WEIGHT = 150_000;
     private static final int ANIMAL_MAX_AGE = 100;
 
-    private List<Animal> animals;
-    private List<AnimalWithMethods> animalsWithMethods;
-    private List<AnimalExternalizable> animalsExternalizable;
-    private Serializer serializer;
+    private static final int LIST_SIZE = 10;
+    private static final int TRIALS_COUNT = 250;
 
-    @Before
-    public void setUp() throws IOException {
+    private static List<Animal> animals;
+    private static List<AnimalWithMethods> animalsWithMethods;
+    private static List<AnimalExternalizable> animalsExternalizable;
+    private static Serializer serializer;
+
+    @BeforeClass
+    public static void setUp() throws IOException {
         Random random = new Random();
-        animals = IntStream.range(0, 10)
+        animals = IntStream.range(0, LIST_SIZE)
                 .mapToObj(i -> generateRandomAnimal(random))
                 .collect(Collectors.toList());
 
-        animalsWithMethods = IntStream.range(0, 10)
+        animalsWithMethods = IntStream.range(0, LIST_SIZE)
                 .mapToObj(i -> generateRandomAnimal(random))
                 .map(SerializerTest::animalToAnimalWithMethods)
                 .collect(Collectors.toList());
 
-        animalsExternalizable = IntStream.range(0, 10)
+        animalsExternalizable = IntStream.range(0, LIST_SIZE)
                 .mapToObj(i -> generateRandomAnimal(random))
                 .map(SerializerTest::animalToAnimalExternalizable)
                 .collect(Collectors.toList());
@@ -66,8 +67,8 @@ public class SerializerTest {
         serializer = new Serializer();
     }
 
-    @After
-    public void cleanUp() throws IOException {
+    @AfterClass
+    public static void cleanUp() throws IOException {
         FileUtils.deleteDirectory(TEST_DIRECTORY.toFile());
     }
 
@@ -101,6 +102,34 @@ public class SerializerTest {
         serializer.customSerialize(animals, filePath);
         List<Animal> deserializedAnimals = serializer.customDeserialize(filePath);
         assertEquals(animals, deserializedAnimals);
+    }
+
+    @Test
+    public void measureDefaultSerializationTime() throws IOException, ClassNotFoundException {
+        String filePath = DEFAULT_SERIALIZE_OUTPUT_FILE.toAbsolutePath().toString();
+        measure(() -> serializer.defaultSerialize(animals, filePath), "Default serialization");
+        measure(() -> serializer.defaultDeserialize(filePath), "Default deserialization");
+    }
+
+    @Test
+    public void measureSerializationWithMethodsTime() throws IOException, ClassNotFoundException {
+        String filePath = SERIALIZE_WITH_METHODS_OUTPUT_FILE.toAbsolutePath().toString();
+        measure(() -> serializer.serializeWithMethods(animalsWithMethods, filePath), "Serialization with read/writeObject methods");
+        measure(() -> serializer.deserializeWithMethods(filePath), "Deserialization with read/writeObject methods");
+    }
+
+    @Test
+    public void measureExternalizableSerializationTime() throws IOException, ClassNotFoundException {
+        String filePath = SERIALIZE_WITH_EXTERNALIZABLE_OUTPUT_FILE.toAbsolutePath().toString();
+        measure(() -> serializer.serializeWithExternalizable(animalsExternalizable, filePath), "Externalizable serialization");
+        measure(() -> serializer.deserializeWithExternalizable(filePath), "Externalizable deserialization");
+    }
+
+    @Test
+    public void measureCustomSerializationTime() throws IOException, ClassNotFoundException {
+        String filePath = CUSTOM_SERIALIZE_OUTPUT_FILE.toAbsolutePath().toString();
+        measure(() -> serializer.customSerialize(animals, filePath), "Custom serialization");
+        measure(() -> serializer.customDeserialize(filePath), "Custom deserialization");
     }
 
     private static Animal generateRandomAnimal(Random random) {
@@ -182,5 +211,20 @@ public class SerializerTest {
                 .withEnemies(behavior.enemies().toArray(new String[0]))
                 .withFavouriteFood(behavior.favouriteFoodList().toArray(new String[0]))
                 .build();
+    }
+
+    private static void measure(RunnableWithExceptions payload, String title) throws IOException, ClassNotFoundException {
+        System.out.printf("** %s **\n", title);
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < TRIALS_COUNT; i++) {
+            payload.run();
+        }
+        long time = System.currentTimeMillis() - start;
+        System.out.printf("Elapsed time: %d\n\n", time);
+    }
+
+    @FunctionalInterface
+    private interface RunnableWithExceptions {
+        void run() throws IOException, ClassNotFoundException;
     }
 }
