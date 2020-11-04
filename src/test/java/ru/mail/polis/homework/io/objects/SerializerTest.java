@@ -30,8 +30,8 @@ public class SerializerTest {
     private static final double ANIMAL_MAX_WEIGHT = 150_000;
     private static final int ANIMAL_MAX_AGE = 100;
 
-    private static final int LIST_SIZE = 50;
-    private static final int TRIALS_COUNT = 150;
+    private static final int LIST_SIZE = 10;
+    private static final int TRIALS_COUNT = 1000;
 
     private static List<Animal> animals;
     private static List<AnimalWithMethods> animalsWithMethods;

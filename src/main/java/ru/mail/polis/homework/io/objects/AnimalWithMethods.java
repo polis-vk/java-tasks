@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -12,11 +11,11 @@ import java.util.*;
  * 3 балла
  */
 public class AnimalWithMethods implements Serializable {
-    private final AnimalGroup group;
-    private final String name;
-    private final boolean isWarmBlooded;
-    private final Behavior behavior;
-    private final List<HabitatEnvironment> habitatEnvironments;
+    private AnimalGroup group;
+    private String name;
+    private boolean isWarmBlooded;
+    private Behavior behavior;
+    private List<HabitatEnvironment> habitatEnvironments;
 
     // default value of -1, if unknown
     private int age;
@@ -56,39 +55,15 @@ public class AnimalWithMethods implements Serializable {
     }
 
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        try {
-            Class<AnimalWithMethods> clazz = AnimalWithMethods.class;
-            Field groupField = clazz.getDeclaredField("group");
-            Field nameField = clazz.getDeclaredField("name");
-            Field isWarmBloodedField = clazz.getDeclaredField("isWarmBlooded");
-            Field behaviorField = clazz.getDeclaredField("behavior");
-            Field habitatEnvironmentsField = clazz.getDeclaredField("habitatEnvironments");
+        group = (AnimalGroup) ois.readObject();
+        name = (String) ois.readObject();
+        isWarmBlooded = ois.readBoolean();
+        behavior = (Behavior) ois.readObject();
 
-            groupField.setAccessible(true);
-            nameField.setAccessible(true);
-            isWarmBloodedField.setAccessible(true);
-            behaviorField.setAccessible(true);
-            habitatEnvironmentsField.setAccessible(true);
-
-            groupField.set(this, ois.readObject());
-            nameField.set(this, ois.readObject());
-            isWarmBloodedField.set(this, ois.readBoolean());
-            behaviorField.set(this, ois.readObject());
-
-            int habitatEnvironmentsCount = ois.readInt();
-            List<HabitatEnvironment> habitatEnvironments = new ArrayList<>();
-            for (int i = 0; i < habitatEnvironmentsCount; i++) {
-                habitatEnvironments.add((HabitatEnvironment) ois.readObject());
-            }
-            habitatEnvironmentsField.set(this, Collections.unmodifiableList(habitatEnvironments));
-
-            groupField.setAccessible(false);
-            nameField.setAccessible(false);
-            isWarmBloodedField.setAccessible(false);
-            behaviorField.setAccessible(false);
-            habitatEnvironmentsField.setAccessible(false);
-        } catch (NoSuchFieldException | IllegalAccessException ex) {
-            throw new ClassNotFoundException("Failed to set final fields using reflection", ex);
+        int habitatEnvironmentsCount = ois.readInt();
+        habitatEnvironments = new ArrayList<>();
+        for (int i = 0; i < habitatEnvironmentsCount; i++) {
+            habitatEnvironments.add((HabitatEnvironment) ois.readObject());
         }
 
         age = ois.readInt();
@@ -144,11 +119,11 @@ public class AnimalWithMethods implements Serializable {
     }
 
     public static class Behavior implements Serializable {
-        private final boolean canBeTamed;
-        private final boolean isPredator;
-        private final AnimalMovementType movementType;
-        private final List<String> enemies, friends;
-        private final List<String> favouriteFood;
+        private boolean canBeTamed;
+        private boolean isPredator;
+        private AnimalMovementType movementType;
+        private List<String> enemies, friends;
+        private List<String> favouriteFood;
 
         private Behavior(boolean canBeTamed, boolean isPredator, AnimalMovementType movementType, List<String> favouriteFood,
                          List<String> enemies, List<String> friends) {
@@ -183,57 +158,30 @@ public class AnimalWithMethods implements Serializable {
         }
 
         private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-            try {
-                Class<AnimalWithMethods.Behavior> clazz = AnimalWithMethods.Behavior.class;
-                Field canBeTamedField = clazz.getDeclaredField("canBeTamed");
-                Field isPredatorField = clazz.getDeclaredField("isPredator");
-                Field movementTypeField = clazz.getDeclaredField("movementType");
-                Field enemiesField = clazz.getDeclaredField("enemies");
-                Field friendsField = clazz.getDeclaredField("friends");
-                Field favouriteFoodField = clazz.getDeclaredField("favouriteFood");
+            canBeTamed = ois.readBoolean();
+            isPredator = ois.readBoolean();
+            movementType = (AnimalMovementType) ois.readObject();
 
-                canBeTamedField.setAccessible(true);
-                isPredatorField.setAccessible(true);
-                movementTypeField.setAccessible(true);
-                enemiesField.setAccessible(true);
-                friendsField.setAccessible(true);
-                favouriteFoodField.setAccessible(true);
-
-                canBeTamedField.set(this, ois.readBoolean());
-                isPredatorField.set(this, ois.readBoolean());
-                movementTypeField.set(this, ois.readObject());
-
-                int enemiesCount = ois.readInt();
-                List<String> enemies = new ArrayList<>();
-                for (int i = 0; i < enemiesCount; i++) {
-                    enemies.add((String) ois.readObject());
-                }
-                enemiesField.set(this, Collections.unmodifiableList(enemies));
-
-                int friendsCount = ois.readInt();
-                List<String> friends = new ArrayList<>();
-                for (int i = 0; i < friendsCount; i++) {
-                    friends.add((String) ois.readObject());
-                }
-                friendsField.set(this, Collections.unmodifiableList(friends));
-
-                int favouriteFoodItemsCount = ois.readInt();
-                List<String> favouriteFood = new ArrayList<>();
-                for (int i = 0; i < favouriteFoodItemsCount; i++) {
-                    favouriteFood.add((String) ois.readObject());
-                }
-                favouriteFoodField.set(this, Collections.unmodifiableList(favouriteFood));
-
-
-                canBeTamedField.setAccessible(false);
-                isPredatorField.setAccessible(false);
-                movementTypeField.setAccessible(false);
-                enemiesField.setAccessible(false);
-                friendsField.setAccessible(false);
-                favouriteFoodField.setAccessible(false);
-            } catch (NoSuchFieldException | IllegalAccessException ex) {
-                throw new ClassNotFoundException("Failed to set final fields using reflection", ex);
+            int enemiesCount = ois.readInt();
+            enemies = new ArrayList<>();
+            for (int i = 0; i < enemiesCount; i++) {
+                enemies.add((String) ois.readObject());
             }
+            enemies = Collections.unmodifiableList(enemies);
+
+            int friendsCount = ois.readInt();
+            friends = new ArrayList<>();
+            for (int i = 0; i < friendsCount; i++) {
+                friends.add((String) ois.readObject());
+            }
+            friends = Collections.unmodifiableList(friends);
+
+            int favouriteFoodItemsCount = ois.readInt();
+            favouriteFood = new ArrayList<>();
+            for (int i = 0; i < favouriteFoodItemsCount; i++) {
+                favouriteFood.add((String) ois.readObject());
+            }
+            favouriteFood = Collections.unmodifiableList(favouriteFood);
         }
 
         @Override
