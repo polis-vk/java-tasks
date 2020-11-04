@@ -158,7 +158,6 @@ public class Serializer {
             for (Animal animal : animals) {
                 objectOutputStream.writeUTF(animal.getName());
                 objectOutputStream.writeDouble(animal.getWeight());
-
                 objectOutputStream.writeUTF(animal.getParents().getMother());
                 objectOutputStream.writeUTF(animal.getParents().getFather());
                 objectOutputStream.writeInt(animal.getGenericOfRelatives().size());
@@ -202,8 +201,8 @@ public class Serializer {
                         Parents parents1 = new Parents(mother1, father1);
                         genericOfRelatives.add(parents1);
                     }
-                    Colour colour = Colour.valueOf(objectInputStream.readUTF());
-                    animals.add(new Animal(name, weight, parents, genericOfRelatives, colour));
+
+                    animals.add(new Animal(name, weight, parents, genericOfRelatives, Colour.valueOf(objectInputStream.readUTF())));
                 } catch (IOException e) {
                     break;
                 }

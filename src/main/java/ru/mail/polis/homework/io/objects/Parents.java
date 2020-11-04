@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.io.objects;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public class Parents implements Serializable {
@@ -41,6 +44,15 @@ public class Parents implements Serializable {
         Parents parents = (Parents) obj;
         return mother.equals(parents.mother) &&
                 father.equals(parents.father);
+    }
+
+    public void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeUTF(mother);
+        out.writeUTF(father);
+    }
+
+    public Parents readObject(ObjectInputStream in) throws IOException {
+        return new Parents(in.readUTF(), in.readUTF());
     }
 }
 
