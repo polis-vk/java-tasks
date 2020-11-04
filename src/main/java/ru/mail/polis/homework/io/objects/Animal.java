@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.io.objects;
 
+import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Класс должен содержать несколько полей с примитивами, строками, энамами и некоторыми сапомисными объектами.
@@ -8,8 +10,8 @@ import java.util.*;
  * Всего должно быть минимум 6 полей с разными типами.
  * 1 балл
  */
-public class Animal {
-    private final Group group;
+public class Animal implements Serializable {
+    private final AnimalGroup group;
     private final String name;
     private final boolean isWarmBlooded;
     private final Behavior behavior;
@@ -17,8 +19,11 @@ public class Animal {
 
     // default value of -1, if unknown
     private int age;
-    // default value of 0x00000000, if unknown
+
+    // RGBA format
+    // default value of 0x00000000 (black color with alpha == 0.0), if unknown
     private int color;
+
     // default value of Double.NaN, if unknown
     private double weight;
 
@@ -46,10 +51,42 @@ public class Animal {
         this.weight = weight;
     }
 
+    public AnimalGroup getGroup() {
+        return group;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isWarmBlooded() {
+        return isWarmBlooded;
+    }
+
+    public Behavior getBehavior() {
+        return behavior;
+    }
+
+    public Stream<HabitatEnvironment> habitatEnvironments() {
+        return habitatEnvironments.stream();
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
     @Override
     public String toString() {
         return String.format("Animal { Group: %s, Name: %s, Type: %s, Habitat environments: %s, Behavior: \"%s\", "
-                + "Age: %s, Color: %s, Weight: %s }",
+                        + "Age: %s years, Color: %s, Weight: %s kg }",
                 group, name, isWarmBlooded ? "warm-blooded" : "cold-blooded", habitatEnvironments, behavior,
                 age >= 0 ? Integer.toString(age) : "unknown",
                 color != 0 ? Integer.toHexString(color) : "unknown",
@@ -66,14 +103,14 @@ public class Animal {
         }
 
         Animal other = (Animal) otherObject;
-        return isWarmBlooded == other.isWarmBlooded &&
-                age == other.age &&
-                color == other.color &&
-                Double.compare(other.weight, weight) == 0 &&
-                group == other.group &&
-                Objects.equals(name, other.name) &&
-                Objects.equals(behavior, other.behavior) &&
-                Objects.equals(habitatEnvironments, other.habitatEnvironments);
+        return isWarmBlooded == other.isWarmBlooded
+                && age == other.age
+                && color == other.color
+                && Double.compare(other.weight, weight) == 0
+                && group == other.group
+                && Objects.equals(name, other.name)
+                && Objects.equals(behavior, other.behavior)
+                && Objects.equals(habitatEnvironments, other.habitatEnvironments);
     }
 
     @Override
@@ -81,22 +118,14 @@ public class Animal {
         return Objects.hash(group, name, isWarmBlooded, behavior, habitatEnvironments, age, color, weight);
     }
 
-    public enum HabitatEnvironment {
-        FRESH_WATER, OCEAN, SWAMP, DESERT, JUNGLE, TAIGA, MOUNTAINS, PLAINS, HOME
-    }
-
-    public enum Group {
-        MAMMALS, BIRDS, FISH, REPTILES, AMPHIBIANS, INSECTS
-    }
-
-    public static class Behavior {
+    public static class Behavior implements Serializable {
         private final boolean canBeTamed;
         private final boolean isPredator;
-        private final MovementType movementType;
+        private final AnimalMovementType movementType;
         private final List<String> enemies, friends;
         private final List<String> favouriteFood;
 
-        private Behavior(boolean canBeTamed, boolean isPredator, MovementType movementType, List<String> favouriteFood,
+        private Behavior(boolean canBeTamed, boolean isPredator, AnimalMovementType movementType, List<String> favouriteFood,
                          List<String> enemies, List<String> friends) {
             this.canBeTamed = canBeTamed;
             this.isPredator = isPredator;
@@ -107,24 +136,28 @@ public class Animal {
             this.friends = friends;
         }
 
-        public enum MovementType {
-            FLYING, WALKING, SWIMMING, JUMPING;
+        public boolean canBeTamed() {
+            return canBeTamed;
+        }
 
-            @Override
-            public String toString() {
-                switch (this) {
-                    case FLYING:
-                        return "flies";
-                    case WALKING:
-                        return "walks";
-                    case SWIMMING:
-                        return "swims";
-                    case JUMPING:
-                        return "jumps";
-                }
+        public boolean isPredator() {
+            return isPredator;
+        }
 
-                return "does something weird";
-            }
+        public AnimalMovementType getMovementType() {
+            return movementType;
+        }
+
+        public Stream<String> enemies() {
+            return enemies.stream();
+        }
+
+        public Stream<String> friends() {
+            return friends.stream();
+        }
+
+        public Stream<String> favouriteFoodStream() {
+            return favouriteFood.stream();
         }
 
         @Override
@@ -148,12 +181,12 @@ public class Animal {
                 return false;
             }
             Behavior other = (Behavior) otherObject;
-            return canBeTamed == other.canBeTamed &&
-                    isPredator == other.isPredator &&
-                    movementType == other.movementType &&
-                    Objects.equals(enemies, other.enemies) &&
-                    Objects.equals(friends, other.friends) &&
-                    Objects.equals(favouriteFood, other.favouriteFood);
+            return canBeTamed == other.canBeTamed
+                    && isPredator == other.isPredator
+                    && movementType == other.movementType
+                    && Objects.equals(enemies, other.enemies)
+                    && Objects.equals(friends, other.friends)
+                    && Objects.equals(favouriteFood, other.favouriteFood);
         }
 
         @Override
@@ -163,12 +196,12 @@ public class Animal {
     }
 
     public static class Builder {
-        private final Group group;
+        private final AnimalGroup group;
         private final String name;
         private final boolean isWarmBlooded;
         private final boolean canBeTamed;
         private final boolean isPredator;
-        private final Behavior.MovementType movementType;
+        private final AnimalMovementType movementType;
 
         private final List<HabitatEnvironment> habitatEnvironments;
         private final List<String> enemies, friends;
@@ -178,8 +211,8 @@ public class Animal {
         private int color = 0;
         private double weight = Double.NaN;
 
-        public Builder(Group group, String name, boolean isWarmBlooded, boolean canBeTamed, boolean isPredator,
-                        Behavior.MovementType movementType) {
+        public Builder(AnimalGroup group, String name, boolean isWarmBlooded, boolean canBeTamed, boolean isPredator,
+                       AnimalMovementType movementType) {
             this.group = group;
             this.name = name;
             this.isWarmBlooded = isWarmBlooded;
@@ -235,7 +268,7 @@ public class Animal {
     }
 
     public static void main(String[] args) {
-        Animal dog = new Animal.Builder(Group.MAMMALS, "Pug", true, true, false, Behavior.MovementType.WALKING)
+        Animal dog = new Animal.Builder(AnimalGroup.MAMMALS, "Pug", true, true, false, AnimalMovementType.WALKING)
                 .withAge(2)
                 .withWeight(4.9)
                 .withHabitatEnvironments(HabitatEnvironment.HOME)
@@ -244,7 +277,7 @@ public class Animal {
                 .withFavouriteFood("Bones")
                 .build();
 
-        Animal cat = new Animal.Builder(Group.MAMMALS, "Siamese cat", true, true, false, Behavior.MovementType.WALKING)
+        Animal cat = new Animal.Builder(AnimalGroup.MAMMALS, "Siamese cat", true, true, false, AnimalMovementType.WALKING)
                 .withColor(0xC6CDC7FF)
                 .withWeight(3.8)
                 .withHabitatEnvironments(HabitatEnvironment.HOME)

@@ -1,16 +1,25 @@
 package ru.mail.polis.homework.io.objects;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static org.junit.Assert.assertEquals;
 
 public class SerializerTest {
-    private static final Path TEST_DIRECTORY = Paths.get("test");
-    private static final Path DEFAULT_SERIALIZABLE_OUTPUT_FILE = TEST_DIRECTORY.resolve("defaultSerializable.out");
+    private static final Path TEST_DIRECTORY = Paths.get("testResources");
+    private static final Path DEFAULT_SERIALIZE_OUTPUT_FILE = TEST_DIRECTORY.resolve("defaultSerialize.out");
+    private static final Path SERIALIZE_WITH_METHODS_OUTPUT_FILE = TEST_DIRECTORY.resolve("serializeWithMethods.out");
 
     private static final List<String> CREATURES_NAMES = List.of("Dog", "Cat", "Human", "Dolphin", "Whale", "Parrot",
             "Frog", "Camel", "Bear", "Turtle", "Scorpion", "Snake", "Tiger", "Crocodile", "Spider", "Ant", "Bee",
@@ -20,28 +29,73 @@ public class SerializerTest {
             "Bread", "Dog food", "Cat food", "Chocolate", "Eggs", "Insects", "Worms", "Mice", "Honey");
 
     private static final double ANIMAL_MAX_WEIGHT = 150_000;
+    private static final int ANIMAL_MAX_AGE = 100;
 
     private List<Animal> animals;
+    private List<AnimalWithMethods> animalsWithMethods;
+    private Serializer serializer;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
+        Random random = new Random();
+        animals = IntStream.range(0, 10)
+                .mapToObj(i -> generateRandomAnimal(random))
+                .collect(Collectors.toList());
 
+        animalsWithMethods = IntStream.range(0, 10)
+                .mapToObj(i -> generateRandomAnimal(random))
+                .map(SerializerTest::animalToAnimalWithMethods)
+                .collect(Collectors.toList());
+
+        if (Files.exists(TEST_DIRECTORY)) {
+            FileUtils.deleteDirectory(TEST_DIRECTORY.toFile());
+        }
+        Files.createDirectories(TEST_DIRECTORY);
+        Files.createFile(DEFAULT_SERIALIZE_OUTPUT_FILE);
+        Files.createFile(SERIALIZE_WITH_METHODS_OUTPUT_FILE);
+
+        serializer = new Serializer();
+    }
+
+    @After
+    public void cleanUp() throws IOException {
+        FileUtils.deleteDirectory(TEST_DIRECTORY.toFile());
+    }
+
+    @Test
+    public void defaultSerializeTest() throws IOException, FileNotFoundException, ClassNotFoundException {
+        String filePath = DEFAULT_SERIALIZE_OUTPUT_FILE.toAbsolutePath().toString();
+        serializer.defaultSerialize(animals, filePath);
+        List<Animal> deserializedAnimals = serializer.defaultDeserialize(filePath);
+        assertEquals(animals, deserializedAnimals);
+    }
+
+    @Test
+    public void serializeWithMethodsTest() throws IOException, FileNotFoundException, ClassNotFoundException {
+        String filePath = SERIALIZE_WITH_METHODS_OUTPUT_FILE.toAbsolutePath().toString();
+        serializer.serializeWithMethods(animalsWithMethods, filePath);
+        List<AnimalWithMethods> deserializedAnimalsWithMethods = serializer.deserializeWithMethods(filePath);
+        assertEquals(animalsWithMethods, deserializedAnimalsWithMethods);
     }
 
     private static Animal generateRandomAnimal(Random random) {
-        Animal.Builder builder = new Animal.Builder(getRandomEnum(Animal.Group.class, random),
+        Animal.Builder builder = new Animal.Builder(getRandomEnum(AnimalGroup.class, random),
                 getRandomListEntry(CREATURES_NAMES, random), random.nextBoolean(), random.nextBoolean(), random.nextBoolean(),
-                getRandomEnum(Animal.Behavior.MovementType.class, random));
+                getRandomEnum(AnimalMovementType.class, random));
+
         if (random.nextBoolean()) {
             builder.withColor(random.nextInt());
         }
         if (random.nextBoolean()) {
             builder.withWeight(random.nextDouble() * ANIMAL_MAX_WEIGHT);
         }
+        if (random.nextBoolean()) {
+            builder.withAge(random.nextInt(ANIMAL_MAX_AGE + 1));
+        }
 
-        List<Animal.HabitatEnvironment> environments
-                = getRandomSubset(Arrays.asList(Animal.HabitatEnvironment.values()), random, 1);
-        builder.withHabitatEnvironments(environments.toArray(new Animal.HabitatEnvironment[0]));
+        List<HabitatEnvironment> environments
+                = getRandomSubset(Arrays.asList(HabitatEnvironment.values()), random, 1);
+        builder.withHabitatEnvironments(environments.toArray(new HabitatEnvironment[0]));
 
         List<String> friends = getRandomSubset(CREATURES_NAMES, random);
         builder.withFriends(friends.toArray(new String[0]));
@@ -77,20 +131,17 @@ public class SerializerTest {
         return getRandomSubset(sourceList, random, 0);
     }
 
-    @After
-    public void cleanUp() {
-
-    }
-
-    @Test
-    public void defaultSerializeTest() {
-
-    }
-
-    public static void main(String[] args) {
-        Random random = new Random();
-        System.out.println(generateRandomAnimal(random) + "\n");
-        System.out.println(generateRandomAnimal(random) + "\n");
-        System.out.println(generateRandomAnimal(random) + "\n");
+    private static AnimalWithMethods animalToAnimalWithMethods(Animal animal) {
+        Animal.Behavior behavior = animal.getBehavior();
+        return new AnimalWithMethods.Builder(animal.getGroup(), animal.getName(), animal.isWarmBlooded(),
+                behavior.canBeTamed(), behavior.isPredator(), behavior.getMovementType())
+                .withAge(animal.getAge())
+                .withColor(animal.getColor())
+                .withWeight(animal.getWeight())
+                .withHabitatEnvironments(animal.habitatEnvironments().toArray(HabitatEnvironment[]::new))
+                .withFriends(behavior.friends().toArray(String[]::new))
+                .withEnemies(behavior.enemies().toArray(String[]::new))
+                .withFavouriteFood(behavior.favouriteFoodStream().toArray(String[]::new))
+                .build();
     }
 }
