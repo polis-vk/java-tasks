@@ -34,11 +34,10 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName, true))) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
             out.writeObject(animals);
         }
     }
-
 
     /**
      * 1 балл
@@ -78,6 +77,7 @@ public class Serializer {
         return Collections.emptyList();
     }
 
+
     /**
      * 1 балл
      * Реализовать простую ручную сериализацию, с помощью специального потока для сериализации объектов и интерфейса Externalizable
@@ -85,8 +85,11 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) throws IOException {
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName, true))) {
-            objectOutputStream.writeObject(animals);
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            out.writeInt(animals.size());
+            for (AnimalExternalizable animal : animals) {
+                animal.writeExternal(out);
+            }
         }
     }
 
@@ -101,7 +104,12 @@ public class Serializer {
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) throws IOException, ClassNotFoundException {
         List<AnimalExternalizable> animals = new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
-            animals = (List<AnimalExternalizable>)in.readObject();
+            int size = in.readInt();
+            for (int i = 0; i < size; i++) {
+                AnimalExternalizable animal = new AnimalExternalizable();
+                animal.readExternal(in);
+                animals.add(animal);
+            }
         }
         return animals;
     }
@@ -114,8 +122,21 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
-    public void customSerialize(List<Animal> animals, String fileName) {
-
+    public void customSerialize(List<Animal> animals, String fileName) throws IOException {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            for (Animal animal : animals) {
+                out.writeUTF(animal.getKind());
+                out.writeBoolean(animal.getTail().isLong());
+                out.writeDouble(animal.getEnergy());
+                out.writeObject(animal.getFoodPreferences()); //ну ето сложно без writeObject...
+                out.writeInt(animal.getAverageLifeExpectancy());
+                List<String> habitats = animal.getHabitats();
+                out.writeInt(habitats.size());
+                for (String habitat : habitats) {
+                    out.writeUTF(habitat);
+                }
+            }
+        }
     }
 
     /**
@@ -126,7 +147,29 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+    public List<Animal> customDeserialize(String fileName) throws IOException, ClassNotFoundException {
+        List<Animal> animals = new ArrayList<>();
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
+            while (true) {
+                String kind = in.readUTF();
+                Tail tail = new Tail(in.readBoolean());
+                double energy = in.readDouble();
+                Animal.FoodPreferences foodPreferences = (Animal.FoodPreferences) in.readObject();
+                int averageLifeExpectancy = in.readInt();
+                int habitatsSize = in.readInt();
+                List<String> habitats = new ArrayList<>();
+                for (int i = 0; i < habitatsSize; i++) {
+                    String habitat = in.readUTF();
+                    habitats.add(habitat);
+                }
+
+                Animal animal = new Animal(kind, tail, energy, foodPreferences,
+                        averageLifeExpectancy, habitats);
+
+                animals.add(animal);
+            }
+        } catch (EOFException ignored) {}
+
+        return animals;
     }
 }

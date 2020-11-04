@@ -1,57 +1,88 @@
 package ru.mail.polis.homework.io.objects;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 
 public class SerializerTest {
 
+    private static List<Animal> simpleAnimals = new ArrayList<>();
+    private static List<AnimalWithMethods> animalWithMethods = new ArrayList<>();
+    private static List<AnimalExternalizable> externalizableAnimals = new ArrayList<>();
+
+    private static Serializer serializer = new Serializer();
+
+    private static String fileName = "D:\\test.ser";
+
+    @Before
+    public void prepare() {
+        List<String> allKinds = Arrays.asList("cat", "dog", "bear", "wolf", "fox",
+                "hippo", "koala", "horse", "ferret", "giraffe");
+
+        List<String> allHabitats = Arrays.asList("Europe", "Asia", "South America", "North America",
+                "Africa", "Australia", "Ocean");
+
+        Animal.FoodPreferences[] allPreferences = Animal.FoodPreferences.values();
+
+        Random rnd = new Random();
+
+        for (int i = 0; i < 1000; i++) {
+            String kind = allKinds.get(rnd.nextInt(allKinds.size()));
+            Boolean isTailLong = rnd.nextBoolean();
+            double energy = 100;
+            Animal.FoodPreferences foodPreferences = allPreferences[rnd.nextInt(allPreferences.length)];
+            int averageLifeExpectancy = rnd.nextInt(50);
+            List<String> habitats = Arrays.asList(
+                    allHabitats.get(rnd.nextInt(allHabitats.size())),
+                    allHabitats.get(rnd.nextInt(allHabitats.size()))
+            );
+
+            Tail tail = new Tail(isTailLong);
+
+            simpleAnimals.add(new Animal(kind, tail, energy, foodPreferences, averageLifeExpectancy, habitats));
+            animalWithMethods.add(new AnimalWithMethods(kind, tail, energy, foodPreferences, averageLifeExpectancy, habitats));
+            externalizableAnimals.add(new AnimalExternalizable(kind, tail, energy, foodPreferences, averageLifeExpectancy, habitats));
+        }
+    }
+
+    @After
+    public void clear() {
+        File file = new File(fileName);
+        file.delete();
+    }
+
     @Test
     public void defaultSerialize() {
-        Animal cat = new Animal("cat", true, Animal.FoodPreferences.CARNIVOROUS, 15);
-        Animal bear = new Animal("bear", false, Animal.FoodPreferences.CARNIVOROUS, 15);
-        Animal giraffe = new Animal("giraffe", true, Animal.FoodPreferences.HERBIVOROUS, 15);
-        Animal dog = new Animal("dog", true, Animal.FoodPreferences.OMNIVOROUS, 15);
-        Animal wolf = new Animal("wolf", true, Animal.FoodPreferences.CARNIVOROUS, 15);
-        Animal fox = new Animal("fox", true, Animal.FoodPreferences.CARNIVOROUS, 15);
-        Animal hippo = new Animal("hippo", false, Animal.FoodPreferences.HERBIVOROUS, 15);
-        Animal koala = new Animal("koala", false, Animal.FoodPreferences.HERBIVOROUS, 15);
-        Animal horse = new Animal("horse", true, Animal.FoodPreferences.HERBIVOROUS, 15);
-        Animal ferret = new Animal("ferret", true, Animal.FoodPreferences.OMNIVOROUS, 15);
-
-        List<Animal> animals = Arrays.asList(cat, bear, giraffe, dog, wolf,
-                fox, hippo, koala, horse, ferret);
-
-        String fileName = "D:\\test.txt";
-
-        Serializer serializer = new Serializer();
         try {
             long startTime = System.currentTimeMillis();
-            for (int i = 0; i < 10; i++) {
-                serializer.defaultSerialize(animals, fileName);
-            }
+            serializer.defaultSerialize(simpleAnimals, fileName);
             long endTime = System.currentTimeMillis();
 
-            System.out.println("TEST 1");
-            System.out.println("Serialization took: " + (endTime - startTime) + " milliseconds");
+            System.out.println("DEFAULT");
+            System.out.println("Serialization: " + (endTime - startTime) + " milliseconds");
 
             startTime = System.currentTimeMillis();
             List<Animal> deserializedAnimals = serializer.defaultDeserialize(fileName);
             endTime = System.currentTimeMillis();
 
-            System.out.println("Deserialization took: " + (endTime - startTime) + " milliseconds");
+            System.out.println("Deserialization: " + (endTime - startTime) + " milliseconds");
 
             File file = new File(fileName);
             System.out.println("File size: " + file.length());
+            //file.delete();
 
-            System.out.println(deserializedAnimals);
-
-            file.delete();
+            for (int i = 0; i < simpleAnimals.size(); i++) {
+                assertEquals(simpleAnimals.get(i), deserializedAnimals.get(i));
+            }
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -59,47 +90,64 @@ public class SerializerTest {
     }
 
     @Test
+    public void serializeWithMethods() {
+
+    }
+
+    @Test
     public void serializeWithExternalizable() {
-        AnimalExternalizable cat = new AnimalExternalizable("cat", true, AnimalExternalizable.FoodPreferences.CARNIVOROUS, 15);
-        AnimalExternalizable bear = new AnimalExternalizable("bear", false, AnimalExternalizable.FoodPreferences.CARNIVOROUS, 15);
-        AnimalExternalizable giraffe = new AnimalExternalizable("giraffe", true, AnimalExternalizable.FoodPreferences.HERBIVOROUS, 15);
-        AnimalExternalizable dog = new AnimalExternalizable("dog", true, AnimalExternalizable.FoodPreferences.OMNIVOROUS, 15);
-        AnimalExternalizable wolf = new AnimalExternalizable("wolf", true, AnimalExternalizable.FoodPreferences.CARNIVOROUS, 15);
-        AnimalExternalizable fox = new AnimalExternalizable("fox", true, AnimalExternalizable.FoodPreferences.CARNIVOROUS, 15);
-        AnimalExternalizable hippo = new AnimalExternalizable("hippo", false, AnimalExternalizable.FoodPreferences.HERBIVOROUS, 15);
-        AnimalExternalizable koala = new AnimalExternalizable("koala", false, AnimalExternalizable.FoodPreferences.HERBIVOROUS, 15);
-        AnimalExternalizable horse = new AnimalExternalizable("horse", true, AnimalExternalizable.FoodPreferences.HERBIVOROUS, 15);
-        AnimalExternalizable ferret = new AnimalExternalizable("ferret", true, AnimalExternalizable.FoodPreferences.OMNIVOROUS, 15);
-
-        List<AnimalExternalizable> animals = Arrays.asList(cat, bear, giraffe, dog, wolf,
-                fox, hippo, koala, horse, ferret);
-
-        String fileName = "D:\\test.txt";
-
-        Serializer serializer = new Serializer();
         try {
             long startTime = System.currentTimeMillis();
-            for (int i = 0; i < 10; i++) {
-                serializer.serializeWithExternalizable(animals, fileName);
-            }
+            serializer.serializeWithExternalizable(externalizableAnimals, fileName);
             long endTime = System.currentTimeMillis();
 
-            System.out.println("TEST 2");
-            System.out.println("Serialization took: " + (endTime - startTime) + " milliseconds");
+            System.out.println("\nEXTERNALIZABLE");
+            System.out.println("Serialization: " + (endTime - startTime) + " milliseconds");
 
             startTime = System.currentTimeMillis();
             List<AnimalExternalizable> deserializedAnimals = serializer.deserializeWithExternalizable(fileName);
             endTime = System.currentTimeMillis();
 
-            System.out.println("Deserialization took: " + (endTime - startTime) + " milliseconds");
+            System.out.println("Deserialization: " + (endTime - startTime) + " milliseconds");
 
             File file = new File(fileName);
             System.out.println("File size: " + file.length());
+            //file.delete();
 
-            file.delete();
+            for (int i = 0; i < externalizableAnimals.size(); i++) {
+                assertEquals(externalizableAnimals.get(i), deserializedAnimals.get(i));
+            }
 
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void customSerialize() {
+        try {
+            long startTime = System.currentTimeMillis();
+            serializer.customSerialize(simpleAnimals, fileName);
+            long endTime = System.currentTimeMillis();
+
+            System.out.println("\nCUSTOM");
+            System.out.println("Serialization: " + (endTime - startTime) + " milliseconds");
+
+            startTime = System.currentTimeMillis();
+            List<Animal> deserializedAnimals = serializer.customDeserialize(fileName);
+            endTime = System.currentTimeMillis();
+
+            System.out.println("Deserialization: " + (endTime - startTime) + " milliseconds");
+
+            File file = new File(fileName);
+            System.out.println("File size: " + file.length());
+            //file.delete();
+
+            for (int i = 0; i < simpleAnimals.size(); i++) {
+                assertEquals(simpleAnimals.get(i), deserializedAnimals.get(i));
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -6,6 +6,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Дубль класса Animal, для Serializer.serializeWithExternalizable
@@ -25,7 +26,7 @@ public class AnimalExternalizable implements Externalizable {
 
     private double energy;
 
-    private FoodPreferences foodPreferences;
+    private Animal.FoodPreferences foodPreferences;
 
     private int averageLifeExpectancy;
 
@@ -33,13 +34,14 @@ public class AnimalExternalizable implements Externalizable {
 
     public AnimalExternalizable() {}
 
-    public AnimalExternalizable(String kind, boolean isTailLong,
-                                FoodPreferences foodPreferences, int averageLifeExpectancy) {
+    public AnimalExternalizable(String kind, Tail tail, double energy,
+                                Animal.FoodPreferences foodPreferences, int averageLifeExpectancy, List<String> habitats) {
         this.kind = kind;
-        this.tail = new Tail(isTailLong);
+        this.tail = tail;
+        this.energy = energy;
         this.foodPreferences = foodPreferences;
         this.averageLifeExpectancy = averageLifeExpectancy;
-        this.habitats = new ArrayList<>();
+        this.habitats = habitats;
     }
 
     public String getKind() {
@@ -58,7 +60,7 @@ public class AnimalExternalizable implements Externalizable {
         this.energy = energy;
     }
 
-    public FoodPreferences getFoodPreferences() {
+    public Animal.FoodPreferences getFoodPreferences() {
         return foodPreferences;
     }
 
@@ -74,23 +76,37 @@ public class AnimalExternalizable implements Externalizable {
         this.habitats = habitats;
     }
 
+
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeObject(this.getKind());
-        out.writeObject(this.getTail());
-        out.writeObject(this.getEnergy());
-        out.writeObject(this.getFoodPreferences());
-        out.writeObject(this.getAverageLifeExpectancy());
-        out.writeObject(this.getHabitats());
+        out.writeUTF(kind);
+        out.writeObject(tail);
+        out.writeDouble(energy);
+        out.writeObject(foodPreferences);
+        out.writeInt(averageLifeExpectancy);
+        out.writeObject(habitats);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        kind = (String) in.readObject();
+        kind = in.readUTF();
         tail = (Tail) in.readObject();
-        energy = (Double) in.readObject();
-        foodPreferences = (FoodPreferences) in.readObject();
-        averageLifeExpectancy = (int) in.readObject();
+        energy = in.readDouble();
+        foodPreferences = (Animal.FoodPreferences) in.readObject();
+        averageLifeExpectancy = in.readInt();
         habitats = (List<String>) in.readObject();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AnimalExternalizable that = (AnimalExternalizable) o;
+        return Double.compare(that.energy, energy) == 0 &&
+                averageLifeExpectancy == that.averageLifeExpectancy &&
+                Objects.equals(kind, that.kind) &&
+                Objects.equals(tail, that.tail) &&
+                foodPreferences == that.foodPreferences &&
+                Objects.equals(habitats, that.habitats);
     }
 }

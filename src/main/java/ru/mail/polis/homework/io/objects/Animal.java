@@ -4,6 +4,7 @@ package ru.mail.polis.homework.io.objects;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Класс должен содержать несколько полей с примитивами, строками, энамами и некоторыми сапомисными объектами.
@@ -33,13 +34,14 @@ public class Animal implements Serializable {
 
     public Animal() {}
 
-    public Animal(String kind, boolean isTailLong,
-                  FoodPreferences foodPreferences, int averageLifeExpectancy) {
+    public Animal(String kind, Tail tail, double energy,
+                  FoodPreferences foodPreferences, int averageLifeExpectancy, List<String> habitats) {
         this.kind = kind;
-        this.tail = new Tail(isTailLong);
+        this.tail = tail;
+        this.energy = energy;
         this.foodPreferences = foodPreferences;
         this.averageLifeExpectancy = averageLifeExpectancy;
-        this.habitats = new ArrayList<>();
+        this.habitats = habitats;
     }
 
     public String getKind() {
@@ -62,6 +64,10 @@ public class Animal implements Serializable {
         return foodPreferences;
     }
 
+    public void setFoodPreferences(FoodPreferences foodPreferences) {
+        this.foodPreferences = foodPreferences;
+    }
+
     public int getAverageLifeExpectancy() {
         return averageLifeExpectancy;
     }
@@ -75,14 +81,15 @@ public class Animal implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return "Animal{" +
-                "kind='" + kind + '\'' +
-                ", tail=" + tail +
-                ", energy=" + energy +
-                ", foodPreferences=" + foodPreferences +
-                ", averageLifeExpectancy=" + averageLifeExpectancy +
-                ", habitats=" + habitats +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Animal animal = (Animal) o;
+        return Double.compare(animal.energy, energy) == 0 &&
+                averageLifeExpectancy == animal.averageLifeExpectancy &&
+                Objects.equals(kind, animal.kind) &&
+                Objects.equals(tail, animal.tail) &&
+                foodPreferences == animal.foodPreferences &&
+                Objects.equals(habitats, animal.habitats);
     }
 }
