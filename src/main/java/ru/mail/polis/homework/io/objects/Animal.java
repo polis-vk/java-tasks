@@ -133,7 +133,10 @@ public class Animal {
                     "Acts as a %s and %s, %s around and likes to eat %s. Befriends with %s. Hates %s.",
                     isPredator ? "predator" : "peaceful animal",
                     canBeTamed ? "can be tamed" : "cannot be tamed",
-                    movementType, favouriteFood, friends, enemies);
+                    movementType,
+                    favouriteFood.size() > 0 ? favouriteFood : "nothing",
+                    friends.size() > 0 ? friends : "nobody",
+                    enemies.size() > 0 ? enemies : "nobody");
         }
 
         @Override
@@ -175,7 +178,7 @@ public class Animal {
         private int color = 0;
         private double weight = Double.NaN;
 
-        private Builder(Group group, String name, boolean isWarmBlooded, boolean canBeTamed, boolean isPredator,
+        public Builder(Group group, String name, boolean isWarmBlooded, boolean canBeTamed, boolean isPredator,
                         Behavior.MovementType movementType) {
             this.group = group;
             this.name = name;
