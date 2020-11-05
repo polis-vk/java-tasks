@@ -23,11 +23,11 @@ public class AnimalExternalizable implements Externalizable {
     public AnimalExternalizable() {
     }
     
-    public AnimalExternalizable(int age, boolean isFriendly, String name, List<Integer> weightByLastTenDays, Kind kind, Animal.Owner owner) {
+    public AnimalExternalizable(int age, boolean isFriendly, String name, List<Integer> weightByLastDays, Kind kind, Animal.Owner owner) {
         this.age = age;
         this.isFriendly = isFriendly;
         this.name = name;
-        this.weightByLastDays = weightByLastTenDays;
+        this.weightByLastDays = weightByLastDays;
         this.kind = kind;
         this.owner = owner;
     }
