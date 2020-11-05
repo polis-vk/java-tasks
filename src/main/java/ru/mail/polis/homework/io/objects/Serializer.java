@@ -1,6 +1,12 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,7 +26,10 @@ import java.util.List;
  * В конце теста по чтению данных, не забывайте удалять файлы
  */
 public class Serializer {
-
+    public static void main(String[] args) {
+        Animal animal = new Animal("Hoba", 10, 100, AnimalType.HERBIVOUS, new Person("Alex", 30), Collections.singletonList(new Food("Milk", 300)));
+        List<Animal> list = Collections.singletonList(animal);
+    }
     /**
      * 1 балл
      * Реализовать простую сериализацию, с помощью специального потока для сериализации объектов
@@ -28,7 +37,12 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
-
+        try(ObjectOutputStream stream = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName))))
+        {
+            stream.writeObject(animals);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -39,7 +53,13 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
+        List<Animal> list = new ArrayList<>();
+        try(ObjectInputStream stream = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
+            list = (List<Animal>) stream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
 
@@ -50,7 +70,12 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
-
+        try(ObjectOutputStream stream = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
+            stream.writeInt(animals.size());
+            animals.forEach(animal -> animal.writeObject(stream));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -62,7 +87,18 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
-        return Collections.emptyList();
+        List<AnimalWithMethods> list = new ArrayList<>();
+        try(ObjectInputStream stream = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
+            int amount = stream.readInt();
+            for (int i = 0; i < amount; ++i) {
+                AnimalWithMethods animal = new AnimalWithMethods();
+                animal.ReadObject(stream);
+                list.add(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     /**
@@ -72,7 +108,11 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
-
+        try(ObjectOutputStream stream = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
+            stream.writeObject(animals);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -84,7 +124,13 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-        return Collections.emptyList();
+        List<AnimalExternalizable> list = new ArrayList<>();
+        try(ObjectInputStream stream = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
+            list = (List<AnimalExternalizable>) stream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     /**
@@ -96,7 +142,33 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
+        try(DataOutputStream stream = new DataOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
+            stream.writeInt(animals.size());
+            animals.forEach(animal -> {
+                try {
+                    stream.writeUTF(animal.getName());
+                    stream.writeInt(animal.getAge());
+                    stream.writeDouble(animal.getWeight());
+                    stream.writeInt(animal.getType().ordinal());
 
+                    Person person = animal.getOwner();
+                    stream.writeUTF(person.getName());
+                    stream.writeInt(person.getAge());
+
+                    List<Food> nutrition = animal.getNutrition();
+                    stream.writeInt(nutrition.size());
+                    for (Food food : nutrition) {
+                        stream.writeUTF(food.getName());
+                        stream.writeInt(food.getCalories());
+
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -108,6 +180,25 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+        List<Animal> list = new ArrayList<>();
+        try(DataInputStream stream = new DataInputStream(Files.newInputStream(Paths.get(fileName)))) {
+            int amount = stream.readInt();
+            for (int i = 0; i < amount; ++i) {
+                String name = stream.readUTF();
+                int age = stream.readInt();
+                double weight = stream.readDouble();
+                AnimalType type = AnimalType.values()[stream.readInt()];
+                Person person = new Person(stream.readUTF(), stream.readInt());
+                int foodAmount = stream.readInt();
+                List<Food> food = new ArrayList<>();
+                for (int j = 0; j < foodAmount; ++j) {
+                    food.add(new Food(stream.readUTF(), stream.readInt()));
+                }
+                list.add(new Animal(name, age, weight, type, person, food));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }
