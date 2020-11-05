@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SerializerTest {
 
@@ -18,6 +20,7 @@ public class SerializerTest {
     private static final List<String> foodList = Arrays.asList("mushroom", "animal", "bark", "leaves", "berries");
     private final String fileName = "src/test/java/ru/mail/polis/homework/io/object/serialize";
     Serializer serializer = new Serializer();
+    Logger log = Logger.getLogger(SerializerTest.class.getName());
 
     private static final List<Animal> animals = new ArrayList<Animal>() {{
         Random random1 = new Random(SEED);
@@ -78,10 +81,9 @@ public class SerializerTest {
 
         Assert.assertArrayEquals(animals.toArray(), animalsSerializer.toArray());
 
-        System.out.println("  Default");
-        System.out.println("Serialize wasted time = " + (endSerialize - startTime) + "ms.");
-        System.out.println("Deserialize wasted time = " + (endDeserialize - endSerialize) + "ms.");
-        System.out.println("File size = " + fileSize + "kb.");
+        log.log(Level.INFO, "Default: Serialize wasted time = " + (endSerialize - startTime) + "ms; " +
+                "Deserialize wasted time = " + (endDeserialize - endSerialize) + "ms; " +
+                "File size = " + fileSize + "kb.");
     }
 
     @Test
@@ -95,10 +97,9 @@ public class SerializerTest {
 
         Assert.assertArrayEquals(animalsExternalizable.toArray(), animalsSerializer.toArray());
 
-        System.out.println("  Externalizable");
-        System.out.println("Serialize wasted time = " + (endSerialize - startTime) + "ms.");
-        System.out.println("Deserialize wasted time = " + (endDeserialize - endSerialize) + "ms.");
-        System.out.println("File size = " + fileSize + "kb.");
+        log.log(Level.INFO, "Externalize: Serialize wasted time = " + (endSerialize - startTime) + "ms; " +
+                "Deserialize wasted time = " + (endDeserialize - endSerialize) + "ms; " +
+                "File size = " + fileSize + "kb.");
     }
 
     @Test
@@ -112,10 +113,9 @@ public class SerializerTest {
 
         Assert.assertArrayEquals(animalsWithMethods.toArray(), animalsSerializer.toArray());
 
-        System.out.println("  With methods");
-        System.out.println("Serialize wasted time = " + (endSerialize - startTime) + "ms.");
-        System.out.println("Deserialize wasted time = " + (endDeserialize - endSerialize) + "ms.");
-        System.out.println("File size = " + fileSize + "kb.");
+        log.log(Level.INFO, "With method: Serialize wasted time = " + (endSerialize - startTime) + "ms; " +
+                "Deserialize wasted time = " + (endDeserialize - endSerialize) + "ms; " +
+                "File size = " + fileSize + "kb.");
     }
 
     @Test
@@ -129,10 +129,9 @@ public class SerializerTest {
 
         Assert.assertArrayEquals(animals.toArray(), animalsSerializer.toArray());
 
-        System.out.println("  Custom");
-        System.out.println("Serialize wasted time = " + (endSerialize - startTime) + "ms.");
-        System.out.println("Deserialize wasted time = " + (endDeserialize - endSerialize) + "ms.");
-        System.out.println("File size = " + fileSize + "kb.");
+        log.log(Level.INFO, "Custom: Serialize wasted time = " + (endSerialize - startTime) + "ms; " +
+                "Deserialize wasted time = " + (endDeserialize - endSerialize) + "ms; " +
+                "File size = " + fileSize + "kb.");
     }
 
 
