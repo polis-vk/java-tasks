@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,8 +29,12 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void defaultSerialize(List<Animal> animals, String fileName) {
-
+    public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
+        try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
+            try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
+                objectOutputStream.writeObject(animals);
+            }
+        }
     }
 
     /**
@@ -38,10 +44,16 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> defaultDeserialize(String fileName) {
+    public List<Animal> defaultDeserialize(String fileName) throws IOException {
+        try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
+            try (ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
+                return (List<Animal>) objectInputStream.readObject();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
         return Collections.emptyList();
     }
-
 
     /**
      * 1 балл
@@ -49,8 +61,17 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
-
+    public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) throws IOException {
+        try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
+            try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
+                animals.forEach(animalWithMethods -> {
+                    try {
+                        animalWithMethods.writeObject(objectOutputStream);
+                    } catch (IOException e) {
+                    }
+                });
+            }
+        }
     }
 
     /**
@@ -61,8 +82,19 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
-        return Collections.emptyList();
+    public List<AnimalWithMethods> deserializeWithMethods(String fileName) throws IOException {
+        List<AnimalWithMethods> list = new ArrayList<>();
+        try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
+            try (ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
+                for(;;) {
+                    AnimalWithMethods current = new AnimalWithMethods();
+                    current.readObject(objectInputStream);
+                    list.add(current);
+                }
+            } catch (EOFException | ClassNotFoundException e) {
+            }
+        }
+        return list;
     }
 
     /**
@@ -71,8 +103,14 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
-
+    public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) throws IOException {
+        try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
+            try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
+                for (AnimalExternalizable animal: animals) {
+                    animal.writeExternal(objectOutputStream);
+                }
+            }
+        }
     }
 
     /**
@@ -83,8 +121,19 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-        return Collections.emptyList();
+    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) throws IOException {
+        List<AnimalExternalizable> list = new ArrayList<>();
+        try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
+            try (ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
+                for(;;) {
+                    AnimalExternalizable current = new AnimalExternalizable();
+                    current.readExternal(objectInputStream);
+                    list.add(current);
+                }
+            } catch (EOFException | ClassNotFoundException e) {
+            }
+        }
+        return list;
     }
 
     /**
@@ -95,8 +144,30 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
-    public void customSerialize(List<Animal> animals, String fileName) {
-
+    public void customSerialize(List<Animal> animals, String fileName) throws IOException {
+        try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
+            try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
+                animals.forEach(animal -> {
+                    try {
+                        objectOutputStream.writeUTF(animal.getTypeAnimal().name());
+                        objectOutputStream.writeUTF(animal.getNickname());
+                        objectOutputStream.writeInt(animal.getWeight());
+                        objectOutputStream.writeInt(animal.getAnimalSizes().size());
+                        animal.getAnimalSizes().forEach(size -> {
+                            try {
+                                objectOutputStream.writeInt(size);
+                            } catch (IOException e) {
+                            }
+                        });
+                        objectOutputStream.writeUTF(animal.getMainColor().name());
+                        objectOutputStream.writeUTF(animal.getEyeColor().name());
+                        objectOutputStream.writeInt(animal.getNumberOfLimbs());
+                        objectOutputStream.writeUTF(animal.getSex().name());
+                    } catch (IOException e) {
+                    }
+                });
+            }
+        }
     }
 
     /**
@@ -107,7 +178,30 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+    public List<Animal> customDeserialize(String fileName) throws IOException {
+        List<Animal> list = new ArrayList<>();
+        try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
+            try (ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
+                for(;;) {
+                    Animal current = new Animal();
+                    current.setTypeAnimal(Animal.AnimalTypeClass.valueOf(objectInputStream.readUTF()));
+                    current.setNickname(objectInputStream.readUTF());
+                    current.setWeight(objectInputStream.readInt());
+                    int size = objectInputStream.readInt();
+                    List<Integer> listSize = new ArrayList<>();
+                    for (int i = 0; i < size; i++) {
+                        listSize.add(objectInputStream.readInt());
+                    }
+                    current.setAnimalSizes(listSize);
+                    current.setMainColor(Animal.Color.valueOf(objectInputStream.readUTF()));
+                    current.setEyeColor(Animal.Color.valueOf(objectInputStream.readUTF()));
+                    current.setNumberOfLimbs(objectInputStream.readInt());
+                    current.setSex(Animal.Sex.valueOf(objectInputStream.readUTF()));
+                    list.add(current);
+                }
+            } catch (EOFException e) {
+            }
+        }
+        return list;
     }
 }
