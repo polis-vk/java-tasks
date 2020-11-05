@@ -36,7 +36,7 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
+    public static void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
         Path path = Paths.get(fileName);
 
         try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(path))) {
@@ -51,7 +51,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
+    public static List<Animal> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
         Path path = Paths.get(fileName);
 
         try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(path))) {
@@ -67,7 +67,7 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) throws IOException {
+    public static void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) throws IOException {
         Path path = Paths.get(fileName);
 
         try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(path))) {
@@ -83,7 +83,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<AnimalWithMethods> deserializeWithMethods(String fileName) throws IOException, ClassNotFoundException {
+    public static List<AnimalWithMethods> deserializeWithMethods(String fileName) throws IOException, ClassNotFoundException {
         Path path = Paths.get(fileName);
 
         try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(path))) {
@@ -98,7 +98,7 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) throws IOException {
+    public static void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) throws IOException {
         Path path = Paths.get(fileName);
 
         try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(path))) {
@@ -114,7 +114,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) throws IOException, ClassNotFoundException {
+    public static List<AnimalExternalizable> deserializeWithExternalizable(String fileName) throws IOException, ClassNotFoundException {
         Path path = Paths.get(fileName);
 
         try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(path))) {
@@ -130,7 +130,7 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
-    public void customSerialize(List<Animal> animals, String fileName) throws IOException {
+    public static void customSerialize(List<Animal> animals, String fileName) throws IOException {
         Path path = Paths.get(fileName);
 
         try (DataOutputStream out = new DataOutputStream(Files.newOutputStream(path))) {
@@ -141,7 +141,7 @@ public class Serializer {
         }
     }
 
-    public void printAnimal(Animal a, DataOutputStream out) throws IOException {
+    public static void printAnimal(Animal a, DataOutputStream out) throws IOException {
         out.writeInt(a.getHabitat().size());
         for (String s : a.getHabitat()) {
             out.writeUTF(s);
@@ -165,7 +165,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) throws IOException {
+    public static List<Animal> customDeserialize(String fileName) throws IOException {
         Path path = Paths.get(fileName);
 
         List<Animal> list = new ArrayList<>();
@@ -177,7 +177,7 @@ public class Serializer {
         return list;
     }
 
-    public Animal readAnimal(DataInputStream in) throws IOException {
+    public static Animal readAnimal(DataInputStream in) throws IOException {
 
         ArrayList<String> habitat = new ArrayList<>();
 
