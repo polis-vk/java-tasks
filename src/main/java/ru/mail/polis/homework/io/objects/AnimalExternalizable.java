@@ -10,12 +10,6 @@ import java.util.Objects;
  */
 public class AnimalExternalizable implements Externalizable {
 
-  public enum Habitation {
-    WATER,
-    LAND,
-    SOIL
-  }
-
   private BrainExternalizable brain;
   private List<String> listName;
   private int weight;

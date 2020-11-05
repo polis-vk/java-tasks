@@ -25,16 +25,16 @@ public class SerializerTest {
 
   @Before
   public void initializeFields() {
-    animalList.add(new Animal(new Brain(10), Arrays.asList("bear", "tiger"), 22, "Frek", Animal.Habitation.LAND, 2222));
-    animalList.add(new Animal(new Brain(3), Arrays.asList("lion"), 1, "Frik", Animal.Habitation.LAND, 211));
-    animalList.add(new Animal(new Brain(4), Arrays.asList("bear", "tiger", "rabbit"), 20, "Frak", Animal.Habitation.WATER, 11));
-    animalList.add(new Animal(new Brain(14), Arrays.asList("dog"), 23, "Frek", Animal.Habitation.SOIL, 333));
-    animalList.add(new Animal(new Brain(1), Arrays.asList("cat", "tiger"), 66, "Freek", Animal.Habitation.WATER, 444));
-    animalList.add(new Animal(new Brain(20), Arrays.asList("dog", "cat"), 12, "Fruk", Animal.Habitation.LAND, 555));
-    animalList.add(new Animal(new Brain(110), Arrays.asList("cat"), 55, "Frok", Animal.Habitation.SOIL, 212));
-    animalList.add(new Animal(new Brain(11), Arrays.asList("tiger"), 21, "Frak", Animal.Habitation.SOIL, 33));
-    animalList.add(new Animal(new Brain(2), Arrays.asList("elephant"), 77, "Freok", Animal.Habitation.WATER, 414));
-    animalList.add(new Animal(new Brain(33), Arrays.asList("tiger", "elephant"), 16, "Freak", Animal.Habitation.LAND, 812));
+    animalList.add(new Animal(new Brain(10), Arrays.asList("bear", "tiger"), 22, "Frek", Habitation.LAND, 2222));
+    animalList.add(new Animal(new Brain(3), Arrays.asList("lion"), 1, "Frik", Habitation.LAND, 211));
+    animalList.add(new Animal(new Brain(4), Arrays.asList("bear", "tiger", "rabbit"), 20, "Frak", Habitation.WATER, 11));
+    animalList.add(new Animal(new Brain(14), Arrays.asList("dog"), 23, "Frek", Habitation.SOIL, 333));
+    animalList.add(new Animal(new Brain(1), Arrays.asList("cat", "tiger"), 66, "Freek", Habitation.WATER, 444));
+    animalList.add(new Animal(new Brain(20), Arrays.asList("dog", "cat"), 12, "Fruk", Habitation.LAND, 555));
+    animalList.add(new Animal(new Brain(110), Arrays.asList("cat"), 55, "Frok", Habitation.SOIL, 212));
+    animalList.add(new Animal(new Brain(11), Arrays.asList("tiger"), 21, "Frak", Habitation.SOIL, 33));
+    animalList.add(new Animal(new Brain(2), Arrays.asList("elephant"), 77, "Freok", Habitation.WATER, 414));
+    animalList.add(new Animal(new Brain(33), Arrays.asList("tiger", "elephant"), 16, "Freak", Habitation.LAND, 812));
 
     for (Animal animal : animalList) {
       animalWithMethodsList.add(new AnimalWithMethods(animal.getBrain(), animal.getListName(), animal.getWeight(), animal.getName(), animal.getHabitation().toString(), animal.getDistanceTraveled()));

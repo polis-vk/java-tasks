@@ -208,7 +208,7 @@ public class Serializer {
         List<String> nameList = (List<String>) inputStream.readObject();
         int weight = inputStream.readInt();
         String name = inputStream.readUTF();
-        Animal.Habitation habitation = Animal.Habitation.valueOf(inputStream.readUTF());
+        Habitation habitation = Habitation.valueOf(inputStream.readUTF());
         long distanceTraveled = inputStream.readLong();
         animalList.add(new Animal(brain, nameList, weight, name, habitation, distanceTraveled));
       }

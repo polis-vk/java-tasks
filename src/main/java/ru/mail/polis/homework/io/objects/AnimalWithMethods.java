@@ -14,12 +14,6 @@ import java.util.Objects;
  */
 public class AnimalWithMethods implements Serializable {
 
-  public enum Habitation {
-    WATER,
-    LAND,
-    SOIL
-  }
-
   private final Brain brain;
   private final List<String> listName;
   private final int weight;
