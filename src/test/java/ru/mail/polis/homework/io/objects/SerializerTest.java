@@ -36,7 +36,7 @@ public class SerializerTest {
 
         for (int i = 0; i < 1000; i++) {
             String kind = allKinds.get(rnd.nextInt(allKinds.size()));
-            Boolean isTailLong = rnd.nextBoolean();
+            boolean isTailLong = rnd.nextBoolean();
             double energy = 100;
             Animal.FoodPreferences foodPreferences = allPreferences[rnd.nextInt(allPreferences.length)];
             int averageLifeExpectancy = rnd.nextInt(50);
@@ -90,7 +90,31 @@ public class SerializerTest {
 
     @Test
     public void serializeWithMethods() {
+        try {
+            long startTime = System.currentTimeMillis();
+            serializer.serializeWithMethods(animalWithMethods, fileName);
+            long endTime = System.currentTimeMillis();
 
+            System.out.println("WITH METHODS");
+            System.out.println("Serialization: " + (endTime - startTime) + " milliseconds");
+
+            startTime = System.currentTimeMillis();
+            List<AnimalWithMethods> deserializedAnimals = serializer.deserializeWithMethods(fileName);
+            endTime = System.currentTimeMillis();
+
+            System.out.println("Deserialization: " + (endTime - startTime) + " milliseconds");
+
+            File file = new File(fileName);
+            System.out.println("File size: " + file.length());
+            file.delete();
+
+            for (int i = 0; i < animalWithMethods.size(); i++) {
+                assertEquals(animalWithMethods.get(i), deserializedAnimals.get(i));
+            }
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

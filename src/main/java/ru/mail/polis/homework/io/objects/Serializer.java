@@ -63,8 +63,12 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
-
+    public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) throws IOException {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            for (AnimalWithMethods animal : animals) {
+                animal.writeObject(out);
+            }
+        }
     }
 
     /**
@@ -75,8 +79,17 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
-        return Collections.emptyList();
+    public List<AnimalWithMethods> deserializeWithMethods(String fileName) throws IOException, ClassNotFoundException {
+        List<AnimalWithMethods> animals = new ArrayList<>();
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
+            while (true) {
+                AnimalWithMethods animal = new AnimalWithMethods();
+                animal.readObject(in);
+                animals.add(animal);
+            }
+        } catch (EOFException ignored) {}
+
+        return animals;
     }
 
 
