@@ -19,7 +19,7 @@ public class SerializerTest {
     private static List<Animal> animalList;
     private static List<AnimalWithMethods> animalWithMethodsList;
     private static List<AnimalExternalizable> animalExternalizableList;
-    private static Serializer serializer;
+    private static final Serializer serializer = new Serializer();
     private static final Random random = new Random();
 
     private static long startTime = 0;
@@ -87,12 +87,11 @@ public class SerializerTest {
             animalExternalizableList.add(animalExternalizable);
         }
 
-        serializer = new Serializer();
         System.out.println("Number of serializing elements: " + numberOfElements + "\n");
     }
 
     @AfterClass
-    public static void findDefaultSerializeTimeAndFileSize() throws IOException, ClassNotFoundException {
+    public static void findDefaultSerializeTimeAndFileSize() throws IOException {
         System.out.println("Default serialize:");
         startTime = System.currentTimeMillis();
         serializer.defaultSerialize(animalList, fileName);
@@ -108,7 +107,7 @@ public class SerializerTest {
     }
 
     @AfterClass
-    public static void findSerializeWithMethodsTimeAndFileSize() throws IOException, ClassNotFoundException {
+    public static void findSerializeWithMethodsTimeAndFileSize() throws IOException {
         System.out.println("Serialize with methods:");
         startTime = System.currentTimeMillis();
         serializer.serializeWithMethods(animalWithMethodsList, fileName);
@@ -124,7 +123,7 @@ public class SerializerTest {
     }
 
     @AfterClass
-    public static void findSerializeWithExternalizableTimeAndFileSize() throws IOException, ClassNotFoundException {
+    public static void findSerializeWithExternalizableTimeAndFileSize() throws IOException {
         System.out.println("External serialize:");
         startTime = System.currentTimeMillis();
         serializer.serializeWithExternalizable(animalExternalizableList, fileName);
@@ -157,7 +156,7 @@ public class SerializerTest {
 
 
     @Test
-    public void checkDefaultSerialize() throws IOException, ClassNotFoundException {
+    public void checkDefaultSerialize() throws IOException {
         serializer.defaultSerialize(animalList, fileName);
         List<Animal> animalsAfter = serializer.defaultDeserialize(fileName);
         assertEquals(animalList, animalsAfter);
@@ -165,7 +164,7 @@ public class SerializerTest {
     }
 
     @Test
-    public void checkSerializeWithMethods() throws IOException, ClassNotFoundException {
+    public void checkSerializeWithMethods() throws IOException {
         serializer.serializeWithMethods(animalWithMethodsList, fileName);
         List<AnimalWithMethods> animalsAfter = serializer.deserializeWithMethods(fileName);
         assertEquals(animalWithMethodsList, animalsAfter);
@@ -173,7 +172,7 @@ public class SerializerTest {
     }
 
     @Test
-    public void checkSerializeWithExternalizable() throws IOException, ClassNotFoundException {
+    public void checkSerializeWithExternalizable() throws IOException {
         serializer.serializeWithExternalizable(animalExternalizableList, fileName);
         List<AnimalExternalizable> animalsAfter = serializer.deserializeWithExternalizable(fileName);
         assertEquals(animalExternalizableList, animalsAfter);
