@@ -41,21 +41,21 @@ public class SerializerTest {
             new AnimalExternalizable("Kolya", 19, 72.88,CharacteristicExternalizable.SMART, Arrays.asList("Ilya")),
             new AnimalExternalizable("Ilya", 7, 24.75, CharacteristicExternalizable.STUPID, new ArrayList<>()));
 
-    private final String DEFAULT = "default.txt";
-    private final String METHODS = "methods.txt";
-    private final String EXTERNAL = "externalizable.txt";
-    private final String CUSTOM = "custom.txt";
+    private final String DEFAULT = "default.bat";
+    private final String METHODS = "methods.bat";
+    private final String EXTERNAL = "externalizable.bat";
+    private final String CUSTOM = "custom.bat";
 
     @Before
     public void start() {
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1000; i++) {
             animalsDefault.add(AnimalsDefault_Starting.get(ThreadLocalRandom.current().nextInt(0, 4)));
         }
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1000; i++) {
             animalWithMethods.add(animalWithMethods_Starting.get(ThreadLocalRandom.current().nextInt(0, 4)));
         }
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1000; i++) {
             animalExternalizable.add(animalExternalizable_Starting.get(ThreadLocalRandom.current().nextInt(0, 4)));
         }
     }
@@ -69,19 +69,18 @@ public class SerializerTest {
 
     @Test
     public void TestSerializable() throws IOException, ClassNotFoundException {
-
         long startSerializable = System.currentTimeMillis();
-        for (int i = 0; i < 1000; i++) {
-            serializer.defaultSerialize(animalsDefault, DEFAULT);
-        }
+
+        serializer.defaultSerialize(animalsDefault, DEFAULT);
+
         long endSerializable = System.currentTimeMillis();
         long TimeSerializable = endSerializable - startSerializable;
 
         long startDeserialize = System.currentTimeMillis();
         List<Animal> deserialize = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
-            deserialize = serializer.defaultDeserialize(DEFAULT);
-        }
+
+        deserialize = serializer.defaultDeserialize(DEFAULT);
+
         long endSDeserialize = System.currentTimeMillis();
         long TimeDeserialize = endSDeserialize - startDeserialize;
 
@@ -95,9 +94,9 @@ public class SerializerTest {
     public void TestSerializableWithMethods() throws IOException, ClassNotFoundException {
 
         long startSerializable = System.currentTimeMillis();
-        for (int i = 0; i < 1000; i++) {
-            serializer.serializeWithMethods(animalWithMethods, METHODS);
-        }
+
+        serializer.serializeWithMethods(animalWithMethods, METHODS);
+
         long endSerializable = System.currentTimeMillis();
         long TimeSerializable = endSerializable - startSerializable;
 
@@ -105,9 +104,9 @@ public class SerializerTest {
 
         long startDeserialize = System.currentTimeMillis();
         List<AnimalWithMethods> deserialize = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
-            deserialize = serializer.deserializeWithMethods(METHODS);
-        }
+
+        deserialize = serializer.deserializeWithMethods(METHODS);
+
         long endSDeserialize = System.currentTimeMillis();
         long TimeDeserialize = endSDeserialize - startDeserialize;
         printInfo(TimeSerializable, TimeDeserialize, fileSize, "#2");
@@ -119,9 +118,9 @@ public class SerializerTest {
     public void TestExternalizable() throws IOException, ClassNotFoundException {
 
         long startSerializable = System.currentTimeMillis();
-        for (int i = 0; i < 1000; i++) {
-            serializer.serializeWithExternalizable(animalExternalizable, EXTERNAL);
-        }
+
+        serializer.serializeWithExternalizable(animalExternalizable, EXTERNAL);
+
         long endSerializable = System.currentTimeMillis();
         long TimeSerializable = endSerializable - startSerializable;
 
@@ -129,9 +128,9 @@ public class SerializerTest {
 
         long startDeserialize = System.currentTimeMillis();
         List<AnimalExternalizable> deserialize = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
-            deserialize = serializer.deserializeWithExternalizable(EXTERNAL);
-        }
+
+        deserialize = serializer.deserializeWithExternalizable(EXTERNAL);
+
         long endSDeserialize = System.currentTimeMillis();
         long TimeDeserialize = endSDeserialize - startDeserialize;
         printInfo(TimeSerializable, TimeDeserialize, fileSize, "#3");
@@ -143,9 +142,9 @@ public class SerializerTest {
     public void TestCustom() throws IOException, ClassNotFoundException {
 
         long startSerializable = System.currentTimeMillis();
-        for (int i = 0; i < 1000; i++) {
-            serializer.customSerialize(animalsDefault, CUSTOM);
-        }
+
+        serializer.customSerialize(animalsDefault, CUSTOM);
+
         long endSerializable = System.currentTimeMillis();
         long TimeSerializable = endSerializable - startSerializable;
 
@@ -153,9 +152,9 @@ public class SerializerTest {
 
         long startDeserialize = System.currentTimeMillis();
         List<Animal> deserialize = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
-            deserialize = serializer.customDeserialize(CUSTOM);
-        }
+
+        deserialize = serializer.customDeserialize(CUSTOM);
+
         long endSDeserialize = System.currentTimeMillis();
         long TimeDeserialize = endSDeserialize - startDeserialize;
         printInfo(TimeSerializable, TimeDeserialize, fileSize, "#4");
@@ -174,4 +173,8 @@ public class SerializerTest {
             e.printStackTrace();
         }
     }
+
+
+
+
 }
