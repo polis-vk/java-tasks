@@ -15,15 +15,15 @@ public class Animal implements Serializable {
     private int age;
     private boolean isFriendly;
     private String name;
-    private List<Integer> weightByLastTenDays;
+    private List<Integer> weightByLastDays;
     private Kind kind;
     private Owner owner;
     
-    public Animal(int age, boolean isFriendly, String name, List<Integer> weightByLastTenDays, Kind kind, Owner owner) {
+    public Animal(int age, boolean isFriendly, String name, List<Integer> weightByLastDays, Kind kind, Owner owner) {
         this.age = age;
         this.isFriendly = isFriendly;
         this.name = name;
-        this.weightByLastTenDays = weightByLastTenDays;
+        this.weightByLastDays = weightByLastDays;
         this.kind = kind;
         this.owner = owner;
     }
@@ -40,8 +40,8 @@ public class Animal implements Serializable {
         return name;
     }
     
-    public List<Integer> getWeightByLastTenDays() {
-        return weightByLastTenDays;
+    public List<Integer> getWeightByLastDays() {
+        return weightByLastDays;
     }
     
     public Kind getKind() {
@@ -60,14 +60,14 @@ public class Animal implements Serializable {
         return age == animal.age &&
                 isFriendly == animal.isFriendly &&
                 Objects.equals(name, animal.name) &&
-                Objects.equals(weightByLastTenDays, animal.weightByLastTenDays) &&
+                Objects.equals(weightByLastDays, animal.weightByLastDays) &&
                 Objects.equals(kind, animal.kind) &&
                 owner == animal.owner;
     }
     
     @Override
     public int hashCode() {
-        return Objects.hash(age, isFriendly, name, weightByLastTenDays, kind, owner);
+        return Objects.hash(age, isFriendly, name, weightByLastDays, kind, owner);
     }
     
     public enum Owner {

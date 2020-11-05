@@ -182,9 +182,9 @@ public class Serializer {
                 dos.writeBoolean(animal.isFriendly());
                 dos.writeUTF(animal.getName());
                 
-                List<Integer> weightByLastTenDays = animal.getWeightByLastTenDays();
-                dos.writeInt(weightByLastTenDays.size());
-                for (Integer weight : weightByLastTenDays) {
+                List<Integer> weightByLastDays = animal.getWeightByLastDays();
+                dos.writeInt(weightByLastDays.size());
+                for (Integer weight : weightByLastDays) {
                     dos.writeInt(weight);
                 }
                 
@@ -218,10 +218,10 @@ public class Serializer {
                 int age = dis.readInt();
                 boolean isFriendly = dis.readBoolean();
                 String name = dis.readUTF();
-                List<Integer> weightByLastTenDays = new ArrayList<>();
+                List<Integer> weightByLastDays = new ArrayList<>();
                 int daysListSize = dis.readInt();
                 for (int j = 0; j < daysListSize; j++) {
-                    weightByLastTenDays.add(dis.readInt());
+                    weightByLastDays.add(dis.readInt());
                 }
                 
                 String kindName = dis.readUTF();
@@ -229,7 +229,7 @@ public class Serializer {
                 Kind kind = new Kind(kindName, populationSize);
                 Animal.Owner owner = Animal.Owner.values()[dis.readInt()];
                 
-                animals.add(new Animal(age, isFriendly, name, weightByLastTenDays, kind, owner));
+                animals.add(new Animal(age, isFriendly, name, weightByLastDays, kind, owner));
             }
         } catch (IOException e) {
             e.printStackTrace();

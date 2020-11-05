@@ -16,15 +16,15 @@ public class AnimalWithMethods implements Serializable {
     private int age;
     private boolean isFriendly;
     private String name;
-    private List<Integer> weightByLastTenDays;
+    private List<Integer> weightByLastDays;
     private Kind kind;
     private Animal.Owner owner;
     
-    public AnimalWithMethods(int age, boolean isFriendly, String name, List<Integer> weightByLastTenDays, Kind kind, Animal.Owner owner) {
+    public AnimalWithMethods(int age, boolean isFriendly, String name, List<Integer> weightByLastDays, Kind kind, Animal.Owner owner) {
         this.age = age;
         this.isFriendly = isFriendly;
         this.name = name;
-        this.weightByLastTenDays = weightByLastTenDays;
+        this.weightByLastDays = weightByLastDays;
         this.kind = kind;
         this.owner = owner;
     }
@@ -34,8 +34,8 @@ public class AnimalWithMethods implements Serializable {
         out.writeBoolean(isFriendly);
         out.writeUTF(name);
         
-        out.writeInt(weightByLastTenDays.size());
-        for (Integer weight : weightByLastTenDays) {
+        out.writeInt(weightByLastDays.size());
+        for (Integer weight : weightByLastDays) {
             out.writeInt(weight);
         }
         out.writeUTF(kind.getName());
@@ -48,9 +48,9 @@ public class AnimalWithMethods implements Serializable {
         isFriendly = in.readBoolean();
         name = in.readUTF();
         int daysListSize = in.readInt();
-        weightByLastTenDays = new ArrayList<>(daysListSize);
+        weightByLastDays = new ArrayList<>(daysListSize);
         for (int j = 0; j < daysListSize; j++) {
-            weightByLastTenDays.add(in.readInt());
+            weightByLastDays.add(in.readInt());
         }
         kind = new Kind(in.readUTF(), in.readLong());
         owner = Animal.Owner.values()[in.readInt()];
@@ -64,13 +64,13 @@ public class AnimalWithMethods implements Serializable {
         return age == that.age &&
                 isFriendly == that.isFriendly &&
                 Objects.equals(name, that.name) &&
-                Objects.equals(weightByLastTenDays, that.weightByLastTenDays) &&
+                Objects.equals(weightByLastDays, that.weightByLastDays) &&
                 Objects.equals(kind, that.kind) &&
                 owner == that.owner;
     }
     
     @Override
     public int hashCode() {
-        return Objects.hash(age, isFriendly, name, weightByLastTenDays, kind, owner);
+        return Objects.hash(age, isFriendly, name, weightByLastDays, kind, owner);
     }
 }
