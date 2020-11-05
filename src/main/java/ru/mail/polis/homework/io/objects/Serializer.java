@@ -184,18 +184,17 @@ public class Serializer {
             int size = dataInputStream.readInt();
             ArrayList<Animal> animals = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
-                Animal animal = new Animal();
-                animal.setName(dataInputStream.readUTF());
-                animal.setPredator(dataInputStream.readBoolean());
-                animal.setType(AnimalType.values()[dataInputStream.readInt()]);
+                String name = dataInputStream.readUTF();
+                boolean isPredator = (dataInputStream.readBoolean());
+                AnimalType type = (AnimalType.values()[dataInputStream.readInt()]);
                 int sizeFood = dataInputStream.readInt();
                 List<String> food = new ArrayList<>(sizeFood);
                 for (int j = 0; j < sizeFood; j++) {
                     food.add(dataInputStream.readUTF());
                 }
-                animal.setFood(food);
-                animal.setHabitat(new Habitat(dataInputStream.readUTF()));
-                animal.setSpeed(dataInputStream.readInt());
+                Habitat habitat = new Habitat(dataInputStream.readUTF());
+                int speed = dataInputStream.readInt();
+                Animal animal = new Animal(name, isPredator, type, food, habitat, speed);
                 animals.add(animal);
             }
             return animals;

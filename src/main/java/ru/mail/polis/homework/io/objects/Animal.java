@@ -19,15 +19,12 @@ enum AnimalType {
 }
 
 public class Animal implements Serializable {
-    private String name;
-    private boolean isPredator;
-    private AnimalType type;
-    private List<String> food;
-    private Habitat habitat;
-    private int speed;
-
-    public Animal() {
-    }
+    private final String name;
+    private final boolean isPredator;
+    private final AnimalType type;
+    private final List<String> food;
+    private final Habitat habitat;
+    private final int speed;
 
     public Animal(String name, boolean isPredator, AnimalType type, List<String> food, Habitat habitat, int speed) {
         if (speed <= 0) {
@@ -38,33 +35,6 @@ public class Animal implements Serializable {
         this.type = type;
         this.food = food;
         this.habitat = habitat;
-        this.speed = speed;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setPredator(boolean predator) {
-        isPredator = predator;
-    }
-
-    public void setType(AnimalType type) {
-        this.type = type;
-    }
-
-    public void setFood(List<String> food) {
-        this.food = food;
-    }
-
-    public void setHabitat(Habitat habitat) {
-        this.habitat = habitat;
-    }
-
-    public void setSpeed(int speed) {
-        if (speed <= 0) {
-            throw new IllegalArgumentException();
-        }
         this.speed = speed;
     }
 
