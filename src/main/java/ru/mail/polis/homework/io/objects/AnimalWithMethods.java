@@ -21,6 +21,14 @@ public class AnimalWithMethods implements Serializable {
     AnimalWithMethods() {
     }
 
+    public AnimalWithMethods(Animal animal) {
+        this(animal.getName(),
+                animal.getWeight(),
+                animal.getParents(),
+                animal.getGenericOfRelatives(),
+                animal.getColor());
+    }
+
     public AnimalWithMethods(String name, double weight, Parents parents, List<Parents> genericOfRelatives, Colour colour) {
         this.name = name;
         this.weight = weight;

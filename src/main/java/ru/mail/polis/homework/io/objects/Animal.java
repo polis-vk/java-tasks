@@ -22,6 +22,14 @@ public class Animal implements Serializable {
     private List<Parents> genericOfRelatives;
     private Colour colour;
 
+    public Animal(Animal animal) {
+        this(animal.name,
+                animal.weight,
+                animal.parents,
+                animal.genericOfRelatives,
+                animal.colour);
+    }
+
     public Animal(String name, double weight, Parents parents, List<Parents> genericOfRelatives, Colour colour) {
         this.name = name;
         this.weight = weight;
@@ -29,6 +37,8 @@ public class Animal implements Serializable {
         this.genericOfRelatives = new ArrayList<>(genericOfRelatives);
         this.colour = colour;
     }
+
+
 
     @Override
     public boolean equals(Object obj) {

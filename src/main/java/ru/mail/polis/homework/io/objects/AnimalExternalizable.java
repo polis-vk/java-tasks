@@ -20,6 +20,14 @@ public class AnimalExternalizable implements Externalizable {
     AnimalExternalizable() {
     }
 
+    public AnimalExternalizable(Animal animal) {
+        this(animal.getName(),
+                animal.getWeight(),
+                animal.getParents(),
+                animal.getGenericOfRelatives(),
+                animal.getColor());
+    }
+
     public AnimalExternalizable(String name, double weight, Parents parents, List<Parents> genericOfRelatives, Colour colour) {
         this.name = name;
         this.weight = weight;
@@ -30,6 +38,8 @@ public class AnimalExternalizable implements Externalizable {
         this.genericOfRelatives = new ArrayList<>(genericOfRelatives);
         this.colour = colour;
     }
+
+
 
     @Override
     public boolean equals(Object obj) {
