@@ -103,8 +103,8 @@ public class TestSerializable {
                         new Parents("GMom", "GDad"))), Colour.RED);
 
 
-        List<Animal> arrayListOfAnimals = new ArrayList<>(Arrays.asList(
-                pixie, brutus, rex, nemo, tina, greed, cat, dog, slawa, dumbo));
+        List<Animal> arrayListOfAnimals = Arrays.asList(
+                pixie, brutus, rex, nemo, tina, greed, cat, dog, slawa, dumbo);
 
         for (int i = 0; i < 10000; ++i) {
             animals.add(new Animal(
