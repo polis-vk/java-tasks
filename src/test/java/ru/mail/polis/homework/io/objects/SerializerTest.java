@@ -11,10 +11,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class SerializerTest {
 
-  private final int numberToSerialize = 100;
+  private final int numberToSerialize = 1000;
 
   private final List<Animal> animalList = new ArrayList<>();
   private final List<AnimalWithMethods> animalWithMethodsList = new ArrayList<>();
@@ -46,100 +48,68 @@ public class SerializerTest {
   public void defaultSerializationTest() {
 
     long startTime = System.currentTimeMillis();
-    for (int i = 0; i < numberToSerialize; i++) {
-      serializer.defaultSerialize(animalList, fileForTest);
-    }
+    serialize(animalList, x -> serializer.defaultSerialize(x, fileForTest));
     long endTime = System.currentTimeMillis();
     long serialisedTime = endTime - startTime;
 
     startTime = System.currentTimeMillis();
-    List<Animal> deserializedList = new ArrayList<>();
-    for (int i = 0; i < numberToSerialize; i++) {
-      deserializedList = serializer.defaultDeserialize(fileForTest);
-    }
+    List<Animal> deserializedList = deserialize(() -> serializer.defaultDeserialize(fileForTest));
     endTime = System.currentTimeMillis();
     long deserializeTime = endTime - startTime;
 
-//    long fileSize = Files.size(Paths.get(fileForTest));
-
     Assert.assertEquals(animalList, deserializedList);
-//    printInfo(serialisedTime, deserializeTime, fileSize);
+    printInfo(serialisedTime, deserializeTime, getFileSize(fileForTest));
   }
 
   @Test
   public void serializationWithMethodsTest() {
     long startTime = System.currentTimeMillis();
-    for (int i = 0; i < numberToSerialize; i++) {
-      serializer.serializeWithMethods(animalWithMethodsList, fileForTest);
-    }
+    serialize(animalWithMethodsList, x -> serializer.serializeWithMethods(x, fileForTest));
     long endTime = System.currentTimeMillis();
     long serialisedTime = endTime - startTime;
 
     startTime = System.currentTimeMillis();
 
-    List<AnimalWithMethods> deserializedList = new ArrayList<>();
-    for (int i = 0; i < numberToSerialize; i++) {
-      deserializedList = serializer.deserializeWithMethods(fileForTest);
-    }
+    List<AnimalWithMethods> deserializedList = deserialize(() -> serializer.deserializeWithMethods(fileForTest));
     endTime = System.currentTimeMillis();
     long deserializeTime = endTime - startTime;
 
-//    long fileSize = Files.size(Paths.get(fileForTest));
-
     Assert.assertEquals(animalWithMethodsList, deserializedList);
-
-//    printInfo(serialisedTime, deserializeTime, fileSize);
-
+    printInfo(serialisedTime, deserializeTime, getFileSize(fileForTest));
   }
 
   @Test
   public void serializeWithExternalizableTest() {
     long startTime = System.currentTimeMillis();
-    for (int i = 0; i < numberToSerialize; i++) {
-      serializer.serializeWithExternalizable(animalExternalizableList, fileForTest);
-    }
+    serialize(animalExternalizableList, x -> serializer.serializeWithExternalizable(animalExternalizableList, fileForTest));
     long endTime = System.currentTimeMillis();
     long serialisedTime = endTime - startTime;
 
     startTime = System.currentTimeMillis();
-    List<AnimalExternalizable> deserializedList = new ArrayList<>();
-    for (int i = 0; i < numberToSerialize; i++) {
-      deserializedList = serializer.deserializeWithExternalizable(fileForTest);
-    }
+    List<AnimalExternalizable> deserializedList = deserialize(() -> serializer.deserializeWithExternalizable(fileForTest));
+
     endTime = System.currentTimeMillis();
     long deserializeTime = endTime - startTime;
 
-//    long fileSize = Files.size(Paths.get(fileForTest));
-
     Assert.assertEquals(animalExternalizableList, deserializedList);
-
-//    printInfo(serialisedTime, deserializeTime, fileSize);
+    printInfo(serialisedTime, deserializeTime, getFileSize(fileForTest));
   }
 
   @Test
   public void customSerializeTest() {
-    long startTime = System.currentTimeMillis();
 
-    for (int i = 0; i < numberToSerialize; i++) {
-      serializer.customSerialize(animalList, fileForTest);
-    }
+    long startTime = System.currentTimeMillis();
+    serialize(animalList, x -> serializer.customSerialize(x, fileForTest));
     long endTime = System.currentTimeMillis();
     long serialisedTime = endTime - startTime;
 
     startTime = System.currentTimeMillis();
-    List<Animal> deserializedList = new ArrayList<>();
-    for (int i = 0; i < numberToSerialize; i++) {
-      deserializedList = serializer.customDeserialize(fileForTest);
-    }
+    List<Animal> deserializedList = deserialize(() -> serializer.customDeserialize(fileForTest));
     endTime = System.currentTimeMillis();
     long deserializeTime = endTime - startTime;
 
-//    long fileSize = Files.size(Paths.get(fileForTest));
-
     Assert.assertEquals(animalList, deserializedList);
-
-//    printInfo(serialisedTime, deserializeTime, fileSize);
-
+    printInfo(serialisedTime, deserializeTime, getFileSize(fileForTest));
   }
 
   @After
@@ -156,7 +126,34 @@ public class SerializerTest {
     }
   }
 
+  private <T> void serialize(List<T> list, Consumer<List<T>> consumer) {
+    for (int i = 0; i < numberToSerialize; i++) {
+      consumer.accept(list);
+    }
+  }
+
+  private <R> List<R> deserialize(Supplier<List<R>> supplier) {
+    List<R> resList = new ArrayList<>();
+    for (int i = 0; i < numberToSerialize; i++) {
+      resList = supplier.get();
+    }
+    return resList;
+  }
+
+  private long getFileSize(String fileForTest) {
+    long fileSize = 0;
+    try {
+      fileSize = Files.size(Paths.get(fileForTest));
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+    return fileSize;
+  }
+
   private void printInfo(Long serialisedTime, Long deserializeTime, Long fileSize) {
-    System.out.println("Serialize time: " + serialisedTime + "\n" + "Deserialize time: " + deserializeTime + "\n" + "File size:" + fileSize + "\n");
+    System.out.println("Serialize time: " + serialisedTime + " ms" + "\n"
+            + "Deserialize time: " + deserializeTime + " ms" + "\n"
+            + "File size:" + fileSize + " bytes" + "\n");
   }
 }
