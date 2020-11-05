@@ -1,25 +1,44 @@
 package ru.mail.polis.homework.io.objects;
 
+
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Objects;
 
 /**
- * Класс должен содержать несколько полей с примитивами, строками, энамами и некоторыми сапомисными объектами.
- * Хотя бы один из них должен быть в списке! Например список размеров или список имен.
- * Важно, чтобы хотя бы одно поле каждого типа присутствовало в классе в качестве поля
- * 1 балл
+ * Дубль класса Animal, для Serializer.serializeWithMethods
+ * 3 балла
  */
-
-public class Animal {
+public class AnimalWithMethods {
     private String name;
     private int age;
     private Food food;
+
+    public AnimalWithMethods() {
+
+    }
+
+    public void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeUTF(name);
+        out.writeInt(age);
+        out.writeInt(sizeFriend);
+        for(int i = 0; i < sizeFriend; ++i) {
+            out.writeUTF(friends.get(i));
+        }
+        out.writeBoolean(isPredator);
+        out.writeObject(size);
+        out.writeObject(food);
+    }
+
     public enum Food {
         MEET,
         PLANTS,
         OTHER
     }
     List<String> friends;
+    private int sizeFriend;
     private Size size;
     private boolean isPredator;
     private static class Size{
@@ -58,7 +77,7 @@ public class Animal {
         }
     }
 
-    public Animal(String name, int age, Food food, List<String> friends, Size size, boolean isPredator) {
+    public AnimalWithMethods(String name, int age, Food food, List<String> friends, Size size, boolean isPredator) {
         this.name = name;
         this.age = age;
         this.food = food;
@@ -91,6 +110,14 @@ public class Animal {
         this.food = food;
     }
 
+    public int getSizeFriend() {
+        return sizeFriend;
+    }
+
+    public void setSizeFriend(int sizeFriend) {
+        this.sizeFriend = sizeFriend;
+    }
+
     public List<String> getFriends() {
         return friends;
     }
@@ -115,21 +142,20 @@ public class Animal {
         isPredator = predator;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Animal animal = (Animal) o;
-        return isPredator == animal.isPredator &&
-                Objects.equals(name, animal.name) &&
-                Objects.equals(age, animal.age) &&
-                food == animal.food &&
-                Objects.equals(friends, animal.friends) &&
-                Objects.equals(size, animal.size);
+
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        name = in.readUTF();
+        age = in.readInt();
+        sizeFriend = in.readInt();
+        friends = (List<String>) in.readObject();
+        size = (Size) in.readObject();
+        isPredator = in.readBoolean();
+        food = (Food) in.readObject();
     }
+
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, age, food, friends, size, isPredator);
+        return Objects.hash(name, age, food, friends, sizeFriend, size, isPredator);
     }
 }
