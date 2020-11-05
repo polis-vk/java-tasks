@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +30,11 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
-
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            objectOutputStream.writeObject(animals);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -39,9 +45,17 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
-    }
+        List<Animal> animals = new ArrayList<>();
 
+        try (ObjectInputStream objectInputStream = new ObjectInputStream((new FileInputStream(fileName)))) {
+            animals = (List<Animal>)objectInputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+
+        return animals;
+    }
 
     /**
      * 1 балл
@@ -50,7 +64,13 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
-
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            for (AnimalWithMethods animal : animals) {
+                animal.writeObject(objectOutputStream);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -62,7 +82,21 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
-        return Collections.emptyList();
+        List<AnimalWithMethods> animals = new ArrayList<>();
+        AnimalWithMethods animal = new AnimalWithMethods();
+
+        try (ObjectInputStream objectInputStream = new ObjectInputStream((new FileInputStream(fileName)))) {
+            int size = objectInputStream.readInt();
+
+            for (int i = 0; i < size; i++) {
+                animals.add((AnimalWithMethods)objectInputStream.readObject());
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+
+        return animals;
     }
 
     /**
@@ -72,7 +106,17 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
-
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            for (AnimalExternalizable animal : animals) {
+                try {
+                    animal.writeExternal(objectOutputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -84,7 +128,22 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-        return Collections.emptyList();
+        List<AnimalExternalizable> animals = new ArrayList<>();
+
+        try (ObjectInputStream objectInputStream = new ObjectInputStream((new FileInputStream(fileName)))) {
+            int size = objectInputStream.readInt();
+
+            for (int i = 0; i < size; i++) {
+                AnimalExternalizable animal = new AnimalExternalizable();
+                animal.readExternal(objectInputStream);
+                animals.add(animal);
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+
+        return animals;
     }
 
     /**
@@ -96,7 +155,26 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            for (Animal animal : animals) {
+                try {
+                    objectOutputStream.writeInt(animal.getAnimalClassification().ordinal());
+                    objectOutputStream.writeUTF(animal.getName());
+                    objectOutputStream.writeInt(animal.getAge());
+                    objectOutputStream.writeInt(animal.getWeight());
+                    objectOutputStream.writeBoolean(animal.isPredator());
 
+                    objectOutputStream.writeInt(animal.getAreas().size());
+                    for (String area : animal.getAreas()) {
+                        objectOutputStream.writeUTF(area);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -108,6 +186,34 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+        List<Animal> animals = new ArrayList<>();
+
+        try (ObjectInputStream objectInputStream = new ObjectInputStream((new FileInputStream(fileName)))) {
+            int size = objectInputStream.readInt();
+
+            for (int i = 0; i < size; i++) {
+                Animal.AnimalClassification animalClassification = Animal.AnimalClassification.values()[objectInputStream.readInt()];
+                String name = objectInputStream.readUTF();
+                int age = objectInputStream.readInt();
+                int weight = objectInputStream.readInt();
+                boolean isPredator = objectInputStream.readBoolean();
+
+                List<String> areas = new ArrayList<>();
+                int areasSize = objectInputStream.readInt();
+                for (int j = 0; j < size; j++) {
+                    areas.add(objectInputStream.readUTF());
+                }
+
+                Animal animal = new Animal(animalClassification, name, age, weight, isPredator, areas);
+
+                animals.add(animal);
+            }
+
+        } catch(IOException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+
+        return animals;
     }
 }
