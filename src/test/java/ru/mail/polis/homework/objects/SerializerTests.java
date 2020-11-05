@@ -11,6 +11,7 @@ import ru.mail.polis.homework.io.objects.Serializer;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,7 +32,7 @@ public class SerializerTests {
         List<Animal> animals = (new Data()).getAnimalList();
         long begW = System.currentTimeMillis();
         for (int i = 0; i < N; i++) {
-            Serializer.defaultSerialize(animals, fileName);
+            Serializer.defaultSerialize(new ArrayList<>(animals), fileName);
         }
         long endW = System.currentTimeMillis();
         long timeW = endW - begW;
@@ -52,7 +53,7 @@ public class SerializerTests {
 
         long begW = System.currentTimeMillis();
         for (int i = 0; i < N; i++) {
-            Serializer.serializeWithMethods(animals, fileName);
+            Serializer.serializeWithMethods(new ArrayList<>(animals), fileName);
         }
         long endW = System.currentTimeMillis();
         long timeW = endW - begW;
@@ -73,7 +74,7 @@ public class SerializerTests {
 
         long begW = System.currentTimeMillis();
         for (int i = 0; i < N; i++) {
-            Serializer.serializeWithExternalizable(animals, fileName);
+            Serializer.serializeWithExternalizable(new ArrayList<>(animals), fileName);
         }
         long endW = System.currentTimeMillis();
         long timeW = endW - begW;
@@ -94,7 +95,7 @@ public class SerializerTests {
         List<Animal> animals = (new Data()).getAnimalList();
         long begW = System.currentTimeMillis();
         for (int i = 0; i < N; i++) {
-            Serializer.customSerialize(animals, fileName);
+            Serializer.customSerialize(new ArrayList<>(animals), fileName);
         }
         long endW = System.currentTimeMillis();
         long timeW = endW - begW;
