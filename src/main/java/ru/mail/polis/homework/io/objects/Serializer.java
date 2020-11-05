@@ -1,7 +1,11 @@
 package ru.mail.polis.homework.io.objects;
 
 
-import java.util.Collections;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,8 +31,14 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void defaultSerialize(List<Animal> animals, String fileName) {
-
+    public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
+        Path path = Paths.get(fileName);
+        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(path))) {
+            out.writeInt(animals.size());
+            for (Animal animal : animals) {
+                out.writeObject(animal);
+            }
+        }
     }
 
     /**
@@ -38,8 +48,19 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
+    public List<Animal> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
+        Path path = Paths.get(fileName);
+        if (!Files.exists(path)) {
+            throw new IllegalArgumentException();
+        }
+        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(path))) {
+            int size = in.readInt();
+            List<Animal> animals = new ArrayList<>(size);
+            for (int itemNum = 0; itemNum < size; itemNum++) {
+                animals.add((Animal) in.readObject());
+            }
+            return animals;
+        }
     }
 
 
@@ -49,8 +70,14 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
-
+    public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) throws IOException {
+        Path path = Paths.get(fileName);
+        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(path))) {
+            out.writeInt(animals.size());
+            for (Animal animal : animals) {
+                out.writeObject(animal);
+            }
+        }
     }
 
     /**
@@ -61,8 +88,19 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
-        return Collections.emptyList();
+    public List<AnimalWithMethods> deserializeWithMethods(String fileName) throws IOException, ClassNotFoundException {
+        Path path = Paths.get(fileName);
+        if (!Files.exists(path)) {
+            throw new IllegalArgumentException();
+        }
+        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(path))) {
+            int size = in.readInt();
+            List<AnimalWithMethods> animals = new ArrayList<>(size);
+            for (int itemNum = 0; itemNum < size; itemNum++) {
+                animals.add((AnimalWithMethods) in.readObject());
+            }
+            return animals;
+        }
     }
 
     /**
@@ -71,8 +109,14 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
-
+    public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) throws IOException {
+        Path path = Paths.get(fileName);
+        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(path))) {
+            out.writeInt(animals.size());
+            for (Animal animal : animals) {
+                out.writeObject(animal);
+            }
+        }
     }
 
     /**
@@ -83,8 +127,19 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-        return Collections.emptyList();
+    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) throws IOException, ClassNotFoundException {
+        Path path = Paths.get(fileName);
+        if (!Files.exists(path)) {
+            throw new IllegalArgumentException();
+        }
+        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(path))) {
+            int size = in.readInt();
+            List<AnimalExternalizable> animals = new ArrayList<>(size);
+            for (int itemNum = 0; itemNum < size; itemNum++) {
+                animals.add((AnimalExternalizable) in.readObject());
+            }
+            return animals;
+        }
     }
 
     /**
@@ -95,8 +150,38 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
-    public void customSerialize(List<Animal> animals, String fileName) {
+    public void customSerialize(List<Animal> animals, String fileName) throws IOException {
+        Path path = Paths.get(fileName);
+        try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(Files.newOutputStream(path)))) {
+            out.writeInt(animals.size());
+            for (Animal animal : animals) {
+                addAnimalToDataOutputStream(animal, out);
+            }
+        }
+    }
 
+    private void addAnimalToDataOutputStream(Animal animal, DataOutputStream out) throws IOException {
+        out.writeUTF(animal.getName());
+        out.writeInt(animal.getBreed().ordinal());
+        out.writeInt(animal.getAge());
+        out.writeInt(animal.getEat().size());
+        for (Eat e : animal.getEat()) {
+            out.writeInt(e.ordinal());
+        }
+        out.writeBoolean(animal.getInWild());
+        out.writeUTF(animal.getLocation());
+        if (animal.getMother() != null) {
+            out.writeBoolean(true);
+            addAnimalToDataOutputStream(animal.getMother(), out);
+        } else {
+            out.writeBoolean(false);
+        }
+        if (animal.getFather() != null) {
+            out.writeBoolean(true);
+            addAnimalToDataOutputStream(animal.getFather(), out);
+        } else {
+            out.writeBoolean(false);
+        }
     }
 
     /**
@@ -107,7 +192,49 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+    public List<Animal> customDeserialize(String fileName) throws IOException {
+        Path path = Paths.get(fileName);
+        if (!Files.exists(path)) {
+            throw new IllegalArgumentException();
+        }
+        try (DataInputStream in = new DataInputStream(new BufferedInputStream((Files.newInputStream(path))))) {
+            int size = in.readInt();
+            List<Animal> animals = new ArrayList<>(size);
+            for (int itemNum = 0; itemNum < size; itemNum++) {
+                animals.add(getAnimalFromDataOutputStream(in));
+            }
+            return animals;
+        }
+    }
+
+    private Animal getAnimalFromDataOutputStream(DataInputStream in) throws IOException {
+        String name = in.readUTF();
+        Breeds breed = (Breeds.values()[in.readInt()]);
+        int age = in.readInt();
+        int eatSize = in.readInt();
+        List<Eat> eat = new ArrayList<>(eatSize);
+        for (int itemNum = 0; itemNum < eatSize; itemNum++) {
+            eat.add(Eat.values()[in.readInt()]);
+        }
+        boolean inWild = in.readBoolean();
+        String location = in.readUTF();
+        Animal mother = null;
+        if (in.readBoolean()) {
+            mother = getAnimalFromDataOutputStream(in);
+        }
+        Animal father = null;
+        if (in.readBoolean()) {
+            father = getAnimalFromDataOutputStream(in);
+        }
+        return new Animal.Builder()
+                .setName(name)
+                .setBreed(breed)
+                .setAge(age)
+                .setEat(eat)
+                .setInWild(inWild)
+                .setLocation(location)
+                .setMother(mother)
+                .setFather(father)
+                .build();
     }
 }
