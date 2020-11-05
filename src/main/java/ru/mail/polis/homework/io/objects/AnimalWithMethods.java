@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Дубль класса Animal, для Serializer.serializeWithMethods
@@ -47,6 +48,24 @@ public class AnimalWithMethods {
     }
     public Clothes getClothes() {
         return clothes;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AnimalWithMethods that = (AnimalWithMethods) o;
+        return age == that.age &&
+                weight == that.weight &&
+                name.equals(that.name) &&
+                todosList.equals(that.todosList) &&
+                animalKind == that.animalKind &&
+                clothes.equals(that.clothes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, age, weight, todosList, animalKind, clothes);
     }
 
     public void myWriteObjects(ObjectOutputStream objectOutputStream) throws IOException {

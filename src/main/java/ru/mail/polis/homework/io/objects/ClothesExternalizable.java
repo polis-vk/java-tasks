@@ -4,6 +4,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Objects;
 
 public class ClothesExternalizable implements Externalizable {
     public String brand;
@@ -17,6 +18,20 @@ public class ClothesExternalizable implements Externalizable {
     public ClothesExternalizable() {
         brand = "Abibas";
         size = 1;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ClothesExternalizable that = (ClothesExternalizable) o;
+        return size == that.size &&
+                brand.equals(that.brand);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(brand, size);
     }
 
     @Override

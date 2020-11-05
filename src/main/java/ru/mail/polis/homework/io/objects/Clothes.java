@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Clothes implements Serializable {
     private String brand;
@@ -22,6 +23,20 @@ public class Clothes implements Serializable {
 
     public int getSize() {
         return size;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Clothes clothes = (Clothes) o;
+        return size == clothes.size &&
+                brand.equals(clothes.brand);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(brand, size);
     }
 
     void myWriteObject(ObjectOutputStream objectOutputStream) throws IOException {
