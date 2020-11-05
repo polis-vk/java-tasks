@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class Brain implements Serializable {
-  private int size;
+  private final int size;
 
   public Brain(int size) {
     this.size = size;

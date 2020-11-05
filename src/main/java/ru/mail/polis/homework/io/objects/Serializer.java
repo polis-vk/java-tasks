@@ -178,7 +178,12 @@ public class Serializer {
     try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
       for (Animal animal : animals) {
         outputStream.writeInt(animal.getBrain().getSize());
-        outputStream.writeObject(animal.getListName());
+
+        outputStream.writeInt(animal.getListName().size());
+        for (String name : animal.getListName()) {
+          outputStream.writeUTF(name);
+        }
+
         outputStream.writeInt(animal.getWeight());
         outputStream.writeUTF(animal.getName());
         outputStream.writeUTF(animal.getHabitation().toString());
@@ -205,7 +210,13 @@ public class Serializer {
     try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(path))) {
       while (true) {
         Brain brain = new Brain(inputStream.readInt());
-        List<String> nameList = (List<String>) inputStream.readObject();
+
+        int nameListSize = inputStream.readInt();
+        List<String> nameList = new ArrayList<>();
+        for (int i = 0; i < nameListSize; i++) {
+          nameList.add(inputStream.readUTF());
+        }
+
         int weight = inputStream.readInt();
         String name = inputStream.readUTF();
         Habitation habitation = Habitation.valueOf(inputStream.readUTF());
@@ -215,7 +226,7 @@ public class Serializer {
     }
     catch (EOFException ignored) {
     }
-    catch (IOException | ClassNotFoundException e) {
+    catch (IOException e) {
       e.printStackTrace();
     }
 
