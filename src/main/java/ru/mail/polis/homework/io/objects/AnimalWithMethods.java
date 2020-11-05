@@ -42,7 +42,7 @@ public class AnimalWithMethods implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AnimalWithMethods animal = (AnimalWithMethods) o;
-        return name == animal.name &&
+        return Objects.equals(name, animal.name) &&
                 age == animal.age &&
                 Objects.equals(colors, animal.colors) &&
                 isTame == animal.isTame &&
@@ -60,10 +60,10 @@ public class AnimalWithMethods implements Serializable {
         oos.writeInt(age);
         oos.writeInt(colors.size());
         for (Color color : colors) {
-            oos.writeObject(color);
+            oos.writeInt(color.ordinal());
         }
         oos.writeBoolean(isTame);
-        oos.writeObject(eatingStrategy);
+        oos.writeInt(eatingStrategy.ordinal());
         oos.writeObject(taxonomy);
     }
 
@@ -72,11 +72,11 @@ public class AnimalWithMethods implements Serializable {
         age = ois.readInt();
         int colorsCount = ois.readInt();
         for (int i = 0; i < colorsCount; i++) {
-            colors.add((Color) ois.readObject());
+            colors.add(Color.values()[ois.readInt()]);
         }
         colors = Collections.unmodifiableList(colors);
         isTame = ois.readBoolean();
-        eatingStrategy = (EatingStrategy) ois.readObject();
+        eatingStrategy = EatingStrategy.values()[ois.readInt()];
         taxonomy = (Taxonomy) ois.readObject();
     }
 

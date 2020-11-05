@@ -42,7 +42,7 @@ public class AnimalExternalizable implements Externalizable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AnimalExternalizable animal = (AnimalExternalizable) o;
-        return name == animal.name &&
+        return Objects.equals(name, animal.name) &&
                 age == animal.age &&
                 Objects.equals(colors, animal.colors) &&
                 isTame == animal.isTame &&
@@ -61,10 +61,10 @@ public class AnimalExternalizable implements Externalizable {
         out.writeInt(age);
         out.writeInt(colors.size());
         for (Color color : colors) {
-            out.writeObject(color);
+            out.writeInt(color.ordinal());
         }
         out.writeBoolean(isTame);
-        out.writeObject(eatingStrategy);
+        out.writeObject(eatingStrategy.ordinal());
         out.writeObject(taxonomy);
     }
 
@@ -74,11 +74,11 @@ public class AnimalExternalizable implements Externalizable {
         age = in.readInt();
         int colorsCount = in.readInt();
         for (int i = 0; i < colorsCount; i++) {
-            colors.add((Color) in.readObject());
+            colors.add(Color.values()[in.readInt()]);
         }
         colors = Collections.unmodifiableList(colors);
         isTame = in.readBoolean();
-        eatingStrategy = (EatingStrategy) in.readObject();
+        eatingStrategy = EatingStrategy.values()[in.readInt()];
         taxonomy = (Taxonomy) in.readObject();
     }
 

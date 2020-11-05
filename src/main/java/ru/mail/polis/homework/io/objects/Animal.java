@@ -29,6 +29,30 @@ public class Animal implements Serializable {
         this.taxonomy = taxonomy;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public List<Color> getColors() {
+        return colors;
+    }
+
+    public boolean getIsTame() {
+        return isTame;
+    }
+
+    public EatingStrategy getEatingStrategy() {
+        return eatingStrategy;
+    }
+
+    public Taxonomy getTaxonomy() {
+        return taxonomy;
+    }
+
     @Override
     public String toString() {
         return String.format("Animal { Name: %s, Age: %s, Colors: %s, Tame: %s, Eating Strategy: %s, Taxonomy [%s]}",
@@ -40,7 +64,7 @@ public class Animal implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return name == animal.name &&
+        return Objects.equals(name, animal.name) &&
                 age == animal.age &&
                 Objects.equals(colors, animal.colors) &&
                 isTame == animal.isTame &&
@@ -256,7 +280,21 @@ public class Animal implements Serializable {
             .setSpecies("F. catus")
             .build();
 
+        Animal cat1 = new Animal.Builder("Cat", 0, true, EatingStrategy.OMNIVORE, Color.BLACK)
+            .setDomain("Eukaryota")
+            .setKingdom("Animalia")
+            .setPhylum("Chordata")
+            .setClassT("Mammalia")
+            .setOrder("Carnivora")
+            .setFamily("Felidae")
+            .setGenus("Felis")
+            .setSpecies("F. catus")
+            .build();
+
         System.out.println(dog);
         System.out.println(cat);
+        if (Objects.equals(cat, cat1)) {
+            System.out.println(true);
+        }
     }
 }
