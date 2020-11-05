@@ -27,6 +27,8 @@ import java.util.List;
  */
 public class Serializer {
 
+    private static Animal.FoodPreferences[] allFoodPreferences = Animal.FoodPreferences.values();
+
     /**
      * 1 балл
      * Реализовать простую сериализацию, с помощью специального потока для сериализации объектов
@@ -128,7 +130,17 @@ public class Serializer {
                 out.writeUTF(animal.getKind());
                 out.writeBoolean(animal.getTail().isLong());
                 out.writeDouble(animal.getEnergy());
-                out.writeObject(animal.getFoodPreferences()); //ну ето сложно без writeObject...
+//                out.writeObject(animal.getFoodPreferences()); //ну ето сложно без writeObject...
+                int foodId = -1;
+                Animal.FoodPreferences foodPreferences = animal.getFoodPreferences();
+                for (int i = 0; i < allFoodPreferences.length; i++) {
+                    if (allFoodPreferences[i] == foodPreferences) {
+                        foodId = i;
+                        break;
+                    }
+                }
+                out.writeInt(foodId);
+
                 out.writeInt(animal.getAverageLifeExpectancy());
                 List<String> habitats = animal.getHabitats();
                 out.writeInt(habitats.size());
@@ -154,7 +166,9 @@ public class Serializer {
                 String kind = in.readUTF();
                 Tail tail = new Tail(in.readBoolean());
                 double energy = in.readDouble();
-                Animal.FoodPreferences foodPreferences = (Animal.FoodPreferences) in.readObject();
+//                Animal.FoodPreferences foodPreferences = (Animal.FoodPreferences) in.readObject();
+                int foodId = in.readInt();
+                Animal.FoodPreferences foodPreferences = allFoodPreferences[foodId];
                 int averageLifeExpectancy = in.readInt();
                 int habitatsSize = in.readInt();
                 List<String> habitats = new ArrayList<>();

@@ -92,4 +92,16 @@ public class Animal implements Serializable {
                 foodPreferences == animal.foodPreferences &&
                 Objects.equals(habitats, animal.habitats);
     }
+
+    @Override
+    public String toString() {
+        return "Animal{" +
+                "kind='" + kind + '\'' +
+                ", tail=" + tail +
+                ", energy=" + energy +
+                ", foodPreferences=" + foodPreferences +
+                ", averageLifeExpectancy=" + averageLifeExpectancy +
+                ", habitats=" + habitats +
+                '}';
+    }
 }

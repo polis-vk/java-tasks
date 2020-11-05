@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.io.objects;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,13 +14,13 @@ import static org.junit.Assert.assertEquals;
 
 public class SerializerTest {
 
-    private static List<Animal> simpleAnimals = new ArrayList<>();
-    private static List<AnimalWithMethods> animalWithMethods = new ArrayList<>();
-    private static List<AnimalExternalizable> externalizableAnimals = new ArrayList<>();
+    private static final List<Animal> simpleAnimals = new ArrayList<>();
+    private static final List<AnimalWithMethods> animalWithMethods = new ArrayList<>();
+    private static final List<AnimalExternalizable> externalizableAnimals = new ArrayList<>();
 
-    private static Serializer serializer = new Serializer();
+    private static final Serializer serializer = new Serializer();
 
-    private static String fileName = "D:\\test.ser";
+    private static final String fileName = "D:\\test.ser";
 
     @Before
     public void prepare() {
@@ -54,11 +53,11 @@ public class SerializerTest {
         }
     }
 
-    @After
-    public void clear() {
-        File file = new File(fileName);
-        file.delete();
-    }
+//    @After
+//    public void clear() {
+//        File file = new File(fileName);
+//        file.delete();
+//    }
 
     @Test
     public void defaultSerialize() {
@@ -78,7 +77,7 @@ public class SerializerTest {
 
             File file = new File(fileName);
             System.out.println("File size: " + file.length());
-            //file.delete();
+            file.delete();
 
             for (int i = 0; i < simpleAnimals.size(); i++) {
                 assertEquals(simpleAnimals.get(i), deserializedAnimals.get(i));
@@ -112,7 +111,7 @@ public class SerializerTest {
 
             File file = new File(fileName);
             System.out.println("File size: " + file.length());
-            //file.delete();
+            file.delete();
 
             for (int i = 0; i < externalizableAnimals.size(); i++) {
                 assertEquals(externalizableAnimals.get(i), deserializedAnimals.get(i));
@@ -141,11 +140,12 @@ public class SerializerTest {
 
             File file = new File(fileName);
             System.out.println("File size: " + file.length());
-            //file.delete();
+            file.delete();
 
             for (int i = 0; i < simpleAnimals.size(); i++) {
                 assertEquals(simpleAnimals.get(i), deserializedAnimals.get(i));
             }
+
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
