@@ -1,13 +1,7 @@
 package ru.mail.polis.homework.io.objects;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.io.*;
+import java.util.*;
 
 /**
  * Дубль класса Animal, для Serializer.serializeWithExternalizable
@@ -138,5 +132,171 @@ public class AnimalExternalizable implements Externalizable {
         }
         scaredOf = scared;
         singleCell = in.readBoolean();
+    }
+
+    public static class Chromosome implements Externalizable {
+        private int[] genome;
+        private boolean isImmutable;
+
+        public Chromosome() {
+
+        }
+
+        public Chromosome(int[] genes, boolean isImmutable) {
+            this.genome = Arrays.copyOf(genes, genes.length);
+            this.isImmutable = isImmutable;
+        }
+
+        public int[] getGenes() {
+            return Arrays.copyOf(genome, genome.length);
+        }
+
+        public int getGene(int index) {
+            return genome[index];
+        }
+
+        public boolean insertGenes(int[] genes, int index) {
+            if (!isImmutable) {
+                int[] newGenome = new int[genome.length + genes.length];
+                System.arraycopy(genome, 0, newGenome, 0, index);
+                System.arraycopy(genes, 0, newGenome, index, genes.length);
+                System.arraycopy(genome, index, newGenome, index + genes.length, genome.length - index);
+                genome = newGenome;
+                return true;
+            }
+            return false;
+        }
+
+        public boolean cutGenes(int index, int length) {
+            if (!isImmutable) {
+                int[] newGenome = new int[genome.length - length];
+                System.arraycopy(genome, 0, newGenome, 0, index);
+                System.arraycopy(genome, index + length, newGenome, index, genome.length - index - length);
+                genome = newGenome;
+                return true;
+            }
+            return false;
+        }
+
+        public boolean isImmutable() {
+            return isImmutable;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Chromosome that = (Chromosome) o;
+            return isImmutable == that.isImmutable &&
+                    Arrays.equals(genome, that.genome);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = Objects.hash(isImmutable);
+            result = 31 * result + Arrays.hashCode(genome);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "Chromosome{" +
+                    "genome=" + Arrays.toString(genome) +
+                    ", isImmutable=" + isImmutable +
+                    '}';
+        }
+
+        @Override
+        public void writeExternal(ObjectOutput out) throws IOException {
+            out.writeBoolean(isImmutable);
+            out.writeInt(genome.length);
+            for (int i = 0; i < genome.length; i++) {
+                out.writeInt(genome[i]);
+            }
+        }
+
+        @Override
+        public void readExternal(ObjectInput in) throws IOException {
+            isImmutable = in.readBoolean();
+            int size = in.readInt();
+            genome = new int[size];
+            for (int i = 0; i < size; i++) {
+                genome[i] = in.readInt();
+            }
+        }
+    }
+
+    public static class Genotype implements Externalizable {
+        private List<Chromosome> chromosomes;
+        private boolean isImmutable;
+
+        public Genotype() {
+
+        }
+
+        public Genotype(List<Chromosome> chromosomes, boolean isImmutable) {
+            this.chromosomes = new ArrayList<>(chromosomes.size());
+            this.isImmutable = isImmutable;
+        }
+
+        public List<Chromosome> getChromosomes() {
+            if (isImmutable) {
+                return Collections.unmodifiableList(chromosomes);
+            }
+            return chromosomes;
+        }
+
+        public int getSize() {
+            return chromosomes.size();
+        }
+
+        public Chromosome getChromosome(int index) {
+            return chromosomes.get(index);
+        }
+
+        public boolean isImmutable() {
+            return isImmutable;
+        }
+
+        @Override
+        public String toString() {
+            return "Genotype{" +
+                    "chromosomes=" + chromosomes +
+                    ", isImmutable=" + isImmutable +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Genotype genotype = (Genotype) o;
+            return isImmutable == genotype.isImmutable &&
+                    Objects.equals(chromosomes, genotype.chromosomes);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(chromosomes, isImmutable);
+        }
+
+        @Override
+        public void writeExternal(ObjectOutput out) throws IOException {
+            out.writeBoolean(isImmutable);
+            out.writeInt(chromosomes.size());
+            for (Chromosome chromosome : chromosomes) {
+                out.writeObject(chromosome);
+            }
+        }
+
+        @Override
+        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+            isImmutable = in.readBoolean();
+            int size = in.readInt();
+            chromosomes = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+               chromosomes.add((Chromosome) in.readObject());
+            }
+        }
     }
 }

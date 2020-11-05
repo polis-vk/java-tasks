@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -69,7 +70,7 @@ public class Serializer {
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName));
         objectOutputStream.writeInt(animals.size());
         for (AnimalWithMethods animal : animals) {
-            animal.write(objectOutputStream);
+            objectOutputStream.writeObject(animal);
         }
         objectOutputStream.close();
     }
@@ -87,7 +88,7 @@ public class Serializer {
         int count = objectInputStream.readInt();
         ArrayList<AnimalWithMethods> animals = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
-            animals.add(AnimalWithMethods.read(objectInputStream));
+            animals.add((AnimalWithMethods) objectInputStream.readObject());
         }
         objectInputStream.close();
         return animals;
@@ -103,7 +104,7 @@ public class Serializer {
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName));
         objectOutputStream.writeInt(animals.size());
         for (AnimalExternalizable animal : animals) {
-            animal.writeExternal(objectOutputStream);
+           objectOutputStream.writeObject(animal);
         }
         objectOutputStream.close();
     }
@@ -121,9 +122,7 @@ public class Serializer {
         int count = objectInputStream.readInt();
         ArrayList<AnimalExternalizable> animals = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
-            AnimalExternalizable animal = new AnimalExternalizable();
-            animal.readExternal(objectInputStream);
-            animals.add(animal);
+            animals.add((AnimalExternalizable) objectInputStream.readObject());
         }
         objectInputStream.close();
         return animals;
@@ -137,17 +136,31 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
+
     public static void customSerialize(List<Animal> animals, String fileName) throws IOException {
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName));
         objectOutputStream.writeInt(animals.size());
+        HashSet<Animal> hashSet = new HashSet<>();
         for (Animal animal : animals) {
             objectOutputStream.writeUTF(animal.getName());
-            objectOutputStream.writeObject(animal.getDiet());
-            objectOutputStream.writeObject(animal.getGenotype());
+            objectOutputStream.writeInt(animal.getDiet().ordinal());
+
+            objectOutputStream.writeBoolean(animal.getGenotype().isImmutable());
+            objectOutputStream.writeInt(animal.getGenotype().getChromosomes().size());;
+            for (Animal.Chromosome chromosome : animal.getGenotype().getChromosomes()) {
+                int[] genes = chromosome.getGenes();
+                objectOutputStream.writeBoolean(chromosome.isImmutable());
+                objectOutputStream.writeInt(genes.length);
+                for (int i = 0; i < genes.length; i++) {
+                    objectOutputStream.writeInt(genes[i]);
+                }
+            }
+
             objectOutputStream.writeInt(animal.getSpeciesId());
             objectOutputStream.writeInt(animal.getScaredOf().size());
-            for (Integer integer : animal.getScaredOf()) {
-                objectOutputStream.writeInt(integer);
+            List<Integer> list = animal.getScaredOf();
+            for (Integer val : list) {
+                objectOutputStream.writeInt(val);
             }
             objectOutputStream.writeBoolean(animal.isSingleCell());
         }
@@ -168,16 +181,123 @@ public class Serializer {
         ArrayList<Animal> animals = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             String name = objectInputStream.readUTF();
-            Animal.Diet diet = (Animal.Diet) objectInputStream.readObject();
-            Genotype genotype = (Genotype) objectInputStream.readObject();
-            int speciesId = objectInputStream.readInt();
+            Animal.Diet diet = Animal.Diet.values()[objectInputStream.readInt()];
+
+            List<Animal.Chromosome> chromosomes = new ArrayList<>();
+            boolean isImmutable = objectInputStream.readBoolean();
             int size = objectInputStream.readInt();
+            for (int j = 0; j < size; j++) {
+                boolean isImmutableChromosome = objectInputStream.readBoolean();
+                int chromosomeSize = objectInputStream.readInt();
+                int[] genes = new int[chromosomeSize];
+                for (int k = 0; k < chromosomeSize; k++) {
+                    genes[j] = objectInputStream.readInt();
+                }
+                chromosomes.add(new Animal.Chromosome(genes, isImmutableChromosome));
+            }
+            Animal.Genotype genotype = new Animal.Genotype(chromosomes, isImmutable);
+
+            int speciesId = objectInputStream.readInt();
+            size = objectInputStream.readInt();
             List<Integer> scared = new ArrayList<>(size);
             for (int j = 0; j < size; j++) {
                 scared.add(objectInputStream.readInt());
             }
             boolean singleCell = objectInputStream.readBoolean();
             animals.add(new Animal(name, diet, genotype, speciesId, scared, singleCell));
+        }
+        objectInputStream.close();
+        return animals;
+    }
+
+    public static void customDeepSerialize(List<Animal> animals, String fileName) throws IOException {
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName));
+        objectOutputStream.writeInt(animals.size());
+        for (Animal animal : animals) {
+            animal.writeObjectCustom(objectOutputStream);
+        }
+        objectOutputStream.close();
+    }
+
+    public static List<Animal> customDeepDeserialize(String fileName) throws IOException {
+        ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName));
+        int count = objectInputStream.readInt();
+        ArrayList<Animal> animals = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            animals.add(Animal.readObjectCustom(objectInputStream));
+        }
+        objectInputStream.close();
+        return animals;
+    }
+
+    public static final int NEW_OBJECT = 0;
+    public static final int REFERENCE = 1;
+
+    public static class HashTable<T> {
+        private final List<List<T>> buckets;
+        private final List<List<Integer>> bucketsReferences;
+        private final int size;
+
+        public HashTable(int size) {
+            buckets = new ArrayList<>(size);
+            bucketsReferences = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+                buckets.add(new ArrayList<>());
+                bucketsReferences.add(new ArrayList<>());
+            }
+            this.size = size;
+        }
+
+        public int getReference(T obj) {
+            List<T> bucket = buckets.get(getHash(obj));
+            List<Integer> reference = bucketsReferences.get(getHash(obj));
+            for (int i = 0; i < bucket.size(); i++) {
+                if (bucket.get(i) == obj) {
+                    return reference.get(i);
+                }
+            }
+            return -1;
+        }
+
+        public void add(T obj, int index) {
+            buckets.get(getHash(obj)).add(obj);
+            bucketsReferences.get(getHash(obj)).add(index);
+        }
+
+        private int getHash(T obj) {
+            return Math.abs(obj.hashCode() % size);
+        }
+    }
+
+    public static void customDeepStableSerialize(List<Animal> animals, String fileName) throws IOException {
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName));
+        objectOutputStream.writeInt(animals.size());
+        HashTable<Animal> hashTable = new HashTable<>(animals.size() / 10);
+        for (int i = 0; i < animals.size(); i++) {
+            int indexOfReference = hashTable.getReference(animals.get(i));
+            if (indexOfReference != -1) {
+                objectOutputStream.writeInt(REFERENCE);
+                objectOutputStream.writeInt(indexOfReference);
+                continue;
+            }
+            objectOutputStream.writeInt(NEW_OBJECT);
+            hashTable.add(animals.get(i), i);
+            animals.get(i).writeObjectCustom(objectOutputStream);
+        }
+        objectOutputStream.close();
+    }
+
+    public static List<Animal> customDeepStableDeserialize(String fileName) throws IOException {
+        ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName));
+        int count = objectInputStream.readInt();
+        ArrayList<Animal> animals = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            int flag = objectInputStream.readInt();
+            if (flag == NEW_OBJECT) {
+                animals.add(Animal.readObjectCustom(objectInputStream));
+            } else {
+                animals.add(animals.get(objectInputStream.readInt()));
+            }
         }
         objectInputStream.close();
         return animals;

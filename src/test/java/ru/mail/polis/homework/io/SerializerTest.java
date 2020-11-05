@@ -3,14 +3,12 @@ package ru.mail.polis.homework.io;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import ru.mail.polis.homework.io.objects.*;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;
 import java.util.ArrayList;
 import java.nio.file.Files;
-
 import static org.junit.Assert.assertEquals;
 
 public class SerializerTest {
@@ -28,47 +26,47 @@ public class SerializerTest {
         // Animals default
         for (int i = 0; i < testSize / 2; i++) {
             animalsDef.add(new Animal(
-                    selectRandom("name1", "vasya", "petya", "test", "sugar", "tiger", "gloves", "check", "keyboard", "cola"),
+                    selectRandom("name1", "vasya", "petya", "tests", "sugar", "tiger", "glove", "check", "board", "cola"),
                     selectRandom(Animal.Diet.values()),
-                    generateGenotype(),
+                    generateGenotypeDef(),
                     rng.nextInt(),
                     generateScaredOf(),
                     selectRandom(true, false)));
         }
-        for (int i = testSize / 2 + 1; i < testSize; i++) {
+        for (int i = testSize / 2; i < testSize; i++) {
             animalsDef.add(animalsDef.get(i - testSize / 2));
         }
         // Animals externalizable
         for (int i = 0; i < testSize / 2; i++) {
             animalsExt.add(new AnimalExternalizable(
-                    selectRandom("name1", "vasya", "petya", "test", "sugar", "tiger", "gloves", "check", "keyboard", "cola"),
+                    selectRandom("name1", "vasya", "petya", "tests", "sugar", "tiger", "glove", "check", "board", "cola"),
                     selectRandom(AnimalExternalizable.Diet.values()),
-                    generateGenotype(),
+                    generateGenotypeExt(),
                     rng.nextInt(),
                     generateScaredOf(),
                     selectRandom(true, false)));
         }
-        for (int i = testSize / 2 + 1; i < testSize; i++) {
+        for (int i = testSize / 2; i < testSize; i++) {
             animalsExt.add(animalsExt.get(i - testSize / 2));
         }
         // Animals methods
         for (int i = 0; i < testSize / 2; i++) {
             animalsMet.add(new AnimalWithMethods(
-                    selectRandom("name1", "vasya", "petya", "test", "sugar", "tiger", "gloves", "check", "keyboard", "cola"),
+                    selectRandom("name1", "vasya", "petya", "tests", "sugar", "tiger", "glove", "check", "board", "cola"),
                     selectRandom(AnimalWithMethods.Diet.values()),
-                    generateGenotype(),
+                    generateGenotypeMet(),
                     rng.nextInt(),
                     generateScaredOf(),
                     selectRandom(true, false)));
         }
-        for (int i = testSize / 2 + 1; i < testSize; i++) {
+        for (int i = testSize / 2; i < testSize; i++) {
             animalsMet.add(animalsMet.get(i - testSize / 2));
         }
     }
 
     @Test
     public void defaultSerialize() throws IOException, ClassNotFoundException {
-        System.out.println(" - - Default - -");
+        System.out.println("Default");
         timerStart();
         Serializer.defaultSerialize(animalsDef, fileName);
         timerStop("to serialize");
@@ -83,7 +81,7 @@ public class SerializerTest {
 
     @Test
     public void externalizableSerialize() throws IOException, ClassNotFoundException {
-        System.out.println(" - - Externalizable - -");
+        System.out.println("Externalizable");
         timerStart();
         Serializer.serializeWithExternalizable(animalsExt, fileName);
         timerStop("to serialize");
@@ -97,7 +95,7 @@ public class SerializerTest {
 
     @Test
     public void methodsSerialize() throws IOException, ClassNotFoundException {
-        System.out.println(" - - Methods - -");
+        System.out.println("Private Methods");
         timerStart();
         Serializer.serializeWithMethods(animalsMet, fileName);
         timerStop("to serialize");
@@ -111,12 +109,40 @@ public class SerializerTest {
 
     @Test
     public void customSerialize() throws IOException, ClassNotFoundException {
-        System.out.println(" - - Custom - -");
+        System.out.println("Custom");
         timerStart();
         Serializer.customSerialize(animalsDef, fileName);
         timerStop("to serialize");
         timerStart();
         List<Animal> list = Serializer.customDeserialize(fileName);
+        timerStop("to deserialize");
+        assertEquals(animalsDef, list);
+        System.out.println("File size: " + Files.size(Paths.get(fileName)));
+        deleteFile(fileName);
+    }
+
+    @Test
+    public void customDeepSerialize() throws IOException, ClassNotFoundException {
+        System.out.println("Deep Custom");
+        timerStart();
+        Serializer.customDeepSerialize(animalsDef, fileName);
+        timerStop("to serialize");
+        timerStart();
+        List<Animal> list = Serializer.customDeepDeserialize(fileName);
+        timerStop("to deserialize");
+        assertEquals(animalsDef, list);
+        System.out.println("File size: " + Files.size(Paths.get(fileName)));
+        deleteFile(fileName);
+    }
+
+    @Test
+    public void customDeepStableSerialize() throws IOException, ClassNotFoundException {
+        System.out.println("Deep Custom Stable");
+        timerStart();
+        Serializer.customDeepStableSerialize(animalsDef, fileName);
+        timerStop("to serialize");
+        timerStart();
+        List<Animal> list = Serializer.customDeepStableDeserialize(fileName);
         timerStop("to deserialize");
         assertEquals(animalsDef, list);
         System.out.println("File size: " + Files.size(Paths.get(fileName)));
@@ -134,7 +160,7 @@ public class SerializerTest {
     }
 
     private static List<Integer> generateScaredOf() {
-        int size = rng.nextInt(192);
+        int size = 192;
         List<Integer> scaredOf = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             scaredOf.add(rng.nextInt());
@@ -142,18 +168,40 @@ public class SerializerTest {
         return scaredOf;
     }
 
-    private static Genotype generateGenotype() {
-        int size = rng.nextInt(192);
-        List<Chromosome> chromosomes = new ArrayList<>(size);
+    private static Animal.Genotype generateGenotypeDef() {
+        int size = 192;
+        List<Animal.Chromosome> chromosomes = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            int cSize = rng.nextInt(4000);
-            int[] genes = new int[cSize];
-            for (int j = 0; j < cSize; j++) {
-                genes[j] = rng.nextInt();
-            }
-            chromosomes.add(new Chromosome(genes, selectRandom(true, false)));
+            chromosomes.add(new Animal.Chromosome(generateGenes(), selectRandom(true, false)));
         }
-        return new Genotype(chromosomes, selectRandom(true, false));
+        return new Animal.Genotype(chromosomes, selectRandom(true, false));
+    }
+
+    private static AnimalWithMethods.Genotype generateGenotypeMet() {
+        int size = 192;
+        List<AnimalWithMethods.Chromosome> chromosomes = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            chromosomes.add(new AnimalWithMethods.Chromosome(generateGenes(), selectRandom(true, false)));
+        }
+        return new AnimalWithMethods.Genotype(chromosomes, selectRandom(true, false));
+    }
+
+    private static AnimalExternalizable.Genotype generateGenotypeExt() {
+        int size = 192;
+        List<AnimalExternalizable.Chromosome> chromosomes = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            chromosomes.add(new AnimalExternalizable.Chromosome(generateGenes(), selectRandom(true, false)));
+        }
+        return new AnimalExternalizable.Genotype(chromosomes, selectRandom(true, false));
+    }
+
+    private static int[] generateGenes() {
+        int cSize = 4000;
+        int[] genes = new int[cSize];
+        for (int j = 0; j < cSize; j++) {
+            genes[j] = rng.nextInt();
+        }
+        return genes;
     }
 
     private static <T> T selectRandom(T... objects) {
