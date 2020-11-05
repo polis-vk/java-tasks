@@ -53,7 +53,7 @@ public class Serializer {
         List<Animal> animals = new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
             int size = in.readInt();
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < size; ++i) {
                 animals.add((Animal) in.readObject());
             }
         } catch (IOException | ClassNotFoundException ignored) {
@@ -92,7 +92,7 @@ public class Serializer {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
             int size = in.readInt();
             AnimalWithMethods tempAnimal;
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < size; ++i) {
                 tempAnimal = new AnimalWithMethods();
                 tempAnimal.readObject(in);
                 animals.add(tempAnimal);
@@ -132,7 +132,7 @@ public class Serializer {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
             int size = in.readInt();
             AnimalExternalizable tempAnimal;
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < size; ++i) {
                 tempAnimal = new AnimalExternalizable();
                 tempAnimal.readExternal(in);
                 animals.add(tempAnimal);
@@ -152,6 +152,7 @@ public class Serializer {
      */
     public void customSerialize(List<Animal> animals, String fileName) {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            out.writeInt(animals.size());
             for (Animal animal : animals) {
                 out.writeUTF(animal.getName());
                 animal.getTag().myWriteObject(out);
@@ -179,19 +180,21 @@ public class Serializer {
     public List<Animal> customDeserialize(String fileName) {
         List<Animal> animals = new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
-            Animal tempAnimal = new Animal();
-            while (in.available() > 0) {
+            int size = in.readInt();
+            Animal tempAnimal;
+            for (int i = 0; i < size; ++i) {
+                tempAnimal = new Animal();
                 tempAnimal.setName(in.readUTF());
 
-                BioTag bioTag = new BioTag();
-                bioTag.myReadObject(in);
-                tempAnimal.setTag(bioTag);
+                BioTag tag = new BioTag();
+                tag.myReadObject(in);
+                tempAnimal.setTag(tag);
 
                 tempAnimal.setAge(in.readInt());
 
                 int habitatSize = in.readInt();
                 List<String> habitat = new ArrayList<>(habitatSize);
-                for (int i = 0; i < habitatSize; ++i) {
+                for (int j = 0; j < habitatSize; ++j) {
                     habitat.add(in.readUTF());
                 }
                 tempAnimal.setHabitat(habitat);

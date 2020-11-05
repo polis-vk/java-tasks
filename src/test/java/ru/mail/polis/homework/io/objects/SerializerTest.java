@@ -29,7 +29,7 @@ public class SerializerTest {
         }
     }};
 
-    private static final List<AnimalExternalizable> animalsExternalizable = new ArrayList<AnimalExternalizable>() {{
+    private static final List<AnimalExternalizable> animalsExternalize = new ArrayList<AnimalExternalizable>() {{
         Random random = new Random(System.currentTimeMillis());
         for (int i = 0; i < OBJECTS_QUANTITY; ++i) {
             AnimalExternalizable animal = new AnimalExternalizable(String.valueOf(random.nextInt()),
@@ -47,6 +47,20 @@ public class SerializerTest {
         Random random = new Random(System.currentTimeMillis());
         for (int i = 0; i < OBJECTS_QUANTITY; ++i) {
             AnimalWithMethods animal = new AnimalWithMethods(String.valueOf(random.nextInt()),
+                    new BioTag(random.nextLong(), String.valueOf(random.nextInt())),
+                    random.nextInt(),
+                    Arrays.asList(String.valueOf(random.nextInt()), String.valueOf(random.nextInt()), String.valueOf(random.nextInt())),
+                    Animal.Size.values()[random.nextInt(3)],
+                    random.nextDouble(),
+                    random.nextBoolean());
+            add(animal);
+        }
+    }};
+
+    private static final List<Animal> animalsWithCustom = new ArrayList<Animal>() {{
+        Random random = new Random(System.currentTimeMillis());
+        for (int i = 0; i < OBJECTS_QUANTITY; ++i) {
+            Animal animal = new Animal(String.valueOf(random.nextInt()),
                     new BioTag(random.nextLong(), String.valueOf(random.nextInt())),
                     random.nextInt(),
                     Arrays.asList(String.valueOf(random.nextInt()), String.valueOf(random.nextInt()), String.valueOf(random.nextInt())),
@@ -95,14 +109,27 @@ public class SerializerTest {
     @Test
     public void serializableWithExternalize() {
         long start = System.currentTimeMillis();
-        serializer.serializeWithExternalizable(animalsExternalizable, fileName);
+        serializer.serializeWithExternalizable(animalsExternalize, fileName);
         long serializingExitTime = System.currentTimeMillis();
         List<AnimalExternalizable> test = serializer.deserializeWithExternalizable(fileName);
         long deserializeExitTime = System.currentTimeMillis();
 
-        assertEquals(test, animalsExternalizable);
+        assertEquals(test, animalsExternalize);
 
         printResults("Externalize", serializingExitTime - start, deserializeExitTime - start);
+    }
+
+    @Test
+    public void serializableWithCustom() {
+        long start = System.currentTimeMillis();
+        serializer.customSerialize(animalsWithCustom, fileName);
+        long serializingExitTime = System.currentTimeMillis();
+        List<Animal> test = serializer.customDeserialize(fileName);
+        long deserializeExitTime = System.currentTimeMillis();
+
+        assertEquals(test, animalsWithCustom);
+
+        printResults("Custom", serializingExitTime - start, deserializeExitTime - start);
     }
 
     public void printResults(String header, long serTime, long desTime) {
