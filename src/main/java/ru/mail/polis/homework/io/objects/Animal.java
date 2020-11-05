@@ -24,25 +24,6 @@ public class Animal implements Serializable {
     Animal() {
     }
 
-    void writeObject(ObjectOutputStream out) throws IOException {
-        animalKind.writeObject(out);
-        out.writeUTF(name);
-        out.writeInt(age);
-        out.writeInt(weight);
-        out.writeUTF(locationsList.toString());
-        colour.writeObject(out);
-    }
-
-    void readObject(ObjectInputStream in) throws IOException {
-        animalKind = animalKind.readObject(in);
-        name = in.readUTF();
-        age = in.readInt();
-        weight = in.readInt();
-        locationsList = new ArrayList<>();
-        locationsList.add(in.readUTF());
-        colour = colour.readObject(in);
-    }
-
     public static Animal getRandom(Random random) {
         return newBuilder().getRandom(random);
     }
