@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ru.mail.polis.homework.io.SerializerTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2020-11-04T13:08:42" hostname="MacBook-Pro-Stepan.local" time="0.311">
+<testsuite name="ru.mail.polis.homework.io.SerializerTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2020-11-06T20:33:14" hostname="MacBook-Pro-Stepan.local" time="0.782">
   <properties/>
-  <testcase name="serializeWithMethodsTest" classname="ru.mail.polis.homework.io.SerializerTest" time="0.141"/>
-  <testcase name="serializeWithExternalizableTest" classname="ru.mail.polis.homework.io.SerializerTest" time="0.083"/>
-  <testcase name="defaultSerializeTest" classname="ru.mail.polis.homework.io.SerializerTest" time="0.041"/>
-  <testcase name="customSerializeTest" classname="ru.mail.polis.homework.io.SerializerTest" time="0.042"/>
+  <testcase name="serializeWithMethodsTest" classname="ru.mail.polis.homework.io.SerializerTest" time="0.274"/>
+  <testcase name="serializeWithExternalizableTest" classname="ru.mail.polis.homework.io.SerializerTest" time="0.154"/>
+  <testcase name="defaultSerializeTest" classname="ru.mail.polis.homework.io.SerializerTest" time="0.08"/>
+  <testcase name="customSerializeTest" classname="ru.mail.polis.homework.io.SerializerTest" time="0.269"/>
   <system-out><![CDATA[Serialize With Methods Test
 Animal amount: 200
 File size in bytes:  20762
-Time in millis: 133
+Time in millis: 257
 
 Serialize With Externalizable Test
 Animal amount: 200
 File size in bytes:  23378
-Time in millis: 59
+Time in millis: 134
 
 Default Serialize Test
 Animal amount: 200
 File size in bytes:  19951
-Time in millis: 38
+Time in millis: 76
 
 Custom Serialize Test
 Animal amount: 200
 File size in bytes:  25443
-Time in millis: 40
+Time in millis: 268
 
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>

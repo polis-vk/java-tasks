@@ -42,8 +42,6 @@ public class Serializer {
         } catch (Exception ignored) {
         }
       });
-
-      objectOutputStream.flush();
     } catch (Exception e) {
       e.printStackTrace();
     }
