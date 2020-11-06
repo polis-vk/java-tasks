@@ -22,6 +22,9 @@ public class AnimalExternalizable implements Externalizable {
     private EatingStrategy eatingStrategy;
     private Taxonomy taxonomy;
 
+    public AnimalExternalizable() {
+    }
+
     private AnimalExternalizable(Builder builder, Taxonomy taxonomy) {
         this.name = builder.name;
         this.age = builder.age;
@@ -64,8 +67,8 @@ public class AnimalExternalizable implements Externalizable {
             out.writeInt(color.ordinal());
         }
         out.writeBoolean(isTame);
-        out.writeObject(eatingStrategy.ordinal());
-        out.writeObject(taxonomy);
+        out.writeInt(eatingStrategy.ordinal());
+        taxonomy.writeExternal(out);
     }
 
     @Override
@@ -73,13 +76,15 @@ public class AnimalExternalizable implements Externalizable {
         name = in.readUTF();
         age = in.readInt();
         int colorsCount = in.readInt();
+        colors = new ArrayList<>();
         for (int i = 0; i < colorsCount; i++) {
             colors.add(Color.values()[in.readInt()]);
         }
         colors = Collections.unmodifiableList(colors);
         isTame = in.readBoolean();
         eatingStrategy = EatingStrategy.values()[in.readInt()];
-        taxonomy = (Taxonomy) in.readObject();
+        taxonomy = new Taxonomy();
+        taxonomy.readExternal(in);
     }
 
     public static class Taxonomy implements Externalizable {

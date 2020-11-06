@@ -71,6 +71,7 @@ public class AnimalWithMethods implements Serializable {
         name = ois.readUTF();
         age = ois.readInt();
         int colorsCount = ois.readInt();
+        colors = new ArrayList<>();
         for (int i = 0; i < colorsCount; i++) {
             colors.add(Color.values()[ois.readInt()]);
         }
