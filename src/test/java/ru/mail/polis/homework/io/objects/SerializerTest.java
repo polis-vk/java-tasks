@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.io.objects;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -20,15 +20,15 @@ public class SerializerTest {
     
     private static final Path FILE_PATH = Paths.get("src", "test", "resources", "fileForSerialize.bin");
     private static final Random RANDOM = new Random();
-    private static final Serializer serializer = new Serializer();
+    private static final Serializer SERIALIZER = new Serializer();
     
     private static final int N = 10000;
     private static List<Animal> animalList;
     private static List<AnimalWithMethods> animalWithMethodsList;
     private static List<AnimalExternalizable> animalExternalizableList;
     
-    @BeforeClass
-    public static void setUp() {
+    @Before
+    public void setUp() {
         animalList = Stream.generate(RandomAnimal::getAnimal)
                 .limit(N)
                 .collect(Collectors.toList());
@@ -42,10 +42,10 @@ public class SerializerTest {
     
     @Test
     public void serializeTest() throws IOException {
-        checkCorrectSerialize(serializer::defaultSerialize, serializer::defaultDeserialize, animalList);
-        checkCorrectSerialize(serializer::serializeWithExternalizable, serializer::deserializeWithExternalizable, animalExternalizableList);
-        checkCorrectSerialize(serializer::serializeWithMethods, serializer::deserializeWithMethods, animalWithMethodsList);
-        checkCorrectSerialize(serializer::customSerialize, serializer::customDeserialize, animalList);
+        checkCorrectSerialize(SERIALIZER::defaultSerialize, SERIALIZER::defaultDeserialize, animalList);
+        checkCorrectSerialize(SERIALIZER::serializeWithExternalizable, SERIALIZER::deserializeWithExternalizable, animalExternalizableList);
+        checkCorrectSerialize(SERIALIZER::serializeWithMethods, SERIALIZER::deserializeWithMethods, animalWithMethodsList);
+        checkCorrectSerialize(SERIALIZER::customSerialize, SERIALIZER::customDeserialize, animalList);
     }
     
     private <T> void checkCorrectSerialize(BiConsumer<List<T>, String> serialize, Function<String, List<T>> deserialize, List<T> animals) throws IOException {
@@ -57,10 +57,10 @@ public class SerializerTest {
     
     @Test
     public void serializeTimeTest() throws IOException {
-        serializeTime(serializer::defaultSerialize, serializer::defaultDeserialize, animalList, "Default serialize");
-        serializeTime(serializer::serializeWithExternalizable, serializer::deserializeWithExternalizable, animalExternalizableList, "External serialize");
-        serializeTime(serializer::serializeWithMethods, serializer::deserializeWithMethods, animalWithMethodsList, "Serialize with methods");
-        serializeTime(serializer::customSerialize, serializer::customDeserialize, animalList, "Custom serialize");
+        serializeTime(SERIALIZER::defaultSerialize, SERIALIZER::defaultDeserialize, animalList, "Default serialize");
+        serializeTime(SERIALIZER::serializeWithExternalizable, SERIALIZER::deserializeWithExternalizable, animalExternalizableList, "External serialize");
+        serializeTime(SERIALIZER::serializeWithMethods, SERIALIZER::deserializeWithMethods, animalWithMethodsList, "Serialize with methods");
+        serializeTime(SERIALIZER::customSerialize, SERIALIZER::customDeserialize, animalList, "Custom serialize");
     }
     
     private <T> void serializeTime(BiConsumer<List<T>, String> serialize, Function<String, List<T>> deserialize, List<T> animals, String serializeType) throws IOException {
