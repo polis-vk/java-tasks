@@ -149,7 +149,7 @@ public class Serializer {
                 animals.add(animal);
             }
             return animals;
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }

@@ -60,26 +60,26 @@ public class AnimalExternalizable implements Externalizable {
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeUTF(name);
         out.writeBoolean(isPredator);
-        out.writeObject(type);
+        out.writeInt(type.ordinal());
         out.writeInt(food.size());
         for (String f : food) {
             out.writeUTF(f);
         }
-        out.writeObject(habitat);
+        out.writeUTF(habitat.getArea());
         out.writeInt(speed);
     }
 
     @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(ObjectInput in) throws IOException {
         name = in.readUTF();
         isPredator = in.readBoolean();
-        type = (AnimalType) in.readObject();
+        type = AnimalType.values()[in.readInt()];
         int foodSize = in.readInt();
         food = new ArrayList<>(foodSize);
         for (int i = 0; i < foodSize; i++) {
             food.add(in.readUTF());
         }
-        habitat = (Habitat) in.readObject();
+        habitat = new Habitat(in.readUTF());
         speed = in.readInt();
         if (speed <= 0) {
             throw new IllegalArgumentException();
