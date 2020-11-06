@@ -89,14 +89,14 @@ public class AnimalExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeObject(group);
+        out.writeInt(group.ordinal());
         out.writeUTF(name);
         out.writeBoolean(isWarmBlooded);
         out.writeObject(behavior);
 
         out.writeInt(habitatEnvironments.size());
         for (HabitatEnvironment environment : habitatEnvironments) {
-            out.writeObject(environment);
+            out.writeInt(environment.ordinal());
         }
         out.writeInt(age);
         out.writeInt(color);
@@ -105,14 +105,14 @@ public class AnimalExternalizable implements Externalizable {
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        group = (AnimalGroup) in.readObject();
+        group = AnimalGroup.values()[in.readInt()];
         name = in.readUTF();
         isWarmBlooded = in.readBoolean();
         behavior = (Behavior) in.readObject();
 
         int habitatEnvironmentsCount = in.readInt();
         for (int i = 0; i < habitatEnvironmentsCount; i++) {
-            habitatEnvironments.add((HabitatEnvironment) in.readObject());
+            habitatEnvironments.add(HabitatEnvironment.values()[in.readInt()]);
         }
         habitatEnvironments = Collections.unmodifiableList(habitatEnvironments);
 
@@ -183,7 +183,7 @@ public class AnimalExternalizable implements Externalizable {
         public void writeExternal(ObjectOutput out) throws IOException {
             out.writeBoolean(canBeTamed);
             out.writeBoolean(isPredator);
-            out.writeObject(movementType);
+            out.writeInt(movementType.ordinal());
 
             out.writeInt(enemies.size());
             for (String enemy : enemies) {
@@ -205,7 +205,7 @@ public class AnimalExternalizable implements Externalizable {
         public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
             canBeTamed = in.readBoolean();
             isPredator = in.readBoolean();
-            movementType = (AnimalMovementType) in.readObject();
+            movementType = AnimalMovementType.values()[in.readInt()];
 
             int enemiesCount = in.readInt();
             for (int i = 0; i < enemiesCount; i++) {

@@ -30,8 +30,8 @@ public class SerializerTest {
     private static final double ANIMAL_MAX_WEIGHT = 150_000;
     private static final int ANIMAL_MAX_AGE = 100;
 
-    private static final int LIST_SIZE = 10;
-    private static final int TRIALS_COUNT = 3000;
+    private static final int LIST_SIZE = 10_000;
+    private static final int TRIALS_COUNT = 10;
 
     private static List<Animal> animals;
     private static List<AnimalWithMethods> animalsWithMethods;
@@ -87,7 +87,7 @@ public class SerializerTest {
     }
 
     @Test
-    public void serializeWithExternalizable() throws IOException, ClassNotFoundException {
+    public void serializeWithExternalizableTest() throws IOException, ClassNotFoundException {
         String filePath = SERIALIZE_WITH_EXTERNALIZABLE_OUTPUT_FILE.toAbsolutePath().toString();
         serializer.serializeWithExternalizable(animalsExternalizable, filePath);
         List<AnimalExternalizable> deserializedAnimalsExternalizable = serializer.deserializeWithExternalizable(filePath);
@@ -95,7 +95,7 @@ public class SerializerTest {
     }
 
     @Test
-    public void customSerialize() throws IOException {
+    public void customSerializeTest() throws IOException {
         String filePath = CUSTOM_SERIALIZE_OUTPUT_FILE.toAbsolutePath().toString();
         serializer.customSerialize(animals, filePath);
         List<Animal> deserializedAnimals = serializer.customDeserialize(filePath);
@@ -106,28 +106,36 @@ public class SerializerTest {
     public void measureDefaultSerializationTime() throws IOException, ClassNotFoundException {
         String filePath = DEFAULT_SERIALIZE_OUTPUT_FILE.toAbsolutePath().toString();
         measure(() -> serializer.defaultSerialize(animals, filePath), "Default serialization");
+        System.out.printf("File size: %d bytes\n", Files.size(DEFAULT_SERIALIZE_OUTPUT_FILE));
         measure(() -> serializer.defaultDeserialize(filePath), "Default deserialization");
+        System.out.println();
     }
 
     @Test
     public void measureSerializationWithMethodsTime() throws IOException, ClassNotFoundException {
         String filePath = SERIALIZE_WITH_METHODS_OUTPUT_FILE.toAbsolutePath().toString();
         measure(() -> serializer.serializeWithMethods(animalsWithMethods, filePath), "Serialization with read/writeObject methods");
+        System.out.printf("File size: %d bytes\n", Files.size(SERIALIZE_WITH_METHODS_OUTPUT_FILE));
         measure(() -> serializer.deserializeWithMethods(filePath), "Deserialization with read/writeObject methods");
+        System.out.println();
     }
 
     @Test
     public void measureExternalizableSerializationTime() throws IOException, ClassNotFoundException {
         String filePath = SERIALIZE_WITH_EXTERNALIZABLE_OUTPUT_FILE.toAbsolutePath().toString();
         measure(() -> serializer.serializeWithExternalizable(animalsExternalizable, filePath), "Externalizable serialization");
+        System.out.printf("File size: %d bytes\n", Files.size(SERIALIZE_WITH_EXTERNALIZABLE_OUTPUT_FILE));
         measure(() -> serializer.deserializeWithExternalizable(filePath), "Externalizable deserialization");
+        System.out.println();
     }
 
     @Test
     public void measureCustomSerializationTime() throws IOException, ClassNotFoundException {
         String filePath = CUSTOM_SERIALIZE_OUTPUT_FILE.toAbsolutePath().toString();
         measure(() -> serializer.customSerialize(animals, filePath), "Custom serialization");
+        System.out.printf("File size: %d bytes\n", Files.size(CUSTOM_SERIALIZE_OUTPUT_FILE));
         measure(() -> serializer.customDeserialize(filePath), "Custom deserialization");
+        System.out.println();
     }
 
     private static Animal generateRandomAnimal(Random random) {
@@ -213,12 +221,14 @@ public class SerializerTest {
 
     private static void measure(RunnableWithExceptions payload, String title) throws IOException, ClassNotFoundException {
         System.out.printf("** %s **\n", title);
-        long start = System.currentTimeMillis();
+
+        long timeSum = 0;
         for (int i = 0; i < TRIALS_COUNT; i++) {
+            long start = System.nanoTime();
             payload.run();
+            timeSum += System.nanoTime() - start;
         }
-        long time = System.currentTimeMillis() - start;
-        System.out.printf("Elapsed time: %d\n\n", time);
+        System.out.printf("Average time: %.1f ms\n", (timeSum * 1.0 / TRIALS_COUNT) * 1e-6);
     }
 
     @FunctionalInterface

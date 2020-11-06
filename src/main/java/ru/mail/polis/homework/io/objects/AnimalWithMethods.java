@@ -40,14 +40,14 @@ public class AnimalWithMethods implements Serializable {
     }
 
     private void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.writeObject(group);
+        oos.writeInt(group.ordinal());
         oos.writeUTF(name);
         oos.writeBoolean(isWarmBlooded);
         oos.writeObject(behavior);
 
         oos.writeInt(habitatEnvironments.size());
         for (HabitatEnvironment environment : habitatEnvironments) {
-            oos.writeObject(environment);
+            oos.writeInt(environment.ordinal());
         }
         oos.writeInt(age);
         oos.writeInt(color);
@@ -55,7 +55,7 @@ public class AnimalWithMethods implements Serializable {
     }
 
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        group = (AnimalGroup) ois.readObject();
+        group = AnimalGroup.values()[ois.readInt()];
         name = ois.readUTF();
         isWarmBlooded = ois.readBoolean();
         behavior = (Behavior) ois.readObject();
@@ -63,7 +63,7 @@ public class AnimalWithMethods implements Serializable {
         int habitatEnvironmentsCount = ois.readInt();
         habitatEnvironments = new ArrayList<>();
         for (int i = 0; i < habitatEnvironmentsCount; i++) {
-            habitatEnvironments.add((HabitatEnvironment) ois.readObject());
+            habitatEnvironments.add(HabitatEnvironment.values()[ois.readInt()]);
         }
 
         age = ois.readInt();
@@ -139,7 +139,7 @@ public class AnimalWithMethods implements Serializable {
         private void writeObject(ObjectOutputStream oos) throws IOException {
             oos.writeBoolean(canBeTamed);
             oos.writeBoolean(isPredator);
-            oos.writeObject(movementType);
+            oos.writeInt(movementType.ordinal());
 
             oos.writeInt(enemies.size());
             for (String enemy : enemies) {
@@ -160,7 +160,7 @@ public class AnimalWithMethods implements Serializable {
         private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
             canBeTamed = ois.readBoolean();
             isPredator = ois.readBoolean();
-            movementType = (AnimalMovementType) ois.readObject();
+            movementType = AnimalMovementType.values()[ois.readInt()];
 
             int enemiesCount = ois.readInt();
             enemies = new ArrayList<>();
