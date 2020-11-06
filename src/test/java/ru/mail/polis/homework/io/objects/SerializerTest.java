@@ -23,6 +23,13 @@ class SerializerTest {
     @BeforeAll
     static void initFields() {
         for (int i = 0; i < countOfAnimals; i++) {
+            int randomSexIndex = random.nextInt(Animal.Sex.values().length);
+            int randomNumberOfLimbs = random.nextInt(10);
+            int randomEyeColorIndex = random.nextInt(Animal.Color.values().length);
+            int randomMainColorIndex = random.nextInt(Animal.Color.values().length);
+            int randomWeight = random.nextInt(200);
+            String randomNickname = randomString(random.nextInt(10));
+            int randomAnimalTypeIndex = random.nextInt(Animal.AnimalTypeClass.values().length);
             List<Integer> randomListSizes = new ArrayList<>();
             for (int j = 0; j < random.nextInt(10); j++) {
                 randomListSizes.add(random.nextInt(20));
@@ -30,69 +37,37 @@ class SerializerTest {
 
             //Animal
             Animal animal = new Animal();
-            animal.setSex(
-                    Animal.Sex.values()[random.nextInt(Animal.Sex.values().length)]
-            );
-            animal.setNumberOfLimbs(random.nextInt(10));
-            animal.setEyeColor(
-                    Animal.Color.values()[random.nextInt(Animal.Color.values().length)]
-            );
-            animal.setMainColor(
-                    Animal.Color.values()[random.nextInt(Animal.Color.values().length)]
-            );
-            animal.setWeight(random.nextInt(200));
-            animal.setNickname(randomString(random.nextInt(10)));
-            animal.setTypeAnimal(
-                    Animal.AnimalTypeClass.values()[random.nextInt(Animal.AnimalTypeClass.values().length)]
-            );
+            animal.setSex(Animal.Sex.values()[randomSexIndex]);
+            animal.setNumberOfLimbs(randomNumberOfLimbs);
+            animal.setEyeColor(Animal.Color.values()[randomEyeColorIndex]);
+            animal.setMainColor(Animal.Color.values()[randomMainColorIndex]);
+            animal.setWeight(randomWeight);
+            animal.setNickname(randomNickname);
+            animal.setTypeAnimal(Animal.AnimalTypeClass.values()[randomAnimalTypeIndex]);
             animal.setAnimalSizes(randomListSizes);
             animals.add(animal);
 
             //AnimalExternalizable
             AnimalExternalizable animalExternalizable = new AnimalExternalizable();
-            animalExternalizable.setSex(
-                    AnimalExternalizable.Sex
-                            .values()[random.nextInt(AnimalExternalizable.Sex.values().length)]
-            );
-            animalExternalizable.setNumberOfLimbs(random.nextInt(10));
-            animalExternalizable.setEyeColor(
-                    AnimalExternalizable.Color
-                            .values()[random.nextInt(AnimalExternalizable.Color.values().length)]
-            );
-            animalExternalizable.setMainColor(
-                    AnimalExternalizable.Color
-                            .values()[random.nextInt(AnimalExternalizable.Color.values().length)]
-            );
-            animalExternalizable.setWeight(random.nextInt(200));
-            animalExternalizable.setNickname(randomString(random.nextInt(10)));
-            animalExternalizable.setTypeAnimal(
-                    AnimalExternalizable.AnimalTypeClass
-                            .values()[random.nextInt(AnimalExternalizable.AnimalTypeClass.values().length)]
-            );
+            animalExternalizable.setSex(AnimalExternalizable.Sex.values()[randomSexIndex]);
+            animalExternalizable.setNumberOfLimbs(randomNumberOfLimbs);
+            animalExternalizable.setEyeColor(AnimalExternalizable.Color.values()[randomEyeColorIndex]);
+            animalExternalizable.setMainColor(AnimalExternalizable.Color.values()[randomMainColorIndex]);
+            animalExternalizable.setWeight(randomWeight);
+            animalExternalizable.setNickname(randomNickname);
+            animalExternalizable.setTypeAnimal(AnimalExternalizable.AnimalTypeClass.values()[randomAnimalTypeIndex]);
             animalExternalizable.setAnimalSizes(randomListSizes);
             animalsExternalizable.add(animalExternalizable);
 
             //AnimalWithMethods
             AnimalWithMethods animalWithMethods = new AnimalWithMethods();
-            animalWithMethods.setSex(
-                    AnimalWithMethods.Sex
-                            .values()[random.nextInt(AnimalWithMethods.Sex.values().length)]
-            );
-            animalWithMethods.setNumberOfLimbs(random.nextInt(10));
-            animalWithMethods.setEyeColor(
-                    AnimalWithMethods.Color
-                            .values()[random.nextInt(AnimalWithMethods.Color.values().length)]
-            );
-            animalWithMethods.setMainColor(
-                    AnimalWithMethods.Color
-                            .values()[random.nextInt(AnimalWithMethods.Color.values().length)]
-            );
-            animalWithMethods.setWeight(random.nextInt(200));
-            animalWithMethods.setNickname(randomString(random.nextInt(10)));
-            animalWithMethods.setTypeAnimal(
-                    AnimalWithMethods.AnimalTypeClass
-                            .values()[random.nextInt(AnimalWithMethods.AnimalTypeClass.values().length)]
-            );
+            animalWithMethods.setSex(AnimalWithMethods.Sex.values()[randomSexIndex]);
+            animalWithMethods.setNumberOfLimbs(randomNumberOfLimbs);
+            animalWithMethods.setEyeColor(AnimalWithMethods.Color.values()[randomEyeColorIndex]);
+            animalWithMethods.setMainColor(AnimalWithMethods.Color.values()[randomMainColorIndex]);
+            animalWithMethods.setWeight(randomWeight);
+            animalWithMethods.setNickname(randomNickname);
+            animalWithMethods.setTypeAnimal(AnimalWithMethods.AnimalTypeClass.values()[randomAnimalTypeIndex]);
             animalWithMethods.setAnimalSizes(randomListSizes);
             animalsWithMethods.add(animalWithMethods);
         }
