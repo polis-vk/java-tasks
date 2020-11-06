@@ -40,7 +40,7 @@ public class SerializerTest {
 
     for (Animal animal : animalList) {
       animalWithMethodsList.add(new AnimalWithMethods(animal.getBrain(), animal.getListName(), animal.getWeight(), animal.getName(), animal.getHabitation().toString(), animal.getDistanceTraveled()));
-      animalExternalizableList.add(new AnimalExternalizable(new BrainExternalizable(animal.getBrain().getSize()), animal.getListName(), animal.getWeight(), animal.getName(), animal.getHabitation().toString(), animal.getDistanceTraveled()));
+      animalExternalizableList.add(new AnimalExternalizable(new Brain(animal.getBrain().getSize()), animal.getListName(), animal.getWeight(), animal.getName(), animal.getHabitation().toString(), animal.getDistanceTraveled()));
     }
   }
 

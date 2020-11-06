@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public class AnimalExternalizable implements Externalizable {
 
-  private BrainExternalizable brain;
+  private Brain brain;
   private List<String> listName;
   private int weight;
   private String name;
@@ -21,7 +21,7 @@ public class AnimalExternalizable implements Externalizable {
 
   }
 
-  public AnimalExternalizable(BrainExternalizable brain, List<String> listName, int weight, String name, String habitation, long distanceTraveled) {
+  public AnimalExternalizable(Brain brain, List<String> listName, int weight, String name, String habitation, long distanceTraveled) {
     this.brain = brain;
     this.listName = listName;
     this.weight = weight;
@@ -42,7 +42,7 @@ public class AnimalExternalizable implements Externalizable {
 
   @Override
   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-    this.brain = new BrainExternalizable(in.readInt());
+    this.brain = new Brain(in.readInt());
     this.listName = (List<String>) in.readObject();
     this.weight = in.readInt();
     this.name = in.readUTF();
