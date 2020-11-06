@@ -14,12 +14,12 @@ import java.util.Objects;
  */
 public class AnimalWithMethods implements Serializable {
 
-  private final Brain brain;
-  private final List<String> listName;
-  private final int weight;
-  private final String name;
-  private final Habitation habitation;
-  private final long distanceTraveled;
+  private Brain brain;
+  private List<String> listName;
+  private int weight;
+  private String name;
+  private Habitation habitation;
+  private long distanceTraveled;
 
   public AnimalWithMethods(Brain brain, List<String> listName, int weight, String name, String habitation, long distanceTraveled) {
     this.brain = brain;
@@ -31,11 +31,21 @@ public class AnimalWithMethods implements Serializable {
   }
 
   private void writeObject(ObjectOutputStream out) throws IOException {
-    out.defaultWriteObject();
+    out.writeObject(this.brain);
+    out.writeObject(this.listName);
+    out.writeInt(this.weight);
+    out.writeUTF(this.name);
+    out.writeObject(this.habitation);
+    out.writeLong(this.distanceTraveled);
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
+    this.brain = (Brain) in.readObject();
+    this.listName = (List<String>) in.readObject();
+    this.weight = in.readInt();
+    this.name = in.readUTF();
+    this.habitation = (Habitation) in.readObject();
+    this.distanceTraveled = in.readLong();
   }
 
   @Override
