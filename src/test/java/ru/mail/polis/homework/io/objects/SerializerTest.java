@@ -135,7 +135,7 @@ public class SerializerTest {
         }
         long endTime = System.currentTimeMillis();
 
-        System.out.print(String.format("The file (%d bytes) was written in %d mls ",
+        System.out.print(String.format("The file (%d bytes) was written in %d ms ",
         Files.size(Path.of(filePath)), endTime - beginTime));
 
         long dBeginTime = System.currentTimeMillis();
@@ -167,7 +167,7 @@ public class SerializerTest {
         }
         long endTime = System.currentTimeMillis();
 
-        System.out.print(String.format("The file (%d bytes) was written in %d mls ",
+        System.out.print(String.format("The file (%d bytes) was written in %d ms ",
         Files.size(Path.of(filePath)), endTime - beginTime));
 
         long dBeginTime = System.currentTimeMillis();
@@ -199,7 +199,7 @@ public class SerializerTest {
         }
         long endTime = System.currentTimeMillis();
 
-        System.out.print(String.format("The file (%d bytes) was written in %d mls ",
+        System.out.print(String.format("The file (%d bytes) was written in %d ms ",
         Files.size(Path.of(filePath)), endTime - beginTime));
 
         long dBeginTime = System.currentTimeMillis();
@@ -231,7 +231,7 @@ public class SerializerTest {
         }
         long endTime = System.currentTimeMillis();
 
-        System.out.print(String.format("The file (%d bytes) was written in %d mls ",
+        System.out.print(String.format("The file (%d bytes) was written in %d ms ",
         Files.size(Path.of(filePath)), endTime - beginTime));
 
         long dBeginTime = System.currentTimeMillis();
