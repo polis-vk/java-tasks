@@ -31,11 +31,20 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            oos.writeInt(animals.size());
-            for (Animal animal : animals) {
-                oos.writeObject(animal);
+    public void defaultSerialize(List<Animal> animals, String fileName, boolean withHeader) throws IOException {
+        if (withHeader) {
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
+                oos.writeInt(animals.size());
+                for (Animal animal : animals) {
+                    oos.writeObject(animal);
+                }
+            }
+        } else {
+            try (AppendingObjectOutputStream oos = new AppendingObjectOutputStream(new FileOutputStream(fileName, true))) {
+                oos.writeInt(animals.size());
+                for (Animal animal : animals) {
+                    oos.writeObject(animal);
+                }
             }
         }
     }
@@ -47,13 +56,16 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
+    public List<Animal> defaultDeserialize(String fileName, int numberOfReads) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
-            int objectsCount = ois.readInt();
             List<Animal> animals = new ArrayList<>();
-            for (int i = 0; i < objectsCount; i++) {
-                animals.add((Animal) ois.readObject());
+            for(int i = 0; i < numberOfReads; i++) {
+                int objectsCount = ois.readInt();
+                for (int j = 0; j < objectsCount; j++) {
+                    animals.add((Animal) ois.readObject());
+                }
             }
+
             return animals;
         }
     }
@@ -65,11 +77,20 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) throws IOException {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            oos.writeInt(animals.size());
-            for (AnimalWithMethods animal : animals) {
-                oos.writeObject(animal);
+    public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName, boolean withHeader) throws IOException {
+        if (withHeader) {
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
+                oos.writeInt(animals.size());
+                for (AnimalWithMethods animal : animals) {
+                    oos.writeObject(animal);
+                }
+            }
+        } else {
+            try (AppendingObjectOutputStream oos = new AppendingObjectOutputStream(new FileOutputStream(fileName, true))) {
+                oos.writeInt(animals.size());
+                for (AnimalWithMethods animal : animals) {
+                    oos.writeObject(animal);
+                }
             }
         }
     }
@@ -82,13 +103,16 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<AnimalWithMethods> deserializeWithMethods(String fileName) throws IOException, ClassNotFoundException {
+    public List<AnimalWithMethods> deserializeWithMethods(String fileName, int numberOfReads) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
-            int objectsCount = ois.readInt();
             List<AnimalWithMethods> animals = new ArrayList<>();
-            for (int i = 0; i < objectsCount; i++) {
-                animals.add((AnimalWithMethods) ois.readObject());
+            for (int i = 0; i < numberOfReads; i++) {
+                int objectsCount = ois.readInt();            
+                for (int j = 0; j < objectsCount; j++) {
+                    animals.add((AnimalWithMethods) ois.readObject());
+                }
             }
+
             return animals;
         }
     }
@@ -99,12 +123,21 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) throws IOException {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            oos.writeInt(animals.size());
-            for (AnimalExternalizable animal : animals) {
-                oos.writeObject(animal);
+    public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName, boolean withHeader) throws IOException {
+        if (withHeader) {
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
+                oos.writeInt(animals.size());
+                for (AnimalExternalizable animal : animals) {
+                    animal.writeExternal(oos);
+                }
             }
+        } else {
+            try (AppendingObjectOutputStream oos = new AppendingObjectOutputStream(new FileOutputStream(fileName, true))) {
+                oos.writeInt(animals.size());
+                for (AnimalExternalizable animal : animals) {
+                    animal.writeExternal(oos);
+                }
+            }           
         }
     }
 
@@ -116,13 +149,18 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) throws IOException, ClassNotFoundException {
+    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName, int numberOfReads) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
-            int objectsCount = ois.readInt();
             List<AnimalExternalizable> animals = new ArrayList<>();
-            for (int i = 0; i < objectsCount; i++) {
-                animals.add((AnimalExternalizable) ois.readObject());
+            for (int i = 0; i < numberOfReads; i++) {
+                int objectsCount = ois.readInt();            
+                for (int j = 0; j < objectsCount; j++) {
+                    AnimalExternalizable animal = new AnimalExternalizable();
+                    animal.readExternal(ois);
+                    animals.add(animal);
+                }
             }
+
             return animals;
         }
     }
@@ -135,29 +173,56 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
-    public void customSerialize(List<Animal> animals, String fileName) throws IOException {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            out.writeInt(animals.size());
-            for (Animal animal : animals) {
-                out.writeUTF(animal.getName());
-                out.writeInt(animal.getAge());
-                List<Color> colors = animal.getColors();
-                out.writeInt(colors.size());
-                for (Color color : colors) {
-                    out.writeInt(color.ordinal());
+    public void customSerialize(List<Animal> animals, String fileName, boolean withHeader) throws IOException {
+        if (withHeader) {
+            try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
+                out.writeInt(animals.size());
+                for (Animal animal : animals) {
+                    out.writeUTF(animal.getName());
+                    out.writeInt(animal.getAge());
+                    List<Color> colors = animal.getColors();
+                    out.writeInt(colors.size());
+                    for (Color color : colors) {
+                        out.writeInt(color.ordinal());
+                    }
+                    out.writeBoolean(animal.getIsTame());
+                    out.writeInt(animal.getEatingStrategy().ordinal());
+    
+                    Animal.Taxonomy taxonomy = animal.getTaxonomy();
+                    out.writeUTF(taxonomy.getDomain());
+                    out.writeUTF(taxonomy.getKingdom());
+                    out.writeUTF(taxonomy.getPhylum());
+                    out.writeUTF(taxonomy.getClassT());
+                    out.writeUTF(taxonomy.getOrder());
+                    out.writeUTF(taxonomy.getFamily());
+                    out.writeUTF(taxonomy.getGenus());
+                    out.writeUTF(taxonomy.getSpecies());
                 }
-                out.writeBoolean(animal.getIsTame());
-                out.writeInt(animal.getEatingStrategy().ordinal());
-
-                Animal.Taxonomy taxonomy = animal.getTaxonomy();
-                out.writeUTF(taxonomy.getDomain());
-                out.writeUTF(taxonomy.getKingdom());
-                out.writeUTF(taxonomy.getPhylum());
-                out.writeUTF(taxonomy.getClassT());
-                out.writeUTF(taxonomy.getOrder());
-                out.writeUTF(taxonomy.getFamily());
-                out.writeUTF(taxonomy.getGenus());
-                out.writeUTF(taxonomy.getSpecies());
+            }
+        } else {
+            try (AppendingObjectOutputStream out = new AppendingObjectOutputStream(new FileOutputStream(fileName, true))) {
+                out.writeInt(animals.size());
+                for (Animal animal : animals) {
+                    out.writeUTF(animal.getName());
+                    out.writeInt(animal.getAge());
+                    List<Color> colors = animal.getColors();
+                    out.writeInt(colors.size());
+                    for (Color color : colors) {
+                        out.writeInt(color.ordinal());
+                    }
+                    out.writeBoolean(animal.getIsTame());
+                    out.writeInt(animal.getEatingStrategy().ordinal());
+    
+                    Animal.Taxonomy taxonomy = animal.getTaxonomy();
+                    out.writeUTF(taxonomy.getDomain());
+                    out.writeUTF(taxonomy.getKingdom());
+                    out.writeUTF(taxonomy.getPhylum());
+                    out.writeUTF(taxonomy.getClassT());
+                    out.writeUTF(taxonomy.getOrder());
+                    out.writeUTF(taxonomy.getFamily());
+                    out.writeUTF(taxonomy.getGenus());
+                    out.writeUTF(taxonomy.getSpecies());
+                }
             }
         }
     }
@@ -170,36 +235,51 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) throws IOException {
+    public List<Animal> customDeserialize(String fileName, int numberOfReads) throws IOException {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
             List<Animal> animals = new ArrayList<>();
-            int animalsCount = in.readInt();
-            for (int i = 0; i < animalsCount; i++) {
-                String name = in.readUTF();
-                int age = in.readInt();
-                int colorsCount = in.readInt();
-                Color[] colors = new Color[colorsCount];
-                for (int j = 0; j < colorsCount; j++) {
-                    colors[j] = Color.values()[in.readInt()];
+            for (int i = 0; i < numberOfReads; i++) {
+                int animalsCount = in.readInt();
+                for (int j = 0; j < animalsCount; j++) {
+                    String name = in.readUTF();
+                    int age = in.readInt();
+                    int colorsCount = in.readInt();
+                    Color[] colors = new Color[colorsCount];
+                    for (int k = 0; k < colorsCount; k++) {
+                        colors[k] = Color.values()[in.readInt()];
+                    }
+                    boolean isTame = in.readBoolean();
+                    EatingStrategy eatingStrategy = EatingStrategy.values()[in.readInt()];
+    
+                    Animal.Builder builder = new Animal.Builder(name, age, isTame, eatingStrategy, colors);
+    
+                    builder.setDomain(in.readUTF())
+                    .setKingdom(in.readUTF())
+                    .setPhylum(in.readUTF())
+                    .setClassT(in.readUTF())
+                    .setOrder(in.readUTF())
+                    .setFamily(in.readUTF())
+                    .setGenus(in.readUTF())
+                    .setSpecies(in.readUTF());      
+    
+                    animals.add(builder.build());
                 }
-                boolean isTame = in.readBoolean();
-                EatingStrategy eatingStrategy = EatingStrategy.values()[in.readInt()];
-
-                Animal.Builder builder = new Animal.Builder(name, age, isTame, eatingStrategy, colors);
-
-                builder.setDomain(in.readUTF())
-                .setKingdom(in.readUTF())
-                .setPhylum(in.readUTF())
-                .setClassT(in.readUTF())
-                .setOrder(in.readUTF())
-                .setFamily(in.readUTF())
-                .setGenus(in.readUTF())
-                .setSpecies(in.readUTF());      
-
-                animals.add(builder.build());
             }
 
             return animals;
         }
+    }
+
+    public class AppendingObjectOutputStream extends ObjectOutputStream {
+
+        public AppendingObjectOutputStream(FileOutputStream out) throws IOException {
+          super(out);
+        }
+      
+        @Override
+        protected void writeStreamHeader() throws IOException {
+          reset();
+        }
+      
     }
 }
