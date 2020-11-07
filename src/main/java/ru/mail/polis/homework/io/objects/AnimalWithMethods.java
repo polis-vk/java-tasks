@@ -29,10 +29,6 @@ public class AnimalWithMethods implements Serializable {
     this.isAlive = isAlive;
   }
 
-  public AnimalWithMethods() {
-
-  }
-
   public int getAge() {
     return age;
   }

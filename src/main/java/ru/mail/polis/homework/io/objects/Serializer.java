@@ -35,13 +35,9 @@ public class Serializer {
   public void defaultSerialize(List<Animal> animals, String fileName) {
     Path path = Paths.get(fileName);
     try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
-
-      animals.forEach(a -> {
-        try {
-          objectOutputStream.writeObject(a);
-        } catch (Exception ignored) {
-        }
-      });
+      for (Animal a : animals) {
+        objectOutputStream.writeObject(a);
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -59,12 +55,9 @@ public class Serializer {
     List<Animal> animals = new ArrayList<>();
 
     try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))) {
-
       while (true) {
         animals.add((Animal) objectInputStream.readObject());
       }
-
-    } catch (EOFException ignored) {
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -84,13 +77,9 @@ public class Serializer {
     Path path = Paths.get(fileName);
 
     try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
-
-      animals.forEach(a -> {
-        try {
-          objectOutputStream.writeObject(a);
-        } catch (Exception ignored) {
-        }
-      });
+      for (AnimalWithMethods animal : animals) {
+        objectOutputStream.writeObject(animal);
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -114,7 +103,6 @@ public class Serializer {
         animals.add((AnimalWithMethods) objectInputStream.readObject());
       }
 
-    } catch (EOFException ignored) {
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -131,14 +119,9 @@ public class Serializer {
    */
   public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
     try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
-
-      animals.forEach(a -> {
-        try {
-          a.writeExternal(objectOutputStream);
-        } catch (Exception ignored) {
-
-        }
-      });
+      for (AnimalExternalizable animal : animals) {
+        animal.writeExternal(objectOutputStream);
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -164,7 +147,6 @@ public class Serializer {
 
         animals.add(animal);
       }
-    } catch (EOFException ignored) {
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -184,18 +166,21 @@ public class Serializer {
     Path path = Paths.get(fileName);
     try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
 
-      animals.forEach(a -> {
-        try {
-          objectOutputStream.writeInt(a.getAge());
-          objectOutputStream.writeUTF(a.getName());
-          objectOutputStream.writeObject(a.getDemon());
-          objectOutputStream.writeObject(a.getFriendNames());
-          objectOutputStream.writeObject(a.getDiet());
-          objectOutputStream.writeBoolean(a.isAlive());
-        } catch (IOException e) {
-          e.printStackTrace();
+      for (Animal a : animals) {
+        objectOutputStream.writeInt(a.getAge());
+        objectOutputStream.writeUTF(a.getName());
+        objectOutputStream.writeBoolean(a.getDemon().isActive());
+
+        int size = a.getFriendNames().size();
+        objectOutputStream.writeInt(size);
+
+        for (int i = 0; i < size; i++) {
+          objectOutputStream.writeUTF(a.getFriendNames().get(i));
         }
-      });
+
+        objectOutputStream.writeUTF(a.getDiet().name());
+        objectOutputStream.writeBoolean(a.isAlive());
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -219,19 +204,28 @@ public class Serializer {
         Animal animal = new Animal(
             objectInputStream.readInt(),
             objectInputStream.readUTF(),
-            (SerializableInnerDemon) objectInputStream.readObject(),
-            (List<String>) objectInputStream.readObject(),
-            (Animal.Diet) objectInputStream.readObject(),
+            new SerializableInnerDemon(objectInputStream.readBoolean()),
+            deserializeStringList(objectInputStream.readInt(), objectInputStream),
+            Animal.Diet.valueOf(objectInputStream.readUTF()),
             objectInputStream.readBoolean()
         );
 
         animals.add(animal);
       }
-    } catch (EOFException ignored) {
     } catch (Exception e) {
       e.printStackTrace();
     }
 
     return animals;
+  }
+
+  private List<String> deserializeStringList(int amount, ObjectInputStream objectInputStream) throws IOException {
+    List<String> strings = new ArrayList<>();
+
+    for (int i = 0; i < amount; i++) {
+      strings.add(objectInputStream.readUTF());
+    }
+
+    return strings;
   }
 }

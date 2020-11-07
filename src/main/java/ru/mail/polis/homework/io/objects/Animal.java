@@ -34,10 +34,6 @@ public class Animal implements Serializable {
     this.isAlive = isAlive;
   }
 
-  public Animal() {
-
-  }
-
   public int getAge() {
     return age;
   }
