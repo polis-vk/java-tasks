@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 public class SerializerTest {
 
-    private static final int QUANTITY = 100000;
+    private static final int QUANTITY = 100;
     private static final long SEED = 2001;
     private static final List<String> foodList = Arrays.asList("mushroom", "animal", "bark", "leaves", "berries");
     private final String fileName = "src/test/java/ru/mail/polis/homework/io/object/serialize";
@@ -48,7 +48,7 @@ public class SerializerTest {
                     Arrays.asList(foodList.get(random1.nextInt(4)), foodList.get(random1.nextInt(4))),
                     random1.nextBoolean(),
                     random1.nextDouble() * 100,
-                    new Heart(random1.nextBoolean())
+                    new HeartWithMethod(random1.nextBoolean())
             );
             add(animalWithMethods);
         }
@@ -79,7 +79,7 @@ public class SerializerTest {
         long endDeserialize = System.currentTimeMillis();
         double fileSize = (double) new File(fileName).length() / (1024);
 
-        Assert.assertArrayEquals(animals.toArray(), animalsSerializer.toArray());
+        Assert.assertEquals(animals, animalsSerializer);
 
         log.log(Level.INFO, "Default: Serialize wasted time = " + (endSerialize - startTime) + "ms; " +
                 "Deserialize wasted time = " + (endDeserialize - endSerialize) + "ms; " +
@@ -95,7 +95,7 @@ public class SerializerTest {
         long endDeserialize = System.currentTimeMillis();
         double fileSize = (double) new File(fileName).length() / (1024);
 
-        Assert.assertArrayEquals(animalsExternalizable.toArray(), animalsSerializer.toArray());
+        Assert.assertEquals(animalsExternalizable, animalsSerializer);
 
         log.log(Level.INFO, "Externalize: Serialize wasted time = " + (endSerialize - startTime) + "ms; " +
                 "Deserialize wasted time = " + (endDeserialize - endSerialize) + "ms; " +
@@ -111,7 +111,7 @@ public class SerializerTest {
         long endDeserialize = System.currentTimeMillis();
         double fileSize = (double) new File(fileName).length() / (1024);
 
-        Assert.assertArrayEquals(animalsWithMethods.toArray(), animalsSerializer.toArray());
+        Assert.assertEquals(animalsWithMethods, animalsSerializer);
 
         log.log(Level.INFO, "With method: Serialize wasted time = " + (endSerialize - startTime) + "ms; " +
                 "Deserialize wasted time = " + (endDeserialize - endSerialize) + "ms; " +
@@ -127,7 +127,7 @@ public class SerializerTest {
         long endDeserialize = System.currentTimeMillis();
         double fileSize = (double) new File(fileName).length() / (1024);
 
-        Assert.assertArrayEquals(animals.toArray(), animalsSerializer.toArray());
+        Assert.assertEquals(animals, animalsSerializer);
 
         log.log(Level.INFO, "Custom: Serialize wasted time = " + (endSerialize - startTime) + "ms; " +
                 "Deserialize wasted time = " + (endDeserialize - endSerialize) + "ms; " +

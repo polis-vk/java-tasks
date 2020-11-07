@@ -17,13 +17,13 @@ import java.util.Objects;
 @Getter
 public class AnimalExternalizable implements Externalizable {
 
-    protected int age;
-    protected String name;
-    protected Habitat habitat;
-    protected List<String> food;
-    protected boolean sexIsMale;
-    protected double height;
-    protected HeartExternalizable heartExternalizable;
+    private int age;
+    private String name;
+    private Habitat habitat;
+    private List<String> food;
+    private boolean sexIsMale;
+    private double height;
+    private HeartExternalizable heartExternalizable;
 
     public enum Habitat {
         WATER,
@@ -50,23 +50,22 @@ public class AnimalExternalizable implements Externalizable {
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeInt(age);
         out.writeUTF(name);
-        out.writeObject(habitat);
+        out.writeUTF(habitat.name());
         out.writeObject(food);
         out.writeBoolean(sexIsMale);
         out.writeDouble(height);
-        heartExternalizable.writeExternal(out);
+        out.writeObject(heartExternalizable);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         age = in.readInt();
         name = in.readUTF();
-        habitat = (Habitat) in.readObject();
+        habitat = Habitat.valueOf(in.readUTF());
         food = (List<String>) in.readObject();
         sexIsMale = in.readBoolean();
         height = in.readDouble();
-        heartExternalizable = new HeartExternalizable();
-        heartExternalizable.readExternal(in);
+        heartExternalizable = (HeartExternalizable) in.readObject();
     }
 
     @Override

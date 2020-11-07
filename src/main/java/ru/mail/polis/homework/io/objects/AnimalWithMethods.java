@@ -23,7 +23,7 @@ public class AnimalWithMethods implements Serializable {
     private List<String> food;
     private boolean sexIsMale;
     private double height;
-    private Heart heart;
+    private HeartWithMethod heart;
 
     public enum Habitat {
         WATER,
@@ -32,7 +32,7 @@ public class AnimalWithMethods implements Serializable {
     }
 
     public AnimalWithMethods(int age, String name, Habitat habitat, List<String> food,
-                  boolean sexIsMale, double height, Heart heart) {
+                  boolean sexIsMale, double height, HeartWithMethod heart) {
         this.age = age;
         this.name = name;
         this.habitat = habitat;
@@ -42,28 +42,24 @@ public class AnimalWithMethods implements Serializable {
         this.heart = heart;
     }
 
-    public AnimalWithMethods() {
-
-    }
-
-    public void myWriteObject(ObjectOutputStream oos) throws IOException {
+    private void writeObject(ObjectOutputStream oos) throws IOException {
         oos.writeInt(age);
         oos.writeUTF(name);
-        oos.writeObject(habitat);
+        oos.writeUTF(habitat.name());
         oos.writeObject(food);
         oos.writeBoolean(sexIsMale);
         oos.writeDouble(height);
-        heart.myWriteObject(oos);
+        oos.writeObject(heart);
     }
 
-    public void myReadObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
         age = ois.readInt();
         name = ois.readUTF();
-        habitat = (Habitat) ois.readObject();
+        habitat = Habitat.valueOf(ois.readUTF());
         food = (List<String>) ois.readObject();
         sexIsMale = ois.readBoolean();
         height = ois.readDouble();
-        heart = new Heart().myReadObject(ois);
+        heart = (HeartWithMethod) ois.readObject();
     }
 
     @Override

@@ -2,22 +2,22 @@ package ru.mail.polis.homework.io.objects;
 
 import lombok.Getter;
 
-import java.io.Externalizable;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Getter
-public class HeartExternalizable implements Externalizable {
+public class HeartWithMethod implements Serializable {
 
     private boolean isAlive;
 
-    public HeartExternalizable(boolean isAlive) {
+    public HeartWithMethod(boolean isAlive) {
         this.isAlive = isAlive;
     }
 
-    public HeartExternalizable() {
+    public HeartWithMethod() {
         this.isAlive = true;
     }
 
@@ -25,22 +25,20 @@ public class HeartExternalizable implements Externalizable {
         isAlive = false;
     }
 
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeBoolean(isAlive);
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.writeBoolean(isAlive);
     }
 
-    @Override
-    public void readExternal(ObjectInput in) throws IOException {
-        this.isAlive = in.readBoolean();
+    private void readObject(ObjectInputStream ois) throws IOException {
+        isAlive = ois.readBoolean();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        HeartExternalizable heart = (HeartExternalizable) o;
-        return isAlive == heart.isAlive;
+        HeartWithMethod that = (HeartWithMethod) o;
+        return isAlive == that.isAlive;
     }
 
     @Override
@@ -50,10 +48,8 @@ public class HeartExternalizable implements Externalizable {
 
     @Override
     public String toString() {
-        return "HeartExternalizable{" +
+        return "Heart{" +
                 "isAlive=" + isAlive +
                 '}';
     }
-
-
 }

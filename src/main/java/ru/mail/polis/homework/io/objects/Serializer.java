@@ -65,9 +65,7 @@ public class Serializer {
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            for (AnimalWithMethods animal : animals) {
-                animal.myWriteObject(oos);
-            }
+            oos.writeObject(animals);
         } catch (IOException ignored) {
         }
 
@@ -84,12 +82,7 @@ public class Serializer {
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
         List<AnimalWithMethods> animals = new ArrayList<>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
-            AnimalWithMethods animalWithMethods;
-            while (ois.available() != 0) {
-                animalWithMethods = new AnimalWithMethods();
-                animalWithMethods.myReadObject(ois);
-                animals.add(animalWithMethods);
-            }
+            animals = (List<AnimalWithMethods>) ois.readObject();
         } catch (ClassNotFoundException | IOException ignored) {
         }
         return animals;
@@ -104,12 +97,10 @@ public class Serializer {
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            for (AnimalExternalizable animalExternalizable : animals) {
-                try {
-                    animalExternalizable.writeExternal(oos);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            try {
+                oos.writeObject(animals);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         } catch (IOException ignored) {
         }
@@ -127,12 +118,7 @@ public class Serializer {
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
         List<AnimalExternalizable> animals = new ArrayList<>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
-            AnimalExternalizable animalExternalizable;
-            while (ois.available() != 0) {
-                animalExternalizable = new AnimalExternalizable();
-                animalExternalizable.readExternal(ois);
-                animals.add(animalExternalizable);
-            }
+            animals = (List<AnimalExternalizable>) ois.readObject();
         } catch (ClassNotFoundException | IOException ignored) {
         }
         return animals;
@@ -153,7 +139,7 @@ public class Serializer {
                 try {
                     dos.writeInt(animal.getAge());
                     dos.writeUTF(animal.getName());
-                    dos.writeInt(animal.getHabitat().ordinal());
+                    dos.writeUTF(animal.getHabitat().name());
                     dos.writeInt(animal.getFood().size());
                     for (String f : animal.getFood()) {
                         dos.writeUTF(f);
@@ -186,10 +172,10 @@ public class Serializer {
                 Animal.Builder animalBuilder = new Animal().createBuilder();
                 animalBuilder.setAge(dis.readInt());
                 animalBuilder.setName(dis.readUTF());
-                animalBuilder.setHabitat(Animal.Habitat.values()[dis.readInt()]);
+                animalBuilder.setHabitat(Animal.Habitat.valueOf(dis.readUTF()));
 
                 int sizeFood = dis.readInt();
-                List<String >food = new ArrayList<>();
+                List<String> food = new ArrayList<>(sizeFood);
                 for (int j = 0; j < sizeFood; j++) {
                     food.add(dis.readUTF());
                 }

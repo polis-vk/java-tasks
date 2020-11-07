@@ -6,7 +6,6 @@ import lombok.Getter;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 
 
 /**
@@ -62,33 +61,27 @@ public class Animal implements Serializable {
             return this;
         }
 
-        public Builder setName(String name) {
+        public void setName(String name) {
             Animal.this.name = name;
-            return this;
         }
 
-        public Builder setHabitat(Habitat habitat) {
+        public void setHabitat(Habitat habitat) {
             Animal.this.habitat = habitat;
-            return this;
         }
 
-        public Builder setFood(List<String> food) {
+        public void setFood(List<String> food) {
             Animal.this.food = food;
-            return this;
         }
-         public Builder setSex(boolean sexIsMale) {
+         public void setSex(boolean sexIsMale) {
             Animal.this.sexIsMale = sexIsMale;
-            return this;
          }
 
-         public Builder setHeight(double height) {
+         public void setHeight(double height) {
             Animal.this.height = height;
-            return this;
          }
 
-         public Builder setHeart(Heart heart) {
+         public void setHeart(Heart heart) {
             Animal.this.heart = heart;
-            return this;
          }
 
          public Animal build() {
