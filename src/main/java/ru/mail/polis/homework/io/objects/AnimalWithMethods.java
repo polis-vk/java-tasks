@@ -22,6 +22,8 @@ public class AnimalWithMethods implements Serializable {
     private EatingStrategy eatingStrategy;
     private Taxonomy taxonomy;
 
+    static final long serialVersionUID = 65110105L;
+
     private AnimalWithMethods(Builder builder, Taxonomy taxonomy) {
         this.name = builder.name;
         this.age = builder.age;
@@ -90,6 +92,8 @@ public class AnimalWithMethods implements Serializable {
         private String family;
         private String genus;
         private String species;
+
+        static final long serialVersionUID = 8497120L;
         
         private Taxonomy(String domain, String kingdom, String phylum, String classT, String order, String family, String genus, String species) {
             this.domain = domain;
