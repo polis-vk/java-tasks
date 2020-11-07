@@ -16,7 +16,7 @@ public class AnimalWithMethods implements Serializable, Cloneable {
     public enum Gender {MALE, FEMALE, NEUTRAL, MAYBE_MALE, MAYBE_FEMALE, OTHER}
 
     private List<String> habitat;
-    private final String species;
+    private String species;
     private short age;
     private Gender gender;
     private boolean realExistence;
@@ -47,11 +47,21 @@ public class AnimalWithMethods implements Serializable, Cloneable {
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
+        out.writeObject(habitat);
+        out.writeUTF(species);
+        out.writeShort(age);
+        out.writeObject(gender);
+        out.writeBoolean(realExistence);
+        out.writeObject(children);
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
+        this.habitat = (ArrayList<String>) in.readObject();
+        this.species = in.readUTF();
+        age = in.readShort();
+        gender = (Gender) in.readObject();
+        realExistence = in.readBoolean();
+        children = (ArrayList<AnimalWithMethods>) in.readObject();
         if (age < 0) {
             throw new IllegalArgumentException();
         }
