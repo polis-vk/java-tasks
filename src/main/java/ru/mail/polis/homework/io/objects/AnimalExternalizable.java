@@ -13,7 +13,7 @@ import java.util.List;
  * Дубль класса Animal, для Serializer.serializeWithExternalizable
  * 3 балла
  */
-public class AnimalExternalizable implements Externalizable {
+public class AnimalExternalizable implements Externalizable, Cloneable {
     public enum Gender {MALE, FEMALE, NEUTRAL, MAYBE_MALE, MAYBE_FEMALE, OTHER}
 
     private List<String> habitat;
@@ -66,6 +66,33 @@ public class AnimalExternalizable implements Externalizable {
         gender = (AnimalExternalizable.Gender) in.readObject();
         realExistence = in.readBoolean();
         children = (ArrayList<AnimalExternalizable>) in.readObject();
+    }
+
+    @Override
+    protected AnimalExternalizable clone() throws CloneNotSupportedException {
+        return (AnimalExternalizable) super.clone();
+    }
+
+    @Override
+    public String toString() {
+        return "Habitat: " + this.habitat.toString() +
+                " Species: " + this.species +
+                " Age: " + this.age +
+                " Gender: " + this.gender +
+                " Real existence: " + this.realExistence +
+                " Children: " + this.children.toString();
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        AnimalExternalizable o = (AnimalExternalizable) obj;
+        return this.habitat.toString().equals(o.getHabitat().toString()) &&
+                this.species.equals(o.species) &&
+                this.age == o.age &&
+                this.gender == o.gender &&
+                this.realExistence == o.realExistence &&
+                this.children.equals(o.children);
     }
 
     public List<String> getHabitat() {

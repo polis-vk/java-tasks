@@ -12,7 +12,7 @@ import java.util.List;
  * Дубль класса Animal, для Serializer.serializeWithMethods
  * 3 балла
  */
-public class AnimalWithMethods implements Serializable {
+public class AnimalWithMethods implements Serializable, Cloneable {
     public enum Gender {MALE, FEMALE, NEUTRAL, MAYBE_MALE, MAYBE_FEMALE, OTHER}
 
     private List<String> habitat;
@@ -55,6 +55,34 @@ public class AnimalWithMethods implements Serializable {
         if (age < 0) {
             throw new IllegalArgumentException();
         }
+    }
+
+    @Override
+    protected AnimalExternalizable clone() throws CloneNotSupportedException {
+        return (AnimalExternalizable) super.clone();
+    }
+
+    @Override
+    public String toString() {
+        return "Habitat: " + this.habitat.toString() +
+                " Species: " + this.species +
+                " Age: " + this.age +
+                " Gender: " + this.gender +
+                " Real existence: " + this.realExistence +
+                " Children: " + this.children.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        AnimalWithMethods o = (AnimalWithMethods) obj;
+        return this.habitat.toString().equals(o.getHabitat().toString()) &&
+                this.species.equals(o.species) &&
+                this.age == o.age &&
+                this.gender == o.gender &&
+                this.realExistence == o.realExistence &&
+                this.children.equals(o.children);
     }
 
     public List<String> getHabitat() {

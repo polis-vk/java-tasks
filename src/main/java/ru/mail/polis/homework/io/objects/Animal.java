@@ -11,7 +11,7 @@ import java.util.List;
  * Всего должно быть минимум 6 полей с разными типами.
  * 1 балл
  */
-public class Animal implements Serializable {
+public class Animal implements Serializable, Cloneable {
     public enum Gender {MALE, FEMALE, NEUTRAL, MAYBE_MALE, MAYBE_FEMALE, OTHER}
 
     private List<String> habitat;
@@ -43,6 +43,34 @@ public class Animal implements Serializable {
         this.gender = gender;
         this.realExistence = realExistence;
         this.children = children;
+    }
+
+    @Override
+    protected Animal clone() throws CloneNotSupportedException {
+        return (Animal) super.clone();
+    }
+
+    @Override
+    public String toString() {
+        return "Habitat: " + this.habitat.toString() +
+                " Species: " + this.species +
+                " Age: " + this.age +
+                " Gender: " + this.gender +
+                " Real existence: " + this.realExistence +
+                " Children: " + this.children.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Animal o = (Animal) obj;
+        return this.habitat.toString().equals(o.getHabitat().toString()) &&
+                this.species.equals(o.species) &&
+                this.age == o.age &&
+                this.gender == o.gender &&
+                this.realExistence == o.realExistence &&
+                this.children.equals(o.children);
     }
 
     public List<String> getHabitat() {
