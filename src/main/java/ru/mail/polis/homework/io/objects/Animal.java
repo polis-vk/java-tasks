@@ -256,45 +256,4 @@ public class Animal implements Serializable {
         }
 
     }
-
-    public static void main(String[] args) {
-        Animal dog = new Animal.Builder("Dog", 0, true, EatingStrategy.OMNIVORE, Color.WHITE)
-            .setDomain("Eukaryota")
-            .setKingdom("Animalia")
-            .setPhylum("Chordata")
-            .setClassT("Mammalia")
-            .setOrder("Carnivora")
-            .setFamily("Canidae")
-            .setGenus("Canis")
-            .setSpecies("C. lupus")
-            .build();
-
-        Animal cat = new Animal.Builder("Cat", 0, true, EatingStrategy.OMNIVORE, Color.BLACK)
-            .setDomain("Eukaryota")
-            .setKingdom("Animalia")
-            .setPhylum("Chordata")
-            .setClassT("Mammalia")
-            .setOrder("Carnivora")
-            .setFamily("Felidae")
-            .setGenus("Felis")
-            .setSpecies("F. catus")
-            .build();
-
-        Animal cat1 = new Animal.Builder("Cat", 0, true, EatingStrategy.OMNIVORE, Color.BLACK)
-            .setDomain("Eukaryota")
-            .setKingdom("Animalia")
-            .setPhylum("Chordata")
-            .setClassT("Mammalia")
-            .setOrder("Carnivora")
-            .setFamily("Felidae")
-            .setGenus("Felis")
-            .setSpecies("F. catus")
-            .build();
-
-        System.out.println(dog);
-        System.out.println(cat);
-        if (Objects.equals(cat, cat1)) {
-            System.out.println(true);
-        }
-    }
 }
