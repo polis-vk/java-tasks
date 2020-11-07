@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static org.junit.Assert.assertEquals;
+
 public class SerializerTests {
     private final String fileName = "testFile.bin";
     private final int N = 1000;
@@ -39,7 +41,7 @@ public class SerializerTests {
 
         long begR = System.currentTimeMillis();
         for (int i = 0; i < N; i++) {
-            Serializer.defaultDeserialize(fileName);
+            assertEquals(Serializer.defaultDeserialize(fileName), animals);
         }
         long endR = System.currentTimeMillis();
         long timeR = endR - begR;
@@ -60,7 +62,7 @@ public class SerializerTests {
 
         long begR = System.currentTimeMillis();
         for (int i = 0; i < N; i++) {
-            Serializer.deserializeWithMethods(fileName);
+            assertEquals(Serializer.deserializeWithMethods(fileName), animals);
         }
         long endR = System.currentTimeMillis();
         long timeR = endR - begR;
@@ -81,7 +83,7 @@ public class SerializerTests {
 
         long begR = System.currentTimeMillis();
         for (int i = 0; i < N; i++) {
-            Serializer.deserializeWithExternalizable(fileName);
+            assertEquals(Serializer.deserializeWithExternalizable(fileName), animals);
         }
         long endR = System.currentTimeMillis();
         long timeR = endR - begR;
@@ -102,7 +104,7 @@ public class SerializerTests {
 
         long begR = System.currentTimeMillis();
         for (int i = 0; i < N; i++) {
-            Serializer.customDeserialize(fileName);
+            assertEquals(Serializer.customDeserialize(fileName), animals);
         }
         long endR = System.currentTimeMillis();
         long timeR = endR - begR;
