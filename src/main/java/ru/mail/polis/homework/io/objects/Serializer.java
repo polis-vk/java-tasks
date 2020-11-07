@@ -136,12 +136,12 @@ public class Serializer {
         try (DataOutputStream out = new DataOutputStream(Files.newOutputStream(path))) {
             out.writeInt(animals.size());
             for (Animal a : animals) {
-                printAnimal(a, out);
+                writeAnimal(a, out);
             }
         }
     }
 
-    public static void printAnimal(Animal a, DataOutputStream out) throws IOException {
+    public static void writeAnimal(Animal a, DataOutputStream out) throws IOException {
         out.writeInt(a.getHabitat().size());
         for (String s : a.getHabitat()) {
             out.writeUTF(s);
@@ -153,7 +153,7 @@ public class Serializer {
 
         out.writeInt(a.getChildren().size());
         for (Animal ch : a.getChildren()) {
-            printAnimal(ch, out);
+            writeAnimal(ch, out);
         }
     }
 
