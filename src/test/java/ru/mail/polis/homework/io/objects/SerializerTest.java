@@ -1,6 +1,11 @@
 package ru.mail.polis.homework.io.objects;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -19,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SerializerTest {
 
-    private static final int LIST_SIZE = 1000;
+    private static final int LIST_SIZE = 25000;
 
     private static final List<Animal> animals = new ArrayList<>();
 
@@ -65,6 +70,7 @@ public class SerializerTest {
         assertEquals(animals, serializer.defaultDeserialize(BIN_DEFAULT));
         String info = "Execution time: " + (System.currentTimeMillis() - start) + " ms";
         logger.log(Level.INFO, info);
+        Files.deleteIfExists(Path.of(BIN_DEFAULT));
     }
 
     @Test
@@ -83,6 +89,7 @@ public class SerializerTest {
         assertEquals(animalsWithMethods, serializer.deserializeWithMethods(BIN_METHODS));
         String info = "Execution time: " + (System.currentTimeMillis() - start) + " ms";
         logger.log(Level.INFO, info);
+        Files.deleteIfExists(Path.of(BIN_METHODS));
     }
 
     @Test
@@ -101,6 +108,7 @@ public class SerializerTest {
         assertEquals(animalsExternalizable, serializer.deserializeWithExternalizable(BIN_EXTERNAL));
         String info = "Execution time: " + (System.currentTimeMillis() - start) + " ms";
         logger.log(Level.INFO, info);
+        Files.deleteIfExists(Path.of(BIN_EXTERNAL));
     }
 
     /**
@@ -117,6 +125,7 @@ public class SerializerTest {
         Assertions.assertThrows(IllegalArgumentException.class, () ->
                 serializer.deserializeWithExternalizable(BIN_EXTERNAL)
         );
+        Files.deleteIfExists(Path.of(BIN_EXTERNAL));
     }
 
     @Test
@@ -130,12 +139,15 @@ public class SerializerTest {
 
     @Test
     @Order(8)
-    public void customDeserialize() throws IOException, ClassNotFoundException {
+    public void customDeserialize() throws IOException {
         long start = System.currentTimeMillis();
         assertEquals(animals, serializer.customDeserialize(BIN_CUSTOM));
         String info = "Execution time: " + (System.currentTimeMillis() - start) + " ms";
         logger.log(Level.INFO, info);
+        Files.deleteIfExists(Path.of(BIN_CUSTOM));
     }
+
+
 
 
 }

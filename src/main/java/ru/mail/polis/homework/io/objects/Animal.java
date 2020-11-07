@@ -1,10 +1,11 @@
 package ru.mail.polis.homework.io.objects;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 
 
 /**
@@ -20,9 +21,7 @@ public class Animal implements Serializable {
     private int weight;
     private List<String> locationsList = new ArrayList<>();
     private Colour colour = Colour.UNKNOWN;
-
-    Animal() {
-    }
+    private Parents parents = new Parents();
 
     public static Animal getRandom(Random random) {
         return newBuilder().getRandom(random);
@@ -56,6 +55,10 @@ public class Animal implements Serializable {
         return colour;
     }
 
+    public Parents getParents() {
+        return parents;
+    }
+
     @Override
     public String toString() {
         return "Animal{" +
@@ -65,6 +68,7 @@ public class Animal implements Serializable {
                 ", weight=" + weight +
                 ", locationsList=" + locationsList +
                 ", colour=" + colour +
+                ", parents=" + parents +
                 '}';
     }
 
@@ -78,12 +82,13 @@ public class Animal implements Serializable {
                 animalKind == animal.animalKind &&
                 Objects.equals(name, animal.name) &&
                 Objects.equals(locationsList, animal.locationsList) &&
-                colour == animal.colour;
+                colour == animal.colour &&
+                Objects.equals(parents, animal.parents);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(animalKind, name, age, weight, locationsList, colour);
+        return Objects.hash(animalKind, name, age, weight, locationsList, colour, parents);
     }
 
     public class Builder {
@@ -96,6 +101,7 @@ public class Animal implements Serializable {
             for (int i = 0; i < random.nextInt(20); i++)
                 addLocations(Utils.getRandomString(random, 12));
             setColour(Colour.getRandom(random));
+            setParents(new Parents(random.nextBoolean(), random.nextBoolean()));
             return build();
         }
 
@@ -134,6 +140,11 @@ public class Animal implements Serializable {
 
         public Builder setColour(Colour colour) {
             Animal.this.colour = colour;
+            return this;
+        }
+
+        public Builder setParents(Parents parents) {
+            Animal.this.parents = parents;
             return this;
         }
 

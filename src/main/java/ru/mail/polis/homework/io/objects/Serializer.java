@@ -68,8 +68,9 @@ public class Serializer {
         Path path = Paths.get(fileName);
         try (ObjectOutputStream output =
                      new ObjectOutputStream(Files.newOutputStream(path))) {
+            output.writeInt(animals.size());
             for (AnimalWithMethods animal : animals) {
-                animal.writeObject(output);
+                output.writeObject(animal);
             }
         }
     }
@@ -87,14 +88,9 @@ public class Serializer {
         List<AnimalWithMethods> resultList = new ArrayList<>();
         try (ObjectInputStream input =
                      new ObjectInputStream(Files.newInputStream(path))) {
-            while (true) {
-                try {
-                    AnimalWithMethods animal = new AnimalWithMethods();
-                    animal.readObject(input);
-                    resultList.add(animal);
-                } catch (IOException e) {
-                    break;
-                }
+            int size = input.readInt();
+            for (int i = 0; i < size; i++) {
+                resultList.add((AnimalWithMethods) input.readObject());
             }
         }
         return resultList;
@@ -111,8 +107,9 @@ public class Serializer {
         Path path = Paths.get(fileName);
         try (ObjectOutputStream output =
                      new ObjectOutputStream(Files.newOutputStream(path))) {
+            output.writeInt(animals.size());
             for (AnimalExternalizable animal : animals) {
-                animal.writeExternal(output);
+                output.writeObject(animal);
             }
         }
     }
@@ -130,14 +127,9 @@ public class Serializer {
         List<AnimalExternalizable> resultList = new ArrayList<>();
         try (ObjectInputStream input =
                      new ObjectInputStream(Files.newInputStream(path))) {
-            while (true) {
-                try {
-                    AnimalExternalizable animalExternalizable = new AnimalExternalizable();
-                    animalExternalizable.readExternal(input);
-                    resultList.add(animalExternalizable);
-                } catch (IOException e) {
-                    break;
-                }
+            int size = input.readInt();
+            for (int i = 0; i < size; i++) {
+                resultList.add((AnimalExternalizable) input.readObject());
             }
         }
         return resultList;
@@ -155,6 +147,7 @@ public class Serializer {
         Path path = Paths.get(fileName);
         try (ObjectOutputStream out =
                      new ObjectOutputStream(Files.newOutputStream(path))) {
+            out.writeInt(animals.size());
             for (Animal animal : animals) {
                 out.writeUTF(animal.getAnimalKind().name());
                 out.writeUTF(animal.getName());
@@ -162,9 +155,12 @@ public class Serializer {
                 out.writeInt(animal.getWeight());
                 List<String> locationList = animal.getLocationsList();
                 out.writeInt(locationList.size());
-                for (String location : locationList)
+                for (String location : locationList) {
                     out.writeUTF(location);
+                }
                 out.writeUTF(animal.getColour().name());
+                out.writeUTF(Boolean.toString(animal.getParents().isDoHaveFather()));
+                out.writeUTF(Boolean.toString(animal.getParents().isDoHaveMother()));
             }
         }
     }
@@ -177,29 +173,27 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) throws IOException, ClassNotFoundException {
+    public List<Animal> customDeserialize(String fileName) throws IOException {
         Path path = Paths.get(fileName);
         List<Animal> resultList = new ArrayList<>();
         try (ObjectInputStream in =
                      new ObjectInputStream(Files.newInputStream(path))) {
-            while (true) {
-                try {
-                    Animal.Builder animal = Animal.newBuilder();
-                    animal.setAnimalKind(AnimalKind.valueOf(in.readUTF()));
-                    animal.setName(in.readUTF());
-                    animal.setAge(in.readInt());
-                    animal.setWeight(in.readInt());
-                    List<String> locationList = new ArrayList<>();
-                    int size = in.readInt();
-                    for (int i = 0; i < size; i++) {
-                        locationList.add(in.readUTF());
-                    }
-                    animal.setLocationList(locationList);
-                    animal.setColour(Colour.valueOf(in.readUTF()));
-                    resultList.add(animal.build());
-                } catch (IOException e) {
-                    break;
+            int listSize = in.readInt();
+            for (int i = 0; i < listSize; i++) {
+                Animal.Builder animal = Animal.newBuilder();
+                animal.setAnimalKind(AnimalKind.valueOf(in.readUTF()));
+                animal.setName(in.readUTF());
+                animal.setAge(in.readInt());
+                animal.setWeight(in.readInt());
+                int size = in.readInt();
+                List<String> locationList = new ArrayList<>(size);
+                for (int k = 0; k < size; k++) {
+                    locationList.add(in.readUTF());
                 }
+                animal.setLocationList(locationList);
+                animal.setColour(Colour.valueOf(in.readUTF()));
+                animal.setParents(new Parents(Boolean.parseBoolean(in.readUTF()), Boolean.parseBoolean(in.readUTF())));
+                resultList.add(animal.build());
             }
         }
         return resultList;

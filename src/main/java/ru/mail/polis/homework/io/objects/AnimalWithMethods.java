@@ -18,26 +18,26 @@ public class AnimalWithMethods implements Serializable {
     private int weight;
     private List<String> locationsList = new ArrayList<>();
     private Colour colour = Colour.UNKNOWN;
+    private Parents parents = new Parents();
 
-    AnimalWithMethods() {
-    }
-
-    void writeObject(ObjectOutputStream out) throws IOException {
-        animalKind.writeObject(out);
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeObject(animalKind);
         out.writeUTF(name);
         out.writeInt(age);
         out.writeInt(weight);
         out.writeObject(locationsList);
-        colour.writeObject(out);
+        out.writeObject(colour);
+        out.writeObject(parents);
     }
 
-    void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        animalKind = animalKind.readObject(in);
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        animalKind = (AnimalKind) in.readObject();
         name = in.readUTF();
         age = in.readInt();
         weight = in.readInt();
         locationsList = (List<String>) in.readObject();
-        colour = colour.readObject(in);
+        colour = (Colour) in.readObject();
+        parents = (Parents) in.readObject();
     }
 
     public static AnimalWithMethods getRandom(Random random) {
@@ -46,18 +46,6 @@ public class AnimalWithMethods implements Serializable {
 
     public static Builder newBuilder() {
         return new AnimalWithMethods().new Builder();
-    }
-
-    @Override
-    public String toString() {
-        return "AnimalWithMethods{" +
-                "animalKind=" + animalKind +
-                ", name='" + name + '\'' +
-                ", age=" + age +
-                ", weight=" + weight +
-                ", locationsList=" + locationsList +
-                ", colour=" + colour +
-                '}';
     }
 
     @Override
@@ -70,12 +58,26 @@ public class AnimalWithMethods implements Serializable {
                 animalKind == animal.animalKind &&
                 Objects.equals(name, animal.name) &&
                 Objects.equals(locationsList, animal.locationsList) &&
-                colour == animal.colour;
+                colour == animal.colour &&
+                Objects.equals(parents, animal.parents);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(animalKind, name, age, weight, locationsList, colour);
+        return Objects.hash(animalKind, name, age, weight, locationsList, colour, parents);
+    }
+
+    @Override
+    public String toString() {
+        return "AnimalWithMethods{" +
+                "animalKind=" + animalKind +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", weight=" + weight +
+                ", locationsList=" + locationsList +
+                ", colour=" + colour +
+                ", parents=" + parents +
+                '}';
     }
 
     public class Builder {
@@ -91,6 +93,7 @@ public class AnimalWithMethods implements Serializable {
             for (int i = 0; i < random.nextInt(20); i++)
                 addLocations(Utils.getRandomString(random, 12));
             setColour(Colour.getRandom(random));
+            setParents(new Parents(random.nextBoolean(), random.nextBoolean()));
             return build();
         }
 
@@ -126,6 +129,11 @@ public class AnimalWithMethods implements Serializable {
 
         public Builder setColour(Colour colour) {
             AnimalWithMethods.this.colour = colour;
+            return this;
+        }
+
+        public Builder setParents(Parents parents) {
+            AnimalWithMethods.this.parents = parents;
             return this;
         }
 
