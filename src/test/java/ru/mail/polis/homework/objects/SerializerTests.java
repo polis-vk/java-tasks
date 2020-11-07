@@ -46,7 +46,7 @@ public class SerializerTests {
         long endR = System.currentTimeMillis();
         long timeR = endR - begR;
 
-        log.log(Level.INFO, "\nDefault: \t\nwriting time = " + timeW + "\t\nreading time = " + timeR + "\t\nfile size = " + path.toFile().length() + " byte");
+        log.log(Level.INFO, "\nDefault: \t\nWriting time = " + timeW + "\t\nReading time = " + timeR + "\t\nFile size = " + path.toFile().length() + " byte");
     }
 
     @Test
@@ -67,7 +67,8 @@ public class SerializerTests {
         long endR = System.currentTimeMillis();
         long timeR = endR - begR;
 
-        log.log(Level.INFO, "\nWith methods: \t\nwriting time = " + timeW + "\t\nreading time = " + timeR + "\t\nfile size = " + path.toFile().length() + " bytes\n");
+        log.log(Level.INFO, "\nWith methods: \t\nWriting time = " + timeW + "\t\nReading time = " + timeR + "\t\nFile size = " + path.toFile().length() + " byte");
+
     }
 
     @Test
@@ -88,7 +89,7 @@ public class SerializerTests {
         long endR = System.currentTimeMillis();
         long timeR = endR - begR;
 
-        log.log(Level.INFO, "\nWith externalizable: \t\nwriting time = " + timeW + "\t\nreading time = " + timeR + "\t\nfile size = " + path.toFile().length() + " bytes\n");
+        log.log(Level.INFO, "\nWith externalizable: \t\nWriting time = " + timeW + "\t\nReading time = " + timeR + "\t\nFile size = " + path.toFile().length() + " bytes\n");
     }
 
 
@@ -109,7 +110,7 @@ public class SerializerTests {
         long endR = System.currentTimeMillis();
         long timeR = endR - begR;
 
-        log.log(Level.INFO, "\nCustom: \t\nwriting time = " + timeW + "\t\nreading time = " + timeR + "\t\nfile size = " + path.toFile().length() + " bytes\n");
+        log.log(Level.INFO, "\nCustom: \t\nWriting time = " + timeW + "\t\nReading time = " + timeR + "\t\nFile size = " + path.toFile().length() + " bytes\n");
     }
 
     @After

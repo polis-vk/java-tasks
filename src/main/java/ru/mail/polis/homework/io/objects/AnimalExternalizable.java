@@ -23,7 +23,8 @@ public class AnimalExternalizable implements Externalizable, Cloneable {
     private boolean realExistence;
     private List<AnimalExternalizable> children;
 
-    public AnimalExternalizable() { }
+    public AnimalExternalizable() {
+    }
 
     public AnimalExternalizable(ArrayList<String> habitat, String species, short age, AnimalExternalizable.Gender gender, boolean realExistence) {
         if (age < 0) {
@@ -49,7 +50,7 @@ public class AnimalExternalizable implements Externalizable, Cloneable {
         this.children = children;
     }
 
-
+    @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeObject(habitat);
         out.writeUTF(species);
@@ -59,8 +60,9 @@ public class AnimalExternalizable implements Externalizable, Cloneable {
         out.writeObject(children);
     }
 
+    @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        habitat = (ArrayList<String>)in.readObject();
+        habitat = (ArrayList<String>) in.readObject();
         species = in.readUTF();
         age = in.readShort();
         gender = (AnimalExternalizable.Gender) in.readObject();
@@ -82,6 +84,7 @@ public class AnimalExternalizable implements Externalizable, Cloneable {
                 " Real existence: " + this.realExistence +
                 " Children: " + this.children.toString();
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
