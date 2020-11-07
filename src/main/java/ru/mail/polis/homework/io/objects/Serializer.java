@@ -112,7 +112,7 @@ public class Serializer {
         : new AppendingObjectOutputStream(new FileOutputStream(fileName, true))) {
             oos.writeInt(animals.size());
             for (AnimalExternalizable animal : animals) {
-                animal.writeExternal(oos);
+                oos.writeObject(animal);
             }
         }
     }
@@ -131,9 +131,7 @@ public class Serializer {
             for (int i = 0; i < numberOfReads; i++) {
                 int objectsCount = ois.readInt();            
                 for (int j = 0; j < objectsCount; j++) {
-                    AnimalExternalizable animal = new AnimalExternalizable();
-                    animal.readExternal(ois);
-                    animals.add(animal);
+                    animals.add((AnimalExternalizable) ois.readObject());
                 }
             }
 
