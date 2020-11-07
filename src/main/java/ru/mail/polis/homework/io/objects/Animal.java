@@ -29,13 +29,14 @@ public class Animal implements Serializable {
     private List<String> food;
     private Colour animalColor;
 
-    public Animal(int a, double w, boolean s, String n, animalType t, List<String> f) {
+    public Animal(int a, double w, boolean s, String n, animalType t, List<String> f, Colour ac) {
         this.age = a;
         this.weight = w;
         this.gender = s;
         this.name = n;
         this.kindOfAnimal = t;
         this.food = f;
+        this.animalColor = ac;
     }
 
     @Override
