@@ -77,11 +77,11 @@ public class SerializerTest {
     try {
       long beforeSerialization = System.currentTimeMillis();
       serializer.defaultSerialize(justAnimals, fileName);
-      long serializationTime = System.nanoTime() - beforeSerialization;
+      long serializationTime = System.currentTimeMillis() - beforeSerialization;
 
       long beforeDeserialization = System.currentTimeMillis();
       List<Animal> animals = serializer.defaultDeserialize(fileName);
-      long deserializationTime = System.nanoTime() - beforeDeserialization;
+      long deserializationTime = System.currentTimeMillis() - beforeDeserialization;
 
       long size = Files.size(path);
 
@@ -100,11 +100,11 @@ public class SerializerTest {
     try {
       long beforeSerialization = System.currentTimeMillis();
       serializer.serializeWithMethods(animalsWithMethods, fileName);
-      long serializationTime = System.nanoTime() - beforeSerialization;
+      long serializationTime = System.currentTimeMillis() - beforeSerialization;
 
       long beforeDeserialization = System.currentTimeMillis();
       List<AnimalWithMethods> animals = serializer.deserializeWithMethods(fileName);
-      long deserializationTime = System.nanoTime() - beforeDeserialization;
+      long deserializationTime = System.currentTimeMillis() - beforeDeserialization;
 
       long size = Files.size(path);
 
@@ -123,11 +123,11 @@ public class SerializerTest {
     try {
       long beforeSerialization = System.currentTimeMillis();
       serializer.serializeWithExternalizable(animalsExtern, fileName);
-      long serializationTime = System.nanoTime() - beforeSerialization;
+      long serializationTime = System.currentTimeMillis() - beforeSerialization;
 
       long beforeDeserialization = System.currentTimeMillis();
       List<AnimalExternalizable> animals = serializer.deserializeWithExternalizable(fileName);
-      long deserializationTime = System.nanoTime() - beforeDeserialization;
+      long deserializationTime = System.currentTimeMillis() - beforeDeserialization;
 
       long size = Files.size(path);
 
@@ -146,11 +146,11 @@ public class SerializerTest {
     try {
       long beforeSerialization = System.currentTimeMillis();
       serializer.customSerialize(justAnimals, fileName);
-      long serializationTime = System.nanoTime() - beforeSerialization;
+      long serializationTime = System.currentTimeMillis() - beforeSerialization;
 
       long beforeDeserialization = System.currentTimeMillis();
       List<Animal> animals = serializer.customDeserialize(fileName);
-      long deserializationTime = System.nanoTime() - beforeDeserialization;
+      long deserializationTime = System.currentTimeMillis() - beforeDeserialization;
 
       long size = Files.size(path);
 
@@ -174,7 +174,7 @@ public class SerializerTest {
     System.out.println(
         testName + "\n"
             + "Animal amount: " + AMOUNT + "\n"
-            + "File size in bytes:  " + size + "\n"
+            + "File size in kb:  " + size / 1024 + "\n"
             + "Serialization time in millis: " + serializationTime + "\n"
             + "Deserialization Time in millis: " + deserializationTime + "\n"
     );
