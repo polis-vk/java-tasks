@@ -68,10 +68,12 @@ public class SerializerTest {
         serialize.accept(animals, FILE_PATH.toString());
         long finishTime = System.currentTimeMillis();
         long serializeTime = finishTime - startTime;
+        
         startTime = System.currentTimeMillis();
         deserialize.apply(FILE_PATH.toString());
         finishTime = System.currentTimeMillis();
         long deserializeTime = finishTime - startTime;
+        
         printResult(serializeType, serializeTime, deserializeTime, Files.size(FILE_PATH));
         Files.deleteIfExists(FILE_PATH);
     }
@@ -89,7 +91,7 @@ public class SerializerTest {
         private static final int MAX_AGE = 100;
         private static final int MIN_NAME_LENGTH = 3;
         private static final int MAX_NAME_LENGTH = 10;
-        private static final int OWNER_TYPES_COUNT = Animal.Owner.values().length;
+        private static final int OWNER_TYPES_COUNT = Owner.values().length;
         
         public static Animal getAnimal() {
             return new Animal(RandomAnimal.getAge(), RandomAnimal.getIsFriendly(),
@@ -137,8 +139,8 @@ public class SerializerTest {
             return new Kind(getName(), RANDOM.nextInt(Integer.MAX_VALUE) + 1);
         }
         
-        private static Animal.Owner getOwnerType() {
-            return Animal.Owner.values()[RANDOM.nextInt(OWNER_TYPES_COUNT)];
+        private static Owner getOwnerType() {
+            return Owner.values()[RANDOM.nextInt(OWNER_TYPES_COUNT)];
         }
     }
 }

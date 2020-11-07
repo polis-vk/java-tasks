@@ -69,10 +69,4 @@ public class Animal implements Serializable {
     public int hashCode() {
         return Objects.hash(age, isFriendly, name, weightByLastDays, kind, owner);
     }
-    
-    public enum Owner {
-        PERSON,
-        ZOO,
-        OWNER_LESS
-    }
 }

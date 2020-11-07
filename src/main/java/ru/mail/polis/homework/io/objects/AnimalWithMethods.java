@@ -18,15 +18,39 @@ public class AnimalWithMethods implements Serializable {
     private String name;
     private List<Integer> weightByLastDays;
     private Kind kind;
-    private Animal.Owner owner;
+    private Owner owner;
     
-    public AnimalWithMethods(int age, boolean isFriendly, String name, List<Integer> weightByLastDays, Kind kind, Animal.Owner owner) {
+    public AnimalWithMethods(int age, boolean isFriendly, String name, List<Integer> weightByLastDays, Kind kind, Owner owner) {
         this.age = age;
         this.isFriendly = isFriendly;
         this.name = name;
         this.weightByLastDays = weightByLastDays;
         this.kind = kind;
         this.owner = owner;
+    }
+    
+    public int getAge() {
+        return age;
+    }
+    
+    public boolean isFriendly() {
+        return isFriendly;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public List<Integer> getWeightByLastDays() {
+        return weightByLastDays;
+    }
+    
+    public Kind getKind() {
+        return kind;
+    }
+    
+    public Owner getOwner() {
+        return owner;
     }
     
     private void writeObject(ObjectOutputStream out) throws IOException {
@@ -40,7 +64,7 @@ public class AnimalWithMethods implements Serializable {
         }
         out.writeUTF(kind.getName());
         out.writeLong(kind.getPopulationSize());
-        out.writeInt(owner.ordinal());
+        out.writeUTF(owner.name());
     }
     
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -53,7 +77,7 @@ public class AnimalWithMethods implements Serializable {
             weightByLastDays.add(in.readInt());
         }
         kind = new Kind(in.readUTF(), in.readLong());
-        owner = Animal.Owner.values()[in.readInt()];
+        owner = Owner.valueOf(in.readUTF());
     }
     
     @Override
