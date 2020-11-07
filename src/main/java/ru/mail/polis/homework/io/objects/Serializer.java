@@ -32,19 +32,11 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName, boolean withHeader) throws IOException {
-        if (withHeader) {
-            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
-                oos.writeInt(animals.size());
-                for (Animal animal : animals) {
-                    oos.writeObject(animal);
-                }
-            }
-        } else {
-            try (AppendingObjectOutputStream oos = new AppendingObjectOutputStream(new FileOutputStream(fileName, true))) {
-                oos.writeInt(animals.size());
-                for (Animal animal : animals) {
-                    oos.writeObject(animal);
-                }
+        try (ObjectOutputStream oos = withHeader ? new ObjectOutputStream(new FileOutputStream(fileName))
+        : new AppendingObjectOutputStream(new FileOutputStream(fileName, true))) {
+            oos.writeInt(animals.size());
+            for (Animal animal : animals) {
+                oos.writeObject(animal);
             }
         }
     }
@@ -78,19 +70,11 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName, boolean withHeader) throws IOException {
-        if (withHeader) {
-            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
-                oos.writeInt(animals.size());
-                for (AnimalWithMethods animal : animals) {
-                    oos.writeObject(animal);
-                }
-            }
-        } else {
-            try (AppendingObjectOutputStream oos = new AppendingObjectOutputStream(new FileOutputStream(fileName, true))) {
-                oos.writeInt(animals.size());
-                for (AnimalWithMethods animal : animals) {
-                    oos.writeObject(animal);
-                }
+        try (ObjectOutputStream oos = withHeader ? new ObjectOutputStream(new FileOutputStream(fileName))
+        : new AppendingObjectOutputStream(new FileOutputStream(fileName, true))) {
+            oos.writeInt(animals.size());
+            for (AnimalWithMethods animal : animals) {
+                oos.writeObject(animal);
             }
         }
     }
@@ -124,20 +108,12 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName, boolean withHeader) throws IOException {
-        if (withHeader) {
-            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
-                oos.writeInt(animals.size());
-                for (AnimalExternalizable animal : animals) {
-                    animal.writeExternal(oos);
-                }
+        try (ObjectOutputStream oos = withHeader ? new ObjectOutputStream(new FileOutputStream(fileName))
+        : new AppendingObjectOutputStream(new FileOutputStream(fileName, true))) {
+            oos.writeInt(animals.size());
+            for (AnimalExternalizable animal : animals) {
+                animal.writeExternal(oos);
             }
-        } else {
-            try (AppendingObjectOutputStream oos = new AppendingObjectOutputStream(new FileOutputStream(fileName, true))) {
-                oos.writeInt(animals.size());
-                for (AnimalExternalizable animal : animals) {
-                    animal.writeExternal(oos);
-                }
-            }           
         }
     }
 
@@ -174,55 +150,29 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName, boolean withHeader) throws IOException {
-        if (withHeader) {
-            try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
-                out.writeInt(animals.size());
-                for (Animal animal : animals) {
-                    out.writeUTF(animal.getName());
-                    out.writeInt(animal.getAge());
-                    List<Color> colors = animal.getColors();
-                    out.writeInt(colors.size());
-                    for (Color color : colors) {
-                        out.writeInt(color.ordinal());
-                    }
-                    out.writeBoolean(animal.getIsTame());
-                    out.writeInt(animal.getEatingStrategy().ordinal());
-    
-                    Animal.Taxonomy taxonomy = animal.getTaxonomy();
-                    out.writeUTF(taxonomy.getDomain());
-                    out.writeUTF(taxonomy.getKingdom());
-                    out.writeUTF(taxonomy.getPhylum());
-                    out.writeUTF(taxonomy.getClassT());
-                    out.writeUTF(taxonomy.getOrder());
-                    out.writeUTF(taxonomy.getFamily());
-                    out.writeUTF(taxonomy.getGenus());
-                    out.writeUTF(taxonomy.getSpecies());
+        try (ObjectOutputStream out = withHeader ? new ObjectOutputStream(new FileOutputStream(fileName))
+        : new AppendingObjectOutputStream(new FileOutputStream(fileName, true))) {
+            out.writeInt(animals.size());
+            for (Animal animal : animals) {
+                out.writeUTF(animal.getName());
+                out.writeInt(animal.getAge());
+                List<Color> colors = animal.getColors();
+                out.writeInt(colors.size());
+                for (Color color : colors) {
+                    out.writeInt(color.ordinal());
                 }
-            }
-        } else {
-            try (AppendingObjectOutputStream out = new AppendingObjectOutputStream(new FileOutputStream(fileName, true))) {
-                out.writeInt(animals.size());
-                for (Animal animal : animals) {
-                    out.writeUTF(animal.getName());
-                    out.writeInt(animal.getAge());
-                    List<Color> colors = animal.getColors();
-                    out.writeInt(colors.size());
-                    for (Color color : colors) {
-                        out.writeInt(color.ordinal());
-                    }
-                    out.writeBoolean(animal.getIsTame());
-                    out.writeInt(animal.getEatingStrategy().ordinal());
-    
-                    Animal.Taxonomy taxonomy = animal.getTaxonomy();
-                    out.writeUTF(taxonomy.getDomain());
-                    out.writeUTF(taxonomy.getKingdom());
-                    out.writeUTF(taxonomy.getPhylum());
-                    out.writeUTF(taxonomy.getClassT());
-                    out.writeUTF(taxonomy.getOrder());
-                    out.writeUTF(taxonomy.getFamily());
-                    out.writeUTF(taxonomy.getGenus());
-                    out.writeUTF(taxonomy.getSpecies());
-                }
+                out.writeBoolean(animal.getIsTame());
+                out.writeInt(animal.getEatingStrategy().ordinal());
+
+                Animal.Taxonomy taxonomy = animal.getTaxonomy();
+                out.writeUTF(taxonomy.getDomain());
+                out.writeUTF(taxonomy.getKingdom());
+                out.writeUTF(taxonomy.getPhylum());
+                out.writeUTF(taxonomy.getClassT());
+                out.writeUTF(taxonomy.getOrder());
+                out.writeUTF(taxonomy.getFamily());
+                out.writeUTF(taxonomy.getGenus());
+                out.writeUTF(taxonomy.getSpecies());
             }
         }
     }
