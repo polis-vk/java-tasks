@@ -16,42 +16,110 @@ public class Animal implements Serializable {
     private AnimalTypeClass typeAnimal;
     private String nickname;
     private int weight;
+    private int age;
     private List<Integer> animalSizes;
     private Color mainColor;
     private Color eyeColor;
     private int numberOfLimbs;
     private Sex sex;
+    private Habitat habitat;
+
+    static class Habitat implements Serializable {
+        private String placeName;
+        private int averageTemperature;
+        private int heightAboveSeaLevel;
+
+        Habitat(String placeName, int averageTemperature, int heightAboveSeaLevel) {
+            this.placeName = placeName;
+            this.averageTemperature = averageTemperature;
+            this.heightAboveSeaLevel = heightAboveSeaLevel;
+        }
+
+        public String getPlaceName() {
+            return placeName;
+        }
+
+        public void setPlaceName(String placeName) {
+            this.placeName = placeName;
+        }
+
+        public int getAverageTemperature() {
+            return averageTemperature;
+        }
+
+        public void setAverageTemperature(int averageTemperature) {
+            this.averageTemperature = averageTemperature;
+        }
+
+        public int getHeightAboveSeaLevel() {
+            return heightAboveSeaLevel;
+        }
+
+        public void setHeightAboveSeaLevel(int heightAboveSeaLevel) {
+            this.heightAboveSeaLevel = heightAboveSeaLevel;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Habitat habitat = (Habitat) o;
+            return averageTemperature == habitat.averageTemperature &&
+                    heightAboveSeaLevel == habitat.heightAboveSeaLevel &&
+                    placeName.equals(habitat.placeName);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(placeName, averageTemperature, heightAboveSeaLevel);
+        }
+
+        @Override
+        public String toString() {
+            return "Habitat{" +
+                    "placeName='" + placeName + '\'' +
+                    ", averageTemperature=" + averageTemperature +
+                    ", heightAboveSeaLevel=" + heightAboveSeaLevel +
+                    '}';
+        }
+    }
 
     public Animal(AnimalTypeClass typeAnimal,
                   String nickname,
                   int weight,
+                  int age,
                   List<Integer> animalSizes,
                   Color mainColor,
                   Color eyeColor,
                   int numberOfLimbs,
-                  Sex sex) {
+                  Sex sex,
+                  Habitat habitat) {
         this.typeAnimal = typeAnimal;
         this.nickname = nickname;
         this.weight = weight;
+        this.age = age;
         this.animalSizes = animalSizes;
         this.mainColor = mainColor;
         this.eyeColor = eyeColor;
         this.numberOfLimbs = numberOfLimbs;
         this.sex = sex;
+        this.habitat = habitat;
     }
 
     public Animal() {
-        this.sex = Sex.MALE;
         this.typeAnimal = AnimalTypeClass.UNKNOWN;
         this.nickname = "";
         this.weight = 0;
+        this.age = 0;
         this.animalSizes = new ArrayList<>();
         this.mainColor = Color.UNKNOWN;
         this.eyeColor = Color.UNKNOWN;
         this.numberOfLimbs = 0;
+        this.sex = Sex.MALE;
+        this.habitat = new Habitat("", 0, 0);
     }
 
-    enum AnimalTypeClass implements Serializable {
+    enum AnimalTypeClass {
         MAMMALS,
         BIRDS,
         FISH,
@@ -60,7 +128,7 @@ public class Animal implements Serializable {
         UNKNOWN
     }
 
-    enum Color implements Serializable {
+    enum Color {
         RED,
         GRAY,
         WHITE,
@@ -74,7 +142,7 @@ public class Animal implements Serializable {
         UNKNOWN
     }
 
-    enum Sex implements Serializable {
+    enum Sex {
         MALE,
         FEMALE,
         UNKNOWN
@@ -84,32 +152,80 @@ public class Animal implements Serializable {
         return typeAnimal;
     }
 
+    public void setTypeAnimal(AnimalTypeClass typeAnimal) {
+        this.typeAnimal = typeAnimal;
+    }
+
     public String getNickname() {
         return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public int getWeight() {
         return weight;
     }
 
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
     public List<Integer> getAnimalSizes() {
         return animalSizes;
+    }
+
+    public void setAnimalSizes(List<Integer> animalSizes) {
+        this.animalSizes = animalSizes;
     }
 
     public Color getMainColor() {
         return mainColor;
     }
 
+    public void setMainColor(Color mainColor) {
+        this.mainColor = mainColor;
+    }
+
     public Color getEyeColor() {
         return eyeColor;
+    }
+
+    public void setEyeColor(Color eyeColor) {
+        this.eyeColor = eyeColor;
     }
 
     public int getNumberOfLimbs() {
         return numberOfLimbs;
     }
 
+    public void setNumberOfLimbs(int numberOfLimbs) {
+        this.numberOfLimbs = numberOfLimbs;
+    }
+
     public Sex getSex() {
         return sex;
+    }
+
+    public void setSex(Sex sex) {
+        this.sex = sex;
+    }
+
+    public Habitat getHabitat() {
+        return habitat;
+    }
+
+    public void setHabitat(Habitat habitat) {
+        this.habitat = habitat;
     }
 
     @Override
@@ -118,17 +234,21 @@ public class Animal implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
         return weight == animal.weight &&
+                age == animal.age &&
                 numberOfLimbs == animal.numberOfLimbs &&
                 typeAnimal == animal.typeAnimal &&
                 nickname.equals(animal.nickname) &&
                 animalSizes.equals(animal.animalSizes) &&
                 mainColor == animal.mainColor &&
-                eyeColor == animal.eyeColor;
+                eyeColor == animal.eyeColor &&
+                sex == animal.sex &&
+                habitat.equals(animal.habitat);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(typeAnimal, nickname, weight, animalSizes, mainColor, eyeColor, numberOfLimbs);
+        return Objects
+                .hash(typeAnimal, nickname, weight, age, animalSizes, mainColor, eyeColor, numberOfLimbs, sex, habitat);
     }
 
     @Override
@@ -137,43 +257,13 @@ public class Animal implements Serializable {
                 "typeAnimal=" + typeAnimal +
                 ", nickname='" + nickname + '\'' +
                 ", weight=" + weight +
+                ", age=" + age +
                 ", animalSizes=" + animalSizes +
                 ", mainColor=" + mainColor +
                 ", eyeColor=" + eyeColor +
                 ", numberOfLimbs=" + numberOfLimbs +
                 ", sex=" + sex +
-                "}\n";
-    }
-
-    public void setTypeAnimal(AnimalTypeClass typeAnimal) {
-        this.typeAnimal = typeAnimal;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public void setWeight(int weight) {
-        this.weight = weight;
-    }
-
-    public void setAnimalSizes(List<Integer> animalSizes) {
-        this.animalSizes = animalSizes;
-    }
-
-    public void setMainColor(Color mainColor) {
-        this.mainColor = mainColor;
-    }
-
-    public void setEyeColor(Color eyeColor) {
-        this.eyeColor = eyeColor;
-    }
-
-    public void setNumberOfLimbs(int numberOfLimbs) {
-        this.numberOfLimbs = numberOfLimbs;
-    }
-
-    public void setSex(Sex sex) {
-        this.sex = sex;
+                ", habitat=" + habitat +
+                '}';
     }
 }

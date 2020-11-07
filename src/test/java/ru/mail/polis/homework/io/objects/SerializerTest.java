@@ -1,7 +1,11 @@
 package ru.mail.polis.homework.io.objects;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
@@ -11,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class SerializerTest {
     private static List<Animal> animals = new ArrayList<>();
     private static List<AnimalExternalizable> animalsExternalizable = new ArrayList<>();
@@ -18,58 +23,77 @@ class SerializerTest {
     private static Random random = new Random();
     private static Serializer serializer = new Serializer();
 
-    private static final int countOfAnimals = 5000;
+    private static final int countOfAnimals = 50000;
 
     @BeforeAll
     static void initFields() {
         for (int i = 0; i < countOfAnimals; i++) {
-            int randomSexIndex = random.nextInt(Animal.Sex.values().length);
-            int randomNumberOfLimbs = random.nextInt(10);
-            int randomEyeColorIndex = random.nextInt(Animal.Color.values().length);
-            int randomMainColorIndex = random.nextInt(Animal.Color.values().length);
-            int randomWeight = random.nextInt(200);
-            String randomNickname = randomString(random.nextInt(10));
             int randomAnimalTypeIndex = random.nextInt(Animal.AnimalTypeClass.values().length);
+            String randomNickname = randomString(random.nextInt(10));
+            int randomWeight = random.nextInt(200);
+            int randomAge = random.nextInt(50);
             List<Integer> randomListSizes = new ArrayList<>();
             for (int j = 0; j < random.nextInt(10); j++) {
                 randomListSizes.add(random.nextInt(20));
             }
+            int randomMainColorIndex = random.nextInt(Animal.Color.values().length);
+            int randomEyeColorIndex = random.nextInt(Animal.Color.values().length);
+            int randomNumberOfLimbs = random.nextInt(10);
+            int randomSexIndex = random.nextInt(Animal.Sex.values().length);
+            String randomHabitatPlaceName = randomString(random.nextInt(10));
+            int randomHabitatAverageTemperature = random.nextInt(500);
+            int randomHabitatHeightAboveSeaLevel = random.nextInt(10000);
 
-            //Animal
-            Animal animal = new Animal();
-            animal.setSex(Animal.Sex.values()[randomSexIndex]);
-            animal.setNumberOfLimbs(randomNumberOfLimbs);
-            animal.setEyeColor(Animal.Color.values()[randomEyeColorIndex]);
-            animal.setMainColor(Animal.Color.values()[randomMainColorIndex]);
-            animal.setWeight(randomWeight);
-            animal.setNickname(randomNickname);
-            animal.setTypeAnimal(Animal.AnimalTypeClass.values()[randomAnimalTypeIndex]);
-            animal.setAnimalSizes(randomListSizes);
-            animals.add(animal);
+            animals.add(new Animal(
+                    Animal.AnimalTypeClass.values()[randomAnimalTypeIndex],
+                    randomNickname,
+                    randomWeight,
+                    randomAge,
+                    randomListSizes,
+                    Animal.Color.values()[randomMainColorIndex],
+                    Animal.Color.values()[randomEyeColorIndex],
+                    randomNumberOfLimbs,
+                    Animal.Sex.values()[randomSexIndex],
+                    new Animal.Habitat(
+                            randomHabitatPlaceName,
+                            randomHabitatAverageTemperature,
+                            randomHabitatHeightAboveSeaLevel
+                    )
+            ));
 
-            //AnimalExternalizable
-            AnimalExternalizable animalExternalizable = new AnimalExternalizable();
-            animalExternalizable.setSex(AnimalExternalizable.Sex.values()[randomSexIndex]);
-            animalExternalizable.setNumberOfLimbs(randomNumberOfLimbs);
-            animalExternalizable.setEyeColor(AnimalExternalizable.Color.values()[randomEyeColorIndex]);
-            animalExternalizable.setMainColor(AnimalExternalizable.Color.values()[randomMainColorIndex]);
-            animalExternalizable.setWeight(randomWeight);
-            animalExternalizable.setNickname(randomNickname);
-            animalExternalizable.setTypeAnimal(AnimalExternalizable.AnimalTypeClass.values()[randomAnimalTypeIndex]);
-            animalExternalizable.setAnimalSizes(randomListSizes);
-            animalsExternalizable.add(animalExternalizable);
+            animalsExternalizable.add(new AnimalExternalizable(
+                    AnimalExternalizable.AnimalTypeClass.values()[randomAnimalTypeIndex],
+                    randomNickname,
+                    randomWeight,
+                    randomAge,
+                    randomListSizes,
+                    AnimalExternalizable.Color.values()[randomMainColorIndex],
+                    AnimalExternalizable.Color.values()[randomEyeColorIndex],
+                    randomNumberOfLimbs,
+                    AnimalExternalizable.Sex.values()[randomSexIndex],
+                    new AnimalExternalizable.Habitat(
+                            randomHabitatPlaceName,
+                            randomHabitatAverageTemperature,
+                            randomHabitatHeightAboveSeaLevel
+                    )
+            ));
 
-            //AnimalWithMethods
-            AnimalWithMethods animalWithMethods = new AnimalWithMethods();
-            animalWithMethods.setSex(AnimalWithMethods.Sex.values()[randomSexIndex]);
-            animalWithMethods.setNumberOfLimbs(randomNumberOfLimbs);
-            animalWithMethods.setEyeColor(AnimalWithMethods.Color.values()[randomEyeColorIndex]);
-            animalWithMethods.setMainColor(AnimalWithMethods.Color.values()[randomMainColorIndex]);
-            animalWithMethods.setWeight(randomWeight);
-            animalWithMethods.setNickname(randomNickname);
-            animalWithMethods.setTypeAnimal(AnimalWithMethods.AnimalTypeClass.values()[randomAnimalTypeIndex]);
-            animalWithMethods.setAnimalSizes(randomListSizes);
-            animalsWithMethods.add(animalWithMethods);
+            animalsWithMethods.add(new AnimalWithMethods(
+                    AnimalWithMethods.AnimalTypeClass.values()[randomAnimalTypeIndex],
+                    randomNickname,
+                    randomWeight,
+                    randomAge,
+                    randomListSizes,
+                    AnimalWithMethods.Color.values()[randomMainColorIndex],
+                    AnimalWithMethods.Color.values()[randomEyeColorIndex],
+                    randomNumberOfLimbs,
+                    AnimalWithMethods.Sex.values()[randomSexIndex],
+                    new AnimalWithMethods.Habitat(
+                            randomHabitatPlaceName,
+                            randomHabitatAverageTemperature,
+                            randomHabitatHeightAboveSeaLevel
+                    )
+            ));
         }
     }
 
@@ -83,102 +107,102 @@ class SerializerTest {
     }
 
     @Test
+    @Order(0)
     void defaultSerialize() throws IOException {
         long beginTime = System.currentTimeMillis();
-        serializer.defaultSerialize(animals, "defaultSerializeTest.bin");
+        serializer.defaultSerialize(animals, "defaultTest.bin");
         long endTime = System.currentTimeMillis();
-        System.out.println(String.format("File defaultSerializeTest.bin (%d BYTE) was CREATED in %d mls",
-                Files.size(Path.of("defaultSerializeTest.bin")),
+        System.out.println(String.format("File defaultTest.bin (%d BYTE) was CREATED in %d mls",
+                Files.size(Path.of("defaultTest.bin")),
                 endTime - beginTime));
-        Files.delete(Path.of("defaultSerializeTest.bin"));
     }
 
     @Test
-    void defaultDeserialize() throws IOException {
-        serializer.defaultSerialize(animals, "defaultDeserializeTest.bin");
+    @Order(1)
+    void defaultDeserialize() throws IOException, ClassNotFoundException {
         long beginTime = System.currentTimeMillis();
-        List<Animal> deserializeList = serializer.defaultDeserialize("defaultDeserializeTest.bin");
+        List<Animal> deserializeList = serializer.defaultDeserialize("defaultTest.bin");
         long endTime = System.currentTimeMillis();
         assertEquals(deserializeList, animals);
-        System.out.println(String.format("File defaultDeserializeTest.bin (%d BYTE) was DESERIALIZED in %d mls",
-                Files.size(Path.of("defaultDeserializeTest.bin")),
+        System.out.println(String.format("File defaultTest.bin (%d BYTE) was DESERIALIZED in %d mls\n",
+                Files.size(Path.of("defaultTest.bin")),
                 endTime - beginTime));
-        Files.delete(Path.of("defaultDeserializeTest.bin"));
+        Files.delete(Path.of("defaultTest.bin"));
     }
 
     @Test
+    @Order(2)
     void serializeWithMethods() throws IOException {
         long beginTime = System.currentTimeMillis();
-        serializer.serializeWithMethods(animalsWithMethods, "serializeWithMethodsTest.bin");
+        serializer.serializeWithMethods(animalsWithMethods, "withMethodsTest.bin");
         long endTime = System.currentTimeMillis();
-        System.out.println(String.format("File serializeWithMethodsTest.bin (%d BYTE) was CREATED in %d mls",
-                Files.size(Path.of("serializeWithMethodsTest.bin")),
+        System.out.println(String.format("File withMethodsTest.bin (%d BYTE) was CREATED in %d mls",
+                Files.size(Path.of("withMethodsTest.bin")),
                 endTime - beginTime));
-        Files.delete(Path.of("serializeWithMethodsTest.bin"));
     }
 
     @Test
+    @Order(3)
     void deserializeWithMethods() throws IOException {
-        serializer.serializeWithMethods(animalsWithMethods, "deserializeWithMethodsTest.bin");
         long beginTime = System.currentTimeMillis();
-        List<AnimalWithMethods> deserializeList = serializer.deserializeWithMethods("deserializeWithMethodsTest.bin");
+        List<AnimalWithMethods> deserializeList = serializer.deserializeWithMethods("withMethodsTest.bin");
         long endTime = System.currentTimeMillis();
         assertEquals(deserializeList, animalsWithMethods);
-        System.out.println(String.format("File deserializeWithMethodsTest.bin (%d BYTE) was DESERIALIZED in %d mls",
-                Files.size(Path.of("deserializeWithMethodsTest.bin")),
+        System.out.println(String.format("File withMethodsTest.bin (%d BYTE) was DESERIALIZED in %d mls\n",
+                Files.size(Path.of("withMethodsTest.bin")),
                 endTime - beginTime));
-        Files.delete(Path.of("deserializeWithMethodsTest.bin"));
+        Files.delete(Path.of("withMethodsTest.bin"));
     }
 
     @Test
+    @Order(4)
     void serializeWithExternalizable() throws IOException {
         long beginTime = System.currentTimeMillis();
-        serializer.serializeWithExternalizable(animalsExternalizable, "serializeWithExternalizableTest.bin");
+        serializer.serializeWithExternalizable(animalsExternalizable, "withExternalizableTest.bin");
         long endTime = System.currentTimeMillis();
-        System.out.println(String.format("File serializeWithExternalizableTest.bin (%d BYTE) was CREATED in %d mls",
-                Files.size(Path.of("serializeWithExternalizableTest.bin")),
+        System.out.println(String.format("File withExternalizableTest.bin (%d BYTE) was CREATED in %d mls",
+                Files.size(Path.of("withExternalizableTest.bin")),
                 endTime - beginTime));
-        Files.delete(Path.of("serializeWithExternalizableTest.bin"));
     }
 
     @Test
+    @Order(5)
     void deserializeWithExternalizable() throws IOException {
-        serializer.serializeWithExternalizable(animalsExternalizable, "deserializeWithExternalizableTest.bin");
         long beginTime = System.currentTimeMillis();
         List<AnimalExternalizable> deserializeList =
-                serializer.deserializeWithExternalizable("deserializeWithExternalizableTest.bin");
+                serializer.deserializeWithExternalizable("withExternalizableTest.bin");
         long endTime = System.currentTimeMillis();
         assertEquals(deserializeList, animalsExternalizable);
         System.out.println(
-                String.format("File deserializeWithExternalizableTest.bin (%d BYTE) was DESERIALIZED in %d mls",
-                Files.size(Path.of("deserializeWithExternalizableTest.bin")),
+                String.format("File withExternalizableTest.bin (%d BYTE) was DESERIALIZED in %d mls\n",
+                Files.size(Path.of("withExternalizableTest.bin")),
                 endTime - beginTime)
         );
-        Files.delete(Path.of("deserializeWithExternalizableTest.bin"));
+        Files.delete(Path.of("withExternalizableTest.bin"));
     }
 
     @Test
+    @Order(6)
     void customSerialize() throws IOException {
         long beginTime = System.currentTimeMillis();
-        serializer.customSerialize(animals, "customSerializeTest.bin");
+        serializer.customSerialize(animals, "customTest.bin");
         long endTime = System.currentTimeMillis();
-        System.out.println(String.format("File customSerializeTest.bin (%d BYTE) was CREATED in %d mls",
-                Files.size(Path.of("customSerializeTest.bin")),
+        System.out.println(String.format("File customTest.bin (%d BYTE) was CREATED in %d mls",
+                Files.size(Path.of("customTest.bin")),
                 endTime - beginTime));
-        Files.delete(Path.of("customSerializeTest.bin"));
     }
 
     @Test
+    @Order(7)
     void customDeserialize() throws IOException {
-        serializer.customSerialize(animals, "customDeserializeTest.bin");
         long beginTime = System.currentTimeMillis();
         List<Animal> deserializeList =
-                serializer.customDeserialize("customDeserializeTest.bin");
+                serializer.customDeserialize("customTest.bin");
         long endTime = System.currentTimeMillis();
         assertEquals(deserializeList, animals);
-        System.out.println(String.format("File customDeserializeTest.bin (%d BYTE) was DESERIALIZED in %d mls",
-                Files.size(Path.of("customDeserializeTest.bin")),
+        System.out.println(String.format("File customTest.bin (%d BYTE) was DESERIALIZED in %d mls\n",
+                Files.size(Path.of("customTest.bin")),
                 endTime - beginTime));
-        Files.delete(Path.of("customDeserializeTest.bin"));
+        Files.delete(Path.of("customTest.bin"));
     }
 }
