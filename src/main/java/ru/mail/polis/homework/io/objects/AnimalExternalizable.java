@@ -64,10 +64,10 @@ public class AnimalExternalizable implements Externalizable {
         out.writeInt(age);
         out.writeInt(colors.size());
         for (Color color : colors) {
-            out.writeInt(color.ordinal());
+            out.writeUTF(color.name());
         }
         out.writeBoolean(isTame);
-        out.writeInt(eatingStrategy.ordinal());
+        out.writeUTF(eatingStrategy.name());
         taxonomy.writeExternal(out);
     }
 
@@ -78,11 +78,11 @@ public class AnimalExternalizable implements Externalizable {
         int colorsCount = in.readInt();
         colors = new ArrayList<>();
         for (int i = 0; i < colorsCount; i++) {
-            colors.add(Color.values()[in.readInt()]);
+            colors.add(Color.valueOf(in.readUTF()));
         }
         colors = Collections.unmodifiableList(colors);
         isTame = in.readBoolean();
-        eatingStrategy = EatingStrategy.values()[in.readInt()];
+        eatingStrategy = EatingStrategy.valueOf(in.readUTF());
         taxonomy = new Taxonomy();
         taxonomy.readExternal(in);
     }

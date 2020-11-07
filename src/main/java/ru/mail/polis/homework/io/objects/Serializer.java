@@ -157,10 +157,10 @@ public class Serializer {
                 List<Color> colors = animal.getColors();
                 out.writeInt(colors.size());
                 for (Color color : colors) {
-                    out.writeInt(color.ordinal());
+                    out.writeUTF(color.name());
                 }
                 out.writeBoolean(animal.getIsTame());
-                out.writeInt(animal.getEatingStrategy().ordinal());
+                out.writeUTF(animal.getEatingStrategy().name());
 
                 Animal.Taxonomy taxonomy = animal.getTaxonomy();
                 out.writeUTF(taxonomy.getDomain());
@@ -194,10 +194,10 @@ public class Serializer {
                     int colorsCount = in.readInt();
                     Color[] colors = new Color[colorsCount];
                     for (int k = 0; k < colorsCount; k++) {
-                        colors[k] = Color.values()[in.readInt()];
+                        colors[k] = Color.valueOf(in.readUTF());
                     }
                     boolean isTame = in.readBoolean();
-                    EatingStrategy eatingStrategy = EatingStrategy.values()[in.readInt()];
+                    EatingStrategy eatingStrategy = EatingStrategy.valueOf(in.readUTF());
     
                     Animal.Builder builder = new Animal.Builder(name, age, isTame, eatingStrategy, colors);
     

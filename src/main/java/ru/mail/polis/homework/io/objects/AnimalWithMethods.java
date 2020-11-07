@@ -60,10 +60,10 @@ public class AnimalWithMethods implements Serializable {
         oos.writeInt(age);
         oos.writeInt(colors.size());
         for (Color color : colors) {
-            oos.writeInt(color.ordinal());
+            oos.writeUTF(color.name());
         }
         oos.writeBoolean(isTame);
-        oos.writeInt(eatingStrategy.ordinal());
+        oos.writeUTF(eatingStrategy.name());
         oos.writeObject(taxonomy);
     }
 
@@ -73,11 +73,11 @@ public class AnimalWithMethods implements Serializable {
         int colorsCount = ois.readInt();
         colors = new ArrayList<>();
         for (int i = 0; i < colorsCount; i++) {
-            colors.add(Color.values()[ois.readInt()]);
+            colors.add(Color.valueOf(ois.readUTF()));
         }
         colors = Collections.unmodifiableList(colors);
         isTame = ois.readBoolean();
-        eatingStrategy = EatingStrategy.values()[ois.readInt()];
+        eatingStrategy = EatingStrategy.valueOf(ois.readUTF());
         taxonomy = (Taxonomy) ois.readObject();
     }
 
