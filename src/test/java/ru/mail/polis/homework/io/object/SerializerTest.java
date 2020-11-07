@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 public class SerializerTest {
 
-    private static final int QUANTITY = 100;
+    private static final int QUANTITY = 10000;
     private static final long SEED = 2001;
     private static final List<String> foodList = Arrays.asList("mushroom", "animal", "bark", "leaves", "berries");
     private final String fileName = "src/test/java/ru/mail/polis/homework/io/object/serialize";
