@@ -79,7 +79,7 @@ public class Animal implements Serializable {
 
     public void writeObjectCustom(ObjectOutput out) throws IOException {
         out.writeUTF(name);
-        out.writeInt(diet.ordinal());
+        out.writeUTF(diet.name());
         genotype.writeObjectCustom(out);
         out.writeInt(speciesId);
         out.writeInt(scaredOf.size());
@@ -91,7 +91,7 @@ public class Animal implements Serializable {
 
     public static Animal readObjectCustom(ObjectInput in) throws IOException {
         String name = in.readUTF();
-        Diet diet = Diet.values()[in.readInt()];
+        Diet diet = Diet.valueOf(in.readUTF());
         Genotype genotype = Genotype.readObjectCustom(in);
         int speciesId = in.readInt();
         int size = in.readInt();
@@ -132,13 +132,78 @@ public class Animal implements Serializable {
         return Objects.hash(name, diet, genotype, speciesId, scaredOf, singleCell);
     }
 
+    public static class Genotype implements Serializable {
+        private List<Chromosome> chromosomes;
+        private boolean isImmutable;
+
+        public Genotype(List<Chromosome> chromosomes, boolean isImmutable) {
+            this.chromosomes = new ArrayList<>(chromosomes.size());
+            this.isImmutable = isImmutable;
+        }
+
+        public List<Chromosome> getChromosomes() {
+            if (isImmutable) {
+                return Collections.unmodifiableList(chromosomes);
+            }
+            return chromosomes;
+        }
+
+        public int getSize() {
+            return chromosomes.size();
+        }
+
+        public Chromosome getChromosome(int index) {
+            return chromosomes.get(index);
+        }
+
+        public boolean isImmutable() {
+            return isImmutable;
+        }
+
+        @Override
+        public String toString() {
+            return "Genotype{" +
+                    "chromosomes=" + chromosomes +
+                    ", isImmutable=" + isImmutable +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Genotype genotype = (Genotype) o;
+            return isImmutable == genotype.isImmutable &&
+                    Objects.equals(chromosomes, genotype.chromosomes);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(chromosomes, isImmutable);
+        }
+
+        public void writeObjectCustom(ObjectOutput out) throws IOException {
+            out.writeBoolean(isImmutable);
+            out.writeInt(chromosomes.size());
+            for (Chromosome c : chromosomes) {
+                c.writeObjectCustom(out);
+            }
+        }
+
+        public static Genotype readObjectCustom(ObjectInput in) throws IOException {
+            boolean isImmutable = in.readBoolean();
+            int size = in.readInt();
+            List<Chromosome> chromosomes = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+                chromosomes.add(Chromosome.readObjectCustom(in));
+            }
+            return new Genotype(chromosomes, isImmutable);
+        }
+    }
+
     public static class Chromosome implements Serializable {
         private int[] genome;
         private boolean isImmutable;
-
-        private Chromosome() {
-
-        }
 
         public Chromosome(int[] genes, boolean isImmutable) {
             this.genome = Arrays.copyOf(genes, genes.length);
@@ -220,79 +285,6 @@ public class Animal implements Serializable {
                 genome[i] = in.readInt();
             }
             return new Chromosome(genome, isImmutable);
-        }
-    }
-
-    public static class Genotype implements Serializable {
-        private List<Chromosome> chromosomes;
-        private boolean isImmutable;
-
-        private Genotype() {
-
-        }
-
-        public Genotype(List<Chromosome> chromosomes, boolean isImmutable) {
-            this.chromosomes = new ArrayList<>(chromosomes.size());
-            this.isImmutable = isImmutable;
-        }
-
-        public List<Chromosome> getChromosomes() {
-            if (isImmutable) {
-                return Collections.unmodifiableList(chromosomes);
-            }
-            return chromosomes;
-        }
-
-        public int getSize() {
-            return chromosomes.size();
-        }
-
-        public Chromosome getChromosome(int index) {
-            return chromosomes.get(index);
-        }
-
-        public boolean isImmutable() {
-            return isImmutable;
-        }
-
-        @Override
-        public String toString() {
-            return "Genotype{" +
-                    "chromosomes=" + chromosomes +
-                    ", isImmutable=" + isImmutable +
-                    '}';
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Genotype genotype = (Genotype) o;
-            return isImmutable == genotype.isImmutable &&
-                    Objects.equals(chromosomes, genotype.chromosomes);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(chromosomes, isImmutable);
-        }
-
-        public void writeObjectCustom(ObjectOutput out) throws IOException {
-            out.writeBoolean(isImmutable);
-            out.writeInt(chromosomes.size());
-            for (Chromosome c : chromosomes) {
-                c.writeObjectCustom(out);
-            }
-        }
-
-        public static Genotype readObjectCustom(ObjectInput in) throws IOException {
-            boolean isImmutable = in.readBoolean();
-            int size = in.readInt();
-            List<Chromosome> chromosomes = new ArrayList<>(size);
-            for (int i = 0; i < size; i++) {
-                chromosomes.add(Chromosome.readObjectCustom(in));
-            }
-            return new Genotype(chromosomes, isImmutable);
         }
     }
 }

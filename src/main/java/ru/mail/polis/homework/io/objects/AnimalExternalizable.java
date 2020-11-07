@@ -134,6 +134,80 @@ public class AnimalExternalizable implements Externalizable {
         singleCell = in.readBoolean();
     }
 
+    public static class Genotype implements Externalizable {
+        private List<Chromosome> chromosomes;
+        private boolean isImmutable;
+
+        public Genotype() {
+
+        }
+
+        public Genotype(List<Chromosome> chromosomes, boolean isImmutable) {
+            this.chromosomes = new ArrayList<>(chromosomes.size());
+            this.isImmutable = isImmutable;
+        }
+
+        public List<Chromosome> getChromosomes() {
+            if (isImmutable) {
+                return Collections.unmodifiableList(chromosomes);
+            }
+            return chromosomes;
+        }
+
+        public int getSize() {
+            return chromosomes.size();
+        }
+
+        public Chromosome getChromosome(int index) {
+            return chromosomes.get(index);
+        }
+
+        public boolean isImmutable() {
+            return isImmutable;
+        }
+
+        @Override
+        public String toString() {
+            return "Genotype{" +
+                    "chromosomes=" + chromosomes +
+                    ", isImmutable=" + isImmutable +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Genotype genotype = (Genotype) o;
+            return isImmutable == genotype.isImmutable &&
+                    Objects.equals(chromosomes, genotype.chromosomes);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(chromosomes, isImmutable);
+        }
+
+        @Override
+        public void writeExternal(ObjectOutput out) throws IOException {
+            out.writeBoolean(isImmutable);
+            out.writeInt(chromosomes.size());
+            for (Chromosome chromosome : chromosomes) {
+                out.writeObject(chromosome);
+            }
+        }
+
+        @Override
+        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+            isImmutable = in.readBoolean();
+            int size = in.readInt();
+            chromosomes = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+               chromosomes.add((Chromosome) in.readObject());
+            }
+        }
+    }
+
     public static class Chromosome implements Externalizable {
         private int[] genome;
         private boolean isImmutable;
@@ -222,80 +296,6 @@ public class AnimalExternalizable implements Externalizable {
             genome = new int[size];
             for (int i = 0; i < size; i++) {
                 genome[i] = in.readInt();
-            }
-        }
-    }
-
-    public static class Genotype implements Externalizable {
-        private List<Chromosome> chromosomes;
-        private boolean isImmutable;
-
-        public Genotype() {
-
-        }
-
-        public Genotype(List<Chromosome> chromosomes, boolean isImmutable) {
-            this.chromosomes = new ArrayList<>(chromosomes.size());
-            this.isImmutable = isImmutable;
-        }
-
-        public List<Chromosome> getChromosomes() {
-            if (isImmutable) {
-                return Collections.unmodifiableList(chromosomes);
-            }
-            return chromosomes;
-        }
-
-        public int getSize() {
-            return chromosomes.size();
-        }
-
-        public Chromosome getChromosome(int index) {
-            return chromosomes.get(index);
-        }
-
-        public boolean isImmutable() {
-            return isImmutable;
-        }
-
-        @Override
-        public String toString() {
-            return "Genotype{" +
-                    "chromosomes=" + chromosomes +
-                    ", isImmutable=" + isImmutable +
-                    '}';
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Genotype genotype = (Genotype) o;
-            return isImmutable == genotype.isImmutable &&
-                    Objects.equals(chromosomes, genotype.chromosomes);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(chromosomes, isImmutable);
-        }
-
-        @Override
-        public void writeExternal(ObjectOutput out) throws IOException {
-            out.writeBoolean(isImmutable);
-            out.writeInt(chromosomes.size());
-            for (Chromosome chromosome : chromosomes) {
-                out.writeObject(chromosome);
-            }
-        }
-
-        @Override
-        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-            isImmutable = in.readBoolean();
-            int size = in.readInt();
-            chromosomes = new ArrayList<>(size);
-            for (int i = 0; i < size; i++) {
-               chromosomes.add((Chromosome) in.readObject());
             }
         }
     }
