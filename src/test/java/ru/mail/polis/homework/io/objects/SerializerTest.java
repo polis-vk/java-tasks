@@ -69,7 +69,6 @@ public class SerializerTest {
     long serialisedTime = endTime - startTime;
 
     startTime = System.currentTimeMillis();
-
     List<AnimalWithMethods> deserializedList = deserialize(() -> serializer.deserializeWithMethods(fileForTest));
     endTime = System.currentTimeMillis();
     long deserializeTime = endTime - startTime;
@@ -87,7 +86,6 @@ public class SerializerTest {
 
     startTime = System.currentTimeMillis();
     List<AnimalExternalizable> deserializedList = deserialize(() -> serializer.deserializeWithExternalizable(fileForTest));
-
     endTime = System.currentTimeMillis();
     long deserializeTime = endTime - startTime;
 
