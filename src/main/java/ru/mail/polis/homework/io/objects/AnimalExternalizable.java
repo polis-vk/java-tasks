@@ -132,7 +132,8 @@ public class AnimalExternalizable implements Externalizable {
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeUTF(name);
-        out.writeObject(tag);
+        out.writeLong(tag.getId());
+        out.writeUTF(tag.getSeries());
         out.writeInt(age);
 
         List<String> temp = getHabitat();
@@ -141,7 +142,7 @@ public class AnimalExternalizable implements Externalizable {
             out.writeUTF(habitat);
         }
 
-        out.writeObject(size);
+        out.writeUTF(size.toString());
         out.writeDouble(weight);
         out.writeBoolean(canFly);
     }
@@ -149,7 +150,7 @@ public class AnimalExternalizable implements Externalizable {
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         name = in.readUTF();
-        tag = (BioTag) in.readObject();
+        tag = new BioTag(in.readLong(), in.readUTF());
         age = in.readInt();
 
         int length = in.readInt();
@@ -159,7 +160,7 @@ public class AnimalExternalizable implements Externalizable {
         }
         habitat = temp;
 
-        size = (Size) in.readObject();
+        size = Size.valueOf(in.readUTF());
         weight = in.readDouble();
         canFly = in.readBoolean();
     }

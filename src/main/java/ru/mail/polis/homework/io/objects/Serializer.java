@@ -73,7 +73,7 @@ public class Serializer {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
             out.writeInt(animals.size());
             for (AnimalWithMethods animal : animals) {
-                animal.writeObject(out);
+                out.writeObject(animal);
             }
         } catch (IOException ignored) {
         }
@@ -91,11 +91,8 @@ public class Serializer {
         List<AnimalWithMethods> animals = new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
             int size = in.readInt();
-            AnimalWithMethods tempAnimal;
             for (int i = 0; i < size; ++i) {
-                tempAnimal = new AnimalWithMethods();
-                tempAnimal.readObject(in);
-                animals.add(tempAnimal);
+                animals.add((AnimalWithMethods) in.readObject());
             }
         } catch (IOException | ClassNotFoundException ignored) {
         }
@@ -113,7 +110,7 @@ public class Serializer {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
             out.writeInt(animals.size());
             for (AnimalExternalizable animal : animals) {
-                animal.writeExternal(out);
+                out.writeObject(animal);
             }
         } catch (IOException ignored) {
         }
@@ -131,11 +128,8 @@ public class Serializer {
         List<AnimalExternalizable> animals = new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
             int size = in.readInt();
-            AnimalExternalizable tempAnimal;
             for (int i = 0; i < size; ++i) {
-                tempAnimal = new AnimalExternalizable();
-                tempAnimal.readExternal(in);
-                animals.add(tempAnimal);
+                animals.add((AnimalExternalizable) in.readObject());
             }
         } catch (IOException | ClassNotFoundException ignored) {
         }
@@ -161,7 +155,7 @@ public class Serializer {
                 for (String habitat : animal.getHabitat()) {
                     out.writeUTF(habitat);
                 }
-                out.writeInt(animal.getSize().ordinal());
+                out.writeUTF(animal.getSize().toString());
                 out.writeDouble(animal.getWeight());
                 out.writeBoolean(animal.isCanFly());
             }
@@ -199,7 +193,7 @@ public class Serializer {
                 }
                 tempAnimal.setHabitat(habitat);
 
-                tempAnimal.setSize(Animal.Size.values()[in.readInt()]);
+                tempAnimal.setSize(Animal.Size.valueOf(in.readUTF()));
                 tempAnimal.setWeight(in.readDouble());
                 tempAnimal.setCanFly(in.readBoolean());
                 animals.add(tempAnimal);

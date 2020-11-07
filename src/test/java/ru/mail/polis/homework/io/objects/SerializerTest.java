@@ -50,7 +50,7 @@ public class SerializerTest {
                     new BioTag(random.nextLong(), String.valueOf(random.nextInt())),
                     random.nextInt(),
                     Arrays.asList(String.valueOf(random.nextInt()), String.valueOf(random.nextInt()), String.valueOf(random.nextInt())),
-                    Animal.Size.values()[random.nextInt(3)],
+                    AnimalWithMethods.Size.values()[random.nextInt(3)],
                     random.nextDouble(),
                     random.nextBoolean());
             add(animal);
