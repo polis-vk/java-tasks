@@ -46,7 +46,7 @@ public class SerializerTests {
         long endR = System.currentTimeMillis();
         long timeR = endR - begR;
 
-        log.log(Level.INFO, "\nDefault: \t\nWriting time = " + timeW + "\t\nReading time = " + timeR + "\t\nFile size = " + path.toFile().length() + " byte");
+        log.log(Level.INFO, "\nDefault: \t\nWriting time = " + timeW + "\t\nReading time = " + timeR + "\t\nFile size = " + path.toFile().length() + " byte\n");
     }
 
     @Test
@@ -67,7 +67,7 @@ public class SerializerTests {
         long endR = System.currentTimeMillis();
         long timeR = endR - begR;
 
-        log.log(Level.INFO, "\nWith methods: \t\nWriting time = " + timeW + "\t\nReading time = " + timeR + "\t\nFile size = " + path.toFile().length() + " byte");
+        log.log(Level.INFO, "\nWith methods: \t\nWriting time = " + timeW + "\t\nReading time = " + timeR + "\t\nFile size = " + path.toFile().length() + " byte\n");
 
     }
 
