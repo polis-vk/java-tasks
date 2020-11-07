@@ -3,8 +3,16 @@ bin/
 .project
 .settings/
 .classpath
+=======
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+=======
 # Mobile Tools for Java (J2ME)
-.idea/
 .gradle/
 out/
-homework2.iml
+build/
+target/
+gradle
