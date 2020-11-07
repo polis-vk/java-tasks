@@ -51,7 +51,7 @@ public class Serializer {
     public List<Animal> defaultDeserialize(String fileName, int numberOfReads) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
             List<Animal> animals = new ArrayList<>();
-            for(int i = 0; i < numberOfReads; i++) {
+            for (int i = 0; i < numberOfReads; i++) {
                 int objectsCount = ois.readInt();
                 for (int j = 0; j < objectsCount; j++) {
                     animals.add((Animal) ois.readObject());

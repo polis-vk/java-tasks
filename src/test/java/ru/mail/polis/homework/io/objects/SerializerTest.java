@@ -139,8 +139,7 @@ public class SerializerTest {
         Files.size(Path.of(filePath)), endTime - beginTime));
 
         long dBeginTime = System.currentTimeMillis();
-        List<Animal> deserializedAnimals = new LinkedList<>();
-        deserializedAnimals = serializer.defaultDeserialize(filePath, NUMBER_OF_WRITES);
+        List<Animal> deserializedAnimals = serializer.defaultDeserialize(filePath, NUMBER_OF_WRITES);
         long dEndTime = System.currentTimeMillis();
 
         System.out.println(String.format("and read in %d ms\n",
@@ -171,8 +170,7 @@ public class SerializerTest {
         Files.size(Path.of(filePath)), endTime - beginTime));
 
         long dBeginTime = System.currentTimeMillis();
-        List<AnimalWithMethods> deserializedAnimalsWithMethods = new LinkedList<>();
-        deserializedAnimalsWithMethods = serializer.deserializeWithMethods(filePath, NUMBER_OF_WRITES);
+        List<AnimalWithMethods> deserializedAnimalsWithMethods = serializer.deserializeWithMethods(filePath, NUMBER_OF_WRITES);
         long dEndTime = System.currentTimeMillis();
 
         System.out.println(String.format("and read in %d ms\n",
@@ -203,8 +201,7 @@ public class SerializerTest {
         Files.size(Path.of(filePath)), endTime - beginTime));
 
         long dBeginTime = System.currentTimeMillis();
-        List<AnimalExternalizable> deserializedAnimalsExternalizable = new LinkedList<>();
-        deserializedAnimalsExternalizable = serializer.deserializeWithExternalizable(filePath, NUMBER_OF_WRITES);
+        List<AnimalExternalizable> deserializedAnimalsExternalizable = serializer.deserializeWithExternalizable(filePath, NUMBER_OF_WRITES);
         long dEndTime = System.currentTimeMillis();
 
         System.out.println(String.format("and read in %d ms\n",
@@ -235,8 +232,7 @@ public class SerializerTest {
         Files.size(Path.of(filePath)), endTime - beginTime));
 
         long dBeginTime = System.currentTimeMillis();
-        List<Animal> deserializedAnimals = new LinkedList<>();
-        deserializedAnimals = serializer.customDeserialize(filePath, NUMBER_OF_WRITES);
+        List<Animal> deserializedAnimals = serializer.customDeserialize(filePath, NUMBER_OF_WRITES);
         long dEndTime = System.currentTimeMillis();
 
         System.out.println(String.format("and read in %d ms\n",
@@ -247,5 +243,19 @@ public class SerializerTest {
             writtenList.addAll(animals);
         }
         assertEquals(writtenList, deserializedAnimals);
+    }
+
+    @Test
+    public void appendingTest() throws IOException, ClassNotFoundException {
+        List<Animal> smallAnimalsList = new ArrayList<>();
+        smallAnimalsList.add(animals.get(0));
+        String filePath = DEFAULT_SERIALIZE_OUTPUT_FILE.toAbsolutePath().toString();
+        serializer.defaultSerialize(smallAnimalsList, filePath, true);
+        serializer.defaultSerialize(smallAnimalsList, filePath, false);
+        smallAnimalsList = serializer.defaultDeserialize(filePath, 2);
+        if (smallAnimalsList.get(0) == smallAnimalsList.get(1)) {
+            System.out.println("True");
+        }
+        assertEquals(smallAnimalsList.get(0), smallAnimalsList.get(1));
     }
 }
