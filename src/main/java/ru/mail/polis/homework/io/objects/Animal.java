@@ -5,14 +5,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Класс должен содержать несколько полей с примитивами, строками, энамами и некоторыми сапомисными объектами.
- * Хотя бы одно поле должен быть списком! Например список размеров или список имен.
- * Всего должно быть минимум 6 полей с разными типами.
- * 1 балл
- */
-enum Gender {MALE, FEMALE, NEUTRAL, MAYBE_MALE, MAYBE_FEMALE, OTHER}
-
 public class Animal implements Serializable, Cloneable {
 
     private List<String> habitat;
