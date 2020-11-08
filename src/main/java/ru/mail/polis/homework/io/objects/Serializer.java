@@ -121,7 +121,7 @@ public class Serializer {
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
             objectOutputStream.writeInt(animals.size());
             for (AnimalExternalizable animal : animals) {
-                animal.writeExternal(objectOutputStream);
+                objectOutputStream.writeObject(animal);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -144,12 +144,10 @@ public class Serializer {
             int size = objectInputStream.readInt();
             ArrayList<AnimalExternalizable> animals = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
-                AnimalExternalizable animal = new AnimalExternalizable();
-                animal.readExternal(objectInputStream);
-                animals.add(animal);
+                animals.add((AnimalExternalizable) objectInputStream.readObject());
             }
             return animals;
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return null;
         }
@@ -169,7 +167,7 @@ public class Serializer {
             for (Animal animal : animals) {
                 dataOutputStream.writeUTF(animal.getName());
                 dataOutputStream.writeBoolean(animal.isPredator());
-                dataOutputStream.writeInt(animal.getType().ordinal());
+                dataOutputStream.writeUTF(animal.getType().name());
                 List<String> food = animal.getFood();
                 dataOutputStream.writeInt(food.size());
                 for (String f : food) {
@@ -200,8 +198,8 @@ public class Serializer {
             ArrayList<Animal> animals = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
                 String name = dataInputStream.readUTF();
-                boolean isPredator = (dataInputStream.readBoolean());
-                AnimalType type = (AnimalType.values()[dataInputStream.readInt()]);
+                boolean isPredator = dataInputStream.readBoolean();
+                AnimalType type = AnimalType.valueOf(dataInputStream.readUTF());
                 int sizeFood = dataInputStream.readInt();
                 List<String> food = new ArrayList<>(sizeFood);
                 for (int j = 0; j < sizeFood; j++) {

@@ -60,7 +60,7 @@ public class AnimalExternalizable implements Externalizable {
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeUTF(name);
         out.writeBoolean(isPredator);
-        out.writeInt(type.ordinal());
+        out.writeUTF(type.name());
         out.writeInt(food.size());
         for (String f : food) {
             out.writeUTF(f);
@@ -73,7 +73,7 @@ public class AnimalExternalizable implements Externalizable {
     public void readExternal(ObjectInput in) throws IOException {
         name = in.readUTF();
         isPredator = in.readBoolean();
-        type = AnimalType.values()[in.readInt()];
+        type = AnimalType.valueOf(in.readUTF());
         int foodSize = in.readInt();
         food = new ArrayList<>(foodSize);
         for (int i = 0; i < foodSize; i++) {
