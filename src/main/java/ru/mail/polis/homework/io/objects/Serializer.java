@@ -36,6 +36,7 @@ public class Serializer {
     Path path = Paths.get(fileName);
 
     try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
+      outputStream.writeInt(animals.size());
       for (Animal animal : animals) {
         outputStream.writeObject(animal);
       }
@@ -57,11 +58,11 @@ public class Serializer {
     Path path = Paths.get(fileName);
 
     try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(path))) {
-      while (inputStream.available() != 0) {
+      int deserializeNumber = inputStream.readInt();
+      for (int i = 0; i < deserializeNumber; i++) {
         animalList.add((Animal) inputStream.readObject());
+
       }
-    }
-    catch (EOFException ignored) {
     }
     catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
@@ -82,6 +83,7 @@ public class Serializer {
     Path path = Paths.get(fileName);
 
     try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
+      outputStream.writeInt(animals.size());
       for (AnimalWithMethods animalWithMethods : animals) {
         outputStream.writeObject(animalWithMethods);
       }
@@ -103,12 +105,10 @@ public class Serializer {
     Path path = Paths.get(fileName);
 
     try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(path))) {
-
-      while (true) {
+      int deserializeNumber = inputStream.readInt();
+      for (int i = 0; i < deserializeNumber; i++) {
         animalList.add((AnimalWithMethods) inputStream.readObject());
       }
-    }
-    catch (EOFException ignored) {
     }
     catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
@@ -129,6 +129,7 @@ public class Serializer {
     Path path = Paths.get(fileName);
 
     try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
+      outputStream.writeInt(animals.size());
       for (AnimalExternalizable animalExternalizable : animals) {
         outputStream.writeObject(animalExternalizable);
       }
@@ -150,11 +151,10 @@ public class Serializer {
     Path path = Paths.get(fileName);
 
     try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(path))) {
-      while (true) {
+      int deserializeNumber = inputStream.readInt();
+      for (int i = 0; i < deserializeNumber; i++) {
         animalList.add((AnimalExternalizable) inputStream.readObject());
       }
-    }
-    catch (EOFException ignored) {
     }
     catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
@@ -174,6 +174,7 @@ public class Serializer {
     Path path = Paths.get(fileName);
 
     try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
+      outputStream.writeInt(animals.size());
       for (Animal animal : animals) {
         outputStream.writeInt(animal.getBrain().getSize());
 
@@ -206,13 +207,14 @@ public class Serializer {
     Path path = Paths.get(fileName);
 
     try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(path))) {
-      while (true) {
+      int deserializeNumber = inputStream.readInt();
+      for (int i = 0; i < deserializeNumber; i++) {
         Brain brain = new Brain(inputStream.readInt());
 
         int nameListSize = inputStream.readInt();
         List<String> nameList = Arrays.asList(new String[nameListSize]);
-        for (int i = 0; i < nameListSize; i++) {
-          nameList.set(i, inputStream.readUTF());
+        for (int j = 0; j < nameListSize; j++) {
+          nameList.set(j, inputStream.readUTF());
         }
 
         int weight = inputStream.readInt();
@@ -221,8 +223,6 @@ public class Serializer {
         long distanceTraveled = inputStream.readLong();
         animalList.add(new Animal(brain, nameList, weight, name, habitation, distanceTraveled));
       }
-    }
-    catch (EOFException ignored) {
     }
     catch (IOException e) {
       e.printStackTrace();
