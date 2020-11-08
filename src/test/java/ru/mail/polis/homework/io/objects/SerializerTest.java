@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.io.objects;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
@@ -23,8 +24,8 @@ public class SerializerTest {
 
     private static final String fileName = "D:\\test.ser";
 
-    @Before
-    public void prepare() {
+    @BeforeClass
+    public static void prepare() {
         List<String> allKinds = Arrays.asList("cat", "dog", "bear", "wolf", "fox",
                 "hippo", "koala", "horse", "ferret", "giraffe");
 
