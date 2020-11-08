@@ -27,8 +27,6 @@ public class AnimalWithMethods implements Serializable {
 
     private List<String> habitats;
 
-    public AnimalWithMethods() {}
-
     public AnimalWithMethods(String kind, Tail tail, double energy,
                              Animal.FoodPreferences foodPreferences, int averageLifeExpectancy, List<String> habitats) {
         this.kind = kind;
@@ -87,7 +85,7 @@ public class AnimalWithMethods implements Serializable {
         this.habitats = habitats;
     }
 
-    public void writeObject(ObjectOutputStream out) throws IOException {
+    private void writeObject(ObjectOutputStream out) throws IOException {
         out.writeUTF(getKind());
         out.writeObject(getTail());
         out.writeDouble(getEnergy());
@@ -96,7 +94,7 @@ public class AnimalWithMethods implements Serializable {
         out.writeObject(getHabitats());
     }
 
-    public void readObject(ObjectInputStream in) throws  IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws  IOException, ClassNotFoundException {
         setKind(in.readUTF());
         setTail((Tail)in.readObject());
         setEnergy(in.readDouble());

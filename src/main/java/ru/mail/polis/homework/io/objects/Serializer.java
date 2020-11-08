@@ -50,7 +50,7 @@ public class Serializer {
      */
 
     public List<Animal> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
-        List<Animal> animals = new ArrayList<>();
+        List<Animal> animals;
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
             animals = (List<Animal>)in.readObject();
         }
@@ -65,8 +65,9 @@ public class Serializer {
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) throws IOException {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            out.writeInt(animals.size());
             for (AnimalWithMethods animal : animals) {
-                animal.writeObject(out);
+                out.writeObject(animal);
             }
         }
     }
@@ -82,13 +83,11 @@ public class Serializer {
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) throws IOException, ClassNotFoundException {
         List<AnimalWithMethods> animals = new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
-            while (true) {
-                AnimalWithMethods animal = new AnimalWithMethods();
-                animal.readObject(in);
-                animals.add(animal);
+            int size = in.readInt();
+            for (int i = 0; i < size; i++) {
+                animals.add((AnimalWithMethods) in.readObject());
             }
-        } catch (EOFException ignored) {}
-
+        }
         return animals;
     }
 
@@ -103,7 +102,7 @@ public class Serializer {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
             out.writeInt(animals.size());
             for (AnimalExternalizable animal : animals) {
-                animal.writeExternal(out);
+                out.writeObject(animal);
             }
         }
     }
@@ -121,9 +120,7 @@ public class Serializer {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
             int size = in.readInt();
             for (int i = 0; i < size; i++) {
-                AnimalExternalizable animal = new AnimalExternalizable();
-                animal.readExternal(in);
-                animals.add(animal);
+                animals.add((AnimalExternalizable) in.readObject());
             }
         }
         return animals;
@@ -143,17 +140,7 @@ public class Serializer {
                 out.writeUTF(animal.getKind());
                 out.writeBoolean(animal.getTail().isLong());
                 out.writeDouble(animal.getEnergy());
-//                out.writeObject(animal.getFoodPreferences()); //ну ето сложно без writeObject...
-                int foodId = -1;
-                Animal.FoodPreferences foodPreferences = animal.getFoodPreferences();
-                for (int i = 0; i < allFoodPreferences.length; i++) {
-                    if (allFoodPreferences[i] == foodPreferences) {
-                        foodId = i;
-                        break;
-                    }
-                }
-                out.writeInt(foodId);
-
+                out.writeUTF(animal.getFoodPreferences().toString());
                 out.writeInt(animal.getAverageLifeExpectancy());
                 List<String> habitats = animal.getHabitats();
                 out.writeInt(habitats.size());
@@ -175,13 +162,11 @@ public class Serializer {
     public List<Animal> customDeserialize(String fileName) throws IOException, ClassNotFoundException {
         List<Animal> animals = new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
-            while (true) {
+            while (in.available() != 0) {
                 String kind = in.readUTF();
                 Tail tail = new Tail(in.readBoolean());
                 double energy = in.readDouble();
-//                Animal.FoodPreferences foodPreferences = (Animal.FoodPreferences) in.readObject();
-                int foodId = in.readInt();
-                Animal.FoodPreferences foodPreferences = allFoodPreferences[foodId];
+                Animal.FoodPreferences foodPreferences = Enum.valueOf(Animal.FoodPreferences.class, in.readUTF());
                 int averageLifeExpectancy = in.readInt();
                 int habitatsSize = in.readInt();
                 List<String> habitats = new ArrayList<>();
@@ -195,8 +180,7 @@ public class Serializer {
 
                 animals.add(animal);
             }
-        } catch (EOFException ignored) {}
-
+        }
         return animals;
     }
 }

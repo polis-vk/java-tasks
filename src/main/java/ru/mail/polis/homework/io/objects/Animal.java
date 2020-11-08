@@ -32,8 +32,6 @@ public class Animal implements Serializable {
 
     private List<String> habitats;
 
-    public Animal() {}
-
     public Animal(String kind, Tail tail, double energy,
                   FoodPreferences foodPreferences, int averageLifeExpectancy, List<String> habitats) {
         this.kind = kind;

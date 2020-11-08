@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class SerializerTest {
@@ -30,15 +31,14 @@ public class SerializerTest {
         List<String> allHabitats = Arrays.asList("Europe", "Asia", "South America", "North America",
                 "Africa", "Australia", "Ocean");
 
-        Animal.FoodPreferences[] allPreferences = Animal.FoodPreferences.values();
-
         Random rnd = new Random();
 
         for (int i = 0; i < 1000; i++) {
             String kind = allKinds.get(rnd.nextInt(allKinds.size()));
             boolean isTailLong = rnd.nextBoolean();
             double energy = 100;
-            Animal.FoodPreferences foodPreferences = allPreferences[rnd.nextInt(allPreferences.length)];
+            Animal.FoodPreferences foodPreferences =
+                    Animal.FoodPreferences.values()[rnd.nextInt(Animal.FoodPreferences.values().length)];
             int averageLifeExpectancy = rnd.nextInt(50);
             List<String> habitats = Arrays.asList(
                     allHabitats.get(rnd.nextInt(allHabitats.size())),
@@ -52,12 +52,6 @@ public class SerializerTest {
             externalizableAnimals.add(new AnimalExternalizable(kind, tail, energy, foodPreferences, averageLifeExpectancy, habitats));
         }
     }
-
-//    @After
-//    public void clear() {
-//        File file = new File(fileName);
-//        file.delete();
-//    }
 
     @Test
     public void defaultSerialize() {
@@ -76,12 +70,10 @@ public class SerializerTest {
             System.out.println("Deserialization: " + (endTime - startTime) + " milliseconds");
 
             File file = new File(fileName);
-            System.out.println("File size: " + file.length());
+            System.out.println("File size: " + file.length() + " bytes");
             file.delete();
 
-            for (int i = 0; i < simpleAnimals.size(); i++) {
-                assertEquals(simpleAnimals.get(i), deserializedAnimals.get(i));
-            }
+            assertArrayEquals(simpleAnimals.toArray(), deserializedAnimals.toArray());
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -105,12 +97,10 @@ public class SerializerTest {
             System.out.println("Deserialization: " + (endTime - startTime) + " milliseconds");
 
             File file = new File(fileName);
-            System.out.println("File size: " + file.length());
+            System.out.println("File size: " + file.length() + " bytes");
             file.delete();
 
-            for (int i = 0; i < animalWithMethods.size(); i++) {
-                assertEquals(animalWithMethods.get(i), deserializedAnimals.get(i));
-            }
+            assertArrayEquals(animalWithMethods.toArray(), deserializedAnimals.toArray());
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -124,7 +114,7 @@ public class SerializerTest {
             serializer.serializeWithExternalizable(externalizableAnimals, fileName);
             long endTime = System.currentTimeMillis();
 
-            System.out.println("\nEXTERNALIZABLE");
+            System.out.println("EXTERNALIZABLE");
             System.out.println("Serialization: " + (endTime - startTime) + " milliseconds");
 
             startTime = System.currentTimeMillis();
@@ -134,12 +124,10 @@ public class SerializerTest {
             System.out.println("Deserialization: " + (endTime - startTime) + " milliseconds");
 
             File file = new File(fileName);
-            System.out.println("File size: " + file.length());
+            System.out.println("File size: " + file.length() + " bytes");
             file.delete();
 
-            for (int i = 0; i < externalizableAnimals.size(); i++) {
-                assertEquals(externalizableAnimals.get(i), deserializedAnimals.get(i));
-            }
+            assertArrayEquals(externalizableAnimals.toArray(), deserializedAnimals.toArray());
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -153,7 +141,7 @@ public class SerializerTest {
             serializer.customSerialize(simpleAnimals, fileName);
             long endTime = System.currentTimeMillis();
 
-            System.out.println("\nCUSTOM");
+            System.out.println("CUSTOM");
             System.out.println("Serialization: " + (endTime - startTime) + " milliseconds");
 
             startTime = System.currentTimeMillis();
@@ -163,12 +151,10 @@ public class SerializerTest {
             System.out.println("Deserialization: " + (endTime - startTime) + " milliseconds");
 
             File file = new File(fileName);
-            System.out.println("File size: " + file.length());
+            System.out.println("File size: " + file.length() + " bytes");
             file.delete();
 
-            for (int i = 0; i < simpleAnimals.size(); i++) {
-                assertEquals(simpleAnimals.get(i), deserializedAnimals.get(i));
-            }
+            assertArrayEquals(simpleAnimals.toArray(), deserializedAnimals.toArray());
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
