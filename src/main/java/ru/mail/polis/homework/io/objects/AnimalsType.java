@@ -1,22 +1,24 @@
 package ru.mail.polis.homework.io.objects;
 
+import java.awt.*;
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public enum AnimalsType implements Serializable {
-    Fish(0),
-    Bird(1),
-    Mammals(2),
-    Length(3);
+    Fish("Fish"),
+    Bird("Bird"),
+    Mammals("Mammals");
 
-    private final int value;
+    private final String value;
 
-    AnimalsType(int value) {
+    AnimalsType(String value) {
         this.value = value;
     }
 
-    public static AnimalsType fromValue(int value) {
+    public static AnimalsType fromValue(String value) {
         for (AnimalsType my : AnimalsType.values()) {
-            if (my.value == value) {
+            if (my.value.equals(value)) {
                 return my;
             }
         }
@@ -24,7 +26,7 @@ public enum AnimalsType implements Serializable {
         return null;
     }
 
-    public int getValue() {
+    public String getValue() {
         return value;
     }
 }

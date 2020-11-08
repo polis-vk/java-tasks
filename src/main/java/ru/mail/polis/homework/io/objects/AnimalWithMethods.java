@@ -12,17 +12,12 @@ import java.util.List;
  * Дубль класса Animal, для Serializer.serializeWithMethods
  * 3 балла
  */
-public class AnimalWithMethods extends Animal implements Serializable {
-
-    public AnimalWithMethods() {
-
-    }
-
+public class AnimalWithMethods extends Animal {
     public AnimalWithMethods(AnimalsType type, String name, List<String> food, int speed, int health, boolean orientation, Mind mind) {
         super(type, name, food, speed, health, orientation, mind);
     }
 
-    public void writeExternal(ObjectOutput objectOutput) throws IOException {
+    private void writeExternal(ObjectOutput objectOutput) throws IOException {
         objectOutput.writeObject(getType());
         objectOutput.writeUTF(getName());
         objectOutput.writeInt(getFood().size());
@@ -35,7 +30,7 @@ public class AnimalWithMethods extends Animal implements Serializable {
         objectOutput.writeObject(getMind());
     }
 
-    public void readExternal(ObjectInput objectInput) throws IOException, ClassNotFoundException {
+    private void readExternal(ObjectInput objectInput) throws IOException, ClassNotFoundException {
         setType((AnimalsType) objectInput.readObject());
         setName(objectInput.readUTF());
         int size = objectInput.readInt();
@@ -54,6 +49,4 @@ public class AnimalWithMethods extends Animal implements Serializable {
     public String toString() {
         return "AnimalWithMethods{}";
     }
-
-
 }

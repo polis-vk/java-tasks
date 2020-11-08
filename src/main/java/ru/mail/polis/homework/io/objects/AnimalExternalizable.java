@@ -64,11 +64,8 @@ public class AnimalExternalizable implements Externalizable {
         objectOutput.writeObject(type);
         objectOutput.writeUTF(name);
         objectOutput.writeInt(food.size());
-        /*for (String f : food) {
-            objectOutput.writeUTF(f);
-        }*/
-        for (int i = 0; i < food.size(); i++) {
-            objectOutput.writeUTF(food.get(i));
+        for (String s : food) {
+            objectOutput.writeUTF(s);
         }
         objectOutput.writeInt(speed);
         objectOutput.writeInt(health);
