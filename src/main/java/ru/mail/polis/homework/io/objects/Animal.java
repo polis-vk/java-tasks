@@ -18,6 +18,7 @@ public class Animal implements Serializable {
     private int age;
     private int weight;
     private boolean isPredator;
+    private Owner owner;
     private List<String> areas = new ArrayList<>();
 
     public enum AnimalClassification {
@@ -32,12 +33,13 @@ public class Animal implements Serializable {
     }
 
     public Animal(AnimalClassification animalClassification, String name, int age, int weight,
-                  boolean isPredator, List<String> areas) {
+                  boolean isPredator, Owner owner, List<String> areas) {
         this.animalClassification = animalClassification;
         this.name = name;
         this.age = age;
         this.weight = weight;
         this.isPredator = isPredator;
+        this.owner = owner;
         this.areas = areas;
     }
 
@@ -65,6 +67,18 @@ public class Animal implements Serializable {
         return isPredator;
     }
 
+    public Owner getOwner() {
+        return owner;
+    }
+
+    public void setAnimalClassification(AnimalClassification classification) {
+        this.animalClassification = classification;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -81,6 +95,7 @@ public class Animal implements Serializable {
                 age == animal.age &&
                 weight == animal.weight &&
                 isPredator == animal.isPredator &&
+                owner.equals(animal.owner) &&
                 Objects.equals(areas, animal.areas);
     }
 
@@ -92,7 +107,13 @@ public class Animal implements Serializable {
                 ", age = " + age +
                 ", weight = " + weight +
                 ", isPredator = " + isPredator +
+                ", owner = " + owner +
                 ", areas = " + areas +
                 '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(animalClassification, name, age, weight, isPredator, owner, areas);
     }
 }

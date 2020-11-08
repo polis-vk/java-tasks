@@ -4,4 +4,6 @@
 .idea/
 .gradle/
 out/
+build/
+gradle
 homework2.iml

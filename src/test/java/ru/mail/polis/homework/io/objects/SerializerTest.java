@@ -12,9 +12,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertEquals;
+
 public class SerializerTest {
 
-    private static final int COUNT = 10;
+    private static final int COUNT = 300;
 
     private final String filename = "testFile.bin";
     private static final Serializer serializer = new Serializer();
@@ -22,7 +24,8 @@ public class SerializerTest {
 
     private static Animal.AnimalClassification getRandomAnimalClassification() {
         Animal.AnimalClassification[] classifications = Animal.AnimalClassification.values();
-        return classifications[new Random().nextInt(classifications.length)];
+        int randomIndex = new Random().nextInt(classifications.length);
+        return classifications[randomIndex];
     }
 
     private static String getRandomName() {
@@ -44,6 +47,10 @@ public class SerializerTest {
         return new Random().nextBoolean();
     }
 
+    private static Owner getRandomOwner() {
+        return new Owner(getRandomName(), getRandomName(), getRandomAge());
+    }
+
     private static List<String> getRandomAreas() {
         List<String> areas = new ArrayList<>();
 
@@ -61,6 +68,7 @@ public class SerializerTest {
                 getRandomAge(),
                 getRandomWeight(),
                 getRandomIsPredator(),
+                getRandomOwner(),
                 getRandomAreas()
         );
     }
@@ -72,6 +80,7 @@ public class SerializerTest {
                 getRandomAge(),
                 getRandomWeight(),
                 getRandomIsPredator(),
+                getRandomOwner(),
                 getRandomAreas()
         );
     }
@@ -83,6 +92,7 @@ public class SerializerTest {
                 getRandomAge(),
                 getRandomWeight(),
                 getRandomIsPredator(),
+                getRandomOwner(),
                 getRandomAreas()
         );
     }
@@ -110,78 +120,150 @@ public class SerializerTest {
     private void printTestInfo(String testName, long size, long time) {
         System.out.println(
                 testName + "\n" +
-                "File size: " + size +
+                "File size: " + size / 1024 + "\n" +
                 "Time: " + time + "\n"
         );
     }
 
     @Test
-    public void defaultSerializeTest() throws IOException {
+    public void defaultSerializeTest() {
         Path path = Paths.get(filename);
-        long timeBeforeSerialization = System.currentTimeMillis();
+        long beforeTime = System.currentTimeMillis();
+
+        try {
+            serializer.defaultSerialize(animals, filename);
+            long size = Files.size(path);
+            long afterTime = System.currentTimeMillis() - beforeTime;
+
+            printTestInfo("Default serialize test", size, afterTime);
+            Files.delete(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void defaultDeserializeTest() {
+        Path path = Paths.get(filename);
+        long beforeTime = System.currentTimeMillis();
 
         try {
             serializer.defaultSerialize(animals, filename);
             List<Animal> animalsAfterDeserialize = serializer.defaultDeserialize(filename);
             long size = Files.size(path);
-            long time = System.currentTimeMillis() - timeBeforeSerialization;
+            long afterTime = System.currentTimeMillis() - beforeTime;
 
-            Assert.assertArrayEquals(animals.toArray(), animalsAfterDeserialize.toArray());
-            printTestInfo("Default serialize test", size, time);
+            assertEquals(animals, animalsAfterDeserialize);
+            printTestInfo("Default deserialize test", size, afterTime);
+            Files.delete(path);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @Test
-    public void serializeExternalizable() throws IOException {
+    public void serializeExternalizableTest() {
         Path path = Paths.get(filename);
-        long timeBeforeSerialization = System.currentTimeMillis();
+        long beforeTime = System.currentTimeMillis();
+
+        try {
+            serializer.serializeWithExternalizable(animalsExternalizable, filename);
+            long size = Files.size(path);
+            long afterTime = System.currentTimeMillis() - beforeTime;
+
+            printTestInfo("Serialize with Externalizable test", size, afterTime);
+            Files.delete(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void deserializeExternalizableTest() {
+        Path path = Paths.get(filename);
+        long beforeTime = System.currentTimeMillis();
 
         try {
             serializer.serializeWithExternalizable(animalsExternalizable, filename);
             List<AnimalExternalizable> animalsAfterDeserialize = serializer.deserializeWithExternalizable(filename);
             long size = Files.size(path);
-            long time = System.currentTimeMillis() - timeBeforeSerialization;
+            long afterTime = System.currentTimeMillis() - beforeTime;
 
-            Assert.assertArrayEquals(animalsExternalizable.toArray(), animalsAfterDeserialize.toArray());
-            printTestInfo("Serialize with Externalizable test", size, time);
+            assertEquals(animalsExternalizable, animalsAfterDeserialize);
+            printTestInfo("Deserialize with Externalizable test", size, afterTime);
+            Files.delete(path);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @Test
-    public void serializeWithMethods() throws IOException {
+    public void serializeWithMethodsTest() {
         Path path = Paths.get(filename);
-        long timeBeforeSerialization = System.currentTimeMillis();
+        long beforeTime = System.currentTimeMillis();
+
+        try {
+            serializer.serializeWithMethods(animalsWithMethod, filename);
+            long size = Files.size(path);
+            long afterTime = System.currentTimeMillis() - beforeTime;
+
+            printTestInfo("Serialize with methods test", size, afterTime);
+            Files.delete(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void deserializeWithMethodsTest() {
+        Path path = Paths.get(filename);
+        long beforeTime = System.currentTimeMillis();
 
         try {
             serializer.serializeWithMethods(animalsWithMethod, filename);
             List<AnimalWithMethods> animalsAfterDeserialize = serializer.deserializeWithMethods(filename);
             long size = Files.size(path);
-            long time = System.currentTimeMillis() - timeBeforeSerialization;
+            long afterTime = System.currentTimeMillis() - beforeTime;
 
-            Assert.assertArrayEquals(animalsWithMethod.toArray(), animalsAfterDeserialize.toArray());
-            printTestInfo("Serialize with methods test", size, time);
+            assertEquals(animalsWithMethod, animalsAfterDeserialize);
+            printTestInfo("Deserialize with methods test", size, afterTime);
+            Files.delete(path);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @Test
-    public void customSerializeTest() throws IOException {
+    public void customSerializeTest() {
         Path path = Paths.get(filename);
-        long timeBeforeSerialization = System.currentTimeMillis();
+        long beforeTime = System.currentTimeMillis();
+
+        try {
+            serializer.customSerialize(animals, filename);
+            long size = Files.size(path);
+            long afterTime = System.currentTimeMillis() - beforeTime;
+
+            printTestInfo("Custom serialize test", size, afterTime);
+            Files.delete(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void customDeserializeTest() {
+        Path path = Paths.get(filename);
+        long beforeTime = System.currentTimeMillis();
 
         try {
             serializer.customSerialize(animals, filename);
             List<Animal> animalsAfterDeserialize = serializer.customDeserialize(filename);
             long size = Files.size(path);
-            long time = System.currentTimeMillis() - timeBeforeSerialization;
+            long afterTime = System.currentTimeMillis() - beforeTime;
 
-            Assert.assertArrayEquals(animals.toArray(), animalsAfterDeserialize.toArray());
-            printTestInfo("Custom serialize test", size, time);
+            assertEquals(animals, animalsAfterDeserialize);
+            printTestInfo("Custom deserialize test", size, afterTime);
+            Files.delete(path);
         } catch (IOException e) {
             e.printStackTrace();
         }

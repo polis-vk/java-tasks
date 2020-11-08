@@ -18,6 +18,7 @@ public class AnimalExternalizable implements Externalizable {
     private int age;
     private int weight;
     private boolean isPredator;
+    private Owner owner;
     private List<String> areas = new ArrayList<>();
 
     public enum AnimalClassification {
@@ -42,6 +43,7 @@ public class AnimalExternalizable implements Externalizable {
         out.writeInt(age);
         out.writeInt(weight);
         out.writeBoolean(isPredator);
+        out.writeObject(owner);
         out.writeObject(areas);
     }
 
@@ -52,16 +54,18 @@ public class AnimalExternalizable implements Externalizable {
         age = in.readInt();
         weight = in.readInt();
         isPredator = in.readBoolean();
+        owner = (Owner) in.readObject();
         areas = (List<String>) in.readObject();
     }
 
     public AnimalExternalizable(Animal.AnimalClassification animalClassification, String name, int age, int weight,
-                                boolean isPredator, List<String> areas) {
+                                boolean isPredator, Owner owner, List<String> areas) {
         this.animalClassification = animalClassification;
         this.name = name;
         this.age = age;
         this.weight = weight;
         this.isPredator = isPredator;
+        this.owner = owner;
         this.areas = areas;
     }
 
@@ -81,6 +85,7 @@ public class AnimalExternalizable implements Externalizable {
                 age == animal.age &&
                 weight == animal.weight &&
                 isPredator == animal.isPredator &&
+                owner.equals(animal.owner) &&
                 Objects.equals(areas, animal.areas);
     }
 
@@ -92,7 +97,12 @@ public class AnimalExternalizable implements Externalizable {
                 ", age = " + age +
                 ", weight = " + weight +
                 ", isPredator = " + isPredator +
+                ", owner = " + owner +
                 ", areas = " + areas +
                 '}';
+    }
+
+    public int hashCode() {
+        return Objects.hash(animalClassification, name, age, weight, isPredator, owner, areas);
     }
 }
