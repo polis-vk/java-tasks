@@ -18,9 +18,6 @@ public class AnimalWithMethods implements Serializable {
     private List<Parents> genericOfRelatives;
     private Colour colour;
 
-    AnimalWithMethods() {
-    }
-
     public AnimalWithMethods(Animal animal) {
         this(animal.getName(),
                 animal.getWeight(),
@@ -35,8 +32,11 @@ public class AnimalWithMethods implements Serializable {
         if(weight < 50) {
             this.weight = 50;
         }
-        this.parents = parents;
-        this.genericOfRelatives = new ArrayList<>(genericOfRelatives);
+        this.parents = new Parents(parents);
+        this.genericOfRelatives = new ArrayList<>();
+        for(Parents i : genericOfRelatives) {
+            this.genericOfRelatives.add(new Parents(i));
+        }
         this.colour = colour;
     }
 

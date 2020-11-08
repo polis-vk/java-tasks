@@ -17,8 +17,7 @@ public class AnimalExternalizable implements Externalizable {
     private List<Parents> genericOfRelatives;
     private Colour colour;
 
-    AnimalExternalizable() {
-    }
+    public AnimalExternalizable() {}
 
     public AnimalExternalizable(Animal animal) {
         this(animal.getName(),
@@ -34,8 +33,11 @@ public class AnimalExternalizable implements Externalizable {
         if(weight < 50) {
             this.weight = 50;
         }
-        this.parents = parents;
-        this.genericOfRelatives = new ArrayList<>(genericOfRelatives);
+        this.parents = new Parents(parents);
+        this.genericOfRelatives = new ArrayList<>();
+        for(Parents i : genericOfRelatives) {
+            this.genericOfRelatives.add(new Parents(i));
+        }
         this.colour = colour;
     }
 
