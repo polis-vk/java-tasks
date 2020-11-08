@@ -139,7 +139,7 @@ public class Serializer {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
             out.writeInt(animals.size());
             for (Animal animal : animals) {
-                out.writeInt(animal.getGroup().ordinal());
+                out.writeUTF(animal.getGroup().toString());
                 out.writeUTF(animal.getName());
                 out.writeBoolean(animal.isWarmBlooded());
 
@@ -147,7 +147,7 @@ public class Serializer {
                 Animal.Behavior behavior = animal.getBehavior();
                 out.writeBoolean(behavior.canBeTamed());
                 out.writeBoolean(behavior.isPredator());
-                out.writeInt(behavior.getMovementType().ordinal());
+                out.writeUTF(behavior.getMovementType().toString());
 
                 out.writeInt(behavior.enemies().size());
                 for (String enemy : behavior.enemies()) {
@@ -166,7 +166,7 @@ public class Serializer {
 
                 out.writeInt(animal.habitatEnvironments().size());
                 for (HabitatEnvironment environment : animal.habitatEnvironments()) {
-                    out.writeInt(environment.ordinal());
+                    out.writeUTF(environment.toString());
                 }
 
                 out.writeInt(animal.getAge());
@@ -189,12 +189,12 @@ public class Serializer {
             int animalsCount = in.readInt();
             List<Animal> animals = new ArrayList<>(animalsCount);
             for (int i = 0; i < animalsCount; i++) {
-                AnimalGroup group = AnimalGroup.values()[in.readInt()];
+                AnimalGroup group = AnimalGroup.valueOf(in.readUTF());
                 String name = in.readUTF();
                 boolean isWarmBlooded = in.readBoolean();
                 boolean canBeTamed = in.readBoolean();
                 boolean isPredator = in.readBoolean();
-                AnimalMovementType movementType = AnimalMovementType.values()[in.readInt()];
+                AnimalMovementType movementType = AnimalMovementType.valueOf(in.readUTF());
 
                 Animal.Builder builder = new Animal.Builder(group, name, isWarmBlooded, canBeTamed, isPredator, movementType);
 
@@ -212,7 +212,7 @@ public class Serializer {
                 }
                 int habitatEnvironmentsCount = in.readInt();
                 for (int j = 0; j < habitatEnvironmentsCount; j++) {
-                    builder.withHabitatEnvironments(HabitatEnvironment.values()[in.readInt()]);
+                    builder.withHabitatEnvironments(HabitatEnvironment.valueOf(in.readUTF()));
                 }
                 builder.withAge(in.readInt());
                 builder.withColor(in.readInt());
