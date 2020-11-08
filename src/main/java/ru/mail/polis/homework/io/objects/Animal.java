@@ -4,6 +4,7 @@ package ru.mail.polis.homework.io.objects;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Класс должен содержать несколько полей с примитивами, строками, энамами и некоторыми сапомисными объектами.
@@ -18,82 +19,87 @@ public class Animal implements Serializable {
     private double weight;
     private Characteristic characteristic;
     private List<String> nameChildren;
+    private AnimalInfo animalInfo;
 
-    public Animal() {
-
-    }
-    public Animal(String name, int age, double weight, Characteristic characteristic, List<String> nameChildren) {
+    public Animal(String name, int age, double weight, Characteristic characteristic, List<String> nameChildren, AnimalInfo animalInfo) {
        this.name = name;
        this.age = age;
        this.weight = weight;
        this.characteristic = characteristic;
        this.nameChildren = new ArrayList<>(nameChildren);
+       this.animalInfo = animalInfo;
     }
 
     @Override
     public String toString() {
-        return "Animal{ " + "name=" + name +
+        return "Animal{" +
+                "name='" + name + '\'' +
                 ", age=" + age +
                 ", weight=" + weight +
                 ", characteristic=" + characteristic +
-                ", nameChildren=" + nameChildren + "}";
+                ", nameChildren=" + nameChildren +
+                ", animalInfo=" + animalInfo +
+                '}';
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (obj == null || obj.getClass() != this.getClass()) {
-            return false;
-        }
-
-        Animal guest = (Animal) obj;
-        return  name.equals(guest.getName()) &&
-                age == guest.getAge() &&
-                weight == guest.getWeight() &&
-                characteristic.equals(guest.getCharacteristic()) &&
-                nameChildren.equals(guest.getNameChildren());
-
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
-
-    public void setCharacteristic(Characteristic characteristic) {
-        this.characteristic = characteristic;
-    }
-
-    public void setNameChildren(List<String> nameChildren) {
-        this.nameChildren = nameChildren;
-    }
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public int getAge() {
-        return age;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Animal animal = (Animal) o;
+        return age == animal.age &&
+                Double.compare(animal.weight, weight) == 0 &&
+                Objects.equals(name, animal.name) &&
+                characteristic == animal.characteristic &&
+                Objects.equals(nameChildren, animal.nameChildren) &&
+                Objects.equals(animalInfo, animal.animalInfo);
     }
 
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
     public Characteristic getCharacteristic() {
         return characteristic;
     }
 
+    public void setCharacteristic(Characteristic characteristic) {
+        this.characteristic = characteristic;
+    }
+
     public List<String> getNameChildren() {
         return nameChildren;
+    }
+
+    public void setNameChildren(List<String> nameChildren) {
+        this.nameChildren = nameChildren;
+    }
+
+    public AnimalInfo getAnimalInfo() {
+        return animalInfo;
+    }
+
+    public void setAnimalInfo(AnimalInfo animalInfo) {
+        this.animalInfo = animalInfo;
     }
 }

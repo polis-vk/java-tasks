@@ -58,8 +58,9 @@ public class Serializer {
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) throws IOException {
         try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
-            for (AnimalWithMethods animal : animals) {
-                animal.writeObject(objectOutputStream);
+            objectOutputStream.writeInt(animals.size());
+            for(AnimalWithMethods animal : animals) {
+                objectOutputStream.writeObject(animal);
             }
         }
     }
@@ -74,12 +75,10 @@ public class Serializer {
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) throws IOException, ClassNotFoundException {
         try(ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
-            List<AnimalWithMethods> animals = new ArrayList<>();
-            AnimalWithMethods animal;
-            while (objectInputStream.available() != 0) {
-                animal = new AnimalWithMethods();
-                animal.readObject(objectInputStream);
-                animals.add(animal);
+            int size = objectInputStream.readInt();
+            List<AnimalWithMethods> animals = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+                animals.add((AnimalWithMethods)objectInputStream.readObject());
             }
             return animals;
         }
@@ -93,8 +92,9 @@ public class Serializer {
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) throws IOException {
         try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
+            objectOutputStream.writeInt(animals.size());
             for (AnimalExternalizable animal : animals) {
-                animal.writeExternal(objectOutputStream);
+                objectOutputStream.writeObject(animal);
             }
         }
     }
@@ -109,12 +109,10 @@ public class Serializer {
      */
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) throws IOException, ClassNotFoundException {
         try(ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
-            List<AnimalExternalizable> animals = new ArrayList<>();
-            AnimalExternalizable animal;
-            while (objectInputStream.available() != 0) {
-                animal = new AnimalExternalizable();
-                animal.readExternal(objectInputStream);
-                animals.add(animal);
+            int size = objectInputStream.readInt();
+            List<AnimalExternalizable> animals = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+                animals.add((AnimalExternalizable)objectInputStream.readObject());
             }
             return animals;
         }
@@ -130,6 +128,7 @@ public class Serializer {
      */
     public void customSerialize(List<Animal> animals, String fileName) throws IOException {
         try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
+            objectOutputStream.writeInt(animals.size());
             for (Animal animal : animals) {
                 objectOutputStream.writeUTF(animal.getName());
                 objectOutputStream.writeInt(animal.getAge());
@@ -139,6 +138,9 @@ public class Serializer {
                 for (String name : animal.getNameChildren()) {
                     objectOutputStream.writeUTF(name);
                 }
+                objectOutputStream.writeInt(animal.getAnimalInfo().getAverageAge());
+                objectOutputStream.writeUTF(animal.getAnimalInfo().getInhabitancy());
+                objectOutputStream.writeBoolean(animal.getAnimalInfo().isLonely());
             }
         }
     }
@@ -153,21 +155,24 @@ public class Serializer {
      */
     public List<Animal> customDeserialize(String fileName) throws IOException {
         try(ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
-            List<Animal> animals = new ArrayList<>();
-            Animal animal;
-            while (objectInputStream.available() != 0) {
-                animal = new Animal();
-                animal.setName(objectInputStream.readUTF());
-                animal.setAge(objectInputStream.readInt());
-                animal.setWeight(objectInputStream.readDouble());
-                animal.setCharacteristic(Characteristic.valueOf(objectInputStream.readUTF().toUpperCase()));
-                int size = objectInputStream.readInt();
-                List<String> nameChildren = new ArrayList<>();
-                for (int i = 0; i < size; i++) {
+            int size = objectInputStream.readInt();
+            List<Animal> animals = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+                String name = objectInputStream.readUTF();
+                int age = objectInputStream.readInt();
+                double weight = objectInputStream.readDouble();
+                Characteristic characteristic = Characteristic.valueOf(objectInputStream.readUTF());
+                int count = objectInputStream.readInt();
+                List<String> nameChildren = new ArrayList<>(count);
+                for (int j = 0; j < count; j++) {
                     nameChildren.add(objectInputStream.readUTF());
                 }
-                animal.setNameChildren(nameChildren);
-                animals.add(animal);
+                int averageAge = objectInputStream.readInt();
+                String inhabitancy = objectInputStream.readUTF();
+                boolean lonely = objectInputStream.readBoolean();
+                animals.add(new Animal(name, age,
+                        weight, characteristic, nameChildren,
+                        new AnimalInfo(averageAge,inhabitancy, lonely)));
             }
             return animals;
         }

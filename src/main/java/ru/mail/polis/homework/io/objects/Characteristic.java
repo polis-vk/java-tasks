@@ -1,8 +1,7 @@
 package ru.mail.polis.homework.io.objects;
 
-import java.io.Serializable;
 
-public enum Characteristic implements Serializable {
+public enum Characteristic {
     STUPID("Stupid"),
     SMART("smart"),
     PASSIVE("passive"),
@@ -16,8 +15,4 @@ public enum Characteristic implements Serializable {
         this.characteristic = characteristic;
     }
 
-    @Override
-    public String toString() {
-        return characteristic;
-    }
 }

@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public enum CharacteristicWithMethods implements Serializable {
+public enum CharacteristicWithMethods {
     STUPID("Stupid"),
     SMART("smart"),
     PASSIVE("passive"),
@@ -28,10 +28,5 @@ public enum CharacteristicWithMethods implements Serializable {
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         characteristic = in.readUTF();
-    }
-
-    @Override
-    public String toString() {
-        return characteristic;
     }
 }
