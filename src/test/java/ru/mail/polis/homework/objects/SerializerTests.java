@@ -25,24 +25,24 @@ public class SerializerTests {
     private Path path;
 
     @Before
-    public void init(){
+    public void init() {
         path = Paths.get(fileName);
     }
 
     @Test
     public void defaultSerializeTest() throws IOException, ClassNotFoundException {
-        List<Animal> animals = (new Data()).getAnimalList();
+        List<Animal> animals = (new Data(N)).getAnimalList();
         long begW = System.currentTimeMillis();
-        for (int i = 0; i < N; i++) {
-            Serializer.defaultSerialize(new ArrayList<>(animals), fileName);
-        }
+
+        Serializer.defaultSerialize(new ArrayList<>(animals), fileName);
+
         long endW = System.currentTimeMillis();
         long timeW = endW - begW;
 
         long begR = System.currentTimeMillis();
-        for (int i = 0; i < N; i++) {
-            assertEquals(Serializer.defaultDeserialize(fileName), animals);
-        }
+
+        assertEquals(Serializer.defaultDeserialize(fileName), animals);
+
         long endR = System.currentTimeMillis();
         long timeR = endR - begR;
 
@@ -51,19 +51,19 @@ public class SerializerTests {
 
     @Test
     public void withMethodsSerializeTest() throws IOException, ClassNotFoundException {
-        List<AnimalWithMethods> animals = (new Data()).getAnimalWithMethodsList();
+        List<AnimalWithMethods> animals = (new Data(N)).getAnimalWithMethodsList();
 
         long begW = System.currentTimeMillis();
-        for (int i = 0; i < N; i++) {
-            Serializer.serializeWithMethods(new ArrayList<>(animals), fileName);
-        }
+
+        Serializer.serializeWithMethods(new ArrayList<>(animals), fileName);
+
         long endW = System.currentTimeMillis();
         long timeW = endW - begW;
 
         long begR = System.currentTimeMillis();
-        for (int i = 0; i < N; i++) {
-            assertEquals(Serializer.deserializeWithMethods(fileName), animals);
-        }
+
+        assertEquals(Serializer.deserializeWithMethods(fileName), animals);
+
         long endR = System.currentTimeMillis();
         long timeR = endR - begR;
 
@@ -73,19 +73,19 @@ public class SerializerTests {
 
     @Test
     public void externalizableTest() throws IOException, ClassNotFoundException {
-        List<AnimalExternalizable> animals = (new Data()).getAnimalExternalizableList();
+        List<AnimalExternalizable> animals = (new Data(N)).getAnimalExternalizableList();
 
         long begW = System.currentTimeMillis();
-        for (int i = 0; i < N; i++) {
-            Serializer.serializeWithExternalizable(new ArrayList<>(animals), fileName);
-        }
+
+        Serializer.serializeWithExternalizable(new ArrayList<>(animals), fileName);
+
         long endW = System.currentTimeMillis();
         long timeW = endW - begW;
 
         long begR = System.currentTimeMillis();
-        for (int i = 0; i < N; i++) {
-            assertEquals(Serializer.deserializeWithExternalizable(fileName), animals);
-        }
+
+        assertEquals(Serializer.deserializeWithExternalizable(fileName), animals);
+
         long endR = System.currentTimeMillis();
         long timeR = endR - begR;
 
@@ -95,18 +95,18 @@ public class SerializerTests {
 
     @Test
     public void customTest() throws IOException {
-        List<Animal> animals = (new Data()).getAnimalList();
+        List<Animal> animals = (new Data(N)).getAnimalList();
         long begW = System.currentTimeMillis();
-        for (int i = 0; i < N; i++) {
-            Serializer.customSerialize(new ArrayList<>(animals), fileName);
-        }
+
+        Serializer.customSerialize(new ArrayList<>(animals), fileName);
+
         long endW = System.currentTimeMillis();
         long timeW = endW - begW;
 
         long begR = System.currentTimeMillis();
-        for (int i = 0; i < N; i++) {
-            assertEquals(Serializer.customDeserialize(fileName), animals);
-        }
+
+        assertEquals(Serializer.customDeserialize(fileName), animals);
+
         long endR = System.currentTimeMillis();
         long timeR = endR - begR;
 
@@ -114,7 +114,7 @@ public class SerializerTests {
     }
 
     @After
-    public void tierDown(){
+    public void tierDown() {
         path.toFile().delete();
     }
 }
