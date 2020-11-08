@@ -12,9 +12,6 @@ import java.util.List;
  * 1 балл
  */
 
-
-
-
 public class Animal implements Serializable {
     private String name;
     private double weight;
@@ -22,13 +19,26 @@ public class Animal implements Serializable {
     private List<Parents> genericOfRelatives;
     private Colour colour;
 
+    public Animal(Animal animal) {
+        this(animal.name,
+                animal.weight,
+                animal.parents,
+                animal.genericOfRelatives,
+                animal.colour);
+    }
+
     public Animal(String name, double weight, Parents parents, List<Parents> genericOfRelatives, Colour colour) {
         this.name = name;
         this.weight = weight;
-        this.parents = parents;
-        this.genericOfRelatives = new ArrayList<>(genericOfRelatives);
+        this.parents = new Parents(parents);
+        this.genericOfRelatives = new ArrayList<>();
+        for(Parents i : genericOfRelatives) {
+            this.genericOfRelatives.add(new Parents(i));
+        }
         this.colour = colour;
     }
+
+
 
     @Override
     public boolean equals(Object obj) {

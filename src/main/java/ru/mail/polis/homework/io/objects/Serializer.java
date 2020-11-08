@@ -38,7 +38,10 @@ public class Serializer {
 
         try (ObjectOutputStream objectOutputStream =
                      new ObjectOutputStream(Files.newOutputStream(path))) {
-            objectOutputStream.writeObject(animals);
+            objectOutputStream.writeInt(animals.size());
+            for (Animal animal : animals) {
+                objectOutputStream.writeObject(animal);
+            }
         }
     }
 
@@ -54,7 +57,12 @@ public class Serializer {
 
         try (ObjectInputStream objectInputStream =
                      new ObjectInputStream(Files.newInputStream(path))) {
-            return (ArrayList) objectInputStream.readObject();
+            int n = objectInputStream.readInt();
+            List<Animal> animals = new ArrayList<>(n);
+            for (int i = 0; i < n; ++i) {
+                animals.add((Animal) objectInputStream.readObject());
+            }
+            return animals;
         }
     }
 
@@ -70,8 +78,9 @@ public class Serializer {
 
         try (ObjectOutputStream objectOutputStream =
                      new ObjectOutputStream(Files.newOutputStream(path))) {
+            objectOutputStream.writeInt(animals.size());
             for (AnimalWithMethods animal : animals) {
-                animal.writeObject(objectOutputStream);
+                objectOutputStream.writeObject(animal);
             }
         }
     }
@@ -90,11 +99,9 @@ public class Serializer {
         List<AnimalWithMethods> animals = new ArrayList<>();
         try (ObjectInputStream objectInputStream =
                      new ObjectInputStream(Files.newInputStream(path))) {
-            AnimalWithMethods animalWithMethods;
-            while (objectInputStream.available() != 0) {
-                animalWithMethods = new AnimalWithMethods();
-                animalWithMethods.readObject(objectInputStream);
-                animals.add(animalWithMethods);
+            int n = objectInputStream.readInt();
+            for (int i = 0; i < n; ++i) {
+                animals.add((AnimalWithMethods) objectInputStream.readObject());
             }
         }
         return animals;
@@ -112,8 +119,9 @@ public class Serializer {
 
         try (ObjectOutputStream objectOutputStream =
                      new ObjectOutputStream(Files.newOutputStream(path))) {
+            objectOutputStream.writeInt(animals.size());
             for (AnimalExternalizable animal : animals) {
-                animal.writeExternal(objectOutputStream);
+                objectOutputStream.writeObject(animal);
             }
         }
     }
@@ -132,11 +140,9 @@ public class Serializer {
         List<AnimalExternalizable> animals = new ArrayList<>();
         try (ObjectInputStream objectInputStream =
                      new ObjectInputStream(Files.newInputStream(path))) {
-            AnimalExternalizable animalExternalizable;
-            while (objectInputStream.available() != 0) {
-                animalExternalizable = new AnimalExternalizable();
-                animalExternalizable.readExternal(objectInputStream);
-                animals.add(animalExternalizable);
+            int n = objectInputStream.readInt();
+            for (int i = 0; i < n; ++i) {
+                animals.add((AnimalExternalizable) objectInputStream.readObject());
             }
         }
         return animals;
@@ -155,10 +161,10 @@ public class Serializer {
 
         try (ObjectOutputStream objectOutputStream =
                      new ObjectOutputStream(Files.newOutputStream(path))) {
+            objectOutputStream.writeInt(animals.size());
             for (Animal animal : animals) {
                 objectOutputStream.writeUTF(animal.getName());
                 objectOutputStream.writeDouble(animal.getWeight());
-
                 objectOutputStream.writeUTF(animal.getParents().getMother());
                 objectOutputStream.writeUTF(animal.getParents().getFather());
                 objectOutputStream.writeInt(animal.getGenericOfRelatives().size());
@@ -186,27 +192,24 @@ public class Serializer {
         List<Animal> animals = new ArrayList<>();
         try (ObjectInputStream objectInputStream =
                      new ObjectInputStream(Files.newInputStream(path))) {
-            while (true) {
-                try {
-                    String name = objectInputStream.readUTF();
-                    double weight = objectInputStream.readDouble();
-                    String mother = objectInputStream.readUTF();
-                    String father = objectInputStream.readUTF();
-                    Parents parents = new Parents(mother, father);
-                    int n = objectInputStream.readInt();
+            int n = objectInputStream.readInt();
+            for (int k = 0; k < n; ++k) {
+                String name = objectInputStream.readUTF();
+                double weight = objectInputStream.readDouble();
+                String mother = objectInputStream.readUTF();
+                String father = objectInputStream.readUTF();
+                Parents parents = new Parents(mother, father);
+                int size = objectInputStream.readInt();
 
-                    List<Parents> genericOfRelatives = new ArrayList<>(n);
-                    for (int i = 0; i < n; ++i) {
-                        String mother1 = objectInputStream.readUTF();
-                        String father1 = objectInputStream.readUTF();
-                        Parents parents1 = new Parents(mother1, father1);
-                        genericOfRelatives.add(parents1);
-                    }
-                    Colour colour = Colour.valueOf(objectInputStream.readUTF());
-                    animals.add(new Animal(name, weight, parents, genericOfRelatives, colour));
-                } catch (IOException e) {
-                    break;
+                List<Parents> genericOfRelatives = new ArrayList<>(n);
+                for (int i = 0; i < size; ++i) {
+                    String mother1 = objectInputStream.readUTF();
+                    String father1 = objectInputStream.readUTF();
+                    Parents parents1 = new Parents(mother1, father1);
+                    genericOfRelatives.add(parents1);
                 }
+
+                animals.add(new Animal(name, weight, parents, genericOfRelatives, Colour.valueOf(objectInputStream.readUTF())));
             }
 
         }

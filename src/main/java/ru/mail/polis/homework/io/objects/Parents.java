@@ -1,12 +1,22 @@
 package ru.mail.polis.homework.io.objects;
 
+import sun.security.krb5.internal.PAData;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public class Parents implements Serializable {
     private String mother;
     private String father;
 
-    Parents() {}
+//    public Parents() {}
+
+    public Parents(Parents parents) {
+        this(parents.getMother(), parents.getFather());
+    }
+
 
     public Parents(String mother, String father) {
         this.mother = mother;
@@ -42,5 +52,13 @@ public class Parents implements Serializable {
         return mother.equals(parents.mother) &&
                 father.equals(parents.father);
     }
-}
 
+    public void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeUTF(mother);
+        out.writeUTF(father);
+    }
+
+    public Parents readObject(ObjectInputStream in) throws IOException {
+        return new Parents(in.readUTF(), in.readUTF());
+    }
+}

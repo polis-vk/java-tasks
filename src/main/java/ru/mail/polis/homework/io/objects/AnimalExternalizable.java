@@ -17,20 +17,31 @@ public class AnimalExternalizable implements Externalizable {
     private List<Parents> genericOfRelatives;
     private Colour colour;
 
-    AnimalExternalizable() {
+    public AnimalExternalizable() {}
+
+    public AnimalExternalizable(Animal animal) {
+        this(animal.getName(),
+                animal.getWeight(),
+                animal.getParents(),
+                animal.getGenericOfRelatives(),
+                animal.getColor());
     }
 
-    public AnimalExternalizable(String name, double weight, Parents parents, ArrayList<Parents> genericOfRelatives, Colour colour) {
+    public AnimalExternalizable(String name, double weight, Parents parents, List<Parents> genericOfRelatives, Colour colour) {
         this.name = name;
-        if (weight > 50) {
-            this.weight = weight;
-        } else {
+        this.weight = weight;
+        if(weight < 50) {
             this.weight = 50;
         }
-        this.parents = parents;
-        this.genericOfRelatives = new ArrayList<>(genericOfRelatives);
+        this.parents = new Parents(parents);
+        this.genericOfRelatives = new ArrayList<>();
+        for(Parents i : genericOfRelatives) {
+            this.genericOfRelatives.add(new Parents(i));
+        }
         this.colour = colour;
     }
+
+
 
     @Override
     public boolean equals(Object obj) {
@@ -73,8 +84,9 @@ public class AnimalExternalizable implements Externalizable {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         name = in.readUTF();
         weight = in.readDouble();
-        if (weight <= 50) {
-            this.weight = 50;
+
+        if(weight < 50) {
+            weight = 50;
         }
         parents = (Parents) in.readObject();
         genericOfRelatives = (List<Parents>) in.readObject();

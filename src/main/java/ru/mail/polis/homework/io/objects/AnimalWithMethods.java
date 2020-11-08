@@ -18,17 +18,25 @@ public class AnimalWithMethods implements Serializable {
     private List<Parents> genericOfRelatives;
     private Colour colour;
 
-    AnimalWithMethods() {
+    public AnimalWithMethods(Animal animal) {
+        this(animal.getName(),
+                animal.getWeight(),
+                animal.getParents(),
+                animal.getGenericOfRelatives(),
+                animal.getColor());
     }
 
-    public AnimalWithMethods(String name, double weight, Parents parents, ArrayList<Parents> genericOfRelatives, Colour colour) {
+    public AnimalWithMethods(String name, double weight, Parents parents, List<Parents> genericOfRelatives, Colour colour) {
         this.name = name;
         this.weight = weight;
-        if (weight <= 50) {
+        if(weight < 50) {
             this.weight = 50;
         }
-        this.parents = parents;
-        this.genericOfRelatives = new ArrayList<>(genericOfRelatives);
+        this.parents = new Parents(parents);
+        this.genericOfRelatives = new ArrayList<>();
+        for(Parents i : genericOfRelatives) {
+            this.genericOfRelatives.add(new Parents(i));
+        }
         this.colour = colour;
     }
 
@@ -71,8 +79,8 @@ public class AnimalWithMethods implements Serializable {
     public void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         name = in.readUTF();
         weight = in.readDouble();
-        if (weight <= 50) {
-            this.weight = 50;
+        if(weight < 50) {
+            weight = 50;
         }
         parents = (Parents) in.readObject();
         genericOfRelatives = (List<Parents>) in.readObject();
