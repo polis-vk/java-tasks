@@ -13,8 +13,6 @@ import java.util.List;
  * 3 балла
  */
 public class AnimalWithMethods implements Serializable, Cloneable {
-    public enum Gender {MALE, FEMALE, NEUTRAL, MAYBE_MALE, MAYBE_FEMALE, OTHER}
-
     private List<String> habitat;
     private String species;
     private short age;

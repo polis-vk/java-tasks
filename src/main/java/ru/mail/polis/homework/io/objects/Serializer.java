@@ -187,7 +187,7 @@ public class Serializer {
 
         String species = in.readUTF();
         short age = in.readShort();
-        Animal.Gender gender = Animal.Gender.valueOf(in.readUTF());
+        Gender gender = Gender.valueOf(in.readUTF());
         boolean realExistence = in.readBoolean();
         ArrayList<Animal> children = new ArrayList<>();
         for (int i = in.readInt(); i > 0; i--) {

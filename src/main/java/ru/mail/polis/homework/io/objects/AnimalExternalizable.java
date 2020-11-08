@@ -14,19 +14,17 @@ import java.util.List;
  * 3 балла
  */
 public class AnimalExternalizable implements Externalizable, Cloneable {
-    public enum Gender {MALE, FEMALE, NEUTRAL, MAYBE_MALE, MAYBE_FEMALE, OTHER}
-
     private List<String> habitat;
     private String species;
     private short age;
-    private AnimalExternalizable.Gender gender;
+    private Gender gender;
     private boolean realExistence;
     private List<AnimalExternalizable> children;
 
     public AnimalExternalizable() {
     }
 
-    public AnimalExternalizable(ArrayList<String> habitat, String species, short age, AnimalExternalizable.Gender gender, boolean realExistence) {
+    public AnimalExternalizable(ArrayList<String> habitat, String species, short age, Gender gender, boolean realExistence) {
         if (age < 0) {
             throw new IllegalArgumentException();
         }
@@ -38,7 +36,7 @@ public class AnimalExternalizable implements Externalizable, Cloneable {
         this.children = new ArrayList<>();
     }
 
-    public AnimalExternalizable(ArrayList<String> habitat, String species, short age, AnimalExternalizable.Gender gender, boolean realExistence, ArrayList<AnimalExternalizable> children) {
+    public AnimalExternalizable(ArrayList<String> habitat, String species, short age, Gender gender, boolean realExistence, ArrayList<AnimalExternalizable> children) {
         if (age < 0) {
             throw new IllegalArgumentException();
         }
@@ -65,7 +63,7 @@ public class AnimalExternalizable implements Externalizable, Cloneable {
         habitat = (ArrayList<String>) in.readObject();
         species = in.readUTF();
         age = in.readShort();
-        gender = (AnimalExternalizable.Gender) in.readObject();
+        gender = (Gender) in.readObject();
         realExistence = in.readBoolean();
         children = (ArrayList<AnimalExternalizable>) in.readObject();
     }

@@ -11,8 +11,9 @@ import java.util.List;
  * Всего должно быть минимум 6 полей с разными типами.
  * 1 балл
  */
+enum Gender {MALE, FEMALE, NEUTRAL, MAYBE_MALE, MAYBE_FEMALE, OTHER}
+
 public class Animal implements Serializable, Cloneable {
-    public enum Gender {MALE, FEMALE, NEUTRAL, MAYBE_MALE, MAYBE_FEMALE, OTHER}
 
     private List<String> habitat;
     private String species;
