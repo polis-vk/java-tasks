@@ -158,20 +158,22 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
-        try (DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(fileName))) {
-            dataOutputStream.writeInt(animals.size());
-            for (Animal animal : animals) {
-                dataOutputStream.writeUTF(animal.getType().getValue());
-                dataOutputStream.writeUTF(animal.getName());
-                List<String> food = animal.getFood();
-                dataOutputStream.writeInt(food.size());
-                for (String f : food) {
-                    dataOutputStream.writeUTF(f);
+        try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
+            try (ObjectOutputStream objectOutputStream = new ObjectOutputStream((outputStream))) {
+                objectOutputStream.writeInt(animals.size());
+                for (Animal animal : animals) {
+                    objectOutputStream.writeUTF(animal.getType().getValue());
+                    objectOutputStream.writeUTF(animal.getName());
+                    List<String> food = animal.getFood();
+                    objectOutputStream.writeInt(food.size());
+                    for (String f : food) {
+                        objectOutputStream.writeUTF(f);
+                    }
+                    objectOutputStream.writeInt(animal.getSpeed());
+                    objectOutputStream.writeInt(animal.getHealth());
+                    objectOutputStream.writeBoolean(animal.getOrientation());
+                    objectOutputStream.writeInt(animal.getMind().getBrain());
                 }
-                dataOutputStream.writeInt(animal.getSpeed());
-                dataOutputStream.writeInt(animal.getHealth());
-                dataOutputStream.writeBoolean(animal.getOrientation());
-                dataOutputStream.writeInt(animal.getMind().getBrain());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -188,23 +190,25 @@ public class Serializer {
      */
     public List<Animal> customDeserialize(String fileName) {
         List<Animal> animals = new ArrayList<>();
-        try (DataInputStream dataInputStream = new DataInputStream(new FileInputStream(fileName))) {
-            int size = dataInputStream.readInt();
-            for (int i = 0; i < size; i++) {
-                Animal animal = new Animal();
-                animal.setType(AnimalsType.fromValue(dataInputStream.readUTF()));
-                animal.setName(dataInputStream.readUTF());
-                int sizeFood = dataInputStream.readInt();
-                List<String> food = new ArrayList<>(sizeFood);
-                for (int j = 0; j < sizeFood; j++) {
-                    food.add(dataInputStream.readUTF());
+        try (FileInputStream inputStream = new FileInputStream(fileName)) {
+            try (ObjectInputStream objectInputStream = new ObjectInputStream((inputStream))) {
+                int size = objectInputStream.readInt();
+                for (int i = 0; i < size; i++) {
+                    Animal animal = new Animal();
+                    animal.setType(AnimalsType.fromValue(objectInputStream.readUTF()));
+                    animal.setName(objectInputStream.readUTF());
+                    int sizeFood = objectInputStream.readInt();
+                    List<String> food = new ArrayList<>(sizeFood);
+                    for (int j = 0; j < sizeFood; j++) {
+                        food.add(objectInputStream.readUTF());
+                    }
+                    animal.setFood(food);
+                    animal.setSpeed(objectInputStream.readInt());
+                    animal.setHealth(objectInputStream.readInt());
+                    animal.setOrientation(objectInputStream.readBoolean());
+                    animal.setMind(new Mind(objectInputStream.readInt()));
+                    animals.add(animal);
                 }
-                animal.setFood(food);
-                animal.setSpeed(dataInputStream.readInt());
-                animal.setHealth(dataInputStream.readInt());
-                animal.setOrientation(dataInputStream.readBoolean());
-                animal.setMind(new Mind(dataInputStream.readInt()));
-                animals.add(animal);
             }
         } catch (IOException e) {
             e.printStackTrace();
