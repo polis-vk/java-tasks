@@ -1,13 +1,11 @@
 package ru.mail.polis.homework.io.objects;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -59,7 +57,7 @@ public class Serializer {
     Path path = Paths.get(fileName);
 
     try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(path))) {
-      while (true) {
+      while (inputStream.available() != 0) {
         animalList.add((Animal) inputStream.readObject());
       }
     }
@@ -212,9 +210,9 @@ public class Serializer {
         Brain brain = new Brain(inputStream.readInt());
 
         int nameListSize = inputStream.readInt();
-        List<String> nameList = new ArrayList<>();
+        List<String> nameList = Arrays.asList(new String[nameListSize]);
         for (int i = 0; i < nameListSize; i++) {
-          nameList.add(inputStream.readUTF());
+          nameList.set(i, inputStream.readUTF());
         }
 
         int weight = inputStream.readInt();
