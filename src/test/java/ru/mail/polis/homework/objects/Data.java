@@ -47,11 +47,7 @@ public class Data {
     public ArrayList<Animal> getAnimalList() {
         ArrayList<Animal> animals = new ArrayList<>();
         for (int i = 0; i < N; i++) {
-            if (r.nextInt(10) > 8) {
-                animals.add(new Animal(getRandomHabitat(), getRandomString(stringSize), getRandomAge((short) 0, (short) 300), getRandomGender(), getRandomRealExistence(), getAnimalList()));
-            } else {
-                animals.add(new Animal(getRandomHabitat(), getRandomString(stringSize), getRandomAge((short) 0, (short) 300), getRandomGender(), getRandomRealExistence()));
-            }
+            animals.add(new Animal(getRandomHabitat(), getRandomString(stringSize), getRandomAge((short) 0, (short) 300), getRandomGender(), getRandomRealExistence()));
         }
         return animals;
     }
@@ -59,11 +55,7 @@ public class Data {
     public ArrayList<AnimalWithMethods> getAnimalWithMethodsList() {
         ArrayList<AnimalWithMethods> animals = new ArrayList<>();
         for (int i = 0; i < N; i++) {
-            if (r.nextInt(10) > 8) {
-                animals.add(new AnimalWithMethods(getRandomHabitat(), getRandomString(stringSize), getRandomAge((short) 0, (short) 300), getRandomGender(), getRandomRealExistence(), getAnimalWithMethodsList()));
-            } else {
-                animals.add(new AnimalWithMethods(getRandomHabitat(), getRandomString(stringSize), getRandomAge((short) 0, (short) 300), getRandomGender(), getRandomRealExistence()));
-            }
+            animals.add(new AnimalWithMethods(getRandomHabitat(), getRandomString(stringSize), getRandomAge((short) 0, (short) 300), getRandomGender(), getRandomRealExistence()));
         }
         return animals;
     }
@@ -71,11 +63,7 @@ public class Data {
     public ArrayList<AnimalExternalizable> getAnimalExternalizableList() {
         ArrayList<AnimalExternalizable> animals = new ArrayList<>();
         for (int i = 0; i < N; i++) {
-            if (r.nextInt(10) > 8) {
-                animals.add(new AnimalExternalizable(getRandomHabitat(), getRandomString(stringSize), getRandomAge((short) 0, (short) 300), getRandomGender(), getRandomRealExistence(), getAnimalExternalizableList()));
-            } else {
-                animals.add(new AnimalExternalizable(getRandomHabitat(), getRandomString(stringSize), getRandomAge((short) 0, (short) 300), getRandomGender(), getRandomRealExistence()));
-            }
+            animals.add(new AnimalExternalizable(getRandomHabitat(), getRandomString(stringSize), getRandomAge((short) 0, (short) 300), getRandomGender(), getRandomRealExistence()));
         }
         return animals;
     }
