@@ -27,7 +27,7 @@ public class TestSerialize {
 
     @Before
     public void fillObjects() throws IOException {
-        final int countOfAnimals = 100000;
+        final int countOfAnimals = 10000;
         animals = new ArrayList<>(countOfAnimals);
 
         animalsWithMethods = new ArrayList<>(countOfAnimals);
@@ -114,17 +114,17 @@ public class TestSerialize {
 
     @Test
     public void serializeWithMethodsTest() throws IOException {
-        System.out.println("WithMethods");
-        long start = System.currentTimeMillis();
-        serialize.serializeWithMethods(animalsWithMethods, pathToFile);
-        System.out.println(System.currentTimeMillis() - start);
-        File f = new File(pathToFile);
-        System.out.println(f.length());
-        start = System.currentTimeMillis();
-        List<AnimalWithMethods> deserializeObjects = serialize.deserializeWithMethods(pathToFile);
-        System.out.println(System.currentTimeMillis() - start);
-        assertEquals(animalsWithMethods, deserializeObjects);
-        Files.delete(Paths.get(pathToFile));
+            System.out.println("WithMethods");
+            long start = System.currentTimeMillis();
+            serialize.serializeWithMethods(animalsWithMethods, pathToFile);
+            System.out.println(System.currentTimeMillis() - start);
+            File f = new File(pathToFile);
+            System.out.println(f.length());
+            start = System.currentTimeMillis();
+            List<AnimalWithMethods> deserializeObjects = serialize.deserializeWithMethods(pathToFile);
+            System.out.println(System.currentTimeMillis() - start);
+            assertEquals(animalsWithMethods, deserializeObjects);
+            Files.delete(Paths.get(pathToFile));
     }
 
     @Test
