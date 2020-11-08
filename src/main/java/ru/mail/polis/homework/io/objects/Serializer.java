@@ -1,7 +1,12 @@
 package ru.mail.polis.homework.io.objects;
 
-
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -63,7 +68,6 @@ public class Serializer {
         }
     }
 
-
     /**
      * 1 балл
      * Реализовать простую ручную сериализацию, с помощью специального потока для сериализации объектов и специальных методов
@@ -74,7 +78,7 @@ public class Serializer {
         Path path = Paths.get(fileName);
         try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(path))) {
             out.writeInt(animals.size());
-            for (Animal animal : animals) {
+            for (AnimalWithMethods animal : animals) {
                 out.writeObject(animal);
             }
         }
@@ -113,7 +117,7 @@ public class Serializer {
         Path path = Paths.get(fileName);
         try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(path))) {
             out.writeInt(animals.size());
-            for (Animal animal : animals) {
+            for (AnimalExternalizable animal : animals) {
                 out.writeObject(animal);
             }
         }
@@ -161,24 +165,43 @@ public class Serializer {
     }
 
     private void addAnimalToDataOutputStream(Animal animal, DataOutputStream out) throws IOException {
-        out.writeUTF(animal.getName());
-        out.writeInt(animal.getBreed().ordinal());
+        if (animal.getName() != null) {
+            out.writeBoolean(true);
+            out.writeUTF(animal.getName());
+        } else {
+            out.writeBoolean(false);
+        }
+        if (animal.getBreed() != null) {
+            out.writeBoolean(true);
+            out.writeUTF(animal.getBreed().toString());
+        } else {
+            out.writeBoolean(false);
+        }
         out.writeInt(animal.getAge());
-        out.writeInt(animal.getEat().size());
-        for (Eat e : animal.getEat()) {
-            out.writeInt(e.ordinal());
+        if (animal.getEat() != null) {
+            out.writeInt(animal.getEat().size());
+            for (Eat e : animal.getEat()) {
+                out.writeUTF(e.toString());
+            }
+        } else {
+            out.writeInt(0);
         }
         out.writeBoolean(animal.getInWild());
-        out.writeUTF(animal.getLocation());
+        if (animal.getLocation() != null) {
+            out.writeBoolean(true);
+            out.writeUTF(animal.getLocation());
+        } else {
+            out.writeBoolean(false);
+        }
         if (animal.getMother() != null) {
             out.writeBoolean(true);
-            addAnimalToDataOutputStream(animal.getMother(), out);
+            addAnimalToDataOutputStream((Animal) animal.getMother(), out);
         } else {
             out.writeBoolean(false);
         }
         if (animal.getFather() != null) {
             out.writeBoolean(true);
-            addAnimalToDataOutputStream(animal.getFather(), out);
+            addAnimalToDataOutputStream((Animal) animal.getFather(), out);
         } else {
             out.writeBoolean(false);
         }
@@ -208,16 +231,16 @@ public class Serializer {
     }
 
     private Animal getAnimalFromDataOutputStream(DataInputStream in) throws IOException {
-        String name = in.readUTF();
-        Breeds breed = (Breeds.values()[in.readInt()]);
+        String name = in.readBoolean() ? in.readUTF() : null;
+        Breeds breed = in.readBoolean() ? Breeds.valueOf(in.readUTF()) : null;
         int age = in.readInt();
         int eatSize = in.readInt();
-        List<Eat> eat = new ArrayList<>(eatSize);
+        List<Eat> eat = eatSize != 0 ? new ArrayList<>(eatSize) : null;
         for (int itemNum = 0; itemNum < eatSize; itemNum++) {
-            eat.add(Eat.values()[in.readInt()]);
+            eat.add(Eat.valueOf(in.readUTF()));
         }
         boolean inWild = in.readBoolean();
-        String location = in.readUTF();
+        String location = in.readBoolean() ? in.readUTF() : null;
         Animal mother = null;
         if (in.readBoolean()) {
             mother = getAnimalFromDataOutputStream(in);
@@ -235,6 +258,6 @@ public class Serializer {
                 .setLocation(location)
                 .setMother(mother)
                 .setFather(father)
-                .build();
+                .buildAnimal();
     }
 }

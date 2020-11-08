@@ -1,7 +1,8 @@
 package ru.mail.polis.homework.io.objects;
 
-
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,30 +12,48 @@ import java.util.List;
  */
 
 public class AnimalWithMethods extends Animal {
-    public AnimalWithMethods() {
 
+    public AnimalWithMethods(ru.mail.polis.homework.io.objects.Builder builder) {
+        this.name = builder.name;
+        this.breed = builder.breed;
+        this.age = builder.age;
+        this.eat = builder.eat;
+        this.inWild = builder.inWild;
+        this.location = builder.location;
+        this.mother = (AnimalWithMethods) builder.mother;
+        this.father = (AnimalWithMethods) builder.father;
     }
 
-    public AnimalWithMethods(Builder builder) {
-        super(builder);
-    }
-
-    public void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeUTF(name);
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        if (name != null) {
+            out.writeBoolean(true);
+            out.writeUTF(name);
+        } else {
+            out.writeBoolean(false);
+        }
         out.writeObject(breed);
         out.writeInt(age);
-        out.writeInt(eat.size());
-        for (Eat e : eat) {
-            out.writeObject(e);
+        if (eat != null) {
+            out.writeInt(eat.size());
+            for (Eat e : eat) {
+                out.writeObject(e);
+            }
+        } else {
+            out.writeInt(0);
         }
         out.writeBoolean(inWild);
-        out.writeUTF(location);
+        if (location != null) {
+            out.writeBoolean(true);
+            out.writeUTF(location);
+        } else {
+            out.writeBoolean(false);
+        }
         out.writeObject(mother);
         out.writeObject(father);
     }
 
-    public void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        name = in.readUTF();
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        name = in.readBoolean() ? in.readUTF() : null;
         breed = (Breeds) in.readObject();
         age = in.readInt();
         if (age < 0) {
@@ -45,68 +64,12 @@ public class AnimalWithMethods extends Animal {
         for (int eatItem = 0; eatItem < eatSize; eatItem++) {
             incomingEat.add((Eat) in.readObject());
         }
-        eat = incomingEat;
+        eat = eatSize != 0 ? incomingEat : null;
         inWild = in.readBoolean();
-        location = in.readUTF();
-        mother = (Animal) in.readObject();
-        father = (Animal) in.readObject();
+        location = in.readBoolean() ? in.readUTF() : null;
+        mother = (AnimalWithMethods) in.readObject();
+        father = (AnimalWithMethods) in.readObject();
     }
 
-    public static class Builder extends Animal.Builder {
-        @Override
-        public AnimalWithMethods build() {
-            return new AnimalWithMethods(this);
-        }
-
-        @Override
-        public Builder setName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        @Override
-        public Builder setBreed(Breeds breed) {
-            this.breed = breed;
-            return this;
-        }
-
-        @Override
-        public Builder setAge(int age) {
-            if (age < 0) {
-                throw new IllegalArgumentException();
-            }
-            this.age = age;
-            return this;
-        }
-
-        @Override
-        public Builder setEat(List<Eat> eat) {
-            this.eat = eat;
-            return this;
-        }
-
-        @Override
-        public Builder setInWild(boolean inWild) {
-            this.inWild = inWild;
-            return this;
-        }
-
-        @Override
-        public Builder setLocation(String location) {
-            this.location = location;
-            return this;
-        }
-
-        @Override
-        public Builder setMother(Animal mother) {
-            this.mother = mother;
-            return this;
-        }
-
-        @Override
-        public Animal.Builder setFather(Animal father) {
-            this.father = father;
-            return this;
-        }
-    }
+    public static class Builder extends ru.mail.polis.homework.io.objects.Builder { }
 }
