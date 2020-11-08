@@ -4,6 +4,7 @@ package ru.mail.polis.homework.io.objects;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,23 +12,21 @@ import java.util.Objects;
  * Дубль класса Animal, для Serializer.serializeWithMethods
  * 3 балла
  */
-public class AnimalWithMethods {
-    private String name;
-    private int age;
-    private int weight;
-    private List<String> todosList; // Важные дела, которые данное животное должно выполнить
-    private Species animalKind;
-    private Clothes clothes;
-
-    public AnimalWithMethods(){ }
+public class AnimalWithMethods implements Serializable {
+    private final String name;
+    private final int age;
+    private final int weight;
+    private final List<String> todosList; // Важные дела, которые данное животное должно выполнить
+    private final Species species;
+    private final Clothes clothes;
 
     public AnimalWithMethods(String name, int age, int weight,
-                  List<String> todosList, Species animalKind, Clothes clothes) {
+                             List<String> todosList, Species species, Clothes clothes) {
         this.name = name;
         this.age = age;
         this.weight = weight;
         this.todosList = todosList;
-        this.animalKind = animalKind;
+        this.species = species;
         this.clothes = clothes;
     }
 
@@ -43,11 +42,21 @@ public class AnimalWithMethods {
     public List<String> getTodosList() {
         return todosList;
     }
-    public Species getAnimalKind() {
-        return animalKind;
+    public Species getSpecies() {
+        return species;
     }
     public Clothes getClothes() {
         return clothes;
+    }
+
+    private void writeObject(ObjectOutputStream objectOutputStream) throws IOException {
+        objectOutputStream.defaultWriteObject();
+        //something more if we want
+    }
+
+    private void readObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
+        objectInputStream.defaultReadObject();
+        //something more if we want
     }
 
     @Override
@@ -59,31 +68,12 @@ public class AnimalWithMethods {
                 weight == that.weight &&
                 name.equals(that.name) &&
                 todosList.equals(that.todosList) &&
-                animalKind == that.animalKind &&
+                species == that.species &&
                 clothes.equals(that.clothes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, age, weight, todosList, animalKind, clothes);
-    }
-
-    public void myWriteObjects(ObjectOutputStream objectOutputStream) throws IOException {
-        objectOutputStream.writeUTF(name);
-        objectOutputStream.writeInt(age);
-        objectOutputStream.writeInt(weight);
-        objectOutputStream.writeObject(todosList);
-        objectOutputStream.writeObject(animalKind);
-        clothes.myWriteObject(objectOutputStream);
-    }
-
-    public void myReadObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
-        name = objectInputStream.readUTF();
-        age = objectInputStream.readInt();
-        weight = objectInputStream.readInt();
-        todosList = (List<String>)objectInputStream.readObject();
-        animalKind = (Species)objectInputStream.readObject();
-        clothes = new Clothes();
-        clothes.myReadObject(objectInputStream);
+        return Objects.hash(name, age, weight, todosList, species, clothes);
     }
 }

@@ -3,7 +3,6 @@ package ru.mail.polis.homework.io.objects;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,8 +29,7 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
-        try(ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(fileName)))
-        {
+        try(ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
             outputStream.writeObject(animals);
         }
         catch (Exception e){
@@ -48,8 +46,7 @@ public class Serializer {
      */
     public List<Animal> defaultDeserialize(String fileName) {
         List<Animal> animals = new ArrayList<>();
-        try(ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(fileName)))
-        {
+        try(ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(fileName))) {
             animals = (ArrayList<Animal>)inputStream.readObject();
         }
         catch (Exception e){
@@ -66,11 +63,10 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))){
-            for (AnimalWithMethods animal : animals){
-                animal.myWriteObjects(objectOutputStream);
-            }
-        } catch (IOException e){
+        try(ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            outputStream.writeObject(animals);
+        }
+        catch (Exception e){
             System.out.println(e.getMessage());
         }
     }
@@ -85,15 +81,11 @@ public class Serializer {
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
         List<AnimalWithMethods> animals = new ArrayList<>();
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))){
-            AnimalWithMethods animalWithMethods;
-            while (objectInputStream.available() != 0){
-                animalWithMethods = new AnimalWithMethods();
-                animalWithMethods.myReadObject(objectInputStream);
-                animals.add(animalWithMethods);
-            }
-        } catch (IOException | ClassNotFoundException e){
-            e.getMessage();
+        try(ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(fileName))) {
+            animals = (ArrayList<AnimalWithMethods>)inputStream.readObject();
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
         }
         return animals;
     }
@@ -161,7 +153,7 @@ public class Serializer {
                     for (String todo : animal.getTodosList()){
                         objectOutputStream.writeUTF(todo);
                     }
-                    objectOutputStream.writeInt(animal.getAnimalKind().ordinal());
+                    objectOutputStream.writeInt(animal.getSpecies().ordinal());
                     objectOutputStream.writeUTF(animal.getClothes().getBrand());
                     objectOutputStream.writeInt(animal.getClothes().getSize());
                 } catch (IOException e) {

@@ -5,10 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.List;
-<<<<<<< HEAD
-=======
 import java.util.Objects;
->>>>>>> Tests and fixes
 
 /**
  * Дубль класса Animal, для Serializer.serializeWithExternalizable
@@ -19,16 +16,16 @@ public class AnimalExternalizable implements Externalizable {
     private int age;
     private int weight;
     private List<String> todosList; // Важные дела, которые данное животное должно выполнить
-    private Species animalKind;
+    private Species species;
     private ClothesExternalizable clothes;
 
     public AnimalExternalizable(String name, int age, int weight,
-                  List<String> todosList, Species animalKind, ClothesExternalizable clothes) {
+                                List<String> todosList, Species species, ClothesExternalizable clothes) {
         this.name = name;
         this.age = age;
         this.weight = weight;
         this.todosList = todosList;
-        this.animalKind = animalKind;
+        this.species = species;
         this.clothes = clothes;
     }
 
@@ -48,33 +45,12 @@ public class AnimalExternalizable implements Externalizable {
     public List<String> getTodosList() {
         return todosList;
     }
-    public Species getAnimalKind() {
-        return animalKind;
+    public Species getSpecies() {
+        return species;
     }
     public ClothesExternalizable getClothes() {
         return clothes;
     }
-
-<<<<<<< HEAD
-=======
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AnimalExternalizable that = (AnimalExternalizable) o;
-        return age == that.age &&
-                weight == that.weight &&
-                name.equals(that.name) &&
-                todosList.equals(that.todosList) &&
-                animalKind == that.animalKind &&
-                clothes.equals(that.clothes);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, age, weight, todosList, animalKind, clothes);
-    }
->>>>>>> Tests and fixes
 
     @Override
     public void writeExternal(ObjectOutput objectOutput) throws IOException {
@@ -82,7 +58,7 @@ public class AnimalExternalizable implements Externalizable {
         objectOutput.writeInt(age);
         objectOutput.writeInt(weight);
         objectOutput.writeObject(todosList);
-        objectOutput.writeObject(animalKind);
+        objectOutput.writeObject(species);
         clothes.writeExternal(objectOutput);
     }
 
@@ -92,8 +68,26 @@ public class AnimalExternalizable implements Externalizable {
         age = objectInput.readInt();
         weight = objectInput.readInt();
         todosList = (List<String>)objectInput.readObject();
-        animalKind = (Species)objectInput.readObject();
+        species = (Species)objectInput.readObject();
         clothes = new ClothesExternalizable();
         clothes.readExternal(objectInput);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AnimalExternalizable that = (AnimalExternalizable) o;
+        return age == that.age &&
+                weight == that.weight &&
+                name.equals(that.name) &&
+                todosList.equals(that.todosList) &&
+                species == that.species &&
+                clothes.equals(that.clothes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, age, weight, todosList, species, clothes);
     }
 }

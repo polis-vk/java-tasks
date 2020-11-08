@@ -1,5 +1,9 @@
 package ru.mail.polis.homework.io.objects;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * Класс должен содержать несколько полей с примитивами, строками, энамами и некоторыми сапомисными объектами.
  * Хотя бы один из них должен быть в списке! Например список размеров или список имен.
@@ -8,20 +12,20 @@ package ru.mail.polis.homework.io.objects;
  */
 
 public class Animal implements Serializable {
-    private String name;
-    private int age;
-    private int weight;
-    private List<String> todosList; // Важные дела, которые данное животное должно выполнить
-    private Species animalKind;
-    private Clothes clothes;
+    private final String name;
+    private final int age;
+    private final int weight;
+    private final List<String> todosList; // Важные дела, которые данное животное должно выполнить
+    private final Species species;
+    private final Clothes clothes;
 
     public Animal(String name, int age, int weight,
-                  List<String> todosList, Species animalKind, Clothes clothes) {
+                  List<String> todosList, Species species, Clothes clothes) {
         this.name = name;
         this.age = age;
         this.weight = weight;
         this.todosList = todosList;
-        this.animalKind = animalKind;
+        this.species = species;
         this.clothes = clothes;
     }
 
@@ -37,8 +41,8 @@ public class Animal implements Serializable {
     public List<String> getTodosList() {
         return todosList;
     }
-    public Species getAnimalKind() {
-        return animalKind;
+    public Species getSpecies() {
+        return species;
     }
     public Clothes getClothes() {
         return clothes;
@@ -53,12 +57,12 @@ public class Animal implements Serializable {
                 weight == animal.weight &&
                 name.equals(animal.name) &&
                 todosList.equals(animal.todosList) &&
-                animalKind == animal.animalKind &&
+                species == animal.species &&
                 clothes.equals(animal.clothes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, age, weight, todosList, animalKind, clothes);
+        return Objects.hash(name, age, weight, todosList, species, clothes);
     }
 }

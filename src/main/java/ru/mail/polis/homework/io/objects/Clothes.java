@@ -25,6 +25,14 @@ public class Clothes implements Serializable {
         return size;
     }
 
+    private void writeObject(ObjectOutputStream objectOutputStream) throws IOException {
+        objectOutputStream.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
+        objectInputStream.defaultReadObject();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -37,16 +45,6 @@ public class Clothes implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(brand, size);
-    }
-
-    void myWriteObject(ObjectOutputStream objectOutputStream) throws IOException {
-        objectOutputStream.writeUTF(brand);
-        objectOutputStream.writeInt(size);
-    }
-
-    void myReadObject(ObjectInputStream objectInputStream) throws IOException {
-        brand = objectInputStream.readUTF();
-        size = objectInputStream.readInt();
     }
 }
 
