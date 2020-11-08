@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +30,14 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
-
+        try(ObjectOutputStream objectOutputStream  = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            objectOutputStream.write(animals.size());
+            for(Animal animal : animals){
+                objectOutputStream.writeObject(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -39,7 +48,17 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))){
+            int size = objectInputStream.readInt();
+            ArrayList<Animal> animals = new ArrayList<>(size);
+            for(int i = 0; i < size; i++){
+                animals.add((Animal) objectInputStream.readObject());
+            }
+            return animals;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 
