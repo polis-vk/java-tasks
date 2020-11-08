@@ -54,9 +54,9 @@ public class Serializer {
     public List<Animal> defaultDeserialize(String fileName) {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
             int size = in.readInt();
-            List<Animal> animals = new ArrayList<>();
+            List<Animal> animals = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
-                animals.add((Animal) in.readObject());
+                animals.add(i, (Animal) in.readObject());
             }
             return animals;
         } catch (IOException e) {
@@ -97,9 +97,9 @@ public class Serializer {
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
             int size = in.readInt();
-            List<AnimalWithMethods> animals = new ArrayList<>();
+            List<AnimalWithMethods> animals = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
-                animals.add((AnimalWithMethods) in.readObject());
+                animals.add(i, (AnimalWithMethods) in.readObject());
             }
             return animals;
         } catch (IOException e) {
@@ -139,9 +139,9 @@ public class Serializer {
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
             int size = in.readInt();
-            List<AnimalExternalizable> animals = new ArrayList<>();
+            List<AnimalExternalizable> animals = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
-                animals.add((AnimalExternalizable) in.readObject());
+                animals.add(i, (AnimalExternalizable) in.readObject());
             }
             return animals;
         } catch (IOException e) {
@@ -161,6 +161,32 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            int size = animals.size();
+            out.writeInt(size);
+            for (Animal animal : animals) {
+                out.writeUTF(animal.getName());
+                out.writeInt(animal.getAge());
+                out.writeDouble(animal.getWeight());
+                out.writeUTF(animal.getKindOfAnimal().toString());
+
+                List<String> list = animal.getFood();
+                out.writeInt(list.size());
+                for (String f : list) {
+                    out.writeUTF(f);
+                }
+
+                Colour c = animal.getAnimalColor();
+                out.writeInt(c.getMainColor());
+                out.writeBoolean(c.getStains());
+                out.writeBoolean(c.getStripes());
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -173,6 +199,40 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> customDeserialize(String fileName) {
+        if (!Files.exists(Paths.get(fileName))) {
+            return Collections.emptyList();
+        }
+        try (DataInputStream in = new DataInputStream(new FileInputStream(fileName))) {
+            int size = in.readInt();
+            List<Animal> animals = new ArrayList<Animal>(size);
+            for (int i = 0; i < size; i++) {
+                String name = in.readUTF();
+                int age = in.readInt();
+                double weight = in.readDouble();
+                boolean gender = in.readBoolean();
+                animalType kindOfAnimal = animalType.valueOf(in.readUTF());
+
+                int listSize = in.readInt();
+                List<String> food = new ArrayList<String>(listSize);
+                for (int j = 0; j < listSize; j++) {
+                    food.add(j, in.readUTF());
+                }
+
+                int m = in.readInt();
+                boolean sa = in.readBoolean();
+                boolean st = in.readBoolean();
+                Colour animalColor = new Colour(m, sa, st);
+
+                Animal newAnimal = new Animal(age, weight, gender, name, kindOfAnimal, food, animalColor);
+                animals.add(i, newAnimal);
+            }
+            return animals;
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return Collections.emptyList();
     }
 }

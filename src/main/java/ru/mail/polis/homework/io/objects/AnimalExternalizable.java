@@ -95,6 +95,7 @@ public class AnimalExternalizable implements Externalizable {
         out.writeInt(age);
         out.writeDouble(weight);
         out.writeUTF(kindOfAnimal.toString());
+        out.writeBoolean(gender);
 
         out.writeInt(food.size());
         for (String eat : food) {
@@ -113,6 +114,7 @@ public class AnimalExternalizable implements Externalizable {
         weight = in.readDouble();
         String str = in.readUTF();
         kindOfAnimal = animalType.valueOf(str);
+        gender = in.readBoolean();
 
         int listSize = in.readInt();
         food = new ArrayList<String>(listSize);
