@@ -15,6 +15,7 @@ public class SerializerTest {
     private final static int COPIES_AMOUNT = 1000;
     private final static int STRINGS_LENGTH = 10;
 
+    private final static Random rand = new Random();
     private final static Serializer SERIALIZER = new Serializer();
 
     private static List<Animal> animals = new ArrayList<>();
@@ -23,12 +24,9 @@ public class SerializerTest {
 
     @BeforeClass
     public static void before() {
-        Random rand = new Random();
         List<Animal> animalsTemp = new ArrayList<>();
         List<AnimalWithMethods> animalsWithMethodsTemp = new ArrayList<>();
         List<AnimalExternalizable> animalsExternalizableTemp = new ArrayList<>();
-        final List<AnimalType> TYPES = Collections.unmodifiableList(Arrays.asList(AnimalType.values()));
-
         for (int i = 0; i < DATA_AMOUNT; ++i) {
             StringBuilder animalName = new StringBuilder();
             for (int j = 0; j < STRINGS_LENGTH; ++j) {
@@ -37,7 +35,7 @@ public class SerializerTest {
 
             int age = rand.nextInt();
             double weight = rand.nextDouble();
-            AnimalType type = TYPES.get(rand.nextInt(TYPES.size()));
+            AnimalType type = AnimalType.values()[rand.nextInt(AnimalType.values().length)];
 
             StringBuilder ownerName = new StringBuilder();
             for (int j = 0; j < STRINGS_LENGTH; ++j) {
@@ -62,9 +60,14 @@ public class SerializerTest {
             animalsExternalizableTemp.add(new AnimalExternalizable(animalName.toString(), age, weight, type, owner, nutrition));
         }
         for (int i = 0; i < COPIES_AMOUNT; ++i) {
-            animals.addAll(animalsTemp);
+            for (int j = 0; j < DATA_AMOUNT; ++j) {
+                animals.add(new Animal(animalsTemp.get(j)));
+                animalsWithMethods.add(new AnimalWithMethods(animalsWithMethodsTemp.get(j)));
+                animalsExternalizable.add(new AnimalExternalizable(animalsExternalizableTemp.get(j)));
+            }
+            /*animals.addAll(animalsTemp);
             animalsWithMethods.addAll(animalsWithMethodsTemp);
-            animalsExternalizable.addAll(animalsExternalizableTemp);
+            animalsExternalizable.addAll(animalsExternalizableTemp);*/
         }
     }
 

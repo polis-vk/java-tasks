@@ -21,6 +21,10 @@ public class AnimalExternalizable implements Externalizable {
     public AnimalExternalizable() {
     }
 
+    public AnimalExternalizable(AnimalExternalizable animal) {
+        this(animal.name, animal.age, animal.weight, animal.type, animal.owner, animal.nutrition);
+    }
+
     public AnimalExternalizable(String name, int age, double weight, AnimalType type, Person owner, List<Food> nutrition) {
         this.name = name;
         this.age = age;
@@ -30,32 +34,48 @@ public class AnimalExternalizable implements Externalizable {
         this.nutrition = nutrition;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public AnimalType getType() {
+        return type;
+    }
+
+    public Person getOwner() {
+        return owner;
+    }
+
+    public List<Food> getNutrition() {
+        return nutrition;
+    }
+
     @Override
-    public void writeExternal(ObjectOutput objectOutput) {
-        try {
+    public void writeExternal(ObjectOutput objectOutput) throws IOException {
             objectOutput.writeUTF(name);
             objectOutput.writeInt(age);
             objectOutput.writeDouble(weight);
             objectOutput.writeObject(type);
             objectOutput.writeObject(owner);
             objectOutput.writeObject(nutrition);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
-    public void readExternal(ObjectInput objectInput) {
-        try {
+    public void readExternal(ObjectInput objectInput) throws IOException, ClassNotFoundException {
             this.name = objectInput.readUTF();
             this.age = objectInput.readInt();
             this.weight = objectInput.readDouble();
             this.type = (AnimalType) objectInput.readObject();
             this.owner = (Person) objectInput.readObject();
             this.nutrition = (List<Food>) objectInput.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override

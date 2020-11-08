@@ -11,12 +11,16 @@ import java.util.List;
  * 1 балл
  */
 public class Animal implements Serializable {
-    private String name;
-    private int age;
-    private double weight;
-    private AnimalType type;
-    private Person owner;
-    private List<Food> nutrition;
+    private final String name;
+    private final int age;
+    private final double weight;
+    private final AnimalType type;
+    private final Person owner;
+    private final List<Food> nutrition;
+
+    public Animal(Animal animal) {
+        this(animal.name, animal.age, animal.weight, animal.type, animal.owner, animal.nutrition);
+    }
 
     public Animal(String name, int age, double weight, AnimalType type, Person owner, List<Food> nutrition) {
         this.name = name;
