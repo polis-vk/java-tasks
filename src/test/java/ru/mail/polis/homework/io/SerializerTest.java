@@ -91,7 +91,7 @@ public class SerializerTest {
         serializer.defaultSerialize(animalsDefault, DEFAULT);
 
         long endSerializable = System.currentTimeMillis();
-        long TimeSerializable = endSerializable - startSerializable;
+        long timeSerializable = endSerializable - startSerializable;
 
         long fileSize = Files.size(Paths.get(DEFAULT));
 
@@ -104,7 +104,7 @@ public class SerializerTest {
         long timeDeserialize = endSDeserialize - startDeserialize;
 
 
-        printInfo(TimeSerializable, timeDeserialize, fileSize, "#1");
+        printInfo(timeSerializable, timeDeserialize, fileSize, "#1");
 
         Assert.assertArrayEquals(animalsDefault.toArray(), deserialize.toArray());
     }
@@ -117,7 +117,7 @@ public class SerializerTest {
         serializer.serializeWithMethods(animalWithMethods, METHODS);
 
         long endSerializable = System.currentTimeMillis();
-        long TimeSerializable = endSerializable - startSerializable;
+        long timeSerializable = endSerializable - startSerializable;
 
         long fileSize = Files.size(Paths.get(METHODS));
 
@@ -128,7 +128,7 @@ public class SerializerTest {
 
         long endSDeserialize = System.currentTimeMillis();
         long timeDeserialize = endSDeserialize - startDeserialize;
-        printInfo(TimeSerializable, timeDeserialize, fileSize, "#2");
+        printInfo(timeSerializable, timeDeserialize, fileSize, "#2");
 
         Assert.assertArrayEquals(animalWithMethods.toArray(), deserialize.toArray());
     }
@@ -141,7 +141,7 @@ public class SerializerTest {
         serializer.serializeWithExternalizable(animalExternalizable, EXTERNAL);
 
         long endSerializable = System.currentTimeMillis();
-        long TimeSerializable = endSerializable - startSerializable;
+        long timeSerializable = endSerializable - startSerializable;
 
         long fileSize = Files.size(Paths.get(EXTERNAL));
 
@@ -152,7 +152,7 @@ public class SerializerTest {
 
         long endSDeserialize = System.currentTimeMillis();
         long timeDeserialize = endSDeserialize - startDeserialize;
-        printInfo(TimeSerializable, timeDeserialize, fileSize, "#3");
+        printInfo(timeSerializable, timeDeserialize, fileSize, "#3");
 
         Assert.assertArrayEquals(animalExternalizable.toArray(), deserialize.toArray());
     }
@@ -165,7 +165,7 @@ public class SerializerTest {
         serializer.customSerialize(animalsDefault, CUSTOM);
 
         long endSerializable = System.currentTimeMillis();
-        long TimeSerializable = endSerializable - startSerializable;
+        long timeSerializable = endSerializable - startSerializable;
 
         long fileSize = Files.size(Paths.get(CUSTOM));
 
@@ -176,7 +176,7 @@ public class SerializerTest {
 
         long endSDeserialize = System.currentTimeMillis();
         long timeDeserialize = endSDeserialize - startDeserialize;
-        printInfo(TimeSerializable, timeDeserialize, fileSize, "#4");
+        printInfo(timeSerializable, timeDeserialize, fileSize, "#4");
 
         Assert.assertArrayEquals(animalsDefault.toArray(), deserialize.toArray());
     }
