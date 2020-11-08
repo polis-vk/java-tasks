@@ -89,14 +89,14 @@ public class AnimalExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(group.ordinal());
+        out.writeUTF(group.toString());
         out.writeUTF(name);
         out.writeBoolean(isWarmBlooded);
         out.writeObject(behavior);
 
         out.writeInt(habitatEnvironments.size());
         for (HabitatEnvironment environment : habitatEnvironments) {
-            out.writeInt(environment.ordinal());
+            out.writeUTF(environment.toString());
         }
         out.writeInt(age);
         out.writeInt(color);
@@ -105,14 +105,14 @@ public class AnimalExternalizable implements Externalizable {
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        group = AnimalGroup.values()[in.readInt()];
+        group = AnimalGroup.valueOf(in.readUTF());
         name = in.readUTF();
         isWarmBlooded = in.readBoolean();
         behavior = (Behavior) in.readObject();
 
         int habitatEnvironmentsCount = in.readInt();
         for (int i = 0; i < habitatEnvironmentsCount; i++) {
-            habitatEnvironments.add(HabitatEnvironment.values()[in.readInt()]);
+            habitatEnvironments.add(HabitatEnvironment.valueOf(in.readUTF()));
         }
         habitatEnvironments = Collections.unmodifiableList(habitatEnvironments);
 
@@ -151,7 +151,7 @@ public class AnimalExternalizable implements Externalizable {
                     "Acts as a %s and %s, %s around and likes to eat %s. Befriends with %s. Hates %s.",
                     isPredator ? "predator" : "peaceful animal",
                     canBeTamed ? "can be tamed" : "cannot be tamed",
-                    movementType,
+                    movementType.getVerb(),
                     favouriteFood.size() > 0 ? favouriteFood : "nothing",
                     friends.size() > 0 ? friends : "nobody",
                     enemies.size() > 0 ? enemies : "nobody");
@@ -183,7 +183,7 @@ public class AnimalExternalizable implements Externalizable {
         public void writeExternal(ObjectOutput out) throws IOException {
             out.writeBoolean(canBeTamed);
             out.writeBoolean(isPredator);
-            out.writeInt(movementType.ordinal());
+            out.writeUTF(movementType.toString());
 
             out.writeInt(enemies.size());
             for (String enemy : enemies) {
@@ -205,7 +205,7 @@ public class AnimalExternalizable implements Externalizable {
         public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
             canBeTamed = in.readBoolean();
             isPredator = in.readBoolean();
-            movementType = AnimalMovementType.values()[in.readInt()];
+            movementType = AnimalMovementType.valueOf(in.readUTF());
 
             int enemiesCount = in.readInt();
             for (int i = 0; i < enemiesCount; i++) {
@@ -297,29 +297,6 @@ public class AnimalExternalizable implements Externalizable {
             Behavior behavior = new Behavior(canBeTamed, isPredator, movementType, favouriteFood, enemies, friends);
             return new AnimalExternalizable(this, behavior);
         }
-    }
-
-    public static void main(String[] args) {
-        AnimalExternalizable dog = new AnimalExternalizable.Builder(AnimalGroup.MAMMALS, "Pug", true, true, false, AnimalMovementType.WALKING)
-                .withAge(2)
-                .withWeight(4.9)
-                .withHabitatEnvironments(HabitatEnvironment.HOME)
-                .withFriends("Human")
-                .withEnemies("Cat")
-                .withFavouriteFood("Bones")
-                .build();
-
-        AnimalExternalizable cat = new AnimalExternalizable.Builder(AnimalGroup.MAMMALS, "Siamese cat", true, true, false, AnimalMovementType.WALKING)
-                .withColor(0xC6CDC7FF)
-                .withWeight(3.8)
-                .withHabitatEnvironments(HabitatEnvironment.HOME)
-                .withFriends("Human")
-                .withEnemies("Dog")
-                .withFavouriteFood("Fish", "Milk")
-                .build();
-
-        System.out.println(dog);
-        System.out.println(cat);
     }
 }
 

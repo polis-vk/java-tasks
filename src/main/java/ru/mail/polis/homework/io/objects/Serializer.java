@@ -48,7 +48,7 @@ public class Serializer {
     public List<Animal> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
             int objectsCount = ois.readInt();
-            List<Animal> animals = new ArrayList<>();
+            List<Animal> animals = new ArrayList<>(objectsCount);
             for (int i = 0; i < objectsCount; i++) {
                 animals.add((Animal) ois.readObject());
             }
@@ -84,7 +84,7 @@ public class Serializer {
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
             int objectsCount = ois.readInt();
-            List<AnimalWithMethods> animals = new ArrayList<>();
+            List<AnimalWithMethods> animals = new ArrayList<>(objectsCount);
             for (int i = 0; i < objectsCount; i++) {
                 animals.add((AnimalWithMethods) ois.readObject());
             }
@@ -119,7 +119,7 @@ public class Serializer {
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
             int objectsCount = ois.readInt();
-            List<AnimalExternalizable> animals = new ArrayList<>();
+            List<AnimalExternalizable> animals = new ArrayList<>(objectsCount);
             for (int i = 0; i < objectsCount; i++) {
                 animals.add((AnimalExternalizable) ois.readObject());
             }
@@ -186,8 +186,8 @@ public class Serializer {
      */
     public List<Animal> customDeserialize(String fileName) throws IOException {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
-            List<Animal> animals = new ArrayList<>();
             int animalsCount = in.readInt();
+            List<Animal> animals = new ArrayList<>(animalsCount);
             for (int i = 0; i < animalsCount; i++) {
                 AnimalGroup group = AnimalGroup.values()[in.readInt()];
                 String name = in.readUTF();

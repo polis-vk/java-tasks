@@ -3,8 +3,7 @@ package ru.mail.polis.homework.io.objects;
 public enum AnimalMovementType {
     FLYING, WALKING, SWIMMING, JUMPING;
 
-    @Override
-    public String toString() {
+    public String getVerb() {
         switch (this) {
             case FLYING:
                 return "flies";

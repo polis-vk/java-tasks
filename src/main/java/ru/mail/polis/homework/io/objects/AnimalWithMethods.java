@@ -40,14 +40,14 @@ public class AnimalWithMethods implements Serializable {
     }
 
     private void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.writeInt(group.ordinal());
+        oos.writeUTF(group.toString());
         oos.writeUTF(name);
         oos.writeBoolean(isWarmBlooded);
         oos.writeObject(behavior);
 
         oos.writeInt(habitatEnvironments.size());
         for (HabitatEnvironment environment : habitatEnvironments) {
-            oos.writeInt(environment.ordinal());
+            oos.writeUTF(environment.toString());
         }
         oos.writeInt(age);
         oos.writeInt(color);
@@ -55,7 +55,7 @@ public class AnimalWithMethods implements Serializable {
     }
 
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        group = AnimalGroup.values()[ois.readInt()];
+        group = AnimalGroup.valueOf(ois.readUTF());
         name = ois.readUTF();
         isWarmBlooded = ois.readBoolean();
         behavior = (Behavior) ois.readObject();
@@ -63,7 +63,7 @@ public class AnimalWithMethods implements Serializable {
         int habitatEnvironmentsCount = ois.readInt();
         habitatEnvironments = new ArrayList<>();
         for (int i = 0; i < habitatEnvironmentsCount; i++) {
-            habitatEnvironments.add(HabitatEnvironment.values()[ois.readInt()]);
+            habitatEnvironments.add(HabitatEnvironment.valueOf(ois.readUTF()));
         }
 
         age = ois.readInt();
@@ -139,7 +139,7 @@ public class AnimalWithMethods implements Serializable {
         private void writeObject(ObjectOutputStream oos) throws IOException {
             oos.writeBoolean(canBeTamed);
             oos.writeBoolean(isPredator);
-            oos.writeInt(movementType.ordinal());
+            oos.writeUTF(movementType.toString());
 
             oos.writeInt(enemies.size());
             for (String enemy : enemies) {
@@ -160,7 +160,7 @@ public class AnimalWithMethods implements Serializable {
         private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
             canBeTamed = ois.readBoolean();
             isPredator = ois.readBoolean();
-            movementType = AnimalMovementType.values()[ois.readInt()];
+            movementType = AnimalMovementType.valueOf(ois.readUTF());
 
             int enemiesCount = ois.readInt();
             enemies = new ArrayList<>();
@@ -190,7 +190,7 @@ public class AnimalWithMethods implements Serializable {
                     "Acts as a %s and %s, %s around and likes to eat %s. Befriends with %s. Hates %s.",
                     isPredator ? "predator" : "peaceful animal",
                     canBeTamed ? "can be tamed" : "cannot be tamed",
-                    movementType,
+                    movementType.getVerb(),
                     favouriteFood.size() > 0 ? favouriteFood : "nothing",
                     friends.size() > 0 ? friends : "nobody",
                     enemies.size() > 0 ? enemies : "nobody");
@@ -289,28 +289,5 @@ public class AnimalWithMethods implements Serializable {
             Behavior behavior = new Behavior(canBeTamed, isPredator, movementType, favouriteFood, enemies, friends);
             return new AnimalWithMethods(this, behavior);
         }
-    }
-
-    public static void main(String[] args) {
-        AnimalWithMethods dog = new AnimalWithMethods.Builder(AnimalGroup.MAMMALS, "Pug", true, true, false, AnimalMovementType.WALKING)
-                .withAge(2)
-                .withWeight(4.9)
-                .withHabitatEnvironments(HabitatEnvironment.HOME)
-                .withFriends("Human")
-                .withEnemies("Cat")
-                .withFavouriteFood("Bones")
-                .build();
-
-        AnimalWithMethods cat = new AnimalWithMethods.Builder(AnimalGroup.MAMMALS, "Siamese cat", true, true, false, AnimalMovementType.WALKING)
-                .withColor(0xC6CDC7FF)
-                .withWeight(3.8)
-                .withHabitatEnvironments(HabitatEnvironment.HOME)
-                .withFriends("Human")
-                .withEnemies("Dog")
-                .withFavouriteFood("Fish", "Milk")
-                .build();
-
-        System.out.println(dog);
-        System.out.println(cat);
     }
 }

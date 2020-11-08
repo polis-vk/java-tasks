@@ -165,7 +165,7 @@ public class Animal implements Serializable {
                     "Acts as a %s and %s, %s around and likes to eat %s. Befriends with %s. Hates %s.",
                     isPredator ? "predator" : "peaceful animal",
                     canBeTamed ? "can be tamed" : "cannot be tamed",
-                    movementType,
+                    movementType.getVerb(),
                     favouriteFood.size() > 0 ? favouriteFood : "nothing",
                     friends.size() > 0 ? friends : "nobody",
                     enemies.size() > 0 ? enemies : "nobody");
@@ -264,28 +264,5 @@ public class Animal implements Serializable {
             Behavior behavior = new Behavior(canBeTamed, isPredator, movementType, favouriteFood, enemies, friends);
             return new Animal(this, behavior);
         }
-    }
-
-    public static void main(String[] args) {
-        Animal dog = new Animal.Builder(AnimalGroup.MAMMALS, "Pug", true, true, false, AnimalMovementType.WALKING)
-                .withAge(2)
-                .withWeight(4.9)
-                .withHabitatEnvironments(HabitatEnvironment.HOME)
-                .withFriends("Human")
-                .withEnemies("Cat")
-                .withFavouriteFood("Bones")
-                .build();
-
-        Animal cat = new Animal.Builder(AnimalGroup.MAMMALS, "Siamese cat", true, true, false, AnimalMovementType.WALKING)
-                .withColor(0xC6CDC7FF)
-                .withWeight(3.8)
-                .withHabitatEnvironments(HabitatEnvironment.HOME)
-                .withFriends("Human")
-                .withEnemies("Dog")
-                .withFavouriteFood("Fish", "Milk")
-                .build();
-
-        System.out.println(dog);
-        System.out.println(cat);
     }
 }
