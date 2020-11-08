@@ -11,8 +11,6 @@ public class Parents implements Serializable {
     private String mother;
     private String father;
 
-//    public Parents() {}
-
     public Parents(Parents parents) {
         this(parents.getMother(), parents.getFather());
     }
