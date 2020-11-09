@@ -69,7 +69,14 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
-
+        try(ObjectOutputStream objectOutputStream  = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            objectOutputStream.write(animals.size());
+            for(AnimalWithMethods animal : animals){
+                objectOutputStream.writeObject(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -81,7 +88,17 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
-        return Collections.emptyList();
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))){
+            int size = objectInputStream.readInt();
+            ArrayList<AnimalWithMethods> animals = new ArrayList<>(size);
+            for(int i = 0; i < size; i++){
+                animals.add((AnimalWithMethods) objectInputStream.readObject());
+            }
+            return animals;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -91,7 +108,14 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
-
+        try(ObjectOutputStream objectOutputStream  = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            objectOutputStream.write(animals.size());
+            for(AnimalExternalizable animal : animals){
+                objectOutputStream.writeObject(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -103,7 +127,17 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-        return Collections.emptyList();
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))){
+            int size = objectInputStream.readInt();
+            ArrayList<AnimalExternalizable> animals = new ArrayList<>(size);
+            for(int i = 0; i < size; i++){
+                animals.add((AnimalExternalizable) objectInputStream.readObject());
+            }
+            return animals;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
