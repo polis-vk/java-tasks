@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,29 +18,29 @@ enum Habitat {
     AIR
 }
 
-public class Animal {
+public class Animal implements Serializable {
     private String name;
     private Habitat habitat;
-    private int weight;
+    private Iq iq;
     private int age;
     private boolean isPredator;
     private List<String> food;
 
-    public Animal(){
+    public Animal() {
 
     }
 
-    public Animal(String name, Habitat habitat, int weight, int age, boolean isPredator, List<String> food){
+    public Animal(String name, Habitat habitat, Iq iq, int age, boolean isPredator, List<String> food) {
         this.name = name;
         this.habitat = habitat;
-        this.weight = weight;
+        this.iq = iq;
         this.age = age;
         this.isPredator = isPredator;
         this.food = food;
     }
 
-    public void setWeight(int weight) {
-        this.weight = weight;
+    public void setIq(Iq iq) {
+        this.iq = iq;
     }
 
     public void setAge(int age) {
@@ -62,8 +63,8 @@ public class Animal {
         isPredator = predator;
     }
 
-    public int getWeight() {
-        return weight;
+    public Iq getIq() {
+        return iq;
     }
 
     public int getAge() {
@@ -87,11 +88,11 @@ public class Animal {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "Animal{" +
                 "name='" + name + '\'' +
                 ", habitat=" + habitat +
-                ", weight=" + weight  +
+                ", iq=" + iq +
                 ", age=" + age +
                 ", isPredator=" + isPredator +
                 ", food=" + food +
@@ -100,6 +101,6 @@ public class Animal {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getHabitat(), getWeight(), getAge(), isPredator(), getFood());
+        return Objects.hash(getName(), getHabitat(), getIq(), getAge(), isPredator(), getFood());
     }
 }
