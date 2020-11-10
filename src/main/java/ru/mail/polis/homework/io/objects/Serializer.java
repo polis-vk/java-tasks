@@ -199,4 +199,69 @@ public class Serializer {
         }
         return list;
     }
+
+    /**
+     * 2 балла
+     * Реализовать ручную сериализацию, с помощью высокоровневых потоков. Сами ручками пишем поля,
+     * без использования методов writeObject
+     *
+     * @param animals  Список животных для сериализации
+     * @param fileName файл, в который "пишем" животных
+     */
+    public void customSerializeWithObjectStream(List<Animal> animals, String fileName) {
+        try(ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
+            outputStream.writeInt(animals.size());
+            for (Animal animal : animals) {
+                outputStream.writeUTF(animal.getName());
+                outputStream.writeInt(animal.getAge());
+                outputStream.writeDouble(animal.getWeight());
+                outputStream.writeUTF(animal.getType().name());
+
+                Person person = animal.getOwner();
+                outputStream.writeUTF(person.getName());
+                outputStream.writeInt(person.getAge());
+
+                List<Food> nutrition = animal.getNutrition();
+                outputStream.writeInt(nutrition.size());
+                for (Food food : nutrition) {
+                    outputStream.writeUTF(food.getName());
+                    outputStream.writeInt(food.getCalories());
+
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 2 балла
+     * Реализовать ручную дисериализацию, с помощью высокоуровневых потоков. Сами ручками читаем поля,
+     * без использования методов readObject
+     *
+     * @param fileName файл из которого "читаем" животных
+     * @return список животных
+     */
+    public List<Animal> customDeserializeWithObjectStream(String fileName) {
+        List<Animal> list = new ArrayList<>();
+        try(ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
+            int amount = inputStream.readInt();
+            for (int i = 0; i < amount; ++i) {
+                String name = inputStream.readUTF();
+                int age = inputStream.readInt();
+                double weight = inputStream.readDouble();
+                AnimalType type = AnimalType.valueOf(inputStream.readUTF());
+                Person person = new Person(inputStream.readUTF(), inputStream.readInt());
+                int foodAmount = inputStream.readInt();
+                List<Food> food = new ArrayList<>(foodAmount);
+                for (int j = 0; j < foodAmount; ++j) {
+                    food.add(new Food(inputStream.readUTF(), inputStream.readInt()));
+                }
+                list.add(new Animal(name, age, weight, type, person, food));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

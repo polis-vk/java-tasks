@@ -140,6 +140,23 @@ public class SerializerTest {
         Assert.assertEquals(list.toString(), animals.toString());
     }
 
+    @Test
+    public void customSerializationWithObjectStream() {
+        String path = new Formatter().format(PATH, 2).toString();
+        long beginTime = System.currentTimeMillis();
+        SERIALIZER.customSerializeWithObjectStream(animals, path);
+        long serializeTime = System.currentTimeMillis();
+        List<Animal> list = SERIALIZER.customDeserializeWithObjectStream(path);
+        long endTime = System.currentTimeMillis();
+        try {
+            printTestInfo("Custom serialize  with object streams", (serializeTime - beginTime), (endTime - serializeTime), Files.size(Paths.get(path)));
+            Files.delete(Paths.get(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Assert.assertEquals(list.toString(), animals.toString());
+    }
+
     private void printTestInfo(String testName, long serializeTime, long desirealizeTime, long fileSize) {
         System.out.println(testName + ": serialize time = " + serializeTime + " ms; desirealize time = " + desirealizeTime + " ms; file size = " + fileSize + " b");
     }
