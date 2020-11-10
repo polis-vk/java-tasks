@@ -75,8 +75,15 @@ public class AnimalExternalizable implements Externalizable {
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeUTF(name);
         out.writeDouble(weight);
-        out.writeObject(parents);
-        out.writeObject(genericOfRelatives);
+
+        out.writeUTF(parents.getMother());
+        out.writeUTF(parents.getFather());
+
+        out.writeInt(genericOfRelatives.size());
+        for(Parents i : genericOfRelatives) {
+            out.writeUTF(i.getMother());
+            out.writeUTF(i.getFather());
+        }
         out.writeObject(colour);
     }
 
@@ -88,8 +95,12 @@ public class AnimalExternalizable implements Externalizable {
         if(weight < 50) {
             weight = 50;
         }
-        parents = (Parents) in.readObject();
-        genericOfRelatives = (List<Parents>) in.readObject();
+        parents = new Parents(in.readUTF(), in.readUTF());
+        int n = in.readInt();
+        genericOfRelatives = new ArrayList<>(n);
+        for(int i = 0; i < n; ++i) {
+            genericOfRelatives.add(new Parents(in.readUTF(), in.readUTF()));
+        }
         colour = (Colour) in.readObject();
     }
 

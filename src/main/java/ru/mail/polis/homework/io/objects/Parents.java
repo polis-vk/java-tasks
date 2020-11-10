@@ -50,13 +50,4 @@ public class Parents implements Serializable {
         return mother.equals(parents.mother) &&
                 father.equals(parents.father);
     }
-
-    public void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeUTF(mother);
-        out.writeUTF(father);
-    }
-
-    public Parents readObject(ObjectInputStream in) throws IOException {
-        return new Parents(in.readUTF(), in.readUTF());
-    }
 }
