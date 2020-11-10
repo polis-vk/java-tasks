@@ -13,7 +13,7 @@ import java.util.Objects;
  * Дубль класса Animal, для Serializer.serializeWithMethods
  * 3 балла
  */
-public class AnimalWithMethods extends Animal implements Serializable {
+public class AnimalWithMethods implements Serializable {
 
     private String name;
     private Habitat habitat;
@@ -21,10 +21,6 @@ public class AnimalWithMethods extends Animal implements Serializable {
     private int age;
     private boolean isPredator;
     private List<String> food;
-
-    public AnimalWithMethods() {
-
-    }
 
     public AnimalWithMethods(String name, Habitat habitat, Iq iq, int age, boolean isPredator, List<String> food) {
         this.name = name;
@@ -58,54 +54,6 @@ public class AnimalWithMethods extends Animal implements Serializable {
         for (int i = 0; i < size; ++i) {
             food.add(in.readUTF());
         }
-    }
-
-    public void setIq(Iq iq) {
-        this.iq = iq;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setFood(List<String> food) {
-        this.food = food;
-    }
-
-    public void setHabitat(Habitat habitat) {
-        this.habitat = habitat;
-    }
-
-    public void setPredator(boolean predator) {
-        isPredator = predator;
-    }
-
-    public Iq getIq() {
-        return iq;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Habitat getHabitat() {
-        return habitat;
-    }
-
-    public List<String> getFood() {
-        return food;
-    }
-
-    public boolean isPredator() {
-        return isPredator;
     }
 
     @Override

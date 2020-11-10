@@ -12,7 +12,7 @@ import java.util.Objects;
  * Дубль класса Animal, для Serializer.serializeWithExternalizable
  * 3 балла
  */
-public class AnimalExternalizable extends Animal implements Externalizable {
+public class AnimalExternalizable implements Externalizable {
 
     private String name;
     private Habitat habitat;
@@ -38,7 +38,7 @@ public class AnimalExternalizable extends Animal implements Externalizable {
     public void writeExternal(ObjectOutput objectOutput) throws IOException {
         objectOutput.writeUTF(this.getName());
         objectOutput.writeObject(this.getHabitat());
-        objectOutput.writeObject(this.getIq().getIqSize());
+        objectOutput.writeInt(this.getIq().getIqSize());
         objectOutput.writeInt(this.getAge());
         objectOutput.writeBoolean(this.isPredator());
         objectOutput.writeInt(food.size());
@@ -61,43 +61,19 @@ public class AnimalExternalizable extends Animal implements Externalizable {
         }
     }
 
-    public void setIq(Iq iq) {
-        this.iq = iq;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setFood(List<String> food) {
-        this.food = food;
-    }
-
-    public void setHabitat(Habitat habitat) {
-        this.habitat = habitat;
-    }
-
-    public void setPredator(boolean predator) {
-        isPredator = predator;
-    }
-
-    public Iq getIq() {
+    private Iq getIq() {
         return iq;
     }
 
-    public int getAge() {
+    private int getAge() {
         return age;
     }
 
-    public String getName() {
+    private String getName() {
         return name;
     }
 
-    public Habitat getHabitat() {
+    private Habitat getHabitat() {
         return habitat;
     }
 
@@ -105,7 +81,7 @@ public class AnimalExternalizable extends Animal implements Externalizable {
         return food;
     }
 
-    public boolean isPredator() {
+    private boolean isPredator() {
         return isPredator;
     }
 

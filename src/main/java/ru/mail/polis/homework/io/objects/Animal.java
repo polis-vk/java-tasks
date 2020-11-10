@@ -19,16 +19,12 @@ enum Habitat {
 }
 
 public class Animal implements Serializable {
-    private String name;
-    private Habitat habitat;
-    private Iq iq;
-    private int age;
-    private boolean isPredator;
-    private List<String> food;
-
-    public Animal() {
-
-    }
+    private final String name;
+    private final Habitat habitat;
+    private final Iq iq;
+    private final int age;
+    private final boolean isPredator;
+    private final List<String> food;
 
     public Animal(String name, Habitat habitat, Iq iq, int age, boolean isPredator, List<String> food) {
         this.name = name;
@@ -37,30 +33,6 @@ public class Animal implements Serializable {
         this.age = age;
         this.isPredator = isPredator;
         this.food = food;
-    }
-
-    public void setIq(Iq iq) {
-        this.iq = iq;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setFood(List<String> food) {
-        this.food = food;
-    }
-
-    public void setHabitat(Habitat habitat) {
-        this.habitat = habitat;
-    }
-
-    public void setPredator(boolean predator) {
-        isPredator = predator;
     }
 
     public Iq getIq() {
@@ -85,6 +57,19 @@ public class Animal implements Serializable {
 
     public boolean isPredator() {
         return isPredator;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Animal)) return false;
+        Animal animal = (Animal) o;
+        return getName().equals(animal.getName()) &&
+                getHabitat() == animal.getHabitat() &&
+                getIq().equals(animal.getIq()) &&
+                getAge() == (animal.getAge()) &&
+                isPredator() == animal.isPredator() &&
+                getFood().equals(animal.getFood());
     }
 
     @Override

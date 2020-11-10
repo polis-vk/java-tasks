@@ -2,9 +2,6 @@ package ru.mail.polis.homework.io.objects;
 
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,9 +30,7 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
-        Path path = Paths.get(fileName);
-
-        try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
             outputStream.writeInt(animals.size());
             for (Animal animal : animals) {
                 outputStream.writeObject(animal);
@@ -54,9 +49,8 @@ public class Serializer {
      */
     public List<Animal> defaultDeserialize(String fileName) {
         List<Animal> animals = new ArrayList<>();
-        Path path = Paths.get(fileName);
 
-        try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(path))) {
+        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(fileName))) {
             int size = inputStream.readInt();
             for (int i = 0; i < size; i++) {
                 animals.add((Animal) inputStream.readObject());
