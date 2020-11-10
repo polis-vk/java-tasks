@@ -2,8 +2,6 @@ package ru.mail.polis.homework.io.objects;
 
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,9 +49,6 @@ public class Serializer {
      */
     public List<Animal> defaultDeserialize(String fileName) {
         try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
-            if (!Files.exists(Paths.get(fileName))) {
-                return null;
-            }
             int size = objectInputStream.readInt();
             ArrayList<Animal> animals = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
@@ -95,9 +90,6 @@ public class Serializer {
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
         try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
-            if (!Files.exists(Paths.get(fileName))) {
-                return null;
-            }
             int size = objectInputStream.readInt();
             ArrayList<AnimalWithMethods> animals = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
@@ -138,9 +130,6 @@ public class Serializer {
      */
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
         try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
-            if (!Files.exists(Paths.get(fileName))) {
-                return null;
-            }
             int size = objectInputStream.readInt();
             ArrayList<AnimalExternalizable> animals = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
@@ -191,9 +180,6 @@ public class Serializer {
      */
     public List<Animal> customDeserialize(String fileName) {
         try (DataInputStream dataInputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(fileName)))) {
-            if (!Files.exists(Paths.get(fileName))) {
-                return null;
-            }
             int size = dataInputStream.readInt();
             ArrayList<Animal> animals = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
