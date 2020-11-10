@@ -55,7 +55,6 @@ public class Serializer {
             for (int i = 0; i < count; i++) {
                 animals.add((Animal) objectInputStream.readObject());
             }
-            objectInputStream.close();
             return animals;
         }
     }
@@ -91,7 +90,6 @@ public class Serializer {
             for (int i = 0; i < count; i++) {
                 animals.add((AnimalWithMethods) objectInputStream.readObject());
             }
-            objectInputStream.close();
             return animals;
         }
     }
@@ -126,7 +124,6 @@ public class Serializer {
             for (int i = 0; i < count; i++) {
                 animals.add((AnimalExternalizable) objectInputStream.readObject());
             }
-            objectInputStream.close();
             return animals;
         }
     }
@@ -210,7 +207,6 @@ public class Serializer {
                 boolean singleCell = objectInputStream.readBoolean();
                 animals.add(new Animal(name, diet, genotype, speciesId, scared, singleCell));
             }
-            objectInputStream.close();
             return animals;
         }
     }
@@ -231,7 +227,6 @@ public class Serializer {
             for (int i = 0; i < count; i++) {
                 animals.add(Animal.readObjectCustom(objectInputStream));
             }
-            objectInputStream.close();
             return animals;
         }
     }
@@ -305,7 +300,6 @@ public class Serializer {
                     animals.add(animals.get(objectInputStream.readInt()));
                 }
             }
-            objectInputStream.close();
             return animals;
         }
     }
