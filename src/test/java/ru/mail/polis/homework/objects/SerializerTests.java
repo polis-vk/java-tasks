@@ -11,7 +11,6 @@ import ru.mail.polis.homework.io.objects.Serializer;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,9 +19,10 @@ import static org.junit.Assert.assertEquals;
 
 public class SerializerTests {
     private final String fileName = "testFile.bin";
-    private final int N = 1000;
+    private final int N = 10000;
     private static final Logger log = Logger.getLogger(SerializerTests.class.getName());
     private Path path;
+    private Data data = new Data(N);
 
     @Before
     public void init() {
@@ -31,10 +31,10 @@ public class SerializerTests {
 
     @Test
     public void defaultSerializeTest() throws IOException, ClassNotFoundException {
-        List<Animal> animals = (new Data(N)).getAnimalList();
+        List<Animal> animals = data.getAnimalList();
         long begW = System.currentTimeMillis();
 
-        Serializer.defaultSerialize(new ArrayList<>(animals), fileName);
+        Serializer.defaultSerialize(animals, fileName);
 
         long endW = System.currentTimeMillis();
         long timeW = endW - begW;
@@ -51,11 +51,11 @@ public class SerializerTests {
 
     @Test
     public void withMethodsSerializeTest() throws IOException, ClassNotFoundException {
-        List<AnimalWithMethods> animals = (new Data(N)).getAnimalWithMethodsList();
+        List<AnimalWithMethods> animals = data.getAnimalWithMethodsList();
 
         long begW = System.currentTimeMillis();
 
-        Serializer.serializeWithMethods(new ArrayList<>(animals), fileName);
+        Serializer.serializeWithMethods(animals, fileName);
 
         long endW = System.currentTimeMillis();
         long timeW = endW - begW;
@@ -73,11 +73,11 @@ public class SerializerTests {
 
     @Test
     public void externalizableTest() throws IOException, ClassNotFoundException {
-        List<AnimalExternalizable> animals = (new Data(N)).getAnimalExternalizableList();
+        List<AnimalExternalizable> animals = data.getAnimalExternalizableList();
 
         long begW = System.currentTimeMillis();
 
-        Serializer.serializeWithExternalizable(new ArrayList<>(animals), fileName);
+        Serializer.serializeWithExternalizable(animals, fileName);
 
         long endW = System.currentTimeMillis();
         long timeW = endW - begW;
@@ -95,10 +95,10 @@ public class SerializerTests {
 
     @Test
     public void customTest() throws IOException {
-        List<Animal> animals = (new Data(N)).getAnimalList();
+        List<Animal> animals = data.getAnimalList();
         long begW = System.currentTimeMillis();
 
-        Serializer.customSerialize(new ArrayList<>(animals), fileName);
+        Serializer.customSerialize(animals, fileName);
 
         long endW = System.currentTimeMillis();
         long timeW = endW - begW;
