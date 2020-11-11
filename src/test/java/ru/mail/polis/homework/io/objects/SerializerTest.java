@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.io.objects;
 
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.Random;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 
 public class SerializerTest {
 
@@ -34,7 +32,7 @@ public class SerializerTest {
 
         Random rnd = new Random();
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 10000; i++) {
             String kind = allKinds.get(rnd.nextInt(allKinds.size()));
             boolean isTailLong = rnd.nextBoolean();
             double energy = 100;
