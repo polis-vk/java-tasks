@@ -49,7 +49,7 @@ public class SerializerTest {
             long size = Files.size(p);
             System.out.println("Default write: " + (T2 - T1));
             System.out.println("Default read: " + (T3 - T2));
-            System.out.println("Size file: " + size/1024 );
+            System.out.println("Size file: " + size/1024 + "\n" );
 
             Assert.assertEquals(animals, answer);
         } catch (IOException e) {
