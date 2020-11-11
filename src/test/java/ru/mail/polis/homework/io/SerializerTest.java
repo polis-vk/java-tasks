@@ -107,6 +107,31 @@ public class SerializerTest {
         }
     }
 
+    @Test
+    public void customSerializeTest(){
+        try {
+            Path p = Paths.get(path);
+            List<Animal> animals = new ArrayList<>(COUNT_OBJECT);
+            for (int i = 0; i < COUNT_OBJECT; i++) {
+                animals.add(getAnimal(0));
+            }
+            long T1 = System.currentTimeMillis();
+            serializer.customSerialize(animals, path);
+            long T2 = System.currentTimeMillis();
+            List<Animal> answer = serializer.customDeserialize(path);
+            long T3 = System.currentTimeMillis();
+
+            long size = Files.size(p);
+            System.out.println("Serialize with custom write: " + (T2 - T1));
+            System.out.println("Serialize with custom read: " + (T3 - T2));
+            System.out.println("Size file: " + size/1024 + "\n");
+
+            Assert.assertEquals(animals, answer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @After
     public void delete(){
         try {
