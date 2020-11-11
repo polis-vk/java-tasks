@@ -25,15 +25,6 @@ public class Heart implements Serializable {
         isAlive = false;
     }
 
-    public void myWriteObject(ObjectOutputStream oos) throws IOException {
-        oos.writeBoolean(isAlive);
-    }
-
-    public Heart myReadObject(ObjectInputStream ois) throws IOException {
-        this.isAlive = ois.readBoolean();
-        return this;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

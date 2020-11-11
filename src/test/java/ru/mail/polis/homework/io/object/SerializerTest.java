@@ -17,54 +17,55 @@ public class SerializerTest {
 
     private static final int QUANTITY = 10000;
     private static final long SEED = 2001;
+    private static Random random;
     private static final List<String> foodList = Arrays.asList("mushroom", "animal", "bark", "leaves", "berries");
     private final String fileName = "src/test/java/ru/mail/polis/homework/io/object/serialize";
     Serializer serializer = new Serializer();
     Logger log = Logger.getLogger(SerializerTest.class.getName());
 
     private static final List<Animal> animals = new ArrayList<Animal>() {{
-        Random random1 = new Random(SEED);
+        random = new Random(SEED);
         Animal animal;
         for (int i = 0; i < QUANTITY; i++) {
-            animal = new Animal(random1.nextInt(),
-                    String.valueOf(random1.nextInt()),
-                    Animal.Habitat.values()[random1.nextInt(2)],
-                    Arrays.asList(foodList.get(random1.nextInt(4)), foodList.get(random1.nextInt(4))),
-                    random1.nextBoolean(),
-                    random1.nextDouble() * 100,
-                    new Heart(random1.nextBoolean())
+            animal = new Animal(random.nextInt(),
+                    String.valueOf(random.nextInt()),
+                    Animal.Habitat.values()[random.nextInt(2)],
+                    Arrays.asList(foodList.get(random.nextInt(4)), foodList.get(random.nextInt(4))),
+                    random.nextBoolean(),
+                    random.nextDouble() * 100,
+                    new Heart(random.nextBoolean())
             );
             add(animal);
         }
     }};
 
     private static final List<AnimalWithMethods> animalsWithMethods = new ArrayList<AnimalWithMethods>() {{
-        Random random1 = new Random(SEED);
+        random = new Random(SEED);
         AnimalWithMethods animalWithMethods;
         for (int i = 0; i < QUANTITY; i++) {
-            animalWithMethods = new AnimalWithMethods(random1.nextInt(),
-                    String.valueOf(random1.nextInt()),
-                    AnimalWithMethods.Habitat.values()[random1.nextInt(2)],
-                    Arrays.asList(foodList.get(random1.nextInt(4)), foodList.get(random1.nextInt(4))),
-                    random1.nextBoolean(),
-                    random1.nextDouble() * 100,
-                    new HeartWithMethod(random1.nextBoolean())
+            animalWithMethods = new AnimalWithMethods(random.nextInt(),
+                    String.valueOf(random.nextInt()),
+                    AnimalWithMethods.Habitat.values()[random.nextInt(2)],
+                    Arrays.asList(foodList.get(random.nextInt(4)), foodList.get(random.nextInt(4))),
+                    random.nextBoolean(),
+                    random.nextDouble() * 100,
+                    new HeartWithMethod(random.nextBoolean())
             );
             add(animalWithMethods);
         }
     }};
 
     private static final List<AnimalExternalizable> animalsExternalizable = new ArrayList<AnimalExternalizable>() {{
-        Random random1 = new Random(SEED);
+        random = new Random(SEED);
         AnimalExternalizable animalExternalizable;
         for (int i = 0; i < QUANTITY; i++) {
-            animalExternalizable = new AnimalExternalizable(random1.nextInt(),
-                    String.valueOf(random1.nextInt()),
-                    AnimalExternalizable.Habitat.values()[random1.nextInt(2)],
-                    Arrays.asList(foodList.get(random1.nextInt(4)), foodList.get(random1.nextInt(4))),
-                    random1.nextBoolean(),
-                    random1.nextDouble() * 100,
-                    new HeartExternalizable(random1.nextBoolean())
+            animalExternalizable = new AnimalExternalizable(random.nextInt(),
+                    String.valueOf(random.nextInt()),
+                    AnimalExternalizable.Habitat.values()[random.nextInt(2)],
+                    Arrays.asList(foodList.get(random.nextInt(4)), foodList.get(random.nextInt(4))),
+                    random.nextBoolean(),
+                    random.nextDouble() * 100,
+                    new HeartExternalizable(random.nextBoolean())
             );
             add(animalExternalizable);
         }
