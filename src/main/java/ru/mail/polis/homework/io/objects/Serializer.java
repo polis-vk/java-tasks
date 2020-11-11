@@ -29,14 +29,15 @@ public class Serializer {
     /**
      * 1 балл
      * Реализовать простую сериализацию, с помощью специального потока для сериализации объектов
-     * @param animals Список животных для сериализации
+     *
+     * @param animals  Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
         Path path = Paths.get(fileName);
-        try(ObjectOutputStream objectOutputStream  = new ObjectOutputStream(Files.newOutputStream(path))) {
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
             objectOutputStream.writeInt(animals.size());
-            for(Animal animal : animals){
+            for (Animal animal : animals) {
                 objectOutputStream.writeObject(animal);
             }
         } catch (IOException e) {
@@ -55,9 +56,9 @@ public class Serializer {
         Path path = Paths.get(fileName);
         ArrayList<Animal> animals = new ArrayList<>();
 
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))){
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))) {
             int size = objectInputStream.readInt();
-            for(int i = 0; i < size; i++){
+            for (int i = 0; i < size; i++) {
                 animals.add((Animal) objectInputStream.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -71,14 +72,15 @@ public class Serializer {
     /**
      * 1 балл
      * Реализовать простую ручную сериализацию, с помощью специального потока для сериализации объектов и специальных методов
-     * @param animals Список животных для сериализации
+     *
+     * @param animals  Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
         Path path = Paths.get(fileName);
-        try(ObjectOutputStream objectOutputStream  = new ObjectOutputStream(Files.newOutputStream(path))) {
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
             objectOutputStream.writeInt(animals.size());
-            for(AnimalWithMethods animal : animals){
+            for (AnimalWithMethods animal : animals) {
                 objectOutputStream.writeObject(animal);
             }
         } catch (IOException e) {
@@ -96,10 +98,10 @@ public class Serializer {
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
         Path path = Paths.get(fileName);
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))){
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))) {
             int size = objectInputStream.readInt();
             ArrayList<AnimalWithMethods> animals = new ArrayList<>(size);
-            for(int i = 0; i < size; i++){
+            for (int i = 0; i < size; i++) {
                 animals.add((AnimalWithMethods) objectInputStream.readObject());
             }
             return animals;
@@ -112,14 +114,15 @@ public class Serializer {
     /**
      * 1 балл
      * Реализовать простую ручную сериализацию, с помощью специального потока для сериализации объектов и интерфейса Externalizable
-     * @param animals Список животных для сериализации
+     *
+     * @param animals  Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
         Path path = Paths.get(fileName);
-        try(ObjectOutputStream objectOutputStream  = new ObjectOutputStream(Files.newOutputStream(path))) {
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
             objectOutputStream.writeInt(animals.size());
-            for(AnimalExternalizable animal : animals){
+            for (AnimalExternalizable animal : animals) {
                 objectOutputStream.writeObject(animal);
             }
         } catch (IOException e) {
@@ -137,10 +140,10 @@ public class Serializer {
      */
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
         Path path = Paths.get(fileName);
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))){
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))) {
             int size = objectInputStream.readInt();
             ArrayList<AnimalExternalizable> animals = new ArrayList<>(size);
-            for(int i = 0; i < size; i++){
+            for (int i = 0; i < size; i++) {
                 animals.add((AnimalExternalizable) objectInputStream.readObject());
             }
             return animals;
@@ -159,7 +162,26 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
-
+        Path path = Paths.get(fileName);
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
+            objectOutputStream.writeInt(animals.size());
+            for (Animal animal : animals) {
+                objectOutputStream.writeInt(animal.getAge());
+                objectOutputStream.writeUTF(animal.getName());
+                objectOutputStream.writeUTF(animal.getColor().name());
+                objectOutputStream.writeInt(animal.getFriends().size());
+                for (Animal.Friend friend : animal.getFriends()) {
+                    objectOutputStream.writeUTF(friend.getName());
+                    objectOutputStream.writeInt(friend.getAge());
+                    objectOutputStream.writeUTF(friend.getColor().name());
+                }
+                objectOutputStream.writeObject(animal.getMother());
+                objectOutputStream.writeObject(animal.getFather());
+                objectOutputStream.writeDouble(animal.getStrong());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -171,6 +193,34 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+        Path path = Paths.get(fileName);
+        List<Animal> animals = new ArrayList<>();
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))) {
+            int size = objectInputStream.readInt();
+            for (int i = 0; i < size; i++) {
+                int age = objectInputStream.readInt();
+                String name = objectInputStream.readUTF();
+                Animal.Color color = Animal.Color.valueOf(objectInputStream.readUTF());
+
+                int sizeFriends = objectInputStream.readInt();
+                List<Animal.Friend> friends = new ArrayList<>(sizeFriends);
+                for (int j = 0; j < sizeFriends; j++) {
+                    String nameFriend = objectInputStream.readUTF();
+                    int ageFriend = objectInputStream.readInt();
+                    Animal.Color colorFriend = Animal.Color.valueOf(objectInputStream.readUTF());
+                    friends.add(new Animal.Friend(nameFriend, ageFriend, colorFriend));
+                }
+
+                Animal mother = (Animal) objectInputStream.readObject();
+                Animal father = (Animal) objectInputStream.readObject();
+                double strong = objectInputStream.readDouble();
+
+                animals.add(new Animal(age, name, color, friends, mother, father, strong));
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return animals;
     }
 }

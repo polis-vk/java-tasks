@@ -127,28 +127,21 @@ public class AnimalWithMethods implements Serializable{
                 '}';
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    private void writeExternal(ObjectOutput out) throws IOException {
         out.writeInt(age);
         out.writeUTF(name);
         out.writeUTF(color.name());
-        out.writeInt(friends.size());
-        for (Friend friend : friends) {
-                out.writeObject(friend);
-        }
+        out.writeObject(friends);
         out.writeObject(father);
         out.writeObject(mother);
         out.writeDouble(strong);
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    private void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         age = in.readInt();
         name = in.readUTF();
         color = Color.valueOf(in.readUTF());
-        int size = in.readInt();
-        friends = new ArrayList<>(size);
-        for(int i = 0; i < size; i++){
-            friends.add((Friend) in.readObject());
-        }
+        friends = (List<Friend>) in.readObject();
         father = (AnimalWithMethods) in.readObject();
         mother = (AnimalWithMethods) in.readObject();
         strong = in.readDouble();

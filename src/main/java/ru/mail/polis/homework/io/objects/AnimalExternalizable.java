@@ -111,10 +111,7 @@ public class AnimalExternalizable implements Externalizable  {
         out.writeInt(age);
         out.writeUTF(name);
         out.writeUTF(color.name());
-        out.writeInt(friends.size());
-        for (Friend friend : friends) {
-                out.writeObject(friend);
-        }
+        out.writeObject(friends);
         out.writeObject(father);
         out.writeObject(mother);
         out.writeDouble(strong);
@@ -125,11 +122,7 @@ public class AnimalExternalizable implements Externalizable  {
         age = in.readInt();
         name = in.readUTF();
         color = Color.valueOf(in.readUTF());
-        int size = in.readInt();
-        friends = new ArrayList<>(size);
-        for(int i = 0; i < size; i++){
-            friends.add((Friend) in.readObject());
-        }
+        friends = (List<Friend>) in.readObject();
         father = (AnimalExternalizable) in.readObject();
         mother = (AnimalExternalizable) in.readObject();
         strong = in.readDouble();
