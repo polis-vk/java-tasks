@@ -1,7 +1,11 @@
-# Compiled class file
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
 
 # Mobile Tools for Java (J2ME)
-.idea/
 .gradle/
 out/
 build
