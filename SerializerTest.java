@@ -102,7 +102,6 @@ public class SerializerTest {
     private <E> void test(Consumer<List<E>> ser, Supplier<List<E>> deser, List<E> source) {
         List<E> before = new ArrayList<>();
         for (int i = 0; i < COUNT; i++) {
- //           before.addAll(source);
             before.add(source.get(ThreadLocalRandom.current().nextInt(0,10)));
         }
         long serializeTimeStart = System.currentTimeMillis();
