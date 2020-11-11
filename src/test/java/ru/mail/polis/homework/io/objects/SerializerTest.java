@@ -32,6 +32,7 @@ public class SerializerTest {
     private static final List<AnimalWithMethods> animalsWithMethods = new ArrayList<>();
     private static final List<AnimalExternalizable> animalsExternalizable = new ArrayList<>();
     private static final Serializer serializer = new Serializer();
+    private static final Random rnd = new Random();
 
     @BeforeClass
     public static void initialize() throws IOException{
@@ -46,8 +47,7 @@ public class SerializerTest {
         List<String> allSpecies = Arrays.asList("F. catus", "A. fulgens", "R. diazi", "C. lupus");
         List<Color> allColors = Arrays.asList(Color.values());
         List<EatingStrategy> allEatingStrategies = Arrays.asList(EatingStrategy.values());
-
-        Random rnd = new Random();
+        
         for (int i = 0; i < NUMBER_OF_OBJECTS; i++) {
             String name = names.get(rnd.nextInt(names.size()));
             int age = rnd.nextInt(100);
