@@ -58,9 +58,9 @@ public class Serializer {
 
     try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(path))) {
       int deserializeNumber = inputStream.readInt();
+
       for (int i = 0; i < deserializeNumber; i++) {
         animalList.add((Animal) inputStream.readObject());
-
       }
     } catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
@@ -103,6 +103,7 @@ public class Serializer {
 
     try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(path))) {
       int deserializeNumber = inputStream.readInt();
+
       for (int i = 0; i < deserializeNumber; i++) {
         animalList.add((AnimalWithMethods) inputStream.readObject());
       }
@@ -205,9 +206,9 @@ public class Serializer {
         Brain brain = new Brain(inputStream.readInt());
 
         int nameListSize = inputStream.readInt();
-        List<String> nameList = Arrays.asList(new String[nameListSize]);
+        List<String> nameList = new ArrayList<>(nameListSize);
         for (int j = 0; j < nameListSize; j++) {
-          nameList.set(j, inputStream.readUTF());
+          nameList.add(inputStream.readUTF());
         }
 
         int weight = inputStream.readInt();
