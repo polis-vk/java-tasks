@@ -40,8 +40,7 @@ public class Serializer {
       for (Animal animal : animals) {
         outputStream.writeObject(animal);
       }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
   }
@@ -63,8 +62,7 @@ public class Serializer {
         animalList.add((Animal) inputStream.readObject());
 
       }
-    }
-    catch (IOException | ClassNotFoundException e) {
+    } catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
     }
     return animalList;
@@ -87,8 +85,7 @@ public class Serializer {
       for (AnimalWithMethods animalWithMethods : animals) {
         outputStream.writeObject(animalWithMethods);
       }
-    }
-    catch (IOException ignored) {
+    } catch (IOException ignored) {
     }
   }
 
@@ -109,8 +106,7 @@ public class Serializer {
       for (int i = 0; i < deserializeNumber; i++) {
         animalList.add((AnimalWithMethods) inputStream.readObject());
       }
-    }
-    catch (IOException | ClassNotFoundException e) {
+    } catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
     }
 
@@ -133,8 +129,7 @@ public class Serializer {
       for (AnimalExternalizable animalExternalizable : animals) {
         outputStream.writeObject(animalExternalizable);
       }
-    }
-    catch (IOException ignored) {
+    } catch (IOException ignored) {
     }
   }
 
@@ -155,8 +150,7 @@ public class Serializer {
       for (int i = 0; i < deserializeNumber; i++) {
         animalList.add((AnimalExternalizable) inputStream.readObject());
       }
-    }
-    catch (IOException | ClassNotFoundException e) {
+    } catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
     }
     return animalList;
@@ -188,8 +182,7 @@ public class Serializer {
         outputStream.writeUTF(animal.getHabitation().toString());
         outputStream.writeLong(animal.getDistanceTraveled());
       }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
   }
@@ -223,8 +216,7 @@ public class Serializer {
         long distanceTraveled = inputStream.readLong();
         animalList.add(new Animal(brain, nameList, weight, name, habitation, distanceTraveled));
       }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
 

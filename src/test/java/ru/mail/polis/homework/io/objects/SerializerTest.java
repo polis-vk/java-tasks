@@ -118,8 +118,7 @@ public class SerializerTest {
 
     try {
       Files.delete(Paths.get(fileForTest));
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
   }
@@ -141,7 +140,7 @@ public class SerializerTest {
   }
 
   private <T> void serialize(List<T> list, Consumer<List<T>> consumer) {
-      consumer.accept(list);
+    consumer.accept(list);
   }
 
   private <R> List<R> deserialize(Supplier<List<R>> supplier) {
@@ -152,8 +151,7 @@ public class SerializerTest {
     long fileSize = 0;
     try {
       fileSize = Files.size(Paths.get(fileForTest));
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
     return fileSize;
