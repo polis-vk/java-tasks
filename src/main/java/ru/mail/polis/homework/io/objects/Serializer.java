@@ -2,6 +2,9 @@ package ru.mail.polis.homework.io.objects;
 
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,8 +33,9 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
-        try(ObjectOutputStream objectOutputStream  = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            objectOutputStream.write(animals.size());
+        Path path = Paths.get(fileName);
+        try(ObjectOutputStream objectOutputStream  = new ObjectOutputStream(Files.newOutputStream(path))) {
+            objectOutputStream.writeInt(animals.size());
             for(Animal animal : animals){
                 objectOutputStream.writeObject(animal);
             }
@@ -48,17 +52,19 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> defaultDeserialize(String fileName) {
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))){
+        Path path = Paths.get(fileName);
+        ArrayList<Animal> animals = new ArrayList<>();
+
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))){
             int size = objectInputStream.readInt();
-            ArrayList<Animal> animals = new ArrayList<>(size);
             for(int i = 0; i < size; i++){
                 animals.add((Animal) objectInputStream.readObject());
             }
-            return animals;
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-            return null;
         }
+
+        return animals;
     }
 
 
@@ -69,8 +75,9 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
-        try(ObjectOutputStream objectOutputStream  = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            objectOutputStream.write(animals.size());
+        Path path = Paths.get(fileName);
+        try(ObjectOutputStream objectOutputStream  = new ObjectOutputStream(Files.newOutputStream(path))) {
+            objectOutputStream.writeInt(animals.size());
             for(AnimalWithMethods animal : animals){
                 objectOutputStream.writeObject(animal);
             }
@@ -88,7 +95,8 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))){
+        Path path = Paths.get(fileName);
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))){
             int size = objectInputStream.readInt();
             ArrayList<AnimalWithMethods> animals = new ArrayList<>(size);
             for(int i = 0; i < size; i++){
@@ -108,8 +116,9 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
-        try(ObjectOutputStream objectOutputStream  = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            objectOutputStream.write(animals.size());
+        Path path = Paths.get(fileName);
+        try(ObjectOutputStream objectOutputStream  = new ObjectOutputStream(Files.newOutputStream(path))) {
+            objectOutputStream.writeInt(animals.size());
             for(AnimalExternalizable animal : animals){
                 objectOutputStream.writeObject(animal);
             }
@@ -127,7 +136,8 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))){
+        Path path = Paths.get(fileName);
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))){
             int size = objectInputStream.readInt();
             ArrayList<AnimalExternalizable> animals = new ArrayList<>(size);
             for(int i = 0; i < size; i++){

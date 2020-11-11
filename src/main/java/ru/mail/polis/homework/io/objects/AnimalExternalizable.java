@@ -237,7 +237,7 @@ public class AnimalExternalizable implements Externalizable  {
         public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
             name = in.readUTF();
             age = in.readInt();
-            color = Color.valueOf(color.name());
+            color = Color.valueOf(in.readUTF());
         }
     }
 }

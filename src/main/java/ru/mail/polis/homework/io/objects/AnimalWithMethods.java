@@ -224,13 +224,13 @@ public class AnimalWithMethods implements Serializable{
             this.color = color;
         }
 
-        public void writeExternal(ObjectOutput out) throws IOException {
+        private void writeExternal(ObjectOutput out) throws IOException {
             out.writeUTF(name);
             out.writeInt(age);
             out.writeUTF(color.name());
         }
 
-        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        private void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
             name = in.readUTF();
             age = in.readInt();
             color = Color.valueOf(in.readUTF());
