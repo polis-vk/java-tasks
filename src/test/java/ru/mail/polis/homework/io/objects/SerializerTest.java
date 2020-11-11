@@ -31,12 +31,9 @@ public class SerializerTest {
   public void initializeFields() {
 
     for (int i = 0; i < numberToSerialize; i++) {
-      animalList.add(new Animal(new Brain(i), Arrays.asList("bear" + i, "tiger" + i), 22, "Frek" + i, randomHabitation(), i));
-    }
-
-    for (Animal animal : animalList) {
-      animalWithMethodsList.add(new AnimalWithMethods(animal.getBrain(), animal.getListName(), animal.getWeight(), animal.getName(), animal.getHabitation().toString(), animal.getDistanceTraveled()));
-      animalExternalizableList.add(new AnimalExternalizable(new Brain(animal.getBrain().getSize()), animal.getListName(), animal.getWeight(), animal.getName(), animal.getHabitation().toString(), animal.getDistanceTraveled()));
+      animalList.add(new Animal(new Brain(i), Arrays.asList("bear" + i, "tiger" + i), i, "Frok" + i, randomHabitation(), i));
+      animalWithMethodsList.add(new AnimalWithMethods(new Brain(i), Arrays.asList("bear" + i, "tiger" + i), i, "Frak" + i, randomHabitation(), i));
+      animalExternalizableList.add(new AnimalExternalizable(new Brain(i), Arrays.asList("bear" + i, "tiger" + i), i, "Frook" + i, randomHabitation(), i));
     }
   }
 
@@ -125,12 +122,13 @@ public class SerializerTest {
 
   private Habitation randomHabitation() {
     Habitation habitation = Habitation.WATER;
+
     switch (random.nextInt(3)) {
       case 0:
-        habitation = Habitation.WATER;
+        habitation = Habitation.LAND;
         break;
       case 1:
-        habitation = Habitation.LAND;
+        habitation = Habitation.WATER;
         break;
       case 2:
         habitation = Habitation.SOIL;

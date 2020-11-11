@@ -21,12 +21,12 @@ public class AnimalExternalizable implements Externalizable {
 
   }
 
-  public AnimalExternalizable(Brain brain, List<String> listName, int weight, String name, String habitation, long distanceTraveled) {
+  public AnimalExternalizable(Brain brain, List<String> listName, int weight, String name, Habitation habitation, long distanceTraveled) {
     this.brain = brain;
     this.listName = listName;
     this.weight = weight;
     this.name = name;
-    this.habitation = Habitation.valueOf(habitation);
+    this.habitation = habitation;
     this.distanceTraveled = distanceTraveled;
   }
 
