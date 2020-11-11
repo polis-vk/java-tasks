@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.io.objects;
 
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,9 +14,9 @@ public class AnimalWithMethods implements Serializable {
         PLANT, MEAT, BOTH
     }
 
-    private final String name;
-    private final boolean isMale;
-    private final NutritionType nutritionType;
+    private String name;
+    private boolean isMale;
+    private NutritionType nutritionType;
     private int age;
     private List<String> childNames;
     private Heart heart;
@@ -60,6 +60,24 @@ public class AnimalWithMethods implements Serializable {
 
     public List<String> getChildNames() {
         return childNames;
+    }
+
+    private void writeObject(ObjectOutputStream objectOutput) throws IOException {
+        objectOutput.writeObject(this.name);
+        objectOutput.writeBoolean(this.isMale);
+        objectOutput.writeObject(this.nutritionType);
+        objectOutput.writeInt(this.age);
+        objectOutput.writeObject(this.childNames);
+        objectOutput.writeObject(this.heart);
+    }
+
+    private void readObject(ObjectInputStream objectInput) throws IOException, ClassNotFoundException {
+        this.name = (String) objectInput.readObject();
+        this.isMale = objectInput.readBoolean();
+        this.nutritionType = (NutritionType) objectInput.readObject();
+        this.age = objectInput.readInt();
+        this.childNames = (List<String>) objectInput.readObject();
+        this.heart = (Heart) objectInput.readObject();
     }
 
     @Override

@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.objects;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import ru.mail.polis.homework.io.objects.*;
 
 import java.io.IOException;
@@ -13,12 +10,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class SerializerTest {
-    private final static int COUNT = 100;
+    private final static int COUNT = 10000;
     private final static String FILE = "test.bin";
     private static List<Animal> animalList;
 
@@ -91,12 +89,21 @@ public class SerializerTest {
         test(x -> serializer.customSerialize(x, FILE), () -> serializer.customDeserialize(FILE), animalCustomList);
     }
 
+    @AfterClass
+    public static void removeFile() {
+        try {
+            Files.deleteIfExists(Paths.get(FILE));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     private <E> void test(Consumer<List<E>> ser, Supplier<List<E>> deser, List<E> source) {
         List<E> before = new ArrayList<>();
         for (int i = 0; i < COUNT; i++) {
-            before.addAll(source);
+ //           before.addAll(source);
+            before.add(source.get(ThreadLocalRandom.current().nextInt(0,10)));
         }
         long serializeTimeStart = System.currentTimeMillis();
         ser.accept(before);

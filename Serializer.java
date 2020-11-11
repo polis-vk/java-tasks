@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,8 +35,9 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
-        try(ObjectOutputStream stream = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
-            stream.writeObject(animals);
+        try(ObjectOutputStream outputStream = new
+    ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
+            outputStream.writeObject(animals);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -50,8 +52,9 @@ public class Serializer {
      */
     public List<Animal> defaultDeserialize(String fileName){
         List<Animal> result = null;
-        try(ObjectInputStream stream = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
-            result = (List<Animal>)stream.readObject();
+        try(ObjectInputStream inputStream = new
+    ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
+            result = (List<Animal>)inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -66,15 +69,18 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
-        try(ObjectOutputStream stream = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
-            stream.writeInt(animals.size());
+        try(ObjectOutputStream outputStream = new
+    ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
+            outputStream.writeInt(animals.size());
             for (AnimalWithMethods currentAnimal: animals) {
-                stream.writeObject(currentAnimal);
+                outputStream.writeObject(currentAnimal);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+
 
     /**
      * 1 балл
@@ -86,10 +92,11 @@ public class Serializer {
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
         List<AnimalWithMethods> result = new ArrayList<AnimalWithMethods>();
-        try(ObjectInputStream stream = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
-            int size = stream.readInt();
+        try(ObjectInputStream inputStream = new
+    ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
+            int size = inputStream.readInt();
             for (int i = 0; i < size; i++) {
-                result.add((AnimalWithMethods) stream.readObject());
+                result.add((AnimalWithMethods) inputStream.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -104,10 +111,11 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
-        try(ObjectOutputStream stream = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
-            stream.writeInt(animals.size());
+        try(ObjectOutputStream outputStream = new
+    ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
+            outputStream.writeInt(animals.size());
             for (AnimalExternalizable currentAnimal: animals) {
-                currentAnimal.writeExternal(stream);
+                outputStream.writeObject(currentAnimal);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -124,12 +132,11 @@ public class Serializer {
      */
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
         List<AnimalExternalizable> result = new ArrayList<AnimalExternalizable>();
-        try(ObjectInputStream stream = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
-            int size = stream.readInt();
+        try(ObjectInputStream inputStream = new
+    ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
+            int size = inputStream.readInt();
             for (int i = 0; i < size; i++) {
-                AnimalExternalizable current = new AnimalExternalizable();
-                current.readExternal(stream);
-                result.add(current);
+                result.add((AnimalExternalizable) inputStream.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -146,21 +153,22 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
-        try(ObjectOutputStream stream = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
-            stream.writeInt(animals.size());
+        try(ObjectOutputStream outputStream = new
+    ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
+            outputStream.writeInt(animals.size());
             for (Animal currentAnimal: animals) {
-                stream.writeUTF(currentAnimal.getName());
-                stream.writeBoolean(currentAnimal.isMale());
-                stream.writeInt(currentAnimal.getNutritionType().ordinal());
-                stream.writeInt(currentAnimal.getAge());
+                outputStream.writeUTF(currentAnimal.getName());
+                outputStream.writeBoolean(currentAnimal.isMale());
+                outputStream.writeUTF(currentAnimal.getNutritionType().name());
+                outputStream.writeInt(currentAnimal.getAge());
                 List<String> childNames = currentAnimal.getChildNames();
-                stream.writeInt(childNames.size());
+                outputStream.writeInt(childNames.size());
                 for (String currentChild: childNames) {
-                    stream.writeUTF(currentChild);
+                    outputStream.writeUTF(currentChild);
                 }
                 Heart currentHeart = currentAnimal.getHeart();
-                stream.writeDouble(currentHeart.getWeight());
-                stream.writeDouble(currentHeart.getPower());
+                outputStream.writeDouble(currentHeart.getWeight());
+                outputStream.writeDouble(currentHeart.getPower());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -177,19 +185,21 @@ public class Serializer {
      */
     public List<Animal> customDeserialize(String fileName)  {
         List<Animal> result = new ArrayList<Animal>();
-        try(ObjectInputStream stream = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
-            int size = stream.readInt();
+        try(ObjectInputStream inputStream = new
+    ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
+            int size = inputStream.readInt();
             for (int i = 0; i < size; i++) {
-                String name = stream.readUTF();
-                boolean isMale = stream.readBoolean();
-                Animal.NutritionType nutritionType = Animal.NutritionType.values()[stream.readInt()];
-                int age = stream.readInt();
-                int childNamesSize = stream.readInt();
+                String name = inputStream.readUTF();
+                boolean isMale = inputStream.readBoolean();
+                Animal.NutritionType nutritionType = Animal.NutritionType.
+                        valueOf(inputStream.readUTF());
+                int age = inputStream.readInt();
+                int childNamesSize = inputStream.readInt();
                 List childNames = new ArrayList<String>();
                 for (int j = 0; j < childNamesSize; j++) {
-                    childNames.add(stream.readUTF());
+                    childNames.add(inputStream.readUTF());
                 }
-                Heart heart = new Heart(stream.readDouble(), stream.readDouble());
+                Heart heart = new Heart(inputStream.readDouble(), inputStream.readDouble());
                 result.add(new Animal(name, isMale, nutritionType, age, childNames, heart));
             }
         } catch (IOException e) {
