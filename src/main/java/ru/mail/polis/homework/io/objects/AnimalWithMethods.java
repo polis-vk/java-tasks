@@ -31,10 +31,6 @@ public class AnimalWithMethods implements Serializable  {
         }
     }
 
-    public AnimalWithMethods() {
-
-    }
-
     public int getAge() {
         return age;
     }
