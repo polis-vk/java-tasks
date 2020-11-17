@@ -21,18 +21,15 @@ public class SerializerTest {
     private final Serializer serializer = new Serializer();
 
     private final String fileTest = "fileTest";
-    private final int number = 100;
+    private final int number = 1000;
     private final Random random = new Random();
 
     @Before
     public void initiation() {
         for (int i = 0; i < number; i++) {
             animals.add(new Animal("Animal" + i, randomHabitat(), new Iq(i), i, random.nextInt(10) / 2 == 0, Arrays.asList("meat" + i, "water" + i)));
-        }
-
-        for (Animal animal : animals) {
-            animalsWithMethods.add(new AnimalWithMethods(animal.getName(), animal.getHabitat(), animal.getIq(), animal.getAge(), animal.isPredator(), animal.getFood()));
-            animalsExternalizable.add(new AnimalExternalizable(animal.getName(), animal.getHabitat(), new Iq(animal.getIq().getIqSize()), animal.getAge(), animal.isPredator(), animal.getFood()));
+            animalsWithMethods.add(new AnimalWithMethods("Animal" + i, randomHabitat(), new Iq(i), i, random.nextInt(10) / 2 == 0, Arrays.asList("meat" + i, "water" + i)));
+            animalsExternalizable.add(new AnimalExternalizable("Animal" + i, randomHabitat(), new Iq(i), i, random.nextInt(10) / 2 == 0, Arrays.asList("meat" + i, "water" + i)));
         }
     }
 
