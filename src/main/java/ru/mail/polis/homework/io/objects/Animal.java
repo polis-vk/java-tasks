@@ -56,9 +56,8 @@ public class Animal implements Serializable {
         public Builder() {
         }
 
-        public Builder setAge(int age){
+        public void setAge(int age) {
             Animal.this.age = age;
-            return this;
         }
 
         public void setName(String name) {
@@ -72,21 +71,22 @@ public class Animal implements Serializable {
         public void setFood(List<String> food) {
             Animal.this.food = food;
         }
-         public void setSex(boolean sexIsMale) {
+
+        public void setSex(boolean sexIsMale) {
             Animal.this.sexIsMale = sexIsMale;
-         }
+        }
 
-         public void setHeight(double height) {
+        public void setHeight(double height) {
             Animal.this.height = height;
-         }
+        }
 
-         public void setHeart(Heart heart) {
+        public void setHeart(Heart heart) {
             Animal.this.heart = heart;
-         }
+        }
 
-         public Animal build() {
+        public Animal build() {
             return Animal.this;
-         }
+        }
     }
 
     @Override
