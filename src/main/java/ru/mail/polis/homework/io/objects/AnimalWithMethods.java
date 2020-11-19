@@ -127,7 +127,7 @@ public class AnimalWithMethods implements Serializable{
                 '}';
     }
 
-    private void writeExternal(ObjectOutput out) throws IOException {
+    private void writeObject(ObjectOutput out) throws IOException {
         out.writeInt(age);
         out.writeUTF(name);
         out.writeUTF(color.name());
@@ -137,7 +137,7 @@ public class AnimalWithMethods implements Serializable{
         out.writeDouble(strong);
     }
 
-    private void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInput in) throws IOException, ClassNotFoundException {
         age = in.readInt();
         name = in.readUTF();
         color = Color.valueOf(in.readUTF());
@@ -217,13 +217,13 @@ public class AnimalWithMethods implements Serializable{
             this.color = color;
         }
 
-        private void writeExternal(ObjectOutput out) throws IOException {
+        private void writeObject(ObjectOutput out) throws IOException {
             out.writeUTF(name);
             out.writeInt(age);
             out.writeUTF(color.name());
         }
 
-        private void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        private void readObject(ObjectInput in) throws IOException, ClassNotFoundException {
             name = in.readUTF();
             age = in.readInt();
             color = Color.valueOf(in.readUTF());
