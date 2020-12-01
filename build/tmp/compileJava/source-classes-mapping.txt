@@ -3,8 +3,8 @@ ru/mail/polis/homework/io/CopyFile.java
 ru/mail/polis/homework/objects/RepeatingCharacters.java
  ru.mail.polis.homework.objects.RepeatingCharacters
  ru.mail.polis.homework.objects.RepeatingCharacters$Pair
-ru/mail/polis/homework/ReadWriteLockBySemaphore.java
- ru.mail.polis.homework.ReadWriteLockBySemaphore
+ru/mail/polis/homework/objects/StringTasks.java
+ ru.mail.polis.homework.objects.StringTasks
 ru/mail/polis/homework/simple/HomeworkTask.java
  ru.mail.polis.homework.simple.HomeworkTask
 ru/mail/polis/homework/collections/mail/Salary.java
@@ -54,5 +54,5 @@ ru/mail/polis/homework/analyzer/TextFilterManager.java
  ru.mail.polis.homework.analyzer.TextFilterManager
 ru/mail/polis/homework/collections/streams/account/Task.java
  ru.mail.polis.homework.collections.streams.account.Task
-ru/mail/polis/homework/objects/StringTasks.java
- ru.mail.polis.homework.objects.StringTasks
+ru/mail/polis/homework/ReadWriteLockBySemaphore.java
+ ru.mail.polis.homework.ReadWriteLockBySemaphore
