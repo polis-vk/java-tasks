@@ -16,11 +16,8 @@ public class ReadWriteLockBySemaphore {
     }
 
     public void startReading() throws InterruptedException {
-        while (writerAmount.get() != 0) {
-            Thread.sleep(1);
-        }
-
         readerAmount.incrementAndGet();
+        this.semaphore.acquire();
     }
 
     public void stopReading() {
@@ -30,11 +27,6 @@ public class ReadWriteLockBySemaphore {
 
     public void startWrite() throws InterruptedException {
         writerAmount.incrementAndGet();
-
-        while (this.readerAmount.get() != 0) {
-            Thread.sleep(1);
-        }
-
         semaphore.acquire(SEMAPHORE_SIZE);
     }
 
