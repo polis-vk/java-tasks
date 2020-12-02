@@ -16,6 +16,7 @@ public class ReadWriteLockSample {
       semaphore.acquire(1);
     } catch (InterruptedException e) {
       e.printStackTrace();
+      readUnlock();
     }
   }
 
@@ -24,6 +25,7 @@ public class ReadWriteLockSample {
       semaphore.acquire(maxNumber);
     } catch (InterruptedException e) {
       e.printStackTrace();
+      writeUnlock();
     }
   }
 
