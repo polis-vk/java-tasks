@@ -2,41 +2,117 @@ package ru.mail.polis.homework;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
 
-public class ReadWriteLockBySemaphore {
+public class ReadWriteLockBySemaphore implements ReadWriteLock {
     private static int SEMAPHORE_SIZE = 10;
     private final Semaphore semaphore;
     private AtomicInteger readerAmount;
+    private Lock readLock;
+    private Lock writeLock;
     private AtomicInteger writerAmount;
 
+    private class WriteLock implements Lock {
+        @Override
+        public void lock() {
+            writerAmount.incrementAndGet();
+
+            try {
+                semaphore.acquire(SEMAPHORE_SIZE);
+            } catch (InterruptedException e) {
+                semaphore.release(SEMAPHORE_SIZE);
+            }
+        }
+
+        @Override
+        public void lockInterruptibly() throws InterruptedException {
+
+        }
+
+        @Override
+        public boolean tryLock() {
+            return false;
+        }
+
+        @Override
+        public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
+            return false;
+        }
+
+        @Override
+        public void unlock() {
+            writerAmount.decrementAndGet();
+            semaphore.release(SEMAPHORE_SIZE);
+        }
+
+        @Override
+        public Condition newCondition() {
+            return null;
+        }
+    }
+
+    private class ReadLock implements Lock {
+        @Override
+        public void lock() {
+            readerAmount.incrementAndGet();
+
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException e) {
+                semaphore.release();
+            }
+        }
+
+        @Override
+        public void lockInterruptibly() throws InterruptedException {
+
+        }
+
+        @Override
+        public boolean tryLock() {
+            return false;
+        }
+
+        @Override
+        public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
+            return false;
+        }
+
+        @Override
+        public void unlock() {
+            readerAmount.decrementAndGet();
+            semaphore.release();
+        }
+
+        @Override
+        public Condition newCondition() {
+            return null;
+        }
+    }
+
     public ReadWriteLockBySemaphore() {
+        this.readLock = new ReadLock();
+        this.writeLock = new WriteLock();
         this.readerAmount = new AtomicInteger(0);
         this.writerAmount = new AtomicInteger(0);
         this.semaphore = new Semaphore(SEMAPHORE_SIZE);
     }
 
-    public void startReading() throws InterruptedException {
-        readerAmount.incrementAndGet();
-        this.semaphore.acquire();
+    @Override
+    public Lock readLock() {
+        return this.readLock;
     }
 
-    public void stopReading() {
-        readerAmount.decrementAndGet();
-        semaphore.release();
+    @Override
+    public Lock writeLock() {
+        return this.writeLock;
     }
 
-    public void startWrite() throws InterruptedException {
-        writerAmount.incrementAndGet();
-        semaphore.acquire(SEMAPHORE_SIZE);
-    }
-
-    public void stopWrite() {
-        writerAmount.decrementAndGet();
-        semaphore.release(SEMAPHORE_SIZE);
-    }
 
     public static void main(String[] args) {
-        ReadWriteLockBySemaphore semaphore = new ReadWriteLockBySemaphore();
+        ReadWriteLockBySemaphore readWriteLock = new ReadWriteLockBySemaphore();
 
         ExecutorService service = Executors.newFixedThreadPool(SEMAPHORE_SIZE);
 
@@ -44,9 +120,13 @@ public class ReadWriteLockBySemaphore {
             int finalI = i;
 
             service.submit(() -> {
+
+                Lock readLock = readWriteLock.readLock();
+                Lock writeLock = readWriteLock.writeLock();
+
                 if (finalI % 2 == 0) {
                     try {
-                        semaphore.startReading();
+                        readLock.lock();
                         System.out.println("READING");
                         for (int j = 0; j < 1_000_000; j++) {
                             Math.signum(Math.random() * 1000 * 10 - 12 * 100 * Math.random());
@@ -54,18 +134,18 @@ public class ReadWriteLockBySemaphore {
                     } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
-                        semaphore.stopReading();
+                        readLock.unlock();
                         System.out.println("READ");
                     }
                 } else {
                     try {
-                        semaphore.startWrite();
+                        writeLock.lock();
                         System.out.println("WRITING");
                         Thread.sleep(1000);
                     } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
-                        semaphore.stopWrite();
+                        writeLock.unlock();
                         System.out.println("WRITTEN");
                     }
                 }
