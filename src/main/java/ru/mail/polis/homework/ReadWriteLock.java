@@ -31,12 +31,8 @@ public class ReadWriteLock {
 
     class ReadLock {
 
-        public void lock() {
-            try {
-                semaphore.acquire(size);
-            } catch (InterruptedException e) {
-                System.out.println(Thread.currentThread().getName() + " interrupted");
-            }
+        public void lock() throws InterruptedException {
+            semaphore.acquire(size);
         }
 
         public void unlock() {
@@ -47,12 +43,8 @@ public class ReadWriteLock {
 
     class WriteLock {
 
-        public void lock() {
-            try {
-                semaphore.acquire(1);
-            } catch (InterruptedException e) {
-                System.out.println(Thread.currentThread().getName() + " interrupted");
-            }
+        public void lock() throws InterruptedException {
+            semaphore.acquire(1);
         }
 
         public void unlock() {
@@ -96,10 +88,10 @@ class Worker {
     class Writer extends Thread {
         @Override
         public void run() {
-            for (;;) {
-                readWriteLock.writeLock().lock();
-                System.out.println(Thread.currentThread().getName() + " is writing");
+            for (; ; ) {
                 try {
+                    readWriteLock.writeLock().lock();
+                    System.out.println(Thread.currentThread().getName() + " is writing");
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     System.out.println(Thread.currentThread().getName() + " interrupted");
@@ -114,10 +106,10 @@ class Worker {
     class Reader extends Thread {
         @Override
         public void run() {
-            for (;;) {
-                readWriteLock.readLock().lock();
-                System.out.println(Thread.currentThread().getName() + " is reading");
+            for (; ; ) {
                 try {
+                    readWriteLock.readLock().lock();
+                    System.out.println(Thread.currentThread().getName() + " is reading");
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     System.out.println(Thread.currentThread().getName() + " interrupted");
