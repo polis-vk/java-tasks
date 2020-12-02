@@ -32,11 +32,11 @@ public class ReadWriteLock {
     class ReadLock {
 
         public void lock() throws InterruptedException {
-            semaphore.acquire(size);
+            semaphore.acquire(1);
         }
 
         public void unlock() {
-            semaphore.release(size);
+            semaphore.release(1);
         }
 
     }
@@ -44,11 +44,11 @@ public class ReadWriteLock {
     class WriteLock {
 
         public void lock() throws InterruptedException {
-            semaphore.acquire(1);
+            semaphore.acquire(size);
         }
 
         public void unlock() {
-            semaphore.release(1);
+            semaphore.release(size);
         }
 
     }
@@ -64,8 +64,8 @@ public class ReadWriteLock {
 class Worker {
 
     private final ReadWriteLock readWriteLock;
-    private final List<Thread> threadList = new ArrayList<>();
-    private final Reader reader = new Reader();
+    private final List<Reader> threadList = new ArrayList<>();
+    private final Writer writer = new Writer();
 
     public Worker(ReadWriteLock readWriteLock) {
         this.readWriteLock = readWriteLock;
@@ -74,7 +74,7 @@ class Worker {
 
     private void initThreads() {
         for (int i = 0; i < readWriteLock.getSize() - 1; i++) {
-            threadList.add(new Writer());
+            threadList.add(new Reader());
         }
     }
 
@@ -82,7 +82,7 @@ class Worker {
         for (Thread thread : threadList) {
             thread.start();
         }
-        reader.start();
+        writer.start();
     }
 
     class Writer extends Thread {
