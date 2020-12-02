@@ -5,7 +5,8 @@ public class ReadWriteLockExample {
 
   public void get() {
 
-    readWriteLock.readLock();
+    ReadWriteLockSample.ReadLock lock = readWriteLock.readLock();
+    lock.lock();
     try {
 
       System.out.println("Start read " + Thread.currentThread().getName());
@@ -14,14 +15,15 @@ public class ReadWriteLockExample {
     } catch (InterruptedException e) {
       e.printStackTrace();
     } finally {
-      readWriteLock.readUnlock();
+     lock.unlock();
     }
 
   }
 
   public void put() {
 
-    readWriteLock.writeLock();
+    ReadWriteLockSample.WriteLock lock = readWriteLock.writeLock();
+    lock.lock();
     try {
       System.out.println("Start write " + Thread.currentThread().getName());
       Thread.sleep(2000);
@@ -29,7 +31,7 @@ public class ReadWriteLockExample {
     } catch (InterruptedException e) {
       e.printStackTrace();
     } finally {
-      readWriteLock.writeUnlock();
+      lock.unlock();
     }
   }
 

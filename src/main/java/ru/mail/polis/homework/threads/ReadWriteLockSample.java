@@ -1,40 +1,59 @@
 package ru.mail.polis.homework.threads;
 
 import java.util.concurrent.Semaphore;
-
 public class ReadWriteLockSample {
   private final Semaphore semaphore;
   private final int maxNumber;
 
+  private final ReadWriteLockSample.ReadLock readerLock;
+
+  private final ReadWriteLockSample.WriteLock writerLock;
+
   public ReadWriteLockSample(int num) {
     semaphore = new Semaphore(num, true);
+    readerLock = new ReadLock();
+    writerLock = new WriteLock();
     maxNumber = num;
   }
 
-  public void readLock() {
-    try {
-      semaphore.acquire(1);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-      readUnlock();
+  public class ReadLock {
+
+    public void lock() {
+      try {
+        semaphore.acquire(1);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+        unlock();
+      }
+    }
+
+    public void unlock() {
+      semaphore.release(1);
     }
   }
 
-  public void writeLock() {
-    try {
-      semaphore.acquire(maxNumber);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-      writeUnlock();
+  public class WriteLock {
+    public void lock() {
+      try {
+        semaphore.acquire(maxNumber);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+        unlock();
+      }
     }
+
+    public void unlock() {
+      semaphore.release(maxNumber);
+    }
+
   }
 
-  public void readUnlock() {
-    semaphore.release(1);
+  public ReadLock readLock() {
+    return readerLock;
   }
 
-  public void writeUnlock() {
-    semaphore.release(maxNumber);
+  public WriteLock writeLock() {
+    return writerLock;
   }
 }
 
