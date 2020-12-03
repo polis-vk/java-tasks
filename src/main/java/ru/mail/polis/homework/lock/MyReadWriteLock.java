@@ -2,6 +2,8 @@ package ru.mail.polis.homework.lock;
 
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -12,6 +14,9 @@ public class MyReadWriteLock implements ReadWriteLock {
     private Semaphore semaphore;
     private final int size;
 
+    private AtomicInteger readers = new AtomicInteger(0);
+    private AtomicInteger writers = new AtomicInteger(0);
+
     MyReadWriteLock(int size) {
         this.size = size;
         semaphore = new Semaphore(size);
@@ -21,7 +26,13 @@ public class MyReadWriteLock implements ReadWriteLock {
         @Override
         public void lock() {
             try {
+                synchronized (MyReadWriteLock.this) {
+                    while (writers.get() > 0) {
+                        MyReadWriteLock.this.wait();
+                    }
+                }
                 semaphore.acquire();
+                readers.incrementAndGet();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -56,6 +67,7 @@ public class MyReadWriteLock implements ReadWriteLock {
         @Override
         public void lock() {
             try {
+                writers.incrementAndGet();
                 semaphore.acquire(size);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -78,6 +90,11 @@ public class MyReadWriteLock implements ReadWriteLock {
 
         @Override
         public void unlock() {
+            if (writers.decrementAndGet() == 0) {
+                synchronized (MyReadWriteLock.this) {
+                    MyReadWriteLock.this.notifyAll();
+                }
+            }
             semaphore.release(size);
         }
 

@@ -11,13 +11,19 @@ public class MyReadWriteLockExample {
         new Thread(MyReadWriteLockExample::read).start();
         new Thread(MyReadWriteLockExample::read).start();
         new Thread(MyReadWriteLockExample::read).start();
-        new Thread(MyReadWriteLockExample::read).start();
 
+        new Thread(MyReadWriteLockExample::write).start();
         new Thread(MyReadWriteLockExample::write).start();
 
         new Thread(MyReadWriteLockExample::read).start();
         new Thread(MyReadWriteLockExample::read).start();
         new Thread(MyReadWriteLockExample::read).start();
+
+        try {
+            Thread.sleep(SLEEP_TIME * 5);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         new Thread(MyReadWriteLockExample::write).start();
         new Thread(MyReadWriteLockExample::write).start();
