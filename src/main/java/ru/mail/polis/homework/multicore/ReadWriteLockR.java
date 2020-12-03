@@ -13,12 +13,12 @@ public class ReadWriteLockR {
             throw new IllegalArgumentException();
         }
         this.size = size;
-        semaphore = new Semaphore(size);
+        semaphore = new Semaphore(size, true);
     }
 
     ReadWriteLockR() {
         size = 100;
-        semaphore = new Semaphore(size);
+        semaphore = new Semaphore(size, true);
     }
 
     private class MyReadLock {
