@@ -11,8 +11,8 @@ public class ReadWriteLock {
     private final WriteLock writeLock = new WriteLock();
 
     public ReadWriteLock(int size) {
-        if (size <= 1)
-            throw new IllegalArgumentException("Size should be more than 1");
+        if (size <= 0)
+            throw new IllegalArgumentException("Amount should be more than 1");
         this.size = size;
         this.semaphore = new Semaphore(size, true);
     }
@@ -73,7 +73,7 @@ class Worker {
     }
 
     private void initThreads() {
-        for (int i = 0; i < readWriteLock.getSize() - 1; i++) {
+        for (int i = 0; i < readWriteLock.getSize(); i++) {
             threadList.add(new Reader());
         }
     }
