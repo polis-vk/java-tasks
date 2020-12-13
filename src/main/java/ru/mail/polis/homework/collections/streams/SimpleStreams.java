@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.streams;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
@@ -17,8 +18,7 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return n > 1 && IntStream.rangeClosed(2, (int) Math.sqrt(n))
-                .noneMatch(i -> n % i == 0);
+     return false;
     }
 
     /**
@@ -27,9 +27,7 @@ public class SimpleStreams {
      * 1 балл
      */
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
-        return Arrays.stream(text.split("[.,;:!? ]+"))
-                .filter(badWords::contains)
-                .collect(Collectors.toMap(Function.identity(), e -> 1, Integer::sum));
+       return Collections.emptyMap();
     }
 
 
@@ -44,10 +42,7 @@ public class SimpleStreams {
      * <p>
      * 3 балла
      */
-    static final double G = 9.8;
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return DoubleStream.iterate(1, changeV)
-                .limit(n)
-                .reduce(0.0, (dist, prev) -> dist + prev * prev * Math.sin(alpha * 2) / G);
+        return -1;
     }
 }
