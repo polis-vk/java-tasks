@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Нужно сделать свой экзекьютор с линивой инициализацией потоков до какого-то заданного предела.
@@ -22,14 +26,57 @@ import java.util.concurrent.Executor;
  * Max 6 баллов
  */
 public class SimpleExecutor implements Executor {
+    private final BlockingQueue<Runnable> commandQueue = new LinkedBlockingQueue<>();
+    private final List<Worker> workerList = new ArrayList<>();
+
     @Override
     public void execute(Runnable command) {
+        commandQueue.add(command);
+
+        boolean foundFreeWorker = false;
+        for (Worker worker : workerList) {
+            if (worker.getState() == Thread.State.WAITING) {
+                foundFreeWorker = true;
+                worker.notifyWorker();
+                break;
+            }
+        }
+        if (!foundFreeWorker) {
+            Worker newWorker = new Worker();
+            workerList.add(newWorker);
+            newWorker.start();
+        }
+    }
+
+    private final class Worker extends Thread {
+
+        @Override
+        public void run() {
+            while (true) {
+                synchronized (this) {
+                    try {
+                        while (commandQueue.peek() == null) {
+                            wait();
+                        }
+                        Runnable command = commandQueue.take();
+                        command.run();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+            }
+        }
+
+        public synchronized void notifyWorker() {
+            this.notify();
+        }
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        return workerList.size();
     }
 }
