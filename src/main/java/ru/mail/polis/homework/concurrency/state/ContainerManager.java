@@ -107,8 +107,8 @@ public class ContainerManager {
     public void closeContainers() {
         for (CalculateContainer<Double> container : calculateContainers) {
             closeExecutor.execute(() -> {
+                container.close(value -> System.err.printf("Container %s is closed.\n", container));
                 containersCloseLock.countDown();
-                System.err.printf("Container %s is closed.\n", container);
             });
         }
     }
