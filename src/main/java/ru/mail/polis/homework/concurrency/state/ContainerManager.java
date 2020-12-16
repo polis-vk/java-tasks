@@ -2,8 +2,10 @@ package ru.mail.polis.homework.concurrency.state;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
@@ -17,6 +19,7 @@ import java.util.function.UnaryOperator;
  */
 public class ContainerManager {
     private final List<CalculateContainer<Double>> calculateContainers;
+    CountDownLatch countDownLatch;
 
     /**
      * Создайте список из непустых контейнеров
@@ -26,6 +29,7 @@ public class ContainerManager {
         for (int i = 0; i < containersCount; i++) {
             calculateContainers.add(new CalculateContainer<>(5d));
         }
+        countDownLatch = new CountDownLatch(containersCount);
     }
 
 
@@ -83,11 +87,17 @@ public class ContainerManager {
      * то нужно добавить некоторую синхронизацию, которая разблокируется,
      * как только закроются все 10 контейеров
      */
-    public void closeContainers() {
+    public void closeContainers() throws InterruptedException {
         ExecutorService service = Executors.newFixedThreadPool(1);
+        AtomicReference<Double> val = new AtomicReference<>((double) 0);
         for (CalculateContainer<Double> c : calculateContainers) {
-            service.execute(() -> c.close(value -> System.out.println("close " + value)));
+            service.execute(() -> c.close(value -> {
+                countDownLatch.countDown();
+                val.set(value);
+            }));
+            System.out.println("Closed with: " + val.get());
         }
+        countDownLatch.await();
     }
 
     /**
