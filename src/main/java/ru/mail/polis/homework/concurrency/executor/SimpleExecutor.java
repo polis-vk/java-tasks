@@ -1,14 +1,10 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.IntStream;
 
 /**
  * Нужно сделать свой экзекьютор с ленивой инициализацией потоков до какого-то заданного предела.
@@ -40,13 +36,15 @@ public class SimpleExecutor implements Executor {
         try {
             tasks.put(command);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
         Worker freeWorker = getFreeThread();
         if (freeWorker == null) {
             freeWorker = new Worker();
             threadPool.add(freeWorker);
             freeWorker.start();
+        } else {
+            freeWorker.notifyWorker();
         }
     }
 
@@ -59,25 +57,6 @@ public class SimpleExecutor implements Executor {
         return null;
     }
 
-    public void waitAll() {
-        boolean finished = false;
-        while (true) {
-            for (Thread executor : threadPool) {
-                if (executor.getState() != Thread.State.WAITING) {
-                    finished = false;
-                    break;
-                }
-                finished = true;
-            }
-            if (finished)
-                break;
-        }
-    }
-
-    public List<Worker> getThreadPool() {
-        return threadPool;
-    }
-
     /**
      * Должен возвращать количество созданных потоков.
      */
@@ -87,20 +66,23 @@ public class SimpleExecutor implements Executor {
 
     public class Worker extends Thread {
 
-        public Worker() {
-
+        private synchronized void notifyWorker() {
+            notifyAll();
         }
 
-        public Worker(String name) {
-            super(name);
-        }
-
+        @Override
         public void run() {
             while (true) {
-                try {
-                    tasks.take().run();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                synchronized (this) {
+                    try {
+                        while (tasks.peek() == null) {
+                            wait();
+                        }
+                        tasks.take().run();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
                 }
             }
         }
