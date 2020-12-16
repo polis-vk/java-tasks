@@ -48,14 +48,14 @@ public class CalculateContainer<T> {
         State cur;
         do {
             cur = state.get();
-            if ((cur != State.START) && (cur != State.FINISH)) {
+            if ((cur == State.START) || (cur == State.FINISH)) {
                 continue;
             }
             if (cur == State.CLOSE) {
                 System.out.println("Closed");
                 return;
             }
-        } while (state.compareAndSet(cur, State.INIT));
+        } while (!state.compareAndSet(cur, State.INIT));
         synchronized (result) {
             result = initOperator.apply(result);
         }
@@ -68,14 +68,14 @@ public class CalculateContainer<T> {
         State cur;
         do {
             cur = state.get();
-            if (cur != State.INIT) {
+            if (cur == State.INIT) {
                 continue;
             }
             if (cur == State.CLOSE) {
                 System.out.println("Closed");
                 return;
             }
-        } while (state.compareAndSet(cur, State.RUN));
+        } while (!state.compareAndSet(cur, State.RUN));
         synchronized (result) {
             result = runOperator.apply(result, value);
         }
@@ -89,14 +89,14 @@ public class CalculateContainer<T> {
         State cur;
         do {
             cur = state.get();
-            if (cur != State.RUN) {
+            if (cur == State.RUN) {
                 continue;
             }
             if (cur == State.CLOSE) {
                 System.out.println("Closed");
                 return;
             }
-        } while (state.compareAndSet(cur, State.FINISH));
+        } while (!state.compareAndSet(cur, State.FINISH));
         synchronized (result) {
             finishConsumer.accept(result);
         }
@@ -111,14 +111,14 @@ public class CalculateContainer<T> {
         State cur;
         do {
             cur = state.get();
-            if (cur != State.FINISH) {
+            if (cur == State.FINISH) {
                 continue;
             }
             if (cur == State.CLOSE) {
                 System.out.println("Closed");
                 return;
             }
-        } while (state.compareAndSet(cur, State.CLOSE));
+        } while (!state.compareAndSet(cur, State.CLOSE));
         synchronized (result) {
             closeConsumer.accept(result);
         }
