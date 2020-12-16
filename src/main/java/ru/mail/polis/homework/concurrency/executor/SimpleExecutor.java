@@ -10,12 +10,12 @@ import java.util.concurrent.*;
  * Линивая инициализация означает, что если вам приходит раз в 5 секунд задача, которую вы выполняете 2 секунды,
  * то вы создаете только один поток. Если приходит сразу 2 задачи - то два потока.  То есть, если приходит задача
  * и есть свободный запущенный поток - он берет задачу, если такого нет, то создается новый поток.
- *
+ * <p>
  * Задачи должны выполняться в порядке FIFO
  * Потоки после завершения выполнения задачи НЕ умирают, а ждут.
- *
+ * <p>
  * Max 10 баллов
- *
+ * <p>
  * Напишите 3 теста (2 балла за тест)
  * 1) запуск 1 задачи несколько раз с интервалом (должен создаться только 1 поток)
  * 2) запуск параллельно n - 1 задач несколько раз (должно создаться n - 1 потоков) и задачи должны завершится
@@ -33,6 +33,9 @@ public class SimpleExecutor implements Executor {
 
 
     public SimpleExecutor(int limitOfThreads) {
+        if (limitOfThreads < 1) {
+            throw new IllegalArgumentException();
+        }
         this.limitOfThreads = limitOfThreads;
         tasks = new ConcurrentLinkedQueue<>();
         workers = new ArrayList<>(limitOfThreads);
@@ -40,13 +43,15 @@ public class SimpleExecutor implements Executor {
 
     @Override
     public synchronized void execute(Runnable command) {
-        tasks.offer(command);
-        Worker freeWorker = getWorker();
-        if (freeWorker == null && limitOfThreads > workers.size()) {
-            addNewWorker();
-        } else {
-            while ((freeWorker = getWorker()) != null) {
-                freeWorker.notifyWorker();
+        if (isRunning) {
+            tasks.offer(command);
+            Worker freeWorker = getWorker();
+            if (freeWorker == null && limitOfThreads > workers.size()) {
+                addNewWorker();
+            } else {
+                while ((freeWorker = getWorker()) != null) {
+                    freeWorker.notifyWorker();
+                }
             }
         }
     }
@@ -69,6 +74,9 @@ public class SimpleExecutor implements Executor {
 
     public void shutDown() {
         isRunning = false;
+        for (Worker w : workers) {
+            w.notifyWorker();
+        }
     }
 
 
@@ -83,24 +91,24 @@ public class SimpleExecutor implements Executor {
 
         @Override
         public void run() {
-            while (isRunning) {
-                try {
-                    Runnable nextTask = tasks.poll();
-                    if (nextTask == null) {
-                        wait();
-                    }
-                    if (nextTask != null) {
-                        nextTask.run();
-                    }
-                } catch (Exception ignored) {
+            synchronized (this) {
+                while (isRunning) {
+                    try {
+                        if (tasks.isEmpty()) {
+                            wait();
+                        } else {
+                            tasks.poll().run();
+                        }
+                    } catch (Exception ignored) {
 
+                    }
                 }
             }
         }
 
         public void notifyWorker() {
             synchronized (this) {
-                this.notifyAll();
+                notifyAll();
             }
         }
     }
