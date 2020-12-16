@@ -43,9 +43,10 @@ public class ContainerManager {
      */
     public void initContainers() {
         ExecutorService service = Executors.newCachedThreadPool();
+        UnaryOperator<Double> operation = operation(Math::sin);
         for (CalculateContainer<Double> c : calculateContainers) {
             for (int i = 0; i < N; i++) {
-                service.execute(() -> c.init(Math::sqrt));
+                service.execute(() -> c.init(operation));
             }
         }
     }
@@ -59,10 +60,11 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void runContainers() {
+        BinaryOperator<Double> operation = operation((val1, val2) -> (val1 + val2) * 10);
         ExecutorService service = Executors.newFixedThreadPool(2);
         for (CalculateContainer<Double> c : calculateContainers) {
             for (int i = 0; i < N; i++) {
-                service.execute(() -> c.run((start, param) -> start + param, 1d));
+                service.execute(() -> c.run(operation, 1d));
             }
         }
     }
