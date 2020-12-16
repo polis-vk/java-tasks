@@ -19,7 +19,8 @@ import java.util.function.UnaryOperator;
  */
 public class ContainerManager {
     private final List<CalculateContainer<Double>> calculateContainers;
-    CountDownLatch countDownLatch;
+    private CountDownLatch countDownLatch;
+    private final int N = 1_000;
 
     /**
      * Создайте список из непустых контейнеров
@@ -43,7 +44,9 @@ public class ContainerManager {
     public void initContainers() {
         ExecutorService service = Executors.newCachedThreadPool();
         for (CalculateContainer<Double> c : calculateContainers) {
-            service.execute(() -> c.init(Math::sqrt));
+            for (int i = 0; i < N; i++) {
+                service.execute(() -> c.init(Math::sqrt));
+            }
         }
     }
 
@@ -58,7 +61,9 @@ public class ContainerManager {
     public void runContainers() {
         ExecutorService service = Executors.newFixedThreadPool(2);
         for (CalculateContainer<Double> c : calculateContainers) {
-            service.execute(() -> c.run((start, param) -> start + param, 1d));
+            for (int i = 0; i < N; i++) {
+                service.execute(() -> c.run((start, param) -> start + param, 1d));
+            }
         }
     }
 
