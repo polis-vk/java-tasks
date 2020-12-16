@@ -47,16 +47,15 @@ public class CalculateContainer<T> {
     public void init(UnaryOperator<T> initOperator) {
         State cur;
         do {
-            if (state.get() == State.CLOSE) {
-                System.out.println("Closed");
-                return;
-            }
             cur = state.get();
             if ((cur != State.START) && (cur != State.FINISH)) {
                 continue;
             }
-        } while (state.compareAndSet(cur, State.INIT) ||
-                state.compareAndSet(cur, State.INIT));
+            if (cur == State.CLOSE) {
+                System.out.println("Closed");
+                return;
+            }
+        } while (state.compareAndSet(cur, State.INIT));
         synchronized (result) {
             result = initOperator.apply(result);
         }
@@ -68,13 +67,13 @@ public class CalculateContainer<T> {
     public void run(BinaryOperator<T> runOperator, T value) {
         State cur;
         do {
-            if (state.get() == State.CLOSE) {
-                System.out.println("Closed");
-                return;
-            }
             cur = state.get();
             if (cur != State.INIT) {
                 continue;
+            }
+            if (cur == State.CLOSE) {
+                System.out.println("Closed");
+                return;
             }
         } while (state.compareAndSet(cur, State.RUN));
         synchronized (result) {
@@ -89,13 +88,13 @@ public class CalculateContainer<T> {
     public void finish(Consumer<T> finishConsumer) {
         State cur;
         do {
-            if (state.get() == State.CLOSE) {
-                System.out.println("Closed");
-                return;
-            }
             cur = state.get();
             if (cur != State.RUN) {
                 continue;
+            }
+            if (cur == State.CLOSE) {
+                System.out.println("Closed");
+                return;
             }
         } while (state.compareAndSet(cur, State.FINISH));
         synchronized (result) {
@@ -111,13 +110,13 @@ public class CalculateContainer<T> {
     public void close(Consumer<T> closeConsumer) {
         State cur;
         do {
-            if (state.get() == State.CLOSE) {
-                System.out.println("Closed");
-                return;
-            }
             cur = state.get();
             if (cur != State.FINISH) {
                 continue;
+            }
+            if (cur == State.CLOSE) {
+                System.out.println("Closed");
+                return;
             }
         } while (state.compareAndSet(cur, State.CLOSE));
         synchronized (result) {
@@ -125,12 +124,13 @@ public class CalculateContainer<T> {
         }
     }
 
-
     public T getResult() {
         return result;
     }
 
     public State getState() {
-        return state.get();
+        synchronized (state) {
+            return state.get();
+        }
     }
 }
