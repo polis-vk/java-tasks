@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
@@ -78,8 +79,10 @@ public class ContainerManager {
      */
     public void finishContainers() {
         ExecutorService service = Executors.newFixedThreadPool(2);
+        AtomicReference<Double> val = new AtomicReference<>((double) 0);
         for (CalculateContainer<Double> c : calculateContainers) {
-            service.execute(() -> c.finish(value -> System.out.println("finish " + value)));
+            service.execute(() -> c.finish(val::set));
+            System.out.println("Finished  with: " + val.get());
         }
     }
 
@@ -115,7 +118,7 @@ public class ContainerManager {
      * Учтите, что время передается в милисекундах.
      */
     public boolean await(long timeoutMillis) throws Exception {
-        return false;
+        return countDownLatch.await(timeoutMillis, TimeUnit.MILLISECONDS);
     }
 
     public List<CalculateContainer<Double>> getCalculateContainers() {
