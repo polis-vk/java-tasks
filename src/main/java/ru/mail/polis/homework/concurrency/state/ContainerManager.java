@@ -89,7 +89,9 @@ public class ContainerManager {
      */
     public void finishContainers() {
         for (CalculateContainer<Double> container : calculateContainers) {
-            runFinishExecutor.execute(() -> container.finish(value -> System.out.printf("Container %s finished with resulting value: %f\n", container, value)));
+            for (int i = 0; i < OPERATIONS_REPEAT_COUNT; i++) {
+                runFinishExecutor.execute(() -> container.finish(value -> System.out.printf("Container %s finished with resulting value: %f\n", container, value)));
+            }
         }
     }
 
