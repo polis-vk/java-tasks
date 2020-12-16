@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.concurrent.Executor;
+import org.junit.jupiter.api.Test;
+
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Нужно сделать свой экзекьютор с линивой инициализацией потоков до какого-то заданного предела.
@@ -22,15 +25,84 @@ import java.util.concurrent.Executor;
  * Max 6 баллов
  */
 public class SimpleExecutor implements Executor {
-    @Override
-    public void execute(Runnable command) {
 
+    private final int limitOfThreads;
+    private final Queue<Runnable> tasks;
+    private final List<Worker> workers;
+    private volatile boolean isRunning = true;
+
+
+    public SimpleExecutor(int limitOfThreads) {
+        this.limitOfThreads = limitOfThreads;
+        tasks = new ConcurrentLinkedQueue<>();
+        workers = new ArrayList<>(limitOfThreads);
     }
+
+    @Override
+    public synchronized void execute(Runnable command) {
+        tasks.offer(command);
+        Worker freeWorker = getWorker();
+        if (freeWorker == null && limitOfThreads > workers.size()) {
+            addNewWorker();
+        } else {
+            while ((freeWorker = getWorker()) != null) {
+                freeWorker.notifyWorker();
+            }
+        }
+    }
+
+    private synchronized Worker getWorker() {
+        Worker freeWorker = null;
+        for (Worker worker : workers) {
+            if (worker.getState() == Thread.State.WAITING) {
+                freeWorker = worker;
+                break;
+            }
+        }
+        return freeWorker;
+    }
+
+    private synchronized void addNewWorker() {
+        workers.add(new Worker());
+        workers.get(workers.size() - 1).start();
+    }
+
+    public void shutDown() {
+        isRunning = false;
+    }
+
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        return workers.size();
+    }
+
+    private final class Worker extends Thread {
+
+        @Override
+        public void run() {
+            while (isRunning) {
+                try {
+                    Runnable nextTask = tasks.poll();
+                    if (nextTask == null) {
+                        wait();
+                    }
+                    if (nextTask != null) {
+                        nextTask.run();
+                    }
+                } catch (Exception ignored) {
+
+                }
+            }
+        }
+
+        public void notifyWorker() {
+            synchronized (this) {
+                this.notifyAll();
+            }
+        }
     }
 }
+

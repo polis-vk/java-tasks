@@ -9,10 +9,4 @@ package ru.mail.polis.homework.collections.streams.account;
  */
 public class Account {
 
-    final String id;
-
-    public Account(String id) {
-        this.id = id;
-    }
-
 }
