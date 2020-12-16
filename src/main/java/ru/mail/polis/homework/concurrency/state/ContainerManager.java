@@ -1,6 +1,12 @@
 package ru.mail.polis.homework.concurrency.state;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
@@ -13,14 +19,30 @@ import java.util.function.UnaryOperator;
  * Max 11 баллов
  */
 public class ContainerManager {
+    private static final double ARGUMENT_MIN_VALUE = -100, ARGUMENT_MAX_VALUE = 100;
+    private static final int OPERATIONS_REPEAT_COUNT = 1_000_000;
 
     private final List<CalculateContainer<Double>> calculateContainers;
+
+    private final ExecutorService initExecutor = Executors.newCachedThreadPool();
+    private final ExecutorService runFinishExecutor = Executors.newFixedThreadPool(2);
+    private final ExecutorService finishExecutor = Executors.newFixedThreadPool(1);
+
+    private final CountDownLatch containersCloseLock;
+
+    private final Random random = new Random();
 
     /**
      * Создайте список из непустых контейнеров
      */
     public ContainerManager(int containersCount) {
-        this.calculateContainers = null;
+        this.calculateContainers = new ArrayList<>(containersCount);
+        for (int i = 0; i < containersCount; i++) {
+            double value = random.nextDouble() * (ARGUMENT_MAX_VALUE - ARGUMENT_MIN_VALUE) + ARGUMENT_MIN_VALUE;
+            calculateContainers.add(new CalculateContainer<>(value));
+        }
+
+        containersCloseLock = new CountDownLatch(containersCount);
     }
 
 
@@ -32,7 +54,12 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void initContainers() {
-
+        UnaryOperator<Double> initOperation = operation(Math::cos);
+        for (var container : calculateContainers) {
+            for (int i = 0; i < OPERATIONS_REPEAT_COUNT; i++) {
+                initExecutor.execute(() -> container.init(initOperation));
+            }
+        }
     }
 
 
@@ -44,7 +71,13 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void runContainers() {
-
+        BinaryOperator<Double> runOperation = operation((containerValue, value) -> Math.atan(containerValue * value));
+        for (var container : calculateContainers) {
+            for (int i = 0; i < OPERATIONS_REPEAT_COUNT; i++) {
+                double value = random.nextDouble() * (ARGUMENT_MAX_VALUE - ARGUMENT_MIN_VALUE) + ARGUMENT_MIN_VALUE;
+                runFinishExecutor.execute(() -> container.run(runOperation, value));
+            }
+        }
     }
 
 
@@ -55,7 +88,9 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void finishContainers() {
-
+        for (var container : calculateContainers) {
+            runFinishExecutor.execute(() -> container.finish(value -> System.out.printf("Container %s finished with resulting value: %f\n", container, value)));
+        }
     }
 
 
@@ -70,7 +105,12 @@ public class ContainerManager {
      * как только закроются все 10 контейеров
      */
     public void closeContainers() {
-
+        for (var container : calculateContainers) {
+            finishExecutor.execute(() -> {
+                containersCloseLock.countDown();
+                System.err.printf("Container %s is closed.\n", container);
+            });
+        }
     }
 
     /**
@@ -81,7 +121,7 @@ public class ContainerManager {
      * Учтите, что время передается в милисекундах.
      */
     public boolean await(long timeoutMillis) throws Exception {
-        return false;
+        return containersCloseLock.await(timeoutMillis, TimeUnit.MILLISECONDS);
     }
 
     public List<CalculateContainer<Double>> getCalculateContainers() {
