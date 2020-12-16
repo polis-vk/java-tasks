@@ -32,7 +32,7 @@ import java.util.function.UnaryOperator;
  */
 public class CalculateContainer<T> {
 
-    private volatile AtomicReference<State> state = new AtomicReference<>();
+    private final AtomicReference<State> state = new AtomicReference<>();
 
     private T result;
 
@@ -48,13 +48,15 @@ public class CalculateContainer<T> {
         State cur;
         do {
             cur = state.get();
-            if ((cur == State.START) || (cur == State.FINISH)) {
-                continue;
+
+            while ((cur != State.START) && (cur != State.FINISH)) {
+                cur = state.get();
+                if (cur == State.CLOSE) {
+                    System.out.println("Closed");
+                    return;
+                }
             }
-            if (cur == State.CLOSE) {
-                System.out.println("Closed");
-                return;
-            }
+
         } while (!state.compareAndSet(cur, State.INIT));
         synchronized (result) {
             result = initOperator.apply(result);
@@ -68,13 +70,15 @@ public class CalculateContainer<T> {
         State cur;
         do {
             cur = state.get();
-            if (cur == State.INIT) {
-                continue;
+
+            while (cur != State.INIT) {
+                cur = state.get();
+                if (cur == State.CLOSE) {
+                    System.out.println("Closed");
+                    return;
+                }
             }
-            if (cur == State.CLOSE) {
-                System.out.println("Closed");
-                return;
-            }
+
         } while (!state.compareAndSet(cur, State.RUN));
         synchronized (result) {
             result = runOperator.apply(result, value);
@@ -89,13 +93,15 @@ public class CalculateContainer<T> {
         State cur;
         do {
             cur = state.get();
-            if (cur == State.RUN) {
-                continue;
+
+            while (cur != State.RUN) {
+                cur = state.get();
+                if (cur == State.CLOSE) {
+                    System.out.println("Closed");
+                    return;
+                }
             }
-            if (cur == State.CLOSE) {
-                System.out.println("Closed");
-                return;
-            }
+
         } while (!state.compareAndSet(cur, State.FINISH));
         synchronized (result) {
             finishConsumer.accept(result);
@@ -111,12 +117,12 @@ public class CalculateContainer<T> {
         State cur;
         do {
             cur = state.get();
-            if (cur == State.FINISH) {
-                continue;
-            }
-            if (cur == State.CLOSE) {
-                System.out.println("Closed");
-                return;
+            while (cur != State.FINISH) {
+                cur = state.get();
+                if (cur == State.CLOSE) {
+                    System.out.println("Closed");
+                    return;
+                }
             }
         } while (!state.compareAndSet(cur, State.CLOSE));
         synchronized (result) {
