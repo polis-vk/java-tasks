@@ -20,7 +20,7 @@ import java.util.function.UnaryOperator;
  */
 public class ContainerManager {
     private final List<CalculateContainer<Double>> calculateContainers;
-    private CountDownLatch countDownLatch;
+   // private CountDownLatch countDownLatch;
     private final int N = 1_000;
 
     /**
@@ -31,7 +31,7 @@ public class ContainerManager {
         for (int i = 0; i < containersCount; i++) {
             calculateContainers.add(new CalculateContainer<>(5d));
         }
-        countDownLatch = new CountDownLatch(containersCount);
+        //countDownLatch = new CountDownLatch(containersCount);
     }
 
 
@@ -61,7 +61,7 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void runContainers() {
-        BinaryOperator<Double> operation = operation((val1, val2) -> (val1 + val2) * 10);
+        BinaryOperator<Double> operation = operation((val1, val2) -> Math.cos((val1 + val2) * 10));
         ExecutorService service = Executors.newFixedThreadPool(2);
         for (CalculateContainer<Double> c : calculateContainers) {
             for (int i = 0; i < N; i++) {
@@ -102,12 +102,12 @@ public class ContainerManager {
         AtomicReference<Double> val = new AtomicReference<>((double) 0);
         for (CalculateContainer<Double> c : calculateContainers) {
             service.execute(() -> c.close(value -> {
-                countDownLatch.countDown();
+               // countDownLatch.countDown();
                 val.set(value);
             }));
             System.out.println("Closed with: " + val.get());
         }
-        countDownLatch.await();
+       // countDownLatch.await();
     }
 
     /**
@@ -118,7 +118,8 @@ public class ContainerManager {
      * Учтите, что время передается в милисекундах.
      */
     public boolean await(long timeoutMillis) throws Exception {
-        return countDownLatch.await(timeoutMillis, TimeUnit.MILLISECONDS);
+        //return countDownLatch.await(timeoutMillis, TimeUnit.MILLISECONDS);
+        return false;
     }
 
     public List<CalculateContainer<Double>> getCalculateContainers() {
