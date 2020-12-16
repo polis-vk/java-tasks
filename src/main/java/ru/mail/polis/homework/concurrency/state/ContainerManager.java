@@ -2,6 +2,8 @@ package ru.mail.polis.homework.concurrency.state;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
@@ -14,7 +16,6 @@ import java.util.function.UnaryOperator;
  * Max 11 баллов
  */
 public class ContainerManager {
-
     private final List<CalculateContainer<Double>> calculateContainers;
 
     /**
@@ -36,8 +37,9 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void initContainers() {
+        ExecutorService service = Executors.newCachedThreadPool();
         for (CalculateContainer<Double> c : calculateContainers) {
-            c.init(Math::sqrt);
+            service.execute(() -> c.init(Math::sqrt));
         }
     }
 
@@ -50,8 +52,9 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void runContainers() {
+        ExecutorService service = Executors.newFixedThreadPool(2);
         for (CalculateContainer<Double> c : calculateContainers) {
-            c.run((start, param) -> start + param, 1d);
+            service.execute(() -> c.run((start, param) -> start + param, 1d));
         }
     }
 
@@ -63,8 +66,9 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void finishContainers() {
+        ExecutorService service = Executors.newFixedThreadPool(2);
         for (CalculateContainer<Double> c : calculateContainers) {
-            c.finish(value -> System.out.println("finish " + value));
+            service.execute(() -> c.finish(value -> System.out.println("finish " + value)));
         }
     }
 
@@ -80,8 +84,9 @@ public class ContainerManager {
      * как только закроются все 10 контейеров
      */
     public void closeContainers() {
+        ExecutorService service = Executors.newFixedThreadPool(1);
         for (CalculateContainer<Double> c : calculateContainers) {
-            c.close(value -> System.out.println("close " + value));
+            service.execute(() -> c.close(value -> System.out.println("close " + value)));
         }
     }
 
@@ -93,7 +98,7 @@ public class ContainerManager {
      * Учтите, что время передается в милисекундах.
      */
     public boolean await(long timeoutMillis) throws Exception {
-       return false;
+        return false;
     }
 
     public List<CalculateContainer<Double>> getCalculateContainers() {
