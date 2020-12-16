@@ -55,18 +55,16 @@ public class SimpleExecutorTest {
                 e.printStackTrace();
             }
         };
-        int n = 10;
+        int n = 5;
         for (int i = 0; i < n; i++) {
             executor.execute(task);
         }
         Thread.sleep(5000);
-        Assert.assertEquals(10, executor.getLiveThreadsCount());
-
         for (int i = 0; i < n; i++) {
             executor.execute(task);
         }
         Thread.sleep(5000);
-        Assert.assertEquals(10, executor.getLiveThreadsCount());
+        Assert.assertEquals(n, executor.getLiveThreadsCount());
         executor.shutdown();
     }
 
@@ -93,7 +91,7 @@ public class SimpleExecutorTest {
         Runnable task2 = () -> {
             try {
                 System.out.println("start Task2");
-                Thread.sleep(2000);
+                Thread.sleep(1000);
                 System.out.println("end Task2");
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -102,7 +100,6 @@ public class SimpleExecutorTest {
         for (int i = 0; i < n; i++) {
             executor.execute(task1);
         }
-        Thread.sleep(1000);
         for (int i = 0; i < m; i++) {
             executor.execute(task2);
         }

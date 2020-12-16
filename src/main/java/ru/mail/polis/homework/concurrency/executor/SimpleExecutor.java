@@ -27,7 +27,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class SimpleExecutor implements Executor {
     private final BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
-    private final List<Worker> workers = new ArrayList<>();
+    final List<Worker> workers = new ArrayList<>();
     private boolean isRunnable = true;
     private final int size;
 
@@ -43,14 +43,16 @@ public class SimpleExecutor implements Executor {
     public void execute(Runnable command) {
         workQueue.offer(command);
         Worker freeWorker = getFreeWorker();
-        if (freeWorker == null && size > workers.size()) {
+        if (size == workers.size()) {
+            while ((freeWorker = getFreeWorker()) != null) {
+                freeWorker.notifyWorker();
+            }
+        } else if (freeWorker == null) {
             Worker newWorker = new Worker();
             workers.add(newWorker);
             newWorker.start();
         } else {
-            while ((freeWorker = getFreeWorker()) != null) {
-                freeWorker.notifyWorker();
-            }
+            freeWorker.notifyWorker();
         }
     }
 
@@ -76,7 +78,7 @@ public class SimpleExecutor implements Executor {
         isRunnable = false;
     }
 
-    private class Worker extends Thread {
+    class Worker extends Thread {
 
         @Override
         public void run() {
