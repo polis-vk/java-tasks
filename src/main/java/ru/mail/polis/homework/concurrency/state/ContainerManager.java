@@ -26,7 +26,7 @@ public class ContainerManager {
 
     private final ExecutorService initExecutor = Executors.newCachedThreadPool();
     private final ExecutorService runFinishExecutor = Executors.newFixedThreadPool(2);
-    private final ExecutorService finishExecutor = Executors.newFixedThreadPool(1);
+    private final ExecutorService closeExecutor = Executors.newFixedThreadPool(1);
 
     private final CountDownLatch containersCloseLock;
 
@@ -55,7 +55,7 @@ public class ContainerManager {
      */
     public void initContainers() {
         UnaryOperator<Double> initOperation = operation(Math::cos);
-        for (var container : calculateContainers) {
+        for (CalculateContainer<Double> container : calculateContainers) {
             for (int i = 0; i < OPERATIONS_REPEAT_COUNT; i++) {
                 initExecutor.execute(() -> container.init(initOperation));
             }
@@ -72,7 +72,7 @@ public class ContainerManager {
      */
     public void runContainers() {
         BinaryOperator<Double> runOperation = operation((containerValue, value) -> Math.atan(containerValue * value));
-        for (var container : calculateContainers) {
+        for (CalculateContainer<Double> container : calculateContainers) {
             for (int i = 0; i < OPERATIONS_REPEAT_COUNT; i++) {
                 double value = random.nextDouble() * (ARGUMENT_MAX_VALUE - ARGUMENT_MIN_VALUE) + ARGUMENT_MIN_VALUE;
                 runFinishExecutor.execute(() -> container.run(runOperation, value));
@@ -88,7 +88,7 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void finishContainers() {
-        for (var container : calculateContainers) {
+        for (CalculateContainer<Double> container : calculateContainers) {
             runFinishExecutor.execute(() -> container.finish(value -> System.out.printf("Container %s finished with resulting value: %f\n", container, value)));
         }
     }
@@ -105,8 +105,8 @@ public class ContainerManager {
      * как только закроются все 10 контейеров
      */
     public void closeContainers() {
-        for (var container : calculateContainers) {
-            finishExecutor.execute(() -> {
+        for (CalculateContainer<Double> container : calculateContainers) {
+            closeExecutor.execute(() -> {
                 containersCloseLock.countDown();
                 System.err.printf("Container %s is closed.\n", container);
             });

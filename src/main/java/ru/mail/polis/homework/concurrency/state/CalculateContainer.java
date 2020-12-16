@@ -45,7 +45,7 @@ public class CalculateContainer<T> {
      */
     public void init(UnaryOperator<T> initOperator) {
         if (!waitForStateAndSet(State.INIT, state -> state == State.START || state == State.FINISH)) {
-            System.err.println("Error: Cannot proceed from state CLOSE to state INIT (inside `init` method).");
+            System.err.printf("Error: Cannot proceed from state CLOSE to state INIT (inside `init` method of %s container).\n", this);
             return;
         }
 
@@ -60,7 +60,7 @@ public class CalculateContainer<T> {
      */
     public void run(BinaryOperator<T> runOperator, T value) {
         if (!waitForStateAndSet(State.RUN, state -> state == State.INIT)) {
-            System.err.println("Error: Cannot proceed from state CLOSE to state RUN (inside `run` method).");
+            System.err.printf("Error: Cannot proceed from state CLOSE to state RUN (inside `run` method of %s container).\n", this);
             return;
         }
 
@@ -76,7 +76,7 @@ public class CalculateContainer<T> {
      */
     public void finish(Consumer<T> finishConsumer) {
         if (!waitForStateAndSet(State.FINISH, state -> state == State.RUN)) {
-            System.err.println("Error: Cannot proceed from state CLOSE to state FINISH (inside `finish` method).");
+            System.err.printf("Error: Cannot proceed from state CLOSE to state FINISH (inside `finish` method of %s container).\n", this);
             return;
         }
 
@@ -90,7 +90,7 @@ public class CalculateContainer<T> {
      */
     public void close(Consumer<T> closeConsumer) {
         if (!waitForStateAndSet(State.CLOSE, state -> state == State.FINISH)) {
-            System.err.println("Error: Cannot perform close method twice.");
+            System.err.printf("Error: Cannot perform close method twice (inside `close` method of %s container).\n", this);
             return;
         }
 
