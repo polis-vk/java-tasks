@@ -65,7 +65,7 @@ public class CalculateContainer<T> {
             }
         }
 
-        result.set(runOperator.apply(result.get(), value));
+        result.getAndAccumulate(value, runOperator);
     }
 
 
