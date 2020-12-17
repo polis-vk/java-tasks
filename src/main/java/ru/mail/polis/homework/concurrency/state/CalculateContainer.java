@@ -3,7 +3,6 @@ package ru.mail.polis.homework.concurrency.state;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 /**
@@ -34,10 +33,6 @@ import java.util.function.UnaryOperator;
 
 public class CalculateContainer<T> {
 
-    //private volatile State state = State.START;
-
-    //private volatile T result;
-
     private final AtomicReference<T> result;
     private final AtomicReference<State> state = new AtomicReference<>(State.START);
 
@@ -56,10 +51,7 @@ public class CalculateContainer<T> {
             }
         }
 
-        T r = result.get();
-        while (!result.compareAndSet(r, initOperator.apply(r))) {
-            r = result.get();
-        }
+        result.getAndUpdate(initOperator);
     }
 
     /**
@@ -73,10 +65,7 @@ public class CalculateContainer<T> {
             }
         }
 
-        T r = result.get();
-        while (!result.compareAndSet(r, runOperator.apply(r, runOperator.apply(r, value)))) {
-            r = result.get();
-        }
+        result.set(runOperator.apply(result.get(), value));
     }
 
 
