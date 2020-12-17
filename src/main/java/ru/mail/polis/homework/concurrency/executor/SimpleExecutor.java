@@ -1,9 +1,9 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Нужно сделать свой экзекьютор с линивой инициализацией потоков до какого-то заданного предела.
@@ -29,7 +29,7 @@ public class SimpleExecutor implements Executor {
     private final int limitOfThreads;
     private final Queue<Runnable> tasks;
     private final List<Worker> workers;
-    private volatile boolean isRunning = true;
+    private AtomicBoolean isRunning = new AtomicBoolean(true);
 
 
     public SimpleExecutor(int limitOfThreads) {
@@ -42,8 +42,8 @@ public class SimpleExecutor implements Executor {
     }
 
     @Override
-    public synchronized void execute(Runnable command) {
-        if (isRunning) {
+    public void execute(Runnable command) {
+        if (isRunning.get()) {
             tasks.offer(command);
             Worker freeWorker = getWorker();
             if (freeWorker == null && limitOfThreads > workers.size()) {
@@ -73,9 +73,9 @@ public class SimpleExecutor implements Executor {
     }
 
     public void shutDown() {
-        isRunning = false;
-        for (Worker w : workers) {
-            w.notifyWorker();
+        isRunning.set(false);
+        synchronized (this) {
+            notifyAll();
         }
     }
 
@@ -88,20 +88,19 @@ public class SimpleExecutor implements Executor {
     }
 
     private final class Worker extends Thread {
-
         @Override
         public void run() {
-            synchronized (this) {
-                while (isRunning) {
-                    try {
-                        if (tasks.isEmpty()) {
+            while (isRunning.get()) {
+                try {
+                    if (tasks.isEmpty()) {
+                        synchronized (this) {
                             wait();
-                        } else {
-                            tasks.poll().run();
                         }
-                    } catch (Exception ignored) {
-
+                    } else {
+                        tasks.poll().run();
                     }
+                } catch (Exception ignored) {
+
                 }
             }
         }

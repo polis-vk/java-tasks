@@ -9,7 +9,6 @@ public class SimpleExecutorTest {
 
     @Test
     public void TestOneTask() {
-
         SimpleExecutor simpleExecutor = new SimpleExecutor(4);
         Runnable run = () -> {
             System.out.println("Start");

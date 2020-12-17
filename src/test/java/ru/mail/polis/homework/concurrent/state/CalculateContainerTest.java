@@ -15,7 +15,7 @@ public class CalculateContainerTest {
     @Test
     public void deadlockTest() {
         ExecutorService service = Executors.newFixedThreadPool(10);
-        for (int i = 0; i < 1_000_000; i++) {
+        for (int i = 0; i < 10000; i++) {
             System.out.println("i = " + i);
             CalculateContainer<Double> container = new CalculateContainer<>(10d);
             for (int j = 0; j < 10; j++) {
