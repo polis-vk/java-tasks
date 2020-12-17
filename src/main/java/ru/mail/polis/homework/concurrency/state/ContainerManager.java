@@ -1,8 +1,12 @@
 package ru.mail.polis.homework.concurrency.state;
 
 import java.util.List;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -15,52 +19,72 @@ import java.util.function.UnaryOperator;
 public class ContainerManager {
 
     private final List<CalculateContainer<Double>> calculateContainers;
+    private final CountDownLatch countDownLatch = new CountDownLatch(2);
+    private final ExecutorService service = Executors.newFixedThreadPool(2);
 
     /**
      * Создайте список из непустых контейнеров
      */
-    public ContainerManager(int containersCount) {
-        this.calculateContainers = null;
+    public ContainerManager(int numberOfContainers) {
+        this.calculateContainers = Stream
+                .generate(() -> new CalculateContainer<>(10d))
+                .limit(2)
+                .collect(Collectors.toList());
     }
 
 
     /**
-     * Используйте executor c расширяемым количеством потоков,
+     * используйте executor c расширяемым количеством потоков,
      * который будет инициировать все контейнеры, какой-нибудь математической операцией 1_000_000 раз.
      * (для этого используйте вспомогательный метод operation)
      *
      * Каждый контейнер надо исполнять отдельно.
      */
     public void initContainers() {
-
+        final ExecutorService serviceInit = Executors.newCachedThreadPool();
+        for (CalculateContainer<Double> container : calculateContainers) {
+            for (int j = 0; j < 20; j++) {
+                serviceInit.execute(() -> container.init(operation(Math::sqrt)));
+            }
+        }
     }
 
 
     /**
-     * Используйте executor c 2 потоками (общий с операцией finish),
+     * используйте executor c 2 потоками (общий с операцией finish),
      * который будет запускать все контейнеры какой-нибудь математической операцией 1_000_000 раз
      * (для этого используйте вспомогательный метод operation)
      *
      * Каждый контейнер надо исполнять отдельно.
      */
     public void runContainers() {
-
+        final ExecutorService service = Executors.newFixedThreadPool(2);
+        for (CalculateContainer<Double> container : calculateContainers) {
+            for (int i = 0; i < 20; i++) {
+                service.execute(() -> container.run(operation((start, param) -> start + param), 5d));
+            }
+        }
     }
 
 
     /**
-     * Используйте executor c 2 потоками (общий с операцией run), который будет принимать
+     * используйте executor c 2 потоками (общий с операцией run), который будет принимать
      * элемент из контейнеров и печатать их с соответствующим текстом об совершенных операциях
      *
      * Каждый контейнер надо исполнять отдельно.
      */
     public void finishContainers() {
-
+        final ExecutorService service = Executors.newFixedThreadPool(2);
+        for (CalculateContainer<Double> container : calculateContainers) {
+            service.execute(() -> container.finish(value -> {
+                System.out.println("finish " + value);
+            }));
+        }
     }
 
 
     /**
-     * Используйте executor c 1 потоком, который будет принимать элемент из контейнеров
+     * используйте executor c 1 потоком, который будет принимать элемент из контейнеров
      * и печатать их с соответствующим текстом о закртыии.
      *
      * Каждый контейнер надо исполнять отдельно.
@@ -70,7 +94,18 @@ public class ContainerManager {
      * как только закроются все 10 контейеров
      */
     public void closeContainers() {
-
+        ExecutorService serviceClose = Executors.newFixedThreadPool(1);
+        for (CalculateContainer<Double> container : calculateContainers) {
+            serviceClose.execute(() -> container.close(value -> {
+                countDownLatch.countDown();
+                System.out.println("close " + value);
+            }));
+        }
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     /**
@@ -81,7 +116,7 @@ public class ContainerManager {
      * Учтите, что время передается в милисекундах.
      */
     public boolean await(long timeoutMillis) throws Exception {
-        return false;
+        return countDownLatch.await(timeoutMillis, TimeUnit.MILLISECONDS);
     }
 
     public List<CalculateContainer<Double>> getCalculateContainers() {
