@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+
 
 /**
  * Нужно сделать свой экзекьютор с линивой инициализацией потоков до какого-то заданного предела.
@@ -21,16 +25,90 @@ import java.util.concurrent.Executor;
  * примерно одновременно, вторые m задач должны завершиться чуть позже первых n и тоже примерно одновременно
  * Max 6 баллов
  */
+
+
 public class SimpleExecutor implements Executor {
+
+    static int maxCapacity;
+    static LinkedBlockingQueue<Runnable> linkedBlockingQueue = new LinkedBlockingQueue<>();
+    static List<CustomThread> threadList = new ArrayList<>();
+    static boolean isAlive = true;
+
+
+    public SimpleExecutor(int maxCapacity) {
+        this.maxCapacity = maxCapacity;
+    }
+
+    public SimpleExecutor() {
+        maxCapacity = 10;
+    }
+
+
     @Override
     public void execute(Runnable command) {
+        linkedBlockingQueue.offer(command);
 
+        for (CustomThread threadInList : threadList) {
+            if (threadInList.getState() == Thread.State.WAITING) {
+                threadInList.customNotify();
+                return;
+            }
+        }
+
+        if (threadList.size() < maxCapacity) {
+            threadList.add(new CustomThread());
+            threadList.get(threadList.size() - 1).start();
+        }
+        else {
+            while (true) {
+                for (CustomThread temp : threadList) {
+                    if (temp.getState() == Thread.State.WAITING) {
+                        temp.customNotify();
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    public void shutDown() {
+        isAlive = false;
+        for (CustomThread thread : threadList) {
+            thread.customNotify();
+        }
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        return threadList.size();
+    }
+
+    class CustomThread extends Thread {
+
+        @Override
+        public void run() {
+            synchronized (this) {
+                while (isAlive) {
+                    try {
+                        Runnable runnable = linkedBlockingQueue.poll();
+                        if (runnable != null) {
+                            runnable.run();
+                        }
+                        if (runnable == null) {
+                            wait();
+                        }
+
+                    } catch(Exception e){}
+                }
+            }
+        }
+
+        public void customNotify() {
+            synchronized (this) {
+                this.notify();
+            }
+        }
     }
 }
