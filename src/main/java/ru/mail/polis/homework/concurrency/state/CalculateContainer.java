@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.concurrency.state;
 
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
@@ -11,7 +12,7 @@ import java.util.function.UnaryOperator;
  *
  * Последовательность переходов из состояния в состояние строго определена:
  * START -> INIT -> RUN -> FINISH
- * Из состояния FINISH можно перейти или в состояние INIT или в состояние CLOSE.
+ * из состояния FINISH можно перейти или в состояние INIT или в состояние CLOSE.
  * CLOSE - конченое состояние.
  *
  * Если какой-либо метод вызывается после перехода в состояние CLOSE
@@ -29,28 +30,46 @@ import java.util.function.UnaryOperator;
  *
  * Max 8 баллов
  */
-public class CalculateContainer<T> {
+public class    CalculateContainer<T> {
 
-    private State state = State.START;
-
-    private T result;
+    private final AtomicReference<State> state = new AtomicReference<>();
+    private final AtomicReference<T> result;
 
     public CalculateContainer(T result) {
-        this.result = result;
+        this.result = new AtomicReference<>(result);
+        this.state.set(State.START);
     }
 
     /**
-     * Инициализирует результат и переводит контейнер в состояние INIT (Возможно только из состояния START и FINISH)
+     * инициализирует результат и переводит контейнер в состояние INIT (Возможно только из состояния START и FINISH)
      */
     public void init(UnaryOperator<T> initOperator) {
+        while (!state.compareAndSet(State.START, State.START) && !state.compareAndSet(State.FINISH, State.FINISH)) {
+            if (state.compareAndSet(State.CLOSE, State.CLOSE)) {
+                System.out.println(Thread.currentThread().getName() + " init failed: container is closed");
+                return;
+            }
+        }
 
+        if (state.compareAndSet(State.START, State.INIT)) {
+            result.set(initOperator.apply(result.get()));
+        }
     }
 
     /**
      * Вычисляет результат и переводит контейнер в состояние RUN (Возможно только из состояния INIT)
      */
     public void run(BinaryOperator<T> runOperator, T value) {
+        while (!state.compareAndSet(State.INIT, State.INIT)) {
+            if (state.compareAndSet(State.CLOSE, State.CLOSE)) {
+                System.out.println(Thread.currentThread().getName() + " run failed: container is closed");
+                return;
+            }
+        }
 
+        if (state.compareAndSet(State.INIT, State.RUN)) {
+            result.set(runOperator.apply(result.get(), value));
+        }
     }
 
 
@@ -58,7 +77,16 @@ public class CalculateContainer<T> {
      * Передает результат потребителю и переводит контейнер в состояние FINISH (Возможно только из состояния RUN)
      */
     public void finish(Consumer<T> finishConsumer) {
+        while (!state.compareAndSet(State.RUN, State.RUN)) {
+            if (state.compareAndSet(State.CLOSE, State.CLOSE)) {
+                System.out.println(Thread.currentThread().getName() + " finish failed: container is closed");
+                return;
+            }
+        }
 
+        if (state.compareAndSet(State.RUN, State.FINISH)) {
+            finishConsumer.accept(result.get());
+        }
     }
 
 
@@ -67,15 +95,24 @@ public class CalculateContainer<T> {
      * (Возможно только из состояния FINISH)
      */
     public void close(Consumer<T> closeConsumer) {
+        while (!state.compareAndSet(State.FINISH, State.FINISH)) {
+            if (state.compareAndSet(State.CLOSE, State.CLOSE)) {
+                System.out.println(Thread.currentThread().getName() + " close failed: container is closed");
+                return;
+            }
+        }
 
+        if (state.compareAndSet(State.FINISH, State.CLOSE)) {
+            closeConsumer.accept(result.get());
+        }
     }
 
 
     public T getResult() {
-        return result;
+        return result.get();
     }
 
     public State getState() {
-        return state;
+        return state.get();
     }
 }
