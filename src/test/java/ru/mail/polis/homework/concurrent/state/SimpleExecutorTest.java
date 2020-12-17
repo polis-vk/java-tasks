@@ -54,8 +54,6 @@ public class SimpleExecutorTest {
                         e.printStackTrace();
                     }
                 };
-
-
                 simpleExecutorl.execute(kek);
                 simpleExecutorl.execute(kek);
                 simpleExecutorl.execute(kek);

@@ -23,6 +23,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * примерно одновременно, вторые m задач должны завершиться чуть позже первых n и тоже примерно одновременно
  * Max 6 баллов
  */
+
+//DOESN'T WORK YET
 public class SimpleExecutor implements Executor {
     private final int AMOUNT;
     private final BlockingQueue<Runnable> threads;
