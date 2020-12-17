@@ -128,5 +128,6 @@ public class SimpleExecutorTest {
             e.printStackTrace();
         }
         Assert.assertEquals(N, simpleExecutor.getLiveThreadsCount());
+        simpleExecutor.off();
     }
 }

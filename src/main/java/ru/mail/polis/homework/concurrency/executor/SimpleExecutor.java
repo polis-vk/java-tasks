@@ -55,25 +55,26 @@ public class SimpleExecutor implements Executor {
             }
 
             queue.add(command);
-            Worker w = getEmptyWorker();
+            Worker w = getFreeWorker();
 
-            if (w == null) {
+            if (w == null && countLiveThreads.get() < capacity) {
                 addWorker();
             } else {
-                w.notifyThreads();
+                while (w != null) {
+                    w.notifyThreads();
+                    w = getFreeWorker();
+                }
             }
         }
     }
 
     private void addWorker() {
-        if (countLiveThreads.get() < capacity) {
-            Worker w = new Worker();
-            pool.add(w);
-            w.start();
-        }
+        Worker w = new Worker();
+        pool.add(w);
+        w.start();
     }
 
-    private Worker getEmptyWorker() {
+    private Worker getFreeWorker() {
         for (Worker worker : pool) {
             if (worker.getState() == WAITING) {
                 return worker;
@@ -92,12 +93,15 @@ public class SimpleExecutor implements Executor {
         @Override
         public void run() {
             synchronized (this) {
+                Runnable t;
                 try {
                     while (running) {
-                        if (queue.isEmpty()) {
+                        t = queue.peek();
+                        if (t == null) {
                             wait();
                         } else {
-                            queue.take().run();
+                            t.run();
+                            queue.poll();
                         }
                     }
                 } catch (InterruptedException e) {
