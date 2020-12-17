@@ -1,6 +1,11 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой экзекьютор с линивой инициализацией потоков до какого-то заданного предела.
@@ -22,15 +27,80 @@ import java.util.concurrent.Executor;
  * Max 6 баллов
  */
 public class SimpleExecutor implements Executor {
-    @Override
-    public void execute(Runnable command) {
+    private final int numberOfThreadsLimit;
+    private final AtomicInteger numberOfThreads = new AtomicInteger(0);
+    private final BlockingQueue<Runnable> tasksToDoQueue = new LinkedBlockingQueue<>();
+    private final List<SimpleThread> threadsList = new ArrayList<>();
 
+    public SimpleExecutor(int limit) {
+        numberOfThreadsLimit = limit;
+    }
+
+    public SimpleExecutor() {
+        numberOfThreadsLimit = 50;
+    }
+
+    @Override
+    public void execute(Runnable task) {
+        tasksToDoQueue.offer(task);
+        SimpleThread freeThread = null;
+        for (SimpleThread thread : threadsList) {
+            if (thread.getState() == Thread.State.WAITING) {
+                freeThread = thread;
+                freeThread.notifySimpleThread();
+                break;
+            }
+        }
+        if (freeThread == null) {
+            if (numberOfThreads.get() < numberOfThreadsLimit) {
+                SimpleThread newThread = new SimpleThread();
+                threadsList.add(newThread);
+                newThread.start();
+            } else {
+                for (SimpleThread thread : threadsList) {
+                    if (thread.getState() == Thread.State.WAITING) {
+                        thread.notifySimpleThread();
+                    }
+                }
+            }
+        }
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        return numberOfThreads.get();
+    }
+
+    private final class SimpleThread extends Thread {
+
+        SimpleThread() {
+            numberOfThreads.incrementAndGet();
+        }
+
+        public void notifySimpleThread() {
+            synchronized (this) {
+                this.notifyAll();
+            }
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    synchronized (this) {
+                        Runnable task;
+                        while ((task = tasksToDoQueue.poll()) == null) {
+                            wait();
+                        }
+                        task.run();
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }
     }
 }
