@@ -104,4 +104,5 @@ public class CalculateContainer<T> {
     public State getState() {
         return state.get();
     }
+
 }

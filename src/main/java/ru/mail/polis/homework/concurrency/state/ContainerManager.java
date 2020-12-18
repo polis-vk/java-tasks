@@ -1,26 +1,37 @@
 package ru.mail.polis.homework.concurrency.state;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
  * Класс, который упраялвет контейнерами и умеет их инициализировать, запускать, финишировать и закрывать.
  * Делает все это параллельно, то есть может использоваться из многих потоков.
- *
+ * <p>
  * Это задание на 2 балла за каждый метод. Конструктор на 1 балл
  * Max 11 баллов
  */
 public class ContainerManager {
 
     private final List<CalculateContainer<Double>> calculateContainers;
+    private static final int COUNT = 10000;
+    CountDownLatch countDownLatch;
+    private final ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     /**
      * Создайте список из непустых контейнеров
      */
     public ContainerManager(int containersCount) {
-        this.calculateContainers = null;
+        this.calculateContainers = Stream.generate(() -> new CalculateContainer<Double>(1.0))
+                .limit(containersCount)
+                .collect(Collectors.toList());
+        countDownLatch = new CountDownLatch(containersCount);
     }
 
 
@@ -28,11 +39,18 @@ public class ContainerManager {
      * Используйте executor c расширяемым количеством потоков,
      * который будет инициировать все контейнеры, какой-нибудь математической операцией 1_000_000 раз.
      * (для этого используйте вспомогательный метод operation)
-     *
+     * <p>
      * Каждый контейнер надо исполнять отдельно.
      */
     public void initContainers() {
-
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        for (int i = 0; i < calculateContainers.size(); ++i) {
+            int finalI = i;
+            executorService.execute(() -> {
+                calculateContainers.get(finalI).init(operation(Math::sin));
+            });
+        }
+        executorService.shutdown();
     }
 
 
@@ -40,58 +58,76 @@ public class ContainerManager {
      * Используйте executor c 2 потоками (общий с операцией finish),
      * который будет запускать все контейнеры какой-нибудь математической операцией 1_000_000 раз
      * (для этого используйте вспомогательный метод operation)
-     *
+     * <p>
      * Каждый контейнер надо исполнять отдельно.
      */
     public void runContainers() {
-
+        for (int i = 0; i < calculateContainers.size(); ++i) {
+            int finalI = i;
+            executorService.execute(() -> {
+                calculateContainers.get(finalI).run(Double::sum, 2.0);
+            });
+        }
     }
 
 
     /**
      * Используйте executor c 2 потоками (общий с операцией run), который будет принимать
      * элемент из контейнеров и печатать их с соответствующим текстом об совершенных операциях
-     *
+     * <p>
      * Каждый контейнер надо исполнять отдельно.
      */
     public void finishContainers() {
-
+        for (int i = 0; i < calculateContainers.size(); ++i) {
+            int finalI = i;
+            executorService.execute(() -> {
+                calculateContainers.get(finalI).finish(value -> System.out.println("Finish " + value));
+            });
+        }
     }
 
 
     /**
      * Используйте executor c 1 потоком, который будет принимать элемент из контейнеров
-     * и печатать их с соответствующим текстом о закртыии.
-     *
+     * и печатать их с соответствующим текстом о закрытии.
+     * <p>
      * Каждый контейнер надо исполнять отдельно.
-     *
-     * Так как этот метод переводит контейнер в закрытое состояине,
+     * <p>
+     * Так как этот метод переводит контейнер в закрытое состояние,
      * то нужно добавить некоторую синхронизацию, которая разблокируется,
-     * как только закроются все 10 контейеров
+     * как только закроются все 10 контейнеров
      */
-    public void closeContainers() {
-
+    public void closeContainers() throws InterruptedException {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        for (int i = 0; i < calculateContainers.size(); ++i) {
+            int finalI = i;
+            executorService.execute(() -> {
+                calculateContainers.get(finalI).close(value -> System.out.println("Close " + value));
+                countDownLatch.countDown();
+            });
+        }
+        countDownLatch.await();
+        executorService.shutdown();
     }
 
     /**
      * Этот метод должен ждать, пока все контейнеры не закроются или пока не закончится время.
      * Если вышло время, то метод должен вернуть false, иначе true.
-     *
+     * <p>
      * Почти все методы ожидания, которые реализованы в Java умеют ждать с таймаутом.
      * Учтите, что время передается в милисекундах.
      */
     public boolean await(long timeoutMillis) throws Exception {
-        return false;
+        return countDownLatch.await(timeoutMillis, TimeUnit.MILLISECONDS);
     }
 
     public List<CalculateContainer<Double>> getCalculateContainers() {
         return calculateContainers;
     }
 
-    private  <T> UnaryOperator<T> operation(UnaryOperator<T> operator) {
+    private <T> UnaryOperator<T> operation(UnaryOperator<T> operator) {
         return param -> {
             T result = param;
-
             for (int i = 0; i < 1000; i++) {
                 result = operator.apply(result);
             }
