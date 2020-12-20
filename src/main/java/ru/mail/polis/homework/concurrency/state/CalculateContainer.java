@@ -39,7 +39,7 @@ public class CalculateContainer<T> {
     private volatile T result;
 
     private final Lock lock = new ReentrantLock();
-    private final Condition stateWaitingCondition = lock.newCondition();
+    private final Condition statusChanged = lock.newCondition();
 
     private final String errorMessage = "ERROR";
 
@@ -58,11 +58,11 @@ public class CalculateContainer<T> {
                     System.out.println(errorMessage);
                     return;
                 }
-                stateWaitingCondition.await();
+                statusChanged.await();
             }
             result = initOperator.apply(result);
             state = State.INIT;
-            stateWaitingCondition.signalAll();
+            statusChanged.signalAll();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -83,12 +83,12 @@ public class CalculateContainer<T> {
                     System.out.println(errorMessage);
                     return;
                 }
-                stateWaitingCondition.await();
+                statusChanged.await();
             }
 
             result = runOperator.apply(result, value);
             state = State.RUN;
-            stateWaitingCondition.signalAll();
+            statusChanged.signalAll();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -108,11 +108,11 @@ public class CalculateContainer<T> {
                     System.out.println(errorMessage);
                     return;
                 }
-                stateWaitingCondition.await();
+                statusChanged.await();
             }
             finishConsumer.accept(result);
             state = State.FINISH;
-            stateWaitingCondition.signalAll();
+            statusChanged.signalAll();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -134,12 +134,12 @@ public class CalculateContainer<T> {
                     System.out.println(errorMessage);
                     return;
                 }
-                stateWaitingCondition.await();
+                statusChanged.await();
             }
 
             closeConsumer.accept(result);
             state = State.CLOSE;
-            stateWaitingCondition.signalAll();
+            statusChanged.signalAll();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
