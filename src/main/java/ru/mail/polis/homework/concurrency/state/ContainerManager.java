@@ -23,6 +23,10 @@ public class ContainerManager {
     private CountDownLatch countDownLatch;
     private final int N = 1_000;
 
+    private final ExecutorService extendedExecutor = Executors.newCachedThreadPool();
+    private final ExecutorService doubleThreadExecutor = Executors.newFixedThreadPool(2);
+    private final ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+
     /**
      * Создайте список из непустых контейнеров
      */
@@ -43,11 +47,10 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void initContainers() {
-        ExecutorService service = Executors.newCachedThreadPool();
         UnaryOperator<Double> operation = operation(Math::sin);
         for (CalculateContainer<Double> c : calculateContainers) {
             for (int i = 0; i < N; i++) {
-                service.execute(() -> c.init(operation));
+                extendedExecutor.execute(() -> c.init(operation));
             }
         }
     }
@@ -62,10 +65,9 @@ public class ContainerManager {
      */
     public void runContainers() {
         BinaryOperator<Double> operation = operation((val1, val2) -> Math.cos((val1 + val2) * 10));
-        ExecutorService service = Executors.newFixedThreadPool(2);
         for (CalculateContainer<Double> c : calculateContainers) {
             for (int i = 0; i < N; i++) {
-                service.execute(() -> c.run(operation, 1d));
+                doubleThreadExecutor.execute(() -> c.run(operation, 1d));
             }
         }
     }
@@ -78,10 +80,9 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void finishContainers() {
-        ExecutorService service = Executors.newFixedThreadPool(2);
-        AtomicReference<Double> val = new AtomicReference<>((double) 0);
+        AtomicReference<Double> val = new AtomicReference<>(0d);
         for (CalculateContainer<Double> c : calculateContainers) {
-            service.execute(() -> c.finish(val::set));
+            doubleThreadExecutor.execute(() -> c.finish(val::set));
             System.out.println("Finished  with: " + val.get());
         }
     }
@@ -98,10 +99,9 @@ public class ContainerManager {
      * как только закроются все 10 контейеров
      */
     public void closeContainers() throws InterruptedException {
-        ExecutorService service = Executors.newFixedThreadPool(1);
-        AtomicReference<Double> val = new AtomicReference<>((double) 0);
+        AtomicReference<Double> val = new AtomicReference<>(0d);
         for (CalculateContainer<Double> c : calculateContainers) {
-            service.execute(() -> c.close(value -> {
+            singleThreadExecutor.execute(() -> c.close(value -> {
                 countDownLatch.countDown();
                 val.set(value);
             }));
