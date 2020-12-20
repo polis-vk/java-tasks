@@ -29,22 +29,29 @@ public class SimpleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private final List<Worker> threadPool = new ArrayList<>();
+    public static final int MAX_THREADS = 20;
 
 
     @Override
     public void execute(Runnable command) {
-        try {
-            tasks.put(command);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+        if (threadPool.size() >= MAX_THREADS) {
+            try {
+                tasks.put(command);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            return;
         }
         Worker freeWorker = getFreeThread();
         if (freeWorker == null) {
             freeWorker = new Worker();
             threadPool.add(freeWorker);
-            freeWorker.start();
-        } else {
-            freeWorker.notifyWorker();
+        }
+        try {
+            tasks.put(command);
+            freeWorker.startWorker();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -57,6 +64,19 @@ public class SimpleExecutor implements Executor {
         return null;
     }
 
+    public void waitAll() {
+        while (true) {
+            try {
+                if (threadPool.stream().noneMatch(e -> e.getState() != Thread.State.WAITING)) {
+                    break;
+                }
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
     /**
      * Должен возвращать количество созданных потоков.
      */
@@ -66,23 +86,21 @@ public class SimpleExecutor implements Executor {
 
     public class Worker extends Thread {
 
-        private synchronized void notifyWorker() {
-            notifyAll();
+        private synchronized void startWorker() {
+            if (getState() == State.NEW) {
+                start();
+            } else {
+                notifyAll();
+            }
         }
 
         @Override
         public void run() {
             while (true) {
-                synchronized (this) {
-                    try {
-                        while (tasks.peek() == null) {
-                            wait();
-                        }
-                        tasks.take().run();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        break;
-                    }
+                try {
+                    tasks.take().run();
+                } catch (InterruptedException e) {
+                    interrupt();
                 }
             }
         }

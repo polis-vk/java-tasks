@@ -55,11 +55,7 @@ public class SimpleExecutorTest {
             for (int j = 0; j < taskAmount; j++) {
                 simpleExecutor.execute(firstRunnable);
             }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+            simpleExecutor.waitAll();
         }
         assertEquals(taskAmount, simpleExecutor.getLiveThreadsCount());
     }
@@ -70,21 +66,16 @@ public class SimpleExecutorTest {
     public void anotherParallel() {
         final int firstTaskAmount = 15;
         final int secondTaskAmount = 10;
-        try {
-            for (int i = 0; i < 10; i++) {
-                for (int j = 0; j < firstTaskAmount; j++) {
-                    simpleExecutor.execute(firstRunnable);
-                }
-                Thread.sleep(50);
-                for (int j = 0; j < secondTaskAmount; j++) {
-                    simpleExecutor.execute(secondRunnable);
-                }
-                Thread.sleep(1000);
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < firstTaskAmount; j++) {
+                simpleExecutor.execute(firstRunnable);
             }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            for (int j = 0; j < secondTaskAmount; j++) {
+                simpleExecutor.execute(secondRunnable);
+            }
+            simpleExecutor.waitAll();
         }
-        assertEquals(firstTaskAmount, simpleExecutor.getLiveThreadsCount());
+        assertEquals(SimpleExecutor.MAX_THREADS, simpleExecutor.getLiveThreadsCount());
     }
 
 }

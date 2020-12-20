@@ -51,15 +51,12 @@ public class CalculateContainer<T> {
             System.out.println("Error, calling method after close");
             return;
         }
-        synchronized (state) {
-            synchronized (result) {
-                if (state.compareAndSet(State.START, State.INIT) || state.compareAndSet(State.FINISH, State.INIT)) {
-                    System.out.println("In init: " + Thread.currentThread().getName());
-                    result.set(initOperator.apply(result.get()));
-                }
-            }
+        if (state.compareAndSet(State.START, State.INIT) || state.compareAndSet(State.FINISH, State.INIT)) {
+            System.out.println("In init: " + Thread.currentThread().getName());
+            result.set(initOperator.apply(result.get()));
         }
     }
+
 
     /**
      * Вычисляет результат и переводит контейнер в состояние RUN (Возможно только из состояния INIT)
