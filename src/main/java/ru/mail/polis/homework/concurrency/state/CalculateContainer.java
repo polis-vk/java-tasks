@@ -46,7 +46,7 @@ public class CalculateContainer<T> {
      */
     public void init(UnaryOperator<T> initOperator) {
         State cur;
-        do {
+        while (true) {
             cur = state.get();
 
             while ((cur != State.START) && (cur != State.FINISH)) {
@@ -57,9 +57,12 @@ public class CalculateContainer<T> {
                 }
             }
 
-        } while (!state.compareAndSet(cur, State.INIT));
-        synchronized (result) {
-            result = initOperator.apply(result);
+            synchronized (result) {
+                if (state.compareAndSet(cur, State.INIT)) {
+                    result = initOperator.apply(result);
+                    return;
+                }
+            }
         }
     }
 
@@ -68,7 +71,7 @@ public class CalculateContainer<T> {
      */
     public void run(BinaryOperator<T> runOperator, T value) {
         State cur;
-        do {
+        while (true) {
             cur = state.get();
 
             while (cur != State.INIT) {
@@ -79,9 +82,12 @@ public class CalculateContainer<T> {
                 }
             }
 
-        } while (!state.compareAndSet(cur, State.RUN));
-        synchronized (result) {
-            result = runOperator.apply(result, value);
+            synchronized (result) {
+                if (state.compareAndSet(cur, State.RUN)) {
+                    result = runOperator.apply(result, value);
+                    return;
+                }
+            }
         }
     }
 
@@ -91,7 +97,7 @@ public class CalculateContainer<T> {
      */
     public void finish(Consumer<T> finishConsumer) {
         State cur;
-        do {
+        while (true) {
             cur = state.get();
 
             while (cur != State.RUN) {
@@ -102,9 +108,12 @@ public class CalculateContainer<T> {
                 }
             }
 
-        } while (!state.compareAndSet(cur, State.FINISH));
-        synchronized (result) {
-            finishConsumer.accept(result);
+            synchronized (result) {
+                if (state.compareAndSet(cur, State.FINISH)) {
+                    finishConsumer.accept(result);
+                    return;
+                }
+            }
         }
     }
 
@@ -115,8 +124,9 @@ public class CalculateContainer<T> {
      */
     public void close(Consumer<T> closeConsumer) {
         State cur;
-        do {
+        while (true) {
             cur = state.get();
+
             while (cur != State.FINISH) {
                 cur = state.get();
                 if (cur == State.CLOSE) {
@@ -124,9 +134,13 @@ public class CalculateContainer<T> {
                     return;
                 }
             }
-        } while (!state.compareAndSet(cur, State.CLOSE));
-        synchronized (result) {
-            closeConsumer.accept(result);
+
+            synchronized (result) {
+                if (state.compareAndSet(cur, State.CLOSE)) {
+                    closeConsumer.accept(result);
+                    return;
+                }
+            }
         }
     }
 
