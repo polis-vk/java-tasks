@@ -61,7 +61,7 @@ public class CalculateContainer<T> {
     /**
      * Вычисляет результат и переводит контейнер в состояние RUN (Возможно только из состояния INIT)
      */
-    public synchronized void run(BinaryOperator<T> runOperator, T value) {
+    public void run(BinaryOperator<T> runOperator, T value) {
         if (finished.get()) {
             System.out.println("Error, calling method after close");
             return;
@@ -75,7 +75,7 @@ public class CalculateContainer<T> {
     /**
      * Передает результат потребителю и переводит контейнер в состояние FINISH (Возможно только из состояния RUN)
      */
-    public synchronized void finish(Consumer<T> finishConsumer) {
+    public void finish(Consumer<T> finishConsumer) {
         if (finished.get()) {
             System.out.println("Error, calling method after close");
             return;
@@ -90,7 +90,7 @@ public class CalculateContainer<T> {
      * Закрывает контейнер и передает результат потребителю. Переводит контейнер в состояние CLOSE
      * (Возможно только из состояния FINISH)
      */
-    public synchronized void close(Consumer<T> closeConsumer) {
+    public void close(Consumer<T> closeConsumer) {
         if (state.compareAndSet(State.FINISH, State.CLOSE)) {
             closeConsumer.accept(result.get());
             finished.set(true);

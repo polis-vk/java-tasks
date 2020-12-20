@@ -3,6 +3,7 @@ package ru.mail.polis.homework.concurrency.executor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -30,6 +31,7 @@ public class SimpleExecutor implements Executor {
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private final List<Worker> threadPool = new ArrayList<>();
     public static final int MAX_THREADS = 20;
+
 
 
     @Override

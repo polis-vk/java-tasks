@@ -3,10 +3,13 @@ package ru.mail.polis.homework.concurrency.executor;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.concurrent.CountDownLatch;
+
 import static org.junit.Assert.*;
 
 public class SimpleExecutorTest {
 
+    private CountDownLatch countDownLatch;
     private SimpleExecutor simpleExecutor;
     private final Runnable firstRunnable = () -> {
         System.out.println("1. Doing job: " + Thread.currentThread().getName());
@@ -34,8 +37,9 @@ public class SimpleExecutorTest {
     // Запуск 1 задачи несколько раз с интервалом (должен создаться только 1 поток)
     @Test
     public void threadsAmount() {
+        int taskAmount = 100;
         Runnable runnable = () -> System.out.println("Doing job: " + Thread.currentThread().getName());
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < taskAmount; i++) {
             simpleExecutor.execute(runnable);
             try {
                 Thread.sleep(100);
