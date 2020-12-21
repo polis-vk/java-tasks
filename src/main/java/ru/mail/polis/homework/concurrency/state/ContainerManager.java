@@ -1,12 +1,12 @@
 package ru.mail.polis.homework.concurrency.state;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 
@@ -21,8 +21,9 @@ public class ContainerManager {
 
     private final List<CalculateContainer<Double>> calculateContainers;
     private static final int COUNT = 10000;
-    CountDownLatch countDownLatch;
-    private final ExecutorService executorService = Executors.newFixedThreadPool(2);
+    final CountDownLatch countDownLatch;
+    private final ExecutorService fixedExecutorService = Executors.newFixedThreadPool(2);
+    ExecutorService executorService = Executors.newCachedThreadPool();
 
     /**
      * Создайте список из непустых контейнеров
@@ -43,14 +44,7 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void initContainers() {
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        for (int i = 0; i < calculateContainers.size(); ++i) {
-            int finalI = i;
-            executorService.execute(() -> {
-                calculateContainers.get(finalI).init(operation(Math::sin));
-            });
-        }
-        executorService.shutdown();
+        calculateContainers.forEach(e -> e.init(operation(Math::sin)));
     }
 
 
@@ -62,12 +56,7 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void runContainers() {
-        for (int i = 0; i < calculateContainers.size(); ++i) {
-            int finalI = i;
-            executorService.execute(() -> {
-                calculateContainers.get(finalI).run(Double::sum, 2.0);
-            });
-        }
+        calculateContainers.forEach(e -> e.run(Double::sum, 2.0));
     }
 
 
@@ -78,12 +67,7 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void finishContainers() {
-        for (int i = 0; i < calculateContainers.size(); ++i) {
-            int finalI = i;
-            executorService.execute(() -> {
-                calculateContainers.get(finalI).finish(value -> System.out.println("Finish " + value));
-            });
-        }
+        calculateContainers.forEach(e -> e.finish(value -> System.out.println("Finish " + value)));
     }
 
 
@@ -99,10 +83,9 @@ public class ContainerManager {
      */
     public void closeContainers() throws InterruptedException {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        for (int i = 0; i < calculateContainers.size(); ++i) {
-            int finalI = i;
+        for (CalculateContainer<Double> e : calculateContainers) {
             executorService.execute(() -> {
-                calculateContainers.get(finalI).close(value -> System.out.println("Close " + value));
+                e.close(value -> System.out.println("Close " + value));
                 countDownLatch.countDown();
             });
         }

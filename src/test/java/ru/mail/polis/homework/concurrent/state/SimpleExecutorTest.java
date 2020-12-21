@@ -5,6 +5,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import ru.mail.polis.homework.concurrency.executor.SimpleExecutor;
 
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class SimpleExecutorTest {
 
     @Test
@@ -22,20 +26,16 @@ public class SimpleExecutorTest {
         Assert.assertEquals(0, simpleExecutor.getLiveThreadsCount());
         simpleExecutor.execute(run);
         Assert.assertEquals(1, simpleExecutor.getLiveThreadsCount());
-        try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while (!simpleExecutor.isDone()) {
+            //waiting
         }
         Assert.assertEquals(1, simpleExecutor.getLiveThreadsCount());
 
 
         simpleExecutor.execute(run);
         Assert.assertEquals(1, simpleExecutor.getLiveThreadsCount());
-        try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while (!simpleExecutor.isDone()) {
+            //waiting
         }
         Assert.assertEquals(1, simpleExecutor.getLiveThreadsCount());
         simpleExecutor.shutDown();
@@ -57,22 +57,12 @@ public class SimpleExecutorTest {
         simpleExecutor.execute(run);
         simpleExecutor.execute(run);
         simpleExecutor.execute(run);
-        simpleExecutor.execute(run);
-        Assert.assertEquals(4, simpleExecutor.getLiveThreadsCount());
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while (!simpleExecutor.isDone()) {
+            //waiting
         }
-        Assert.assertEquals(4, simpleExecutor.getLiveThreadsCount());
+        Assert.assertEquals(3, simpleExecutor.getLiveThreadsCount());
         simpleExecutor.execute(run);
-        simpleExecutor.execute(run);
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Assert.assertEquals(4, simpleExecutor.getLiveThreadsCount());
+        Assert.assertEquals(3, simpleExecutor.getLiveThreadsCount());
         simpleExecutor.shutDown();
     }
 
@@ -98,20 +88,16 @@ public class SimpleExecutorTest {
         simpleExecutor.execute(run);
         simpleExecutor.execute(run);
         Assert.assertEquals(4, simpleExecutor.getLiveThreadsCount());
-        try {
-            Thread.sleep(6500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while (!simpleExecutor.isDone()) {
+            //waiting
         }
         Assert.assertEquals(4, simpleExecutor.getLiveThreadsCount());
         simpleExecutor.execute(run);
         simpleExecutor.execute(run);
         simpleExecutor.execute(run);
         Assert.assertEquals(4, simpleExecutor.getLiveThreadsCount());
-        try {
-            Thread.sleep(6500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while (!simpleExecutor.isDone()) {
+            //waiting
         }
         Assert.assertEquals(4, simpleExecutor.getLiveThreadsCount());
         simpleExecutor.shutDown();

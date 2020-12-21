@@ -46,7 +46,7 @@ public class CalculateContainer<T> {
      */
     public void init(UnaryOperator<T> initOperator) {
         while(!state.compareAndSet(State.START, State.INIT) && !state.compareAndSet(State.FINISH, State.INIT)) {
-            if(state.compareAndSet(State.CLOSE, State.CLOSE)) {
+            if(state.get() == State.CLOSE) {
                 System.err.println("Close state in init!");
                 return;
             }
@@ -59,7 +59,7 @@ public class CalculateContainer<T> {
      */
     public void run(BinaryOperator<T> runOperator, T value) {
         while(!state.compareAndSet(State.INIT, State.RUN)) {
-            if(state.compareAndSet(State.CLOSE, State.CLOSE)) {
+            if(state.get() == State.CLOSE) {
                 System.err.println("Close state in run!");
                 return;
             }
@@ -73,7 +73,7 @@ public class CalculateContainer<T> {
      */
     public void finish(Consumer<T> finishConsumer) {
         while(!state.compareAndSet(State.RUN, State.FINISH)) {
-            if(state.compareAndSet(State.CLOSE, State.CLOSE)) {
+            if(state.get() == State.CLOSE) {
                 System.err.println("Close state in finish!");
                 return;
             }
@@ -88,7 +88,7 @@ public class CalculateContainer<T> {
      */
     public void close(Consumer<T> closeConsumer) {
         while(!state.compareAndSet(State.FINISH, State.CLOSE)) {
-            if(state.compareAndSet(State.CLOSE, State.CLOSE)) {
+            if(state.get() == State.CLOSE) {
                 System.err.println("Close state in close!");
                 return;
             }

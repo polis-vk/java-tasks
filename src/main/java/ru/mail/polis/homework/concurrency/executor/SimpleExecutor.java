@@ -3,7 +3,6 @@ package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Нужно сделать свой экзекьютор с линивой инициализацией потоков до какого-то заданного предела.
@@ -29,7 +28,7 @@ public class SimpleExecutor implements Executor {
     private final int limitOfThreads;
     private final Queue<Runnable> tasks;
     private final List<Worker> workers;
-    private AtomicBoolean isRunning = new AtomicBoolean(true);
+    private volatile boolean isRunning = true;
 
 
     public SimpleExecutor(int limitOfThreads) {
@@ -43,12 +42,13 @@ public class SimpleExecutor implements Executor {
 
     @Override
     public void execute(Runnable command) {
-        if (isRunning.get()) {
-            tasks.offer(command);
+        if (isRunning) {
             Worker freeWorker = getWorker();
             if (freeWorker == null && limitOfThreads > workers.size()) {
+                tasks.offer(command);
                 addNewWorker();
             } else {
+                tasks.offer(command);
                 while ((freeWorker = getWorker()) != null) {
                     freeWorker.notifyWorker();
                 }
@@ -56,7 +56,7 @@ public class SimpleExecutor implements Executor {
         }
     }
 
-    private synchronized Worker getWorker() {
+    private Worker getWorker() {
         Worker freeWorker = null;
         for (Worker worker : workers) {
             if (worker.getState() == Thread.State.WAITING) {
@@ -68,17 +68,26 @@ public class SimpleExecutor implements Executor {
     }
 
     private synchronized void addNewWorker() {
-        workers.add(new Worker());
-        workers.get(workers.size() - 1).start();
+        Worker worker = new Worker();
+        worker.start();
+        workers.add(worker);
     }
 
     public void shutDown() {
-        isRunning.set(false);
+        isRunning = false;
         synchronized (this) {
             notifyAll();
         }
     }
 
+    public boolean isDone() {
+        for (Worker worker : workers) {
+            if (worker.getState() != Thread.State.WAITING) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * Должен возвращать количество созданных потоков.
@@ -90,12 +99,10 @@ public class SimpleExecutor implements Executor {
     private final class Worker extends Thread {
         @Override
         public void run() {
-            while (isRunning.get()) {
+            while (isRunning) {
                 try {
                     if (tasks.isEmpty()) {
-                        synchronized (this) {
-                            wait();
-                        }
+                        wait();
                     } else {
                         tasks.poll().run();
                     }
