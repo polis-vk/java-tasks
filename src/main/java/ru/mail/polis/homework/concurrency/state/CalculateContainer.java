@@ -32,63 +32,62 @@ import java.util.function.UnaryOperator;
  */
 public class CalculateContainer<T> {
 
-    private final AtomicReference<State> state = new AtomicReference<>();
+    private class Node {
+        public State state;
+        public T result;
 
-    private T result;
+        Node(State state, T result) {
+            this.state = state;
+            this.result = result;
+        }
+    }
+
+    private final AtomicReference<Node> data = new AtomicReference<>();
 
     public CalculateContainer(T result) {
-        this.result = result;
-        this.state.set(State.START);
+        data.set(new Node(State.START, result));
     }
 
     /**
      * Инициализирует результат и переводит контейнер в состояние INIT (Возможно только из состояния START и FINISH)
      */
     public void init(UnaryOperator<T> initOperator) {
-        State cur;
-        while (true) {
-            cur = state.get();
-
-            while ((cur != State.START) && (cur != State.FINISH)) {
-                cur = state.get();
-                if (cur == State.CLOSE) {
+        Node cur;
+        Node newData;
+        do {
+            cur = data.get();
+            while ((cur.state != State.START) && (cur.state != State.FINISH)) {
+                cur = data.get();
+                if (cur.state == State.CLOSE) {
                     System.out.println("Closed");
                     return;
                 }
             }
+            T newResult = initOperator.apply(cur.result);
+            newData = new Node(State.INIT, newResult);
 
-            synchronized (result) {
-                if (state.compareAndSet(cur, State.INIT)) {
-                    result = initOperator.apply(result);
-                    return;
-                }
-            }
-        }
+        } while (!data.compareAndSet(cur, newData));
     }
 
     /**
      * Вычисляет результат и переводит контейнер в состояние RUN (Возможно только из состояния INIT)
      */
     public void run(BinaryOperator<T> runOperator, T value) {
-        State cur;
-        while (true) {
-            cur = state.get();
-
-            while (cur != State.INIT) {
-                cur = state.get();
-                if (cur == State.CLOSE) {
+        Node cur;
+        Node newData;
+        do {
+            cur = data.get();
+            while (cur.state != State.INIT) {
+                cur = data.get();
+                if (cur.state == State.CLOSE) {
                     System.out.println("Closed");
                     return;
                 }
             }
+            T newResult = runOperator.apply(cur.result, value);
+            newData = new Node(State.RUN, newResult);
 
-            synchronized (result) {
-                if (state.compareAndSet(cur, State.RUN)) {
-                    result = runOperator.apply(result, value);
-                    return;
-                }
-            }
-        }
+        } while (!data.compareAndSet(cur, newData));
     }
 
 
@@ -96,25 +95,21 @@ public class CalculateContainer<T> {
      * Передает результат потребителю и переводит контейнер в состояние FINISH (Возможно только из состояния RUN)
      */
     public void finish(Consumer<T> finishConsumer) {
-        State cur;
-        while (true) {
-            cur = state.get();
-
-            while (cur != State.RUN) {
-                cur = state.get();
-                if (cur == State.CLOSE) {
+        Node cur;
+        Node newData;
+        do {
+            cur = data.get();
+            while (cur.state != State.RUN) {
+                cur = data.get();
+                if (cur.state == State.CLOSE) {
                     System.out.println("Closed");
                     return;
                 }
             }
+            newData = new Node(State.FINISH, cur.result);
+        } while (!data.compareAndSet(cur, newData));
 
-            synchronized (result) {
-                if (state.compareAndSet(cur, State.FINISH)) {
-                    finishConsumer.accept(result);
-                    return;
-                }
-            }
-        }
+        finishConsumer.accept(newData.result);
     }
 
 
@@ -123,34 +118,30 @@ public class CalculateContainer<T> {
      * (Возможно только из состояния FINISH)
      */
     public void close(Consumer<T> closeConsumer) {
-        State cur;
-        while (true) {
-            cur = state.get();
-
-            while (cur != State.FINISH) {
-                cur = state.get();
-                if (cur == State.CLOSE) {
+        Node cur;
+        Node newData;
+        do {
+            cur = data.get();
+            while (cur.state != State.FINISH) {
+                cur = data.get();
+                if (cur.state == State.CLOSE) {
                     System.out.println("Closed");
                     return;
                 }
             }
+            newData = new Node(State.CLOSE, cur.result);
+        } while (!data.compareAndSet(cur, newData));
 
-            synchronized (result) {
-                if (state.compareAndSet(cur, State.CLOSE)) {
-                    closeConsumer.accept(result);
-                    return;
-                }
-            }
-        }
+        closeConsumer.accept(newData.result);
     }
 
     public T getResult() {
-        return result;
+        return data.get().result;
     }
 
     public State getState() {
-        synchronized (state) {
-            return state.get();
+        synchronized (data) {
+            return data.get().state;
         }
     }
 }
