@@ -31,78 +31,122 @@ import java.util.function.UnaryOperator;
  * Max 8 баллов
  */
 public class CalculateContainer<T> {
-    private AtomicReference<State> state = new AtomicReference<>(State.START);
+    private volatile State state = State.START;
 
-    private AtomicReference<T> result;
+    private volatile T result;
 
     public CalculateContainer(T result) {
-        this.result = new AtomicReference<>(result);
+        this.result = result;
     }
 
     /**
      * Инициализирует результат и переводит контейнер в состояние INIT (Возможно только из состояния START и FINISH)
      */
-    public void init(UnaryOperator<T> initOperator) {
-        while (!state.compareAndSet(State.START, State.INIT) && !state.compareAndSet(State.FINISH, State.INIT)) {
-            if (state.get().equals(State.CLOSE)) {
-                System.err.println("ОШИБКА");
-
+    public synchronized void init(UnaryOperator<T> initOperator) {
+        while (!this.state.equals(State.START) && !this.state.equals(State.FINISH)) {
+            if (needStop()) {
                 return;
+            }
+
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
 
-        result.getAndUpdate(initOperator);
+        result = initOperator.apply(result);
+
+        changeState(State.INIT);
     }
 
     /**
      * Вычисляет результат и переводит контейнер в состояние RUN (Возможно только из состояния INIT)
      */
-    public void run(BinaryOperator<T> runOperator, T value) {
-        while (!state.compareAndSet(State.INIT, State.RUN)) {
-            if (state.get().equals(State.CLOSE)) {
-                System.err.println("ОШИБКА");
+    public synchronized void run(BinaryOperator<T> runOperator, T value) {
+        while (!this.state.equals(State.INIT)) {
+            if (needStop()) {
                 return;
+            }
+
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
 
-        result.set(runOperator.apply(result.get(), value));
+        result = runOperator.apply(value, result);
+
+        changeState(State.RUN);
     }
 
     /**
      * Передает результат потребителю и переводит контейнер в состояние FINISH (Возможно только из состояния RUN)
      */
-    public void finish(Consumer<T> finishConsumer) {
-        while (!state.compareAndSet(State.RUN, State.FINISH)) {
-            if (state.get().equals(State.CLOSE)) {
-                System.err.println("ОШИБКА");
+    public synchronized void finish(Consumer<T> finishConsumer) {
+        while (!state.equals(State.RUN)) {
+            if (needStop()) {
                 return;
+            }
+
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
 
-        finishConsumer.accept(result.get());
+        finishConsumer.accept(result);
+
+        changeState(State.FINISH);
     }
 
     /**
      * Закрывает контейнер и передает результат потребителю. Переводит контейнер в состояние CLOSE
      * (Возможно только из состояния FINISH)
      */
-    public void close(Consumer<T> closeConsumer) {
-        while (!state.compareAndSet(State.FINISH, State.CLOSE)) {
-            if (state.get().equals(State.CLOSE)) {
-                System.err.println("ОШИБКА");
+    public synchronized void close(Consumer<T> closeConsumer) {
+        while (!state.equals(State.FINISH)) {
+            if (needStop()) {
                 return;
+            }
+
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
 
-        closeConsumer.accept(result.get());
+        closeConsumer.accept(result);
+
+        changeState(State.CLOSE);
     }
 
     public T getResult() {
-        return result.get();
+        return result;
     }
 
     public State getState() {
-        return state.get();
+        return state;
     }
 
+    private void waitChanges() {
+
+    }
+
+    private boolean needStop() {
+        if (state.equals(State.CLOSE)) {
+            System.err.println("ОШИБКА");
+            return true;
+        }
+
+        return false;
+    }
+
+    private synchronized void changeState(State state) {
+        this.state = state;
+        this.notifyAll();
+    }
 }
