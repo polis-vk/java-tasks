@@ -39,7 +39,11 @@ public class CalculateContainer<T> {
     private volatile T result;
 
     private final Lock lock = new ReentrantLock();
-    private final Condition statusChanged = lock.newCondition();
+
+    private final Condition isStartOrFinishStatus = lock.newCondition();
+    private final Condition isRunStatus = lock.newCondition();
+    private final Condition isFinishStatus = lock.newCondition();
+    private final Condition isCloseStatus = lock.newCondition();
 
     private final String errorMessage = "ERROR";
 
@@ -54,15 +58,15 @@ public class CalculateContainer<T> {
         lock.lock();
         try {
             while (state != State.START && state != State.FINISH) {
-                if (state == State.CLOSE) {
-                    System.out.println(errorMessage);
+                if (isCloseStatus()) {
                     return;
                 }
-                statusChanged.await();
+                isStartOrFinishStatus.await();
             }
             result = initOperator.apply(result);
-            state = State.INIT;
-            statusChanged.signalAll();
+            changeStatus(State.INIT);
+
+            isRunStatus.signal();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -79,16 +83,16 @@ public class CalculateContainer<T> {
 
         try {
             while (state != State.INIT) {
-                if (state == State.CLOSE) {
-                    System.out.println(errorMessage);
+                if (isCloseStatus()) {
                     return;
                 }
-                statusChanged.await();
+                isRunStatus.await();
             }
 
             result = runOperator.apply(result, value);
-            state = State.RUN;
-            statusChanged.signalAll();
+            changeStatus(State.RUN);
+
+            isFinishStatus.signal();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -104,15 +108,16 @@ public class CalculateContainer<T> {
         lock.lock();
         try {
             while (state != State.RUN) {
-                if (state == State.CLOSE) {
-                    System.out.println(errorMessage);
+                if (isCloseStatus()) {
                     return;
                 }
-                statusChanged.await();
+                isFinishStatus.await();
             }
             finishConsumer.accept(result);
-            state = State.FINISH;
-            statusChanged.signalAll();
+            changeStatus(State.FINISH);
+
+            isStartOrFinishStatus.signal();
+            isCloseStatus.signal();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -130,16 +135,18 @@ public class CalculateContainer<T> {
 
         try {
             while (state != State.FINISH) {
-                if (state == State.CLOSE) {
-                    System.out.println(errorMessage);
+                if (isCloseStatus()) {
                     return;
                 }
-                statusChanged.await();
+                isCloseStatus.await();
             }
 
             closeConsumer.accept(result);
-            state = State.CLOSE;
-            statusChanged.signalAll();
+            changeStatus(State.CLOSE);
+
+            isStartOrFinishStatus.signal();
+            isRunStatus.signal();
+            isFinishStatus.signal();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -147,6 +154,18 @@ public class CalculateContainer<T> {
         }
     }
 
+    private boolean isCloseStatus() {
+        if (state == State.CLOSE) {
+            System.out.println(errorMessage);
+            return true;
+        }
+        return false;
+    }
+
+    private void changeStatus(State newState)
+    {
+        state = newState;
+    }
 
     public T getResult() {
         return result;
