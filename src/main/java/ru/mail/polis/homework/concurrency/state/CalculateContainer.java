@@ -132,10 +132,6 @@ public class CalculateContainer<T> {
         return state;
     }
 
-    private void waitChanges() {
-
-    }
-
     private boolean needStop() {
         if (state.equals(State.CLOSE)) {
             System.err.println("ОШИБКА");

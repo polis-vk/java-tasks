@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -45,7 +46,12 @@ public class ContainerManager {
             e.submit(() -> c.init(operation(k -> k + 20)));
         }
 
-        e.shutdown();
+        try {
+            e.shutdown();
+            e.awaitTermination(100, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
+        }
     }
 
     /**
@@ -62,7 +68,12 @@ public class ContainerManager {
             e.submit(() -> c.run(operation(Double::sum), c.getResult()));
         }
 
-        e.shutdown();
+        try {
+            e.shutdown();
+            e.awaitTermination(100, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
+        }
     }
 
     /**
@@ -81,7 +92,12 @@ public class ContainerManager {
             });
         }
 
-        e.shutdown();
+        try {
+            e.shutdown();
+            e.awaitTermination(100, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
+        }
     }
 
     /**
@@ -104,7 +120,12 @@ public class ContainerManager {
             });
         }
 
-        e.shutdown();
+        try {
+            e.shutdown();
+            e.awaitTermination(100, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
+        }
     }
 
     /**
@@ -115,9 +136,21 @@ public class ContainerManager {
      * Учтите, что время передается в милисекундах.
      */
     public boolean await(long timeoutMillis) throws Exception {
-        Thread.sleep(timeoutMillis);
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-        return calculateContainers.stream().map(c -> c.getState().equals(State.CLOSE)).reduce(true, (acc, v) -> acc && v);
+        executor.execute(() -> {
+            while (!calculateContainers.stream()
+                    .map(c -> c.getState().equals(State.CLOSE))
+                    .reduce(true, (acc, v) -> acc && v)) {
+            }
+        });
+
+        executor.shutdown();
+        executor.awaitTermination(timeoutMillis, TimeUnit.MILLISECONDS);
+
+        return calculateContainers.stream()
+                .map(c -> c.getState().equals(State.CLOSE))
+                .reduce(true, (acc, v) -> acc && v);
     }
 
     public List<CalculateContainer<Double>> getCalculateContainers() {
