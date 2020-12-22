@@ -64,7 +64,7 @@ public class CalculateContainer<T> {
                 isStartOrFinishStatus.await();
             }
             result = initOperator.apply(result);
-            changeStatus(State.INIT);
+            changeState(State.INIT);
 
             isRunStatus.signal();
         } catch (InterruptedException e) {
@@ -90,7 +90,7 @@ public class CalculateContainer<T> {
             }
 
             result = runOperator.apply(result, value);
-            changeStatus(State.RUN);
+            changeState(State.RUN);
 
             isFinishStatus.signal();
         } catch (InterruptedException e) {
@@ -114,7 +114,7 @@ public class CalculateContainer<T> {
                 isFinishStatus.await();
             }
             finishConsumer.accept(result);
-            changeStatus(State.FINISH);
+            changeState(State.FINISH);
 
             isStartOrFinishStatus.signal();
             isCloseStatus.signal();
@@ -142,7 +142,7 @@ public class CalculateContainer<T> {
             }
 
             closeConsumer.accept(result);
-            changeStatus(State.CLOSE);
+            changeState(State.CLOSE);
 
             isStartOrFinishStatus.signal();
             isRunStatus.signal();
@@ -162,7 +162,7 @@ public class CalculateContainer<T> {
         return false;
     }
 
-    private void changeStatus(State newState)
+    private void changeState(State newState)
     {
         state = newState;
     }
