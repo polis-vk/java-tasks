@@ -32,7 +32,6 @@ public class SimpleExecutor implements Executor {
     private volatile boolean running;
 
     private final long TIMEOUT = 40;
-    private final TimeUnit SECONDS = TimeUnit.SECONDS;
     private final Thread.State WAITING = Thread.State.WAITING;
 
     public SimpleExecutor(int capacity) {
@@ -54,17 +53,19 @@ public class SimpleExecutor implements Executor {
                 throw new NullPointerException();
             }
 
-            queue.add(command);
-            Worker w = getFreeWorker();
-
-            if (w == null && countLiveThreads.get() < capacity) {
-                addWorker();
-            } else {
-                while (w != null) {
-                    w.notifyThreads();
-                    w = getFreeWorker();
+            boolean existFreeWorker = false;
+            for (Worker worker : pool) {
+                if (worker.getState() == WAITING) {
+                    worker.notifyThreads();
+                    existFreeWorker = true;
+                    break;
                 }
             }
+
+            if (!existFreeWorker && pool.size() < capacity) {
+                addWorker();
+            }
+            queue.offer(command);
         }
     }
 
@@ -74,14 +75,14 @@ public class SimpleExecutor implements Executor {
         w.start();
     }
 
-    private Worker getFreeWorker() {
+    /*private Worker getFreeWorker() {
         for (Worker worker : pool) {
             if (worker.getState() == WAITING) {
                 return worker;
             }
         }
         return null;
-    }
+    }*/
 
     private class Worker extends Thread {
         private final int num;
@@ -92,21 +93,12 @@ public class SimpleExecutor implements Executor {
 
         @Override
         public void run() {
-            synchronized (this) {
-                Runnable t;
-                try {
-                    while (running) {
-                        t = queue.peek();
-                        if (t == null) {
-                            wait();
-                        } else {
-                            t.run();
-                            queue.poll();
-                        }
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            try {
+                while (running) {
+                    queue.take().run();
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
 
@@ -119,33 +111,3 @@ public class SimpleExecutor implements Executor {
         return countLiveThreads.get();
     }
 }
-
-/*class Task implements Runnable {
-
-    private final String name;
-
-    public Task(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public void run() {
-        System.out.print("Start: " + name + " ");
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Finish: " + name);
-    }
-}
-
-class Test {
-    public static void main(String[] args) {
-        SimpleExecutor simpleExecutor = new SimpleExecutor(3);
-        simpleExecutor.execute(new Task("1"));
-        simpleExecutor.execute(new Task("2"));
-        simpleExecutor.execute(new Task("3"));
-        simpleExecutor.execute(new Task("4"));
-    }
-}*/

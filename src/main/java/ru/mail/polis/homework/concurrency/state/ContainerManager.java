@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.concurrency.state;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -8,6 +7,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -19,17 +20,20 @@ import java.util.function.UnaryOperator;
  */
 public class ContainerManager {
 
-    private final List<CalculateContainer<Double>> calculateContainers = new LinkedList<>();
+    private final List<CalculateContainer<Double>> calculateContainers;
+
     private final CountDownLatch latch;
-    private ExecutorService executorRunFinish;
+
+    private final ExecutorService executorRunFinish = Executors.newFixedThreadPool(2);
+    private final ExecutorService executorInit = Executors.newCachedThreadPool();
 
     /**
      * Создайте список из непустых контейнеров
      */
     public ContainerManager(int containersCount) {
-        for (int i = 0; i < containersCount; i++) {
-            this.calculateContainers.add(new CalculateContainer<>(5d));
-        }
+        this.calculateContainers = Stream.generate(() -> new CalculateContainer<>(5d))
+            .limit(containersCount)
+            .collect(Collectors.toList());
         this.latch = new CountDownLatch(containersCount);
     }
 
@@ -42,11 +46,9 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void initContainers() {
-        ExecutorService executorInit = Executors.newCachedThreadPool();
         for (CalculateContainer<Double> container : calculateContainers) {
             executorInit.execute(() -> container.init(operation(Math::sqrt)));
         }
-        executorInit.shutdown();
     }
 
 
@@ -58,11 +60,9 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void runContainers() {
-        executorRunFinish = Executors.newFixedThreadPool(2);
         for (CalculateContainer<Double> container : calculateContainers) {
             executorRunFinish.execute(() -> container.run(operation(Double::sum), 5d));
         }
-        executorRunFinish.shutdown();
     }
 
 
@@ -73,11 +73,9 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void finishContainers() {
-        executorRunFinish = Executors.newFixedThreadPool(2);
         for (CalculateContainer<Double> container : calculateContainers) {
             executorRunFinish.execute(() -> container.finish(value -> System.out.println("finish " + value)));
         }
-        executorRunFinish.shutdown();
     }
 
 
@@ -100,6 +98,9 @@ public class ContainerManager {
             }));
         }
         latch.await();
+        executorClose.shutdown();
+        executorRunFinish.shutdown();
+        executorInit.shutdown();
     }
 
     /**

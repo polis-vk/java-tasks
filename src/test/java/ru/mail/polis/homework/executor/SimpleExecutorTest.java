@@ -4,130 +4,109 @@ import org.junit.Assert;
 import org.junit.Test;
 import ru.mail.polis.homework.concurrency.executor.SimpleExecutor;
 
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+
 public class SimpleExecutorTest {
 
-    @Test
-    public void Test1() {
-        SimpleExecutor simpleExecutor = new SimpleExecutor(4);
+    static class Task implements Runnable {
 
-        Runnable task = () -> {
+        private final CountDownLatch latch;
+        private final int time;
+
+        Task(CountDownLatch latch, int time) {
+            if (time < 1) {
+                throw new IllegalArgumentException();
+            }
+            this.latch = latch;
+            this.time = time;
+        }
+
+        @Override
+        public void run() {
             System.out.print("Starting");
             try {
-                Thread.sleep(2000);
+                Thread.sleep(time);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             System.out.print("Complete");
-        };
-
-        Assert.assertEquals(0, simpleExecutor.getLiveThreadsCount());
-        simpleExecutor.execute(task);
-        Assert.assertEquals(1, simpleExecutor.getLiveThreadsCount());
-
-        try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            latch.countDown();
         }
+    }
 
-        Assert.assertEquals(1, simpleExecutor.getLiveThreadsCount());
-        simpleExecutor.execute(task);
-        Assert.assertEquals(1, simpleExecutor.getLiveThreadsCount());
+    @Test
+    public void Test1() throws InterruptedException {
+        SimpleExecutor simpleExecutor = new SimpleExecutor(4);
+        Random random = new Random();
+        int min = 100;
+        int max = 500;
 
-        try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        for (int i = 0; i < 10; i++) {
+            int time = random.nextInt((max - min) + 1) + min;
+            CountDownLatch latch = new CountDownLatch(1);
+
+            simpleExecutor.execute(new Task(latch, time));
+            Assert.assertEquals(1, simpleExecutor.getLiveThreadsCount());
+
+            latch.await();
+            Assert.assertEquals(1, simpleExecutor.getLiveThreadsCount());
         }
-
-        Assert.assertEquals(1, simpleExecutor.getLiveThreadsCount());
         simpleExecutor.off();
     }
 
     @Test
-    public void Task2() {
+    public void Task2() throws InterruptedException {
+        Random random = new Random();
+        int minThreads = 10;
+        int maxThreads = 20;
 
-        final int N = 10;
+        final int N = random.nextInt((maxThreads - minThreads) + 1) + minThreads;
         SimpleExecutor simpleExecutor = new SimpleExecutor(N);
 
-        //450ms
-        Runnable task = () -> {
-            try {
-                Thread.sleep(450);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        int min = 100;
+        int max = 500;
+
+        for (int i = 0; i < 10; i++) {
+            int time = random.nextInt((max - min) + 1) + min;
+            CountDownLatch latch = new CountDownLatch(N - 1);
+
+            for (int j = 0; j < N - 1; j++) {
+                simpleExecutor.execute(new Task(latch, time));
             }
-        };
+            Assert.assertEquals(N - 1, simpleExecutor.getLiveThreadsCount());
 
-        Assert.assertEquals(0, simpleExecutor.getLiveThreadsCount());
-
-        for (int i = 0; i < N; i++) {
-            simpleExecutor.execute(task);
+            latch.await();
+            Assert.assertEquals(N - 1, simpleExecutor.getLiveThreadsCount());
         }
-
-        Assert.assertEquals(N, simpleExecutor.getLiveThreadsCount());
-
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Assert.assertEquals(N, simpleExecutor.getLiveThreadsCount());
-
-        for (int i = 0; i < N; i++) {
-            simpleExecutor.execute(task);
-        }
-
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Assert.assertEquals(N, simpleExecutor.getLiveThreadsCount());
         simpleExecutor.off();
     }
 
     @Test
-    public void Task3() {
-        final int N = 30;
-        final int M = 15;
+    public void Task3() throws InterruptedException {
+        Random random = new Random();
+        int minThreads = 10;
+        int maxThreads = 30;
 
+        final int N = random.nextInt((maxThreads - minThreads) + 1) + minThreads;
+        final int M = random.nextInt((maxThreads - minThreads) + 1) + minThreads;
         SimpleExecutor simpleExecutor = new SimpleExecutor(N);
 
-        //100ms
-        Runnable task = () -> {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        int min = 100;
+        int max = 300;
+
+        for (int i = 0; i < 10; i++) {
+            int time = random.nextInt((max - min) + 1) + min;
+            CountDownLatch latch = new CountDownLatch(N + M);
+
+            for (int j = 0; j < N + M; j++) {
+                simpleExecutor.execute(new Task(latch, time));
             }
-        };
+            Assert.assertEquals(N, simpleExecutor.getLiveThreadsCount());
 
-        Assert.assertEquals(0, simpleExecutor.getLiveThreadsCount());
-
-        for (int i = 0; i < N + M; i++) {
-            simpleExecutor.execute(task);
+            latch.await();
+            Assert.assertEquals(N, simpleExecutor.getLiveThreadsCount());
         }
-        Assert.assertEquals(N, simpleExecutor.getLiveThreadsCount());
-        try {
-            Thread.sleep(6500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Assert.assertEquals(N, simpleExecutor.getLiveThreadsCount());
-
-        for (int i = 0; i < N + M; i++) {
-            simpleExecutor.execute(task);
-        }
-        Assert.assertEquals(N, simpleExecutor.getLiveThreadsCount());
-        try {
-            Thread.sleep(6500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Assert.assertEquals(N, simpleExecutor.getLiveThreadsCount());
         simpleExecutor.off();
     }
 }
