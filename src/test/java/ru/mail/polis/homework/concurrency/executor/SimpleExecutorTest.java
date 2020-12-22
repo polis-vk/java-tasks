@@ -3,13 +3,10 @@ package ru.mail.polis.homework.concurrency.executor;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.concurrent.CountDownLatch;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class SimpleExecutorTest {
 
-    private CountDownLatch countDownLatch;
     private SimpleExecutor simpleExecutor;
     private final Runnable firstRunnable = () -> {
         System.out.println("1. Doing job: " + Thread.currentThread().getName());

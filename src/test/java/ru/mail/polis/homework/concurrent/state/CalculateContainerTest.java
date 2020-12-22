@@ -20,31 +20,14 @@ public class CalculateContainerTest {
             CalculateContainer<Double> container = new CalculateContainer<>(10d);
             for (int j = 0; j < 100; j++) {
                 service.execute(() -> container.finish(value -> System.out.println("finish " + value)));
-                System.out.println("Current status: " + container.getState().get());
+                System.out.println("Current status: " + container.getState());
                 service.execute(() -> container.init(Math::sqrt));
-                System.out.println("Current status: " + container.getState().get());
+                System.out.println("Current status: " + container.getState());
                 service.execute(() -> container.run((start, param) -> start + param, 5d));
-                System.out.println("Current status: " + container.getState().get());
+                System.out.println("Current status: " + container.getState());
             }
             container.close(value -> System.out.println("close " + value));
-            assertEquals(State.CLOSE, container.getState().get());
-        }
-    }
-
-
-    @Test
-    public void smallTest() {
-        ExecutorService service = Executors.newFixedThreadPool(10);
-        for (int i = 0; i < 1; i++) {
-            System.out.println("i = " + i);
-            CalculateContainer<Double> container = new CalculateContainer<>(10d);
-            for (int j = 0; j < 3; j++) {
-                service.execute(() -> container.init(Math::sqrt));
-                service.execute(() -> container.run(Double::sum, 5d));
-                service.execute(() -> container.finish(value -> System.out.println("finish " + value)));
-            }
-            container.close(value -> System.out.println("close " + value));
-            assertEquals(State.CLOSE, container.getState().get());
+            assertEquals(State.CLOSE, container.getState());
         }
     }
 
