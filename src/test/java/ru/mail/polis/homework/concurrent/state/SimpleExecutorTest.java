@@ -31,7 +31,12 @@ public class SimpleExecutorTest {
             } catch (InterruptedException e) {
                 System.out.println("Явно произошла ошибка");
             }
-            Assert.assertEquals(1, simpleExecutor.getLiveThreadsCount());
+            if (simpleExecutor.isJob()) {
+                Assert.assertEquals(1, simpleExecutor.getLiveThreadsCount());
+            } else {
+                System.out.println("Не все задачи выполнены");
+                Assert.fail();
+            }
         }
         simpleExecutor.shutDown();
     }
@@ -45,7 +50,7 @@ public class SimpleExecutorTest {
         SimpleExecutor simpleExecutor = new SimpleExecutor();
         int count = 10;
         for (int i = 0; i < count; i++) {
-            for (int j = 0; j < count; j++) {
+            for (int j = 1; j < count; j++) {
                 simpleExecutor.execute(runnable);
             }
             try {
@@ -53,7 +58,12 @@ public class SimpleExecutorTest {
             } catch (InterruptedException e) {
                 System.out.println("Явно произошла ошибка");
             }
-            Assert.assertEquals(count, simpleExecutor.getLiveThreadsCount());
+            if (simpleExecutor.isJob()) {
+                Assert.assertEquals(count - 1, simpleExecutor.getLiveThreadsCount());
+            } else {
+                System.out.println("Не все задачи выполнены");
+                Assert.fail();
+            }
         }
         simpleExecutor.shutDown();
     }
@@ -75,12 +85,12 @@ public class SimpleExecutorTest {
                 simpleExecutor.execute(runnable);
             }
             try {
-                Thread.sleep(1228);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
 
-            for (int j = 0; j < count; j++) {
+            for (int j = 0; j < 5; j++) {
                 simpleExecutor.execute(runnable);
             }
             try {
@@ -88,7 +98,12 @@ public class SimpleExecutorTest {
             } catch (InterruptedException e) {
                 System.out.println("Явно произошла ошибка");
             }
-            Assert.assertEquals(count, simpleExecutor.getLiveThreadsCount());
+            if (simpleExecutor.isJob()) {
+                Assert.assertEquals(count + 5, simpleExecutor.getLiveThreadsCount());
+            } else {
+                System.out.println("Не все задачи выполнены");
+                Assert.fail();
+            }
         }
         simpleExecutor.shutDown();
     }

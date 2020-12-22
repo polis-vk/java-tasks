@@ -33,12 +33,12 @@ import java.util.function.UnaryOperator;
 public class CalculateContainer<T> {
 
     // private State state = State.START;
-    private volatile AtomicReference<State> atomicReference;
-    private volatile AtomicReference<T> result;
+    private AtomicReference<State> atomicReference;
+    private volatile T result;
 
     public CalculateContainer(T result) {
-        this.result = new AtomicReference<>(result);
-        atomicReference = new AtomicReference(State.START);;
+        this.result = result;
+        this.atomicReference = new AtomicReference(State.START);;
     }
 
     /**
@@ -50,9 +50,11 @@ public class CalculateContainer<T> {
                 System.out.println("Ошибочка");
                 return;
             }
-            if (atomicReference.compareAndSet(State.START, State.INIT) || atomicReference.compareAndSet(State.FINISH, State.INIT)) {
-                result.set(initOperator.apply(result.get()));
-                return;
+            synchronized (atomicReference) {
+                if (atomicReference.compareAndSet(State.START, State.INIT) || atomicReference.compareAndSet(State.FINISH, State.INIT)) {
+                    result = initOperator.apply(result);
+                    return;
+                }
             }
         }
     }
@@ -66,9 +68,11 @@ public class CalculateContainer<T> {
                 System.out.println("Ошибочка");
                 return;
             }
-            if (atomicReference.compareAndSet(State.INIT, State.RUN)) {
-                result.set(runOperator.apply(result.get(), value));
-                return;
+            synchronized (atomicReference) {
+                if (atomicReference.compareAndSet(State.INIT, State.RUN)) {
+                    result = runOperator.apply(result, value);
+                    return;
+                }
             }
         }
     }
@@ -83,9 +87,11 @@ public class CalculateContainer<T> {
                 System.out.println("Ошибочка");
                 return;
             }
-            if (atomicReference.compareAndSet(State.RUN, State.FINISH)) {
-                finishConsumer.accept(result.get());
-                return;
+            synchronized (atomicReference) {
+                if (atomicReference.compareAndSet(State.RUN, State.FINISH)) {
+                    finishConsumer.accept(result);
+                    return;
+                }
             }
         }
     }
@@ -101,16 +107,18 @@ public class CalculateContainer<T> {
                 System.out.println("Ошибочка");
                 return;
             }
-            if (atomicReference.compareAndSet(State.FINISH, State.CLOSE)) {
-                closeConsumer.accept(result.get());
-                return;
+            synchronized (atomicReference) {
+                if (atomicReference.compareAndSet(State.FINISH, State.CLOSE)) {
+                    closeConsumer.accept(result);
+                    return;
+                }
             }
         }
     }
 
 
     public T getResult() {
-        return result.get();
+        return result;
     }
 
     public State getState() {

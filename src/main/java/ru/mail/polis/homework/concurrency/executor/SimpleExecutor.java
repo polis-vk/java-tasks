@@ -28,10 +28,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class SimpleExecutor implements Executor {
 
-    static int maxCapacity;
-    static LinkedBlockingQueue<Runnable> linkedBlockingQueue = new LinkedBlockingQueue<>();
-    static List<CustomThread> threadList = new ArrayList<>();
-    static boolean isAlive = true;
+    int maxCapacity;
+    LinkedBlockingQueue<Runnable> linkedBlockingQueue = new LinkedBlockingQueue<>();
+    List<CustomThread> threadList = new ArrayList<>();
+    boolean isAlive = true;
 
 
     public SimpleExecutor(int maxCapacity) {
@@ -39,12 +39,13 @@ public class SimpleExecutor implements Executor {
     }
 
     public SimpleExecutor() {
-        maxCapacity = 10;
+        maxCapacity = 25;
     }
 
 
     @Override
     public void execute(Runnable command) {
+        if (!isAlive) return;
         linkedBlockingQueue.offer(command);
 
         for (CustomThread threadInList : threadList) {
@@ -55,16 +56,21 @@ public class SimpleExecutor implements Executor {
         }
 
         if (threadList.size() < maxCapacity) {
-            threadList.add(new CustomThread());
-            threadList.get(threadList.size() - 1).start();
-        }
-        else {
+            CustomThread temp = new CustomThread();
+            threadList.add(temp);
+            temp.start();
+        } else {
             while (true) {
                 for (CustomThread temp : threadList) {
                     if (temp.getState() == Thread.State.WAITING) {
                         temp.customNotify();
                         return;
                     }
+                }
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -75,6 +81,10 @@ public class SimpleExecutor implements Executor {
         for (CustomThread thread : threadList) {
             thread.customNotify();
         }
+    }
+
+    public boolean isJob() {
+        return linkedBlockingQueue.isEmpty();
     }
 
     /**
@@ -104,10 +114,8 @@ public class SimpleExecutor implements Executor {
             }
         }
 
-        public void customNotify() {
-            synchronized (this) {
-                this.notify();
-            }
+        public synchronized void customNotify() {
+            this.notifyAll();
         }
     }
 }
