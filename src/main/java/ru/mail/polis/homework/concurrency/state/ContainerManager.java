@@ -1,6 +1,12 @@
 package ru.mail.polis.homework.concurrency.state;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
@@ -15,12 +21,22 @@ import java.util.function.UnaryOperator;
 public class ContainerManager {
 
     private final List<CalculateContainer<Double>> calculateContainers;
+    private final ExecutorService execWithExpandedThreads = Executors.newCachedThreadPool();
+    private final ExecutorService execOneThread = Executors.newSingleThreadExecutor();
+    private final ExecutorService execTwoThread = Executors.newFixedThreadPool(2);
+    private final CountDownLatch countDownLatch;
 
     /**
      * Создайте список из непустых контейнеров
      */
     public ContainerManager(int containersCount) {
-        this.calculateContainers = null;
+        this.calculateContainers = new ArrayList<>(containersCount);
+        Random random = new Random();
+        for(int i = 0; i < containersCount; ++i) {
+            double initValue = random.nextDouble() * 100;
+            calculateContainers.add(new CalculateContainer(initValue));
+        }
+        this.countDownLatch = new CountDownLatch(containersCount);
     }
 
 
@@ -32,7 +48,12 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void initContainers() {
-
+        UnaryOperator<Double> initOperation = operation(Math::sqrt);
+        for(CalculateContainer<Double> calculateContainer : calculateContainers) {
+            for(int i = 0; i < 1_000; ++i) {
+                execWithExpandedThreads.execute(() -> calculateContainer.init(operation(initOperation)));
+            }
+        }
     }
 
 
@@ -44,7 +65,13 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void runContainers() {
-
+        BinaryOperator<Double> runOperation = operation((start, result) -> Math.cos(start + result));
+        Random random = new Random();
+        for(CalculateContainer<Double> calculateContainer : calculateContainers) {
+            for(int i = 0; i < 1_000; ++i) {
+                execTwoThread.execute(() -> calculateContainer.run(runOperation, random.nextDouble()));
+            }
+        }
     }
 
 
@@ -55,7 +82,9 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void finishContainers() {
-
+        for(CalculateContainer<Double> calculateContainer : calculateContainers) {
+            execTwoThread.execute(() -> calculateContainer.finish((value -> System.out.println("finish " + value))));
+        }
     }
 
 
@@ -70,7 +99,17 @@ public class ContainerManager {
      * как только закроются все 10 контейеров
      */
     public void closeContainers() {
-
+        for(CalculateContainer<Double> calculateContainer : calculateContainers) {
+            execOneThread.execute(() -> calculateContainer.close((value) -> {
+                countDownLatch.countDown();
+                System.out.println("Container " + calculateContainer + " closed with this value " + value);
+            }));
+            try {
+                countDownLatch.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     /**
@@ -81,7 +120,7 @@ public class ContainerManager {
      * Учтите, что время передается в милисекундах.
      */
     public boolean await(long timeoutMillis) throws Exception {
-        return false;
+        return countDownLatch.await(timeoutMillis, TimeUnit.MILLISECONDS);
     }
 
     public List<CalculateContainer<Double>> getCalculateContainers() {
