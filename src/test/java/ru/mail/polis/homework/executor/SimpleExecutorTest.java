@@ -6,6 +6,7 @@ import ru.mail.polis.homework.concurrency.executor.SimpleExecutor;
 
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class SimpleExecutorTest {
 
@@ -38,18 +39,19 @@ public class SimpleExecutorTest {
     @Test
     public void Test1() throws InterruptedException {
         SimpleExecutor simpleExecutor = new SimpleExecutor(4);
+        final int numberOfIterations = 10;
         Random random = new Random();
         int min = 100;
         int max = 500;
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < numberOfIterations; i++) {
             int time = random.nextInt((max - min) + 1) + min;
             CountDownLatch latch = new CountDownLatch(1);
 
             simpleExecutor.execute(new Task(latch, time));
             Assert.assertEquals(1, simpleExecutor.getLiveThreadsCount());
 
-            latch.await();
+            latch.await(max * numberOfIterations, TimeUnit.MILLISECONDS);
             Assert.assertEquals(1, simpleExecutor.getLiveThreadsCount());
         }
         simpleExecutor.off();
@@ -61,23 +63,24 @@ public class SimpleExecutorTest {
         int minThreads = 10;
         int maxThreads = 20;
 
-        final int N = random.nextInt((maxThreads - minThreads) + 1) + minThreads;
-        SimpleExecutor simpleExecutor = new SimpleExecutor(N);
+        final int n = random.nextInt((maxThreads - minThreads) + 1) + minThreads;
+        final int numberOfIterations = 10;
+        SimpleExecutor simpleExecutor = new SimpleExecutor(n);
 
         int min = 100;
         int max = 500;
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < numberOfIterations; i++) {
             int time = random.nextInt((max - min) + 1) + min;
-            CountDownLatch latch = new CountDownLatch(N - 1);
+            CountDownLatch latch = new CountDownLatch(n - 1);
 
-            for (int j = 0; j < N - 1; j++) {
+            for (int j = 0; j < n - 1; j++) {
                 simpleExecutor.execute(new Task(latch, time));
             }
-            Assert.assertEquals(N - 1, simpleExecutor.getLiveThreadsCount());
+            Assert.assertEquals(n - 1, simpleExecutor.getLiveThreadsCount());
 
-            latch.await();
-            Assert.assertEquals(N - 1, simpleExecutor.getLiveThreadsCount());
+            latch.await(max * numberOfIterations, TimeUnit.MILLISECONDS);
+            Assert.assertEquals(n - 1, simpleExecutor.getLiveThreadsCount());
         }
         simpleExecutor.off();
     }
@@ -88,24 +91,25 @@ public class SimpleExecutorTest {
         int minThreads = 10;
         int maxThreads = 30;
 
-        final int N = random.nextInt((maxThreads - minThreads) + 1) + minThreads;
-        final int M = random.nextInt((maxThreads - minThreads) + 1) + minThreads;
-        SimpleExecutor simpleExecutor = new SimpleExecutor(N);
+        final int n = random.nextInt((maxThreads - minThreads) + 1) + minThreads;
+        final int m = random.nextInt((maxThreads - minThreads) + 1) + minThreads;
+        final int numberOfIterations = 10;
+        SimpleExecutor simpleExecutor = new SimpleExecutor(n);
 
         int min = 100;
         int max = 300;
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < numberOfIterations; i++) {
             int time = random.nextInt((max - min) + 1) + min;
-            CountDownLatch latch = new CountDownLatch(N + M);
+            CountDownLatch latch = new CountDownLatch(n + m);
 
-            for (int j = 0; j < N + M; j++) {
+            for (int j = 0; j < n + m; j++) {
                 simpleExecutor.execute(new Task(latch, time));
             }
-            Assert.assertEquals(N, simpleExecutor.getLiveThreadsCount());
+            Assert.assertEquals(n, simpleExecutor.getLiveThreadsCount());
 
-            latch.await();
-            Assert.assertEquals(N, simpleExecutor.getLiveThreadsCount());
+            latch.await(max * numberOfIterations, TimeUnit.MILLISECONDS);
+            Assert.assertEquals(n, simpleExecutor.getLiveThreadsCount());
         }
         simpleExecutor.off();
     }

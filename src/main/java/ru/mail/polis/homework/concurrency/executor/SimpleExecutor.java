@@ -54,18 +54,20 @@ public class SimpleExecutor implements Executor {
             }
 
             boolean existFreeWorker = false;
-            for (Worker worker : pool) {
-                if (worker.getState() == WAITING) {
-                    worker.notifyThreads();
-                    existFreeWorker = true;
-                    break;
-                }
-            }
 
-            if (!existFreeWorker && pool.size() < capacity) {
-                addWorker();
+            synchronized (pool) {
+                for (Worker worker : pool) {
+                    if (worker.getState() == WAITING) {
+                        existFreeWorker = true;
+                        pool.notifyAll();
+                        break;
+                    }
+                }
+                if (!existFreeWorker && pool.size() < capacity) {
+                    addWorker();
+                }
+                queue.offer(command);
             }
-            queue.offer(command);
         }
     }
 
@@ -74,15 +76,6 @@ public class SimpleExecutor implements Executor {
         pool.add(w);
         w.start();
     }
-
-    /*private Worker getFreeWorker() {
-        for (Worker worker : pool) {
-            if (worker.getState() == WAITING) {
-                return worker;
-            }
-        }
-        return null;
-    }*/
 
     private class Worker extends Thread {
         private final int num;
@@ -100,10 +93,6 @@ public class SimpleExecutor implements Executor {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
-
-        public synchronized void notifyThreads() {
-            notifyAll();
         }
     }
 
