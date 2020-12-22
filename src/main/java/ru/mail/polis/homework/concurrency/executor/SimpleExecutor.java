@@ -1,6 +1,11 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.Executor;
+
 
 /**
  * Нужно сделать свой экзекьютор с линивой инициализацией потоков до какого-то заданного предела.
@@ -22,15 +27,84 @@ import java.util.concurrent.Executor;
  * Max 6 баллов
  */
 public class SimpleExecutor implements Executor {
+
+    private static final int DEFAULT_MAX_WORKERS_NUMBER = 5;
+
+    private final Queue<Runnable> workQueue;
+    private final List<Worker> workersList;
+    private boolean shutDowned;
+    private final int maxWorkersNumber;
+
+    public SimpleExecutor(int maxWorkersNumber) {
+        workQueue = new ArrayDeque<>();
+        workersList = new ArrayList<>(maxWorkersNumber);
+        shutDowned = false;
+        this.maxWorkersNumber = maxWorkersNumber;
+    }
+
+    public SimpleExecutor() {
+        this(DEFAULT_MAX_WORKERS_NUMBER);
+    }
+
     @Override
     public void execute(Runnable command) {
+        workQueue.offer(command);
+        Worker worker = getWorkerFromList();
+        if (worker == null && maxWorkersNumber > workersList.size()) {
+            worker = new Worker();
+            workersList.add(worker);
+            worker.start();
+        } else {
+            while ((worker = getWorkerFromList()) != null) {
+                worker.notifyAllWorkers();
+            }
+        }
+    }
 
+    private Worker getWorkerFromList() {
+        Worker worker = null;
+        for (Worker w : workersList) {
+            if (w.getState() == Thread.State.WAITING) {
+                worker = w;
+                break;
+            }
+        }
+        return worker;
+    }
+
+    public void shutdown() {
+        shutDowned = true;
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        return workersList.size();
+    }
+
+    private class Worker extends Thread {
+
+        @Override
+        public void run() {
+            while (!shutDowned) {
+                synchronized (this) {
+                    try {
+                        Runnable nextTask = workQueue.poll();
+                        while (nextTask == null) {
+                            wait();
+                            nextTask = workQueue.poll();
+                        }
+                        nextTask.run();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        public synchronized void notifyAllWorkers() {
+            notifyAll();
+        }
     }
 }
