@@ -20,6 +20,7 @@ import java.util.stream.Stream;
  */
 public class ContainerManager {
     private final List<CalculateContainer<Double>> calculateContainers;
+    private final ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     /**
      * Создайте список из непустых контейнеров
@@ -43,14 +44,7 @@ public class ContainerManager {
         ExecutorService e = Executors.newCachedThreadPool();
 
         for (CalculateContainer<Double> c : this.calculateContainers) {
-            e.submit(() -> c.init(operation(k -> k + 20)));
-        }
-
-        try {
-            e.shutdown();
-            e.awaitTermination(100, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
+            e.execute(() -> c.init(operation(k -> k + 20)));
         }
     }
 
@@ -62,17 +56,8 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public synchronized void runContainers() {
-        ExecutorService e = Executors.newFixedThreadPool(2);
-
         for (CalculateContainer<Double> c : this.calculateContainers) {
-            e.submit(() -> c.run(operation(Double::sum), c.getResult()));
-        }
-
-        try {
-            e.shutdown();
-            e.awaitTermination(100, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
+            executorService.execute(() -> c.run(operation(Double::sum), c.getResult()));
         }
     }
 
@@ -83,20 +68,11 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public synchronized void finishContainers() {
-        ExecutorService e = Executors.newFixedThreadPool(2);
-
         for (CalculateContainer<Double> c : this.calculateContainers) {
-            e.submit(() -> {
+            executorService.execute(() -> {
                 c.finish(System.out::println);
                 System.out.println("Finished " + c.getClass().toString());
             });
-        }
-
-        try {
-            e.shutdown();
-            e.awaitTermination(100, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
         }
     }
 
@@ -114,17 +90,10 @@ public class ContainerManager {
         ExecutorService e = Executors.newSingleThreadExecutor();
 
         for (CalculateContainer<Double> c : this.calculateContainers) {
-            e.submit(() -> {
+            e.execute(() -> {
                 c.close(System.out::println);
                 System.out.println("Closed " + c.getClass().toString());
             });
-        }
-
-        try {
-            e.shutdown();
-            e.awaitTermination(100, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
         }
     }
 
@@ -145,7 +114,6 @@ public class ContainerManager {
             }
         });
 
-        executor.shutdown();
         executor.awaitTermination(timeoutMillis, TimeUnit.MILLISECONDS);
 
         return calculateContainers.stream()
