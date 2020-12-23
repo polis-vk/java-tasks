@@ -68,7 +68,7 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        return threads.size();
     }
 
     private class Worker extends Thread {
