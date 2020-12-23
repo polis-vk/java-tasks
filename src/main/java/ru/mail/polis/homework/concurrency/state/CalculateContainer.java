@@ -52,42 +52,52 @@ public class CalculateContainer<T> {
      * Инициализирует результат и переводит контейнер в состояние INIT (Возможно только из состояния START и FINISH)
      */
     public void init(UnaryOperator<T> initOperator) {
-        Node cur;
-        Node newData;
-        do {
+        Node cur = null;
+        Node newData = null;
+
+        boolean hasError = true;
+        while(hasError || !data.compareAndSet(cur, newData)){
             cur = data.get();
-            while ((cur.state != State.START) && (cur.state != State.FINISH)) {
-                cur = data.get();
-                if (cur.state == State.CLOSE) {
-                    System.out.println("Closed");
-                    return;
-                }
+            if(cur.state == State.CLOSE){
+                System.out.println("Closed");
+                return;
             }
+
+            if((cur.state != State.START) && (cur.state != State.FINISH)){
+                hasError = true;
+                continue;
+            }
+
             T newResult = initOperator.apply(cur.result);
             newData = new Node(State.INIT, newResult);
-
-        } while (!data.compareAndSet(cur, newData));
+            hasError = false;
+        }
     }
 
     /**
      * Вычисляет результат и переводит контейнер в состояние RUN (Возможно только из состояния INIT)
      */
     public void run(BinaryOperator<T> runOperator, T value) {
-        Node cur;
-        Node newData;
-        do {
+        Node cur = null;
+        Node newData = null;
+
+        boolean hasError = true;
+        while(hasError || !data.compareAndSet(cur, newData)){
             cur = data.get();
-            while (cur.state != State.INIT) {
-                cur = data.get();
-                if (cur.state == State.CLOSE) {
-                    System.out.println("Closed");
-                    return;
-                }
+            if(cur.state == State.CLOSE){
+                System.out.println("Closed");
+                return;
             }
+
+            if(cur.state != State.INIT){
+                hasError = true;
+                continue;
+            }
+
             T newResult = runOperator.apply(cur.result, value);
             newData = new Node(State.RUN, newResult);
-
-        } while (!data.compareAndSet(cur, newData));
+            hasError = false;
+        }
     }
 
 
@@ -95,20 +105,25 @@ public class CalculateContainer<T> {
      * Передает результат потребителю и переводит контейнер в состояние FINISH (Возможно только из состояния RUN)
      */
     public void finish(Consumer<T> finishConsumer) {
-        Node cur;
-        Node newData;
-        do {
-            cur = data.get();
-            while (cur.state != State.RUN) {
-                cur = data.get();
-                if (cur.state == State.CLOSE) {
-                    System.out.println("Closed");
-                    return;
-                }
-            }
-            newData = new Node(State.FINISH, cur.result);
-        } while (!data.compareAndSet(cur, newData));
+        Node cur = null;
+        Node newData = null;
 
+        boolean hasError = true;
+        while(hasError || !data.compareAndSet(cur, newData)){
+            cur = data.get();
+            if(cur.state == State.CLOSE){
+                System.out.println("Closed");
+                return;
+            }
+
+            if(cur.state != State.RUN){
+                hasError = true;
+                continue;
+            }
+
+            newData = new Node(State.FINISH, cur.result);
+            hasError = false;
+        }
         finishConsumer.accept(newData.result);
     }
 
@@ -118,20 +133,25 @@ public class CalculateContainer<T> {
      * (Возможно только из состояния FINISH)
      */
     public void close(Consumer<T> closeConsumer) {
-        Node cur;
-        Node newData;
-        do {
-            cur = data.get();
-            while (cur.state != State.FINISH) {
-                cur = data.get();
-                if (cur.state == State.CLOSE) {
-                    System.out.println("Closed");
-                    return;
-                }
-            }
-            newData = new Node(State.CLOSE, cur.result);
-        } while (!data.compareAndSet(cur, newData));
+        Node cur = null;
+        Node newData = null;
 
+        boolean hasError = true;
+        while(hasError || !data.compareAndSet(cur, newData)){
+            cur = data.get();
+            if(cur.state == State.CLOSE){
+                System.out.println("Closed");
+                return;
+            }
+
+            if(cur.state != State.FINISH){
+                hasError = true;
+                continue;
+            }
+
+            newData = new Node(State.CLOSE, cur.result);
+            hasError = false;
+        }
         closeConsumer.accept(newData.result);
     }
 
@@ -140,8 +160,6 @@ public class CalculateContainer<T> {
     }
 
     public State getState() {
-        synchronized (data) {
-            return data.get().state;
-        }
+        return data.get().state;
     }
 }
