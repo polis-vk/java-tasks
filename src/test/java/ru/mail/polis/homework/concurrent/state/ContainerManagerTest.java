@@ -28,6 +28,7 @@ public class ContainerManagerTest {
         assertEquals(State.FINISH, manager.getCalculateContainers().get(0).getState());
 
         manager.closeContainers();
+        Thread.sleep(100);
         assertTrue(manager.await(100));
         assertEquals(State.CLOSE, manager.getCalculateContainers().get(0).getState());
     }

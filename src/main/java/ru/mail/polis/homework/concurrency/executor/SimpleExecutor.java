@@ -26,26 +26,29 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Max 6 баллов
  */
 public class SimpleExecutor implements Executor {
+    private final int MAX_THREAD_CAPACITY = 20;
     private final BlockingQueue<Runnable> commandQueue = new LinkedBlockingQueue<>();
-    private final List<Worker> workerList = new ArrayList<>();
+    private final Worker[] workerList = new Worker[MAX_THREAD_CAPACITY];
+    private int count = 0;
 
     @Override
     public void execute(Runnable command) {
-        commandQueue.add(command);
-
         boolean foundFreeWorker = false;
-        for (Worker worker : workerList) {
-            if (worker.getState() == Thread.State.WAITING) {
+        for (int i = 0; i < count; i++) {
+            if (workerList[i].getState() == Thread.State.WAITING) {
                 foundFreeWorker = true;
-                worker.notifyWorker();
+                commandQueue.add(command);
+                workerList[i].notifyWorker();
                 break;
             }
         }
-        if (!foundFreeWorker) {
+        if (!foundFreeWorker && count < MAX_THREAD_CAPACITY) {
             Worker newWorker = new Worker();
-            workerList.add(newWorker);
+            workerList[count++] = newWorker;
+            commandQueue.add(command);
             newWorker.start();
         }
+
     }
 
     private final class Worker extends Thread {
@@ -53,17 +56,12 @@ public class SimpleExecutor implements Executor {
         @Override
         public void run() {
             while (true) {
-                synchronized (this) {
-                    try {
-                        while (commandQueue.peek() == null) {
-                            wait();
-                        }
-                        Runnable command = commandQueue.take();
-                        command.run();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        break;
-                    }
+                try {
+                    Runnable command = commandQueue.take();
+                    command.run();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
                 }
             }
         }
@@ -77,6 +75,6 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return workerList.size();
+        return count;
     }
 }
