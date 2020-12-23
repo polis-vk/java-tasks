@@ -29,9 +29,11 @@ public class ContainerManager {
      * Создайте список из непустых контейнеров
      */
     public ContainerManager(int containersCount) {
-        this.calculateContainers = new ArrayList<>(containersCount);
+        calculateContainers = new ArrayList<>(containersCount);
 
-        calculateContainers.add(new CalculateContainer<>(10d));
+        for (int i = 0; i < containersCount; i++) {
+            calculateContainers.add(new CalculateContainer<>(10d));
+        }
 
         cyclicBarrier = new CyclicBarrier(containersCount);
     }
@@ -89,8 +91,7 @@ public class ContainerManager {
      */
     public void closeContainers() {
         for (CalculateContainer<Double> calculateContainer : calculateContainers) {
-            closeExecutor.execute(() -> calculateContainer.close(x ->
-                    System.out.println(x + " was closed")));
+            closeExecutor.execute(() -> calculateContainer.close(x -> System.out.println(x + " was closed")));
         }
 
         try {
