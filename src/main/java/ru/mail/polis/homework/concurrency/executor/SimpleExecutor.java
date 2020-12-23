@@ -27,8 +27,6 @@ import java.util.concurrent.*;
 
 //DOESN'T WORK YET
 public class SimpleExecutor implements Executor {
-    private static Object lock = new Object();
-
     private final int threadAmount;
     private final Queue<Runnable> tasks;
     private final List<SimpleWorker> workers;
