@@ -1,8 +1,7 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -28,7 +27,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class SimpleExecutor implements Executor {
     private int max;
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingDeque<>();
-    private final List<Worker> threads = new ArrayList<>();
+    private final CopyOnWriteArrayList<Worker> threads = new CopyOnWriteArrayList<>();
 
     public SimpleExecutor(int max) {
         this.max = max;
