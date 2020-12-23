@@ -21,6 +21,7 @@ public class ContainerManager {
     private final List<CalculateContainer<Double>> calculateContainers;
     private final CountDownLatch countDownLatch = new CountDownLatch(2);
     private final ExecutorService service = Executors.newFixedThreadPool(2);
+    private final ExecutorService serviceInit = Executors.newCachedThreadPool();
 
     /**
      * Создайте список из непустых контейнеров
@@ -28,7 +29,7 @@ public class ContainerManager {
     public ContainerManager(int numberOfContainers) {
         this.calculateContainers = Stream
                 .generate(() -> new CalculateContainer<>(10d))
-                .limit(2)
+                .limit(numberOfContainers)
                 .collect(Collectors.toList());
     }
 
@@ -41,7 +42,6 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void initContainers() {
-        final ExecutorService serviceInit = Executors.newCachedThreadPool();
         for (CalculateContainer<Double> container : calculateContainers) {
             for (int j = 0; j < 20; j++) {
                 serviceInit.execute(() -> container.init(operation(Math::sqrt)));
@@ -58,7 +58,6 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void runContainers() {
-        final ExecutorService service = Executors.newFixedThreadPool(2);
         for (CalculateContainer<Double> container : calculateContainers) {
             for (int i = 0; i < 20; i++) {
                 service.execute(() -> container.run(operation((start, param) -> start + param), 5d));
@@ -74,7 +73,6 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void finishContainers() {
-        final ExecutorService service = Executors.newFixedThreadPool(2);
         for (CalculateContainer<Double> container : calculateContainers) {
             service.execute(() -> container.finish(value -> {
                 System.out.println("finish " + value);
@@ -94,7 +92,7 @@ public class ContainerManager {
      * как только закроются все 10 контейеров
      */
     public void closeContainers() {
-        ExecutorService serviceClose = Executors.newFixedThreadPool(1);
+        ExecutorService serviceClose = Executors.newSingleThreadExecutor();
         for (CalculateContainer<Double> container : calculateContainers) {
             serviceClose.execute(() -> container.close(value -> {
                 countDownLatch.countDown();
