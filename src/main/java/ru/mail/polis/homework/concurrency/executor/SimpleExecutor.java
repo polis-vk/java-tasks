@@ -4,6 +4,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой экзекьютор с линивой инициализацией потоков до какого-то заданного предела.
@@ -26,6 +27,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public class SimpleExecutor implements Executor {
     private int max;
+    private AtomicInteger size = new AtomicInteger(0);
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingDeque<>();
     private final CopyOnWriteArrayList<Worker> threads = new CopyOnWriteArrayList<>();
 
@@ -35,17 +37,23 @@ public class SimpleExecutor implements Executor {
 
     @Override
     public void execute(Runnable command) {
+        int cur = 0, res = 0;
+        do {
+            cur = size.get();
+            if (cur >= max) {
+                tasks.add(command);
+                return;
+            }
+            res = cur + 1;
+        } while (!size.compareAndSet(cur, res));
+
         Worker worker = getFreeWorker();
         if (worker == null) {
             worker = new Worker();
             threads.add(worker);
         }
 
-        try {
-            tasks.put(command);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        tasks.add(command);
 
         if (worker.getState() == Thread.State.NEW) {
             worker.start();
@@ -72,8 +80,8 @@ public class SimpleExecutor implements Executor {
 
     private class Worker extends Thread {
         public synchronized void waitTask() throws InterruptedException {
-            if(this.getState() == State.WAITING){
-                notifyAll();
+            if (this.getState() == State.WAITING) {
+                notify();
                 return;
             }
             while (true) {
