@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.concurrency.state;
 
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
@@ -31,8 +32,8 @@ import java.util.function.UnaryOperator;
  */
 public class CalculateContainer<T> {
 
-    private State state = State.START;
-
+    private final AtomicReference<State> state = new AtomicReference<>(State.START);
+    private static final String ERROR_MSG = "State has been closed";
     private T result;
 
     public CalculateContainer(T result) {
@@ -43,7 +44,25 @@ public class CalculateContainer<T> {
      * Инициализирует результат и переводит контейнер в состояние INIT (Возможно только из состояния START и FINISH)
      */
     public void init(UnaryOperator<T> initOperator) {
-
+        synchronized (state) {
+            while (true) {
+                if (state.get() == State.CLOSE) {
+                    System.err.println(ERROR_MSG);
+                    break;
+                }
+                if (state.get() == State.START || state.get() == State.FINISH) {
+                    result = initOperator.apply(result);
+                    state.set(State.INIT);
+                    break;
+                }
+                try {
+                    state.wait();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            state.notifyAll();
+        }
     }
 
 
@@ -51,7 +70,26 @@ public class CalculateContainer<T> {
      * Вычисляет результат и переводит контейнер в состояние RUN (Возможно только из состояния INIT)
      */
     public void run(BinaryOperator<T> runOperator, T value) {
+        synchronized (state) {
 
+            while (true) {
+                if (state.get() == State.CLOSE) {
+                    System.err.println(ERROR_MSG);
+                    break;
+                }
+                if (state.get() == State.INIT) {
+                    result = runOperator.apply(result, value);
+                    state.set(State.RUN);
+                    break;
+                }
+                try {
+                    state.wait();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            state.notifyAll();
+        }
     }
 
 
@@ -59,7 +97,25 @@ public class CalculateContainer<T> {
      * Передает результат потребителю и переводит контейнер в состояние FINISH (Возможно только из состояния RUN)
      */
     public void finish(Consumer<T> finishConsumer) {
-
+        synchronized (state) {
+            while (true) {
+                if (state.get() == State.CLOSE) {
+                    System.err.println(ERROR_MSG);
+                    break;
+                }
+                if (state.get() == State.RUN) {
+                    finishConsumer.accept(result);
+                    state.set(State.FINISH);
+                    break;
+                }
+                try {
+                    state.wait();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            state.notifyAll();
+        }
     }
 
 
@@ -68,15 +124,32 @@ public class CalculateContainer<T> {
      * (Возможно только из состояния FINISH)
      */
     public void close(Consumer<T> closeConsumer) {
-
+        synchronized (state) {
+            while (true) {
+                if (state.get() == State.CLOSE) {
+                    System.err.println(ERROR_MSG);
+                    break;
+                }
+                if (state.get() == State.FINISH) {
+                    closeConsumer.accept(result);
+                    state.set(State.CLOSE);
+                    break;
+                }
+                try {
+                    state.wait();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            state.notifyAll();
+        }
     }
-
 
     public T getResult() {
         return result;
     }
 
     public State getState() {
-        return state;
+        return state.get();
     }
 }

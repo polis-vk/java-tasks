@@ -14,22 +14,29 @@ public class ContainerManagerTest {
     public void oneContainer() throws Exception {
         ContainerManager manager = new ContainerManager(1);
         assertEquals(State.START, manager.getCalculateContainers().get(0).getState());
+        System.out.println("START Passed");
 
         manager.initContainers();
         assertFalse(manager.await(100));
         assertEquals(State.INIT, manager.getCalculateContainers().get(0).getState());
+        System.out.println("INIT PASSED");
 
         manager.runContainers();
         assertFalse(manager.await(100));
         assertEquals(State.RUN, manager.getCalculateContainers().get(0).getState());
+        System.out.println("RUN PASSED");
 
         manager.finishContainers();
         assertFalse(manager.await(100));
         assertEquals(State.FINISH, manager.getCalculateContainers().get(0).getState());
+        System.out.println("FINISH PASSED");
+
 
         manager.closeContainers();
         assertTrue(manager.await(100));
         assertEquals(State.CLOSE, manager.getCalculateContainers().get(0).getState());
+        System.out.println("CLOSE PASSED");
+
     }
 
 

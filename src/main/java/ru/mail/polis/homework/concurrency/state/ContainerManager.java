@@ -22,7 +22,7 @@ public class ContainerManager {
 
     private final List<CalculateContainer<Double>> calculateContainers;
     private final CountDownLatch countDownLatch;
-    private final int iterationsCount = 1_000_000;
+    private final int iterationsCount = 10_000;
 
     private final ExecutorService cachedExecutor = Executors.newCachedThreadPool();
     private final ExecutorService doubleThreadExecutor = Executors.newFixedThreadPool(2);
@@ -33,8 +33,8 @@ public class ContainerManager {
      */
     public ContainerManager(int containersCount) {
         this.calculateContainers = new ArrayList<>(containersCount);
-        for (int i = 0; i < 10; i++) {
-            calculateContainers.add(new CalculateContainer<>(Math.random() * 10_000D));
+        for (int i = 0; i < containersCount; i++) {
+            calculateContainers.add(new CalculateContainer<>(Math.random() * 100D));
         }
         this.countDownLatch = new CountDownLatch(containersCount);
     }
@@ -49,9 +49,11 @@ public class ContainerManager {
      */
     public void initContainers() {
         for (CalculateContainer<Double> container : calculateContainers) {
-            UnaryOperator<Double> operator = operation(Math::cos);
+            UnaryOperator<Double> operator = operation(Math::sin);
             for (int j = 0; j < iterationsCount; j++) {
-                cachedExecutor.execute(() -> container.init(operator));
+                cachedExecutor.execute(() -> {
+                    container.init(operator);
+                });
             }
         }
     }
