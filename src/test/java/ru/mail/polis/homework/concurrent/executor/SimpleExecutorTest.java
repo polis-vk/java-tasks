@@ -23,7 +23,7 @@ public class SimpleExecutorTest {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            assertEquals(executor.getLiveThreadsCount(), 1);
+            assertEquals(1, executor.getLiveThreadsCount());
         }
     }
 
@@ -54,7 +54,39 @@ public class SimpleExecutorTest {
                 });
             }
             executorService.awaitTermination(5, TimeUnit.SECONDS);
-            assertEquals(executor.getLiveThreadsCount(), N);
+            assertEquals(N, executor.getLiveThreadsCount());
+        }
+    }
+
+    @Test
+    public void runMoreThanMaxTasks() throws InterruptedException {
+        int N = 10;
+        int M = 5;
+        ExecutorService executorService = Executors.newFixedThreadPool(N + M);
+        for (int j = 0; j < 4; j++) {
+            SimpleExecutor executor = new SimpleExecutor(N);
+            System.out.println(j);
+            CountDownLatch countDownLatch = new CountDownLatch(N + M);
+            for (int i = 0; i < N + M; i++) {
+                executorService.execute(() -> {
+                    countDownLatch.countDown();
+                    try {
+                        countDownLatch.await();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    executor.execute(() -> {
+                        try {
+                            Thread.sleep(1500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        System.out.println("Some work results");
+                    });
+                });
+            }
+            executorService.awaitTermination(5, TimeUnit.SECONDS);
+            assertEquals(N, executor.getLiveThreadsCount());
         }
     }
 }
