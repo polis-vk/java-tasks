@@ -1,81 +1,79 @@
 package ru.mail.polis.homework.concurrent.state;
 
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import ru.mail.polis.homework.concurrency.executor.SimpleExecutor;
 
 public class SimpleExecutorTest {
-    private SimpleExecutor simpleExecutorl;
-
-    public SimpleExecutorTest() {
-        simpleExecutorl = new SimpleExecutor(5);
-    }
-
-    @Test
-    public void executorExecutingOnlyOneTask() {
-        for (int i = 0; i < 5; i++) {
-            int finalI = i;
-
-            Runnable kek = () -> {
-                System.out.println("Kek " + finalI);
-            };
-
-            simpleExecutorl.execute(kek);
-
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            Assert.assertEquals(0, simpleExecutorl.getLiveThreadsCount());
-        }
-    }
-
-    @Test
-    public void executorShould() {
+     private SimpleExecutor simpleExecutor;
+    private final Runnable firstRunnable = () -> {
+        System.out.println("1. Doing job: " + Thread.currentThread().getName());
         try {
-            for (int i = 0; i < 5; i++) {
-                int finalI = i;
-                Runnable kek = () -> {
-                    try {
-                        Thread.sleep(1000);
-                        System.out.println("Kek type1 Try: " + finalI);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                };
-
-                Runnable kek2 = () -> {
-                    try {
-                        Thread.sleep(1000);
-                        System.out.println("Kek type2 Try: " + finalI);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                };
-                simpleExecutorl.execute(kek);
-                simpleExecutorl.execute(kek);
-                simpleExecutorl.execute(kek);
-                simpleExecutorl.execute(kek);
-                simpleExecutorl.execute(kek);
-
-                simpleExecutorl.execute(kek2);
-                simpleExecutorl.execute(kek2);
-                simpleExecutorl.execute(kek2);
-                simpleExecutorl.execute(kek2);
-
-                Assert.assertEquals(5, simpleExecutorl.getLiveThreadsCount());
-
-                System.out.println(simpleExecutorl.getLiveThreadsCount());
-                Thread.sleep(1500);
-
-//                Assert.assertNotEquals(0, simpleExecutorl.getLiveThreadsCount());
-                Thread.sleep(2100);
-                System.out.println("-----------");
-            }
+            Thread.sleep(5);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
+        }
+    };
+    private final Runnable secondRunnable = () -> {
+        System.out.println("2. Doing job: " + Thread.currentThread().getName());
+        try {
+            Thread.sleep(5);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    };
+
+
+    @Before
+    public void initExecutor() {
+        simpleExecutor = new SimpleExecutor(4);
+    }
+
+    // Запуск 1 задачи несколько раз с интервалом (должен создаться только 1 поток)
+    @Test
+    public void threadsAmount() {
+        int taskAmount = 100;
+        Runnable runnable = () -> System.out.println("Doing job: " + Thread.currentThread().getName());
+        for (int i = 0; i < taskAmount; i++) {
+            simpleExecutor.execute(runnable);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        assertEquals(1, simpleExecutor.getLiveThreadsCount());
+    }
+
+    private void assertEquals(int i, long liveThreadsCount) {
+    }
+
+    // запуск параллельно n - 1 задач несколько раз (должно создаться n - 1 потоков) и задачи должны завершится
+    // примерно одновременно
+    @Test
+    public void parallel() {
+        final int taskAmount = 20;
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < taskAmount; j++) {
+                simpleExecutor.execute(firstRunnable);
+            }
+        }
+        assertEquals(taskAmount, simpleExecutor.getLiveThreadsCount());
+    }
+
+    // запуск параллельно n + m задач несколько раз (должно создаться n потоков) и первые n задач должны завершится
+    // примерно одновременно, вторые m задач должны завершиться чуть позже первых n и тоже примерно одновременно
+    @Test
+    public void anotherParallel() {
+        final int firstTaskAmount = 15;
+        final int secondTaskAmount = 10;
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < firstTaskAmount; j++) {
+                simpleExecutor.execute(firstRunnable);
+            }
+            for (int j = 0; j < secondTaskAmount; j++) {
+                simpleExecutor.execute(secondRunnable);
+            }
         }
     }
 }

@@ -1,8 +1,9 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой экзекьютор с линивой инициализацией потоков до какого-то заданного предела.
@@ -26,68 +27,61 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 //DOESN'T WORK YET
 public class SimpleExecutor implements Executor {
-    private final int AMOUNT;
-    private final BlockingQueue<Runnable> threads;
-    private final AtomicInteger size = new AtomicInteger(0);
-    private final AtomicBoolean working = new AtomicBoolean(false);
-    private volatile boolean isFinished = false;
+    private static Object lock = new Object();
+
+    private final int threadAmount;
+    private final Queue<Runnable> tasks;
+    private final List<SimpleWorker> workers;
+
+    private static class SimpleWorker extends Thread {
+        private final Queue<Runnable> tasks;
+        private boolean works;
+
+        public SimpleWorker(Queue<Runnable> tasks) {
+            this.tasks = tasks;
+            this.works = true;
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                works = false;
+
+                Runnable task = this.tasks.poll();
+                works = true;
+                task.run();
+            }
+        }
+
+        public boolean isWorks() {
+            return works;
+        }
+    }
 
     public SimpleExecutor(int amount) {
-        this.AMOUNT = amount - 1;
-        threads = new ArrayBlockingQueue<>(this.AMOUNT);
-
-        Thread demon = new Thread(() -> {
-            while (!isFinished || !threads.isEmpty()) {
-                if (size.get() < AMOUNT) {
-                    Thread t = new Thread(() -> {
-                        try {
-                            threads.take().run();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } finally {
-                            size.decrementAndGet();
-                        }
-                    });
-
-                    t.start();
-                }
-            }
-        });
-
-        demon.start();
+        this.threadAmount = amount;
+        this.tasks = new LinkedBlockingQueue();
+        this.workers = new ArrayList<>(amount);
+        this.workers.add(new SimpleWorker(tasks));
     }
 
     @Override
     public void execute(Runnable command) {
-        try {
-            if (!working.get()) {
-                Thread t = new Thread(() -> {
-                    working.set(true);
-                    command.run();
-                    working.set(false);
-
-                    size.decrementAndGet();
-                });
-
-                t.start();
-            } else {
-                threads.put(command);
-            }
-
-            size.incrementAndGet();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (!haveFreeWorker() && workers.size() < threadAmount) {
+            workers.add(new SimpleWorker(this.tasks));
         }
+
+        tasks.add(command);
     }
 
-    public void stop() {
-        isFinished = true;
+    private boolean haveFreeWorker() {
+        return this.workers.stream().anyMatch(w -> !w.isWorks());
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
-    public int getLiveThreadsCount() {
-        return size.get();
+    public long getLiveThreadsCount() {
+        return this.workers.size();
     }
 }

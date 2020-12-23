@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.concurrency.state;
 
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
