@@ -22,6 +22,7 @@ public class ContainerManager {
     private final CountDownLatch countDownLatch;
     private final ExecutorService initThreadPool = Executors.newCachedThreadPool();
     private final ExecutorService doubleThreadPool = Executors.newFixedThreadPool(2);
+    private final ExecutorService doubleThreadPool2 = Executors.newFixedThreadPool(2);
     private final ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
 
     /**
@@ -82,7 +83,7 @@ public class ContainerManager {
     public void finishContainers() {
         for (CalculateContainer<Double> container : calculateContainers) {
             for (int j = 0; j < N; j++) {
-                doubleThreadPool.execute(
+                doubleThreadPool2.execute(
                         () -> container.finish((aDouble) -> System.out.println("Finish: " + aDouble))
                 );
             }
