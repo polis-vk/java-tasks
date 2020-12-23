@@ -43,20 +43,15 @@ public class CalculateContainer<T> {
      * Инициализирует результат и переводит контейнер в состояние INIT (Возможно только из состояния START и FINISH)
      */
     public synchronized void init(UnaryOperator<T> initOperator) {
-        while (!this.state.equals(State.START) && !this.state.equals(State.FINISH)) {
+        while (!isNeededState(State.START) && !isNeededState(State.FINISH)) {
             if (needStop()) {
                 return;
             }
 
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            waitForStateChanges();
         }
 
         result = initOperator.apply(result);
-
         changeState(State.INIT);
     }
 
@@ -64,20 +59,15 @@ public class CalculateContainer<T> {
      * Вычисляет результат и переводит контейнер в состояние RUN (Возможно только из состояния INIT)
      */
     public synchronized void run(BinaryOperator<T> runOperator, T value) {
-        while (!this.state.equals(State.INIT)) {
+        while (!isNeededState(State.INIT)) {
             if (needStop()) {
                 return;
             }
 
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            waitForStateChanges();
         }
 
         result = runOperator.apply(value, result);
-
         changeState(State.RUN);
     }
 
@@ -85,20 +75,15 @@ public class CalculateContainer<T> {
      * Передает результат потребителю и переводит контейнер в состояние FINISH (Возможно только из состояния RUN)
      */
     public synchronized void finish(Consumer<T> finishConsumer) {
-        while (!state.equals(State.RUN)) {
+        while (!isNeededState(State.RUN)) {
             if (needStop()) {
                 return;
             }
 
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            waitForStateChanges();
         }
 
         finishConsumer.accept(result);
-
         changeState(State.FINISH);
     }
 
@@ -107,20 +92,15 @@ public class CalculateContainer<T> {
      * (Возможно только из состояния FINISH)
      */
     public synchronized void close(Consumer<T> closeConsumer) {
-        while (!state.equals(State.FINISH)) {
+        while (!isNeededState(State.FINISH)) {
             if (needStop()) {
                 return;
             }
 
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            waitForStateChanges();
         }
 
         closeConsumer.accept(result);
-
         changeState(State.CLOSE);
     }
 
@@ -139,6 +119,18 @@ public class CalculateContainer<T> {
         }
 
         return false;
+    }
+
+    private synchronized void waitForStateChanges() {
+        try {
+            this.wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean isNeededState(State state) {
+        return this.state.equals(state);
     }
 
     private synchronized void changeState(State state) {
