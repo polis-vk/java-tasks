@@ -1,6 +1,11 @@
 package ru.mail.polis.homework.concurrency.state;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
@@ -13,38 +18,56 @@ import java.util.function.UnaryOperator;
  * Max 11 баллов
  */
 public class ContainerManager {
+    private final int N = 1_000;
 
     private final List<CalculateContainer<Double>> calculateContainers;
+    private final CountDownLatch latch;
+
+    private final ExecutorService initExec = Executors.newCachedThreadPool();
+    private final ExecutorService mainExec = Executors.newFixedThreadPool(2);
+    private final ExecutorService closeExec = Executors.newSingleThreadExecutor();
+
+
 
     /**
      * Создайте список из непустых контейнеров
      */
     public ContainerManager(int containersCount) {
-        this.calculateContainers = null;
+        this.calculateContainers = new ArrayList<>(containersCount);
+        for (int i = 0; i < containersCount; ++i) {
+            calculateContainers.add(new CalculateContainer<>(10d));
+        }
+        latch = new CountDownLatch(containersCount);
     }
 
 
     /**
      * Используйте executor c расширяемым количеством потоков,
-     * который будет инициировать все контейнеры, какой-нибудь математической операцией 1_000_000 раз.
+     * который будет инициировать все контейнеры, какой-нибудь математической операцией 1_000 раз.
      * (для этого используйте вспомогательный метод operation)
      *
      * Каждый контейнер надо исполнять отдельно.
      */
     public void initContainers() {
-
+        UnaryOperator<Double> operator = operation(Math::sqrt);
+        for (CalculateContainer<Double> container : calculateContainers) {
+            initExec.execute(() -> container.init(operator));
+        }
     }
 
 
     /**
      * Используйте executor c 2 потоками (общий с операцией finish),
-     * который будет запускать все контейнеры какой-нибудь математической операцией 1_000_000 раз
+     * который будет запускать все контейнеры какой-нибудь математической операцией 1_000 раз
      * (для этого используйте вспомогательный метод operation)
      *
      * Каждый контейнер надо исполнять отдельно.
      */
     public void runContainers() {
-
+        BinaryOperator<Double> operator = operation(Double::sum);
+        for (CalculateContainer<Double> container : calculateContainers) {
+            mainExec.execute(() -> container.run(operator, 5d));
+        }
     }
 
 
@@ -55,7 +78,9 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void finishContainers() {
-
+        for (CalculateContainer<Double> container : calculateContainers) {
+            mainExec.execute(() -> container.finish(value -> System.out.println("finish " + value)));
+        }
     }
 
 
@@ -69,8 +94,15 @@ public class ContainerManager {
      * то нужно добавить некоторую синхронизацию, которая разблокируется,
      * как только закроются все 10 контейеров
      */
-    public void closeContainers() {
+    public void closeContainers() throws InterruptedException {
+        for (CalculateContainer<Double> container : calculateContainers) {
+            closeExec.execute(() -> container.close(value -> {
+                System.out.println("closed " + value);
+                latch.countDown();
+            }));
+        }
 
+        latch.await();
     }
 
     /**
@@ -81,7 +113,7 @@ public class ContainerManager {
      * Учтите, что время передается в милисекундах.
      */
     public boolean await(long timeoutMillis) throws Exception {
-        return false;
+        return latch.await(timeoutMillis, TimeUnit.MILLISECONDS);
     }
 
     public List<CalculateContainer<Double>> getCalculateContainers() {

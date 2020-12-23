@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Нужно сделать свой экзекьютор с линивой инициализацией потоков до какого-то заданного предела.
@@ -22,15 +26,78 @@ import java.util.concurrent.Executor;
  * Max 6 баллов
  */
 public class SimpleExecutor implements Executor {
+    private final int MAX_THREADS;
+    private final Queue<Runnable> queue = new LinkedBlockingQueue<>();
+    private final List<Worker> pool;
+    private boolean isRunning = true;
+
+    public SimpleExecutor(int threadsAmount) {
+        MAX_THREADS = threadsAmount;
+        pool = new ArrayList<>(threadsAmount);
+    }
+
     @Override
     public void execute(Runnable command) {
+        if (isRunning) {
+            queue.offer(command);
+            for (Worker worker : pool) {
+                if (worker.getState() == Thread.State.WAITING) {
+                    worker.myNotify();
+                    return;
+                }
+            }
 
+
+            if (pool.size() < MAX_THREADS) {
+                Worker temp = new Worker();
+                pool.add(temp);
+                temp.start();
+            } else {
+                notifyThreads();
+            }
+        }
+    }
+
+    private void notifyThreads() {
+        for (Worker worker : pool) {
+            if (worker.getState() == Thread.State.WAITING) {
+                worker.myNotify();
+            }
+        }
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        return pool.size();
+    }
+
+    public void shutdown() {
+        isRunning = false;
+        notifyThreads();
+    }
+
+    private final class Worker extends Thread {
+
+        @Override
+        public synchronized void run() {
+            while (isRunning) {
+                Runnable task = queue.poll();
+                if (task != null) {
+                    task.run();
+                } else {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        private synchronized void myNotify() {
+            this.notify();
+        }
     }
 }

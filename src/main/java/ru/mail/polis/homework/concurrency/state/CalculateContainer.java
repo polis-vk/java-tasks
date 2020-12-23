@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.concurrency.state;
 
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
@@ -31,26 +32,55 @@ import java.util.function.UnaryOperator;
  */
 public class CalculateContainer<T> {
 
-    private State state = State.START;
+    private class Pair {
+        State state;
+        T result;
 
-    private T result;
+        Pair(State state, T result) {
+            this.state = state;
+            this.result = result;
+        }
+    }
+
+    private AtomicReference<Pair> pair = new AtomicReference<>();
 
     public CalculateContainer(T result) {
-        this.result = result;
+        pair.set(new Pair(State.START, result));
     }
 
     /**
      * Инициализирует результат и переводит контейнер в состояние INIT (Возможно только из состояния START и FINISH)
      */
     public void init(UnaryOperator<T> initOperator) {
+        Pair curVal;
+        Pair newVal;
+        do {
+            curVal = pair.get();
+            if (curVal.state == State.CLOSE) {
+                System.out.println("Error. Container is closed.");
+                return;
+            }
 
+            newVal = new Pair(State.INIT, initOperator.apply(curVal.result));
+        }   while (curVal.state != State.START && curVal.state != State.FINISH
+                    || !pair.compareAndSet(curVal, newVal));
     }
 
     /**
      * Вычисляет результат и переводит контейнер в состояние RUN (Возможно только из состояния INIT)
      */
     public void run(BinaryOperator<T> runOperator, T value) {
+        Pair curVal;
+        Pair newVal;
+        do {
+            curVal = pair.get();
+            if (curVal.state == State.CLOSE) {
+                System.out.println("Error. Container is closed.");
+                return;
+            }
 
+            newVal = new Pair(State.RUN, runOperator.apply(curVal.result, value));
+        }   while (curVal.state != State.INIT || !pair.compareAndSet(curVal, newVal));
     }
 
 
@@ -58,7 +88,18 @@ public class CalculateContainer<T> {
      * Передает результат потребителю и переводит контейнер в состояние FINISH (Возможно только из состояния RUN)
      */
     public void finish(Consumer<T> finishConsumer) {
+        Pair curVal;
+        Pair newVal;
+        do {
+            curVal = pair.get();
+            if (curVal.state == State.CLOSE) {
+                System.out.println("Error. Container is closed.");
+                return;
+            }
 
+            newVal = new Pair(State.FINISH, curVal.result);
+        }   while (curVal.state != State.RUN || !pair.compareAndSet(curVal, newVal));
+        finishConsumer.accept(curVal.result);
     }
 
 
@@ -67,15 +108,25 @@ public class CalculateContainer<T> {
      * (Возможно только из состояния FINISH)
      */
     public void close(Consumer<T> closeConsumer) {
+        Pair curVal;
+        Pair newVal;
+        do {
+            curVal = pair.get();
+            if (curVal.state == State.CLOSE) {
+                System.out.println("Error. Container is closed.");
+                return;
+            }
 
+            newVal = new Pair(State.CLOSE, curVal.result);
+        }   while (curVal.state != State.FINISH || !pair.compareAndSet(curVal, newVal));
+        closeConsumer.accept(curVal.result);
     }
 
-
     public T getResult() {
-        return result;
+        return pair.get().result;
     }
 
     public State getState() {
-        return state;
+        return pair.get().state;
     }
 }
