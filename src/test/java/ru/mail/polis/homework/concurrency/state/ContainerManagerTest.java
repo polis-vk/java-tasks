@@ -1,8 +1,6 @@
-package ru.mail.polis.homework.concurrent.state;
+package ru.mail.polis.homework.concurrency.state;
 
 import org.junit.Test;
-import ru.mail.polis.homework.concurrency.state.ContainerManager;
-import ru.mail.polis.homework.concurrency.state.State;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

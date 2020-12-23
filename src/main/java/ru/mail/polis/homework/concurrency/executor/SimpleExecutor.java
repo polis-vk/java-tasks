@@ -29,25 +29,26 @@ public class SimpleExecutor implements Executor {
     private final BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
     final List<Worker> workers = new ArrayList<>();
     private boolean isRunnable = true;
-    private final int size;
+    private final int sizeThread;
 
     public SimpleExecutor() {
-        size = 10;
+        sizeThread = 10;
     }
 
-    public SimpleExecutor(int n) {
-        this.size = n;
+    public SimpleExecutor(int sizeThread) {
+        this.sizeThread = sizeThread;
     }
 
     @Override
     public void execute(Runnable command) {
-        workQueue.offer(command);
+        if (sizeThread == workers.size()) {
+            workQueue.offer(command);
+            return;
+        }
+
         Worker freeWorker = getFreeWorker();
-        if (size == workers.size()) {
-            while ((freeWorker = getFreeWorker()) != null) {
-                freeWorker.notifyWorker();
-            }
-        } else if (freeWorker == null) {
+        workQueue.offer(command);
+        if (freeWorker == null) {
             Worker newWorker = new Worker();
             workers.add(newWorker);
             newWorker.start();
@@ -84,13 +85,7 @@ public class SimpleExecutor implements Executor {
         public void run() {
             while (isRunnable) {
                 try {
-                    synchronized (this) {
-                        Runnable nextTask ;
-                        while ((nextTask = workQueue.poll()) == null) {
-                            wait();
-                        }
-                        nextTask.run();
-                    }
+                    workQueue.take().run();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

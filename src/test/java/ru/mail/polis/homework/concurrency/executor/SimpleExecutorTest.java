@@ -5,6 +5,16 @@ import org.junit.Test;
 
 public class SimpleExecutorTest {
 
+    private final Runnable task = () -> {
+        try {
+            System.out.println("start Task");
+            Thread.sleep(10);
+            System.out.println("end Task");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    };
+
     /**
      * запуск 1 задачи несколько раз с интервалом (должен создаться только 1 поток)
      */
@@ -13,26 +23,11 @@ public class SimpleExecutorTest {
         SimpleExecutor executor = new SimpleExecutor();
         Assert.assertEquals(0, executor.getLiveThreadsCount());
 
-        Runnable task = () -> {
-            try {
-                System.out.println("start Task");
-                Thread.sleep(3000);
-                System.out.println("end Task");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        };
+        for (int i = 0; i < 100; i++) {
+            executor.execute(task);
+            Thread.sleep(20);
+        }
 
-        executor.execute(task);
-        Thread.sleep(4000);
-        Assert.assertEquals(1, executor.getLiveThreadsCount());
-
-        executor.execute(task);
-        Thread.sleep(4000);
-        Assert.assertEquals(1, executor.getLiveThreadsCount());
-
-        executor.execute(task);
-        Thread.sleep(4000);
         Assert.assertEquals(1, executor.getLiveThreadsCount());
         executor.shutdown();
     }
@@ -42,28 +37,16 @@ public class SimpleExecutorTest {
      */
     @Test
     public void severalTask() throws InterruptedException {
-
         SimpleExecutor executor = new SimpleExecutor();
         Assert.assertEquals(0, executor.getLiveThreadsCount());
 
-        Runnable task = () -> {
-            try {
-                System.out.println("start Task");
-                Thread.sleep(3000);
-                System.out.println("end Task");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        };
         int n = 5;
-        for (int i = 0; i < n; i++) {
-            executor.execute(task);
+        for (int j = 0; j < 100; j++) {
+            for (int i = 0; i < n; i++) {
+                executor.execute(task);
+            }
+            Thread.sleep(60);
         }
-        Thread.sleep(5000);
-        for (int i = 0; i < n; i++) {
-            executor.execute(task);
-        }
-        Thread.sleep(5000);
         Assert.assertEquals(n, executor.getLiveThreadsCount());
         executor.shutdown();
     }
@@ -82,7 +65,7 @@ public class SimpleExecutorTest {
         Runnable task1 = () -> {
             try {
                 System.out.println("start Task1");
-                Thread.sleep(2000);
+                Thread.sleep(20);
                 System.out.println("end Task1");
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -91,27 +74,21 @@ public class SimpleExecutorTest {
         Runnable task2 = () -> {
             try {
                 System.out.println("start Task2");
-                Thread.sleep(1000);
+                Thread.sleep(10);
                 System.out.println("end Task2");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         };
-        for (int i = 0; i < n; i++) {
-            executor.execute(task1);
+        for (int j = 0; j < 100; j++) {
+            for (int i = 0; i < n; i++) {
+                executor.execute(task1);
+            }
+            for (int i = 0; i < m; i++) {
+                executor.execute(task2);
+            }
+            Thread.sleep(150);
         }
-        for (int i = 0; i < m; i++) {
-            executor.execute(task2);
-        }
-        Thread.sleep(5000);
-        Assert.assertEquals(5, executor.getLiveThreadsCount());
-        for (int i = 0; i < n; i++) {
-            executor.execute(task1);
-        }
-        for (int i = 0; i < m; i++) {
-            executor.execute(task2);
-        }
-        Thread.sleep(5000);
         Assert.assertEquals(5, executor.getLiveThreadsCount());
         executor.shutdown();
     }
