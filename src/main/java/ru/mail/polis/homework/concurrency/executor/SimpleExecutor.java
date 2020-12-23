@@ -36,11 +36,10 @@ public class SimpleExecutor implements Executor {
 
     @Override
     public void execute(Runnable command) {
-        Worker thread = getFreeTread();
-        if (thread == null) {
-            thread = new Worker();
-            thread.start();
-            threads.add(thread);
+        Worker worker = getFreeWorker();
+        if (worker == null) {
+            worker = new Worker();
+            threads.add(worker);
         }
 
         try {
@@ -49,14 +48,14 @@ public class SimpleExecutor implements Executor {
             e.printStackTrace();
         }
 
-        try {
-            thread.waitTask();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (worker.getState() == Thread.State.NEW) {
+            worker.start();
+        } else {
+            worker.run();
         }
     }
 
-    private Worker getFreeTread() {
+    private Worker getFreeWorker() {
         for (Worker e : threads) {
             if (e.getState() == Thread.State.WAITING) {
                 return e;
@@ -74,20 +73,30 @@ public class SimpleExecutor implements Executor {
 
     private class Worker extends Thread {
         public synchronized void waitTask() throws InterruptedException {
-            while(tasks.isEmpty()){
-                wait();
+            if(this.getState() == State.WAITING){
+                notifyAll();
+                return;
             }
-            start();
+            while (true) {
+                if (tasks.isEmpty()) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        interrupt();
+                    }
+                } else {
+                    tasks.take().run();
+                }
+            }
         }
 
         @Override
         public void run() {
-            while (true){
-                try {
-                    tasks.take().run();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            try {
+                waitTask();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                interrupt();
             }
         }
     }
