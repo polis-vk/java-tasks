@@ -30,6 +30,7 @@ public class SimpleExecutor implements Executor {
     private final int limitOfThreads;
     private final BlockingQueue<Runnable> tasks;
     private final List<Worker> workers;
+    Lock lock = new ReentrantLock();
     private volatile boolean isRunning = true;
 
 
@@ -46,7 +47,6 @@ public class SimpleExecutor implements Executor {
     public void execute(Runnable command) {
         if (isRunning) {
             Worker freeWorker = null;
-            Lock lock = new ReentrantLock();
             lock.lock();
             try {
                 for (Worker worker : workers) {
