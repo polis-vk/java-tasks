@@ -28,7 +28,7 @@ public class SimpleExecutorTest {
         for (int i = 0; i < numberOfExecutions; i++) {
             simpleExecutor.execute(task);
             try {
-                Thread.sleep(1100);
+                Thread.sleep(1300);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -49,7 +49,7 @@ public class SimpleExecutorTest {
                 simpleExecutor.execute(task);
             }
             try {
-                Thread.sleep(1100);
+                Thread.sleep(1300);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }

@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Нужно сделать свой экзекьютор с линивой инициализацией потоков до какого-то заданного предела.
@@ -28,41 +31,44 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class SimpleExecutor implements Executor {
     private final int numberOfThreadsLimit;
-    private final AtomicInteger numberOfThreads = new AtomicInteger(0);
-    private final BlockingQueue<Runnable> tasksToDoQueue = new LinkedBlockingQueue<>();
-    private final List<SimpleThread> threadsList = new ArrayList<>();
+    private final AtomicInteger numberOfThreads = new AtomicInteger();
+    private final BlockingQueue<Runnable> tasksToDoQueue;
+    private final Lock lock = new ReentrantLock();
 
     public SimpleExecutor(int limit) {
         numberOfThreadsLimit = limit;
+        tasksToDoQueue = new LinkedBlockingQueue<>();
     }
 
     public SimpleExecutor() {
         numberOfThreadsLimit = 50;
+        tasksToDoQueue = new LinkedBlockingQueue<>();
     }
 
     @Override
     public void execute(Runnable task) {
         tasksToDoQueue.offer(task);
-        SimpleThread freeThread = null;
-        for (SimpleThread thread : threadsList) {
-            if (thread.getState() == Thread.State.WAITING) {
-                freeThread = thread;
-                freeThread.notifySimpleThread();
-                break;
-            }
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        if (freeThread == null) {
-            if (numberOfThreads.get() < numberOfThreadsLimit) {
-                SimpleThread newThread = new SimpleThread();
-                threadsList.add(newThread);
-                newThread.start();
-            } else {
-                for (SimpleThread thread : threadsList) {
-                    if (thread.getState() == Thread.State.WAITING) {
-                        thread.notifySimpleThread();
-                    }
-                }
+        if (numberOfThreads.get() < numberOfThreadsLimit && tasksToDoQueue.size() > 0) {
+            tryAddThread();
+        }
+    }
+
+    private void tryAddThread() {
+        lock.lock();
+        try {
+            if (numberOfThreads.get() == numberOfThreadsLimit || tasksToDoQueue.size() == 0) {
+                return;
             }
+            Thread thread = new SimpleThread();
+            numberOfThreads.incrementAndGet();
+            thread.start();
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -75,32 +81,23 @@ public class SimpleExecutor implements Executor {
 
     private final class SimpleThread extends Thread {
 
-        SimpleThread() {
-            numberOfThreads.incrementAndGet();
-        }
-
-        public void notifySimpleThread() {
-            synchronized (this) {
-                this.notifyAll();
-            }
-        }
-
         @Override
         public void run() {
             while (true) {
                 try {
-                    synchronized (this) {
-                        Runnable task;
-                        while ((task = tasksToDoQueue.poll()) == null) {
-                            wait();
-                        }
-                        task.run();
+                    Runnable task = tasksToDoQueue.poll(5, TimeUnit.MINUTES);
+                    if (task == null) {
+                        numberOfThreads.decrementAndGet();
+                        return;
                     }
+                    task.run();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     break;
                 }
             }
         }
+
+
     }
 }
