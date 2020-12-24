@@ -3,6 +3,8 @@ package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Нужно сделать свой экзекьютор с линивой инициализацией потоков до какого-то заданного предела.
@@ -26,7 +28,7 @@ import java.util.concurrent.*;
 public class SimpleExecutor implements Executor {
 
     private final int limitOfThreads;
-    private final Queue<Runnable> tasks;
+    private final BlockingQueue<Runnable> tasks;
     private final List<Worker> workers;
     private volatile boolean isRunning = true;
 
@@ -36,35 +38,32 @@ public class SimpleExecutor implements Executor {
             throw new IllegalArgumentException();
         }
         this.limitOfThreads = limitOfThreads;
-        tasks = new ConcurrentLinkedQueue<>();
+        tasks = new LinkedBlockingQueue<>();
         workers = new ArrayList<>(limitOfThreads);
     }
 
     @Override
     public void execute(Runnable command) {
         if (isRunning) {
-            Worker freeWorker = getWorker();
-            if (freeWorker == null && limitOfThreads > workers.size()) {
-                tasks.offer(command);
-                addNewWorker();
-            } else {
-                tasks.offer(command);
-                while ((freeWorker = getWorker()) != null) {
-                    freeWorker.notifyWorker();
+            Worker freeWorker = null;
+            Lock lock = new ReentrantLock();
+            lock.lock();
+            try {
+                for (Worker worker : workers) {
+                    if (worker.getState() == Thread.State.WAITING) {
+                        freeWorker = worker;
+                        worker.notifyAll();
+                        break;
+                    }
                 }
+                if (freeWorker == null && limitOfThreads > workers.size()) {
+                    addNewWorker();
+                }
+            } finally {
+                lock.unlock();
             }
+            tasks.offer(command);
         }
-    }
-
-    private Worker getWorker() {
-        Worker freeWorker = null;
-        for (Worker worker : workers) {
-            if (worker.getState() == Thread.State.WAITING) {
-                freeWorker = worker;
-                break;
-            }
-        }
-        return freeWorker;
     }
 
     private synchronized void addNewWorker() {
@@ -75,18 +74,6 @@ public class SimpleExecutor implements Executor {
 
     public void shutDown() {
         isRunning = false;
-        synchronized (this) {
-            notifyAll();
-        }
-    }
-
-    public boolean isDone() {
-        for (Worker worker : workers) {
-            if (worker.getState() != Thread.State.WAITING) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -100,23 +87,11 @@ public class SimpleExecutor implements Executor {
         @Override
         public void run() {
             while (isRunning) {
-                try {
-                    if (tasks.isEmpty()) {
-                        wait();
-                    } else {
-                        tasks.poll().run();
-                    }
-                } catch (Exception ignored) {
-
+                Runnable task = tasks.poll();
+                if(task != null) {
+                    task.run();
                 }
-            }
-        }
-
-        public void notifyWorker() {
-            synchronized (this) {
-                notifyAll();
             }
         }
     }
 }
-

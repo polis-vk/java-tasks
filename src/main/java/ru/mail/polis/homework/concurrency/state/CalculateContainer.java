@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.concurrency.state;
 
-import org.hamcrest.Condition;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
@@ -35,36 +35,50 @@ import java.util.function.UnaryOperator;
 public class CalculateContainer<T> {
 
     private AtomicReference<State> state = new AtomicReference<>(State.START);
-    private AtomicReference<T> result = new AtomicReference<>();
+    private T result;
+
+    private final AtomicBoolean changedInit = new AtomicBoolean(true);
+    private final AtomicBoolean changedRun = new AtomicBoolean(false);
+    private final AtomicBoolean changedFinish = new AtomicBoolean(false);
+    private final AtomicBoolean changedClose = new AtomicBoolean(false);
+
 
     public CalculateContainer(T result) {
-        this.result.set(result);
+        this.result = result;
     }
 
     /**
      * Инициализирует результат и переводит контейнер в состояние INIT (Возможно только из состояния START и FINISH)
      */
     public void init(UnaryOperator<T> initOperator) {
-        while(!state.compareAndSet(State.START, State.INIT) && !state.compareAndSet(State.FINISH, State.INIT)) {
-            if(state.get() == State.CLOSE) {
+        while (true) {
+            if(changedInit.get() && (state.compareAndSet(State.START, State.INIT) || !state.compareAndSet(State.FINISH, State.INIT))) {
+                result = initOperator.apply(result);
+                changedInit.set(false);
+                changedRun.set(true);
+                return;
+            } else if (state.get() == State.CLOSE) {
                 System.err.println("Close state in init!");
                 return;
             }
         }
-        result.set(initOperator.apply(result.get()));
     }
 
     /**
      * Вычисляет результат и переводит контейнер в состояние RUN (Возможно только из состояния INIT)
      */
     public void run(BinaryOperator<T> runOperator, T value) {
-        while(!state.compareAndSet(State.INIT, State.RUN)) {
-            if(state.get() == State.CLOSE) {
-                System.err.println("Close state in run!");
+        while (true) {
+            if(changedRun.get() && state.compareAndSet(State.INIT, State.RUN)) {
+                result = runOperator.apply(result, value);
+                changedRun.set(false);
+                changedFinish.set(true);
+                return;
+            } else if (state.get() == State.CLOSE) {
+                System.err.println("Close state in init!");
                 return;
             }
         }
-        result.set(runOperator.apply(result.get(), value));
     }
 
 
@@ -72,13 +86,18 @@ public class CalculateContainer<T> {
      * Передает результат потребителю и переводит контейнер в состояние FINISH (Возможно только из состояния RUN)
      */
     public void finish(Consumer<T> finishConsumer) {
-        while(!state.compareAndSet(State.RUN, State.FINISH)) {
-            if(state.get() == State.CLOSE) {
-                System.err.println("Close state in finish!");
+        while (true) {
+            if(changedFinish.get() && state.compareAndSet(State.RUN, State.FINISH)) {
+                finishConsumer.accept(result);
+                changedFinish.set(false);
+                changedClose.set(true);
+                changedInit.set(true);
+                return;
+            } else if (state.get() == State.CLOSE) {
+                System.err.println("Close state in init!");
                 return;
             }
         }
-        finishConsumer.accept(result.get());
     }
 
 
@@ -87,18 +106,24 @@ public class CalculateContainer<T> {
      * (Возможно только из состояния FINISH)
      */
     public void close(Consumer<T> closeConsumer) {
-        while(!state.compareAndSet(State.FINISH, State.CLOSE)) {
-            if(state.get() == State.CLOSE) {
-                System.err.println("Close state in close!");
+        while (true) {
+            if(changedClose.get() && state.compareAndSet(State.FINISH, State.CLOSE)) {
+                closeConsumer.accept(result);
+                changedInit.set(false);
+                changedRun.set(false);
+                changedFinish.set(false);
+                changedClose.set(false);
+                return;
+            } else if (state.get() == State.CLOSE) {
+                System.err.println("Close state in init!");
                 return;
             }
         }
-        closeConsumer.accept(result.get());
     }
 
 
     public T getResult() {
-        return result.get();
+        return result;
     }
 
     public State getState() {

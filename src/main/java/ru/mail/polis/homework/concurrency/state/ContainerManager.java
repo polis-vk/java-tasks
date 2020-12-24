@@ -44,7 +44,9 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void initContainers() {
-        calculateContainers.forEach(e -> e.init(operation(Math::sin)));
+        for(CalculateContainer<Double> container : calculateContainers) {
+            executorService.execute(() -> container.init(operation(Math::sin)));
+        }
     }
 
 
@@ -56,7 +58,9 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void runContainers() {
-        calculateContainers.forEach(e -> e.run(Double::sum, 2.0));
+        for (CalculateContainer<Double> container : calculateContainers) {
+            fixedExecutorService.execute(() -> container.run(operation(Double::sum), 2.0));
+        }
     }
 
 
@@ -67,7 +71,9 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void finishContainers() {
-        calculateContainers.forEach(e -> e.finish(value -> System.out.println("Finish " + value)));
+        for (CalculateContainer<Double> container : calculateContainers) {
+            fixedExecutorService.execute(() -> container.finish(value -> System.out.println("Finish " + value)));
+        }
     }
 
 
@@ -91,6 +97,8 @@ public class ContainerManager {
         }
         countDownLatch.await();
         executorService.shutdown();
+        fixedExecutorService.shutdown();
+        this.executorService.shutdown();
     }
 
     /**
