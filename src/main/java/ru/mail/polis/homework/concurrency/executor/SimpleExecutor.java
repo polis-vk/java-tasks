@@ -39,22 +39,19 @@ public class SimpleExecutor implements Executor {
     public void execute(Runnable command) {
         synchronized (workersList) {
             if (workersList.size() >= maxWorkersCount) {
-                tasksQueue.add(command);
+                tasksQueue.offer(command);
                 return;
             }
-            boolean hasFreeWorker = false;
             for (Worker worker : workersList) {
                 if (worker.getState() == Thread.State.WAITING) {
-                    hasFreeWorker = true;
-                    worker.notifyAll();
-                    break;
+                    tasksQueue.offer(command);
+                    return;
                 }
             }
-            if (!hasFreeWorker) {
-                Worker worker = new Worker();
-                workersList.add(worker);
-                worker.start();
-            }
+            tasksQueue.offer(command);
+            Worker worker = new Worker();
+            workersList.add(worker);
+            worker.start();
         }
     }
 
