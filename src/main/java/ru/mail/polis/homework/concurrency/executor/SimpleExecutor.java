@@ -71,16 +71,11 @@ public class SimpleExecutor implements Executor {
         @Override
         public void run() {
             while (true) {
-                Runnable task = tasksQueue.poll();
-                if (task == null) {
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        System.err.println("Failed to poll a task.");
-                    }
-                } else {
-                    task.run();
+                try {
+                    tasksQueue.take().run();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    System.err.println("Failed to poll a task.");
                 }
             }
         }
