@@ -106,13 +106,16 @@ public class ContainerManager {
      * то нужно добавить некоторую синхронизацию, которая разблокируется,
      * как только закроются все 10 контейеров
      */
-    public void closeContainers() {
+    public void closeContainers() throws InterruptedException {
         for (CalculateContainer<Double> container : calculateContainers) {
             closeExecutor.execute(() -> {
-                container.close(value -> System.err.printf("Container %s is closed.\n", container));
-                containersCloseLock.countDown();
+                container.close(value -> {
+                    System.out.printf("Container %s is closed with value %f.\n", container, value);
+                    containersCloseLock.countDown();
+                });
             });
         }
+        containersCloseLock.await();
     }
 
     /**
