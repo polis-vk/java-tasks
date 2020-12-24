@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * Нужно сделать свой экзекьютор с линивой инициализацией потоков до какого-то заданного предела.
@@ -22,15 +26,63 @@ import java.util.concurrent.Executor;
  * Max 6 баллов
  */
 public class SimpleExecutor implements Executor {
+    private BlockingQueue<Runnable> tasksQueue = new LinkedBlockingDeque<>();
+    private final List<Worker> workersList;
+    private final int maxWorkersCount;
+
+    public SimpleExecutor(int maxWorkersCount) {
+        this.maxWorkersCount = maxWorkersCount;
+        workersList = new ArrayList<>(maxWorkersCount);
+    }
+
     @Override
     public void execute(Runnable command) {
-
+        synchronized (workersList) {
+            if (workersList.size() >= maxWorkersCount) {
+                tasksQueue.add(command);
+                return;
+            }
+            boolean hasFreeWorker = false;
+            for (Worker worker : workersList) {
+                if (worker.getState() == Thread.State.WAITING) {
+                    hasFreeWorker = true;
+                    worker.notifyAll();
+                    break;
+                }
+            }
+            if (!hasFreeWorker) {
+                Worker worker = new Worker();
+                workersList.add(worker);
+                worker.start();
+            }
+        }
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
-    public int getLiveThreadsCount() {
-        return 0;
+    public int getLiveWorkersCount() {
+        synchronized (workersList) {
+            return workersList.size();
+        }
+    }
+
+    private class Worker extends Thread {
+        @Override
+        public void run() {
+            while (true) {
+                Runnable task = tasksQueue.poll();
+                if (task == null) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        System.err.println("Failed to poll a task.");
+                    }
+                } else {
+                    task.run();
+                }
+            }
+        }
     }
 }
