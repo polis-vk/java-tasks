@@ -3,6 +3,7 @@ package ru.mail.polis.homework.functions;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
@@ -18,7 +19,9 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
-    interface TerFunction {
+    @FunctionalInterface
+    interface TerFunction<R, T, U, W> {
+        R apply(T t, U u, W w);
 
     }
 
@@ -28,8 +31,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
-        return null;
+    static <R, T, U, W> Function<T, Function<U, Function<W, R>>> curring(TerFunction<R, T, U, W> terFunction) {
+        return f -> s -> t -> terFunction.apply(f, s, t);
     }
 
 
@@ -40,17 +43,25 @@ public class SimpleFunction {
      * 4 балла
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            a -> null;
+            operatorsList -> numberList -> numberList.stream()
+                    .flatMap(num -> IntStream.rangeClosed(1, operatorsList.size())
+                            .mapToObj(i -> operatorsList.subList(0, i))
+                            .map(subListOp -> subListOp.stream()
+                                .reduce(IntUnaryOperator.identity(), IntUnaryOperator::andThen))
+                            .map(op -> op.applyAsInt(num)))
+                    .collect(Collectors.toList());
 
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
      * которая на заданном интервале (входящие аргументы результирующей функции) считает преобразование всех целых чисел
      * на заданном интервале.
-     *
+     * <p>
      * Пример хотим просуммировать числа от 2 до 10:
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 3 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (seed, bi) ->
+            (a, b) -> IntStream.rangeClosed(a, b).reduce(seed, bi);
+    ;
 }

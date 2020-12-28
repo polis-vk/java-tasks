@@ -1,17 +1,20 @@
 package ru.mail.polis.homework.collections.streams.account;
 
-import java.util.Collections;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Task {
 
     /**
      * Метод должен вернуть сумму всех исходящих транзакций с аккаунта
      * 2 балла
+     * @return
      */
-    public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
-        return Collections.emptyMap();
+    public static Map<Long, Long> paymentsSumByAccount(List<Transaction> transactions) {
+        return transactions.stream().collect(Collectors.groupingBy(Transaction::getIdSender, Collectors.summingLong(Transaction::getSum)));
     }
 
     /**
@@ -36,7 +39,15 @@ public class Task {
      * (обойтись без циклов и условий)
      * 3 балла
      */
-    public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
-        return Collections.emptyList();
+    public static List<Long> paymentsSumByAccount(List<Account> accounts, long t, int n) {
+        // TODO: 29.10.2020
+        return accounts.stream().sorted(Comparator.comparing((Account account) -> getBalanceByTime(account, t)).reversed()).map(Account::getId).skip(1).limit(n).collect(Collectors.toList());
+    }
+    public static long getBalanceByTime(Account account, long time) {
+        return account.getSum() - account.getTransactionList().stream().filter(i -> i.getIdSender() == account.getId())
+                .filter(i -> i.getDate() > time).mapToLong(Transaction::getSum).sum()
+                + account.getTransactionList().stream().filter(i -> i.getIdRecipient() == account.getId())
+                .filter(i -> i.getDate() > time).mapToLong(Transaction::getSum).sum()
+                ;
     }
 }
