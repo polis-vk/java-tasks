@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.io.objects;
 
 import org.junit.Before;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-class SerializerTests {
+public class SerializerTests {
     private static final List<Animal> animals = new ArrayList<>();
     private static final List<AnimalExternalizable> animalsExternalizable = new ArrayList<>();
     private static final List<AnimalWithMethods> animalsWithMethods = new ArrayList<>();
