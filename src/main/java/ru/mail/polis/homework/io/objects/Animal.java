@@ -17,23 +17,39 @@ public class Animal implements Serializable {
     private int age;
     private Food food;
 
-    public Animal() {
-
-    }
+    public Animal() { }
 
     public enum Food {
         MEET,
         PLANTS,
         OTHER,
     }
+
+
+
     private int sizeFriend;
     ArrayList<String> friends;
     private Size size;
     private boolean isPredator;
-    public static class Size{
+    public static class Size implements Serializable {
         private double width;
         private double height;
         private double length;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Size)) return false;
+            Size size = (Size) o;
+            return Double.compare(size.width, width) == 0 &&
+                    Double.compare(size.height, height) == 0 &&
+                    Double.compare(size.length, length) == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(width, height, length);
+        }
 
         public Size(double width, double height, double length) {
             this.width = width;
@@ -63,6 +79,15 @@ public class Animal implements Serializable {
 
         public void setLength(double length) {
             this.length = length;
+        }
+
+        @Override
+        public String toString() {
+            return "Size{" +
+                    "width=" + width +
+                    ", height=" + height +
+                    ", length=" + length +
+                    '}';
         }
     }
 

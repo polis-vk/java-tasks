@@ -65,7 +65,9 @@ public class SerializerTests {
 
 
             for (int i = 0; i < animals.size(); i++) {
-                assertEquals(animals.get(i), deserializedAnimals.get(i));
+                Animal first = animals.get(i);
+                Animal second = deserializedAnimals.get(i);
+                assertEquals(first, second);
             }
 
         } catch (IOException e) {
@@ -90,7 +92,7 @@ public class SerializerTests {
 
 
             for (int i = 0; i < animals.size(); i++) {
-                assertEquals(animals.get(i), deserializedAnimals.get(i));
+                assertEquals(animalsWithMethods.get(i), deserializedAnimals.get(i));
             }
 
         } catch (IOException e) {

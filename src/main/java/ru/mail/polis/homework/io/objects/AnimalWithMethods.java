@@ -3,7 +3,6 @@ package ru.mail.polis.homework.io.objects;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -25,7 +24,6 @@ public class AnimalWithMethods implements Serializable {
         this.isPredator = isPredator;
     }
 
-
     private int sizeFriend;
     ArrayList<String> friends;
     private Size size;
@@ -42,28 +40,30 @@ public class AnimalWithMethods implements Serializable {
             this.length = length;
         }
 
-        public double getWidth() {
-            return width;
+        public Size() { }
+
+        @Override
+        public String toString() {
+            return "Size{" +
+                    "width=" + width +
+                    ", height=" + height +
+                    ", length=" + length +
+                    '}';
         }
 
-        public double getHeight() {
-            return height;
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Size)) return false;
+            Size size = (Size) o;
+            return Double.compare(size.width, width) == 0 &&
+                    Double.compare(size.height, height) == 0 &&
+                    Double.compare(size.length, length) == 0;
         }
 
-        public double getLength() {
-            return length;
-        }
-
-        public void setWidth(double width) {
-            this.width = width;
-        }
-
-        public void setHeight(double height) {
-            this.height = height;
-        }
-
-        public void setLength(double length) {
-            this.length = length;
+        @Override
+        public int hashCode() {
+            return Objects.hash(width, height, length);
         }
 
         private void writeObject(ObjectOutputStream out) throws IOException {
@@ -73,67 +73,11 @@ public class AnimalWithMethods implements Serializable {
         }
 
 
-        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        private void readObject(ObjectInputStream in) throws IOException {
             width = in.readDouble();
             height = in.readDouble();
             length = in.readDouble();
         }
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public Animal.Food getFood() {
-        return food;
-    }
-
-    public void setFood(Animal.Food food) {
-        this.food = food;
-    }
-
-    public int getSizeFriend() {
-        return sizeFriend;
-    }
-
-    public void setSizeFriend(int sizeFriend) {
-        this.sizeFriend = sizeFriend;
-    }
-
-    public List<String> getFriends() {
-        return friends;
-    }
-
-    public void setFriends(ArrayList<String> friends) {
-        this.friends = friends;
-    }
-
-    public Size getSize() {
-        return size;
-    }
-
-    public void setSize(Size size) {
-        this.size = size;
-    }
-
-    public boolean isPredator() {
-        return isPredator;
-    }
-
-    public void setPredator(boolean predator) {
-        isPredator = predator;
     }
 
     @Override
@@ -180,6 +124,7 @@ public class AnimalWithMethods implements Serializable {
         age = in.readInt();
         food = (Animal.Food) in.readObject();
         friends = (ArrayList<String>) in.readObject();
+        size = new Size();
         size.readObject(in);
         isPredator = in.readBoolean();
     }

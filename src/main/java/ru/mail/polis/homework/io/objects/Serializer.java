@@ -155,7 +155,8 @@ public class Serializer {
             for (Animal animal : animals) {
                 out.writeUTF(animal.getName());
                 out.writeInt(animal.getAge());
-                out.writeObject(animal.getSizeFriend());
+                out.writeObject(animal.getFood());
+                out.writeInt(animal.getSizeFriend());
                 List<String> friends = animal.getFriends();
                 for (String friend : friends) {
                     out.writeUTF(friend);
@@ -187,22 +188,23 @@ public class Serializer {
                 Animal newAnimal = new Animal();
                 newAnimal.setName(in.readUTF());
                 newAnimal.setAge(in.readInt());
+                newAnimal.setFood((Animal.Food) in.readObject());
                 newAnimal.setSizeFriend(in.readInt());
                 ArrayList<String> friends = new ArrayList<>(newAnimal.getSizeFriend());
                 for (int j = 0; j < newAnimal.getSizeFriend(); j++) {
                     friends.add(in.readUTF());
                 }
                 newAnimal.setFriends(friends);
-                Double width = in.readDouble();
-                Double height = in.readDouble();
-                Double length = in.readDouble();
+                double width = in.readDouble();
+                double height = in.readDouble();
+                double length = in.readDouble();
                 Animal.Size newSize = new Animal.Size(width, height, length);
                 newAnimal.setSize(newSize);
                 newAnimal.setPredator(in.readBoolean());
-
+                animals.add(newAnimal);
             }
             return animals;
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;

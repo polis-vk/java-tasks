@@ -13,7 +13,8 @@ import java.util.Objects;
  * 3 балла
  */
 public class AnimalExternalizable implements Externalizable {
-    public AnimalExternalizable() { }
+    public AnimalExternalizable() {
+    }
 
     private String name;
     private int age;
@@ -24,11 +25,13 @@ public class AnimalExternalizable implements Externalizable {
         PLANTS,
         OTHER,
     }
+
     private int sizeFriend;
     ArrayList<String> friends;
     private Size size;
     private boolean isPredator;
-    public static class Size implements Externalizable{
+
+    public static class Size implements Externalizable {
         private double width;
         private double height;
         private double length;
@@ -39,28 +42,30 @@ public class AnimalExternalizable implements Externalizable {
             this.length = length;
         }
 
-        public double getWidth() {
-            return width;
+        public Size() { }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Size)) return false;
+            Size size = (Size) o;
+            return Double.compare(size.width, width) == 0 &&
+                    Double.compare(size.height, height) == 0 &&
+                    Double.compare(size.length, length) == 0;
         }
 
-        public double getHeight() {
-            return height;
+        @Override
+        public int hashCode() {
+            return Objects.hash(width, height, length);
         }
 
-        public double getLength() {
-            return length;
-        }
-
-        public void setWidth(double width) {
-            this.width = width;
-        }
-
-        public void setHeight(double height) {
-            this.height = height;
-        }
-
-        public void setLength(double length) {
-            this.length = length;
+        @Override
+        public String toString() {
+            return "Size{" +
+                    "width=" + width +
+                    ", height=" + height +
+                    ", length=" + length +
+                    '}';
         }
 
         @Override
@@ -178,10 +183,11 @@ public class AnimalExternalizable implements Externalizable {
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeUTF(name);
         out.writeInt(age);
-        out.writeObject(food);
+        out.writeInt(sizeFriend);
         out.writeObject(friends);
         size.writeExternal(out);
         out.writeBoolean(isPredator);
+        out.writeObject(food);
     }
 
 
@@ -191,7 +197,8 @@ public class AnimalExternalizable implements Externalizable {
         setAge(in.readInt());
         setSizeFriend(in.readInt());
         setFriends((ArrayList<String>) in.readObject());
-        setSize((Size) in.readObject());
+        size = new Size();
+        size.readExternal(in);
         setPredator(in.readBoolean());
         setFood((Animal.Food) in.readObject());
     }
