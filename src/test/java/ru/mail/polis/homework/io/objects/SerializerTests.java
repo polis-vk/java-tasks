@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,9 +63,6 @@ public class SerializerTests {
 
             System.out.println("defaultDeserialization: " + (finish - start) + " milliseconds");
 
-            File file = new File(fileName);
-            System.out.println("File size: " + file.length());
-            file.delete();
 
             for (int i = 0; i < animals.size(); i++) {
                 assertEquals(animals.get(i), deserializedAnimals.get(i));
@@ -92,9 +88,6 @@ public class SerializerTests {
 
             System.out.println("DeserializationWithMethods: " + (finish - start) + " milliseconds");
 
-            File file = new File(fileName);
-            System.out.println("File size: " + file.length());
-            file.delete();
 
             for (int i = 0; i < animals.size(); i++) {
                 assertEquals(animals.get(i), deserializedAnimals.get(i));
@@ -120,9 +113,8 @@ public class SerializerTests {
 
             System.out.println("ExternalizableDeserialization: " + (finish - start) + " milliseconds");
 
-            File file = new File(fileName);
-            System.out.println("File size: " + file.length());
-            file.delete();
+
+
 
             for (int i = 0; i < animalsExternalizable.size(); i++) {
                 assertEquals(animalsExternalizable.get(i), deserializedAnimals.get(i));
@@ -147,9 +139,6 @@ public class SerializerTests {
 
             System.out.println("CustomDeserialization: " + (finish - start) + " milliseconds");
 
-            File file = new File(fileName);
-            System.out.println("File size: " + file.length());
-            file.delete();
 
             for (int i = 0; i < animals.size(); i++) {
                 assertEquals(animals.get(i), deserializedAnimals.get(i));
