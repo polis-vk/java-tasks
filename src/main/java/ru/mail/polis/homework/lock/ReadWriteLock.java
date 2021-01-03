@@ -12,6 +12,7 @@ public class ReadWriteLock implements java.util.concurrent.locks.ReadWriteLock {
     private final MyLock writeL = new MyLock(true);
 
     public ReadWriteLock(int n) {
+        if (n < 0) throw new IllegalArgumentException();
         this.n = n;
         this.semaphore = new Semaphore(n);
     }
