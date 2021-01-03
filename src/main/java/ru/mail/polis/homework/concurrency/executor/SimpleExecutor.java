@@ -1,6 +1,12 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой экзекьютор с линивой инициализацией потоков до какого-то заданного предела.
@@ -22,15 +28,52 @@ import java.util.concurrent.Executor;
  * Max 6 баллов
  */
 public class SimpleExecutor implements Executor {
-    @Override
-    public void execute(Runnable command) {
-
+    private int capacity;
+    private int nowThreads = 0;
+    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+    private final HashSet<Worker> workers = new HashSet<>();
+    public SimpleExecutor(int capacity) {
+        if (capacity <= 0) throw new IllegalArgumentException();
+        this.capacity = capacity;
     }
 
+    @Override
+    public void execute(Runnable command) {
+        if (command == null) throw new NullPointerException();
+        boolean freeWorker = false;
+        for (Worker worker : workers) {
+            if (worker.getState() == Thread.State.WAITING) {
+                freeWorker = true;
+                break;
+            }
+        }
+        if (!freeWorker && nowThreads < capacity) {
+            Worker worker = new Worker();
+            workers.add(worker);
+            worker.start();
+            nowThreads++;
+        }
+        queue.offer(command);
+    }
+
+    private class Worker extends Thread {
+
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    queue.take().run();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }
+    }
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        return nowThreads;
     }
 }
