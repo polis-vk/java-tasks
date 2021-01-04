@@ -26,7 +26,5 @@ public class CalculateContainerTest {
             container.close(value -> System.out.println("close " + value));
             assertEquals(State.CLOSE, container.getState());
         }
-
     }
-
 }

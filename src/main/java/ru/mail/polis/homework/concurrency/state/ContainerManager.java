@@ -1,6 +1,12 @@
 package ru.mail.polis.homework.concurrency.state;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
@@ -16,11 +22,20 @@ public class ContainerManager {
 
     private final List<CalculateContainer<Double>> calculateContainers;
 
+    private final ExecutorService init = Executors.newCachedThreadPool();
+    private final ExecutorService runFinish = Executors.newFixedThreadPool(2);
+    private final ExecutorService close = Executors.newSingleThreadExecutor();
+    private final Random random = new Random();
+    private final CountDownLatch countDownLatch;
     /**
      * Создайте список из непустых контейнеров
      */
     public ContainerManager(int containersCount) {
-        this.calculateContainers = null;
+        this.countDownLatch = new CountDownLatch(containersCount);
+        this.calculateContainers = new ArrayList<>();
+        for (int i = 0; i < containersCount; i++) {
+            calculateContainers.add(new CalculateContainer<>(random.nextDouble()));
+        }
     }
 
 
@@ -32,7 +47,9 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void initContainers() {
-
+        for (CalculateContainer<Double> container : calculateContainers) {
+            init.execute(() -> container.init(operation(Math::sqrt)));
+        }
     }
 
 
@@ -44,7 +61,9 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void runContainers() {
-
+        for (CalculateContainer<Double> container : calculateContainers) {
+            runFinish.execute(() -> container.run(operation(operation((a, b) -> Math.sqrt((a + b)))), random.nextDouble()));
+        }
     }
 
 
@@ -55,7 +74,9 @@ public class ContainerManager {
      * Каждый контейнер надо исполнять отдельно.
      */
     public void finishContainers() {
-
+        for (CalculateContainer<Double> container : calculateContainers) {
+            runFinish.execute(() -> container.finish(value -> System.out.println("finish with: " + value)));
+        }
     }
 
 
@@ -69,8 +90,17 @@ public class ContainerManager {
      * то нужно добавить некоторую синхронизацию, которая разблокируется,
      * как только закроются все 10 контейеров
      */
-    public void closeContainers() {
-
+    public void closeContainers() throws InterruptedException {
+        for (CalculateContainer<Double> container : calculateContainers) {
+            close.execute(() -> container.close(value -> {
+                System.out.println("close with: " + value);
+                countDownLatch.countDown();
+            }));
+        }
+        countDownLatch.await();
+        init.shutdown();
+        runFinish.shutdown();
+        close.shutdown();
     }
 
     /**
@@ -81,7 +111,7 @@ public class ContainerManager {
      * Учтите, что время передается в милисекундах.
      */
     public boolean await(long timeoutMillis) throws Exception {
-        return false;
+        return countDownLatch.await(timeoutMillis, TimeUnit.MILLISECONDS);
     }
 
     public List<CalculateContainer<Double>> getCalculateContainers() {
