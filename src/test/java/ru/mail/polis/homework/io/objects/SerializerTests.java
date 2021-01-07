@@ -58,14 +58,14 @@ public class SerializerTests {
             long finish = System.currentTimeMillis();
 
             System.out.println("defaultSerialization: size - " +
-                    Files.size(Path.of(fileName)) + "|| time - " +  (finish - start) + "mls");
+                    Files.size(Path.of(fileName)) + " || time - " +  (finish - start) + "mls");
 
             start = System.currentTimeMillis();
             List<Animal> deserializedAnimals = serializer.defaultDeserialize(fileName);
             finish = System.currentTimeMillis();
 
             System.out.println("defaultDeserialization: size - " +
-                    Files.size(Path.of(fileName)) + "|| time - " +  (finish - start) + "mls");
+                    Files.size(Path.of(fileName)) + " || time - " +  (finish - start) + "mls");
 
             for (int i = 0; i < animals.size(); i++) {
                 Animal first = animals.get(i);
@@ -86,14 +86,14 @@ public class SerializerTests {
             long finish = System.currentTimeMillis();
 
             System.out.println("SerializationWithMethods: size - " +
-                    Files.size(Path.of(fileName)) + "|| time - " +  (finish - start) + "mls");
+                    Files.size(Path.of(fileName)) + " || time - " +  (finish - start) + "mls");
 
             start = System.currentTimeMillis();
             List<AnimalWithMethods> deserializedAnimals = serializer.deserializeWithMethods(fileName);
             finish = System.currentTimeMillis();
 
             System.out.println("DeserializationWithMethods: size - " +
-                    Files.size(Path.of(fileName)) + "|| time - " +  (finish - start) + "mls");
+                    Files.size(Path.of(fileName)) + " || time - " +  (finish - start) + "mls");
 
 
             for (int i = 0; i < animals.size(); i++) {
@@ -114,14 +114,14 @@ public class SerializerTests {
             long finish = System.currentTimeMillis();
 
             System.out.println("ExternalizableSerialization: size - " +
-                    Files.size(Path.of(fileName)) + "|| time - " +  (finish - start) + "mls");
+                    Files.size(Path.of(fileName)) + " || time - " +  (finish - start) + "mls");
 
             start = System.currentTimeMillis();
             List<AnimalExternalizable> deserializedAnimals = serializer.deserializeWithExternalizable(fileName);
             finish = System.currentTimeMillis();
 
             System.out.println("ExternalizableDeserialization: size - " +
-                    Files.size(Path.of(fileName)) + "|| time - " +  (finish - start) + "mls");
+                    Files.size(Path.of(fileName)) + " || time - " +  (finish - start) + "mls");
 
             for (int i = 0; i < animalsExternalizable.size(); i++) {
                 assertEquals(animalsExternalizable.get(i), deserializedAnimals.get(i));
@@ -140,14 +140,14 @@ public class SerializerTests {
             long finish = System.currentTimeMillis();
 
             System.out.println("CustomSerialization: size - " +
-                    Files.size(Path.of(fileName)) + "|| time - " +  (finish - start) + "mls");
+                    Files.size(Path.of(fileName)) + " || time - " +  (finish - start) + "mls");
 
         start = System.currentTimeMillis();
             List<Animal> deserializedAnimals = serializer.customDeserialize(fileName);
             finish = System.currentTimeMillis();
 
             System.out.println("CustomDeserialization: size - " +
-                    Files.size(Path.of(fileName)) + "|| time - " +  (finish - start) + "mls");
+                    Files.size(Path.of(fileName)) + " || time - " +  (finish - start) + "mls");
 
 
             for (int i = 0; i < animals.size(); i++) {
