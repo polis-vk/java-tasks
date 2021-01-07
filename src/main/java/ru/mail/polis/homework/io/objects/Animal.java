@@ -17,7 +17,8 @@ public class Animal implements Serializable {
     private int age;
     private Food food;
 
-    public Animal() { }
+    public Animal() {
+    }
 
     public enum Food {
         MEET,
@@ -26,11 +27,11 @@ public class Animal implements Serializable {
     }
 
 
-
     private int sizeFriend;
     ArrayList<String> friends;
     private Size size;
     private boolean isPredator;
+
     public static class Size implements Serializable {
         private double width;
         private double height;

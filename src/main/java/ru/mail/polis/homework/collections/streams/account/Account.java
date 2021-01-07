@@ -12,25 +12,20 @@ import java.util.List;
  * 1 балл
  */
 public class Account {
-    private long curId = 0;
-    private long id;
+    private String id;
     private long sum;
     private List<Transaction> transactionList = new ArrayList<>();
 
-    public Account() { }
+    public Account() {
+    }
 
-    public Account(long sum, List<Transaction> transactionList) {
-        this.id = curId++;
+    public Account(String id, long sum, List<Transaction> transactionList) {
+        this.id = id;
         this.sum = sum;
         this.transactionList = transactionList;
     }
 
-    public Account(long sum) {
-        this.id = curId++;
-        this.sum = sum;
-    }
-
-    public long getId() {
+    public String getId() {
         return id;
     }
 
@@ -40,18 +35,5 @@ public class Account {
 
     public List<Transaction> getTransactionList() {
         return Collections.unmodifiableList(transactionList);
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setSum(long a) {
-        this.sum += a;
-    }
-
-    public void setTransaction(List<Transaction> transactionList) {
-        this.transactionList = transactionList;
-        transactionList.stream().map(i -> this.sum += i.getSum());
     }
 }

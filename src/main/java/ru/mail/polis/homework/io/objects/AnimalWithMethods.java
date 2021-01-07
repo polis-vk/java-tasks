@@ -40,7 +40,8 @@ public class AnimalWithMethods implements Serializable {
             this.length = length;
         }
 
-        public Size() { }
+        public Size() {
+        }
 
         @Override
         public String toString() {
@@ -110,7 +111,7 @@ public class AnimalWithMethods implements Serializable {
                 '}';
     }
 
-    private void writeObject(ObjectOutputStream out) throws  IOException, ClassNotFoundException {
+    private void writeObject(ObjectOutputStream out) throws IOException, ClassNotFoundException {
         out.writeUTF(name);
         out.writeInt(age);
         out.writeObject(food);
@@ -119,7 +120,7 @@ public class AnimalWithMethods implements Serializable {
         out.writeBoolean(isPredator);
     }
 
-    private void readObject(ObjectInputStream in) throws  IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         name = in.readUTF();
         age = in.readInt();
         food = (Animal.Food) in.readObject();

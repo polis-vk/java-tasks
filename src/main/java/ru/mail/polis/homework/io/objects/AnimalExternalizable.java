@@ -42,7 +42,8 @@ public class AnimalExternalizable implements Externalizable {
             this.length = length;
         }
 
-        public Size() { }
+        public Size() {
+        }
 
         @Override
         public boolean equals(Object o) {

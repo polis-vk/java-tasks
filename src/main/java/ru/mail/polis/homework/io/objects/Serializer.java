@@ -34,8 +34,9 @@ public class Serializer {
     public void defaultSerialize(List<Animal> animals, String fileName) {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
             out.writeInt(animals.size());
-            for (Animal animal : animals)
+            for (Animal animal : animals) {
                 out.writeObject(animal);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -73,8 +74,9 @@ public class Serializer {
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) throws IOException {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
             out.writeInt(animals.size());
-            for (AnimalWithMethods animal : animals)
+            for (AnimalWithMethods animal : animals) {
                 out.writeObject(animal);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -112,8 +114,9 @@ public class Serializer {
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
             out.writeInt(animals.size());
-            for (AnimalExternalizable animal : animals)
+            for (AnimalExternalizable animal : animals) {
                 out.writeObject(animal);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
