@@ -200,7 +200,6 @@ public class PopularMapTest {
 
     @Test
     public void put() {
-
         popularMap2.put(new TestObject("key"), new TestObject("value"));
         verify(map, times(1)).put(new TestObject("key"), new TestObject("value"));
     }
