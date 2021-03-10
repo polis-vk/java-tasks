@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.function.ToDoubleFunction;
 
 public class HomeworkTask {
@@ -10,8 +12,14 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        function.applyAsDouble(4d);
-        return 0;
+        double pos = a;
+        double res = 0;
+        while (pos + delta < b){
+            res += (function.applyAsDouble(pos) + function.applyAsDouble(pos + delta)) * delta / 2;
+            pos += delta;
+        }
+        res += (function.applyAsDouble(pos) + function.applyAsDouble(b)) * (b - pos) / 2;
+        return res;
     }
 
     /**
@@ -19,7 +27,18 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        ArrayList<Byte> nums = new ArrayList<Byte>();
+        do{
+            nums.add((byte)(a % 10));
+            a = a / 10;
+        } while(a != 0);
+        byte elem = 0;
+        byte index = 1;
+        ArrayList<Byte> sorted = (ArrayList<Byte>)nums.clone();
+        Collections.sort(sorted);
+        elem = sorted.get(sorted.size() - 1);
+        index = (byte)(nums.size() - nums.lastIndexOf(elem));
+        return index;
     }
 
 
@@ -28,7 +47,9 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        double speed = ((double)y2 - (double)y1)/((double)x2 - (double)x1);
+        double y3 = y2 + speed * ((double)x3 - (double)x2);
+        return y3;
     }
 
     /**
