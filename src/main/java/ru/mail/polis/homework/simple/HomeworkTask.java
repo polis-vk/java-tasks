@@ -57,8 +57,26 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      * Это дополнительное задание, необязательное для выполнения
      */
+    // введем похожую на DoubleTask.length функцию, которая возвращает double
+    public static double length(double x1, double y1, double x2, double y2) {
+        double c = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+        return c;
+    }
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        double d1 = length(x1, y1, x3, y3); //нужна для подсчета диагоналей
+        double d2 = length(x2, y2, x4, y4);
+        if (d1 == 0d || d2 == 0d){
+            return 0;
+        }
+        double a1 = x3 - x1; // где (a1, b1) - вектор ab1
+        double b1 = y3 - y1;
+        double a2 = x4 - x2; // где (a2, b2) - вектор ab2
+        double b2 = y4 - y2;
+        // косинус угла между векторами
+        double cos = (a1 * a2 + b1 * b2) / ((Math.sqrt(Math.pow(a1, 2) + Math.pow(b1, 2))) * (Math.sqrt(Math.pow(a2, 2) + Math.pow(b2, 2))));
+        // используем основное тригонометрическое тождество
+        double sin = Math.sqrt(1 - Math.pow(cos, 2));
+        return d1 * d2 * sin / 2;
     }
 
 }
