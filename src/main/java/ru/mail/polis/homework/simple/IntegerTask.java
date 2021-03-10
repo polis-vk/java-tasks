@@ -60,9 +60,4 @@ public class IntegerTask {
         }
         return res;
     }
-
-    public static void main(String[] args) {
-        //System.out.println(factorial((byte)5));
-        System.out.println(kDecimal(454355,3));
-    }
 }
