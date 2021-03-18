@@ -31,9 +31,9 @@ import java.util.function.UnaryOperator;
  */
 public class CalculateContainer<T> {
 
-    private State state = State.START;
+    private final State state = State.START;
 
-    private T result;
+    private final T result;
 
     public CalculateContainer(T result) {
         this.result = result;
