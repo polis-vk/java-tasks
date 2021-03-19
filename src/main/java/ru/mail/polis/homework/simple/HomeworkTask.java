@@ -10,8 +10,23 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        function.applyAsDouble(4d);
-        return 0;
+        // function.applyAsDouble(4d);
+        double x = a;
+        double rectSquareSum = 0;
+
+        while (x < b - delta) {
+            rectSquareSum += function.applyAsDouble(x + delta / 2) * delta;
+            x += delta;
+        }
+
+        return rectSquareSum;
+
+        /*double res = 0;
+        for (double step = a; step < b - delta; step += delta) {
+            res += function.applyAsDouble(step + delta / 2);
+        }
+        res *= delta;
+        return res;*/
     }
 
     /**
@@ -19,7 +34,20 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        long maxDigit = 0;
+        byte indexFromEnd = 0;
+        byte maxIndexFromEnd = 0;
+
+        while (a > 0) {
+            indexFromEnd++;
+            if (a % 10 >= maxDigit) {
+                maxDigit = a % 10;
+                maxIndexFromEnd = indexFromEnd;
+            }
+            a = a / 10;
+        }
+
+        return (byte) (indexFromEnd - maxIndexFromEnd + 1);
     }
 
 
