@@ -24,7 +24,7 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        if((top <= bottom) && (height > top)){
+        if ((top <= bottom) && (height > top)) {
             return Integer.MAX_VALUE;
         }
         int days = 1;
@@ -32,7 +32,7 @@ public class IntegerTask {
         while (path < height) {
             days++;
             path -= bottom;
-            path+=top;
+            path += top;
         }
         return days;
     }
