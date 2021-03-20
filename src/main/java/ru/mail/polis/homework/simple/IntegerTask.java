@@ -14,8 +14,7 @@ public class IntegerTask {
      */
     public static int sum(int n) {
         int sum = 0;
-
-        for (int i = 0; i <= n; ++i) {
+        for (int i = 1; i <= n; ++i) {
             sum += i;
         }
 
@@ -32,7 +31,6 @@ public class IntegerTask {
         if (height <= top) {
             return 1;
         }
-
         if (bottom >= top) {
             return Integer.MAX_VALUE;
         }
@@ -61,8 +59,7 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long factorial = 1;
-
-        for (int i = 1; i <= n; ++i) {
+        for (long i = 1; i <= n; ++i) {
             factorial *= i;
         }
 

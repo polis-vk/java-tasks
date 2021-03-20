@@ -11,7 +11,6 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integral = 0;
-
         for (double x = a; x < b; x += delta) {
             integral += delta * function.applyAsDouble(x);
         }
@@ -36,9 +35,9 @@ public class HomeworkTask {
         byte index = 1;
 
         for (byte i = 1; i <= counterNumbers; i++) {
-            System.out.println((a / (long) Math.pow(10, (counterNumbers - i))));
-            if ((a / (long) Math.pow(10, (counterNumbers - i))) % 10 > maxNumber) {
-                maxNumber = (a / (long) Math.pow(10, (counterNumbers - i))) % 10;
+            long currentNumber = (a / (long) Math.pow(10, (counterNumbers - i)));
+            if (currentNumber > maxNumber) {
+                maxNumber = currentNumber;
                 index = i;
             }
         }

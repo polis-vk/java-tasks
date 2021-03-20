@@ -14,7 +14,6 @@ public class DoubleTask {
      * Пример: (1, 5, 4) -> "-1.0, -4.0"
      */
     public static String equation(int a, int b, int c) {
-
         double discriminant = b * b - 4 * a * c;
 
         if (discriminant > 0) {
@@ -26,19 +25,12 @@ public class DoubleTask {
                 x1 = x2;
                 x2 = temp;
             }
-
             return x1 + ", " + x2;
-
         } else if (discriminant == 0) {
             double x = -b / (double) (2 * a);
-
             return x + ", " + x;
-
         } else {
-            double real = -b / (double) (2 * a);
-            double imagine = Math.sqrt(Math.abs(discriminant)) / (2 * a);
-
-            return real + " + " + imagine + "i, " + real + " - " + imagine + "i";
+            return "Нет действительных корней";
         }
     }
 
