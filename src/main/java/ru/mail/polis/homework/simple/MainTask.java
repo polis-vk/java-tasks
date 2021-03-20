@@ -12,7 +12,4 @@ public class MainTask {
         System.out.println("It is work.");
     }
 
-    static String hello() {
-        return "Hello world! I am a first program";
-    }
 }

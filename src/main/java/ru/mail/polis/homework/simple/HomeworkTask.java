@@ -11,9 +11,10 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double sum = 0;
-        while (a <= b) {
-            sum += function.applyAsDouble(a) * delta;
-            a += delta;
+        double x1 = a;
+        while (x1 <= b) {
+            sum += function.applyAsDouble(x1) * delta;
+            x1 += delta;
         }
         return sum;
     }
@@ -26,13 +27,15 @@ public class HomeworkTask {
         byte max = -1;
         int pos = 0;
         int length = 0;
-        while (a > 0) {
+        long number = a;
+        while (number > 0) {
             length++;
-            if (a % 10 >= max) {
-                max = (byte) (a % 10);
+            byte digit = (byte) (number % 10);
+            if (digit % 10 >= max) {
+                max = digit;
                 pos = length;
             }
-            a /= 10;
+            number /= 10;
         }
         return (byte) (length - pos + 1);
     }
@@ -43,7 +46,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        double k = (y2 - y1) * 1.0 / (x2 - x1);
+        double k = (double) (y2 - y1) / (x2 - x1);
         double b = y1 - k * x1;
         return k * x3 + b;
     }

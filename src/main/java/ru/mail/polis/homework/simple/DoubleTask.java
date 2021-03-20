@@ -20,9 +20,7 @@ public class DoubleTask {
         x1 = (-b + Math.sqrt(d)) / (2 * a);
         x2 = (-b - Math.sqrt(d)) / (2 * a);
         if (x1 < x2) {
-            double t = x1;
-            x1 = x2;
-            x2 = t;
+            return x2 + ", " + x1;
         }
         return x1 + ", " + x2;
     }
