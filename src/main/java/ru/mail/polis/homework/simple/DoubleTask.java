@@ -14,8 +14,20 @@ public class DoubleTask {
      * Пример: (1, 5, 4) -> "-1.0, -4.0"
      */
     public static String equation(int a, int b, int c) {
-        double x1 = 0;
-        double x2 = 0;
+        double d = Math.pow(b, 2) - 4 * a * c;  // Вычисляем дискриминант
+        if (d < 0) {
+            return "DoubleTask -> equation(): This quadratic equation has no roots";
+        }
+
+        // Вычисляем корни квадратного уравнения
+        double x1 = (-b - Math.sqrt(d)) / (2 * a);
+        double x2 = (-b + Math.sqrt(d)) / (2 * a);
+
+        if (x1 < x2) {
+            double temp = x1;
+            x1 = x2;
+            x2 = temp;
+        }
         return x1 + ", " + x2;
     }
 
@@ -24,6 +36,9 @@ public class DoubleTask {
      * Пример: (0, 0, 3, 4) -> 5.0
      */
     public static float length(double x1, double y1, double x2, double y2) {
-        return 0;
+        float cathet1 = (float) Math.abs(x1 - x2);
+        float cathet2 = (float) Math.abs(y1 - y2);
+
+        return (float) Math.sqrt(Math.pow(cathet1, 2) + Math.pow(cathet2, 2));
     }
 }

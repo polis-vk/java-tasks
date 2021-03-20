@@ -14,7 +14,21 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return 0;
+        // Принцип работы данного метода заключается в следующем:
+        // складывается первое и последнее чисело и полученная сумма умножается на кол-во пар
+        if (n < 1) {
+            System.out.println("IntegerTask -> sum(): \"n\": " + n + " < 1");
+            return 0;
+        }
+
+        int result = 0;
+        if (n % 2 == 0) {
+            result = (1 + n) * (n / 2);
+        } else {
+            int division = n / 2;
+            result = (1 + n) * division + 1 + division;
+        }
+        return result;
     }
 
     /**
@@ -24,7 +38,23 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        return 0;
+        // Если у гусеницы высота подьёма меньше, чем высота спуска и при этом
+        // гусеница не может доползти до потолка за один день, то гусеница никодна не достигнет потолка
+        if ((bottom >= top && top < height)) {
+            return Integer.MAX_VALUE;
+        }
+
+        int counter = 0;
+        while (height > 0) {
+            height -= top;
+            if (height <= 0) {
+                return counter += 1;
+            } else {
+                height += bottom;
+                counter++;
+            }
+        }
+        return counter;
     }
 
     /**
@@ -32,15 +62,34 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return 0;
-    }
+        String number = Integer.toString(n);
+        if (order < 1 || order > number.length()) {
+            System.out.println("IntegerTask -> kDecimal(): Invalid argument \"order\": " + order);
+            return -1;
+        }
 
+        // Если order указывает на знак "-"
+        int result = Character.getNumericValue(number.charAt(number.length() - order));
+        if (result == -1) {
+            System.out.println("IntegerTask -> kDecimal(): Invalid argument \"order\": " + order);
+            return -1;
+        }
+        return result;
+    }
 
     /**
      * Выведите факториал от числа n
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        if (n < 0) {
+            System.out.println("IntegerTask -> factorial(): \"n\": " + n + " < 0");
+            return -1;
+        }
+        long result = 1;
+        for (int i = 2; i <= n; i++) {
+            result *= i;
+        }
+        return result;
     }
 }
