@@ -10,8 +10,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double result = 0;
-        for (double i = a; i < b - (delta / 2); i += delta) {
-            result += 0.5 * delta * (function.applyAsDouble(i) + function.applyAsDouble(i + delta));
+        for (double x = a; x < b - (delta / 2); x += delta) {
+            result += 0.5 * delta * (function.applyAsDouble(x) + function.applyAsDouble(x + delta));
         }
 
         return result;
@@ -22,17 +22,27 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
+        if (a == 0) {
+            return 1;
+        }
+
         int max = 0;
         int pos = 0;
-        String aStr = String.valueOf(a);
-        for (int i = 0; i < aStr.length(); ++i) {
-            int number = Integer.parseInt(String.valueOf(aStr.charAt(i)));
-            if (max < number) {
-                pos = i;
-                max = number;
+        int length = 0;
+
+        long aCopy = a;
+        while (aCopy != 0) {
+            int digit = (int) (aCopy % 10);
+
+            if (digit >= max) {
+                max = digit;
+                pos = length;
             }
+            aCopy /= 10;
+            ++length;
         }
-        return (byte) (pos + 1);
+
+        return (byte) (length - pos);
     }
 
 
