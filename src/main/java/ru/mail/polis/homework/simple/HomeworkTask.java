@@ -22,8 +22,20 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-
-        String numbers = Long.toString(a);
+        long number = a;
+        byte maxNumber = 0;
+        byte indexMaxNumber = 0;
+        byte maxIndexMaxNumber = 0;
+        while (number > 0) {
+            indexMaxNumber++;
+            if (number % 10 >= maxNumber) {
+                maxNumber = (byte) (number % 10);
+                maxIndexMaxNumber = indexMaxNumber;
+            }
+            number /= 10;
+        }
+        return (byte) (indexMaxNumber - maxIndexMaxNumber + 1);
+        /*String numbers = Long.toString(a);
         byte maxNumber = 0;
         byte indexMaxNumber = 0;
         for (byte i = 0; i < numbers.length(); i++) {
@@ -34,7 +46,7 @@ public class HomeworkTask {
                 indexMaxNumber = i;
             }
         }
-        return (byte) (indexMaxNumber + 1);
+        return (byte) (indexMaxNumber + 1);*/
     }
 
 
