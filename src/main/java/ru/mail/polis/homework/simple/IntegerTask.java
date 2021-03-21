@@ -14,7 +14,7 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return (int) ((1 + n) * n / 2);
+        return (1 + n) * n / 2;
     }
 
     /**

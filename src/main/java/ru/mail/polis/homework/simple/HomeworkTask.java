@@ -11,10 +11,10 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double sum = 0;
-        double x1 = a;
-        while (x1 <= b) {
-            sum += function.applyAsDouble(x1) * delta;
-            x1 += delta;
+        double curX = a;
+        while (curX <= b) {
+            sum += function.applyAsDouble(curX) * delta;
+            curX += delta;
         }
         return sum;
     }
