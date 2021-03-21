@@ -10,12 +10,10 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        //function.applyAsDouble(4d);
         double curr = a;
         double answer = 0;
         while (curr < b) {
-            double y1 = function.applyAsDouble(curr);
-            answer += y1 * delta;
+            answer += function.applyAsDouble(curr) * delta;
             curr += delta;
         }
         return answer;
@@ -33,12 +31,14 @@ public class HomeworkTask {
         if (a == 0) {
             return 1;
         }
-        while (a != 0) {
-            if ((a % 10) >= max) {
-                max = (byte) (a % 10);
+        long curr = a;
+        while (curr != 0) {
+            byte lastNum = (byte) (curr % 10);
+            if (lastNum >= max) {
+                max = lastNum;
                 counter = 0;
             }
-            a /= 10;
+            curr /= 10;
             counter += 1;
         }
 
@@ -56,10 +56,10 @@ public class HomeworkTask {
         if (xLen == 0) {
             throw new IllegalArgumentException("Points should be located differently in x axis");
         }
-        double argK = yLen / xLen;
-        double argB = y1 - argK * x1;
+        double k = yLen / xLen;
+        double b = y1 - k * x1;
 
-        return argK * x3 + argB;
+        return k * x3 + b;
     }
 
     /**
