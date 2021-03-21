@@ -31,10 +31,11 @@ public class IntegerTask {
             return Integer.MAX_VALUE;
         }
         int days = 1;
+        int path = height;
         while (true) {
-            height -= top;
-            if (height > 0) {
-                height += bottom;
+            path -= top;
+            if (path > 0) {
+                path += bottom;
                 days++;
             } else {
                 return days;
@@ -57,7 +58,7 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long result = 1;
-        for (int i = 2; i <= n; i++) {
+        for (byte i = 2; i <= n; i++) {
             result *= i;
         }
         return result;
