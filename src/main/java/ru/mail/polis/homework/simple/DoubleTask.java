@@ -16,6 +16,15 @@ public class DoubleTask {
     public static String equation(int a, int b, int c) {
         double x1 = 0;
         double x2 = 0;
+        double d = 0;
+        d = (b * b) - (4 * a * c);                          //Находим дискриминант
+        x1 = (-b + Math.sqrt(d)) / (2 * a);                 //Находим x1
+        x2 = (-b - Math.sqrt(d)) / (2 * a);                 //Находим x2
+        if (x1 < x2) {                                      //Если x1 < x2, то меняем их местами
+            x1 = x1 + x2;
+            x2 = x1 - x2;
+            x1 = x1 - x2;
+        }
         return x1 + ", " + x2;
     }
 
@@ -24,6 +33,8 @@ public class DoubleTask {
      * Пример: (0, 0, 3, 4) -> 5.0
      */
     public static float length(double x1, double y1, double x2, double y2) {
-        return 0;
+        float ans;
+        ans = (float) Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)); //Находим расстояние по теореме Пифагора
+        return ans;
     }
 }

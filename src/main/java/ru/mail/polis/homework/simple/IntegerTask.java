@@ -14,7 +14,11 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return 0;
+        int ans = 0;
+        for (int i = 1; i < n + 1; i++) {        //Суммируем все числа от 1 до n в цикле
+            ans += i;
+        }
+        return ans;
     }
 
     /**
@@ -24,6 +28,18 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
+        if ((bottom >= top) && (top < height)) { //Если bottom >= top, то гусеница за сутки спускается
+            return Integer.MAX_VALUE;            //или остаётся на том же месте, поэтому если она не может
+        }                                        //добраться до верха за 1 день, выводим Integer.MAX_VALUE
+        int ans = 1;
+        while (height > 0) {
+            height -= top;                       //Расстояние, пройденное за день
+            if (height <= 0) {                   //Если гусеница достигла верха, выводим ответ
+                return ans;
+            }
+            height += bottom;                    //Расстояние, на которое гусеница возвращается за ночь
+            ans++;                               //Новый день
+        }
         return 0;
     }
 
@@ -32,7 +48,10 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return 0;
+        for (int i = 1; i < order; i++) {        //Отсекаем все цифры до нужного разряда
+            n = n / 10;
+        }
+        return Math.abs(n % 10);                 //Остатком от деления на 10 получаем цифру, стоящую в нужном разряде
     }
 
 
@@ -41,6 +60,10 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        long ans = 1;
+        for (byte i = 1; i < n + 1; i++) {       //Находим произведение от 1 до n в цикле
+            ans *= i;
+        }
+        return ans;
     }
 }
