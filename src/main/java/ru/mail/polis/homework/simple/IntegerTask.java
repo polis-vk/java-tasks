@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.simple;
 
 
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -14,7 +17,9 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return 0;
+        return IntStream
+                .rangeClosed(1, n)
+                .sum();
     }
 
     /**
@@ -24,7 +29,19 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        return 0;
+        int daysResult;
+        if (top >= height) {
+            daysResult = 1;
+        } else {
+            int distancePerDay = top - bottom;
+            if (distancePerDay <= 0) {
+                daysResult = Integer.MAX_VALUE;
+            } else {
+                double heightWithoutLastMove = height - top;
+                daysResult = (int) Math.ceil(heightWithoutLastMove / distancePerDay) + 1;
+            }
+        }
+        return daysResult;
     }
 
     /**
@@ -32,7 +49,8 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return 0;
+        int dividerForLastDigit = (int) Math.pow(10, order - 1);
+        return (Math.abs(n) / dividerForLastDigit) % 10;
     }
 
 
@@ -41,6 +59,9 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        return LongStream
+                .rangeClosed(1, n)
+                .reduce((x, y) -> x * y)
+                .orElse(1); //for n = 0
     }
 }
