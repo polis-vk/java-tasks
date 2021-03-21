@@ -29,14 +29,15 @@ public class HomeworkTask {
         int  indexOfNowNumeralFromRightToLeft = 0;
         byte nowNumeral;
 
-        while (a > 0) {
+        long copyA = a;
+        while (copyA > 0) {
             indexOfNowNumeralFromRightToLeft++;
-            nowNumeral = (byte) (a % 10);
+            nowNumeral = (byte) (copyA % 10);
             if (nowNumeral >= maxNumeral) {
                 maxNumeral = nowNumeral;
                 indexOfMaxNumeralFromRightToLeft = indexOfNowNumeralFromRightToLeft;
             }
-            a /= 10;
+            copyA /= 10;
         }
 
         return (byte) (indexOfNowNumeralFromRightToLeft - indexOfMaxNumeralFromRightToLeft + 1);
