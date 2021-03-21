@@ -35,18 +35,6 @@ public class HomeworkTask {
             number /= 10;
         }
         return (byte) (indexMaxNumber - maxIndexMaxNumber + 1);
-        /*String numbers = Long.toString(a);
-        byte maxNumber = 0;
-        byte indexMaxNumber = 0;
-        for (byte i = 0; i < numbers.length(); i++) {
-            char ww = numbers.charAt(i);
-            byte currentNum = (byte) (numbers.charAt(i) - '0');
-            if (currentNum > maxNumber) {
-                maxNumber = currentNum;
-                indexMaxNumber = i;
-            }
-        }
-        return (byte) (indexMaxNumber + 1);*/
     }
 
 
