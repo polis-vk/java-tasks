@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.simple;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -14,7 +17,12 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return 0;
+        int res = 0;
+        for (int i = 1; i <= n ; i+=1){
+            res += i;
+        }
+
+        return res;
     }
 
     /**
@@ -24,15 +32,32 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        return 0;
+        if (top <= bottom && top < height) return Integer.MAX_VALUE;
+        int x = 0;
+        int count = 0;
+        while (x + top < height){
+            x += (top - bottom);
+            count += 1;
+        }
+        return count + 1;
+
     }
+
 
     /**
      * Дано число n и номер разряда order. Выведите цифру стояющую на нужном разряде
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return 0;
+        if (n < 0){
+            n *= -1;
+        }
+        List<Integer> list_of_numbers = new ArrayList<>();
+        while( n != 0){
+            list_of_numbers.add(n % 10);
+            n = n / 10;
+        }
+        return list_of_numbers.get(order - 1);
     }
 
 
@@ -41,6 +66,13 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        long res = 1;
+        if (n == 0) {
+            return res;
+        }
+        for(int i = 1; i <= n ; i += 1){
+            res *= i;
+        }
+        return res;
     }
 }
