@@ -14,13 +14,16 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
+        int amount = 0;
         if (n > 0) {
-            int amount = 0;
             for (int i = 1; i <= n; i++) {
                 amount = amount + i;
             }
-            return (amount);
-        } else return (0);
+            return amount;
+        }
+        else {
+            return 0;
+        }
     }
 
     /**
@@ -30,23 +33,22 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        int progress = 0, days = 0;
-
-        if (top > bottom && top != height) {
+        int progress = 0;
+        int days = 0;
+        if (top >= height) {
+            return 1;
+        }
+        if (top <= bottom) {
+            return Integer.MAX_VALUE;
+        }
+        if (top > bottom) {
             while (progress < height - top) {
                 progress += top;
                 days++;
                 progress -= bottom;
             }
             days++;
-        } else {
-            days = Integer.MAX_VALUE;
         }
-
-        if (top >= height) {
-            days = 1;
-        }
-
         return days;
     }
 
@@ -58,29 +60,17 @@ public class IntegerTask {
         if (n < 0) {
             n *= -1;
         }
-
-        int result = n;
-        int reduce = n;
-
-        for (int i = 0; i < order - 1; i++) {
-            result = result / 10;
-            reduce = result;
-        }
-
-        if (n > 10) {
-            reduce = reduce / 10;
-            reduce = reduce * 10;
-            result = result - reduce;
-
-        }
-
         if (n == 10 && order == 1) {
             return 0;
         }
-
         if (n == 10 && order == 2) {
             return 1;
         }
+        int result = n;
+        for (int i = 0; i < order - 1; i++) {
+            result = result / 10;
+        }
+        result %= 10;
         return result;
     }
 
@@ -90,12 +80,10 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        if (n != 0) {
-            long fact = 1;
-            for (int i = 1; i <= n; i++) {
-                fact = fact * i;
-            }
-            return fact;
-        } else return 1;
+        long fact = 1;
+        for (int i = 1; i <= n; i++) {
+            fact = fact * i;
+        }
+        return fact;
     }
 }

@@ -16,10 +16,7 @@ public class DoubleTask {
     public static String equation(int a, int b, int c) {
         double x1 = 0;
         double x2 = 0;
-        double D;
-
-        D = Math.pow(b, 2) - (4 * a * c);
-
+        double D = Math.pow(b, 2) - (4 * a * c);
         if (D >= 0) {
             x1 = (-b + Math.sqrt(D)) / (2 * a);
             x2 = (-b - Math.sqrt(D)) / (2 * a);
@@ -39,9 +36,7 @@ public class DoubleTask {
      */
     public static float length(double x1, double y1, double x2, double y2) {
         double distance;
-
         distance = Math.sqrt((Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)));
-
         return (float) distance;
     }
 }
