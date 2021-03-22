@@ -14,7 +14,7 @@ public class HomeworkTask {
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double pos = a;
         double res = 0;
-        while (pos + delta < b){
+        while (pos + delta < b) {
             res += (function.applyAsDouble(pos) + function.applyAsDouble(pos + delta)) * delta / 2;
             pos += delta;
         }
@@ -27,18 +27,18 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        ArrayList<Byte> nums = new ArrayList<Byte>();
-        do{
-            nums.add((byte)(a % 10));
+        byte maxIndex = 1;
+        byte maxNum = 0;
+        byte i = 0;
+        do {
+            i++;
+            if (a % 10 >= maxNum) {
+                maxIndex = i;
+                maxNum = (byte) (a % 10);
+            }
             a = a / 10;
-        } while(a != 0);
-        byte elem = 0;
-        byte index = 1;
-        ArrayList<Byte> sorted = (ArrayList<Byte>)nums.clone();
-        Collections.sort(sorted);
-        elem = sorted.get(sorted.size() - 1);
-        index = (byte)(nums.size() - nums.lastIndexOf(elem));
-        return index;
+        } while (a > 0);
+        return (byte) (i - maxIndex + 1);
     }
 
 
@@ -47,9 +47,8 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        double speed = ((double)y2 - (double)y1)/((double)x2 - (double)x1);
-        double y3 = y2 + speed * ((double)x3 - (double)x2);
-        return y3;
+        double speed = ((double) y2 - (double) y1) / ((double) x2 - (double) x1);
+        return y2 + speed * ((double) x3 - (double) x2);
     }
 
     /**
@@ -59,13 +58,13 @@ public class HomeworkTask {
      */
     // введем похожую на DoubleTask.length функцию, которая возвращает double
     public static double length(double x1, double y1, double x2, double y2) {
-        double c = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
-        return c;
+        return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
     }
+
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
         double d1 = length(x1, y1, x3, y3); //нужна для подсчета диагоналей
         double d2 = length(x2, y2, x4, y4);
-        if (d1 == 0d || d2 == 0d){
+        if (d1 == 0d || d2 == 0d) {
             return 0;
         }
         double a1 = x3 - x1; // где (a1, b1) - вектор ab1
