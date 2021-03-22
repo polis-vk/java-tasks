@@ -55,7 +55,7 @@ public class IntegerTask {
         int index = 0;
         int res = 0;
         if (num < 0) {
-            num = num * -1;
+            num *= -1;
         }
         while (num != 0) {
 
