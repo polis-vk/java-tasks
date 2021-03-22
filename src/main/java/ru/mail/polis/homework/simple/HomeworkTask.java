@@ -16,11 +16,10 @@ public class HomeworkTask {
         }
 
         double result = 0;
-        while (a < b) {
-            result += delta * function.applyAsDouble(a);
-            a += delta;
+        for (int i = 0; i < (b - a) / delta; i++) {
+            result += function.applyAsDouble(delta * i + a);
         }
-        return result;
+        return result * delta;
     }
 
     /**
@@ -28,18 +27,25 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        // Принцип работы данного метода - сравнение кодов символов по кодировке ASCII
-        String number = Long.toString(a);
-        char maxDigit = ' ';
-        byte numberOfMaxDigit = 0;
-
-        for (int i = 0; i < number.length(); i++) {
-            if (number.charAt(i) > maxDigit) {
-                maxDigit = number.charAt(i);
-                numberOfMaxDigit = (byte) (i + 1);
-            }
+        if (a == 0) {
+            return 1;
         }
-        return numberOfMaxDigit;
+
+        byte numberOfMaxDigit = 0;
+        long number = a;
+        byte length = 0;
+        byte max = 0;
+
+        while (number != 0) {
+            byte digit = (byte) (number % 10);
+            if (digit >= max) {
+                max = digit;
+                numberOfMaxDigit = length;
+            }
+            number /= 10;
+            length++;
+        }
+        return (byte) (length - numberOfMaxDigit);
     }
 
     /**
