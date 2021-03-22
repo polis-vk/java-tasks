@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.simple;
 
 
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
@@ -17,9 +15,11 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return IntStream
-                .rangeClosed(1, n)
-                .sum();
+        int sum = 0;
+        for (int i = 1; i <= n; i++) {
+            sum += i;
+        }
+        return sum;
     }
 
     /**
@@ -59,9 +59,10 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return LongStream
-                .rangeClosed(1, n)
-                .reduce((x, y) -> x * y)
-                .orElse(1); //for n = 0
+        long factorial = 1;
+        for (byte i = 1; i <= n; i++) {
+            factorial *= i;
+        }
+        return factorial;
     }
 }
