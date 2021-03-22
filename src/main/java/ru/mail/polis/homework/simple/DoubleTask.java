@@ -20,7 +20,9 @@ public class DoubleTask {
         if (x1 >= x2) {
             return x1 + ", " + x2;
         }
-        else return x2 + ", " + x1;
+        else {
+            return x2 + ", " + x1;
+        }
     }
 
     /**
