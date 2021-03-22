@@ -37,7 +37,7 @@ public class HomeworkTask {
             indexOfDigit++;
             size++;
         }
-        return (byte) (size - indexOfMaxDigit + (byte) 1); //меняем порядок индексирования, byte + byte = int
+        return (byte) (size - indexOfMaxDigit + 1); //меняем порядок индексирования, byte + byte = int
     }
 
 
