@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.lang.Math;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -16,6 +18,17 @@ public class DoubleTask {
     public static String equation(int a, int b, int c) {
         double x1 = 0;
         double x2 = 0;
+        double d = Math.pow(b, 2) - 4 * (a * c);
+        double x = 0;
+
+        x1 = (-b + Math.sqrt(d)) / (2 * a);
+        x2 = (-b - Math.sqrt(d)) / (2 * a);
+        if (x2 > x1) { 
+            x = x2;
+            x2 = x1;
+            x1 = x;
+        } 
+
         return x1 + ", " + x2;
     }
 
@@ -24,6 +37,8 @@ public class DoubleTask {
      * Пример: (0, 0, 3, 4) -> 5.0
      */
     public static float length(double x1, double y1, double x2, double y2) {
-        return 0;
+        float l = (float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+
+        return l;
     }
 }
