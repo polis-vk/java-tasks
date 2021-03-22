@@ -8,10 +8,10 @@ public class IntegerTaskTest {
 
     @Test
     public void sum() {
-//        assertEquals(0, IntegerTask.sum(0));
-//        assertEquals(15, IntegerTask.sum(5));
-//        assertEquals(55, IntegerTask.sum(10));
-//        assertEquals(50005000, IntegerTask.sum(10000));
+        assertEquals(0, IntegerTask.sum(0));
+        assertEquals(15, IntegerTask.sum(5));
+        assertEquals(55, IntegerTask.sum(10));
+        assertEquals(50005000, IntegerTask.sum(10000));
     }
 
     @Test

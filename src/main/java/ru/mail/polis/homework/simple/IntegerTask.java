@@ -28,16 +28,17 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        if ((bottom >= top) && (top < height)) { //Если bottom >= top, то гусеница за сутки спускается
-            return Integer.MAX_VALUE;            //или остаётся на том же месте, поэтому если она не может
-        }                                        //добраться до верха за 1 день, выводим Integer.MAX_VALUE
+        int h = height;
+        if ((bottom >= top) && (top < height)) { //Гусеница не доберётся до верха
+            return Integer.MAX_VALUE;
+        }
         int ans = 1;
-        while (height > 0) {
-            height -= top;                       //Расстояние, пройденное за день
-            if (height <= 0) {                   //Если гусеница достигла верха, выводим ответ
+        while (h > 0) {
+            h -= top;                       //Расстояние, пройденное за день
+            if (h <= 0) {                   //Если гусеница достигла верха, выводим ответ
                 return ans;
             }
-            height += bottom;                    //Расстояние, на которое гусеница возвращается за ночь
+            h += bottom;                    //Расстояние, на которое гусеница возвращается за ночь
             ans++;                               //Новый день
         }
         return 0;
@@ -48,10 +49,11 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
+        int number = n;
         for (int i = 1; i < order; i++) {        //Отсекаем все цифры до нужного разряда
-            n = n / 10;
+            number = number / 10;
         }
-        return Math.abs(n % 10);                 //Остатком от деления на 10 получаем цифру, стоящую в нужном разряде
+        return Math.abs(number % 10);                 //Получаем цифру, стоящую в нужном разряде
     }
 
 
