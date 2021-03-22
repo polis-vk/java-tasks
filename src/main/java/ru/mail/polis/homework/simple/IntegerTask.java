@@ -29,19 +29,15 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        int daysResult;
         if (top >= height) {
-            daysResult = 1;
-        } else {
-            int distancePerDay = top - bottom;
-            if (distancePerDay <= 0) {
-                daysResult = Integer.MAX_VALUE;
-            } else {
-                double heightWithoutLastMove = height - top;
-                daysResult = (int) Math.ceil(heightWithoutLastMove / distancePerDay) + 1;
-            }
+            return 1;
         }
-        return daysResult;
+        int distancePerDay = top - bottom;
+        if (distancePerDay <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        double heightWithoutLastMove = height - top;
+        return (int) Math.ceil(heightWithoutLastMove / distancePerDay) + 1;
     }
 
     /**
