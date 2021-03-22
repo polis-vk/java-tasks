@@ -17,8 +17,8 @@ public class DoubleTask {
         double discriminant = b * b - 4 * a * c;
         double x1 = (-b - Math.sqrt(discriminant)) / (2 * a);
         double x2 = (-b + Math.sqrt(discriminant)) / (2 * a);
-        double x = 0;
         if (x1 < x2) {
+            double x;
             x = x1;
             x1 = x2;
             x2 = x;
@@ -31,6 +31,6 @@ public class DoubleTask {
      * Пример: (0, 0, 3, 4) -> 5.0
      */
     public static float length(double x1, double y1, double x2, double y2) {
-        return (float)Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+        return (float) Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
     }
 }

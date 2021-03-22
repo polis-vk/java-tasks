@@ -11,8 +11,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integral = 0;
-        for (double i = a; i <= b; i += delta) {
-            integral += delta * function.applyAsDouble(i);
+        for (double x = a; x <= b; x += delta) {
+            integral += delta * function.applyAsDouble(x);
         }
         return integral;
     }
@@ -22,23 +22,19 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        int lengthOfNumber = String.valueOf(a).length();
-        long[] listOfNumbers = new long[lengthOfNumber];
-        for (int i = 0; i < lengthOfNumber; i++) {
-            listOfNumbers[(lengthOfNumber - 1) - i] = a % 10;
+        int count = 0;
+        int index = 0;
+        long maxNum = 0;
+        while (a > 0) {
+            long tmpNum = a % 10;
+            count++;
+            if (maxNum <= tmpNum) {
+                maxNum = tmpNum;
+                index = count;
+            }
             a = a / 10;
         }
-
-        long max = listOfNumbers[0];
-        int index = 0;
-
-        for (int i = 0; i < lengthOfNumber; i++) {
-            if (listOfNumbers[i] > max) {
-                max = listOfNumbers[i];
-                index = i;
-            }
-        }
-        return (byte) (index + 1);
+        return (byte) (Math.abs(count - index) + 1);
     }
 
 
@@ -47,8 +43,8 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        double k = (double)(y2 - y1) / (x2 - x1);
-        double b = (double)((x2 * y1) - (y2 * x1)) / (x2 - x1);
+        double k = (double) (y2 - y1) / (x2 - x1);
+        double b = (double) ((x2 * y1) - (y2 * x1)) / (x2 - x1);
         return k * x3 + b;
     }
 
