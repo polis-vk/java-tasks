@@ -26,17 +26,18 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
+        long number = a;
         long maxDigit = 0;
         byte indexFromEnd = 0;
         byte maxIndexFromEnd = 0;
 
-        while (a > 0) {
+        while (number > 0) {
             indexFromEnd++;
-            if (a % 10 >= maxDigit) {
-                maxDigit = a % 10;
+            if (number % 10 >= maxDigit) {
+                maxDigit = number % 10;
                 maxIndexFromEnd = indexFromEnd;
             }
-            a = a / 10;
+            number = number / 10;
         }
 
         return (byte) (indexFromEnd - maxIndexFromEnd + 1);
@@ -57,7 +58,8 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        return 0.5 * Math.abs((x1 - x2) * (y1 + y2) + (x2 - x3) * (y2 + y3) +
+                (x3 - x4) * (y3 + y4) + (x4 - x1) * (y4 + y1));
     }
 
 }

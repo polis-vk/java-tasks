@@ -15,11 +15,9 @@ public class IntegerTask {
      */
     public static int sum(int n) {
         int sum = 0;
-
         for (int i = 1; i <= n; i++) {
             sum += i;
         }
-
         return sum;
     }
 
@@ -34,11 +32,11 @@ public class IntegerTask {
 
         if (stepPerDay > 0) {
             return (int) Math.ceil((height - top) / stepPerDay + 1);
-        } else if (top >= height ){
-            return 1;
-        } else {
-            return  Integer.MAX_VALUE;
         }
+        if (top >= height) {
+            return 1;
+        }
+        return Integer.MAX_VALUE;
     }
 
     /**
@@ -46,11 +44,12 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
+        int number = n;
         for (int i = 0; i < order - 1; i++) {
-            n = n / 10;
+            number = number / 10;
         }
 
-        return Math.abs(n) % 10;
+        return Math.abs(number) % 10;
     }
 
 
@@ -59,11 +58,12 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
+        byte number = n;
         long result = 1;
 
-        while (n >= 1) {
-            result *= n;
-            n = (byte) (n - 1);
+        while (number >= 1) {
+            result *= number;
+            number = (byte) (number - 1);
         }
 
         return result;
