@@ -10,10 +10,10 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        int steps = (int)((b - a) / delta);
+        int steps = (int) ((b - a) / delta);
         double area = 0;
-        for (int i = 0; i < steps; i++){
-            double value = 0.5*(function.applyAsDouble(a+i*delta) + function.applyAsDouble(a+(i+1)*delta));
+        for (int i = 0; i < steps; i++) {
+            double value = 0.5 * (function.applyAsDouble(a + i * delta) + function.applyAsDouble(a + (i + 1) * delta));
             area += delta * value;
         }
         return area;
@@ -29,14 +29,14 @@ public class HomeworkTask {
         byte indexOfMax = 0;
         while (a != 0) {
             long number = a % 10;
-            if (number >= max){
+            if (number >= max) {
                 max = number;
                 indexOfMax = c;
             }
             c++;
             a /= 10;
         }
-        return (byte)(c - indexOfMax);
+        return (byte) (c - indexOfMax);
     }
 
 
@@ -55,13 +55,12 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      * Это дополнительное задание, необязательное для выполнения
      */
-    public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
-    {
+    public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
         int a = x1 * y2 - x2 * y1;
         int b = x2 * y3 - x3 * y2;
         int c = x3 * y4 - x4 * y3;
         int d = x4 * y1 - x1 * y4;
-        return Math.abs((double)(a + b + c + d) / 2);
+        return Math.abs((double) (a + b + c + d) / 2);
     }
 
 }

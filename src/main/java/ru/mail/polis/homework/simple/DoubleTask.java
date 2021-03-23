@@ -14,14 +14,15 @@ public class DoubleTask {
      * Пример: (1, 5, 4) -> "-1.0, -4.0"
      */
     public static String equation(int a, int b, int c) {
-        double x1, x2;
+        double x1;
+        double x2;
 
         double discriminant = b * b - 4 * a * c;
 
-        x1 = (-b + Math.sqrt(discriminant)) / (2*a);
-        x2 = (-b - Math.sqrt(discriminant)) / (2*a);
+        x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+        x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
 
-        if (x2 > x1){
+        if (x2 > x1) {
             return x2 + ", " + x1;
         }
         return x1 + ", " + x2;
