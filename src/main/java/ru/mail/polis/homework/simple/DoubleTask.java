@@ -9,7 +9,6 @@ import java.lang.Math;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class DoubleTask {
-
     /**
      * Вывести два корня квадратного уравнения через запятую: a * x ^ 2 + b * x + c = 0;
      * Вывод менять не нужно, надо только посчитать x1 и x2, где x1 > x2
@@ -19,16 +18,13 @@ public class DoubleTask {
         double x1 = 0;
         double x2 = 0;
         double d = Math.pow(b, 2) - 4 * (a * c);
-        double x = 0;
-
         x1 = (-b + Math.sqrt(d)) / (2 * a);
         x2 = (-b - Math.sqrt(d)) / (2 * a);
-        if (x2 > x1) { 
-            x = x2;
+        if (x2 > x1) {
+            double x = x2;
             x2 = x1;
             x1 = x;
-        } 
-
+        }
         return x1 + ", " + x2;
     }
 
@@ -37,8 +33,6 @@ public class DoubleTask {
      * Пример: (0, 0, 3, 4) -> 5.0
      */
     public static float length(double x1, double y1, double x2, double y2) {
-        float l = (float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-
-        return l;
+        return (float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 }
