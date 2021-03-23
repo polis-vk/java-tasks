@@ -12,15 +12,16 @@ public class HomeworkTask {
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integral = 0;
         int numOfSteps = (int) ((b - a) / delta);
+        double x;
         for (int i = 0; i < numOfSteps; i++) {
-            double x = a + delta * i;
-            double y =delta* function.applyAsDouble(x);
-            integral = integral + y;
+            x = a + delta * i;
+            integral = integral + delta * function.applyAsDouble(x);
 
         }
 
         return integral;
     }
+
     /**
      * Вывести номер максимальной цифры. Счет начинается слева направо,
      * выводим номер первой максимальной цифры (если их несколько)
@@ -44,7 +45,16 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        double a = DoubleTask.length(x1, y1, x2, y2);
+        double b = DoubleTask.length(x2, y2, x3, y3);
+        double c = DoubleTask.length(x3, y3, x4, y4);
+        double d = DoubleTask.length(x1, y1, x4, y4);
+        double diag = DoubleTask.length(x1, y1, x3, y3);
+        double p1 = (a + b + diag) / 2;
+        double p2 = (c + d + diag) / 2;
+        double area1 = Math.sqrt(p1 * (p1 - a) * (p1 - b) * (p1 - diag));
+        double area2 = Math.sqrt(p2 * (p2 - c) * (p2 - d) * (p2 - diag));
+        return area1 + area2;
     }
 
 }

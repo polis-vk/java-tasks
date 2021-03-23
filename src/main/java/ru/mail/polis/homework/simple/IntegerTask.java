@@ -14,9 +14,9 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        int sum=0;
+        int sum = 0;
         for (int i = 1; i <= n; i++) {
-            sum+=i;
+            sum += i;
         }
         return sum;
     }
@@ -28,21 +28,19 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        int step=0;
-        int result=0;
-        while(result<height){
-
-
-            result+=top;
+        int step = 0;
+        int result = 0;
+        if (top <= bottom && height > top) {
+            step = Integer.MAX_VALUE;
+            return step;
+        }
+        while (result < height) {
+            result += top;
             step++;
-            if(result>=height) {
+            if (result >= height) {
                 break;
             }
             result -= bottom;
-            if(top<=bottom){
-                step=Integer.MAX_VALUE;
-                break;
-            }
         }
         return step;
     }
@@ -52,12 +50,12 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int decimal= (int) ((n/(Math.pow(10,order-1)))%10);
-        if(order==1){
-            decimal=n%10;
+        int decimal = (int) ((n / (Math.pow(10, order - 1))) % 10);
+        if (order == 1) {
+            decimal = n % 10;
         }
-        if(decimal<0){
-            decimal=-decimal;
+        if (decimal < 0) {
+            decimal = -decimal;
         }
         return decimal;
     }
@@ -68,10 +66,10 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        long proiz=1;
+        long multi = 1;
         for (int i = 1; i <= n; i++) {
-            proiz=proiz*i;
+            multi = multi * i;
         }
-        return proiz;
+        return multi;
     }
 }
