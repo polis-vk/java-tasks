@@ -14,7 +14,15 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return 0;
+        int result =0;
+
+        if (n>0) {
+            for (int i = 1; i <= n; i++) {
+                result += i;
+            }
+            System.out.println("Сумма чисел до  " + n + " есть число " + result);
+        }
+        return result;
     }
 
     /**
@@ -24,7 +32,22 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        return 0;
+        int result =0;
+        int now_range=0;
+        while(true){
+
+            now_range+=top;
+            result+=1;
+            if (now_range==height){
+                break;
+            }
+
+            now_range-=bottom;
+
+
+        }
+        System.out.println("Гусеница поднимется на высоту "+ height + "за "+ result + " дней");
+        return result;
     }
 
     /**
@@ -32,7 +55,17 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return 0;
+        int result=0;
+        for (int i=1;i<=order;i++){
+            if (i==order){
+                result=n%10;
+                break;
+            }
+            else
+            n/=10;
+        }
+        System.out.println("На "+ order + " месте числа " + n + " находится цифра "+ result);
+        return result;
     }
 
 
@@ -41,6 +74,18 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        int result=1;
+        if (n>0)
+        {
+            for (int i = 1; i <= n; i++) {
+                result *= i;
+            }
+            System.out.println("Факториал числа " + n + " есть число " + result);
+        }
+        else if (n==0)
+            System.out.println("Факториал числа " + n + " есть число " + result);
+        else
+            System.out.println("Invalid argument");
+        return result;
     }
 }

@@ -10,7 +10,12 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double resultCalc = 0;
+        for (int i = 0; i < (b - a) / delta; i++) {
+            resultCalc += function.applyAsDouble(delta * i + a);
+        }
+        return resultCalc * delta;
+
     }
 
     /**
@@ -18,7 +23,15 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        byte result=0;
+        while (a!=0){
+            long current = a%10;
+            if (current >result)
+                result = (byte) current;
+            a/=10;
+
+        }
+        return result;
     }
 
 
@@ -27,7 +40,13 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        if (x1 == x2 && y1 == y2) {
+            System.out.println("Invalid coordinates");
+            return 0;
+        }
+
+        return (double)((x3 - x1) * (y2 - y1)) / (x2 - x1) + y1;
+
     }
 
     /**
@@ -36,7 +55,20 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        double s1 = DoubleTask.length(x1, y1, x2, y2);
+        double s2 = DoubleTask.length(x2, y2, x3, y3);
+        double s3 = DoubleTask.length(x3, y3, x4, y4);
+        double s4 = DoubleTask.length(x4, y4, x1, y1);
+
+        double diagonal = DoubleTask.length(x1, y1, x3, y3);
+
+        double perimeter1 = (s1 + s2 + diagonal) / 2;
+        double perimeter2 = (s3 + s4 + diagonal) / 2;
+
+        double square1 = Math.sqrt(perimeter1 * (perimeter1 - s1) * (perimeter1 - s2) * (perimeter1 - diagonal));
+        double square2 = Math.sqrt(perimeter2 * (perimeter2 - s3) * (perimeter2 - s4) * (perimeter2 - diagonal));
+
+        return square1 + square2;
     }
 
 }
