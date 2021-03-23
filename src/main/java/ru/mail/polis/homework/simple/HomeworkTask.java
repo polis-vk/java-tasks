@@ -10,8 +10,13 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        function.applyAsDouble(4d);
-        return 0;
+        int steps = (int)((b - a) / delta);
+        double area = 0;
+        for (int i = 0; i < steps; i++){
+            double value = 0.5*(function.applyAsDouble(a+i*delta) + function.applyAsDouble(a+(i+1)*delta));
+            area += delta * value;
+        }
+        return area;
     }
 
     /**
@@ -19,7 +24,19 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        byte c = 1;
+        long max = -1;
+        byte indexOfMax = 0;
+        while (a != 0) {
+            long number = a % 10;
+            if (number >= max){
+                max = number;
+                indexOfMax = c;
+            }
+            c++;
+            a /= 10;
+        }
+        return (byte)(c - indexOfMax);
     }
 
 
@@ -28,7 +45,9 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        double a = (x3 - x1) * (y2 - y1);
+        double b = x2 - x1;
+        return a / b + y1;
     }
 
     /**
@@ -36,8 +55,13 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      * Это дополнительное задание, необязательное для выполнения
      */
-    public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+    public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
+    {
+        int a = x1 * y2 - x2 * y1;
+        int b = x2 * y3 - x3 * y2;
+        int c = x3 * y4 - x4 * y3;
+        int d = x4 * y1 - x1 * y4;
+        return Math.abs((double)(a + b + c + d) / 2);
     }
 
 }
