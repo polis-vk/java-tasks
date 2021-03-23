@@ -37,7 +37,7 @@ public class IntegerTask {
         if (delta <= 0) {
             return Integer.MAX_VALUE;
         }
-        return (int) Math.ceil(1.0 * distanceAfter1Day / delta) + 1;
+        return (int) Math.ceil((float) distanceAfter1Day / delta) + 1;
     }
 
     /**

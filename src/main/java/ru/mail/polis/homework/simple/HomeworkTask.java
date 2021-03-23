@@ -23,23 +23,21 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte maxNumber = 1;
-        byte k = 2;
+        byte maxNumberIndex = 1;
+        byte currentIndex = 2;
         long max = a % 10;
         long num = a / 10;
 
         while (num != 0) {
             if (num % 10 >= max) {
                 max = num % 10;
-                maxNumber = k;
+                maxNumberIndex = currentIndex;
             }
             num /= 10;
-            k++;
+            currentIndex++;
         }
-
-        return (byte) (k - maxNumber);
+        return (byte) (currentIndex - maxNumberIndex);
     }
-
 
     /**
      * Даны две точки в пространстве (x1, y1) и (x2, y2). Вам нужно найти Y координату третьей точки (x3, y3),
@@ -47,7 +45,7 @@ public class HomeworkTask {
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
 
-        double k = 1.0 * (y1 - y2) / (x1 - x2);
+        double k = (float) (y1 - y2) / (x1 - x2);
         double m = y1 - k * x1;
 
         return k * x3 + m;
