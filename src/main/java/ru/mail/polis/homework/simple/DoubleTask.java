@@ -26,12 +26,12 @@ public class DoubleTask {
                 x2 = temp;
             }
             return x1 + ", " + x2;
-        } else if (discriminant == 0) {
+        }
+        if (discriminant == 0) {
             double x = -b / (double) (2 * a);
             return x + ", " + x;
-        } else {
-            return "Нет действительных корней";
         }
+        return "Нет действительных корней";
     }
 
     /**
