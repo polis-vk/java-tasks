@@ -14,9 +14,24 @@ public class DoubleTask {
      * Пример: (1, 5, 4) -> "-1.0, -4.0"
      */
     public static String equation(int a, int b, int c) {
-        double x1 = 0;
-        double x2 = 0;
-        return x1 + ", " + x2;
+        double Discriminant = b * b - 4 * a * c;
+        if (Discriminant < 0) {
+            System.out.println("корни в поле комплексных чисел");
+        }
+
+
+        double x1 = (-b + Math.sqrt(Discriminant)) / (2 * a);
+        double x2 = (-b - Math.sqrt(Discriminant)) / (2 * a);
+        double max, min;
+        if (x1 > x2) {
+            max = x1;
+            min = x2;
+        } else {
+            max = x2;
+            min = x1;
+        }
+
+        return max + ", " + min;
     }
 
     /**
@@ -24,6 +39,10 @@ public class DoubleTask {
      * Пример: (0, 0, 3, 4) -> 5.0
      */
     public static float length(double x1, double y1, double x2, double y2) {
-        return 0;
+
+        double module = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+
+
+        return (float) module;
     }
 }

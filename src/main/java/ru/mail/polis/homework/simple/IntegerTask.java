@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.simple;
 
 
+import javax.swing.plaf.IconUIResource;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -14,7 +16,12 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return 0;
+        int sum = 0;
+        while (n != 0) {
+            sum += n;
+            n--;
+        }
+        return sum;
     }
 
     /**
@@ -24,7 +31,20 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        return 0;
+        int day_counter = 0;
+        if (bottom >= height) {
+            return 1;
+        }
+
+        if (bottom >= top) {
+            return Integer.MAX_VALUE;
+        } else {
+            for (int current_hight = bottom; current_hight < height; current_hight += (top - bottom)) {
+                day_counter++;
+            }
+        }
+
+        return day_counter;
     }
 
     /**
@@ -32,7 +52,9 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return 0;
+        int value = Math.abs(n) % (int) (Math.pow(10, order));
+        value /= (int) (Math.pow(10, order - 1));
+        return value;
     }
 
 
@@ -41,6 +63,11 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        long value = 1;
+        while (n >= 1) {
+            value *= n;
+            n--;
+        }
+        return value;
     }
 }
