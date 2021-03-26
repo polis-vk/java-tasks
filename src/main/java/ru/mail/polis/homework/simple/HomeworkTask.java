@@ -37,8 +37,7 @@ public class HomeworkTask {
             }
             copy /= 10;
         }
-        int res = i - pos + 1;
-        return (byte) res;
+        return (byte) (i - pos + 1);
     }
 
 
@@ -47,8 +46,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        double position = (double) ((y2 - y1) * (x3 - x2)) / (double) (x2 - x1) + y2;
-        return position;
+        return (double) ((y2 - y1) * (x3 - x2)) / (double) (x2 - x1) + y2;
     }
 
     /**
@@ -57,8 +55,7 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        double coub = (Math.abs((x1 * y2 - y1 * x2) + (x2 * y3 - y2 * x3) + (x3 * y4 - y3 * x4) + (x4 * y1 - y4 * x1))) / 2.0;
-        return coub;
+        return (Math.abs((x1 * y2 - y1 * x2) + (x2 * y3 - y2 * x3) + (x3 * y4 - y3 * x4) + (x4 * y1 - y4 * x1))) / 2.0;
     }
 
 }

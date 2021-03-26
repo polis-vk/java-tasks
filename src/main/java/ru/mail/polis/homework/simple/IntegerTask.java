@@ -21,9 +21,7 @@ public class IntegerTask {
             }
             return amount;
         }
-        else {
-            return 0;
-        }
+        return 0;
     }
 
     /**
