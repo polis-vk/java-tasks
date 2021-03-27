@@ -30,9 +30,8 @@ public class IntegerTask {
         double stepsPerDay = top - bottom;
         if (stepsPerDay > 0) {
             return (int) Math.ceil(((height - top) / stepsPerDay) + 1);
-        } else {
-            return Integer.MAX_VALUE;
         }
+        return Integer.MAX_VALUE;
     }
 
     /**
