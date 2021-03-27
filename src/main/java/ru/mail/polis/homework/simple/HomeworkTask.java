@@ -46,9 +46,8 @@ public class HomeworkTask {
         double y = y2 - y1;
         if (y == 0) {
             return y1;
-        } else {
-            return y2 - (y * ((x2 - x3) / x));
         }
+        return y2 - (y * ((x2 - x3) / x));
     }
 
     /**
