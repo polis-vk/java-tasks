@@ -13,7 +13,64 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        return new Pair<>('s', 4);
+        if (str == null || str.equals("")) {
+            return null;
+        }
+
+//      Довольно инересный код я написал нечаянно - ищет наиболее часто встречающийся в строке элемент
+//      не зависимо от того, идет ли подряд. Решил оставить на всякий случай - вдруг вам понравится
+//      Ибо сильно усложнил сво. задачу из-за невинимательного чтения задания
+//        char[] symbols = new char[str.length()];
+//        int[] symbolCount = new int[str.length()];
+//        int numOfSymbols = 0;
+//
+//        for(int i = 0; i < str.length(); i++){
+//            boolean isUnique = true;
+//            for(int j = 0; j < numOfSymbols; j++){
+//                if (symbols[j] == str.charAt(i)) {
+//                    symbolCount[j] += 1;
+//                    isUnique = false;
+//                    break;
+//                }
+//            }
+//            if(isUnique){
+//                symbols[numOfSymbols] = str.charAt(i);
+//                symbolCount[numOfSymbols] += 1;
+//                numOfSymbols += 1;
+//            }
+//        }
+//
+//        int max = symbolCount[0];
+//        int iMax = 0;
+//        for(int i = 1; i < numOfSymbols; i++){
+//            if(max < symbolCount[i]){
+//                iMax = i;
+//                max = symbolCount[i];
+//            }
+//        }
+//        return new Pair<>(symbols[iMax], max);
+
+        char maxRowChar = str.charAt(0);
+        char currRowChar = str.charAt(0);
+        int currRow = 1;
+        int maxInRow = 0;
+        for (int i = 1; i < str.length(); i++) {
+            if (currRowChar == str.charAt(i)) {
+                currRow += 1;
+            } else {
+                if (currRow > maxInRow) {
+                    maxInRow = currRow;
+                    maxRowChar = currRowChar;
+                }
+                currRow = 1;
+                currRowChar = str.charAt(i);
+            }
+        }
+        if (currRow > maxInRow) {
+            maxInRow = currRow;
+            maxRowChar = currRowChar;
+        }
+        return new Pair<>(maxRowChar, maxInRow);
     }
 
     public static class Pair<T, V> {
