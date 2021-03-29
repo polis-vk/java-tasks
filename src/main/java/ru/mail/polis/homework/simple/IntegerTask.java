@@ -14,11 +14,11 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        int S = 0;
+        int s = 0;
         for (int i = 1; i <= n; i++) {
-            S += i;
+            s += i;
         }
-        return S;
+        return s;
     }
 
     /**
@@ -29,16 +29,17 @@ public class IntegerTask {
      */
     public static int snake(int height, int top, int bottom) {
         int days = 0;
+        int heightCopy = height;
 
-        if ((top >= height) || (top > bottom)) {
-            while (height > top) {
-                height -= top - bottom;
-                days++;
-            }
-            days++;
-        } else {
-            days = Integer.MAX_VALUE;
+        if ((top < height) && (top <= bottom)) {
+            return Integer.MAX_VALUE;
         }
+
+        while (heightCopy > top) {
+            heightCopy -= top - bottom;
+            days++;
+        }
+            days++;
 
         return days;
     }
@@ -49,11 +50,11 @@ public class IntegerTask {
      */
     public static int kDecimal(int n, int order) {
         int number;
-        int dec;
-        for (int i = 0; i<(order - 1); i++) {
-            n = n / 10;
+        int nCopy = n;
+        for (int i = 0; i < (order - 1); i++) {
+            nCopy = nCopy / 10;
         }
-        number = Math.abs(n % 0);
+        number = Math.abs(nCopy % 10);
         return number;
     }
 

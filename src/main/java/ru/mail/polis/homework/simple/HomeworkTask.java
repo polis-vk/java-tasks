@@ -10,11 +10,10 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        function.applyAsDouble(4d);
         double integral = 0;
-        double x; // текущее значение x
-        x = a;
-        while (x<b){
+        double x = a; // текущее значение x
+
+        while (x < b) {
             integral += function.applyAsDouble(x) * delta;
             x += delta;
         }
@@ -26,22 +25,23 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte max = 0; // текущая максимальная цифра
-        byte number = 0; // номер текущей максимальной цифры (счтая с конца)
-        byte k = 0; // количество цифр в числе
-        while (a > 0){
-            k++;
-            if ((a % 10) >= max){
-                max = (byte) (a % 10);
-                number = k;
+        byte max = 0;
+        byte number = 0;
+        byte numberLength = 0;
+        long aCopy = a;
+        while (aCopy > 0) {
+            numberLength++;
+            if ((aCopy % 10) >= max) {
+                max = (byte) (aCopy % 10);
+                number = numberLength;
             }
-            a = a / 10;
+            aCopy = aCopy / 10;
         }
-        if (k == 0){
+        if (numberLength == 0) {
             number = 1;
         }
         else {
-            number = (byte) ( (k - number) + 1);
+            number = (byte) ((numberLength - number) + 1);
         }
 
         return number;
@@ -54,11 +54,8 @@ public class HomeworkTask {
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
         double y3;
-        double k; // коэфициент наклона прямой
-        double b; // свободный член
-
-        k = (y2 - y1) / (double) (x2 - x1);
-        b = y1 - k * x1;
+        double k = (y2 - y1) / (double) (x2 - x1); // коэфициент наклона прямой
+        double b = y1 - k * x1; // свободный член
 
         y3 = k * x3 + b;
         return y3;
