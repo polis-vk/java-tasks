@@ -30,14 +30,15 @@ public class HomeworkTask {
         byte maxIndex = 1;
         byte maxNum = 0;
         byte i = 0;
+        long value = a;
         do {
             i++;
-            if (a % 10 >= maxNum) {
+            if (value % 10 >= maxNum) {
                 maxIndex = i;
-                maxNum = (byte) (a % 10);
+                maxNum = (byte) (value % 10);
             }
-            a = a / 10;
-        } while (a > 0);
+            value = value / 10;
+        } while (value > 0);
         return (byte) (i - maxIndex + 1);
     }
 
