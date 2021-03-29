@@ -19,7 +19,8 @@ public class DoubleTask {
         double discrimanant = b * b - 4 * a * c;
         if (discrimanant < 0) {
             return "Нет корней";
-        } else if (discrimanant == 0) {
+        }
+        if (discrimanant == 0) {
             x1 = x2 = -b / (2 * a);
         }
         x1 = (-b + Math.sqrt(discrimanant)) / (2 * a);

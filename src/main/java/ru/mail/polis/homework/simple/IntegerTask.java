@@ -42,8 +42,8 @@ public class IntegerTask {
             count += 1;
         }
         return count + 1;
-
     }
+
 
 
     /**
@@ -74,10 +74,10 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        long res = 1;
         if (n == 0) {
-            return res;
+            return 1;
         }
+        long res = 1;
         for (int i = 1; i <= n; i += 1) {
             res *= i;
         }
