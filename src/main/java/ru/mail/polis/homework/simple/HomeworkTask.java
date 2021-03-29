@@ -23,10 +23,45 @@ public class HomeworkTask {
      * Вывести номер максимальной цифры. Счет начинается слева направо,
      * выводим номер первой максимальной цифры (если их несколько)
      */
+    /**
     public static byte maxNumber(long a) {
-        long lengthNumber = (String.valueOf(a)).length();
+        long lengthNumber = 0;
         long aCopy = a;
+        long aCopy1 = a;
+        while (aCopy1 > 9) {
+            aCopy1 /= 10;
+            lengthNumber++;
+        }
+        lengthNumber++;
+        System.out.println(lengthNumber);
         long Number1 = aCopy % 10;
+        long Number2 = 0;
+        long number = lengthNumber;
+        long max = Number1;
+        aCopy = aCopy / 10;
+        lengthNumber--;
+        for (long i = lengthNumber; i > 0; i--) {
+            Number2 = aCopy % 10;
+            if (Number2 >= max) {
+                number = i;
+                max = Number2;
+            }
+            aCopy = aCopy / 10;
+        }
+        return (byte) number;
+    }**/
+
+    public static byte maxNumber(long a) {
+        long lengthNumber = 0;
+        long aCopy = a;
+        long aCopy1 = a;
+        while (aCopy1 > 9) {/**тут находим длину числа**/
+            aCopy1 /= 10;
+            lengthNumber++;
+        }
+        lengthNumber++;
+        System.out.println(lengthNumber);
+        long Number1 = aCopy % 10;/**ниже все **/
         long Number2 = 0;
         long number = lengthNumber;
         long max = Number1;
