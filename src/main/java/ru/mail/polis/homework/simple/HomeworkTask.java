@@ -10,7 +10,13 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double start = a;
+        double result = 0;
+        while (start < b){
+            result = result + function.applyAsDouble(start) * delta;
+            start = start + delta;
+        }
+        return result;
     }
 
     /**
@@ -18,7 +24,18 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        long nDecimal = a;
+        long max = 0;
+        byte n = 0;
+        while(nDecimal != 0){
+            if (max < nDecimal % 10) {
+                max = nDecimal % 10;
+                n = 0;
+            }
+            nDecimal = nDecimal / 10;
+            n++;
+        }
+        return n;
     }
 
 
@@ -27,7 +44,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        return (double) (x3 - x1) * (y2 - y1) / (x2 - x1) + y1;
     }
 
     /**
@@ -35,8 +52,6 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      * Это дополнительное задание, необязательное для выполнения
      */
-    public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
-    }
+    public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {return 0;}
 
 }
