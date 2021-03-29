@@ -14,6 +14,101 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        return null;
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+
+        String resultStr = str.replaceAll("[^0-9e.-]", "");
+
+        boolean meetingDot = false;
+        boolean meetingExp = false;
+        boolean meetingDash = false;
+
+        if (resultStr.charAt(resultStr.length() - 1) == 'e') {
+            return null;
+        }
+        for (int i = 0; i < resultStr.length(); ++i) {
+            switch (resultStr.charAt(i)) {
+                case 'e':
+                    if (meetingExp) {
+                        return null;
+                    }
+                    meetingExp = true;
+                    break;
+
+                case '.':
+                    if (meetingDot) {
+                        return null;
+                    }
+                    meetingDot = true;
+                    break;
+            }
+
+            if (resultStr.charAt(i) == '-') {
+                if (meetingDash || (i != 0 && resultStr.charAt(i - 1) != 'e')) {
+                    return null;
+                }
+                meetingDash = true;
+            } else {
+                meetingDash = false;
+            }
+        }
+
+        if (meetingDot || meetingExp) {
+            return parseDouble(resultStr);
+        }
+
+        long result = (long) parseLong(resultStr);
+        int resultInt = (int) result;
+        if (result == resultInt) {
+            return resultInt;
+        }
+        return result;
+    }
+
+    private static double parseLong(String str) {
+        double result = 0.0;
+
+        int i = 0;
+        if (str.charAt(i) == '-') {
+            ++i;
+            result = Character.getNumericValue(str.charAt(i));
+        } else {
+            result = Character.getNumericValue(str.charAt(i));
+        }
+        ++i;
+
+        for (; i < str.length(); ++i) {
+            result = result * 10 + Character.getNumericValue(str.charAt(i));
+        }
+
+        return (str.charAt(0) == '-' ? -result : result);
+    }
+
+    private static double parseDouble(String str) {
+        double result = 0.0;
+        int dotIndex = str.indexOf('.');
+        int startExpPartPos = 0;
+
+        if (dotIndex != -1) {
+            result = parseLong(str.substring(0, dotIndex));
+            startExpPartPos = dotIndex + 1;
+        }
+
+        String expPartStr = str.substring(startExpPartPos);
+        int expIndex = expPartStr.indexOf('e');
+
+        if (expIndex == -1) {
+            return result + parseLong(expPartStr) / Math.pow(10, expPartStr.length());
+        }
+
+        double temp = parseLong(expPartStr.substring(0, expIndex));
+        double expDegree = parseLong(expPartStr.substring(expIndex + 1));
+
+        if (dotIndex == -1) {
+            return temp * Math.pow(10, expDegree);
+        }
+
+        return (result + temp / Math.pow(10, expIndex)) * Math.pow(10, expDegree);
     }
 }
