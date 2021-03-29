@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.simple;
 
 
-import javax.swing.plaf.IconUIResource;
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -16,10 +14,11 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
+        int lastAdd = n;
         int sum = 0;
-        while (n != 0) {
+        while (lastAdd != 0) {
             sum += n;
-            n--;
+            lastAdd--;
         }
         return sum;
     }
@@ -31,7 +30,7 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        int day_counter = 0;
+        int dayCounter = 0;
         if (bottom >= height) {
             return 1;
         }
@@ -39,12 +38,12 @@ public class IntegerTask {
         if (bottom >= top) {
             return Integer.MAX_VALUE;
         } else {
-            for (int current_hight = bottom; current_hight < height; current_hight += (top - bottom)) {
-                day_counter++;
+            for (int currentHight = bottom; currentHight < height; currentHight += (top - bottom)) {
+                dayCounter++;
             }
         }
 
-        return day_counter;
+        return dayCounter;
     }
 
     /**
@@ -52,9 +51,7 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int value = Math.abs(n) % (int) (Math.pow(10, order));
-        value /= (int) (Math.pow(10, order - 1));
-        return value;
+        return (Math.abs(n) % (int) (Math.pow(10, order))) / (int) (Math.pow(10, order - 1));
     }
 
 
@@ -63,10 +60,11 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
+        byte number = n;
         long value = 1;
-        while (n >= 1) {
-            value *= n;
-            n--;
+        while (number >= 1) {
+            value *= number;
+            number--;
         }
         return value;
     }
