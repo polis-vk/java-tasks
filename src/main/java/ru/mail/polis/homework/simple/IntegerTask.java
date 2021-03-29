@@ -28,9 +28,9 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        if (top <= bottom & height > top) {
+        if (top <= bottom && height > top) {
             return Integer.MAX_VALUE;
-        } else if (top >= height) {
+        } if (top >= height) {
             return  1;
         }
         return (height - top - 1) / (top - bottom) + 2;
