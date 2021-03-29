@@ -22,18 +22,18 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        long a1 = Math.abs(a);
+        long numberToChange = Math.abs(a);
         long maxNum = 0;
         byte maxNumPos = 0;
         byte count = 0;
         do {
-            if (a1 % 10 >= maxNum) {
-                maxNum = a1 % 10;
+            if (numberToChange % 10 >= maxNum) {
+                maxNum = numberToChange % 10;
                 maxNumPos = count;
             }
-            a1 /= 10;
+            numberToChange /= 10;
             count++;
-        } while (a1 != 0);
+        } while (numberToChange != 0);
         return (byte) (count - maxNumPos);
     }
 
