@@ -45,7 +45,7 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return Math.abs((n / (int) Math.pow(10.0, order - 1)) % 10);
+        return Math.abs((n / (int) Math.pow(10, order - 1)) % 10);
     }
 
 
@@ -55,7 +55,7 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long res = 1L;
-        for (int i = 2; i <= n; i++) {
+        for (byte i = 2; i <= n; i++) {
             res *= i;
         }
         return res;
