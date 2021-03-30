@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.simple;
 
 
+import org.w3c.dom.ls.LSOutput;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -14,7 +16,12 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return 0;
+        int sum = 0;
+        for (int i = 0; i < n; i++) {
+            sum += i;
+            sum++;
+        }
+        return sum;
     }
 
     /**
@@ -24,7 +31,18 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        return 0;
+        int i = 1;
+        int progress = top;
+        if ((bottom > height - top) || (top <= bottom)) {
+            if (top >= height) {
+                return i;
+            }
+            return Integer.MAX_VALUE;
+        }
+        for (; (height - progress) > 0; i++) {
+            progress = progress + top - bottom;
+        }
+        return i;
     }
 
     /**
@@ -32,15 +50,18 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return 0;
+        return (int) (Math.abs(n) / Math.pow(10, order - 1)) % 10;
     }
-
 
     /**
      * Выведите факториал от числа n
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        long top = 1;
+        for (int i = 1; i <= n; i++) {
+            top = top * i;
+        }
+        return top;
     }
 }
