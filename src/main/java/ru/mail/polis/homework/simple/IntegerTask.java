@@ -14,13 +14,13 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        int f = 1;
+        int nextTerm = 1;
         int res = 0;
         int newN = n + 1;
-        while (f > 0) {
-            f = newN - 1;
-            res += f;
-            newN = f;
+        while (nextTerm > 0) {
+            nextTerm = newN - 1;
+            res += nextTerm;
+            newN = nextTerm;
         }
         return res;
     }
@@ -49,19 +49,6 @@ public class IntegerTask {
         return days - bottom;
     }
 
-
-        /*int count = 0;
-        int result = height;
-        if (bottom > top) return Integer.MAX_VALUE;
-        else {
-            while (result != 0) {
-                result -= top - bottom;
-                count++;
-            }
-        }
-        return count;
-        */
-
     /**
      * Дано число n и номер разряда order. Выведите цифру стояющую на нужном разряде
      * Пример: (454355, 3) -> 3
@@ -84,15 +71,15 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
+        long number = n;
         long nextNumber = n;
-        long n1 = n;
         if (n <= 1) {
             return 1;
         }
-        while (n1 > 1) {
-            nextNumber = ((n1 - 1) * nextNumber);
-            n1 = (n1 - 1);
+        while (nextNumber > 1) {
+            number = ((nextNumber - 1) * number);
+            nextNumber = (nextNumber - 1);
         }
-        return nextNumber;
+        return number;
     }
 }

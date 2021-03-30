@@ -38,8 +38,7 @@ public class HomeworkTask {
             }
         }
 
-        byte result = (byte) (count + 1 - newCount);
-        return result;
+        return (byte) (count + 1 - newCount);
     }
 
 

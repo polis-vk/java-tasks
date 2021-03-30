@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-import java.lang.Math;
-
 import static java.lang.StrictMath.sqrt;
 
 /**
