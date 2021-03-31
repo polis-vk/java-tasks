@@ -15,14 +15,14 @@ public class IntegerTask {
      */
     public static int sum(int n) {
         int nextTerm = 1;
-        int res = 0;
+        int sum = 0;
         int newN = n + 1;
         while (nextTerm > 0) {
             nextTerm = newN - 1;
-            res += nextTerm;
+            sum += nextTerm;
             newN = nextTerm;
         }
-        return res;
+        return sum;
     }
 
     /**
@@ -33,7 +33,9 @@ public class IntegerTask {
      */
     public static int snake(int height, int top, int bottom) {
         int dif = top - bottom;
-        if (top >= height) return 1;
+        if (top >= height) {
+            return 1;
+        }
         if (top < 0 && bottom < 0 && dif <= 0) {
             return Integer.MAX_VALUE;
         }
@@ -77,8 +79,9 @@ public class IntegerTask {
             return 1;
         }
         while (nextNumber > 1) {
-            number = ((nextNumber - 1) * number);
             nextNumber = (nextNumber - 1);
+            number = (nextNumber * number);
+
         }
         return number;
     }

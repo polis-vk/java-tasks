@@ -23,22 +23,23 @@ public class HomeworkTask {
      * Вывести номер максимальной цифры. Счет начинается слева направо,
      * выводим номер первой максимальной цифры (если их несколько)
      */
-    public static byte maxNumber(long a) {
+    public static byte maxNumber(long a1) {
+        long a = a1;
         long number = 0;
-        byte count = 0;
-        byte newCount = 0;
+        byte index = 0;
+        byte indexMaxNumber = 0;
         long max = 0;
         while (a >= 1) {
             number = a % 10;
             a = a / 10;
-            count += 1;
+            index += 1;
             if (number >= max) {
                 max = number;
-                newCount = count;
+                indexMaxNumber = index;
             }
         }
 
-        return (byte) (count + 1 - newCount);
+        return (byte) (index + 1 - indexMaxNumber);
     }
 
 
