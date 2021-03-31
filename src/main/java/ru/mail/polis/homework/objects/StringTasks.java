@@ -58,15 +58,19 @@ public class StringTasks {
             return parseDouble(resultStr);
         }
 
-        long result = (long) parseLong(resultStr);
-        int resultInt = (int) result;
-        if (result == resultInt) {
-            return resultInt;
+        long result = (long) parseIntegralNumber(resultStr);
+        if (result > Integer.MAX_VALUE || result < Integer.MIN_VALUE)
+        {
+            return result;
         }
-        return result;
+        return (int) result;
     }
 
-    private static double parseLong(String str) {
+    //Не придумал лучше названия, всё равно странно парсить целое число, а возвращать double
+    //Как вариант BigInteger ¯\_(ツ)_/¯
+
+    //Вы обещали не стукать и посмотреть на варианты прошлых лет
+    private static double parseIntegralNumber(String str) {
         double result = 0.0;
 
         int i = 0;
@@ -91,7 +95,7 @@ public class StringTasks {
         int startExpPartPos = 0;
 
         if (dotIndex != -1) {
-            result = parseLong(str.substring(0, dotIndex));
+            result = parseIntegralNumber(str.substring(0, dotIndex));
             startExpPartPos = dotIndex + 1;
         }
 
@@ -99,11 +103,11 @@ public class StringTasks {
         int expIndex = expPartStr.indexOf('e');
 
         if (expIndex == -1) {
-            return result + parseLong(expPartStr) / Math.pow(10, expPartStr.length());
+            return result + parseIntegralNumber(expPartStr) / Math.pow(10, expPartStr.length());
         }
 
-        double temp = parseLong(expPartStr.substring(0, expIndex));
-        double expDegree = parseLong(expPartStr.substring(expIndex + 1));
+        double temp = parseIntegralNumber(expPartStr.substring(0, expIndex));
+        double expDegree = parseIntegralNumber(expPartStr.substring(expIndex + 1));
 
         if (dotIndex == -1) {
             return temp * Math.pow(10, expDegree);
