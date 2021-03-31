@@ -22,17 +22,22 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte maxNum = -1;
-        byte maxNumPos = -1;
-        char[] nums = Long.toString(a).toCharArray();
-        for (byte i = 0; i < nums.length && maxNum  != 9; i++) {
-            byte currentNum = Byte.parseByte(String.valueOf(nums[i]));
-            if (maxNum < currentNum){
-                maxNum = currentNum;
-                maxNumPos = (byte) (i + 1);
+        if (a == 0) {
+            return 1;
+        }
+        long copyOfInput = a;
+        byte maxNum = (byte) (copyOfInput % 10);
+        byte maxNumPosFromTheEnd = 0;
+        byte count = 0;
+        while (copyOfInput != 0) {
+            copyOfInput /= 10;
+            count++;
+            if (copyOfInput % 10 >= maxNum) {
+                maxNum = (byte) (copyOfInput % 10);
+                maxNumPosFromTheEnd = count;
             }
         }
-        return maxNumPos;
+        return (byte) (count - maxNumPosFromTheEnd);
     }
 
 
