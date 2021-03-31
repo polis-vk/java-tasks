@@ -15,7 +15,6 @@ public class HomeworkTask {
             resultCalc += function.applyAsDouble(delta * i + a);
         }
         return resultCalc * delta;
-
     }
 
     /**
@@ -23,13 +22,13 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte result=0;
-        while (a!=0){
-            long current = a%10;
-            if (current >result)
+        byte result = 0;
+        long b = a;
+        while (b != 0) {
+            long current = b % 10;
+            if (current > result)
                 result = (byte) current;
-            a/=10;
-
+            b /= 10;
         }
         return result;
     }

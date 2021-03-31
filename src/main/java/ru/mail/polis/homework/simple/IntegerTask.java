@@ -14,13 +14,11 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        int result =0;
-
-        if (n>0) {
+        int result = 0;
+        if (n > 0) {
             for (int i = 1; i <= n; i++) {
                 result += i;
             }
-            System.out.println("Сумма чисел до  " + n + " есть число " + result);
         }
         return result;
     }
@@ -35,18 +33,13 @@ public class IntegerTask {
         int result =0;
         int now_range=0;
         while(true){
-
             now_range+=top;
             result+=1;
             if (now_range==height){
                 break;
             }
-
             now_range-=bottom;
-
-
         }
-        System.out.println("Гусеница поднимется на высоту "+ height + "за "+ result + " дней");
         return result;
     }
 
@@ -55,17 +48,12 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int result=0;
-        for (int i=1;i<=order;i++){
-            if (i==order){
-                result=n%10;
-                break;
-            }
-            else
-            n/=10;
+        if (order < 1 ) {
+            System.out.println("Invalid argument \"Order\"");
+            return -1;
         }
-        System.out.println("На "+ order + " месте числа " + n + " находится цифра "+ result);
-        return result;
+        int temp = (int) Math.pow(10, order);
+        return Math.abs(n % temp / (temp / 10));
     }
 
 
@@ -74,18 +62,16 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        int result=1;
-        if (n>0)
+        int result = 1;
+        if (n > 0)
         {
             for (int i = 1; i <= n; i++) {
                 result *= i;
             }
-            System.out.println("Факториал числа " + n + " есть число " + result);
         }
-        else if (n==0)
-            System.out.println("Факториал числа " + n + " есть число " + result);
-        else
-            System.out.println("Invalid argument");
+
+        else if (n < 0)
+            result = -1;
         return result;
     }
 }
