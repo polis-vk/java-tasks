@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.objects;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 public class MaxTask {
 
