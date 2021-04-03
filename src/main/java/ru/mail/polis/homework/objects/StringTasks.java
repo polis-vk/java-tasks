@@ -34,8 +34,11 @@ public class StringTasks {
         if (dotCount + eCount > 0) {
             return parseDouble(numberString);
         }
-        return parseWhole(numberString);
-
+        Double numberResult = parseWhole(numberString);
+        if (numberResult > Integer.MAX_VALUE || numberResult < Integer.MIN_VALUE) {
+            return numberResult.longValue();
+        }
+        return numberResult.intValue();
     }
 
     private static String strFilter(String str) {
@@ -45,12 +48,11 @@ public class StringTasks {
                 numberStringBuilder.append(ch);
             }
         }
-        String numberString = numberStringBuilder.toString();
-        return numberString;
+        return numberStringBuilder.toString();
     }
 
-    private static Number parseWhole(String str) {
-        long result = 0;
+    private static Double parseWhole(String str) {
+        double result = 0.0;
         for (char ch : str.toCharArray()) {
             if (ch != '-') {
                 result = result * 10 + Character.getNumericValue(ch);
@@ -59,10 +61,7 @@ public class StringTasks {
         if (str.indexOf('-') == 0) {
             result = -result;
         }
-        if (result > Integer.MAX_VALUE || result < Integer.MIN_VALUE) {
-            return result;
-        }
-        return (int) result;
+        return result;
     }
 
     private static Double parseDouble(String str) {
@@ -70,7 +69,7 @@ public class StringTasks {
         if (expIndex == -1) {
             return parseRealNumber(str);
         } else {
-            Double mantissa = parseRealNumber(str.substring(0, expIndex));
+            double mantissa = parseRealNumber(str.substring(0, expIndex));
             double order = parseRealNumber(str.substring(expIndex + 1));
             return mantissa * Math.pow(10, order);
         }
@@ -79,13 +78,13 @@ public class StringTasks {
     private static Double parseRealNumber(String str) {
         int dotIndex = str.indexOf('.');
         if (dotIndex == -1) {
-            return parseWhole(str).doubleValue();
+            return parseWhole(str);
         }
 
-        double doubleWholePart = parseWhole(str.substring(0, dotIndex)).doubleValue();
-        String fractionalPart = str.substring(dotIndex + 1);
-        double doubleFractionalPart = parseWhole(fractionalPart).doubleValue();
-        doubleFractionalPart = doubleFractionalPart * Math.pow(10, -(fractionalPart.length()));
+        double doubleWholePart = parseWhole(str.substring(0, dotIndex));
+        String strFractionalPart = str.substring(dotIndex + 1);
+        double doubleFractionalPart = parseWhole(strFractionalPart);
+        doubleFractionalPart = doubleFractionalPart * Math.pow(10, -(strFractionalPart.length()));
         return doubleWholePart + doubleFractionalPart;
     }
 }
