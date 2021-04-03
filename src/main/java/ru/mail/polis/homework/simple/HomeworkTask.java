@@ -10,13 +10,7 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        double integral = 0;
-
-        for (double i = a; i <= b - delta; i += delta) {
-            integral += delta * function.applyAsDouble(i);
-        }
-
-        return integral;
+        return 0;
     }
 
     /**
@@ -24,22 +18,7 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte max = -1, pos = 0, i = 0;
-        long mod, copy = a;
-
-        while (copy > 0) {
-            mod = copy % 10;
-            i++;
-            if (mod >= max) {
-                max = (byte) mod;
-                pos = i;
-            }
-            copy /= 10;
-        }
-
-        pos--;
-        int res = i - pos;
-        return (byte) res;
+        return 0;
     }
 
 
@@ -48,11 +27,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        double position = 0;
-
-        position = (double) ((y2 - y1) * (x3 - x2)) / (double) (x2 - x1) + y2;
-
-        return position;
+        return 0;
     }
 
     /**
@@ -61,9 +36,7 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        double coub = (Math.abs((x1 * y2 - y1 * x2) + (x2 * y3 - y2 * x3) + (x3 * y4 - y3 * x4) +
-                (x4 * y1 - y4 * x1))) / 2.0;
-        return coub;
+        return 0;
     }
 
 }
