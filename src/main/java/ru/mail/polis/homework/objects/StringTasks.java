@@ -14,6 +14,22 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        return null;
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+        if (str.split("e").length > 2 || str.split(".").length > 2 || str.split("-").length > 3) {
+            return null;
+        }
+
+        StringBuilder numberStringBuilder = new StringBuilder();
+        for (char ch : str.toCharArray()) {
+            if (ch == '.' || ch == 'e' || ch == '-' || Character.isDigit(ch)) {
+                numberStringBuilder.append(ch);
+            }
+        }
+        String numberString = numberStringBuilder.toString();
+
+
+        return 0;
     }
 }
