@@ -78,7 +78,7 @@ public class StringTasks {
         int i = str.charAt(0) == '-' ? 1 : 0;
         double result = str.charAt(i) - '0';
         for (i++; i < str.length(); i++) {
-            result = result * 10 + (str.charAt(i) - '0');
+            result = result * 10 + Character.getNumericValue(str.charAt(i));
         }
         return result * (str.charAt(0) == '-' ? -1 : 1);
     }
