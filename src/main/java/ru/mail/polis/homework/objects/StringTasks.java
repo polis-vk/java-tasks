@@ -49,20 +49,21 @@ public class StringTasks {
             i++;
         }
 
-        for (int j = 1; j < inputStr.length(); j++) {
-            if (inputStr.charAt(j) == '-' && inputStr.charAt(j - 1) != 'e') {
+        String number = inputStr.toString();
+
+        for (int j = 1; j < number.length(); j++) {
+            if (number.charAt(j) == '-' && number.charAt(j - 1) != 'e') {
                 return null;
             }
         }
 
         if (countOfAllowedCharacters[0] != 0 || countOfAllowedCharacters[1] != 0) {
-            return parseDouble(inputStr.toString());
+            return parseDouble(number);
         }
 
-        Long longNumber = parseLong(inputStr.toString());
-
+        Long longNumber = parseLong(number);
         if (longNumber == null) {
-            return parseDouble(inputStr.toString());
+            return parseDouble(number);
         }
         if (longNumber > Integer.MAX_VALUE || longNumber < Integer.MIN_VALUE) {
             return longNumber;
@@ -96,7 +97,7 @@ public class StringTasks {
     private static Double parseDouble(String str) {
         int dotIndex = str.indexOf('.');
         int eIndex = str.indexOf('e');
-        
+
         if (eIndex == str.length() - 1) {
             return null;
         }
@@ -109,17 +110,16 @@ public class StringTasks {
                     Math.pow(10, parseLongHowDouble(str.substring(eIndex + 1)));
         }
 
-        if (dotIndex == -1 && eIndex != -1) {
-            return parseLongHowDouble(str.substring(0, eIndex)) * 
+        if (eIndex != -1) {
+            return parseLongHowDouble(str.substring(0, eIndex)) *
                     Math.pow(10, parseLongHowDouble(str.substring(eIndex + 1)));
         }
 
-        if (dotIndex != -1) {
-            String fractionalPartOfNumber = str.substring(dotIndex + 1);
-            return parseLongHowDouble(str.substring(0, dotIndex)) +
-                    parseLongHowDouble(fractionalPartOfNumber) / Math.pow(10, fractionalPartOfNumber.length());
-        }
-        
-        return null;
+
+        String fractionalPartOfNumber = str.substring(dotIndex + 1);
+        return parseLongHowDouble(str.substring(0, dotIndex)) +
+                parseLongHowDouble(fractionalPartOfNumber) / Math.pow(10, fractionalPartOfNumber.length());
+
+
     }
 }
