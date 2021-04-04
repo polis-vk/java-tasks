@@ -16,41 +16,25 @@ public class MaxTask {
         }
 
         int[] ans = new int[count];
-        System.arraycopy(array, 0, ans, 0, count);
-        executeBubbleSortArray(ans);
+        for (int i = 0; i < count; i++) {
+            ans[i] = Integer.MIN_VALUE;
+        }
 
-        for (int i = count; i < array.length; i++) {
+        for (int number : array) {
             int j = count - 1;
             boolean hasBigger = false;
-            while (j >= 0 && array[i] > ans[j]) {
+            while (j >= 0 && number > ans[j]) {
                 j--;
                 hasBigger = true;
             }
 
             if (hasBigger) {
                 j += 1;
-                insertElement(ans, j, array[i]);
+                insertElement(ans, j, number);
             }
         }
 
         return ans;
-    }
-
-    private static void executeBubbleSortArray(int[] array) {
-        boolean sorted = false;
-        int temp;
-
-        while (!sorted) {
-            sorted = true;
-            for (int i = 0; i < array.length - 1; i++) {
-                if (array[i] < array[i + 1]) {
-                    temp = array[i];
-                    array[i] = array[i + 1];
-                    array[i + 1] = temp;
-                    sorted = false;
-                }
-            }
-        }
     }
 
     private static void insertElement(int[] array, int index, int value) {
