@@ -14,20 +14,20 @@ public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
         if (str == null || str.isEmpty()) {
-            return  null;
+            return null;
         }
         char[] symbols = str.toCharArray();
         char maxFrequent = symbols[0];
         int sequenceLength = 1;
         int maxSequenceLength = 1;
         for (int i = 1; i < symbols.length; i++) {
-            if (symbols[i] == symbols[i-1] ) {
+            if (symbols[i] == symbols[i - 1]) {
                 sequenceLength++;
             }
-            if (symbols[i] != symbols[i-1] || i == symbols.length - 1){
+            if (symbols[i] != symbols[i - 1] || i == symbols.length - 1) {
                 if (sequenceLength > maxSequenceLength) {
                     maxSequenceLength = sequenceLength;
-                    maxFrequent = symbols[i-1];
+                    maxFrequent = symbols[i - 1];
                 }
                 sequenceLength = 1;
             }

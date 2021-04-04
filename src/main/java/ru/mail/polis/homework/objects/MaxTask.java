@@ -11,7 +11,6 @@ public class MaxTask {
      * Например ({1, 3, 10, 11, 22, 0}, 2) -> {22, 11}
      * ({1, 3, 22, 11, 22, 0}, 3) -> {22, 22, 11}
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копиии
-     *
      */
     public static int[] getMaxArray(int[] array, int count) {
         if (count > array.length) {
@@ -28,8 +27,8 @@ public class MaxTask {
                 for (int i = count - 1; i > 0; i--) {
                     if (result[i] > result[i - 1]) {
                         int temp = result[i];
-                        result[i] = result[i-1];
-                        result[i-1] = temp;
+                        result[i] = result[i - 1];
+                        result[i - 1] = temp;
                     }
                 }
             }

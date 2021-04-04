@@ -58,15 +58,17 @@ public class StringTasks {
             }
         }
         String eNotation = correctsSymbols.toString();
-        if (eNotation.contains("--") ||
-                eNotation.contains("-e") ||
-                eNotation.contains(".e") ||
-                eNotation.contains("e.") ||
-                eNotation.contains("-.") ||
-                eNotation.contains(".-") ||
-                eNotation.endsWith("-") ||
-                eNotation.endsWith("e") ||
-                eNotation.endsWith(".")) {
+        if (eNotation.contains("--")
+                || eNotation.contains("-e")
+                || eNotation.contains(".e")
+                || eNotation.contains("e.")
+                || eNotation.contains("-.")
+                || eNotation.contains(".-")
+                || eNotation.endsWith("-")
+                || eNotation.endsWith("e")
+                || eNotation.endsWith(".")
+                || eNotation.startsWith("e")
+                || eNotation.startsWith(".")) {
             return null;
         }
         return eNotation;
