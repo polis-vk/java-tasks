@@ -76,7 +76,7 @@ public class StringTasks {
 
     private static double toNumber(String str) {
         int i = str.charAt(0) == '-' ? 1 : 0;
-        double result = str.charAt(i) - '0';
+        double result = Character.getNumericValue(str.charAt(i));
         for (i++; i < str.length(); i++) {
             result = result * 10 + Character.getNumericValue(str.charAt(i));
         }
