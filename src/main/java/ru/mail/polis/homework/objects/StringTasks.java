@@ -50,10 +50,10 @@ public class StringTasks {
     private static String toENotation(String str) {
         StringBuilder correctsSymbols = new StringBuilder();
         for (char symbol : str.toCharArray()) {
-            if (Character.isDigit(symbol) ||
-                    symbol == '-' ||
-                    symbol == 'e' ||
-                    symbol == '.') {
+            if (Character.isDigit(symbol)
+                    || symbol == '-'
+                    || symbol == 'e'
+                    || symbol == '.') {
                 correctsSymbols.append(symbol);
             }
         }
