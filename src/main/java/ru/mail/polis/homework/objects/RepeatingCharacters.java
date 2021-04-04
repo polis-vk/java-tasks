@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.objects;
 
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -11,9 +12,33 @@ import java.util.Objects;
  * Пример abbasbdlbdbfklsssbb -> (s, 3)
  */
 public class RepeatingCharacters {
-
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        return new Pair<>('s', 4);
+        if(str == null || str.isEmpty()) {
+            return null;
+        }
+        char maxCh = 0;
+        int maxRepeats = 0;
+        char currentCh = str.charAt(0);
+        int currentRepeats = 1;
+
+        for(int i = 0; i < str.length() - 1; i++){
+            if(str.charAt(i+1) == currentCh) {
+                currentRepeats++;
+            }
+            else {
+                if(currentRepeats > maxRepeats){
+                    maxCh = currentCh;
+                    maxRepeats = currentRepeats;
+                }
+                currentCh = str.charAt(i+1);
+                currentRepeats = 1;
+            }
+        }
+        if(currentRepeats > maxRepeats){
+           maxCh = currentCh;
+           maxRepeats = currentRepeats;
+        }
+        return new Pair<>(maxCh, maxRepeats);
     }
 
     public static class Pair<T, V> {
@@ -45,5 +70,12 @@ public class RepeatingCharacters {
             return Objects.equals(first, pair.first) && Objects.equals(second, pair.second);
         }
 
+        @Override
+        public String toString() {
+            return "Pair{" +
+                    "first=" + first +
+                    ", second=" + second +
+                    '}';
+        }
     }
 }
