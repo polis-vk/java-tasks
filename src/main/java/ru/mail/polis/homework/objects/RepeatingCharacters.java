@@ -26,7 +26,7 @@ public class RepeatingCharacters {
             if (str.charAt(i) == str.charAt(i - 1)) {
                 repeatsCount[i] += repeatsCount[i - 1] + 1;
             } else {
-                ++repeatsCount[i];
+                repeatsCount[i] = 1;
             }
 
             if (repeatsCount[i] > max) {

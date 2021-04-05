@@ -18,49 +18,47 @@ public class StringTasks {
             return null;
         }
 
-        String resultStr = str.replaceAll("[^0-9e.-]", "");
+        StringBuilder resultStrBuilder = new StringBuilder();
 
-        boolean meetingDot = false;
-        boolean meetingExp = false;
-        boolean meetingDash = false;
+        int dotCount = 0;
+        int expCount = 0;
 
-        if (resultStr.charAt(resultStr.length() - 1) == 'e') {
+        for (int i = 0; i < str.length(); ++i) {
+            char ch = str.charAt(i);
+            switch (ch) {
+                case 'e':
+                    resultStrBuilder.append(ch);
+                    ++expCount;
+                    break;
+                case '.':
+                    resultStrBuilder.append(ch);
+                    ++dotCount;
+                    break;
+                case '-':
+                    resultStrBuilder.append(ch);
+                    break;
+                default:
+                    if (Character.isDigit(ch)) {
+                        resultStrBuilder.append(ch);
+                    }
+            }
+        }
+
+        String resultStr = resultStrBuilder.toString();
+
+        int lastDashIndex = resultStr.lastIndexOf('-');
+        if (dotCount > 1 || expCount > 1 || resultStr.charAt(resultStr.length() - 1) == 'e' ||
+                resultStr.charAt(0) == 'e' || resultStr.contains("--") ||
+                !(lastDashIndex == -1 || lastDashIndex == 0 || resultStr.charAt(lastDashIndex - 1) == 'e')) {
             return null;
         }
-        for (int i = 0; i < resultStr.length(); ++i) {
-            switch (resultStr.charAt(i)) {
-                case 'e':
-                    if (meetingExp) {
-                        return null;
-                    }
-                    meetingExp = true;
-                    break;
 
-                case '.':
-                    if (meetingDot) {
-                        return null;
-                    }
-                    meetingDot = true;
-                    break;
-            }
-
-            if (resultStr.charAt(i) == '-') {
-                if (meetingDash || (i != 0 && resultStr.charAt(i - 1) != 'e')) {
-                    return null;
-                }
-                meetingDash = true;
-            } else {
-                meetingDash = false;
-            }
-        }
-
-        if (meetingDot || meetingExp) {
+        if (dotCount > 0 || expCount > 0) {
             return parseDouble(resultStr);
         }
 
         long result = (long) parseIntegralNumber(resultStr);
-        if (result > Integer.MAX_VALUE || result < Integer.MIN_VALUE)
-        {
+        if (result > Integer.MAX_VALUE || result < Integer.MIN_VALUE) {
             return result;
         }
         return (int) result;
