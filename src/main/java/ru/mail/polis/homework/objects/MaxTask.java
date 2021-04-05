@@ -1,5 +1,9 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 public class MaxTask {
 
     /**
@@ -12,7 +16,24 @@ public class MaxTask {
      *
      */
     public static int[] getMaxArray(int[] array, int count) {
-        return null;
+        if(array.length < count){
+            return null;
+        }
+
+        int[] maxElems = new int[count];
+        ArrayList<Integer> arrayList = new ArrayList<>();
+        for (int i : array) {
+            arrayList.add(i);
+        }
+        int j = 0;
+        Integer max = 0;
+        for (int i = 0; i < count; i++) {
+            max = Collections.max(arrayList);
+            maxElems[j++] = max;
+            arrayList.remove(max);
+        }
+
+        return maxElems;
     }
 
 }
