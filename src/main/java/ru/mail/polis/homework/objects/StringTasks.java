@@ -14,6 +14,35 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        return null;
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+        int dotCount = str.length() - str.replace(".", "").length();
+        int eCount = str.length() - str.replace("e", "").length();
+        int minusCount = str.length() - str.replace("-", "").length();
+        if (dotCount > 1 || eCount > 1 || minusCount > 2) {
+            return null;
+        }
+
+        StringBuilder numberStringBuilder = new StringBuilder();
+        for (char ch : str.toCharArray()) {
+            if (ch == '.' || ch == 'e' || ch == '-' || Character.isDigit(ch)) {
+                numberStringBuilder.append(ch);
+            }
+        }
+        String numberString = numberStringBuilder.toString();
+        if (str.contains("--") || str.contains("-e") || str.contains(".e") || str.contains("e.")
+                || str.endsWith("-") || str.endsWith("e")) {
+            return null;
+        }
+
+        if (dotCount + eCount > 0) {
+            return Double.parseDouble(numberString);
+        }
+        long longNumber = Long.parseLong(numberString);
+        if (longNumber > Integer.MAX_VALUE || longNumber < Integer.MIN_VALUE) {
+            return longNumber;
+        }
+        return (int) longNumber;
     }
 }

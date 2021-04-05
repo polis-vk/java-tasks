@@ -4,17 +4,18 @@ import org.junit.Test;
 import ru.mail.polis.homework.objects.StringTasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class StringTasksTest {
 
     @Test
     public void valueOf() {
-//        assertEquals(null, StringTasks.valueOf(null));
-//        assertEquals(null, StringTasks.valueOf(""));
+        assertEquals(null, StringTasks.valueOf(null));
+        assertEquals(null, StringTasks.valueOf(""));
         assertEquals(0, StringTasks.valueOf("0"));
         assertEquals(0, StringTasks.valueOf("a0"));
         assertEquals(-1, StringTasks.valueOf("-a1"));
-//        assertEquals(null, StringTasks.valueOf("--a1"));
+        assertEquals(null, StringTasks.valueOf("--a1"));
         assertEquals(-12, StringTasks.valueOf("-a1bsc2"));
         assertEquals(-132, StringTasks.valueOf("a-132a"));
         assertEquals(-2147483648, StringTasks.valueOf("a-d21s474asd83648sad"));
