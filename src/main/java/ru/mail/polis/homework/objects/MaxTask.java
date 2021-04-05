@@ -1,5 +1,4 @@
 package ru.mail.polis.homework.objects;
-
 public class MaxTask {
 
     /**
@@ -12,7 +11,41 @@ public class MaxTask {
      *
      */
     public static int[] getMaxArray(int[] array, int count) {
-        return null;
+        if (array.length < count) {
+            return null;
+        }
+        int checkFinal = 0;
+        int[] check = new int[count];
+        for (int i = 0; i < count; i++) {
+            check[i] = -1;
+        }
+        int[] sorted = new int[count];
+        for (int i = 0; i < count; i++) {
+            sorted[i] = Integer.MIN_VALUE;
+        }
+        for (int i = 0; i < count; i++) {
+            for (int k = 0; k < array.length; k++) {
+                if (array[k] > sorted[i]) {
+                    check[i] = k;
+                    if (checked(check)) {
+                        sorted[i] = array[k];
+                        checkFinal = k;
+                    }
+                }
+                check[i] = checkFinal;
+            }
+        }
+        return sorted;
     }
 
+    public static boolean checked(int[] check) {
+        for (int i = 0; i < check.length; i++) {
+         for (int j = i + 1; j < check.length; j++) {
+                if ((check[i] == check[j]) && (check[i] != -1)) {
+                    return false;
+                }
+            }  
+        }
+        return true;
+      }
 }

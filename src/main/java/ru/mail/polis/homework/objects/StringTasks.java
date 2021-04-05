@@ -14,6 +14,42 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        return null;
+        String clear = "";
+        int eCount = 0;
+        int dotCount = 0;
+        for (int i = 0; i < str.length(); i++){
+            if ((Character.isDigit(str.charAt(i)) || (str.charAt(i) == '-' ) ||
+                (str.charAt(i) == '.' ) || (str.charAt(i) == 'e' ))) {
+                    clear += str.charAt(i);
+            }
+        }
+        for (int i = 1; i < clear.length(); i++) {
+            if (clear.charAt(i) == 'e') {
+                eCount++;
+                if (eCount > 1) {
+                    return null;
+                }
+                if ((clear.charAt(i) == 'e') && (i >= clear.length() - 1)) {
+                    return null;
+                }
+            }
+            if (clear.charAt(i) == '.') {
+                dotCount++;
+                if (dotCount > 1) {
+                    return null;
+                }
+            }
+            if (((clear.charAt(i) == '-') && (i != 0) && (clear.charAt(i - 1) != 'e'))) {
+                return null;
+            }
+        }
+        if ((eCount > 0) || (dotCount > 0)) {
+            return Double.parseDouble(clear);
+        }
+        Long clearL = Long.parseLong(clear);
+        if ((clearL > Integer.MAX_VALUE) || (clearL < Integer.MIN_VALUE)){
+            return clearL;
+        }
+        return Integer.parseInt(clear);
     }
 }
