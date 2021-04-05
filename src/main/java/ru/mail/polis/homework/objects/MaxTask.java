@@ -16,32 +16,47 @@ public class MaxTask {
         }
 
         int[] result = new int[count];
-        for (int i = 0; i < count; ++i) {
+        if (count == 0) {
+            return result;
+        }
 
-            int localMaxIndex = -1;
+        int localMax = array[0];
+        int duplicates = 0;
+
+        for (int i = 0; i < array.length; ++i) {
+            if (array[i] > localMax) {
+                localMax = array[i];
+                duplicates = 1;
+            } else if (array[i] == localMax) {
+                ++duplicates;
+            }
+        }
+
+        int i = 0;
+        for (; i < count && duplicates != 0; ++i, --duplicates) {
+            result[i] = localMax;
+        }
+
+        for (; i < count; ++i) {
+            int newMax = Integer.MIN_VALUE;
+
             for (int j = 0; j < array.length; ++j) {
-
-                if ((localMaxIndex == -1 || array[j] >= array[localMaxIndex]) && (i == 0 || array[j] <= array[result[i - 1]])) {
-                    boolean duplication = false;
-                    for (int k = 0; k < i; ++k) {
-                        if (result[k] == j) {
-                            duplication = true;
-                            break;
-                        }
-                    }
-
-                    if (!duplication) {
-                        localMaxIndex = j;
-                    }
+                if (array[j] < localMax && array[j] > newMax) {
+                    newMax = array[j];
+                    duplicates = 1;
+                } else if (array[j] == newMax) {
+                    ++duplicates;
                 }
             }
-            result[i] = localMaxIndex;
+
+            for (; i < count && duplicates != 0; ++i, --duplicates) {
+                result[i] = newMax;
+            }
+            --i;
+
+            localMax = newMax;
         }
 
-        for (int i = 0; i < count; i++) {
-            result[i] = array[result[i]];
-        }
         return result;
     }
-
 }
