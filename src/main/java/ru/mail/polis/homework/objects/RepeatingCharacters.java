@@ -18,26 +18,27 @@ public class RepeatingCharacters {
         }
 
         char[] strCharArray = str.toCharArray();
+        char maxSymbol = strCharArray[0];
         char tempSymbol = strCharArray[0];
-        int counter = 1;
-        Pair<Character, Integer> tempPair = new Pair<>(tempSymbol, counter);
-        Pair<Character, Integer> result = tempPair;
+        int maxCounter = 1;
+        int tempCounter = 1;
         for (int i = 1; i < strCharArray.length; i++) {
             if (strCharArray[i] == tempSymbol) {
-                counter++;
+                tempCounter++;
             } else {
-                tempPair = new Pair<>(tempSymbol, counter);
-                if (tempPair.getSecond() > result.getSecond()) {
-                    result = tempPair;
+                if (tempCounter > maxCounter) {
+                    maxSymbol = tempSymbol;
+                    maxCounter = tempCounter;
                 }
                 tempSymbol = strCharArray[i];
-                counter = 1;
+                tempCounter = 1;
             }
         }
-        if (counter > result.getSecond()) {
-            result = new Pair<>(tempSymbol, counter);
+        if (tempCounter > maxCounter) {
+            maxSymbol = tempSymbol;
+            maxCounter = tempCounter;
         }
-        return result;
+        return new Pair<>(maxSymbol, maxCounter);
     }
 
     public static class Pair<T, V> {

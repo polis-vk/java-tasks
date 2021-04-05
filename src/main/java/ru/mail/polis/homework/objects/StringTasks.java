@@ -28,7 +28,8 @@ public class StringTasks {
         String numberString = strFilter(str);
 
         if (str.contains("--") || str.contains(".e") || str.contains("-e") || str.contains("e.") || str.endsWith("-") ||
-                str.endsWith("e")) {
+                str.endsWith("e") || str.endsWith(".") || str.startsWith(".") || str.startsWith("e") ||
+                str.contains("-.") || str.contains(".-")) {
             return null;
         }
         if (dotCount + eCount > 0) {
@@ -68,11 +69,10 @@ public class StringTasks {
         int expIndex = str.indexOf('e');
         if (expIndex == -1) {
             return parseRealNumber(str);
-        } else {
-            double mantissa = parseRealNumber(str.substring(0, expIndex));
-            double order = parseRealNumber(str.substring(expIndex + 1));
-            return mantissa * Math.pow(10, order);
         }
+        double mantissa = parseRealNumber(str.substring(0, expIndex));
+        double order = parseDouble(str.substring(expIndex + 1));
+        return mantissa * Math.pow(10, order);
     }
 
     private static Double parseRealNumber(String str) {

@@ -16,35 +16,21 @@ public class MaxTask {
         }
 
         int[] results = new int[count];
-        if (count == 0) {
-            return results;
-        }
-
-        int[] resultsIndexes = new int[count];
-        boolean match = false;
-        int elemsFound = 0;
+        int[] arrayClone = new int[array.length];
         int tempMax = Integer.MIN_VALUE;
-        int tempMaxIndex = -1;
-        while (elemsFound != count) {
-            for (int i = 0; i < array.length; i++) {
-                if (array[i] > tempMax) {
-                    for (int j = 0; j < elemsFound; j++) {
-                        if (i == resultsIndexes[j]) {
-                            match = true;
-                        }
-                    }
-                    if (!match){
-                        tempMax = array[i];
-                        tempMaxIndex = i;
-                    }
-                    match = false;
+        int tempIndex = -1;
+        System.arraycopy(array, 0, arrayClone, 0, array.length);
+        for (int i = 0; i < count; i++) {
+            tempMax = Integer.MIN_VALUE;
+            tempIndex = -1;
+            for (int j = 0; j < arrayClone.length; j++) {
+                if (arrayClone[j] > tempMax) {
+                    tempMax = arrayClone[j];
+                    tempIndex = j;
                 }
             }
-            results[elemsFound] = tempMax;
-            resultsIndexes[elemsFound] = tempMaxIndex;
-            elemsFound++;
-            tempMax = Integer.MIN_VALUE;
-            tempMaxIndex = -1;
+            arrayClone[tempIndex] = Integer.MIN_VALUE;
+            results[i] = tempMax;
         }
         return results;
     }
