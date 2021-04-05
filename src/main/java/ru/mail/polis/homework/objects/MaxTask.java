@@ -14,7 +14,8 @@ public class MaxTask {
         if (array.length < count) {
             return null;
         }
-        int[] tempArr = array;
+        int[] tempArr = new int[array.length];
+        System.arraycopy(array, 0, tempArr, 0, array.length);
         int[] maxArr = new int[count];
         for (int i = 0; i < count; i++) {
             int max = tempArr[0];
