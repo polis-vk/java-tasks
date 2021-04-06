@@ -47,9 +47,9 @@ public class StringTasks {
         String resultStr = resultStrBuilder.toString();
 
         int lastDashIndex = resultStr.lastIndexOf('-');
-        if (dotCount > 1 || expCount > 1 || resultStr.startsWith("e") || resultStr.endsWith("e") ||
-                !(lastDashIndex == -1 || lastDashIndex == 0 || resultStr.charAt(lastDashIndex - 1) == 'e') ||
-                resultStr.contains("--")) {
+        if (dotCount > 1 || expCount > 1 || resultStr.startsWith("e") || resultStr.endsWith("e")
+                || !(lastDashIndex == -1 || lastDashIndex == 0 || resultStr.charAt(lastDashIndex - 1) == 'e')
+                || resultStr.contains("--")) {
             return null;
         }
 
