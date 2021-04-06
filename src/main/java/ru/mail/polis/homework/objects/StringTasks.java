@@ -14,6 +14,11 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
 
+    private static final byte DOT_INDEX = 0;
+    private static final byte MINUS_INDEX = 1;
+    private static final byte E_INDEX = 2;
+
+
     public static Number valueOf(String str) {
         if (str == null || str.length() == 0) {
             return null;
@@ -26,17 +31,17 @@ public class StringTasks {
         while (i < inputStr.length()) {
             switch (inputStr.charAt(i)) {
                 case '.':
-                    if (countOfAllowedCharacters[0]++ >= 1) {
+                    if (countOfAllowedCharacters[DOT_INDEX]++ >= 1) {
                         return null;
                     }
                     break;
                 case 'e':
-                    if (countOfAllowedCharacters[1]++ >= 1) {
+                    if (countOfAllowedCharacters[MINUS_INDEX]++ >= 1) {
                         return null;
                     }
                     break;
                 case '-':
-                    if (countOfAllowedCharacters[2]++ >= 2) {
+                    if (countOfAllowedCharacters[E_INDEX]++ >= 2) {
                         return null;
                     }
                     break;
@@ -57,7 +62,7 @@ public class StringTasks {
             }
         }
 
-        if (countOfAllowedCharacters[0] != 0 || countOfAllowedCharacters[1] != 0) {
+        if (countOfAllowedCharacters[DOT_INDEX] != 0 || countOfAllowedCharacters[MINUS_INDEX] != 0) {
             return parseDouble(number);
         }
 
@@ -74,7 +79,7 @@ public class StringTasks {
 
     private static Long parseLong(String str) {
         double longNumber = parseLongHowDouble(str);
-        if (longNumber> Long.MAX_VALUE) {
+        if (longNumber > Long.MAX_VALUE || longNumber < Long.MIN_VALUE) {
             return null;
         }
         return (long) longNumber;
