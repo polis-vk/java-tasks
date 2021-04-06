@@ -20,24 +20,10 @@ public class MaxTask {
             return result;
         }
 
-        int localMax = array[0];
+        int localMax = Integer.MAX_VALUE;
         int duplicates = 0;
 
-        for (int i = 0; i < array.length; ++i) {
-            if (array[i] > localMax) {
-                localMax = array[i];
-                duplicates = 1;
-            } else if (array[i] == localMax) {
-                ++duplicates;
-            }
-        }
-
-        int i = 0;
-        for (; i < count && duplicates != 0; ++i, --duplicates) {
-            result[i] = localMax;
-        }
-
-        for (; i < count; ++i) {
+        for (int i = 0; i < count; ++i) {
             int newMax = Integer.MIN_VALUE;
 
             for (int j = 0; j < array.length; ++j) {
@@ -49,9 +35,10 @@ public class MaxTask {
                 }
             }
 
-            for (; i < count && duplicates != 0; ++i, --duplicates) {
+            for (int endOfDuplicatesFilling = Math.min(count - i, duplicates) + i; i < endOfDuplicatesFilling; ++i) {
                 result[i] = newMax;
             }
+            duplicates = 0;
             --i;
 
             localMax = newMax;
