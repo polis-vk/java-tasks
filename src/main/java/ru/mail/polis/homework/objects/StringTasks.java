@@ -18,18 +18,18 @@ public class StringTasks {
             return null;
         }
 
-        int eCount = (str.split("e").length == 0) ? 0 : str.split("e").length - 1;
+        int eCount = str.length() - str.replace("e", "").length();
         int dotCount = str.length() - str.replace(".", "").length();
-        int minusCount = (str.split("-").length == 0) ? 0 : str.split("-").length - 1;
+        int minusCount = str.length() - str.replace("-", "").length();
         if (dotCount > 1 || eCount > 1 || minusCount > 2) {
             return null;
         }
 
-        String numberString = strFilter(str);
+        String numberString = strRemoveExtraChars(str);
 
-        if (str.contains("--") || str.contains(".e") || str.contains("-e") || str.contains("e.") || str.endsWith("-") ||
-                str.endsWith("e") || str.endsWith(".") || str.startsWith(".") || str.startsWith("e") ||
-                str.contains("-.") || str.contains(".-")) {
+        if (str.contains("--") || str.contains(".e") || str.contains("-e") || str.contains("e.") || str.endsWith("-")
+                || str.endsWith("e") || str.endsWith(".") || str.startsWith(".") || str.startsWith("e")
+                || str.contains("-.") || str.contains(".-")) {
             return null;
         }
         if (dotCount + eCount > 0) {
@@ -42,7 +42,7 @@ public class StringTasks {
         return numberResult.intValue();
     }
 
-    private static String strFilter(String str) {
+    private static String strRemoveExtraChars(String str) {
         StringBuilder numberStringBuilder = new StringBuilder();
         for (char ch : str.toCharArray()) {
             if (ch == '.' || ch == 'e' || ch == '-' || Character.isDigit(ch)) {
@@ -59,7 +59,7 @@ public class StringTasks {
                 result = result * 10 + Character.getNumericValue(ch);
             }
         }
-        if (str.indexOf('-') == 0) {
+        if (str.charAt(0) == '-') {
             result = -result;
         }
         return result;
