@@ -20,25 +20,34 @@ public class StringTasks {
         int eCount = 0;
         for (int i = 0; i < tempStr.length(); i++) {
             char currChar = tempStr.charAt(i);
-            if (Character.isDigit(currChar)) {
-                continue;
-            } else if (currChar == '-') {
-                if (((i != 0) && (tempStr.charAt(i - 1) == currChar)) || (i == tempStr.length() - 1)) {
-                    return null;
+            switch (currChar) {
+                case '-': {
+                    if (((i != 0) && (tempStr.charAt(i - 1) == currChar)) || (i == tempStr.length() - 1)) {
+                        return null;
+                    }
+                    break;
                 }
-            } else if (currChar == '.') {
-                dotCount += 1;
-                if (dotCount > 1) {
-                    return null;
+                case '.': {
+                    dotCount += 1;
+                    if (dotCount > 1) {
+                        return null;
+                    }
+                    break;
                 }
-            } else if (currChar == 'e') {
-                eCount += 1;
-                if ((eCount > 1) || (i == 0) || (!Character.isDigit(tempStr.charAt(i - 1))) || (i == tempStr.length() - 1)) {
-                    return null;
+                case 'e': {
+                    eCount += 1;
+                    if ((eCount > 1) || (i == 0) || (!Character.isDigit(tempStr.charAt(i - 1))) || (i == tempStr.length() - 1)) {
+                        return null;
+                    }
+                    break;
                 }
-            } else {
-                tempStr.deleteCharAt(i);
-                i--;
+                default: {
+                    if (!Character.isDigit(currChar)) {
+                        tempStr.deleteCharAt(i);
+                        i--;
+                    }
+                    break;
+                }
             }
         }
 
@@ -47,26 +56,23 @@ public class StringTasks {
 
             if ((int) result == result) {
                 return (int) result;
-            } else {
-                return result;
             }
-        } else {
-            return strToDouble(tempStr.toString());
+            return result;
         }
+        return strToDouble(tempStr.toString());
     }
 
     private static Long strToLong(String str) {
         long result = 0L;
-        if (str.charAt(0) == '-') {
-            for (int i = 1; i < str.length(); i++) {
-                result = result * 10 + Character.getNumericValue(str.charAt(i));
-            }
-            result *= -1;
-        } else {
-            for (int i = 0; i < str.length(); i++) {
-                result = result * 10 + Character.getNumericValue(str.charAt(i));
-            }
+
+        for (int i = 1; i < str.length(); i++) {
+            result = result * 10 + Character.getNumericValue(str.charAt(i));
         }
+        
+        //Лично мне кажется, что лучше было бы принебречь DRY, чем такую загагулину писать, чтобы все делалось
+        //одним тернарным оператором. Зато задача была интересная для исполнения
+        result = str.charAt(0) == '-' ? result * -1 : result + Character.getNumericValue(str.charAt(0)) * (long) Math.pow(10, str.length() - 1);
+
         return result;
     }
 
@@ -81,9 +87,8 @@ public class StringTasks {
                 afterDot = afterDot + test;
             }
             return (double) beforeDot + afterDot;
-        } else {
-            return (double) strToLong(str);
         }
+        return (double) strToLong(str);
     }
 
     private static Double strToDouble(String str) {
@@ -92,9 +97,8 @@ public class StringTasks {
             double number = strToDot(str.substring(0, ePlace));
             double degree = strToLong(str.substring(ePlace + 1));
             return number * Math.pow(10, degree);
-        } else {
-            return strToDot(str);
         }
+        return strToDot(str);
     }
 }
 
