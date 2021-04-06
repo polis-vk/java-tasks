@@ -17,12 +17,14 @@ public class StringTasks {
         if (str == null || str.isEmpty()) {
             return null;
         }
+
         int dotCount = str.length() - str.replace(".", "").length();
         int eCount = str.length() - str.replace("e", "").length();
         int deCount = str.length() - str.replace("-", "").length();
         if (dotCount > 1 || eCount > 1 || deCount > 2) {
             return null;
         }
+
         StringBuilder term = new StringBuilder();
         for (char ch : str.toCharArray()) {
             if (Character.isDigit(ch) || ch == '.' || ch == 'e' || ch == '-') {
@@ -32,7 +34,9 @@ public class StringTasks {
         String finalTerm = term.toString();
 
         if (finalTerm.contains("--") || finalTerm.contains("-e") || finalTerm.contains(".e") || finalTerm.endsWith(("-"))
-                || finalTerm.endsWith(("e"))) {
+                || finalTerm.endsWith(("e")) || finalTerm.contains(".-") || finalTerm.contains("e.") ||
+                finalTerm.contains("-e") || finalTerm.startsWith("e") || finalTerm.contains(".-") ||
+                finalTerm.contains("-.") || finalTerm.startsWith(".") || finalTerm.endsWith(("."))) {
             return null;
         }
 
@@ -40,11 +44,12 @@ public class StringTasks {
             return parseToDouble(finalTerm);
         }
 
-        double IntOrLong = parseNumbers(finalTerm);
-        if (IntOrLong > Integer.MAX_VALUE || IntOrLong < Integer.MIN_VALUE) {
-            return (long)IntOrLong;
+        double intOrlong = parseNumbers(finalTerm);
+        if (intOrlong > Integer.MAX_VALUE || intOrlong < Integer.MIN_VALUE) {
+            return (long) intOrlong;
         }
-        return (int)IntOrLong;
+
+        return (int) intOrlong;
     }
 
     private static Double parseNumbers(String str) {
@@ -56,7 +61,7 @@ public class StringTasks {
         }
         double res = str.charAt(firstCharacter) - (int) '0';
         for (int i = firstCharacter + 1; i < str.length(); i++) {
-            res = res * 10 + (str.charAt(i) - (int) '0');
+            res = res * 10 + (Character.getNumericValue(str.charAt(i)));
         }
         return res * minus;
     }
@@ -76,9 +81,11 @@ public class StringTasks {
         if (dotPos >= 0) {
             intPart = Math.abs(parseNumbers((str.substring(0, dotPos))));
             if (ePos < 0) {
-                fracPart = Math.abs(parseNumbers((str.substring(dotPos + 1, str.length()))) / Math.pow(10, str.length() - str.indexOf(".") - 1));
+                fracPart = Math.abs(parseNumbers((str.substring(dotPos + 1, str.length()))) / Math.pow(10, str.length()
+                        - str.indexOf(".") - 1));
             } else {
-                fracPart = Math.abs(parseNumbers((str.substring(dotPos + 1, ePos))) / Math.pow(10, str.indexOf('e') - str.indexOf('.') - 1));
+                fracPart = Math.abs(parseNumbers((str.substring(dotPos + 1, ePos))) / Math.pow(10, str.indexOf('e')
+                        - str.indexOf('.') - 1));
             }
         } else {
             intPart = Math.abs(parseNumbers((str.substring(0, ePos))));

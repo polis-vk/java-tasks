@@ -17,40 +17,40 @@ public class RepeatingCharacters {
             return null;
         }
 
-        char cur = 0;
-        char let = 0;
-        int count = 0;
-        int max = -1;
-        char str_copy[] = str.toCharArray();
-        for (int i = 0; i < (str_copy.length) ; i++) {
+        char strCopy[] = str.toCharArray();
+        char cur = strCopy[0];
+        char let = strCopy[0];
+        int count = 1;
+        int max = 1;
 
-            if (str_copy[i] != cur) {
+        for (int i = 1; i < strCopy.length; i++) {
+            if (strCopy[i] != cur) {
                 count = 0;
+                cur = strCopy[i];
             }
             count++;
-            cur = str_copy[i];
             if (count > max) {
                 max = count;
                 let = cur;
             }
         }
-        return new Pair<Character, Integer>(let, max);
+        return new Pair<>(let, max);
     }
 
-    public static class Pair<Character, Integer> {
-        private final Character first;
-        private final Integer second;
+    public static class Pair<T, V> {
+        private final T first;
+        private final V second;
 
-        public Pair(Character first, Integer second) {
+        public Pair(T first, V second) {
             this.first = first;
             this.second = second;
         }
 
-        public Character getFirst() {
+        public T getFirst() {
             return first;
         }
 
-        public Integer getSecond() {
+        public V getSecond() {
             return second;
         }
 
