@@ -15,7 +15,7 @@ public class RepeatingCharacters {
         if (str == null || str.isEmpty()) {
             return null;
         }
-        char maxRepeatingCharacter = '\0';
+        char maxRepeatingCharacter = 0;
         int maxRepetitionNumber = 0;
         char currentRepeatingCharacter = str.charAt(0);
         int currentRepetitionNumber = 1;

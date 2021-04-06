@@ -13,7 +13,9 @@ public class StringTasks {
      * Работайте со строкой, НЕ надо ее переводить в массив байт (это можно использовать только для цикла)
      * У класса Character есть полезные методы, например Character.isDigit()
      */
-    private final static int CHARACTER_RADIX = 48;
+    private final static int CHARACTER_RADIX = 10;
+    private final static int MAX_ALLOWED_DOT_EXP_COUNT = 1;
+    private final static int MAX_ALLOWED_HYPHEN_COUNT = 2;
 
     public static Number valueOf(String str) {
         if (str == null || str.isEmpty()) {
@@ -27,12 +29,10 @@ public class StringTasks {
     }
 
     private static String formatString(String str) {
-        final int MAX_ALLOWED_DOT_EXP_COUNT = 1;
-        final int MAX_ALLOWED_HYPHEN_COUNT = 2;
         int dotCount = 0;
         int expCount = 0;
         int hyphenCount = 0;
-        String tmpStr = str;
+        StringBuilder tmpStr = new StringBuilder(str);
 
         for (int i = 0; i < tmpStr.length(); ++i) {
             switch (tmpStr.charAt(i)) {
@@ -65,12 +65,12 @@ public class StringTasks {
                     break;
                 default:
                     if (!Character.isDigit(tmpStr.charAt(i))) {
-                        tmpStr = tmpStr.substring(0, i).concat(tmpStr.substring(i + 1));
+                        tmpStr.deleteCharAt(i);
                         --i;
                     }
             }
         }
-        return tmpStr;
+        return tmpStr.toString();
     }
 
     private static Number getValue(String str) {
@@ -109,22 +109,22 @@ public class StringTasks {
         double exponent = 0.0;
         double rank = Math.pow(10, -str.length());
         for (int i = str.length() - 1; i >= 0; i--, rank *= 10) {
-            exponent += (str.charAt(i) - CHARACTER_RADIX) * rank;
+            exponent += Character.digit(str.charAt(i), CHARACTER_RADIX) * rank;
         }
         return exponent;
     }
 
     private static double parseValue(String str) {
-        long result = 0;
+        double result = 0;
         long rank = 1;
         for (int i = str.length() - 1; i >= 0; i--, rank *= 10) {
             if (str.charAt(i) == '-') {
                 result *= -1;
                 continue;
             }
-            result += (str.charAt(i) - CHARACTER_RADIX) * rank;
+            result += Character.digit(str.charAt(i), CHARACTER_RADIX) * rank;
         }
-        return (double) result;
+        return result;
     }
 
     private static Number getIntValue(String str) {
