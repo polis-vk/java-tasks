@@ -13,7 +13,31 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        return new Pair<>('s', 4);
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+
+        char maxRepeatChar = str.charAt(0);
+        int repeats = 1;
+        int maxRepeats = repeats;
+
+        for (int i = 1; i < str.length(); i++) {
+            if (str.charAt(i) != str.charAt(i - 1)) {
+                if (repeats > maxRepeats) {
+                    maxRepeatChar = str.charAt(i - 1);
+                    maxRepeats = repeats;
+                }
+                repeats = 0;
+            }
+            repeats++;
+        }
+
+        if (repeats > maxRepeats) {
+            maxRepeatChar = str.charAt(str.length() - 1);
+            maxRepeats = repeats;
+        }
+
+        return new Pair<>(maxRepeatChar, maxRepeats);
     }
 
     public static class Pair<T, V> {
