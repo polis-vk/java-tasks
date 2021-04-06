@@ -14,6 +14,92 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        return null;
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+        int dotCount = str.length() - str.replace(".", "").length();
+        int eCount = str.length() - str.replace("e", "").length();
+        int minusCount = str.length() - str.replace("-", "").length();
+        if (dotCount > 1 || eCount > 1 || minusCount > 2) {
+            return null;
+        }
+        String numberString = removeUnavailableChars(str);
+        if (containsInvalidCombinations(numberString)) {
+            return null;
+        }
+        if (dotCount + eCount > 0) {
+            return parseDouble(numberString);
+        }
+        double number = parseNumber(numberString);
+        if (number > Integer.MAX_VALUE || number < Integer.MIN_VALUE) {
+            return (long) number;
+        }
+        return (int) number;
+    }
+
+    private static Double parseNumber(String str) {
+        int sign = str.charAt(0) == '-' ? -1 : 1;
+        int firstAnalyzedChar = (str.charAt(0) == '-' || str.charAt(0) == '+') ? 1 : 0;
+        double res = convertChar(str.charAt(firstAnalyzedChar));
+
+        for (int i = firstAnalyzedChar + 1; i < str.length(); i++) {
+            res = res * 10 + convertChar(str.charAt(i));
+        }
+        return sign * res;
+    }
+
+    private static Double parseDouble(String str) {
+        int ePosition = str.indexOf('e');
+        int dotPosition = str.indexOf('.');
+        int sign = str.charAt(0) == '-' ? -1 : 1;
+        boolean containsE = ePosition != -1;
+        boolean containsDot = dotPosition != -1;
+
+        double power = containsE ? parseNumber(str.substring(ePosition + 1)) : 0;
+        double integerPart;
+        double fractionPart;
+
+        if (containsDot) {
+            String fractionPartString = str.substring(dotPosition + 1, containsE ? ePosition : str.length());
+            integerPart = Math.abs(parseNumber(str.substring(0, dotPosition)));
+            fractionPart = Math.abs(parseNumber(fractionPartString)) / Math.pow(10, fractionPartString.length());
+        } else {
+            integerPart = Math.abs(parseNumber(str.substring(0, ePosition)));
+            fractionPart = 0;
+        }
+        double base = sign * (integerPart + fractionPart);
+        return base * Math.pow(10, power);
+    }
+
+    private static String removeUnavailableChars(String str) {
+        StringBuilder builder = new StringBuilder();
+        for (char ch : str.toCharArray()) {
+            if (ch == '.' || ch == 'e' || ch == '-' || ch == '+' || Character.isDigit(ch)) {
+                builder.append(ch);
+            }
+        }
+        return builder.toString();
+    }
+
+    private static boolean containsInvalidCombinations(String str) {
+        return str.startsWith(".") ||
+                str.contains("--") ||
+                str.contains("-e") ||
+                str.contains(".e") ||
+                str.contains("e.") ||
+                str.contains("-.") ||
+                str.contains(".-") ||
+                str.contains("++") ||
+                str.contains("+e") ||
+                str.contains("+.") ||
+                str.contains(".+") ||
+                str.endsWith("+") ||
+                str.endsWith("-") ||
+                str.endsWith("e") ||
+                str.endsWith(".");
+    }
+
+    private static int convertChar(char ch) {
+        return ch - (int) '0';
     }
 }
