@@ -20,22 +20,21 @@ public class RepeatingCharacters {
         int maxIndex = 0;
         int max = 1;
 
-        int[] repeatsCount = new int[str.length()];
-        repeatsCount[0] = 1;
-        for (int i = 1; i < str.length(); i++) {
+        int repeatsCount = 1;
+        for (int i = 1; i < str.length(); ++i) {
             if (str.charAt(i) == str.charAt(i - 1)) {
-                repeatsCount[i] += repeatsCount[i - 1] + 1;
+                ++repeatsCount;
             } else {
-                repeatsCount[i] = 1;
+                repeatsCount = 1;
             }
 
-            if (repeatsCount[i] > max) {
-                max = repeatsCount[i];
+            if (repeatsCount > max) {
+                max = repeatsCount;
                 maxIndex = i;
             }
         }
 
-        return new Pair<>(str.charAt(maxIndex), repeatsCount[maxIndex]);
+        return new Pair<>(str.charAt(maxIndex), max);
     }
 
     public static class Pair<T, V> {
