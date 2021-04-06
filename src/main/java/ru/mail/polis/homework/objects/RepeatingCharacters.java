@@ -1,10 +1,5 @@
 package ru.mail.polis.homework.objects;
 
-
-
-import java.util.HashMap;
-
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -17,9 +12,8 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
 
-
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if(str == null || str.isEmpty()){
+        if (str == null || str.isEmpty()) {
             return null;
         }
         char maxRepeatingChar = str.charAt(0);
@@ -27,8 +21,8 @@ public class RepeatingCharacters {
         int repeats = 1;
 
         for (int i = 1; i < str.length(); i++) {
-            if(str.charAt(i) != str.charAt(i - 1)){
-                if(repeats > maxRepeats){
+            if (str.charAt(i) != str.charAt(i - 1)) {
+                if (repeats > maxRepeats) {
                     maxRepeats = repeats;
                     maxRepeatingChar = str.charAt(i - 1);
                 }
@@ -36,7 +30,7 @@ public class RepeatingCharacters {
             }
             repeats++;
         }
-        if(repeats > maxRepeats){
+        if (repeats > maxRepeats) {
             maxRepeats = repeats;
             maxRepeatingChar = str.charAt(str.length() - 1);
         }
