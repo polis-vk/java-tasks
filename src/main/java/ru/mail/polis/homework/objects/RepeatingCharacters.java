@@ -22,7 +22,7 @@ public class RepeatingCharacters {
         int count = 0;
         int max = -1;
         char str_copy[] = str.toCharArray();
-        for (int i = 0; i < (str_copy.length); i++) {
+        for (int i = 0; i < (str_copy.length) ; i++) {
 
             if (str_copy[i] != cur) {
                 count = 0;

@@ -67,11 +67,11 @@ public class StringTasks {
         int ePos = str.indexOf("e");
         int sign = str.charAt(0) == '-' ? -1 : 1;
         double powerOfE = 1;
+        double intPart;
+        double fracPart = 0;
         if (ePos > 0) {
             powerOfE = Math.pow(10, parseNumbers((str.substring(ePos + 1, str.length()))));
         }
-        double intPart;
-        double fracPart = 0;
 
         if (dotPos >= 0) {
             intPart = Math.abs(parseNumbers((str.substring(0, dotPos))));

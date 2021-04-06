@@ -28,6 +28,7 @@ public class MaxTask {
         for (int h = 0; h < count; h++) {
             index[h] = -1;
         }
+
         int pos = 0;
         while (pos != count) {
             int max = Integer.MIN_VALUE;
