@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.Arrays;
+
 public class MaxTask {
 
     /**
@@ -16,20 +18,22 @@ public class MaxTask {
             return null;
         }
 
-        int[] clonedArray = array.clone();
+        int[] clonedArray = Arrays.copyOf(array, array.length);
         int[] resultArray = new int[count];
 
         for (int i = 0; i < count; i++) {
             int maxElement = Integer.MIN_VALUE;
-            int indexOfMaxElement = 0;
-            for (int j = 0; j < clonedArray.length; j++) {
+            int indexOfMaxElement = i;
+            for (int j = i; j < clonedArray.length; j++) {
                 if (clonedArray[j] > maxElement) {
                     maxElement = clonedArray[j];
                     indexOfMaxElement = j;
                 }
             }
+            int tpmElement = clonedArray[i];
+            clonedArray[i] = maxElement;
+            clonedArray[indexOfMaxElement] = tpmElement;
             resultArray[i] = maxElement;
-            clonedArray[indexOfMaxElement] = Integer.MIN_VALUE;
         }
         return resultArray;
     }

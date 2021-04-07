@@ -58,20 +58,20 @@ public class StringTasks {
 
         String numberString = stringWithAllowedSymbol.toString();
 
-        if (numberString.contains("-e") || numberString.contains(".e") ||
-                numberString.contains("e.") || numberString.contains("--") ||
-                numberString.endsWith("-") || numberString.endsWith("e") ||
-                numberString.startsWith(".") || numberString.startsWith("e")) {
+        if (numberString.contains("-e") || numberString.contains(".e")
+                || numberString.contains("e.") || numberString.contains("--")
+                || numberString.endsWith("-") || numberString.endsWith("e")
+                || numberString.startsWith(".") || numberString.startsWith("e")) {
             return null;
         }
 
-        if ((eCount > 0) || (dotCount > 0)) {
+        if (eCount > 0 || dotCount > 0) {
             return stringToDouble(numberString);
         }
 
         Double number = parseIntegerPart(numberString);
 
-        if ((number > Integer.MAX_VALUE) || (number < Integer.MIN_VALUE)) {
+        if (number > Integer.MAX_VALUE || number < Integer.MIN_VALUE) {
             return number.longValue();
         }
         return number.intValue();
