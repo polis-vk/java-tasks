@@ -97,12 +97,26 @@ public class StringTasks {
     private static Double parseDoubleWithDot(String str) {
         int indexDot = str.indexOf('.');
         String mantissaWhole = str.substring(0, indexDot);
-        String mantissaFract = str.substring(indexDot + 1, str.length());
+        String mantissaFract = str.substring(indexDot + 1);
         Double whole = parseWholeNumber(mantissaWhole);
         Double fract = parseWholeNumber(mantissaFract);
-        while (fract > 1)
-            fract = fract / 10;
+        while (fract > 1) {
+            fract /= 10;
+        }
+        //Делим чтобы получить нужное кол-во нулей после "."   Например для числа Авогадро 6.02(в тестах нету)
+        fract /= Math.pow(10, countStartWithZeros(mantissaFract));
         return whole + fract;
+    }
+
+    private static int countStartWithZeros(String mantissaFract) {
+        int count = 0;
+        for (char ch : mantissaFract.toCharArray()) {
+            if (0 != Character.getNumericValue(ch)) {
+                break;
+            }
+            count++;
+        }
+        return count;
     }
 
     private static Double parseWholeNumber(String str) {
