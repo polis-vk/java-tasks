@@ -54,7 +54,7 @@ public class StringTasks {
             res += Character.getNumericValue(ch);
         }
         }
-        return number.charAt(0) == '-' ? -res : res;
+         return number.charAt(0) == '-' ? -res : res;
     }
     private static double parseFractional(String number) {
         double res = 0.0;
