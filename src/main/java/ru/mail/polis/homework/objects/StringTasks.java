@@ -13,7 +13,88 @@ public class StringTasks {
      * Работайте со строкой, НЕ надо ее переводить в массив байт (это можно использовать только для цикла)
      * У класса Character есть полезные методы, например Character.isDigit()
      */
+    private static final int REPETITION_NUMBER = 2;
+    private static final int RADIX = 10;
+
     public static Number valueOf(String str) {
-        return null;
+        int countDot = 0;
+        int countE = 0;
+        int countHyphen = 0;
+        StringBuilder newStr = new StringBuilder();
+        for (int i = 0; i < str.length(); ++i) {
+            newStr.append(Character.isDigit(str.charAt(i)) ? str.charAt(i) : "");
+            if (str.charAt(i) == '.') {
+                newStr.append(str.charAt(i));
+                countDot++;
+            }
+            if (str.charAt(i) == 'e') {
+                newStr.append(str.charAt(i));
+                countE++;
+            }
+            if (str.charAt(i) == '-') {
+                newStr.append(str.charAt(i));
+                countHyphen++;
+            }
+        }
+        String numberStr = newStr.toString();
+
+        if (countDot >= REPETITION_NUMBER || countE >= REPETITION_NUMBER || countHyphen > REPETITION_NUMBER ||
+                numberStr.contains("-e") || numberStr.contains("--") ||
+                numberStr.charAt(numberStr.length() - 1) == '-' || numberStr.charAt(numberStr.length() - 1) == 'e') {
+            return null;
+        }
+        return toNumber(numberStr);
+    }
+
+    private static Number toNumber(String str) {
+        int dotPlace = str.indexOf('.');
+        int expPlace = str.indexOf('e');
+        if (dotPlace != -1 && expPlace != -1) {
+            return (double) toDouble(str.substring(0, expPlace), dotPlace)
+                    * Math.pow(10, countIntegerPart(str, str.length() - 1, expPlace + 1));
+        }
+        if (expPlace != -1) {
+            return countIntegerPart(str, expPlace - 1, 0) *
+                    Math.pow(10, countIntegerPart(str, str.length() - 1, expPlace + 1));
+        }
+        if (dotPlace != -1) {
+            return toDouble(str, dotPlace);
+        }
+
+        return toInt(countIntegerPart(str, str.length() - 1, 0));
+    }
+
+    private static double countIntegerPart(String str, int start, int end) {
+        double number = 0;
+        long rank = 1;
+        for (int i = start; i >= end; --i, rank *= 10) {
+            if (str.charAt(i) == '-') {
+                number *= -1;
+                continue;
+            }
+            number += Character.digit(str.charAt(i), RADIX) * rank;
+        }
+        return number;
+    }
+
+    private static Number toInt(double str) {
+        long number = (long) str;
+        if (number <= Integer.MAX_VALUE && number >= Integer.MIN_VALUE) {
+            return (int) number;
+        }
+        return number;
+    }
+
+    private static Number toDouble(String str, int dotPlace) {
+        return countIntegerPart(str, dotPlace - 1, 0) + countAfterDot(str, dotPlace);
+    }
+
+    private static double countAfterDot(String str, int dotPlace) {
+        double exp = 0.0;
+        double rank = Math.pow(10, dotPlace - str.length() + 1);
+        for (int i = str.length() - 1; i > dotPlace; --i, rank *= 10) {
+            exp += Character.digit(str.charAt(i), RADIX) * rank;
+        }
+        return exp;
     }
 }
