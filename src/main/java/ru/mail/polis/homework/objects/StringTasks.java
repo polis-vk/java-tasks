@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.objects;
 
-import javax.swing.text.NumberFormatter;
-
 public class StringTasks {
 
     /**
