@@ -14,6 +14,10 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+
         StringBuilder stringBuilderWithValidSym = new StringBuilder();
         for (char ch : str.toCharArray()) {
             if (contains(ch, validSym) || Character.isDigit(ch)) {
