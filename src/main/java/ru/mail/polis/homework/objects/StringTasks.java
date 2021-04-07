@@ -2,6 +2,8 @@ package ru.mail.polis.homework.objects;
 
 public class StringTasks {
 
+    private static final char[] VALID_SYM = {'e', '.', '-'};
+
     /**
      * Убрать все лишние символы из строки и вернуть получившееся число.
      * Разрешенные символы: цифры, '-', '.', 'e'
@@ -20,7 +22,7 @@ public class StringTasks {
 
         StringBuilder stringBuilderWithValidSym = new StringBuilder();
         for (char ch : str.toCharArray()) {
-            if (contains(ch, validSym) || Character.isDigit(ch)) {
+            if (contains(ch, VALID_SYM) || Character.isDigit(ch)) {
                 stringBuilderWithValidSym.append(ch);
             }
         }
