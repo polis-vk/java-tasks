@@ -38,12 +38,16 @@ public class StringTasks {
     }
 
     private static Double parseNumber(String str) {
-        int sign = str.charAt(0) == '-' ? -1 : 1;
-        int firstAnalyzedChar = (str.charAt(0) == '-' || str.charAt(0) == '+') ? 1 : 0;
-        double res = convertChar(str.charAt(firstAnalyzedChar));
+        int sign = 1;
+        int firstAnalyzedChar = 0;
+        if (str.charAt(0) == '-') {
+            sign = -1;
+            firstAnalyzedChar = 1;
+        }
+        double res = Character.digit(str.charAt(firstAnalyzedChar), 10);
 
         for (int i = firstAnalyzedChar + 1; i < str.length(); i++) {
-            res = res * 10 + convertChar(str.charAt(i));
+            res = res * 10 + Character.digit(str.charAt(i), 10);
         }
         return sign * res;
     }
@@ -74,7 +78,7 @@ public class StringTasks {
     private static String removeUnavailableChars(String str) {
         StringBuilder builder = new StringBuilder();
         for (char ch : str.toCharArray()) {
-            if (ch == '.' || ch == 'e' || ch == '-' || ch == '+' || Character.isDigit(ch)) {
+            if (ch == '.' || ch == 'e' || ch == '-' || Character.isDigit(ch)) {
                 builder.append(ch);
             }
         }
@@ -83,23 +87,16 @@ public class StringTasks {
 
     private static boolean containsInvalidCombinations(String str) {
         return str.startsWith(".") ||
+                str.startsWith("e") ||
                 str.contains("--") ||
                 str.contains("-e") ||
                 str.contains(".e") ||
                 str.contains("e.") ||
                 str.contains("-.") ||
                 str.contains(".-") ||
-                str.contains("++") ||
-                str.contains("+e") ||
-                str.contains("+.") ||
-                str.contains(".+") ||
-                str.endsWith("+") ||
                 str.endsWith("-") ||
                 str.endsWith("e") ||
                 str.endsWith(".");
     }
 
-    private static int convertChar(char ch) {
-        return ch - (int) '0';
-    }
 }
