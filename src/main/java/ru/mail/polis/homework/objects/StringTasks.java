@@ -86,17 +86,17 @@ public class StringTasks {
     }
 
     private static boolean containsInvalidCombinations(String str) {
-        return str.startsWith(".") ||
-                str.startsWith("e") ||
-                str.contains("--") ||
-                str.contains("-e") ||
-                str.contains(".e") ||
-                str.contains("e.") ||
-                str.contains("-.") ||
-                str.contains(".-") ||
-                str.endsWith("-") ||
-                str.endsWith("e") ||
-                str.endsWith(".");
+        return str.startsWith(".")
+                || str.startsWith("e")
+                || str.contains("--")
+                || str.contains("-e")
+                || str.contains(".e")
+                || str.contains("e.")
+                || str.contains("-.")
+                || str.contains(".-")
+                || str.endsWith("-")
+                || str.endsWith("e")
+                || str.endsWith(".");
     }
 
 }
