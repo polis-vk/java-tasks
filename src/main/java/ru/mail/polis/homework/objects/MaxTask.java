@@ -24,8 +24,8 @@ public class MaxTask {
         int[] decArray = new int[count];
         Arrays.fill(decArray, Integer.MIN_VALUE);  //Надеюсь можно использовать
 
-        for (int elemOfArray : array) {
-            insertToDescendingSortArray(decArray, elemOfArray);
+        for (int element : array) {
+            insertToDescendingSortArray(decArray, element);
         }
         return decArray;
     }
@@ -42,9 +42,12 @@ public class MaxTask {
                 break;
             }
         }
-        for (int i = array.length - 1; i > indexElementSmallerValue; i--) {
-            array[i] = array[i - 1];
-        }
+        System.arraycopy(
+                array,
+                indexElementSmallerValue,
+                array,
+                indexElementSmallerValue + 1,
+                array.length - indexElementSmallerValue - 1);
         array[indexElementSmallerValue] = value;
     }
 }
