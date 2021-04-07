@@ -28,9 +28,9 @@ public class StringTasks {
         }
         String strMod = stringBuilderWithValidSym.toString();
 
-        int dotCount = count(strMod, '.');
-        int expCount = count(strMod, 'e');
-        int subCount = count(strMod, '-');
+        int dotCount = count(strMod, ".");
+        int expCount = count(strMod, "e");
+        int subCount = count(strMod, "-");
         if (dotCount > 1 || expCount > 1 || subCount > 2) {
             return null;
         }
@@ -55,10 +55,8 @@ public class StringTasks {
         return res;
     }
 
-    private static final char[] validSym = {'e', '.', '-'};
-
-    private static int count(String str, Character value) {
-        return str.length() - str.replace(value.toString(),"").length();
+    private static int count(String str, String value) {
+        return str.length() - str.replace(value,"").length();
     }
 
     private static boolean contains(char value, char[] container) {
