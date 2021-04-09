@@ -15,7 +15,7 @@ public class StringTasks {
      */
     private final static int CHARACTER_RADIX = 10;
     private final static int MAX_ALLOWED_DOT_EXP_COUNT = 1;
-    private final static int MAX_ALLOWED_HYPHEN_COUNT = 2;
+    private final static int MAX_ALLOWED_MINUS_COUNT = 2;
 
     public static Number valueOf(String str) {
         if (str == null || str.isEmpty()) {
@@ -31,7 +31,7 @@ public class StringTasks {
     private static String formatString(String str) {
         int dotCount = 0;
         int expCount = 0;
-        int hyphenCount = 0;
+        int minusCount = 0;
         StringBuilder tmpStr = new StringBuilder(str);
 
         for (int i = 0; i < tmpStr.length(); ++i) {
@@ -53,7 +53,7 @@ public class StringTasks {
                     }
                     break;
                 case '-':
-                    if (++hyphenCount > MAX_ALLOWED_HYPHEN_COUNT) {
+                    if (++minusCount > MAX_ALLOWED_MINUS_COUNT) {
                         return null;
                     }
                     if (i != 0 && (tmpStr.charAt(i - 1) == '-' || tmpStr.charAt(i - 1) != 'e')) {
