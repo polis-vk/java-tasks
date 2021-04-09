@@ -10,15 +10,36 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double sumY = 0;
+        double x = a;
+        while (x <= b) {
+            sumY += function.applyAsDouble(x) * delta;
+            x += delta;
+        }
+        return sumY;
     }
 
     /**
      * Вывести номер максимальной цифры. Счет начинается слева направо,
      * выводим номер первой максимальной цифры (если их несколько)
      */
-    public static byte maxNumber(long a) {
-        return 0;
+    public static byte maxNumber(long a1) {
+        long a = a1;
+        long number = 0;
+        byte index = 0;
+        byte indexMaxNumber = 0;
+        long max = 0;
+        while (a >= 1) {
+            number = a % 10;
+            a = a / 10;
+            index += 1;
+            if (number >= max) {
+                max = number;
+                indexMaxNumber = index;
+            }
+        }
+
+        return (byte) (index + 1 - indexMaxNumber);
     }
 
 
@@ -27,7 +48,9 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        double k = ((double) y2 - (double) y1) / ((double) x2 - (double) x1);
+        double b = (double) y1 - k * (double) x1;
+        return k * x3 + b;
     }
 
     /**
