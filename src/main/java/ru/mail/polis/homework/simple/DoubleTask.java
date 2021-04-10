@@ -20,15 +20,17 @@ public class DoubleTask {
         if (discrimanant < 0) {
             return "Нет корней";
         }
-        if (discrimanant == 0) {
-            x1 = x2 = -b / (2 * a);
+        else if (discrimanant == 0){
+            x1 = x2 = - b / (2 * a);
         }
-        x1 = (-b + Math.sqrt(discrimanant)) / (2 * a);
-        x2 = (-b - Math.sqrt(discrimanant)) / (2 * a);
-        if (x1 < x2) {
-            double x = x1;
-            x1 = x2;
-            x2 = x;
+        else {
+            x1 = (-b + Math.sqrt(discrimanant))/ (2 * a);
+            x2 = (-b - Math.sqrt(discrimanant))/ (2 * a);
+            if (x1 < x2){
+                double x = x1;
+                x1 = x2;
+                x2 = x;
+            }
         }
         return x1 + ", " + x2;
     }
