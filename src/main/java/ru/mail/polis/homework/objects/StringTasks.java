@@ -14,15 +14,14 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        StringBuilder tempStr = new StringBuilder();
-        tempStr.append(str);
+        StringBuilder tempStr = new StringBuilder(str);
         int dotCount = 0;
         int eCount = 0;
         for (int i = 0; i < tempStr.length(); i++) {
             char currChar = tempStr.charAt(i);
             switch (currChar) {
                 case '-': {
-                    if (((i != 0) && (tempStr.charAt(i - 1) == currChar)) || (i == tempStr.length() - 1)) {
+                    if ((i != 0 && tempStr.charAt(i - 1) == currChar) || i == tempStr.length() - 1) {
                         return null;
                     }
                     break;
@@ -36,7 +35,7 @@ public class StringTasks {
                 }
                 case 'e': {
                     eCount += 1;
-                    if ((eCount > 1) || (i == 0) || (!Character.isDigit(tempStr.charAt(i - 1))) || (i == tempStr.length() - 1)) {
+                    if (eCount > 1 || i == 0 || !Character.isDigit(tempStr.charAt(i - 1)) || i == tempStr.length() - 1) {
                         return null;
                     }
                     break;
@@ -71,7 +70,7 @@ public class StringTasks {
         
         //Лично мне кажется, что лучше было бы принебречь DRY, чем такую загагулину писать, чтобы все делалось
         //одним тернарным оператором. Зато задача была интересная для исполнения
-        result = str.charAt(0) == '-' ? result * -1 : result + Character.getNumericValue(str.charAt(0)) * (long) Math.pow(10, str.length() - 1);
+        result = str.charAt(0) == '-' ? -result : result + Character.getNumericValue(str.charAt(0)) * (long) Math.pow(10, str.length() - 1);
 
         return result;
     }
