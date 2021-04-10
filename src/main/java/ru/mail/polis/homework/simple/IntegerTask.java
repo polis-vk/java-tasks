@@ -49,8 +49,11 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        if (n < 0){
-            n *= -1;
+        int num = n;
+        int index = 0;
+        int res = 0;
+        if (num < 0) {
+            num = num * -1;
         }
         List<Integer> list_of_numbers = new ArrayList<>();
         while( n != 0){
