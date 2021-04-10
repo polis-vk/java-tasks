@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-import java.util.*;
 import java.util.function.ToDoubleFunction;
 
 public class HomeworkTask {
@@ -24,27 +23,26 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        if (a < 0) {
-            a *= -1;
+        long b = a;
+        if (b < 0) {
+            b *= -1;
         }
-        if (a == 0) {
+        if (b == 0) {
             return 1;
         }
-        List<Long> num = new ArrayList();
-        while (a != 0) {
-            num.add(a % 10);
-            a /= 10;
-        }
-        Collections.reverse(num);
-        int max_i = 1;
-        long max = num.get(0);
-        for (int i = 1; i < num.size(); i++) {
-            if (num.get(i) > max) {
-                max = num.get(i);
-                max_i = i + 1;
+        int i = 0;
+        int countNum = 0;
+        long max = 0;
+        while (b != 0) {
+            long d = b % 10;
+            countNum += 1;
+            if (d >= max) {
+                i = countNum;
+                max = d;
             }
+            b /= 10;
         }
-        return (byte) max_i;
+        return (byte) (countNum - i + 1);
     }
 
 
