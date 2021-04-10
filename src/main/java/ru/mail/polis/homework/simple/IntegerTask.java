@@ -18,7 +18,7 @@ public class IntegerTask {
      */
     public static int sum(int n) {
         int res = 0;
-        for (int i = 1; i <= n ; i+=1){
+        for (int i = 1; i <= n; i += 1) {
             res += i;
         }
 
@@ -32,10 +32,12 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        if (top <= bottom && top < height) return Integer.MAX_VALUE;
+        if (top <= bottom && top < height) {
+            return Integer.MAX_VALUE;
+        }
         int x = 0;
         int count = 0;
-        while (x + top < height){
+        while (x + top < height) {
             x += (top - bottom);
             count += 1;
         }
@@ -55,12 +57,15 @@ public class IntegerTask {
         if (num < 0) {
             num = num * -1;
         }
-        List<Integer> list_of_numbers = new ArrayList<>();
-        while( n != 0){
-            list_of_numbers.add(n % 10);
-            n = n / 10;
+        while (num != 0) {
+
+            index += 1;
+            if (index == order) {
+                res = num % 10;
+            }
+            num /= 10;
         }
-        return list_of_numbers.get(order - 1);
+        return res;
     }
 
 
@@ -73,7 +78,7 @@ public class IntegerTask {
         if (n == 0) {
             return res;
         }
-        for(int i = 1; i <= n ; i += 1){
+        for (int i = 1; i <= n; i += 1) {
             res *= i;
         }
         return res;
