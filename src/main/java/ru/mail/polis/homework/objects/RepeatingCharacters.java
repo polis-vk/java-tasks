@@ -23,6 +23,10 @@ public class RepeatingCharacters {
         for (int i = 1; i < str.length(); i++) {
             if (tempChar == str.charAt(i)) {
                 tempCount++;
+                if (tempCount > maxCount) {
+                    maxCount = tempCount;
+                    maxChar = tempChar;
+                }
             } else {
                 if (tempCount > maxCount) {
                     maxCount = tempCount;
@@ -31,10 +35,7 @@ public class RepeatingCharacters {
                 tempCount = 1;
                 tempChar = str.charAt(i);
             }
-            if (tempCount > maxCount) {
-                maxCount = tempCount;
-                maxChar = tempChar;
-            }
+
         }
         return new Pair<>(maxChar, maxCount);
     }
