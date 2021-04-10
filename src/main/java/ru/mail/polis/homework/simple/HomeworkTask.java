@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-import java.util.*;
 import java.util.function.ToDoubleFunction;
 
 public class HomeworkTask {
@@ -12,11 +11,7 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         function.applyAsDouble(4d);
-        double res = 0;
-        for (int i = 0; i < (b - a) / delta - 1; i++) {
-            res += (function.applyAsDouble(a + i * delta) + function.applyAsDouble(a + (i + 1) * delta)) * 0.5 * delta;
-        }
-        return res;
+        return 0;
     }
 
     /**
@@ -24,27 +19,7 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        if (a < 0) {
-            a *= -1;
-        }
-        if (a == 0) {
-            return 1;
-        }
-        List<Long> num = new ArrayList();
-        while (a != 0) {
-            num.add(a % 10);
-            a /= 10;
-        }
-        Collections.reverse(num);
-        int max_i = 1;
-        long max = num.get(0);
-        for (int i = 1; i < num.size(); i++) {
-            if (num.get(i) > max) {
-                max = num.get(i);
-                max_i = i + 1;
-            }
-        }
-        return (byte) max_i;
+        return 0;
     }
 
 
@@ -53,7 +28,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return (double) (x3 - x1) * (y2 - y1) / (x2 - x1) + y1;
+        return 0;
     }
 
     /**
@@ -62,8 +37,7 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-
-        return 0.5 * Math.abs((x1 - x2) * (y1 + y2) + (x2 - x3) * (y2 + y3) + (x3 - x4) * (y3 + y4) + (x4 - x1) * (y1 + y4));
+        return 0;
     }
 
 }
