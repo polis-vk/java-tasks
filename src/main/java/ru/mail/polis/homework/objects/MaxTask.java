@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.objects;
 
-import java.lang.reflect.Array;
 
 public class MaxTask {
 
@@ -20,15 +19,6 @@ public class MaxTask {
         }
 
         int[] result = new int[count];
-        if (count == 0) {
-            return result;
-        }
-
-        int[] index = new int[count];
-        for (int h = 0; h < count; h++) {
-            index[h] = -1;
-        }
-
         int[] arrayCopy = new int[array.length];
         System.arraycopy(array, 0, arrayCopy, 0, array.length);
         for (int i = 0; i < count; i++) {

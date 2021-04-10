@@ -35,8 +35,7 @@ public class StringTasks {
 
         if (finalTerm.contains("--") || finalTerm.contains("-e") || finalTerm.contains(".e") || finalTerm.endsWith(("-"))
                 || finalTerm.endsWith(("e")) || finalTerm.contains(".-") || finalTerm.contains("e.") ||
-                finalTerm.contains("-e") || finalTerm.startsWith("e") || finalTerm.contains(".-") ||
-                finalTerm.contains("-.") || finalTerm.startsWith(".") || finalTerm.endsWith(("."))) {
+                finalTerm.contains("-e") || finalTerm.startsWith("e") || finalTerm.contains("-.")) {
             return null;
         }
 
@@ -59,9 +58,9 @@ public class StringTasks {
             minus = -1;
             firstCharacter = 1;
         }
-        double res = str.charAt(firstCharacter) - (int) '0';
+        double res = Character.getNumericValue(str.charAt(firstCharacter));
         for (int i = firstCharacter + 1; i < str.length(); i++) {
-            res = res * 10 + (Character.getNumericValue(str.charAt(i)));
+            res = res * 10 + Character.getNumericValue(str.charAt(i));
         }
         return res * minus;
     }
