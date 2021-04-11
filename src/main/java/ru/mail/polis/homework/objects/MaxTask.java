@@ -15,15 +15,14 @@ public class MaxTask {
             return null;
         }
 
-        int[] origin = array;
+        int[] origin = array.clone();
         int maxValue;
-        int minValue;
+        int minValue = Integer.MIN_VALUE;
         int indMaxValue;
         int[] result = new int[count];
 
         for (int i = 0; i < count; i++) {
             maxValue = origin[0];
-            minValue = origin[0];
             indMaxValue = 0;
 
             for (int j = 1; j < origin.length; j++) {
@@ -31,10 +30,6 @@ public class MaxTask {
                 if (origin[j] > maxValue) {
                     maxValue = origin[j];
                     indMaxValue = j;
-                }
-
-                if (origin[j] < minValue) {
-                    minValue = origin[j];
                 }
             }
 

@@ -47,9 +47,11 @@ public class StringTasks {
 
         String numString = sb.toString();
 
-        if (dotCount > 1 || eCount > 1 || minusCount > 2 ||
-                numString.contains("--") || numString.contains("-e") || numString.endsWith("e") ||
-                numString.contains(".e") || numString.contains("e.") || numString.endsWith("-")) {
+        if (dotCount > 1 || eCount > 1 || minusCount > 2 || numString.startsWith(".")
+                || numString.startsWith("e") || numString.contains("--")
+                || numString.contains("-e") || numString.endsWith("e")
+                || numString.endsWith(".") || numString.contains(".e")
+                || numString.contains("e.") || numString.endsWith("-")) {
             return null;
         }
 
@@ -67,50 +69,16 @@ public class StringTasks {
     }
 
     private static long parseLong(String numString) {
-        long result = 0;
-        int num;
-        boolean minusFlag = false;
-
-        for (int i = 0; i < numString.length(); i++) {
-
-            num = parseChar(numString.charAt(i));
-
-            if (num >= 0) {
-                result += num * Math.pow(10, numString.length() - i - 1);
-            } else {
-                minusFlag = !minusFlag;
-            }
-        }
-
-        if (minusFlag) {
-            result *= -1;
-        }
-
-        return result;
+        return (long) parsePart(numString, 0);
     }
 
     private static double parseDouble(String numString) {
-        double result = 0;
-        int num;
-        boolean minusFlag = false;
-
-        String[] parts = numString.split("\\.|e");
-
-        for (int i = 0; i < parts[0].length(); i++) {
-            num = parseChar(parts[0].charAt(i));
-
-            if (num >= 0) {
-                result += num * Math.pow(10, parts[0].length() - i - 1);
-            } else {
-                minusFlag = !minusFlag;
-            }
-        }
-
-        if (minusFlag) {
-            result *= -1;
-        }
+        String[] parts = numString.split("[.e]");
+        double result = parsePart(parts[0], 0.0);
 
         if (numString.contains(".")) {
+            int num;
+
             for (int i = 0; i < parts[1].length(); i++) {
                 num = parseChar(parts[1].charAt(i));
 
@@ -121,26 +89,29 @@ public class StringTasks {
         }
 
         if (numString.contains("e")) {
-            int pow = 0;
-            minusFlag = false;
-
-            for (int i = 0; i < parts[parts.length - 1].length(); i++) {
-                num = parseChar(parts[parts.length - 1].charAt(i));
-
-                if (num >= 0) {
-                    pow += num * Math.pow(10, parts[parts.length - 1].length() - i - 1);
-                } else {
-                    minusFlag = !minusFlag;
-                }
-            }
-
-            if (minusFlag) {
-                pow *= -1;
-            }
-
-            result *= Math.pow(10, pow);
+            result *= Math.pow(10, parsePart(parts[parts.length - 1], 0.0));
         }
 
+        return result;
+    }
+
+    public static double parsePart(String part, double result) {
+        boolean minusFlag = false;
+        int num;
+
+        for (int i = 0; i < part.length(); i++) {
+            num = parseChar(part.charAt(i));
+
+            if (num >= 0) {
+                result += num * Math.pow(10, part.length() - i - 1);
+            } else {
+                minusFlag = !minusFlag;
+            }
+        }
+
+        if (minusFlag) {
+            result *= -1;
+        }
         return result;
     }
 
@@ -169,7 +140,7 @@ public class StringTasks {
             case '9':
                 return 9;
             default:
-                return -999;
+                throw new RuntimeException();
         }
     }
 }
