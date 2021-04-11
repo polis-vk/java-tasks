@@ -19,28 +19,31 @@ public class StringTasks {
     public static Number valueOf(String str) {
         int countDot = 0;
         int countE = 0;
-        int countHyphen = 0;
+        int countMinus = 0;
         StringBuilder newStr = new StringBuilder();
         for (int i = 0; i < str.length(); ++i) {
-            newStr.append(Character.isDigit(str.charAt(i)) ? str.charAt(i) : "");
-            if (str.charAt(i) == '.') {
-                newStr.append(str.charAt(i));
-                countDot++;
-            }
-            if (str.charAt(i) == 'e') {
-                newStr.append(str.charAt(i));
-                countE++;
-            }
-            if (str.charAt(i) == '-') {
-                newStr.append(str.charAt(i));
-                countHyphen++;
+            char character = str.charAt(i);
+            newStr.append(Character.isDigit(character) ? character : "");
+            switch (character) {
+                case 'e':
+                    newStr.append(character);
+                    countE++;
+                    break;
+                case '-':
+                    newStr.append(character);
+                    countMinus++;
+                    break;
+                case '.':
+                    newStr.append(character);
+                    countDot++;
+                    break;
             }
         }
         String numberStr = newStr.toString();
 
-        if (countDot >= REPETITION_NUMBER || countE >= REPETITION_NUMBER || countHyphen > REPETITION_NUMBER ||
-                numberStr.contains("-e") || numberStr.contains("--") ||
-                numberStr.charAt(numberStr.length() - 1) == '-' || numberStr.charAt(numberStr.length() - 1) == 'e') {
+        if (countDot >= REPETITION_NUMBER || countE >= REPETITION_NUMBER || countMinus > REPETITION_NUMBER ||
+                numberStr.contains("-e") || numberStr.contains("--") || numberStr.startsWith(".") ||
+                numberStr.endsWith("-") || numberStr.endsWith("e")) {
             return null;
         }
         return toNumber(numberStr);
@@ -77,8 +80,8 @@ public class StringTasks {
         return number;
     }
 
-    private static Number toInt(double str) {
-        long number = (long) str;
+    private static Number toInt(double num) {
+        long number = (long) num;
         if (number <= Integer.MAX_VALUE && number >= Integer.MIN_VALUE) {
             return (int) number;
         }
