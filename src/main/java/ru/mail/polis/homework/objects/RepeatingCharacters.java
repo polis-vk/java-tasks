@@ -13,7 +13,34 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        return new Pair<>('s', 4);
+        Character ch = null;
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+        if (str.length() == 1) {
+            return new Pair<>(str.charAt(0), 1);
+        }
+        int maxCommonLetter = 0;
+        for (int i = 0; i < str.length(); i++) {
+            int count = checkCommon(str, i + 1, str.charAt(i));
+            if (count > maxCommonLetter) {
+                ch = str.charAt(i);
+                maxCommonLetter = count;
+            }
+        }
+        return new Pair<>(ch, maxCommonLetter);
+    }
+
+    public static int checkCommon(String str, int startIndex, Character first) {
+        int commonLetters = 1;
+        for (int i = startIndex; i < str.length(); i++) {
+            if (str.charAt(i) == first) {
+                commonLetters++;
+            } else {
+                i = str.length();
+            }
+        }
+        return commonLetters;
     }
 
     public static class Pair<T, V> {
