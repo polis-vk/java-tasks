@@ -31,6 +31,7 @@ public class MaxTask {
                     }
                     if (array[i] > sorted[k] && array[i] < tempMax) {
                         sorted[k] = array[i];
+                        check = 0;
                     }
                 }
             }
