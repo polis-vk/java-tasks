@@ -27,15 +27,16 @@ public class StringTasks {
                 tempStr.append(str.charAt(i));
             }
         }
-        int dot = tempStr.length() - tempStr.toString().replace(".", "").length();
-        int e = tempStr.length() - tempStr.toString().replace("e", "").length();
-        int minus = tempStr.length() - tempStr.toString().replace("-", "").length();
+        int dot = str.length() - str.replace(".", "").length();
+        int e = str.length() - str.replace("e", "").length();
+        int minus = str.length() - str.replace("-", "").length();
         if (dot > 1 || e > 1 || minus > 2) {
             return null;
         }
         if (tempStr.toString().contains("--") || tempStr.toString().contains(".e") ||
                 tempStr.toString().contains("e.") || tempStr.toString().contains("-e") ||
-                tempStr.toString().endsWith("e") || tempStr.toString().endsWith("-")) {
+                tempStr.toString().startsWith(".") || tempStr.toString().endsWith("e") ||
+                tempStr.toString().endsWith("-")) {
             return null;
         }
         if (dot == 0 && e == 0) {
@@ -50,7 +51,7 @@ public class StringTasks {
         }
     }
 
-    public static long convertToLong(String tempStr) {
+    private static long convertToLong(String tempStr) {
         long result = 0L;
         byte sign = 1;
         int index = 0;
@@ -64,38 +65,32 @@ public class StringTasks {
         return result * sign;
     }
 
-    public static double convertToDouble(String tempStr) {
+    private static double convertToDouble(String tempStr) {
         int expIndex = tempStr.indexOf('e');
         int dotIndex = tempStr.indexOf('.');
         long intPart;
-        double doublePart;
+        int exponent;
+        String afterDotStr;
+        double doublePart = 0.0;
         double tempDouble;
-        if (expIndex == -1 && dotIndex != -1) {
-            String afterDotStr = tempStr.substring(dotIndex + 1);
+        if (dotIndex != -1) {
             intPart = convertToLong(tempStr.substring(0, dotIndex));
-            doublePart = 0.0;
-            for (int i = 0; i < afterDotStr.length(); i++) {
-                tempDouble = ((double) Character.getNumericValue(afterDotStr.charAt(i))) / Math.pow(10, (i + 1));
-                doublePart += tempDouble;
+            if (expIndex != -1) {
+                exponent = (int) convertToLong(tempStr.substring((expIndex + 1)));
+                afterDotStr = tempStr.substring((dotIndex + 1), expIndex);
+                for (int i = 0; i < afterDotStr.length(); i++) {
+                    tempDouble = ((double) Character.getNumericValue(tempStr.substring(dotIndex + 1).charAt(i))) /
+                            Math.pow(10, (i + 1));
+                    doublePart += tempDouble;
+                }
+                return (intPart + doublePart) * Math.pow(10, exponent);
             }
+            afterDotStr = tempStr.substring(dotIndex + 1);
+            doublePart = convertToLong(afterDotStr) / Math.pow(10, afterDotStr.length());
             return intPart + doublePart;
         }
-        if (expIndex != -1 && dotIndex == -1) {
-            long mantissa = convertToLong(tempStr.substring(0, expIndex));
-            int exponent = (int) convertToLong(tempStr.substring((expIndex + 1)));
-            return mantissa * Math.pow(10, exponent);
-        }
-        if (expIndex != -1) {
-            int exponent = (int) convertToLong(tempStr.substring((expIndex + 1)));
-            intPart = convertToLong(tempStr.substring(0, dotIndex));
-            doublePart = 0.0;
-            for (int i = 0; i < tempStr.substring((dotIndex + 1), expIndex).length(); i++) {
-                tempDouble = ((double) Character.getNumericValue(tempStr.substring(dotIndex + 1).charAt(i))) /
-                        Math.pow(10, (i + 1));
-                doublePart += tempDouble;
-            }
-            return (intPart + doublePart) * Math.pow(10, exponent);
-        }
-        return convertToLong(tempStr);
+        long mantissa = convertToLong(tempStr.substring(0, expIndex));
+        exponent = (int) convertToLong(tempStr.substring((expIndex + 1)));
+        return mantissa * Math.pow(10, exponent);
     }
 }

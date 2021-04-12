@@ -14,10 +14,10 @@ public class MaxTask {
      *
      */
     public static int[] getMaxArray(int[] array, int count) {
-        int[] copyOfArray = Arrays.copyOf(array, array.length);
-        if (copyOfArray.length < count) {
+        if (array.length < count) {
             return null;
         }
+        int[] copyOfArray = Arrays.copyOf(array, array.length);
         int[] maxArray = new int[count];
         for (int i = 0; i < count; i++) {
             int maxDigit = copyOfArray[0];
