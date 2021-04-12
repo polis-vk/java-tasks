@@ -20,7 +20,6 @@ public class StringTasks {
         boolean negative = false;
         boolean expNeg = false;
         int activeStagePos = 0;
-        long longResult = 0;
         int eCount = 0;
         int dotCount = 0;
         StringBuffer stringBuffer = new StringBuffer();
@@ -28,19 +27,20 @@ public class StringTasks {
             char c = str.charAt(i);
             if (Character.isDigit(c) || c == '.' || c == '-' || c == 'e') {
                 stringBuffer.append(c);
-                if (c == 'e') {
+                switch (c) {
+                case ('e'):
                     if (activeStagePos == 0 || eCount > 1) {
                         return null;
                     }
                     eCount++;
-                }
-                if (c == '.') {
+                    break;
+                case ('.'):
                     if (dotCount > 1) {
                         return null;
                     }
                     dotCount++;
-                }
-                if (c == '-') {
+                    break;
+                case ('-'):
                     if (activeStagePos == 0) {
                         negative = true;
                     } else {
@@ -54,17 +54,16 @@ public class StringTasks {
             }
         }
         String clearStr = stringBuffer.toString();
-        int dotPosition = str.indexOf('.');
-        int ePosition = str.indexOf('e');
         for (int i = 0; i < clearStr.length(); i++) {
             char c = clearStr.charAt(i);
-            if (c == '-' || c == 'e' || c == '.') {
+            if (c == '-' || c == 'e') {
                 if (i == clearStr.length() - 1) {
                     return null;
                 }
             }
         }
-        if (dotPosition == -1 && ePosition == -1) {
+        if (str.indexOf('.') == -1 && str.indexOf('e') == -1) {
+            long longResult = 0;
             longResult = longOut(clearStr, negative);
             if (longResult >= Integer.MIN_VALUE && longResult <= Integer.MAX_VALUE) {
                 return (int) longResult;
@@ -80,7 +79,6 @@ public class StringTasks {
             char c = clearStr.charAt(i);
             if (Character.isDigit(c)) {
                 temp = temp * 10 + Character.digit(c, 10);
-                System.out.println(temp);
             }
         }
         temp = negative ? -temp : temp;
@@ -95,31 +93,30 @@ public class StringTasks {
         boolean dotPass = false;
         for (int i = 0; i < clearStr.length(); i++) {
             char c = clearStr.charAt(i);
-            if (c == 'e') {
+            switch (c) {
+            case ('e'):
                 ePass = true;
-            }
-            if (c == '.') {
+                break;
+            case ('.'):
                 dotPass = true;
-            }
-            if (Character.isDigit(c)) {
-                if (ePass) {
-                    exp = exp * 10 + Character.digit(c, 10);
-                    System.out.println("exp = " + exp);
+                break;
+            default:
+                if (Character.isDigit(c)) {
+                    if (ePass) {
+                        exp = exp * 10 + Character.digit(c, 10);
+                    }
+                    if (dotPass && !ePass) {
+                        temp += Character.digit(c, 10) * Math.pow(10, -activeStagePos);
+                        activeStagePos++;
+                    }
+                    if (!dotPass && !ePass) {
+                        temp = temp * 10 + Character.digit(c, 10);
+                    }
                 }
-                if (dotPass && !ePass) {
-                    temp += Character.digit(c, 10) * Math.pow(10, -activeStagePos);
-                    activeStagePos++;
-                }
-                if (!dotPass && !ePass) {
-                    temp = temp * 10 + Character.digit(c, 10);
-                }
-
             }
         }
         temp = negative ? -temp : temp;
         exp = expNeg ? -exp : exp;
-        System.out.println("exp = " + exp);
-        System.out.println("temp = " + temp);
         return temp * Math.pow(10, exp);
     }
 }
