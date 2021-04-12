@@ -11,13 +11,13 @@ public class MaxTask {
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копии
      */
     public static int[] getMaxArray(int[] array, int count) {
-        int[] inputArray = array;
-        if (inputArray.length == 0 || count == 0) {
+        if (array.length == 0 || count == 0) {
             return new int[]{};
         }
-        if (inputArray.length < count) {
+        if (array.length < count) {
             return null;
         }
+        int [] inputArray = array.clone();
         int[] maxArr = new int[count];
         int minFromMax = Integer.MAX_VALUE;
         for (int j = 0; j < maxArr.length; j++) {
@@ -30,7 +30,7 @@ public class MaxTask {
                 }
             }
             maxArr[j] = max;
-            inputArray[indexMax] = 0;
+            inputArray[indexMax] = Integer.MIN_VALUE;
             minFromMax = max;
         }
         return maxArr;
