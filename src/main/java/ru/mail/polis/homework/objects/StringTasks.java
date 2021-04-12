@@ -14,14 +14,14 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        if ((str.indexOf("e") != str.lastIndexOf("e")) || (str.indexOf(".") != str.lastIndexOf(".")) ||
-                        str.contains("--") || str.endsWith("-") || str.endsWith("e") || str.endsWith(".")) {
+        if (str.indexOf("e") != str.lastIndexOf("e") || str.indexOf(".") != str.lastIndexOf(".")) {
             return null;
         }
         StringBuilder resultString = new StringBuilder();
         boolean isDouble = false;
         for (int i = 0; i < str.length(); i++) {
-            if ((str.charAt(i) == 'e') || (str.charAt(i) == '.') || (str.charAt(i) == '-') || Character.isDigit(str.charAt(i))) {
+            if ((str.charAt(i) == 'e') || (str.charAt(i) == '.') || (str.charAt(i) == '-')
+                    || Character.isDigit(str.charAt(i))) {
                 resultString.append(str.charAt(i));
                 if ((str.charAt(i) == 'e') || (str.charAt(i) == '.')) {
                     isDouble = true;
@@ -29,35 +29,20 @@ public class StringTasks {
             }
         }
         String checkString = resultString.toString();
-        if (checkString.contains("e.") || checkString.contains(".e") || checkString.contains("-e") ||
-            checkString.contains("--") || checkString.endsWith(".") || checkString.endsWith("e") ||
-            checkString.endsWith("-") || checkString.contains(".-") || checkString.contains("-.")) {
+        if (checkString.contains("e.") || checkString.contains(".e") || checkString.contains("-e")
+                || checkString.contains("--") || checkString.endsWith("e") || checkString.endsWith("-")
+                || checkString.contains(".-") || checkString.contains("-.") || checkString.startsWith("e")
+                || checkString.startsWith(".")) {
             return null;
         }
         if (isDouble) {
-            return parseDouble(resultString.toString());
+            return parseDouble(checkString);
         }
         long resultNumber = parseLong(checkString);
-        if ((resultNumber < Integer.MIN_VALUE) || (resultNumber > Integer.MAX_VALUE)) {
+        if (resultNumber < Integer.MIN_VALUE || resultNumber > Integer.MAX_VALUE) {
             return resultNumber;
         }
         return (int) resultNumber;
-    }
-
-    private static int parseChar(char parChar) {
-        switch (parChar) {
-            case '0': return 0;
-            case '1': return 1;
-            case '2': return 2;
-            case '3': return 3;
-            case '4': return 4;
-            case '5': return 5;
-            case '6': return 6;
-            case '7': return 7;
-            case '8': return 8;
-            case '9': return 9;
-            default: return Integer.MIN_VALUE;
-        }
     }
 
     private static long parseLong(String parString) {
@@ -67,12 +52,11 @@ public class StringTasks {
         if (parString.charAt(0) == '-') {
             isNegative = true;
             numString = parString.substring(1);
-        }
-        else {
+        } else {
             numString = parString;
         }
         for (int i = 0; i < numString.length(); i++) {
-            resultLong += parseChar(numString.charAt(i)) * Math.pow(10, numString.length() - i - 1);
+            resultLong += Character.getNumericValue(numString.charAt(i)) * Math.pow(10, numString.length() - i - 1);
         }
         if (isNegative) {
             resultLong *= -1;
@@ -87,20 +71,17 @@ public class StringTasks {
         if (parString.charAt(0) == '-') {
             isNegative = true;
             numString = parString.substring(1);
-        }
-        else {
+        } else {
             numString = parString;
         }
         String[] stringParts = numString.split("\\.|e");
-        for (int i = 0; i < stringParts[0].length(); i++) {
-            resultDouble += parseChar(stringParts[0].charAt(i)) * Math.pow(10, stringParts[0].length() - i - 1);
-        }
+        resultDouble = parseLong(stringParts[0]);
         if (isNegative) {
             resultDouble *= -1;
         }
         if (numString.contains(".")) {
             for (int i = 0; i < stringParts[1].length(); i++) {
-                resultDouble += parseChar(stringParts[1].charAt(i)) * Math.pow(10, - i - 1);
+                resultDouble += Character.getNumericValue(stringParts[1].charAt(i)) * Math.pow(10, - i - 1);
             }
         }
         if (numString.contains("e")) {
@@ -110,12 +91,11 @@ public class StringTasks {
             if (stringParts[stringParts.length - 1].charAt(0) == '-') {
                 isNegative = true;
                 stringPower = stringParts[stringParts.length - 1].substring(1);
-            }
-            else {
+            } else {
                 stringPower = stringParts[stringParts.length - 1];
             }
             for (int i = 0; i < stringPower.length(); i++) {
-                ePower += parseChar(stringPower.charAt(i)) * Math.pow(10,stringPower.length() - i - 1);
+                ePower += Character.getNumericValue(stringPower.charAt(i)) * Math.pow(10,stringPower.length() - i - 1);
             }
             if (isNegative) {
                 ePower *= -1;

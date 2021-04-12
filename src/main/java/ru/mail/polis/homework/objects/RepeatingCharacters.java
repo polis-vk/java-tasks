@@ -12,7 +12,7 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if ((str == null) || (str == "")) {
+        if (str == null || str == "") {
             return null;
         }
         char inStringLetter = 'a';
@@ -23,8 +23,7 @@ public class RepeatingCharacters {
             if (str.charAt(i) == str.charAt(i - 1)) {
                 inStringLetter = str.charAt(i);
                 inStringCount++;
-            }
-            else {
+            } else {
                 inStringCount = 1;
             }
             if (maxCount < inStringCount) {

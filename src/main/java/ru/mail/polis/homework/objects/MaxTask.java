@@ -16,29 +16,23 @@ public class MaxTask {
             return null;
         }
         int[] resultArray = new int[count];
-        if ((count == 0) || (array.length == 0)) {
+        if (count == 0 || array.length == 0) {
             return resultArray;
         }
-        int[] indexesArray = new int[count];
-        for (int i = 0; i < resultArray.length; i++) {
-            resultArray[i] = Integer.MIN_VALUE;
-            indexesArray[i] = -1;
-        }
-        for (int i = 0; i < resultArray.length; i++) {
-            for (int j = 0; j < array.length; j++) {
-                boolean newIndex = true;
-                for (int m = 0; m < indexesArray.length; m++) {
-                    if (indexesArray[m] == j) {
-                        newIndex = false;
-                    }
-                }
-                if (newIndex) {
-                    if (resultArray[i] < array[j]) {
-                        resultArray[i] = array[j];
-                        indexesArray[i] = j;
-                    }
+        int maxValue = array[0];
+        int maxIndex = 0;
+        int[] doppelArray = array.clone();
+        for (int i = 0; i < count; i++) {
+            for (int j = 1; j < doppelArray.length; j++) {
+                if (maxValue < doppelArray[j]) {
+                    maxValue = doppelArray[j];
+                    maxIndex = j;
                 }
             }
+            resultArray[i] = maxValue;
+            doppelArray[maxIndex] = Integer.MIN_VALUE;
+            maxValue = doppelArray[0];
+            maxIndex = 0;
         }
         return resultArray;
     }
