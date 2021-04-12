@@ -47,7 +47,7 @@ public class StringTasks {
 
         String numString = sb.toString();
 
-        if (dotCount > 1 || eCount > 1 || minusCount > 2 || numString.startsWith(".")
+        if (dotCount > 1 || eCount > 1 || minusCount > 2
                 || numString.startsWith("e") || numString.contains("--")
                 || numString.contains("-e") || numString.endsWith("e")
                 || numString.endsWith(".") || numString.contains(".e")

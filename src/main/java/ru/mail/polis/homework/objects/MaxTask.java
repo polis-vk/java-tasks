@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.Arrays;
+
 public class MaxTask {
 
     /**
@@ -15,7 +17,7 @@ public class MaxTask {
             return null;
         }
 
-        int[] origin = array.clone();
+        int[] origin = Arrays.copyOf(array, array.length);
         int maxValue;
         int minValue = Integer.MIN_VALUE;
         int indMaxValue;
