@@ -23,7 +23,6 @@ public class StringTasks {
         StringBuilder newStr = new StringBuilder();
         for (int i = 0; i < str.length(); ++i) {
             char character = str.charAt(i);
-            newStr.append(Character.isDigit(character) ? character : "");
             switch (character) {
                 case 'e':
                     newStr.append(character);
@@ -37,13 +36,15 @@ public class StringTasks {
                     newStr.append(character);
                     countDot++;
                     break;
+                default:
+                    newStr.append(Character.isDigit(character) ? character : "");
             }
         }
         String numberStr = newStr.toString();
 
         if (countDot >= REPETITION_NUMBER || countE >= REPETITION_NUMBER || countMinus > REPETITION_NUMBER ||
                 numberStr.contains("-e") || numberStr.contains("--") || numberStr.startsWith(".") ||
-                numberStr.endsWith("-") || numberStr.endsWith("e")) {
+                numberStr.startsWith("e") || numberStr.endsWith("-") || numberStr.endsWith("e")) {
             return null;
         }
         return toNumber(numberStr);
