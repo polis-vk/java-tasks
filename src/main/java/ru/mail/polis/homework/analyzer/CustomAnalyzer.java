@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
+/*
+ * Ограничивает количество идущих подряд одинаковых слов
+ * */
 public class CustomAnalyzer implements TextAnalyzer {
     private static final int priority = 4;
     private static final FilterType filterType = FilterType.CUSTOM;
@@ -22,12 +25,22 @@ public class CustomAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean analyze(String text) {
-        String[] words = text.split(" ");
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
 
+        if (maxRepeatsCount == 0) {
+            return true;
+        }
+
+        String[] words = text.split(" ");
         int repeatsCount = 1;
+
         for (int i = 1; i < words.length; ++i) {
-            if (words[i].equals(words[i - 1]) && ++repeatsCount > maxRepeatsCount) {
-                return true;
+            if (words[i].equals(words[i - 1])) {
+                if (++repeatsCount > maxRepeatsCount) {
+                    return true;
+                }
             } else {
                 repeatsCount = 1;
             }
