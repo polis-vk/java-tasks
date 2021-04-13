@@ -22,14 +22,14 @@ public class RepeatingCharacters {
         char ch = 0;
         int maxCommonLetter = 0;
         int i = 0;
-        while(i != str.length() - 1) {
+        while (i != str.length() - 1) {
             int count = checkCommon(str, i + 1, str.charAt(i));
             if (count > maxCommonLetter) {
                 ch = str.charAt(i);
                 maxCommonLetter = count;
-                i += count -1;
-            }else {
-                i+= 1 ;
+                i += count - 1;
+            } else {
+                i += 1;
             }
         }
         return new Pair<>(Character.valueOf(ch), maxCommonLetter);

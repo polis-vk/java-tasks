@@ -26,7 +26,7 @@ public class StringTasks {
         String resStr = clearString(str);
         if (resStr.contains("--") || resStr.contains("-e") || resStr.endsWith("-")
                 || resStr.endsWith("e") || resStr.contains("e.") || resStr.contains(".e")
-                || resStr.startsWith("e") || resStr.startsWith(".")) {
+                || resStr.startsWith("e")) {
             return null;
         }
         if (dotCount + eCount > 0) {
@@ -99,19 +99,19 @@ public class StringTasks {
         String[] parts = str.split("e");
         String mainPart = parts[0];
         String tenPower = parts[1];
-        double mainPartNumerical;
+        double convertedMainPart;
         if (mainPart.contains(".")) {
-            mainPartNumerical = convertToRealNumber(mainPart, startIndex);
+            convertedMainPart = convertToRealNumber(mainPart, startIndex);
         } else {
-            mainPartNumerical = convert(mainPart, startIndex);
+            convertedMainPart = convert(mainPart, startIndex);
         }
         double p;
         if (tenPower.startsWith("-")) {
             p = convert(tenPower, 1);
-            return mainPartNumerical / Math.pow(10, p);
+            return convertedMainPart / Math.pow(10, p);
         }
         p = convert(tenPower, 0);
-        return mainPartNumerical * Math.pow(10, p);
+        return convertedMainPart * Math.pow(10, p);
     }
 
     public static double convert(String str, int startIndex) {

@@ -17,7 +17,7 @@ public class MaxTask {
         if (array.length < count) {
             return null;
         }
-        int [] inputArray = array.clone();
+        int[] inputArray = array.clone();
         int[] maxArr = new int[count];
         int minFromMax = Integer.MAX_VALUE;
         for (int j = 0; j < maxArr.length; j++) {
