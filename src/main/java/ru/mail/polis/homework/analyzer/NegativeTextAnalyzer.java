@@ -17,6 +17,10 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean analyze(String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+
         for (String negativeWord : negativeText) {
             if (text.contains(negativeWord)) {
                 return true;

@@ -6,7 +6,6 @@ public class TooLongAnalyzer implements TextAnalyzer {
 
     private final long maxLength;
 
-
     public TooLongAnalyzer(long maxLength) {
         this.maxLength = maxLength;
     }
@@ -23,6 +22,10 @@ public class TooLongAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean analyze(String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+
         return text.length() > maxLength;
     }
 }

@@ -23,6 +23,10 @@ public class SpamAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean analyze(String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+
         for (String spamWord : spam) {
             if (text.contains(spamWord)) {
                 return true;
