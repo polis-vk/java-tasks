@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 /*
- * Ограничивает количество идущих подряд одинаковых слов
+ * Limits the number of consecutive repeated words
  * */
 public class CustomAnalyzer implements TextAnalyzer {
     private static final int priority = 4;
