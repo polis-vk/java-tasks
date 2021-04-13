@@ -32,7 +32,8 @@ public class StringTasks {
         }
         String numberString = numberStringBuilder.toString();
         if (str.contains("--") || str.contains("-e") || str.contains(".e") || str.contains("e.")
-                || str.endsWith("-") || str.endsWith("e")) {
+                || str.endsWith("-") || str.endsWith("e") || str.endsWith(".")
+                || str.startsWith("e") || str.startsWith(".")) {
             return null;
         }
 

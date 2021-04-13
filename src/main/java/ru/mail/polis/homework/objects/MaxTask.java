@@ -25,8 +25,8 @@ public class MaxTask {
             int maxNumIndex = -1;
             for (int j = 0; j < array.length; j++) {
                 boolean flag = false;
-                for (int AddedIndex : alreadyAddedIndexes) {
-                    if (j == AddedIndex) {
+                for (int addedIndex : alreadyAddedIndexes) {
+                    if (j == addedIndex) {
                         flag = true;
                         break;
                     }

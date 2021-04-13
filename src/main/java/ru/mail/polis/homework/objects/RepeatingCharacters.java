@@ -13,7 +13,7 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if (str == null || str.isEmpty()) { // Почему так рабоатет, а (str.isEmpty() || str == null) не работает?
+        if (str == null || str.isEmpty()) {
             return null;
         }
         char[] charStr = str.toCharArray();
