@@ -122,6 +122,32 @@ public class TextFilterManagerTest {
         manyFilters(true);
     }
 
+    @Test
+    public void analyzeOnlyCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer(5)});
+        assertEquals("GOOD", manager.analyze("Привет, я Петя :(").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("FREE! FREE! FREE! FREE! FREE! FREE").toString());
+        assertEquals("CUSTOM", manager.analyze("FREE! FREE! FREE! FREE! FREE! FREE!").toString());
+        assertEquals("CUSTOM", manager.analyze("spam       spam spam    spam   spam spam").toString());
+        assertEquals("GOOD", manager.analyze("spam spam NOT_SPAM spam spam spam").toString());
+
+        manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer(0)});
+        assertEquals("CUSTOM", manager.analyze("Привет, я Петя").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+
+        manager = new TextFilterManager(new TextAnalyzer[]{
+                TextAnalyzer.createCustomAnalyzer(5),
+                TextAnalyzer.createCustomAnalyzer(3)});
+        assertEquals("GOOD", manager.analyze("Привет, я Петя :(").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("CUSTOM", manager.analyze("a a a a").toString());
+        assertEquals("CUSTOM", manager.analyze("FREE! FREE! FREE! FREE! FREE! FREE!").toString());
+    }
+
     private void manyFilters(boolean withPriority) {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
