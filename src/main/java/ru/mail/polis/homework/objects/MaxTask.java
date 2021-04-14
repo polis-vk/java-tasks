@@ -12,11 +12,14 @@ public class MaxTask {
      *
      */
     public static int[] getMaxArray(int[] array, int count) {
-        if (array.length < count || count <= 0) {
+        if (array.length < count) {
             return null;
         }
+        if (count == 0) {
+            return new int[]{};
+        }
 
-        int[] copyArray = new int[count];
+        int[] copyArray = new int[array.length];
         System.arraycopy(array, 0, copyArray, 0, array.length);
         int[] result = new int[count];
 
