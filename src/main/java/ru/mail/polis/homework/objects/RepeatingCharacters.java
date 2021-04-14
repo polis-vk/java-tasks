@@ -23,10 +23,11 @@ public class RepeatingCharacters {
         int maxCount = 0;
 
         for (int i = 1; i < charStr.length; i++) {
-            if (charStr[i] == charStr[i - 1]){
+            if (charStr[i] == charStr[i - 1]) {
                 count = count + 1;
-            } else {
-                if (count > maxCount){
+            }
+            if (charStr[i] != charStr[i - 1] || i == charStr.length - 1) {
+                if (count > maxCount) {
                     maxCount = count;
                     symbol = charStr[i - 1];
                 }
