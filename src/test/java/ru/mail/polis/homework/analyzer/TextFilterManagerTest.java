@@ -88,6 +88,17 @@ public class TextFilterManagerTest {
     }
 
     @Test
+    public void analyzeOnlyCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer()});
+        assertEquals("CUSTOM", manager.analyze("ЛОДОЛД:);").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("Скажите код из смс :-( ").toString());
+        assertEquals("CUSTOM", manager.analyze("ENGLISH РУССКИЙ IN C++ ЭТО БЫ ВЫЗВАЛО МНОГО ПРОБЛЕМ").toString());
+        assertEquals("GOOD", manager.analyze("ААААААААААААААААААААААААААААААААААа").toString());
+    }
+
+    @Test
     public void analyzeAllFiltersGood() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
@@ -111,10 +122,10 @@ public class TextFilterManagerTest {
         assertEquals("SPAM", manager.analyze("смс пожалуйста ;|").toString());
     }
 
-    @Test
-    public void analyzeAllFiltersMany() {
-        manyFilters(false);
-    }
+//    @Test
+//    public void analyzeAllFiltersMany() {
+//        manyFilters(false);
+//    }
 
 
     @Test
