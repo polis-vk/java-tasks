@@ -125,12 +125,14 @@ public class TextFilterManagerTest {
     private void manyFilters(boolean withPriority) {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
+                TextAnalyzer.createCustomAnalyzer('k',2),
                 TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
                 TextAnalyzer.createTooLongAnalyzer(20)});
         if (withPriority) {
             assertEquals("SPAM", manager.analyze("Привет, я Петя вот мой cvv").toString());
             assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :(").toString());
             assertEquals("SPAM", manager.analyze("смс пожалуйста           :|").toString());
+            assertEquals("CUSTOM", manager.analyze("сМс пожалуйста,kk?").toString());
         } else {
             assertTrue(Arrays.asList("SPAM", "TOO_LONG").contains(
                     manager.analyze("Привет, я Петя вот мой cvv").toString()));
@@ -141,5 +143,22 @@ public class TextFilterManagerTest {
         }
     }
 
+    @Test
+    public void analyzeOnlyCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
+                TextAnalyzer.createCustomAnalyzer('!', 5),
+                TextAnalyzer.createCustomAnalyzer('$', 3),
+                TextAnalyzer.createCustomAnalyzer('@', 2)});
+        assertEquals("GOOD",
+                manager.analyze("Hello! Get 1000$ by writing to us by mail r2d2@yandex.ru").toString());
+        assertEquals("CUSTOM",
+                manager.analyze("Hello! Get 1$$$ by writing to us by mail r2d2@yandex.ru").toString());
+        assertEquals("CUSTOM", manager.analyze("@@ps!").toString());
+        assertEquals("CUSTOM", manager.analyze("Get free 2000$!!!!!!").toString());
+
+        manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer('e', 6)});
+        assertEquals("CUSTOM", manager.analyze("Complement to Peter's letter").toString());
+        assertEquals("GOOD", manager.analyze("Complement to your letter").toString());
+    }
 
 }

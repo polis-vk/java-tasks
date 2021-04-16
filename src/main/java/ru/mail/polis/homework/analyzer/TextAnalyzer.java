@@ -31,11 +31,13 @@ public interface TextAnalyzer {
     /**
      * придумать свой фильтр
      */
-    static <T> TextAnalyzer createCustomAnalyzer(T something) {
-        return null;
+    static TextAnalyzer createCustomAnalyzer(char symbol, int count) {
+        return new CustomFilter(symbol, count);
     }
 
     boolean isNotCorrect(String text);
 
     FilterType getType();
+
+    byte getPriority();
 }
