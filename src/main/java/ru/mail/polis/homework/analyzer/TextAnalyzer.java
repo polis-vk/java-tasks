@@ -15,19 +15,22 @@ package ru.mail.polis.homework.analyzer;
  * 2 балла + (2 балла за каждый фильтр + 1 балл за тест на свой фильтр) ИТОГО 11
  */
 public interface TextAnalyzer {
+    public byte priority();
+    public boolean check(String str);
+    public FilterType filter();
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return null;
+        return new TooLongAnalyzer(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return null;
+        return new SpamAnalyzer(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return null;
+        return new NegativeTextAnalyzer();
     }
-
+    
     /**
      * придумать свой фильтр
      */
