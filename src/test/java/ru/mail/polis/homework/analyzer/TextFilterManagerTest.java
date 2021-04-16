@@ -113,13 +113,13 @@ public class TextFilterManagerTest {
 
     @Test
     public void analyzeAllFiltersMany() {
-        manyFilters(false);
+        manyFilters(true);
     }
 
 
     @Test
     public void analyzeAllFiltersManyWithPriority() {
-        manyFilters(true);
+        manyFilters(false);
     }
 
     private void manyFilters(boolean withPriority) {
@@ -141,5 +141,14 @@ public class TextFilterManagerTest {
         }
     }
 
-
+    @Test
+    public void analyzeOnlyIsDigitFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer()});
+        assertEquals("CUSTOM", manager.analyze("i32i4832941").toString());
+        assertEquals("GOOD", manager.analyze("hi").toString());
+        assertEquals("CUSTOM", manager.analyze("2kmfj13kckmmcdsklc").toString());
+        assertEquals("GOOD", manager.analyze("Zdarova").toString());
+        assertEquals("CUSTOM", manager.analyze("0bject is there").toString());
+        assertEquals("GOOD", manager.analyze("l, dqjidq").toString());
+    }
 }
