@@ -20,13 +20,12 @@ public class StringTasks {
         int dotCount = str.split("\\.").length - 1;
         int eCount = str.split("e").length - 1;
         int minusCount = str.split("-").length - 1;
-        if (dotCount > 1 || eCount > 1 || minusCount > 2) {
+        if (dotCount > 2 || eCount > 2 || minusCount > 3) {
             return null;
         }
         String resStr = clearString(str);
         if (resStr.contains("--") || resStr.contains("-e") || resStr.endsWith("-")
-                || resStr.endsWith("e") || resStr.contains("e.") || resStr.contains(".e")
-                || resStr.startsWith("e") || resStr.startsWith(".")) {
+                || resStr.endsWith("e") || resStr.contains("e.") || resStr.contains(".e")) {
             return null;
         }
         if (dotCount + eCount > 0) {
@@ -99,19 +98,19 @@ public class StringTasks {
         String[] parts = str.split("e");
         String mainPart = parts[0];
         String tenPower = parts[1];
-        double mainPartNumerical;
+        double mainPartDouble;
         if (mainPart.contains(".")) {
-            mainPartNumerical = convertToRealNumber(mainPart, startIndex);
+            mainPartDouble = convertToRealNumber(mainPart, startIndex);
         } else {
-            mainPartNumerical = convert(mainPart, startIndex);
+            mainPartDouble = convert(mainPart, startIndex);
         }
         double p;
         if (tenPower.startsWith("-")) {
             p = convert(tenPower, 1);
-            return mainPartNumerical / Math.pow(10, p);
+            return mainPartDouble / Math.pow(10, p);
         }
         p = convert(tenPower, 0);
-        return mainPartNumerical * Math.pow(10, p);
+        return mainPartDouble * Math.pow(10, p);
     }
 
     public static double convert(String str, int startIndex) {
