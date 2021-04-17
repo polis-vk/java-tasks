@@ -3,7 +3,7 @@ package ru.mail.polis.homework.analyzer;
 public class SpamAnalyzer implements TextAnalyzer {
     private final String[] spam;
 
-    SpamAnalyzer(String[] spam) {
+    public SpamAnalyzer(String[] spam) {
         this.spam = spam;
     }
 
@@ -13,7 +13,7 @@ public class SpamAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public byte getPriority() {
+    public final byte getPriority() {
         return 1;
     }
 

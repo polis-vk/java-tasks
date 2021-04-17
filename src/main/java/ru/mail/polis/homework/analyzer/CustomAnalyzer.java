@@ -8,13 +8,13 @@ public class CustomAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public byte getPriority() {
+    public final byte getPriority() {
         return 4;
     }
 
     @Override
     public boolean isValid(String text) {
-        if (text == null || text.length() == 0) {
+        if (text.length() == 0) {
             return true;
         }
         return !text.equals(text.toUpperCase());
