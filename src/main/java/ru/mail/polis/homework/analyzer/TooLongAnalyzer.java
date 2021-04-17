@@ -1,12 +1,11 @@
 package ru.mail.polis.homework.analyzer;
 
 public class TooLongAnalyzer implements TextAnalyzer {
-    private final long MAX_LENGTH;
+    private final long maxLength;
 
     public TooLongAnalyzer(long maxLength) {
-        this.MAX_LENGTH = maxLength;
+        this.maxLength = maxLength;
     }
-
 
     @Override
     public FilterType getTypeFilter() {
@@ -15,6 +14,6 @@ public class TooLongAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean isCorrect(String text) {
-        return text == null || text.isEmpty() || (text.length() <= MAX_LENGTH);
+        return text == null || text.isEmpty() || (text.length() <= maxLength);
     }
 }

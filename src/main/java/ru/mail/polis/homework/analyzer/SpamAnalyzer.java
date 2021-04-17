@@ -3,10 +3,10 @@ package ru.mail.polis.homework.analyzer;
 import java.util.Arrays;
 
 public class SpamAnalyzer implements TextAnalyzer {
-    private final String[] SPAM_WORDS;
+    private final String[] spamWords;
 
     public SpamAnalyzer(String[] spam) {
-        this.SPAM_WORDS = Arrays.copyOf(spam, spam.length);
+        this.spamWords = Arrays.copyOf(spam, spam.length);
     }
 
     @Override
@@ -20,7 +20,7 @@ public class SpamAnalyzer implements TextAnalyzer {
             return true;
         }
 
-        for (String spamWord : SPAM_WORDS) {
+        for (String spamWord : spamWords) {
             if (text.contains(spamWord)) {
                 return false;
             }

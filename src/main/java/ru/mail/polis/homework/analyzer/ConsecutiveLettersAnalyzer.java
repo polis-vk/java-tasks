@@ -2,10 +2,10 @@ package ru.mail.polis.homework.analyzer;
 
 
 public class ConsecutiveLettersAnalyzer implements TextAnalyzer {
-    private final String COMPARE_LETTERS;
+    private final String compareLetters;
 
     public ConsecutiveLettersAnalyzer(char letter, int minCount) {
-        COMPARE_LETTERS = String.valueOf(letter).repeat(Math.max(0, minCount));
+        compareLetters = String.valueOf(letter).repeat(Math.max(0, minCount));
     }
 
     @Override
@@ -19,6 +19,6 @@ public class ConsecutiveLettersAnalyzer implements TextAnalyzer {
             return true;
         }
 
-        return !text.contains(COMPARE_LETTERS);
+        return !text.contains(compareLetters);
     }
 }

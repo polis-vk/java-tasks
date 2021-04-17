@@ -39,20 +39,19 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
 
-    private final TextAnalyzer[] FILTERS;
+    private final TextAnalyzer[] filters;
 
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.FILTERS = Arrays.copyOf(filters, filters.length);
+        this.filters = Arrays.copyOf(filters, filters.length);
 
-        Arrays.sort(this.FILTERS, (left, right) -> {
-            if (left.getTypeFilter().ordinal() < right.getTypeFilter().ordinal()) {
+        Arrays.sort(this.filters, (left, right) -> {
+            if (left.getTypeFilter().getPriority() > right.getTypeFilter().getPriority()) {
                 return -1;
             } else if (left.getTypeFilter() == right.getTypeFilter()) {
                 return 0;
             }
             return 1;
         });
-
     }
 
     /**
@@ -63,7 +62,7 @@ public class TextFilterManager {
             return FilterType.GOOD;
         }
 
-        for (TextAnalyzer textAnalyzer : FILTERS) {
+        for (TextAnalyzer textAnalyzer : filters) {
             if (!textAnalyzer.isCorrect(text)) {
                 return textAnalyzer.getTypeFilter();
             }
