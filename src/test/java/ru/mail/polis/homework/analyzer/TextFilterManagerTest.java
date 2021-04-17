@@ -88,6 +88,20 @@ public class TextFilterManagerTest {
     }
 
     @Test
+    public void analyzeOnlyConsecutiveLettersFilter() {
+        TextFilterManager manager = new TextFilterManager(
+                new TextAnalyzer[]{TextAnalyzer.createConsecutiveLettersAnalyzer('a', 3)});
+        assertEquals("CONSECUTIVE_LETTERS", manager.analyze("Привет aaa, я Петя :(").toString());
+        assertEquals("CONSECUTIVE_LETTERS", manager.analyze("Привет aaaaaa, я Петя :(").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("Скажите код из смс aa :(").toString());
+        assertEquals("GOOD", manager.analyze("Скажите код из смс aAAAa :(").toString());
+        assertEquals("CONSECUTIVE_LETTERS", manager.analyze("Скажите код из смс aAaaa :(").toString());
+        assertEquals("CONSECUTIVE_LETTERS", manager.analyze("Скажaaaaите код из смс пожалуйста ").toString());
+    }
+
+    @Test
     public void analyzeAllFiltersGood() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
@@ -126,11 +140,13 @@ public class TextFilterManagerTest {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
                 TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
-                TextAnalyzer.createTooLongAnalyzer(20)});
+                TextAnalyzer.createTooLongAnalyzer(20),
+                TextAnalyzer.createConsecutiveLettersAnalyzer('b', 5)});
         if (withPriority) {
-            assertEquals("SPAM", manager.analyze("Привет, я Петя вот мой cvv").toString());
-            assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :(").toString());
+            assertEquals("SPAM", manager.analyze("Привет, я Петя вот мbbbbbой cvv").toString());
+            assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смbbbс :(").toString());
             assertEquals("SPAM", manager.analyze("смс пожалуйста           :|").toString());
+            assertEquals("CONSECUTIVE_LETTERS", manager.analyze("bbbbbb").toString());
         } else {
             assertTrue(Arrays.asList("SPAM", "TOO_LONG").contains(
                     manager.analyze("Привет, я Петя вот мой cvv").toString()));
