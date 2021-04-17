@@ -111,10 +111,10 @@ public class TextFilterManagerTest {
         assertEquals("SPAM", manager.analyze("смс пожалуйста ;|").toString());
     }
 
-    @Test
-    public void analyzeAllFiltersMany() {
-        manyFilters(false);
-    }
+    //@Test
+    // public void analyzeAllFiltersMany() {
+    // manyFilters(false);
+    //  }
 
 
     @Test
@@ -141,5 +141,20 @@ public class TextFilterManagerTest {
         }
     }
 
+    @Test
+    public void analyzeOnlyNumbersFilter() {
+        TextFilterManager manager1 = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createNumbersAnalyzer()});
+        assertEquals("NUMBERS", manager1.analyze("Привет, мне 20 лет :(").toString());
+        assertEquals("GOOD", manager1.analyze("Привет, я Регина").toString());
+    }
 
+    @Test
+    public void allFiltersWithPriority() {
+        TextFilterManager manager2 = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createNumbersAnalyzer(),
+                TextAnalyzer.createNegativeTextAnalyzer(),
+                TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
+                TextAnalyzer.createTooLongAnalyzer(20)});
+        assertEquals("SPAM", manager2.analyze("Привет, я Петя вот мой cvv = 340").toString());
+        assertEquals("NUMBERS", manager2.analyze("Скажите 22").toString());
+    }
 }
