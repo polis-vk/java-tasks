@@ -39,15 +39,8 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = filters.clone();
-        Arrays.sort(this.filters, (filter1, filter2) -> {
-            if (filter1.priority() < filter2.priority()) {
-                return -1;
-            } else if (filter1 == filter2) {
-                return 0;
-            }
-            return 1;
-        });
+        this.filters = Arrays.copyOf(filters, filters.length);
+        FilterType.SortPriority(this.filters);
     }
 
     /**

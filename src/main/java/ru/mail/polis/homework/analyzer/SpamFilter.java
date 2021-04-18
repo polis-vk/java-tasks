@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
 public class SpamFilter implements TextAnalyzer {
-    private static final byte priority = 1;
-    private static final FilterType filterType = FilterType.SPAM;
     private final String[] spam;
 
     public SpamFilter(String[] spam) {
@@ -10,13 +8,8 @@ public class SpamFilter implements TextAnalyzer {
     }
 
     @Override
-    public byte priority() {
-        return priority;
-    }
-
-    @Override
     public FilterType filterType() {
-        return filterType;
+        return FilterType.SPAM;
     }
 
     @Override
