@@ -35,9 +35,19 @@ public interface TextAnalyzer {
         return new NumbersAnalyzer();
     }
 
+    default boolean containsBadSymbols(String str, String[] badSymbols) {
+        for (String symbol : badSymbols) {
+            if (str.contains(symbol)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     boolean isNotCorrectString(String str);
 
     int getPriority();
 
     FilterType getType();
+
 }

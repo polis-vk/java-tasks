@@ -1,7 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
 public class SpamAnalyzer implements TextAnalyzer {
-    String[] spamWords;
+    private final String[] spamWords;
+    private final int priority = 3;
 
     public SpamAnalyzer(String[] spamWords) {
         this.spamWords = spamWords;
@@ -9,17 +10,12 @@ public class SpamAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean isNotCorrectString(String str) {
-        for (String spamWord : spamWords) {
-            if (str.contains(spamWord)) {
-                return true;
-            }
-        }
-        return false;
+        return containsBadSymbols(str,spamWords);
     }
 
     @Override
     public int getPriority() {
-        return 3;
+        return priority;
     }
 
     @Override

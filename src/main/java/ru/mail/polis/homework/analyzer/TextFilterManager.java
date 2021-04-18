@@ -33,7 +33,7 @@ import java.util.Arrays;
  */
 public class TextFilterManager {
 
-    public TextAnalyzer[] filters;
+    private final TextAnalyzer[] filters;
 
 
     /**
@@ -42,7 +42,7 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = filters;
+        this.filters = filters.clone();
         Arrays.sort(filters, (filter1, filter2) -> {
             if (filter1.getPriority() > filter2.getPriority()) {
                 return -1;

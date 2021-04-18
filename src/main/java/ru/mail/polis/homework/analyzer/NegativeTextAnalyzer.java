@@ -1,14 +1,17 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyzer implements TextAnalyzer {
+    private final String[] badEmotions = new String[]{"=(", ":(", ":|"};
+    private final int priority = 1;
+
     @Override
     public boolean isNotCorrectString(String str) {
-        return str.contains("=(") || str.contains(":(") || str.contains(":|");
+        return containsBadSymbols(str, badEmotions);
     }
 
     @Override
     public int getPriority() {
-        return 1;
+        return priority;
     }
 
     @Override
