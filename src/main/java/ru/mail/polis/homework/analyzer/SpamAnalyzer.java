@@ -1,24 +1,17 @@
 package ru.mail.polis.homework.analyzer;
 
 public class SpamAnalyzer implements TextAnalyzer {
-    private static final int priority = 1;
-    private static final FilterType filterType = FilterType.SPAM;
+    private static final FilterType FILTER_TYPE = FilterType.SPAM;
 
     private final String[] spam;
-
 
     public SpamAnalyzer(String[] spam) {
         this.spam = spam;
     }
 
     @Override
-    public int priority() {
-        return priority;
-    }
-
-    @Override
     public FilterType filterType() {
-        return filterType;
+        return FILTER_TYPE;
     }
 
     @Override
@@ -27,11 +20,6 @@ public class SpamAnalyzer implements TextAnalyzer {
             return false;
         }
 
-        for (String spamWord : spam) {
-            if (text.contains(spamWord)) {
-                return true;
-            }
-        }
-        return false;
+        return Utils.contains(text, spam);
     }
 }

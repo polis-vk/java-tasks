@@ -35,8 +35,6 @@ public interface TextAnalyzer {
         return new CustomAnalyzer(maxRepeatsCount);
     }
 
-    int priority();
-
     FilterType filterType();
 
     boolean analyze(String text);

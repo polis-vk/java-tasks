@@ -4,8 +4,7 @@ package ru.mail.polis.homework.analyzer;
  * Limits the number of consecutive repeated words
  * */
 public class CustomAnalyzer implements TextAnalyzer {
-    private static final int priority = 4;
-    private static final FilterType filterType = FilterType.CUSTOM;
+    private static final FilterType FILTER_TYPE = FilterType.CUSTOM;
 
     private final int maxRepeatsCount;
 
@@ -14,13 +13,8 @@ public class CustomAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public int priority() {
-        return priority;
-    }
-
-    @Override
     public FilterType filterType() {
-        return filterType;
+        return FILTER_TYPE;
     }
 
     @Override
