@@ -20,6 +20,6 @@ public class SpamAnalyzer implements TextAnalyzer {
             return false;
         }
 
-        return Utils.contains(text, spam);
+        return NegativeTextAnalyzer.contains(text, spam);
     }
 }

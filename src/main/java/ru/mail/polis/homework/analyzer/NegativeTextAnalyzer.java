@@ -2,8 +2,16 @@ package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyzer implements TextAnalyzer {
     private static final FilterType FILTER_TYPE = FilterType.NEGATIVE_TEXT;
+    private static final String[] NEGATIVE_TEXT = {"=(", ":(", ":|"};
 
-    private static final String[] negativeText = {"=(", ":(", ":|"};
+    protected static boolean contains(String string, String[] words) {
+        for (String word : words) {
+            if (string.contains(word)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public FilterType filterType() {
@@ -16,6 +24,11 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
             return false;
         }
 
-        return Utils.contains(text, negativeText);
+        for (String word : NEGATIVE_TEXT) {
+            if (text.contains(word)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
