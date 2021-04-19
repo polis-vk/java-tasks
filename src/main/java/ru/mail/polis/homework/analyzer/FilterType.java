@@ -11,7 +11,6 @@ enum FilterType {
     CUSTOM(4),
     TOO_LONG(2),
     SPAM(1);
-
     private final int priority;
 
     FilterType(int priority) {
@@ -27,7 +26,7 @@ enum FilterType {
         });
     }
 
-    int getPriority() {
+    private int getPriority() {
         return priority;
     }
 }

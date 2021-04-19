@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
-public class SpamFilter implements TextAnalyzer {
+public class SpamFilter extends AnalyzeText implements TextAnalyzer {
     private final String[] spam;
 
     public SpamFilter(String[] spam) {
@@ -14,11 +14,6 @@ public class SpamFilter implements TextAnalyzer {
 
     @Override
     public boolean analyzeText(String text) {
-        for (String spamWords : spam) {
-            if (text.contains(spamWords)) {
-                return true;
-            }
-        }
-        return false;
+        return AnalyzeText.analyzeText(text, spam);
     }
 }
