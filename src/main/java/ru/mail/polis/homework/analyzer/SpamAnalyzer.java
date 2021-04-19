@@ -16,10 +16,6 @@ public class SpamAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean analyze(String text) {
-        if (text == null || text.isEmpty()) {
-            return false;
-        }
-
-        return NegativeTextAnalyzer.contains(text, spam);
+        return text != null && !text.isEmpty() && NegativeTextAnalyzer.contains(text, spam);
     }
 }

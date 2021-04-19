@@ -20,10 +20,6 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean analyze(String text) {
-        if (text == null || text.isEmpty()) {
-            return false;
-        }
-
-        return contains(text, NEGATIVE_TEXT);
+        return text != null && !text.isEmpty() && contains(text, NEGATIVE_TEXT);
     }
 }
