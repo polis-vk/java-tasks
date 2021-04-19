@@ -1,10 +1,13 @@
 package ru.mail.polis.homework.analyzer;
 
 public class TooLongAnalyzer implements TextAnalyzer {
+    private final int priority;
+
     private final long maxLength;
 
-    public TooLongAnalyzer(long maxLength) {
+    public TooLongAnalyzer(long maxLength, int priority) {
         this.maxLength = maxLength;
+        this.priority = priority;
     }
 
     @Override
@@ -13,8 +16,8 @@ public class TooLongAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public final byte getPriority() {
-        return 2;
+    public final int getPriority() {
+        return priority;
     }
 
     @Override

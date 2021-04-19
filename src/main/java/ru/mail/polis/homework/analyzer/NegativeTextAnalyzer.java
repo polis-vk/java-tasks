@@ -1,11 +1,14 @@
 package ru.mail.polis.homework.analyzer;
 
+import java.util.Arrays;
+
 public class NegativeTextAnalyzer implements TextAnalyzer {
-    private final String[] smiles = {
-            "=(",
-            ":(",
-            ":|"
-    };
+    private static final String[] NEGATIVE = {"=(", ":(", ":|"};
+    private final int priority;
+
+    public NegativeTextAnalyzer(int priority) {
+        this.priority = priority;
+    }
 
     @Override
     public FilterType getType() {
@@ -13,17 +16,12 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public final byte getPriority() {
-        return 3;
+    public final int getPriority() {
+        return priority;
     }
 
     @Override
     public boolean isValid(String text) {
-        for(String i : smiles){
-            if(text.contains(i)){
-                return false;
-            }
-        }
-        return true;
+        return Arrays.stream(NEGATIVE).noneMatch(text::contains);
     }
 }

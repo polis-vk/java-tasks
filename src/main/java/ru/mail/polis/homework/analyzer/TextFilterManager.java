@@ -40,8 +40,9 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = filters;
-        Arrays.sort(filters, (filter1, filter2) -> {
+        this.filters = new TextAnalyzer[filters.length];
+        System.arraycopy(filters, 0, this.filters, 0, filters.length);
+        Arrays.sort(this.filters, (filter1, filter2) -> {
             if (filter1.getPriority() < filter2.getPriority()) {
                 return -1;
             } else if (filter1 == filter2) {
