@@ -19,15 +19,15 @@ import java.util.Arrays;
  * (SPAM, TOO_LONG, NEGATIVE_TEXT, CUSTOM - в таком порядке) и возвращать тип с максимальным приоритетом.
  * Отсортировать фильтра можно с помощью функции
  * Arrays.sort(filter, (filter1, filter2) -> {
- *     if (filter1 < filter2) {
- *         return -1;
- *     } else if (filter1 == filter2) {
- *         return 0;
- *     }
- *     return 1;
+ * if (filter1 < filter2) {
+ * return -1;
+ * } else if (filter1 == filter2) {
+ * return 0;
+ * }
+ * return 1;
  * }
  * где вместо сравнение самих фильтров должно быть стравнение каких-то количественных параметров фильтра
- *
+ * <p>
  * 2 балла ( + 2 балла за доп приоритет)
  * Итого 15 баллов + 2 дополнительных
  */
@@ -40,8 +40,8 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = filters;
-        Arrays.sort(filters, (filter1, filter2) -> {
+        this.filters = Arrays.copyOf(filters,filters.length);
+        Arrays.sort(this.filters, (filter1, filter2) -> {
             if (filter1.getPriority() < filter2.getPriority()) {
                 return -1;
             } else if (filter1.getPriority() == filter2.getPriority()) {

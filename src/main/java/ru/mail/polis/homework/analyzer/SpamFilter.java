@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 public class SpamFilter implements TextAnalyzer {
-    private static final int priority = 1;
+    final int PRIORITY = 1;
     private final String[] spam;
     private static final FilterType typeOfFilter = FilterType.SPAM;
 
@@ -11,7 +11,7 @@ public class SpamFilter implements TextAnalyzer {
 
     @Override
     public int getPriority() {
-        return priority;
+        return PRIORITY;
     }
 
     public FilterType getType() {
@@ -20,7 +20,7 @@ public class SpamFilter implements TextAnalyzer {
 
     @Override
     public boolean analyze(String text) {
-        if (text == null || text.isEmpty()) {
+        if (text == null) {
             return false;
         }
         for (String badWord : spam) {
