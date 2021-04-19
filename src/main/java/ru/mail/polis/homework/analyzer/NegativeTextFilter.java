@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
-public class NegativeTextFilter implements TextAnalyzer {
+public class NegativeTextFilter implements TextAnalyzer, SimpleFilter {
     private static final String[] BAD_EMOTIONS = {"=(", ":(", ":|"};
 
     @Override

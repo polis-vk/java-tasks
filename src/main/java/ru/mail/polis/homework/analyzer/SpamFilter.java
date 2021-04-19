@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
-public class SpamFilter implements TextAnalyzer {
+public class SpamFilter implements TextAnalyzer, SimpleFilter {
     private final String[] spam;
 
     public SpamFilter(String[] spam) {

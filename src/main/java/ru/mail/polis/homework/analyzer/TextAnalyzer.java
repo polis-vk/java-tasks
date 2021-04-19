@@ -38,13 +38,4 @@ public interface TextAnalyzer {
     FilterType getFilterType();
 
     boolean analysis(String text);
-
-    default boolean textContain(String text, String[] checklist) {
-        for (String element : checklist) {
-            if (text.contains(element)) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

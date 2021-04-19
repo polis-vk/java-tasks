@@ -41,7 +41,7 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = filters;
+        this.filters = filters.clone();
         Arrays.sort(this.filters, Comparator.comparingInt(filter -> filter.getFilterType().getPriority()));
     }
 
