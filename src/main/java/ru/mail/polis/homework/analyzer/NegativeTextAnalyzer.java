@@ -24,11 +24,6 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
             return false;
         }
 
-        for (String word : NEGATIVE_TEXT) {
-            if (text.contains(word)) {
-                return true;
-            }
-        }
-        return false;
+        return contains(text, NEGATIVE_TEXT);
     }
 }
