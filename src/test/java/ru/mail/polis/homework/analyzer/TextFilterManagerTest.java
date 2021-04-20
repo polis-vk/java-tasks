@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 import org.junit.Test;
+import ru.mail.polis.homework.analyzer.implementations.CustomAnalyzer;
 
 import java.util.Arrays;
 
@@ -141,5 +142,23 @@ public class TextFilterManagerTest {
         }
     }
 
-
+    @Test
+    public void analyzeOnlyCustomFilter() {
+//        System.out.println(CustomAnalyzer.decrypt("BOMB",10));   // LYWL
+//        System.out.println(CustomAnalyzer.decrypt("Plant A",10));// Zvkx~*K
+//        System.out.println(CustomAnalyzer.decrypt("Plant B",10));// Zvkx~*L
+//        System.out.println(CustomAnalyzer.decrypt("Caesar",-5)); // >\`n\m
+//        System.out.println(CustomAnalyzer.decrypt("cipher",-5)); // ^dkc`m
+//        System.out.println(CustomAnalyzer.decrypt("Caesar",3));  // Fdhvdu
+//        System.out.println(CustomAnalyzer.decrypt("cipher",3));  // flskhu
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
+                TextAnalyzer.createCustomAnalyzer(-10),
+                TextAnalyzer.createCustomAnalyzer(5)});
+        assertEquals("SPY_MESSAGE", manager.analyze("Let's plant LYWL").toString());
+        assertEquals("SPY_MESSAGE", manager.analyze("Go to Zvkx~*K").toString());
+        assertEquals("SPY_MESSAGE", manager.analyze("Bomb on Zvkx~*L").toString());
+        assertEquals("SPY_MESSAGE", manager.analyze("How good to use >\\`n\\m ^dkc`m").toString());
+        assertEquals("GOOD", manager.analyze("Let's do not use Caesar cipher").toString());
+        assertEquals("GOOD", manager.analyze("They don't know about password 3 for Fdhvdu flskhu").toString());
+    }
 }
