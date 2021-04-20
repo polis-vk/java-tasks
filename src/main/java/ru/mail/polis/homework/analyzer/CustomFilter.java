@@ -40,6 +40,9 @@ public class CustomFilter implements TextAnalyzer {
                     }
                 }
             }
+            if (textCounter > words.length - sameWordsNumber) {
+                return false;
+            }
             textCounter = 1;
         }
         return false;
