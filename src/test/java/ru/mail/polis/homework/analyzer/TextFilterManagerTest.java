@@ -101,6 +101,15 @@ public class TextFilterManagerTest {
     }
 
     @Test
+    public void analyzeOnlyCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer()});
+        assertEquals("CUSTOM", manager.analyze("HELLO").toString());
+        assertEquals("GOOD", manager.analyze("hello").toString());
+        assertEquals("GOOD", manager.analyze("Hello").toString());
+        assertEquals("CUSTOM", manager.analyze("CAPS NOT A PROBLEM").toString());
+    }
+
+    @Test
     public void analyzeAllFiltersOne() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
