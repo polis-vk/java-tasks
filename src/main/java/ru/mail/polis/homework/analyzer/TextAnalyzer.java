@@ -38,6 +38,4 @@ public interface TextAnalyzer {
     boolean isNotCorrect(String text);
 
     FilterType getType();
-
-    byte getPriority();
 }

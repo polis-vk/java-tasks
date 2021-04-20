@@ -8,18 +8,13 @@ public class TooLongFilter implements TextAnalyzer {
     }
 
     @Override
-    public byte getPriority() {
-        return 2;
-    }
-
-    @Override
     public FilterType getType() {
         return FilterType.TOO_LONG;
     }
 
     @Override
     public boolean isNotCorrect(String text) {
-        if (text == null || text.isEmpty()) {
+        if (text == null) {
             return false;
         }
 

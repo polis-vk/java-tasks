@@ -31,7 +31,7 @@ import java.util.Arrays;
  * Итого 15 баллов + 2 дополнительных
  */
 public class TextFilterManager {
-    private TextAnalyzer[] filters;
+    private final TextAnalyzer[] filters;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -39,17 +39,16 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        TextAnalyzer[] tempArray = Arrays.copyOfRange(filters, 0, filters.length);
-        Arrays.sort(tempArray,
+        this.filters = Arrays.copyOfRange(filters, 0, filters.length);
+        Arrays.sort(this.filters,
                 (filter1, filter2) -> {
-                    if (filter1.getPriority() < filter2.getPriority()) {
+                    if (filter1.getType().ordinal() < filter2.getType().ordinal()) {
                         return -1;
-                    } else if (filter1.getPriority() == filter2.getPriority()) {
+                    } else if (filter1.getType().ordinal() == filter2.getType().ordinal()) {
                         return 0;
                     }
                     return 1;
                 });
-        this.filters = tempArray;
     }
 
     /**

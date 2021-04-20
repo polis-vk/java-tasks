@@ -10,18 +10,13 @@ public class CustomFilter implements TextAnalyzer {
     }
 
     @Override
-    public byte getPriority() {
-        return 1;
-    }
-
-    @Override
     public FilterType getType() {
         return FilterType.CUSTOM;
     }
 
     @Override
     public boolean isNotCorrect(String text) {
-        if (text == null || text.isEmpty()) {
+        if (text == null) {
             return false;
         }
 

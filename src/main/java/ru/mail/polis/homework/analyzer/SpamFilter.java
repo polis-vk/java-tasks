@@ -8,18 +8,13 @@ public class SpamFilter implements TextAnalyzer {
     }
 
     @Override
-    public byte getPriority() {
-        return 1;
-    }
-
-    @Override
     public FilterType getType() {
         return FilterType.SPAM;
     }
 
     @Override
     public boolean isNotCorrect(String text) {
-        if (text == null || text.isEmpty()) {
+        if (text == null) {
             return false;
         }
 
