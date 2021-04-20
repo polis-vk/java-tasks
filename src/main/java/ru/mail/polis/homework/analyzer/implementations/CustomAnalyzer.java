@@ -9,7 +9,7 @@ import ru.mail.polis.homework.analyzer.TextAnalyzer;
  * Код == 10 означает, что надо сдвинуть код буквы
  * зашифрованного сообщения на 10 чтобы дешифровать его
  */
-public class CustomAnalyzer extends KeywordAnalyzer implements TextAnalyzer {
+public final class CustomAnalyzer extends KeywordAnalyzer implements TextAnalyzer {
 
     private final int password;
     private final FilterType filterType = FilterType.SPY_MESSAGE;

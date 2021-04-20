@@ -3,7 +3,7 @@ package ru.mail.polis.homework.analyzer.implementations;
 import ru.mail.polis.homework.analyzer.FilterType;
 import ru.mail.polis.homework.analyzer.TextAnalyzer;
 
-public class TooLongAnalyzer implements TextAnalyzer {
+public final class TooLongAnalyzer implements TextAnalyzer {
 
     private final long maxSize;
     private final FilterType filterType = FilterType.TOO_LONG;
