@@ -8,11 +8,6 @@ public class SpamAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    final public int priority() {
-        return filterType().getPriority();
-    }
-
-    @Override
     public FilterType filterType() {
         return FilterType.SPAM;
     }

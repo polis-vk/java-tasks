@@ -15,7 +15,10 @@ package ru.mail.polis.homework.analyzer;
  * 2 балла + (2 балла за каждый фильтр + 1 балл за тест на свой фильтр) ИТОГО 11
  */
 public interface TextAnalyzer {
-    int priority();
+
+    default int priority() {
+        return filterType().getPriority();
+    }
 
     FilterType filterType();
 
