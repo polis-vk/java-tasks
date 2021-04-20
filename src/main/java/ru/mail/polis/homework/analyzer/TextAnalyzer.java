@@ -16,15 +16,15 @@ package ru.mail.polis.homework.analyzer;
  */
 public interface TextAnalyzer {
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return new TooLongAnalyzer(maxLength, 2);
+        return new TooLongAnalyzer(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return new SpamAnalyzer(spam, 1);
+        return new SpamAnalyzer(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return new NegativeTextAnalyzer(3);
+        return new NegativeTextAnalyzer();
     }
 
     /**
@@ -32,10 +32,8 @@ public interface TextAnalyzer {
      * ФИЛЬТР НА ПРОВЕРКУ, ЧТО ТЕКСТ НЕ НАПИСАН КАПСОМ
      */
     static TextAnalyzer createCustomAnalyzer() {
-        return new CustomAnalyzer(4);
+        return new CustomAnalyzer();
     }
-
-    int getPriority();
 
     FilterType getType();
 

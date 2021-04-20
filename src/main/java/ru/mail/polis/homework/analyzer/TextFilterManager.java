@@ -43,9 +43,9 @@ public class TextFilterManager {
         this.filters = new TextAnalyzer[filters.length];
         System.arraycopy(filters, 0, this.filters, 0, filters.length);
         Arrays.sort(this.filters, (filter1, filter2) -> {
-            if (filter1.getPriority() < filter2.getPriority()) {
+            if (FilterType.getPriority(filter1) < FilterType.getPriority(filter2)) {
                 return -1;
-            } else if (filter1 == filter2) {
+            } else if (FilterType.getPriority(filter1) == FilterType.getPriority(filter2)) {
                 return 0;
             }
             return 1;
