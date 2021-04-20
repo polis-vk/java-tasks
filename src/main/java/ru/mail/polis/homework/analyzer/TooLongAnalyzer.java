@@ -4,8 +4,8 @@ public class TooLongAnalyzer implements TextAnalyzer {
     private final long maxLength;
 
     @Override
-    public int priority() {
-        return 2;
+    final public int priority() {
+        return filterType().getPriority();
     }
 
     @Override

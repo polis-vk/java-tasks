@@ -8,8 +8,8 @@ public class TooBigDigitAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public int priority() {
-        return 4;
+    final public int priority() {
+        return filterType().getPriority();
     }
 
     @Override
