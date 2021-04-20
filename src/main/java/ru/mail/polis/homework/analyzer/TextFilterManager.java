@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
+import java.util.Arrays;
 
 /**
  * Задание написать систему фильтрации комментариев.
@@ -30,6 +31,7 @@ package ru.mail.polis.homework.analyzer;
  * Итого 15 баллов + 2 дополнительных
  */
 public class TextFilterManager {
+    private final TextAnalyzer[] filtersArray;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -37,13 +39,28 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-
+        this.filtersArray = Arrays.copyOf(filters, filters.length);
+        Arrays.sort(this.filtersArray, (filter1, filter2) -> {
+            if (filter1.getRank() < filter2.getRank()) {
+                return -1;
+            }
+            if (filter1.getRank() == filter2.getRank()) {
+                return 0;
+            }
+            return 1;
+        });
     }
 
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-        return null;
+        FilterType filterType = FilterType.GOOD;
+        if (text != null) {
+            for (TextAnalyzer analyzer : filtersArray) {
+                filterType = filterType == FilterType.GOOD ? analyzer.analyze(text) : filterType;
+            }
+        }
+        return filterType;
     }
 }

@@ -141,5 +141,16 @@ public class TextFilterManagerTest {
         }
     }
 
+    @Test
+    public void analyzeOnlyNotOfficialFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createNotOfficialAnalyzer()});
+        assertEquals("NOT_OFFICIAL", manager.analyze("Hello! I'm Peter!").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("NOT_OFFICIAL", manager.analyze("Somebody said we're coming!").toString());
+        assertEquals("NOT_OFFICIAL", manager.analyze("He's alone, but they're all together, so he'll do anything to...").toString());
+        assertEquals("GOOD", manager.analyze("Good day! I am Peter!").toString());
+    }
+
 
 }
