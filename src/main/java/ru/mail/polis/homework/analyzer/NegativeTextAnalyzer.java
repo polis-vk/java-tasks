@@ -1,20 +1,18 @@
 package ru.mail.polis.homework.analyzer;
 
-public class NegativeTextAnalyzer implements TextAnalyzer {
+public class NegativeTextAnalyzer extends SpamAnalyzer {
     private final byte priority = 3;
+    private static final String[] negative = { "=(", ":(", ":|" };
 
-    public boolean check(String str) {
-        if (str.contains("=(") || str.contains(":(") || str.contains(":|")) {
-            return true;
-        }
-        return false;
+    public NegativeTextAnalyzer() {
+        super(negative);
     }
 
     public FilterType filter() {
         return FilterType.NEGATIVE_TEXT;
     }
 
-     public byte priority() {
-         return priority;
-     }
+    public byte priority() {
+        return priority;
+    }
 }

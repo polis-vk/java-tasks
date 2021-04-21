@@ -1,16 +1,11 @@
 package ru.mail.polis.homework.analyzer;
 
-public class CustomAnalyzer implements TextAnalyzer {
+public class CustomAnalyzer extends SpamAnalyzer {
     private final byte priority = 4;
-    private final String[] formatirovanie = { " ,", " .", " !", " ?" }; /* можно ещё что-то добавить */
+    private static final String[] formatirovanie = { " ,", " .", " !", " ?" }; /* можно ещё что-то добавить */
 
-    public boolean check(String str) {
-        for (int i = 0; i < formatirovanie.length; i++) {
-            if (str.contains(formatirovanie[i])) {
-                return true;
-            }
-        }
-        return false;
+    public CustomAnalyzer() {
+        super(formatirovanie);
     }
 
     public FilterType filter() {
