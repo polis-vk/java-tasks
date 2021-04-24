@@ -35,7 +35,7 @@ public interface TextAnalyzer {
     /**
      * придумать свой фильтр
      */
-    static TextAnalyzer createCustomAnalyzer() {
+    static TextAnalyzer createPositiveTextAnalyzer() {
         return new PositiveTextAnalyzer();
     }
 
