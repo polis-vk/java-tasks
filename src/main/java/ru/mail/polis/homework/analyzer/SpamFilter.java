@@ -18,8 +18,8 @@ public class SpamFilter implements TextAnalyzer {
             return false;
         }
 
-        for (String spamWord : spam) {
-            if (text.contains(spamWord)) {
+        for (int i = 0; i < spam.length; i++) {
+            if (text.contains(spam[i])) {
                 return true;
             }
         }
