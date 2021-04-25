@@ -101,6 +101,16 @@ public class TextFilterManagerTest {
     }
 
     @Test
+    public void analyzeCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
+                TextAnalyzer.createCustomAnalyzer(new String[]{"bad", "horror", "ddd"})});
+        assertEquals("GOOD", manager.analyze("hello word!").toString());
+        assertEquals("CUSTOM", manager.analyze("bad good").toString());
+        assertEquals("CUSTOM", manager.analyze("horrord").toString());
+        assertEquals("CUSTOM", manager.analyze("ddd in horror!").toString());
+    }
+
+    @Test
     public void analyzeAllFiltersOne() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
