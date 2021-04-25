@@ -35,19 +35,19 @@ public interface TextAnalyzer {
         return new NumbersAnalyzer();
     }
 
-    default boolean containsBadSymbols(String str, String[] badSymbols) {
-        for (String symbol : badSymbols) {
-            if (str.contains(symbol)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     boolean isNotCorrectString(String str);
-
-    int getPriority();
 
     FilterType getType();
 
+    FilterType[] analyzersPriority = new FilterType[]{FilterType.NUMBERS, FilterType.NEGATIVE_TEXT,
+            FilterType.TOO_LONG, FilterType.SPAM};  // в порядке убывания по приоритетности
+
+    default int getPriority(FilterType type) {
+        for (int i = 0; i < analyzersPriority.length; i++) {
+            if (analyzersPriority[i] == type) {
+                return i + 1;
+            }
+        }
+        return 0;
+    }
 }

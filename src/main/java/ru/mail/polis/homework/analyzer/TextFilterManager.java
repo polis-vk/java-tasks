@@ -33,7 +33,7 @@ import java.util.Arrays;
  */
 public class TextFilterManager {
 
-    private final TextAnalyzer[] filters;
+    private final TextAnalyzer[] sortedFilters;
 
 
     /**
@@ -42,9 +42,9 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = filters.clone();
-        Arrays.sort(filters, (filter1, filter2) -> {
-            if (filter1.getPriority() > filter2.getPriority()) {
+        this.sortedFilters = Arrays.copyOf(filters, filters.length);
+        Arrays.sort(sortedFilters, (filter1, filter2) -> {
+            if (filter1.getPriority(filter1.getType()) > filter2.getPriority(filter2.getType())) {
                 return -1;
             } else if (filter1 == filter2) {
                 return 0;
@@ -57,10 +57,10 @@ public class TextFilterManager {
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-        if (text == null || text.isEmpty() || filters.length == 0) {
+        if (text == null || text.isEmpty() || sortedFilters.length == 0) {
             return FilterType.GOOD;
         }
-        for (TextAnalyzer filter : filters) {
+        for (TextAnalyzer filter : sortedFilters) {
             if (filter.isNotCorrectString(text)) {
                 return filter.getType();
             }
