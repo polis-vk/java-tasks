@@ -1,17 +1,11 @@
 package ru.mail.polis.homework.analyzer;
 
 public class CustomFilter implements TextAnalyzer {
-    final int PRIORITY = 4;
     private static final FilterType typeOfFilter = FilterType.CUSTOM;
     private final int sameWordsNumber;
 
     public CustomFilter(int sameWordsNumber) {
         this.sameWordsNumber = sameWordsNumber;
-    }
-
-    @Override
-    public int getPriority() {
-        return PRIORITY;
     }
 
     @Override
@@ -40,6 +34,7 @@ public class CustomFilter implements TextAnalyzer {
                     }
                 }
             }
+
             if (textCounter > words.length - sameWordsNumber) {
                 return false;
             }

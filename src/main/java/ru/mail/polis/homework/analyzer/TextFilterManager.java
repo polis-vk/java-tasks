@@ -40,11 +40,11 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = Arrays.copyOf(filters,filters.length);
+        this.filters = Arrays.copyOf(filters, filters.length);
         Arrays.sort(this.filters, (filter1, filter2) -> {
-            if (filter1.getPriority() < filter2.getPriority()) {
+            if (filter1.getType().ordinal() < filter2.getType().ordinal()) {
                 return -1;
-            } else if (filter1.getPriority() == filter2.getPriority()) {
+            } else if (filter1.getType().ordinal() == filter2.getType().ordinal()) {
                 return 0;
             }
             return 1;

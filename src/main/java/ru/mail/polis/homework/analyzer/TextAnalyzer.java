@@ -35,9 +35,19 @@ public interface TextAnalyzer {
         return new CustomFilter(sameWordsNumber);
     }
 
-    public int getPriority();
-
     FilterType getType();
 
     boolean analyze(String text);
+
+    public static boolean analyzeCoidences(String[] badWords, String text) {
+        if (text == null) {
+            return false;
+        }
+        for (String str : badWords) {
+            if (text.contains(str)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
