@@ -40,7 +40,7 @@ public class TextFilterManager {
      */
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filters = Arrays.copyOf(filters, filters.length);
-        FilterType.SortPriority(this.filters);
+        FilterType.sortPriority(this.filters);
     }
 
     /**
@@ -56,5 +56,14 @@ public class TextFilterManager {
             }
         }
         return FilterType.GOOD;
+    }
+
+    public static boolean analyzeText(String text, String[] array) {
+        for (String strangeWords : array) {
+            if (text.contains(strangeWords)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

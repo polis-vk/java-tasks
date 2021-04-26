@@ -17,13 +17,15 @@ enum FilterType {
         this.priority = priority;
     }
 
-    public static void SortPriority(TextAnalyzer[] filters) {
-        Arrays.sort(filters, (filter1, filter2) -> {
-            if (filter1.filterType().getPriority() < filter2.filterType().getPriority()) {
-                return -1;
-            }
-            return filter1.filterType().getPriority() == filter2.filterType().getPriority() ? 0 : 1;
-        });
+    public static void sortPriority(TextAnalyzer[] filters) {
+        Arrays.sort(filters, FilterType::compareByPriority);
+    }
+
+    private static int compareByPriority(TextAnalyzer filter1, TextAnalyzer filter2) {
+        if (filter1.filterType().getPriority() < filter2.filterType().getPriority()) {
+            return -1;
+        }
+        return filter1.filterType().getPriority() == filter2.filterType().getPriority() ? 0 : 1;
     }
 
     private int getPriority() {

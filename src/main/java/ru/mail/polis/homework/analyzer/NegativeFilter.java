@@ -10,6 +10,6 @@ public class NegativeFilter implements TextAnalyzer {
 
     @Override
     public boolean analyzeText(String text) {
-        return AnalyzeText.analyzeText(text, negativeChars);
+        return TextFilterManager.analyzeText(text, negativeChars);
     }
 }
