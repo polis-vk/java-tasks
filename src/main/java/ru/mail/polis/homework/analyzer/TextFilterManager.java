@@ -41,10 +41,10 @@ public class TextFilterManager {
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filtersArray = Arrays.copyOf(filters, filters.length);
         Arrays.sort(this.filtersArray, (filter1, filter2) -> {
-            if (filter1.getRank() < filter2.getRank()) {
+            if (filter1.filterType().getRank() < filter2.filterType().getRank()) {
                 return -1;
             }
-            if (filter1.getRank() == filter2.getRank()) {
+            if (filter1.filterType().getRank() == filter2.filterType().getRank()) {
                 return 0;
             }
             return 1;

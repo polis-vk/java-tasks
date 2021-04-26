@@ -6,7 +6,6 @@ import ru.mail.polis.homework.analyzer.TextAnalyzer;
 import java.util.Arrays;
 
 public class SpamFilter implements TextAnalyzer {
-    private final static int rank = 1;
     private final String[] avoidWords;
 
     public SpamFilter(String[] avoidWordsParam) {
@@ -23,12 +22,10 @@ public class SpamFilter implements TextAnalyzer {
         return FilterType.GOOD;
     }
 
+    /**Тут по идее даже если я унаследуюсь от этого фильтра, я все равно смогу вернуть только
+     * тип фильтра, и приоритеты у них привязаны к типам теперь*/
+    @Override
     public FilterType filterType() {
         return FilterType.SPAM;
-    }
-
-    @Override
-    public int getRank() {
-        return rank;
     }
 }
