@@ -41,16 +41,30 @@ public class TextFilterManager {
 
     TextAnalyzer[] filters;
 
-    public TextFilterManager(TextAnalyzer[] in_filters) {
-        filters = in_filters;
-        Arrays.sort(filters, (first, second) -> {
-            if (first.getOrder() < second.getOrder()) {
+    public TextFilterManager(TextAnalyzer[] filters) {
+        this.filters = Arrays.copyOf(filters, filters.length);
+        Arrays.sort(this.filters, (first, second) -> {
+            if (order(first) < order(second)) {
                 return -1;
-            } else if (first.getOrder() == second.getOrder()) {
+            } else if (order(first) == order(second)) {
                 return 0;
             }
             return 1;
         });
+    }
+
+    private byte order(TextAnalyzer first) {
+        switch (first.getFilterType()) {
+            case SPAM:
+                return 1;
+            case TOO_LONG:
+                return 2;
+            case NEGATIVE_TEXT:
+                return 3;
+            case TOO_FEW_WORDS:
+                return 4;
+        }
+        return Byte.MAX_VALUE;
     }
 
     /**

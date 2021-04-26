@@ -1,10 +1,15 @@
 package ru.mail.polis.homework.analyzer.filters;
 
 import ru.mail.polis.homework.analyzer.FilterType;
+import ru.mail.polis.homework.analyzer.TextAnalyzer;
 
-public class TooFewWordsAnalyzer extends Filter {
+public class TooFewWordsAnalyzer implements TextAnalyzer {
 
-    private int minWords;
+    private final int minWords;
+
+    public TooFewWordsAnalyzer(int min) {
+        minWords = min;
+    }
 
     @Override
     public boolean check(String text) {
@@ -18,20 +23,11 @@ public class TooFewWordsAnalyzer extends Filter {
         String[] words = text.split("[^\\p{L}&']+");
         // регулярное выражение ловит промежутки между словами (& понимается как слово "and")
 
-        if (words.length < minWords) {
-            return true;
-        }
-
-        return false;
+        return words.length < minWords;
     }
 
     @Override
     public FilterType getFilterType() {
         return FilterType.TOO_FEW_WORDS;
-    }
-
-    public TooFewWordsAnalyzer(int min) {
-        minWords = min;
-        order = 4;
     }
 }

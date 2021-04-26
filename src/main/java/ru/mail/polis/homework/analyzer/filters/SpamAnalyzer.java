@@ -1,34 +1,16 @@
 package ru.mail.polis.homework.analyzer.filters;
 
 import ru.mail.polis.homework.analyzer.FilterType;
+import ru.mail.polis.homework.analyzer.TextAnalyzer;
 
-public class SpamAnalyzer extends Filter {
+public class SpamAnalyzer extends WordChecker {
 
-    private String[] spamWords;
-
-    @Override
-    public boolean check(String text) {
-
-        if (text == null) {
-            return false;
-        }
-
-        for (String word : spamWords) {
-            if (text.contains(word)) {
-                return true;
-            }
-        }
-
-        return false;
+    public SpamAnalyzer(String[] words) {
+        super(words);
     }
 
     @Override
     public FilterType getFilterType() {
         return FilterType.SPAM;
-    }
-
-    public SpamAnalyzer(String[] words) {
-        spamWords = words;
-        order = 1;
     }
 }

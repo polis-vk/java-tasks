@@ -36,6 +36,4 @@ public interface TextAnalyzer {
     boolean check(String text);
 
     FilterType getFilterType();
-
-    int getOrder();
 }

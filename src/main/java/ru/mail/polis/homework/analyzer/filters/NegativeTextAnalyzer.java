@@ -1,33 +1,16 @@
 package ru.mail.polis.homework.analyzer.filters;
 
 import ru.mail.polis.homework.analyzer.FilterType;
+import ru.mail.polis.homework.analyzer.TextAnalyzer;
 
-public class NegativeTextAnalyzer extends Filter {
+public class NegativeTextAnalyzer extends WordChecker {
 
-    private final String[] negativeWords = {"=(", ":(", ":|"};
-
-    @Override
-    public boolean check(String text) {
-
-        if (text == null) {
-            return false;
-        }
-
-        for (String word : negativeWords) {
-            if (text.contains(word)) {
-                return true;
-            }
-        }
-
-        return false;
+    public NegativeTextAnalyzer() {
+        super(new String[] {"=(", ":(", ":|"});
     }
 
     @Override
     public FilterType getFilterType() {
         return FilterType.NEGATIVE_TEXT;
-    }
-
-    public NegativeTextAnalyzer() {
-        order = 3;
     }
 }
