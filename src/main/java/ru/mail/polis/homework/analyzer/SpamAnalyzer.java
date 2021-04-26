@@ -1,22 +1,12 @@
 package ru.mail.polis.homework.analyzer;
 
-import java.util.Arrays;
-
-public class SpamAnalyzer implements TextAnalyzer {
-    private final String[] spam;
-
+public class SpamAnalyzer extends StringArrayAnalyzer {
     public SpamAnalyzer(String[] spam) {
-        this.spam = spam;
+        this.keys = spam;
     }
 
     @Override
     public FilterType getType() {
         return FilterType.SPAM;
-    }
-
-
-    @Override
-    public boolean isValid(String text) {
-        return Arrays.stream(spam).noneMatch(text::contains);
     }
 }
