@@ -16,7 +16,7 @@ public enum FilterType {
         this.priority = priority;
     }
 
-    int getPriority() {
+    public int getPriority() {
         return this.priority;
     }
 }

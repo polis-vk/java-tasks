@@ -5,7 +5,7 @@ import java.util.Arrays;
 public class SpamAnalyzer implements TextAnalyzer {
     private final String[] spam;
 
-    SpamAnalyzer(String[] spam) {
+    public SpamAnalyzer(String[] spam) {
         this.spam = Arrays.copyOf(spam, spam.length);
     }
 
@@ -13,7 +13,7 @@ public class SpamAnalyzer implements TextAnalyzer {
     public FilterType analyze(String text) {
         for (String spamWord : spam) {
             if (text.contains(spamWord)) {
-                return FilterType.SPAM;
+                return getType();
             }
         }
         return FilterType.GOOD;
