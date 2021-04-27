@@ -14,6 +14,6 @@ public class SpamFilter implements TextAnalyzer {
 
     @Override
     public boolean analyzeText(String text) {
-        return TextFilterManager.analyzeText(text, spam);
+        return NegativeFilter.analyzeText(text, spam);
     }
 }

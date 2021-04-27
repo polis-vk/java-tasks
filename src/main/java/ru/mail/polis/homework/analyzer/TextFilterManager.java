@@ -57,13 +57,4 @@ public class TextFilterManager {
         }
         return FilterType.GOOD;
     }
-
-    public static boolean analyzeText(String text, String[] array) {
-        for (String strangeWords : array) {
-            if (text.contains(strangeWords)) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

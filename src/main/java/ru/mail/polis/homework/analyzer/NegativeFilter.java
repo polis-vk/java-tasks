@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeFilter implements TextAnalyzer {
-    private final String[] negativeChars = {"=(", ":(", ":|"};
+    private static final String[] negativeChars = {"=(", ":(", ":|"};
 
     @Override
     public FilterType filterType() {
@@ -10,6 +10,15 @@ public class NegativeFilter implements TextAnalyzer {
 
     @Override
     public boolean analyzeText(String text) {
-        return TextFilterManager.analyzeText(text, negativeChars);
+        return analyzeText(text, negativeChars);
+    }
+
+    public static boolean analyzeText(String text, String[] array) {
+        for (String strangeWords : array) {
+            if (text.contains(strangeWords)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
