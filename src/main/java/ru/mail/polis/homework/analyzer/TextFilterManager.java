@@ -58,7 +58,10 @@ public class TextFilterManager {
         FilterType filterType = FilterType.GOOD;
         if (text != null) {
             for (TextAnalyzer analyzer : filtersArray) {
-                filterType = filterType == FilterType.GOOD ? analyzer.analyze(text) : filterType;
+                filterType = analyzer.analyze(text);
+                if (filterType != FilterType.GOOD) {
+                    break;
+                }
             }
         }
         return filterType;

@@ -3,11 +3,11 @@ package ru.mail.polis.homework.analyzer.filters;
 import ru.mail.polis.homework.analyzer.FilterType;
 import ru.mail.polis.homework.analyzer.TextAnalyzer;
 
-public class NegativeFilter extends SpamFilter implements TextAnalyzer {
-    private final static String[] sadEmotes = new String[]{":(", "=(", ":|"};
+public class NegativeFilter extends SpamFilter {
+    private final static String[] SAD_EMOTES = new String[]{":(", "=(", ":|"};
 
     public NegativeFilter() {
-        super(sadEmotes);
+        super(SAD_EMOTES);
     }
 
     @Override
