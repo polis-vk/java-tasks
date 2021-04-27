@@ -2,7 +2,7 @@ package ru.mail.polis.homework.analyzer;
 
 public class SpamAnalyzer extends StringArrayAnalyzer {
     public SpamAnalyzer(String[] spam) {
-        this.keys = spam;
+        super(spam);
     }
 
     @Override

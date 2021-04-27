@@ -1,8 +1,10 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyzer extends StringArrayAnalyzer {
-    NegativeTextAnalyzer() {
-        keys = new String[]{"=(", ":(", ":|"};
+    private final static String[] NEGATIVE = {"=(", ":(", ":|"};
+
+    public NegativeTextAnalyzer() {
+        super(NEGATIVE);
     }
 
     @Override
