@@ -1,20 +1,20 @@
 package ru.mail.polis.homework.analyzer;
 
 public class SpamFilter implements TextAnalyzer {
-    private final String[] SPAM;
-    private static final FilterType typeOfFilter = FilterType.SPAM;
+    private final String[] spam;
+    private static final FilterType TYPEOFFILTER = FilterType.SPAM;
 
     public SpamFilter(String[] spam) {
-        this.SPAM = spam;
+        this.spam = spam;
     }
 
     public FilterType getType() {
-        return typeOfFilter;
+        return TYPEOFFILTER;
     }
 
     @Override
     public boolean analyze(String text) {
-        if (TextAnalyzer.analyzeCoidences(SPAM, text)) {
+        if (TextAnalyzer.analyzeCoidences(spam, text)) {
             return true;
         }
         return false;

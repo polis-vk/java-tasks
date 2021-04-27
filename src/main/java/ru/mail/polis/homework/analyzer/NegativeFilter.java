@@ -1,12 +1,12 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeFilter implements TextAnalyzer {
-    private static final FilterType typeOfFilter = FilterType.NEGATIVE_TEXT;
+    private static final FilterType TYPEOFFILTER = FilterType.NEGATIVE_TEXT;
     private static final String[] NEGATIVEWORDS = {"=(", ":(", ":|"};
 
     @Override
     public FilterType getType() {
-        return typeOfFilter;
+        return TYPEOFFILTER;
     }
 
     @Override

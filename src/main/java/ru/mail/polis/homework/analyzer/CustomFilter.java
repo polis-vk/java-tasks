@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 public class CustomFilter implements TextAnalyzer {
-    private static final FilterType typeOfFilter = FilterType.CUSTOM;
+    private static final FilterType TYPEOFFILTER = FilterType.CUSTOM;
     private final int sameWordsNumber;
 
     public CustomFilter(int sameWordsNumber) {
@@ -10,7 +10,7 @@ public class CustomFilter implements TextAnalyzer {
 
     @Override
     public FilterType getType() {
-        return typeOfFilter;
+        return TYPEOFFILTER;
     }
 
     @Override
