@@ -12,6 +12,7 @@ public class SpamFilter extends NegativeTextFilter implements TextAnalyzer {
         return FilterType.SPAM;
     }
 
+    @Override
     public boolean analysis(String text) {
         return textContain(text, spam);
     }
