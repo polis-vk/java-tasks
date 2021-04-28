@@ -88,6 +88,19 @@ public class TextFilterManagerTest {
     }
 
     @Test
+    public void analyzeOnlyCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(
+                new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer("ну", 2)});
+        assertEquals("CUSTOM", manager.analyze("Привет, ну, я Петя. Ну ну").toString());
+        assertEquals("GOOD", manager.analyze("ну привет").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("привет)))").toString());
+        assertEquals("GOOD", manager.analyze("Скажите код из смс пожалуйста :|").toString());
+        assertEquals("CUSTOM", manager.analyze("ну..... ну, да. Ну??!").toString());
+        assertEquals("CUSTOM", manager.analyze("ну как-то ну не очень ну ну да").toString());
+    }
+
+    @Test
     public void analyzeAllFiltersGood() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
@@ -126,11 +139,14 @@ public class TextFilterManagerTest {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
                 TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
-                TextAnalyzer.createTooLongAnalyzer(20)});
+                TextAnalyzer.createTooLongAnalyzer(20),
+                TextAnalyzer.createCustomAnalyzer("ну", 2)});
         if (withPriority) {
             assertEquals("SPAM", manager.analyze("Привет, я Петя вот мой cvv").toString());
             assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :(").toString());
             assertEquals("SPAM", manager.analyze("смс пожалуйста           :|").toString());
+            assertEquals("NEGATIVE_TEXT", manager.analyze("Скажите код :(").toString());
+            assertEquals("CUSTOM", manager.analyze("ну!!! НУ! Ну нуб..").toString());
         } else {
             assertTrue(Arrays.asList("SPAM", "TOO_LONG").contains(
                     manager.analyze("Привет, я Петя вот мой cvv").toString()));
