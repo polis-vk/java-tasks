@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
 
+import java.util.Arrays;
+
 /**
  * Задание написать систему фильтрации комментариев.
  * Надо реализовать три типа обязательных фильтров
@@ -30,6 +32,7 @@ package ru.mail.polis.homework.analyzer;
  * Итого 15 баллов + 2 дополнительных
  */
 public class TextFilterManager {
+    private final TextAnalyzer[] filters;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -37,13 +40,31 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
+        this.filters = Arrays.copyOf(filters, filters.length);
 
+        Arrays.sort(this.filters, (filter1, filter2) -> {
+            int filter1Priority = filter1.type().getPriority();
+            int filter2Priority = filter2.type().getPriority();
+
+            if (filter1Priority > filter2Priority) {
+                return -1;
+            } else if (filter1Priority == filter2Priority) {
+                return 0;
+            }
+            return 1;
+        });
     }
 
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-        return null;
+        for (TextAnalyzer filter : this.filters) {
+            if (!filter.isValid(text)) {
+                return filter.type();
+            }
+        }
+
+        return FilterType.GOOD;
     }
 }

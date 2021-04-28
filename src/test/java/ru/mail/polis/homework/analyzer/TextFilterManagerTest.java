@@ -141,5 +141,18 @@ public class TextFilterManagerTest {
         }
     }
 
-
+    @Test
+    public void analyzeCustomExtraSpacesFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomExtraSpacesAnalyzer()});
+        assertEquals("GOOD", manager.analyze("Строка без лишних пробелов").toString());
+        assertEquals("CUSTOM_EXTRA_SPACES", manager.analyze("Строка с лишним пробелом в конце ").toString());
+        assertEquals("CUSTOM_EXTRA_SPACES", manager.analyze("Строка с лишними пробелами в конце     ").toString());
+        assertEquals("CUSTOM_EXTRA_SPACES", manager.analyze(" Строка с лишним пробелом в начале").toString());
+        assertEquals("CUSTOM_EXTRA_SPACES", manager.analyze("        Строка с лишними пробелами в начале").toString());
+        assertEquals("CUSTOM_EXTRA_SPACES", manager.analyze(" Строка с лишними пробелами в начале и конце ").toString());
+        assertEquals("CUSTOM_EXTRA_SPACES", manager.analyze("Строка с лишним  пробелом в предложнии").toString());
+        assertEquals("CUSTOM_EXTRA_SPACES", manager.analyze("Строка  с лишними      пробелами в   предложении").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("CUSTOM_EXTRA_SPACES", manager.analyze("   ").toString());
+    }
 }
