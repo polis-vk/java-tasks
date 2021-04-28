@@ -1,5 +1,9 @@
 package ru.mail.polis.homework.analyzer;
 
+import ru.mail.polis.homework.analyzer.filters.Custom;
+import ru.mail.polis.homework.analyzer.filters.NegativeFilter;
+import ru.mail.polis.homework.analyzer.filters.TooLongFilter;
+import ru.mail.polis.homework.analyzer.filters.SpamFilter;
 
 /**
  * Базовый интерефейс фильтра, наследники этого интерефейса должны инкапсулировать в себе всю логику
@@ -17,21 +21,25 @@ package ru.mail.polis.homework.analyzer;
 public interface TextAnalyzer {
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return null;
+        return new TooLongFilter(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return null;
+        return new SpamFilter(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return null;
+        return new NegativeFilter();
     }
 
     /**
      * придумать свой фильтр
      */
-    static <T> TextAnalyzer createCustomAnalyzer(T something) {
-        return null;
+    static TextAnalyzer createCustom() {
+        return new Custom();
     }
+
+    FilterType analyze(String text);
+    int getPriority();
+
 }

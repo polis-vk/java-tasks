@@ -99,6 +99,16 @@ public class TextFilterManagerTest {
         assertEquals("GOOD", manager.analyze("СкажитеКодИзСмс:-(").toString());
         assertEquals("GOOD", manager.analyze("сМс пожалуйста ;|").toString());
     }
+    @Test
+    public void analyzeOnlyCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustom()});
+        assertEquals("CUSTOM", manager.analyze("Go to the beach!").toString());
+        assertEquals("CUSTOM", manager.analyze("Use this fork!").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("CUSTOM", manager.analyze("This sock stinks!").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze("fo rk, be a ch, s ock").toString());
+    }
 
     @Test
     public void analyzeAllFiltersOne() {
