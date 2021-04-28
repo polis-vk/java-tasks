@@ -39,7 +39,7 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
 
-    TextAnalyzer[] filters;
+    private final TextAnalyzer[] filters;
 
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filters = Arrays.copyOf(filters, filters.length);

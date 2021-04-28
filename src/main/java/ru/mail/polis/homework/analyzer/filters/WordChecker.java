@@ -4,7 +4,7 @@ import ru.mail.polis.homework.analyzer.TextAnalyzer;
 
 public abstract class WordChecker implements TextAnalyzer {
 
-    protected final String[] words;
+    private final String[] words;
 
     public WordChecker(String[] words) {
         this.words = words;

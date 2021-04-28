@@ -5,8 +5,10 @@ import ru.mail.polis.homework.analyzer.TextAnalyzer;
 
 public class NegativeTextAnalyzer extends WordChecker {
 
+    static public final String[] negativeWords = new String[] {"=(", ":(", ":|"};
+
     public NegativeTextAnalyzer() {
-        super(new String[] {"=(", ":(", ":|"});
+        super(negativeWords);
     }
 
     @Override
