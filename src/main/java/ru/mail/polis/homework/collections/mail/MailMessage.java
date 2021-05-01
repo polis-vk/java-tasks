@@ -3,6 +3,8 @@ package ru.mail.polis.homework.collections.mail;
 /**
  * 1 балл
  */
-public class MailMessage {
-
+public class MailMessage extends Message{
+    public MailMessage(String sender, String recipient, String content) {
+        super(sender, recipient, content);
+    }
 }
