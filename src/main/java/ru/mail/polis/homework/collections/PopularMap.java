@@ -47,102 +47,57 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean isEmpty() {
-        return size() == 0;
+        return map.isEmpty();
     }
 
     @Override
     public boolean containsKey(Object key) {
-        for (Entry<K, V> entry : map.entrySet()) {
-            if (entry.getKey() == key) {
-                return true;
-            }
-        }
-        return false;
+        return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        for (Entry<K, V> entry : map.entrySet()) {
-            if (entry.getValue() == value) {
-                return true;
-            }
-        }
-        return false;
+        return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        for (Entry<K, V> entry : map.entrySet()) {
-            if (entry.getKey() == key) {
-                return entry.getValue();
-            }
-        }
-        return null;
+        return map.get(key);
     }
 
     @Override
     public V put(K key, V value) {
-        for (Entry<K, V> entry : map.entrySet()) {
-            if (entry.getKey() == key) {
-                V previousValue = entry.getValue();
-                map.put(key, value);
-                return previousValue;
-            }
-        }
-        return null;
+        return map.put(key, value);
     }
 
     @Override
     public V remove(Object key) {
-        for (Entry<K, V> entry : map.entrySet()) {
-            if (entry.getKey() == key) {
-                V previousValue = entry.getValue();
-                map.remove(key);
-                return previousValue;
-            }
-        }
-        return null;
+        return map.remove(key);
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-        for (Entry<? extends K, ? extends V> entry : m.entrySet()) {
-            map.put(entry.getKey(), entry.getValue());
-        }
+        map.putAll(m);
     }
 
     @Override
     public void clear() {
-        for (Entry<K, V> entry : map.entrySet()) {
-            map.remove(entry.getKey());
-        }
+        map.clear();
     }
 
     @Override
     public Set<K> keySet() {
-        Set<K> keys = new HashSet<>();
-        for (Entry<K, V> entry : map.entrySet()) {
-            keys.add(entry.getKey());
-        }
-        return keys;
+        return map.keySet();
     }
 
     @Override
     public Collection<V> values() {
-        List<V> values = new ArrayList<>();
-        for (Entry<K, V> entry : map.entrySet()) {
-            values.add(entry.getValue());
-        }
-        return values;
+        return map.values();
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        Set<Entry<K, V>> entries = new HashSet<>();
-        for (Entry<K, V> entry : map.entrySet()) {
-            entries.add(entry);
-        }
-        return entries;
+        return map.entrySet();
     }
 
     /**
