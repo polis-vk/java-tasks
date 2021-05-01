@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.collections.mail;
 
 
-
 import ru.mail.polis.homework.collections.PopularMap;
 
 import java.util.ArrayList;
