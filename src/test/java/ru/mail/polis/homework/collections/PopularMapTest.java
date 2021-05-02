@@ -195,7 +195,7 @@ public class PopularMapTest {
     @Test
     public void get() {
         popularMap2.get(new TestObject("key"));
-        verify(map, times(1)).get(new TestObject("key"));
+        verify(map, times(2)).get(new TestObject("key"));
     }
 
     @Test
