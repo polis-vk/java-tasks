@@ -53,10 +53,10 @@ public class SimpleFunction {
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
             a -> (c) -> {
                 List<Integer> result = new ArrayList<>();
-                for (int i = 0; i < c.size(); i++) {
+                for (Integer temp : c) {
                     for (IntUnaryOperator intUnaryOperator : a) {
-                        c.set(i, intUnaryOperator.applyAsInt(c.get(i)));
-                        result.add(c.get(i));
+                        temp = intUnaryOperator.applyAsInt(temp);
+                        result.add(temp);
                     }
                 }
                 return result;
