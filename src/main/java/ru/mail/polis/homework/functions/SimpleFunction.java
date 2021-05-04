@@ -26,9 +26,8 @@ public class SimpleFunction {
      * 2 балла
      */
 
-    static <T, U, O, R> BiFunction<U, O, Function<T, R>> curring(TerFunction terFunction) {
-        //return (t) -> (u, o) -> terFunction.apply(t, u, o);   :((((( Как?
-        return null;
+    static <T, U, O, R> Function<T, Function<U, Function<O, R>>> curring(TerFunction<T, U, O, R> terFunction) {
+        return (T t) -> (U u) -> (O o) -> terFunction.apply(t, u, o);
     }
 
     /**
@@ -77,7 +76,7 @@ public class SimpleFunction {
     public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
             (initialValue, binaryOperator) -> (leftBound, rightBound) -> {
                 int result = initialValue;
-                for (int elem = leftBound; elem < rightBound; elem++) {
+                for (int elem = leftBound; elem <= rightBound; elem++) {
                     result = binaryOperator.applyAsInt(result, elem);
                 }
                 return result;
