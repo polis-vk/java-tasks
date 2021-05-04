@@ -4,9 +4,9 @@ import java.util.Objects;
 
 public class Message<T> {
 
-    protected final String sender;
-    protected final String recipient;
-    protected final T content;
+    private final String sender;
+    private final String recipient;
+    private final T content;
 
     public Message(String sender, String recipient, T content) {
         this.sender = sender;

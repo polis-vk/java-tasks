@@ -51,12 +51,13 @@ public class SimpleFunction {
      * 4 балла (доп задание)
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            a -> (c) -> {
+            operators -> (numbers) -> {
                 List<Integer> result = new ArrayList<>();
-                for (Integer temp : c) {
-                    for (IntUnaryOperator intUnaryOperator : a) {
-                        temp = intUnaryOperator.applyAsInt(temp);
-                        result.add(temp);
+                for (Integer number : numbers) {
+                    Integer currentNumber = number;
+                    for (IntUnaryOperator intUnaryOperator : operators) {
+                        currentNumber = intUnaryOperator.applyAsInt(currentNumber);
+                        result.add(currentNumber);
                     }
                 }
                 return result;

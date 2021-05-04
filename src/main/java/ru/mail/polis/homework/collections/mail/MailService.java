@@ -27,8 +27,8 @@ public class MailService<M extends Message<?>> implements Consumer<M> {
      */
     @Override
     public void accept(M message) {
-        recipientBox.computeIfAbsent(message.recipient, (v) -> new ArrayList<>()).add(message);
-        sendersBox.computeIfAbsent(message.sender, (v) -> new ArrayList<>()).add(message);
+        recipientBox.computeIfAbsent(message.getRecipient(), (v) -> new ArrayList<>()).add(message);
+        sendersBox.computeIfAbsent(message.getSender(), (v) -> new ArrayList<>()).add(message);
     }
 
     /**
