@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.functions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -14,8 +15,8 @@ public class SimpleFunction {
      * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
-    interface TerFunction {
-
+    interface TerFunction<T, U, O, R> {
+        R apply(T var1, U var2, O var3);
     }
 
     /**
@@ -24,7 +25,9 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
+
+    static <T, U, O, R> BiFunction<U, O, Function<T, R>> curring(TerFunction terFunction) {
+        //return (t) -> (u, o) -> terFunction.apply(t, u, o);   :((((( Как?
         return null;
     }
 
@@ -38,7 +41,9 @@ public class SimpleFunction {
     static Function<String, Double> doubleStringEquation(double a1, double b1, double c1,
                                                          double a2, double b2, double c2,
                                                          Function<String, Double> g) {
-        return null;
+        TerFunction<Double, Double, Double, Function<Double, Double>> square =
+                (a, b, c) -> (x) -> (a * x * x + b * x + c);
+        return str -> square.apply(a1, b1, c1).apply(square.apply(a2, b2, c2).apply(g.apply(str)));
     }
 
 
@@ -49,7 +54,15 @@ public class SimpleFunction {
      * 4 балла (доп задание)
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            a -> null;
+            (listIntUnaryOperator) -> (listInteger) -> {
+                List<Integer> result = new ArrayList<>(listIntUnaryOperator.size() * listInteger.size());
+                for (Integer elem : listInteger) {
+                    for (IntUnaryOperator unaryOperator : listIntUnaryOperator) {
+                        result.add(unaryOperator.applyAsInt(elem));
+                    }
+                }
+                return result;
+            };
 
 
     /**
@@ -61,5 +74,12 @@ public class SimpleFunction {
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 2 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
+            (initialValue, binaryOperator) -> (leftBound, rightBound) -> {
+                int result = initialValue;
+                for (int elem = leftBound; elem < rightBound; elem++) {
+                    result = binaryOperator.applyAsInt(result, elem);
+                }
+                return result;
+            };
 }
