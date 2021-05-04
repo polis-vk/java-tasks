@@ -46,22 +46,6 @@ public class PopularMap<K, V> implements Map<K, V> {
         this.valuesPopularity = new HashMap<>();
     }
 
-    /**
-     * Не учитываем null значения
-     */
-
-    private void addKeyPopularity(K key) {
-        if (key != null) {
-            keysPopularity.put(key, keysPopularity.getOrDefault(key, 0) + 1);
-        }
-    }
-
-    private void addValuePopularity(V value) {
-        if (value != null) {
-            valuesPopularity.put(value, valuesPopularity.getOrDefault(value, 0) + 1);
-        }
-    }
-
     @Override
     public int size() {
         return map.size();
@@ -74,38 +58,38 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        addKeyPopularity((K) key);
+        addPopularity(keysPopularity, (K) key);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        addValuePopularity((V) value);
+        addPopularity(valuesPopularity, (V) value);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
         V value = map.get(key);
-        addKeyPopularity((K) key);
-        addValuePopularity(value);
+        addPopularity(keysPopularity, (K) key);
+        addPopularity(valuesPopularity, value);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
-        addKeyPopularity(key);
-        addValuePopularity(value);
+        addPopularity(keysPopularity, key);
+        addPopularity(valuesPopularity, value);
         V oldValue = map.put(key, value);
-        addValuePopularity(oldValue);
+        addPopularity(valuesPopularity, oldValue);
         return oldValue;
     }
 
     @Override
     public V remove(Object key) {
-        addKeyPopularity((K) key);
+        addPopularity(keysPopularity, (K) key);
         V valueRemoved = map.remove(key);
-        addValuePopularity(valueRemoved);
+        addPopularity(valuesPopularity, valueRemoved);
         return valueRemoved;
     }
 
@@ -134,22 +118,16 @@ public class PopularMap<K, V> implements Map<K, V> {
         return map.entrySet();
     }
 
+    private K popularKey;
+    private V popularValue;
+
     /**
      * Возвращает самый популярный, на данный момент, ключ
      * 1 балл
      */
     public K getPopularKey() {
-        Integer maxPopularity = 0;
-        K maxPopularKey = null;
-        for (Entry<K, Integer> entry : keysPopularity.entrySet()) {
-            if (entry.getValue() > maxPopularity) {
-                maxPopularKey = entry.getKey();
-                maxPopularity = entry.getValue();
-            }
-        }
-        return maxPopularKey;
+        return (popularKey == null) ? popularKey = getPopular(keysPopularity) : popularKey;
     }
-
 
     /**
      * Возвращает количество использование ключа
@@ -164,15 +142,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 1 балл
      */
     public V getPopularValue() {
-        Integer maxPopularity = 0;
-        V maxPopularValue = null;
-        for (Entry<V, Integer> entry : valuesPopularity.entrySet()) {
-            if (entry.getValue() > maxPopularity) {
-                maxPopularValue = entry.getKey();
-                maxPopularity = entry.getValue();
-            }
-        }
-        return maxPopularValue;
+        return (popularValue == null) ? popularValue = getPopular(valuesPopularity) : popularValue;
     }
 
     /**
@@ -189,12 +159,28 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 балла
      */
     public Iterator<V> popularIterator() {
-        List<Entry<V, Integer>> entries = new ArrayList<>(valuesPopularity.entrySet());
-        entries.sort(Entry.comparingByValue());
-        List<V> result = new ArrayList<>(entries.size());
-        for (Entry<V, Integer> entry : entries) {
-            result.add(entry.getKey());
+        List<V> valuesPopularityList = new ArrayList<>(valuesPopularity.keySet());
+        valuesPopularityList.sort(Comparator.comparing(valuesPopularity::get));
+        return valuesPopularityList.iterator();
+    }
+
+    private <Z> void addPopularity(Map<Z, Integer> target, Z parameter) {
+        popularKey = null;
+        popularValue = null;
+        if (parameter != null) {
+            target.merge(parameter, 1, Integer::sum);
         }
-        return result.iterator();
+    }
+
+    private <Z> Z getPopular(Map<Z, Integer> target) {
+        Integer maxPopularity = 0;
+        Z maxPopular = null;
+        for (Entry<Z, Integer> entry : target.entrySet()) {
+            if (entry.getValue() > maxPopularity) {
+                maxPopular = entry.getKey();
+                maxPopularity = entry.getValue();
+            }
+        }
+        return maxPopular;
     }
 }
