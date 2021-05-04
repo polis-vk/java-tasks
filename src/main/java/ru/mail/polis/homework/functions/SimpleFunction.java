@@ -73,5 +73,11 @@ public class SimpleFunction {
      * 2 балла
      */
     public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
-            (a, b) -> null;
+            (startValue, operator) -> (left, right) -> {
+                int result = startValue;
+                for (int i = left; i <= right; i++) {
+                    result = operator.applyAsInt(result, i);
+                }
+                return result;
+            };
 }
