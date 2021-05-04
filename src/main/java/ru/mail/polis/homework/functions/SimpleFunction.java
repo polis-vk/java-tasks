@@ -56,8 +56,10 @@ public class SimpleFunction {
             (listIntUnaryOperator) -> (listInteger) -> {
                 List<Integer> result = new ArrayList<>(listIntUnaryOperator.size() * listInteger.size());
                 for (Integer elem : listInteger) {
+                    Integer prev = elem;
                     for (IntUnaryOperator unaryOperator : listIntUnaryOperator) {
-                        result.add(unaryOperator.applyAsInt(elem));
+                        prev = unaryOperator.applyAsInt(prev);
+                        result.add(prev);
                     }
                 }
                 return result;
