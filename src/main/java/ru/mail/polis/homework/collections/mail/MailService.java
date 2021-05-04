@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Нужно создать сервис, который умеет обрабатывать письма и зарплату.
@@ -20,18 +22,6 @@ public class MailService<T extends Mail<?>> implements Consumer<T> {
 
     private final PopularMap<String, List<T>> senders = new PopularMap<>();
     private final PopularMap<String, List<T>> recipients = new PopularMap<>();
-
-    private void add(String name, T mail, PopularMap<String, List<T>> map) {
-        List<T> mails = map.get(name);          //+1 к ключу
-        if (mails == null) {
-            map.put(name, List.of(mail));       //+1 к ключу
-        } else {
-            List<T> newMails = new ArrayList<>(mails);
-            newMails.add(mail);
-            map.put(name, newMails);            //+1 к ключу
-        }
-        //+2 к популярности ключа в независимости от ключа => корректная работа
-    }
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
@@ -73,5 +63,11 @@ public class MailService<T extends Mail<?>> implements Consumer<T> {
      */
     public static void process(MailService<Mail<?>> service, List<? extends Mail<?>> mails) {
         mails.forEach(service);
+    }
+
+    private void add(String name, T mail, PopularMap<String, List<T>> map) {
+        List<T> newMail = new ArrayList<T>() {{add(mail);}};
+        map.merge(name, newMail, (oldValue, newValue) ->
+                Stream.concat(oldValue.stream(), newValue.stream()).collect(Collectors.toList()));
     }
 }

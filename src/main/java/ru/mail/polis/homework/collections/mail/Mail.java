@@ -18,4 +18,8 @@ public class Mail<T> {
     public String getRecipient() {
         return recipient;
     }
+
+    public T getMessage() {
+        return message;
+    }
 }
