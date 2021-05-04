@@ -168,7 +168,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         popularKey = null;
         popularValue = null;
         if (parameter != null) {
-            target.merge(parameter, 1, Integer::sum);
+            target.compute(parameter, (k, v) -> (v == null) ? 1 : v + 1);
         }
     }
 
