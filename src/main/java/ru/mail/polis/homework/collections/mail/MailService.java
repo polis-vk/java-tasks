@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.collections.mail;
 
 
+import ru.mail.polis.homework.collections.PopularMap;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -13,23 +16,39 @@ import java.util.function.Consumer;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 баллов за пакет mail
  */
-public class MailService implements Consumer {
+public class MailService<T extends Mail<?>> implements Consumer<T> {
+
+    private final PopularMap<String, List<T>> senders = new PopularMap<>();
+    private final PopularMap<String, List<T>> recipients = new PopularMap<>();
+
+    private void add(String name, T mail, PopularMap<String, List<T>> map) {
+        List<T> mails = map.get(name);          //+1 к ключу
+        if (mails == null) {
+            map.put(name, List.of(mail));       //+1 к ключу
+        } else {
+            List<T> newMails = new ArrayList<>(mails);
+            newMails.add(mail);
+            map.put(name, newMails);            //+1 к ключу
+        }
+        //+2 к популярности ключа в независимости от ключа => корректная работа
+    }
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
      * 1 балл
      */
     @Override
-    public void accept(Object o) {
-
+    public void accept(T o) {
+        add(o.getSender(), o, senders);
+        add(o.getRecipient(), o, recipients);
     }
 
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      * 1 балл
      */
-    public Map<String, List> getMailBox() {
-        return null;
+    public Map<String, List<T>> getMailBox() {
+        return recipients;
     }
 
     /**
@@ -37,7 +56,7 @@ public class MailService implements Consumer {
      * 1 балл
      */
     public String getPopularSender() {
-        return null;
+        return senders.getPopularKey();
     }
 
     /**
@@ -45,14 +64,14 @@ public class MailService implements Consumer {
      * 1 балл
      */
     public String getPopularRecipient() {
-        return null;
+        return recipients.getPopularKey();
     }
 
     /**
      * Метод должен заставить обработать service все mails.
      * 1 балл
      */
-    public static void process(MailService service, List mails) {
-
+    public static void process(MailService<Mail<?>> service, List<? extends Mail<?>> mails) {
+        mails.forEach(service);
     }
 }
