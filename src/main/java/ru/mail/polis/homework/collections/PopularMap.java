@@ -1,11 +1,7 @@
 package ru.mail.polis.homework.collections;
 
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -35,72 +31,100 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
 
+    private final Map<K, Integer> popularKeys;
+
+    private final Map<V, Integer> popularValues;
+
     public PopularMap() {
         this.map = new HashMap<>();
+        this.popularKeys = new HashMap<>();
+        this.popularValues = new HashMap<>();
     }
 
     public PopularMap(Map<K, V> map) {
         this.map = map;
+        this.popularKeys = new HashMap<>();
+        this.popularValues = new HashMap<>();
     }
 
     @Override
     public int size() {
-        return 0;
+        return this.map.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return this.map.isEmpty();
     }
 
     @Override
     public boolean containsKey(Object key) {
-        return false;
+        updatePopular(popularKeys, (K) key);
+
+        return this.map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        return false;
+        updatePopular(popularValues, (V) value);
+
+        return this.map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        return null;
+        V returnValue = this.map.get(key);
+
+        updatePopular(popularKeys, (K) key);
+        updatePopular(popularValues, returnValue);
+
+        return returnValue;
     }
 
     @Override
     public V put(K key, V value) {
-        return null;
+        V returnValue = this.map.put(key, value);
+
+        updatePopular(popularKeys, key);
+        updatePopular(popularValues, value);
+        updatePopular(popularValues, returnValue);
+
+        return returnValue;
     }
 
     @Override
     public V remove(Object key) {
+        V returnValue = this.map.remove(key);
+
+        updatePopular(popularKeys, (K) key);
+        updatePopular(popularValues, returnValue);
+
         return null;
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-        throw new UnsupportedOperationException("putAll");
+        this.map.putAll(m);
     }
 
     @Override
     public void clear() {
-
+        this.map.clear();
     }
 
     @Override
     public Set<K> keySet() {
-        return null;
+        return this.map.keySet();
     }
 
     @Override
     public Collection<V> values() {
-        return null;
+        return this.map.values();
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return null;
+        return this.map.entrySet();
     }
 
     /**
@@ -108,7 +132,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 1 балл
      */
     public K getPopularKey() {
-        return null;
+        return getPopular(popularKeys);
     }
 
 
@@ -117,7 +141,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 1 балл
      */
     public int getKeyPopularity(K key) {
-        return 0;
+        return this.popularKeys.getOrDefault(key, 0);
     }
 
     /**
@@ -125,7 +149,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 1 балл
      */
     public V getPopularValue() {
-        return null;
+        return getPopular(popularValues);
     }
 
     /**
@@ -134,7 +158,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 1 балл
      */
     public int getValuePopularity(V value) {
-        return 0;
+        return this.popularValues.getOrDefault(value, 0);
     }
 
     /**
@@ -142,6 +166,26 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 балла
      */
     public Iterator<V> popularIterator() {
-        return null;
+        List<V> valuesList = new ArrayList<>(popularValues.keySet());
+        valuesList.sort(Comparator.comparing(popularValues::get));
+        return valuesList.iterator();
+    }
+
+    private <T> void updatePopular(Map<T, Integer> updMap, T key) {
+        if (key != null) {
+            updMap.merge(key, 1, (oldValue, newValue) -> oldValue + newValue);
+        }
+    }
+
+    private <T> T getPopular(Map<T, Integer> searchMap) {
+        T popularValue = null;
+        Integer maxCount = -1;
+        for (Entry<T, Integer> entry : searchMap.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                maxCount = entry.getValue();
+                popularValue = entry.getKey();
+            }
+        }
+        return popularValue;
     }
 }
