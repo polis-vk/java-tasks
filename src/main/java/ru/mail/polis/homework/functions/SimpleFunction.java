@@ -38,7 +38,11 @@ public class SimpleFunction {
     static Function<String, Double> doubleStringEquation(double a1, double b1, double c1,
                                                          double a2, double b2, double c2,
                                                          Function<String, Double> g) {
-        return null;
+        return x -> square(a1, b1, c1).apply(square(a2, b2, c2).apply(g.apply(x)));
+    }
+
+    static UnaryOperator<Double> square(double a, double b, double c) {
+        return x -> a * x * x + b * x + c;
     }
 
 
@@ -56,7 +60,7 @@ public class SimpleFunction {
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
      * которая на заданном интервале (входящие аргументы результирующей функции) считает преобразование всех целых чисел
      * на заданном интервале.
-     *
+     * <p>
      * Пример хотим просуммировать числа от 2 до 10:
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 2 балла
