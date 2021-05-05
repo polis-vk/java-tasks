@@ -11,26 +11,29 @@ import java.util.stream.Collectors;
  * Популярность - это количество раз, который этот ключ/значение учавствовал/ло в других методах мапы, такие как
  * containsKey, get, put, remove (в качестве параметра и возвращаемого значения).
  * Считаем, что null я вам не передаю ни в качестве ключа, ни в качестве значения
- *
+ * <p>
  * Так же надо сделать итератор (подробности ниже).
- *
+ * <p>
  * Важный момент, вам не надо реализовывать мапу, вы должны использовать композицию.
  * Вы можете использовать любые коллекции, которые есть в java.
- *
+ * <p>
  * Помните, что по мапе тоже можно итерироваться
- *
- *         for (Map.Entry<K, V> entry : map.entrySet()) {
- *             entry.getKey();
- *             entry.getValue();
- *         }
- *
+ * <p>
+ * for (Map.Entry<K, V> entry : map.entrySet()) {
+ * entry.getKey();
+ * entry.getValue();
+ * }
+ * <p>
  * Всего 9 баллов (3 за общие методы, 6 за специальные)
+ *
  * @param <K> - тип ключа
  * @param <V> - тип значения
  */
 public class PopularMap<K, V> implements Map<K, V> {
     private final Map<K, Integer> keysPopularityMap = new HashMap<>();
     private final Map<V, Integer> valuesPopularityMap = new HashMap<>();
+    private K popularKey;
+    private V popularValue;
 
     private final Map<K, V> map;
 
@@ -54,21 +57,21 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        updatePopularityMap(keysPopularityMap, key);
+        popularKey = (K) updatePopularityMap(keysPopularityMap, key);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        updatePopularityMap(valuesPopularityMap, value);
+        popularValue = (V) updatePopularityMap(valuesPopularityMap, value);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
         V value = map.get(key);
-        updatePopularityMap(keysPopularityMap, key);
-        updatePopularityMap(valuesPopularityMap, value);
+        popularKey = (K) updatePopularityMap(keysPopularityMap, key);
+        popularValue = (V) updatePopularityMap(valuesPopularityMap, value);
         return value;
     }
 
@@ -78,17 +81,17 @@ public class PopularMap<K, V> implements Map<K, V> {
         if (oldValue != null) {
             updatePopularityMap(valuesPopularityMap, oldValue);
         }
-        updatePopularityMap(keysPopularityMap, key);
-        updatePopularityMap(valuesPopularityMap, value);
+        popularKey = (K) updatePopularityMap(keysPopularityMap, key);
+        popularValue = (V) updatePopularityMap(valuesPopularityMap, value);
         return oldValue;
     }
 
     @Override
     public V remove(Object key) {
         V oldValue = map.remove(key);
-        updatePopularityMap(keysPopularityMap, key);
+        popularKey = (K) updatePopularityMap(keysPopularityMap, key);
         if (oldValue != null) {
-            updatePopularityMap(valuesPopularityMap, oldValue);
+            popularValue = (V) updatePopularityMap(valuesPopularityMap, oldValue);
         }
         return oldValue;
     }
@@ -122,7 +125,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return keysPopularityMap.entrySet().stream().max(Entry.comparingByValue()).get().getKey();
+        return popularKey;
     }
 
 
@@ -137,7 +140,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        return valuesPopularityMap.entrySet().stream().max(Entry.comparingByValue()).get().getKey();
+        return popularValue;
     }
 
     /**
@@ -157,8 +160,9 @@ public class PopularMap<K, V> implements Map<K, V> {
                 collect(Collectors.toList()).iterator();
     }
 
-    private <M> void updatePopularityMap(Map<M, Integer> popularityMap, Object keyElement) {
+    private <M> Object updatePopularityMap(Map<M, Integer> popularityMap, Object keyElement) {
         popularityMap.compute((M) keyElement, (key, value) -> value == null ? 1 : value + 1);
+        return popularityMap.entrySet().stream().max(Entry.comparingByValue()).get().getKey();
     }
 
 }

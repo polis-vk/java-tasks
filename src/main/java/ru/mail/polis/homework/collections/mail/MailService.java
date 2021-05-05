@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  * Нужно создать сервис, который умеет обрабатывать письма и зарплату.
  * Письма состоят из получателя, отправителя, текста сообщения
  * Зарплата состоит из получателя, отправителя и суммы.
- *
+ * <p>
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 баллов за пакет mail
  */
@@ -26,8 +26,8 @@ public class MailService<T extends MailItem<?>> implements Consumer<T> {
      */
     @Override
     public void accept(T t) {
-        sendersMap.getOrDefault(t.sender, new ArrayList<>()).add(t);
-        receiversMap.getOrDefault(t.receiver, new ArrayList<>()).add(t);
+        sendersMap.getOrDefault(t.getSender(), new ArrayList<>()).add(t);
+        receiversMap.getOrDefault(t.getReceiver(), new ArrayList<>()).add(t);
     }
 
     /**
@@ -54,8 +54,8 @@ public class MailService<T extends MailItem<?>> implements Consumer<T> {
     /**
      * Метод должен заставить обработать service все mails.
      */
-    public static <T extends MailItem<?>>void process(MailService<T> service, List<T> mails) {
-        for(T mail: mails){
+    public static <T extends MailItem<?>> void process(MailService<T> service, List<T> mails) {
+        for (T mail : mails) {
             service.accept(mail);
         }
     }
