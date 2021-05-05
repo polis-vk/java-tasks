@@ -5,7 +5,7 @@ public abstract class MessagingUnit<T> {
     private final String sender;
     private final T content;
 
-    MessagingUnit(String receiver, String sender, T content){
+    MessagingUnit(String receiver, String sender, T content) {
         this.receiver = receiver;
         this.sender = sender;
         this.content = content;
