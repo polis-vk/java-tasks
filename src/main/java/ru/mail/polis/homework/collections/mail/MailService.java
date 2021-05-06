@@ -26,8 +26,8 @@ public class MailService<T extends MailItem<?>> implements Consumer<T> {
      */
     @Override
     public void accept(T t) {
-        sendersMap.getOrDefault(t.getSender(), new ArrayList<>()).add(t);
-        receiversMap.getOrDefault(t.getReceiver(), new ArrayList<>()).add(t);
+        upDateMailItems(t.getSender(), t, sendersMap);
+        upDateMailItems(t.getReceiver(), t, receiversMap);
     }
 
     /**
@@ -58,6 +58,12 @@ public class MailService<T extends MailItem<?>> implements Consumer<T> {
         for (T mail : mails) {
             service.accept(mail);
         }
+    }
+
+    private void upDateMailItems(String person, T mailItem, PopularMap<String, List<T>> mailMap) {
+        List<T> mailItems = mailMap.getOrDefault(person, new ArrayList<>());
+        mailItems.add(mailItem);
+        mailMap.put(person, mailItems);
     }
 
 }
