@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.functions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -39,18 +40,11 @@ public class SimpleFunction {
                                                          double a2, double b2, double c2,
                                                          Function<String, Double> g) {
 
-        return (String str) -> {
-            double x = squareFromStr(a2, b2, c2, g).apply(str);
-            return  a1 * x * x + b1 * x +  c1;
-        };
+        return (String str) -> square(a1, b1, c1).apply(square(a2, b2, c2).apply(g.apply(str)));
     }
 
-    static Function<String, Double> squareFromStr(double a, double b, double c,
-                                         Function<String, Double> g) {
-        return (String str) -> {
-            double x = g.apply(str);
-            return a * x * x + b * x + c;
-        };
+    static UnaryOperator<Double> square(double a, double b, double c) {
+        return (Double x) -> a * x * x + b * x + c;
     }
 
 
@@ -62,12 +56,16 @@ public class SimpleFunction {
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
             (List<IntUnaryOperator> listUnaryOperators) -> (List<Integer> listOfInteger) -> {
+                List<Integer> result = new ArrayList<>();
+                int addedElement;
                 for (Integer element : listOfInteger) {
+                    addedElement = element;
                     for (IntUnaryOperator unaryOperator : listUnaryOperators) {
-                        element = unaryOperator.applyAsInt(element);
+                        addedElement = unaryOperator.applyAsInt(addedElement);
+                        result.add(addedElement);
                     }
                 }
-                return listOfInteger;
+                return result;
             };
 
     /**
@@ -82,7 +80,7 @@ public class SimpleFunction {
     public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
             (Integer start, IntBinaryOperator operator) -> (int a, int b) -> {
                 int result = start;
-                for (int i = a; i < b; i++) {
+                for (int i = a; i <= b; i++) {
                     result = operator.applyAsInt(result, i);
                 }
                 return result;

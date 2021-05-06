@@ -38,7 +38,7 @@ public class MailService<T extends Mail<?>> implements Consumer<T> {
     @Override
     public void accept(T mail) {
         recipients.computeIfAbsent(mail.getRecipient(), k -> new ArrayList<>()).add(mail);
-        senders.put(mail.getSender(), senders.getOrDefault(mail.getSender(), 0) + 1);
+        senders.compute(mail.getSender(), (key, value) -> value == null ? 1 : value + 1);
     }
 
     /**
