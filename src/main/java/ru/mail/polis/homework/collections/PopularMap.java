@@ -61,43 +61,43 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        RefreshPopularity(keysPopularity, (K) key);
+        RefreshPopularity(keysPopularity, key, true);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        RefreshPopularity(valuesPopularity, (V) value);
+        RefreshPopularity(valuesPopularity, value, false);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        RefreshPopularity(keysPopularity, (K) key);
+        RefreshPopularity(keysPopularity, key, true);
         V previousValue = map.get(key);
         if (previousValue != null) {
-            RefreshPopularity(valuesPopularity, previousValue);
+            RefreshPopularity(valuesPopularity, previousValue, false);
         }
         return previousValue;
     }
 
     @Override
     public V put(K key, V value) {
-        RefreshPopularity(keysPopularity, key);
-        RefreshPopularity(valuesPopularity, value);
+        RefreshPopularity(keysPopularity, key, true);
+        RefreshPopularity(valuesPopularity, value, false);
         V previousValue = map.put(key, value);
         if (previousValue != null) {
-            RefreshPopularity(valuesPopularity, previousValue);
+            RefreshPopularity(valuesPopularity, previousValue, false);
         }
         return previousValue;
     }
 
     @Override
     public V remove(Object key) {
-        RefreshPopularity(keysPopularity, (K) key);
+        RefreshPopularity(keysPopularity, key, true);
         V deletedValue = map.remove(key);
         if (deletedValue != null) {
-            RefreshPopularity(valuesPopularity, deletedValue);
+            RefreshPopularity(valuesPopularity, deletedValue, false);
         }
         return deletedValue;
     }
@@ -171,14 +171,14 @@ public class PopularMap<K, V> implements Map<K, V> {
         return sortedValuesPopularity.iterator();
     }
 
-    public <T> void RefreshPopularity(Map<T, Integer> m, T key) {
-        Integer newPopularity = m.compute(key, (k, v) -> (v == null) ? 1 : v + 1);
-        if (m.equals(keysPopularity)) {
-            if (mostPopularKey == null || newPopularity > m.get(mostPopularKey)) {
+    public <T> void RefreshPopularity(Map<T, Integer> popularityMap, Object key, boolean flag) {
+        Integer newPopularity = popularityMap.compute((T) key, (k, v) -> (v == null) ? 1 : v + 1);
+        if (flag) {
+            if (mostPopularKey == null || newPopularity > popularityMap.get(mostPopularKey)) {
                 mostPopularKey = (K) key;
             }
         } else {
-            if (mostPopularValue == null || newPopularity > m.get(mostPopularValue)) {
+            if (mostPopularValue == null || newPopularity > popularityMap.get(mostPopularValue)) {
                 mostPopularValue = (V) key;
             }
         }

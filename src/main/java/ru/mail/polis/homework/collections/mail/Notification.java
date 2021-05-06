@@ -1,12 +1,12 @@
 package ru.mail.polis.homework.collections.mail;
 
-public class Notification<C> {
+public class Notification<T> {
     private final String recipient;
     private final String sender;
-    private final C content;
+    private final T content;
 
 
-    public Notification(String recipient, String sender, C content) {
+    public Notification(String recipient, String sender, T content) {
         this.recipient = recipient;
         this.sender = sender;
         this.content = content;
@@ -20,7 +20,7 @@ public class Notification<C> {
         return sender;
     }
 
-    public C getContent() {
+    public T getContent() {
         return content;
     }
 }

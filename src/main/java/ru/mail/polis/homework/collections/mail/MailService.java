@@ -1,10 +1,9 @@
 package ru.mail.polis.homework.collections.mail;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import ru.mail.polis.homework.collections.PopularMap;
+
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -15,31 +14,23 @@ import java.util.function.Consumer;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 баллов за пакет mail
  */
-public class MailService implements Consumer {
-    private Map<String, List<Notification>> mailBox;
-    private Map<String, Integer> sendersPopularity;
-    private Map<String, Integer> recipientsPopularity;
-    private String mostPopularSender;
-    private String mostPopularRecipient;
+public class MailService<T extends Notification<?>> implements Consumer<T> {
+    private PopularMap<String, List<Notification>> mailsToRecipients;
+    private PopularMap<String, List<Notification>> mailsFromSenders;
+
+    public MailService() {
+        this.mailsToRecipients = new PopularMap<>();
+        this.mailsFromSenders = new PopularMap<>();
+    }
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
      * 1 балл
      */
     @Override
-    public void accept(Object o) {
-        if (o instanceof Notification) {
-            RefreshPopularity((Notification) o);
-            mailBox.compute(((Notification<?>) o).getRecipient(), (k, v) -> {
-                if (v == null) {
-                    return new ArrayList<Notification>();
-                } else {
-                    List<Notification> temp = mailBox.get(k);
-                    temp.add((Notification) o);
-                    return temp;
-                }
-            });
-        }
+    public void accept(T object) {
+        mailsToRecipients.computeIfAbsent(object.getRecipient(), (l) -> new ArrayList<Notification>()).add(object);
+        mailsFromSenders.computeIfAbsent(object.getSender(), (l) -> new ArrayList<Notification>()).add(object);
     }
 
 
@@ -48,7 +39,7 @@ public class MailService implements Consumer {
      * 1 балл
      */
     public Map<String, List<Notification>> getMailBox() {
-        return mailBox;
+        return mailsToRecipients;
     }
 
     /**
@@ -56,7 +47,7 @@ public class MailService implements Consumer {
      * 1 балл
      */
     public String getPopularSender() {
-        return mostPopularSender;
+        return mailsFromSenders.getPopularKey();
     }
 
     /**
@@ -64,7 +55,7 @@ public class MailService implements Consumer {
      * 1 балл
      */
     public String getPopularRecipient() {
-        return mostPopularRecipient;
+        return mailsToRecipients.getPopularKey();
     }
 
     /**
@@ -74,17 +65,6 @@ public class MailService implements Consumer {
     public static void process(MailService service, List<Notification> mails) {
         for (Notification mail : mails) {
             service.accept(mail);
-        }
-    }
-
-    private void RefreshPopularity(Notification o) {
-        Integer newPopularity = sendersPopularity.compute(o.getSender(), (k, v) -> (v == null) ? 1 : v + 1);
-        if (sendersPopularity == null || newPopularity > sendersPopularity.get(mostPopularSender)) {
-            mostPopularSender = o.getSender();
-        }
-        newPopularity = recipientsPopularity.compute(o.getRecipient(), (k, v) -> (v == null) ? 1 : v + 1);
-        if (recipientsPopularity == null || newPopularity > recipientsPopularity.get(mostPopularRecipient)) {
-            mostPopularRecipient = o.getRecipient();
         }
     }
 }
