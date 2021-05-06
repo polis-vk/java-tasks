@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
 import java.util.function.IntUnaryOperator;
 import java.util.function.UnaryOperator;
+import java.util.ArrayList;
 
 public class SimpleFunction {
 
@@ -38,7 +39,12 @@ public class SimpleFunction {
     static Function<String, Double> doubleStringEquation(double a1, double b1, double c1,
                                                          double a2, double b2, double c2,
                                                          Function<String, Double> g) {
-        return null;
+        return (str) -> quadratic(a1, b1, c1, quadratic(a2, b2, c2, g.apply(str))); // Используется функция для построения кв. уравн
+    }
+
+    static Double quadratic(double a, double b, double c, double x) // Функция на выходе имеет обычное квадратное уравнение
+    {
+        return a * x * x + b * x + c;
     }
 
 
@@ -49,7 +55,17 @@ public class SimpleFunction {
      * 4 балла (доп задание)
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            a -> null;
+            (listIntUnaryOperator) -> (listInteger) -> {
+                List<Integer> result = new ArrayList<>(listIntUnaryOperator.size() * listInteger.size());
+                for (Integer i : listInteger) {
+                    Integer current = i;
+                    for (IntUnaryOperator unaryOperator : listIntUnaryOperator) {
+                        current = unaryOperator.applyAsInt(current);
+                        result.add(current);
+                    }
+                }
+                return result;
+            };
 
 
     /**
@@ -61,5 +77,12 @@ public class SimpleFunction {
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 2 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
+            (initial, binaryOperator) -> (left, right) -> {
+                int result = initial;
+                for (int i = left; i <= right; i++) {
+                    result = binaryOperator.applyAsInt(result, i);
+                }
+                return result;
+            };
 }
