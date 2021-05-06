@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -33,80 +35,104 @@ import java.util.Set;
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
+    private final Map<K, Integer> keyChart;
+    private final Map<V, Integer> valueChart;
 
     public PopularMap() {
-        this.map = new HashMap<>();
+        this(new HashMap<>());
     }
 
     public PopularMap(Map<K, V> map) {
         this.map = map;
+        this.keyChart = new HashMap<>();
+        this.valueChart = new HashMap<>();
     }
 
     @Override
     public int size() {
-        return 0;
+        return this.map.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return this.map.isEmpty();
     }
 
     @Override
     public boolean containsKey(Object key) {
-        return false;
+        this.updateChart((K) key, this.keyChart);
+        return this.map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        return false;
+        this.updateChart((V) value, this.valueChart);
+        return this.map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        return null;
+        this.updateChart((K) key, this.keyChart);
+
+        V value = this.map.get(key);
+        this.updateChart(value, this.valueChart);
+
+        return value;
     }
 
     @Override
     public V put(K key, V value) {
-        return null;
+        this.updateChart(key, this.keyChart);
+        this.updateChart(value, this.valueChart);
+
+        V previousValue = this.map.put(key, value);
+        this.updateChart(previousValue, this.valueChart);
+
+        return previousValue;
     }
 
     @Override
     public V remove(Object key) {
-        return null;
+        this.updateChart((K) key, this.keyChart);
+
+        V value = this.map.get(key);
+        this.updateChart(value, this.valueChart);
+
+        return this.map.remove(key);
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-        throw new UnsupportedOperationException("putAll");
+        this.map.putAll(m);
     }
 
     @Override
     public void clear() {
-
+        this.map.clear();
+        this.keyChart.clear();
+        this.valueChart.clear();
     }
 
     @Override
     public Set<K> keySet() {
-        return null;
+        return this.map.keySet();
     }
 
     @Override
     public Collection<V> values() {
-        return null;
+        return this.map.values();
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return null;
+        return this.map.entrySet();
     }
 
     /**
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return null;
+        return this.getPopularItem(this.keyChart);
     }
 
 
@@ -114,14 +140,14 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        return 0;
+        return this.keyChart.getOrDefault(key, 0);
     }
 
     /**
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        return null;
+        return this.getPopularItem(this.valueChart);
     }
 
     /**
@@ -129,13 +155,41 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        return 0;
+        return this.valueChart.getOrDefault(value, 0);
     }
 
     /**
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        return null;
+        List<V> list = new ArrayList<>(this.valueChart.keySet());
+        list.sort((V a, V b) -> {
+            Integer valueA = this.valueChart.get(a);
+            Integer valueB = this.valueChart.get(b);
+            return valueA.compareTo(valueB);
+        });
+        return list.iterator();
+    }
+
+    private <T> void updateChart(T key, Map<T, Integer> chart) {
+        if (key == null) return;
+
+        Integer popularity = chart.getOrDefault(key, 0) + 1;
+        chart.put(key, popularity);
+    }
+
+    private <T> T getPopularItem(Map<T, Integer> chart) {
+        T key = null;
+        Integer maxValue = 0;
+
+        for (Map.Entry<T, Integer> entry : chart.entrySet()) {
+            Integer value = entry.getValue();
+            if (value > maxValue) {
+                maxValue = value;
+                key = entry.getKey();
+            }
+        }
+
+        return key;
     }
 }

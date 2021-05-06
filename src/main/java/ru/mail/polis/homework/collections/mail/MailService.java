@@ -19,7 +19,7 @@ public class MailService<T extends MailTemplate> implements Consumer<T> {
     private final PopularMap<String, List<T>> senders;
     private final PopularMap<String, List<T>> recipients;
 
-    MailService() {
+    public MailService() {
         this.senders = new PopularMap<>();
         this.recipients = new PopularMap<>();
     }
