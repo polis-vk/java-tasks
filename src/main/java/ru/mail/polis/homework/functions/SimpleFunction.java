@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.functions;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
@@ -15,7 +16,6 @@ public class SimpleFunction {
      * 1 балл
      */
     interface TerFunction {
-
     }
 
     /**
@@ -38,10 +38,12 @@ public class SimpleFunction {
     static Function<String, Double> doubleStringEquation(double a1, double b1, double c1,
                                                          double a2, double b2, double c2,
                                                          Function<String, Double> g) {
-        return null;
+        return str -> square(a1, b1, c1, square(a2, b2, c2, g.apply(str)));
     }
 
-
+     private static Double square(double a, double b, double c, double x) {
+        return a * Math.pow(x, 2) + b * x + c;
+    }
     /**
      * Превращает список унарных операторов в один унарный оператор для списка чисел. Получившийся оператор
      * берет каждый элемент из списка чисел и последовательно применяет все входящие операторы.
