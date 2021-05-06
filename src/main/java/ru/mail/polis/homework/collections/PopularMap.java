@@ -36,6 +36,9 @@ public class PopularMap<K, V> implements Map<K, V> {
     private final Map<K, V> map;
     private HashMap<K, Integer> popularKey = new HashMap<>();
     private HashMap<V, Integer> popularObject = new HashMap<>();
+    private K maxKey;
+    private V maxObj;
+    public boolean changed = true;
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -69,32 +72,27 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V get(Object key) {
-        System.out.println(map.toString() + "    map");
-        System.out.println("get   " + key.toString());
         KeyValueCheck((K) key);
-        Object tempV = map.get(key);
-        if (map.containsKey(key)) {
-            ObjValueCheck((V) tempV);
+        V tempV = map.get(key);
+        if (tempV != null) {
+            ObjValueCheck(tempV);
         }
-        return (V) tempV;
+        return tempV;
     }
 
     @Override
     public V put(K key, V value) {
-        System.out.println(map.toString() + "    map");
-        System.out.println("put   " + key.toString() + "    " + value.toString());
         KeyValueCheck(key);
         ObjValueCheck(value);
         if (map.get(key) == value) {
             ObjValueCheck(value);
+            return value;
         }
         return map.put(key, value);
     }
 
     @Override
     public V remove(Object key) {
-        System.out.println(map.toString() + "    map");
-        System.out.println("remove   " + key.toString());
         KeyValueCheck((K) key);
         if (map.get(key) != null) {
             ObjValueCheck(map.get(key));
@@ -104,9 +102,6 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-        for (Object K : m.keySet()) {
-            ObjValueCheck((V) m.get(K));
-        }
         map.putAll(m);
     }
 
@@ -130,90 +125,74 @@ public class PopularMap<K, V> implements Map<K, V> {
         return map.entrySet();
     }
 
-    /**
-     * Возвращает самый популярный, на данный момент, ключ 1 балл
-     */
     public K getPopularKey() {
-        int max = 0;
-        Object key = new Object();
-        for (Object K : popularKey.keySet()) {
-            int temp = popularKey.get(K);
-            System.out.println("getPopularValue   " + K.toString() + "  " + temp);
-            if (temp >= max) {
-                max = temp;
-                key = K;
+        if (changed) {
+            int maxKeyCount = 0;
+            for (K K : popularKey.keySet()) {
+                int temp = popularKey.get(K);
+                if (temp >= maxKeyCount) {
+                    maxKeyCount = temp;
+                    maxKey = K;
+                }
             }
+            changed = false;
         }
-        return (K) key;
+        return maxKey;
     }
 
-    /**
-     * Возвращает количество использование ключа 1 балл
-     */
+    public V getPopularValue() {
+        if (changed) {
+            int maxObjCount = 0;
+            for (V V : popularObject.keySet()) {
+                int temp = popularObject.get(V);
+                if (temp >= maxObjCount) {
+                    maxObjCount = temp;
+                    maxObj = V;
+                }
+            }
+            changed = false;
+        }
+        return maxObj;
+    }
+
     public int getKeyPopularity(K key) {
-        if (!popularKey.containsKey(key)) {
+        Integer tempValue = popularKey.get(key);
+        if (tempValue == null) {
             return 0;
         }
         return popularKey.get(key);
     }
 
-    /**
-     * Возвращает самое популярное, на данный момент, значение. Надо учесть что
-     * значени может быть более одного 1 балл
-     */
-    public V getPopularValue() {
-        int max = 0;
-        Object value = new Object();
-        for (Object V : popularObject.keySet()) {
-            int temp = popularObject.get(V);
-            System.out.println("getPopularValue   " + V.toString() + "  " + temp);
-            if (temp >= max) {
-                max = temp;
-                value = V;
-            }
-        }
-        return (V) value;
-    }
-
-    /**
-     * Возвращает количество использований значений в методах: containsValue, get,
-     * put (учитывается 2 раза, если старое значение и новое - одно и тоже), remove
-     * (считаем по старому значению). 1 балл
-     */
     public int getValuePopularity(V value) {
-        if (!popularObject.containsKey(value)) {
+        Integer tempValue = popularObject.get(value);
+        if (tempValue == null) {
             return 0;
         }
-        return popularObject.get(value);
+        return tempValue;
     }
 
-    /**
-     * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к
-     * самым популярным) 2 балла
-     */
     public Iterator<V> popularIterator() {
-        popularObject.entrySet().stream()
-        .sorted(Map.Entry.<V, Integer>comparingByValue());
-        return popularObject.keySet().iterator();
+        HashMap<V, Integer> tempKey = new HashMap<>();
+        popularObject.entrySet().stream().sorted(Map.Entry.<V, Integer>comparingByValue().reversed())
+                .forEachOrdered(x -> tempKey.put(x.getKey(), x.getValue()));
+        return tempKey.keySet().iterator();
     }
 
     public void KeyValueCheck(K key) {
         if (popularKey.containsKey(key)) {
-            int temp = popularKey.get(key);
-            popularKey.put(key, 1 + temp);
+            popularKey.put(key, 1 + popularKey.get(key));
         } else {
             popularKey.put(key, 1);
         }
-        System.out.println(popularKey.toString() + " key");
+        changed = true;
     }
 
     public void ObjValueCheck(V value) {
         if (popularObject.containsKey(value)) {
-            int temp = popularObject.get(value);
-            popularObject.put(value, 1 + temp);
+            popularObject.put(value, 1 + popularObject.get(value));
         } else {
             popularObject.put(value, 1);
         }
-        System.out.println(popularObject.toString() + " obj");
+        changed = true;
     }
 }
