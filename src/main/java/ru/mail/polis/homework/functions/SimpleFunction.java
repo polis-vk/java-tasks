@@ -1,11 +1,8 @@
 package ru.mail.polis.homework.functions;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.IntBinaryOperator;
-import java.util.function.IntUnaryOperator;
-import java.util.function.UnaryOperator;
+import java.util.function.*;
 
 public class SimpleFunction {
 
@@ -38,7 +35,10 @@ public class SimpleFunction {
     static Function<String, Double> doubleStringEquation(double a1, double b1, double c1,
                                                          double a2, double b2, double c2,
                                                          Function<String, Double> g) {
-        return null;
+        return (String str) -> {
+            double x = (a2 * Math.pow(g.apply(str), 2) + b2 * g.apply(str) + c2);
+            return a1 * Math.pow(x, 2) + b1 * x + c1;
+        };
     }
 
 
@@ -49,17 +49,34 @@ public class SimpleFunction {
      * 4 балла (доп задание)
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            a -> null;
+            (unaryOperatorList) -> (integerList) -> {
+                List<Integer> resultList = new ArrayList<>(unaryOperatorList.size() * integerList.size());
+                for (Integer number : integerList) {
+                    Integer current = number;
+                    for (IntUnaryOperator operator : unaryOperatorList) {
+                        current = operator.applyAsInt(current);
+                        resultList.add(current);
+                    }
+                }
+                return resultList;
+            };
 
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
      * которая на заданном интервале (входящие аргументы результирующей функции) считает преобразование всех целых чисел
      * на заданном интервале.
-     *
+     * <p>
      * Пример хотим просуммировать числа от 2 до 10:
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 2 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
+            (start, biOperator) -> (left, right) -> {
+                int result = start;
+                for (int i = left; i <= right; ++i) {
+                    result = biOperator.applyAsInt(result, i);
+                }
+                return result;
+            };
 }
