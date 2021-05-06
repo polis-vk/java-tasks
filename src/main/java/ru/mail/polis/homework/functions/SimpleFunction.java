@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.functions;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
@@ -49,17 +52,46 @@ public class SimpleFunction {
      * 4 балла (доп задание)
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            a -> null;
+            unaryOperatorList -> {
+                if (unaryOperatorList == null || unaryOperatorList.isEmpty()) {
+                    return null;
+                }
+                return intList -> {
+                    if (intList == null || intList.isEmpty()) {
+                        return null;
+                    }
+                    List<Integer> resIntList = new ArrayList<>();
+
+                    intList.forEach(iListElement -> {
+                                resIntList.add(unaryOperatorList.get(0).applyAsInt(iListElement));
+                                for (int i = 1; i < unaryOperatorList.size(); ++i) {
+                                    resIntList.add(unaryOperatorList.get(i).applyAsInt(resIntList.get(resIntList.size() - 1)));
+                                }
+                            }
+                    );
+                    intList.clear();
+                    intList.addAll(resIntList);
+                    return intList;
+                };
+            };
 
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
      * которая на заданном интервале (входящие аргументы результирующей функции) считает преобразование всех целых чисел
      * на заданном интервале.
-     *
+     * <p>
      * Пример хотим просуммировать числа от 2 до 10:
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 2 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
+            (iInitialValue, function) ->
+                    (int1, int2) -> {
+                        int result = iInitialValue;
+                        for (int x = int1; x <= int2; ++x) {
+                            result = function.applyAsInt(result, x);
+                        }
+                        return result;
+                    };
 }
