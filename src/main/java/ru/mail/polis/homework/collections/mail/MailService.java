@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.collections.mail;
 
 
+import ru.mail.polis.homework.collections.PopularMap;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -12,42 +15,55 @@ import java.util.function.Consumer;
  *
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  */
-public class MailService implements Consumer {
+public class MailService<T extends MailTemplate> implements Consumer<T> {
+    private final PopularMap<String, List<T>> senders;
+    private final PopularMap<String, List<T>> recipients;
+
+    MailService() {
+        this.senders = new PopularMap<>();
+        this.recipients = new PopularMap<>();
+    }
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
      * 1 балл
      */
     @Override
-    public void accept(Object o) {
+    public void accept(T mail) {
+        String sender = mail.getSender();
+        this.senders.computeIfAbsent(sender, k -> new ArrayList<T>()).add(mail);
 
+        String recipient = mail.getRecipient();
+        this.recipients.computeIfAbsent(recipient, k -> new ArrayList<T>()).add(mail);
     }
 
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      */
-    public Map<String, List> getMailBox() {
-        return null;
+    public Map<String, List<T>> getMailBox() {
+        return this.recipients;
     }
 
     /**
      * Возвращает самого популярного отправителя
      */
     public String getPopularSender() {
-        return null;
+        return this.senders.getPopularKey();
     }
 
     /**
      * Возвращает самого популярного получателя
      */
     public String getPopularRecipient() {
-        return null;
+        return this.recipients.getPopularKey();
     }
 
     /**
      * Метод должен заставить обработать service все mails.
      */
-    public static void process(MailService service, List mails) {
-
+    public static <T extends MailTemplate> void process(MailService<T> service, List<T> mails) {
+        for (T mail : mails) {
+            service.accept(mail);
+        }
     }
 }
