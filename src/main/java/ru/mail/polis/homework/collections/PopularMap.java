@@ -34,8 +34,8 @@ import java.util.Set;
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
-    private HashMap<K, Integer> popularKey = new HashMap<>();
-    private HashMap<V, Integer> popularObject = new HashMap<>();
+    private final HashMap<K, Integer> popularKey = new HashMap<>();
+    private final HashMap<V, Integer> popularObject = new HashMap<>();
     private K maxKey;
     private V maxObj;
     public boolean changed = true;
@@ -82,6 +82,9 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
+        if (map.get(key) != null && map.get(key) != value) {
+            ObjValueCheck(map.get(key));
+        }
         KeyValueCheck(key);
         ObjValueCheck(value);
         if (map.get(key) == value) {
