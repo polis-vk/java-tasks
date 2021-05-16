@@ -58,38 +58,38 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        addPopularity(keysPopularity, (K) key);
+        addPopularity(keysPopularity, (K) key, true);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        addPopularity(valuesPopularity, (V) value);
+        addPopularity(valuesPopularity, (V) value, false);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
         V value = map.get(key);
-        addPopularity(keysPopularity, (K) key);
-        addPopularity(valuesPopularity, value);
+        addPopularity(keysPopularity, (K) key, true);
+        addPopularity(valuesPopularity, value, false);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
-        addPopularity(keysPopularity, key);
-        addPopularity(valuesPopularity, value);
+        addPopularity(keysPopularity, key, true);
+        addPopularity(valuesPopularity, value, false);
         V oldValue = map.put(key, value);
-        addPopularity(valuesPopularity, oldValue);
+        addPopularity(valuesPopularity, oldValue, false);
         return oldValue;
     }
 
     @Override
     public V remove(Object key) {
-        addPopularity(keysPopularity, (K) key);
+        addPopularity(keysPopularity, (K) key, true);
         V valueRemoved = map.remove(key);
-        addPopularity(valuesPopularity, valueRemoved);
+        addPopularity(valuesPopularity, valueRemoved, false);
         return valueRemoved;
     }
 
@@ -126,7 +126,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 1 балл
      */
     public K getPopularKey() {
-        return (popularKey == null) ? popularKey = getPopular(keysPopularity) : popularKey;
+        return popularKey;
     }
 
     /**
@@ -142,7 +142,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 1 балл
      */
     public V getPopularValue() {
-        return (popularValue == null) ? popularValue = getPopular(valuesPopularity) : popularValue;
+        return popularValue;
     }
 
     /**
@@ -164,23 +164,19 @@ public class PopularMap<K, V> implements Map<K, V> {
         return valuesPopularityList.iterator();
     }
 
-    private <Z> void addPopularity(Map<Z, Integer> target, Z parameter) {
-        popularKey = null;
-        popularValue = null;
+    private <Z> void addPopularity(Map<Z, Integer> target, Z parameter, boolean isKey) {
         if (parameter != null) {
-            target.compute(parameter, (k, v) -> (v == null) ? 1 : v + 1);
-        }
-    }
-
-    private <Z> Z getPopular(Map<Z, Integer> target) {
-        Integer maxPopularity = 0;
-        Z maxPopular = null;
-        for (Entry<Z, Integer> entry : target.entrySet()) {
-            if (entry.getValue() > maxPopularity) {
-                maxPopular = entry.getKey();
-                maxPopularity = entry.getValue();
+            Integer parameterPopularity = target.compute(parameter, (k, v) -> (v == null) ? 1 : v + 1);
+            if (isKey) {
+                if (popularKey == null || target.get(popularKey) < parameterPopularity) {
+                    popularKey = (K) parameter;
+                }
+            }
+            else {
+                if (popularValue == null || target.get(popularValue) < parameterPopularity) {
+                    popularValue = (V) parameter;
+                }
             }
         }
-        return maxPopular;
     }
 }
