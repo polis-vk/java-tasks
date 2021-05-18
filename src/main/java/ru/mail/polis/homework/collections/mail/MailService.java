@@ -67,7 +67,7 @@ public class MailService<T extends Mail<?>> implements Consumer<T> {
 
     private void add(String name, T mail, PopularMap<String, List<T>> map) {
         List<T> newMail = new ArrayList<T>() {{add(mail);}};
-        map.merge(name, newMail, (oldValue, newValue) ->
-                Stream.concat(oldValue.stream(), newValue.stream()).collect(Collectors.toList()));
+        //Короче чем использовать Stream.concat с merge, но выглядит так себе
+        map.compute(name, (k, v) -> (v == null) ? newMail : (v.add(mail)? v : v));
     }
 }
