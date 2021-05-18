@@ -58,38 +58,38 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        addPopularity(keysPopularity, (K) key, true);
+        addPopularityKey((K) key);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        addPopularity(valuesPopularity, (V) value, false);
+        addPopularityValue((V) value);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
         V value = map.get(key);
-        addPopularity(keysPopularity, (K) key, true);
-        addPopularity(valuesPopularity, value, false);
+        addPopularityKey((K) key);
+        addPopularityValue(value);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
-        addPopularity(keysPopularity, key, true);
-        addPopularity(valuesPopularity, value, false);
+        addPopularityKey(key);
+        addPopularityValue(value);
         V oldValue = map.put(key, value);
-        addPopularity(valuesPopularity, oldValue, false);
+        addPopularityValue(oldValue);
         return oldValue;
     }
 
     @Override
     public V remove(Object key) {
-        addPopularity(keysPopularity, (K) key, true);
+        addPopularityKey((K) key);
         V valueRemoved = map.remove(key);
-        addPopularity(valuesPopularity, valueRemoved, false);
+        addPopularityValue(valueRemoved);
         return valueRemoved;
     }
 
@@ -164,16 +164,24 @@ public class PopularMap<K, V> implements Map<K, V> {
         return valuesPopularityList.iterator();
     }
 
-    private <Z> void addPopularity(Map<Z, Integer> target, Z parameter, boolean isKey) {
+    private void addPopularityKey(K parameter) {
+        addPopularity(parameter, true, keysPopularity);
+    }
+
+    private void addPopularityValue(V parameter) {
+        addPopularity(parameter, false, valuesPopularity);
+    }
+
+    private <Z> void addPopularity(Z parameter, boolean isKeyUpdate, Map<Z, Integer> popularMap) {
         if (parameter != null) {
-            Integer parameterPopularity = target.compute(parameter, (k, v) -> (v == null) ? 1 : v + 1);
-            if (isKey) {
-                if (popularKey == null || target.get(popularKey) < parameterPopularity) {
+            int parameterPopularity = popularMap.compute(parameter, (k, v) -> (v == null) ? 1 : v + 1);
+            if (isKeyUpdate) {
+                if (popularKey == null || keysPopularity.get(popularKey) < parameterPopularity) {
                     popularKey = (K) parameter;
                 }
             }
             else {
-                if (popularValue == null || target.get(popularValue) < parameterPopularity) {
+                if (popularValue == null || valuesPopularity.get(popularValue) < parameterPopularity) {
                     popularValue = (V) parameter;
                 }
             }
