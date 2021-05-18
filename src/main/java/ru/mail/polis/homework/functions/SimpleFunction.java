@@ -40,9 +40,11 @@ public class SimpleFunction {
     static Function<String, Double> doubleStringEquation(double a1, double b1, double c1,
                                                          double a2, double b2, double c2,
                                                          Function<String, Double> g) {
-        TerFunction<Double, Double, Double, Function<Double, Double>> square =
-                (a, b, c) -> (x) -> (a * x * x + b * x + c);
-        return str -> square.apply(a1, b1, c1).apply(square.apply(a2, b2, c2).apply(g.apply(str)));
+        return str -> square(a1, b1, c1).compose(square(a2, b2, c2).compose(g)).apply(str);
+    }
+
+    static private Function<Double, Double> square(double a, double b, double c) {
+        return x -> a * Math.pow(x, 2) + b * x + c;
     }
 
 
