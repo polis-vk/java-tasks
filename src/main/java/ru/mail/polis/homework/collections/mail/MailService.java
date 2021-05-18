@@ -4,6 +4,7 @@ package ru.mail.polis.homework.collections.mail;
 import ru.mail.polis.homework.collections.PopularMap;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -67,7 +68,7 @@ public class MailService<T extends Mail<?>> implements Consumer<T> {
 
     private void add(String name, T mail, PopularMap<String, List<T>> map) {
         List<T> newMail = new ArrayList<T>() {{add(mail);}};
-        //Короче чем использовать Stream.concat с merge, но выглядит так себе
-        map.compute(name, (k, v) -> (v == null) ? newMail : (v.add(mail)? v : v));
+        map.compute(name, (k, v) ->
+                (v == null) ? newMail : (Stream.concat(v.stream(), newMail.stream()).collect(Collectors.toList())));
     }
 }
