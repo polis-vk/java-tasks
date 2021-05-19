@@ -14,9 +14,9 @@ import java.util.function.Consumer;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 баллов за пакет mail
  */
-public class MailService<T extends Notification<?>> implements Consumer<T> {
-    private PopularMap<String, List<Notification>> mailsToRecipients;
-    private PopularMap<String, List<Notification>> mailsFromSenders;
+public class MailService<T extends Notification> implements Consumer<T> {
+    private final PopularMap<String, List<Notification>> mailsToRecipients;
+    private final PopularMap<String, List<Notification>> mailsFromSenders;
 
     public MailService() {
         this.mailsToRecipients = new PopularMap<>();
