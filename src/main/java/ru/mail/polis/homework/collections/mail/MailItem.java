@@ -5,6 +5,12 @@ public class MailItem<T> {
     private final String receiver;
     private final T entry;
 
+    public MailItem(String sender, String receiver, T entry) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.entry = entry;
+    }
+
     public String getSender() {
         return sender;
     }
@@ -17,9 +23,4 @@ public class MailItem<T> {
         return entry;
     }
 
-    public MailItem(String sender, String receiver, T entry) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.entry = entry;
-    }
 }

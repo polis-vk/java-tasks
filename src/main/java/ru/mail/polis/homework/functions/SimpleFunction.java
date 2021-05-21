@@ -39,14 +39,11 @@ public class SimpleFunction {
     static Function<String, Double> doubleStringEquation(double a1, double b1, double c1,
                                                          double a2, double b2, double c2,
                                                          Function<String, Double> g) {
-        return (String str) -> square(a1, b1, c1, square(a2, b2, c2, g)).apply(str);
+        return str -> square(a1, b1, c1).compose(square(a2, b2, c2).compose(g)).apply(str);
     }
 
-    static Function<String, Double> square(double a, double b, double c, Function<String, Double> g) {
-        return (String str) -> {
-            double x = g.apply(str);
-            return a * x * x + b * x + c;
-        };
+    private static Function<Double, Double> square(double a, double b, double c) {
+        return x -> a * x * x + b * x + c;
     }
 
     /**
