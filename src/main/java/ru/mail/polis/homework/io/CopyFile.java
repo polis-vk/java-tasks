@@ -45,15 +45,15 @@ public class CopyFile {
     }
 
     private static void copyFile(Path copyFrom, Path copyTo) throws IOException {
-        try (InputStream inputStream = Files.newInputStream(copyFrom);
-             OutputStream outputStream = Files.newOutputStream(copyTo)) {
-            byte[] buffer = new byte[1024];
-            int blockSize = inputStream.read(buffer);
-            while (blockSize > 0) {
-                outputStream.write(buffer, 0, blockSize);
-                blockSize = inputStream.read(buffer);
+        try (InputStream inputStream = Files.newInputStream(copyFrom)) {
+            try (OutputStream outputStream = Files.newOutputStream(copyTo)) {
+                byte[] buffer = new byte[1024];
+                int blockSize = inputStream.read(buffer);
+                while (blockSize > 0) {
+                    outputStream.write(buffer, 0, blockSize);
+                    blockSize = inputStream.read(buffer);
+                }
             }
-            outputStream.flush();
         }
     }
 }
