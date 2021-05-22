@@ -7,6 +7,8 @@ import java.util.function.DoubleUnaryOperator;
 
 public class SimpleStreams {
 
+    public static final double GRAVITATION_CONSTANT = 9.8;
+
     /**
      * Реализуйте проверку на простоту входящего числа с помощью стримов.
      * Никаких циклов.
@@ -30,14 +32,16 @@ public class SimpleStreams {
      * Маленький мальчик кидает мячик n раз в поле силы тяжести под углом alpha к поверхности земли.
      * Так же известно, что мальчик устает с каждым броском все больше. Дана начальная скорость v - скорость
      * при первом броске и функция изменения скорости от номера броска - changeV
-     *
+     * <p>
      * Посчитать расстояние на которое улетит мячик.
      * Для расчета дальности броска можно пользоваться физическими формулами движения и законом сохранения энергии.
      * g = 9.8
-     *
+     * <p>
      * 3 балла
      */
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return 0;
+        double startSpeed = (n == 1) ? v : changeV.applyAsDouble(n);
+        return (2 * Math.pow(startSpeed, 2.0) *
+                Math.sin(Math.toRadians(alpha)) * Math.cos(Math.toRadians(alpha))) / GRAVITATION_CONSTANT;
     }
 }

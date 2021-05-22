@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.collections.streams;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -17,12 +21,25 @@ import java.util.stream.Stream;
  */
 public class WordFrequency {
 
+    private final static String SPILT_WORD_REGEX = "[ .,!;:?\\-\\n]+";
+    private final static int FLOOR_WORD_COUNT = 10;
+
     /**
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-        return null;
+        return lines
+                .map(String::toLowerCase)
+                .flatMap((string) -> Arrays.stream(string.split(SPILT_WORD_REGEX)))
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue()
+                        .reversed()
+                        .thenComparing(Map.Entry.comparingByKey()))
+                .map(Map.Entry::getKey)
+                .limit(FLOOR_WORD_COUNT)
+                .collect(Collectors.toList());
     }
-
 
 }
