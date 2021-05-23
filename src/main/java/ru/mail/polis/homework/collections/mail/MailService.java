@@ -68,7 +68,9 @@ public class MailService<T extends Mail<?>> implements Consumer<T> {
 
     private void add(String name, T mail, PopularMap<String, List<T>> map) {
         List<T> newMail = new ArrayList<T>() {{add(mail);}};
-        map.compute(name, (k, v) ->
-                (v == null) ? newMail : (Stream.concat(v.stream(), newMail.stream()).collect(Collectors.toList())));
+        List<T> currentMails = map.putIfAbsent(name, newMail);
+        if (!currentMails.equals(newMail)) {
+            currentMails.add(mail);
+        }
     }
 }
