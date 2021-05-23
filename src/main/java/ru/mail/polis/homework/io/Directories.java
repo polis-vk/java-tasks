@@ -20,25 +20,19 @@ public class Directories {
      */
     public static int removeWithFile(String path) {
         File dir = new File(path);
-        if(!dir.exists()){
+        if (!dir.exists()) {
             return 0;
         }
         return 1 + removeRecursiveFile(dir);
     }
 
-    public static int removeRecursiveFile(File dir){
+    public static int removeRecursiveFile(File dir) {
         int n = 0;
-        if(dir.isDirectory()){
-        for (File element: dir.listFiles()){
-            n++;
-            if (element.isDirectory()){
-                n += removeRecursiveFile(element);
-            }
-            else {
-                element.delete();
+        if (dir.isDirectory()) {
+            for (File element : dir.listFiles()) {
+                n += removeRecursiveFile(element) + 1;
             }
         }
-    }
         dir.delete();
         return n;
     }
@@ -51,33 +45,20 @@ public class Directories {
         if (!Files.exists(Paths.get(path))) {
             return 0;
         }
-
         return 1 + removeRecursivePath(path);
     }
+
     public static int removeRecursivePath(String dir) throws IOException {
-        final Path[] path = {Paths.get(dir)};
-        final int[] n = {0};
-        if(Files.isDirectory(path[0])){
-            DirectoryStream <Path> stream = Files.newDirectoryStream(path[0]);
-            stream.forEach(x -> {
-                n[0]++;
-                if(Files.isDirectory(x)){
-                    try {
-                        n[0] += removeRecursivePath(x.toString());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                else {
-                    try {
-                        Files.delete(x);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-    }
-        Files.delete(path[0]);
-        return n[0];
+        Path path = Paths.get(dir);
+        int n = 0;
+        if (Files.isDirectory(path)) {
+            DirectoryStream<Path> stream = Files.newDirectoryStream(path);
+            for (Path line : stream) {
+                n += removeRecursivePath(line.toString()) + 1;
+            }
+            stream.close();
+        }
+        Files.delete(path);
+        return n;
     }
 }

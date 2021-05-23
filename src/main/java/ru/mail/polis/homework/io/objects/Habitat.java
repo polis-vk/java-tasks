@@ -7,12 +7,12 @@ public class Habitat implements Serializable {
     private final Mainland mainland;
     private final ClimateZone climateZone;
 
-    Habitat() {
+    public Habitat() {
         this.mainland = Mainland.UNKNOWN;
         this.climateZone = ClimateZone.UNKNOWN;
     }
 
-    Habitat(ClimateZone climateZone, Mainland mainland) {
+    public Habitat(ClimateZone climateZone, Mainland mainland) {
         this.mainland = mainland;
         this.climateZone = climateZone;
     }
