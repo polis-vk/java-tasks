@@ -7,6 +7,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.List;
 
 public class Directories {
 
@@ -30,9 +33,8 @@ public class Directories {
         int counter = 0;
         for (File childFile : currentFile.listFiles()) {
             if (childFile.isDirectory()) {
-                counter += removeWithFile(childFile.toString());
-            }
-            else {
+                counter += removeWithFile(childFile.getPath());
+            } else {
                 childFile.delete();
                 counter++;
             }
@@ -51,16 +53,15 @@ public class Directories {
             return 0;
         }
         AtomicReference<Integer> counter = new AtomicReference<>(0);
-        Files.walk(removingPath)
-                .sorted(Comparator.reverseOrder())
-                .forEachOrdered(file -> {
-                    try {
-                        Files.delete(file);
-                        counter.getAndSet(counter.get() + 1);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
+        try (Stream<Path> pathStream = Files.walk(removingPath)) {
+            List<Path> pathList = pathStream
+                    .sorted(Comparator.reverseOrder())
+                    .collect(Collectors.toList());
+            for (Path currentPath : pathList) {
+                Files.delete(currentPath);
+                counter.getAndSet(counter.get() + 1);
+            }
+        }
         return counter.get();
     }
 }
