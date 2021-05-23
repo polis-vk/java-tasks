@@ -34,6 +34,9 @@ public class PopularMap<K, V> implements Map<K, V> {
     private final Map<K, Integer> keysPopularity;
     private final Map<V, Integer> valuesPopularity;
 
+    private K popularKey;
+    private V popularValue;
+
     public PopularMap() {
         this.map = new HashMap<>();
         this.keysPopularity = new HashMap<>();
@@ -118,9 +121,6 @@ public class PopularMap<K, V> implements Map<K, V> {
         return map.entrySet();
     }
 
-    private K popularKey;
-    private V popularValue;
-
     /**
      * Возвращает самый популярный, на данный момент, ключ
      * 1 балл
@@ -179,8 +179,7 @@ public class PopularMap<K, V> implements Map<K, V> {
                 if (popularKey == null || keysPopularity.get(popularKey) < parameterPopularity) {
                     popularKey = (K) parameter;
                 }
-            }
-            else {
+            } else {
                 if (popularValue == null || valuesPopularity.get(popularValue) < parameterPopularity) {
                     popularValue = (V) parameter;
                 }
