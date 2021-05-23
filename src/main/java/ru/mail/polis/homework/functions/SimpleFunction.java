@@ -36,15 +36,11 @@ public class SimpleFunction {
                                                          double a2, double b2, double c2,
                                                          Function<String, Double> g) {
 
-        Function<String, Double> fn = func(a2, b2, c2, g);
-        return func(a1, b1, c1, fn);
+        return str -> square(a1, b1, c1).compose(square(a2, b2, c2).compose(g)).apply(str);
     }
 
-    static Function<String, Double> func(double a, double b, double c, Function<String, Double> g) {
-        return (String str) -> {
-            double x = g.apply(str);
-            return a * x * x + b * x + c;
-        };
+    static private Function<Double, Double> square(double a, double b, double c) {
+        return x -> a * x * x + b * x + c;
     }
 
 
@@ -56,8 +52,8 @@ public class SimpleFunction {
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper = a -> numList -> {
         List<Integer> result = new ArrayList<>();
-        for (Integer num : numList) {
-            Integer tempNum = num;
+        for (int num : numList) {
+            int tempNum = num;
             for (IntUnaryOperator operator : a) {
                 tempNum = operator.applyAsInt(tempNum);
                 result.add(tempNum);

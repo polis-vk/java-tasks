@@ -39,6 +39,9 @@ public class PopularMap<K, V> implements Map<K, V> {
     private final Map<K, Integer> keyChart;
     private final Map<V, Integer> valueChart;
 
+    private K topKey;
+    private V topValue;
+
     public PopularMap() {
         this(new HashMap<>());
     }
@@ -51,82 +54,82 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public int size() {
-        return this.map.size();
+        return map.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return this.map.isEmpty();
+        return map.isEmpty();
     }
 
     @Override
     public boolean containsKey(Object key) {
-        this.updateChart((K) key, this.keyChart);
-        return this.map.containsKey(key);
+        topKey = this.updateChart((K) key, keyChart);
+        return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        this.updateChart((V) value, this.valueChart);
-        return this.map.containsValue(value);
+        topValue = this.updateChart((V) value, valueChart);
+        return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        this.updateChart((K) key, this.keyChart);
+        topKey = this.updateChart((K) key, keyChart);
 
-        V value = this.map.get(key);
-        this.updateChart(value, this.valueChart);
+        V value = map.get(key);
+        topValue = this.updateChart(value, valueChart);
 
         return value;
     }
 
     @Override
     public V put(K key, V value) {
-        this.updateChart(key, this.keyChart);
-        this.updateChart(value, this.valueChart);
+        topKey = this.updateChart(key, keyChart);
+        topValue = this.updateChart(value, valueChart);
 
-        V previousValue = this.map.put(key, value);
-        this.updateChart(previousValue, this.valueChart);
+        V previousValue = map.put(key, value);
+        topValue = this.updateChart(previousValue, valueChart);
 
         return previousValue;
     }
 
     @Override
     public V remove(Object key) {
-        this.updateChart((K) key, this.keyChart);
+        topKey = this.updateChart((K) key, keyChart);
 
-        V value = this.map.get(key);
-        this.updateChart(value, this.valueChart);
+        V value = map.get(key);
+        topValue = this.updateChart(value, valueChart);
 
-        return this.map.remove(key);
+        return map.remove(key);
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-        this.map.putAll(m);
+        map.putAll(m);
     }
 
     @Override
     public void clear() {
-        this.map.clear();
-        this.keyChart.clear();
-        this.valueChart.clear();
+        map.clear();
+        keyChart.clear();
+        valueChart.clear();
     }
 
     @Override
     public Set<K> keySet() {
-        return this.map.keySet();
+        return map.keySet();
     }
 
     @Override
     public Collection<V> values() {
-        return this.map.values();
+        return map.values();
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return this.map.entrySet();
+        return map.entrySet();
     }
 
     /**
@@ -134,7 +137,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 1 балл
      */
     public K getPopularKey() {
-        return this.getPopularItem(this.keyChart);
+        return topKey;
     }
 
 
@@ -143,7 +146,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 1 балл
      */
     public int getKeyPopularity(K key) {
-        return this.keyChart.getOrDefault(key, 0);
+        return keyChart.getOrDefault(key, 0);
     }
 
     /**
@@ -151,7 +154,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 1 балл
      */
     public V getPopularValue() {
-        return this.getPopularItem(this.valueChart);
+        return topValue;
     }
 
     /**
@@ -160,7 +163,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 1 балл
      */
     public int getValuePopularity(V value) {
-        return this.valueChart.getOrDefault(value, 0);
+        return valueChart.getOrDefault(value, 0);
     }
 
     /**
@@ -168,28 +171,29 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 балла
      */
     public Iterator<V> popularIterator() {
-        List<V> list = new ArrayList<>(this.valueChart.keySet());
+        List<V> list = new ArrayList<>(valueChart.keySet());
         list.sort((V a, V b) -> {
-            Integer valueA = this.valueChart.get(a);
-            Integer valueB = this.valueChart.get(b);
+            Integer valueA = valueChart.get(a);
+            Integer valueB = valueChart.get(b);
             return valueA.compareTo(valueB);
         });
         return list.iterator();
     }
 
-    private <T> void updateChart(T key, Map<T, Integer> chart) {
-        if (key == null) return;
+    private <T> T updateChart(T key, Map<T, Integer> chart) {
+        if (key != null) {
+            chart.compute(key, (k, v) -> v == null ? 1 : v + 1);
+        }
 
-        Integer popularity = chart.getOrDefault(key, 0) + 1;
-        chart.put(key, popularity);
+        return this.getPopularItem(chart);
     }
 
     private <T> T getPopularItem(Map<T, Integer> chart) {
         T key = null;
-        Integer maxValue = 0;
+        int maxValue = 0;
 
         for (Map.Entry<T, Integer> entry : chart.entrySet()) {
-            Integer value = entry.getValue();
+            int value = entry.getValue();
             if (value > maxValue) {
                 maxValue = value;
                 key = entry.getKey();

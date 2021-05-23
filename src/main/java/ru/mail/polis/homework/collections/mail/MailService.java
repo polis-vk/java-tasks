@@ -31,19 +31,16 @@ public class MailService<T extends MailTemplate> implements Consumer<T> {
      */
     @Override
     public void accept(T mail) {
-        String sender = mail.getSender();
-        this.senders.computeIfAbsent(sender, k -> new ArrayList<T>()).add(mail);
-
-        String recipient = mail.getRecipient();
-        this.recipients.computeIfAbsent(recipient, k -> new ArrayList<T>()).add(mail);
+        senders.computeIfAbsent(mail.getSender(), k -> new ArrayList<T>()).add(mail);
+        recipients.computeIfAbsent(mail.getRecipient(), k -> new ArrayList<T>()).add(mail);
     }
 
     /**
-     * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
+     * Метод возвращает мапу получатель  -> все объекты которые пришли к этому получателю через данный почтовый сервис
      * 1 балл
      */
     public Map<String, List<T>> getMailBox() {
-        return this.recipients;
+        return recipients;
     }
 
     /**
@@ -51,7 +48,7 @@ public class MailService<T extends MailTemplate> implements Consumer<T> {
      * 1 балл
      */
     public String getPopularSender() {
-        return this.senders.getPopularKey();
+        return senders.getPopularKey();
     }
 
     /**
@@ -59,7 +56,7 @@ public class MailService<T extends MailTemplate> implements Consumer<T> {
      * 1 балл
      */
     public String getPopularRecipient() {
-        return this.recipients.getPopularKey();
+        return recipients.getPopularKey();
     }
 
     /**
