@@ -165,25 +165,20 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private void addPopularityKey(K parameter) {
-        addPopularity(parameter, true, keysPopularity);
+        popularKey = addPopularity(parameter, popularKey, keysPopularity);
     }
 
     private void addPopularityValue(V parameter) {
-        addPopularity(parameter, false, valuesPopularity);
+        popularValue = addPopularity(parameter, popularValue, valuesPopularity);
     }
 
-    private <Z> void addPopularity(Z parameter, boolean isKeyUpdate, Map<Z, Integer> popularMap) {
+    private <Z> Z addPopularity(Z parameter, Z mostPopular, Map<Z, Integer> popularMap) {
         if (parameter != null) {
             int parameterPopularity = popularMap.compute(parameter, (k, v) -> (v == null) ? 1 : v + 1);
-            if (isKeyUpdate) {
-                if (popularKey == null || keysPopularity.get(popularKey) < parameterPopularity) {
-                    popularKey = (K) parameter;
-                }
-            } else {
-                if (popularValue == null || valuesPopularity.get(popularValue) < parameterPopularity) {
-                    popularValue = (V) parameter;
-                }
+            if (mostPopular == null || popularMap.get(mostPopular) < parameterPopularity) {
+                return parameter;
             }
         }
+        return mostPopular;
     }
 }
