@@ -1,12 +1,11 @@
 package ru.mail.polis.homework.io;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class CopyFile {
 
@@ -28,18 +27,36 @@ public class CopyFile {
             Files.createDirectories(toPath.getParent());
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
-        try (Stream<Path> stream = Files.walk(fromPath)) {
-            stream.forEachOrdered(path -> {
-                try {
-                    Files.copy(path, toPath.resolve(fromPath.relativize(path)), REPLACE_EXISTING);
-                } catch (IOException e) {
-                    e.printStackTrace();
+
+        try (Stream<Path> filesFromPathStream = Files.walk(fromPath)) {
+            for (Path currentPathFrom : filesFromPathStream.collect(Collectors.toList())) {
+                if (Files.isDirectory(currentPathFrom)) {
+                    Files.createDirectory(toPath.resolve(fromPath.relativize(currentPathFrom)));
                 }
-            });
+                else if (Files.isRegularFile(currentPathFrom)) {
+                    copyWithStream(currentPathFrom, toPath.resolve((fromPath.relativize(currentPathFrom))));
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
         return toPath.toString();
+    }
+
+    private static void copyWithStream(Path pathFrom, Path pathTo) throws IOException {
+        Files.createFile(pathTo);
+        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(pathTo))) {
+            try (InputStream in = new BufferedInputStream(Files.newInputStream(pathFrom))) {
+                byte[] buffer = new byte[1024];
+                int length = in.read(buffer);
+                while (length != -1) {
+                    out.write(buffer, 0, length);
+                    length = in.read(buffer);
+                }
+            }
+        }
     }
 }
