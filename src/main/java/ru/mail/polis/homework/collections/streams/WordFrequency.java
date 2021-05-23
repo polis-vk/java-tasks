@@ -23,13 +23,16 @@ import static java.util.Comparator.comparing;
  */
 public class WordFrequency {
 
+    private static final int WORD_COUNT = 10;
+    private static final String WORDS_IN_SENTENCE_REGEX = "[.,!:-?;]?\\s|[.,!:-?;]";
+
     /**
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
         return lines
                 .map(String::toLowerCase)
-                .map(str -> str.split("[.,!:-?;]?\\s|[.,!:-?;]"))
+                .map(str -> str.split(WORDS_IN_SENTENCE_REGEX))
                 .flatMap(Arrays::stream)
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet().stream()
@@ -38,7 +41,7 @@ public class WordFrequency {
                                 .reversed()
                                 .thenComparing(Map.Entry::getKey)
                 )
-                .limit(10)
+                .limit(WORD_COUNT)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
