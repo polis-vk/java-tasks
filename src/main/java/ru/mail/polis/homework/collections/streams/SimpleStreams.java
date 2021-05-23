@@ -4,8 +4,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
+import java.util.stream.DoubleStream;
 
 public class SimpleStreams {
+
+    private static final double G = 9.81;
 
     /**
      * Реализуйте проверку на простоту входящего числа с помощью стримов.
@@ -38,6 +41,9 @@ public class SimpleStreams {
      * 3 балла
      */
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return 0;
+        return DoubleStream.iterate(v, changeV)
+                .limit(n)
+                .map(speed -> Math.pow(speed, 2) * Math.sin(2 * alpha) / G)
+                .sum();
     }
 }
