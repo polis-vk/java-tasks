@@ -1,6 +1,13 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,7 +38,12 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
-
+        Path pathOutputFile = Paths.get(fileName);
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(pathOutputFile))) {
+            objectOutputStream.writeObject(animals);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -42,7 +54,14 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
+        Path pathInputFile = Paths.get(fileName);
+
+        try (ObjectInputStream input = new ObjectInputStream((Files.newInputStream(pathInputFile)))) {
+            return (List<Animal>) input.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
@@ -99,7 +118,18 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
+        Path pathOutputFile = Paths.get(fileName);
 
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(pathOutputFile))) {
+            outputStream.writeInt(animals.size());
+            for (Animal animal : animals) {
+                outputStream.writeInt(animal.getAge());
+                outputStream.writeUTF(animal.getName());
+                outputStream.writeUTF(animal.getPhylumOfAnimals().name());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -111,6 +141,20 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+        Path pathInputFile = Paths.get(fileName);
+        List<Animal> resultList = new ArrayList<>();
+        try (ObjectInputStream input = new ObjectInputStream((Files.newInputStream(pathInputFile)))) {
+            int listSize = input.readInt();
+            for (int i = 0; i < listSize; i++) {
+                Animal animal = new Animal();
+                animal.setAge(input.readInt());
+                animal.setName(input.readUTF());
+                animal.setPhylumOfAnimals(Animal.PhylumOfAnimals.valueOf(input.readUTF()));
+                resultList.add(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return resultList;
     }
 }
