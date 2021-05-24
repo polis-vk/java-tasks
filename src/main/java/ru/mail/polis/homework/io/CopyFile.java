@@ -51,17 +51,18 @@ public class CopyFile {
 
 
     private static void copyFile(Path fileIn, Path fileOut) throws IOException {
-        if (Files.notExists(fileOut)) {
+        if (Files.notExists(fileOut.getParent())) {
             Files.createDirectories(fileOut.getParent());
         }
         Files.createFile(fileOut);
 
-        InputStream inputStream = Files.newInputStream(fileIn);
-        try (OutputStream outputStream = Files.newOutputStream(fileOut)) {
-            byte[] buffer = new byte[BUFF_SIZE];
-            int lengthRead;
-            while ((lengthRead = inputStream.read(buffer)) > 0) {
-                outputStream.write(buffer, 0, lengthRead);
+        try (InputStream inputStream = Files.newInputStream(fileIn)) {
+            try (OutputStream outputStream = Files.newOutputStream(fileOut)) {
+                byte[] buffer = new byte[BUFF_SIZE];
+                int lengthRead;
+                while ((lengthRead = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, lengthRead);
+                }
             }
         }
     }

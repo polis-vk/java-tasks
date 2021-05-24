@@ -126,6 +126,11 @@ public class Serializer {
                 outputStream.writeInt(animal.getAge());
                 outputStream.writeUTF(animal.getName());
                 outputStream.writeUTF(animal.getPhylumOfAnimals().name());
+                List<String> foods = animal.getFoods();
+                outputStream.writeInt(foods.size());
+                for (String food : foods) {
+                    outputStream.writeUTF(food);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -149,7 +154,13 @@ public class Serializer {
                 Animal animal = new Animal();
                 animal.setAge(input.readInt());
                 animal.setName(input.readUTF());
-                animal.setPhylumOfAnimals(Animal.PhylumOfAnimals.valueOf(input.readUTF()));
+                animal.setPhylumOfAnimals(PhylumOfAnimals.valueOf(input.readUTF()));
+                int countFoods = input.readInt();
+                List<String> foods = new ArrayList<>();
+                for (int j = 0; j < countFoods; j++) {
+                    foods.add(input.readUTF());
+                }
+                animal.setFoods(foods);
                 resultList.add(animal);
             }
         } catch (IOException e) {

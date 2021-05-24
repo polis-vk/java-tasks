@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,12 +33,12 @@ public class WordFrequency {
     public static List<String> wordFrequency(Stream<String> lines) {
         return lines
                 .filter(Objects::nonNull)
-                .filter(s -> s.length() > 0)
+                .filter(Predicate.not(String::isEmpty))
                 .flatMap(line -> Arrays.stream(line.split(REGEX)))
                 .map(String::toLowerCase)
-                .collect(Collectors.toMap(key -> key, key -> 1, Integer::sum))
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet().stream()
-                .sorted(Map.Entry.<String, Integer>comparingByValue()
+                .sorted(Map.Entry.<String, Long>comparingByValue()
                         .reversed()
                         .thenComparing(Map.Entry.comparingByKey()))
                 .map(Map.Entry::getKey)

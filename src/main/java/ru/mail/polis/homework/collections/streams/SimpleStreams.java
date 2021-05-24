@@ -39,10 +39,16 @@ public class SimpleStreams {
      * 3 балла
      */
 
-    private static final double G = 9.8066;
+    private static final double G = 9.8;
 
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return DoubleStream.iterate(v, changeV)
+        return DoubleStream.iterate(0, i -> {
+            i++;
+            if (i == 1) {
+                return v;
+            }
+            return v - changeV.applyAsDouble(i);
+        })
                 .limit(n)
                 .map(speed -> Math.pow(speed, 2) * Math.sin(2 * alpha) / G)
                 .sum();

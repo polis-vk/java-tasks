@@ -2,10 +2,7 @@ package ru.mail.polis.homework.io.objects;
 
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Класс должен содержать несколько полей с примитивами, строками, энамами и некоторыми сапомисными объектами (не энам).
@@ -17,15 +14,17 @@ public class Animal implements Serializable {
     private String name;
     private int age;
     private PhylumOfAnimals phylumOfAnimals;
+    private List<String> foods;
 
     public Animal(String name, int age, PhylumOfAnimals phylumOfAnimals) {
         this.name = name;
         this.age = age;
         this.phylumOfAnimals = phylumOfAnimals;
+        new Animal();
     }
 
     public Animal() {
-
+        foods = new ArrayList<>();
     }
 
     public String getName() {
@@ -53,12 +52,13 @@ public class Animal implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Animal)) return false;
         Animal animal = (Animal) o;
-        return age == animal.age && Objects.equals(name, animal.name) && phylumOfAnimals == animal.phylumOfAnimals;
+        return age == animal.age && Objects.equals(name, animal.name) && phylumOfAnimals == animal.phylumOfAnimals &&
+                Objects.equals(foods, animal.foods);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, age, phylumOfAnimals);
+        return Objects.hash(name, age, phylumOfAnimals, foods);
     }
 
     @Override
@@ -67,6 +67,7 @@ public class Animal implements Serializable {
                 "name='" + name + '\'' +
                 ", age=" + age +
                 ", phylumOfAnimals=" + phylumOfAnimals +
+                ", food=" + foods +
                 '}';
     }
 
@@ -74,25 +75,11 @@ public class Animal implements Serializable {
         return phylumOfAnimals;
     }
 
-    public enum PhylumOfAnimals {
-        ANNELIDS,
-        ARTHROPODS,
-        BRYOZOA,
-        CHORDATES,
-        CNIDARIA,
-        ENCHINODERMS,
-        MOLLUSCS,
-        NEMATODES,
-        PLATYHELMINTHES,
-        ROTIFERS,
-        SPONGES;
-
-        private static final List<PhylumOfAnimals> VALUES = Arrays.asList(PhylumOfAnimals.values());
-        private static final int SIZE = VALUES.size();
-
-        public static PhylumOfAnimals getRandom(Random random) {
-            return VALUES.get(random.nextInt(SIZE));
-        }
+    public List<String> getFoods() {
+        return foods;
     }
 
+    public void setFoods(List<String> food) {
+        this.foods = food;
+    }
 }
