@@ -1,8 +1,11 @@
 package ru.mail.polis.homework.collections;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,7 +41,10 @@ public class PopularMap<K, V> implements Map<K, V> {
     private final HashMap<V, Integer> popularObject = new HashMap<>();
     private K maxKey;
     private V maxObj;
-    public boolean changed = true;
+    private V tempV;
+    private Integer popK = 0;
+    private Integer popV = 0;
+    private Integer counter;
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -67,7 +73,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public boolean containsValue(Object value) {
         ObjValueCheck((V) value);
-        return map.containsValue((V) value);
+        return map.containsValue(value);
     }
 
     @Override
@@ -82,12 +88,13 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
-        if (map.get(key) != null && map.get(key) != value) {
-            ObjValueCheck(map.get(key));
+        tempV = map.get(key);
+        if (tempV != null && tempV != value) {
+            ObjValueCheck(tempV);
         }
         KeyValueCheck(key);
         ObjValueCheck(value);
-        if (map.get(key) == value) {
+        if (tempV == value) {
             ObjValueCheck(value);
             return value;
         }
@@ -97,8 +104,9 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public V remove(Object key) {
         KeyValueCheck((K) key);
-        if (map.get(key) != null) {
-            ObjValueCheck(map.get(key));
+        tempV = map.get(key);
+        if (tempV != null) {
+            ObjValueCheck(tempV);
         }
         return map.remove(key);
     }
@@ -129,73 +137,60 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     public K getPopularKey() {
-        if (changed) {
-            int maxKeyCount = 0;
-            for (K K : popularKey.keySet()) {
-                int temp = popularKey.get(K);
-                if (temp >= maxKeyCount) {
-                    maxKeyCount = temp;
-                    maxKey = K;
-                }
-            }
-            changed = false;
-        }
         return maxKey;
     }
 
     public V getPopularValue() {
-        if (changed) {
-            int maxObjCount = 0;
-            for (V V : popularObject.keySet()) {
-                int temp = popularObject.get(V);
-                if (temp >= maxObjCount) {
-                    maxObjCount = temp;
-                    maxObj = V;
-                }
-            }
-            changed = false;
-        }
         return maxObj;
     }
 
     public int getKeyPopularity(K key) {
-        Integer tempValue = popularKey.get(key);
-        if (tempValue == null) {
+        counter = popularKey.get(key);
+        if (counter == null) {
             return 0;
         }
-        return popularKey.get(key);
+        return counter;
     }
 
     public int getValuePopularity(V value) {
-        Integer tempValue = popularObject.get(value);
-        if (tempValue == null) {
+        counter = popularObject.get(value);
+        if (counter == null) {
             return 0;
         }
-        return tempValue;
+        return counter;
     }
 
     public Iterator<V> popularIterator() {
-        HashMap<V, Integer> tempKey = new HashMap<>();
-        popularObject.entrySet().stream().sorted(Map.Entry.<V, Integer>comparingByValue().reversed())
-                .forEachOrdered(x -> tempKey.put(x.getKey(), x.getValue()));
-        return tempKey.keySet().iterator();
+        List<V> values = new ArrayList<>(popularObject.keySet());
+        values.sort(Comparator.comparing(popularObject::get));
+        return values.iterator();
     }
 
     public void KeyValueCheck(K key) {
-        if (popularKey.containsKey(key)) {
-            popularKey.put(key, 1 + popularKey.get(key));
+        counter = popularKey.get(key);
+        if (counter != null) {
+            popularKey.put(key, 1 + counter);
         } else {
             popularKey.put(key, 1);
+            counter = 1;
         }
-        changed = true;
+        if (counter > popK) {
+            popK = counter;
+            maxKey = key;
+        }
     }
 
     public void ObjValueCheck(V value) {
-        if (popularObject.containsKey(value)) {
-            popularObject.put(value, 1 + popularObject.get(value));
+        counter = popularObject.get(value);
+        if (counter != null) {
+            popularObject.put(value, 1 + counter);
         } else {
             popularObject.put(value, 1);
+            counter = 1;
         }
-        changed = true;
+        if (counter > popV) {
+            popV = counter;
+            maxObj = value;
+        }
     }
 }

@@ -17,24 +17,18 @@ import ru.mail.polis.homework.collections.PopularMap;
  *
  */
 public class MailService<I extends CommonMessage<I>> implements Consumer<I> {
-    private PopularMap<String, Integer> popularSender = new PopularMap<String, Integer>();
-    private PopularMap<String, Integer> popularReceiver = new PopularMap<String, Integer>();
+    private PopularMap<String, String> senderToReceiver = new PopularMap<String, String>();
     private HashMap<String, List<I>> whatReceived = new HashMap<String, List<I>>();
-    private List<I> tempList;
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты 1 балл
      */
     @Override
     public void accept(I Inf) {
-        popularReceiver.KeyValueCheck(Inf.getTo());
-        popularSender.KeyValueCheck(Inf.getFrom());
-        if (whatReceived.containsKey(Inf.getTo())) {
-            tempList.addAll(whatReceived.get(Inf.getTo()));
-        }
+        senderToReceiver.put(Inf.getFrom(), Inf.getTo());
+        List<I> tempList = whatReceived.get(Inf.getTo());
         tempList.add(Inf.getInformation());
         whatReceived.put(Inf.getTo(), tempList);
-        tempList.clear();
     }
 
     /**
@@ -49,14 +43,14 @@ public class MailService<I extends CommonMessage<I>> implements Consumer<I> {
      * Возвращает самого популярного отправителя 1 балл
      */
     public String getPopularSender() {
-        return popularSender.getPopularKey();
+        return senderToReceiver.getPopularKey();
     }
 
     /**
      * Возвращает самого популярного получателя 1 балл
      */
     public String getPopularRecipient() {
-        return popularSender.getPopularKey();
+        return senderToReceiver.getPopularValue();
     }
 
     /**

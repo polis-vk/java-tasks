@@ -1,9 +1,9 @@
 package ru.mail.polis.homework.collections.mail;
 
 public class CommonMessage<I> {
-    private String to;
-    private String from;
-    private I information;
+    private final String to;
+    private final String from;
+    private final I information;
 
     public CommonMessage(String To, String From, I text) {
         this.to = To;
