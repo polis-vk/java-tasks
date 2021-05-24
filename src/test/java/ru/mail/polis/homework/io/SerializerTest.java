@@ -5,6 +5,7 @@ import net.bytebuddy.utility.RandomString;
 import org.junit.Before;
 import org.junit.Test;
 import ru.mail.polis.homework.io.objects.Animal;
+import ru.mail.polis.homework.io.objects.Food;
 import ru.mail.polis.homework.io.objects.PhylumOfAnimals;
 import ru.mail.polis.homework.io.objects.Serializer;
 
@@ -28,14 +29,14 @@ public class SerializerTest {
     public void setUp() {
         Random random = new Random();
         Animal animal;
-        List<String> foods;
+        List<Food> foods;
         int size;
         for (int i = 0; i < SIZE_LIST; i++) {
             animal = new Animal(RandomString.make(), random.nextInt(), PhylumOfAnimals.getRandom(random));
             foods = new ArrayList<>();
             size = random.nextInt(10);
             for (int j = 0; j < size; j++) {
-                foods.add(RandomString.make());
+                foods.add(new Food(RandomString.make(), random.nextInt(100)));
             }
             animal.setFoods(foods);
             animals.add(animal);

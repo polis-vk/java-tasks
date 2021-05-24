@@ -13,8 +13,9 @@ public class Animal implements Serializable {
 
     private String name;
     private int age;
+    private int energy;
     private PhylumOfAnimals phylumOfAnimals;
-    private List<String> foods;
+    private List<Food> foods;
 
     public Animal(String name, int age, PhylumOfAnimals phylumOfAnimals) {
         this.name = name;
@@ -24,6 +25,7 @@ public class Animal implements Serializable {
     }
 
     public Animal() {
+        energy = 100;
         foods = new ArrayList<>();
     }
 
@@ -75,11 +77,52 @@ public class Animal implements Serializable {
         return phylumOfAnimals;
     }
 
-    public List<String> getFoods() {
+    public List<Food> getFoods() {
         return foods;
     }
 
-    public void setFoods(List<String> food) {
+    public void setFoods(List<Food> food) {
         this.foods = food;
     }
+
+    public int getEnergy() {
+        return energy;
+    }
+
+    public void setEnergy(int energy) {
+        if (energy > 100) {
+            energy = 100;
+        } else if (energy < 0) {
+            energy = 0;
+        }
+
+        this.energy = energy;
+    }
+
+    public void eat(int countOfFood) {
+        if (countOfFood < 0) {
+            return;
+        }
+
+        int count  = Math.min(countOfFood, foods.size());
+        for (int i = count - 1; i >= 0; i--) {
+            energy += foods.get(i).getEnergy();
+            foods.remove(i);
+            if (energy >= 100) {
+                energy = 100;
+                return;
+            }
+        }
+    }
+
+    public void doSomething(int consumedEnergy) {
+        if (consumedEnergy > energy) {
+            System.out.println("I will die, if i do this!");
+            return;
+        }
+
+        energy -= consumedEnergy;
+        System.out.println("I am doing this now!");
+    }
+
 }
