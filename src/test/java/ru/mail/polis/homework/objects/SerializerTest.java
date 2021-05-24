@@ -12,14 +12,8 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class SerializerTest {
-    List<Animal> animals;
+    List<Animal> animals = Animal.randomListOfAnimals(10);
     final String testFileName = "testSerializer.txt";
-
-    @Before
-    public void setUp() {
-        animals = Animal.randomListOfAnimals(10);
-        System.out.println(animals);
-    }
 
     @Test
     public void testDefaultSerializer() throws IOException {
