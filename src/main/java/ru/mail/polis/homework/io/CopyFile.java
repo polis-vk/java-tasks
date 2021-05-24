@@ -2,6 +2,7 @@ package ru.mail.polis.homework.io;
 
 
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,16 +27,16 @@ public class CopyFile {
                 return pathTo;
             }
             Files.createDirectories(to);
-            DirectoryStream<Path> stream = Files.newDirectoryStream(from);
-            for (Path element : stream) {
-                Path newTo = to.resolve(element.getFileName());
-                if (Files.isDirectory(element)) {
-                    copyFiles(element.toString(), newTo.toString());
-                } else {
-                    copy(element, newTo);
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(from)) {
+                for (Path element : stream) {
+                    Path newTo = to.resolve(element.getFileName());
+                    if (Files.isDirectory(element)) {
+                        copyFiles(element.toString(), newTo.toString());
+                    } else {
+                        copy(element, newTo);
+                    }
                 }
             }
-            stream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -44,12 +45,10 @@ public class CopyFile {
 
 
     private static void copy(Path from, Path to) throws IOException {
-        try (InputStream is = new FileInputStream(from.toString()); OutputStream os = new FileOutputStream(to.toString())) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = is.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
+        try (FileChannel in = new FileInputStream(from.toString()).getChannel()) {
+            try(FileChannel out = new FileOutputStream(to.toString()).getChannel()) {
+                out.transferFrom(in,0,in.size());
+                }
             }
         }
-    }
 }

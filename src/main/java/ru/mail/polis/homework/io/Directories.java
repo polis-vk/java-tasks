@@ -52,11 +52,11 @@ public class Directories {
         Path path = Paths.get(dir);
         int n = 0;
         if (Files.isDirectory(path)) {
-            DirectoryStream<Path> stream = Files.newDirectoryStream(path);
-            for (Path line : stream) {
-                n += removeRecursivePath(line.toString()) + 1;
+            try(DirectoryStream<Path> stream = Files.newDirectoryStream(path)){
+                for (Path line : stream) {
+                    n += removeRecursivePath(line.toString()) + 1;
+                }
             }
-            stream.close();
         }
         Files.delete(path);
         return n;

@@ -38,10 +38,12 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
+    public void defaultSerialize(List<Animal> animals, String fileName) {
         Path path = Paths.get(fileName);
         try (ObjectOutputStream outputStream = new ObjectOutputStream((Files.newOutputStream(path)))) {
             outputStream.writeObject(animals);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
@@ -53,12 +55,15 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
+    public List<Animal> defaultDeserialize(String fileName) {
         Path path = Paths.get(fileName);
+        List<Animal> res = null;
         try (ObjectInputStream input = new ObjectInputStream((Files.newInputStream(path)))) {
-            return (List<Animal>) input.readObject();
+            res = (List<Animal>) input.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
-
+        return res;
     }
 
 
@@ -70,7 +75,6 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
-
     }
 
     /**
@@ -116,7 +120,7 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
-    public void customSerialize(List<Animal> animals, String fileName) throws IOException {
+    public void customSerialize(List<Animal> animals, String fileName) {
         Path path = Paths.get(fileName);
         try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
             outputStream.writeInt(animals.size());
@@ -133,6 +137,8 @@ public class Serializer {
                     outputStream.writeUTF(memberName);
                 }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
@@ -145,7 +151,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) throws IOException {
+    public List<Animal> customDeserialize(String fileName) {
         Path path = Paths.get(fileName);
         List<Animal> resultList = new ArrayList<>();
         try (ObjectInputStream input = new ObjectInputStream((Files.newInputStream(path)))) {
@@ -165,6 +171,8 @@ public class Serializer {
                 animal.setFamilyMembersNames(famMemberList);
                 resultList.add(animal);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return resultList;
     }
