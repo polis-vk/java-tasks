@@ -2,7 +2,9 @@ package ru.mail.polis.homework.io.objects;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Класс должен содержать несколько полей с примитивами, строками, энамами и некоторыми сапомисными объектами.
@@ -18,7 +20,7 @@ public class Animal implements Serializable {
 
 
     public Animal(int HP, String name, List<Type> type) {
-        this(HP, name, type, null);
+        this(HP, name, type, new ArrayList<>());
     }
 
     public Animal(int HP, String name, List<Type> type, List<Animal> evolutions) {
@@ -42,21 +44,39 @@ public class Animal implements Serializable {
                 .reduce("", (acc, t) -> acc.isEmpty() ? t : acc + "/" + t);
     }
 
-    public String getEvolutions() {
-        return evolutions != null
-                ? evolutions.stream()
-                    .map(Animal::getName)
-                    .reduce(this.getName(), (acc, name) -> acc + " -> " + name)
-                : "There is no evolution";
+    public List<Animal> getEvolutions() {
+        return evolutions;
     }
 
     @Override
     public String toString() {
+        String evoLine = evolutions != null
+                ? evolutions.stream()
+                .map(Animal::getName)
+                .reduce(this.getName(), (acc, name) -> acc + " -> " + name)
+                : "There is no evolution";
+
         return "\nName: " + name + "\n" +
                 "Type: " + this.getType() + "\n" +
                 "HP:" + HP + "\n" +
-                "Evolution: " + this.getEvolutions() + "\n";
+                "Evolution: " + evoLine + "\n";
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(HP, name, type, evolutions);
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Animal))
+            return false;
+        Animal animal = (Animal) o;
+        return HP == animal.HP &&
+                Objects.equals(name, animal.name) &&
+                Objects.equals(type, animal.type) &&
+                Objects.equals(evolutions, animal.evolutions);
+    }
 }

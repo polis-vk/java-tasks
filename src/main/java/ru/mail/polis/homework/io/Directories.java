@@ -30,7 +30,7 @@ public class Directories {
                 if (f.isFile()) {
                     f.delete();
                     count++;
-                } else if (f.isDirectory()) {
+                } else {
                     count += removeWithFile(f.getPath());
                 }
             }

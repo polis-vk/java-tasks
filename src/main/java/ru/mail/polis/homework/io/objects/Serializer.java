@@ -1,8 +1,15 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Нужно реализовать методы этого класса и реализовать тестирование 4-ех способов записи.
@@ -28,7 +35,11 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
-
+        try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            os.writeObject(animals);
+        } catch(IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -39,7 +50,19 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
+        if (fileName == null || fileName.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Animal> animals = new ArrayList<>();
+
+        try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(fileName))) {
+            animals = (List<Animal>) is.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return animals;
     }
 
 
@@ -96,6 +119,26 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
+        try (DataOutputStream os = new DataOutputStream(new FileOutputStream(fileName))) {
+            for (Animal animal : animals) {
+                serializeAnimal(animal, os);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void serializeAnimal(Animal animal, DataOutputStream os) throws IOException {
+        os.writeInt(animal.getHP());
+        os.writeUTF(animal.getName());
+        os.writeUTF(animal.getType());
+
+        List<Animal> evolutions = animal.getEvolutions();
+        os.writeInt(evolutions.size());
+        for (Animal evolution : evolutions) {
+            serializeAnimal(evolution, os);
+        }
+
 
     }
 
@@ -108,6 +151,35 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+        Path filePath = Paths.get(fileName);
+        if (Files.notExists(filePath)) {
+            return Collections.emptyList();
+        }
+
+        List<Animal> animals = new ArrayList<>();
+
+        try (DataInputStream is = new DataInputStream(Files.newInputStream(filePath))) {
+            while (is.available() > 0) {
+                animals.add(parseAnimal(is));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return animals;
+    }
+
+    private Animal parseAnimal(DataInputStream is) throws IOException {
+        int HP = is.readInt();
+        String name = is.readUTF();
+        List<Type> type = Arrays.stream(is.readUTF().split("/")).map(Type::valueOf).collect(Collectors.toList());
+
+        List<Animal> evolutions = new ArrayList<>();
+        int evolveCount = is.readInt();
+        for (int i = 0; i < evolveCount; i++) {
+            evolutions.add(parseAnimal(is));
+        }
+
+        return new Animal(HP, name, type, evolutions);
     }
 }

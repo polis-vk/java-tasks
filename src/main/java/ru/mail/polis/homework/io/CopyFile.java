@@ -36,8 +36,6 @@ public class CopyFile {
                     for (Path path : dirStream) {
                         copyFiles(path.toString(), to.resolve(path.getFileName()).toString());
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
         } catch (IOException e) {
@@ -48,11 +46,13 @@ public class CopyFile {
     }
 
     private static void copyFile(Path from, Path to) throws IOException {
-        try (InputStream fis = Files.newInputStream(from); OutputStream fos = Files.newOutputStream(to)) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = fis.read(buffer)) > 0) {
-                fos.write(buffer, 0, length);
+        try (InputStream fis = Files.newInputStream(from)) {
+            try (OutputStream fos = Files.newOutputStream(to)) {
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = fis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, length);
+                }
             }
         }
     }
