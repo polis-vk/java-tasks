@@ -21,7 +21,7 @@ public class SerializerTest {
 
 
     @Before
-    public void setUp(){
+    public void setUp() {
         Random random = new Random();
         for (int i = 0; i < SIZE_LIST; i++) {
             animals.add(new Animal(RandomString.make(), random.nextInt(), Animal.PhylumOfAnimals.getRandom(random)));
@@ -36,7 +36,7 @@ public class SerializerTest {
     }
 
     @Test
-    public void testCustom()  {
+    public void testCustom() {
         Serializer serializer = new Serializer();
         serializer.customSerialize(animals, FILENAME);
         assertArrayEquals(animals.toArray(), serializer.customDeserialize(FILENAME).toArray());

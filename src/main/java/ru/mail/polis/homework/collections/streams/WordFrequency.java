@@ -26,7 +26,7 @@ public class WordFrequency {
      */
 
     private static final int MAX_COUNT_WORDS = 10;
-    private static final String REGEX ="[.,!:\\-?;\\s]+";
+    private static final String REGEX = "[.,!:\\-?;\\s]+";
 
     public static List<String> wordFrequency(Stream<String> lines) {
         return lines
@@ -43,6 +43,5 @@ public class WordFrequency {
                 .limit(MAX_COUNT_WORDS)
                 .collect(Collectors.toList());
     }
-
 
 }

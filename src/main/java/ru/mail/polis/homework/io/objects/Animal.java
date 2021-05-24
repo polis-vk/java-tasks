@@ -88,9 +88,9 @@ public class Animal implements Serializable {
         SPONGES;
 
         private static final List<PhylumOfAnimals> VALUES = Arrays.asList(PhylumOfAnimals.values());
-        private static  final int SIZE = VALUES.size();
+        private static final int SIZE = VALUES.size();
 
-        public static PhylumOfAnimals getRandom(Random random){
+        public static PhylumOfAnimals getRandom(Random random) {
             return VALUES.get(random.nextInt(SIZE));
         }
     }

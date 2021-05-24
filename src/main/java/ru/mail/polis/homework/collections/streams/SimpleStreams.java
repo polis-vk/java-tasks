@@ -47,4 +47,5 @@ public class SimpleStreams {
                 .map(speed -> Math.pow(speed, 2) * Math.sin(2 * alpha) / G)
                 .sum();
     }
+
 }

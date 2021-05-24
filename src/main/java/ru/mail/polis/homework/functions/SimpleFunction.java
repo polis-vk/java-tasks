@@ -1,7 +1,11 @@
 package ru.mail.polis.homework.functions;
 
 import java.util.List;
-import java.util.function.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.IntBinaryOperator;
+import java.util.function.IntUnaryOperator;
+import java.util.function.UnaryOperator;
 
 public class SimpleFunction {
 
