@@ -11,7 +11,7 @@ public class SimpleFunction {
 
     /**
      * Функция от трех аргументов. Не забудьте добавить дженерики.
-     * Функция должна походить на {@link BiFunction}
+     * Функция должна походить на {@link java.util.function.BiFunction}
      * 1 балл
      */
     interface TerFunction {
