@@ -1,11 +1,7 @@
 package ru.mail.polis.homework.functions;
 
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.IntBinaryOperator;
-import java.util.function.IntUnaryOperator;
-import java.util.function.UnaryOperator;
+import java.util.function.*;
 
 public class SimpleFunction {
 
@@ -49,18 +45,8 @@ public class SimpleFunction {
      * 4 балла (доп задание)
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            (List<IntUnaryOperator> listUnaryOperators) -> (List<Integer> listOfInteger) -> {
-                List<Integer> result = new ArrayList<>();
-                int addedElement;
-                for (Integer element : listOfInteger) {
-                    addedElement = element;
-                    for (IntUnaryOperator unaryOperator : listUnaryOperators) {
-                        addedElement = unaryOperator.applyAsInt(addedElement);
-                        result.add(addedElement);
-                    }
-                }
-                return result;
-            };
+            a -> null;
+
 
     /**
      * Написать функцию, которая принимает начальное значение и преобразователь двух чисел в одно, возвращает функцию,
@@ -71,12 +57,5 @@ public class SimpleFunction {
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 2 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
-            (Integer start, IntBinaryOperator operator) -> (int a, int b) -> {
-                int result = start;
-                for (int i = a; i <= b; i++) {
-                    result = operator.applyAsInt(result, i);
-                }
-                return result;
-            };
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
 }
