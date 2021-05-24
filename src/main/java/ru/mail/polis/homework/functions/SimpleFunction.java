@@ -39,12 +39,7 @@ public class SimpleFunction {
     static Function<String, Double> doubleStringEquation(double a1, double b1, double c1,
                                                          double a2, double b2, double c2,
                                                          Function<String, Double> g) {
-
-        return (String str) -> square(a1, b1, c1).apply(square(a2, b2, c2).apply(g.apply(str)));
-    }
-
-    static UnaryOperator<Double> square(double a, double b, double c) {
-        return (Double x) -> a * x * x + b * x + c;
+        return null;
     }
 
 
