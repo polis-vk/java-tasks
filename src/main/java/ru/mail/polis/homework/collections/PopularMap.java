@@ -64,43 +64,43 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        topKey = this.updateChart((K) key, keyChart);
+        topKey = updateChart((K) key, keyChart, topKey);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        topValue = this.updateChart((V) value, valueChart);
+        topValue = updateChart((V) value, valueChart, topValue);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        topKey = this.updateChart((K) key, keyChart);
+        topKey = updateChart((K) key, keyChart, topKey);
 
         V value = map.get(key);
-        topValue = this.updateChart(value, valueChart);
+        topValue = updateChart(value, valueChart, topValue);
 
         return value;
     }
 
     @Override
     public V put(K key, V value) {
-        topKey = this.updateChart(key, keyChart);
-        topValue = this.updateChart(value, valueChart);
+        topKey = updateChart(key, keyChart, topKey);
+        topValue = updateChart(value, valueChart, topValue);
 
         V previousValue = map.put(key, value);
-        topValue = this.updateChart(previousValue, valueChart);
+        topValue = updateChart(previousValue, valueChart, topValue);
 
         return previousValue;
     }
 
     @Override
     public V remove(Object key) {
-        topKey = this.updateChart((K) key, keyChart);
+        topKey = updateChart((K) key, keyChart, topKey);
 
         V value = map.get(key);
-        topValue = this.updateChart(value, valueChart);
+        topValue = updateChart(value, valueChart, topValue);
 
         return map.remove(key);
     }
@@ -180,26 +180,15 @@ public class PopularMap<K, V> implements Map<K, V> {
         return list.iterator();
     }
 
-    private <T> T updateChart(T key, Map<T, Integer> chart) {
+    private <T> T updateChart(T key, Map<T, Integer> chart, T currentTop) {
         if (key != null) {
             chart.compute(key, (k, v) -> v == null ? 1 : v + 1);
         }
 
-        return this.getPopularItem(chart);
+        return this.getPopularItem(key, chart, currentTop);
     }
 
-    private <T> T getPopularItem(Map<T, Integer> chart) {
-        T key = null;
-        int maxValue = 0;
-
-        for (Map.Entry<T, Integer> entry : chart.entrySet()) {
-            int value = entry.getValue();
-            if (value > maxValue) {
-                maxValue = value;
-                key = entry.getKey();
-            }
-        }
-
-        return key;
+    private <T> T getPopularItem(T key, Map<T, Integer> chart, T currentTop) {
+        return currentTop == null || key != null && chart.get(key) > chart.get(currentTop) ? key : currentTop;
     }
 }
