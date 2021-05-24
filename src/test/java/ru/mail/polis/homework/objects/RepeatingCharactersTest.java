@@ -23,6 +23,7 @@ public class RepeatingCharactersTest {
 
     @Test
     public void getMaxRepeatingCharacters_manyMax() {
+        assertEquals(new RepeatingCharacters.Pair<>('a', 1), RepeatingCharacters.getMaxRepeatingCharacters("a"));
         assertEquals(new RepeatingCharacters.Pair<>('a', 1), RepeatingCharacters.getMaxRepeatingCharacters("abcd"));
         assertEquals(new RepeatingCharacters.Pair<>('g', 2), RepeatingCharacters.getMaxRepeatingCharacters("gagaggaa"));
         assertEquals(new RepeatingCharacters.Pair<>('a', 3), RepeatingCharacters.getMaxRepeatingCharacters("aaabbbccc"));
