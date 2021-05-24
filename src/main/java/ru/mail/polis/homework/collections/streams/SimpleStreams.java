@@ -43,8 +43,7 @@ public class SimpleStreams {
 
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
         return DoubleStream.iterate(0, i -> {
-            i++;
-            if (i == 1) {
+            if (i++ == 0) {
                 return v;
             }
             return v - changeV.applyAsDouble(i);
