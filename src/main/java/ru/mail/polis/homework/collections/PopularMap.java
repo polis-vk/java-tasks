@@ -146,10 +146,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 1 балл
      */
     public int getKeyPopularity(K key) {
-        if (keyPopularity.containsKey(key)) {
-            return keyPopularity.get(key);
-        }
-        return 0;
+        return keyPopularity.getOrDefault(key, 0);
     }
 
     /**
@@ -174,10 +171,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 1 балл
      */
     public int getValuePopularity(V value) {
-        if (valuePopularity.containsKey(value)) {
-            return valuePopularity.get(value);
-        }
-        return 0;
+        return valuePopularity.getOrDefault(value, 0);
     }
 
     /**
@@ -191,18 +185,10 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private void upgradeKeyPopularity(K key) {
-        if (keyPopularity.containsKey(key)) {
-            keyPopularity.replace(key, keyPopularity.get(key) + 1);
-        } else {
-            keyPopularity.put(key, 1);
-        }
+        keyPopularity.merge(key, 1, Integer::sum);
     }
 
     private void upgradeValuePopularity(V value) {
-        if (valuePopularity.containsKey(value)) {
-            valuePopularity.replace(value, valuePopularity.get(value) + 1);
-        } else {
-            valuePopularity.put(value, 1);
-        }
+        valuePopularity.merge(value, 1, Integer::sum);
     }
 }
