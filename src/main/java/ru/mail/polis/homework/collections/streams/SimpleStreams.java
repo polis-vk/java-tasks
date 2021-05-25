@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
 import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
 public class SimpleStreams {
 
@@ -42,13 +43,8 @@ public class SimpleStreams {
     private static final double G = 9.8;
 
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return DoubleStream.iterate(1, i -> {
-            if (i++ == 1) {
-                return v;
-            }
-            return changeV.applyAsDouble(i);
-        })
-                .limit(n)
+        return IntStream.rangeClosed(1, n)
+                .mapToDouble(i -> (i == 1) ? v : changeV.applyAsDouble(i))
                 .map(speed -> Math.pow(speed, 2) * Math.sin(2 * alpha) / G)
                 .sum();
     }
