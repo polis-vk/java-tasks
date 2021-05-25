@@ -4,39 +4,63 @@ import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class SerializerTest extends TestCase {
     private final List<Animal> animals;
     private final Serializer serializer;
+    private final Random random;
 
     public SerializerTest() {
         animals = new ArrayList<>();
         serializer = new Serializer();
-        Animal animal1 = new Animal(AnimalType.AMPHIBIAN, true, new AnimalOwner("test1", "test2"), "test3", 4);
-        Animal animal2 = new Animal(AnimalType.FISH, false, new AnimalOwner("test4", "test5"), "test6", 15);
-        Animal animal3 = new Animal(AnimalType.AMPHIBIAN, true, new AnimalOwner("test7", "test8"), "test9", 10);
-        animals.add(animal1);
-        animals.add(animal2);
-        animals.add(animal3);
+        random = new Random();
+        for (int i = 0; i < 5000; i++) {
+            AnimalOwner animalOwner = new AnimalOwner(randomString(), randomString());
+            animals.add(new Animal(randomAnimalType(), random.nextBoolean(), animalOwner, randomString(), random.nextInt()));
+        }
+    }
+
+    private String randomString() {
+        byte[] array = new byte[10];
+        random.nextBytes(array);
+        return new String(array, Charset.forName("UTF-8"));
+    }
+
+    private AnimalType randomAnimalType() {
+        return AnimalType.values()[random.nextInt(AnimalType.values().length)];
     }
 
     @Test
     public void testDefaultSerializeAndDeserialize() throws IOException, ClassNotFoundException {
+        long startTimeSerialize = System.currentTimeMillis();
         serializer.defaultSerialize(animals, "src/test/resources/animals");
+        long endTimeSerialize = System.currentTimeMillis();
+        long startTimeDeserialize = System.currentTimeMillis();
         List<Animal> deserialized = serializer.defaultDeserialize("src/test/resources/animals");
+        long endTimeDeserialize = System.currentTimeMillis();
         Files.delete(Paths.get("src", "test", "resources", "animals"));
         assertEquals(animals, deserialized);
+        System.out.println("default serialize: " + (endTimeSerialize - startTimeSerialize));
+        System.out.println("default deserialize: " + (endTimeDeserialize - startTimeDeserialize));
     }
 
     @Test
     public void testCustomSerializeAndDeserialize() throws IOException {
+        long startTimeSerialize = System.currentTimeMillis();
         serializer.customSerialize(animals, "src/test/resources/animals");
+        long endTimeSerialize = System.currentTimeMillis();
+        long startTimeDeserialize = System.currentTimeMillis();
         List<Animal> deserialized = serializer.customDeserialize("src/test/resources/animals");
+        long endTimeDeserialize = System.currentTimeMillis();
         Files.delete(Paths.get("src", "test", "resources", "animals"));
         assertEquals(animals, deserialized);
+        System.out.println("custom serialize: " + (endTimeSerialize - startTimeSerialize));
+        System.out.println("custom deserialize: " + (endTimeDeserialize - startTimeDeserialize));
     }
 }
