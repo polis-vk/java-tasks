@@ -18,10 +18,10 @@ public class Animal implements Serializable {
     private List<Food> foods;
 
     public Animal(String name, int age, PhylumOfAnimals phylumOfAnimals) {
+        this();
         this.name = name;
         this.age = age;
         this.phylumOfAnimals = phylumOfAnimals;
-        new Animal();
     }
 
     public Animal() {
