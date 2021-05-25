@@ -13,7 +13,7 @@ public class CopyFile {
      * Файлы копировать ручками через стримы. Исползуем новый API
      * В тесте для создания нужных файлов для первого запуска надо расскоментировать код в setUp()
      *
-     * 6 баллов
+     * 4 баллов
      */
     public static String copyFiles(String pathFrom, String pathTo) {
         Path from = Paths.get(pathFrom);
