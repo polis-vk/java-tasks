@@ -1,6 +1,12 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,8 +36,12 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void defaultSerialize(List<Animal> animals, String fileName) {
-
+    public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
+        try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
+            try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);) {
+                objectOutputStream.writeObject(animals);
+            }
+        }
     }
 
     /**
@@ -41,8 +51,12 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
+    public List<Animal> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
+        try (FileInputStream inputStream = new FileInputStream(fileName)) {
+            try (ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+                return (List<Animal>) objectInputStream.readObject();
+            }
+        }
     }
 
 
@@ -98,8 +112,20 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
-    public void customSerialize(List<Animal> animals, String fileName) {
-
+    public void customSerialize(List<Animal> animals, String fileName) throws IOException {
+        try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
+            try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
+                objectOutputStream.writeInt(animals.size());
+                for (Animal animal : animals) {
+                    objectOutputStream.writeUTF(animal.getAnimalType().name());
+                    objectOutputStream.writeBoolean(animal.isMale());
+                    objectOutputStream.writeUTF(animal.getAnimalOwner().getLastName());
+                    objectOutputStream.writeUTF(animal.getAnimalOwner().getFirstName());
+                    objectOutputStream.writeUTF(animal.getName());
+                    objectOutputStream.writeInt(animal.getAge());
+                }
+            }
+        }
     }
 
     /**
@@ -110,7 +136,22 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+    public List<Animal> customDeserialize(String fileName) throws IOException {
+        List<Animal> animals = new ArrayList<>();
+        try (FileInputStream inputStream = new FileInputStream(fileName)) {
+            try (ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+                int animalsAmount = objectInputStream.readInt();
+                for (int i = 0; i < animalsAmount; i++) {
+                    Animal animal = new Animal();
+                    animal.setAnimalType(AnimalType.valueOf(objectInputStream.readUTF()));
+                    animal.setMale(objectInputStream.readBoolean());
+                    animal.setAnimalOwner(new AnimalOwner(objectInputStream.readUTF(), objectInputStream.readUTF()));
+                    animal.setName(objectInputStream.readUTF());
+                    animal.setAge(objectInputStream.readInt());
+                    animals.add(animal);
+                }
+            }
+        }
+        return animals;
     }
 }
