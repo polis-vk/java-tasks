@@ -1,9 +1,9 @@
 package ru.mail.polis.homework.collections.mail;
 
 
+import ru.mail.polis.homework.collections.PopularMap;
+
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -17,12 +17,12 @@ import java.util.function.Consumer;
  * Всего 7 баллов за пакет mail
  */
 public class MailService implements Consumer<Mail> {
-    private Map<String, List<Mail>> recipients;
-    private Map<String, List<Mail>> senders;
+    private PopularMap<String, List<Mail>> recipients;
+    private PopularMap<String, List<Mail>> senders;
 
     public MailService() {
-        this.recipients = new HashMap<>();
-        this.senders = new HashMap<>();
+        this.recipients = new PopularMap<>();
+        this.senders = new PopularMap<>();
     }
 
     /**
@@ -48,12 +48,7 @@ public class MailService implements Consumer<Mail> {
      * 1 балл
      */
     public String getPopularSender() {
-        return senders
-                .entrySet()
-                .stream()
-                .max(Comparator.comparing(x -> x.getValue().size()))
-                .get()
-                .getKey();
+        return senders.getPopularKey();
     }
 
     /**
@@ -61,12 +56,7 @@ public class MailService implements Consumer<Mail> {
      * 1 балл
      */
     public String getPopularRecipient() {
-        return recipients
-                .entrySet()
-                .stream()
-                .max(Comparator.comparing(x -> x.getValue().size()))
-                .get()
-                .getKey();
+        return recipients.getPopularKey();
     }
 
     /**
