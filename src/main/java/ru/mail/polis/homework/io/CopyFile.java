@@ -4,7 +4,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.stream.Collectors;
+import java.util.Iterator;
 import java.util.stream.Stream;
 
 public class CopyFile {
@@ -23,19 +23,15 @@ public class CopyFile {
         if (Files.notExists(fromPath)) {
             return null;
         }
-        try {
-            Files.createDirectories(toPath.getParent());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
 
         try (Stream<Path> filesFromPathStream = Files.walk(fromPath)) {
-            for (Path currentPathFrom : filesFromPathStream.collect(Collectors.toList())) {
+            Files.createDirectories(toPath.getParent());
+            Iterator<Path> pathIterator = filesFromPathStream.iterator();
+            while (pathIterator.hasNext()) {
+                Path currentPathFrom = pathIterator.next();
                 if (Files.isDirectory(currentPathFrom)) {
                     Files.createDirectory(toPath.resolve(fromPath.relativize(currentPathFrom)));
-                }
-                else if (Files.isRegularFile(currentPathFrom)) {
+                } else if (Files.isRegularFile(currentPathFrom)) {
                     copyWithStream(currentPathFrom, toPath.resolve((fromPath.relativize(currentPathFrom))));
                 }
             }
