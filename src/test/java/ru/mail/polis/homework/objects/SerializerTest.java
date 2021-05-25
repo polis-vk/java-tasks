@@ -5,6 +5,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import ru.mail.polis.homework.io.objects.Animal;
+import ru.mail.polis.homework.io.objects.Attack;
 import ru.mail.polis.homework.io.objects.Serializer;
 import ru.mail.polis.homework.io.objects.Type;
 
@@ -13,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -29,20 +29,24 @@ public class SerializerTest {
 
     @Before
     public void createAnimals() {
-        Animal raichu = new Animal(150, "Raichu", Arrays.asList(Type.ELECTRIC));
-        Animal pikachu = new Animal(100, "Pikachu", Arrays.asList(Type.ELECTRIC), Arrays.asList(raichu));
+        Attack weakAttack = new Attack("weak attack", 10);
+        Attack mediumAttack = new Attack("medium attack", 20);
+        Attack superAttack = new Attack("super attack", 50);
 
-        Animal dragonite = new Animal(160, "Dragonite", Arrays.asList(Type.DRAGON, Type.FLYING));
-        Animal dragonair = new Animal(115, "Dragonair", Arrays.asList(Type.DRAGON), Arrays.asList(dragonite));
-        Animal dratini = new Animal(40, "Dratini", Arrays.asList(Type.DRAGON), Arrays.asList(dragonair, dragonite));
+        Animal raichu = new Animal(150, "Raichu", Arrays.asList(Type.ELECTRIC), superAttack);
+        Animal pikachu = new Animal(100, "Pikachu", Arrays.asList(Type.ELECTRIC), mediumAttack, Arrays.asList(raichu));
 
-        Animal xerneas = new Animal(160, "Xerneas", Arrays.asList(Type.FAIRY));
+        Animal dragonite = new Animal(160, "Dragonite", Arrays.asList(Type.DRAGON, Type.FLYING), superAttack);
+        Animal dragonair = new Animal(115, "Dragonair", Arrays.asList(Type.DRAGON), mediumAttack, Arrays.asList(dragonite));
+        Animal dratini = new Animal(40, "Dratini", Arrays.asList(Type.DRAGON), weakAttack, Arrays.asList(dragonair, dragonite));
 
-        Animal persian = new Animal(90, "Persian", Arrays.asList(Type.NORMAL));
-        Animal meowth = new Animal(69, "Meowth", Arrays.asList(Type.NORMAL), Arrays.asList(persian));
+        Animal xerneas = new Animal(160, "Xerneas", Arrays.asList(Type.FAIRY), superAttack);
 
-        Animal golduck = new Animal(148, "Golduck", Arrays.asList(Type.WATER));
-        Animal psyduck = new Animal(105, "Psyduck", Arrays.asList(Type.WATER), Arrays.asList(golduck));
+        Animal persian = new Animal(90, "Persian", Arrays.asList(Type.NORMAL), mediumAttack);
+        Animal meowth = new Animal(69, "Meowth", Arrays.asList(Type.NORMAL), weakAttack, Arrays.asList(persian));
+
+        Animal golduck = new Animal(148, "Golduck", Arrays.asList(Type.WATER), mediumAttack);
+        Animal psyduck = new Animal(105, "Psyduck", Arrays.asList(Type.WATER), mediumAttack, Arrays.asList(golduck));
 
 
         List<Animal> tenAnimals = Arrays.asList(
@@ -58,11 +62,11 @@ public class SerializerTest {
             psyduck
         );
 
-        animals.addAll(
-                Collections.nCopies(100, tenAnimals).stream()
-                        .flatMap(List::stream)
-                        .collect(Collectors.toList())
-        );
+        for (int i = 0; i < 10000; i++) {
+            for (Animal animal : tenAnimals) {
+                animals.add(animal.copy());
+            }
+        }
     }
 
     @Before

@@ -122,7 +122,7 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
-        try (DataOutputStream os = new DataOutputStream(new FileOutputStream(fileName))) {
+        try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(fileName))) {
             for (Animal animal : animals) {
                 serializeAnimal(animal, os);
             }
@@ -131,18 +131,20 @@ public class Serializer {
         }
     }
 
-    private void serializeAnimal(Animal animal, DataOutputStream os) throws IOException {
+    private void serializeAnimal(Animal animal, ObjectOutputStream os) throws IOException {
         os.writeInt(animal.getHP());
         os.writeUTF(animal.getName());
         os.writeUTF(animal.getType());
+
+        Attack attack = animal.getAttack();
+        os.writeUTF(attack.getName());
+        os.writeInt(attack.getDamage());
 
         List<Animal> evolutions = animal.getEvolutions();
         os.writeInt(evolutions.size());
         for (Animal evolution : evolutions) {
             serializeAnimal(evolution, os);
         }
-
-
     }
 
     /**
@@ -161,7 +163,7 @@ public class Serializer {
 
         List<Animal> animals = new ArrayList<>();
 
-        try (DataInputStream is = new DataInputStream(Files.newInputStream(filePath))) {
+        try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(fileName))) {
             while (is.available() > 0) {
                 animals.add(parseAnimal(is));
             }
@@ -172,10 +174,14 @@ public class Serializer {
         return animals;
     }
 
-    private Animal parseAnimal(DataInputStream is) throws IOException {
+    private Animal parseAnimal(ObjectInputStream is) throws IOException {
         int HP = is.readInt();
         String name = is.readUTF();
         List<Type> type = Arrays.stream(is.readUTF().split("/")).map(Type::valueOf).collect(Collectors.toList());
+
+        String attackName = is.readUTF();
+        int attackDamage = is.readInt();
+        Attack attack = new Attack(attackName, attackDamage);
 
         List<Animal> evolutions = new ArrayList<>();
         int evolveCount = is.readInt();
@@ -183,6 +189,6 @@ public class Serializer {
             evolutions.add(parseAnimal(is));
         }
 
-        return new Animal(HP, name, type, evolutions);
+        return new Animal(HP, name, type, attack, evolutions);
     }
 }

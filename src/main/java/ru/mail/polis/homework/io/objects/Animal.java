@@ -12,21 +12,37 @@ import java.util.Objects;
  * 1 балл
  */
 public class Animal implements Serializable {
-    private final int HP;
+    private int HP;
     private final List<Type> type;
     private final String name;
     private final List<Animal> evolutions;
+    private final Attack attack;
 
 
-    public Animal(int HP, String name, List<Type> type) {
-        this(HP, name, type, new ArrayList<>());
+    public Animal(int HP, String name, List<Type> type, Attack attack) {
+        this(HP, name, type, attack, new ArrayList<>());
     }
 
-    public Animal(int HP, String name, List<Type> type, List<Animal> evolutions) {
+    public Animal(int HP, String name, List<Type> type, Attack attack, List<Animal> evolutions) {
         this.HP = HP;
         this.name = name;
         this.type = type;
+        this.attack = attack;
         this.evolutions = evolutions;
+    }
+
+    public int attackEnemy(Animal enemy) {
+        int damage = attack.getDamage();
+        return enemy.receiveDamage(damage);
+    }
+
+    public int receiveDamage(int damage) {
+        setHP(damage <= HP ? HP - damage : 0);
+        return HP;
+    }
+
+    public void setHP(int HP) {
+        this.HP = HP;
     }
 
     public int getHP() {
@@ -41,6 +57,10 @@ public class Animal implements Serializable {
         return type.stream()
                 .map(Type::toString)
                 .reduce("", (acc, t) -> acc.isEmpty() ? t : acc + "/" + t);
+    }
+
+    public Attack getAttack() {
+        return attack;
     }
 
     public List<Animal> getEvolutions() {
@@ -76,6 +96,11 @@ public class Animal implements Serializable {
         return HP == animal.HP &&
                 Objects.equals(name, animal.name) &&
                 Objects.equals(type, animal.type) &&
+                Objects.equals(attack, animal.attack) &&
                 Objects.equals(evolutions, animal.evolutions);
+    }
+
+    public Animal copy() {
+        return new Animal(HP, name, type, attack, evolutions);
     }
 }
