@@ -52,16 +52,16 @@ public class Directories {
         if (Files.notExists(removingPath)) {
             return 0;
         }
-        AtomicReference<Integer> counter = new AtomicReference<>(0);
+        int deletedCounter = 0;
         try (Stream<Path> pathStream = Files.walk(removingPath)) {
             List<Path> pathList = pathStream
                     .sorted(Comparator.reverseOrder())
                     .collect(Collectors.toList());
             for (Path currentPath : pathList) {
                 Files.delete(currentPath);
-                counter.getAndSet(counter.get() + 1);
+                deletedCounter++;
             }
         }
-        return counter.get();
+        return deletedCounter;
     }
 }
