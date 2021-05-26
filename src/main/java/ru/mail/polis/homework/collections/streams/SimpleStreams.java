@@ -1,12 +1,15 @@
 package ru.mail.polis.homework.collections.streams;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
+import java.util.stream.IntStream;
 
 public class SimpleStreams {
 
+    private final static double G = 9.8;
     /**
      * Реализуйте проверку на простоту входящего числа с помощью стримов.
      * Никаких циклов.
@@ -38,6 +41,11 @@ public class SimpleStreams {
      * 3 балла
      */
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return 0;
+        //Ne sovsem logichno, chto "changeV" ne zavisit ot nachalnoi skorosti "v",
+        //poatomy v dannom slychae ona mozhet i nachalnuy znat (sorry for translit)
+        return IntStream.rangeClosed(0, n - 1)
+                .mapToDouble(changeV::applyAsDouble)
+                .map(speed -> Math.pow(speed, 2) * Math.sin(Math.toRadians(2 * alpha)) / G)
+                .sum();
     }
 }
