@@ -31,8 +31,8 @@ import java.util.*;
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
-    private Map<K, Integer> popularKeyMap;
-    private Map<V, Integer> popularValueMap;
+    private final Map<K, Integer> popularKeyMap;
+    private final Map<V, Integer> popularValueMap;
 
     private K mostPopularKey;
     private V mostPopularValue;
@@ -174,8 +174,8 @@ public class PopularMap<K, V> implements Map<K, V> {
     private <T> void addPopularity(Map<T, Integer> map, T key) {
         if (key != null) {
             map.compute(key, (k, v) -> v == null ? 1 : v + 1);
-            popularKeyMap = null;
-            popularValueMap = null;
+            mostPopularValue = null;
+            mostPopularKey = null;
         }
     }
 
