@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.functions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -38,9 +39,12 @@ public class SimpleFunction {
     static Function<String, Double> doubleStringEquation(double a1, double b1, double c1,
                                                          double a2, double b2, double c2,
                                                          Function<String, Double> g) {
-        return null;
+        return str -> quadraticEquation(a1, b1, c1).compose(quadraticEquation(a2, b2, c2).compose(g)).apply(str);
     }
 
+    static private Function<Double, Double> quadraticEquation(double a, double b, double c) {
+        return x -> a * Math.pow(x, 2) + b * x + c;
+    }
 
     /**
      * Превращает список унарных операторов в один унарный оператор для списка чисел. Получившийся оператор
@@ -49,7 +53,17 @@ public class SimpleFunction {
      * 4 балла (доп задание)
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            a -> null;
+            intUnaryOperators -> numbers -> {
+                List<Integer> result = new ArrayList<>();
+                for (int number : numbers) {
+                    int element = number;
+                    for (IntUnaryOperator operator : intUnaryOperators) {
+                        element = operator.applyAsInt(element);
+                        result.add(element);
+                    }
+                }
+                return result;
+            };
 
 
     /**
@@ -61,5 +75,12 @@ public class SimpleFunction {
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 2 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
+            (initialValue, intBinaryOperator) -> (a, b) -> {
+                int answer = initialValue;
+                for (int i = a; i <= b; i++) {
+                    answer = intBinaryOperator.applyAsInt(answer, i);
+                }
+                return answer;
+            };
 }
