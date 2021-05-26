@@ -1,6 +1,13 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,8 +37,12 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void defaultSerialize(List<Animal> animals, String fileName) {
-
+    public static void defaultSerialize(List<Animal> animals, String fileName) {
+        try(ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
+            out.writeObject(animals);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -41,53 +52,13 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
-    }
-
-
-    /**
-     * 1 балл
-     * Реализовать простую ручную сериализацию, с помощью специального потока для сериализации объектов и специальных методов
-     * @param animals Список животных для сериализации
-     * @param fileName файл в который "пишем" животных
-     */
-    public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
-
-    }
-
-    /**
-     * 1 балл
-     * Реализовать простую ручную дисериализацию, с помощью специального потока для дисериализации объектов
-     * и специальных методов
-     *
-     * @param fileName файл из которого "читаем" животных
-     * @return список животных
-     */
-    public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
-        return Collections.emptyList();
-    }
-
-    /**
-     * 1 балл
-     * Реализовать простую ручную сериализацию, с помощью специального потока для сериализации объектов и интерфейса Externalizable
-     * @param animals Список животных для сериализации
-     * @param fileName файл в который "пишем" животных
-     */
-    public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
-
-    }
-
-    /**
-     * 1 балл
-     * Реализовать простую ручную дисериализацию, с помощью специального потока для дисериализации объектов
-     * и интерфейса Externalizable
-     *
-     * @param fileName файл из которого "читаем" животных
-     * @return список животных
-     */
-    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-        return Collections.emptyList();
+    public static List<Animal> defaultDeserialize(String fileName) {
+        try(ObjectInputStream in = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))){
+            return (List<Animal>) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
     }
 
     /**
@@ -98,8 +69,20 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
-    public void customSerialize(List<Animal> animals, String fileName) {
-
+    public static void customSerialize(List<Animal> animals, String fileName) {
+        try(ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
+            out.writeInt(animals.size());
+            for(Animal animal : animals)
+            {
+                out.writeUTF(animal.getLivingPlace().getCountry());
+                out.writeUTF(animal.getLivingPlace().getName());
+                out.writeUTF(animal.getName());
+                out.writeByte(animal.getAge());
+                out.writeUTF(animal.getColour().toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -110,7 +93,27 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+    public static List<Animal> customDeserialize(String fileName) {
+        try(ObjectInputStream in = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))){
+            int count = in.readInt();
+            List<Animal> animals = new ArrayList<>(count);
+            for(int i = 0; i < count; i++)
+            {
+
+                Animal animal = new Animal();
+                Zoo zoo = new Zoo();
+                zoo.setCountry(in.readUTF());
+                zoo.setName(in.readUTF());
+                animal.setLivingPlace(zoo);
+                animal.setName(in.readUTF());
+                animal.setAge(in.readByte());
+                animal.setColour(Animal.Colour.valueOf(in.readUTF()));
+                animals.add(animal);
+            }
+            return animals;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
     }
 }
