@@ -5,6 +5,7 @@ import ru.mail.polis.homework.collections.PopularMap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -34,18 +35,12 @@ public class MailService<T extends MessageContent<T>> implements Consumer<T> {
         processClient(mail, mail.getSender(), senders);
     }
 
-    private void processClient(T mail, String client, PopularMap<String, List<T>> clients) {
-        List<T> mails = clients.getOrDefault(client, new ArrayList<>());
-        mails.add(mail);
-        clients.put(client, mails);
-    }
-
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      * 1 балл
      * @return
      */
-    public PopularMap<String, List<T>> getMailBox() {
+    public Map<String, List<T>> getMailBox() {
         return recipients;
     }
 
@@ -73,5 +68,11 @@ public class MailService<T extends MessageContent<T>> implements Consumer<T> {
         for (MessageContent mail : mails) {
             service.accept(mail);
         }
+    }
+
+    private void processClient(T mail, String client, PopularMap<String, List<T>> clients) {
+        List<T> mails = clients.getOrDefault(client, new ArrayList<>());
+        mails.add(mail);
+        clients.put(client, mails);
     }
 }

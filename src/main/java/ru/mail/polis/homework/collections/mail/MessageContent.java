@@ -4,6 +4,7 @@ public abstract class MessageContent<T> {
     private final String sender;
     private final String recipient;
     private final T info;
+
     public MessageContent(String sender, String recipient, T info) {
         this.sender = sender;
         this.recipient = recipient;

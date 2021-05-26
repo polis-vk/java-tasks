@@ -38,11 +38,11 @@ public class SimpleFunction {
     static Function<String, Double> doubleStringEquation(double a1, double b1, double c1,
                                                          double a2, double b2, double c2,
                                                          Function<String, Double> g) {
-        return str -> square(a1, b1, c1, square(a2, b2, c2, g.apply(str)));
+        return str -> square(a1, b1, c1).compose(square(a2, b2, c2).compose(g)).apply(str);
     }
 
-     private static Double square(double a, double b, double c, double x) {
-        return a * Math.pow(x, 2) + b * x + c;
+    private static Function<Double, Double> square(double a, double b, double c) {
+        return x -> a * Math.pow(x, 2) + b * x + c;
     }
     /**
      * Превращает список унарных операторов в один унарный оператор для списка чисел. Получившийся оператор
