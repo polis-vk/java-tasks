@@ -52,26 +52,24 @@ public class SimpleFunction {
      * 4 балла (доп задание)
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            unaryOperatorList -> {
-                if (unaryOperatorList == null || unaryOperatorList.isEmpty()) {
+            unaryOperators -> {
+                if (unaryOperators == null || unaryOperators.isEmpty()) {
                     return null;
                 }
                 return intList -> {
                     if (intList == null || intList.isEmpty()) {
                         return null;
                     }
-                    List<Integer> resIntList = new ArrayList<>();
+                    List<Integer> result = new ArrayList<>();
 
                     intList.forEach(iListElement -> {
-                                resIntList.add(unaryOperatorList.get(0).applyAsInt(iListElement));
-                                for (int i = 1; i < unaryOperatorList.size(); ++i) {
-                                    resIntList.add(unaryOperatorList.get(i).applyAsInt(resIntList.get(resIntList.size() - 1)));
+                                result.add(unaryOperators.get(0).applyAsInt(iListElement));
+                                for (int i = 1; i < unaryOperators.size(); ++i) {
+                                    result.add(unaryOperators.get(i).applyAsInt(result.get(result.size() - 1)));
                                 }
                             }
                     );
-                    intList.clear();
-                    intList.addAll(resIntList);
-                    return intList;
+                    return result;
                 };
             };
 

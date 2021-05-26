@@ -31,23 +31,11 @@ import java.util.*;
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
-    private final Map<K, Integer> popularKeyMap;
-    private final Map<V, Integer> popularValueMap;
+    private Map<K, Integer> popularKeyMap;
+    private Map<V, Integer> popularValueMap;
 
     private K mostPopularKey;
     private V mostPopularValue;
-
-    private <T> int addPopularity(Map<T, Integer> map, T key) {
-        if (key != null) {
-            map.compute(key, (k, v) -> v == null ? 1 : v + 1);
-            return 1;
-        }
-        return 0;
-    }
-
-    private <T> T updatingTheMostPopular(Map<T, Integer> map, T popularKey) {
-        return popularKey == null ? Collections.max(map.entrySet(), Entry.comparingByValue()).getKey() : popularKey;
-    }
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -79,38 +67,38 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        mostPopularKey = addPopularity(popularKeyMap, (K) key) == 0 ? mostPopularKey : null;
+        addPopularity(popularKeyMap, (K) key);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        mostPopularValue = addPopularity(popularValueMap, (V) value) == 0 ? mostPopularValue : null;
+        addPopularity(popularValueMap, (V) value);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
         V value = map.get(key);
-        mostPopularKey = addPopularity(popularKeyMap, (K) key) == 0 ? mostPopularKey : null;
-        mostPopularValue = addPopularity(popularValueMap, value) == 0 ? mostPopularValue : null;
+        addPopularity(popularKeyMap, (K) key);
+        addPopularity(popularValueMap, value);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
         V previouslyValue = map.put(key, value);
-        mostPopularKey = addPopularity(popularKeyMap, key) == 0 ? mostPopularKey : null;
-        mostPopularValue = addPopularity(popularValueMap, value) == 0 ? mostPopularValue : null;
-        mostPopularValue = addPopularity(popularValueMap, previouslyValue) == 0 ? mostPopularValue : null;
+        addPopularity(popularKeyMap, key);
+        addPopularity(popularValueMap, value);
+        addPopularity(popularValueMap, previouslyValue);
         return previouslyValue;
     }
 
     @Override
     public V remove(Object key) {
         V removedValue = map.remove(key);
-        mostPopularKey = addPopularity(popularKeyMap, (K) key) == 0 ? mostPopularKey : null;
-        mostPopularValue = addPopularity(popularValueMap, removedValue) == 0 ? mostPopularValue : null;
+        addPopularity(popularKeyMap, (K) key);
+        addPopularity(popularValueMap, removedValue);
         return removedValue;
     }
 
@@ -181,5 +169,17 @@ public class PopularMap<K, V> implements Map<K, V> {
         List<V> sortedValueList = new ArrayList<>(popularValueMap.keySet());
         sortedValueList.sort(Comparator.comparing(popularValueMap::get));
         return sortedValueList.iterator();
+    }
+
+    private <T> void addPopularity(Map<T, Integer> map, T key) {
+        if (key != null) {
+            map.compute(key, (k, v) -> v == null ? 1 : v + 1);
+            popularKeyMap = null;
+            popularValueMap = null;
+        }
+    }
+
+    private <T> T updatingTheMostPopular(Map<T, Integer> map, T popularKey) {
+        return popularKey == null ? Collections.max(map.entrySet(), Entry.comparingByValue()).getKey() : popularKey;
     }
 }
