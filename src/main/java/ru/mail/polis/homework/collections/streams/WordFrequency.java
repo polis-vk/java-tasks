@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.collections.streams;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -16,12 +19,25 @@ import java.util.stream.Stream;
  * 3 балла
  */
 public class WordFrequency {
+    private final static String REGEX = "[ .,!;:?\\-\\n]+";
+    private final static int WORDS_LIMIT = 10;
 
     /**
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
+
     public static List<String> wordFrequency(Stream<String> lines) {
-        return null;
+        return lines
+                .map(String::toLowerCase)
+                .flatMap((string) -> Arrays.stream(string.split(REGEX)))
+                .collect(Collectors.groupingBy(str -> str, Collectors.counting()))
+                .entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue()
+                        .reversed()
+                        .thenComparing(Map.Entry.comparingByKey()))
+                .map(Map.Entry::getKey)
+                .limit(WORDS_LIMIT)
+                .collect(Collectors.toList());
     }
 
 
