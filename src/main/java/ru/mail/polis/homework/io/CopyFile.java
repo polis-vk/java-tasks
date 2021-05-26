@@ -40,21 +40,19 @@ public class CopyFile {
         return null;
     }
 
-    private static int copyFile(Path from, Path to) throws IOException {
-        if (Files.notExists(to)) {
+    private static void copyFile(Path from, Path to) throws IOException {
+        if (Files.notExists(to.getParent())) {
             Files.createDirectories(to.getParent());
         }
         Files.createFile(to);
-        try (BufferedInputStream input = new BufferedInputStream(Files.newInputStream(from));
-             BufferedOutputStream output = new BufferedOutputStream(Files.newOutputStream(to))) {
-            int totalBytes = 0;
-            int blockSize;
-            byte[] buffer = new byte[1024];
-            while ((blockSize = input.read(buffer)) > 0) {
-                output.write(buffer, 0, blockSize);
-                totalBytes += blockSize;
+        try (BufferedInputStream input = new BufferedInputStream(Files.newInputStream(from))) {
+            try (BufferedOutputStream output = new BufferedOutputStream(Files.newOutputStream(to))) {
+                int blockSize;
+                byte[] buffer = new byte[1024];
+                while ((blockSize = input.read(buffer)) > 0) {
+                    output.write(buffer, 0, blockSize);
+                }
             }
-            return totalBytes;
         }
     }
 }

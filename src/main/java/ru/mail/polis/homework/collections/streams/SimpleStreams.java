@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
+import java.util.stream.IntStream;
 
 public class SimpleStreams {
 
@@ -40,8 +41,10 @@ public class SimpleStreams {
      * 3 балла
      */
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        double startSpeed = (n == 1) ? v : changeV.applyAsDouble(n);
-        return (2 * Math.pow(startSpeed, 2.0) *
-                Math.sin(Math.toRadians(alpha)) * Math.cos(Math.toRadians(alpha))) / GRAVITATION_CONSTANT;
+        return IntStream.rangeClosed(1, n)
+                .mapToDouble(num -> (num == 1) ? v : changeV.applyAsDouble(num))
+                .map(startSpeed -> Math.pow(startSpeed, 2.0) * 2 * Math.sin(Math.toRadians(alpha)) *
+                        Math.cos(Math.toRadians(alpha)) / GRAVITATION_CONSTANT)
+                .sum();
     }
 }

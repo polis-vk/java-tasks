@@ -4,9 +4,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import ru.mail.polis.homework.io.objects.Animal;
-import ru.mail.polis.homework.io.objects.Color;
-import ru.mail.polis.homework.io.objects.Serializer;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -91,17 +88,37 @@ public class SerializerTest {
 
     @Test
     public void defaultSerializeTest() {
+        long start = System.currentTimeMillis();
         Path file = Paths.get("src", "test", "resources", "serializerTest",
                 "defaultSerializeSingleListTest.txt");
         serializer.defaultSerialize(animals, file.toString());
+        long finish = System.currentTimeMillis();
         assertEquals(animals, serializer.defaultDeserialize(file.toString()));
+
+        System.out.println("Default serialize\nSize of file: ");
+        try {
+            System.out.println(Files.size(file) + "bytes\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Time serialize and deserialize: " + (finish - start) + "ms\n");
     }
 
     @Test
     public void customSerializeTest() {
+        long start = System.currentTimeMillis();
         Path file = Paths.get("src", "test", "resources", "serializerTest",
                 "customSerializeSingleListTest.txt");
         serializer.customSerialize(animals, file.toString());
+        long finish = System.currentTimeMillis();
         assertEquals(animals, serializer.customDeserialize(file.toString()));
+
+        System.out.println("Custom serialize\nSize of file: ");
+        try {
+            System.out.println(Files.size(file) + "bytes\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Time serialize and deserialize: " + (finish - start) + "ms\n");
     }
 }
