@@ -81,8 +81,8 @@ public class Animal implements Serializable {
             animal.setType(ru.mail.polis.homework.io.objects.Type.values()[random.nextInt(ru.mail.polis.homework.io.objects.Type.values().length)]);
             animal.setHome(
                     new Place(countryNames[random.nextInt(countryNames.length)],
-                            random.nextDouble(),
-                            random.nextDouble())
+                            random.nextDouble() + random.nextInt(180),
+                            random.nextDouble() + random.nextInt(180))
             );
             animal.setAbilities(Ability.randomListOfAbilities());
             res.add(animal);

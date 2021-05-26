@@ -19,16 +19,16 @@ public class Directories {
      * 2 балла
      */
     public static int removeWithFile(String path) {
-        File dirToRemove = new File(path);
-        if (!dirToRemove.exists()) {
+        File toRemove = new File(path);
+        if (!toRemove.exists()) {
             return 0;
         }
-        if (dirToRemove.isFile()) {
-            dirToRemove.delete();
+        if (toRemove.isFile()) {
+            toRemove.delete();
             return 1;
         }
         int count = 0;
-        for (File file : dirToRemove.listFiles()) {
+        for (File file : toRemove.listFiles()) {
             if (file.isFile()) {
                 file.delete();
                 count++;
@@ -36,7 +36,7 @@ public class Directories {
                 count += removeWithFile(file.toString());
             }
         }
-        dirToRemove.delete();
+        toRemove.delete();
         return ++count;
     }
 
@@ -53,22 +53,18 @@ public class Directories {
             Files.delete(pathToRemove);
             return 1;
         }
-        AtomicInteger count = new AtomicInteger();
+        int count = 0;
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(pathToRemove)) {
-            directoryStream.forEach(currentPath -> {
-                try {
-                    if (Files.isRegularFile(currentPath)) {
-                        Files.delete(currentPath);
-                        count.getAndIncrement();
-                    } else {
-                        count.addAndGet(removeWithPath(currentPath.toString()));
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+            for (Path currentPath : directoryStream) {
+                if (Files.isRegularFile(currentPath)) {
+                    Files.delete(currentPath);
+                    count++;
+                } else {
+                    count += (removeWithPath(currentPath.toString()));
                 }
-            });
+            }
         }
         Files.delete(pathToRemove);
-        return count.incrementAndGet();
+        return ++count;
     }
 }
