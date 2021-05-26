@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
 import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
 public class SimpleStreams {
 
@@ -41,11 +42,10 @@ public class SimpleStreams {
     static final double g = 9.8;
 
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        //Если я правильно понял задачу, то расстояния всех бросков нужно сложить...
-        return DoubleStream.iterate(v, changeV)
-                .limit(n)
+        return IntStream
+                .range(1, n)
+                .mapToDouble(el -> el == 1 ? v : changeV.applyAsDouble(el))
                 .map(el -> Math.pow(el, 2) * Math.sin(2 * alpha) / g)
-                .reduce(Double::sum)
-                .getAsDouble();
+                .sum();
     }
 }
