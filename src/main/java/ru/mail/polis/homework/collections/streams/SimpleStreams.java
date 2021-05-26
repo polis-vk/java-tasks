@@ -14,7 +14,7 @@ public class SimpleStreams {
      * 1 балл
      */
     public static boolean isPrime(int n) {
-        return IntStream.range(2, n).noneMatch(i -> n % i == 0);
+        return false;
     }
 
     /**
@@ -39,6 +39,9 @@ public class SimpleStreams {
      * 3 балла
      */
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return 0;
+        return IntStream.range(1, n + 1)
+                .mapToDouble(i -> i == 1 ? v : changeV.applyAsDouble(i))
+                .map(s -> Math.pow(s, 2) * Math.sin(2 * alpha) / 9.8)
+                .sum();
     }
 }
