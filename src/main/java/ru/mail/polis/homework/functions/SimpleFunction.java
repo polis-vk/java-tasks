@@ -39,11 +39,11 @@ public class SimpleFunction {
     static Function<String, Double> doubleStringEquation(double a1, double b1, double c1,
                                                          double a2, double b2, double c2,
                                                          Function<String, Double> g) {
-        return str -> square(a1, b1, c1, square(a2, b2, c2, g.apply(str)));
+        return str -> square(a1, b1, c1).compose(square(a2, b2, c2).compose(g)).apply(str);
     }
 
-    static Double square(double a, double b, double c, double x) {
-        return a * Math.pow(x, 2) + x * b + c;
+    private static Function<Double, Double> square(double a, double b, double c) {
+        return x -> a * Math.pow(x, 2.0) + b * x + c;
     }
 
     /**
@@ -55,8 +55,8 @@ public class SimpleFunction {
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
             operators -> (values) -> {
                 List<Integer> result = new ArrayList<>();
-                for (Integer number : values) {
-                    Integer currentNumber = number;
+                for (int number : values) {
+                    int currentNumber = number;
                     for (IntUnaryOperator intUnaryOperator : operators) {
                         currentNumber = intUnaryOperator.applyAsInt(currentNumber);
                         result.add(currentNumber);

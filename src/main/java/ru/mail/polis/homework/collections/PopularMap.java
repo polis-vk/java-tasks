@@ -152,7 +152,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private <T> void updatePopularity(T object, Map<T, Integer> popularityMap) {
-        popularityMap.put(object, popularityMap.getOrDefault(object, 0) + 1);
+        popularityMap.merge(object, 1, Integer::sum);
     }
 
     private <T> void updateAllPopularity(K key, V value) {
@@ -179,13 +179,9 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 балла
      */
     public Iterator<V> popularIterator() {
-        Iterator<V> iterator = popularityValue
-                .entrySet()
-                .stream()
+        return popularityValue.entrySet().stream()
                 .sorted(Entry.comparingByValue())
                 .map(Entry::getKey)
-                .collect(Collectors.toList())
-                .iterator();
-        return iterator;
+                .collect(Collectors.toList()).iterator();
     }
 }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Нужно создать сервис, который умеет обрабатывать письма и зарплату.
@@ -71,11 +72,6 @@ public class MailService<T extends Mail> implements Consumer<T> {
     }
 
     private void acceptCorrespondent(T mail, PopularMap<String, List<Mail>> map, String correspondent) {
-        List<Mail> mails = map.get(correspondent);
-        if (mails == null) {
-            mails = new ArrayList<>();
-        }
-        mails.add(mail);
-        map.put(correspondent, mails);
+        map.computeIfAbsent(correspondent, k -> new ArrayList<>()).add(mail);
     }
 }
