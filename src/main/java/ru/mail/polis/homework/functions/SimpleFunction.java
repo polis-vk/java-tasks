@@ -51,8 +51,8 @@ public class SimpleFunction {
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
             (unaryOperatorList) -> (integerList) -> {
                 List<Integer> resultList = new ArrayList<>(unaryOperatorList.size() * integerList.size());
-                for (Integer number : integerList) {
-                    Integer current = number;
+                for (int number : integerList) {
+                    int current = number;
                     for (IntUnaryOperator operator : unaryOperatorList) {
                         current = operator.applyAsInt(current);
                         resultList.add(current);

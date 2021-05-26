@@ -166,13 +166,10 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 балла
      */
     public Iterator<V> popularIterator() {
-        return valuePopularityMap
-                .entrySet()
-                .stream()
+        return valuePopularityMap.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
                 .map(Entry::getKey)
-                .collect(Collectors.toList())
-                .iterator();
+                .collect(Collectors.toList()).iterator();
     }
 
     private <T> T getPopular(Map<T, Integer> popularityMap) {
@@ -188,6 +185,6 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private <T> void countPopularity(T key, Map<T, Integer> popularityMap) {
-        popularityMap.put(key, popularityMap.getOrDefault(key, 0) + 1);
+        popularityMap.compute(key, (newKey, val) -> val == null ? 1 : ++val);
     }
 }

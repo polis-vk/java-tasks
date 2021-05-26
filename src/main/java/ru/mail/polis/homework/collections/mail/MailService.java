@@ -68,11 +68,6 @@ public class MailService<T extends Mail<T>> implements Consumer<T> {
     }
 
     private void addMail(String person, T mail, PopularMap<String, List<T>> map) {
-        List<T> mails = map.get(person);
-        if (mails == null) {
-            mails = new ArrayList<>();
-        }
-        mails.add(mail);
-        map.put(person, mails);
+        map.computeIfAbsent(person, s -> new ArrayList<>()).add(mail);
     }
 }
