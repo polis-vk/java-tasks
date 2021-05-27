@@ -1,8 +1,9 @@
 package ru.mail.polis.homework.io.objects;
 
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+
+
 
 /**
  * Нужно реализовать методы этого класса и реализовать тестирование 4-ех (2-ух) способов записи.

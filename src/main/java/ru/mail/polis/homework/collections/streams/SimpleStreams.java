@@ -4,9 +4,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
+import java.util.stream.IntStream;
 
 public class SimpleStreams {
 
+    public static final double ACCELERATION_GRAVITY_CONST = 9.8;
     /**
      * Реализуйте проверку на простоту входящего числа с помощью стримов.
      * Никаких циклов.
@@ -38,6 +40,11 @@ public class SimpleStreams {
      * 3 балла
      */
     public static double calcDistance(double v, DoubleUnaryOperator changeV, double alpha, int n) {
-        return 0;
+        double initialSpeed = (n == 1) ? v : changeV.applyAsDouble(n);
+        return IntStream.rangeClosed(1, n)
+                .mapToDouble(num -> (num == 1) ? v : changeV.applyAsDouble(num))
+                .map(initSpeed -> Math.pow(initSpeed, 2.0) * 2 * Math.sin(Math.toRadians(alpha)) *
+                        Math.cos(Math.toRadians(alpha)) / ACCELERATION_GRAVITY_CONST)
+                .sum();
     }
 }
