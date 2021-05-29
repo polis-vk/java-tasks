@@ -2,7 +2,12 @@ package ru.mail.polis.homework.io.objects;
 
 
 import java.util.*;
-
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 /**
@@ -32,7 +37,15 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
-
+        Path filePath = Paths.get(fileName);
+        try (ObjectOutputStream output = new ObjectOutputStream(Files.newOutputStream(filePath))) {
+            output.writeInt(animals.size());
+            for (Animal animal : animals) {
+                output.writeObject(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -43,6 +56,20 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> defaultDeserialize(String fileName) {
+        Path filePath = Paths.get(fileName);
+        if (Files.notExists(filePath)) {
+            return Collections.emptyList();
+        }
+        try (ObjectInputStream input = new ObjectInputStream(Files.newInputStream(filePath))) {
+            List<Animal> animals = new ArrayList<>();
+            int size = input.readInt();
+            for (int i = 0; i < size; ++i) {
+                animals.add((Animal) input.readObject());
+            }
+            return animals;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         return Collections.emptyList();
     }
 
