@@ -31,7 +31,12 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 11, 20) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int dx = right - left;
+        int dy = up - down;
+        if ((dx <= 0) || (dy <= 0)) {
+            return Integer.MAX_VALUE;
+        }
+        return Math.max(grassX / dx, grassY / dy);
     }
 
     /**
