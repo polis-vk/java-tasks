@@ -40,7 +40,26 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        for (int i = 0; i < order - 1; i++) {
+            n /= 16;
+        }
+        int digit = n % 16;
+        switch (digit) {
+            case 15:
+                return 'F';
+            case 14:
+                return 'E';
+            case 13:
+                return 'D';
+            case 12:
+                return 'C';
+            case 11:
+                return 'B';
+            case 10:
+                return 'A';
+            default:
+                return (char) (digit + '0');
+        }
     }
 
     /**
