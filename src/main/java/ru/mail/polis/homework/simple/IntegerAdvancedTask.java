@@ -14,7 +14,12 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        long term = a;
+        for (int i = 1; i < n; i++) {
+            term *= q;
+            a += term;
+        }
+        return a;
     }
 
     /**
