@@ -35,10 +35,10 @@ public class IntegerAdvancedTask {
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
         int dx = right - left;
         int dy = up - down;
-        if ((dx <= 0) || (dy <= 0)) {
+        if (((dx <= 0) && (right < grassX)) && ((dy <= 0) && (up < grassY))) {
             return Integer.MAX_VALUE;
         }
-        return Math.max(grassX / dx, grassY / dy);
+        return (((grassX / dx) < (grassY / dy)) && (dx > 0)) ? (grassX / dx) : (grassY / dy);
     }
 
     /**
