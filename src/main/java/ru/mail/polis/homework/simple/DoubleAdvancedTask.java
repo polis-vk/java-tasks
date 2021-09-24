@@ -54,7 +54,7 @@ public class DoubleAdvancedTask {
     }
 
     /**
-     * Нужно посчитать расстояние, между двумя прямыми
+     * Нужно посчитать расстояние между двумя прямыми
      * Примеры: (1, 1, 2, -1) -> 0
      * (0, 1, 0, 5) -> 4
      */
@@ -74,6 +74,19 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        // Решение через определитель: при подставлении известных значений получаем линейное уравнение относительно z4
+        double a11 = x4 - x1;
+        double a12 = y4 - y1;
+        double a21 = x2 - x1;
+        double a22 = y2 - y1;
+        double a23 = z2 - z1;
+        double a31 = x3 - x1;
+        double a32 = y3 - y1;
+        double a33 = z3 - z1;
+
+        double z4 = z1 + (-a11 * a22 * a33 - a31 * a12 * a23 + a21 * a12 * a33 + a11 * a23 * a32)
+                / (a21 * a32 - a22 * a31);
+
+        return z4;
     }
 }
