@@ -18,21 +18,20 @@ public class DoubleAdvancedTask {
      */
     //Вычисляем при помощи метода Виета-Кардано
     public static String equation(int a, int b, int c, int d) {
-        if(a == 0) {
-            if(b == 0) {
-                if(c == 0) {
+        if (a == 0) {
+            if (b == 0) {
+                if (c == 0) {
                     throw (new ArithmeticException("There is no equation"));
                 }
                 double x = ((double) d) / c;
                 return Double.toString(x);
             }
             double D = Math.sqrt(Math.pow(c, 2) - 4 * b * d);
-            double x1 = (- c - D) / 2 * b;
-            double x2 = (- c + D) / 2 * b;
+            double x1 = (-c - D) / 2 * b;
+            double x2 = (-c + D) / 2 * b;
             return x2 + ", " + x1;
-        }
-        else if(b == 0 && c == 0) {
-                return Math.cbrt(-d) + ", " + Math.cbrt(-d) + ", " + Math.cbrt(-d);
+        } else if (b == 0 && c == 0) {
+            return Math.cbrt(-d) + ", " + Math.cbrt(-d) + ", " + Math.cbrt(-d);
         }
         double aDer = (double) b / a;
         double bDer = (double) c / a;
