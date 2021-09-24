@@ -45,13 +45,14 @@ public class IntegerAdvancedTask {
         // то следующим же шагом змейка доберется до травы.
         int needReachX = grassX - right;
         int needReachY = grassY - up;
+        int resultForX = ((needReachX % dx == 0) ? (needReachX / dx) : (needReachX / dx + 1)) + 1;
+        int resultForY = ((needReachY % dy == 0) ? (needReachY / dy) : (needReachY / dy + 1)) + 1;
         if (dx > 0 && dy > 0) {
-            return Math.min(((needReachX % dx == 0) ? (needReachX / dx) : (needReachX / dx + 1)),
-                    ((needReachY % dy == 0) ? (needReachY / dy) : (needReachY / dy + 1))) + 1;
+            return Math.min(resultForX, resultForY);
         } else if (dx > 0) {
-            return ((needReachX % dx == 0) ? (needReachX / dx) : (needReachX / dx + 1)) + 1;
+            return resultForX;
         }
-        return ((needReachY % dy == 0) ? (needReachY / dy) : (needReachY / dy + 1)) + 1;
+        return resultForY;
     }
 
     /**
