@@ -20,6 +20,36 @@ public class DoubleAdvancedTask {
         double x1 = 0;
         double x2 = 0;
         double x3 = 0;
+
+        if (a == 0) {
+            if (b == 0) {
+                return String.valueOf(-(double) d / c);
+            }
+
+            double D = c * c - 4 * b * d;
+            return (D >= 0) ? (((-c - Math.sqrt(D)) / (2 * b)) + ", " + ((-c + Math.sqrt(D)) / (2 * b))) : "";
+        }
+
+        // Решение по теореме Виета-Кардана при a = 1
+        double doubleB = (double) b / a;
+        double doubleC = (double) c / a;
+        double doubleD = (double) d / a;
+        //a = 1;
+
+        double Q = (Math.pow(doubleB, 2) - 3 * doubleC) / 9;
+        double R = (2 * Math.pow(doubleB, 3) - 9 * doubleB * doubleC + 27 * doubleD) / 54;
+
+        double phi = (Q != 0) ? (Math.acos(R / Math.sqrt(Math.pow(Q, 3))) / 3) : 0;
+        x1 = -2 * Math.sqrt(Q) * Math.cos(phi) - doubleB / 3;
+        x2 = -2 * Math.sqrt(Q) * Math.cos(phi + (2 * Math.PI / 3)) - doubleB / 3;
+        x3 = -2 * Math.sqrt(Q) * Math.cos(phi - (2 * Math.PI / 3)) - doubleB / 3;
+
+        double min = Math.min(Math.min(x1, x2), x3);
+        double middle = Math.min(Math.max(x1, x2), x3);
+
+        x1 = Math.max(Math.max(x1, x2), x3);
+        x2 = middle;
+        x3 = min;
         return x1 + ", " + x2 + ", " + x3;
     }
 
