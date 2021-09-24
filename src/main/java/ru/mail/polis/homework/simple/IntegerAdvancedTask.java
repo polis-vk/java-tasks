@@ -10,13 +10,19 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     /**
-     * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
+     * Сумма первых n членов геометрической прогрессии с первым элементом a и множителем q
      * a + aq + aq^2 + ... + aq^(n-1)
      *
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        final double EPSILON = 1E-5;
+
+        if (Math.abs(q - 1) < EPSILON) {
+            return (long) a * n;
+        }
+
+        return a * (long) (1 - Math.pow(q, n)) / (long) (1 - q);
     }
 
     /**
@@ -28,7 +34,30 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        return Math.min(snakeOneDimensional(up, down, grassY), snakeOneDimensional(right, left, grassX));
+    }
+
+    /**
+     * Сколько суток понадобится гусенице, чтобы доползти до клетки с травой, если она начинает в клетке 0 и
+     * @param right клеток ползет гусеница днем в положительном направлении
+     * @param left клеток ползет гусеница ночью в отрицательном направлении
+     * @param grassMin координата клетки, начиная с которой растет трава
+     * @return количество суток
+     */
+    private static int snakeOneDimensional(int right, int left, int grassMin) {
+        if (grassMin <= 0) {
+            return 0;
+        }
+
+        if (right - left > 0) {
+            return 1 + (int) Math.ceil((double) (grassMin - right) / (right - left));
+        }
+
+        if (grassMin - right <= 0) {
+            return 1;
+        }
+
+        return Integer.MAX_VALUE;
     }
 
     /**
@@ -38,7 +67,10 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        if (n == Integer.MIN_VALUE) {
+            return 'F';
+        }
+        return "0123456789ABCDEF".charAt((int) ((Math.abs((long) n) >> ((order - 1) * 4)) & 0xF));
     }
 
     /**
@@ -49,7 +81,20 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        if (a == Long.MIN_VALUE) {
+            return 1;
+        }
+        a = Math.abs(a);
+        long minDigit = a & 0xF;
+        int minOrder = 0;
+        for (int i = 0; a > 0; i++) {
+            if ((a & 0xF) < minDigit) {
+                minDigit = a & 0xF;
+                minOrder = i;
+            }
+            a >>= 4;
+        }
+        return (byte) (minOrder + 1);
     }
 
 }
