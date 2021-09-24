@@ -12,11 +12,17 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (q == 0.0) {
+            return a;
+        } else if (q == 1.0) {
+            return (long) a * n;
+        } else {
+            return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
+        }
     }
 
     /**
@@ -28,7 +34,22 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 11, 20) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (up < grassY && up - down <= 0 && right < grassX && right - left <= 0) {
+            return Integer.MAX_VALUE;
+        } else {
+            int y = (grassY - up);
+            int x = (grassX - right);
+            if (x <= 0 || y <= 0) {
+                return 1;
+            }
+            y = y / (up - down) + 1;
+            x = x / (right - left) + 1;
+            y += y % (up - down) == 0 ? 0 : 1;
+            x += x % (right - left) == 0 ? 0 : 1;
+            y = y > 0 ? y : Integer.MAX_VALUE;
+            x = x > 0 ? x : Integer.MAX_VALUE;
+            return Math.min(x, y);
+        }
     }
 
     /**
