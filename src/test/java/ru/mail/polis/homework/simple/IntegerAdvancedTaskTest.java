@@ -19,13 +19,13 @@ public class IntegerAdvancedTaskTest {
 
     @Test
     public void snake() {
-        assertEquals(2, IntegerAdvancedTask.snake(10, 3, 5, 5, 11, 20));
+        assertEquals(2, IntegerAdvancedTask.snake(10, 3, 5, 5, 20, 11));
         assertEquals(Integer.MAX_VALUE, IntegerAdvancedTask.snake(10, 3, 10, 5, 11, 20));
-        assertEquals(Integer.MAX_VALUE, IntegerAdvancedTask.snake(1, 2, 3, 4, 2, 3));
+        assertEquals(Integer.MAX_VALUE, IntegerAdvancedTask.snake(1, 2, 3, 4, 3, 2));
         assertEquals(1, IntegerAdvancedTask.snake(5, 2, 39, 4, 4, 3));
         assertEquals(46, IntegerAdvancedTask.snake(100, 10, 200, 8, 100, 23333));
         assertEquals(13, IntegerAdvancedTask.snake(10, 3,2, 4, 32, 100));
-        assertEquals(1, IntegerAdvancedTask.snake(5, 2, 39, 4, 23, 2));
+        assertEquals(1, IntegerAdvancedTask.snake(5, 2, 39, 4, 2, 23));
 
     }
 
