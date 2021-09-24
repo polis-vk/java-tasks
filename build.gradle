@@ -12,6 +12,9 @@ repositories {
 }
 
 dependencies {
+    // https://mvnrepository.com/artifact/gov.nist.math/jama
+    implementation group: 'gov.nist.math', name: 'jama', version: '1.0.3'
+
     testImplementation group: 'junit', name: 'junit', version: '4.12'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.23.0'
     testImplementation group: 'commons-io', name: 'commons-io', version: '2.6'

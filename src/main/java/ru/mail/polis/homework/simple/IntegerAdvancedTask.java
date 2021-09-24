@@ -12,7 +12,7 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
@@ -32,12 +32,12 @@ public class IntegerAdvancedTask {
         int currentX = 0;
         int currentY = 0;
         if (currentX + up >= grassY || currentY + right >= grassX) return count;
-        if(up-down <=0 && right - left <=0)return Integer.MAX_VALUE;
-        while(true){
+        if (up - down <= 0 && right - left <= 0) return Integer.MAX_VALUE;
+        while (true) {
             if (currentX + up >= grassY || currentY + right >= grassX) return count;
             else {
-                currentX += (up-down);
-                currentY += (right-left);
+                currentX += (up - down);
+                currentY += (right - left);
                 count++;
             }
         }
