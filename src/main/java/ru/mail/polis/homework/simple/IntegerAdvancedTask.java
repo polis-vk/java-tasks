@@ -58,7 +58,8 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        String hexString = Integer.toHexString(n).toUpperCase();
+        return hexString.charAt(hexString.length() - order);
     }
 
     /**
@@ -68,7 +69,16 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        String hexString = Long.toHexString(a);
+        char min = Character.MAX_VALUE;
+        int offset = 0;
+        for (int i = hexString.length() - 1; i >= 0; i--) {
+            if (hexString.charAt(i) < min) {
+                min = hexString.charAt(i);
+                offset = hexString.length() - i;
+            }
+        }
+        return (byte) offset;
     }
 
 }
