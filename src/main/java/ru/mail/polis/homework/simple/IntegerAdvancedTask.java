@@ -17,15 +17,12 @@ public class IntegerAdvancedTask {
      * <p>
      * Пример: (1, 2, 3) -> 7
      */
-
     public static long progression(int a, double q, int n) {
-        long result = a;
-        for (int i = 1; i < n; i++) {
-            result += a * Math.pow(q, i);
+        if (q == 1) {
+            return (long) a * n;
         }
-        return result;
+        return (long) (a * (1L - Math.pow(q, n)) / (1L - q));
     }
-
 
     /**
      * Гусеница ползает по столку квадратами по часовой стрелке. За день она двигается следующим образом:
