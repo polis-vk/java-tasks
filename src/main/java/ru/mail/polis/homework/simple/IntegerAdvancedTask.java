@@ -10,7 +10,9 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     /**
-     * Сумма элементов геометрической прогрессии с 1 элементом a и множителем r (a + aq + aq^2 + ... + aq^n)
+     * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
+     * a + aq + aq^2 + ... + aq^(n-1)
+     *
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
