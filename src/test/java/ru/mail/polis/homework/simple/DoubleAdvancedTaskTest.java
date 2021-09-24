@@ -45,7 +45,7 @@ public class DoubleAdvancedTaskTest {
         assertEquals(-517, DoubleAdvancedTask.surfaceFunction(5, 7, 2,
                 2, 0, 4,
                 1, -2, -3,
-                -10, 5), 1e-2);
+                -10, -5), 1e-2);
         assertEquals(0.6, DoubleAdvancedTask.surfaceFunction(0, 0, 2,
                 2, -2, 4,
                 1, 4, -3,
