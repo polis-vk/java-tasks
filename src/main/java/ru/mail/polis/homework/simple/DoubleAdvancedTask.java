@@ -19,7 +19,6 @@ public class DoubleAdvancedTask {
      * <p>
      * Если используете какой-то конкретный способ, напишите какой.
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
-     *
      */
 
     private static double[] solveDerivative(int a, int b, int c) {
@@ -47,13 +46,14 @@ public class DoubleAdvancedTask {
     }
 
     private static double getOneRootInRange(double left, double right, int a, int b, int c, int d) {
-        final double e = 1e-9;
         if (isRoot(right, a, b, c, d)) {
             return right;
         }
         if (isRoot(left, a, b, c, d)) {
             return left;
         }
+
+        final double e = 1e-9;
         final boolean isDecreasing = isMoreThenRoot(right - e, a, b, c, d);
         while (right >= left) {
             final double mid = (left + right) / 2;
@@ -87,14 +87,16 @@ public class DoubleAdvancedTask {
             Именно в нулях функции y = 3ax^2 + 2bx + c функция меняет знак
             На этих промежутках мы и будем искать корни
         */
-        ArrayList<Double> arrayList = new ArrayList<>();
-        arrayList.add(getOneRootInRange(Integer.MIN_VALUE, extremum[0], a, b, c, d));
-        arrayList.add(getOneRootInRange(extremum[0], extremum[1], a, b, c, d));
-        arrayList.add(getOneRootInRange(extremum[1], Integer.MAX_VALUE, a, b, c, d));
-        Collections.sort(arrayList);
-        final double x1 = arrayList.get(2);
-        final double x2 = arrayList.get(1);
-        final double x3 = arrayList.get(0);
+        ArrayList<Double> allX = new ArrayList<>();
+
+        allX.add(getOneRootInRange(Integer.MIN_VALUE, extremum[0], a, b, c, d));
+        allX.add(getOneRootInRange(extremum[0], extremum[1], a, b, c, d));
+        allX.add(getOneRootInRange(extremum[1], Integer.MAX_VALUE, a, b, c, d));
+
+        Collections.sort(allX);
+        final double x1 = allX.get(2);
+        final double x2 = allX.get(1);
+        final double x3 = allX.get(0);
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -106,6 +108,7 @@ public class DoubleAdvancedTask {
      */
 
     public static float length(double a1, double b1, double a2, double b2) {
+        // При a1 = a2 прямые не параллельны и пересекаются
         return a1 == a2 ? (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1)) : 0;
     }
 

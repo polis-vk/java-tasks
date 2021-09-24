@@ -60,6 +60,7 @@ public class IntegerAdvancedTask {
 
     private static ArrayList<Character> ReverseDecToHex(long n) {
         ArrayList<Character> result = new ArrayList<>();
+
         long oneFigure;
         while (n >= 16) {
             oneFigure = n % 16;
@@ -84,6 +85,7 @@ public class IntegerAdvancedTask {
      */
     public static byte minNumber(long a) {
         final ArrayList<Character> reverseHex = ReverseDecToHex(a);
+
         char min = Character.MAX_VALUE;
         byte minIndex = 1;
         for (int i = 0; i < reverseHex.size(); i++) {
