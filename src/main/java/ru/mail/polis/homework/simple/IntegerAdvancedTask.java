@@ -10,7 +10,9 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     /**
-     * Сумма элементов геометрической прогрессии с 1 элементом a и множителем r (a + aq + aq^2 + ... + aq^n)
+     * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
+     * a + aq + aq^2 + ... + aq^(n-1)
+     *
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
@@ -27,7 +29,7 @@ public class IntegerAdvancedTask {
      * сначала наверх на up, потом направо на right. Ночью она двигается вниз на down и налево на left.
      * Сколько суток понадобится гусенице, чтобы доползти до правого верхнего поля с травой?
      * Если она этого никогда не сможет сделать, Верните число Integer.MAX_VALUE;
-     * Считаем, что на каждой клетке с координатами >= grassX и >= grassY находится трава
+     * Считаем, что на каждой клетке с координатами >= grassX или >= grassY находится трава
      * Пример: (10, 3, 5, 5, 11, 20) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
