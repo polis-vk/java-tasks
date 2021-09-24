@@ -12,11 +12,17 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (q == 0) {
+            return a;
+        }
+        if (q == 1) {
+            return (long) a * n;
+        }
+        return (long) (a * ((1 - Math.pow(q, n)) / (1 - q)));
     }
 
     /**
@@ -28,7 +34,22 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 11, 20) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (up >= grassY || right >= grassX) {
+            return 1;
+        }
+        int upPerDay = up - down;
+        int rightPerDay = right - left;
+        if (upPerDay <= 0 && rightPerDay <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        int daysX = (grassX - right + rightPerDay - 1) / rightPerDay + 1;
+        int daysY = (grassY - up + upPerDay - 1) / upPerDay + 1;
+        if (upPerDay > 0 && rightPerDay > 0) {
+            return Math.min(daysX, daysY);
+        } else if (upPerDay > 0) {
+            return daysY;
+        }
+        return daysX;
     }
 
     /**
@@ -37,7 +58,19 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        char[] letters = {'A', 'B', 'C', 'D', 'E', 'F'};
+        StringBuilder string = new StringBuilder();
+        int remainder;
+        for (int i = 0; i < order; i++) {
+            remainder = n % 16;
+            if (remainder < 10) {
+                string.append(remainder);
+            } else {
+                string.append(letters[remainder - 10]);
+            }
+            n /= 16;
+        }
+        return string.charAt(order - 1);
     }
 
     /**
@@ -47,7 +80,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte min = 16;
+        byte iMin = 0;
+        byte i = 0;
+        while (a != 0) {
+            i++;
+            byte remainder = (byte) (a % 16);
+            if (min > remainder) {
+                min = remainder;
+                iMin = i;
+            }
+            a /= 16;
+        }
+        return iMin;
     }
 
 }
