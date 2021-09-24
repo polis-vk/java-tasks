@@ -12,11 +12,13 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        double numerator = a * (Math.pow(q, n) - 1);
+        double denominator = q - 1;
+        return (long) (numerator / denominator);
     }
 
     /**
@@ -28,7 +30,24 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 11, 20) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int xMoveAtOneDay = right - left;
+        int yMoveAtOneDay = up - down;
+
+        int xBeforeLastDay = grassX - right;
+        int yBeforeLastDay = grassY - up;
+
+        if (xBeforeLastDay <= 0 || yBeforeLastDay <= 0) {
+            return 1;
+        }
+
+        if (xMoveAtOneDay <= 0 && yMoveAtOneDay <= 0) {
+            return Integer.MAX_VALUE;
+        }
+
+        int xDays = (int) Math.ceil((double) xBeforeLastDay / xMoveAtOneDay) + 1;
+        int yDays = (int) Math.ceil((double) yBeforeLastDay / yMoveAtOneDay) + 1;
+
+        return Math.max(xDays, yDays);
     }
 
     /**
@@ -37,7 +56,8 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        String hexNumber = Integer.toHexString(n).toUpperCase();
+        return hexNumber.charAt(hexNumber.length() - order);
     }
 
     /**
@@ -47,7 +67,18 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        String hexNumber = Long.toHexString(a);
+        byte numberOfMinDigit = 17;
+        char minDigit = 'f';
+
+        for (int i = hexNumber.length() - 1; i >= 0; i--) {
+            char current = hexNumber.charAt(i);
+            if (current < minDigit) {
+                minDigit = current;
+                numberOfMinDigit = (byte) (hexNumber.length() - i);
+            }
+        }
+        return numberOfMinDigit;
     }
 
 }
