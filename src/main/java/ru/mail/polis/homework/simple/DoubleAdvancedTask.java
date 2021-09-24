@@ -22,8 +22,8 @@ public class DoubleAdvancedTask {
      *
      */
 
-    private static double[] solveDerivatives(int a, int b, int c) {
-        double d = b * b - 4 * a * c;
+    private static double[] solveDerivative(int a, int b, int c) {
+        final double d = b * b - 4 * a * c;
         if (d > 0) {
             double x1, x2;
             x1 = (-b - Math.sqrt(d)) / (2 * a);
@@ -81,15 +81,20 @@ public class DoubleAdvancedTask {
             c *= -1;
             d *= -1;
         }
-        final double[] extremum = solveDerivatives(3 * a, 2 * b, c); // (ax^3+bx^2+cx+d)' = 3ax^2 + 2bx + c
+        final double[] extremum = solveDerivative(3 * a, 2 * b, c);
+        /*
+            (ax^3+bx^2+cx+d)' = 3ax^2 + 2bx + c
+            Именно в нулях функции y = 3ax^2 + 2bx + c функция меняет знак
+            На этих промежутках мы и будем искать корни
+        */
         ArrayList<Double> arrayList = new ArrayList<>();
         arrayList.add(getOneRootInRange(Integer.MIN_VALUE, extremum[0], a, b, c, d));
         arrayList.add(getOneRootInRange(extremum[0], extremum[1], a, b, c, d));
         arrayList.add(getOneRootInRange(extremum[1], Integer.MAX_VALUE, a, b, c, d));
         Collections.sort(arrayList);
-        double x1 = arrayList.get(2);
-        double x2 = arrayList.get(1);
-        double x3 = arrayList.get(0);
+        final double x1 = arrayList.get(2);
+        final double x2 = arrayList.get(1);
+        final double x3 = arrayList.get(0);
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -99,6 +104,7 @@ public class DoubleAdvancedTask {
      * Примеры: (1, 1, 2, -1) -> 0
      * (0, 1, 0, 5) -> 4
      */
+
     public static float length(double a1, double b1, double a2, double b2) {
         return a1 == a2 ? (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1)) : 0;
     }
@@ -115,10 +121,12 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        double a = y1 * (z2 - z3) + y2 * (z3 - z1) + y3 * (z1 - z2);
-        double b = z1 * (x2 - x3) + z2 * (x3 - x1) + z3 * (x1 - x2);
-        double c = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2);
-        double d = -(x1 * (y2 * z3 - y3 * z2) + x2 * (y3 * z1 - y1 * z3) + x3 * (y1 * z2 - y2 * z1));
+
+        final double a = y1 * (z2 - z3) + y2 * (z3 - z1) + y3 * (z1 - z2);
+        final double b = z1 * (x2 - x3) + z2 * (x3 - x1) + z3 * (x1 - x2);
+        final double c = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2);
+        final double d = -(x1 * (y2 * z3 - y3 * z2) + x2 * (y3 * z1 - y1 * z3) + x3 * (y1 * z2 - y2 * z1));
+        // Получили коэффициенты уравнения плоскости, откуда выразим z:
         return (-d - b * y4 - a * x4) / c;
     }
 }

@@ -17,6 +17,7 @@ public class IntegerAdvancedTask {
      * <p>
      * Пример: (1, 2, 3) -> 7
      */
+
     public static long progression(int a, double q, int n) {
         long result = a;
         for (int i = 1; i < n; i++) {
@@ -57,7 +58,7 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
 
-    public static ArrayList<Character> ReverseDecToHex(long n) {
+    private static ArrayList<Character> ReverseDecToHex(long n) {
         ArrayList<Character> result = new ArrayList<>();
         long oneFigure;
         while (n >= 16) {
@@ -93,5 +94,4 @@ public class IntegerAdvancedTask {
         }
         return minIndex;
     }
-
 }
