@@ -12,23 +12,33 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        return (long) ((a * (1 - Math.pow(q, n))) / (1 - q));
     }
 
     /**
-     * Гусеница ползает по столу квадратами по часовой стрелке. За день она двигается следующим образом:
+     * Гусеница ползает по столку квадратами по часовой стрелке. За день она двигается следующим образом:
      * сначала наверх на up, потом направо на right. Ночью она двигается вниз на down и налево на left.
-     * Сколько суток понадобится гусенице, чтобы доползти до поля с травой?
-     * Считаем, что на каждой клетке с координатами >= grassX или >= grassY находится трава
+     * Сколько суток понадобится гусенице, чтобы доползти до правого верхнего поля с травой?
      * Если она этого никогда не сможет сделать, Верните число Integer.MAX_VALUE;
-     * Пример: (10, 3, 5, 5, 20, 1) -> 2
+     * Считаем, что на каждой клетке с координатами >= grassX или >= grassY находится трава
+     * Пример: (10, 3, 5, 5, 11, 20) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (up < grassY && up - down <= 0 && right < grassX && right - left <= 0) {
+            return Integer.MAX_VALUE;
+        }
+
+        if (up >= grassY || right >= grassX) {
+            return 1;
+        }
+
+        int xDays = (int) Math.ceil((double) (grassX - right) / (right - left));
+        int yDays = (int) Math.ceil((double) (grassY - up) / (up - down));
+        return (xDays >= 0 && yDays >= 0 ? Integer.min(xDays, yDays) : Integer.max(xDays, yDays)) + 1;
     }
 
     /**
@@ -37,7 +47,8 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        return new StringBuilder(Integer.toHexString(n))
+                .reverse().toString().toUpperCase().charAt(order - 1);
     }
 
     /**
@@ -47,7 +58,17 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        String hexNum = new StringBuilder(Long.toHexString(a)).reverse().toString();
+        byte min = Byte.MAX_VALUE;
+        int result = 0;
+        for (int i = 0; i < hexNum.length(); i++) {
+            char currentChar = hexNum.charAt(i);
+            if (currentChar < min) {
+                min = (byte) currentChar;
+                result = i + 1;
+            }
+        }
+        return (byte) result;
     }
-
 }
+
