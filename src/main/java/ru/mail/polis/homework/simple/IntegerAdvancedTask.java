@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.simple;
 
 
+import java.util.Locale;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -15,8 +17,12 @@ public class IntegerAdvancedTask {
      *
      * Пример: (1, 2, 3) -> 7
      */
+
+    private static final double EPS = 0.0000001;
+
     public static long progression(int a, double q, int n) {
-        return 0;
+        return Math.abs(q - 1) > EPS ? (long) (a * (Math.pow(q, n) - 1) / (q - 1)) :
+                (long) a * n;
     }
 
     /**
@@ -28,7 +34,24 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 11, 20) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (grassX <= right || grassY <= up) {
+            return 1;
+        }
+
+        int differenceX = right - left;
+        int differenceY = up - down;
+
+        return Math.min(countOfDays(grassX, differenceX, right), countOfDays(grassY, differenceY, up));
+    }
+
+    private static int countOfDays(int length, int difference, int addInAfternoon) {
+        if (difference <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        if (length % difference == 0) {
+            return length / difference - addInAfternoon / difference + 1;
+        }
+        return length / difference - addInAfternoon / difference + 2;
     }
 
     /**
@@ -36,8 +59,12 @@ public class IntegerAdvancedTask {
      * Выведите цифру стоящую на нужном разряде для числа n в 16-ом формате
      * Пример: (454355, 2) -> D
      */
+
+    private static final int HEXADECIMAL_BASE = 16;
+
     public static char kDecimal(int n, int order) {
-        return 0;
+        int truncatedNumber = n / (int) Math.pow(HEXADECIMAL_BASE, order - 1);
+        return Integer.toHexString(truncatedNumber % HEXADECIMAL_BASE).toUpperCase().charAt(0);
     }
 
     /**
@@ -47,7 +74,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte minDigit = (byte) HEXADECIMAL_BASE;
+        byte indexOfMaxDigit = 0;
+        byte currentDigit;
+        for (byte i = 0; a > 0; i++) {
+            currentDigit = (byte) (a % HEXADECIMAL_BASE);
+            if (minDigit > currentDigit) {
+                indexOfMaxDigit = i;
+                minDigit = currentDigit;
+            }
+
+            a = a / HEXADECIMAL_BASE;
+        }
+        return (byte) (indexOfMaxDigit + 1);
     }
 
 }
