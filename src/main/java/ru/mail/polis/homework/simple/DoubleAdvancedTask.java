@@ -17,24 +17,31 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int a, int b, int c, int d) {
-        // Используется тригонометрическая формула.
+        // Используется тригонометрическая формула Виета (Википедия).
         double A = (double) b / a;
         double B = (double) c / a;
         double C = (double) d / a;
         double Q = (A * A - 3 * B) / 9;
         double R = (2 * A * A * A - 9 * A * B + 27 * C) / 54;
         double S = Q * Q * Q - R * R;
-        double f = (1.0 / 3.0) * Math.acos(R / Math.sqrt(Q * Q * Q));
-        double x1 = (-2) * Math.sqrt(Q) * Math.cos(f) - (A / 3);
-        double x2 = (-2) * Math.sqrt(Q) * Math.cos(f + ((2 * Math.PI) / 3.0)) - (A / 3);
-        double x3 = (-2) * Math.sqrt(Q) * Math.cos(f - ((2 * Math.PI) / 3.0)) - (A / 3);
-        // TODO: Рассмотреть S = 0
+        double x1, x2, x3;
+        if (S == 0.0) {
+            x1 = (-2) * Math.signum(R) * Math.sqrt(Q) - (A / 3);
+            x2 = Math.signum(R) * Math.sqrt(Q) - (A / 3);
+            x3 = x2;
+        } else {
+            double f = (1.0 / 3.0) * Math.acos(R / Math.sqrt(Q * Q * Q));
+            x1 = (-2) * Math.sqrt(Q) * Math.cos(f) - (A / 3);
+            x2 = (-2) * Math.sqrt(Q) * Math.cos(f + ((2 * Math.PI) / 3.0)) - (A / 3);
+            x3 = (-2) * Math.sqrt(Q) * Math.cos(f - ((2 * Math.PI) / 3.0)) - (A / 3);
+        }
         double[] ans = new double[]{x1, x2, x3};
+        // Сортировка вставками.
         for (int i = 1; i < 3; i++) {
             double x = ans[i];
             int j = i;
-            while ((j > 0) && ans[j-1] < x) {
-                ans[j] = ans[j-1];
+            while ((j > 0) && (ans[j - 1] < x)) {
+                ans[j] = ans[j - 1];
                 j--;
             }
             ans[j] = x;
