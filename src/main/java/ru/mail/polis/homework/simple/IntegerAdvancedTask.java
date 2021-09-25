@@ -16,7 +16,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
     /**
@@ -28,8 +28,17 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 11, 20) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
-    }
+    	if(up >= grassY || right >= grassX) {
+        	return 1; //доползет за полдня, формально за первый день
+        }
+
+		return Math.min(calcTime(right - left, grassX-right), calcTime(up - down, grassY-up));
+	}
+	
+	private static int calcTime(final int step, final int border) {
+		if(step <= 0) return Integer.MAX_VALUE; // не доползет
+		return (border / step) + (border%step>0?2:1);
+	}
 
     /**
      * Дано число n в 10-ном формате и номер разряда order.
@@ -37,7 +46,8 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+    	String s = Integer.toHexString(n);
+        return s.toUpperCase().charAt(s.length() - order);
     }
 
     /**
@@ -47,7 +57,17 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+    	String s = Long.toHexString(a);
+    	char min = 'g';
+    	int k = 0;
+    	for(int i = 0; i < s.length(); ++i) {
+    		final char ch = s.charAt(i);
+    		if(ch <= min) {
+    			k = s.length() - i;
+    			min = ch;
+    		}
+    	}
+        return (byte)k;
     }
 
 }
