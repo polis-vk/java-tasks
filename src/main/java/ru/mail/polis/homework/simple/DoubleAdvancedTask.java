@@ -58,12 +58,9 @@ public class DoubleAdvancedTask {
         if (a1 != a2) {
             return 0;
         }
-        // Представление в виде общего уравнения прямой.
-        double A = a1;
-        double B = -1;
-        double C1 = b1;
-        double C2 = b2;
-        return (float) (Math.abs(C2 - C1)/Math.sqrt(A*A + B*B));
+        // Используется формула нахождения расстояния между двумя прямыми,
+        // представленными в виде общего уравнения прямой.
+        return (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a2 + 1));
     }
 
     /**
