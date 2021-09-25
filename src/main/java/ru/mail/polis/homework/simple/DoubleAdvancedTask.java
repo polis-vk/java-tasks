@@ -75,6 +75,25 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        // Координаты векторов между прямыми на плоскости.
+        int dx21 = x2 - x1;
+        int dy21 = y2 - y1;
+        int dz21 = z2 - z1;
+
+        int dx31 = x3 - x1;
+        int dy31 = y3 - y1;
+        int dz31 = z3 - z1;
+
+        int dx41 = x4 - x1;
+        int dy41 = y4 - y1;
+
+        // Нормаль к плоскости.
+        int ni = dy21 * dz31 - dy31 * dz21;
+        int nj = -(dx21 * dz31 - dx31 * dz21);
+        int nk = dx21 * dy31 - dx31 * dy21;
+
+        // z4 получается из скалярного произведения нормали и вектора на плоскости,
+        // проходящего через четвертую точку (оно будет равно нулю).
+        return (nk * z1 - ni * dx41 - nj * dy41) / ((double) nk);
     }
 }
