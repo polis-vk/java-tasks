@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.simple;
 
 
-import Jama.Matrix;
-
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -85,14 +83,20 @@ public class DoubleAdvancedTask {
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
 
-        double[][] odds = {{x1, y1, z1}, {x2, y2, z2}, {x3, y3, z3}};
-        double[] ans = {-1, -1, -1};
-        Matrix a = new Matrix(odds);
-        Matrix b = new Matrix(ans, 3);
-        Matrix x = a.solve(b); // A*X=B
-
-        return (-(x.get(0, 0)) * x4 - (x.get(1, 0)) * y4 - 1) / x.get(2, 0); //z4
+        double detX = determinantOfTwoByTwoMatrix(new double[][]{{y2 - y1, z2 - z1}, {y3 - y1, z3 - z1}});
+        double detY = determinantOfTwoByTwoMatrix(new double[][]{{x2 - x1, z2 - z1}, {x3 - x1, z3 - z1}});
+        double detZ = determinantOfTwoByTwoMatrix(new double[][]{{x2 - x1, y2 - y1}, {x3 - x1, y3 - y1}});
+        double tail = -x1 * detX + y1 * detY - z1 * detZ; //now detX equals A, detY equals B, detZ equals C and tail equals D in formula Ax+By+Cz+D=0
+        return (-tail + y4 * detY - x4 * detX) / (detZ);
 
 
+    }
+
+    public static double determinantOfTwoByTwoMatrix(double[][] matrix) {
+        if (matrix.length == matrix[0].length &&
+                matrix.length == matrix[1].length &&
+                matrix.length == 2) {
+            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+        } else throw new IllegalArgumentException();
     }
 }
