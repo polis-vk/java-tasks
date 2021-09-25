@@ -29,7 +29,10 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        if (a1 != a2) {
+            return 0;
+        }
+        return (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1));
     }
 
     /**
@@ -44,6 +47,17 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        int vector1[] = new int[]{x2 - x1, y2 - y1, z2 - z1};
+        int vector2[] = new int[]{x3 - x1, y3 - y1, z3 - z1};
+
+        int coefA = vector1[0] * vector2[1] - vector1[1] * vector2[0];
+        int coefB = vector1[0] * vector2[2] - vector1[2] * vector2[0];
+        int coefC = vector1[1] * vector2[2] - vector1[2] * vector2[1];
+
+        if (coefC == 0) {
+            return z1;
+        }
+
+        return (double) (coefA * (x1 - x4) - coefB * (y1 - y4) + coefC * z1) / coefC;
     }
 }
