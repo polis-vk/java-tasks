@@ -1,14 +1,27 @@
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
+# Ignore everything
+*
 
+# But not Java files...
+!.gitignore
+!*.java
 
-# Mobile Tools for Java (J2ME)
-.gradle/
-out/
-build/
-target/
-gradle
+# And not Gradle Wrapper stuff
+!gradle/wrapper/*
+
+# And CI
+!.travis.yml
+!build.gradle.kts
+!gradlew
+!gradlew.bat
+!LICENSE
+!README.md
+!settings.gradle
+!.circleci/*
+!.codeclimate.yml
+!checkstyle.xml
+!.lgtm.yml
+
+# ...even if they are in subdirectories
+!*/
 /bin/
+/.gradle/
