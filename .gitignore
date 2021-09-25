@@ -5,9 +5,6 @@
 !.gitignore
 !*.java
 
-# And not Gradle Wrapper stuff
-!gradle/wrapper/*
-
 # And CI
 !.travis.yml
 !build.gradle.kts
