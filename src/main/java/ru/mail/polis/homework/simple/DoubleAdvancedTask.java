@@ -30,16 +30,16 @@ public class DoubleAdvancedTask {
         double q = 2 * ratioA * ratioA * ratioA / 27 - ratioA * ratioB / 3 + ratioC;
         double discriminant = p * p * p + q * q;
 
-        double[] roots = new double[] {0, 0, 0};
+        double[] roots = new double[]{0, 0, 0};
 
         if (Math.abs(discriminant) < EPS) {
-            roots[0] = - 2 * Math.pow(p / 2, 1.0 / 3) - ratioA / 3;
-            roots[1] = - Math.pow(p / 2, 1.0 / 3) - ratioA / 3;
+            roots[0] = -2 * Math.pow(p / 2, 1.0 / 3) - ratioA / 3;
+            roots[1] = -Math.pow(p / 2, 1.0 / 3) - ratioA / 3;
             roots[2] = roots[1];
         } else if (discriminant > 0) {
-            roots[0] = Math.pow(- q / 2 + Math.sqrt(discriminant), 1.0 / 3) +
-                    Math.pow(- q / 2 - Math.sqrt(discriminant), 1.0 / 3) - ratioA / 3;
-            return roots[0] + ", " + roots[1] + ", " + roots[2];
+            roots[0] = Math.pow(-q / 2 + Math.sqrt(discriminant), 1.0 / 3) +
+                    Math.pow(-q / 2 - Math.sqrt(discriminant), 1.0 / 3) - ratioA / 3;
+            return roots[0] + ", " + roots[0] + ", " + roots[0];
         } else {
             double ratio = 2 / Math.sqrt(3) * Math.sqrt(-p);
             double argArcSin = (3 * Math.sqrt(3) * q) / (2 * Math.pow(Math.sqrt(-p), 3));
@@ -53,7 +53,7 @@ public class DoubleAdvancedTask {
             double arcSin = Math.asin(argArcSin) / 3;
 
             roots[0] = ratio * Math.sin(arcSin) - ratioA / 3;
-            roots[1] = - ratio * Math.sin(arcSin + Math.PI / 3) - ratioA / 3;
+            roots[1] = -ratio * Math.sin(arcSin + Math.PI / 3) - ratioA / 3;
             roots[2] = ratio * Math.cos(arcSin + Math.PI / 6) - ratioA / 3;
         }
 
@@ -84,9 +84,9 @@ public class DoubleAdvancedTask {
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
         double a = (y2 - y1) * (z3 - z1) - (z2 - z1) * (y3 - y1);
-        double b = - ((x2 - x1) * (z3 - z1) - (z2 - z1) * (x3 - x1));
+        double b = -((x2 - x1) * (z3 - z1) - (z2 - z1) * (x3 - x1));
         double c = (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1);
-        double d = - x1 * a - y1 * b - z1 * c;
+        double d = -x1 * a - y1 * b - z1 * c;
 
         return (-d - a * x4 - b * y4) / c;
     }
