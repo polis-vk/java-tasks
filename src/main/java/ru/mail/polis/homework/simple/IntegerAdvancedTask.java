@@ -35,7 +35,7 @@ public class IntegerAdvancedTask {
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
         int dx = right - left;
         int dy = up - down;
-        if ((dx <=0) && (dy <= 0) && (right < grassX) && (up < grassY)) {
+        if ((dx <= 0) && (dy <= 0) && (right < grassX) && (up < grassY)) {
             return Integer.MAX_VALUE;
         }
         if ((right >= grassX) || (up >= grassY)) {
