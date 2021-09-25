@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.simple;
 
 
+import jdk.nashorn.internal.ir.IdentNode;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -12,11 +14,11 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
     /**
@@ -28,7 +30,17 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 11, 20) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (up >= grassY || right >= grassX) {
+            return 1;
+        }
+
+        int changeX = right - left;
+        int changeY = up - down;
+        int remainingX = grassX - right;
+        int remainingY = grassY - up;
+        int daysX = changeX > 0 ? (int) Math.ceil((double) remainingX / changeX + 1) : Integer.MAX_VALUE;
+        int daysY = changeY > 0 ? (int) Math.ceil((double) remainingY / changeY + 1) : Integer.MAX_VALUE;
+        return Integer.min(daysX, daysY);
     }
 
     /**
@@ -37,7 +49,15 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        for (int i = 0; i < order - 1; i++) {
+            n /= 16;
+        }
+        int number = n % 16;
+        if (number <= 9) {
+            return (char) (number + '0');
+        } else {
+            return (char) ('A' - 10 + number);
+        }
     }
 
     /**
@@ -47,7 +67,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte minIndex = 0;
+        long min = 16;
+        byte i = 1;
+        while (a > 0) {
+            if (a % 16 < min) {
+                min = a % 16;
+                minIndex = i;
+            }
+            i++;
+            a /= 16;
+        }
+
+        return minIndex;
     }
 
 }
