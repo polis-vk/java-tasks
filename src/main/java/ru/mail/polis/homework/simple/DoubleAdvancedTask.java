@@ -23,31 +23,19 @@ public class DoubleAdvancedTask {
         double x1;
         double x2;
         double x3;
-        if (b == 0) {
-            if (c == 0 && d == 0) {
-                return 0.0 + ", " + 0.0 + ", " + 0.0;
-            }
-            //Формула из раздела "Неалгебраическое решение в терминах вещественных величин" отсюда: https://ru.wikipedia.org/wiki/Casus_irreducibilis
-            double p = (double) c / a;
-            double q = d / (27.0 * a);
-            double sqrtTerm = Math.sqrt(-p / 3.0);
-            double acosTerm = 1.0 / 3.0 * Math.acos(((3.0 * q) / (2.0 * p) * sqrtTerm));
-            x1 = 2 * sqrtTerm * Math.cos(acosTerm - (0 * 2 * Math.PI) / 3.0); //0 оставлен для того, чтобы было одинаково
-            x2 = 2 * sqrtTerm * Math.cos(acosTerm - (1 * 2 * Math.PI) / 3.0);
-            x3 = 2 * sqrtTerm * Math.cos(acosTerm - (2 * 2 * Math.PI) / 3.0);
-        } else if (d == 0) {
+        if (d == 0) {
             //Делим на аргумент и решаем как квадратное уравнение + нулевой корень
             double discriminantSqrt = Math.sqrt(b * b - 4 * a * c);
             x1 = (-b + discriminantSqrt) / (2 * a);
             x2 = (-b - discriminantSqrt) / (2 * a);
-            x3 = 0;
+            x3 = 0.0;
         } else {
             //Тригонометрическая формула Виета: https://ru.wikipedia.org/wiki/Тригонометрическая_формула_Виета
             double reducedB = (double) b / a;
-            double reducedC = c != 0 ? (double) c / a : 0;
+            double reducedC = (double) c / a;
             double reducedD = (double) d / a;
-            double q = (reducedB * reducedB - 3 * reducedC) / 9.0;
-            double r = (2 * reducedB * reducedB * reducedB - 9 * reducedB * reducedC + 27 * reducedD) / 54.0;
+            double q = (reducedB * reducedB - 3.0 * reducedC) / 9.0;
+            double r = (2.0 * reducedB * reducedB * reducedB - 9.0 * reducedB * reducedC + 27.0 * reducedD) / 54.0;
             double fi = 1.0 / 3.0 * Math.acos(r / Math.sqrt(q * q * q));
             x1 = -2.0 * Math.sqrt(q) * Math.cos(fi) - reducedB / 3.0;
             x2 = -2.0 * Math.sqrt(q) * Math.cos(fi + 2.0 * Math.PI / 3.0) - reducedB / 3.0;
