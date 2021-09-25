@@ -12,11 +12,15 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (q == 1.0) {
+            return (long) a * n;
+        } else {
+            return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
+        }
     }
 
     /**
@@ -28,7 +32,21 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int upMove = up - down; // смещение вверх
+        int rightMove = right - left; // смещение вправо
+        if (up >= grassY || right >= grassX) {
+            return 1;
+        }
+        if (upMove <= 0 && rightMove <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        int upMoveCnt = (int) Math.ceil((double) (grassY - up) / upMove);
+        int rightMoveCnt = (int) Math.ceil((double) (grassX - right) / rightMove);
+        if (upMoveCnt > 0 && rightMoveCnt > 0) {
+            return Math.min(upMoveCnt, rightMoveCnt) + 1;
+        } else {
+            return Math.max(upMoveCnt, rightMoveCnt) + 1;
+        }
     }
 
     /**
@@ -37,7 +55,16 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        StringBuilder hexNum = new StringBuilder();
+        for (int i = 0; i < order; i++) {
+            if (n % 16 > 9) {
+                hexNum.append((char) (n % 16 + 55)); // Код символа 'A' - 65.
+            } else {
+                hexNum.append(n % 16);
+            }
+            n /= 16;
+        }
+        return hexNum.charAt(order - 1);
     }
 
     /**
@@ -47,7 +74,17 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte minNum = 15;
+        byte minPos = 1;
+        byte iterator = 1;
+        while (a != 0) {
+            if (a % 16 < minNum) {
+                minNum = (byte) (a % 16);
+                minPos = iterator;
+            }
+            a /= 16;
+            iterator++;
+        }
+        return minPos;
     }
-
 }

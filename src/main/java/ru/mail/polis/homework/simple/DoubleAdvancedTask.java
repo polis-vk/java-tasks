@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.Arrays;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -20,6 +22,28 @@ public class DoubleAdvancedTask {
         double x1 = 0;
         double x2 = 0;
         double x3 = 0;
+        // Решение с помощью тригонометрической формулы Виета
+        double a1 = (double) b / a;
+        double b1 = (double) c / a;
+        double c1 = (double) d / a;
+        double Q = (Math.pow(a1, 2) - 3 * b1) / 9;
+        double R = (2 * Math.pow(a1, 3) - 9 * a1 * b1 + 27 * c1) / 54;
+        double S = Math.pow(Q, 3) - Math.pow(R, 2);
+        double[] sorted = new double[3];
+        if (S > 0) {
+            double phi = Math.acos(R / Math.pow(Q, (double) 3 / 2)) / 3;
+            sorted[0] = -2 * Math.sqrt(Q) * Math.cos(phi) - a1 / 3;
+            sorted[1] = -2 * Math.sqrt(Q) * Math.cos(phi + 2 * Math.PI / 3) - a1 / 3;
+            sorted[2] = -2 * Math.sqrt(Q) * Math.cos(phi - 2 * Math.PI / 3) - a1 / 3;
+        } else {
+            sorted[0] = -2 * Math.cbrt(R) - a1 / 3;
+            sorted[1] = Math.cbrt(R) - a1 / 3;
+            sorted[2] = sorted[1];
+        }
+        Arrays.sort(sorted);
+        x1 = sorted[2];
+        x2 = sorted[1];
+        x3 = sorted[0];
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -29,7 +53,11 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        if (a1 != a2) {
+            return 0;
+        } else {
+            return (float) (Math.abs(b2 - b1) / Math.sqrt(Math.pow(a1, 2) + 1));
+        }
     }
 
     /**
@@ -44,6 +72,10 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        double coef1 = (y2 - y1) * (z3 - z1) - (z2 - z1) * (y3 - y1);
+        double coef2 = -((x2 - x1) * (z3 - z1) - (z2 - z1) * (x3 - x1));
+        double coef3 = (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1);
+        double coef4 = -x1 * coef1 - y1 * coef2 - z1 * coef3;
+        return -(coef4 + coef1 * x4 + coef2 * y4) / coef3;
     }
 }
