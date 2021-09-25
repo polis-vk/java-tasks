@@ -56,4 +56,39 @@ public class DoubleAdvancedTaskTest {
                 4, -2), 1e-2);
     }
 
+    @Test
+    public void rounder() {
+        double eps = 0.0001;
+        assertEquals(5.0, DoubleAdvancedTask.rounder(4.999995, eps), eps);
+        assertEquals(6.0, DoubleAdvancedTask.rounder(6.000003, eps), eps);
+        assertEquals(6.344, DoubleAdvancedTask.rounder(6.344, eps), eps);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void determinantOfTwoByTwoMatrixTestOfIncorrectArgument() {
+        double eps = 0.0001;
+        double[][] matrix = {{1}, {1, 2}};
+        assertEquals(0.0, DoubleAdvancedTask.determinantOfTwoByTwoMatrix(matrix), eps); // ignored output
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void determinantOfTwoByTwoMatrixTestOfDullArgument() {
+        double eps = 0.0001;
+        double[][] matrix = {{}};
+        assertEquals(0.0, DoubleAdvancedTask.determinantOfTwoByTwoMatrix(matrix), eps);//ignored output
+    }
+
+    @Test
+    public void determinantOfTwoByTwoMatrixTest() {
+        double delta = 0.01;
+        double[][] matrix1 = {{1, 3}, {1, 2}};
+        double[][] matrix2 = {{0, 0}, {0, 0}};
+        double[][] matrix3 = {{-1, -1}, {-1, 2}};
+        double[][] matrix4 = {{50.0, -23.22}, {-168.48, -132.004}};
+
+        assertEquals(-1.0, DoubleAdvancedTask.determinantOfTwoByTwoMatrix(matrix1), delta);
+        assertEquals(0.0, DoubleAdvancedTask.determinantOfTwoByTwoMatrix(matrix2), delta);
+        assertEquals(-3.0, DoubleAdvancedTask.determinantOfTwoByTwoMatrix(matrix3), delta);
+        assertEquals(-10512.3056, DoubleAdvancedTask.determinantOfTwoByTwoMatrix(matrix4), delta);
+    }
 }
