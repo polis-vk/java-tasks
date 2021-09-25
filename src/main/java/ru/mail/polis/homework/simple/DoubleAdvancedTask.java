@@ -55,7 +55,15 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        if (a1 != a2) {
+            return 0;
+        }
+        // Представление в виде общего уравнения прямой.
+        double A = a1;
+        double B = -1;
+        double C1 = b1;
+        double C2 = b2;
+        return (float) (Math.abs(C2 - C1)/Math.sqrt(A*A + B*B));
     }
 
     /**
