@@ -16,11 +16,11 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q == 1.0) {
+        double delta = 1e-10;
+        if (Math.abs(q - 1.0) < delta) {
             return (long) a * n;
-        } else {
-            return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
         }
+        return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
     /**
@@ -32,21 +32,20 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        int upMove = up - down; // смещение вверх
-        int rightMove = right - left; // смещение вправо
         if (up >= grassY || right >= grassX) {
             return 1;
         }
+        int upMove = up - down; // смещение вверх
+        int rightMove = right - left; // смещение вправо
         if (upMove <= 0 && rightMove <= 0) {
             return Integer.MAX_VALUE;
         }
-        int upMoveCnt = (int) Math.ceil((double) (grassY - up) / upMove);
-        int rightMoveCnt = (int) Math.ceil((double) (grassX - right) / rightMove);
-        if (upMoveCnt > 0 && rightMoveCnt > 0) {
-            return Math.min(upMoveCnt, rightMoveCnt) + 1;
-        } else {
-            return Math.max(upMoveCnt, rightMoveCnt) + 1;
+        int upMoveCount = (int) Math.ceil((double) (grassY - up) / upMove);
+        int rightMoveCount = (int) Math.ceil((double) (grassX - right) / rightMove);
+        if (upMoveCount > 0 && rightMoveCount > 0) {
+            return Math.min(upMoveCount, rightMoveCount) + 1;
         }
+        return Math.max(upMoveCount, rightMoveCount) + 1;
     }
 
     /**
@@ -55,16 +54,17 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        StringBuilder hexNum = new StringBuilder();
+        int[] hexNums = new int[order];
+        int buffer = n;
         for (int i = 0; i < order; i++) {
-            if (n % 16 > 9) {
-                hexNum.append((char) (n % 16 + 55)); // Код символа 'A' - 65.
+            if (buffer % 16 > 9) {
+                hexNums[i] = buffer % 16 + 55; // Код символа 'A' - 65.
             } else {
-                hexNum.append(n % 16);
+                hexNums[i] = buffer % 16 + 48; // Код символа '0' - 48.
             }
-            n /= 16;
+            buffer /= 16;
         }
-        return hexNum.charAt(order - 1);
+        return (char) hexNums[order - 1];
     }
 
     /**
@@ -76,14 +76,15 @@ public class IntegerAdvancedTask {
     public static byte minNumber(long a) {
         byte minNum = 15;
         byte minPos = 1;
-        byte iterator = 1;
-        while (a != 0) {
-            if (a % 16 < minNum) {
-                minNum = (byte) (a % 16);
-                minPos = iterator;
+        byte i = 1;
+        long buffer = a;
+        while (buffer != 0) {
+            if (buffer % 16 < minNum) {
+                minNum = (byte) (buffer % 16);
+                minPos = i;
             }
-            a /= 16;
-            iterator++;
+            buffer /= 16;
+            i++;
         }
         return minPos;
     }

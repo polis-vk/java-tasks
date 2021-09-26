@@ -55,9 +55,8 @@ public class DoubleAdvancedTask {
     public static float length(double a1, double b1, double a2, double b2) {
         if (a1 != a2) {
             return 0;
-        } else {
-            return (float) (Math.abs(b2 - b1) / Math.sqrt(Math.pow(a1, 2) + 1));
         }
+        return (float) (Math.abs(b2 - b1) / Math.sqrt(Math.pow(a1, 2) + 1));
     }
 
     /**
