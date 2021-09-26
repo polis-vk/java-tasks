@@ -55,7 +55,7 @@ public class DoubleAdvancedTask {
 
     public static float length(double a1, double b1, double a2, double b2) {
         // При a1 = a2 прямые не параллельны и пересекаются
-        return a1 == a2 ? (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1)) : 0;
+        return Math.abs(a1 - a2) < 1e-10 ? (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1)) : 0;
     }
 
     /**
