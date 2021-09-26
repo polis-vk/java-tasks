@@ -38,23 +38,22 @@ public class IntegerAdvancedTask {
         int y = 0;
         int daysCount = 0;
 
-        if ((up <= down) && (up < grassY) && (right <= left) && (right < grassX)) {
+        if (up <= down && up < grassY && right <= left && right < grassX) {
             return Integer.MAX_VALUE;
         }
 
-        while ((x < grassX) && (y < grassY)) {
+        while (x < grassX && y < grassY) {
             y += up;
             x += right;
             daysCount++;
 
-            if ((x >= grassX) || (y >= grassY)) {
+            if (x >= grassX || y >= grassY) {
                 break;
             }
 
             y -= down;
             x -= left;
         }
-
         return daysCount;
     }
 
@@ -65,14 +64,13 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        LinkedList<Integer> numbers = new LinkedList<>();
-        while (n >= 16) {
-            numbers.add(n % 16);
-            n /= 16;
+        int[] nums = new int[order];
+        int tmpN = n;
+        for (int i = 0; i < order; i++) {
+            nums[i] = tmpN % 16;
+            tmpN /= 16;
         }
-        numbers.add(n);
-
-        return Character.toUpperCase(Character.forDigit(numbers.get(order - 1), 16));
+        return Character.toUpperCase(Character.forDigit(nums[order - 1], 16));
     }
 
     /**
@@ -83,13 +81,18 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        LinkedList<Long> numbers = new LinkedList<>();
-        while (a >= 16) {
-            numbers.add(a % 16);
-            a /= 16;
+        long tmpA = a;
+        byte indexOfMin = 1;
+        byte i = 1;
+        long tmpMin = tmpA % 16;
+        while (tmpA > 0) {
+            if (tmpA % 16 < tmpMin) {
+                tmpMin = tmpA % 16;
+                indexOfMin = i;
+            }
+            i++;
+            tmpA /= 16;
         }
-        numbers.add(a);
-
-        return (byte) (numbers.indexOf(Collections.min(numbers)) + 1);
+        return indexOfMin;
     }
 }

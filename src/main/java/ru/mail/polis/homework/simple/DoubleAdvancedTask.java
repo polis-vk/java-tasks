@@ -17,40 +17,31 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
-
         if (a == 0) {
             if (b == 0) {
                 return String.valueOf(-(double) d / c);
             }
-
             double D = c * c - 4 * b * d;
-            return (D >= 0) ? (((-c - Math.sqrt(D)) / (2 * b)) + ", " + ((-c + Math.sqrt(D)) / (2 * b))) : "";
+            double x1 = (-c - Math.sqrt(D)) / (2 * b);
+            double x2 = (-c + Math.sqrt(D)) / (2 * b);
+            return D >= 0 ? Math.max(x1, x2) + ", " + Math.min(x1, x2) : "";
         }
 
         // Решение по теореме Виета-Кардана при a = 1
-        double doubleB = (double) b / a;
-        double doubleC = (double) c / a;
-        double doubleD = (double) d / a;
-        //a = 1;
+        double A = (double) b / a;
+        double B = (double) c / a;
+        double C = (double) d / a;
 
-        double Q = (Math.pow(doubleB, 2) - 3 * doubleC) / 9;
-        double R = (2 * Math.pow(doubleB, 3) - 9 * doubleB * doubleC + 27 * doubleD) / 54;
-
-        double phi = (Q != 0) ? (Math.acos(R / Math.sqrt(Math.pow(Q, 3))) / 3) : 0;
-        x1 = -2 * Math.sqrt(Q) * Math.cos(phi) - doubleB / 3;
-        x2 = -2 * Math.sqrt(Q) * Math.cos(phi + (2 * Math.PI / 3)) - doubleB / 3;
-        x3 = -2 * Math.sqrt(Q) * Math.cos(phi - (2 * Math.PI / 3)) - doubleB / 3;
+        double Q = (Math.pow(A, 2) - 3 * B) / 9;
+        double R = (2 * Math.pow(A, 3) - 9 * A * B + 27 * C) / 54;
+        double phi = Q != 0 ? Math.acos(R / Math.sqrt(Math.pow(Q, 3))) / 3 : 0;
+        double x1 = -2 * Math.sqrt(Q) * Math.cos(phi) - A / 3;
+        double x2 = -2 * Math.sqrt(Q) * Math.cos(phi + (2 * Math.PI / 3)) - A / 3;
+        double x3 = -2 * Math.sqrt(Q) * Math.cos(phi - (2 * Math.PI / 3)) - A / 3;
 
         double min = Math.min(Math.min(x1, x2), x3);
         double middle = Math.min(Math.max(x1, x2), x3);
-
-        x1 = Math.max(Math.max(x1, x2), x3);
-        x2 = middle;
-        x3 = min;
-        return x1 + ", " + x2 + ", " + x3;
+        return Math.max(Math.max(x1, x2), x3) + ", " + middle + ", " + min;
     }
 
     /**
@@ -59,7 +50,10 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        if (a1 != a2) {
+            return 0;
+        }
+        return (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a2 + 1));
     }
 
     /**
@@ -83,10 +77,7 @@ public class DoubleAdvancedTask {
         double a31 = x3 - x1;
         double a32 = y3 - y1;
         double a33 = z3 - z1;
-
-        double z4 = z1 + (-a11 * a22 * a33 - a31 * a12 * a23 + a21 * a12 * a33 + a11 * a23 * a32)
+        return z1 + (-a11 * a22 * a33 - a31 * a12 * a23 + a21 * a12 * a33 + a11 * a23 * a32)
                 / (a21 * a32 - a22 * a31);
-
-        return z4;
     }
 }
