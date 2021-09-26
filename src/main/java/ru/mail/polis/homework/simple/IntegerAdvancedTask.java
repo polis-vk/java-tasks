@@ -36,18 +36,18 @@ public class IntegerAdvancedTask {
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
         int dx = right - left;
         int dy = up - down;
-        if ((dx <= 0) && (dy <= 0) && (right < grassX) && (up < grassY)) {
+        if (dx <= 0 && dy <= 0 && right < grassX && up < grassY) {
             return Integer.MAX_VALUE;
         }
-        if ((right >= grassX) || (up >= grassY)) {
+        if (right >= grassX || up >= grassY) {
             return 1;
         }
         // Если мы достигнем какой-либо из этих точек после окончания дня
         // то следующим же шагом змейка доберется до травы.
         int needReachX = grassX - right;
         int needReachY = grassY - up;
-        int resultForX = ((needReachX % dx == 0) ? (needReachX / dx) : (needReachX / dx + 1)) + 1;
-        int resultForY = ((needReachY % dy == 0) ? (needReachY / dy) : (needReachY / dy + 1)) + 1;
+        int resultForX = (needReachX % dx == 0 ? needReachX / dx : needReachX / dx + 1) + 1;
+        int resultForY = (needReachY % dy == 0 ? needReachY / dy : needReachY / dy + 1) + 1;
         if (dx > 0 && dy > 0) {
             return Math.min(resultForX, resultForY);
         } else if (dx > 0) {
