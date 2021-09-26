@@ -82,9 +82,7 @@ public class DoubleAdvancedTask {
     	if(a1 != a2) {// расстояние не равно 0 только если угловые коэффициенты равны
     		return 0;
     	}
-    	else {
-    		return (float) (Math.abs(b1 - b2) / Math.sqrt(1 + a1 * a2));
-    	}
+    	return (float) (Math.abs(b1 - b2) / Math.sqrt(1 + a1 * a2));
     }
 
     /**

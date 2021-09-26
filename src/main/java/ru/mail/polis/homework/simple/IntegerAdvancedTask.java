@@ -16,7 +16,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
+    	//сравниваю квадрат отклонения с 10^-10, если меньше то q ~ 1
+    	if((1 - q) * (1 - q) <= 1e-10)
+    		return a * n;
+    	return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
     /**
@@ -32,7 +35,7 @@ public class IntegerAdvancedTask {
         	return 1; // доползет за полдня, формально за первый день
         }
 
-		return Math.min(calcTime(right - left, grassX-right), calcTime(up - down, grassY-up));
+		return Math.min(calcTime(right - left, grassX - right), calcTime(up - down, grassY - up));
 	}
 	
 	private static int calcTime(final int step, final int border) {
@@ -49,8 +52,15 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-    	String s = Integer.toHexString(n);
-        return s.toUpperCase().charAt(s.length() - order);
+    	// а, ой...
+    	// String s = Integer.toHexString(n);
+        // return s.toUpperCase().charAt(s.length() - order);
+    	int num = (n >> 4 * (order - 1)) % 16;
+    	// Ну раз нельзя String и методы Integer, то
+    	if(num < 10) {
+    		return (char) ('0' + num);
+    	}
+    	return (char) ('A' + num - 10);
     }
 
     /**
@@ -61,14 +71,14 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-    	String s = Long.toHexString(a);
-    	char min = 'g';
+    	int size = (int) Math.round(Math.log(a) / Math.log(16) + 0.5);
+    	int min = 16;
     	int k = 0;
-    	for(int i = 0; i < s.length(); ++i) {
-    		final char ch = s.charAt(i);
-    		if(ch <= min) {
-    			k = s.length() - i;
-    			min = ch;
+    	for(int i = 0; i < size; ++i) {
+    		int num = (int) ((a >> 4 * i) % 16);
+    		if(num < min) {
+    			k = i + 1;
+    			min = num;
     		}
     	}
         return (byte)k;
