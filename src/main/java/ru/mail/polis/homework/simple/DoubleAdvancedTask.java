@@ -30,7 +30,7 @@ public class DoubleAdvancedTask {
         double q = 2 * ratioA * ratioA * ratioA / 27 - ratioA * ratioB / 3 + ratioC;
         double discriminant = p * p * p + q * q;
 
-        double[] roots = new double[]{0, 0, 0};
+        double[] roots = new double[] {0, 0, 0};
 
         if (Math.abs(discriminant) < EPS) {
             roots[0] = -2 * Math.pow(p / 2, 1.0 / 3) - ratioA / 3;
@@ -58,7 +58,6 @@ public class DoubleAdvancedTask {
         }
 
         Arrays.sort(roots);
-
         return roots[2] + ", " + roots[1] + ", " + roots[0];
     }
 
@@ -87,7 +86,6 @@ public class DoubleAdvancedTask {
         double b = -((x2 - x1) * (z3 - z1) - (z2 - z1) * (x3 - x1));
         double c = (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1);
         double d = -x1 * a - y1 * b - z1 * c;
-
         return (-d - a * x4 - b * y4) / c;
     }
 }

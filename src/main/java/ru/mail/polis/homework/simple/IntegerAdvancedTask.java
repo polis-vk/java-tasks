@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.simple;
 
 
-import java.util.Locale;
 
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
@@ -21,8 +20,8 @@ public class IntegerAdvancedTask {
     private static final double EPS = 0.0000001;
 
     public static long progression(int a, double q, int n) {
-        return Math.abs(q - 1) > EPS ? (long) (a * (Math.pow(q, n) - 1) / (q - 1)) :
-                (long) a * n;
+        return Math.abs(q - 1) > EPS ? (long) (a * (Math.pow(q, n) - 1) / (q - 1))
+                : (long) a * n;
     }
 
     /**
@@ -41,6 +40,9 @@ public class IntegerAdvancedTask {
         int differenceX = right - left;
         int differenceY = up - down;
 
+        if (differenceX <= 0 && differenceY <= 0) {
+            return Integer.MAX_VALUE;
+        }
         return Math.min(countOfDays(grassX, differenceX, right), countOfDays(grassY, differenceY, up));
     }
 
@@ -62,10 +64,16 @@ public class IntegerAdvancedTask {
      */
 
     private static final int HEXADECIMAL_BASE = 16;
+    private static final int DIGIT_TO_CHAR_OF_ZERO_TO_NINE = 48;
+    private static final int DIGIT_TO_CHAR_OF_TEN_TO_FIFTEEN = 55;
 
     public static char kDecimal(int n, int order) {
-        int truncatedNumber = n / (int) Math.pow(HEXADECIMAL_BASE, order - 1);
-        return Integer.toHexString(truncatedNumber % HEXADECIMAL_BASE).toUpperCase().charAt(0);
+        int truncatedNumber = Math.abs(n) / (int) Math.pow(HEXADECIMAL_BASE, order - 1);
+        int lastDigitInHex = truncatedNumber % HEXADECIMAL_BASE;
+        if (lastDigitInHex < 10) {
+            return (char) (lastDigitInHex + DIGIT_TO_CHAR_OF_ZERO_TO_NINE);
+        }
+        return (char) (lastDigitInHex + DIGIT_TO_CHAR_OF_TEN_TO_FIFTEEN);
     }
 
     /**
@@ -76,17 +84,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
+        long number = a;
         byte minDigit = (byte) HEXADECIMAL_BASE;
         byte indexOfMaxDigit = 0;
         byte currentDigit;
-        for (byte i = 0; a > 0; i++) {
-            currentDigit = (byte) (a % HEXADECIMAL_BASE);
+
+        for (byte i = 0; number > 0; i++) {
+            currentDigit = (byte) (number % HEXADECIMAL_BASE);
             if (minDigit > currentDigit) {
                 indexOfMaxDigit = i;
                 minDigit = currentDigit;
             }
 
-            a = a / HEXADECIMAL_BASE;
+            number = number / HEXADECIMAL_BASE;
         }
         return (byte) (indexOfMaxDigit + 1);
     }
