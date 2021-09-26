@@ -15,6 +15,9 @@ public class IntegerAdvancedTaskTest {
         assertEquals(67108865, IntegerAdvancedTask.progression(5, -4, 13));
         assertEquals(765, IntegerAdvancedTask.progression(3, 2, 8));
         assertEquals(3, IntegerAdvancedTask.progression(3, 1231233232, 1));
+        assertEquals(12, IntegerAdvancedTask.progression(3, 1, 4));
+        assertEquals(3, IntegerAdvancedTask.progression(3, 1, 1));
+        assertEquals(340, IntegerAdvancedTask.progression(34, 1, 10));
     }
 
     @Test
