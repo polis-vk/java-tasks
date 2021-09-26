@@ -30,7 +30,7 @@ public class DoubleAdvancedTask {
     		v3 = (double) d / a, // по основной теореме алгербы, и третий корень определить нельзя
     		Q = (double) (v1 * v1 - 3 * v2) / 9,
     		R = (double) (2 * v1 * v1 * v1 - 9 * v1 * v2 + 27 * v3) / 54,
-    		a1 = v1/3; // в формуле часто фигурирует v1/3
+    		a1 = v1 / 3; // в формуле часто фигурирует v1/3
 
     	if(Q * Q * Q > R * R) {
     		final double angle = Math.acos( R / Math.pow(Q, 1.5)) / 3;

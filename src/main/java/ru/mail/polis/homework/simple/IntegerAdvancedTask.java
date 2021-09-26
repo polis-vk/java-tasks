@@ -39,7 +39,7 @@ public class IntegerAdvancedTask {
 		if(step <= 0) {
 			return Integer.MAX_VALUE; // не доползет
 		}
-		return (border / step) + (border % step > 0? 2 : 1);
+		return (border / step) + (border % step > 0 ? 2 : 1);
 	}
 
     /**
