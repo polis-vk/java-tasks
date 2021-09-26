@@ -55,5 +55,6 @@ public class IntegerAdvancedTaskTest {
         assertEquals(1, IntegerAdvancedTask.minNumber(11));
         assertEquals(2, IntegerAdvancedTask.minNumber(171));
         assertEquals(3, IntegerAdvancedTask.minNumber(322));
+        assertEquals(1, IntegerAdvancedTask.minNumber(0));
     }
 }

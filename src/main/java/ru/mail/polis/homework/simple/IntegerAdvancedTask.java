@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.simple;
 
 
+import java.util.Locale;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -12,11 +14,11 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
     /**
@@ -25,10 +27,26 @@ public class IntegerAdvancedTask {
      * Сколько суток понадобится гусенице, чтобы доползти до правого верхнего поля с травой?
      * Если она этого никогда не сможет сделать, Верните число Integer.MAX_VALUE;
      * Считаем, что на каждой клетке с координатами >= grassX или >= grassY находится трава
-     * Пример: (10, 3, 5, 5, 11, 20) -> 2
+     * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int x = 0, y = 0, i = 0, xPrev = 0, yPrev = 0;
+        while (x < grassX && y < grassY) {
+            i++;
+            x += right;
+            y += up;
+            if (x >= grassX || y >= grassY) {
+                return i;
+            }
+            x -= left;
+            y -= down;
+            if (x <= xPrev && y <= yPrev){
+                return Integer.MAX_VALUE;
+            }
+            xPrev = x;
+            yPrev = y;
+        }
+        return i;
     }
 
     /**
@@ -37,7 +55,8 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        String str = Integer.toHexString(n).toUpperCase(Locale.ROOT);
+        return str.charAt(str.length() - order);
     }
 
     /**
@@ -47,7 +66,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long currentDecimal = a, integerPart = 1;
+        int minNumber = 16, residue;
+        byte minIndex = 1, i = 1;
+        while (integerPart > 0) {
+            integerPart = currentDecimal >> 4;
+            residue = (int) (currentDecimal - integerPart * 16);
+            if (residue < minNumber) {
+                minNumber = residue;
+                minIndex = i;
+            }
+            currentDecimal = integerPart;
+            i++;
+        }
+        return minIndex;
     }
-
 }
