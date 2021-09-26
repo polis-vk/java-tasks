@@ -1,34 +1,5 @@
-<<<<<<< HEAD
-# Ignore everything
 *
-=======
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-gradlew
-gradlew.bat
->>>>>>> 72cf3dcd0ec8f861d4a790a11398c84e025ab0e1
-
-# But not Java files...
 !.gitignore
 !*.java
-
-# And CI
-!.travis.yml
-!build.gradle.kts
-!gradlew
-!gradlew.bat
-!LICENSE
-!README.md
-!settings.gradle
-!.circleci/*
-!.codeclimate.yml
-!checkstyle.xml
-!.lgtm.yml
-
-# ...even if they are in subdirectories
 !*/
-/bin/
-/.gradle/
+
