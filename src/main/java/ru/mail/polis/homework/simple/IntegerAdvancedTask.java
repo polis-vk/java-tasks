@@ -1,8 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-import java.util.Collections;
-import java.util.LinkedList;
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
