@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.simple;
 
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -16,9 +20,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        double numerator = a * (Math.pow(q, n) - 1);
-        double denominator = q - 1;
-        return (long) (numerator / denominator);
+        if (q == 1.0) {
+            return (long) a * n;
+        }
+        return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
@@ -30,15 +35,15 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        int xMoveAtOneDay = right - left;
-        int yMoveAtOneDay = up - down;
-
         int xBeforeLastDay = grassX - right;
         int yBeforeLastDay = grassY - up;
 
         if (xBeforeLastDay <= 0 || yBeforeLastDay <= 0) {
             return 1;
         }
+
+        int xMoveAtOneDay = right - left;
+        int yMoveAtOneDay = up - down;
 
         if (xMoveAtOneDay <= 0 && yMoveAtOneDay <= 0) {
             return Integer.MAX_VALUE;
@@ -57,8 +62,24 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        String hexNumber = Integer.toHexString(n).toUpperCase();
-        return hexNumber.charAt(hexNumber.length() - order);
+        List<Integer> hexNumber = convertToHex(n);
+        int result = hexNumber.get(order - 1);
+
+        char charToSum = result < 10 ? '0' : 'A' - 10;
+
+        return (char) (result + charToSum);
+    }
+
+    private static List<Integer> convertToHex(long n) {
+        List<Integer> result = new ArrayList<>();
+        long number = n;
+
+        while (number > 0) {
+            result.add((int) (number % 16));
+            number = number / 16;
+        }
+
+        return result;
     }
 
     /**
@@ -69,18 +90,17 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        String hexNumber = Long.toHexString(a);
+        List<Integer> hexNumber = convertToHex(a);
         byte numberOfMinDigit = 17;
-        char minDigit = 'f';
+        int minDigit = 17;
 
-        for (int i = hexNumber.length() - 1; i >= 0; i--) {
-            char current = hexNumber.charAt(i);
+        for (int i = 0; i < hexNumber.size(); i++) {
+            int current = hexNumber.get(i);
             if (current < minDigit) {
                 minDigit = current;
-                numberOfMinDigit = (byte) (hexNumber.length() - i);
+                numberOfMinDigit = (byte) (i + 1);
             }
         }
         return numberOfMinDigit;
     }
-
 }
