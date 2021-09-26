@@ -1,8 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-
-import jdk.nashorn.internal.ir.IdentNode;
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -18,6 +15,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
+        if (q == 0) return a;
         return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
@@ -49,15 +47,15 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
+        int nCopy = n;
         for (int i = 0; i < order - 1; i++) {
-            n /= 16;
+            nCopy /= 16;
         }
-        int number = n % 16;
+        int number = nCopy % 16;
         if (number <= 9) {
             return (char) (number + '0');
-        } else {
-            return (char) ('A' - 10 + number);
         }
+        return (char) ('A' - 10 + number);
     }
 
     /**
@@ -67,16 +65,17 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
+        long aCopy = a;
         byte minIndex = 0;
         long min = 16;
         byte i = 1;
-        while (a > 0) {
-            if (a % 16 < min) {
-                min = a % 16;
+        while (aCopy > 0) {
+            if (aCopy % 16 < min) {
+                min = aCopy % 16;
                 minIndex = i;
             }
             i++;
-            a /= 16;
+            aCopy /= 16;
         }
 
         return minIndex;
