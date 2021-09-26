@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.simple;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.stream.IntStream;
 
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
@@ -20,68 +18,36 @@ public class DoubleAdvancedTask {
      * Если используете какой-то конкретный способ, напишите какой.
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
-    public static double binSearch(double left, double right, int[] coefficients) {
-        while (true) {
-            double mid = (left + right) / 2;
-            double func = coefficients[0] * Math.pow(mid, 3) + coefficients[1] * mid * mid
-                    + coefficients[2] * mid + coefficients[3];
-            if (func == 0) {
-                return mid;
-            }
-            if (func < 0) {
-                left = mid;
-            } else {
-                right = mid;
-            }
-        }
-    }
-
-    public static double[] methodGor(double x1, int[] coefficients) {
-        double[] newCoefficients = new double[3];
-        newCoefficients[0] = coefficients[0];
-        newCoefficients[1] = x1 * newCoefficients[0] + coefficients[1];
-        newCoefficients[2] = x1 * newCoefficients[1] + coefficients[2];
-        return newCoefficients;
-    }
-
-    public static double[] quadratic(double[] coefficients, double x1) {
-        double[] finalResult = new double[3];
-        double dis = Math.pow(coefficients[1], 2)
-                - 4 * coefficients[0] * coefficients[2];
-        if (dis == 0) {
-            finalResult[0] = (-1 * coefficients[1]) / (2 * coefficients[0]);
-            finalResult[1] = finalResult[0];
-            finalResult[2] = x1;
-            Arrays.sort(finalResult);
-            return finalResult;
-        }
-        finalResult[0] = (-1 * coefficients[1] + Math.sqrt(dis)) / (2 * coefficients[0]);
-        finalResult[1] = (-1 * coefficients[1] - Math.sqrt(dis)) / (2 * coefficients[0]);
-        finalResult[2] = x1;
-        Arrays.sort(finalResult);
-
-        return finalResult;
-    }
 
     public static String equation(int a, int b, int c, int d) {
         double x1;
         double x2;
         double x3;
-        int[] coefficients = {a, b, c, d};
+        double[] results = new double[3];
 
-        if (a < 0) {
-            coefficients = IntStream.of(coefficients).map(i -> i * a).toArray();
+        double newB = (double) b / a;
+        double newC = (double) c / a;
+        double newD = (double) d / a;
+
+        double Q = (Math.pow(newB, 2) - 3 * newC) / 9;
+        double R = (2 * Math.pow(newB, 3) - 9 * newB * newC + 27 * newD) / 54;
+        double S = Q * Q * Q - R * R;
+
+        if (S > 0) {
+            double fi = Math.acos(R / Math.sqrt(Q * Q * Q)) / 3;
+            results[0] = -2 * Math.sqrt(Q) * Math.cos(fi) - newB / 3;
+            results[1] = -2 * Math.sqrt(Q) * Math.cos(fi + 2 * Math.PI / 3) - newB / 3;
+            results[2] = -2 * Math.sqrt(Q) * Math.cos(fi - 2 * Math.PI / 3) - newB / 3;
+        } else {
+            results[0] = -2 * Math.cbrt(R) - newB / 3;
+            results[1] = Math.cbrt(R) - newB / 3;
+            results[2] = results[1];
         }
 
-        double boarder = Math.pow(IntStream.of(coefficients).map(Math::abs).max().orElse(0), 3);
-        x1 = binSearch(-1 * boarder, boarder, coefficients);
-        double[] newCoefficients = methodGor(x1, coefficients);
-        double[] results = quadratic(newCoefficients, x1);
-
+        Arrays.sort(results);
         x1 = results[2];
         x2 = results[1];
         x3 = results[0];
-
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -94,7 +60,6 @@ public class DoubleAdvancedTask {
         if (a1 != a2) {
             return 0;
         }
-
         return (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1));
     }
 
@@ -114,7 +79,6 @@ public class DoubleAdvancedTask {
         int yCoefficient = -1 * ((x2 - x1) * (z3 - z1) - (z2 - z1) * (x3 - x1));
         int zCoefficient = (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1);
         int d = -1 * yCoefficient * y1 - xCoefficient * x1 - zCoefficient * z1;
-
         return -1 * ((double) x4 * xCoefficient + y4 * yCoefficient + d) / zCoefficient;
     }
 }
