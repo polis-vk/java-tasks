@@ -35,19 +35,17 @@ public class IntegerAdvancedTask {
 
     private static int moveInAbstractAxis(int moveForward, int moveBack, int distance) {
         final int moveDay = moveForward - moveBack;
-        if (moveForward >= distance) {
-            return 1;
-        } else if (moveDay <= 0) {
+        if (moveDay <= 0) {
             return Integer.MAX_VALUE;
         }
         return ((distance - moveForward) + moveDay - 1) / moveDay + 1; // целочисленное округление вверх
     }
 
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        final int upDays = moveInAbstractAxis(up, down, grassY);
-        if (upDays == 1) {
-            return upDays;
+        if (up >= grassY || right >= grassX) {
+            return 1;
         }
+        final int upDays = moveInAbstractAxis(up, down, grassY);
         final int rightDays = moveInAbstractAxis(right, left, grassX);
         return Math.min(upDays, rightDays);
     }

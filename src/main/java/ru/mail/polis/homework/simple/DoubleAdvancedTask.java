@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.simple;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
@@ -21,82 +20,29 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
 
-    private static double[] solveDerivative(int a, int b, int c) {
-        final double d = b * b - 4 * a * c;
-        if (d > 0) {
-            double x1, x2;
-            x1 = (-b - Math.sqrt(d)) / (2 * a);
-            x2 = (-b + Math.sqrt(d)) / (2 * a);
-            return new double[]{x1, x2};
-        } else if (d == 0) {
-            double x;
-            x = -b / (2d * a);
-            return new double[]{x, x};
-        } else {
-            throw new IllegalArgumentException("Нет 2 корней экстремума");
-        }
-    }
-
-    private static boolean isMoreThenRoot(double root, int a, int b, int c, int d) {
-        return a * root * root * root + b * root * root + c * root + d > 0;
-    }
-
-    private static boolean isRoot(double root, int a, int b, int c, int d) {
-        return a * root * root * root + b * root * root + c * root + d == 0;
-    }
-
-    private static double getOneRootInRange(double left, double right, int a, int b, int c, int d) {
-        if (isRoot(right, a, b, c, d)) {
-            return right;
-        }
-        if (isRoot(left, a, b, c, d)) {
-            return left;
-        }
-
-        final double e = 1e-9;
-        final boolean isDecreasing = isMoreThenRoot(right - e, a, b, c, d);
-        while (right >= left) {
-            final double mid = (left + right) / 2;
-            if (isMoreThenRoot(mid, a, b, c, d)) {
-                if (isDecreasing) {
-                    right = mid - e / 100;
-                } else {
-                    left = mid + e / 100;
-                }
-            } else {
-                if (isDecreasing) {
-                    left = mid + e / 100;
-                } else {
-                    right = mid - e / 100;
-                }
-            }
-        }
-        return left;
-    }
-
     public static String equation(int a, int b, int c, int d) {
-        if (a < 0) {
-            a *= -1;
-            b *= -1;
-            c *= -1;
-            d *= -1;
+        // Тригонометрическая формула Виета
+        // x^3 + mx^2 + nx + k = 0
+        final double m = (double) b / a;
+        final double n = (double) c / a;
+        final double k = (double) d / a;
+        final double q = (Math.pow(m, 2) - 3 * n) / 9;
+        final double r = (2 * Math.pow(m, 3) - 9 * m * n + 27 * k) / 54;
+        final double s = Math.pow(q, 3) - Math.pow(r, 2);
+        double[] roots = new double[3];
+        if (s > 0) {
+            final double phi = Math.acos(r / Math.pow(q, 3d / 2)) / 3;
+            roots[0] = -2 * Math.sqrt(q) * Math.cos(phi) - m / 3;
+            roots[1] = -2 * Math.sqrt(q) * Math.cos(phi + Math.PI * 2d / 3) - m / 3;
+            roots[2] = -2 * Math.sqrt(q) * Math.cos(phi - Math.PI * 2d / 3) - m / 3;
+        } else {
+            roots[0] = -2 * Math.cbrt(r) - m / 3;
+            roots[2] = roots[1] = Math.cbrt(r) - m / 3;
         }
-        final double[] extremum = solveDerivative(3 * a, 2 * b, c);
-        /*
-            (ax^3+bx^2+cx+d)' = 3ax^2 + 2bx + c
-            Именно в нулях функции y = 3ax^2 + 2bx + c функция меняет знак
-            На этих промежутках мы и будем искать корни
-        */
-        ArrayList<Double> allX = new ArrayList<>();
-
-        allX.add(getOneRootInRange(Integer.MIN_VALUE, extremum[0], a, b, c, d));
-        allX.add(getOneRootInRange(extremum[0], extremum[1], a, b, c, d));
-        allX.add(getOneRootInRange(extremum[1], Integer.MAX_VALUE, a, b, c, d));
-
-        Collections.sort(allX);
-        final double x1 = allX.get(2);
-        final double x2 = allX.get(1);
-        final double x3 = allX.get(0);
+        Arrays.sort(roots);
+        final double x3 = roots[0];
+        final double x2 = roots[1];
+        final double x1 = roots[2];
         return x1 + ", " + x2 + ", " + x3;
     }
 
