@@ -39,7 +39,7 @@ public class IntegerAdvancedTask {
         }
         int dx = right - left;
         int dy = up - down;
-        if (dx <= 0 && dy <= 0 && right < grassX && up < grassY) {
+        if (dx <= 0 && dy <= 0) {
             return Integer.MAX_VALUE;
         }
         // Если мы достигнем какой-либо из этих точек после окончания дня,
