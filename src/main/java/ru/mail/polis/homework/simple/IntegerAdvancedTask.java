@@ -15,12 +15,12 @@ public class IntegerAdvancedTask {
      *
      * Пример: (1, 2, 3) -> 7
      */
-	public static long progression(int a, double q, int n) {
-		// сравниваю квадрат отклонения с 10^-10, если меньше то q ~ 1
-		if ((1 - q) * (1 - q) <= 1e-10)
-			return a * n;
-		return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
-	}
+    public static long progression(int a, double q, int n) {
+        // сравниваю квадрат отклонения с 10^-10, если меньше то q ~ 1
+        if ((1 - q) * (1 - q) <= 1e-10)
+            return a * n;
+        return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
+    }
 
     /**
      * Гусеница ползает по столу квадратами по часовой стрелке. За день она двигается следующим образом:
@@ -30,20 +30,20 @@ public class IntegerAdvancedTask {
      * Если она этого никогда не сможет сделать, Верните число Integer.MAX_VALUE;
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
-	public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-		if (up >= grassY || right >= grassX) {
-			return 1; // доползет за полдня, формально за первый день
-		}
+    public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
+        if (up >= grassY || right >= grassX) {
+            return 1; // доползет за полдня, формально за первый день
+        }
 
-		return Math.min(calcTime(right - left, grassX - right), calcTime(up - down, grassY - up));
-	}
+        return Math.min(calcTime(right - left, grassX - right), calcTime(up - down, grassY - up));
+    }
 
-	private static int calcTime(final int step, final int border) {
-		if (step <= 0) {
-			return Integer.MAX_VALUE; // не доползет
-		}
-		return (border / step) + (border % step > 0 ? 2 : 1);
-	}
+    private static int calcTime(final int step, final int border) {
+        if (step <= 0) {
+            return Integer.MAX_VALUE; // не доползет
+        }
+        return (border / step) + (border % step > 0 ? 2 : 1);
+    }
 
     /**
      * Дано число n в 10-ном формате и номер разряда order.
@@ -51,17 +51,17 @@ public class IntegerAdvancedTask {
      * Нельзя пользоваться String-ами
      * Пример: (454355, 2) -> D
      */
-	public static char kDecimal(int n, int order) {
-		// а, ой...
-		// String s = Integer.toHexString(n);
-		// return s.toUpperCase().charAt(s.length() - order);
-		int num = (n >> 4 * (order - 1)) % 16;
-		// Ну раз нельзя String и методы Integer, то
-		if (num < 10) {
-			return (char) ('0' + num);
-		}
-		return (char) ('A' + num - 10);
-	}
+    public static char kDecimal(int n, int order) {
+        // а, ой...
+        // String s = Integer.toHexString(n);
+        // return s.toUpperCase().charAt(s.length() - order);
+        int num = (n >> 4 * (order - 1)) % 16;
+        // Ну раз нельзя String и методы Integer, то
+        if (num < 10) {
+            return (char) ('0' + num);
+        }
+        return (char) ('A' + num - 10);
+    }
 
     /**
      * Дано число в 10-ном формате.
@@ -70,18 +70,21 @@ public class IntegerAdvancedTask {
      * Нельзя пользоваться String-ами
      * (6726455) -> 2
      */
-	public static byte minNumber(long a) {
-		// int size = (int) Math.round(Math.log(a) / Math.log(16) + 0.5);
-		int min = 16;
-		int k = 0;
-		for (int i = 0; i < 16; ++i) { // амортизированные тесты показали что так быстрее
-			int num = (int) ((a >> 4 * i) % 16);
-			if (num < min) {
-				k = i + 1;
-				min = num;
-			}
-		}
-		return (byte) k;
-	}
+    public static byte minNumber(long a) {
+        // int size = (int) Math.round(Math.log(a) / Math.log(16) + 0.5);
+        int min = 16;
+        int k = 0;
+        for (int i = 0; i < 16; ++i) {
+            if((a >> 4 * i) == 0) {
+                break;
+            }
+            final int num = (int) ((a >> 4 * i) % 16);
+            if (num < min) {
+                k = i + 1;
+                min = num;
+            }
+        }
+        return (byte) k;
+    }
 
 }
