@@ -63,10 +63,11 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
+        int number = n;
         for (int i = 0; i < order - 1; i++) {
-            n /= 16;
+            number /= 16;
         }
-        int digit = n % 16;
+        int digit = number % 16;
         switch (digit) {
             case 15:
                 return 'F';
