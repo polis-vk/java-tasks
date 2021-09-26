@@ -34,15 +34,15 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
+        if (right >= grassX || up >= grassY) {
+            return 1;
+        }
         int dx = right - left;
         int dy = up - down;
         if (dx <= 0 && dy <= 0 && right < grassX && up < grassY) {
             return Integer.MAX_VALUE;
         }
-        if (right >= grassX || up >= grassY) {
-            return 1;
-        }
-        // Если мы достигнем какой-либо из этих точек после окончания дня
+        // Если мы достигнем какой-либо из этих точек после окончания дня,
         // то следующим же шагом змейка доберется до травы.
         int needReachX = grassX - right;
         int needReachY = grassY - up;
