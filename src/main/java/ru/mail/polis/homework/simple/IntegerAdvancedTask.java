@@ -18,10 +18,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q == 1) {
+        if (Double.compare(q, 1d) == 0) {
             return (long) a * n;
         }
-        return (long) (a * (1L - Math.pow(q, n)) / (1L - q));
+        return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
     /**
@@ -45,6 +45,9 @@ public class IntegerAdvancedTask {
 
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
         final int upDays = moveInAbstractAxis(up, down, grassY);
+        if (upDays == 1) {
+            return upDays;
+        }
         final int rightDays = moveInAbstractAxis(right, left, grassX);
         return Math.min(upDays, rightDays);
     }
@@ -56,23 +59,10 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
 
-    private static ArrayList<Character> ReverseDecToHex(long n) {
-        ArrayList<Character> result = new ArrayList<>();
-
-        long oneFigure;
-        while (n >= 16) {
-            oneFigure = n % 16;
-            result.add((char) (oneFigure > 9 ? 'A' + oneFigure - 10 : '0' + oneFigure));
-            n /= 16;
-        }
-        oneFigure = n % 16;
-        result.add((char) (oneFigure > 9 ? 'A' + oneFigure - 10 : '0' + oneFigure));
-        return result;
-    }
-
 
     public static char kDecimal(int n, int order) {
-        return ReverseDecToHex(n).get(order - 1);
+        final int figure = (n / (int) Math.pow(16, order - 1)) % 16;
+        return (char) (figure > 9 ? 'A' + figure - 10 : '0' + figure);
     }
 
     /**
@@ -83,16 +73,18 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        final ArrayList<Character> reverseHex = ReverseDecToHex(a);
-
-        char min = Character.MAX_VALUE;
-        byte minIndex = 1;
-        for (int i = 0; i < reverseHex.size(); i++) {
-            if (reverseHex.get(i) < min) {
-                min = reverseHex.get(i);
-                minIndex = (byte) (i + 1);
+        long number = a;
+        byte indexMin = 1;
+        byte minFigure = Byte.MAX_VALUE;
+        byte i = 1;
+        while (number >= 16) {
+            if (number % 16 < minFigure) {
+                indexMin = i;
+                minFigure = (byte) (number % 16);
             }
+            i++;
+            number /= 16;
         }
-        return minIndex;
+        return number % 16 < minFigure ? i : indexMin;
     }
 }
