@@ -12,11 +12,16 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        long sum = 0;
+
+        for (int i = 0; i < n; i++) {
+            sum += a * Math.pow(q, i);
+        }
+        return sum;
     }
 
     /**
@@ -28,7 +33,22 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (up >= grassY || right >= grassX)
+            return 1;
+        double dx = right - left;
+        double dy = up - down;
+        if (dx <= 0 && dy <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        int daysForRightBorder = Integer.MAX_VALUE;
+        int daysForTopBorder = Integer.MAX_VALUE;
+        if (dy > 0) {
+            daysForTopBorder = (int) Math.ceil((grassY - up) / dy + 1);
+        }
+        if (dx > 0) {
+            daysForRightBorder = (int) Math.ceil((grassX - right) / dx + 1);
+        }
+        return Math.min(daysForRightBorder, daysForTopBorder);
     }
 
     /**
@@ -37,7 +57,28 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int decimal = n;
+
+        for (int i = 1; i < order; i++) {
+            decimal /= 16;
+        }
+        int digit = decimal % 16;
+        switch (digit) {
+            case 10:
+                return 'A';
+            case 11:
+                return 'B';
+            case 12:
+                return 'C';
+            case 13:
+                return 'D';
+            case 14:
+                return 'E';
+            case 15:
+                return 'F';
+            default:
+                return (char) (digit + '0');
+        }
     }
 
     /**
@@ -47,7 +88,21 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte index = 0;
+        byte minDigit = 17;
+        long number = a;
+
+        byte i = 1;
+        while (number != 0) {
+            byte currentDigit = (byte) (number % 16);
+            if (currentDigit < minDigit) {
+                minDigit = currentDigit;
+                index = i;
+            }
+            ++i;
+            number /= 16;
+        }
+        return index;
     }
 
 }
