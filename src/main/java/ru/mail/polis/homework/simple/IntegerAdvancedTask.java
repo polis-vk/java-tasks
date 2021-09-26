@@ -35,20 +35,20 @@ public class IntegerAdvancedTask {
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
         if (up >= grassY || right >= grassX)
             return 1;
-        double dx = right - left;
-        double dy = up - down;
-        if (dx <= 0 && dy <= 0) {
+        double stepX = right - left;
+        double stepY = up - down;
+        if (stepX <= 0 && stepY <= 0) {
             return Integer.MAX_VALUE;
         }
-        int daysForRightBorder = Integer.MAX_VALUE;
-        int daysForTopBorder = Integer.MAX_VALUE;
-        if (dy > 0) {
-            daysForTopBorder = (int) Math.ceil((grassY - up) / dy + 1);
+        int daysToRightBorder = Integer.MAX_VALUE;
+        int daysToTopBorder = Integer.MAX_VALUE;
+        if (stepY > 0) {
+            daysToTopBorder = (int) Math.ceil((grassY - up) / stepY + 1);
         }
-        if (dx > 0) {
-            daysForRightBorder = (int) Math.ceil((grassX - right) / dx + 1);
+        if (stepX > 0) {
+            daysToRightBorder = (int) Math.ceil((grassX - right) / stepX + 1);
         }
-        return Math.min(daysForRightBorder, daysForTopBorder);
+        return Math.min(daysToRightBorder, daysToTopBorder);
     }
 
     /**
