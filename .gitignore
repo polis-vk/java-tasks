@@ -1,5 +1,15 @@
+<<<<<<< HEAD
 # Ignore everything
 *
+=======
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+gradlew
+gradlew.bat
+>>>>>>> 72cf3dcd0ec8f861d4a790a11398c84e025ab0e1
 
 # But not Java files...
 !.gitignore
