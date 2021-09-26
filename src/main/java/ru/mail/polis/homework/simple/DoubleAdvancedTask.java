@@ -24,18 +24,17 @@ public class DoubleAdvancedTask {
         double Q = (A * A - 3 * B) / 9;
         double R = (2 * A * A * A - 9 * A * B + 27 * C) / 54;
         double S = Q * Q * Q - R * R;
-        double x1, x2, x3;
+        double[] ans = new double[3];
         if (S == 0.0) {
-            x1 = -2 * Math.signum(R) * Math.sqrt(Q) - (A / 3);
-            x2 = Math.signum(R) * Math.sqrt(Q) - (A / 3);
-            x3 = x2;
+            ans[0] = -2 * Math.signum(R) * Math.sqrt(Q) - (A / 3);
+            ans[1] = Math.signum(R) * Math.sqrt(Q) - (A / 3);
+            ans[2] = ans[1];
         } else {
             double f = (1.0 / 3.0) * Math.acos(R / Math.sqrt(Q * Q * Q));
-            x1 = -2 * Math.sqrt(Q) * Math.cos(f) - (A / 3);
-            x2 = -2 * Math.sqrt(Q) * Math.cos(f + ((2 * Math.PI) / 3.0)) - (A / 3);
-            x3 = -2 * Math.sqrt(Q) * Math.cos(f - ((2 * Math.PI) / 3.0)) - (A / 3);
+            ans[0] = -2 * Math.sqrt(Q) * Math.cos(f) - (A / 3);
+            ans[1] = -2 * Math.sqrt(Q) * Math.cos(f + ((2 * Math.PI) / 3.0)) - (A / 3);
+            ans[2] = -2 * Math.sqrt(Q) * Math.cos(f - ((2 * Math.PI) / 3.0)) - (A / 3);
         }
-        double[] ans = new double[]{x1, x2, x3};
         // Сортировка вставками.
         for (int i = 1; i < 3; i++) {
             double x = ans[i];
