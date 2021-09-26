@@ -16,10 +16,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q == 0) {
+        if (Math.abs(q) < 0.001) {
             return a;
         }
-        if (q == 1) {
+        if (Math.abs(q - 1) < 0.001) {
             return (long) a * n;
         }
         return (long) (a * ((1 - Math.pow(q, n)) / (1 - q)));
@@ -58,19 +58,13 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        char[] letters = {'A', 'B', 'C', 'D', 'E', 'F'};
-        StringBuilder string = new StringBuilder();
-        int remainder;
+        int number = n;
+        char answer = ' ';
         for (int i = 0; i < order; i++) {
-            remainder = n % 16;
-            if (remainder < 10) {
-                string.append(remainder);
-            } else {
-                string.append(letters[remainder - 10]);
-            }
-            n /= 16;
+            answer = Character.toUpperCase(Character.forDigit(number % 16, 16));
+            number /= 16;
         }
-        return string.charAt(order - 1);
+        return answer;
     }
 
     /**
@@ -80,17 +74,18 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
+        long number = a;
         byte min = 16;
         byte iMin = 0;
         byte i = 0;
-        while (a != 0) {
+        while (number != 0) {
             i++;
-            byte remainder = (byte) (a % 16);
+            byte remainder = (byte) (number % 16);
             if (min > remainder) {
                 min = remainder;
                 iMin = i;
             }
-            a /= 16;
+            number /= 16;
         }
         return iMin;
     }

@@ -56,9 +56,9 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        if (a1 != a2) {
+        if (Math.abs(a1 - a2) > 0.001) {
             return 0;
-        } else if (a1 == 0) {
+        } else if (Math.abs(a1) < 0.001) {
             return (float) Math.abs(b1 - b2);
         }
         double aInvert = -(1 / a1); //Вычисляем a функции, перпендикулярной a1
