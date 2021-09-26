@@ -16,6 +16,9 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
+        if (Math.abs(q - 1) < 1e-10) {
+            return (long) a * n;
+        }
         return (long) ((a * (1 - Math.pow(q, n))) / (1 - q));
     }
 
@@ -28,12 +31,12 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 11, 20) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        if (up < grassY && up - down <= 0 && right < grassX && right - left <= 0) {
-            return Integer.MAX_VALUE;
-        }
-
         if (up >= grassY || right >= grassX) {
             return 1;
+        }
+
+        if (up - down <= 0 && right - left <= 0) {
+            return Integer.MAX_VALUE;
         }
 
         int xDays = (int) Math.ceil((double) (grassX - right) / (right - left));
@@ -47,8 +50,12 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return new StringBuilder(Integer.toHexString(n))
-                .reverse().toString().toUpperCase().charAt(order - 1);
+        char[] symbols = {'A', 'B', 'C', 'D', 'E', 'F'};
+        for (int i = 0; i < order - 1; i++) {
+            n /= 16;
+        }
+        n %= 16;
+        return n < 10 ? (char) (n + '0') : symbols[n % 10];
     }
 
     /**
@@ -58,17 +65,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        String hexNum = new StringBuilder(Long.toHexString(a)).reverse().toString();
-        byte min = Byte.MAX_VALUE;
-        int result = 0;
-        for (int i = 0; i < hexNum.length(); i++) {
-            char currentChar = hexNum.charAt(i);
-            if (currentChar < min) {
-                min = (byte) currentChar;
-                result = i + 1;
+        byte idx = 0;
+        long min = 16;
+        for (byte i = 1; a > 0; i++) {
+            long ost = a % 16;
+            if (ost == 0) {
+                return i;
+            } else if (ost < min) {
+                min = ost;
+                idx = i;
             }
+            a /= 16;
         }
-        return (byte) result;
+        return idx;
     }
 }
 
