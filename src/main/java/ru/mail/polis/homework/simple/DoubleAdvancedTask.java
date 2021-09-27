@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.Arrays;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -20,6 +22,31 @@ public class DoubleAdvancedTask {
         double x1 = 0;
         double x2 = 0;
         double x3 = 0;
+
+        double q = (Math.pow(b, 2) - 3.0 * a * c) / (9.0 * Math.pow(a, 2));
+        double r = (2.0 * Math.pow(b, 3) - 9.0 * a * b * c + 27.0 * Math.pow(a, 2) * d) / (54.0 * Math.pow(a, 3));
+
+        double s = Math.pow(q, 3) - Math.pow(r, 2);
+
+        double[] x = new double[3];
+
+        if (s > 0) {
+            double ph = Math.acos(r / Math.sqrt(Math.pow(q, 3))) / 3.0;
+
+            x[0] = -2 * Math.sqrt(q) * Math.cos(ph) - b / (3.0 * a);
+            x[1] = -2 * Math.sqrt(q) * Math.cos(ph + 2.0 * Math.PI / 3.0) - b / (3.0 * a);
+            x[2] = -2 * Math.sqrt(q) * Math.cos(ph - 2.0 * Math.PI / 3.0) - b / (3.0 * a);
+        } else {
+            x[0] = -2 * Math.signum(r) * Math.sqrt(q) - b / (3.0 * a);
+            x[1] = x[2] = Math.signum(r) * Math.sqrt(q) - b / (3.0 * a);
+        }
+
+        Arrays.sort(x);
+
+        x1 = x[2];
+        x2 = x[1];
+        x3 = x[0];
+
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -29,7 +56,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        return (Math.abs(a2 - a1) < 1e-6 ? (float)(Math.abs(b2 - b1) / Math.sqrt(Math.pow(a2, 2) + 1)) : 0);
     }
 
     /**
@@ -44,6 +71,11 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        double A = (y2 - y1) * (z3 - z1) - (z2 - z1) * (y3 - y1);
+        double B = -((x2 - x1) * (z3 - z1) - (z2 - z1) * (x3 - x1));
+        double C = (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1);
+        double D = -x1 * A - y1 * B - z1 * C;
+
+        return -(A * x4 + B * y4 + D) / C;
     }
 }
