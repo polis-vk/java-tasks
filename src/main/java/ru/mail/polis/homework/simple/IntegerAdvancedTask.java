@@ -16,7 +16,8 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (q == 1) return (long) a * n;
+        return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
     /**
@@ -25,10 +26,24 @@ public class IntegerAdvancedTask {
      * Сколько суток понадобится гусенице, чтобы доползти до поля с травой?
      * Считаем, что на каждой клетке с координатами >= grassX или >= grassY находится трава
      * Если она этого никогда не сможет сделать, Верните число Integer.MAX_VALUE;
-     * Пример: (10, 3, 5, 5, 20, 1) -> 2
+     * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (up >= grassY || right >= grassX) return 1;
+        int incYPerDay = up - down;
+        int incXPerDay = right - left;
+        double needToY = Math.ceil((double) grassY / incYPerDay) - Math.floor((double) up / incYPerDay) + 1;
+        double needToX = Math.ceil((double) grassX / incXPerDay) - Math.floor((double) right / incXPerDay) + 1;
+        if (minPositive(needToX, needToY) > 1) return minPositive(needToX, needToY);
+        return Integer.MAX_VALUE;
+    }
+
+    private static int minPositive(double first, double second) {
+        if (first >= 0) {
+            if (second < 0) return (int) first;
+            return (int) Math.min(first, second);
+        }
+        return (int) second;
     }
 
     /**
@@ -38,7 +53,15 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        return Character.toUpperCase(Character.forDigit(getDigit(n, order), 16));
+    }
+
+    private static int getDigit(long n, int order) {
+        long bitwiseComputeDigit = 0;
+        for (int i = 0; i < 4; i++) {
+            bitwiseComputeDigit += (long) Math.pow(2, (i + (order - 1) * 4));
+        }
+        return (int) ((bitwiseComputeDigit & n) >> (order - 1) * 4);
     }
 
     /**
@@ -49,7 +72,25 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        int countOfDigits = getCountsOfDigits(a, 16);
+        int minDigit = 15;
+        byte indexOfMinDigit = 0;
+        for (int order = 1; order <= countOfDigits; order++) {
+            if (getDigit(a, order) < minDigit) {
+                minDigit = getDigit(a, order);
+                indexOfMinDigit = (byte) order;
+            }
+        }
+        return indexOfMinDigit;
+    }
+
+    private static int getCountsOfDigits(long number, int radix) {
+        int count = (number == 0) ? 1 : 0;
+        while (number != 0) {
+            count++;
+            number /= radix;
+        }
+        return count;
     }
 
 }
