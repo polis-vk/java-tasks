@@ -16,6 +16,9 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
+        if (Math.abs(q - 1.0) < 1e-15) {
+            return (long) a * n;
+        }
         return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
@@ -40,7 +43,13 @@ public class IntegerAdvancedTask {
         int widthBeforeLastClimb = grassX - right;
         int daysUp = heightBeforeLastClimb % step1 == 0 ? heightBeforeLastClimb / step1 + 1 : heightBeforeLastClimb / step1 + 2;
         int daysRight = widthBeforeLastClimb % step2 == 0 ? widthBeforeLastClimb / step2 + 1 : widthBeforeLastClimb / step2 + 2;
-        return Integer.max(daysUp, daysRight);
+        if (daysUp < 0) {
+            return daysRight;
+        }
+        if (daysRight < 0) {
+            return daysUp;
+        }
+        return Integer.min(daysUp, daysRight);
     }
 
     /**
