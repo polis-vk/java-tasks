@@ -15,11 +15,25 @@ public class DoubleAdvancedTask {
      * <p>
      * Если используете какой-то конкретный способ, напишите какой.
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
+     * Решение методом Виета-Кардано
      */
     public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
+        double a1 = (double) b / a;
+        double b1 = (double) c / a;
+        double c1 = (double) d / a;
+        double q = (Math.pow(a1, 2) - 3 * b1) / 9;
+        double r = (2 * Math.pow(a1, 3) - 9 * a1 * b1 + 27 * c1) / 54;
+        double fi = Math.acos(r / Math.pow(q, 1.5)) / 3;
+        if (Math.pow(r, 2) >= Math.pow(q, 3)) {
+            double e = -Math.signum(r) * Math.pow((Math.abs(r) + Math.sqrt(r * r - q * q * q)), 1.0 / 3);
+            double f;
+            if (e != 0) f = q / e;
+            else f = 0;
+            return (e + f) - a1 / 3 + ", 0, 0";
+        }
+        double x3 = -2 * Math.sqrt(q) * Math.cos(fi) - a1 / 3;
+        double x2 = -2 * Math.sqrt(q) * Math.cos(fi - 2 * Math.PI / 3) - a1 / 3;
+        double x1 = -2 * Math.sqrt(q) * Math.cos(fi + 2 * Math.PI / 3) - a1 / 3;
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -29,7 +43,8 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        if (a1 != a2) return 0;
+        return (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a2 + 1));
     }
 
     /**
@@ -44,6 +59,9 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        double det1 = ((y2 - y1) * (z3 - z1) - (y3 - y1) * (z2 - z1));
+        double det2 = ((x2 - x1) * (z3 - z1) - (x3 - x1) * (z2 - z1));
+        double det3 = ((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1));
+        return z1 + ((y4 - y1) * det2 - (x4 - x1) * det1) / det3;
     }
 }
