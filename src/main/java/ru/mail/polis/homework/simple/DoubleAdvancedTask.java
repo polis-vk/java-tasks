@@ -46,25 +46,23 @@ public class DoubleAdvancedTask {
      */
     private static Double[] solveCubic(double p, double q) {
         final double EPSILON = 1E-5;
-        double Q = -p / 3.0;
-        double R = q / 2.0;
         // 1 однократный корень и 1 двукратный
-        if (Math.abs(Math.pow(Q, 3.0) + Math.pow(R, 2.0)) < EPSILON) {
+        if (Math.abs(Math.pow(-p / 3.0, 3.0) + Math.pow(0.5 * q, 2.0)) < EPSILON) {
             if (Math.abs(p - q) < EPSILON) {
                 return new Double[]{0.0, 0.0, 0.0};
             }
 
-            double alpha = Math.cbrt(-R);
+            double alpha = Math.cbrt(-0.5 * q);
             Double[] result = new Double[]{2.0 * alpha, -alpha, -alpha};
 
             Arrays.sort(result, Collections.reverseOrder());
             return result;
         }
         // 3 вещественных корня
-        double t = Math.acos(R / Math.sqrt(Q * Q * Q)) / 3.0;
+        double t = Math.acos(0.5 * q / Math.pow(-p / 3.0, 1.5)) / 3.0;
         Double[] result = new Double[]{-1.0, 0.0, 1.0};
         for (int i = 0; i < 3; i++) {
-            result[i] = -2.0 * Math.sqrt(Q) * Math.cos(t + 2.0 * Math.PI * result[i] / 3.0);
+            result[i] = -2.0 * Math.sqrt(-p / 3.0) * Math.cos(t + 2.0 * Math.PI * result[i] / 3.0);
         }
 
         Arrays.sort(result, Collections.reverseOrder());
@@ -80,9 +78,11 @@ public class DoubleAdvancedTask {
     public static float length(double a1, double b1, double a2, double b2) {
         final double EPSILON = 1E-5;
         if (Math.abs(a1 - a2) >= EPSILON) {
+            // lines intersect each other
             return 0.0f;
         }
-
+        // lines are parallel
+        // https://en.wikipedia.org/wiki/Distance_between_two_parallel_lines#Formula_and_proof
         return (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1));
     }
 
@@ -98,17 +98,23 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
+        // translate points 2, 3 and 4 by minus r-vec of point 1
+        // to make them represent vectors lying on plane
         x2 -= x1;
-        x3 -= x1;
-        x4 -= x1;
-
         y2 -= y1;
-        y3 -= y1;
-        y4 -= y1;
-
         z2 -= z1;
+
+        x3 -= x1;
+        y3 -= y1;
         z3 -= z1;
 
+        x4 -= x1;
+        y4 -= y1;
+
+        // solution of equation over z4: det(M) = 0, where
+        //     | x4'   x3' x2' |
+        // M = | y4'   y3' y2' |
+        //     | z4-z1 z3' z2' |
         return z1 - (double) (x4 * (y3 * z2 - z3 * y2) - y4 * (x3 * z2 - z3 * x2)) / (x3 * y2 - y3 * x2);
     }
 }
