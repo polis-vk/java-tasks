@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.Arrays;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -35,17 +37,8 @@ public class DoubleAdvancedTask {
             ans[1] = -2 * Math.sqrt(Q) * Math.cos(f + ((2 * Math.PI) / 3.0)) - (A / 3);
             ans[2] = -2 * Math.sqrt(Q) * Math.cos(f - ((2 * Math.PI) / 3.0)) - (A / 3);
         }
-        // Сортировка вставками.
-        for (int i = 1; i < 3; i++) {
-            double x = ans[i];
-            int j = i;
-            while ((j > 0) && (ans[j - 1] < x)) {
-                ans[j] = ans[j - 1];
-                j--;
-            }
-            ans[j] = x;
-        }
-        return ans[0] + ", " + ans[1] + ", " + ans[2];
+        Arrays.sort(ans);
+        return ans[2] + ", " + ans[1] + ", " + ans[0];
     }
 
     /**
