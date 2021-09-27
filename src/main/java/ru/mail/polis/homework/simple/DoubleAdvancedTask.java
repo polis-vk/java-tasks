@@ -1,8 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -20,15 +17,13 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int a, int b, int c, int d) {
-        double x1;
-        double x2;
-        double x3;
+        double[] x = new double[3];
         if (d == 0) {
             //Делим на аргумент и решаем как квадратное уравнение + нулевой корень
             double discriminantSqrt = Math.sqrt(b * b - 4 * a * c);
-            x1 = (-b + discriminantSqrt) / (2 * a);
-            x2 = (-b - discriminantSqrt) / (2 * a);
-            x3 = 0.0;
+            x[0] = (-b + discriminantSqrt) / (2 * a);
+            x[1] = (-b - discriminantSqrt) / (2 * a);
+            x[2] = 0.0;
         } else {
             //Тригонометрическая формула Виета: https://ru.wikipedia.org/wiki/Тригонометрическая_формула_Виета
             double reducedB = (double) b / a;
@@ -37,13 +32,11 @@ public class DoubleAdvancedTask {
             double q = (reducedB * reducedB - 3.0 * reducedC) / 9.0;
             double r = (2.0 * reducedB * reducedB * reducedB - 9.0 * reducedB * reducedC + 27.0 * reducedD) / 54.0;
             double fi = 1.0 / 3.0 * Math.acos(r / Math.sqrt(q * q * q));
-            x1 = -2.0 * Math.sqrt(q) * Math.cos(fi) - reducedB / 3.0;
-            x2 = -2.0 * Math.sqrt(q) * Math.cos(fi + 2.0 * Math.PI / 3.0) - reducedB / 3.0;
-            x3 = -2.0 * Math.sqrt(q) * Math.cos(fi - 2.0 * Math.PI / 3.0) - reducedB / 3.0;
+            x[0] = -2.0 * Math.sqrt(q) * Math.cos(fi) - reducedB / 3.0;
+            x[1] = -2.0 * Math.sqrt(q) * Math.cos(fi + 2.0 * Math.PI / 3.0) - reducedB / 3.0;
+            x[2] = -2.0 * Math.sqrt(q) * Math.cos(fi - 2.0 * Math.PI / 3.0) - reducedB / 3.0;
         }
-        Double[] rootsArray = new Double[]{x1, x2, x3};
-        Arrays.sort(rootsArray, Comparator.reverseOrder());
-        return rootsArray[0] + ", " + rootsArray[1] + ", " + rootsArray[2];
+        return x[2] + ", " + x[1] + ", " + x[0];
     }
 
     /**
