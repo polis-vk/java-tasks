@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.simple;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
@@ -23,7 +22,7 @@ public class DoubleAdvancedTask {
         // Решение по формуле Кардано
 
         // приведение к канонической форме
-        Double[] roots = solveCubic(
+        double[] roots = solveCubic(
                 (double) c / a - b * b / (3.0 * a * a),
                 2.0 * b * b * b / (27.0 * a * a * a) - ((double) b) * c / (3.0 * a * a) + (double) d / a
         );
@@ -32,7 +31,7 @@ public class DoubleAdvancedTask {
             roots[i] -= b / (3.0 * a);
         }
 
-        return roots[0] + ", " + roots[1] + ", " + roots[2];
+        return roots[2] + ", " + roots[1] + ", " + roots[0];
     }
 
     /**
@@ -42,30 +41,30 @@ public class DoubleAdvancedTask {
      *
      * @param p коэффициент при <code>y</code>
      * @param q свободный коэффициент
-     * @return Массив корней. <code>result[0] >= result[1] >= result[2]</code>
+     * @return Массив корней. <code>result[0] <= result[1] <= result[2]</code>
      */
-    private static Double[] solveCubic(double p, double q) {
+    private static double[] solveCubic(double p, double q) {
         final double EPSILON = 1E-5;
         // 1 однократный корень и 1 двукратный
         if (Math.abs(Math.pow(-p / 3.0, 3.0) + Math.pow(0.5 * q, 2.0)) < EPSILON) {
             if (Math.abs(p - q) < EPSILON) {
-                return new Double[]{0.0, 0.0, 0.0};
+                return new double[]{0.0, 0.0, 0.0};
             }
 
             double alpha = Math.cbrt(-0.5 * q);
-            Double[] result = new Double[]{2.0 * alpha, -alpha, -alpha};
+            double[] result = new double[]{2.0 * alpha, -alpha, -alpha};
 
-            Arrays.sort(result, Collections.reverseOrder());
+            Arrays.sort(result);
             return result;
         }
         // 3 вещественных корня
         double t = Math.acos(0.5 * q / Math.pow(-p / 3.0, 1.5)) / 3.0;
-        Double[] result = new Double[]{-1.0, 0.0, 1.0};
+        double[] result = new double[]{-1.0, 0.0, 1.0};
         for (int i = 0; i < 3; i++) {
             result[i] = -2.0 * Math.sqrt(-p / 3.0) * Math.cos(t + 2.0 * Math.PI * result[i] / 3.0);
         }
 
-        Arrays.sort(result, Collections.reverseOrder());
+        Arrays.sort(result);
         return result;
     }
 
@@ -98,23 +97,13 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        // translate points 2, 3 and 4 by minus r-vec of point 1
-        // to make them represent vectors lying on plane
-        x2 -= x1;
-        y2 -= y1;
-        z2 -= z1;
-
-        x3 -= x1;
-        y3 -= y1;
-        z3 -= z1;
-
-        x4 -= x1;
-        y4 -= y1;
-
         // solution of equation over z4: det(M) = 0, where
-        //     | x4'   x3' x2' |
-        // M = | y4'   y3' y2' |
-        //     | z4-z1 z3' z2' |
-        return z1 - (double) (x4 * (y3 * z2 - z3 * y2) - y4 * (x3 * z2 - z3 * x2)) / (x3 * y2 - y3 * x2);
+        //     | x4 - x1  x3 - x1  x2 - x1 |
+        // M = | y4 - y1  y3 - y1  y2 - y1 |
+        //     | z4 - z1  z3 - z1  z2 - z1 |
+        return z1 - (double) (
+                (x4 - x1) * ((y3 - y1) * (z2 - z1) - (z3 - z1) * (y2 - y1))
+                        - (y4 - y1) * ((x3 - x1) * (z2 - z1) - (z3 - z1) * (x2 - x1))
+        ) / ((x3 - x1) * (y2 - y1) - (y3 - y1) * (x2 - x1));
     }
 }
