@@ -19,14 +19,14 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "5.0, 1.0, -2.0"
      */
     public static String equation(int a, int b, int c, int d) {
-        // Решение по формуле Кардано
+        // solution based on Cardano formulae
 
-        // приведение к канонической форме
+        // transform to canonical form
         double[] roots = solveCubic(
                 (double) c / a - b * b / (3.0 * a * a),
-                2.0 * b * b * b / (27.0 * a * a * a) - ((double) b) * c / (3.0 * a * a) + (double) d / a
+                2.0 * b * b * b / (27.0 * a * a * a) - (double) b * c / (3.0 * a * a) + (double) d / a
         );
-        // обратная замена переменных
+        // reverse change of variables
         for (int i = 0; i < 3; i++) {
             roots[i] -= b / (3.0 * a);
         }
