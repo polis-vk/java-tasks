@@ -75,7 +75,7 @@ public class IntegerAdvancedTask {
         int min = 16;
         int k = 0;
         for (int i = 0; i < 16; ++i) {
-            if((a >> 4 * i) == 0) {
+            if ((a >> 4 * i) == 0) {
                 break;
             }
             final int num = (int) ((a >> 4 * i) % 16);
