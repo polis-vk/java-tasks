@@ -12,11 +12,11 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        return (long) (a * ((long) Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
@@ -28,7 +28,22 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int xSpeed = right - left;
+        int ySpeed = up - down;
+
+        if (0 >= grassX || 0 >= grassY || right >= grassX || up >= grassY)
+            return 1;
+        if (xSpeed <= 0 && ySpeed <= 0)
+            return Integer.MAX_VALUE;
+
+        if (xSpeed <= 0)//зная на сколько клеток вверх смещается гусеница каждый день, считаем когда она достигнет травы
+            return (int) Math.ceil(1 + (grassY - up) / (double) ySpeed);
+        if (ySpeed <= 0)
+            return (int) Math.ceil(1 + (grassX - right) / (double) xSpeed);
+
+        //минимум из предыдущих двух выражений в случае если гусеница по окончанию дня смещается как вправо, так и вверх
+        //на положительное число клеток
+        return Integer.min((int) Math.ceil(1 + (grassY - up) / (double) ySpeed), (int) Math.ceil(1 + (grassX - right) / (double) xSpeed));
     }
 
     /**
@@ -37,7 +52,16 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int result;
+
+        if (order < 8)//остаток от деления на 16^(order) делим нацело на 16^(order-1) и получаем hex число на позиции order
+            result = (Math.floorDiv(Math.floorMod(n, 1 << (4 * order)), 1 << (4 * (order - 1))));
+        else
+            result = Math.floorDiv(n, 1 << (4 * (order - 1)));
+
+        if (result < 10)
+            return (char) (result + '0');
+        return (char) (result + 'A' - 10);
     }
 
     /**
@@ -47,7 +71,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long min = a & 15, tmp;
+        byte minIndex = 1, tmpIndex = 2;
+        a >>= 4;
+        while (a != 0) {
+            tmp = a & 15;
+            if (tmp < min) {
+                min = tmp;
+                minIndex = tmpIndex;
+            }
+            tmpIndex++;
+            a >>= 4;
+        }
+        return minIndex;
     }
 
 }
