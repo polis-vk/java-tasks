@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.simple;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -12,11 +16,11 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        return q != 1 ? (long) (a * (1 - Math.pow(q, n)) / (1 - q)) : (long) a * n;
     }
 
     /**
@@ -28,7 +32,15 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (grassX - right <= 0 || grassY - up <= 0) {
+            return 1;
+        }
+        if (right - left <= 0 && up - down <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        int dayOnXtoGrass = (int) Math.ceil((double) (grassX - right) / (right - left)) + 1;
+        int dayOnYtoGrass = (int) Math.ceil((double) (grassY - up) / (up - down)) + 1;
+        return Math.max(dayOnXtoGrass, dayOnYtoGrass);
     }
 
     /**
@@ -38,7 +50,7 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        return convertDecimalToCharHex(n).get(order - 1);
     }
 
     /**
@@ -49,7 +61,22 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        List<Character> arrayOfHex = convertDecimalToCharHex(a);
+        return (byte) (arrayOfHex.indexOf(Collections.min(arrayOfHex)) + 1);
     }
 
+    private static final char[] hexAlphabet = {
+            '0', '1', '2', '3', '4',
+            '5', '6', '7', '8', '9',
+            'A', 'B', 'C', 'D', 'E', 'F'
+    };
+
+    public static List<Character> convertDecimalToCharHex(long a) {
+        List<Character> arrayOfHex = new ArrayList<>();
+        for (long remainder = a; remainder > 0; ) {
+            arrayOfHex.add(hexAlphabet[(int) (remainder % 16)]);
+            remainder /= 16;
+        }
+        return arrayOfHex;
+    }
 }
