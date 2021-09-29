@@ -52,12 +52,7 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        int result;
-
-        if (order < 8)//остаток от деления на 16^(order) делим нацело на 16^(order-1) и получаем hex число на позиции order
-            result = (Math.floorDiv(Math.floorMod(n, 1 << (4 * order)), 1 << (4 * (order - 1))));
-        else
-            result = Math.floorDiv(n, 1 << (4 * (order - 1)));
+        int result  = (n>>(4*(order-1)))&15;
 
         if (result < 10)
             return (char) (result + '0');
@@ -73,15 +68,16 @@ public class IntegerAdvancedTask {
     public static byte minNumber(long a) {
         long min = a & 15, tmp;
         byte minIndex = 1, tmpIndex = 2;
-        a >>= 4;
-        while (a != 0) {
-            tmp = a & 15;
+        long number = a;
+        number >>= 4;
+        while (number != 0) {
+            tmp = number & 15;
             if (tmp < min) {
                 min = tmp;
                 minIndex = tmpIndex;
             }
             tmpIndex++;
-            a >>= 4;
+            number >>= 4;
         }
         return minIndex;
     }
