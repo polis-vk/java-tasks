@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.simple;
 
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -12,11 +16,17 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (q == 0.0 || n == 1) {
+            return a;
+        } else if (q == 1.0) {
+            return (long) a * n;
+        } else {
+            return (long) ((a * (1 - Math.pow(q, n))) / (1 - q));
+        }
     }
 
     /**
@@ -28,7 +38,33 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (up - down <= 0 && up < grassY && right - left <= 0 && right < grassX) {
+            return Integer.MAX_VALUE;
+        } else {
+            int days = 0;
+            int snakeX = 0;
+            int snakeY = 0;
+            while (snakeX < grassX && snakeY < grassY) {
+                days++;
+                snakeY = snakeY + up;
+                if (snakeY >= grassY) {
+                    break;
+                }
+                snakeX = snakeX + right;
+                if (snakeX >= grassX) {
+                    break;
+                }
+                snakeY = snakeY - down;
+                if (snakeY >= grassY) {
+                    break;
+                }
+                snakeX = snakeX - left;
+                if (snakeX >= grassX) {
+                    break;
+                }
+            }
+            return days;
+        }
     }
 
     /**
@@ -38,7 +74,14 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        ArrayList<Character> digits = new ArrayList<Character>();
+        //я так поняла, что нельзя пользоваться стрингами в плане метода toHexString()
+        String dig = "0123456789ABCDEF";
+        while (n > 0) {
+            digits.add(dig.charAt(n % 16));
+            n = n / 16;
+        }
+        return digits.get(order - 1);
     }
 
     /**
@@ -49,7 +92,22 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        ArrayList<Character> digits = new ArrayList<Character>();
+        String dig = "0123456789ABCDEF";
+        char min = Character.MAX_VALUE;
+        while (a > 0) {
+            digits.add(dig.charAt(Math.floorMod(a, 16)));
+            a = a / 16;
+        }
+        int number = 0;
+        Collections.reverse(digits);
+        for (int i = digits.size() - 1; i >= 0; i--) {
+            if (digits.get(i) < min) {
+                min = digits.get(i);
+                number = digits.size() - i;
+            }
+        }
+        return (byte) number;
     }
 
 }

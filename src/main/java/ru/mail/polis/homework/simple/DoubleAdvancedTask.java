@@ -9,7 +9,7 @@ package ru.mail.polis.homework.simple;
 public class DoubleAdvancedTask {
 
     /**
-     * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
+     * Вывести три корня кубического уравнения через запятую: ax ^ 3 + bx ^ 2 + cx + d = 0;
      * Вывод менять не нужно, надо только посчитать x1, x2 и x3, где x1 >= x2 >= x3
      * Считаем, что все три корня вещественные.
      * <p>
@@ -20,6 +20,7 @@ public class DoubleAdvancedTask {
         double x1 = 0;
         double x2 = 0;
         double x3 = 0;
+
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -29,7 +30,11 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        if (a1 == a2) {
+            return (float) (Math.abs(b2 - b1) / Math.sqrt(Math.pow(a1, 2) + 1));
+        } else {
+            return 0f;
+        }
     }
 
     /**
