@@ -32,11 +32,15 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        if (up <= down && right <= left && up < grassY && right < grassX) {
-            return Integer.MAX_VALUE;
+        if (up <= down && right <= left) {
+            if (up < grassY && right < grassX) {
+                return Integer.MAX_VALUE;
+            }
         }
 
-        int x = 0, y = 0, days = 0;
+        int x = 0;
+        int y = 0;
+        int days = 0;
 
         while (x < grassX && y < grassY) {
             days++;
@@ -76,17 +80,17 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        byte result = 0;
-        byte i = 1;
+        byte result = 1;
+        byte i = result;
         long remainder = a;
-        long min = a;
-        while (remainder != 0) {
+        long min = remainder % 16;
+        while (remainder / 16 != 0 && min != 0) {
+            i++;
+            remainder /= 16;
             if (remainder % 16 < min) {
                 min = remainder % 16;
                 result = i;
             }
-            i++;
-            remainder /= 16;
         }
         return result;
     }

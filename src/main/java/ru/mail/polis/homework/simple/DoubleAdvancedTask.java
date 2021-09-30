@@ -35,15 +35,8 @@ public class DoubleAdvancedTask {
                 anglePhi = Math.PI / 2;
             }
 
-            double temp;
             for (int i = 0; i < 5; i += 2) {
-                temp = 2 * Math.sqrt(-p / 3) * Math.cos(anglePhi / 3 + (i * Math.PI) / 3) - (b / (3.0 * a));
-                if (i > 0 && result[i / 2 - 1] < temp) {
-                    result[i / 2] = result[i / 2 - 1];
-                    result[i / 2 - 1] = temp;
-                } else {
-                    result[i / 2] = temp;
-                }
+                result[i / 2] = 2 * Math.sqrt(-p / 3) * Math.cos(anglePhi / 3 + (i * Math.PI) / 3) - (b / (3.0 * a));
             }
         } else {
             double v = Math.pow(-q / 2 + Math.sqrt(discriminant), 1.0 / 3) +
@@ -51,6 +44,15 @@ public class DoubleAdvancedTask {
             result[0] = v - (b / (3.0 * a));
             result[1] = -1.0 / 2 * v - (b / (3.0 * a));
             result[2] = result[1];
+        }
+
+        double temp = result[0];
+        for (int i = 1; i < result.length; i++) {
+            if (result[i] > temp) {
+                result[i - 1] = result[i];
+                result[i] = temp;
+            }
+            temp = result[i];
         }
 
         x1 = result[0];
@@ -66,7 +68,9 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        if (a1 != a2) return 0;
+        if (a1 != a2) {
+            return 0;
+        }
 
         return (float) (Math.abs(b2 - b1) / Math.sqrt(Math.pow(a1, 2) + 1.0));
     }
