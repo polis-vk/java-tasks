@@ -16,7 +16,8 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (Math.abs(q - 1.0) < 1e-15) {
+        final double EPS = 1e-15;
+        if (Math.abs(q - 1.0) < EPS) {
             return (long) a * n;
         }
         return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
@@ -63,8 +64,8 @@ public class IntegerAdvancedTask {
         for (int i = 0; i < order - 1; i++) {
             currentDiv /= 16;
         }
-        int orderNumber = currentDiv % 16;
-        return (char) (orderNumber < 10 ? orderNumber + 48 : orderNumber + 55);
+        char orderNumber = Character.forDigit(currentDiv % 16, 16);
+        return orderNumber < 10 ? orderNumber : Character.toUpperCase(orderNumber);
     }
 
     /**
@@ -75,7 +76,7 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        byte minDigit = Byte.MAX_VALUE;
+        byte minDigit = 16;
         byte minDigitIndex = 0;
         byte currentDigit;
         long currentDiv = a;
