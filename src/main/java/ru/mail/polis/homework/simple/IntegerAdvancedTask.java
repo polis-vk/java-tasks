@@ -16,6 +16,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
+        if (q == 1.0) return (long) a * n;
         return (long) (a * (1 - Math.pow(q, n)) / (1 - q)); //geometric progression sum formula
     }
 
@@ -29,19 +30,18 @@ public class IntegerAdvancedTask {
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
         int count = 1;
-        int currentX = 0;
         int currentY = 0;
-        if (currentX + up >= grassY || currentY + right >= grassX) return count;
+        int currentX = 0;
+        if (currentY + up >= grassY || currentX + right >= grassX) return count;
         if (up - down <= 0 && right - left <= 0) return Integer.MAX_VALUE;
         while (true) {
-            if (currentX + up >= grassY || currentY + right >= grassX) return count;
+            if (currentY + up >= grassY || currentX + right >= grassX) return count;
             else {
-                currentX += (up - down);
-                currentY += (right - left);
+                currentY += (up - down);
+                currentX += (right - left);
                 count++;
             }
         }
-
     }
 
     /**
@@ -51,8 +51,20 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        String hexValue = Integer.toHexString(n).toUpperCase();
-        return hexValue.charAt(hexValue.length() - order);
+        int number = 0;
+        for (int i = 0; i < order; i++) {
+            number = n % 16;
+            n = n / 16;
+        }
+        return fromPositiveSingleIntToHex(number);
+    }
+
+    public static char fromPositiveSingleIntToHex(int val) {
+        char numberBase = '0';
+        char letterBase = 'A';
+        if (val < 0 || val > 16) throw new IllegalArgumentException();
+        if (val < 10) return (char) (numberBase + val);
+        return (char) (letterBase + (val - 10));
     }
 
     /**
@@ -63,16 +75,22 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        String hexValue = Long.toHexString(a).toUpperCase();
+        System.out.println(Long.toHexString(a).toUpperCase());
         byte min = Byte.MAX_VALUE;
-        byte resIndex = 0;
-        for (int i = hexValue.length() - 1; i >= 0; i--) {
-            if (hexValue.charAt(i) < min) {
-                resIndex = (byte) (hexValue.length() - i);
-                min = (byte) hexValue.charAt(i);
+        byte modulo;
+        byte pose = 0;
+        byte i = 0;
+        while (a != 0) {
+            i++;
+            modulo = (byte) (a % 16);
+            a = a / 16;
+            if (min > modulo) {
+                min = modulo;
+                pose = i;
             }
+
         }
-        return resIndex;
+        return pose;
     }
 
 }

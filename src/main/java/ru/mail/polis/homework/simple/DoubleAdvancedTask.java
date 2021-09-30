@@ -1,10 +1,8 @@
 package ru.mail.polis.homework.simple;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 
-import static java.lang.Math.*;
 
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
@@ -23,41 +21,42 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int a, int b, int c, int d) {  //Vieta's formulas
-        double eps = 0.0001;
         double x1;
         double x2;
         double x3;
 
-        ArrayList<Double> dirtyRoots = new ArrayList<>();
+        double[] dirtyRoots = new double[3];
 
         double ma = (double) b / a;
         double mb = (double) c / a;
         double mc = (double) d / a;
+        double q = (Math.pow(ma, 2.0) - 3.0 * mb) / 9.0;
+        double r = (2.0 * Math.pow(ma, 3.0) - 9.0 * ma * mb + 27.0 * mc) / 54.0;
+        double t = Math.acos(r / Math.sqrt(Math.pow(q, 3.0))) / 3.0;
+        dirtyRoots[0] = (-2.0 * Math.sqrt(q) * Math.cos(t) - ma / 3.0);
+        dirtyRoots[1] = (-2.0 * Math.sqrt(q) * Math.cos(t + (2.0 * Math.PI / 3.0)) - ma / 3.0);
+        dirtyRoots[2] = (-2.0 * Math.sqrt(q) * Math.cos(t - (2.0 * Math.PI / 3.0)) - ma / 3.0);
 
-        double q = (pow(ma, 2.0) - 3.0 * mb) / 9.0;
-        double r = (2.0 * pow(ma, 3.0) - 9.0 * ma * mb + 27.0 * mc) / 54.0;
-        double t = acos(r / sqrt(pow(q, 3.0))) / 3.0;
-        dirtyRoots.add(-2.0 * sqrt(q) * cos(t) - ma / 3.0);
-        dirtyRoots.add(-2.0 * sqrt(q) * cos(t + (2.0 * PI / 3.0)) - ma / 3.0);
-        dirtyRoots.add(-2.0 * sqrt(q) * cos(t - (2.0 * PI / 3.0)) - ma / 3.0);
+        Arrays.sort(dirtyRoots);
+        dirtyRoots = reverseDoubleArray(dirtyRoots);
+        x1 = ifNanWrapToZero(dirtyRoots[0]);
+        x2 = ifNanWrapToZero(dirtyRoots[1]);
+        x3 = ifNanWrapToZero(dirtyRoots[2]);
 
-        Collections.sort(dirtyRoots);
-        Collections.reverse(dirtyRoots);
-        x1 = rounder(dirtyRoots.get(0), eps);
-        x2 = rounder(dirtyRoots.get(1), eps);
-        x3 = rounder(dirtyRoots.get(2), eps);
-
-        System.out.println(x1 + " " + x2 + " " + x3);
         return x1 + ", " + x2 + ", " + x3;
     }
 
-    public static double rounder(double val, double eps) {
-        double roundedVal = round(val);
-        if (abs(roundedVal - val) >= eps) {
-            return val;
-        } else {
-            return roundedVal;
-        }
+    public static double ifNanWrapToZero(double val) {
+        if (Double.isNaN(val)) return 0;
+        return val;
+    }
+
+    public static double[] reverseDoubleArray(double[] numbers) {
+        double[] res = new double[3];
+        res[0] = numbers[2];
+        res[1] = numbers[1];
+        res[2] = numbers[0];
+        return res;
     }
 
     /**
@@ -67,7 +66,7 @@ public class DoubleAdvancedTask {
      */
     public static float length(double a1, double b1, double a2, double b2) {
         if (a1 != a2) return 0;
-        else return (float) ((abs(b1 - b2)) / (sqrt(pow(a1, 2) + 1)));
+        else return (float) ((Math.abs(b1 - b2)) / (Math.sqrt(Math.pow(a1, 2) + 1)));
     }
 
     /**
@@ -93,9 +92,9 @@ public class DoubleAdvancedTask {
     }
 
     public static double determinantOfTwoByTwoMatrix(double[][] matrix) {
-        if (matrix.length == matrix[0].length &&
-                matrix.length == matrix[1].length &&
-                matrix.length == 2) {
+        if (matrix.length == matrix[0].length
+                && matrix.length == matrix[1].length
+                && matrix.length == 2) {
             return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
         } else throw new IllegalArgumentException();
     }

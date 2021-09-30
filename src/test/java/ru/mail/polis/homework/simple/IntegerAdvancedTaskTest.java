@@ -27,7 +27,7 @@ public class IntegerAdvancedTaskTest {
         assertEquals(Integer.MAX_VALUE, IntegerAdvancedTask.snake(1, 2, 3, 4, 3, 2));
         assertEquals(1, IntegerAdvancedTask.snake(5, 2, 39, 4, 4, 3));
         assertEquals(46, IntegerAdvancedTask.snake(100, 10, 200, 8, 100, 23333));
-        assertEquals(13, IntegerAdvancedTask.snake(10, 3,2, 4, 32, 100));
+        assertEquals(13, IntegerAdvancedTask.snake(10, 3, 2, 4, 32, 100));
         assertEquals(1, IntegerAdvancedTask.snake(5, 2, 39, 4, 2, 23));
 
     }
@@ -58,5 +58,30 @@ public class IntegerAdvancedTaskTest {
         assertEquals(1, IntegerAdvancedTask.minNumber(11));
         assertEquals(2, IntegerAdvancedTask.minNumber(171));
         assertEquals(3, IntegerAdvancedTask.minNumber(322));
+    }
+
+    @Test
+    public void fromPositiveSingleIntToHex() {
+        assertEquals('0', IntegerAdvancedTask.fromPositiveSingleIntToHex(0));
+        assertEquals('1', IntegerAdvancedTask.fromPositiveSingleIntToHex(1));
+        assertEquals('2', IntegerAdvancedTask.fromPositiveSingleIntToHex(2));
+        assertEquals('3', IntegerAdvancedTask.fromPositiveSingleIntToHex(3));
+        assertEquals('4', IntegerAdvancedTask.fromPositiveSingleIntToHex(4));
+        assertEquals('5', IntegerAdvancedTask.fromPositiveSingleIntToHex(5));
+        assertEquals('6', IntegerAdvancedTask.fromPositiveSingleIntToHex(6));
+        assertEquals('7', IntegerAdvancedTask.fromPositiveSingleIntToHex(7));
+        assertEquals('8', IntegerAdvancedTask.fromPositiveSingleIntToHex(8));
+        assertEquals('9', IntegerAdvancedTask.fromPositiveSingleIntToHex(9));
+        assertEquals('A', IntegerAdvancedTask.fromPositiveSingleIntToHex(10));
+        assertEquals('B', IntegerAdvancedTask.fromPositiveSingleIntToHex(11));
+        assertEquals('C', IntegerAdvancedTask.fromPositiveSingleIntToHex(12));
+        assertEquals('D', IntegerAdvancedTask.fromPositiveSingleIntToHex(13));
+        assertEquals('E', IntegerAdvancedTask.fromPositiveSingleIntToHex(14));
+        assertEquals('F', IntegerAdvancedTask.fromPositiveSingleIntToHex(15));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void fromPositiveSingleIntToHexExceptionTest() {
+        assertEquals('0', IntegerAdvancedTask.fromPositiveSingleIntToHex(-1));
     }
 }
