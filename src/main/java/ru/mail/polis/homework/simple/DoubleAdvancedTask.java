@@ -18,41 +18,43 @@ public class DoubleAdvancedTask {
      * Если используете какой-то конкретный способ, напишите какой.
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
-    //use general cubic formula
+    //use Кардано-Виета
     public static String equation(int a, int b, int c, int d) {
         double x1 = 0;
         double x2 = 0;
         double x3 = 0;
 
-        double delta0 = Math.pow(b, 2) - 3 * a * c;
-        double delta1 = 2 * Math.pow(b, 3) - 9 * a * b * c + 27 * Math.pow(a, 2) * d;
-        double c1 = Math.pow((delta0 + Math.abs(Math.pow(delta0, 2) - 4 * Math.pow(delta1, 3))) / 2.0, 1 / 3.0);
-        double c2 = Math.pow((delta0 - Math.abs(Math.pow(delta0, 2) - 4 * Math.pow(delta1, 3))) / 2.0, 1 / 3.0);
+        double a_ = b * 1.0 / a;
+        double b_ = c * 1.0 / a;
+        double c_ = d * 1.0 / a;
 
-        double k1 = (-1 + Math.sqrt(-3.0)) / 2.0;
-        double k2 = (-1 - Math.sqrt(-3.0)) / 2.0;
-
-        if (c1 == 0 && c2 == 0){
-            x1 = (- 1.0 / 3 * a) * b;
-
-        } else if (c1 == 0){
-            x1 = (- 1.0 / 3 * a) * (b + k1 * c2 + delta0 / (k1 * c2));
-            x2 = (- 1.0 / 3 * a) * (b + k2 * c2 + delta0 / (k2 * c2));
-        } else {
-
+        if (b == 0 && c == 0){
+            return Math.pow((c_), 1/3.0)+ ", " + 0 + ", " + 0;
         }
 
+        double Q = (Math.pow(a_, 2) - 3 * b_) / 9;
+        double R = (2 * Math.pow(a_, 3) - 9 * a_ * b_ + 27 * c_) / 54;
+        double S = Math.pow(Q, 3) - Math.pow(R, 2);
+        double phi = (Math.acos(R / Math.pow(Q, 1.5))) / 3;
+        x1 = -2 * Math.pow(Q, 0.5) * Math.cos(phi) - a_ / 3;
+        x2 = -2 * Math.pow(Q, 0.5) * Math.cos(phi + (2 * Math.PI / 3)) - a_ / 3;
+        x3 = -2 * Math.pow(Q, 0.5) * Math.cos(phi - (2 * Math.PI / 3)) - a_ / 3;
 
-
-
-
-
+        x1 = closeToInt(x1) ? Math.round(x1) : x1;
+        x2 = closeToInt(x2) ? Math.round(x2) : x2;
+        x3 = closeToInt(x3) ? Math.round(x3) : x3;
 
         double[] xes = {x1, x2, x3};
         Arrays.sort(xes);
 
         return xes[2] + ", " + xes[1] + ", " + xes[0];
     }
+
+    public static boolean closeToInt(double val) {
+        double errMargin = 0.00000001;
+        return Math.abs(Math.round(val) - val) <= errMargin;
+    }
+
 
     /**
      * Нужно посчитать расстояние, между двумя прямыми
