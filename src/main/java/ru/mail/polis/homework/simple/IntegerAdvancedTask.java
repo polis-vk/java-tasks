@@ -85,11 +85,14 @@ public class IntegerAdvancedTask {
         byte indexOfMinDigit = 0;
         byte currentDigit;
 
-        for (byte i = 0; number >= 0; i++) {
+        for (byte i = 0; number > 0; i++) {
             currentDigit = (byte) (number % HEXADECIMAL_BASE);
             if (minDigit > currentDigit) {
                 indexOfMinDigit = i;
                 minDigit = currentDigit;
+            }
+            if (minDigit == 0) {
+                return (byte) (indexOfMinDigit + 1);
             }
 
             number /= HEXADECIMAL_BASE;
