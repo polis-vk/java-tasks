@@ -90,9 +90,9 @@ public class IntegerAdvancedTask {
             if (minDigit > currentDigit) {
                 indexOfMinDigit = i;
                 minDigit = currentDigit;
-            }
-            if (minDigit == 0) {
-                return (byte) (indexOfMinDigit + 1);
+                if (minDigit == 0) {
+                    return (byte) (indexOfMinDigit + 1);
+                }
             }
 
             number /= HEXADECIMAL_BASE;
