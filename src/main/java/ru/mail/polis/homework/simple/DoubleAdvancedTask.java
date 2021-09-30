@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.InputMismatchException;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -7,6 +9,10 @@ package ru.mail.polis.homework.simple;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class DoubleAdvancedTask {
+
+    static double returnFirst(double x, double y) {
+        return x;
+    }
 
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
@@ -16,10 +22,34 @@ public class DoubleAdvancedTask {
      * Если используете какой-то конкретный способ, напишите какой.
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
-    public static String equation(int a, int b, int c, int d) {
+    public static String equation(int A, int B, int C, int D) {
         double x1 = 0;
         double x2 = 0;
         double x3 = 0;
+
+        double a = B / (A * 1.0),
+                b = C / (A * 1.0),
+                c = D / (A * 1.0);
+
+        double Q = (a * a - 3 * b) / 9,
+                R = (2 * a * a * a - 9 * a * b + 27 * c) / 54,
+                S = Q * Q * Q - R * R;
+        if (S < 0)
+            throw new InputMismatchException("Wrong input");
+
+        if (Math.abs(S) < 0.000000001) {
+            x1 = -2 * Math.cbrt(R) - a / 3;
+            x3 = x2 = Math.cbrt(R) - a / 3;
+        } else {
+            double Fi = Math.acos(R / Math.sqrt(Q * Q * Q)) / 3;
+            x1 = -2 * Math.sqrt(Q) * Math.cos(Fi) - a / 3;
+            x2 = -2 * Math.sqrt(Q) * Math.cos(Fi + 2 * Math.PI / 3) - a / 3;
+            x3 = -2 * Math.sqrt(Q) * Math.cos(Fi - 2 * Math.PI / 3) - a / 3;
+        }
+
+        if (x1 < x2) x1 = returnFirst(x2, x2 = x1);
+        if (x2 < x3) x2 = returnFirst(x3, x3 = x2);
+        if (x1 < x2) x1 = returnFirst(x2, x2 = x1);
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -29,7 +59,10 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        if (a1 != a2) {
+            return 0;
+        }
+        return (float) (Math.abs(b1 - b2) / Math.sqrt(a1 * a1 + 1));
     }
 
     /**
@@ -44,6 +77,11 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        int[][] a = {
+                {x4 - x1, y4 - y1, 0},
+                {x2 - x1, y2 - y1, z2 - z1},
+                {x3 - x1, y3 - y1, z3 - z1}
+        };
+        return ( (-(a[0][0]*a[1][1]*a[2][2]) - (a[0][1]*a[1][2]*a[2][0]) + (a[0][0]*a[1][2]*a[2][1]) + (a[0][1]*a[1][0]*a[2][2]) )/ ((a[1][0]*a[2][1] - a[1][1]*a[2][0]) * 1.0) ) + z1;
     }
 }

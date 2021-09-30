@@ -12,11 +12,16 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        long answer = 0, prevQ = 1;
+        for (int i = 0; i < n; i++) {
+            answer += a * prevQ;
+            prevQ *= q;
+        }
+        return answer;
     }
 
     /**
@@ -28,7 +33,15 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int ansY = Integer.MAX_VALUE, ansX = Integer.MAX_VALUE;
+        if (up > down)
+            ansY = (int) Math.ceil((grassY - up) / ((up - down) * 1.0)) + 1;
+        if (right > left)
+            ansX = (int) Math.ceil((grassX - right) / ((right - left) * 1.0)) + 1;
+
+        if(up >= grassY || right >= grassX)
+            return 1;
+        return Math.min(ansY, ansX);
     }
 
     /**
@@ -38,7 +51,11 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        char[] symb = { '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+        for (int i = 0; i < order - 1; i++) {
+            n/=16;
+        }
+        return symb[n%16-1];
     }
 
     /**
@@ -49,7 +66,15 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte minNum = 16, numOfMin = -1;
+        for(int i = 1 ; a > 0 ; i++) {
+            if(a % 16 < minNum) {
+                minNum = (byte) (a%16);
+                numOfMin = (byte) i;
+            }
+            a/=16;
+        }
+        return numOfMin;
     }
 
 }
