@@ -56,14 +56,6 @@ public class DoubleAdvancedTaskTest {
                 4, -2), 1e-2);
     }
 
-    @Test
-    public void rounder() {
-        double eps = 0.0001;
-        assertEquals(5.0, DoubleAdvancedTask.rounder(4.999995, eps), eps);
-        assertEquals(6.0, DoubleAdvancedTask.rounder(6.000003, eps), eps);
-        assertEquals(6.344, DoubleAdvancedTask.rounder(6.344, eps), eps);
-    }
-
     @Test(expected = IllegalArgumentException.class)
     public void determinantOfTwoByTwoMatrixTestOfIncorrectArgument() {
         double eps = 0.0001;
