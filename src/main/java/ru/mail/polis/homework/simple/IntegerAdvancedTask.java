@@ -16,8 +16,8 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        double delta = 1e-10;
-        if (Math.abs(q - 1.0) < delta) {
+        final double DELTA = 1e-10;
+        if (Math.abs(q - 1.0) < DELTA) {
             return (long) a * n;
         }
         return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
@@ -55,17 +55,16 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        int[] hexNums = new int[order];
+        int hexNums = 0;
         int buffer = n;
         for (int i = 0; i < order; i++) {
-            if (buffer % 16 > 9) {
-                hexNums[i] = buffer % 16 + 55; // Код символа 'A' - 65.
-            } else {
-                hexNums[i] = buffer % 16 + 48; // Код символа '0' - 48.
-            }
+            hexNums = buffer % 16;
             buffer /= 16;
         }
-        return (char) hexNums[order - 1];
+        if (hexNums % 16 > 9) {
+            return (char) (hexNums - 10 + 'A');
+        }
+        return (char) (hexNums + '0');
     }
 
     /**
@@ -76,11 +75,11 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        byte minNum = 15;
+        byte minNum = (byte) (a % 16);
         byte minPos = 1;
-        byte i = 1;
-        long buffer = a;
-        while (buffer != 0) {
+        byte i = 2;
+        long buffer = a / 16;
+        while (buffer > 0) {
             if (buffer % 16 < minNum) {
                 minNum = (byte) (buffer % 16);
                 minPos = i;
