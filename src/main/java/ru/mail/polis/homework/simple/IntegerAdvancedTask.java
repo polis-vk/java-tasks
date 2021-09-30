@@ -16,13 +16,14 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q == 0.0) {
+        double eps = 1e-10;
+        if (Math.abs(q) < eps) {
             return a;
-        } else if (q == 1.0) {
-            return (long) a * n;
-        } else {
-            return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
         }
+        if (Math.abs(1.0 - q) < eps) {
+            return (long) a * n;
+        }
+        return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
     /**
@@ -34,22 +35,21 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        if (up < grassY && up - down <= 0 && right < grassX && right - left <= 0) {
-            return Integer.MAX_VALUE;
-        } else {
-            int y = (grassY - up);
-            int x = (grassX - right);
-            if (x <= 0 || y <= 0) {
-                return 1;
-            }
-            y = y / (up - down) + 1;
-            x = x / (right - left) + 1;
-            y += y % (up - down) == 0 ? 0 : 1;
-            x += x % (right - left) == 0 ? 0 : 1;
-            y = y > 0 ? y : Integer.MAX_VALUE;
-            x = x > 0 ? x : Integer.MAX_VALUE;
-            return Math.min(x, y);
+        if (up >= grassY || right >= grassX) {
+            return 1;
         }
+        if (up - down <= 0 && right - left <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        int y = (grassY - up);
+        int x = (grassX - right);
+        y = y / (up - down) + 1;
+        x = x / (right - left) + 1;
+        y += y % (up - down) == 0 ? 0 : 1;
+        x += x % (right - left) == 0 ? 0 : 1;
+        y = y > 0 ? y : Integer.MAX_VALUE;
+        x = x > 0 ? x : Integer.MAX_VALUE;
+        return Math.min(x, y);
     }
 
     /**
@@ -59,8 +59,15 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        String hexString = Integer.toHexString(n).toUpperCase();
-        return hexString.charAt(hexString.length() - order);
+        int temp = n;
+        for (int i = 0; i < order - 1; i++) {
+            temp /= 16;
+        }
+        temp %= 16;
+        if (temp >= 10) {
+            return (char) ('A' + temp - 10);
+        }
+        return (char) ('0' + temp);
     }
 
     /**
@@ -71,16 +78,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        String hexString = Long.toHexString(a);
-        char min = Character.MAX_VALUE;
-        int offset = 0;
-        for (int i = hexString.length() - 1; i >= 0; i--) {
-            if (hexString.charAt(i) < min) {
-                min = hexString.charAt(i);
-                offset = hexString.length() - i;
+        long temp = a;
+        long min = Long.MAX_VALUE;
+        byte minIndex = 1;
+        byte currIndex = 1;
+        while (temp != 0) {
+            if (temp % 16 < min) {
+                min = temp % 16;
+                minIndex = currIndex;
             }
+            temp /= 16;
+            currIndex++;
         }
-        return (byte) offset;
+        return minIndex;
     }
 
 }

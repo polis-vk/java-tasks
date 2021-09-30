@@ -27,23 +27,14 @@ public class DoubleAdvancedTask {
         double ct = (double) d / a;
         double q = (at * at - 3 * bt) / 9;
         double r = (2 * at * at * at - 9 * at * bt + 27 * ct) / 54;
-        // Умножаем q на a^2, r на а^3 и изменяем формулу s на q^3*4 - r^2 чтобы s было целочисленным.
-        BigInteger ab = BigInteger.valueOf(a);
-        BigInteger bb = BigInteger.valueOf(b);
-        BigInteger cb = BigInteger.valueOf(c);
-        BigInteger db = BigInteger.valueOf(d);
-        BigInteger qd = bb.pow(2).subtract(ab.multiply(cb).multiply(BigInteger.valueOf(3)));
-        BigInteger rd = BigInteger.valueOf(2).multiply(bb.pow(3))
-                .subtract(BigInteger.valueOf(9).multiply(bb).multiply(cb).multiply(ab))
-                .add(BigInteger.valueOf(27).multiply(db).multiply(ab.pow(2)));
-        BigInteger s = qd.pow(3).multiply(BigInteger.valueOf(4)).subtract(rd.pow(2));
+        double s = q * q * q - r * r;
         double[] x = new double[3];
-        if (s.signum() == 1) {
+        if (s > 0) {
             double fi = Math.acos(r / Math.pow(q, 1.5)) / 3;
             x[0] = -2 * Math.sqrt(q) * Math.cos(fi) - at / 3;
             x[1] = -2 * Math.sqrt(q) * Math.cos(fi + 2 * Math.PI / 3) - at / 3;
             x[2] = -2 * Math.sqrt(q) * Math.cos(fi - 2 * Math.PI / 3) - at / 3;
-        } else if (s.signum() == -1) {
+        } else if (s < 0) {
             double archArg = Math.abs(r) / Math.pow(Math.abs(q), 1.5);
             double fi = Math.log(archArg + Math.sqrt(archArg * archArg - 1));
             x[0] = -2 * Math.signum(r) * Math.sqrt(Math.abs(q)) * Math.cosh(fi) - at / 3;
@@ -69,9 +60,8 @@ public class DoubleAdvancedTask {
     public static float length(double a1, double b1, double a2, double b2) {
         if (a1 == a2) {
             return (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1));
-        } else {
-            return 0f;
         }
+        return 0f;
     }
 
     /**
