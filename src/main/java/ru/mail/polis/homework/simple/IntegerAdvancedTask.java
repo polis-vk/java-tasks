@@ -64,16 +64,12 @@ public class IntegerAdvancedTask {
      */
 
     private static final int HEXADECIMAL_BASE = 16;
-    private static final int DIGIT_TO_CHAR_OF_ZERO_TO_NINE = 48;
-    private static final int DIGIT_TO_CHAR_OF_TEN_TO_FIFTEEN = 55;
 
     public static char kDecimal(int n, int order) {
         int truncatedNumber = Math.abs(n) / (int) Math.pow(HEXADECIMAL_BASE, order - 1);
         int lastDigitInHex = truncatedNumber % HEXADECIMAL_BASE;
-        if (lastDigitInHex < 10) {
-            return (char) (lastDigitInHex + DIGIT_TO_CHAR_OF_ZERO_TO_NINE);
-        }
-        return (char) (lastDigitInHex + DIGIT_TO_CHAR_OF_TEN_TO_FIFTEEN);
+
+        return Character.toUpperCase(Character.forDigit(lastDigitInHex, HEXADECIMAL_BASE));
     }
 
     /**
@@ -86,19 +82,22 @@ public class IntegerAdvancedTask {
     public static byte minNumber(long a) {
         long number = a;
         byte minDigit = (byte) HEXADECIMAL_BASE;
-        byte indexOfMaxDigit = 0;
+        byte indexOfMinDigit = 0;
         byte currentDigit;
 
         for (byte i = 0; number > 0; i++) {
             currentDigit = (byte) (number % HEXADECIMAL_BASE);
             if (minDigit > currentDigit) {
-                indexOfMaxDigit = i;
+                indexOfMinDigit = i;
                 minDigit = currentDigit;
             }
+            if (minDigit == 0) {
+                return (byte) (indexOfMinDigit + 1);
+            }
 
-            number = number / HEXADECIMAL_BASE;
+            number /= HEXADECIMAL_BASE;
         }
-        return (byte) (indexOfMaxDigit + 1);
+        return (byte) (indexOfMinDigit + 1);
     }
 
 }
