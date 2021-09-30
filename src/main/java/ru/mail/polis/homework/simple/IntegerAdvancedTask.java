@@ -12,11 +12,15 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        long result = 0;
+        for (int i = 0; i < n; i++) {
+            result += a * Math.pow(q, i);
+        }
+        return result;
     }
 
     /**
@@ -28,7 +32,24 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (up <= down && right <= left && up < grassY && right < grassX) {
+            return Integer.MAX_VALUE;
+        }
+
+        int x = 0, y = 0, days = 0;
+
+        while (x < grassX && y < grassY) {
+            days++;
+            x += right;
+            y += up;
+            if (x >= grassX || y >= grassY) {
+                return days;
+            }
+            x -= left;
+            y -= down;
+        }
+
+        return days;
     }
 
     /**
@@ -38,7 +59,13 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int orderDecimal = n << (Integer.SIZE - order * 4);
+        orderDecimal >>= (Integer.SIZE - 4);
+        if (orderDecimal < 0) {
+            orderDecimal += 16;
+        }
+
+        return Character.toUpperCase(Character.forDigit(orderDecimal, 16));
     }
 
     /**
@@ -49,7 +76,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte result = 0;
+        byte i = 1;
+        long remainder = a;
+        long min = a;
+        while (remainder != 0) {
+            if (remainder % 16 < min) {
+                min = remainder % 16;
+                result = i;
+            }
+            i++;
+            remainder /= 16;
+        }
+        return result;
     }
 
 }
