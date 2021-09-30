@@ -34,7 +34,8 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return Math.min(snakeOneDimensional(up, down, grassY), snakeOneDimensional(right, left, grassX));
+        final int snakeY = snakeOneDimensional(up, down, grassY);
+        return snakeY == 0 ? 0 : Math.min(snakeY, snakeOneDimensional(right, left, grassX));
     }
 
     /**
@@ -49,16 +50,20 @@ public class IntegerAdvancedTask {
         if (grassMin <= 0) {
             return 0;
         }
-
-        if (right - left > 0) {
-            return 1 + (int) Math.ceil((double) (grassMin - right) / (right - left));
-        }
-
-        if (grassMin - right <= 0) {
+        if (grassMin - right<= 0) {
             return 1;
         }
+        if (right - left <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        return 1 + ceilDivision(grassMin - right, right - left);
+    }
 
-        return Integer.MAX_VALUE;
+    /**
+     * Same as (int)Math.ceil((double) a / b)
+     */
+    private static int ceilDivision(int a, int b) {
+        return (a + b - 1) / b;
     }
 
     /**
