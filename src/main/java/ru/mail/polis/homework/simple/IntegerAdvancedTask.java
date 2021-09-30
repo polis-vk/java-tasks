@@ -73,10 +73,14 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        if (n == Integer.MIN_VALUE) {
-            return 'F';
+        return hexDigit((int) ((Math.abs((long) n) >> ((order - 1) * 4)) & 0xF));
+    }
+
+    private static char hexDigit(int value) {
+        if (0 <= value && value <= 9) {
+            return (char) ('0' + value);
         }
-        return "0123456789ABCDEF".charAt((int) ((Math.abs((long) n) >> ((order - 1) * 4)) & 0xF));
+        return (char) ('A' + value - 10);
     }
 
     /**
@@ -87,20 +91,20 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        if (a == Long.MIN_VALUE) {
-            return 1;
-        }
-        a = Math.abs(a);
-        long minDigit = a & 0xF;
-        int minOrder = 0;
-        for (int i = 0; a > 0; i++) {
-            if ((a & 0xF) < minDigit) {
-                minDigit = a & 0xF;
-                minOrder = i;
+        long number = Math.abs(a);
+        long digit = number & 0xF;
+        byte order = 1;
+        long minDigit = digit;
+        byte minOrder = 1;
+        while (number > 0) {
+            digit = number & 0xF;
+            if (digit < minDigit) {
+                minDigit = digit;
+                minOrder = order;
             }
-            a >>= 4;
+            number >>= 4;
+            order++;
         }
-        return (byte) (minOrder + 1);
+        return minOrder;
     }
-
 }
