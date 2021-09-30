@@ -3,6 +3,8 @@
 *.iws
 *.iml
 *.ipr
+gradlew
+gradlew.bat
 
 
 # Mobile Tools for Java (J2ME)
