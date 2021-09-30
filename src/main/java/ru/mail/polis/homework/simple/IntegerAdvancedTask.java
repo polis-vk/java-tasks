@@ -16,7 +16,13 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        final double ERROR = 0.000001;
+        if (Math.abs(q - 0) < ERROR) {
+            return a;
+        } else if (Math.abs(q - 1) < ERROR) {
+            return (long) a * n;
+        }
+        return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
@@ -28,7 +34,22 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if ((up > grassX) || (right > grassY)) {
+            return 1;
+        } else if ((grassX <= 0) || (grassY <= 0)) {
+            return 0;
+        }
+
+        int dayX = right - left;
+        int dayY = up - down;
+        if ((dayX <= 0) && (dayY <= 0)) {
+            return Integer.MAX_VALUE;
+        } else if (dayX <= 0) {
+            return (int) (Math.ceil((float) (grassY - up) / dayY) + 1);
+        } else if (dayY <= 0) {
+            return (int) (Math.ceil((float) (grassX - right) / dayX) + 1);
+        }
+        return (int) Math.min(Math.ceil((float) (grassY - up) / dayY) + 1, Math.ceil((float) (grassX - right) / dayX) + 1);
     }
 
     /**
@@ -38,7 +59,7 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        return Character.toUpperCase(Character.forDigit((int) (n / Math.pow(16, order - 1) % 16), 16));
     }
 
     /**
@@ -49,7 +70,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long min = 16;
+        byte minIndex = 1;
+        byte i = 1;
+        long result = a;
+        while (result > 0) {
+            if (result % 16 < min) {
+                min = result % 16;
+                minIndex = i;
+            }
+            result /= 16;
+            i++;
+        }
+        return minIndex;
     }
 
 }
