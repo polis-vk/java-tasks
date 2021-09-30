@@ -9,7 +9,7 @@ import java.util.Arrays;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class DoubleAdvancedTask {
-
+    private final static double EPS = 1e-10;
 
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
@@ -55,7 +55,7 @@ public class DoubleAdvancedTask {
 
     public static float length(double a1, double b1, double a2, double b2) {
         // При a1 = a2 прямые не параллельны и пересекаются
-        return Math.abs(a1 - a2) < 1e-10 ? (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1)) : 0;
+        return Math.abs(a1 - a2) < EPS ? (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1)) : 0;
     }
 
     /**

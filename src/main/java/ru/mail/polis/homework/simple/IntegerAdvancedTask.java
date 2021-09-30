@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class IntegerAdvancedTask {
-
+    private final static double EPS = 1e-10;
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
@@ -18,7 +18,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (Math.abs(q - 1) < 1e-10) {
+        if (Math.abs(q - 1) < EPS) {
             return (long) a * n;
         }
         return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
@@ -79,6 +79,9 @@ public class IntegerAdvancedTask {
             if (number % 16 < minFigure) {
                 indexMin = i;
                 minFigure = (byte) (number % 16);
+            }
+            if(minFigure == 0) {
+                return indexMin;
             }
             i++;
             number /= 16;
