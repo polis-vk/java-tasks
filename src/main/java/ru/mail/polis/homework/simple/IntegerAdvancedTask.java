@@ -31,13 +31,15 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
+        if (up >= grassY || right >= grassX) {
+            return 1;
+        } else if (up <= down && right <= left) {
+            return Integer.MAX_VALUE;
+        }
+
         int x = 0;
         int y = 0;
         int daysCount = 0;
-
-        if (up <= down && up < grassY && right <= left && right < grassX) {
-            return Integer.MAX_VALUE;
-        }
 
         while (x < grassX && y < grassY) {
             y += up;
@@ -61,13 +63,11 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        int[] nums = new int[order];
         int tmpN = n;
-        for (int i = 0; i < order; i++) {
-            nums[i] = tmpN % 16;
+        for (int i = 0; i < order - 1; i++) {
             tmpN /= 16;
         }
-        return Character.toUpperCase(Character.forDigit(nums[order - 1], 16));
+        return Character.toUpperCase(Character.forDigit(tmpN % 16, 16));
     }
 
     /**
@@ -82,7 +82,7 @@ public class IntegerAdvancedTask {
         byte indexOfMin = 1;
         byte i = 1;
         long tmpMin = tmpA % 16;
-        while (tmpA > 0) {
+        while (tmpA > 0 && tmpMin != 0) {
             if (tmpA % 16 < tmpMin) {
                 tmpMin = tmpA % 16;
                 indexOfMin = i;

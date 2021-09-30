@@ -40,8 +40,9 @@ public class DoubleAdvancedTask {
         double x3 = -2 * Math.sqrt(Q) * Math.cos(phi - (2 * Math.PI / 3)) - A / 3;
 
         double min = Math.min(Math.min(x1, x2), x3);
-        double middle = Math.min(Math.max(x1, x2), x3);
-        return Math.max(Math.max(x1, x2), x3) + ", " + middle + ", " + min;
+        double max = Math.max(Math.max(x1, x2), x3);
+        double mid = x1 + x2 + x3 - min - max;
+        return max + ", " + mid + ", " + min;
     }
 
     /**
