@@ -20,7 +20,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q == 1.0) {
+        if (Double.compare(1, q) == 0) {
             return (long) a * n;
         }
         return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
@@ -52,6 +52,10 @@ public class IntegerAdvancedTask {
         int xDays = (int) Math.ceil((double) xBeforeLastDay / xMoveAtOneDay) + 1;
         int yDays = (int) Math.ceil((double) yBeforeLastDay / yMoveAtOneDay) + 1;
 
+        if (xDays > 0 && yDays > 0) {
+            return Math.min(xDays, yDays);
+        }
+
         return Math.max(xDays, yDays);
     }
 
@@ -62,24 +66,16 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        List<Integer> hexNumber = convertToHex(n);
-        int result = hexNumber.get(order - 1);
+        int number = n;
 
+        for (int i = 0; i < order - 1; i++) {
+            number /= 16;
+        }
+
+        int result = number % 16;
         char charToSum = result < 10 ? '0' : 'A' - 10;
 
         return (char) (result + charToSum);
-    }
-
-    private static List<Integer> convertToHex(long n) {
-        List<Integer> result = new ArrayList<>();
-        long number = n;
-
-        while (number > 0) {
-            result.add((int) (number % 16));
-            number = number / 16;
-        }
-
-        return result;
     }
 
     /**
@@ -90,17 +86,21 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        List<Integer> hexNumber = convertToHex(a);
-        byte numberOfMinDigit = 17;
-        int minDigit = 17;
+        byte numberOfMinDigit = Byte.MAX_VALUE;
+        byte minDigit = Byte.MAX_VALUE;
 
-        for (int i = 0; i < hexNumber.size(); i++) {
-            int current = hexNumber.get(i);
-            if (current < minDigit) {
-                minDigit = current;
-                numberOfMinDigit = (byte) (i + 1);
+        long number = a;
+        byte counter = 1;
+
+        while (number > 0) {
+            if (number % 16 < minDigit) {
+                minDigit = (byte) (number % 16);
+                numberOfMinDigit = counter;
             }
+            counter++;
+            number = number / 16;
         }
+
         return numberOfMinDigit;
     }
 }
