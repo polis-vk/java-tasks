@@ -74,18 +74,21 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        int curIndex = 1;
-        int minDigitIndex = -1;
-        int minDigit = HEX_NUMERIC_SYSTEM;
+        byte curIndex = 1;
+        byte minDigitIndex = -1;
+        byte minDigit = HEX_NUMERIC_SYSTEM;
         long num = a;
         while (num > 0) {
+            if (minDigit == 0) {
+                break;
+            }
             if (num % HEX_NUMERIC_SYSTEM < minDigit) {
-                minDigit = (int) (num % HEX_NUMERIC_SYSTEM);
+                minDigit = (byte) (num % HEX_NUMERIC_SYSTEM);
                 minDigitIndex = curIndex;
             }
             ++curIndex;
             num /= HEX_NUMERIC_SYSTEM;
         }
-        return (byte) minDigitIndex;
+        return minDigitIndex;
     }
 }
