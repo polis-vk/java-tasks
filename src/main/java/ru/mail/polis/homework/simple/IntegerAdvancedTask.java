@@ -17,8 +17,11 @@ public class IntegerAdvancedTask {
      */
     public static long progression(int a, double q, int n) {
         // сравниваю квадрат отклонения с 10^-10, если меньше то q ~ 1
-        if ((1 - q) * (1 - q) <= 1e-10)
+        final double delta = 1e-10; // вне метода смысла не имеет
+        
+        if ((1 - q) * (1 - q) <= delta) {
             return a * n;
+        }
         return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 

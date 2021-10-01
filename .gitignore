@@ -1,6 +1,15 @@
-*
-!.gitignore
-!*.java
-!*/
-/bin/
-/.gradle/
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+gradlew
+gradlew.bat
+
+
+# Mobile Tools for Java (J2ME)
+.gradle/
+out/
+build/
+target/
+gradle
