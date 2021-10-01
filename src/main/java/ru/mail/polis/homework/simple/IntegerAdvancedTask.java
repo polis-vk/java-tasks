@@ -17,7 +17,6 @@ public class IntegerAdvancedTask {
      */
     public static long progression(int a, double q, int n) {
         long sum = 0;
-
         for (int i = 0; i < n; i++) {
             sum += a * Math.pow(q, i);
         }
@@ -33,8 +32,9 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        if (up >= grassY || right >= grassX)
+        if (up >= grassY || right >= grassX) {
             return 1;
+        }
         double stepX = right - left;
         double stepY = up - down;
         if (stepX <= 0 && stepY <= 0) {
@@ -91,12 +91,13 @@ public class IntegerAdvancedTask {
      */
     public static byte minNumber(long a) {
         byte index = 0;
-        byte minDigit = 17;
+        byte minDigit = Byte.MAX_VALUE;
         long number = a;
 
         byte i = 1;
-        while (number != 0) {
-            byte currentDigit = (byte) (number % 16);
+        byte currentDigit;
+        while (minDigit != 0 && number != 0) {
+            currentDigit = (byte) (number % 16);
             if (currentDigit < minDigit) {
                 minDigit = currentDigit;
                 index = i;
