@@ -36,14 +36,16 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        int ansY = Integer.MAX_VALUE, ansX = Integer.MAX_VALUE;
-        if (up > down)
-            ansY = (int) Math.ceil((grassY - up) / ((up - down) * 1.0)) + 1;
-        if (right > left)
-            ansX = (int) Math.ceil((grassX - right) / ((right - left) * 1.0)) + 1;
-
-        if (up >= grassY || right >= grassX)
+        if (up >= grassY || right >= grassX) {
             return 1;
+        }
+        int ansY = Integer.MAX_VALUE, ansX = Integer.MAX_VALUE;
+        if (up > down) {
+            ansY = (int) Math.ceil((grassY - up) / ((up - down) * 1.0)) + 1;
+        }
+        if (right > left) {
+            ansX = (int) Math.ceil((grassX - right) / ((right - left) * 1.0)) + 1;
+        }
         return Math.min(ansY, ansX);
     }
 
@@ -54,11 +56,13 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
+        int inputNum = n;
+        int index = order;
         char[] symbols = {'1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-        for (int i = 0; i < order - 1; i++) {
-            n /= 16;
+        for (int i = 0; i < index - 1; i++) {
+            inputNum /= 16;
         }
-        return symbols[n % 16 - 1];
+        return symbols[inputNum % 16 - 1];
     }
 
     /**
@@ -69,17 +73,21 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
+        long inputNumber = a;
         byte minNum = 16, numOfMin = 0;
-        if (a < 0)
+        if (inputNumber < 0) {
             throw new InputMismatchException("Input numbers must be above zero");
-        for (int i = 1; a > 0; i++) {
-            if (a % 16 < minNum) {
-                minNum = (byte) (a % 16);
+        }
+        for (int i = 1; inputNumber > 0; i++) {
+            if(inputNumber % 16 == 0) {
+                return (byte) i;
+            }
+            if (inputNumber % 16 < minNum) {
+                minNum = (byte) (inputNumber % 16);
                 numOfMin = (byte) i;
             }
-            a /= 16;
+            inputNumber /= 16;
         }
         return numOfMin;
     }
-
 }

@@ -23,22 +23,23 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int A, int B, int C, int D) {
+        final double ABS = 0.000000001;
         double x1 = 0;
         double x2 = 0;
         double x3 = 0;
-
-        double a = B / (A * 1.0),
-                b = C / (A * 1.0),
-                c = D / (A * 1.0);
-
-        double Q = (a * a - 3 * b) / 9,
-                R = (2 * a * a * a - 9 * a * b + 27 * c) / 54,
-                S = Q * Q * Q - R * R;
-        if (S < 0)
+        //New coefficients
+        double a = B / (A * 1.0);
+        double b = C / (A * 1.0);
+        double c = D / (A * 1.0);
+        //Smth like discriminant
+        double Q = (a * a - 3 * b) / 9;
+        double R = (2 * a * a * a - 9 * a * b + 27 * c) / 54;
+        double S = Q * Q * Q - R * R;
+        if (S < 0) {
             throw new InputMismatchException("Wrong input");
-
+        }
         //If s equal to zero
-        if (Math.abs(S) < 0.000000001) {
+        if (Math.abs(S) < ABS) {
             x1 = -2 * Math.cbrt(R) - a / 3;
             x3 = x2 = Math.cbrt(R) - a / 3;
         } else {
@@ -47,8 +48,6 @@ public class DoubleAdvancedTask {
             x2 = -2 * Math.sqrt(Q) * Math.cos(Fi + 2 * Math.PI / 3) - a / 3;
             x3 = -2 * Math.sqrt(Q) * Math.cos(Fi - 2 * Math.PI / 3) - a / 3;
         }
-
-
         //Sorting
         //This is smth like swap without using extra memory(disregarding function call memory)
         //I thought we can't use arrays, sry
@@ -89,6 +88,7 @@ public class DoubleAdvancedTask {
                 {x3 - x1, y3 - y1, z3 - z1}
         };
         //express Z using matrix
-        return ( (-(a[0][0]*a[1][1]*a[2][2]) - (a[0][1]*a[1][2]*a[2][0]) + (a[0][0]*a[1][2]*a[2][1]) + (a[0][1]*a[1][0]*a[2][2]) )/ ((a[1][0]*a[2][1] - a[1][1]*a[2][0]) * 1.0) ) + z1;
+        return (a[0][0] * a[1][2] * a[2][1] + a[0][1] * a[1][0] * a[2][2] - a[0][0] * a[1][1] * a[2][2] - a[0][1] * a[1][2] * a[2][0])
+                / (a[1][0] * a[2][1] - a[1][1] * a[2][0] * 1.0) + z1;
     }
 }
