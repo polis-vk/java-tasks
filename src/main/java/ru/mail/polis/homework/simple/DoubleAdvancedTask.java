@@ -50,9 +50,8 @@ public class DoubleAdvancedTask {
     public static float length(double a1, double b1, double a2, double b2) {
         if (a1 != a2) {
             return 0;
-        } else {
-            return (float) (Math.abs(b1 - b2) / Math.sqrt(a1 * a1 + 1));
         }
+        return (float) (Math.abs(b1 - b2) / Math.sqrt(a1 * a1 + 1));
     }
 
     /**

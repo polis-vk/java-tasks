@@ -15,7 +15,8 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q == 1.0) return a * n;
+        double epsilon = 0.000001d;
+        if (Math.abs(1 - q) < epsilon) return a * n;
         return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
@@ -67,11 +68,11 @@ public class IntegerAdvancedTask {
     public static byte minNumber(long a) {
         long aCopy = a;
         byte minIndex = 0;
-        long min = 16;
+        int min = 16;
         byte i = 1;
         while (aCopy > 0) {
             if (aCopy % 16 < min) {
-                min = aCopy % 16;
+                min = (int) aCopy % 16;
                 minIndex = i;
             }
             i++;
