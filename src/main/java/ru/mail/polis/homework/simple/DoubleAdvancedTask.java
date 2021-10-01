@@ -21,20 +21,20 @@ public class DoubleAdvancedTask {
     //(a!=0 && b!=0) || (a!=0) ,мы будем считать, что это так, иначе-не будет 3 вещественных корней.
     //Будем использовать формулу Кардано
     public static String equation(int a, int b, int c, int d) {
-        double[] result;
         double f = findF(a, b, c);
         double g = findG(a, b, c, d);
         if (f == 0 && g == 0) {
-            result = find3EqualRoot(a, d);
-            return result[0] + ", " + result[0] + ", " + result[0];
+            double root = find3EqualRoot(a, d);
+            return root + ", " + root + ", " + root;
         }
         double h = findH(f, g);
-        result = Arrays.stream(find3DifferentRoot(g, h, b, a)).sorted().toArray();
+        double [] result=find3DifferentRoot(g, h, b, a);
+        Arrays.sort(result);
         return result[2] + ", " + result[1] + ", " + result[0];
     }
 
 
-    private static double[] find3EqualRoot(double a, double d) {
+    private static double find3EqualRoot(double a, double d) {
         double x1;
         if (d / a > 0) {
             x1 = Math.pow(d / a, -(1 / 3.0));
@@ -43,7 +43,7 @@ public class DoubleAdvancedTask {
         } else {
             x1 = Math.pow(-d / a, (1 / 3.0));
         }
-        return new double[]{x1, x1, x1};
+        return x1;
     }
 
     private static double[] find3DifferentRoot(double g, double h, double b, double a) {

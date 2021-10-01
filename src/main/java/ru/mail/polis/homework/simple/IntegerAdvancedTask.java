@@ -18,7 +18,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
+        return (q == 1) ? (long) a * n : (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
     /**
@@ -30,7 +30,11 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        int x = 0, y = 0, i = 0, xPrev = 0, yPrev = 0;
+        int x = 0;
+        int y = 0;
+        int i = 0;
+        int xPrev = 0;
+        int yPrev = 0;
         while (x < grassX && y < grassY) {
             i++;
             x += right;
@@ -40,7 +44,7 @@ public class IntegerAdvancedTask {
             }
             x -= left;
             y -= down;
-            if (x <= xPrev && y <= yPrev){
+            if (i == 1 && x <= xPrev && y <= yPrev) {
                 return Integer.MAX_VALUE;
             }
             xPrev = x;
@@ -55,8 +59,35 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        String str = Integer.toHexString(n).toUpperCase(Locale.ROOT);
-        return str.charAt(str.length() - order);
+        int current = n;
+        int i = 1;
+        int integerPart = 1;
+        byte residue;
+        while (integerPart > 0) {
+            integerPart = current >> 4;
+            residue = (byte) (current - (integerPart << 4));
+            if (i == order) {
+                switch (residue) {
+                    case 10:
+                        return 'A';
+                    case 11:
+                        return 'B';
+                    case 12:
+                        return 'C';
+                    case 13:
+                        return 'D';
+                    case 14:
+                        return 'E';
+                    case 15:
+                        return 'F';
+                    default:
+                        return (char) (residue + '0');
+                }
+            }
+            current = integerPart;
+            i++;
+        }
+        return '0';
     }
 
     /**
@@ -66,12 +97,15 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        long currentDecimal = a, integerPart = 1;
-        int minNumber = 16, residue;
-        byte minIndex = 1, i = 1;
+        long currentDecimal = a;
+        long integerPart = 1;
+        byte minNumber = 16;
+        byte residue;
+        byte minIndex = 1;
+        byte i = 1;
         while (integerPart > 0) {
             integerPart = currentDecimal >> 4;
-            residue = (int) (currentDecimal - integerPart * 16);
+            residue = (byte) (currentDecimal - integerPart * 16);
             if (residue < minNumber) {
                 minNumber = residue;
                 minIndex = i;
