@@ -10,6 +10,7 @@ import java.util.Locale;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class IntegerAdvancedTask {
+    public static final double ERROR = 0.00001;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -18,7 +19,11 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return (q == 1) ? ((long) a * n) : (long) (a * (Math.pow(q, n) - 1) / (q - 1));
+        if (Math.abs(q - 1) < ERROR) {
+            return (long) a * n;
+        } else {
+            return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
+        }
     }
 
     /**
@@ -30,12 +35,12 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        if ((grassX <= 0) || (grassY <= 0)) {
+        if (grassX <= 0 || grassY <= 0) {
             return 0;
         }
         grassX -= right;
         grassY -= up;
-        if ((grassY <= 0) || (grassX <= 0)) {
+        if (grassY <= 0 || grassX <= 0) {
             return 1;
         }
 
@@ -62,7 +67,7 @@ public class IntegerAdvancedTask {
         if (order < 1) {
             throw new IllegalArgumentException("Order must be > 0");
         }
-        return (Integer.toHexString((int) ((n / (Math.pow(16, (order - 1)))) % 16))).toUpperCase().toCharArray()[0];
+        return Character.toUpperCase(Character.forDigit((int) ((n / (Math.pow(16, (order - 1)))) % 16), 16));
     }
 
     /**
@@ -78,13 +83,14 @@ public class IntegerAdvancedTask {
         }
         long min = a % 16;
         byte counter = 1;
+        long temp = a;
         byte firstMinimum = counter;
-        while (a > 0) {
-            if (min > (a % 16)) {
+        while (temp > 0) {
+            if (min > (temp % 16)) {
                 firstMinimum = counter;
-                min = a % 16;
+                min = temp % 16;
             }
-            a /= 16;
+            temp /= 16;
             counter++;
         }
         return firstMinimum;

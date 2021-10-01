@@ -11,7 +11,7 @@ import java.util.Collections;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class DoubleAdvancedTask {
-
+    public static final double ERROR = 0.00001;
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
      * Вывод менять не нужно, надо только посчитать x1, x2 и x3, где x1 >= x2 >= x3
@@ -22,7 +22,6 @@ public class DoubleAdvancedTask {
      */
     public static String equation(int k1, int k2, int k3, int k4) {
         double[] x = new double[3]; //Решение кубического уравнения при помощи тригонометрической формулы Виета
-        final double ERROR = 0.00001;
         double a = (double) k2 / k1;
         double b = (double) k3 / k1;
         double c = (double) k4 / k1;
@@ -63,7 +62,6 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        final double ERROR = 0.001;
         if (Math.abs(a1 - a2) > ERROR) {
             return 0;
         }
