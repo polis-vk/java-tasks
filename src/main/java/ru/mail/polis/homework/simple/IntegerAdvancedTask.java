@@ -28,7 +28,7 @@ public class IntegerAdvancedTask {
      * Сколько суток понадобится гусенице, чтобы доползти до поля с травой?
      * Считаем, что на каждой клетке с координатами >= grassX или >= grassY находится трава
      * Если она этого никогда не сможет сделать, Верните число Integer.MAX_VALUE;
-     * Пример: (10, 3, 5, 5, 20, 1) -> 2
+     * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
         if (up >= grassY || right >= grassX) {
