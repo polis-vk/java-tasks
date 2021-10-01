@@ -51,9 +51,15 @@ public class DoubleAdvancedTask {
         //Sorting
         //This is smth like swap without using extra memory(disregarding function call memory)
         //I thought we can't use arrays, sry
-        if (x1 < x2) x1 = returnFirst(x2, x2 = x1);
-        if (x2 < x3) x2 = returnFirst(x3, x3 = x2);
-        if (x1 < x2) x1 = returnFirst(x2, x2 = x1);
+        if (x1 < x2) {
+            x1 = returnFirst(x2, x2 = x1);
+        }
+        if (x2 < x3) {
+            x2 = returnFirst(x3, x3 = x2);
+        }
+        if (x1 < x2) {
+            x1 = returnFirst(x2, x2 = x1);
+        }
         return x1 + ", " + x2 + ", " + x3;
     }
 
