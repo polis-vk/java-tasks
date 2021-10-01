@@ -77,14 +77,15 @@ public class IntegerAdvancedTask {
         // int size = (int) Math.round(Math.log(a) / Math.log(16) + 0.5);
         int min = 16;
         int k = 0;
+        int temp = 0;
         for (int i = 0; i < 16; ++i) {
             if ((a >> 4 * i) == 0) {
                 break;
             }
-            final int num = (int) ((a >> 4 * i) % 16);
-            if (num < min) {
+            temp = (int) ((a >> 4 * i) % 16);
+            if (temp < min) {
                 k = i + 1;
-                min = num;
+                min = temp;
             }
         }
         return (byte) k;
