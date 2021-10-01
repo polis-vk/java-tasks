@@ -99,7 +99,7 @@ public class IntegerAdvancedTask {
         byte minNumberIndex = -1;
         byte minNumber = 16;
         byte candidate;
-        while (number != 0) {
+        while (number != 0 && minNumber != 0) {
             candidate = (byte) (number % 16);
             if (candidate < minNumber) {
                 minNumber = candidate;
