@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.simple;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static java.lang.Math.PI;
@@ -25,33 +26,29 @@ public class DoubleAdvancedTask {
      */
     // Используем формулу Кардано-Виета
     public static String equation(int a, int b, int c, int d) {
-        ArrayList<Double> xRoots = new ArrayList<>();
-        if (hasRootThirdMultiplicity(b, c)) {
+        Double[] xRoots = new Double[N_CUBIC_EQUATION_ROOTS];
+        if (b == 0 && c == 0) {
             double rootThirdMultiplicity = Math.cbrt((double) -d / a);
             return rootThirdMultiplicity + ", " + rootThirdMultiplicity + ", " + rootThirdMultiplicity;
         }
-        double canonicalA = (double) b / a,
-               canonicalB = (double) c / a,
-               canonicalC = (double) d / a;
+        double canonicalA = (double) b / a;
+        double canonicalB = (double) c / a;
+        double canonicalC = (double) d / a;
 
         initializeXRootsByNull(xRoots);
-        double Q = calculateQ(canonicalA, canonicalB),
-               R = calculateR(canonicalA, canonicalB, canonicalC),
-               QSqrt = Math.sqrt(Q),
-               phi = calculatePhi(R, Q, QSqrt);
+        double Q = calculateQ(canonicalA, canonicalB);
+        double R = calculateR(canonicalA, canonicalB, canonicalC);
+        double QSqrt = Math.sqrt(Q);
+        double phi = calculatePhi(R, Q, QSqrt);
 
-        setXRoots(xRoots, Q, QSqrt, phi, canonicalA);
-        Collections.sort(xRoots);
-        return xRoots.get(2) + ", " + xRoots.get(1) + ", " + xRoots.get(0);
+        setXRoots(xRoots, QSqrt, phi, canonicalA);
+        Arrays.sort(xRoots);
+        return xRoots[2] + ", " + xRoots[1] + ", " + xRoots[0];
     }
 
-    private static boolean hasRootThirdMultiplicity(int b, int c) {
-        return b == 0 && c == 0;
-    }
-
-    private static void initializeXRootsByNull(ArrayList<Double> xRoots) {
+    private static void initializeXRootsByNull(Double[] xRoots) {
         for (int i = 0; i < N_CUBIC_EQUATION_ROOTS; ++i) {
-            xRoots.add(0.0);
+            xRoots[i] = 0.0;
         }
     }
 
@@ -67,10 +64,10 @@ public class DoubleAdvancedTask {
         return Math.acos(R / (Q * QSqrt)) / 3;
     }
 
-    private static void setXRoots(ArrayList<Double> xRoots, double Q, double QSqrt, double phi, double A) {
-        xRoots.set(0, -2 * QSqrt * Math.cos(phi) - A / 3.0);
-        xRoots.set(1, -2 * QSqrt * Math.cos(phi - 2 * PI / 3) - A / 3.0);
-        xRoots.set(2, -2 * QSqrt * Math.cos(phi + 2 * PI / 3) - A / 3.0);
+    private static void setXRoots(Double[] xRoots, double QSqrt, double phi, double A) {
+        xRoots[0] = -2 * QSqrt * Math.cos(phi) - A / 3.0;
+        xRoots[1] = -2 * QSqrt * Math.cos(phi - 2 * PI / 3) - A / 3.0;
+        xRoots[2] = -2 * QSqrt * Math.cos(phi + 2 * PI / 3) - A / 3.0;
     }
 
     /**
@@ -85,8 +82,7 @@ public class DoubleAdvancedTask {
         // Прямая y = a1x + b1 проходит через точку (0;b1). Будем считать расстояние между прямыми
         // как расстояние между точкой (0;b1) и прямой y = a2x + b2 (формула для Ро)
         // Используем уже модифицированную для нашего случая формулу
-        double ro = Math.abs(b2 - b1) / Math.sqrt(a2 * a2 + 1);
-        return (float) ro;
+        return (float) (Math.abs(b2 - b1) / Math.sqrt(a2 * a2 + 1));
     }
 
     /**
@@ -102,21 +98,20 @@ public class DoubleAdvancedTask {
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
         // Вычисляем два вектора, по которым будем строить плоскость
-        int v1x = x2 - x1,
-            v1y = y2 - y1,
-            v1z = z2 - z1;
-        int v2x = x3 - x1,
-            v2y = y3 - y1,
-            v2z = z3 - z1;
+        int v1x = x2 - x1;
+        int v1y = y2 - y1;
+        int v1z = z2 - z1;
+        int v2x = x3 - x1;
+        int v2y = y3 - y1;
+        int v2z = z3 - z1;
 
         // Вычисляем нормаль к плоскости как векторное произведение двух векторов, вычисленных выше
-        int A = v1y * v2z - v1z * v2y,
-            B = v1z * v2x - v1x * v2z,
-            C = v1x * v2y - v1y * v2x;
+        int A = v1y * v2z - v1z * v2y;
+        int B = v1z * v2x - v1x * v2z;
+        int C = v1x * v2y - v1y * v2x;
 
         // Теперь плоскость имеет вид: (x-x1)A + (y-y1)B + (z-z1)C = 0, где x,y,z - координаты любой точки плоскости
-        // Отсюда z4 = ((x4-x1)A + (y4-y1)B)/C + z1
-        double z4 = z1 - ((x4 - x1) * A + (y4 - y1) * B) / (double) C;
-        return z4;
+        // Отсюда z4 = z1 - ((x4-x1)A + (y4-y1)B)/C
+        return z1 - ((x4 - x1) * A + (y4 - y1) * B) / (double) C;
     }
 }

@@ -10,6 +10,8 @@ import java.util.Map;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class IntegerAdvancedTask {
+    private static final double ERROR_IN_DOUBLES_COMPARING = 1e-6;
+    private static final int HEX_NUMERIC_SYSTEM = 16;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем q
@@ -18,11 +20,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q == 1) {
+        if (Math.abs(q - 1) <= ERROR_IN_DOUBLES_COMPARING) {
             return n * a;
         }
-        long sum = (long) (a * (Math.pow(q, n) - 1) / (q - 1));
-        return sum;
+        return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
@@ -36,33 +37,15 @@ public class IntegerAdvancedTask {
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
         int deltaX = right - left,
             deltaY = up - down;
-        if (deltaX <= 0 && deltaY <= 0) {
-            if (!canReachGrassForOneDay(up, right, grassX, grassY)) {
-                return Integer.MAX_VALUE;
-            }
+        if (right >= grassX || up >= grassY) {
             return 1;
         }
 
-        return countDaysForReachingGrass(deltaX, deltaY, up, right, down, left, grassX, grassY);
-    }
-
-    private static boolean canReachGrassForOneDay(int up, int right, int grassX, int grassY) {
-        return right >= grassX || up >= grassY;
-    }
-
-    private static int countDaysForReachingGrass(int deltaX, int deltaY, int up, int right, int down,
-        int left, int grassX, int grassY) {
         // Змейка доползёт до клетки grassX за ceil(((double) (grassX - left)) / deltaX) дней,
         // а до клетки grassY - за ceil(((double) (grassY - down)) / deltaY) дней.
         // Из этих величин ответом будет наименьшая.
-        if (deltaX <= 0) {
-            return (int) Math.ceil(((double) (grassY - down)) / deltaY);
-        } else if (deltaY <= 0) {
-            return (int) Math.ceil(((double) (grassX - left)) / deltaX);
-        }
-
-        int nX = (int) Math.ceil(((double) (grassX - left)) / deltaX),
-            nY = (int) Math.ceil(((double) (grassY - down)) / deltaY);
+        int nX = deltaX <= 0 ? Integer.MAX_VALUE : (int) Math.ceil(((double) (grassX - left)) / deltaX);
+        int nY = deltaY <= 0 ? Integer.MAX_VALUE : (int) Math.ceil(((double) (grassY - down)) / deltaY);
         return nX > nY ? nY : nX;
     }
 
@@ -73,33 +56,14 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      **/
 
-    private static HashMap<Integer, Character> hex = new HashMap<Integer, Character>() {
-        {
-            put(1, '1');
-            put(2, '2');
-            put(3, '3');
-            put(4, '4');
-            put(5, '5');
-            put(6, '6');
-            put(7, '7');
-            put(8, '8');
-            put(9, '9');
-            put(10, 'A');
-            put(11, 'B');
-            put(12, 'C');
-            put(13, 'D');
-            put(14, 'E');
-            put(15, 'F');
-        }
-    };
-
-    private static final int HEX_NUMERIC_SYSTEM = 16;
-
     public static char kDecimal(int n, int order) {
-        for (int number_order = 1; number_order <= order - 1; ++number_order) {
+        for (int numberOrder = 1; numberOrder < order; ++numberOrder) {
             n /= HEX_NUMERIC_SYSTEM;
         }
-        return hex.get(n % HEX_NUMERIC_SYSTEM);
+        if (n % HEX_NUMERIC_SYSTEM <= 9) {
+            return (char) ('0' + n % HEX_NUMERIC_SYSTEM);
+        }
+        return (char) ('A' + (n % HEX_NUMERIC_SYSTEM - 10));
     }
 
     /**
@@ -110,19 +74,18 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        // Вычисляем log16(a) - количество разрядов в 16-ричном представлении
-        // у числа a
-        int cur_index = 1,
-            min_digit_index = -1,
-            min_digit = HEX_NUMERIC_SYSTEM;
-        while (a > 0) {
-            if (a % HEX_NUMERIC_SYSTEM < min_digit) {
-                min_digit = (int) (a % HEX_NUMERIC_SYSTEM);
-                min_digit_index = cur_index;
+        int curIndex = 1;
+        int minDigitIndex = -1;
+        int minDigit = HEX_NUMERIC_SYSTEM;
+        long num = a;
+        while (num > 0) {
+            if (num % HEX_NUMERIC_SYSTEM < minDigit) {
+                minDigit = (int) (num % HEX_NUMERIC_SYSTEM);
+                minDigitIndex = curIndex;
             }
-            ++cur_index;
-            a /= HEX_NUMERIC_SYSTEM;
+            ++curIndex;
+            num /= HEX_NUMERIC_SYSTEM;
         }
-        return (byte) min_digit_index;
+        return (byte) minDigitIndex;
     }
 }
