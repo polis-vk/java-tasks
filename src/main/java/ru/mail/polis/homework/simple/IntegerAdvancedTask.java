@@ -9,14 +9,18 @@ package ru.mail.polis.homework.simple;
  */
 public class IntegerAdvancedTask {
 
+    private static final double EPS = 1E-6;
+
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q == 1) return (long) a * n;
+        if (Math.abs(q - 1.0) < EPS) {
+            return (long) a * n;
+        }
         return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
@@ -29,21 +33,28 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        if (up >= grassY || right >= grassX) return 1;
+        if (up >= grassY || right >= grassX) {
+            return 1;
+        }
         int incYPerDay = up - down;
         int incXPerDay = right - left;
         double needToY = Math.ceil((double) grassY / incYPerDay) - Math.floor((double) up / incYPerDay) + 1;
         double needToX = Math.ceil((double) grassX / incXPerDay) - Math.floor((double) right / incXPerDay) + 1;
-        if (minPositive(needToX, needToY) > 1) return minPositive(needToX, needToY);
+        int minPositive = minPositive((int) needToX, (int) needToY);
+        if (minPositive > 1) {
+            return minPositive;
+        }
         return Integer.MAX_VALUE;
     }
 
-    private static int minPositive(double first, double second) {
+    private static int minPositive(int first, int second) {
         if (first >= 0) {
-            if (second < 0) return (int) first;
-            return (int) Math.min(first, second);
+            if (second < 0) {
+                return first;
+            }
+            return Math.min(first, second);
         }
-        return (int) second;
+        return second;
     }
 
     /**
@@ -57,10 +68,7 @@ public class IntegerAdvancedTask {
     }
 
     private static int getDigit(long n, int order) {
-        long bitwiseComputeDigit = 0;
-        for (int i = 0; i < 4; i++) {
-            bitwiseComputeDigit += (long) Math.pow(2, (i + (order - 1) * 4));
-        }
+        long bitwiseComputeDigit = (order == 1) ? 15 : 15L << (order - 1) * 4;
         return (int) ((bitwiseComputeDigit & n) >> (order - 1) * 4);
     }
 
@@ -72,25 +80,20 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        int countOfDigits = getCountsOfDigits(a, 16);
+        long number = a;
         int minDigit = 15;
         byte indexOfMinDigit = 0;
-        for (int order = 1; order <= countOfDigits; order++) {
-            if (getDigit(a, order) < minDigit) {
-                minDigit = getDigit(a, order);
+        int order = 1;
+        while (number != 0) {
+            int digit = getDigit(a, order);
+            if (digit < minDigit) {
+                minDigit = digit;
                 indexOfMinDigit = (byte) order;
             }
+            order++;
+            number /= 16;
         }
         return indexOfMinDigit;
-    }
-
-    private static int getCountsOfDigits(long number, int radix) {
-        int count = (number == 0) ? 1 : 0;
-        while (number != 0) {
-            count++;
-            number /= radix;
-        }
-        return count;
     }
 
 }
