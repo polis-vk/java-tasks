@@ -16,7 +16,9 @@ public class IntegerAdvancedTask {
      */
     public static long progression(int a, double q, int n) {
         double epsilon = 0.000001d;
-        if (Math.abs(1 - q) < epsilon) return a * n;
+        if (Math.abs(1 - q) < epsilon) {
+            return a * n;
+        }
         return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
