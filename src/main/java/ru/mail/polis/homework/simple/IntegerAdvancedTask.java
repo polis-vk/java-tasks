@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -12,11 +11,14 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (Double.compare(q, 1.0) == 0) {
+            return (long) a * n;
+        }
+        return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
     /**
@@ -28,7 +30,36 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int currentX = 0;
+        int currentY = 0;
+        if (currentX >= grassX || currentY >= grassY) {
+            return 0;
+        }
+        int daysCounter = 1;
+        int lastX = 0;
+        int lastY = 0;
+        int lastDeltaX = grassX;
+        int lastDeltaY = grassY;
+        while (currentX < grassX && currentY < grassY) {
+            currentX += right;
+            currentY += up;
+            if (currentX >= grassX || currentY >= grassY) {
+                return daysCounter;
+            }
+            currentX -= left;
+            currentY -= down;
+            int currentDeltaX = lastX + currentX;
+            int currentDeltaY = lastY + currentY;
+            if (currentDeltaX >= lastDeltaX && currentDeltaY >= lastDeltaY) {
+                return Integer.MAX_VALUE;
+            }
+            lastX = currentX;
+            lastY = currentY;
+            lastDeltaX = currentDeltaX;
+            lastDeltaY = currentDeltaY;
+            daysCounter++;
+        }
+        return daysCounter;
     }
 
     /**
@@ -38,7 +69,20 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int dividend = n;
+        int newDividend;
+        int result = 0;
+        int indexOfCurrentDischarge = 0;
+        while (indexOfCurrentDischarge < order) {
+            newDividend = dividend / 16;
+            result = dividend - newDividend * 16;
+            dividend = newDividend;
+            indexOfCurrentDischarge++;
+        }
+        if (result > 10) {
+            return (char) (result + 55);
+        }
+        return (char) (result + 48);
     }
 
     /**
@@ -49,7 +93,29 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long divided = a;
+        long newDivided;
+        byte min = 17;
+        byte minimalIndex = -1;
+        byte currentDischarge;
+        byte indexOfCurrentDischarge = 1;
+        while (divided > 15) {
+            newDivided = divided / 16;
+            currentDischarge = (byte) (divided - newDivided * 16);
+            if (currentDischarge < min) {
+                min = currentDischarge;
+                minimalIndex = indexOfCurrentDischarge;
+                if (min == 0) {
+                    return minimalIndex;
+                }
+            }
+            indexOfCurrentDischarge++;
+            divided = newDivided;
+        }
+        if (divided < min) {
+            return indexOfCurrentDischarge;
+        }
+        return minimalIndex;
     }
 
 }

@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.Arrays;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -29,7 +31,10 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        if (Double.compare(a1, a2) != 0) {
+            return 0;
+        }
+        return (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1));
     }
 
     /**
@@ -40,10 +45,22 @@ public class DoubleAdvancedTask {
      * 10, 100, 1,
      * 235, -5) -> 1
      */
+
     public static double surfaceFunction(int x1, int y1, int z1,
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        // Матрица, детерминант которой, является уравнением плоскости
+        int[][] a = {
+                    {x4 - x1, y4 - y1, 0},
+                    {x2 - x1, y2 - y1, z2 - z1},
+                    {x3 - x1, y3 - y1, z3 - z1}
+        };
+        // Формула полученная из детерминанта матрицы
+        return (double) (a[0][1] * (a[1][0] * a[2][2] - a[2][0] * a[1][2])
+                - a[0][0] * (a[1][1] * a[2][2] - a[2][1] * a[1][2]))
+                / (double) (a[1][0] * a[2][1] - a[2][0] * a[1][1]) + (double) z1;
+
     }
+
 }
