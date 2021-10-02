@@ -1,10 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -13,6 +8,8 @@ import java.util.List;
  */
 public class IntegerAdvancedTask {
 
+    public static final double EPSILON = 1E-10;
+
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
@@ -20,7 +17,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return q != 1 ? (long) (a * (1 - Math.pow(q, n)) / (1 - q)) : (long) a * n;
+        return Math.abs(q - 1) > EPSILON ? (long) (a * (1 - Math.pow(q, n)) / (1 - q)) : (long) a * n;
     }
 
     /**
@@ -40,7 +37,8 @@ public class IntegerAdvancedTask {
         }
         int dayOnXtoGrass = (int) Math.ceil((double) (grassX - right) / (right - left)) + 1;
         int dayOnYtoGrass = (int) Math.ceil((double) (grassY - up) / (up - down)) + 1;
-        return Math.max(dayOnXtoGrass, dayOnYtoGrass);
+        return dayOnXtoGrass > 0 && dayOnYtoGrass > 0 ? Math.min(dayOnXtoGrass, dayOnYtoGrass)
+                : Math.max(dayOnXtoGrass, dayOnYtoGrass);
     }
 
     /**
@@ -50,8 +48,19 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return convertDecimalToCharHex(n).get(order - 1);
+        int resultInInt = 0;
+        for (int i = 0, nForHex = n; i < order; ++i) {
+            resultInInt = nForHex % 16;
+            nForHex /= 16;
+        }
+        return hexAlphabet[resultInInt];
     }
+
+    private static final char[] hexAlphabet = {
+            '0', '1', '2', '3', '4',
+            '5', '6', '7', '8', '9',
+            'A', 'B', 'C', 'D', 'E', 'F'
+    };
 
     /**
      * Дано число в 10-ном формате.
@@ -61,22 +70,15 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        List<Character> arrayOfHex = convertDecimalToCharHex(a);
-        return (byte) (arrayOfHex.indexOf(Collections.min(arrayOfHex)) + 1);
-    }
-
-    private static final char[] hexAlphabet = {
-            '0', '1', '2', '3', '4',
-            '5', '6', '7', '8', '9',
-            'A', 'B', 'C', 'D', 'E', 'F'
-    };
-
-    public static List<Character> convertDecimalToCharHex(long a) {
-        List<Character> arrayOfHex = new ArrayList<>();
-        for (long remainder = a; remainder > 0; ) {
-            arrayOfHex.add(hexAlphabet[(int) (remainder % 16)]);
+        byte indexMin = 0;
+        long min = Long.MAX_VALUE;
+        for (long remainder = a, i = 1; remainder > 0; ++i) {
+            if (remainder % 16 < min) {
+                min = remainder % 16;
+                indexMin = (byte) i;
+            }
             remainder /= 16;
         }
-        return arrayOfHex;
+        return indexMin;
     }
 }

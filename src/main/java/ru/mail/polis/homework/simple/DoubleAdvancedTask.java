@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.simple;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
 
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
@@ -29,18 +27,18 @@ public class DoubleAdvancedTask {
         double r = (2 * Math.pow(aC, 3) - 9 * aC * bC + 27 * cC) / 54;
         double s = Math.pow(q, 3) - Math.pow(r, 2);
         double f = (Math.acos(r / Math.pow(q, 1.5))) / 3;
-        List<Double> arrayOfRoot = new ArrayList<>();
+        double[] arrayOfRoot = new double[3];
         if (s > 0) {
-            arrayOfRoot.add(-2 * Math.sqrt(q) * Math.cos(f) - aC / 3);
-            arrayOfRoot.add(-2 * Math.sqrt(q) * Math.cos(f + 2 * Math.PI / 3.0) - aC / 3);
-            arrayOfRoot.add(-2 * Math.sqrt(q) * Math.cos(f - 2 * Math.PI / 3.0) - aC / 3);
+            arrayOfRoot[0] = -2 * Math.sqrt(q) * Math.cos(f) - aC / 3;
+            arrayOfRoot[1] = -2 * Math.sqrt(q) * Math.cos(f + 2 * Math.PI / 3.0) - aC / 3;
+            arrayOfRoot[2] = -2 * Math.sqrt(q) * Math.cos(f - 2 * Math.PI / 3.0) - aC / 3;
         } else {
-            arrayOfRoot.add(-2 * Math.cbrt(r) - aC / 3);
-            arrayOfRoot.add(Math.cbrt(r) - aC / 3);
-            arrayOfRoot.add(Math.cbrt(r) - aC / 3);
+            arrayOfRoot[0] = -2 * Math.cbrt(r) - aC / 3;
+            arrayOfRoot[1] = Math.cbrt(r) - aC / 3;
+            arrayOfRoot[2] = Math.cbrt(r) - aC / 3;
         }
-        Collections.sort(arrayOfRoot);
-        return arrayOfRoot.get(2) + ", " + arrayOfRoot.get(1) + ", " + arrayOfRoot.get(0);
+        Arrays.sort(arrayOfRoot);
+        return arrayOfRoot[2] + ", " + arrayOfRoot[1] + ", " + arrayOfRoot[0];
     }
 
     /**
@@ -49,7 +47,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return a1 != a2 ? 0 : (float) (Math.abs(b1 - b2) / Math.sqrt(a1 * a2 + 1));
+        return Math.abs(a1 - a2) > IntegerAdvancedTask.EPSILON ? 0 : (float) (Math.abs(b1 - b2) / Math.sqrt(a1 * a2 + 1));
     }
 
     /**
