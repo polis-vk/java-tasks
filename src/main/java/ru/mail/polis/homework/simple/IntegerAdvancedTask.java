@@ -76,16 +76,16 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        byte minDigit = 16;
-        byte minDigitIndex = 0;
-        byte currentDigit;
-        long currentDiv = a;
+        byte minDigit = Byte.MAX_VALUE;
+        byte minDigitIndex = 1;
+        byte currentDigit = (byte) (a % 16);
+        long currentDiv = a / 16;
         for (byte i = 1; currentDiv != 0; i++) {
-            currentDigit = (byte) (currentDiv % 16);
             if (currentDigit < minDigit) {
                 minDigit = currentDigit;
                 minDigitIndex = i;
             }
+            currentDigit = (byte) (currentDiv % 16);
             currentDiv /= 16;
         }
         return minDigitIndex;
