@@ -9,6 +9,8 @@ package ru.mail.polis.homework.simple;
  */
 public class IntegerAdvancedTask {
 
+    private static final double DELTA = 1e-10;
+
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
@@ -16,7 +18,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (Math.abs(q - 1) < 1e-10) {
+        if (Math.abs(q - 1) < DELTA) {
             return (long) a * n;
         }
         return (long) ((a * (1 - Math.pow(q, n))) / (1 - q));
@@ -50,12 +52,13 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
+        int num = n;
         char[] symbols = {'A', 'B', 'C', 'D', 'E', 'F'};
         for (int i = 0; i < order - 1; i++) {
-            n /= 16;
+            num /= 16;
         }
-        n %= 16;
-        return n < 10 ? (char) (n + '0') : symbols[n % 10];
+        num %= 16;
+        return num < 10 ? (char) (num + '0') : symbols[num % 10];
     }
 
     /**
@@ -65,19 +68,22 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        byte idx = 0;
+        byte pos = 0;
         long min = 16;
-        for (byte i = 1; a > 0; i++) {
-            long ost = a % 16;
+        long ost;
+        long current = a;
+
+        for (byte i = 1; current > 0; i++) {
+            ost = current % 16;
             if (ost == 0) {
                 return i;
             } else if (ost < min) {
                 min = ost;
-                idx = i;
+                pos = i;
             }
-            a /= 16;
+            current /= 16;
         }
-        return idx;
+        return pos;
     }
 }
 
