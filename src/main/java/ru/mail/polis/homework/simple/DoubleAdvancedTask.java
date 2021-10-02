@@ -16,10 +16,22 @@ public class DoubleAdvancedTask {
      * Если используете какой-то конкретный способ, напишите какой.
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
+    // Using trigonometric Vieta's formula
     public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
+        assert a != 0;
+        double b_tilda = (double) b / a;
+        double c_tilda = (double) c / a;
+        double d_tilda = (double) d / a;
+
+        double q = (b_tilda * b_tilda - 3 * c_tilda) / 9;
+        double r = (2 * Math.pow(b_tilda, 3) - 9 * b_tilda * c_tilda + 27 * d_tilda) / 54;
+        double fi = 0;
+        if (q != 0)
+            fi = Math.acos(r / Math.pow(q, (double) 3 / 2)) / 3;
+
+        double x1 = -2 * Math.pow(q, (double) 1 / 2) * Math.cos(fi + 2 * Math.PI / 3) - b_tilda / 3;
+        double x2 = -2 * Math.pow(q, (double) 1 / 2) * Math.cos(fi - 2 * Math.PI / 3) - b_tilda / 3;
+        double x3 = -2 * Math.pow(q, (double) 1 / 2) * Math.cos(fi) - b_tilda / 3;
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -29,7 +41,17 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        if (a1 != a2)
+            return 0;
+        if (a1 == 0)
+            return (float) Math.abs(b1 - b2);
+        // take a point on first line (0, b1)
+        // perpendicular to these lines throw this point will be yPer = -1/a1 x + b1
+        // yPer intersects second line at ((b1 - b2) / (a1 + 1/a1), (b1 - b2) / (a1 * a1 + 1 + b2))
+        // the answer is the distance between these two points
+
+        return (float) Math.sqrt(Math.pow(((b1 - b2) * a1) / (Math.pow(a1, 2) + 1), 2) +
+                Math.pow(((b1 - b2) * Math.pow(a1, 2)) / (Math.pow(a1, 2) + 1) + b2 - b1, 2));
     }
 
     /**
@@ -44,6 +66,12 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        // Ax + By + Cz + D = 0    surface equation
+        double a = y1 * ((double) z2 - z3) + y2 * ((double) z3 - z1) + y3 * ((double) z1 - z2);
+        double b = z1 * ((double) x2 - x3) + z2 * ((double) x3 - x1) + z3 * ((double) x1 - x2);
+        double c = x1 * ((double) y2 - y3) + x2 * ((double) y3 - y1) + x3 * ((double) y1 - y2);
+        double d = -(a * x1 + b * y1 + c * z1);
+
+        return (-d - a * x4 - b * y4) / c;
     }
 }
