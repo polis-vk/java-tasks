@@ -1,10 +1,6 @@
 package ru.mail.polis.homework.simple;
 
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -12,6 +8,7 @@ import java.util.List;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class IntegerAdvancedTask {
+    static final double epsilon = 0.000001d;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -20,7 +17,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (Double.compare(1, q) == 0) {
+        if (Math.abs(q - 1) < epsilon) {
             return (long) a * n;
         }
         return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
@@ -93,6 +90,9 @@ public class IntegerAdvancedTask {
         byte counter = 1;
 
         while (number > 0) {
+            if (number % 16 == 0) {
+                return counter;
+            }
             if (number % 16 < minDigit) {
                 minDigit = (byte) (number % 16);
                 numberOfMinDigit = counter;
