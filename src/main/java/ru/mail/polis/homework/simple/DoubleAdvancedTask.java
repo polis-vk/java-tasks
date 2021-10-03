@@ -64,7 +64,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        if (a1 != a2){
+        if (a1 != a2) {
             return 0;
         }
         return (float) ((Math.abs(b1 - b2)) / (Math.sqrt(Math.pow(a1, 2) + 1)));
@@ -97,6 +97,8 @@ public class DoubleAdvancedTask {
                 && matrix.length == matrix[1].length
                 && matrix.length == 2) {
             return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
-        } else throw new IllegalArgumentException();
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 }
