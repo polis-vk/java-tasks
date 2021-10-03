@@ -9,6 +9,7 @@ import java.util.Arrays;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class DoubleAdvancedTask {
+    final private static double eps = 1e-6;
 
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
@@ -25,14 +26,11 @@ public class DoubleAdvancedTask {
 
         double q = (Math.pow(b, 2) - 3.0 * a * c) / (9.0 * Math.pow(a, 2));
         double r = (2.0 * Math.pow(b, 3) - 9.0 * a * b * c + 27.0 * Math.pow(a, 2) * d) / (54.0 * Math.pow(a, 3));
-
         double s = Math.pow(q, 3) - Math.pow(r, 2);
 
         double[] x = new double[3];
-
         if (s > 0) {
             double ph = Math.acos(r / Math.sqrt(Math.pow(q, 3))) / 3.0;
-
             x[0] = -2 * Math.sqrt(q) * Math.cos(ph) - b / (3.0 * a);
             x[1] = -2 * Math.sqrt(q) * Math.cos(ph + 2.0 * Math.PI / 3.0) - b / (3.0 * a);
             x[2] = -2 * Math.sqrt(q) * Math.cos(ph - 2.0 * Math.PI / 3.0) - b / (3.0 * a);
@@ -42,7 +40,6 @@ public class DoubleAdvancedTask {
         }
 
         Arrays.sort(x);
-
         x1 = x[2];
         x2 = x[1];
         x3 = x[0];
@@ -56,7 +53,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return (Math.abs(a2 - a1) < 1e-6 ? (float)(Math.abs(b2 - b1) / Math.sqrt(Math.pow(a2, 2) + 1)) : 0);
+        return Math.abs(a2 - a1) < eps ? (float) (Math.abs(b2 - b1) / Math.sqrt(Math.pow(a2, 2) + 1)) : 0;
     }
 
     /**

@@ -17,11 +17,9 @@ public class IntegerAdvancedTask {
      */
     public static long progression(int a, double q, int n) {
         long result = 0;
-
-        for(int i = 0; i < n; ++i) {
+        for (int i = 0; i < n; ++i) {
             result += a * Math.pow(q, i);
         }
-
         return result;
     }
 
@@ -35,7 +33,12 @@ public class IntegerAdvancedTask {
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
         int result = 1;
-        int xSnake = 0, ySnake = 0;
+        int xSnake = 0;
+        int ySnake = 0;
+
+        if (up <= down && up < grassY && right <= left && right < grassX) {
+            return Integer.MAX_VALUE;
+        }
 
         while (true) {
             xSnake += right;
@@ -43,8 +46,6 @@ public class IntegerAdvancedTask {
 
             if (xSnake >= grassX || ySnake >= grassY) {
                 return result;
-            } else if (up <= down && right <= left) {
-                return Integer.MAX_VALUE;
             }
 
             xSnake -= left;
@@ -64,15 +65,15 @@ public class IntegerAdvancedTask {
         int result = 0;
         int temp = n;
 
-        for(int i = 0; i < order; ++i) {
+        for (int i = 0; i < order; ++i) {
             result = temp % 16;
             temp = temp / 16;
         }
 
         if (result <= 9) {
-            return (char)('0' + result);
+            return (char) ('0' + result);
         } else {
-            return (char)('A' + result - 10);
+            return (char) ('A' + result - 10);
         }
     }
 
@@ -97,7 +98,7 @@ public class IntegerAdvancedTask {
             temp = temp / 16;
         }
 
-        return (byte)result;
+        return (byte) result;
     }
 
 }
