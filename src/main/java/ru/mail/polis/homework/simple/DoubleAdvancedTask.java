@@ -47,8 +47,7 @@ public class DoubleAdvancedTask {
     }
 
     public static double ifNanWrapToZero(double val) {
-        if (Double.isNaN(val)) return 0;
-        return val;
+        return Double.isNaN(val) ? 0 : val;
     }
 
     public static double[] reverseDoubleArray(double[] numbers) {
@@ -65,8 +64,10 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        if (a1 != a2) return 0;
-        else return (float) ((Math.abs(b1 - b2)) / (Math.sqrt(Math.pow(a1, 2) + 1)));
+        if (a1 != a2){
+            return 0;
+        }
+        return (float) ((Math.abs(b1 - b2)) / (Math.sqrt(Math.pow(a1, 2) + 1)));
     }
 
     /**
