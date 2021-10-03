@@ -28,7 +28,7 @@ public class DoubleAdvancedTask {
             return root + ", " + root + ", " + root;
         }
         double h = findH(f, g);
-        double [] result=find3DifferentRoot(g, h, b, a);
+        double[] result = find3DifferentRoot(g, h, b, a);
         Arrays.sort(result);
         return result[2] + ", " + result[1] + ", " + result[0];
     }

@@ -10,6 +10,7 @@ import java.util.Locale;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class IntegerAdvancedTask {
+    public static final double EPSILON = 1e-6;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -18,7 +19,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return Double.compare(q, 1) == 0 ? (long) a * n : (long) (a * (1 - Math.pow(q, n)) / (1 - q));
+        return Math.abs(q - 1.0) < EPSILON ? (long) a * n : (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
     /**
@@ -30,11 +31,15 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
+        if (right >= grassX || up >= grassY) {
+            return 1;
+        }
+        if (right - left <= 0 && up - down <= 0) {
+            return Integer.MAX_VALUE;
+        }
         int x = 0;
         int y = 0;
         int i = 0;
-        int xPrev = 0;
-        int yPrev = 0;
         while (x < grassX && y < grassY) {
             i++;
             x += right;
@@ -44,11 +49,6 @@ public class IntegerAdvancedTask {
             }
             x -= left;
             y -= down;
-            if (i == 1 && x <= xPrev && y <= yPrev) {
-                return Integer.MAX_VALUE;
-            }
-            xPrev = x;
-            yPrev = y;
         }
         return i;
     }
@@ -60,34 +60,15 @@ public class IntegerAdvancedTask {
      */
     public static char kDecimal(int n, int order) {
         int current = n;
-        int i = 1;
-        int integerPart = 1;
-        byte residue;
-        while (integerPart > 0) {
-            integerPart = current >> 4;
-            residue = (byte) (current - (integerPart << 4));
-            if (i == order) {
-                switch (residue) {
-                    case 10:
-                        return 'A';
-                    case 11:
-                        return 'B';
-                    case 12:
-                        return 'C';
-                    case 13:
-                        return 'D';
-                    case 14:
-                        return 'E';
-                    case 15:
-                        return 'F';
-                    default:
-                        return (char) (residue + '0');
-                }
-            }
-            current = integerPart;
-            i++;
+        int residual = 0;
+        for (int i = 0; i < order; i++) {
+            residual = current % 16;
+            current >>= 4;
         }
-        return '0';
+        if (residual > 9) {
+            return (char) (residual + ('A' - 10));
+        }
+        return (char) (residual + '0');
     }
 
     /**
@@ -97,20 +78,24 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
+        if (a == 0) {
+            return 1;
+        }
         long currentDecimal = a;
-        long integerPart = 1;
         byte minNumber = 16;
         byte residue;
-        byte minIndex = 1;
+        byte minIndex = 0;
         byte i = 1;
-        while (integerPart > 0) {
-            integerPart = currentDecimal >> 4;
-            residue = (byte) (currentDecimal - integerPart * 16);
+        while (currentDecimal > 0) {
+            residue = (byte) (currentDecimal % 16);
             if (residue < minNumber) {
+                if (residue == 0) {
+                    return i;
+                }
                 minNumber = residue;
                 minIndex = i;
             }
-            currentDecimal = integerPart;
+            currentDecimal >>= 4;
             i++;
         }
         return minIndex;
