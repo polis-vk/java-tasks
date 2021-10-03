@@ -58,11 +58,11 @@ public class IntegerAdvancedTask {
     public static char kDecimal(int n, int order) {
         int inputNum = n;
         int index = order;
-        char[] symbols = {'1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+        char[] symbols = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
         for (int i = 0; i < index - 1; i++) {
             inputNum /= 16;
         }
-        return symbols[inputNum % 16 - 1];
+        return symbols[inputNum % 16];
     }
 
     /**
@@ -74,15 +74,16 @@ public class IntegerAdvancedTask {
      */
     public static byte minNumber(long a) {
         long inputNumber = a;
-        byte minNum = 16, numOfMin = 0;
+        byte minNum = 16;
+        byte numOfMin = 0;
         if (inputNumber < 0) {
             throw new InputMismatchException("Input numbers must be above zero");
         }
         for (int i = 1; inputNumber > 0; i++) {
-            if(inputNumber % 16 == 0) {
-                return (byte) i;
-            }
             if (inputNumber % 16 < minNum) {
+                if (inputNumber % 16 == 0) {
+                    return (byte) i;
+                }
                 minNum = (byte) (inputNumber % 16);
                 numOfMin = (byte) i;
             }

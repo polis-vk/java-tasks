@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.InputMismatchException;
 
 /**
@@ -10,28 +12,22 @@ import java.util.InputMismatchException;
  */
 public class DoubleAdvancedTask {
 
-    static double returnFirst(double x, double y) {
-        return x;
-    }
 
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
      * Вывод менять не нужно, надо только посчитать x1, x2 и x3, где x1 >= x2 >= x3
      * Считаем, что все три корня вещественные.
-     * <p>
      * Если используете какой-то конкретный способ, напишите какой.
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int A, int B, int C, int D) {
-        final double ABS = 0.000000001;
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
+        final double ABS = 0.000000001d;
+        double[] ans = new double[3];
         //New coefficients
         double a = B / (A * 1.0);
         double b = C / (A * 1.0);
         double c = D / (A * 1.0);
-        //Smth like discriminant
+        //Smth like discriminant(the Vieta's theorem)
         double Q = (a * a - 3 * b) / 9;
         double R = (2 * a * a * a - 9 * a * b + 27 * c) / 54;
         double S = Q * Q * Q - R * R;
@@ -40,27 +36,19 @@ public class DoubleAdvancedTask {
         }
         //If s equal to zero
         if (Math.abs(S) < ABS) {
-            x1 = -2 * Math.cbrt(R) - a / 3;
-            x3 = x2 = Math.cbrt(R) - a / 3;
+            ans[0] = -2 * Math.cbrt(R) - a / 3;
+            ans[2] = ans[1] = Math.cbrt(R) - a / 3;
         } else {
             double Fi = Math.acos(R / Math.sqrt(Q * Q * Q)) / 3;
-            x1 = -2 * Math.sqrt(Q) * Math.cos(Fi) - a / 3;
-            x2 = -2 * Math.sqrt(Q) * Math.cos(Fi + 2 * Math.PI / 3) - a / 3;
-            x3 = -2 * Math.sqrt(Q) * Math.cos(Fi - 2 * Math.PI / 3) - a / 3;
+            ans[0] = -2 * Math.sqrt(Q) * Math.cos(Fi) - a / 3;
+            ans[1] = -2 * Math.sqrt(Q) * Math.cos(Fi + 2 * Math.PI / 3) - a / 3;
+            ans[2] = -2 * Math.sqrt(Q) * Math.cos(Fi - 2 * Math.PI / 3) - a / 3;
         }
         //Sorting
         //This is smth like swap without using extra memory(disregarding function call memory)
         //I thought we can't use arrays, sry
-        if (x1 < x2) {
-            x1 = returnFirst(x2, x2 = x1);
-        }
-        if (x2 < x3) {
-            x2 = returnFirst(x3, x3 = x2);
-        }
-        if (x1 < x2) {
-            x1 = returnFirst(x2, x2 = x1);
-        }
-        return x1 + ", " + x2 + ", " + x3;
+        Arrays.sort(ans);
+        return ans[2] + ", " + ans[1] + ", " + ans[0];
     }
 
     /**
