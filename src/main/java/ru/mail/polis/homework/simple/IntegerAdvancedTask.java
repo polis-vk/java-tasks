@@ -38,13 +38,12 @@ public class IntegerAdvancedTask {
         }
         int incYPerDay = up - down;
         int incXPerDay = right - left;
+        if (incXPerDay <= 0 && incYPerDay <= 0) {
+            return Integer.MAX_VALUE;
+        }
         double needToY = Math.ceil((double) grassY / incYPerDay) - Math.floor((double) up / incYPerDay) + 1;
         double needToX = Math.ceil((double) grassX / incXPerDay) - Math.floor((double) right / incXPerDay) + 1;
-        int minPositive = minPositive((int) needToX, (int) needToY);
-        if (minPositive > 1) {
-            return minPositive;
-        }
-        return Integer.MAX_VALUE;
+        return minPositive((int) needToX, (int) needToY);
     }
 
     private static int minPositive(int first, int second) {
@@ -67,9 +66,9 @@ public class IntegerAdvancedTask {
         return Character.toUpperCase(Character.forDigit(getDigit(n, order), 16));
     }
 
-    private static int getDigit(long n, int order) {
+    private static byte getDigit(long n, int order) {
         long bitwiseComputeDigit = (order == 1) ? 15 : 15L << (order - 1) * 4;
-        return (int) ((bitwiseComputeDigit & n) >> (order - 1) * 4);
+        return (byte) ((bitwiseComputeDigit & n) >> (order - 1) * 4);
     }
 
     /**
@@ -81,14 +80,17 @@ public class IntegerAdvancedTask {
      */
     public static byte minNumber(long a) {
         long number = a;
-        int minDigit = 15;
+        byte minDigit = 15;
         byte indexOfMinDigit = 0;
-        int order = 1;
+        byte order = 1;
         while (number != 0) {
-            int digit = getDigit(a, order);
+            byte digit = getDigit(a, order);
             if (digit < minDigit) {
+                if (digit == 0) {
+                    return order;
+                }
                 minDigit = digit;
-                indexOfMinDigit = (byte) order;
+                indexOfMinDigit = order;
             }
             order++;
             number /= 16;
