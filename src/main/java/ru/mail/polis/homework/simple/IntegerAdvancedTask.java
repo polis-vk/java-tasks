@@ -9,14 +9,17 @@ package ru.mail.polis.homework.simple;
  */
 public class IntegerAdvancedTask {
 
+    private static final double EPS = 1e-10;
+    private static final int HEX_BASE = 16;
+
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        return (long) (Math.abs(q - 1.0) < EPS ? n * a : a * (Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
@@ -28,17 +31,31 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if ((up >= grassY) || (right >= grassX)) {
+            return 1;
+        }
+        int deltaY = up - down;
+        int deltaX = right - left;
+        if ((deltaY <= 0) && (deltaX <= 0)) {
+            return Integer.MAX_VALUE;
+        }
+        int dayX = roundedUp(grassX - right, deltaX) + 1;
+        int dayY = roundedUp(grassY - up, deltaY) + 1;
+        return dayX > 0 && dayY > 0 ? Math.min(dayX, dayY) : (dayX > 0 ? dayX : dayY);
+    }
+
+    private static int roundedUp(int number, int div) {
+        return number / div + (number % div == 0 ? 0 : 1);
     }
 
     /**
      * Дано число n в 10-ном формате и номер разряда order.
-     * Выведите цифру стоящую на нужном разряде для числа n в 16-ом формате
+     * Выведите цифру, стоящую на нужном разряде, для числа n в 16-ом формате
      * Нельзя пользоваться String-ами
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        return Character.toUpperCase(Character.forDigit(n / (int) Math.pow(HEX_BASE, order - 1) % HEX_BASE, HEX_BASE));
     }
 
     /**
@@ -49,7 +66,20 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long number = a;
+        int min = HEX_BASE;
+        int index = 0;
+        for (int i = 1; number > 0; i++, number /= HEX_BASE) {
+            if (min == 0) {
+                break;
+            }
+            int rest = (int) (number % HEX_BASE);
+            if (rest < min) {
+                min = rest;
+                index = i;
+            }
+        }
+        return (byte) index;
     }
 
 }
