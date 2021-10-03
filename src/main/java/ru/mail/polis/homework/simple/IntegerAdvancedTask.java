@@ -12,11 +12,15 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        long answer = a;
+        for (int degree = 1; degree < n; degree++) {
+            answer += a * Math.pow(q, degree);
+        }
+        return answer;
     }
 
     /**
@@ -27,8 +31,27 @@ public class IntegerAdvancedTask {
      * Если она этого никогда не сможет сделать, Верните число Integer.MAX_VALUE;
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
+
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (up >= grassY || right >= grassX) {
+            return 1;
+        }
+
+        int speedX = right - left;
+        int speedY = up - down;
+
+        int dayX = Integer.MAX_VALUE;
+        int dayY = Integer.MAX_VALUE;
+
+        //(grassX - right)... + 1 because of case, when snake come to grass in the middle of day
+        if (speedX > 0) {
+            dayX = (int) Math.ceil((double) (grassX - right) / speedX) + 1;
+        }
+        if (speedY > 0) {
+            dayY = (int) Math.ceil((double) (grassY - up) / speedY) + 1;
+        }
+
+        return Math.min(dayX, dayY);
     }
 
     /**
@@ -37,8 +60,22 @@ public class IntegerAdvancedTask {
      * Нельзя пользоваться String-ами
      * Пример: (454355, 2) -> D
      */
+
+    public static int computeNumInOrder(long n, int order) {
+        long numToOrder = n % (long) Math.pow(16, order);
+
+        int answer10 = (int) (numToOrder / (long) Math.pow(16, order - 1));
+        return answer10;
+    }
+
     public static char kDecimal(int n, int order) {
-        return 0;
+        int answer10 = (int) computeNumInOrder(n, order);
+
+        //Converting to char
+        if (answer10 <= 9)
+            return (char) (answer10 + 48);
+        return (char) (answer10 + 55);
+
     }
 
     /**
@@ -48,8 +85,30 @@ public class IntegerAdvancedTask {
      * Нельзя пользоваться String-ами
      * (6726455) -> 2
      */
+    public static byte getMaxOrder(long a) {
+        byte maxOrder = 1;
+        while (a % (long) Math.pow(16, maxOrder) != a && (long) Math.pow(16, maxOrder) < Long.MAX_VALUE) {
+            maxOrder++;
+        }
+        return maxOrder;
+    }
+
     public static byte minNumber(long a) {
-        return 0;
+        byte order = 1;
+        int min = computeNumInOrder(a, order);
+        byte minInd = order;
+        order++;
+
+        byte maxOrder = getMaxOrder(a);
+        while (order <= maxOrder) {
+            int numInOrder = computeNumInOrder(a, order);
+            if (numInOrder < min) {
+                min = numInOrder;
+                minInd = order;
+            }
+            order++;
+        }
+        return minInd;
     }
 
 }
