@@ -9,14 +9,15 @@ package ru.mail.polis.homework.simple;
  */
 public class IntegerAdvancedTask {
 
+    private static final double ERROR = 0.000001;
+
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        final double ERROR = 0.000001;
         if (Math.abs(q - 0) < ERROR) {
             return a;
         } else if (Math.abs(q - 1) < ERROR) {
@@ -70,16 +71,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        long min = 16;
+        byte min = 16;
         byte minIndex = 1;
         byte i = 1;
-        long result = a;
-        while (result > 0) {
-            if (result % 16 < min) {
-                min = result % 16;
+        long number = a;
+        while (number > 0) {
+            if (number % 16 < min) {
+                min = (byte) (number % 16);
                 minIndex = i;
             }
-            result /= 16;
+            if (min == 0) {
+                break;
+            }
+            number /= 16;
             i++;
         }
         return minIndex;
