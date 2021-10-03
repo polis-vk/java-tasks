@@ -12,7 +12,7 @@ import java.util.InputMismatchException;
  */
 public class DoubleAdvancedTask {
 
-
+    static final double ABS = 0.000000001d;
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
      * Вывод менять не нужно, надо только посчитать x1, x2 и x3, где x1 >= x2 >= x3
@@ -21,7 +21,6 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int A, int B, int C, int D) {
-        final double ABS = 0.000000001d;
         double[] ans = new double[3];
         //New coefficients
         double a = B / (A * 1.0);
@@ -35,7 +34,7 @@ public class DoubleAdvancedTask {
             throw new InputMismatchException("Wrong input");
         }
         //If s equal to zero
-        if (Math.abs(S) < ABS) {
+        if (Math.abs(S) < DoubleAdvancedTask.ABS) {
             ans[0] = -2 * Math.cbrt(R) - a / 3;
             ans[2] = ans[1] = Math.cbrt(R) - a / 3;
         } else {

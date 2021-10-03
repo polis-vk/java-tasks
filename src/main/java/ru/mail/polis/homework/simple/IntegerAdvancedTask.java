@@ -39,7 +39,8 @@ public class IntegerAdvancedTask {
         if (up >= grassY || right >= grassX) {
             return 1;
         }
-        int ansY = Integer.MAX_VALUE, ansX = Integer.MAX_VALUE;
+        int ansY = Integer.MAX_VALUE;
+        int ansX = Integer.MAX_VALUE;
         if (up > down) {
             ansY = (int) Math.ceil((grassY - up) / ((up - down) * 1.0)) + 1;
         }
