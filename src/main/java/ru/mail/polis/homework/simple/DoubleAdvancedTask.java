@@ -26,7 +26,7 @@ public class DoubleAdvancedTask {
      */
     // Используем формулу Кардано-Виета
     public static String equation(int a, int b, int c, int d) {
-        Double[] xRoots = new Double[N_CUBIC_EQUATION_ROOTS];
+        double[] xRoots = new double[N_CUBIC_EQUATION_ROOTS];
         if (b == 0 && c == 0) {
             double rootThirdMultiplicity = Math.cbrt((double) -d / a);
             return rootThirdMultiplicity + ", " + rootThirdMultiplicity + ", " + rootThirdMultiplicity;
@@ -35,7 +35,6 @@ public class DoubleAdvancedTask {
         double canonicalB = (double) c / a;
         double canonicalC = (double) d / a;
 
-        initializeXRootsByNull(xRoots);
         double Q = calculateQ(canonicalA, canonicalB);
         double R = calculateR(canonicalA, canonicalB, canonicalC);
         double QSqrt = Math.sqrt(Q);
@@ -44,12 +43,6 @@ public class DoubleAdvancedTask {
         setXRoots(xRoots, QSqrt, phi, canonicalA);
         Arrays.sort(xRoots);
         return xRoots[2] + ", " + xRoots[1] + ", " + xRoots[0];
-    }
-
-    private static void initializeXRootsByNull(Double[] xRoots) {
-        for (int i = 0; i < N_CUBIC_EQUATION_ROOTS; ++i) {
-            xRoots[i] = 0.0;
-        }
     }
 
     private static double calculateQ(double A, double B) {
@@ -64,7 +57,7 @@ public class DoubleAdvancedTask {
         return Math.acos(R / (Q * QSqrt)) / 3;
     }
 
-    private static void setXRoots(Double[] xRoots, double QSqrt, double phi, double A) {
+    private static void setXRoots(double[] xRoots, double QSqrt, double phi, double A) {
         xRoots[0] = -2 * QSqrt * Math.cos(phi) - A / 3.0;
         xRoots[1] = -2 * QSqrt * Math.cos(phi - 2 * PI / 3) - A / 3.0;
         xRoots[2] = -2 * QSqrt * Math.cos(phi + 2 * PI / 3) - A / 3.0;

@@ -1,8 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -35,8 +32,6 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        int deltaX = right - left,
-            deltaY = up - down;
         if (right >= grassX || up >= grassY) {
             return 1;
         }
@@ -44,9 +39,11 @@ public class IntegerAdvancedTask {
         // Змейка доползёт до клетки grassX за ceil(((double) (grassX - left)) / deltaX) дней,
         // а до клетки grassY - за ceil(((double) (grassY - down)) / deltaY) дней.
         // Из этих величин ответом будет наименьшая.
+        int deltaX = right - left;
+        int deltaY = up - down;
         int nX = deltaX <= 0 ? Integer.MAX_VALUE : (int) Math.ceil(((double) (grassX - left)) / deltaX);
         int nY = deltaY <= 0 ? Integer.MAX_VALUE : (int) Math.ceil(((double) (grassY - down)) / deltaY);
-        return nX > nY ? nY : nX;
+        return Math.min(nX, nY);
     }
 
     /**
@@ -57,13 +54,14 @@ public class IntegerAdvancedTask {
      **/
 
     public static char kDecimal(int n, int order) {
+        int num = n;
         for (int numberOrder = 1; numberOrder < order; ++numberOrder) {
-            n /= HEX_NUMERIC_SYSTEM;
+            num /= HEX_NUMERIC_SYSTEM;
         }
-        if (n % HEX_NUMERIC_SYSTEM <= 9) {
-            return (char) ('0' + n % HEX_NUMERIC_SYSTEM);
+        if (num % HEX_NUMERIC_SYSTEM <= 9) {
+            return (char) ('0' + num % HEX_NUMERIC_SYSTEM);
         }
-        return (char) ('A' + (n % HEX_NUMERIC_SYSTEM - 10));
+        return (char) ('A' + (num % HEX_NUMERIC_SYSTEM - 10));
     }
 
     /**
