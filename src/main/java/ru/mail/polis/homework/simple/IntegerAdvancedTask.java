@@ -7,6 +7,7 @@ package ru.mail.polis.homework.simple;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class IntegerAdvancedTask {
+    private final static double EPSILON = 0.000001d;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -15,8 +16,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        double epsilon = 0.000001d;
-        if (Math.abs(1 - q) < epsilon) {
+        if (Math.abs(1 - q) < EPSILON) {
             return a * n;
         }
         return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
@@ -37,6 +37,9 @@ public class IntegerAdvancedTask {
 
         int changeX = right - left;
         int changeY = up - down;
+        if (changeX < 0 && changeY < 0) {
+            return Integer.MAX_VALUE;
+        }
         int remainingX = grassX - right;
         int remainingY = grassY - up;
         int daysX = changeX > 0 ? (int) Math.ceil((double) remainingX / changeX + 1) : Integer.MAX_VALUE;
@@ -74,7 +77,7 @@ public class IntegerAdvancedTask {
         byte i = 1;
         while (aCopy > 0) {
             if (aCopy % 16 < min) {
-                min = (int) aCopy % 16;
+                min = (int) (aCopy % 16);
                 minIndex = i;
             }
             i++;
