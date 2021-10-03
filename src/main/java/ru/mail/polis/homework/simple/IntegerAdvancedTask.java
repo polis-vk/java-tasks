@@ -69,14 +69,15 @@ public class IntegerAdvancedTask {
         long number = a;
         int min = HEX_BASE;
         int index = 0;
+        int rest;
         for (int i = 1; number > 0; i++, number /= HEX_BASE) {
-            if (min == 0) {
-                break;
-            }
-            int rest = (int) (number % HEX_BASE);
+            rest = (int) (number % HEX_BASE);
             if (rest < min) {
                 min = rest;
                 index = i;
+            }
+            if (min == 0) {
+                break;
             }
         }
         return (byte) index;
