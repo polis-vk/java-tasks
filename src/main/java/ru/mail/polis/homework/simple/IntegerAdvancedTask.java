@@ -32,17 +32,18 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
+        if (up >= grassY || right >= grassX) {
+            return 1;
+        }
         if (up <= down && right <= left) {
-            if (up < grassY && right < grassX) {
-                return Integer.MAX_VALUE;
-            }
+            return Integer.MAX_VALUE;
         }
 
         int x = 0;
         int y = 0;
         int days = 0;
 
-        while (x < grassX && y < grassY) {
+        while (true) {
             days++;
             x += right;
             y += up;
@@ -52,8 +53,6 @@ public class IntegerAdvancedTask {
             x -= left;
             y -= down;
         }
-
-        return days;
     }
 
     /**
