@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
@@ -15,6 +16,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
+    private int modificationCounter;    // количество изменений
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -24,11 +26,13 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
+        modificationCounter++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
+        modificationCounter++;
     }
 
     public int get(int index) {
@@ -48,19 +52,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new Iterator<Integer>() {
-            private int currentIndex = 0;
-
-            @Override
-            public boolean hasNext() {
-                return currentIndex < array.length;
-            }
-
-            @Override
-            public Integer next() {
-                return array[currentIndex++];
-            }
-        };
+        return new specialIterator(0, 1);
     }
 
     /**
@@ -70,19 +62,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new Iterator<Integer>() {
-            private int currentIndex = -1;
-
-            @Override
-            public boolean hasNext() {
-                return currentIndex + 2 < array.length;
-            }
-
-            @Override
-            public Integer next() {
-                return array[currentIndex += 2];
-            }
-        };
+        return new specialIterator(-1, 2);
     }
 
     /**
@@ -92,24 +72,36 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new Iterator<Integer>() {
-            private int currentIndex = -2;
-
-            @Override
-            public boolean hasNext() {
-                return currentIndex + 2 < array.length;
-            }
-
-            @Override
-            public Integer next() {
-                return array[currentIndex += 2];
-            }
-        };
+        return new specialIterator(-2, 2);
     }
 
     private void checkIndex(int index) {
         if (index < 0 || index >= array.length) {
             throw new IndexOutOfBoundsException();
+        }
+    }
+
+    private class specialIterator implements Iterator<Integer> {
+        private final int fixedModificationCounter = modificationCounter;
+        int position;
+        int step;
+
+        public specialIterator(int position, int step) {
+            this.position = position;
+            this.step = step;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return position + step < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            if (modificationCounter != fixedModificationCounter) {
+                throw new ConcurrentModificationException();
+            }
+            return array[position += step];
         }
     }
 }
