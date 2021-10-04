@@ -17,9 +17,14 @@ public class CustomLinkedList {
         Node newNode = new Node(value);
         newNode.value = value;
         if (head != null) {
-            newNode.setNext(head);
+            Node node = head;
+            while (node.next != null) {
+                node = node.next;
+            }
+            node.setNext(newNode);
+        } else {
+            head = newNode;
         }
-        head = newNode;
     }
 
     /**
@@ -30,25 +35,21 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        try {
-            if (head == null) {
-                throw new IndexOutOfBoundsException();
-            }
-            Node node = head;
-            if (index == 0) {
-                head = node.next;
-                return;
-            }
-            for (int i = 0; node != null && i < index - 1; ++i) {
-                node = node.next;
-            }
-            if (node == null || node.next == null) {
-                throw new IndexOutOfBoundsException();
-            }
-            node.setNext(node.next.next);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (head == null) {
+            throw new IndexOutOfBoundsException();
         }
+        Node node = head;
+        if (index == 0) {
+            head = node.next;
+            return;
+        }
+        for (int i = 0; node != null && i < index - 1; ++i) {
+            node = node.next;
+        }
+        if (node == null || node.next == null) {
+            throw new IndexOutOfBoundsException();
+        }
+        node.setNext(node.next.next);
     }
 
     /**
