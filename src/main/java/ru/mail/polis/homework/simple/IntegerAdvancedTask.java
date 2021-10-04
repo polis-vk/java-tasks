@@ -51,4 +51,5 @@ public class IntegerAdvancedTask {
     public static byte minNumber(long a) {
         return 0;
     }
+    
 }
