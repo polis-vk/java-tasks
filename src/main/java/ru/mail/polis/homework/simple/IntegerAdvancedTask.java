@@ -33,29 +33,29 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        final int snakeY = snakeOneDimensional(up, down, grassY);
-        return snakeY == 0 ? 0 : Math.min(snakeY, snakeOneDimensional(right, left, grassX));
-    }
-
-    /**
-     * Сколько суток понадобится гусенице, чтобы доползти до клетки с травой, если она начинает в клетке 0 и
-     *
-     * @param right    клеток ползет гусеница днем в положительном направлении
-     * @param left     клеток ползет гусеница ночью в отрицательном направлении
-     * @param grassMin координата клетки, начиная с которой растет трава
-     * @return количество суток
-     */
-    private static int snakeOneDimensional(int right, int left, int grassMin) {
-        if (grassMin <= 0) {
+        if (grassY <= 0 || grassX <= 0) {
             return 0;
         }
-        if (grassMin - right <= 0) {
+        if (grassY - up <= 0 || grassX - right <= 0) {
             return 1;
         }
-        if (right - left <= 0) {
+        if (up - down <= 0 && right - left <= 0) {
             return Integer.MAX_VALUE;
         }
-        return 1 + ceilDivision(grassMin - right, right - left);
+        if (right - left >= 0) {
+            return generalSnake(right, left, grassX);
+        }
+        if (up - down >= 0) {
+            return generalSnake(up, down, grassY);
+        }
+        return Math.min(
+                generalSnake(up, down, grassY),
+                generalSnake(right, left, grassX)
+        );
+    }
+
+    private static int generalSnake(int forward, int backward, int grassMin) {
+        return 1 + ceilDivision(grassMin - forward, forward - backward);
     }
 
     /**
