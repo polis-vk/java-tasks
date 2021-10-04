@@ -76,10 +76,7 @@ public class IntegerAdvancedTask {
         byte minDigitIndex = -1;
         byte minDigit = HEX_NUMERIC_SYSTEM;
         long num = a;
-        while (num > 0) {
-            if (minDigit == 0) {
-                break;
-            }
+        while (num > 0 && minDigit != 0) {
             if (num % HEX_NUMERIC_SYSTEM < minDigit) {
                 minDigit = (byte) (num % HEX_NUMERIC_SYSTEM);
                 minDigitIndex = curIndex;
