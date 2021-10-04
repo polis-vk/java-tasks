@@ -62,7 +62,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new EventIter();
+        return new EvenIter();
     }
 
     /**
@@ -102,7 +102,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
-    private class EventIter implements Iterator<Integer> {
+    private class EvenIter implements Iterator<Integer> {
         int position = 0;
         int fixedModCount = modCount;
 
