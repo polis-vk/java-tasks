@@ -9,6 +9,7 @@ public class CustomLinkedList {
     private static final String NULL_ITEM = "null";
     private Node head;
     private Node last;
+
     /**
      * [x] Реализовать метод:
      * Добавляет элемент в односвязный список.
