@@ -10,6 +10,8 @@ import java.util.Arrays;
  */
 public class DoubleAdvancedTask {
 
+    private static final double EPSILON = 1E-5;
+
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
      * Вывод менять не нужно, надо только посчитать x1, x2 и x3, где x1 >= x2 >= x3
@@ -44,7 +46,6 @@ public class DoubleAdvancedTask {
      * @return Массив корней. <code>result[0] <= result[1] <= result[2]</code>
      */
     private static double[] solveCubic(double p, double q) {
-        final double EPSILON = 1E-5;
         // 1 однократный корень и 1 двукратный
         if (Math.abs(Math.pow(-p / 3.0, 3.0) + Math.pow(0.5 * q, 2.0)) < EPSILON) {
             if (Math.abs(p - q) < EPSILON) {
@@ -75,7 +76,6 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        final double EPSILON = 1E-5;
         if (Math.abs(a1 - a2) >= EPSILON) {
             // lines intersect each other
             return 0.0f;

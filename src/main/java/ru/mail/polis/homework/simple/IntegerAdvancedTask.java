@@ -9,19 +9,18 @@ package ru.mail.polis.homework.simple;
  */
 public class IntegerAdvancedTask {
 
+    private static final double EPSILON = 1E-5;
+
     /**
      * Сумма первых n членов геометрической прогрессии с первым элементом a и множителем q
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        final double EPSILON = 1E-5;
-
         if (Math.abs(q - 1) < EPSILON) {
             return (long) a * n;
         }
-
         return a * (long) (1 - Math.pow(q, n)) / (long) (1 - q);
     }
 
@@ -50,7 +49,7 @@ public class IntegerAdvancedTask {
         if (grassMin <= 0) {
             return 0;
         }
-        if (grassMin - right<= 0) {
+        if (grassMin - right <= 0) {
             return 1;
         }
         if (right - left <= 0) {
