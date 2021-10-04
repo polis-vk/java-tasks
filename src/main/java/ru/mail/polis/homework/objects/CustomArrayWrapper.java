@@ -48,7 +48,19 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new Iterator<Integer>() {
+            private int currentIndex = 0;
+
+            @Override
+            public boolean hasNext() {
+                return currentIndex < array.length;
+            }
+
+            @Override
+            public Integer next() {
+                return array[currentIndex++];
+            }
+        };
     }
 
     /**
@@ -58,7 +70,19 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new Iterator<Integer>() {
+            private int currentIndex = -1;
+
+            @Override
+            public boolean hasNext() {
+                return currentIndex + 2 < array.length;
+            }
+
+            @Override
+            public Integer next() {
+                return array[currentIndex += 2];
+            }
+        };
     }
 
     /**
@@ -68,7 +92,19 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new Iterator<Integer>() {
+            private int currentIndex = -2;
+
+            @Override
+            public boolean hasNext() {
+                return currentIndex + 2 < array.length;
+            }
+
+            @Override
+            public Integer next() {
+                return array[currentIndex += 2];
+            }
+        };
     }
 
     private void checkIndex(int index) {
@@ -76,5 +112,4 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             throw new IndexOutOfBoundsException();
         }
     }
-
 }
