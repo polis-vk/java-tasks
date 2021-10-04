@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -15,6 +17,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
+    private int modCount;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -24,11 +27,13 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
+        modCount++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
+        modCount++;
     }
 
     public int get(int index) {
@@ -40,35 +45,63 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         return array.length;
     }
 
+    private Iterator<Integer> subSequenceIterator(final int begin, final int step) {
+        return new Iterator<Integer>() {
+            private int position = begin;
+            private final int fixedModCount = modCount;
+
+            @Override
+            public boolean hasNext() {
+                return position < array.length;
+            }
+
+            @Override
+            public Integer next() {
+                if (fixedModCount != modCount) {
+                    throw new ConcurrentModificationException(
+                            CustomArrayWrapper.this
+                                    + " has been changed "
+                                    + (modCount - fixedModCount)
+                                    + " between iterations"
+                    );
+                }
+                if (position >= array.length) {
+                    throw new NoSuchElementException();
+                }
+                return array[(position += step) - step];
+            }
+        };
+    }
+
     /**
-     * Реализовать метод:
+     * [x] Реализовать метод:
      * Возвращает обычный итератор.
      *
      * @return default Iterator
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return subSequenceIterator(0, 1);
     }
 
     /**
-     * Реализовать метод:
+     * [x] Реализовать метод:
      * Возвращает итератор, который проходит только четные элементы.
      *
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return subSequenceIterator(1, 2);
     }
 
     /**
-     * Реализовать метод:
+     * [x] Реализовать метод:
      * Возвращает итератор, который проходит нечетные элементы
      *
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return subSequenceIterator(0, 2);
     }
 
     private void checkIndex(int index) {
@@ -76,5 +109,4 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             throw new IndexOutOfBoundsException();
         }
     }
-
 }
