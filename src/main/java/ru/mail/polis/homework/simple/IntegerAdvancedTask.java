@@ -109,6 +109,4 @@ public class IntegerAdvancedTask {
     private static int hexDigit(long number, int order) {
         return (int) ((number >> (4 * (order - 1))) & 0xF);
     }
-
-
 }
