@@ -9,6 +9,8 @@ package ru.mail.polis.homework.simple;
  */
 public class IntegerAdvancedTask {
 
+    private static final double DELTA = 1e-10;
+    
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
@@ -16,7 +18,6 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        final double DELTA = 1e-10;
         if (Math.abs(q - 1.0) < DELTA) {
             return (long) a * n;
         }
@@ -79,7 +80,7 @@ public class IntegerAdvancedTask {
         byte minPos = 1;
         byte i = 2;
         long buffer = a / 16;
-        while (buffer > 0) {
+        while (buffer > 0 && minNum != 0) {
             if (buffer % 16 < minNum) {
                 minNum = (byte) (buffer % 16);
                 minPos = i;
