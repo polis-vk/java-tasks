@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
@@ -48,7 +49,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new CustomItr();
     }
 
     /**
@@ -58,7 +59,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new CustomItr(1,2);
     }
 
     /**
@@ -68,13 +69,47 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new CustomItr(0,2);
     }
 
     private void checkIndex(int index) {
         if (index < 0 || index >= array.length) {
             throw new IndexOutOfBoundsException();
         }
+    }
+    
+    private class CustomItr implements Iterator<Integer> {
+        int pos;
+        int expectedModCount;
+        final int step;
+
+        public CustomItr() {
+            this(0,1);
+        }
+        
+        public CustomItr(int startPos, int step) {
+            this.pos = startPos;
+            this.expectedModCount = CustomArrayWrapper.this.position;
+            this.step = step;
+        }
+
+        public boolean hasNext() {
+            return this.pos < this.expectedModCount;
+        }
+
+        @Override
+        public Integer next() {
+            validate();
+            Integer result = CustomArrayWrapper.this.array[this.pos];
+            this.pos += this.step;
+            return result;
+        }
+
+        private final void validate() {
+            if (CustomArrayWrapper.this.position != this.expectedModCount)
+                throw new ConcurrentModificationException();
+        }
+        
     }
 
 }
