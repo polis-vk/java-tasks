@@ -18,13 +18,13 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        double sum = a;
-        double temp = a;
+        long sum = a;
+        int temp = a;
         for (int i = 1; i <= n - 1; i++) {
             temp *= q;
             sum += temp;
         }
-        return (long) sum;
+        return sum;
     }
 
     /**
@@ -36,21 +36,20 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 1) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        int dx = right - left;
-        int dy = up - down;
         int days = 1;
         int lastStepX = grassX - right;
         int lastStepY = grassY - up;
         if (lastStepX <= 0 || lastStepY <= 0) {
             return days;
         }
-        if ((dx <= 0) && (dy <= 0)) {
+        int dx = right - left;
+        int dy = up - down;
+        if (dx <= 0 && dy <= 0) {
             return Integer.MAX_VALUE;
         }
-
         double speedX = (double) (lastStepX) / dx;
         double speedY = (double) (lastStepY) / dy;
-        if ((int)speedX != speedX) {
+        if ((int) speedX != speedX) {
             speedX++;
         }
         if ((int)speedY != speedY) {
@@ -65,19 +64,6 @@ public class IntegerAdvancedTask {
         } else {
             return Integer.MAX_VALUE;
         }
-
-        /*while (!(posX >= grassX && posY >= grassY)) {
-            posY += up;
-            posX += right;
-            if (posX >= grassX && posY >= grassY) {
-                return days;
-            }
-            posY -= down;
-            posX -= left;
-            days++;
-        }*/
-
-
         return days;
     }
 
@@ -89,17 +75,19 @@ public class IntegerAdvancedTask {
      */
     public static char kDecimal(int n, int order) {
         int i = 1;
+        int temp = n;
+        int result = 0;
         while (i < order) {
-            n /= 16;
+            temp /= 16;
             i++;
         }
-        int temp = n % 16;
+        temp %= 16;
         if (temp < 10) {
-            temp += 48;
+            result = '0' + temp;
         } else {
-            temp += 55;
+            result = 'A' + temp - 10;
         }
-        return (char) temp;
+        return (char) result;
     }
 
     /**
@@ -113,12 +101,13 @@ public class IntegerAdvancedTask {
         char min = 'F';
         int pos = 0;
         int i = 0;
-        while(a > 0) {
-            if ((char) (a % 16) < min) {
-                min = (char) (a % 16);
+        long temp = a;
+        while (temp > 0) {
+            if ((char) (temp % 16) < min) {
+                min = (char) (temp % 16);
                 pos = i;
             }
-            a /= 16;
+            temp /= 16;
             i++;
         }
         return (byte) (pos + 1);
