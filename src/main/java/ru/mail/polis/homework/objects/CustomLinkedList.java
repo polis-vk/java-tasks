@@ -3,9 +3,11 @@ package ru.mail.polis.homework.objects;
 /**
  * Реализовать все методы односвязанного списка.
  */
-public class CustomLinkedList {
 
+
+public class CustomLinkedList {
     private Node head;
+    private Node lastNode;
 
     /**
      * Реализовать метод:
@@ -14,7 +16,12 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
-
+        if (head == null) {
+            lastNode = head = new Node(value);
+        } else {
+            lastNode.setNext(new Node(value));
+            lastNode = lastNode.next;
+        }
     }
 
     /**
@@ -25,32 +32,56 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-
+        if (head == null) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (index == 0) {
+            head = head.next;
+            return;
+        }
+        Node current = head;
+        for (int i = 0; i < index - 1 && current != null; i++) {
+            current = current.next;
+        }
+        if (current == null || current.next == null) {
+            throw new IndexOutOfBoundsException();
+        }
+        current.setNext(current.next.next);
     }
 
-    /**
-     * Реализовать метод:
-     * Переварачивает все элементы списка.
-     * Пример:
-     *  Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
-     *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
-     */
-    public void revertList() {
 
+    public void revertList() {
+        Node current = head;
+        Node prevNode = null;
+        Node next;
+        while (current.next != null) {
+            next = current.next;
+            current.setNext(prevNode);
+            prevNode = current;
+            current = next;
+        }
+        head = current;
+        head.setNext(prevNode);
     }
 
     /**
      * Метод выводит всю последовательность хранящуюся в списке начиная с head.
      * Формат вывода:
-     *  - значение каждой Node должно разделяться " -> "
-     *  - последовательность всегда заканчивается на null
-     *  - если в списке нет элементов - верните строку "null"
+     * - значение каждой Node должно разделяться " -> "
+     * - последовательность всегда заканчивается на null
+     * - если в списке нет элементов - верните строку "null"
      *
      * @return - String with description all list
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        StringBuilder result = new StringBuilder();
+        Node current = head;
+        while (current != null) {
+            result.append(current.value).append(" -> ");
+            current = current.next;
+        }
+        return result.append("null").toString();
     }
 
     private static class Node {

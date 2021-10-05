@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -15,20 +17,24 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
+    private int modCount;               // количество изменений (add/edit)
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
     }
 
+
     public void add(int value) {
         checkIndex(position);
         array[position] = value;
         position++;
+        modCount++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
+        modCount++;
     }
 
     public int get(int index) {
@@ -48,7 +54,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new CustomIterator(0, 1);
     }
 
     /**
@@ -58,7 +64,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new CustomIterator(1, 2);
     }
 
     /**
@@ -68,7 +74,37 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new CustomIterator(0, 2);
+    }
+
+    class CustomIterator implements Iterator<Integer> {
+        private int index;
+        private final int expectedModCount = modCount;
+        private final int step;
+
+        CustomIterator(int startPosition, int step) {
+            this.step = step;
+            index = startPosition - step;
+        }
+
+        public boolean hasNext() {
+            return index + step < array.length;
+        }
+
+        public Integer next() {
+            checkForModification();
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            index += step;
+            return array[index];
+        }
+
+        private void checkForModification() {
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
+        }
     }
 
     private void checkIndex(int index) {
@@ -76,5 +112,6 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             throw new IndexOutOfBoundsException();
         }
     }
+
 
 }
