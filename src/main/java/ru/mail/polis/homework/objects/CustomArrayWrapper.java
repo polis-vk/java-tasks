@@ -23,7 +23,6 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         this.array = new int[size];
     }
 
-
     public void add(int value) {
         checkIndex(position);
         array[position] = value;

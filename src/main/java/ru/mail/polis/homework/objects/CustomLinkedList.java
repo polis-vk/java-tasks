@@ -4,7 +4,6 @@ package ru.mail.polis.homework.objects;
  * Реализовать все методы односвязанного списка.
  */
 
-
 public class CustomLinkedList {
     private Node head;
     private Node lastNode;
