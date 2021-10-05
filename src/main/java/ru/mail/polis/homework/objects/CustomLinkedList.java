@@ -6,6 +6,7 @@ package ru.mail.polis.homework.objects;
 public class CustomLinkedList {
 
     private Node head;
+    private int size = 0;
 
     /**
      * Реализовать метод:
@@ -14,7 +15,18 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
+        if (size == 0) {
+            head = new Node(value);
+            size++;
+            return;
+        }
 
+        Node last = null;
+        for (Node i = head; i != null; i = i.next) {
+            last = i;
+        }
+        last.setNext(new Node(value));
+        size++;
     }
 
     /**
@@ -25,7 +37,24 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (size == 1) {
+            head = null;
+            size--;
+            return;
+        }
 
+        Node prev = head;
+        Node curr = head.next;
+        for (int i = 1; i < index; ++i) {
+            prev = curr;
+            curr = curr.next;
+        }
+
+        prev.setNext(curr.next);
+        size--;
     }
 
     /**
@@ -36,7 +65,17 @@ public class CustomLinkedList {
      *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
+        Node prev = null;
+        Node curr = head;
 
+        while (curr != null) {
+            Node temp = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = temp;
+        }
+
+        head = prev;
     }
 
     /**
@@ -50,7 +89,13 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        String str = "";
+        for (Node i = head; i != null; i = i.next) {
+            str += i.value + " -> ";
+        }
+        str += "null";
+
+        return str;
     }
 
     private static class Node {
