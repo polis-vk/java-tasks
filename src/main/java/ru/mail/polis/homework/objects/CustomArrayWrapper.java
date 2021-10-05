@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -48,7 +50,23 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new Iterator<Integer>() {
+
+            private int pos = 0;
+
+            @Override
+            public boolean hasNext() {
+                return pos < position && position == array.length;
+            }
+
+            @Override
+            public Integer next() {
+                if (hasNext()) {
+                    return array[pos++];
+                }
+                throw new ConcurrentModificationException();
+            }
+        };
     }
 
     /**
@@ -58,7 +76,23 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new Iterator<Integer>() {
+
+            private int pos = -1;
+
+            @Override
+            public boolean hasNext() {
+                return pos + 2 < position && position == array.length;
+            }
+
+            @Override
+            public Integer next() {
+                if (hasNext()) {
+                    return array[pos += 2];
+                }
+                throw new ConcurrentModificationException();
+            }
+        };
     }
 
     /**
@@ -68,7 +102,23 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new Iterator<Integer>() {
+
+            private int pos = -2;
+
+            @Override
+            public boolean hasNext() {
+                return pos + 2 < position && position == array.length;
+            }
+
+            @Override
+            public Integer next() {
+                if (hasNext()) {
+                    return array[pos += 2];
+                }
+                throw new ConcurrentModificationException();
+            }
+        };
     }
 
     private void checkIndex(int index) {

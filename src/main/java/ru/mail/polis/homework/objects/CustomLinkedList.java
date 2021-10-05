@@ -7,14 +7,26 @@ public class CustomLinkedList {
 
     private Node head;
 
+
     /**
      * Реализовать метод:
-     * Добавляет элемент в односвязны список.
+     * Добавляет элемент в односвязный список.
      *
      * @param value - data for create Node.
      */
     public void add(int value) {
+        Node node = new Node(value);
+        if (head == null) {
+            head = node;
+            return;
+        }
 
+        Node current = head;
+        while (current.next != null) {
+            current = current.next;
+        }
+
+        current.setNext(node);
     }
 
     /**
@@ -25,7 +37,18 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
+        Node current = head;
+        Node prev = head;
 
+        for (int i = 0; i < index; i++) {
+            if (current.next == null) {
+                throw new IndexOutOfBoundsException();
+            }
+            prev = current;
+            current = current.next;
+        }
+
+        prev.next = current.next;
     }
 
     /**
@@ -33,10 +56,26 @@ public class CustomLinkedList {
      * Переварачивает все элементы списка.
      * Пример:
      *  Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
-     *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
+     *  После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
-    public void revertList() {
 
+    public void revertList() {
+        if (head == null) {
+            return;
+        }
+
+        Node current = head.next;
+        head.next = null;
+        Node prev = head;
+        Node next;
+
+        while (current != null) {
+            next = current.next;
+            current.next = prev;
+            prev = current;
+            current = next;
+        }
+        head = prev;
     }
 
     /**
@@ -50,7 +89,13 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        StringBuilder str = new StringBuilder();
+        Node current = head;
+        while (current != null) {
+            str.append(current.value).append(" -> ");
+            current = current.next;
+        }
+        return str.append("null").toString();
     }
 
     private static class Node {
@@ -65,4 +110,5 @@ public class CustomLinkedList {
             this.next = next;
         }
     }
+
 }
