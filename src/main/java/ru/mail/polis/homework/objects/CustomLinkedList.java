@@ -14,7 +14,15 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
-
+        if (head == null) {
+            head = new Node(value);
+            return;
+        }
+        Node tmpNode = head;
+        while (tmpNode.next != null) {
+            tmpNode = tmpNode.next;
+        }
+        tmpNode.setNext(new Node(value));
     }
 
     /**
@@ -25,7 +33,23 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-
+        if (index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (index == 0) {
+            head = head.next;
+        }
+        Node tmpNode = head;
+        for (int i = 0; i < index - 1; i++) {
+            if (tmpNode.next == null) {
+                throw new IndexOutOfBoundsException();
+            }
+            tmpNode = tmpNode.next;
+        }
+        if (tmpNode.next == null) {
+            throw new IndexOutOfBoundsException();
+        }
+        tmpNode.setNext(tmpNode.next.next);
     }
 
     /**
@@ -36,7 +60,21 @@ public class CustomLinkedList {
      *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-
+        if (head == null || head.next == null) {
+            return;
+        }
+        Node tmpNode = head;
+        Node prev = null;
+        Node next = tmpNode.next;
+        while (next.next != null) {
+            tmpNode.setNext(prev);
+            prev = tmpNode;
+            tmpNode = next;
+            next = next.next;
+        }
+        tmpNode.setNext(prev);
+        next.setNext(tmpNode);
+        head = next;
     }
 
     /**
@@ -50,7 +88,15 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        StringBuilder stringBuilder = new StringBuilder();
+        Node tmpNode = head;
+        while (tmpNode != null) {
+            stringBuilder.append(tmpNode.value);
+            stringBuilder.append(" -> ");
+            tmpNode = tmpNode.next;
+        }
+        stringBuilder.append("null");
+        return stringBuilder.toString();
     }
 
     private static class Node {
