@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-import java.util.Collections;
-import java.util.LinkedList;
 
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
@@ -18,11 +16,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        long res = 0;
-        for (int i = 0; i < n; i++) {
-            res += a * Math.pow(q, i);
-        }
-        return res;
+        return 0;
     }
 
     /**
@@ -34,28 +28,7 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        int x = 0;
-        int y = 0;
-        int daysCount = 0;
-
-        if ((up <= down) && (up < grassY) && (right <= left) && (right < grassX)) {
-            return Integer.MAX_VALUE;
-        }
-
-        while ((x < grassX) && (y < grassY)) {
-            y += up;
-            x += right;
-            daysCount++;
-
-            if ((x >= grassX) || (y >= grassY)) {
-                break;
-            }
-
-            y -= down;
-            x -= left;
-        }
-
-        return daysCount;
+        return 0;
     }
 
     /**
@@ -65,14 +38,7 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        LinkedList<Integer> numbers = new LinkedList<>();
-        while (n >= 16) {
-            numbers.add(n % 16);
-            n /= 16;
-        }
-        numbers.add(n);
-
-        return Character.toUpperCase(Character.forDigit(numbers.get(order - 1), 16));
+        return 0;
     }
 
     /**
@@ -83,13 +49,7 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        LinkedList<Long> numbers = new LinkedList<>();
-        while (a >= 16) {
-            numbers.add(a % 16);
-            a /= 16;
-        }
-        numbers.add(a);
-
-        return (byte) (numbers.indexOf(Collections.min(numbers)) + 1);
+        return 0;
     }
+
 }
