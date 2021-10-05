@@ -14,7 +14,15 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
-
+        if (head == null) {
+            head = new Node(value);
+            return;
+        }
+        Node current = head;
+        while (current.next != null) {
+            current = current.next;
+        }
+        current.next = new Node(value);
     }
 
     /**
@@ -25,7 +33,25 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-
+        if (head == null || index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (index == 0) {
+            head = head.next;
+            return;
+        }
+        Node prev = null;
+        Node current = head;
+        int count = 0;
+        while (count < index) {
+            prev = current;
+            current = current.next;
+            count++;
+            if (current == null) {
+                throw new IndexOutOfBoundsException();
+            }
+        }
+        prev.next = current.next;
     }
 
     /**
@@ -36,7 +62,20 @@ public class CustomLinkedList {
      *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-
+        if (head == null || head.next == null) {
+            return;
+        }
+        Node prev = null;
+        Node current = head;
+        Node next = head.next;
+        while (next != null) {
+            current.next = prev;
+            prev = current;
+            current = next;
+            next = next.next;
+        }
+        current.next = prev;
+        head = current;
     }
 
     /**
@@ -50,7 +89,14 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        StringBuilder sb = new StringBuilder();
+        Node current = head;
+        while (current != null) {
+            sb.append(current.value).append(" -> ");
+            current = current.next;
+        }
+        sb.append("null");
+        return sb.toString();
     }
 
     private static class Node {
