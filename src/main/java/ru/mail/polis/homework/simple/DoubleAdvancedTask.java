@@ -16,10 +16,32 @@ public class DoubleAdvancedTask {
      * Если используете какой-то конкретный способ, напишите какой.
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
+
+    // Тригонометрическая формула Виета
     public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
+
+        double a1 = (double) b / a;
+        double b1 = (double) c / a;
+        double c1 = (double) d / a;
+
+        double q = (Math.pow(a1, 2) - 3 * b1) / 9;
+        double r = (2 * Math.pow(a1, 3) - 9 * a1 * b1 + 27 * c1) / 54;
+        double s = Math.pow(q, 3) - Math.pow(r, 2);
+
+        double x1;
+        double x2;
+        double x3;
+
+        if (s > 0) {
+            double phi = Math.acos(r / Math.sqrt(Math.pow(q, 3))) / 3;
+            x1 = -2 * Math.sqrt(q) * Math.cos(phi) - a1 / 3;
+            x2 = -2 * Math.sqrt(q) * Math.cos(phi + 2 * Math.PI / 3) - a1 / 3;
+            x3 = -2 * Math.sqrt(q) * Math.cos(phi - 2 * Math.PI / 3) - a1 / 3;
+        } else {
+            x1 = -2 * Math.cbrt(r) - a1 / 3;
+            x2 = x3 = Math.cbrt(r) - a1 / 3;
+        }
+
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -29,7 +51,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        return (a1 - a2) == 0 ? 0 : (float) (Math.abs(b1 - b2) / Math.sqrt(a1 * a2 + 1));
     }
 
     /**
@@ -44,6 +66,12 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+
+        int[] x = {x2 - x1, x3 - x1, x4 - x1};
+        int[] y = {y2 - y1, y3 - y1, y4 - y1};
+        int[] z = {z2 - z1, z3 - z1};
+
+        return (double) (y[2] * x[0] * z[1] + y[1] * x[2] * z[0] - x[2] * y[0] * z[1] - x[1] * y[2] * z[0])
+                / (x[0] * y[1] - y[0] * x[1]) + z1;
     }
 }
