@@ -38,7 +38,7 @@ public class CustomLinkedList {
     public void removeElement(int index) {
         checkIndex(index);
         if (index == 0) {
-            head = null;
+            head = head.next;
             size--;
             return;
         }
