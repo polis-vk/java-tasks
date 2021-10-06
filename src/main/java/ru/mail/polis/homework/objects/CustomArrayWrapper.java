@@ -83,8 +83,8 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private class Iter implements Iterator<Integer> {
         int index;
-        int shiftValue;
-        int fixedModCount = modCount;
+        final int shiftValue;
+        final int fixedModCount = modCount;
 
         private Iter(int val, int start) {
             index = start;
