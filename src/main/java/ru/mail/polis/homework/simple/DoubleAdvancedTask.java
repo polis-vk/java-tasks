@@ -19,19 +19,20 @@ public class DoubleAdvancedTask {
     // Using trigonometric Vieta's formula
     public static String equation(int a, int b, int c, int d) {
         assert a != 0;
-        double b_tilda = (double) b / a;
-        double c_tilda = (double) c / a;
-        double d_tilda = (double) d / a;
+        double bTilda = (double) b / a;
+        double cTilda = (double) c / a;
+        double dTilda = (double) d / a;
 
-        double q = (b_tilda * b_tilda - 3 * c_tilda) / 9;
-        double r = (2 * Math.pow(b_tilda, 3) - 9 * b_tilda * c_tilda + 27 * d_tilda) / 54;
+        double q = (bTilda * bTilda - 3 * cTilda) / 9;
+        double r = (2 * Math.pow(bTilda, 3) - 9 * bTilda * cTilda + 27 * dTilda) / 54;
         double fi = 0;
-        if (q != 0)
+        if (q != 0) {
             fi = Math.acos(r / Math.pow(q, (double) 3 / 2)) / 3;
+        }
 
-        double x1 = -2 * Math.pow(q, (double) 1 / 2) * Math.cos(fi + 2 * Math.PI / 3) - b_tilda / 3;
-        double x2 = -2 * Math.pow(q, (double) 1 / 2) * Math.cos(fi - 2 * Math.PI / 3) - b_tilda / 3;
-        double x3 = -2 * Math.pow(q, (double) 1 / 2) * Math.cos(fi) - b_tilda / 3;
+        double x1 = -2 * Math.pow(q, (double) 1 / 2) * Math.cos(fi + 2 * Math.PI / 3) - bTilda / 3;
+        double x2 = -2 * Math.pow(q, (double) 1 / 2) * Math.cos(fi - 2 * Math.PI / 3) - bTilda / 3;
+        double x3 = -2 * Math.pow(q, (double) 1 / 2) * Math.cos(fi) - bTilda / 3;
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -41,10 +42,12 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        if (a1 != a2)
+        if (a1 != a2) {
             return 0;
-        if (a1 == 0)
+        }
+        if (a1 == 0) {
             return (float) Math.abs(b1 - b2);
+        }
         // take a point on first line (0, b1)
         // perpendicular to these lines throw this point will be yPer = -1/a1 x + b1
         // yPer intersects second line at ((b1 - b2) / (a1 + 1/a1), (b1 - b2) / (a1 * a1 + 1 + b2))

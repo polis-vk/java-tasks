@@ -12,7 +12,7 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
@@ -36,13 +36,25 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        if (up >= grassY || right >= grassX)
+        if (up >= grassY || right >= grassX) {
             return 1;
+        }
         int xSpeed = right - left;
         int ySpeed = up - down;
-        if (xSpeed <= 0 && ySpeed <= 0)
+        if (xSpeed <= 0 && ySpeed <= 0) {
             return Integer.MAX_VALUE;
-        return (int) Math.max(Math.ceil(((double) grassX - right) / xSpeed), Math.ceil(((double) grassY - up) / ySpeed)) + 1;
+        }
+
+        int daysToGetXGrass = (int) Math.ceil(((double) grassX - right) / xSpeed) + 1;
+        int daysToGetYGrass = (int) Math.ceil(((double) grassY - up) / ySpeed) + 1;
+
+        if (daysToGetXGrass < 0) {
+            return daysToGetYGrass;
+        }
+        if (daysToGetYGrass < 0) {
+            return daysToGetXGrass;
+        }
+        return Math.min(daysToGetYGrass, daysToGetXGrass);
     }
 
     /**
@@ -53,8 +65,9 @@ public class IntegerAdvancedTask {
      */
     public static char kDecimal(int n, int order) {
         int result = (int) ((n % (long) Math.pow(16, order)) / (long) Math.pow(16, order - 1));
-        if (result < 10)
+        if (result < 10) {
             return (char) (result + '0');
+        }
         return (char) (result + 'A' - 10);
     }
 
@@ -70,14 +83,14 @@ public class IntegerAdvancedTask {
         byte minDigitPosition = 1;
         byte currentPosition = 2;
 
-        a /= 16;
-        while (a != 0) {
-            if (minDigit > a % 16) {
-                minDigit = (byte) (a % 16);
+        long restNumber = a / 16;
+        while (restNumber != 0) {
+            if (minDigit > restNumber % 16) {
+                minDigit = (byte) (restNumber % 16);
                 minDigitPosition = currentPosition;
             }
             currentPosition++;
-            a /= 16;
+            restNumber /= 16;
         }
         return minDigitPosition;
     }
