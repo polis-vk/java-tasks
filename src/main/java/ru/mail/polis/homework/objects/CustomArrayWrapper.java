@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -12,7 +15,7 @@ import java.util.Iterator;
  * тогда все элементы со значением 100 имеют нечетную позицию, а элементы = 0 - четную.
  */
 public class CustomArrayWrapper implements Iterable<Integer> {
-
+    private int modCount = 0;
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
 
@@ -24,6 +27,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
+        modCount++;
     }
 
     public void edit(int index, int value) {
@@ -48,7 +52,30 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+
+        return new Iterator<Integer>() {
+            private final int initialModCount = modCount;
+            private int index = -1;
+
+            @Override
+            public boolean hasNext() {
+                if (modCount != initialModCount) {
+                    throw new ConcurrentModificationException();
+                }
+                return index != size() - 1;
+            }
+
+            @Override
+            public Integer next() {
+                if (modCount != initialModCount) {
+                    throw new ConcurrentModificationException();
+                }
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                return get(++index);
+            }
+        };
     }
 
     /**
@@ -58,7 +85,30 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new Iterator<Integer>() {
+            private final int initialModCount = modCount;
+            private int index = -1;
+
+            @Override
+            public boolean hasNext() {
+                if (modCount != initialModCount) {
+                    throw new ConcurrentModificationException();
+                }
+                return index + 2 < size();
+            }
+
+            @Override
+            public Integer next() {
+                if (modCount != initialModCount) {
+                    throw new ConcurrentModificationException();
+                }
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                index += 2;
+                return get(index);
+            }
+        };
     }
 
     /**
@@ -68,7 +118,31 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new Iterator<Integer>() {
+            private final int initialModCount = modCount;
+            private int index = -2;
+
+            @Override
+            public boolean hasNext() {
+                if (modCount != initialModCount) {
+                    throw new ConcurrentModificationException();
+                }
+                return index + 2 < size();
+
+            }
+
+            @Override
+            public Integer next() {
+                if (modCount != initialModCount) {
+                    throw new ConcurrentModificationException();
+                }
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                index += 2;
+                return get(index);
+            }
+        };
     }
 
     private void checkIndex(int index) {
