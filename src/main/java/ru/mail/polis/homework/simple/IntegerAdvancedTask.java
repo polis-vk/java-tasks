@@ -8,7 +8,7 @@ package ru.mail.polis.homework.simple;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class IntegerAdvancedTask {
-
+    private static final double EPS = 1e-10;
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
@@ -16,11 +16,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        double eps = 1e-10;
-        if (Math.abs(q) < eps) {
+        if (Math.abs(q) < EPS) {
             return a;
         }
-        if (Math.abs(1.0 - q) < eps) {
+        if (Math.abs(1.0 - q) < EPS) {
             return (long) a * n;
         }
         return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
@@ -82,7 +81,7 @@ public class IntegerAdvancedTask {
         long min = Long.MAX_VALUE;
         byte minIndex = 1;
         byte currIndex = 1;
-        while (temp != 0) {
+        while (temp != 0 && min != 0) {
             if (temp % 16 < min) {
                 min = temp % 16;
                 minIndex = currIndex;
