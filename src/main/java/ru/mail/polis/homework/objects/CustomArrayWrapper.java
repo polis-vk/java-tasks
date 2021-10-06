@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
@@ -15,6 +16,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
+    private int modCount = 0;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -24,11 +26,13 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
+        modCount++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
+        modCount++;
     }
 
     public int get(int index) {
@@ -48,7 +52,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new Iter(1, 0);
     }
 
     /**
@@ -58,7 +62,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new Iter(2, 1);
     }
 
     /**
@@ -68,12 +72,41 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new Iter(2, 0);
     }
 
     private void checkIndex(int index) {
         if (index < 0 || index >= array.length) {
             throw new IndexOutOfBoundsException();
+        }
+    }
+
+    private class Iter implements Iterator<Integer> {
+        int index;
+        int shiftValue;
+        int fixedModCount = modCount;
+
+        private Iter(int val, int start) {
+            index = start;
+            shiftValue = val;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return index < position;
+        }
+
+        @Override
+        public Integer next() {
+            if(fixedModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+            else if(!hasNext()) {
+                throw new IndexOutOfBoundsException();
+            }
+            int temp = index;
+            index += shiftValue;
+            return array[temp];
         }
     }
 

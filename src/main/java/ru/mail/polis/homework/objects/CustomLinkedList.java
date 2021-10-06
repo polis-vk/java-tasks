@@ -14,7 +14,15 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
-
+        if(head == null) {
+            head = new Node(value);
+            return;
+        }
+        Node curr = head;
+        while (curr.next != null) {
+            curr = curr.next;
+        }
+        curr.next = new Node(value);
     }
 
     /**
@@ -25,7 +33,40 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
+        int size = this.size();
+        if(size <= index) {
+            throw new IndexOutOfBoundsException();
+        }
+        else if(index == 0) {
+            head = head.next;
+            return;
+        }
+        else if(index == size - 1) {
+            Node curr = head;
+            for(int i = 0; i < index - 1; i++) {
+                curr = curr.next;
+            }
+            curr.next = null;
+            return;
+        }
+        Node curr = head;
+        for(int i = 0; i < index - 1; i++) {
+            curr = curr.next;
+        }
+        curr.next = curr.next.next;
+    }
 
+    public int size() {
+        if(head == null) {
+            return 0;
+        }
+        int size = 1;
+        Node curr = head;
+        while (curr.next != null) {
+            curr = curr.next;
+            size += 1;
+        }
+        return size;
     }
 
     /**
@@ -36,7 +77,21 @@ public class CustomLinkedList {
      *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-
+        if(head == null) {
+            return;
+        }
+        int size = this.size();
+        if(size == 1) {
+            return;
+        }
+        Node first = head;
+        Node last = head.next;
+        while (first.next != null) {
+            first.next = last.next;
+            last.next = head;
+            head = last;
+            last = first.next;
+        }
     }
 
     /**
@@ -50,7 +105,17 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        StringBuilder string = new StringBuilder();
+        if(head != null) {
+            string.append(head.value + " -> ");
+            Node curr = head;
+            while (curr.next != null) {
+                curr = curr.next;
+                string.append(curr.value + " -> ");
+            }
+        }
+        string.append("null");
+        return string.toString();
     }
 
     private static class Node {
