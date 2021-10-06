@@ -39,12 +39,15 @@ public class CustomLinkedList {
         checkIndex(index);
         if (index == 0) {
             head = null;
+            size--;
+            return;
         }
         Node parent = head;
         for (int i = 0; i < index - 1; i++) {
             parent = parent.next;
         }
         parent.next = parent.next.next;
+        size--;
     }
 
     /**
@@ -55,7 +58,17 @@ public class CustomLinkedList {
      * После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-
+        if (size <= 1) return;
+        Node previous = null;
+        Node current = head;
+        Node next;
+        while (current != null) {
+            next = current.next;
+            current.next = previous;
+            previous = current;
+            current = next;
+        }
+        head = previous;
     }
 
     /**
@@ -72,7 +85,7 @@ public class CustomLinkedList {
         if (size == 0) return "null";
         StringBuilder list = new StringBuilder();
         Node current = head;
-        while (current.next != null) {
+        while (current != null) {
             list.append(current.value);
             list.append(" -> ");
             current = current.next;
