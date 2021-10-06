@@ -15,7 +15,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (Double.compare(q, 1.0) == 0) {
+        if (DoubleAdvancedTask.isEquals(q, 1.0)) {
             return (long) a * n;
         }
         return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
@@ -30,16 +30,18 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
+        if (right >= grassX || up >= grassY) {
+            return 1;
+        }
         int currentX = 0;
         int currentY = 0;
         if (currentX >= grassX || currentY >= grassY) {
             return 0;
         }
+        if (right - left <= 0 && up - down <= 0) {
+            return Integer.MAX_VALUE;
+        }
         int daysCounter = 1;
-        int lastX = 0;
-        int lastY = 0;
-        int lastDeltaX = grassX;
-        int lastDeltaY = grassY;
         while (currentX < grassX && currentY < grassY) {
             currentX += right;
             currentY += up;
@@ -48,15 +50,6 @@ public class IntegerAdvancedTask {
             }
             currentX -= left;
             currentY -= down;
-            int currentDeltaX = lastX + currentX;
-            int currentDeltaY = lastY + currentY;
-            if (currentDeltaX >= lastDeltaX && currentDeltaY >= lastDeltaY) {
-                return Integer.MAX_VALUE;
-            }
-            lastX = currentX;
-            lastY = currentY;
-            lastDeltaX = currentDeltaX;
-            lastDeltaY = currentDeltaY;
             daysCounter++;
         }
         return daysCounter;
@@ -75,14 +68,14 @@ public class IntegerAdvancedTask {
         int indexOfCurrentDischarge = 0;
         while (indexOfCurrentDischarge < order) {
             newDividend = dividend / 16;
-            result = dividend - newDividend * 16;
+            result = dividend % 16;
             dividend = newDividend;
             indexOfCurrentDischarge++;
         }
-        if (result > 10) {
-            return (char) (result + 55);
+        if (result >= 10) {
+            return (char) (result + ('A' - 10));
         }
-        return (char) (result + 48);
+        return (char) (result + '0');
     }
 
     /**
@@ -101,7 +94,7 @@ public class IntegerAdvancedTask {
         byte indexOfCurrentDischarge = 1;
         while (divided > 15) {
             newDivided = divided / 16;
-            currentDischarge = (byte) (divided - newDivided * 16);
+            currentDischarge = (byte) (divided % 16);
             if (currentDischarge < min) {
                 min = currentDischarge;
                 minimalIndex = indexOfCurrentDischarge;
