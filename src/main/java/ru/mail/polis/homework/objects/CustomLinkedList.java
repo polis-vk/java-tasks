@@ -6,6 +6,7 @@ package ru.mail.polis.homework.objects;
 public class CustomLinkedList {
 
     private Node head;
+    private int size = 0;
 
     /**
      * Реализовать метод:
@@ -14,7 +15,16 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
-
+        if (head == null){
+            head = new Node(value);
+        } else {
+            Node current = head;
+            while (current.next != null){
+                current = current.next;
+            }
+            current.next = new Node(value);
+        }
+        size ++;
     }
 
     /**
@@ -25,7 +35,24 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
+        if (index > size || index < 0){
+            throw new IndexOutOfBoundsException();
+        }
 
+        Node previous = head;
+        Node current = head;
+        if (index == 0){
+            head = null;
+            size --;
+        }
+        for (int i = 0; current != null && i != index; i++ ){
+            previous = current;
+            current = current.next;
+        }
+        if (current == null) {
+            throw new IndexOutOfBoundsException();
+        }
+        previous.setNext(current.next);
     }
 
     /**
@@ -36,7 +63,15 @@ public class CustomLinkedList {
      *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-
+        Node current = head;
+        Node previous = null;
+        while (current != null){
+            Node temp = current.next;
+            current.setNext(previous);
+            previous = current;
+            current = temp;
+        }
+        head = previous;
     }
 
     /**
@@ -45,12 +80,22 @@ public class CustomLinkedList {
      *  - значение каждой Node должно разделяться " -> "
      *  - последовательность всегда заканчивается на null
      *  - если в списке нет элементов - верните строку "null"
+     *  return "1 -> 2 -> 3 -> null";
      *
      * @return - String with description all list
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        if (head == null){
+            return "null";
+        }
+        String result = "";
+        Node current = head;
+        for (int i = 0; current != null; i++ ){
+            result =  result + current.value + " -> ";
+            current = current.next;
+        }
+        return result = result + "null";
     }
 
     private static class Node {
