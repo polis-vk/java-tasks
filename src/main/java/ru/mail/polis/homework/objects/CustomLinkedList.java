@@ -7,45 +7,6 @@ public class CustomLinkedList {
 
     private Node head;
 
-    public static void main(String[] args) {
-        CustomLinkedList linkedList = new CustomLinkedList();
-
-        try {
-            linkedList.removeElement(0);
-        } catch (IndexOutOfBoundsException ex) {
-            System.out.println(ex);
-        }
-        System.out.println(linkedList);
-        linkedList.revertList();
-        System.out.println(linkedList);
-
-
-        linkedList.add(1);
-        linkedList.revertList();
-        System.out.println(linkedList);
-
-        linkedList.removeElement(0);
-        System.out.println(linkedList);
-
-
-        linkedList.add(2);
-        linkedList.add(3);
-        System.out.println(linkedList);
-
-        linkedList.removeElement(0);
-        System.out.println(linkedList);
-        linkedList.add(10);
-        System.out.println(linkedList);
-        linkedList.removeElement(1);
-        System.out.println(linkedList);
-
-        linkedList.add(2);
-        linkedList.add(9);
-        System.out.println(linkedList);
-        linkedList.revertList();
-        System.out.println(linkedList);
-    }
-
     /**
      * Реализовать метод:
      * Добавляет элемент в односвязны список.
