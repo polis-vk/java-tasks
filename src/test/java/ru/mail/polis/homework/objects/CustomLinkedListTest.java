@@ -25,10 +25,31 @@ public class CustomLinkedListTest {
         assertEquals(generateString(new int[]{5, 3, 4, 5}), list.toString());
     }
 
+    @Test
+    public void removeHead() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        list.removeElement(0);
+        assertEquals(generateString(new int[]{3, 7, 4, 5}), list.toString());
+    }
+
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void twiceRemoveSameLastIndex() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        list.removeElement(DEFAULT_ARRAY.length - 1);
+        list.removeElement(DEFAULT_ARRAY.length - 1);
+    }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void testRemoveIndexOutOfBounds() {
         CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
         list.removeElement(DEFAULT_ARRAY.length);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void otherRemoveIndexOutOfBounds() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        list.removeElement(-1);
     }
 
     @Test
