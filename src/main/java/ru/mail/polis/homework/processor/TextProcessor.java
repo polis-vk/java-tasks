@@ -9,16 +9,16 @@ package ru.mail.polis.homework.processor;
  *
  * Сами статические методы мне нужны для создания тестов, что бы без реальных классов (которые вы напишите)
  * я смог "сэмулировать" их создание.
+ *
+ * Каждый обработчик 2 балла. Итого 8
  */
 public interface TextProcessor {
-
-    ProcessingStage getStage();
-
-    String process(String text);
 
     /**
      * Схлопывает все пустые символы в один пробел.
      * Более формально, заменить каждую подстроку, удовлетворяющую регулярному выражению \s+ на 1 пробел.
+     *
+     * Стадия: препроцессинг
      */
     static TextProcessor squashWhiteSpacesProcessor() {
         return null;
@@ -27,6 +27,8 @@ public interface TextProcessor {
     /**
      * Находит первую подстроку, которая удовлетвроряет регулярному выражению regex, и заменяет ее на подстроку replacement
      * Предполагаем, что параметры корректны
+     *
+     * Стадия: процессинг
      */
     static TextProcessor replaceFirstProcessor(String regex, String replacement) {
         return null;
@@ -35,6 +37,9 @@ public interface TextProcessor {
     /**
      * Данный обработчик должен оставить первые maxLength символов исходного текста.
      * Если текст короче, то ничего не делать
+     *
+     * Стадия: постпроцессинг
+     *
      * @param maxLength неотрицательное число
      */
     static TextProcessor trimProcessor(int maxLength) {
@@ -43,6 +48,8 @@ public interface TextProcessor {
 
     /**
      * Обработчик заменяет все символы на заглавные
+     *
+     * Стадия: постпроцессинг
      */
     static TextProcessor upperCaseProcessor() {
         return null;
