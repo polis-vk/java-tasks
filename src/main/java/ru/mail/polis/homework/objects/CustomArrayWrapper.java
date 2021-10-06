@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
@@ -48,7 +49,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new MIterator(Mode.USUAL);
     }
 
     /**
@@ -58,7 +59,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new MIterator(Mode.EVEN);
     }
 
     /**
@@ -68,13 +69,60 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new MIterator(Mode.ODD);
     }
 
     private void checkIndex(int index) {
         if (index < 0 || index >= array.length) {
             throw new IndexOutOfBoundsException();
         }
+    }
+
+    class MIterator implements Iterator<Integer> {
+
+        Mode mode;
+        int index = 0;
+        int modificationCounter;
+
+        public MIterator(Mode mode) {
+            this.mode = mode;
+            if (mode == Mode.EVEN) {
+                index = 1;
+            }
+            modificationCounter = position;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return index < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            int res;
+            if (modificationCounter != position){
+                throw new ConcurrentModificationException();
+            }
+            switch (mode) {
+                case ODD:
+                case EVEN:
+                    res = array[index];
+                    index += 2;
+                    return res;
+
+                case USUAL:
+                default:
+                    res = array[index];
+                    index++;
+                    return res;
+            }
+        }
+    }
+
+    private enum Mode {
+        EVEN,
+        ODD,
+        USUAL
     }
 
 }
