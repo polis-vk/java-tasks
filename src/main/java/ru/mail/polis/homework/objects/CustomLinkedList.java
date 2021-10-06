@@ -17,8 +17,7 @@ public class CustomLinkedList {
     public void add(int value) {
         if (head == null) {
             head = new Node(value);
-        }
-        else {
+        } else {
             Node last = head;
             while (last.next != null) {
                 last = last.next;
@@ -43,19 +42,16 @@ public class CustomLinkedList {
         if (index == 0) {
             if (cur.next != null) {
                 head = cur.next;
-            }
-            else {
+            } else {
                 head = null;
             }
-        }
-        else {
+        } else {
             for (int i = 0; i < index - 1; i++) {
                 cur = cur.next;
             }
             if (index == elCount - 1) {
                 cur.next = null;
-            }
-            else {
+            } else {
                 cur.next = cur.next.next;
             }
         }
@@ -66,8 +62,8 @@ public class CustomLinkedList {
      * Реализовать метод:
      * Переварачивает все элементы списка.
      * Пример:
-     *  исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
-     *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
+     * исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
+     * После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
         Node cur = head;
@@ -85,9 +81,9 @@ public class CustomLinkedList {
     /**
      * Метод выводит всю последовательность хранящуюся в списке начиная с head.
      * Формат вывода:
-     *  - значение каждой Node должно разделяться " -> "
-     *  - последовательность всегда заканчивается на null
-     *  - если в списке нет элементов - верните строку "null"
+     * - значение каждой Node должно разделяться " -> "
+     * - последовательность всегда заканчивается на null
+     * - если в списке нет элементов - верните строку "null"
      *
      * @return - String with description all list
      */
