@@ -98,10 +98,9 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
         @Override
         public Integer next() {
-            if(fixedModCount != modCount) {
+            if (fixedModCount != modCount) {
                 throw new ConcurrentModificationException();
-            }
-            else if(!hasNext()) {
+            } else if (!hasNext()) {
                 throw new IndexOutOfBoundsException();
             }
             int temp = index;

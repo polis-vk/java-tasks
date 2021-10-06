@@ -14,7 +14,7 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
-        if(head == null) {
+        if (head == null) {
             head = new Node(value);
             return;
         }
@@ -34,30 +34,28 @@ public class CustomLinkedList {
      */
     public void removeElement(int index) {
         int size = this.size();
-        if(size <= index) {
+        if (size <= index) {
             throw new IndexOutOfBoundsException();
-        }
-        else if(index == 0) {
+        } else if (index == 0) {
             head = head.next;
             return;
-        }
-        else if(index == size - 1) {
+        } else if (index == size - 1) {
             Node curr = head;
-            for(int i = 0; i < index - 1; i++) {
+            for (int i = 0; i < index - 1; i++) {
                 curr = curr.next;
             }
             curr.next = null;
             return;
         }
         Node curr = head;
-        for(int i = 0; i < index - 1; i++) {
+        for (int i = 0; i < index - 1; i++) {
             curr = curr.next;
         }
         curr.next = curr.next.next;
     }
 
     public int size() {
-        if(head == null) {
+        if (head == null) {
             return 0;
         }
         int size = 1;
@@ -73,15 +71,15 @@ public class CustomLinkedList {
      * Реализовать метод:
      * Переварачивает все элементы списка.
      * Пример:
-     *  Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
-     *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
+     * Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
+     * После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-        if(head == null) {
+        if (head == null) {
             return;
         }
         int size = this.size();
-        if(size == 1) {
+        if (size == 1) {
             return;
         }
         Node first = head;
@@ -97,16 +95,16 @@ public class CustomLinkedList {
     /**
      * Метод выводит всю последовательность хранящуюся в списке начиная с head.
      * Формат вывода:
-     *  - значение каждой Node должно разделяться " -> "
-     *  - последовательность всегда заканчивается на null
-     *  - если в списке нет элементов - верните строку "null"
+     * - значение каждой Node должно разделяться " -> "
+     * - последовательность всегда заканчивается на null
+     * - если в списке нет элементов - верните строку "null"
      *
      * @return - String with description all list
      */
     @Override
     public String toString() {
         StringBuilder string = new StringBuilder();
-        if(head != null) {
+        if (head != null) {
             string.append(head.value + " -> ");
             Node curr = head;
             while (curr.next != null) {
