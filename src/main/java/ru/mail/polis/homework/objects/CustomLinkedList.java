@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.objects;
 
 /**
- * Реализовать все методы односвязанного списка.
+ * Реализовать все методы односвязного списка.
  */
 public class CustomLinkedList {
 
@@ -11,7 +11,7 @@ public class CustomLinkedList {
 
     /**
      * Реализовать метод:
-     * Добавляет элемент в односвязны список.
+     * Добавляет элемент в односвязный список.
      *
      * @param value - data for create Node.
      */
@@ -34,26 +34,37 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (index <= size) {
+        if (index >= size) {
             throw new IndexOutOfBoundsException();
         }
         Node previous = head;
         for (int i = 1; i < index; i++) {
             previous = previous.next;
         }
-        previous.setNext(new Node(previous.next.next.value));
+        previous.setNext(previous.next.next);
         size--;
     }
 
     /**
      * Реализовать метод:
-     * Переварачивает все элементы списка.
+     * Переворачивает все элементы списка.
      * Пример:
      *  Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
-     *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
+     *  После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-
+        Node previous = head;
+        Node current = head.next;
+        Node tmp = last;
+        last = head;
+        head = tmp;
+        previous.setNext(null);
+        for (int i = 1; i < size; i++) {
+            Node next = current.next;
+            current.setNext(previous);
+            previous = current;
+            current = next;
+        }
     }
 
     /**
@@ -67,7 +78,19 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        if (size == 0) {
+            return "null";
+        }
+        StringBuilder sb = new StringBuilder(String.valueOf(head.value));
+        sb.append(" -> ");
+        Node current = head;
+        for (int i = 1; i < size; i++) {
+            current = current.next;
+            sb.append(current.value);
+            sb.append(" -> ");
+        }
+        sb.append("null");
+        return sb.toString();
     }
 
     private static class Node {
