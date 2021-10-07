@@ -31,17 +31,17 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        if ((up >= grassY) || (right >= grassX)) {
+        if (up >= grassY || right >= grassX) {
             return 1;
         }
         int deltaY = up - down;
         int deltaX = right - left;
-        if ((deltaY <= 0) && (deltaX <= 0)) {
+        if (deltaY <= 0 && deltaX <= 0) {
             return Integer.MAX_VALUE;
         }
         int dayX = roundedUp(grassX - right, deltaX) + 1;
         int dayY = roundedUp(grassY - up, deltaY) + 1;
-        return dayX > 0 && dayY > 0 ? Math.min(dayX, dayY) : (dayX > 0 ? dayX : dayY);
+        return dayX > 0 && dayY > 0 ? Math.min(dayX, dayY) : Math.max(dayX, dayY);
     }
 
     private static int roundedUp(int number, int div) {
