@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.processor;
 
 /**
- * Базовый интерфейс обработчика текста, наследники этого интерефейса должны инкапсулировать в себе всю логику
+ * Базовый интерфейс обработчика текста, наследники этого интерфейса должны инкапсулировать в себе всю логику
  * обработки текста.
  * Ниже надо реализовать методы, которые создают обработчики заданного типа (то что они возвращают интерфейс,
  * это как раз прием ООП, где нам не важна конкретная реализация, а важен только контракт,
@@ -14,6 +14,10 @@ package ru.mail.polis.homework.processor;
  */
 public interface TextProcessor {
 
+    String processText(String text);
+
+    ProcessingStage getStage();
+
     /**
      * Схлопывает все пустые символы в один пробел.
      * Более формально, заменить каждую подстроку, удовлетворяющую регулярному выражению \s+ на 1 пробел.
@@ -21,17 +25,17 @@ public interface TextProcessor {
      * Стадия: препроцессинг
      */
     static TextProcessor squashWhiteSpacesProcessor() {
-        return null;
+        return new SquashWhiteSpacesProcessor();
     }
 
     /**
-     * Находит первую подстроку, которая удовлетвроряет регулярному выражению regex, и заменяет ее на подстроку replacement
+     * Находит первую подстроку, которая удовлетворяет регулярному выражению regex, и заменяет ее на подстроку replacement
      * Предполагаем, что параметры корректны
      *
      * Стадия: процессинг
      */
     static TextProcessor replaceFirstProcessor(String regex, String replacement) {
-        return null;
+        return new ReplaceFirstProcessor(regex, replacement);
     }
 
     /**
@@ -43,7 +47,7 @@ public interface TextProcessor {
      * @param maxLength неотрицательное число
      */
     static TextProcessor trimProcessor(int maxLength) {
-        return null;
+        return new TrimProcessor(maxLength);
     }
 
     /**
@@ -52,6 +56,6 @@ public interface TextProcessor {
      * Стадия: постпроцессинг
      */
     static TextProcessor upperCaseProcessor() {
-        return null;
+        return new UpperCaseProcessor();
     }
 }

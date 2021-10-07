@@ -3,7 +3,7 @@ package ru.mail.polis.homework.processor;
 /**
  * Задание: написать систему обработки текста.
  * Надо реализовать 4 обработчика текста
- * 1) Схлопываение всех подстрок соответствующих регулярному выражению \s+ в один пробел
+ * 1) Схлопывание всех подстрок соответствующих регулярному выражению \s+ в один пробел
  * 2) Замена первой подстроки, соответствующей заданному регулярному выражению на заданную подстроку
  * 3) Обрезание текста до заданной длины
  * 4) Замена всех символов на заглавные
@@ -33,13 +33,22 @@ package ru.mail.polis.homework.processor;
  */
 public class TextProcessorManager {
 
-    private static final TextProcessorManager EMPTY = null;
+    private static final TextProcessorManager EMPTY = new TextProcessorManager(new TextProcessor[0]);
+    private final TextProcessor[] processors;
 
     private TextProcessorManager(TextProcessor[] processors) {
+        this.processors = processors;
     }
 
     public String processText(String text) {
-        return null;
+        if (text == null) {
+            return null;
+        }
+        String newText = text;
+        for (TextProcessor processor: this.processors) {
+            newText = processor.processText(newText);
+        }
+        return newText;
     }
 
     public static TextProcessorManager construct(TextProcessor[] processors) {
@@ -51,6 +60,11 @@ public class TextProcessorManager {
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
+        for (int i = 0; i < processors.length - 1; i++) {
+            if (processors[i].getStage().compareTo(processors[i +1 ].getStage()) > 0) {
+                return false;
+            }
+        }
         return true;
     }
 }
