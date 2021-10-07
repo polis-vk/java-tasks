@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.objects;
 
-import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -8,7 +7,9 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 
-public class CustomArrayWrapperTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+
+public class CustomArrayWrapperTest {
 
     private static final int[] DEFAULT_ARRAY = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
 
