@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
@@ -48,7 +49,29 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new Iterator<Integer>() {
+            private int index;
+            private final int savedPosition = position;
+
+            @Override
+            public boolean hasNext() {
+                if (savedPosition != position) {
+                    throw new ConcurrentModificationException();
+                }
+                    return index < position;
+            }
+
+            @Override
+            public Integer next() {
+                if (savedPosition != position) {
+                    throw new ConcurrentModificationException();
+                }
+                if (index > position) {
+                    throw new IndexOutOfBoundsException();
+                }
+                return array[index++];
+            }
+        };
     }
 
     /**
@@ -58,7 +81,31 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new Iterator<Integer>() {
+            private final int savedPosition = position;
+            private int indexPosition = 1;
+
+            @Override
+            public boolean hasNext() {
+                if (savedPosition != position) {
+                    throw new ConcurrentModificationException();
+                }
+                return indexPosition < position;
+            }
+
+            @Override
+            public Integer next() {
+                if (savedPosition != position) {
+                    throw new ConcurrentModificationException();
+                }
+                if (indexPosition > position) {
+                    throw new IndexOutOfBoundsException();
+                }
+                Integer temp = array[indexPosition];
+                indexPosition += 2;
+                return temp;
+            }
+        };
     }
 
     /**
@@ -68,7 +115,31 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new Iterator<Integer>() {
+            private final int savedPosition = position;
+            private int indexPosition = 0;
+
+            @Override
+            public boolean hasNext() {
+                if (savedPosition != position) {
+                    throw new ConcurrentModificationException();
+                }
+                return indexPosition < position;
+            }
+
+            @Override
+            public Integer next() {
+                if (savedPosition != position) {
+                    throw new ConcurrentModificationException();
+                }
+                if (indexPosition > position) {
+                    throw new IndexOutOfBoundsException();
+                }
+                Integer temp = array[indexPosition];
+                indexPosition += 2;
+                return temp;
+            }
+        };
     }
 
     private void checkIndex(int index) {
