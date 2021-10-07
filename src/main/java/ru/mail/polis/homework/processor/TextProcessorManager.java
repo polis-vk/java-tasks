@@ -32,14 +32,25 @@ package ru.mail.polis.homework.processor;
  * Суммарно, по всему заданию 15 баллов
  */
 public class TextProcessorManager {
-
-    private static final TextProcessorManager EMPTY = null;
+    private final TextProcessor[] processors;
+    private static final TextProcessorManager EMPTY = new TextProcessorManager(null);
 
     private TextProcessorManager(TextProcessor[] processors) {
+        this.processors = processors;
     }
 
     public String processText(String text) {
-        return null;
+        if (text == null) {
+            return null;
+        }
+        if (processors == null) {
+            return text;
+        }
+        String res = text;
+        for (TextProcessor textProcessor : processors) {
+            res = textProcessor.getProcessedText(res);
+        }
+        return res;
     }
 
     public static TextProcessorManager construct(TextProcessor[] processors) {
@@ -51,6 +62,11 @@ public class TextProcessorManager {
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
+        for (int i = 0; i < processors.length - 1; i++) {
+            if (processors[i].getProcessingStage().ordinal() > processors[i + 1].getProcessingStage().ordinal()) {
+                return false;
+            }
+        }
         return true;
     }
 }
