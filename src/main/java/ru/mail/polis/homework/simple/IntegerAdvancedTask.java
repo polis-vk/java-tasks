@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.simple;
 
 
+import java.util.Locale;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -12,11 +14,12 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        // Воспользуемся формулу суммы геометрической прогрессии
+        return (long) ((a * (Math.pow(q, n) - 1)) / (q - 1));
     }
 
     /**
@@ -28,7 +31,31 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 11, 20) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int x = 0, y = 0;
+        int dx = right - left;
+        int dy = up - down;
+        int c = 1;
+
+        if (dx <= 0 && dy <= 0 && x + right < grassX && y + up < grassY) {
+            return Integer.MAX_VALUE;
+        }
+
+        while (!checkCoords(x, y, grassX, grassY)) {
+            x += right;
+            y += up;
+            if (checkCoords(x, y, grassX, grassY)) {
+                break;
+            }
+            x -= left;
+            y -= down;
+            c++;
+        }
+
+        return c;
+    }
+
+    private static boolean checkCoords(int x, int y, int grassX, int grassY) {
+        return x >= grassX || y >= grassY;
     }
 
     /**
@@ -37,7 +64,8 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        String num = Integer.toHexString(n).toUpperCase();
+        return num.charAt(num.length() - order);
     }
 
     /**
@@ -47,7 +75,16 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        String num = Long.toHexString(a);
+        char min = 'g';
+        int index = 0;
+        for (int i = num.length() - 1, j = 1; i >= 0; i--, j++) {
+            if (num.charAt(i) < min) {
+                index = j;
+                min = num.charAt(i);
+            }
+        }
+        return (byte) index;
     }
 
 }
