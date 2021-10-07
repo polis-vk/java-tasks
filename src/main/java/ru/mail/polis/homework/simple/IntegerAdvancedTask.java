@@ -16,7 +16,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return (long) (a * ((long) Math.pow(q, n) - 1) / (q - 1));
+        return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
@@ -30,17 +30,18 @@ public class IntegerAdvancedTask {
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
         int xSpeed = right - left;
         int ySpeed = up - down;
-
-        if (0 >= grassX || 0 >= grassY || right >= grassX || up >= grassY)
+        if (0 >= grassX || 0 >= grassY || right >= grassX || up >= grassY) {
             return 1;
-        if (xSpeed <= 0 && ySpeed <= 0)
+        }
+        if (xSpeed <= 0 && ySpeed <= 0) {
             return Integer.MAX_VALUE;
-
-        if (xSpeed <= 0)//зная на сколько клеток вверх смещается гусеница каждый день, считаем когда она достигнет травы
+        }
+        if (xSpeed <= 0) {//зная на сколько клеток вверх смещается гусеница каждый день, считаем когда она достигнет травы
             return (int) Math.ceil(1 + (grassY - up) / (double) ySpeed);
-        if (ySpeed <= 0)
+        }
+        if (ySpeed <= 0) {
             return (int) Math.ceil(1 + (grassX - right) / (double) xSpeed);
-
+        }
         //минимум из предыдущих двух выражений в случае если гусеница по окончанию дня смещается как вправо, так и вверх
         //на положительное число клеток
         return Integer.min((int) Math.ceil(1 + (grassY - up) / (double) ySpeed), (int) Math.ceil(1 + (grassX - right) / (double) xSpeed));
@@ -52,10 +53,13 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        int result  = (n>>(4*(order-1)))&15;
-
-        if (result < 10)
+        if(order<1){
+            return '0';
+        }
+        int result = (n >> (4 * (order - 1))) & 15;
+        if (result < 10) {
             return (char) (result + '0');
+        }
         return (char) (result + 'A' - 10);
     }
 
@@ -68,8 +72,7 @@ public class IntegerAdvancedTask {
     public static byte minNumber(long a) {
         long min = a & 15, tmp;
         byte minIndex = 1, tmpIndex = 2;
-        long number = a;
-        number >>= 4;
+        long number = a>>4;
         while (number != 0) {
             tmp = number & 15;
             if (tmp < min) {
