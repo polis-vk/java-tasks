@@ -180,12 +180,4 @@ public class TextProcessorManagerTest {
     private static boolean isValid(TextProcessor ... processors) {
         return TextProcessorManager.isValidSequence(processors);
     }
-
-    private static TextProcessorManager manager(TextProcessor ... processors) {
-        return TextProcessorManager.construct(processors);
-    }
-
-    private static TextProcessor[] sequence(TextProcessor ... processors) {
-        return processors;
-    }
 }
