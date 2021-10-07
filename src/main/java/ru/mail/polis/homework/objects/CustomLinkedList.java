@@ -14,7 +14,15 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
-
+        if (head == null) {
+            head = new Node(value);
+            return;
+        }
+        Node current = head;
+        while (current.next != null) {
+            current = current.next;
+        }
+        current.setNext(new Node(value));
     }
 
     /**
@@ -25,7 +33,19 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-
+        if (head == null) {
+            throw new IndexOutOfBoundsException();
+        }
+        Node current = head;
+        int currentIndex = 0;
+        while ((current.next != null) && (currentIndex < index - 1)) {
+            current = current.next;
+            currentIndex++;
+        }
+        if (current.next == null) {
+            throw new IndexOutOfBoundsException();
+        }
+        current.setNext(current.next.next);
     }
 
     /**
@@ -36,7 +56,20 @@ public class CustomLinkedList {
      *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-
+        if (head == null) {
+            return;
+        }
+        Node previous = null;
+        Node current = head;
+        Node next = current.next;
+        while (next != null) {
+            current.next = previous;
+            previous = current;
+            current = next;
+            next = next.next;
+        }
+        current.next = previous;
+        head = current;
     }
 
     /**
@@ -50,7 +83,15 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        StringBuilder str = new StringBuilder();
+        Node current = head;
+        while (current != null) {
+            str.append(current.value);
+            str.append(" -> ");
+            current = current.next;
+        }
+        str.append("null");
+        return str.toString();
     }
 
     private static class Node {
