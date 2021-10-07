@@ -16,7 +16,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if(q==1)
+            return a*n;
+        else
+        return (long) (a*(Math.pow(q,n)-1)/(q-1));
     }
 
     /**
@@ -25,10 +28,27 @@ public class IntegerAdvancedTask {
      * Сколько суток понадобится гусенице, чтобы доползти до поля с травой?
      * Считаем, что на каждой клетке с координатами >= grassX или >= grassY находится трава
      * Если она этого никогда не сможет сделать, Верните число Integer.MAX_VALUE;
-     * Пример: (10, 3, 5, 5, 20, 1) -> 2
+     * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if(up>=grassY || right>=grassX || grassX<=0 ||grassY<=0)
+            return 1;
+        else if(up>down||right>left){
+            int coordX=0;
+            int coordY=0;
+            int count=0;
+           while (coordX<=grassX && coordY<=grassY){
+               count++;
+               coordX+=right;
+               coordY+=up;
+               if(coordX>=grassX || coordY>=grassY)
+                   return count;
+               coordX-=left;
+               coordY-=down;
+           }
+           return count;
+        }else
+              return Integer.MAX_VALUE;
     }
 
     /**
@@ -38,8 +58,18 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
-    }
+        for (int i = 0; i < order-1; i++) {
+            n/=16;
+        }
+
+            int rez=Math.abs(n%16);
+            if(rez>9)
+                return (char) ('A'+(rez-10));
+            else
+                return (char)(rez+'0');
+        }
+
+
 
     /**
      * Дано число в 10-ном формате.
@@ -49,7 +79,17 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte i=0,j=0;
+        int min=16;
+        while (a>0){
+            i++;
+            if(a%16<min) {
+                min = (int) (a % 16);
+                j=i;
+            }
+        a/=16;
+        }
+        return j;
     }
 
 }
