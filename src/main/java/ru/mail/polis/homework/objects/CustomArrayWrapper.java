@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -15,6 +17,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
+    private int modCount;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -23,12 +26,14 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     public void add(int value) {
         checkIndex(position);
         array[position] = value;
+        modCount++;
         position++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
+        modCount++;
     }
 
     public int get(int index) {
@@ -48,7 +53,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new ConfigurableIterator();
     }
 
     /**
@@ -58,7 +63,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new ConfigurableIterator(1, 2);
     }
 
     /**
@@ -68,13 +73,46 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new ConfigurableIterator(0, 2);
     }
 
     private void checkIndex(int index) {
-        if (index < 0 || index >= array.length) {
+        if (index < 0 || index >= size()) {
             throw new IndexOutOfBoundsException();
         }
     }
 
+    private class ConfigurableIterator implements Iterator<Integer> {
+        int iteratorPosition;
+        int fixedModCount = modCount;
+        final int step;
+
+        public ConfigurableIterator(int startPosition, int step) {
+            iteratorPosition = startPosition;
+            this.step = step;
+        }
+
+        public ConfigurableIterator() {
+            this(0, 1);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iteratorPosition < size();
+        }
+
+        @Override
+        public Integer next() {
+            if (fixedModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+
+            if (iteratorPosition >= size()) {
+                throw new NoSuchElementException();
+            }
+            int prevPosition = iteratorPosition;
+            iteratorPosition += step;
+            return array[prevPosition];
+        }
+    }
 }
