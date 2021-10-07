@@ -38,9 +38,9 @@ public class IntegerAdvancedTask {
         if (grassX <= 0 || grassY <= 0) {
             return 0;
         }
-        grassX -= right;
-        grassY -= up;
-        if (grassY <= 0 || grassX <= 0) {
+        int tempGrassX = grassX - right;
+        int tempGrassY = grassY - up;
+        if (tempGrassX <= 0 || tempGrassY <= 0) {
             return 1;
         }
 
@@ -49,10 +49,10 @@ public class IntegerAdvancedTask {
         int dX = right - left;
         int dY = up - down;
         if (dX > 0) {
-            xTime = (int) Math.ceil((double) grassX / dX) + 1;
+            xTime = (int) Math.ceil((double) tempGrassX / dX) + 1;
         }
         if (dY > 0) {
-            yTime = (int) Math.ceil((double) grassY / dY) + 1;
+            yTime = (int) Math.ceil((double) tempGrassY / dY) + 1;
         }
         return Math.min(xTime, yTime);
     }
@@ -83,14 +83,12 @@ public class IntegerAdvancedTask {
         }
         long min = a % 16;
         byte counter = 1;
-        long temp = a;
-        byte firstMinimum = counter;
-        while (temp > 0) {
+        byte firstMinimum = 1;
+        for(long temp = a; (temp > 0) && (min != 0); temp /= 16) {
             if (min > (temp % 16)) {
                 firstMinimum = counter;
                 min = temp % 16;
             }
-            temp /= 16;
             counter++;
         }
         return firstMinimum;

@@ -12,6 +12,7 @@ import java.util.Collections;
  */
 public class DoubleAdvancedTask {
     public static final double ERROR = 0.00001;
+
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
      * Вывод менять не нужно, надо только посчитать x1, x2 и x3, где x1 >= x2 >= x3
@@ -80,8 +81,8 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        if (((x1 == x2) && (y1 == y2) && (z1 == z2)) || ((x2 == x3) && (y2 == y3) && (z2 == z3)) ||
-                ((x3 == x1) && (y3 == y1) && (z3 == z1))) {
+        if (((x1 == x2) && (y1 == y2) && (z1 == z2)) || ((x2 == x3) && (y2 == y3) && (z2 == z3))
+                || ((x3 == x1) && (y3 == y1) && (z3 == z1))) {
             throw new IllegalArgumentException("Three point determine an infinite set of planes\n");
         }
         int a = y1 * (z2 - z3) + y2 * (z3 - z1) + y3 * (z1 - z2);
