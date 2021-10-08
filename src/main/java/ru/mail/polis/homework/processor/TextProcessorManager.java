@@ -21,36 +21,52 @@ package ru.mail.polis.homework.processor;
  * <p>
  * Чтобы не усложнять логику TextProcessorManager, предлагается инициализировать экземпляр TextProcessorManager во
  * вспомогательном статическом методе construct. Здесь будет проверяться корректность заданной последовательности,
- * и если она некорректна, то вернем заглушку, которая ничего не делает. Иначе создадим экземпляр с помощью приватного
+ * и если она некорректна, то вернем заглушку, которая ничего не делает.наче создадим экземпляр с помощью приватного
  * конструктора. Таким образом мы гарантируем, что экземпляр класса всегда проинициализирован с корректной
  * последовательностью обработчиков. Этот шаблон уже частично реализован, достаточно только реализовать
  * проверку на корректность (статический метод isValidSequence) и экземпляр заглушки (статическое поле EMPTY).
  * Обратите внимание, что метод isValidSequence не имеет модификатора доступа, и таким образом, он доступен в коде
  * юнит-тестов (т.к. они относятся к тому же пакету).
- *
- * Базовая обвязка класса 2 балла + 3 балла за валидацию. Итого 5
+ * <p>
+ * Базовая обвязка класса 2 балла + 3 балла за валидацию.того 5
  * Суммарно, по всему заданию 15 баллов
  */
 public class TextProcessorManager {
 
-    private static final TextProcessorManager EMPTY = null;
+    private final TextProcessor[] processors;
 
     private TextProcessorManager(TextProcessor[] processors) {
+        this.processors = processors;
     }
 
     public String processText(String text) {
-        return null;
+        if (text == null) {
+            return null;
+        }
+        String workableText = text;
+        for (TextProcessor processor : processors) {
+            workableText = processor.execute(workableText);
+        }
+        return workableText;
     }
 
     public static TextProcessorManager construct(TextProcessor[] processors) {
         if (!isValidSequence(processors)) {
-            return EMPTY;
+            return new TextProcessorManager(new TextProcessor[]{});
         }
         return new TextProcessorManager(processors);
     }
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
+        int currentStage = 0;
+        for (TextProcessor processor : processors) {
+            if (processor.getStage().ordinal() >= currentStage) {
+                currentStage = processor.getStage().ordinal();
+            } else {
+                return false;
+            }
+        }
         return true;
     }
 }
