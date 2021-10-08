@@ -51,6 +51,13 @@ public class TextProcessorManager {
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
+        ProcessingStage currentProcessingStage = ProcessingStage.PREPROCESSING;
+        for (TextProcessor processor : processors) {
+            if (processor.getProcessingStage().ordinal() < currentProcessingStage.ordinal()) {
+                return false;
+            }
+            currentProcessingStage = processor.getProcessingStage();
+        }
         return true;
     }
 }
