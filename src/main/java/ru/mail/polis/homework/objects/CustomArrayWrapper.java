@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
@@ -15,6 +16,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
+    private int modCount = 0;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -24,6 +26,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
+        modCount++;
     }
 
     public void edit(int index, int value) {
@@ -48,7 +51,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new CustomIterator(0,1);
     }
 
     /**
@@ -58,7 +61,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new CustomIterator(1, 2);
     }
 
     /**
@@ -68,12 +71,35 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new CustomIterator(0, 2);
     }
 
     private void checkIndex(int index) {
         if (index < 0 || index >= array.length) {
             throw new IndexOutOfBoundsException();
+        }
+    }
+
+    class CustomIterator implements Iterator<Integer> {
+        private int index;
+        private final int step;
+        private final int expectedModCount = modCount;
+        CustomIterator(int offset, int step) {
+            this.index = offset;
+            this.step = step;
+        }
+        @Override
+        public boolean hasNext() {
+            return index < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            if (expectedModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+            index += step;
+            return array[index - step];
         }
     }
 

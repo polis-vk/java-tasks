@@ -14,7 +14,16 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
-
+        Node newNode = new Node(value);
+        if (head == null) {
+            head = newNode;
+        } else {
+            Node node = head;
+            while (node.next != null) {
+                node = node.next;
+            }
+            node.next = newNode;
+        }
     }
 
     /**
@@ -25,7 +34,20 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-
+        Node prev = null;
+        Node current = head;
+        for (int i = 0; i < index; i++) {
+            prev = current;
+            current = current.next;
+            if (current == null) {
+                throw new IndexOutOfBoundsException();
+            }
+        }
+        if (prev != null) {
+            prev.setNext(current.next);
+        } else {
+            head = head.next;
+        }
     }
 
     /**
@@ -36,7 +58,20 @@ public class CustomLinkedList {
      *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-
+        Node current = head;
+        if (current == null) {
+            return;
+        }
+        Node next = current.next;
+        Node prev;
+        current.next = null;
+        while (next != null) {
+            prev = current;
+            current = next;
+            next = current.next;
+            current.setNext(prev);
+        }
+        head = current;
     }
 
     /**
@@ -50,7 +85,15 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        Node node = head;
+        StringBuilder result = new StringBuilder();
+        while (node != null) {
+            result.append(node.value);
+            result.append(" -> ");
+            node = node.next;
+        }
+        result.append("null");
+        return result.toString();
     }
 
     private static class Node {
@@ -63,6 +106,11 @@ public class CustomLinkedList {
 
         public void setNext(Node next) {
             this.next = next;
+        }
+
+        @Override
+        public String toString() {
+            return Integer.toString(value);
         }
     }
 }
