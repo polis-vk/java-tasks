@@ -33,13 +33,22 @@ package ru.mail.polis.homework.processor;
  */
 public class TextProcessorManager {
 
-    private static final TextProcessorManager EMPTY = null;
+    private TextProcessor[] processors;
+
+    private static final TextProcessorManager EMPTY = new TextProcessorManager(new TextProcessor[0]);
 
     private TextProcessorManager(TextProcessor[] processors) {
+        this.processors = processors;
     }
 
     public String processText(String text) {
-        return null;
+        if (text == null) {
+            return null;
+        }
+        for (TextProcessor processor : processors) {
+            text = processor.execute(text);
+        }
+        return text;
     }
 
     public static TextProcessorManager construct(TextProcessor[] processors) {
