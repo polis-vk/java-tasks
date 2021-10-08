@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.processor;
 
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
+
 /**
  * Задание: написать систему обработки текста.
  * Надо реализовать 4 обработчика текста
@@ -27,30 +30,45 @@ package ru.mail.polis.homework.processor;
  * проверку на корректность (статический метод isValidSequence) и экземпляр заглушки (статическое поле EMPTY).
  * Обратите внимание, что метод isValidSequence не имеет модификатора доступа, и таким образом, он доступен в коде
  * юнит-тестов (т.к. они относятся к тому же пакету).
- *
+ * <p>
  * Базовая обвязка класса 2 балла + 3 балла за валидацию. Итого 5
  * Суммарно, по всему заданию 15 баллов
  */
 public class TextProcessorManager {
 
-    private static final TextProcessorManager EMPTY = null;
+    private static final TextProcessorManager EMPTY = new TextProcessorManager(UnaryOperator.identity());
+    private final Function<String, String> processor;
 
-    private TextProcessorManager(TextProcessor[] processors) {
+    private TextProcessorManager(Function<String, String> processor) {
+        this.processor = processor;
     }
 
     public String processText(String text) {
-        return null;
+        return (text == null) ? null : processor.apply(text);
     }
 
     public static TextProcessorManager construct(TextProcessor[] processors) {
-        if (!isValidSequence(processors)) {
+        if (!isValidSequence(processors) || processors.length == 0) {
             return EMPTY;
         }
-        return new TextProcessorManager(processors);
+        Function<String, String> result = processors[0];
+        for (int i = 1; i < processors.length; i++) {
+            result = result.andThen(processors[i]);
+        }
+        return new TextProcessorManager(result);
     }
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
+        ProcessingStage stage = ProcessingStage.PRE_PROCESSING;
+        for (TextProcessor processor : processors) {
+            if (processor.stage().compareTo(stage) < 0) {
+                return false;
+            }
+            if (processor.stage().compareTo(stage) > 0) {
+                stage = processor.stage();
+            }
+        }
         return true;
     }
 }
