@@ -30,7 +30,7 @@ public interface TextProcessor extends UnaryOperator<String> {
     TextProcessor SQUASH_WHITE_SPACES_PROCESSOR = new TextProcessor() {
         @Override
         public String apply(String s) {
-            return (s == null) ? null : s.replaceAll("\\s+", " ");
+            return s.replaceAll("\\s+", " ");
         }
 
         @Override
@@ -54,7 +54,7 @@ public interface TextProcessor extends UnaryOperator<String> {
 
             @Override
             public String apply(String s) {
-                return (s == null) ? null : s.replaceFirst(regex, replacement);
+                return s.replaceFirst(regex, replacement);
             }
         };
     }
@@ -76,7 +76,7 @@ public interface TextProcessor extends UnaryOperator<String> {
 
             @Override
             public String apply(String s) {
-                return (s == null || maxLength > s.length()) ? s : s.substring(0, maxLength);
+                return (maxLength > s.length()) ? s : s.substring(0, maxLength);
             }
         };
     }
@@ -98,7 +98,7 @@ public interface TextProcessor extends UnaryOperator<String> {
 
         @Override
         public String apply(String s) {
-            return (s == null) ? null : s.toUpperCase();
+            return s.toUpperCase();
         }
     };
 }
