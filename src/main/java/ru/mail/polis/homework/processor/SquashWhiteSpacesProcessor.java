@@ -8,7 +8,7 @@ public class SquashWhiteSpacesProcessor implements TextProcessor {
     }
 
     @Override
-    public void execute(String str) {
-        str = str.replaceAll("\\s+", " ");
+    public String execute(String str) {
+        return str.replaceAll("\\s+", " ");
     }
 }

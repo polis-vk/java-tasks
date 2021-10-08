@@ -16,7 +16,7 @@ public interface TextProcessor {
 
     ProcessingStage getProcessingStage();
 
-    void execute(String str);
+    String execute(String str);
 
     /**
      * Схлопывает все пустые символы в один пробел.
