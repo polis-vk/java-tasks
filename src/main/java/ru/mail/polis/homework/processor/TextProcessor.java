@@ -14,14 +14,18 @@ package ru.mail.polis.homework.processor;
  */
 public interface TextProcessor {
 
+    public ProcessingStage getStage();
+
+    public String process(String text);
+
     /**
      * Схлопывает все пустые символы в один пробел.
      * Более формально, заменить каждую подстроку, удовлетворяющую регулярному выражению \s+ на 1 пробел.
-     *
+     * <p>
      * Стадия: препроцессинг
      */
     static TextProcessor squashWhiteSpacesProcessor() {
-        return null;
+        return new squashWhiteSpacesProcessor();
     }
 
     /**
@@ -31,7 +35,7 @@ public interface TextProcessor {
      * Стадия: процессинг
      */
     static TextProcessor replaceFirstProcessor(String regex, String replacement) {
-        return null;
+        return new replaceFirstProcessor(regex, replacement);
     }
 
     /**
@@ -43,7 +47,7 @@ public interface TextProcessor {
      * @param maxLength неотрицательное число
      */
     static TextProcessor trimProcessor(int maxLength) {
-        return null;
+        return new trimProcessor(maxLength);
     }
 
     /**
@@ -52,6 +56,6 @@ public interface TextProcessor {
      * Стадия: постпроцессинг
      */
     static TextProcessor upperCaseProcessor() {
-        return null;
+        return new upperCaseProcessor();
     }
 }
