@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.simple;
 
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -11,14 +12,11 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     * <p>
+     *
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (DoubleAdvancedTask.isEquals(q, 1.0)) {
-            return (long) a * n;
-        }
-        return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
+        return 0;
     }
 
     /**
@@ -30,29 +28,7 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        if (right >= grassX || up >= grassY) {
-            return 1;
-        }
-        int currentX = 0;
-        int currentY = 0;
-        if (currentX >= grassX || currentY >= grassY) {
-            return 0;
-        }
-        if (right - left <= 0 && up - down <= 0) {
-            return Integer.MAX_VALUE;
-        }
-        int daysCounter = 1;
-        while (currentX < grassX && currentY < grassY) {
-            currentX += right;
-            currentY += up;
-            if (currentX >= grassX || currentY >= grassY) {
-                return daysCounter;
-            }
-            currentX -= left;
-            currentY -= down;
-            daysCounter++;
-        }
-        return daysCounter;
+        return 0;
     }
 
     /**
@@ -62,20 +38,7 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        int dividend = n;
-        int newDividend;
-        int result = 0;
-        int indexOfCurrentDischarge = 0;
-        while (indexOfCurrentDischarge < order) {
-            newDividend = dividend / 16;
-            result = dividend % 16;
-            dividend = newDividend;
-            indexOfCurrentDischarge++;
-        }
-        if (result >= 10) {
-            return (char) (result + ('A' - 10));
-        }
-        return (char) (result + '0');
+        return 0;
     }
 
     /**
@@ -86,29 +49,7 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        long divided = a;
-        long newDivided;
-        byte min = 17;
-        byte minimalIndex = -1;
-        byte currentDischarge;
-        byte indexOfCurrentDischarge = 1;
-        while (divided > 15) {
-            newDivided = divided / 16;
-            currentDischarge = (byte) (divided % 16);
-            if (currentDischarge < min) {
-                min = currentDischarge;
-                minimalIndex = indexOfCurrentDischarge;
-                if (min == 0) {
-                    return minimalIndex;
-                }
-            }
-            indexOfCurrentDischarge++;
-            divided = newDivided;
-        }
-        if (divided < min) {
-            return indexOfCurrentDischarge;
-        }
-        return minimalIndex;
+        return 0;
     }
 
 }
