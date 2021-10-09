@@ -6,17 +6,17 @@ package ru.mail.polis.homework.processor;
  * Ниже надо реализовать методы, которые создают обработчики заданного типа (то что они возвращают интерфейс,
  * это как раз прием ООП, где нам не важна конкретная реализация, а важен только контракт,
  * что результат статических методов умеет как-то обрабатывать текст).
- *
+ * <p>
  * Сами статические методы мне нужны для создания тестов, что бы без реальных классов (которые вы напишите)
  * я смог "сэмулировать" их создание.
- *
+ * <p>
  * Каждый обработчик 2 балла. Итого 8
  */
 public interface TextProcessor {
 
-    public ProcessingStage getStage();
+    ProcessingStage getStage();
 
-    public String process(String text);
+    String process(String text);
 
     /**
      * Схлопывает все пустые символы в один пробел.
@@ -31,7 +31,7 @@ public interface TextProcessor {
     /**
      * Находит первую подстроку, которая удовлетвроряет регулярному выражению regex, и заменяет ее на подстроку replacement
      * Предполагаем, что параметры корректны
-     *
+     * <p>
      * Стадия: процессинг
      */
     static TextProcessor replaceFirstProcessor(String regex, String replacement) {
@@ -41,7 +41,7 @@ public interface TextProcessor {
     /**
      * Данный обработчик должен оставить первые maxLength символов исходного текста.
      * Если текст короче, то ничего не делать
-     *
+     * <p>
      * Стадия: постпроцессинг
      *
      * @param maxLength неотрицательное число
@@ -52,7 +52,7 @@ public interface TextProcessor {
 
     /**
      * Обработчик заменяет все символы на заглавные
-     *
+     * <p>
      * Стадия: постпроцессинг
      */
     static TextProcessor upperCaseProcessor() {
