@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -15,6 +17,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
+    int modCounter = 0;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -24,11 +27,13 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
+        modCounter++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
+        modCounter++;
     }
 
     public int get(int index) {
@@ -48,7 +53,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new Iter();
     }
 
     /**
@@ -58,7 +63,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new evenIter();
     }
 
     /**
@@ -68,7 +73,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new oddIter();
     }
 
     private void checkIndex(int index) {
@@ -77,4 +82,68 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
+    private class Iter implements Iterator<Integer> {
+        private int position = 0;
+        private final int fixedModCounter = modCounter;
+
+        @Override
+        public boolean hasNext() {
+            return position < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            if (fixedModCounter != modCounter) {
+                throw new ConcurrentModificationException();
+            }
+            if (position >= array.length) {
+                throw new NoSuchElementException();
+            }
+            return array[position++];
+        }
+    }
+
+    private class oddIter implements Iterator<Integer> {
+        private int position = 0;
+        private final int fixedModCounter = modCounter;
+
+        @Override
+        public boolean hasNext() {
+            return position < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            if (fixedModCounter != modCounter) {
+                throw new ConcurrentModificationException();
+            }
+            if (position - 1 >= array.length) {
+                throw new NoSuchElementException();
+            }
+            position += 2;
+            return array[position - 2];
+        }
+    }
+
+    private class evenIter implements Iterator<Integer> {
+        private int position = 1;
+        private final int fixedModCounter = modCounter;
+
+        @Override
+        public boolean hasNext() {
+            return position < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            if (fixedModCounter != modCounter) {
+                throw new ConcurrentModificationException();
+            }
+            if (position - 1 >= array.length) {
+                throw new NoSuchElementException();
+            }
+            position += 2;
+            return array[position - 2];
+        }
+    }
 }
