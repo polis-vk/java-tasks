@@ -33,24 +33,39 @@ package ru.mail.polis.homework.processor;
  */
 public class TextProcessorManager {
 
-    private static final TextProcessorManager EMPTY = null;
+    private final TextProcessor[] processors;
 
     private TextProcessorManager(TextProcessor[] processors) {
+        this.processors = processors;
     }
 
     public String processText(String text) {
-        return null;
+        if (text == null || processors == null) {
+            return text;
+        }
+
+        for (TextProcessor processor : processors) {
+            text = processor.process(text);
+        }
+        return text;
     }
 
     public static TextProcessorManager construct(TextProcessor[] processors) {
         if (!isValidSequence(processors)) {
-            return EMPTY;
+            return new TextProcessorManager(null);
         }
         return new TextProcessorManager(processors);
     }
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
+        ProcessingStage currentStage = ProcessingStage.PRE_PROCESSING;
+        for (TextProcessor processor : processors) {
+            if (currentStage.priority > processor.getStage().priority) {
+                return false;
+            }
+            currentStage = processor.getStage();
+        }
         return true;
     }
 }
