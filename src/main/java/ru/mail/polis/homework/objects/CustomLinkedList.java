@@ -14,7 +14,15 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
-
+        if (head == null) {
+            head = new Node(value);
+            return;
+        }
+        Node cur = head;
+        while (cur.next != null) {
+            cur = cur.next;
+        }
+        cur.setNext(new Node(value));
     }
 
     /**
@@ -25,7 +33,22 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
+        if (head == null) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (index == 0) {
+            head = head.next;
+            return;
+        }
+        Node prev = head;
+        for (int i = 0; i < index - 1; i++) {
+            prev = prev.next;
+            if (prev.next == null) {
+                throw new IndexOutOfBoundsException();
+            }
 
+        }
+        prev.setNext(prev.next.next);
     }
 
     /**
@@ -36,7 +59,15 @@ public class CustomLinkedList {
      *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-
+        Node prev = null;
+        Node cur = head;
+        while (cur != null) {
+            Node next = cur.next;
+            cur.setNext(prev);
+            prev = cur;
+            cur = next;
+        }
+        head = prev;
     }
 
     /**
@@ -50,7 +81,15 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        StringBuilder s = new StringBuilder();
+        Node node = head;
+        while (node != null) {
+            s.append(node.value);
+            s.append(" -> ");
+            node = node.next;
+        }
+        s.append("null");
+        return s.toString();
     }
 
     private static class Node {
