@@ -27,19 +27,29 @@ package ru.mail.polis.homework.processor;
  * проверку на корректность (статический метод isValidSequence) и экземпляр заглушки (статическое поле EMPTY).
  * Обратите внимание, что метод isValidSequence не имеет модификатора доступа, и таким образом, он доступен в коде
  * юнит-тестов (т.к. они относятся к тому же пакету).
- *
+ * <p>
  * Базовая обвязка класса 2 балла + 3 балла за валидацию. Итого 5
  * Суммарно, по всему заданию 15 баллов
  */
 public class TextProcessorManager {
 
-    private static final TextProcessorManager EMPTY = null;
+    private static final TextProcessorManager EMPTY = new TextProcessorManager(new TextProcessor[]{});
+    private final TextProcessor[] processors;
 
     private TextProcessorManager(TextProcessor[] processors) {
+        this.processors = processors;
     }
 
     public String processText(String text) {
-        return null;
+        if (text == null) {
+            return null;
+        }
+
+        String result = text;
+        for (TextProcessor processor : processors) {
+            result = processor.processText(result);
+        }
+        return result;
     }
 
     public static TextProcessorManager construct(TextProcessor[] processors) {
@@ -51,6 +61,28 @@ public class TextProcessorManager {
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
+        ProcessingStage currentStage = ProcessingStage.PREPROCESSING;
+        for (TextProcessor processor : processors) {
+            switch (processor.getStage()) {
+                case PREPROCESSING: {
+                    if (currentStage != ProcessingStage.PREPROCESSING) {
+                        return false;
+                    }
+                    break;
+                }
+                case PROCESSING: {
+                    if (currentStage == ProcessingStage.POSTPROCESSING) {
+                        return false;
+                    }
+                    currentStage = ProcessingStage.PROCESSING;
+                    break;
+                }
+                case POSTPROCESSING: {
+                    currentStage = ProcessingStage.POSTPROCESSING;
+                    break;
+                }
+            }
+        }
         return true;
     }
 }
