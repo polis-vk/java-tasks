@@ -33,7 +33,7 @@ package ru.mail.polis.homework.processor;
  * Суммарно, по всему заданию 15 баллов
  */
 public class TextProcessorManager {
-    final TextProcessor[] processors;
+    private final TextProcessor[] processors;
 
     private static final TextProcessorManager EMPTY = new TextProcessorManager(new TextProcessor[0]);
 
