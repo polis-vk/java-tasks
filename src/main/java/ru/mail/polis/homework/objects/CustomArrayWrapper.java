@@ -45,42 +45,6 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         return array.length;
     }
 
-    private class Iter implements Iterator<Integer> {
-        int position;
-        int increment;
-        int fixedCountModification = countModification;
-
-        private static final int INCREMENT_FOR_ODD_OR_EVEN = 2;
-        private static final int DEFAULT_INCREMENT = 1;
-
-        public Iter(int position) {
-            this.position = position;
-            this.increment = INCREMENT_FOR_ODD_OR_EVEN;
-        }
-
-        public Iter() {
-            this.increment = DEFAULT_INCREMENT;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return position < array.length;
-        }
-
-        @Override
-        public Integer next() {
-            if (fixedCountModification != countModification) {
-                throw new ConcurrentModificationException();
-            }
-            if (position >= array.length) {
-                throw new NoSuchElementException();
-            }
-
-            position += increment;
-            return array[position - increment];
-        }
-    }
-
     /**
      * Реализовать метод:
      * Возврящает обычный итератор.
@@ -115,6 +79,42 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     private void checkIndex(int index) {
         if (index < 0 || index >= array.length) {
             throw new IndexOutOfBoundsException();
+        }
+    }
+
+    private class Iter implements Iterator<Integer> {
+        int position;
+        int increment;
+        int fixedCountModification = countModification;
+
+        private static final int INCREMENT_FOR_ODD_OR_EVEN = 2;
+        private static final int DEFAULT_INCREMENT = 1;
+
+        public Iter(int position) {
+            this.position = position;
+            this.increment = INCREMENT_FOR_ODD_OR_EVEN;
+        }
+
+        public Iter() {
+            this.increment = DEFAULT_INCREMENT;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return position < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            if (fixedCountModification != countModification) {
+                throw new ConcurrentModificationException();
+            }
+            if (position >= array.length) {
+                throw new NoSuchElementException();
+            }
+
+            position += increment;
+            return array[position - increment];
         }
     }
 

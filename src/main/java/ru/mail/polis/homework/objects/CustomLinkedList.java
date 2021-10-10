@@ -5,6 +5,9 @@ package ru.mail.polis.homework.objects;
  */
 public class CustomLinkedList {
 
+    private static final String DELIMITER = " -> ";
+    private static final String NULL = "null";
+
     private Node head;
     private Node tail;
     private int countOfElements;
@@ -85,11 +88,7 @@ public class CustomLinkedList {
      * - значение каждой Node должно разделяться " -> "
      * - последовательность всегда заканчивается на null
      * - если в списке нет элементов - верните строку "null"
-     *
      */
-
-    private static final String DELIMITER = " -> ";
-    private static final String NULL = "null";
 
     @Override
     public String toString() {
