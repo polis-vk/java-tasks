@@ -63,7 +63,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new evenIter();
+        return new EvenIter();
     }
 
     /**
@@ -73,7 +73,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new oddIter();
+        return new OddIter();
     }
 
     private void checkIndex(int index) {
@@ -96,16 +96,21 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             if (fixedModCounter != modCounter) {
                 throw new ConcurrentModificationException();
             }
-            if (position >= array.length) {
+            if (position - 2 >= array.length) {
                 throw new NoSuchElementException();
             }
             return array[position++];
         }
     }
 
-    private class oddIter implements Iterator<Integer> {
-        private int position = 0;
-        private final int fixedModCounter = modCounter;
+    private class TwoStepIterTemplate implements Iterator<Integer> {
+        protected int position;
+        protected final int fixedModCounter;
+
+        public TwoStepIterTemplate(int position, int fixedModCounter) {
+            this.position = position;
+            this.fixedModCounter = fixedModCounter;
+        }
 
         @Override
         public boolean hasNext() {
@@ -117,7 +122,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             if (fixedModCounter != modCounter) {
                 throw new ConcurrentModificationException();
             }
-            if (position - 1 >= array.length) {
+            if (position - 2 > array.length) {
                 throw new NoSuchElementException();
             }
             position += 2;
@@ -125,25 +130,19 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
-    private class evenIter implements Iterator<Integer> {
-        private int position = 1;
-        private final int fixedModCounter = modCounter;
+    public class OddIter extends TwoStepIterTemplate {
+        protected static final int beginIndex = 0;
 
-        @Override
-        public boolean hasNext() {
-            return position < array.length;
+        public OddIter() {
+            super(beginIndex, modCounter);
         }
+    }
 
-        @Override
-        public Integer next() {
-            if (fixedModCounter != modCounter) {
-                throw new ConcurrentModificationException();
-            }
-            if (position - 1 >= array.length) {
-                throw new NoSuchElementException();
-            }
-            position += 2;
-            return array[position - 2];
+    public class EvenIter extends TwoStepIterTemplate {
+        protected static final int beginIndex = 1;
+
+        public EvenIter() {
+            super(beginIndex, modCounter);
         }
     }
 }
