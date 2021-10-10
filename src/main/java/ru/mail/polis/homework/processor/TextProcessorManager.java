@@ -33,13 +33,23 @@ package ru.mail.polis.homework.processor;
  */
 public class TextProcessorManager {
 
-    private static final TextProcessorManager EMPTY = null;
+    private static final TextProcessorManager EMPTY = new TextProcessorManager(null);
+
+    private final TextProcessor[] processors;
 
     private TextProcessorManager(TextProcessor[] processors) {
+        this.processors = processors;
     }
 
     public String processText(String text) {
-        return null;
+        if (processors == null) {
+            return text;
+        }
+
+        for (TextProcessor proc : processors) {
+            text = proc.process(text);
+        }
+        return text;
     }
 
     public static TextProcessorManager construct(TextProcessor[] processors) {
@@ -51,6 +61,10 @@ public class TextProcessorManager {
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
+        for (int i = 1; i < processors.length; ++i) {
+            if (processors[i].getStage().getOrder() < processors[i - 1].getStage().getOrder())
+                return false;
+        }
         return true;
     }
 }
