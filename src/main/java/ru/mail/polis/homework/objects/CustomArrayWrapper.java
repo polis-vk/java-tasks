@@ -82,69 +82,38 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
-    private class Iter implements Iterator<Integer> {
-        int position = 0;
-        int fixedModCount = modCount;
-
-        @Override
-        public boolean hasNext() {
-            return position < array.length;
-        }
-
-        @Override
-        public Integer next() {
-            if(fixedModCount != modCount) {
-                throw new ConcurrentModificationException();
-            }
-            if (position >= array.length) {
-                throw new NoSuchElementException();
-            }
-            return array[position++];
-        }
-    }
-
-    private class EvenIter implements Iterator<Integer> {
-        int position = 1;
-        int fixedModCount = modCount;
-
-        @Override
-        public boolean hasNext() {
-            return position < array.length;
-        }
-
-        @Override
-        public Integer next() {
-            if(fixedModCount != modCount) {
-                throw new ConcurrentModificationException();
-            }
-            if (position >= array.length) {
-                throw new NoSuchElementException();
-            }
-            position += 2;
-            return array[position - 2];
-        }
-    }
-
     private class OddIter implements Iterator<Integer> {
         int position = 0;
         int fixedModCount = modCount;
 
-
-        @Override
-        public boolean hasNext() {
-            return position < array.length;
-        }
-
-        @Override
         public Integer next() {
-            if(fixedModCount != modCount) {
+            if (fixedModCount != modCount) {
                 throw new ConcurrentModificationException();
             }
             if (position >= array.length) {
                 throw new NoSuchElementException();
             }
+
             position += 2;
             return array[position - 2];
         }
+
+        public boolean hasNext() {
+            return position < array.length;
+        }
     }
+
+    private class EvenIter extends OddIter {
+        EvenIter() {
+            position = 1;
+        }
+    }
+
+    private class Iter extends OddIter {
+        @Override
+        public Integer next() {
+            return array[position++];
+        }
+    }
+
 }

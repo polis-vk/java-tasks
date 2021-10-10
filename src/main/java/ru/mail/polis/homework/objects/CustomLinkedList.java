@@ -32,6 +32,10 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
+        if (index < 0 && head != null) {
+            throw new IndexOutOfBoundsException();
+        }
+
         Node nodeBeforeEl = head;
         for (int i = 0; i < index - 1; i++) {
             if (nodeBeforeEl == null) {
@@ -42,7 +46,12 @@ public class CustomLinkedList {
 
         Node currNode = nodeBeforeEl.getNext();
         if (currNode == null) {
-            throw new IndexOutOfBoundsException();
+            if (index == 0) {
+                //Case for list consists of 1 element
+                head = null;
+            } else {
+                throw new IndexOutOfBoundsException();
+            }
         }
         nodeBeforeEl.setNext(currNode.getNext());
     }
