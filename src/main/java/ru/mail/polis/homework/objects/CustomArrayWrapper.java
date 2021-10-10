@@ -18,6 +18,9 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
     private int modCount;
+    private static final int evenIteratorStartPosition = 1;
+    private static final int oddIteratorStartPosition  = 0;
+    private static final int parityKeepingStep = 2;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -63,7 +66,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new ConfigurableIterator(1, 2);
+        return new ConfigurableIterator(evenIteratorStartPosition, parityKeepingStep);
     }
 
     /**
@@ -73,7 +76,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new ConfigurableIterator(0, 2);
+        return new ConfigurableIterator(oddIteratorStartPosition, parityKeepingStep);
     }
 
     private void checkIndex(int index) {
@@ -84,7 +87,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private class ConfigurableIterator implements Iterator<Integer> {
         int iteratorPosition;
-        int fixedModCount = modCount;
+        final int fixedModCount = modCount;
         final int step;
 
         public ConfigurableIterator(int startPosition, int step) {

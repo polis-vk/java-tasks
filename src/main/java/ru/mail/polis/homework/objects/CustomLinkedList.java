@@ -6,6 +6,7 @@ package ru.mail.polis.homework.objects;
 public class CustomLinkedList {
 
     private Node head;
+    private int size = 0;
 
     /**
      * Реализовать метод:
@@ -23,8 +24,14 @@ public class CustomLinkedList {
             }
             lastNode.next = new Node(value);
         }
+        size++;
     }
 
+    private void checkIndex(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
+        }
+    }
     /**
      * Реализовать метод:
      * Удаляет элемент в указанной позиции, при это связывая его соседние элементы друг с другом.
@@ -33,10 +40,7 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (head == null) {
-            throw new IndexOutOfBoundsException();
-        }
-
+        checkIndex(index);
         if (index == 0) {
             head = head.next;
             return;
@@ -45,16 +49,12 @@ public class CustomLinkedList {
         int currentIndex = 0;
         Node nodePreviousToOneWeDeleting = head;
         while (currentIndex < index - 1) {
-            if (nodePreviousToOneWeDeleting.next == null) {
-                throw new IndexOutOfBoundsException();
-            }
             nodePreviousToOneWeDeleting = nodePreviousToOneWeDeleting.next;
             currentIndex++;
         }
-        if (nodePreviousToOneWeDeleting.next == null) {
-            throw new IndexOutOfBoundsException();
-        }
         nodePreviousToOneWeDeleting.setNext(nodePreviousToOneWeDeleting.next.next);
+
+        size--;
     }
 
     /**
