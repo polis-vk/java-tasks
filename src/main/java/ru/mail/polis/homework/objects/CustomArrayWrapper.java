@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.objects;
 
-import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -52,30 +51,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-
-        return new Iterator<Integer>() {
-            private final int initialModCount = modCount;
-            private int index = -1;
-
-            @Override
-            public boolean hasNext() {
-                if (modCount != initialModCount) {
-                    throw new ConcurrentModificationException();
-                }
-                return index != size() - 1;
-            }
-
-            @Override
-            public Integer next() {
-                if (modCount != initialModCount) {
-                    throw new ConcurrentModificationException();
-                }
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                return get(++index);
-            }
-        };
+        return new CommonIterator(0, 1);
     }
 
     /**
@@ -85,30 +61,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new Iterator<Integer>() {
-            private final int initialModCount = modCount;
-            private int index = -1;
-
-            @Override
-            public boolean hasNext() {
-                if (modCount != initialModCount) {
-                    throw new ConcurrentModificationException();
-                }
-                return index + 2 < size();
-            }
-
-            @Override
-            public Integer next() {
-                if (modCount != initialModCount) {
-                    throw new ConcurrentModificationException();
-                }
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                index += 2;
-                return get(index);
-            }
-        };
+        return new CommonIterator(1, 2);
     }
 
     /**
@@ -118,31 +71,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new Iterator<Integer>() {
-            private final int initialModCount = modCount;
-            private int index = -2;
-
-            @Override
-            public boolean hasNext() {
-                if (modCount != initialModCount) {
-                    throw new ConcurrentModificationException();
-                }
-                return index + 2 < size();
-
-            }
-
-            @Override
-            public Integer next() {
-                if (modCount != initialModCount) {
-                    throw new ConcurrentModificationException();
-                }
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                index += 2;
-                return get(index);
-            }
-        };
+        return new CommonIterator(0, 2);
     }
 
     private void checkIndex(int index) {
@@ -151,4 +80,33 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
+    private class CommonIterator implements Iterator<java.lang.Integer> {
+        private int index;
+        private final int initialModCount = modCount;
+        private final int increment;
+
+        public CommonIterator(int index, int increment) {
+            this.index = index;
+            this.increment = increment;
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (modCount != initialModCount) {
+                throw new ConcurrentModificationException();
+            }
+            return index < size();
+
+        }
+
+        @Override
+        public Integer next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            int result = get(index);
+            index += increment;
+            return result;
+        }
+    }
 }
