@@ -1,11 +1,15 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.NoSuchElementException;
+
 /**
  * Реализовать все методы односвязанного списка.
  */
 public class CustomLinkedList {
 
     private Node head;
+    
+    private int size;
 
     /**
      * Реализовать метод:
@@ -14,17 +18,18 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
-        if(this.head == null) {
+        if (this.head == null) {
             this.head = new Node(value);
             return;
         }
-        
+
         Node toAdd = this.head;
-        while(toAdd.next != null) {
+        while (toAdd.next != null) {
             toAdd = toAdd.next;
         }
-        
+
         toAdd.next = new Node(value);
+        ++this.size;
     }
 
     /**
@@ -35,32 +40,23 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if(this.head == null) {
-            throw new IndexOutOfBoundsException("Empty list");
+        if (index < 0 || index > this.size) {
+            throw new IndexOutOfBoundsException("Invalid index");
         }
-        
-        if(index == 0) {
-            if(this.head == null) {
-                throw new IndexOutOfBoundsException("No element on given position");
-            }
+        Node prevNode = this.head; // узел предшествующий искомому
+        if (prevNode == null) {
+            throw new IndexOutOfBoundsException("Empty List");// java кидает NoSuchElementException
+        }
+
+        if (index == 0) {
             this.head = this.head.next;
-            return;
+        } else {
+            for (int i = 1; i < index; ++i) {
+                prevNode = prevNode.next;
+            }
+            prevNode.next = prevNode.next.next;
         }
-        
-        Node toRemove = this.head;
-        
-        for(int i = 0; i < index - 1; ++i) {
-            if(toRemove.next == null)
-                throw new IndexOutOfBoundsException("No element on given position");
-            toRemove = toRemove.next;
-        }
-        
-        if(toRemove.next == null) {
-            throw new IndexOutOfBoundsException("No element on given position");
-        }
-        
-        toRemove.next = toRemove.next.next;      
-        
+        --this.size;
     }
 
     /**
@@ -71,33 +67,33 @@ public class CustomLinkedList {
      *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-        if(this.head == null || this.head.next == null) {
+        if (this.head == null || this.head.next == null) {
             return;
         }
-        
+
         int length = 1;
         Node current = this.head;
-        while(current.next != null) {
+        while (current.next != null) {
             current = current.next;
             ++length;
         }
-        
+
         Node first;
         Node last;
         int temp;
-        for(int i = 0; i < length / 2; ++i) {
-            
+        for (int i = 0; i < length / 2; ++i) {
+
             first = this.head;
-            for(int j = 0; j < i; ++j)
+            for (int j = 0; j < i; ++j)
                 first = first.next;
             last = first;
-            for(int j = i << 1; j < length - 1; ++j) {
+            for (int j = i << 1; j < length - 1; ++j) {
                 last = last.next;
             }
             temp = first.value;
             first.value = last.value;
             last.value = temp;
-        }        
+        }
     }
 
     /**
@@ -111,17 +107,13 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
-        if(this.head == null)
+        // небольшая проверка чтоб не создавать лишних объектов
+        if (this.head == null)
             return "null";
-        
-        Node node = this.head;
+
         StringBuilder b = new StringBuilder();
-        b.append(node.value);
-        b.append(" -> ");
-        while(node.next != null) {
-            node = node.next;
-            b.append(node.value);
-            b.append(" -> ");
+        for (Node node = this.head; node != null; node = node.next) {
+            b.append(node.value).append(" -> ");
         }
         return b.append("null").toString();
     }

@@ -59,7 +59,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new CustomItr(1,2);
+        return new CustomItr(CustomItr.EVEN_START_POS, CustomItr.DOUBLE_STEP);
     }
 
     /**
@@ -69,7 +69,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new CustomItr(0,2);
+        return new CustomItr(CustomItr.ODD_START_POS, CustomItr.DOUBLE_STEP);
     }
 
     private void checkIndex(int index) {
@@ -79,16 +79,23 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     }
     
     private class CustomItr implements Iterator<Integer> {
+        // private для полей не прописывается, т.к.
+        // все поля доступны только внутри класса CustomArrayWrapper
         int pos;
         int expectedModCount;
         final int step;
+        final static int DEFAULT_START_POS = 0;
+        final static int ODD_START_POS = 0;
+        final static int EVEN_START_POS = 1;
+        final static int DEFAULT_STEP = 1;
+        final static int DOUBLE_STEP = 2;
 
         public CustomItr() {
-            this(0,1);
+            this(DEFAULT_START_POS, DEFAULT_STEP);
         }
-        
-        public CustomItr(int startPos, int step) {
-            this.pos = startPos;
+
+        public CustomItr(int pos, int step) {
+            this.pos = pos;
             this.expectedModCount = CustomArrayWrapper.this.position;
             this.step = step;
         }
@@ -109,7 +116,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             if (CustomArrayWrapper.this.position != this.expectedModCount)
                 throw new ConcurrentModificationException();
         }
-        
+
     }
 
 }
