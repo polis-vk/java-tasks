@@ -35,17 +35,23 @@ public class CustomLinkedList {
     public void removeElement(int index) {
         if ((head == null) || (index < 0)) {
             throw new IndexOutOfBoundsException();
+        } else if (index == 0) {
+            head = head.next;
+            return;
         }
+        Node prev = null;
         Node current = head;
         int currentIndex = 0;
-        while ((current.next != null) && (currentIndex < index - 1)) {
+        while (current != null) {
+            if (index == currentIndex) {
+                prev.setNext(current.next);
+                return;
+            }
+            prev = current;
             current = current.next;
             currentIndex++;
         }
-        if (current.next == null) {
-            throw new IndexOutOfBoundsException();
-        }
-        current.setNext(current.next.next);
+        throw new IndexOutOfBoundsException();
     }
 
     /**
