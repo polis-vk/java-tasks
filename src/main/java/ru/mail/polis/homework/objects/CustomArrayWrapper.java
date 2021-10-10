@@ -63,7 +63,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new EvenIterator();
+        return new ThroughOneIterator(1);
     }
 
     /**
@@ -73,7 +73,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new OddIterator();
+        return new ThroughOneIterator(0);
     }
 
     private void checkIndex(int index) {
@@ -108,25 +108,20 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
-    private class EvenIterator extends DefaultIterator {
+    private class ThroughOneIterator extends DefaultIterator {
 
-        {
-            iteratorPosition = 1;
+        ThroughOneIterator(int startIndex) {
+            super();
+            iteratorPosition = startIndex;
         }
 
         @Override
         public Integer next() {
             super.checksBeforeNext();
-            return array[(iteratorPosition += 2) - 2];
+            int currentPosition = iteratorPosition;
+            iteratorPosition += 2;
+            return array[currentPosition];
         }
-    }
-
-    private class OddIterator extends EvenIterator {
-
-        {
-            iteratorPosition = 0;
-        }
-
     }
 
 }
