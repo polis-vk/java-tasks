@@ -15,6 +15,11 @@ import java.util.NoSuchElementException;
  */
 public class CustomArrayWrapper implements Iterable<Integer> {
 
+    private static final int EVEN_POSITION = 1;
+    private static final int ODD_POSITION = 0;
+    private static final int UNUSUAL_STEP = 2;
+    private static final int USUAL_STEP = 1;
+
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
     private int modCount;
@@ -63,7 +68,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new Iter(1, 2);
+        return new Iter(EVEN_POSITION, UNUSUAL_STEP);
     }
 
     /**
@@ -73,7 +78,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new Iter(0, 2);
+        return new Iter(ODD_POSITION, UNUSUAL_STEP);
     }
 
     private void checkIndex(int index) {
@@ -89,7 +94,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         int modCount = CustomArrayWrapper.this.modCount;
 
         Iter() {
-            step = 1;
+            this(ODD_POSITION, USUAL_STEP);
         }
 
         Iter(int position, int step) {

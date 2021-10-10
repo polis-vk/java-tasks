@@ -33,7 +33,7 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (head == null) {
+        if ((head == null) || (index < 0)) {
             throw new IndexOutOfBoundsException();
         }
         Node current = head;
