@@ -18,6 +18,9 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
     private int modCount = 0;
+    private final static int STEP_FOR_USUAL_ITER = 1;
+    private final static int POSITION_FOR_USUAL_ITER = 0;
+
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -53,7 +56,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new Iter(0, 1);
+        return new Iter(POSITION_FOR_USUAL_ITER, STEP_FOR_USUAL_ITER);
     }
 
     /**
@@ -63,7 +66,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new Iter(1, 2);
+        return new Iter(POSITION_FOR_USUAL_ITER + 1, STEP_FOR_USUAL_ITER + 1);
     }
 
     /**
@@ -73,7 +76,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new Iter(0, 2);
+        return new Iter(POSITION_FOR_USUAL_ITER, STEP_FOR_USUAL_ITER + 1);
     }
 
     private class Iter implements Iterator<Integer> {
@@ -81,8 +84,8 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         private final int fixedModCount = modCount;
         private final int step;
 
-        public Iter(int startPosition, int step) {
-            this.position = startPosition;
+        public Iter(int position, int step) {
+            this.position = position;
             this.step = step;
         }
 
