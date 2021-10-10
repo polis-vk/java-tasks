@@ -2,12 +2,12 @@ package ru.mail.polis.homework.processor;
 
 public class UpperCaseProcessor extends Processor implements TextProcessor {
 
-    {
-        processingStage = ProcessingStage.POST_PROCESSING;
+    public UpperCaseProcessor() {
+        super(ProcessingStage.POST_PROCESSING);
     }
 
     @Override
-    public String handle(String data) {
+    public String process(String data) {
         return data.toUpperCase();
     }
 }

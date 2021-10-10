@@ -2,12 +2,12 @@ package ru.mail.polis.homework.processor;
 
 public class SquashWhiteSpacesProcessor extends Processor implements TextProcessor {
 
-    {
-        processingStage = ProcessingStage.PRE_PROCESSING;
+    public SquashWhiteSpacesProcessor() {
+        super(ProcessingStage.PRE_PROCESSING);
     }
 
     @Override
-    public String handle(String data) {
+    public String process(String data) {
         return data.replaceAll("\\s+", " ");
     }
 }

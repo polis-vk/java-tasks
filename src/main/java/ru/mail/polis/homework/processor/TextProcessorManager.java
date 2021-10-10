@@ -15,13 +15,13 @@ public class TextProcessorManager {
     public String processText(String text) {
         if (text == null) {
             return null;
-        } else {
-            String res = text;
-            for (TextProcessor proc: processors) {
-                res = proc.handle(res);
-            }
-            return res;
         }
+        String res = text;
+        for (TextProcessor proc: processors) {
+            res = proc.process(res);
+        }
+        return res;
+
     }
 
     public static TextProcessorManager construct(TextProcessor[] processors) {
@@ -32,11 +32,14 @@ public class TextProcessorManager {
     }
 
     private static final Comparator<TextProcessor> comparator =
-            Comparator.comparing(obj -> obj.getStage().ordinal());
+            Comparator.comparing(obj -> obj.getStage().getWeight());
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
-        return processors != null && IntStream.range(0, processors.length - 1).noneMatch(i -> comparator.compare(processors[i],
-                processors[i + 1]) > 0);
+        if (processors != null) {
+            return IntStream.range(0, processors.length - 1).noneMatch(i -> comparator.compare(processors[i],
+                    processors[i + 1]) > 0);
+        }
+        return false;
     }
 }

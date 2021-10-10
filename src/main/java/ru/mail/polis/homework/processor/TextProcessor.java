@@ -3,7 +3,7 @@ package ru.mail.polis.homework.processor;
 
 public interface TextProcessor {
 
-    public String handle(String text);
+    public String process(String text);
 
     public ProcessingStage getStage();
 

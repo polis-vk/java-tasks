@@ -2,18 +2,15 @@ package ru.mail.polis.homework.processor;
 
 public class TrimProcessor extends Processor implements TextProcessor {
 
-    {
-        processingStage = ProcessingStage.POST_PROCESSING;
-    }
-
     private final int maxLength;
 
     public TrimProcessor(int maxLength) {
+        super(ProcessingStage.POST_PROCESSING);
         this.maxLength = maxLength;
     }
 
     @Override
-    public String handle(String data) {
+    public String process(String data) {
         return data.length() > maxLength ? data.substring(0, maxLength) : data;
     }
 }
