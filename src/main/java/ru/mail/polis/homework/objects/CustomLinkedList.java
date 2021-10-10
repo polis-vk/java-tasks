@@ -14,7 +14,15 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
-
+        if (head == null) {
+            head = new Node(value);
+            return;
+        }
+        Node cur = head;
+        while (cur.next != null) {
+            cur = cur.next;
+        }
+        cur.setNext(new Node(value));
     }
 
     /**
@@ -25,32 +33,63 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
+        if (head == null || index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (index == 0) {
+            head = head.next;
+            return;
+        }
+        Node prev = head;
+        for (int i = 0; i < index - 1; i++) {
+            prev = prev.next;
+            if (prev.next == null) {
+                throw new IndexOutOfBoundsException();
+            }
 
+        }
+        prev.setNext(prev.next.next);
     }
 
     /**
      * Реализовать метод:
      * Переварачивает все элементы списка.
      * Пример:
-     *  Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
-     *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
+     * Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
+     * После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-
+        Node prev = null;
+        Node cur = head;
+        while (cur != null) {
+            Node next = cur.next;
+            cur.setNext(prev);
+            prev = cur;
+            cur = next;
+        }
+        head = prev;
     }
 
     /**
      * Метод выводит всю последовательность хранящуюся в списке начиная с head.
      * Формат вывода:
-     *  - значение каждой Node должно разделяться " -> "
-     *  - последовательность всегда заканчивается на null
-     *  - если в списке нет элементов - верните строку "null"
+     * - значение каждой Node должно разделяться " -> "
+     * - последовательность всегда заканчивается на null
+     * - если в списке нет элементов - верните строку "null"
      *
      * @return - String with description all list
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        StringBuilder s = new StringBuilder();
+        Node node = head;
+        while (node != null) {
+            s.append(node.value);
+            s.append(" -> ");
+            node = node.next;
+        }
+        s.append("null");
+        return s.toString();
     }
 
     private static class Node {
