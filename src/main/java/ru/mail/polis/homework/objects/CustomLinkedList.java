@@ -95,7 +95,7 @@ public class CustomLinkedList {
             buf.append(cur.value).append(" -> ");
             cur = cur.next;
         }
-        return buf + "null";
+        return buf.append("null").toString();
     }
 
     private static class Node {

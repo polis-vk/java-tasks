@@ -63,7 +63,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new EvenIter();
+        return new CustomIter(1);
     }
 
     /**
@@ -73,7 +73,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new OddIter();
+        return new CustomIter(0);
     }
 
     private void checkIndex(int index) {
@@ -103,9 +103,13 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
-    private class EvenIter implements Iterator<Integer> {
-        int position = 1;
-        int fixedModCount = modCount;
+    private class CustomIter implements Iterator<Integer> {
+        private int position;
+        private final int fixedModCount = modCount;
+
+        public CustomIter(int startPosition) {
+            position = startPosition;
+        }
 
         @Override
         public boolean hasNext() {
@@ -120,30 +124,9 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             if (position >= array.length) {
                 throw new NoSuchElementException();
             }
+            int buf = array[position];
             position += 2;
-            return array[position - 2];
-        }
-    }
-
-    private class OddIter implements Iterator<Integer> {
-        int position = 0;
-        int fixedModCount = modCount;
-
-        @Override
-        public boolean hasNext() {
-            return position < array.length;
-        }
-
-        @Override
-        public Integer next() {
-            if (fixedModCount != modCount) {
-                throw new ConcurrentModificationException();
-            }
-            if (position >= array.length) {
-                throw new NoSuchElementException();
-            }
-            position += 2;
-            return array[position - 2];
+            return buf;
         }
     }
 }
