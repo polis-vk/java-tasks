@@ -43,6 +43,7 @@ public class CustomLinkedList {
         if (index < 0 || index >= this.size) {
             throw new IndexOutOfBoundsException("Invalid index");
         }
+        
         Node prevNode = this.head; // узел предшествующий искомому
 
         if (index == 0) {
