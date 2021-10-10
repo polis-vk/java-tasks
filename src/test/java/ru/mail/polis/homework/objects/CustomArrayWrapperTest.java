@@ -28,6 +28,19 @@ public class CustomArrayWrapperTest {
     }
 
     @Test
+    public void testDefaultIterator() {
+        CustomArrayWrapper arrayWrapper = generateCustomArrayWrapper(DEFAULT_ARRAY);
+        Iterator<Integer> iterator = arrayWrapper.iterator();
+        List<Integer> result = new ArrayList<>();
+        while (iterator.hasNext()) {
+            result.add(iterator.next());
+        }
+        for (int i = 0; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], result.get(i).intValue());
+        }
+    }
+
+    @Test
     public void testEvenIterator() {
         CustomArrayWrapper arrayWrapper = generateCustomArrayWrapper(DEFAULT_ARRAY);
         Iterator<Integer> iterator = arrayWrapper.evenIterator();
@@ -77,3 +90,5 @@ public class CustomArrayWrapperTest {
 
 
 }
+
+//Есть явное дублирование кода. Even и Odd итераторы явно можно объединить
