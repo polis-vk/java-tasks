@@ -89,13 +89,13 @@ public class CustomLinkedList {
         if (head == null){
             return "null";
         }
-        String result = "";
+        StringBuilder sb = new StringBuilder();
         Node current = head;
         for (int i = 0; current != null; i++ ){
-            result =  result + current.value + " -> ";
+            sb.append(current.value).append(" -> ");
             current = current.next;
         }
-        return result = result + "null";
+        return sb.append("null").toString();
     }
 
     private static class Node {

@@ -63,7 +63,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new OddEvenIter(1, modCount);
+        return new GeneralIter(1, modCount);
     }
 
     /**
@@ -73,7 +73,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new OddEvenIter(0, modCount);
+        return new GeneralIter(0, modCount);
     }
 
     private void checkIndex(int index) {
@@ -103,11 +103,11 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
   //я хотела оба итератора совместить в один, но не знаю, как это сделать...
-    private class OddEvenIter implements Iterator<Integer> {
+    private class GeneralIter implements Iterator<Integer> {
         int position;
         int mc;
 
-        public OddEvenIter(int position, int mc) {
+        public GeneralIter(int position, int mc) {
             this.position = position;
             this.mc = mc;
         }
@@ -125,8 +125,9 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             if (position >= array.length) {
                 throw new NoSuchElementException();
             }
+            int elem = array[position];
             position += 2;
-            return array[position - 2];
+            return elem;
         }
     }
 }
