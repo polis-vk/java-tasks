@@ -8,6 +8,7 @@ import java.util.LinkedList;
 public class CustomLinkedList {
 
     private Node head;
+    private int size;
 
     /**
      * Реализовать метод:
@@ -18,13 +19,14 @@ public class CustomLinkedList {
     public void add(int value) {
         if (head == null) {
             head = new Node(value);
-        } else {
-            Node current = head;
-            while (current.next != null) {
-                current = current.next;
-            }
-            current.next = new Node(value);
+            return;
         }
+        Node current = head;
+        while (current.next != null) {
+            current = current.next;
+        }
+        current.next = new Node(value);
+        size++;
     }
 
     /**
@@ -35,17 +37,17 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (index < 0 || head == null) {
+        if (index < 0 || head == null || index >= size) {
             throw new IndexOutOfBoundsException();
         }
         Node current = head;
         for (int currentIndex = 0; current.next != null; currentIndex++, current = current.next) {
             if (currentIndex + 1 == index) {
                 current.next = current.next.next;
+                size--;
                 return;
             }
         }
-        throw new IndexOutOfBoundsException();
     }
 
     /**
@@ -82,9 +84,9 @@ public class CustomLinkedList {
         if (head == null) {
             return "null";
         }
-        String res = "";
+        StringBuilder res = new StringBuilder();
         for (Node current = head; current != null; current = current.next) {
-            res += "" + current.value + (current.next != null ? " -> " : "");
+            res.append(current.value).append(current.next != null ? " -> " : "");
         }
         return res + " -> null";
     }
