@@ -33,9 +33,9 @@ package ru.mail.polis.homework.processor;
  * Суммарно, по всему заданию 15 баллов
  */
 public class TextProcessorManager {
-    private final TextProcessor[] processors;
-
     private static final TextProcessorManager EMPTY = new TextProcessorManager(new TextProcessor[0]);
+
+    private final TextProcessor[] processors;
 
     private TextProcessorManager(TextProcessor[] processors) {
         this.processors = processors;
@@ -66,7 +66,7 @@ public class TextProcessorManager {
         TextProcessor previous = processors[0];
         for (int i = 1; i < processors.length; i++) {
             TextProcessor current = processors[i];
-            if (previous.processingStage().getOrder() - current.processingStage().getOrder() > 0) {
+            if (previous.getProcessingStage().getOrder() - current.getProcessingStage().getOrder() > 0) {
                 return false;
             }
             previous = current;

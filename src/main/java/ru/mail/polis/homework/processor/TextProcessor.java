@@ -13,7 +13,7 @@ package ru.mail.polis.homework.processor;
  * Каждый обработчик 2 балла. Итого 8
  */
 public interface TextProcessor {
-    ProcessingStage processingStage();
+    ProcessingStage getProcessingStage();
 
     String process(String text);
 
