@@ -5,8 +5,10 @@ package ru.mail.polis.homework.objects;
  */
 
 public class CustomLinkedList {
+    private final static String TO_STRING_SEPARATOR = " -> ";
     private Node head;
     private Node lastNode;
+    private int size = 0;
 
     /**
      * Реализовать метод:
@@ -21,6 +23,7 @@ public class CustomLinkedList {
             lastNode.setNext(new Node(value));
             lastNode = lastNode.next;
         }
+        size++;
     }
 
     /**
@@ -31,23 +34,25 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (head == null) {
-            throw new IndexOutOfBoundsException();
-        }
+        isValidIndex(index);
         if (index == 0) {
             head = head.next;
+            size--;
             return;
         }
         Node current = head;
-        for (int i = 0; i < index - 1 && current != null; i++) {
+        for (int i = 0; i < index - 1; i++) {
             current = current.next;
         }
-        if (current == null || current.next == null) {
-            throw new IndexOutOfBoundsException();
-        }
         current.setNext(current.next.next);
+        size--;
     }
 
+    private void isValidIndex(int index) {
+        if (size == 0 || index >= size || index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+    }
 
     public void revertList() {
         Node current = head;
@@ -77,7 +82,7 @@ public class CustomLinkedList {
         StringBuilder result = new StringBuilder();
         Node current = head;
         while (current != null) {
-            result.append(current.value).append(" -> ");
+            result.append(current.value).append(TO_STRING_SEPARATOR);
             current = current.next;
         }
         return result.append("null").toString();
