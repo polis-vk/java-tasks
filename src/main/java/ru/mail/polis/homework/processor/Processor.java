@@ -1,13 +1,13 @@
 package ru.mail.polis.homework.processor;
 
 public class Processor {
-    private ProcessingStage processingStage;
+    private final ProcessingStage processingStage;
 
     public Processor(ProcessingStage processingStage) {
         this.processingStage = processingStage;
     }
 
-    public ProcessingStage getStage() {
+    public final ProcessingStage getStage() {
         return processingStage;
     }
 }
