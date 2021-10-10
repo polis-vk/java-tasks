@@ -40,13 +40,10 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (index < 0 || index > this.size) {
+        if (index < 0 || index >= this.size) {
             throw new IndexOutOfBoundsException("Invalid index");
         }
         Node prevNode = this.head; // узел предшествующий искомому
-        if (prevNode == null) {
-            throw new IndexOutOfBoundsException("Empty List");// java кидает NoSuchElementException
-        }
 
         if (index == 0) {
             this.head = this.head.next;
