@@ -33,7 +33,7 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (head == null || index < 0) {
+        if (head == null) {
             throw new IndexOutOfBoundsException();
         }
         if (index == 0) {
@@ -55,8 +55,8 @@ public class CustomLinkedList {
      * Реализовать метод:
      * Переварачивает все элементы списка.
      * Пример:
-     * Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
-     * После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
+     *  Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
+     *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
         Node prev = null;
@@ -73,9 +73,9 @@ public class CustomLinkedList {
     /**
      * Метод выводит всю последовательность хранящуюся в списке начиная с head.
      * Формат вывода:
-     * - значение каждой Node должно разделяться " -> "
-     * - последовательность всегда заканчивается на null
-     * - если в списке нет элементов - верните строку "null"
+     *  - значение каждой Node должно разделяться " -> "
+     *  - последовательность всегда заканчивается на null
+     *  - если в списке нет элементов - верните строку "null"
      *
      * @return - String with description all list
      */
