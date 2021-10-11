@@ -84,8 +84,14 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private class Iter implements Iterator<Integer> {
 
-        int position = 0;
+        int position;
         int fixedModCount = modCount;
+        int delta;
+
+        public Iter() {
+            position = 0;
+            delta = 1;
+        }
 
         @Override
         public boolean hasNext() {
@@ -100,53 +106,24 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             if (position >= array.length) {
                 throw new NoSuchElementException();
             }
-            return array[position++];
+            position += delta;
+            return array[position - delta];
         }
     }
 
-    private class EvenIter implements Iterator<Integer> {
+    private class EvenIter extends Iter {
 
-        int position = 1;
-        int fixedModCount = modCount;
-
-        @Override
-        public boolean hasNext() {
-            return position < array.length;
-        }
-
-        @Override
-        public Integer next() {
-            if (fixedModCount != modCount) {
-                throw new ConcurrentModificationException();
-            }
-            if (position >= array.length) {
-                throw new NoSuchElementException();
-            }
-            position += 2;
-            return array[position - 2];
+        public EvenIter() {
+            position = 1;
+            delta = 2;
         }
     }
 
-    private class OddIter implements Iterator<Integer> {
+    private class OddIter extends Iter {
 
-        int position = 0;
-        int fixedModCount = modCount;
-
-        @Override
-        public boolean hasNext() {
-            return position < array.length;
-        }
-
-        @Override
-        public Integer next() {
-            if (fixedModCount != modCount) {
-                throw new ConcurrentModificationException();
-            }
-            if (position >= array.length) {
-                throw new NoSuchElementException();
-            }
-            position += 2;
-            return array[position - 2];
+        public OddIter() {
+            position = 0;
+            delta = 2;
         }
     }
 
