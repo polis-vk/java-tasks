@@ -46,7 +46,7 @@ public class TextProcessorManager {
             return null;
         }
         for (TextProcessor processor : processors) {
-            text = processor.execute(text);
+            text = processor.apply(text);
         }
         return text;
     }

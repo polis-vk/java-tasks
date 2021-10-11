@@ -8,7 +8,7 @@ public class UpperCaseProcessor implements TextProcessor {
     }
 
     @Override
-    public String execute(String str) {
+    public String apply(String str) {
         return str.toUpperCase();
     }
 }
