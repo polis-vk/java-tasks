@@ -45,7 +45,7 @@ public class TextProcessorManager {
         }
         String workableText = text;
         for (TextProcessor processor : processors) {
-            workableText = processor.execute(workableText);
+            workableText = processor.processText(workableText);
         }
         return workableText;
     }
@@ -61,8 +61,8 @@ public class TextProcessorManager {
     static boolean isValidSequence(TextProcessor[] processors) {
         int currentStage = 0;
         for (TextProcessor processor : processors) {
-            if (processor.getStage().ordinal() >= currentStage) {
-                currentStage = processor.getStage().ordinal();
+            if (processor.getStage().getProcessingOrder() >= currentStage) {
+                currentStage = processor.getStage().getProcessingOrder();
             } else {
                 return false;
             }

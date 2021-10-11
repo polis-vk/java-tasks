@@ -2,7 +2,7 @@ package ru.mail.polis.homework.processor;
 
 public class TrimProcessorImpl implements TextProcessor {
 
-    private final ProcessingStage stage = ProcessingStage.POSTPROCESS;
+    private static final ProcessingStage stage = ProcessingStage.POSTPROCESS;
 
     private final int maxLength;
 
@@ -11,7 +11,7 @@ public class TrimProcessorImpl implements TextProcessor {
     }
 
     @Override
-    public String execute(String text) {
+    public String processText(String text) {
         if (maxLength > text.length()) {
             return text;
         }

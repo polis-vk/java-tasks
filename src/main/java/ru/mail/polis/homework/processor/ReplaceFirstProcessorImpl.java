@@ -2,7 +2,7 @@ package ru.mail.polis.homework.processor;
 
 public class ReplaceFirstProcessorImpl implements TextProcessor {
 
-    private final ProcessingStage stage = ProcessingStage.PROCESS;
+    private static final ProcessingStage stage = ProcessingStage.PROCESS;
 
     private final String regex;
     private final String replacement;
@@ -13,7 +13,7 @@ public class ReplaceFirstProcessorImpl implements TextProcessor {
     }
 
     @Override
-    public String execute(String text) {
+    public String processText(String text) {
         return text.replaceFirst(regex, replacement);
     }
 
