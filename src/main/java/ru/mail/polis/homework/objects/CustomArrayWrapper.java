@@ -100,22 +100,17 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         @Override
         public Integer next() {
             int res;
-            if (modificationCounter != position){
+            if (modificationCounter != position) {
                 throw new ConcurrentModificationException();
             }
-            switch (mode) {
-                case ODD:
-                case EVEN:
-                    res = array[index];
-                    index += 2;
-                    return res;
-
-                case USUAL:
-                default:
-                    res = array[index];
-                    index++;
-                    return res;
+            if (mode == Mode.ODD || mode == Mode.EVEN) {
+                res = array[index];
+                index += 2;
+                return res;
             }
+            res = array[index];
+            index++;
+            return res;
         }
     }
 

@@ -40,6 +40,11 @@ public class CustomLinkedList {
         if (index >= size) {
             throw new IndexOutOfBoundsException();
         }
+
+        if (index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+
         int i = 0;
         Node currentNode = head;
         if (index == 0) {
@@ -101,19 +106,19 @@ public class CustomLinkedList {
         if (head == null) {
             return "null";
         }
-        while (node.next != null) {
+        while (node != null) {
             sb.append(node.value);
             sb.append(" -> ");
+            if (node.next == null) {
+                sb.append("null");
+            }
             node = node.next;
         }
-        sb.append(node.value);
-        sb.append(" -> ");
-        sb.append("null");
         return sb.toString();
     }
 
     private static class Node {
-        private int value;
+        private final int value;
         private Node next;
 
         public Node(int value) {
