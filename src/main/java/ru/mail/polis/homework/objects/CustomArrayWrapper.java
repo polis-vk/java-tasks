@@ -22,6 +22,30 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         this.array = new int[size];
     }
 
+    public class CustomIterator implements Iterator<Integer> {
+
+        private int posIter;
+        private final int step;
+
+        public CustomIterator(int posIter, int step) {
+            this.posIter = posIter;
+            this.step = step;
+        }
+
+        public boolean hasNext() {
+            return position == array.length && posIter < position;
+        }
+
+        @Override
+        public Integer next() {
+            if (hasNext()) {
+                posIter += step;
+                return array[posIter - step];
+            }
+            throw new ConcurrentModificationException();
+        }
+    }
+
     public void add(int value) {
         checkIndex(position);
         array[position] = value;
@@ -50,23 +74,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new Iterator<Integer>() {
-
-            private int pos = 0;
-
-            @Override
-            public boolean hasNext() {
-                return pos < position && position == array.length;
-            }
-
-            @Override
-            public Integer next() {
-                if (hasNext()) {
-                    return array[pos++];
-                }
-                throw new ConcurrentModificationException();
-            }
-        };
+        return new CustomIterator(0, 1);
     }
 
     /**
@@ -76,23 +84,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new Iterator<Integer>() {
-
-            private int pos = -1;
-
-            @Override
-            public boolean hasNext() {
-                return pos + 2 < position && position == array.length;
-            }
-
-            @Override
-            public Integer next() {
-                if (hasNext()) {
-                    return array[pos += 2];
-                }
-                throw new ConcurrentModificationException();
-            }
-        };
+        return new CustomIterator(1, 2);
     }
 
     /**
@@ -102,23 +94,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new Iterator<Integer>() {
-
-            private int pos = -2;
-
-            @Override
-            public boolean hasNext() {
-                return pos + 2 < position && position == array.length;
-            }
-
-            @Override
-            public Integer next() {
-                if (hasNext()) {
-                    return array[pos += 2];
-                }
-                throw new ConcurrentModificationException();
-            }
-        };
+        return new CustomIterator(0,2);
     }
 
     private void checkIndex(int index) {
