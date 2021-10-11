@@ -35,7 +35,7 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (index < 0 || head == null) {
+        if (index < 0 || head == null || index >= size()) {
             throw new IndexOutOfBoundsException("Invalid index when removing list's element");
         }
         if (index == 0) {
@@ -49,9 +49,6 @@ public class CustomLinkedList {
             nodeForRemoving = nodeForRemoving.next;
             prev = prev.next;
             ++curIndex;
-        }
-        if (curIndex != index) {
-            throw new IndexOutOfBoundsException("Invalid index when removing list's element");
         }
         prev.next = nodeForRemoving.next;
     }
@@ -67,17 +64,25 @@ public class CustomLinkedList {
         if (head == null || head.next == null) {
             return;
         }
-        Node end = head;
-        ArrayList<Integer> listValues = new ArrayList<>();
-        while (end != null) {
-            listValues.add(end.value);
-            end = end.next;
-        }
+        Node prev = null;
         Node cur = head;
-        for (int i = listValues.size() - 1; i >= 0; --i) {
-            cur.value = listValues.get(i);
+        while (cur != null) {
+            Node nextStatusQuo = cur.next;
+            cur.next = prev;
+            prev = cur;
+            cur = nextStatusQuo;
+        }
+        head = prev;
+    }
+
+    public int size() {
+        int size = 0;
+        Node cur = head;
+        while (cur != null) {
+            ++size;
             cur = cur.next;
         }
+        return size;
     }
 
     /**
@@ -92,7 +97,7 @@ public class CustomLinkedList {
     @Override
     public String toString() {
         Node cur = head;
-        StringBuffer listInfo = new StringBuffer();
+        StringBuilder listInfo = new StringBuilder();
         while (cur != null) {
             listInfo.append(cur.value + " -> ");
             cur = cur.next;
