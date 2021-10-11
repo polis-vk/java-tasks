@@ -2,7 +2,7 @@ package ru.mail.polis.homework.processor;
 
 public class TrimProcessor implements TextProcessor {
 
-    private int maxLength;
+    private final int maxLength;
 
     public TrimProcessor(int maxLength) {
         this.maxLength = maxLength;
