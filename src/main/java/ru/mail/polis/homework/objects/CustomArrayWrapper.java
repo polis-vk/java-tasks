@@ -82,10 +82,18 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
-    private class DefaultIterator implements Iterator<Integer> {
+    private abstract class CustomIterator implements Iterator<Integer> {
         int position;
         int fixedModCount = modCount;
+        int step;
 
+        public void setPosition(int position) {
+            this.position = position;
+        }
+
+        public void setStep(int step) {
+            this.step = step;
+        }
 
         @Override
         public boolean hasNext() {
@@ -100,53 +108,29 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             if (position >= array.length) {
                 throw new NoSuchElementException();
             }
-            return array[position++];
+            position += step;
+            return array[position - step];
         }
     }
 
-    private class EvenIterator implements Iterator<Integer> {
-        int position = 1;
-        int fixedModCount = modCount;
-
-
-        @Override
-        public boolean hasNext() {
-            return position < array.length;
-        }
-
-        @Override
-        public Integer next() {
-            if (fixedModCount != modCount) {
-                throw new ConcurrentModificationException();
-            }
-            if (position >= array.length) {
-                throw new NoSuchElementException();
-            }
-            position += 2;
-            return array[position - 2];
+    private class DefaultIterator extends CustomIterator implements Iterator<Integer> {
+        public DefaultIterator() {
+            setStep(1);
         }
     }
 
-    private class OddIterator implements Iterator<Integer> {
-        int position = 0;
-        int fixedModCount = modCount;
 
 
-        @Override
-        public boolean hasNext() {
-            return position < array.length;
+    private class EvenIterator extends CustomIterator implements Iterator<Integer> {
+        public EvenIterator() {
+            setPosition(1);
+            setStep(2);
         }
+    }
 
-        @Override
-        public Integer next() {
-            if (fixedModCount != modCount) {
-                throw new ConcurrentModificationException();
-            }
-            if (position >= array.length) {
-                throw new NoSuchElementException();
-            }
-            position += 2;
-            return array[position - 2];
+    private class OddIterator extends CustomIterator implements Iterator<Integer> {
+        public OddIterator() {
+            setStep(2);
         }
     }
 
