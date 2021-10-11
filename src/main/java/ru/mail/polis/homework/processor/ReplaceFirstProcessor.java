@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.processor;
 
 public class ReplaceFirstProcessor implements TextProcessor {
-    private final ProcessingStage processingStage = ProcessingStage.PROCESSING;
+    private static final ProcessingStage processingStage = ProcessingStage.PROCESSING;
     private final String regex;
     private final String replacement;
 

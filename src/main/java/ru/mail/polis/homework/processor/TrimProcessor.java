@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.processor;
 
 public class TrimProcessor implements TextProcessor {
-    private final ProcessingStage processingStage = ProcessingStage.POSTPROCESSING;
+    private static final ProcessingStage processingStage = ProcessingStage.POSTPROCESSING;
     private final int maxLength;
 
     public TrimProcessor(int maxLength) {

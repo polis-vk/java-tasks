@@ -63,7 +63,7 @@ public class TextProcessorManager {
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
         for (int i = 0; i < processors.length - 1; i++) {
-            if (processors[i].getProcessingStage().ordinal() > processors[i + 1].getProcessingStage().ordinal()) {
+            if (processors[i].getProcessingStage().getStageOrder() > processors[i + 1].getProcessingStage().getStageOrder()) {
                 return false;
             }
         }

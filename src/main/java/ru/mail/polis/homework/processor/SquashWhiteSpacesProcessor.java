@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.processor;
 
 public class SquashWhiteSpacesProcessor implements TextProcessor {
-    private final ProcessingStage processingStage = ProcessingStage.PREPROCESSING;
+    private static final ProcessingStage processingStage = ProcessingStage.PREPROCESSING;
 
     public ProcessingStage getProcessingStage() {
         return processingStage;
