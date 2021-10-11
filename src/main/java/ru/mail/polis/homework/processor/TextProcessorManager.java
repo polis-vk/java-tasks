@@ -63,24 +63,12 @@ public class TextProcessorManager {
     static boolean isValidSequence(TextProcessor[] processors) {
         ProcessingStage currentStage = ProcessingStage.PREPROCESSING;
         for (TextProcessor processor : processors) {
-            switch (processor.getStage()) {
-                case PREPROCESSING: {
-                    if (currentStage != ProcessingStage.PREPROCESSING) {
-                        return false;
-                    }
-                    break;
-                }
-                case PROCESSING: {
-                    if (currentStage == ProcessingStage.POSTPROCESSING) {
-                        return false;
-                    }
-                    currentStage = ProcessingStage.PROCESSING;
-                    break;
-                }
-                case POSTPROCESSING: {
-                    currentStage = ProcessingStage.POSTPROCESSING;
-                    break;
-                }
+            ProcessingStage newStage = processor.getStage();
+            if (newStage.getOrder() < currentStage.getOrder()) {
+                return false;
+            }
+            if (newStage.getOrder() > currentStage.getOrder()) {
+                currentStage = newStage;
             }
         }
         return true;
