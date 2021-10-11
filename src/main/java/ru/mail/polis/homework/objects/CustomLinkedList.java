@@ -6,6 +6,7 @@ package ru.mail.polis.homework.objects;
 public class CustomLinkedList {
 
     private Node head;
+    private int length;
 
     /**
      * Реализовать метод:
@@ -25,6 +26,7 @@ public class CustomLinkedList {
         } else {
             head = newNode;
         }
+        length++;
     }
 
     /**
@@ -35,21 +37,20 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (head == null) {
+        if (index < 0 || index >= length) {
             throw new IndexOutOfBoundsException();
         }
         Node node = head;
         if (index == 0) {
             head = node.next;
+            length--;
             return;
         }
-        for (int i = 0; node != null && i < index - 1; ++i) {
+        for (int i = 0; i < index - 1; ++i) {
             node = node.next;
         }
-        if (node == null || node.next == null) {
-            throw new IndexOutOfBoundsException();
-        }
         node.setNext(node.next.next);
+        length--;
     }
 
     /**
@@ -74,9 +75,9 @@ public class CustomLinkedList {
     /**
      * Метод выводит всю последовательность хранящуюся в списке начиная с head.
      * Формат вывода:
-     *  - значение каждой Node должно разделяться " -> "
-     *  - последовательность всегда заканчивается на null
-     *  - если в списке нет элементов - верните строку "null"
+     * - значение каждой Node должно разделяться " -> "
+     * - последовательность всегда заканчивается на null
+     * - если в списке нет элементов - верните строку "null"
      *
      * @return - String with description all list
      */
