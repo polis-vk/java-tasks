@@ -19,6 +19,9 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     private int position;               // следующая позиция куда будет вставлен элемент
     private int modCount;
 
+    private static final int SHIFT_FOR_DEFAULT_ITERATOR = 1;
+    private static final int SHIFT_FOR_ODD_AND_EVEN_ITERATOR = 2;
+
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
     }
@@ -52,7 +55,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new Iter(1, false);
+        return new Iter(SHIFT_FOR_DEFAULT_ITERATOR, false);
     }
 
     /**
@@ -62,7 +65,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new Iter(2, true);
+        return new Iter(SHIFT_FOR_ODD_AND_EVEN_ITERATOR, true);
     }
 
     /**
@@ -72,7 +75,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new Iter(2, false);
+        return new Iter(SHIFT_FOR_ODD_AND_EVEN_ITERATOR, false);
     }
 
     private void checkIndex(int index) {
