@@ -99,7 +99,9 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             if (position >= array.length) {
                 throw new NoSuchElementException();
             }
-            return array[position - 2];
+            int elem = array[position];
+            position += 1;
+            return elem;
         }
     }
   //я хотела оба итератора совместить в один, но не знаю, как это сделать...
