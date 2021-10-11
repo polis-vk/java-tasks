@@ -36,7 +36,7 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (index >= size) {
+        if (index >= size || index < 0) {
             throw new IndexOutOfBoundsException();
         }
 
@@ -124,6 +124,10 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
+        if (size == 0) {
+            return "null";
+        }
+
         StringBuilder builder = new StringBuilder();
 
         Node current = first;
@@ -131,10 +135,6 @@ public class CustomLinkedList {
             builder.append(current.value);
             builder.append(" -> ");
             current = current.next;
-        }
-
-        if (builder.toString().isEmpty()) {
-            return "null";
         }
 
         return builder.append("null").toString();

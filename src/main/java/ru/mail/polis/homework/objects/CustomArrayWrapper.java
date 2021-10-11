@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.objects;
 
-import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -18,18 +17,21 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
+    private boolean isChanged = false;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
     }
 
     public void add(int value) {
+        isChanged = true;
         checkIndex(position);
         array[position] = value;
         position++;
     }
 
     public void edit(int index, int value) {
+        isChanged = true;
         checkIndex(index);
         array[index] = value;
     }
@@ -51,28 +53,28 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        // Суть initialArray в том, что он является копией изначального массива
-        // Каждая проверка на изменение основного массива во время итерации будет происходить с помощью него
+        isChanged = false;
+        // При каждом создании Iterator'а обновляется переменная isChanged, и при каждом изменении массива
+        // Ей будет присваиваться true, что после проверки даст исключение ConcurrentModificationException
         return new Iterator<Integer>() {
             int index = 0;
-            final int[] initialArray = Arrays.copyOf(array, array.length);
 
             @Override
             public boolean hasNext() {
-                if (!Arrays.equals(array, initialArray)) {
+                if (isChanged) {
                     throw new ConcurrentModificationException();
                 }
 
-                return index < initialArray.length;
+                return index < array.length;
             }
 
             @Override
             public Integer next() {
-                if (!Arrays.equals(array, initialArray)) {
+                if (isChanged) {
                     throw new ConcurrentModificationException();
                 }
 
-                if (index >= array.length) {
+                if (index >= array.length || index < 0) {
                     throw new NoSuchElementException();
                 }
 
@@ -88,35 +90,9 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new Iterator<Integer>() {
-            int index = 1;
-            final int[] initialArray = Arrays.copyOf(array, array.length);
+        isChanged = false;
 
-            @Override
-            public boolean hasNext() {
-                if (!Arrays.equals(array, initialArray)) {
-                    throw new ConcurrentModificationException();
-                }
-
-                return index < initialArray.length;
-            }
-
-            @Override
-            public Integer next() {
-                if (!Arrays.equals(array, initialArray)) {
-                    throw new ConcurrentModificationException();
-                }
-
-                if (index >= array.length) {
-                    throw new NoSuchElementException();
-                }
-
-                int result = array[index];
-                index += 2;
-
-                return result;
-            }
-        };
+        return getIteratorByFirstIndex(1);
     }
 
     /**
@@ -126,26 +102,31 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
+        isChanged = false;
+
+        return getIteratorByFirstIndex(0);
+    }
+
+    private Iterator<Integer> getIteratorByFirstIndex(int i) {
         return new Iterator<Integer>() {
-            int index = 0;
-            final int[] initialArray = Arrays.copyOf(array, array.length);
+            int index = i;
 
             @Override
             public boolean hasNext() {
-                if (!Arrays.equals(array, initialArray)) {
+                if (isChanged) {
                     throw new ConcurrentModificationException();
                 }
 
-                return index < initialArray.length;
+                return index < array.length;
             }
 
             @Override
             public Integer next() {
-                if (!Arrays.equals(array, initialArray)) {
+                if (isChanged) {
                     throw new ConcurrentModificationException();
                 }
 
-                if (index >= array.length) {
+                if (index >= array.length || index < 0) {
                     throw new NoSuchElementException();
                 }
 

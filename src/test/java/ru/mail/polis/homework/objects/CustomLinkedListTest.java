@@ -26,6 +26,19 @@ public class CustomLinkedListTest {
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
+    public void removeElementWithNegativeIndex() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        list.removeElement(-2);
+        assertEquals(generateString(new int[]{5, 3, 4, 5}), list.toString());
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void removeElementFromEmptyList() {
+        CustomLinkedList list = new CustomLinkedList();
+        list.removeElement(0);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testRemoveIndexOutOfBounds() {
         CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
         list.removeElement(DEFAULT_ARRAY.length);
