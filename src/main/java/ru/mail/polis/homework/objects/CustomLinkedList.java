@@ -47,9 +47,6 @@ public class CustomLinkedList {
             for (int i = 0; i < index - 1; i++) {
                 tempNode = tempNode.next;
             }
-            if (tempNode.next == null) {
-                throw new IndexOutOfBoundsException();
-            }
             tempNode.setNext(tempNode.next.next);
         }
         --size;
