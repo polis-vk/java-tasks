@@ -4,6 +4,7 @@ package ru.mail.polis.homework.objects;
  * Реализовать все методы односвязанного списка.
  */
 public class CustomLinkedList {
+    private int size;
 
     private Node head;
 
@@ -23,6 +24,7 @@ public class CustomLinkedList {
             curr = curr.next;
         }
         curr.next = new Node(value);
+        size++;
     }
 
     /**
@@ -33,18 +35,10 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        int size = this.size();
-        if (size <= index) {
+        if(head == null || index < 0 || index >= size) {
             throw new IndexOutOfBoundsException();
         } else if (index == 0) {
             head = head.next;
-            return;
-        } else if (index == size - 1) {
-            Node curr = head;
-            for (int i = 0; i < index - 1; i++) {
-                curr = curr.next;
-            }
-            curr.next = null;
             return;
         }
         Node curr = head;
@@ -52,18 +46,10 @@ public class CustomLinkedList {
             curr = curr.next;
         }
         curr.next = curr.next.next;
+        size--;
     }
 
     public int size() {
-        if (head == null) {
-            return 0;
-        }
-        int size = 1;
-        Node curr = head;
-        while (curr.next != null) {
-            curr = curr.next;
-            size += 1;
-        }
         return size;
     }
 
@@ -78,7 +64,7 @@ public class CustomLinkedList {
         if (head == null) {
             return;
         }
-        int size = this.size();
+        int size = size();
         if (size == 1) {
             return;
         }

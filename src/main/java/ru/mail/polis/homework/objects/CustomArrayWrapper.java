@@ -13,6 +13,10 @@ import java.util.Iterator;
  * тогда все элементы со значением 100 имеют нечетную позицию, а элементы = 0 - четную.
  */
 public class CustomArrayWrapper implements Iterable<Integer> {
+    private final static int ODD = 0;
+    private final static int EVEN = 1;
+    private final static int REGULAR = 1;
+    private final static int SELECTIVE = 2;
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
@@ -52,7 +56,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new Iter(1, 0);
+        return new Iter(REGULAR, ODD);
     }
 
     /**
@@ -62,7 +66,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new Iter(2, 1);
+        return new Iter(SELECTIVE, EVEN);
     }
 
     /**
@@ -72,7 +76,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new Iter(2, 0);
+        return new Iter(SELECTIVE, ODD);
     }
 
     private void checkIndex(int index) {
@@ -82,13 +86,13 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     }
 
     private class Iter implements Iterator<Integer> {
-        int index;
         final int shiftValue;
+        int index;
         final int fixedModCount = modCount;
 
-        private Iter(int val, int start) {
-            index = start;
-            shiftValue = val;
+        private Iter(int shiftValue, int index) {
+            this.shiftValue = shiftValue;
+            this.index = index;
         }
 
         @Override
