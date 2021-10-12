@@ -15,12 +15,13 @@ import java.util.NoSuchElementException;
  */
 public class CustomArrayWrapper implements Iterable<Integer> {
 
+    private static final int EVEN_ITERATOR_START_POSITION = 1;
+    private static final int ODD_ITERATOR_START_POSITION  = 0;
+    private static final int PARITY_KEEPING_STEP = 2;
+
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
     private int modCount;
-    private static final int evenIteratorStartPosition = 1;
-    private static final int oddIteratorStartPosition  = 0;
-    private static final int parityKeepingStep = 2;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -66,7 +67,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new ConfigurableIterator(evenIteratorStartPosition, parityKeepingStep);
+        return new ConfigurableIterator(EVEN_ITERATOR_START_POSITION, PARITY_KEEPING_STEP);
     }
 
     /**
@@ -76,32 +77,34 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new ConfigurableIterator(oddIteratorStartPosition, parityKeepingStep);
+        return new ConfigurableIterator(ODD_ITERATOR_START_POSITION, PARITY_KEEPING_STEP);
     }
 
     private void checkIndex(int index) {
-        if (index < 0 || index >= size()) {
+        if (index < 0 || index >= array.length) {
             throw new IndexOutOfBoundsException();
         }
     }
 
     private class ConfigurableIterator implements Iterator<Integer> {
+        static final int DEFAULT_POSITION = 0;
+        static final int DEFAULT_STEP = 1;
         int iteratorPosition;
         final int fixedModCount = modCount;
         final int step;
 
-        public ConfigurableIterator(int startPosition, int step) {
-            iteratorPosition = startPosition;
+        public ConfigurableIterator(int iteratorPosition, int step) {
+            this.iteratorPosition = iteratorPosition;
             this.step = step;
         }
 
         public ConfigurableIterator() {
-            this(0, 1);
+            this(DEFAULT_POSITION, DEFAULT_STEP);
         }
 
         @Override
         public boolean hasNext() {
-            return iteratorPosition < size();
+            return iteratorPosition < array.length;
         }
 
         @Override

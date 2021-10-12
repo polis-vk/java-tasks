@@ -97,7 +97,7 @@ public class CustomLinkedList {
             result.append(currentNode.value).append(" -> ");
             currentNode = currentNode.next;
         }
-        return result + "null";
+        return result.append("null").toString();
     }
 
     private static class Node {
