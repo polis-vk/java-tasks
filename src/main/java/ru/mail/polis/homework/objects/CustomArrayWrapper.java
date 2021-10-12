@@ -63,7 +63,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new GeneralIter(1, modCount);
+        return new GeneralIter(1);
     }
 
     /**
@@ -73,7 +73,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new GeneralIter(0, modCount);
+        return new GeneralIter(0);
     }
 
     private void checkIndex(int index) {
@@ -108,11 +108,10 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     //я хотела оба итератора совместить в один, но не знаю, как это сделать...
     private class GeneralIter implements Iterator<Integer> {
         int position;
-        int mc;
+        int mc = modCount;
 
-        public GeneralIter(int position, int mc) {
+        public GeneralIter(int position) {
             this.position = position;
-            this.mc = mc;
         }
 
         @Override
