@@ -6,14 +6,17 @@ import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
- * могут возващать итераторы только по четным/нечетным позициям в массиве. Пример с классического
- * итератора можете взять из лекции. Обратите внимание что подсчет четного или нечетного элемента
+ * могут возвращать итераторы только по четным/нечетным позициям в массиве. Пример с классического
+ * итератора можете взять из лекции. Обратите внимание, что подсчет четного или нечетного элемента
  * идет с человеческой точки зрения.
  * Пример:
- * дан массив [100, 0 ,100, 0, 100]
+ * дан массив [100, 0, 100, 0, 100]
  * тогда все элементы со значением 100 имеют нечетную позицию, а элементы = 0 - четную.
  */
 public class CustomArrayWrapper implements Iterable<Integer> {
+
+    private static final int HONES_STARTING_INDEX = 1; // начальный индекс для прохода по чётным элементам
+    private static final int DOUBLE_STEP = 2; // двойной шаг
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
@@ -47,33 +50,33 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     /**
      * Реализовать метод:
-     * Возврящает обычный итератор.
+     * Возвращает обычный итератор.
      *
      * @return default Iterator
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new CustomArrayWrapperIterator(0, 1);
+        return new CustomArrayWrapperIterator();
     }
 
     /**
      * Реализовать метод:
-     * Возвращает итератор который проходит только четные элементы.
+     * Возвращает итератор, который проходит только четные элементы.
      *
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new CustomArrayWrapperIterator(1, 2);
+        return new CustomArrayWrapperIterator(HONES_STARTING_INDEX, DOUBLE_STEP);
     }
 
     /**
      * Реализовать метод:
-     * Возвращает итератор который проходит нечетные элементы
+     * Возвращает итератор, который проходит нечетные элементы
      *
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new CustomArrayWrapperIterator(0, 2);
+        return new CustomArrayWrapperIterator(DOUBLE_STEP);
     }
 
     private void checkIndex(int index) {
@@ -83,14 +86,28 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     }
 
     private class CustomArrayWrapperIterator implements Iterator<Integer> {
+
+        private final static int DEFAULT_INDEX = 0; // начальный индекс для создания стандартного итератора
+        private final static int DEFAULT_STEP = 1; // шаг для создания стандартного итератора
+
         private final int step;
         // Фиксируем количество проведённых операций на момент вызова итератора
         private final int fixedModCounter = modCounter;
         private int currentIndex;
 
-        public CustomArrayWrapperIterator(int startingIndex, int step) {
-            this.currentIndex = startingIndex;
+        public CustomArrayWrapperIterator(int currentIndex, int step) {
+            this.currentIndex = currentIndex;
             this.step = step;
+        }
+
+        public CustomArrayWrapperIterator(int step) {
+            this.currentIndex = DEFAULT_INDEX;
+            this.step = step;
+        }
+
+        public CustomArrayWrapperIterator() {
+            this.currentIndex = DEFAULT_INDEX;
+            this.step = DEFAULT_STEP;
         }
 
         @Override
