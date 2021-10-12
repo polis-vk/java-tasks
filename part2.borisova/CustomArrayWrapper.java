@@ -52,28 +52,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new Iterator<Integer>() {
-            private int index = -1;
-            private int initMod = modification;
-
-            @Override
-            public boolean hasNext() {
-                if (initMod != modification) {
-                    throw new ConcurrentModificationException();
-                }
-                return index + 1 < size();
-            }
-
-            @Override
-            public Integer next() {
-                if (hasNext()) {
-                    index += 1;
-                    return get(index);
-                } else {
-                    throw new IndexOutOfBoundsException();
-                }
-            }
-        };
+        return new Iter();
     }
 
     /**
@@ -83,28 +62,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new Iterator<Integer>() {
-            private int index = -1;
-            private final int initMod = modification;
-
-            @Override
-            public boolean hasNext() {
-                if (initMod != modification) {
-                    throw new ConcurrentModificationException();
-                }
-                return index + 2 < size();
-            }
-
-            @Override
-            public Integer next() {
-                if (hasNext()) {
-                    index += 2;
-                    return get(index);
-                } else {
-                    throw new IndexOutOfBoundsException();
-                }
-            }
-        };
+        return new Iter(1);
     }
 
     /**
@@ -114,28 +72,39 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new Iterator<Integer>() {
-            private int index = -2;
-            private int initMod = modification;
+        return new Iter(0);
+    }
 
-            @Override
-            public boolean hasNext() {
-                if (initMod != modification) {
-                    throw new ConcurrentModificationException();
-                }
-                return index + 2 < size();
-            }
+    private class Iter implements Iterator<Integer>{
 
-            @Override
-            public Integer next() {
-                if (hasNext()) {
-                    index += 2;
-                    return get(index);
-                } else {
-                    throw new ConcurrentModificationException();
-                }
+        private int index = 0;
+        private int step = 1;
+        private int initMod = modification;
+        public Iter() {
+        }
+
+        public Iter(int firstPos) {
+            this.index = firstPos;
+            this.step = 2;
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (initMod != modification) {
+                throw new ConcurrentModificationException();
             }
-        };
+            return index < size();
+        }
+
+        @Override
+        public Integer next() {
+            if (hasNext()) {
+                index += step;
+                return get(index - step);
+            } else {
+                throw new IndexOutOfBoundsException();
+            }
+        }
     }
 
     private void checkIndex(int index) {
