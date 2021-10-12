@@ -106,9 +106,10 @@ public class CustomLinkedList {
     @Override
     public String toString() {
         // небольшая проверка чтоб не создавать лишних объектов
-        if (this.head == null)
+        if (this.head == null) {
             return "null";
-
+        }
+        
         StringBuilder b = new StringBuilder();
         for (Node node = this.head; node != null; node = node.next) {
             b.append(node.value).append(" -> ");
