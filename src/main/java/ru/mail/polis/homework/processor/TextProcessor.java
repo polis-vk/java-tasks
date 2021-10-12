@@ -21,7 +21,7 @@ public interface TextProcessor {
      * Стадия: препроцессинг
      */
     static TextProcessor squashWhiteSpacesProcessor() {
-        return null;
+        return new SquashWhiteSpacesTextProcessor();
     }
 
     /**
@@ -31,7 +31,7 @@ public interface TextProcessor {
      * Стадия: процессинг
      */
     static TextProcessor replaceFirstProcessor(String regex, String replacement) {
-        return null;
+        return new ReplaceFirstTextProcessor(regex, replacement);
     }
 
     /**
@@ -43,7 +43,7 @@ public interface TextProcessor {
      * @param maxLength неотрицательное число
      */
     static TextProcessor trimProcessor(int maxLength) {
-        return null;
+        return new TrimTextProcessor(maxLength);
     }
 
     /**
@@ -52,6 +52,11 @@ public interface TextProcessor {
      * Стадия: постпроцессинг
      */
     static TextProcessor upperCaseProcessor() {
-        return null;
+        return new UpperCaseTextProcessor();
     }
+
+    ProcessingStage getProcessingStage();
+
+    String processText(String text);
+
 }

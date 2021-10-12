@@ -33,13 +33,23 @@ package ru.mail.polis.homework.processor;
  */
 public class TextProcessorManager {
 
-    private static final TextProcessorManager EMPTY = null;
+    private TextProcessor[] processors;
+    private static final TextProcessorManager EMPTY = new TextProcessorManager(new TextProcessor[]{});
 
     private TextProcessorManager(TextProcessor[] processors) {
+        this.processors = processors;
     }
 
     public String processText(String text) {
-        return null;
+        if (text == null) {
+            return null;
+        }
+
+        String processedText = text;
+        for (TextProcessor tp: processors) {
+            processedText = tp.processText(processedText);
+        }
+        return processedText;
     }
 
     public static TextProcessorManager construct(TextProcessor[] processors) {
@@ -51,6 +61,35 @@ public class TextProcessorManager {
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
-        return true;
+        boolean wasProcessingStage = false;
+        boolean wasPostprocessingStage = false;
+        boolean isValidSequence = true;
+        for (TextProcessor tp: processors) {
+            if (tp == null) {
+                isValidSequence = false;
+                break;
+            }
+            switch (tp.getProcessingStage()) {
+                case PREPROCESSING:
+                    if (wasProcessingStage || wasPostprocessingStage) {
+                        isValidSequence = false;
+                    }
+                    break;
+                case PROCESSING:
+                    wasProcessingStage = true;
+                    if (wasPostprocessingStage) {
+                        isValidSequence = false;
+                    }
+                    break;
+                case POSTPROCESSING:
+                    wasPostprocessingStage = true;
+                    break;
+            }
+            if (!isValidSequence) {
+                break;
+            }
+        }
+        return isValidSequence;
     }
+
 }
