@@ -104,7 +104,8 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             return elem;
         }
     }
-  //я хотела оба итератора совместить в один, но не знаю, как это сделать...
+
+    //я хотела оба итератора совместить в один, но не знаю, как это сделать...
     private class GeneralIter implements Iterator<Integer> {
         int position;
         int mc;
