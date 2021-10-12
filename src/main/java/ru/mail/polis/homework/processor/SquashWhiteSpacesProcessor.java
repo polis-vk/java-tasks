@@ -8,7 +8,7 @@ public class SquashWhiteSpacesProcessor implements TextProcessor {
     private static final ProcessingStage STAGE = ProcessingStage.PREPROCESSING;
 
     public String processText(String text) {
-        Pattern pattern = Pattern.compile("[ \t\n\\x0B\f\r]+");
+        Pattern pattern = Pattern.compile("\\s+");
         Matcher matcher = pattern.matcher(text);
         return matcher.replaceAll(" ");
     }
