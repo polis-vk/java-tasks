@@ -8,7 +8,7 @@ public enum ProcessingStage {
     PROCESSING(2),
     POSTPROCESSING(3);
 
-    private int stageNumber;
+    private final int stageNumber;
 
     ProcessingStage(int stage) {
         stageNumber = stage;
