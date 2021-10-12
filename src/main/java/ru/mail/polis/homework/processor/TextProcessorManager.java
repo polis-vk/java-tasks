@@ -1,5 +1,11 @@
 package ru.mail.polis.homework.processor;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 /**
  * Задание: написать систему обработки текста.
  * Надо реализовать 4 обработчика текста
@@ -27,30 +33,45 @@ package ru.mail.polis.homework.processor;
  * проверку на корректность (статический метод isValidSequence) и экземпляр заглушки (статическое поле EMPTY).
  * Обратите внимание, что метод isValidSequence не имеет модификатора доступа, и таким образом, он доступен в коде
  * юнит-тестов (т.к. они относятся к тому же пакету).
- *
+ * <p>
  * Базовая обвязка класса 2 балла + 3 балла за валидацию. Итого 5
  * Суммарно, по всему заданию 15 баллов
  */
 public class TextProcessorManager {
-
-    private static final TextProcessorManager EMPTY = null;
+    private final TextProcessor[] processors;
 
     private TextProcessorManager(TextProcessor[] processors) {
+        this.processors = processors;
     }
 
     public String processText(String text) {
-        return null;
+        if (text == null) {
+            return null;
+        }
+        String temp = text;
+        for (TextProcessor processor : processors) {
+            temp = processor.process(temp);
+        }
+        return temp;
     }
 
     public static TextProcessorManager construct(TextProcessor[] processors) {
         if (!isValidSequence(processors)) {
-            return EMPTY;
+            return new TextProcessorManager(new TextProcessor[]{new EmptyTextProcessor()});
         }
+
         return new TextProcessorManager(processors);
     }
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
+        TextProcessor[] textProcessors = Arrays.copyOf(processors, processors.length);
+        Arrays.sort(textProcessors, Comparator.comparingInt(o1 -> o1.getProcessingStage().getIndex()));
+        for (int i = 0; i < processors.length; i++) {
+            if (processors[i].getProcessingStage() != textProcessors[i].getProcessingStage()) {
+                return false;
+            }
+        }
         return true;
     }
 }
