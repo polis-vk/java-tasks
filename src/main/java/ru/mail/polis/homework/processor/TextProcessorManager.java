@@ -27,19 +27,32 @@ package ru.mail.polis.homework.processor;
  * проверку на корректность (статический метод isValidSequence) и экземпляр заглушки (статическое поле EMPTY).
  * Обратите внимание, что метод isValidSequence не имеет модификатора доступа, и таким образом, он доступен в коде
  * юнит-тестов (т.к. они относятся к тому же пакету).
- *
+ * <p>
  * Базовая обвязка класса 2 балла + 3 балла за валидацию. Итого 5
  * Суммарно, по всему заданию 15 баллов
  */
-public class TextProcessorManager {
+public class TextProcessorManager implements StringProcessable {
 
-    private static final TextProcessorManager EMPTY = null;
+    private static final TextProcessorManager EMPTY = new TextProcessorManager(new TextProcessor[0]);
+
+    private final TextProcessor[] processors;
 
     private TextProcessorManager(TextProcessor[] processors) {
+        this.processors = processors;
+    }
+
+    @Override
+    public String process(String text) {
+        String processedText = text;
+        for (TextProcessor processor : processors) {
+            processedText = processor.process(processedText);
+        }
+        return processedText;
     }
 
     public String processText(String text) {
-        return null;
+        if (text == null) return null;
+        return process(text);
     }
 
     public static TextProcessorManager construct(TextProcessor[] processors) {
@@ -51,6 +64,18 @@ public class TextProcessorManager {
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
+        if (processors == null) {
+            return false;
+        }
+        int currentOrder = 0;
+        for (TextProcessor processor : processors) {
+            int processorOrder = processor.getStage().order;
+            if (processorOrder < currentOrder) {
+                return false;
+            }
+            currentOrder = processorOrder;
+        }
         return true;
     }
+
 }
