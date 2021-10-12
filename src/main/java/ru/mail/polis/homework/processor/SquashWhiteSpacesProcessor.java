@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 
 public class SquashWhiteSpacesProcessor implements TextProcessor {
 
-    private final ProcessingStage STAGE = ProcessingStage.PREPROCESSING;
+    private static final ProcessingStage STAGE = ProcessingStage.PREPROCESSING;
 
     public String processText(String text) {
         Pattern pattern = Pattern.compile("[ \t\n\\x0B\f\r]+");

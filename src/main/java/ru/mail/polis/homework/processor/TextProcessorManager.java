@@ -61,7 +61,7 @@ public class TextProcessorManager {
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
         for (int i = 0; i < processors.length - 1; i++) {
-            if (processors[i].getStage().compareTo(processors[i +1 ].getStage()) > 0) {
+            if (processors[i].getStage().getPriority() > processors[i + 1].getStage().getPriority()) {
                 return false;
             }
         }

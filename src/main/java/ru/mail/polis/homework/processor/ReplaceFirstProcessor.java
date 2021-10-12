@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 
 public class ReplaceFirstProcessor implements TextProcessor {
 
-    private final ProcessingStage STAGE = ProcessingStage.PROCESSING;
+    private static final ProcessingStage STAGE = ProcessingStage.PROCESSING;
     private final String regex;
     private final String replacement;
 
