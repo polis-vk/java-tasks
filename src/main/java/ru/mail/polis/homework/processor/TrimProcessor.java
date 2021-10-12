@@ -8,6 +8,7 @@ public class TrimProcessor implements TextProcessor {
         this.maxLength = maxLength;
     }
 
+    @Override
     public int getStagePriority() {
         return processingStage.getPriority();
     }

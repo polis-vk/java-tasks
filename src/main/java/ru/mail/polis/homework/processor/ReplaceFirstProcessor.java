@@ -10,6 +10,7 @@ public class ReplaceFirstProcessor implements TextProcessor {
         this.replacement = replacement;
     }
 
+    @Override
     public int getStagePriority() {
         return processingStage.getPriority();
     }
