@@ -51,7 +51,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new CustomIterator(0,1);
+        return new CustomIterator(Type.Default);
     }
 
     /**
@@ -61,7 +61,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new CustomIterator(1, 2);
+        return new CustomIterator(Type.Even);
     }
 
     /**
@@ -71,7 +71,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new CustomIterator(0, 2);
+        return new CustomIterator(Type.Odd);
     }
 
     private void checkIndex(int index) {
@@ -84,10 +84,12 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         private int index;
         private final int step;
         private final int expectedModCount = modCount;
-        CustomIterator(int offset, int step) {
-            this.index = offset;
-            this.step = step;
+
+        CustomIterator(Type type) {
+            this.index = type.getBeginIndex();
+            this.step = type.getStep();
         }
+
         @Override
         public boolean hasNext() {
             return index < array.length;
@@ -98,9 +100,28 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             if (expectedModCount != modCount) {
                 throw new ConcurrentModificationException();
             }
+            int result = array[index];
             index += step;
-            return array[index - step];
+            return result;
         }
     }
 
+    enum Type {
+        Default(0, 1), Odd(0, 2), Even(1, 2);
+        private int beginIndex;
+        private int step;
+
+        Type(int beginIndex, int step) {
+            this.beginIndex = beginIndex;
+            this.step = step;
+        }
+
+        public int getBeginIndex() {
+            return beginIndex;
+        }
+
+        public int getStep() {
+            return step;
+        }
+    }
 }
