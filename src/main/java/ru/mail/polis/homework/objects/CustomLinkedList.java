@@ -15,12 +15,12 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
-        size++;
         if (head == null) {
             head = new Node(value);
             return;
         }
         findTail(head).setNext(new Node(value));
+        size++;
     }
 
 
