@@ -89,13 +89,13 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
-        String str = "";
+        StringBuilder str = new StringBuilder();
         for (Node i = head; i != null; i = i.next) {
-            str += i.value + " -> ";
+            str.append(i.value + " -> ");
         }
-        str += "null";
+        str.append("null");
 
-        return str;
+        return str.toString();
     }
 
     private static class Node {
