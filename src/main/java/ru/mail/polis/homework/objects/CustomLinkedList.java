@@ -53,6 +53,7 @@ public class CustomLinkedList {
         length--;
     }
 
+
     /**
      * Реализовать метод:
      * Переварачивает все элементы списка.

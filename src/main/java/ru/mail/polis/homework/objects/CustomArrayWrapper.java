@@ -14,6 +14,12 @@ import java.util.Iterator;
  */
 public class CustomArrayWrapper implements Iterable<Integer> {
 
+    private static final int positionForDefaultAndEvenIterator = -1;
+    private static final int positionForOddIterator = -2;
+    private static final int stepForDefaultIterator = 1;
+    private static final int stepForOddAndEvenIterator = 2;
+
+
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
     private int modificationCounter;    // количество изменений
@@ -81,6 +87,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
+
     private class SpecialIterator implements Iterator<Integer> {
         private final int fixedModificationCounter = modificationCounter;
         int position;
@@ -89,18 +96,18 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         public SpecialIterator(String howToIter) {
             switch (howToIter) {
                 case "even": {
-                    this.position = -1;
-                    this.step = 2;
+                    this.position = positionForDefaultAndEvenIterator;
+                    this.step = stepForOddAndEvenIterator;
                     break;
                 }
                 case "odd": {
-                    this.position = -2;
-                    this.step = 2;
+                    this.position = positionForOddIterator;
+                    this.step = stepForOddAndEvenIterator;
                     break;
                 }
                 case "default": {
-                    this.position = -1;
-                    this.step = 1;
+                    this.position = positionForDefaultAndEvenIterator;
+                    this.step = stepForDefaultIterator;
                     break;
                 }
             }
@@ -110,7 +117,6 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         public boolean hasNext() {
             return position + step < array.length;
         }
-
         @Override
         public Integer next() {
             if (modificationCounter != fixedModificationCounter) {
