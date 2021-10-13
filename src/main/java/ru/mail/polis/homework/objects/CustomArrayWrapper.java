@@ -52,26 +52,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new Iterator<Integer>() {
-            int position = 0;
-            int fixedModCount = modCount;
-
-            @Override
-            public boolean hasNext() {
-                return position < array.length;
-            }
-
-            @Override
-            public Integer next() {
-                if (fixedModCount != modCount) {
-                    throw new ConcurrentModificationException();
-                }
-                if (position >= array.length) {
-                    throw new IndexOutOfBoundsException();
-                }
-                return array[position++];
-            }
-        };
+        return new CustomArrayIterator(0, 1);
     }
 
     /**
@@ -81,27 +62,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new Iterator<Integer>() {
-            int position = 1;
-            int fixedModCount = modCount;
-
-            @Override
-            public boolean hasNext() {
-                return position < array.length;
-            }
-
-            @Override
-            public Integer next() {
-                if (fixedModCount != modCount) {
-                    throw new ConcurrentModificationException();
-                }
-                if (position >= array.length) {
-                    throw new IndexOutOfBoundsException();
-                }
-                position += 2;
-                return array[position - 2];
-            }
-        };
+        return new CustomArrayIterator(1, 2);
     }
 
     /**
@@ -111,32 +72,40 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new Iterator<Integer>() {
-            int position = 0;
-            int fixedModCount = modCount;
-
-            @Override
-            public boolean hasNext() {
-                return position < array.length;
-            }
-
-            @Override
-            public Integer next() {
-                if (fixedModCount != modCount) {
-                    throw new ConcurrentModificationException();
-                }
-                if (position >= array.length) {
-                    throw new IndexOutOfBoundsException();
-                }
-                position += 2;
-                return array[position - 2];
-            }
-        };
+        return new CustomArrayIterator(0, 2);
     }
 
     private void checkIndex(int index) {
         if (index < 0 || index >= array.length) {
             throw new IndexOutOfBoundsException();
+        }
+    }
+
+    private class CustomArrayIterator implements Iterator<Integer> {
+        private int position;
+        private int step;
+        private int fixedModCount = modCount;
+
+        CustomArrayIterator(int position, int step) {
+            this.position = position;
+            this.step = step;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return position < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            if (fixedModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+            if (position >= array.length) {
+                throw new IndexOutOfBoundsException();
+            }
+            position += step;
+            return array[position - step];
         }
     }
 
