@@ -15,6 +15,11 @@ import java.util.NoSuchElementException;
  */
 public class CustomArrayWrapper implements Iterable<Integer> {
 
+    public static final int FIRST_INDEX = 0;
+    public static final int SECOND_INDEX = 1;
+    public static final int SINGLE_STEP = 1;
+    public static final int DOUBLE_STEP = 2;
+
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
     private int modCount;
@@ -45,34 +50,6 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         return array.length;
     }
 
-    private Iterator<Integer> subSequenceIterator(final int begin, final int step) {
-        return new Iterator<Integer>() {
-            private int position = begin;
-            private final int fixedModCount = modCount;
-
-            @Override
-            public boolean hasNext() {
-                return position < array.length;
-            }
-
-            @Override
-            public Integer next() {
-                if (fixedModCount != modCount) {
-                    throw new ConcurrentModificationException(
-                            CustomArrayWrapper.this
-                                    + " has been changed "
-                                    + (modCount - fixedModCount)
-                                    + " between iterations"
-                    );
-                }
-                if (position >= array.length) {
-                    throw new NoSuchElementException();
-                }
-                return array[(position += step) - step];
-            }
-        };
-    }
-
     /**
      * [x] Реализовать метод:
      * Возвращает обычный итератор.
@@ -81,7 +58,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return subSequenceIterator(0, 1);
+        return new SubSequenceIterator();
     }
 
     /**
@@ -91,7 +68,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return subSequenceIterator(1, 2);
+        return new SubSequenceIterator(Parity.EVEN);
     }
 
     /**
@@ -101,12 +78,57 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return subSequenceIterator(0, 2);
+        return new SubSequenceIterator(Parity.ODD);
     }
 
     private void checkIndex(int index) {
         if (index < 0 || index >= array.length) {
             throw new IndexOutOfBoundsException();
+        }
+    }
+
+    private enum Parity {
+        ODD,
+        EVEN,
+    }
+
+    private class SubSequenceIterator implements Iterator<Integer> {
+        private final int step;
+        private int position;
+        private final int fixedModCount = modCount;
+
+        public SubSequenceIterator(int begin, int step) {
+            this.position = begin;
+            this.step = step;
+        }
+
+        public SubSequenceIterator() {
+            this(FIRST_INDEX, SINGLE_STEP);
+        }
+
+        public SubSequenceIterator(Parity parity) {
+            this(parity == Parity.ODD ? FIRST_INDEX : SECOND_INDEX, DOUBLE_STEP);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return position < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            if (fixedModCount != modCount) {
+                throw new ConcurrentModificationException(
+                        CustomArrayWrapper.this
+                                + " has been changed "
+                                + (modCount - fixedModCount)
+                                + "time(s) between iterations"
+                );
+            }
+            if (position >= array.length) {
+                throw new NoSuchElementException();
+            }
+            return array[(position += step) - step];
         }
     }
 }
