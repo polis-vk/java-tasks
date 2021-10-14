@@ -6,6 +6,8 @@ package ru.mail.polis.homework.objects;
 public class CustomLinkedList {
 
     private Node head;
+    private int size = 0;
+    private Node last;
 
     /**
      * Реализовать метод:
@@ -14,7 +16,15 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
-
+        if(head == null) {
+            head = new Node(value);
+            last = head;
+            size++;
+            return;
+        }
+        last.next = new Node(value);
+        last = last.next;
+        size++;
     }
 
     /**
@@ -25,36 +35,70 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-
+        if (index < 0 || index >= size)
+            throw new IndexOutOfBoundsException();
+        if (index == 0) {
+            head = head.next;
+            size--;
+        }
+        Node tmp = head;
+        int i = 0;
+        while (i < index - 1) {
+            tmp = tmp.next;
+            i++;
+        }
+        tmp.next = tmp.next.next;
+        size--;
     }
 
     /**
      * Реализовать метод:
      * Переварачивает все элементы списка.
      * Пример:
-     *  Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
-     *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
+     * Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
+     * После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-
+        if(size<2)
+            return;
+        Node tmp = head;
+        Node tmpBuf;
+        last = head;
+        while(tmp!=null){
+            tmpBuf =tmp;
+            tmp = tmp.next;
+            tmpBuf.next = head;
+            head = tmpBuf;
+        }
+        last.next = null;
     }
 
     /**
      * Метод выводит всю последовательность хранящуюся в списке начиная с head.
      * Формат вывода:
-     *  - значение каждой Node должно разделяться " -> "
-     *  - последовательность всегда заканчивается на null
-     *  - если в списке нет элементов - верните строку "null"
+     * - значение каждой Node должно разделяться " -> "
+     * - последовательность всегда заканчивается на null
+     * - если в списке нет элементов - верните строку "null"
      *
      * @return - String with description all list
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        StringBuilder result = new StringBuilder();
+        if(size>0)
+        {
+            Node tmp = head;
+            while(tmp!=null) {
+                result.append(tmp.value).append(" -> ");
+                tmp = tmp.next;
+            }
+        }
+        result.append("null");
+        return result.toString();
     }
 
     private static class Node {
-        private int value;
+        private final int value;
         private Node next;
 
         public Node(int value) {

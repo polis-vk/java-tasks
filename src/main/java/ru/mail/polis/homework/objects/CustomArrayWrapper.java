@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -15,6 +17,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
+    private int modCount = 0;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -23,12 +26,14 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     public void add(int value) {
         checkIndex(position);
         array[position] = value;
+        modCount++;
         position++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
+        modCount++;
     }
 
     public int get(int index) {
@@ -40,6 +45,37 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         return array.length;
     }
 
+    private class iterator implements Iterator<Integer> {
+        private int index;
+        private final int step;
+        private final int fixedModCount;
+
+        public iterator(int index, int step) {
+            this.index= index;
+            this.step = step;
+            fixedModCount = modCount;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return index < array.length;
+        }
+
+        @Override
+        public Integer next(){
+            if(fixedModCount !=modCount) {
+                throw new ConcurrentModificationException();
+            }
+            if(index>=array.length) {
+                throw new NoSuchElementException();
+            }
+            int result = array[index];
+            index+= step;
+            return result;
+        }
+
+    }
+
     /**
      * Реализовать метод:
      * Возврящает обычный итератор.
@@ -48,8 +84,9 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new iterator(0,1);
     }
+
 
     /**
      * Реализовать метод:
@@ -58,7 +95,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new iterator(1,2);
     }
 
     /**
@@ -68,7 +105,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new iterator(0,2);
     }
 
     private void checkIndex(int index) {
