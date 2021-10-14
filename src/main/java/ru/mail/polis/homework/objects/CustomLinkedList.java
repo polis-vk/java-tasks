@@ -6,6 +6,11 @@ package ru.mail.polis.homework.objects;
 public class CustomLinkedList {
 
     private Node head;
+    private int length;
+
+    public CustomLinkedList() {
+        this.length = 0;
+    }
 
     /**
      * Реализовать метод:
@@ -14,6 +19,7 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
+        this.length++;
         if (head == null) {
             head = new Node(value);
             return;
@@ -33,7 +39,7 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (head == null || index < 0) {
+        if (head == null || index < 0 || (index >= this.length)) {
             throw new IndexOutOfBoundsException();
         }
         if (index == 0) {
@@ -43,25 +49,22 @@ public class CustomLinkedList {
         Node prev = head;
         for (int i = 0; i < index - 1; i++) {
             prev = prev.next;
-            if (prev.next == null) {
-                throw new IndexOutOfBoundsException();
-            }
-
         }
         prev.setNext(prev.next.next);
+        length--;
     }
 
     /**
      * Реализовать метод:
      * Переварачивает все элементы списка.
      * Пример:
-     * Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
+     * сходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
      * После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
         Node prev = null;
         Node cur = head;
-        while (cur != null) {
+        for (int i = 0; i < this.length; i++) {
             Node next = cur.next;
             cur.setNext(prev);
             prev = cur;
@@ -81,6 +84,9 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
+        if (head == null) {
+            return "null";
+        }
         StringBuilder s = new StringBuilder();
         Node node = head;
         while (node != null) {
