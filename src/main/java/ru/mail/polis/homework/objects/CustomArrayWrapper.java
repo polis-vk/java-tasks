@@ -113,7 +113,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
-    private class DefaultIterator extends CustomIterator implements Iterator<Integer> {
+    private class DefaultIterator extends CustomIterator {
         public DefaultIterator() {
             setStep(1);
         }
@@ -121,14 +121,14 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
 
 
-    private class EvenIterator extends CustomIterator implements Iterator<Integer> {
+    private class EvenIterator extends CustomIterator {
         public EvenIterator() {
             setPosition(1);
             setStep(2);
         }
     }
 
-    private class OddIterator extends CustomIterator implements Iterator<Integer> {
+    private class OddIterator extends CustomIterator {
         public OddIterator() {
             setStep(2);
         }
