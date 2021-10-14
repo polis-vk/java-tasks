@@ -14,9 +14,9 @@ package ru.mail.polis.homework.processor;
  */
 public interface TextProcessor {
 
-    ProcessingStage stage();
+    ProcessingStage getStage();
 
-    String action(String text);
+    String makeAction(String text);
 
     /**
      * Схлопывает все пустые символы в один пробел.
@@ -57,81 +57,5 @@ public interface TextProcessor {
      */
     static TextProcessor upperCaseProcessor() {
         return new UpperCaseProcessor();
-    }
-}
-
-class SquashWhiteSpacesProcessor implements TextProcessor {
-    public SquashWhiteSpacesProcessor() {
-    }
-
-    @Override
-    public ProcessingStage stage() {
-        return ProcessingStage.PREPROC;
-    }
-
-    @Override
-    public String action(String text) {
-        String buf = text;
-        return buf.replaceAll("\\s+", " ");
-    }
-}
-
-class ReplaceFirstProcessor implements TextProcessor {
-    private final String regex;
-    private final String replacement;
-
-    public ReplaceFirstProcessor(String regex, String replacement) {
-        this.regex = regex;
-        this.replacement = replacement;
-    }
-
-    @Override
-    public ProcessingStage stage() {
-        return ProcessingStage.PROC;
-    }
-
-    @Override
-    public String action(String text) {
-        String buf = text;
-        return buf.replaceFirst(regex, replacement);
-    }
-}
-
-class TrimProcessor implements TextProcessor {
-    private final int maxLength;
-
-    public TrimProcessor(int maxLength) {
-        this.maxLength = maxLength;
-    }
-
-    @Override
-    public ProcessingStage stage() {
-        return ProcessingStage.POSTPROC;
-    }
-
-    @Override
-    public String action(String text) {
-        if (text.length() <= maxLength) {
-            return text;
-        } else {
-            String buf = text;
-            return buf.substring(0, maxLength);
-        }
-    }
-}
-
-class UpperCaseProcessor implements TextProcessor {
-    public UpperCaseProcessor() {
-    }
-
-    @Override
-    public ProcessingStage stage() {
-        return ProcessingStage.POSTPROC;
-    }
-
-    @Override
-    public String action(String text) {
-        String buf = text;
-        return buf.toUpperCase();
     }
 }

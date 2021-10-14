@@ -47,7 +47,7 @@ public class TextProcessorManager {
         String buf = text;
         int n = processors.length;
         for (int i = 0; i < n; i++) {
-            buf = processors[i].action(buf);
+            buf = processors[i].makeAction(buf);
         }
         return buf;
     }
@@ -62,16 +62,15 @@ public class TextProcessorManager {
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
         int n = processors.length;
-        ProcessingStage cur = null;
+        ProcessingStage currentStage = null;
         if (n > 0) {
-            cur = processors[0].stage();
+            currentStage = processors[0].getStage();
         }
         for (int i = 1; i < n; i++) {
-            if (processors[i].stage().ordinal() < cur.ordinal()) {
+            if (processors[i].getStage().getOrdinal() < currentStage.getOrdinal()) {
                 return false;
-            } else if (processors[i].stage().ordinal() > cur.ordinal()) {
-                cur = processors[i].stage();
             }
+            currentStage = processors[i].getStage();
         }
         return true;
     }
