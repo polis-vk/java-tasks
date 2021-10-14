@@ -1,9 +1,9 @@
 package ru.mail.polis.homework.processor;
 
-public class trimProcessor implements TextProcessor {
+public class TrimProcessor implements TextProcessor {
     private final int length;
 
-    public trimProcessor(int length) {
+    public TrimProcessor(int length) {
         this.length = length;
     }
 

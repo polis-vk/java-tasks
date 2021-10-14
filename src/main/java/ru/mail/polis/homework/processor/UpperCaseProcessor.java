@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.processor;
 
-public class upperCaseProcessor implements TextProcessor {
+public class UpperCaseProcessor implements TextProcessor {
     @Override
     public ProcessingStage getStage() {
         return ProcessingStage.POSTPROCESSING;

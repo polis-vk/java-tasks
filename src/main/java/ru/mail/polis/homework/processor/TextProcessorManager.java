@@ -44,11 +44,11 @@ public class TextProcessorManager {
         if (text == null) {
             return null;
         }
-        String ans = text;
-        for (TextProcessor pr : processors) {
-            ans = pr.process(ans);
+        String resultText = text;
+        for (TextProcessor textProcessor : processors) {
+            resultText = textProcessor.process(resultText);
         }
-        return ans;
+        return resultText;
     }
 
     public static TextProcessorManager construct(TextProcessor[] processors) {
@@ -61,11 +61,11 @@ public class TextProcessorManager {
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
         ProcessingStage prev = ProcessingStage.PREPROCESSING;
-        for (TextProcessor pr : processors) {
-            if (pr.getStage().getOrder() < prev.getOrder()) {
+        for (TextProcessor textProcessor : processors) {
+            if (textProcessor.getStage().getOrder() < prev.getOrder()) {
                 return false;
             }
-            prev = pr.getStage();
+            prev = textProcessor.getStage();
         }
         return true;
     }

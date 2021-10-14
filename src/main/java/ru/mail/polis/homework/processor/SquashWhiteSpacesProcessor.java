@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.processor;
 
-public class squashWhiteSpacesProcessor implements TextProcessor {
+public class SquashWhiteSpacesProcessor implements TextProcessor {
     @Override
     public String process(String text) {
         return text.replaceAll("\\s+", " ");
