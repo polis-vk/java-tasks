@@ -15,7 +15,7 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
-        ++size;
+        size++;
         if (head == null) {
             head = new Node(value);
             return;
