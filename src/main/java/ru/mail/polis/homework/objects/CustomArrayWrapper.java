@@ -17,23 +17,23 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
-    private boolean isChanged = false;
+    private int modCount = 0;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
     }
 
     public void add(int value) {
-        isChanged = true;
         checkIndex(position);
         array[position] = value;
         position++;
+        modCount++;
     }
 
     public void edit(int index, int value) {
-        isChanged = true;
         checkIndex(index);
         array[index] = value;
+        modCount++;
     }
 
     public int get(int index) {
@@ -53,34 +53,52 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        isChanged = false;
-        // При каждом создании Iterator'а обновляется переменная isChanged, и при каждом изменении массива
-        // Ей будет присваиваться true, что после проверки даст исключение ConcurrentModificationException
-        return new Iterator<Integer>() {
-            int index = 0;
+        return new DefaultInnerIterator();
+    }
 
-            @Override
-            public boolean hasNext() {
-                if (isChanged) {
-                    throw new ConcurrentModificationException();
-                }
+    private class DefaultInnerIterator implements Iterator<Integer> {
+        int fixedModCount = modCount;
+        int index = 0;
 
-                return index < array.length;
+        @Override
+        public boolean hasNext() {
+            return commonHasNext(fixedModCount, index);
+        }
+
+        @Override
+        public Integer next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return array[index++];
+        }
+    }
+
+    private class AnotherInnerIterator implements Iterator<Integer> {
+        int fixedModCount = modCount;
+        int index;
+
+        public AnotherInnerIterator(int startIndex) {
+            this.index = startIndex;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return commonHasNext(fixedModCount, index);
+        }
+
+        @Override
+        public Integer next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
             }
 
-            @Override
-            public Integer next() {
-                if (isChanged) {
-                    throw new ConcurrentModificationException();
-                }
+            int res = array[index];
 
-                if (index >= array.length || index < 0) {
-                    throw new NoSuchElementException();
-                }
+            index += 2;
 
-                return array[index++];
-            }
-        };
+            return res;
+        }
     }
 
     /**
@@ -90,9 +108,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        isChanged = false;
-
-        return getIteratorByFirstIndex(1);
+        return new AnotherInnerIterator(1);
     }
 
     /**
@@ -102,40 +118,14 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        isChanged = false;
-
-        return getIteratorByFirstIndex(0);
+        return new AnotherInnerIterator(0);
     }
 
-    private Iterator<Integer> getIteratorByFirstIndex(int i) {
-        return new Iterator<Integer>() {
-            int index = i;
-
-            @Override
-            public boolean hasNext() {
-                if (isChanged) {
-                    throw new ConcurrentModificationException();
-                }
-
-                return index < array.length;
-            }
-
-            @Override
-            public Integer next() {
-                if (isChanged) {
-                    throw new ConcurrentModificationException();
-                }
-
-                if (index >= array.length || index < 0) {
-                    throw new NoSuchElementException();
-                }
-
-                int result = array[index];
-                index += 2;
-
-                return result;
-            }
-        };
+    public boolean commonHasNext(int fixedModCount, int index) {
+        if (fixedModCount != modCount) {
+            throw new ConcurrentModificationException();
+        }
+        return index < array.length && index >= 0;
     }
 
     private void checkIndex(int index) {

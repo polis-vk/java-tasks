@@ -18,7 +18,6 @@ public class CustomLinkedList {
     public void add(int value) {
         if (first == null) {
             first = new Node(value);
-            first.next = null;
             last = first;
         } else {
             Node curr = last;
