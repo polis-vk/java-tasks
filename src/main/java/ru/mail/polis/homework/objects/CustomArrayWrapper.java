@@ -82,10 +82,21 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
-    private class OddIter implements Iterator<Integer> {
-        int position = 0;
-        int fixedModCount = modCount;
+    private class Iter implements Iterator<Integer> {
+        protected int position = 0;
+        protected int fixedModCount = modCount;
 
+        public Integer next() {
+            return array[position++];
+        }
+
+        public boolean hasNext() {
+            return position < array.length;
+        }
+    }
+
+    private class OddIter extends Iter {
+        @Override
         public Integer next() {
             if (fixedModCount != modCount) {
                 throw new ConcurrentModificationException();
@@ -97,10 +108,6 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             position += 2;
             return array[position - 2];
         }
-
-        public boolean hasNext() {
-            return position < array.length;
-        }
     }
 
     private class EvenIter extends OddIter {
@@ -108,12 +115,4 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             position = 1;
         }
     }
-
-    private class Iter extends OddIter {
-        @Override
-        public Integer next() {
-            return array[position++];
-        }
-    }
-
 }

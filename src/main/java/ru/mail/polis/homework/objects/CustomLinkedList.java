@@ -87,14 +87,19 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
-        String res = "";
+        if(head == null) {
+            return  "null";
+        }
+
+        StringBuilder res = new StringBuilder();
         Node currNode = head;
         while (currNode != null) {
-            res += currNode.getValue() + " -> ";
+            res.append(currNode.getValue() + " -> ");
             currNode = currNode.getNext();
         }
-        res += "null";
-        return res;
+        res.append("null");
+
+        return res.toString();
     }
 
     private static class Node {
