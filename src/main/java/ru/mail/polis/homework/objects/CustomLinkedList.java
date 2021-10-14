@@ -35,7 +35,7 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (index < 0 || index > elCount - 1) {
+        if (index < 0 || index >= elCount) {
             throw new IndexOutOfBoundsException();
         }
         Node cur = head;

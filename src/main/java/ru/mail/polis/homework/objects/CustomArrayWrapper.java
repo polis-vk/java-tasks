@@ -107,8 +107,8 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         private int position;
         private final int fixedModCount = modCount;
 
-        public CustomIter(int startPosition) {
-            position = startPosition;
+        public CustomIter(int position) {
+            this.position = position;
         }
 
         @Override
