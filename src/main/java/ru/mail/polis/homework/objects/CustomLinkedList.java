@@ -85,6 +85,9 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
+        if (count == 0) {
+            return "null";
+        }
         StringBuilder stringBuilder = new StringBuilder();
         Node tmpNode = head;
         while (tmpNode != null) {
