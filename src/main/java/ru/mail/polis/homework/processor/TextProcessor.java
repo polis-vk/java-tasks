@@ -14,6 +14,9 @@ package ru.mail.polis.homework.processor;
  */
 public interface TextProcessor {
 
+    String process(String text);
+    ProcessingStage getProcessingStage();
+
     /**
      * Схлопывает все пустые символы в один пробел.
      * Более формально, заменить каждую подстроку, удовлетворяющую регулярному выражению \s+ на 1 пробел.
@@ -55,6 +58,4 @@ public interface TextProcessor {
         return new UpperCaseProcessor();
     }
 
-    ProcessingStage getProcessingStage();
-    String process(String text);
 }
