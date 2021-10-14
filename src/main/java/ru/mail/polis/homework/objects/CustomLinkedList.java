@@ -15,16 +15,17 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
+        Node addedNode = new Node(value);
         if (head == null) {
-            head = new Node(value);
+            head = addedNode;
         } else if (head.next == null) {
-            head.setNext(new Node(value));
+            head.setNext(addedNode);
         } else {
             Node currentNode = head;
             while (currentNode.next != null) {
                 currentNode = currentNode.next;
             }
-            currentNode.setNext(new Node(value));
+            currentNode.setNext(addedNode);
         }
         size++;
     }
@@ -37,11 +38,7 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (index >= size) {
-            throw new IndexOutOfBoundsException();
-        }
-
-        if (index < 0) {
+        if (index >= size || index < 0) {
             throw new IndexOutOfBoundsException();
         }
 
@@ -101,11 +98,11 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        Node node = head;
         if (head == null) {
             return "null";
         }
+        StringBuilder sb = new StringBuilder();
+        Node node = head;
         while (node != null) {
             sb.append(node.value);
             sb.append(" -> ");
