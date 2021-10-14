@@ -58,7 +58,9 @@ public class CustomLinkedList {
      * После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-        if (size <= 1) return;
+        if (size <= 1) {
+            return;
+        }
         Node previous = null;
         Node current = head;
         Node next;
@@ -82,7 +84,9 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
-        if (size == 0) return "null";
+        if (size == 0) {
+            return "null";
+        }
         StringBuilder list = new StringBuilder();
         Node current = head;
         while (current != null) {
