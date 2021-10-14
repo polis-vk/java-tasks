@@ -9,7 +9,7 @@ public class UpperCaseProcessor implements TextProcessor{
     }
 
     @Override
-    public ProcessingStage getStage() {
-        return stage;
+    public int getStage() {
+        return stage.getStage();
     }
 }

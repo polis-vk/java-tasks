@@ -40,14 +40,16 @@ public class TextProcessorManager {
     }
 
     public String processText(String text) {
-        if (text == null || processors == null) {
-            return text;
+        String element = text;
+
+        if (element == null || processors == null) {
+            return element;
         }
 
         for (TextProcessor processor : processors) {
-            text = processor.process(text);
+            element = processor.process(element);
         }
-        return text;
+        return element;
     }
 
     public static TextProcessorManager construct(TextProcessor[] processors) {
@@ -59,9 +61,9 @@ public class TextProcessorManager {
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
-        ProcessingStage currentStage = ProcessingStage.PRE_PROCESSING;
+        int currentStage = ProcessingStage.PRE_PROCESSING.getStage();
         for (TextProcessor processor : processors) {
-            if (currentStage.priority > processor.getStage().priority) {
+            if (currentStage > processor.getStage()) {
                 return false;
             }
             currentStage = processor.getStage();

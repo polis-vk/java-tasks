@@ -17,7 +17,7 @@ public class TrimProcessor implements TextProcessor {
     }
 
     @Override
-    public ProcessingStage getStage() {
-        return stage;
+    public int getStage() {
+        return stage.getStage();
     }
 }
