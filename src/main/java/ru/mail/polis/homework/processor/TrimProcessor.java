@@ -14,11 +14,6 @@ public class TrimProcessor implements TextProcessor {
 
     @Override
     public String makeAction(String text) {
-        if (text.length() <= maxLength) {
-            return text;
-        } else {
-            String buf = text;
-            return buf.substring(0, maxLength);
-        }
+        return text.length() <= maxLength ? text : text.substring(0, maxLength);
     }
 }

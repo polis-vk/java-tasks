@@ -16,7 +16,6 @@ public class ReplaceFirstProcessor implements TextProcessor {
 
     @Override
     public String makeAction(String text) {
-        String buf = text;
-        return buf.replaceFirst(regex, replacement);
+        return text.replaceFirst(regex, replacement);
     }
 }
