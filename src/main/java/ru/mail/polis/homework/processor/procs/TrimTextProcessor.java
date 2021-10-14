@@ -15,7 +15,7 @@ public final class TrimTextProcessor implements TextProcessor {
 
     @Override
     public String process(String text) {
-        if(text == null || text.length() <= maxLength) {
+        if (text == null || text.length() <= maxLength) {
             return text;
         }        
         return text.substring(0, this.maxLength);

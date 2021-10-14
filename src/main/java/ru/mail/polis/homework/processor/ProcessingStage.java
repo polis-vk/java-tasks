@@ -8,8 +8,6 @@ public enum ProcessingStage {
     PROCESS(1), 
     POSTPROCESS(2);
 
-    // честно не понимаю чем плох .ordinal() в конкретной ситуации
-
     private final int order;
 
     ProcessingStage(int order) {

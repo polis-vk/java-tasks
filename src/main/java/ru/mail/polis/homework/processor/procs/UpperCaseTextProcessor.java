@@ -9,7 +9,7 @@ public final class UpperCaseTextProcessor implements TextProcessor {
 
     @Override
     public String process(String text) {
-        if(text == null) {
+        if (text == null) {
             return text;
         }
         return text.toUpperCase();
