@@ -9,7 +9,7 @@ public class CustomLinkedList {
     private static final String NULL_ITEM = "null";
     private Node head;
     private Node last;
-
+    private int length = 0;
     /**
      * [x] Реализовать метод:
      * Добавляет элемент в односвязный список.
@@ -20,10 +20,12 @@ public class CustomLinkedList {
         if (head == null) {
             head = new Node(value);
             last = head;
+            length++;
             return;
         }
         last.next = new Node(value);
         last = last.next;
+        length++;
     }
 
     /**
@@ -34,7 +36,7 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (head == null) {
+        if (index < 0 || index >= length) {
             throw new IndexOutOfBoundsException();
         }
         if (index == 0) {
@@ -42,20 +44,19 @@ public class CustomLinkedList {
                 last = null;
             }
             head = head.next;
+            length--;
             return;
         }
         Node previous = head;
         int i = 1;
-        for (; i < index && previous.next != null; i++) {
+        for (; i < index; i++) {
             previous = previous.next;
-        }
-        if (i != index || previous.next == null) {
-            throw new IndexOutOfBoundsException();
         }
         if (previous.next.next == null) {
             last = previous;
         }
         previous.next = previous.next.next;
+        length--;
     }
 
     /**
