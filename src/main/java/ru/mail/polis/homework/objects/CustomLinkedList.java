@@ -7,7 +7,9 @@ import java.util.ArrayList;
  */
 public class CustomLinkedList {
 
+    private int size = 0;
     private Node head;
+    private static final String END_OF_LIST = "null";
 
     /**
      * Реализовать метод:
@@ -25,6 +27,7 @@ public class CustomLinkedList {
             nodeForInserting = nodeForInserting.next;
         }
         nodeForInserting.setNext(new Node(value));
+        ++size;
     }
 
     /**
@@ -35,7 +38,7 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (index < 0 || head == null || index >= size()) {
+        if (index < 0 || head == null || index >= size) {
             throw new IndexOutOfBoundsException("Invalid index when removing list's element");
         }
         if (index == 0) {
@@ -51,6 +54,7 @@ public class CustomLinkedList {
             ++curIndex;
         }
         prev.next = nodeForRemoving.next;
+        --size;
     }
 
     /**
@@ -75,16 +79,6 @@ public class CustomLinkedList {
         head = prev;
     }
 
-    public int size() {
-        int size = 0;
-        Node cur = head;
-        while (cur != null) {
-            ++size;
-            cur = cur.next;
-        }
-        return size;
-    }
-
     /**
      * Метод выводит всю последовательность хранящуюся в списке начиная с head.
      * Формат вывода:
@@ -96,18 +90,22 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
+        if (head == null) {
+            return END_OF_LIST;
+        }
+
         Node cur = head;
         StringBuilder listInfo = new StringBuilder();
         while (cur != null) {
             listInfo.append(cur.value + " -> ");
             cur = cur.next;
         }
-        listInfo.append("null");
+        listInfo.append(END_OF_LIST);
         return listInfo.toString();
     }
 
     private static class Node {
-        private int value;
+        private final int value;
         private Node next;
 
         public Node(int value) {
