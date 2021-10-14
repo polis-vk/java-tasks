@@ -11,7 +11,7 @@ public class SquashWhiteSpacesProcessor extends TextProcessor {
 
     @Override
     public String process(String text) {
-        return text.replaceAll("[\r\n\t\f ]+", " ");
+        return text.replaceAll("\s+", " ");
     }
 
 }
