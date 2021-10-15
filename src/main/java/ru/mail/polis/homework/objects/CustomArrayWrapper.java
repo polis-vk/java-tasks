@@ -13,8 +13,8 @@ import java.util.Iterator;
  * тогда все элементы со значением 100 имеют нечетную позицию, а элементы = 0 - четную.
  */
 public class CustomArrayWrapper implements Iterable<Integer> {
-    private final static int ODD = 0;
-    private final static int EVEN = 1;
+    private final static int DEFAULT_STARTING_POSITION = 0;
+    private final static int EVEN_STARTING_POSITION = 1;
     private final static int REGULAR = 1;
     private final static int SELECTIVE = 2;
 
@@ -56,7 +56,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new Iter(REGULAR, ODD);
+        return new Iter(REGULAR, DEFAULT_STARTING_POSITION);
     }
 
     /**
@@ -66,7 +66,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new Iter(SELECTIVE, EVEN);
+        return new Iter(SELECTIVE, EVEN_STARTING_POSITION);
     }
 
     /**
@@ -76,7 +76,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new Iter(SELECTIVE, ODD);
+        return new Iter(SELECTIVE, DEFAULT_STARTING_POSITION);
     }
 
     private void checkIndex(int index) {
