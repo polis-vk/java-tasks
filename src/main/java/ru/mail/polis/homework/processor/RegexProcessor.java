@@ -12,11 +12,7 @@ public class RegexProcessor implements TextProcessor {
 
     @Override
     public String execute(String text) {
-        int index = text.indexOf(regex);
-        if (index == -1) {
-            return text;
-        }
-        return text.substring(0, index) + replacement + text.substring(index + regex.length());
+        return text.replaceFirst(regex, replacement);
     }
 
     @Override

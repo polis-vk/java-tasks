@@ -4,7 +4,7 @@ public class ShrinkProcessor implements TextProcessor {
     private final ProcessingStage stage = ProcessingStage.POSTPROCESSING;
     private final int maxLength;
 
-    ShrinkProcessor(int maxLength) {
+    public ShrinkProcessor(int maxLength) {
         this.maxLength = maxLength;
     }
 

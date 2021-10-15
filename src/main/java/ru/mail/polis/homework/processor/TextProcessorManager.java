@@ -35,15 +35,22 @@ public class TextProcessorManager {
     private static final TextProcessorManager EMPTY = new TextProcessorManager(null);
     TextProcessor[] processors;
 
-    private TextProcessorManager(TextProcessor[] processors) {
-        this.processors = processors;
-    }
-
     public static TextProcessorManager construct(TextProcessor[] processors) {
         if (!isValidSequence(processors)) {
             return EMPTY;
         }
         return new TextProcessorManager(processors);
+    }
+
+    public String processText(String text) {
+        if (processors == null || text == null) {
+            return text;
+        }
+        String processedText = text;
+        for (TextProcessor processor : processors) {
+            processedText = processor.execute(processedText);
+        }
+        return processedText;
     }
 
     // visible for tests
@@ -58,13 +65,8 @@ public class TextProcessorManager {
         return true;
     }
 
-    public String processText(String text) {
-        if (processors == null || text == null) {
-            return text;
-        }
-        for (TextProcessor processor : processors) {
-            text = processor.execute(text);
-        }
-        return text;
+    private TextProcessorManager(TextProcessor[] processors) {
+        this.processors = processors;
     }
+
 }
