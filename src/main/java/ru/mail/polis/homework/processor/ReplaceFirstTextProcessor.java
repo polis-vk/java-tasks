@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.processor;
 
+// Stage:PROCESSING
 public class ReplaceFirstTextProcessor implements TextProcessor {
 
     private String regex;
@@ -11,13 +12,13 @@ public class ReplaceFirstTextProcessor implements TextProcessor {
     }
 
     @Override
-    public ProcessingStage getProcessingStage() {
-        return ProcessingStage.PROCESSING;
+    public int ordinal() {
+        return 1;
     }
 
     @Override
     public String processText(String text) {
-        return text == null ? null : text.replaceFirst(regex, replacement);
+        return text.replaceFirst(regex, replacement);
     }
 
 }

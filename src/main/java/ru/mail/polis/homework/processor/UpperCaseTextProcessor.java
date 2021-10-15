@@ -2,16 +2,17 @@ package ru.mail.polis.homework.processor;
 
 import java.util.Locale;
 
+// Stage:POSTPROCESSING
 public class UpperCaseTextProcessor implements TextProcessor {
 
     @Override
-    public ProcessingStage getProcessingStage() {
-        return ProcessingStage.POSTPROCESSING;
+    public int ordinal() {
+        return 2;
     }
 
     @Override
     public String processText(String text) {
-        return text == null ? null : text.toUpperCase(Locale.ROOT);
+        return text.toUpperCase(Locale.ROOT);
     }
 
 }

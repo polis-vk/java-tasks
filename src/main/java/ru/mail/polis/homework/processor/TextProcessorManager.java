@@ -46,8 +46,8 @@ public class TextProcessorManager {
         }
 
         String processedText = text;
-        for (TextProcessor tp: processors) {
-            processedText = tp.processText(processedText);
+        for (TextProcessor processor: processors) {
+            processedText = processor.processText(processedText);
         }
         return processedText;
     }
@@ -61,33 +61,14 @@ public class TextProcessorManager {
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
-        boolean wasProcessingStage = false;
-        boolean wasPostprocessingStage = false;
         boolean isValidSequence = true;
-        for (TextProcessor tp: processors) {
-            if (tp == null) {
+        int lowerBoundTextProcessorOrdinal = 0;
+        for (TextProcessor processor: processors) {
+            if (processor == null || processor.ordinal() < lowerBoundTextProcessorOrdinal) {
                 isValidSequence = false;
                 break;
             }
-            switch (tp.getProcessingStage()) {
-                case PREPROCESSING:
-                    if (wasProcessingStage || wasPostprocessingStage) {
-                        isValidSequence = false;
-                    }
-                    break;
-                case PROCESSING:
-                    wasProcessingStage = true;
-                    if (wasPostprocessingStage) {
-                        isValidSequence = false;
-                    }
-                    break;
-                case POSTPROCESSING:
-                    wasPostprocessingStage = true;
-                    break;
-            }
-            if (!isValidSequence) {
-                break;
-            }
+            lowerBoundTextProcessorOrdinal = Math.max(processor.ordinal(), lowerBoundTextProcessorOrdinal);
         }
         return isValidSequence;
     }

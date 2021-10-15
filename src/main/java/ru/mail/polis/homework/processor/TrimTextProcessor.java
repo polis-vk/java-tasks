@@ -1,25 +1,20 @@
 package ru.mail.polis.homework.processor;
 
+// Stage:POSTPROCESSING
 public class TrimTextProcessor implements TextProcessor {
-    private int maxLength;
+    private final int maxLength;
 
     public TrimTextProcessor(int maxLength) {
         this.maxLength = maxLength;
     }
 
     @Override
-    public ProcessingStage getProcessingStage() {
-        return ProcessingStage.POSTPROCESSING;
+    public int ordinal() {
+        return 2;
     }
 
     @Override
     public String processText(String text) {
-        if (text == null) {
-            return null;
-        }
-        if (text.length() <= maxLength) {
-            return text;
-        }
-        return text.substring(0, maxLength);
+        return text.length() <= maxLength ? text : text.substring(0, maxLength);
     }
 }

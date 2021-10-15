@@ -1,15 +1,16 @@
 package ru.mail.polis.homework.processor;
 
+// Stage:PREPROCESSING
 public class SquashWhiteSpacesTextProcessor implements TextProcessor {
 
     @Override
-    public ProcessingStage getProcessingStage() {
-        return ProcessingStage.PREPROCESSING;
+    public int ordinal() {
+        return 0;
     }
 
     @Override
     public String processText(String text) {
-        return text == null ? null : text.replaceAll("\\s+", " ");
+        return text.replaceAll("\\s+", " ");
     }
 
 }
