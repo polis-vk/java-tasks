@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.processor;
 
 public class TrimProcessor implements TextProcessor {
-    private static final ProcessingStage processingStage = ProcessingStage.POSTPROCESSING;
+    private static final ProcessingStage PROCESSING_STAGE = ProcessingStage.POSTPROCESSING;
     private final int maxLength;
 
     public TrimProcessor(int maxLength) {
@@ -10,7 +10,7 @@ public class TrimProcessor implements TextProcessor {
 
     @Override
     public int getStagePriority() {
-        return processingStage.getPriority();
+        return PROCESSING_STAGE.getPriority();
     }
 
     @Override
