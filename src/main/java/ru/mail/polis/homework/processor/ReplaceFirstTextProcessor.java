@@ -3,8 +3,8 @@ package ru.mail.polis.homework.processor;
 // Stage:PROCESSING
 public class ReplaceFirstTextProcessor implements TextProcessor {
 
-    private String regex;
-    private String replacement;
+    private final String regex;
+    private final String replacement;
 
     public ReplaceFirstTextProcessor(String regex, String replacement) {
         this.regex = regex;
