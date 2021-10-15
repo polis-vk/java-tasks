@@ -6,7 +6,7 @@ public class SquashTextProcessor implements TextProcessor {
 
     @Override
     public String process(String text) {
-        return text.replaceAll("\\s+", "");
+        return text.replaceAll("\\s+", " ");
     }
 
     @Override
