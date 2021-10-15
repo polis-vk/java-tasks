@@ -59,12 +59,12 @@ public class TextProcessorManager {
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
-        ProcessingStage previous = ProcessingStage.PREPROCESSING;
+        int previous = 0;
         for (TextProcessor processor : processors) {
-            if (processor.getStage().compareTo(previous) < 0) {
+            if (processor.getStage().getOrder() < previous) {
                 return false;
             }
-            previous = processor.getStage();
+            previous = processor.getStage().getOrder();
         }
         return true;
     }

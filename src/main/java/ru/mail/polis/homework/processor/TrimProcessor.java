@@ -11,11 +11,11 @@ public class TrimProcessor implements TextProcessor {
 
     @Override
     public String processText(String text) {
-        try {
-            return text.substring(0, maxLength);
-        } catch (IndexOutOfBoundsException e) {
+        if(text.length() <= maxLength) {
             return text;
         }
+
+        return text.substring(0, maxLength);
     }
 
     @Override
