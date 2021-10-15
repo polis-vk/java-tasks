@@ -33,7 +33,7 @@ package ru.mail.polis.homework.processor;
  */
 public class TextProcessorManager {
 
-    private static final TextProcessorManager EMPTY = new TextProcessorManager(null);
+    private static final TextProcessorManager EMPTY = new TextProcessorManager(new TextProcessor[0]);
     private final TextProcessor[] processors;
 
     private TextProcessorManager(TextProcessor[] processors) {
