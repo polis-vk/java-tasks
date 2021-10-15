@@ -119,7 +119,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             if (position >= array.length) {
                 throw new IndexOutOfBoundsException();
             }
-            ++position;
+            position++;
             return array[position++];
         }
     }
