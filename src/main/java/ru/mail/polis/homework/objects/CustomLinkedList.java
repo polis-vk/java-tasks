@@ -6,6 +6,8 @@ package ru.mail.polis.homework.objects;
 
 public class CustomLinkedList {
     private final static String TO_STRING_SEPARATOR = " -> ";
+    private final static String EMPTY_ELEMENT = "null";
+
     private Node head;
     private Node lastNode;
     private int size = 0;
@@ -79,13 +81,16 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
+        if (size == 0) {
+            return EMPTY_ELEMENT;
+        }
         StringBuilder result = new StringBuilder();
         Node current = head;
         while (current != null) {
             result.append(current.value).append(TO_STRING_SEPARATOR);
             current = current.next;
         }
-        return result.append("null").toString();
+        return result.append(EMPTY_ELEMENT).toString();
     }
 
     private static class Node {

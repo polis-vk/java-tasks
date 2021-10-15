@@ -14,7 +14,9 @@ import java.util.NoSuchElementException;
  * тогда все элементы со значением 100 имеют нечетную позицию, а элементы = 0 - четную.
  */
 public class CustomArrayWrapper implements Iterable<Integer> {
-
+    private final static int ODD_ITERATOR_START_POSITION = 0;
+    private final static int EVEN_ITERATOR_START_POSITION = 1;
+    private final static int PARITY_PRESERVING_STEP = 2;
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
     private int modCount;               // количество изменений (add/edit)
@@ -53,7 +55,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new CustomIterator(0, 1);
+        return new CustomIterator();
     }
 
     /**
@@ -63,7 +65,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new CustomIterator(1, 2);
+        return new CustomIterator(EVEN_ITERATOR_START_POSITION, PARITY_PRESERVING_STEP);
     }
 
     /**
@@ -73,10 +75,18 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new CustomIterator(0, 2);
+        return new CustomIterator(ODD_ITERATOR_START_POSITION, PARITY_PRESERVING_STEP);
     }
 
-    class CustomIterator implements Iterator<Integer> {
+    private void checkIndex(int index) {
+        if (index < 0 || index >= array.length) {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+
+    private class CustomIterator implements Iterator<Integer> {
+        static final int DEFAULT_START_POSITION = 0;
+        static final int DEFAULT_STEP = 1;
         private int index;
         private final int expectedModCount = modCount;
         private final int step;
@@ -84,6 +94,10 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         CustomIterator(int startPosition, int step) {
             this.step = step;
             index = startPosition - step;
+        }
+
+        public CustomIterator() {
+            this(DEFAULT_START_POSITION, DEFAULT_STEP);
         }
 
         public boolean hasNext() {
@@ -105,12 +119,4 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             }
         }
     }
-
-    private void checkIndex(int index) {
-        if (index < 0 || index >= array.length) {
-            throw new IndexOutOfBoundsException();
-        }
-    }
-
-
 }
