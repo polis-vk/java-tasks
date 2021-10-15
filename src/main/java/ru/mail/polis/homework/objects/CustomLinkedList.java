@@ -25,7 +25,7 @@ public class CustomLinkedList {
             }
             tempNode.setNext(newNode);
         }
-        ++size;
+        size++;
     }
 
     /**
@@ -49,7 +49,7 @@ public class CustomLinkedList {
             }
             tempNode.setNext(tempNode.next.next);
         }
-        --size;
+        size--;
     }
 
     /**
@@ -94,6 +94,9 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
+        if (head == null) {
+            return "null";
+        }
         StringBuilder stringBuilder = new StringBuilder();
         Node tempNode = head;
         while (tempNode != null) {
