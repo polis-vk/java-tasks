@@ -13,6 +13,8 @@ package ru.mail.polis.homework.processor;
  * Каждый обработчик 2 балла. Итого 8
  */
 public interface TextProcessor {
+    public ProcessingStage getProcessingStage();
+    public String processText(String text);
 
     /**
      * Схлопывает все пустые символы в один пробел.
@@ -54,9 +56,4 @@ public interface TextProcessor {
     static TextProcessor upperCaseProcessor() {
         return new UpperCaseProcessor();
     }
-
-    public ProcessingStage getProcessingStage();
-
-    public String processText(String text);
-
 }
