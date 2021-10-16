@@ -41,12 +41,15 @@ public class CustomLinkedList {
             throw new IndexOutOfBoundsException();
         }
         Node current = head;
-        for (int currentIndex = 0; current.next != null; currentIndex++, current = current.next) {
+        int currentIndex = 0;
+        while (current.next != null) {
             if (currentIndex + 1 == index) {
                 current.next = current.next.next;
                 size--;
                 return;
             }
+            currentIndex++;
+            current = current.next;
         }
     }
 
