@@ -17,7 +17,7 @@ public final class ReplaceFirstTextProcessor implements TextProcessor {
 
     @Override
     public String process(String text) {
-        if (text == null) {1
+        if (text == null) {
             return text;
         }
         return text.replaceFirst(regex, replacement);
