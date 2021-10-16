@@ -16,6 +16,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
+    private int modification = 0;
     private static final int DEFAULT_STEP = 1;
     private static final int CUSTOM_STEP = 2;
     private static final int DEFAULT_POSITION = 0;
@@ -29,6 +30,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
+        modification++;
     }
 
     public void edit(int index, int value) {
@@ -86,14 +88,16 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
         private int posIter;
         private final int step;
+        private final int mods;
 
         public CustomIterator(int posIter, int step) {
+            this.mods = modification;
             this.posIter = posIter;
             this.step = step;
         }
 
         public boolean hasNext() {
-            return position == array.length && posIter < position;
+            return mods == modification && posIter < position;
         }
 
         @Override
