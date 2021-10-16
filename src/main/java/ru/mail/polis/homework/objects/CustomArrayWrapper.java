@@ -19,6 +19,10 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     private static final int stepForDefaultIterator = 1;
     private static final int stepForOddAndEvenIterator = 2;
 
+    enum iteratorType{
+        EVEN, ODD, DEFAULT
+    }
+
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
@@ -58,7 +62,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new SpecialIterator("default");
+        return new SpecialIterator(iteratorType.DEFAULT);
     }
 
     /**
@@ -68,7 +72,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new SpecialIterator("even");
+        return new SpecialIterator(iteratorType.EVEN);
     }
 
     /**
@@ -78,7 +82,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new SpecialIterator("odd");
+        return new SpecialIterator(iteratorType.ODD);
     }
 
     private void checkIndex(int index) {
@@ -93,22 +97,21 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         int position;
         int step;
 
-        public SpecialIterator(String howToIter) {
-            switch (howToIter) {
-                case "even": {
+
+        public SpecialIterator(iteratorType type) {
+            switch (type) {
+                case EVEN: {
                     this.position = positionForDefaultAndEvenIterator;
                     this.step = stepForOddAndEvenIterator;
                     break;
                 }
-                case "odd": {
+                case ODD: {
                     this.position = positionForOddIterator;
                     this.step = stepForOddAndEvenIterator;
                     break;
                 }
-                case "default": {
-                    this.position = positionForDefaultAndEvenIterator;
-                    this.step = stepForDefaultIterator;
-                    break;
+                default: {
+
                 }
             }
         }

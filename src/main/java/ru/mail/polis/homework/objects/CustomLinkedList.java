@@ -84,9 +84,12 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
+        if (length == 0) {
+            return "null";
+        }
         StringBuilder result = new StringBuilder();
         Node node = this.head;
-        while (node != null) {
+        while (node  != null) {
             result.append(node.value).append(" -> ");
             node = node.next;
         }
