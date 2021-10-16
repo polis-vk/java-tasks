@@ -2,6 +2,7 @@ package ru.mail.polis.homework.objects;
 
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -90,6 +91,12 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         private final int step;
         private final int mods;
 
+        private void checkMods() {
+            if (mods != modification) {
+                throw new ConcurrentModificationException();
+            }
+        }
+
         public CustomIterator(int posIter, int step) {
             this.mods = modification;
             this.posIter = posIter;
@@ -97,16 +104,17 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
 
         public boolean hasNext() {
-            return mods == modification && posIter < position;
+            return posIter < position;
         }
 
         @Override
         public Integer next() {
-            if (hasNext()) {
-                posIter += step;
-                return array[posIter - step];
+            checkMods();
+            if (!hasNext()) {
+                throw new NoSuchElementException();
             }
-            throw new ConcurrentModificationException();
+            posIter += step;
+            return array[posIter - step];
         }
     }
 
