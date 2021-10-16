@@ -83,27 +83,24 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         public Iter() {
         }
 
-        public Iter(int firstPos) {
-            this.index = firstPos;
+        public Iter(int index) {
+            this.index = index;
             this.step = 2;
         }
 
         @Override
         public boolean hasNext() {
-            if (initMod != modification) {
-                throw new ConcurrentModificationException();
-            }
             return index < size();
         }
 
         @Override
         public Integer next() {
-            if (hasNext()) {
-                index += step;
-                return get(index - step);
-            } else {
-                throw new IndexOutOfBoundsException();
+            if (initMod != modification) {
+                throw new ConcurrentModificationException();
             }
+            checkIndex(index);
+            index += step;
+            return get(index - step);
         }
     }
 
@@ -112,5 +109,4 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             throw new IndexOutOfBoundsException();
         }
     }
-
 }

@@ -98,7 +98,7 @@ public class CustomLinkedList {
             buff.append(" -> ");
             buff.append(currentNode.value);
         }
-        return buff.append(" -> null").toString();
+        return buff.append(" -> ").append("null").toString();
     }
 
     private static class Node {
