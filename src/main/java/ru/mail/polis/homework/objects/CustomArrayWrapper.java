@@ -97,7 +97,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
         @Override
         public boolean hasNext() {
-            return index < size();
+            return index < array.length;
 
         }
 
