@@ -7,7 +7,7 @@ public class UpperCaseTextProcessor implements TextProcessor {
 
     @Override
     public int ordinal() {
-        return 2;
+        return ProcessingStage.POSTPROCESSING.ordinal;
     }
 
     @Override

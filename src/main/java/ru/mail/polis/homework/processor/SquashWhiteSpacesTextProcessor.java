@@ -5,7 +5,7 @@ public class SquashWhiteSpacesTextProcessor implements TextProcessor {
 
     @Override
     public int ordinal() {
-        return 0;
+        return ProcessingStage.PREPROCESSING.ordinal;
     }
 
     @Override

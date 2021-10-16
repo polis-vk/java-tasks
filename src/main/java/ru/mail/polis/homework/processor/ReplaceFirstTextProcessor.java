@@ -13,7 +13,7 @@ public class ReplaceFirstTextProcessor implements TextProcessor {
 
     @Override
     public int ordinal() {
-        return 1;
+        return ProcessingStage.PROCESSING.ordinal;
     }
 
     @Override
