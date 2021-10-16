@@ -38,7 +38,7 @@ public class CustomLinkedList {
         if (head == null || index < 0 || index >= size) {
             throw new IndexOutOfBoundsException();
         }
-        --size;
+        size--;
         if (index == 0) {
             head = head.next;
             return;
