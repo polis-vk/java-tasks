@@ -139,10 +139,10 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     }
 
     public class EvenIter extends TwoStepIterTemplate {
-        protected static final int beginIndex = 1;
+        protected static final int BEGIN_INDEX = 1;
 
         public EvenIter() {
-            super(beginIndex, modCounter);
+            super(BEGIN_INDEX, modCounter);
         }
     }
 }
