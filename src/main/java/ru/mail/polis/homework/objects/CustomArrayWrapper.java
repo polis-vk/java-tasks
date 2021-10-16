@@ -131,10 +131,10 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     }
 
     public class OddIter extends TwoStepIterTemplate {
-        protected static final int beginIndex = 0;
+        protected static final int BEGIN_INDEX = 0;
 
         public OddIter() {
-            super(beginIndex, modCounter);
+            super(BEGIN_INDEX, modCounter);
         }
     }
 
