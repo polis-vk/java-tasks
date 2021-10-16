@@ -14,14 +14,10 @@ import java.util.Iterator;
  */
 public class CustomArrayWrapper implements Iterable<Integer> {
 
-    private static final int positionForDefaultAndEvenIterator = -1;
-    private static final int positionForOddIterator = -2;
-    private static final int stepForDefaultIterator = 1;
-    private static final int stepForOddAndEvenIterator = 2;
-
-    enum iteratorType{
-        EVEN, ODD, DEFAULT
-    }
+    private static final int POSITION_FOR_DEFAULT_AND_ODD = 0;
+    private static final int POSITION_FOR_EVEN= 1;
+    private static final int STEP_FOR_DEFAULT = 1;
+    private static final int STEP_FOR_EVEN_AND_ODD = 2;
 
 
     private final int[] array;          // массив
@@ -62,7 +58,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new SpecialIterator(iteratorType.DEFAULT);
+        return new SpecialIterator(POSITION_FOR_DEFAULT_AND_ODD, STEP_FOR_DEFAULT);
     }
 
     /**
@@ -72,7 +68,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new SpecialIterator(iteratorType.EVEN);
+        return new SpecialIterator(POSITION_FOR_EVEN, STEP_FOR_EVEN_AND_ODD);
     }
 
     /**
@@ -82,7 +78,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new SpecialIterator(iteratorType.ODD);
+        return new SpecialIterator(POSITION_FOR_DEFAULT_AND_ODD, STEP_FOR_EVEN_AND_ODD);
     }
 
     private void checkIndex(int index) {
@@ -91,41 +87,29 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
-
     private class SpecialIterator implements Iterator<Integer> {
         private final int fixedModificationCounter = modificationCounter;
         int position;
         int step;
 
-
-        public SpecialIterator(iteratorType type) {
-            switch (type) {
-                case EVEN: {
-                    this.position = positionForDefaultAndEvenIterator;
-                    this.step = stepForOddAndEvenIterator;
-                    break;
-                }
-                case ODD: {
-                    this.position = positionForOddIterator;
-                    this.step = stepForOddAndEvenIterator;
-                    break;
-                }
-                default: {
-
-                }
-            }
+        public SpecialIterator(int position, int step) {
+            this.position = position;
+            this.step = step;
         }
 
         @Override
         public boolean hasNext() {
-            return position + step < array.length;
+            return position < array.length;
         }
+
         @Override
         public Integer next() {
             if (modificationCounter != fixedModificationCounter) {
                 throw new ConcurrentModificationException();
             }
-            return array[position += step];
+            int next = get(position);
+            position += step;
+            return next;
         }
     }
 }
