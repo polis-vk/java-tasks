@@ -48,16 +48,16 @@ public class TextProcessorManager {
         if (text == null) {
             return null;
         }
-        String temp = text;
+        String result = text;
         for (TextProcessor processor : processors) {
-            temp = processor.process(temp);
+            result = processor.process(result);
         }
-        return temp;
+        return result;
     }
 
     public static TextProcessorManager construct(TextProcessor[] processors) {
         if (!isValidSequence(processors)) {
-            return new TextProcessorManager(new TextProcessor[]{new EmptyTextProcessor()});
+            return new TextProcessorManager(new TextProcessor[]{});
         }
 
         return new TextProcessorManager(processors);
@@ -65,11 +65,14 @@ public class TextProcessorManager {
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
-        TextProcessor[] textProcessors = Arrays.copyOf(processors, processors.length);
-        Arrays.sort(textProcessors, Comparator.comparingInt(o1 -> o1.getProcessingStage().getIndex()));
-        for (int i = 0; i < processors.length; i++) {
-            if (processors[i].getProcessingStage() != textProcessors[i].getProcessingStage()) {
+        int index = 0;
+        int currentIndex;
+        for (TextProcessor processor : processors) {
+            currentIndex = processor.getProcessingStage().getIndex();
+            if (currentIndex < index) {
                 return false;
+            } else {
+                index = currentIndex;
             }
         }
         return true;
