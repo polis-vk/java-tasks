@@ -6,6 +6,7 @@ package ru.mail.polis.homework.objects;
 public class CustomLinkedList {
 
     private Node head;
+    private int size = 0;
 
     /**
      * Реализовать метод:
@@ -14,7 +15,18 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
+        if (head == null) {
+            head = new Node(value);
+            size++;
+            return;
+        }
 
+        Node node = head;
+        while (node.next != null) {
+            node = node.next;
+        }
+        node.setNext(new Node(value));
+        size++;
     }
 
     /**
@@ -25,7 +37,22 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
+        }
 
+        if (index == 0) {
+            head = null;
+            size--;
+            return;
+        }
+
+        Node node = head;
+        for (int i = 0; i < index - 1; i++) {
+            node = node.next;
+        }
+        node.setNext(node.next.next);
+        size--;
     }
 
     /**
@@ -36,7 +63,19 @@ public class CustomLinkedList {
      *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
+        if (size == 0 || size == 1) {
+            return;
+        }
 
+        Node oldNode = head;
+        Node prevNewNode = new Node(oldNode.value);
+        for (int i = 0; i < size - 1; i++) {
+            oldNode = oldNode.next;
+            Node newNode = new Node(oldNode.value);
+            newNode.setNext(prevNewNode);
+            prevNewNode = newNode;
+        }
+        head = prevNewNode;
     }
 
     /**
@@ -50,7 +89,16 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        StringBuilder resString = new StringBuilder();
+        Node node = head;
+        if (size > 0) {
+            while (node.next != null) {
+                resString.append(node.value).append(" -> ");
+                node = node.next;
+            }
+            resString.append(node.value).append(" -> ");
+        }
+        return resString + "null";
     }
 
     private static class Node {

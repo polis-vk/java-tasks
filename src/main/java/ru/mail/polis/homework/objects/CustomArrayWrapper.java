@@ -99,7 +99,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             if (position >= array.length) {
                 throw new NoSuchElementException();
             }
-            if (modCount != position) {
+            if (modCount != CustomArrayWrapper.this.position) {
                 throw new ConcurrentModificationException();
             }
             int element = array[position];
