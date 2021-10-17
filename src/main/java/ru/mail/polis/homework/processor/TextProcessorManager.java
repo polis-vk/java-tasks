@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.processor;
 
+import java.util.Arrays;
+
 /**
  * Задание: написать систему обработки текста.
  * Надо реализовать 4 обработчика текста
@@ -33,13 +35,27 @@ package ru.mail.polis.homework.processor;
  */
 public class TextProcessorManager {
 
-    private static final TextProcessorManager EMPTY = null;
+    private static final TextProcessorManager EMPTY = new TextProcessorManager(new TextProcessor[] {});
+    private TextProcessor[] processors;
 
     private TextProcessorManager(TextProcessor[] processors) {
+        this.processors = Arrays.copyOf(processors, processors.length);
     }
 
     public String processText(String text) {
-        return null;
+        if (text == null) {
+            return null;
+        }
+        if (processors.length == 0) {
+            return text;
+        }
+
+        String result = text;
+        for (int i = 0; i < processors.length; ++i) {
+            result = processors[i].process(result);
+        }
+
+        return result;
     }
 
     public static TextProcessorManager construct(TextProcessor[] processors) {
@@ -51,6 +67,11 @@ public class TextProcessorManager {
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
+        for (int i = 1; i < processors.length; ++i) {
+            if (processors[i - 1].stage().priority() < processors[i].stage().priority()) {
+                return false;
+            }
+        }
         return true;
     }
 }
