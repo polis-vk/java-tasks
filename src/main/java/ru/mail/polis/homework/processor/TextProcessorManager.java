@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.processor;
 
+import org.w3c.dom.Text;
+
 /**
  * Задание: написать систему обработки текста.
  * Надо реализовать 4 обработчика текста
@@ -27,19 +29,28 @@ package ru.mail.polis.homework.processor;
  * проверку на корректность (статический метод isValidSequence) и экземпляр заглушки (статическое поле EMPTY).
  * Обратите внимание, что метод isValidSequence не имеет модификатора доступа, и таким образом, он доступен в коде
  * юнит-тестов (т.к. они относятся к тому же пакету).
- *
+ * <p>
  * Базовая обвязка класса 2 балла + 3 балла за валидацию. Итого 5
  * Суммарно, по всему заданию 15 баллов
  */
 public class TextProcessorManager {
 
-    private static final TextProcessorManager EMPTY = null;
+    private static final TextProcessorManager EMPTY = new TextProcessorManager(new TextProcessor[]{});
+    private final TextProcessor[] processors;
 
     private TextProcessorManager(TextProcessor[] processors) {
+        this.processors = processors;
     }
 
     public String processText(String text) {
-        return null;
+        if (text == null) {
+            return null;
+        }
+        String processed = text;
+        for (TextProcessor processor : processors) {
+            processed = processor.processText(processed);
+        }
+        return processed;
     }
 
     public static TextProcessorManager construct(TextProcessor[] processors) {
@@ -51,6 +62,13 @@ public class TextProcessorManager {
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
+        int prev = -1;
+        for (TextProcessor processor : processors) {
+            if (processor.getStage().getStageOrder() < prev) {
+                return false;
+            }
+            prev = processor.getStage().getStageOrder();
+        }
         return true;
     }
 }
