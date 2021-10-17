@@ -91,12 +91,6 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         private final int step;
         private final int mods;
 
-        private void checkMods() {
-            if (mods != modification) {
-                throw new ConcurrentModificationException();
-            }
-        }
-
         public CustomIterator(int posIter, int step) {
             this.mods = modification;
             this.posIter = posIter;
@@ -109,7 +103,9 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
         @Override
         public Integer next() {
-            checkMods();
+            if (mods != modification) {
+                throw new ConcurrentModificationException();
+            }
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
