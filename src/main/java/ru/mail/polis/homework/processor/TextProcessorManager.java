@@ -66,11 +66,10 @@ public class TextProcessorManager {
 
         ProcessingStage currentStage = processors[0].getProcessingStage();
         for (TextProcessor processor : processors) {
-            if (processor.getProcessingStage().compareTo(currentStage) < 0) {
+            if (processor.getProcessingStage().order < currentStage.order) {
                 return false;
-            } else if (processor.getProcessingStage().compareTo(currentStage) > 0) {
-                currentStage = processor.getProcessingStage();
             }
+            currentStage = processor.getProcessingStage();
         }
         return true;
     }
