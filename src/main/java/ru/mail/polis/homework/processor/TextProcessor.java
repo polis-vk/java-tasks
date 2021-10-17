@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.processor;
 
+import java.util.Locale;
+
 /**
  * Базовый интерфейс обработчика текста, наследники этого интерефейса должны инкапсулировать в себе всю логику
  * обработки текста.
@@ -13,6 +15,8 @@ package ru.mail.polis.homework.processor;
  * Каждый обработчик 2 балла. Итого 8
  */
 public interface TextProcessor {
+    String process(String text);
+    ProcessingStage stage();
 
     /**
      * Схлопывает все пустые символы в один пробел.
@@ -21,7 +25,19 @@ public interface TextProcessor {
      * Стадия: препроцессинг
      */
     static TextProcessor squashWhiteSpacesProcessor() {
-        return null;
+        return new SquashProcessor();
+    }
+
+    class SquashProcessor implements TextProcessor {
+        @Override
+        public String process(String text) {
+            return text.replaceAll("\\s+", " ");
+        }
+
+        @Override
+        public ProcessingStage stage() {
+            return ProcessingStage.PREPROCESS;
+        }
     }
 
     /**
@@ -31,7 +47,27 @@ public interface TextProcessor {
      * Стадия: процессинг
      */
     static TextProcessor replaceFirstProcessor(String regex, String replacement) {
-        return null;
+        return new ReplaceFirstProcessor(regex, replacement);
+    }
+
+    class ReplaceFirstProcessor implements TextProcessor {
+        private String regex;
+        private String replacement;
+
+        ReplaceFirstProcessor(String regex, String replacement) {
+            this.regex = regex;
+            this.replacement = replacement;
+        }
+
+        @Override
+        public String process(String text) {
+            return text.replaceFirst(regex, replacement);
+        }
+
+        @Override
+        public ProcessingStage stage() {
+            return ProcessingStage.PROCESS;
+        }
     }
 
     /**
@@ -43,7 +79,25 @@ public interface TextProcessor {
      * @param maxLength неотрицательное число
      */
     static TextProcessor trimProcessor(int maxLength) {
-        return null;
+        return new TrimProcessor(maxLength);
+    }
+
+    class TrimProcessor implements TextProcessor {
+        private int maxLenght;
+
+        TrimProcessor(int maxLength) {
+            this.maxLenght = maxLength;
+        }
+
+        @Override
+        public String process(String text) {
+            return text.substring(0, Math.min(maxLenght, text.length()));
+        }
+
+        @Override
+        public ProcessingStage stage() {
+            return ProcessingStage.POSTPROCESS;
+        }
     }
 
     /**
@@ -52,6 +106,18 @@ public interface TextProcessor {
      * Стадия: постпроцессинг
      */
     static TextProcessor upperCaseProcessor() {
-        return null;
+        return new UpperCaseProcessor();
+    }
+
+    class UpperCaseProcessor implements TextProcessor {
+        @Override
+        public String process(String text) {
+            return text.toUpperCase(Locale.ROOT);
+        }
+
+        @Override
+        public ProcessingStage stage() {
+            return ProcessingStage.POSTPROCESS;
+        }
     }
 }
