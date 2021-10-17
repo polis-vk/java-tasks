@@ -14,6 +14,10 @@ package ru.mail.polis.homework.processor;
  */
 public interface TextProcessor {
 
+    String process(String text);
+
+    ProcessingStage getStage();
+
     /**
      * Схлопывает все пустые символы в один пробел.
      * Более формально, заменить каждую подстроку, удовлетворяющую регулярному выражению \s+ на 1 пробел.
@@ -21,7 +25,17 @@ public interface TextProcessor {
      * Стадия: препроцессинг
      */
     static TextProcessor squashWhiteSpacesProcessor() {
-        return null;
+        return new TextProcessor() {
+            @Override
+            public String process(String text) {
+                return text.replaceAll("\\s+", " ");
+            }
+
+            @Override
+            public ProcessingStage getStage() {
+                return ProcessingStage.PREPROCESSING;
+            }
+        };
     }
 
     /**
@@ -31,7 +45,17 @@ public interface TextProcessor {
      * Стадия: процессинг
      */
     static TextProcessor replaceFirstProcessor(String regex, String replacement) {
-        return null;
+        return new TextProcessor() {
+            @Override
+            public String process(String text) {
+                return text.replaceFirst(regex, replacement);
+            }
+
+            @Override
+            public ProcessingStage getStage() {
+                return ProcessingStage.PROCESSING;
+            }
+        };
     }
 
     /**
@@ -43,7 +67,20 @@ public interface TextProcessor {
      * @param maxLength неотрицательное число
      */
     static TextProcessor trimProcessor(int maxLength) {
-        return null;
+        return new TextProcessor() {
+            @Override
+            public String process(String text) {
+                if (text.length() < maxLength) {
+                    return text;
+                }
+                return text.substring(0, maxLength);
+            }
+
+            @Override
+            public ProcessingStage getStage() {
+                return ProcessingStage.POSTPROCESSING;
+            }
+        };
     }
 
     /**
@@ -52,6 +89,16 @@ public interface TextProcessor {
      * Стадия: постпроцессинг
      */
     static TextProcessor upperCaseProcessor() {
-        return null;
+        return new TextProcessor() {
+            @Override
+            public String process(String text) {
+                return text.toUpperCase();
+            }
+
+            @Override
+            public ProcessingStage getStage() {
+                return ProcessingStage.POSTPROCESSING;
+            }
+        };
     }
 }
