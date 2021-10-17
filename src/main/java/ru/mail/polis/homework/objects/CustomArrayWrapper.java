@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.NoSuchElementException;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
@@ -48,7 +50,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new CustomIterator(0, 1);
     }
 
     /**
@@ -58,7 +60,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new CustomIterator(1, 2);
     }
 
     /**
@@ -68,7 +70,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new CustomIterator(0, 2);
     }
 
     private void checkIndex(int index) {
@@ -77,4 +79,32 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
+    private class CustomIterator implements Iterator<Integer> {
+        private int position;
+        private final int shift;
+        private final int modCount = CustomArrayWrapper.this.position;
+
+        public CustomIterator(int position, int shift) {
+            this.position = position;
+            this.shift = shift;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return position < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            if (position >= array.length) {
+                throw new NoSuchElementException();
+            }
+            if (modCount != position) {
+                throw new ConcurrentModificationException();
+            }
+            int element = array[position];
+            position += shift;
+            return element;
+        }
+    }
 }
