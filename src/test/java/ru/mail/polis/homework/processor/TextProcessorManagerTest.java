@@ -63,7 +63,7 @@ public class TextProcessorManagerTest {
 
     @Test
     public void processNullText() {
-        TextProcessorManager manager = TextProcessorManager.construct(new TextProcessor[]{
+        TextProcessorManager manager = TextProcessorManager.construct(new TextProcessor[] {
                 TextProcessor.squashWhiteSpacesProcessor(),
                 TextProcessor.upperCaseProcessor()
         });
@@ -72,14 +72,14 @@ public class TextProcessorManagerTest {
 
     @Test
     public void processEmptySequenceNullText() {
-        TextProcessorManager manager = TextProcessorManager.construct(new TextProcessor[]{
+        TextProcessorManager manager = TextProcessorManager.construct(new TextProcessor[] {
         });
         assertNull(manager.processText(null));
     }
 
     @Test
     public void processEmptyText() {
-        TextProcessorManager manager = TextProcessorManager.construct(new TextProcessor[]{
+        TextProcessorManager manager = TextProcessorManager.construct(new TextProcessor[] {
                 TextProcessor.squashWhiteSpacesProcessor(),
                 TextProcessor.upperCaseProcessor()
         });
@@ -88,7 +88,7 @@ public class TextProcessorManagerTest {
 
     @Test
     public void processWrongSequence() {
-        TextProcessorManager manager = TextProcessorManager.construct(new TextProcessor[]{
+        TextProcessorManager manager = TextProcessorManager.construct(new TextProcessor[] {
                 TextProcessor.upperCaseProcessor(),
                 TextProcessor.squashWhiteSpacesProcessor()
         });
@@ -100,7 +100,7 @@ public class TextProcessorManagerTest {
 
     @Test
     public void processSquashOnly() {
-        TextProcessorManager manager = TextProcessorManager.construct(new TextProcessor[]{
+        TextProcessorManager manager = TextProcessorManager.construct(new TextProcessor[] {
                 TextProcessor.squashWhiteSpacesProcessor()
         });
         assertNull(manager.processText(null));
@@ -113,7 +113,7 @@ public class TextProcessorManagerTest {
 
     @Test
     public void processReplaceFirstProcessorOnly() {
-        TextProcessorManager manager = TextProcessorManager.construct(new TextProcessor[]{
+        TextProcessorManager manager = TextProcessorManager.construct(new TextProcessor[] {
                 TextProcessor.replaceFirstProcessor("ABA", "ACA")
         });
         assertNull(manager.processText(null));
@@ -124,7 +124,7 @@ public class TextProcessorManagerTest {
         assertEquals("ACA ACA ABA", manager.processText("ACA ABA ABA"));
         assertEquals("ACABABA", manager.processText("ABABABA"));
 
-        manager = TextProcessorManager.construct(new TextProcessor[]{
+        manager = TextProcessorManager.construct(new TextProcessor[] {
                 TextProcessor.replaceFirstProcessor("ABA", "")
         });
         assertNull(manager.processText(null));
@@ -138,7 +138,7 @@ public class TextProcessorManagerTest {
 
     @Test
     public void processTrimProcessorOnly() {
-        TextProcessorManager manager = TextProcessorManager.construct(new TextProcessor[]{
+        TextProcessorManager manager = TextProcessorManager.construct(new TextProcessor[] {
                 TextProcessor.trimProcessor(0)
         });
         assertNull(manager.processText(null));
@@ -148,7 +148,7 @@ public class TextProcessorManagerTest {
         assertEquals("", manager.processText("ACA ABA ABA"));
         assertEquals("", manager.processText("ABABABA"));
 
-        manager = TextProcessorManager.construct(new TextProcessor[]{
+        manager = TextProcessorManager.construct(new TextProcessor[] {
                 TextProcessor.trimProcessor(3)
         });
         assertNull(manager.processText(null));
@@ -161,7 +161,7 @@ public class TextProcessorManagerTest {
 
     @Test
     public void processComplexProcessor() {
-        TextProcessorManager manager = TextProcessorManager.construct(new TextProcessor[]{
+        TextProcessorManager manager = TextProcessorManager.construct(new TextProcessor[] {
                 TextProcessor.squashWhiteSpacesProcessor(),
                 TextProcessor.replaceFirstProcessor("A B", "B A"),
                 TextProcessor.replaceFirstProcessor("X", "Y"),
@@ -177,7 +177,7 @@ public class TextProcessorManagerTest {
         assertEquals(" BAC A YYZ", manager.processText("\t  CAA  B\t   \t  \nXyz    \t\tD\ne\n"));
     }
 
-    private static boolean isValid(TextProcessor... processors) {
+    private static boolean isValid(TextProcessor ... processors) {
         return TextProcessorManager.isValidSequence(processors);
     }
 }
