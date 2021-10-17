@@ -88,6 +88,9 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
+        if (head == null) {
+            return "null";
+        }
         Node node = head;
         StringBuilder result = new StringBuilder();
         while (node != null) {
@@ -109,11 +112,6 @@ public class CustomLinkedList {
 
         public void setNext(Node next) {
             this.next = next;
-        }
-
-        @Override
-        public String toString() {
-            return Integer.toString(value);
         }
     }
 }
