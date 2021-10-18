@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.processor;
 
+import java.util.ArrayList;
+
 /**
  * Базовый интерфейс обработчика текста, наследники этого интерефейса должны инкапсулировать в себе всю логику
  * обработки текста.
@@ -14,6 +16,29 @@ package ru.mail.polis.homework.processor;
  */
 public interface TextProcessor {
 
+    ArrayList<ProcessingStage> stages = new ArrayList<>();
+    ProcessingStage[] allStages = ProcessingStage.values();
+
+    static TextProcessor validate() {
+        if (stages.size() < 2) {
+            return new TextProcessor() {};
+        }
+
+        ProcessingStage prev = stages.get(stages.size() - 2), current = stages.get(stages.size() - 1);
+
+        int prevIndex = 0, currentIndex = 0;
+
+        for (int i = 0; i < allStages.length; i++) {
+            if (prev == allStages[i]) {
+                prevIndex = i;
+            } else if (current == allStages[i]) {
+                currentIndex = i;
+            }
+        }
+
+        return prevIndex <= currentIndex ? new TextProcessor() {} : null;
+    }
+
     /**
      * Схлопывает все пустые символы в один пробел.
      * Более формально, заменить каждую подстроку, удовлетворяющую регулярному выражению \s+ на 1 пробел.
@@ -21,7 +46,13 @@ public interface TextProcessor {
      * Стадия: препроцессинг
      */
     static TextProcessor squashWhiteSpacesProcessor() {
-        return null;
+        stages.add(ProcessingStage.PRE_PROCESSING);
+
+        TextProcessor result = validate();
+
+        stages.clear();
+
+        return result;
     }
 
     /**
@@ -31,7 +62,13 @@ public interface TextProcessor {
      * Стадия: процессинг
      */
     static TextProcessor replaceFirstProcessor(String regex, String replacement) {
-        return null;
+        stages.add(ProcessingStage.PROCESSING);
+
+        TextProcessor result = validate();
+
+        stages.clear();
+
+        return result;
     }
 
     /**
@@ -43,7 +80,13 @@ public interface TextProcessor {
      * @param maxLength неотрицательное число
      */
     static TextProcessor trimProcessor(int maxLength) {
-        return null;
+        stages.add(ProcessingStage.POST_PROCESSING);
+
+        TextProcessor result = validate();
+
+        stages.clear();
+
+        return result;
     }
 
     /**
@@ -52,6 +95,12 @@ public interface TextProcessor {
      * Стадия: постпроцессинг
      */
     static TextProcessor upperCaseProcessor() {
-        return null;
+        stages.add(ProcessingStage.POST_PROCESSING);
+
+        TextProcessor result = validate();
+
+        stages.clear();
+
+        return result;
     }
 }

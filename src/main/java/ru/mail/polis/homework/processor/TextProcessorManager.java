@@ -34,11 +34,16 @@ package ru.mail.polis.homework.processor;
 public class TextProcessorManager {
 
     private static final TextProcessorManager EMPTY = null;
+    private TextProcessor[] processors;
 
     private TextProcessorManager(TextProcessor[] processors) {
+        this.processors = processors;
     }
 
     public String processText(String text) {
+        for (TextProcessor processor : processors) {
+
+        }
         return null;
     }
 
@@ -51,6 +56,11 @@ public class TextProcessorManager {
 
     // visible for tests
     static boolean isValidSequence(TextProcessor[] processors) {
+        for (TextProcessor processor : processors) {
+            if (processor == null) {
+                return false;
+            }
+        }
         return true;
     }
 }
