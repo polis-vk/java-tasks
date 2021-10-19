@@ -10,8 +10,17 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
+    private Integer maxValue = Integer.MIN_VALUE;
+
     public Integer getMaxValue() {
-        return 0;
+        return maxValue;
     }
 
+    @Override
+    public Integer push(Integer integer) {
+        if (maxValue < integer) {
+            maxValue = integer;
+        }
+        return super.push(integer);
+    }
 }

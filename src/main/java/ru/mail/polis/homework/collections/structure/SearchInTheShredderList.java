@@ -1,7 +1,10 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * Задание оценивается в 2 балла.
@@ -35,6 +38,23 @@ public class SearchInTheShredderList {
      * @return - либо массив с реальными позициями подстрок если нашли, либо - null
      */
     public int[] positionPartString(String value) {
-        return null;
+        List<Integer> result = new ArrayList<>();
+        int index = -1;
+        int cursor = 0;
+        for (int i = 0; i <= value.length(); i++) {
+            index = partStrings.indexOf(value.substring(cursor, i));
+            if (index != -1) {
+                cursor = i;
+                result.add(index);
+            }
+        }
+        if (index == -1) {
+            return null;
+        }
+        int[] res = new int[result.size()];
+        for (int i = 0; i < result.size(); i++) {
+            res[i] = result.get(i);
+        }
+        return res;
     }
 }
