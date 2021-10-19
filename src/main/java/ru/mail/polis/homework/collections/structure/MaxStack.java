@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Stack;
 

@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import static java.lang.System.out;
 import static java.util.Map.entry;
 
 /**
