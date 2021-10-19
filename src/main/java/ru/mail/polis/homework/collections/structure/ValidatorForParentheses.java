@@ -1,5 +1,9 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Задание оценивается в 2 балла.
  * Одна из самых популярных задач.
@@ -7,14 +11,28 @@ package ru.mail.polis.homework.collections.structure;
  * В строке помимо скобок могут содержаться и другие символы.
  * Скобки могут быть: [],{},<>,()
  * Примеры:
- *      "(-b + (x)^2)/(2+4)" - true
- *      "Понедельники меня угнетают ((" - false
- *
+ * "(-b + (x)^2)/(2+4)" - true
+ * "Понедельники меня угнетают ((" - false
+ * <p>
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
 
     public static boolean validate(String value) {
-        return false;
+        if (value == null || value.equals("")) {
+            return false;
+        }
+        List<Character> list = new ArrayList<>(); // ArrayList так как Stack deprecated
+        Map<Character, Character> brackets = Map.of('(', ')', '[', ']', '{', '}');
+        for (char c : value.toCharArray()) {
+            if (brackets.containsKey(c)) {
+                list.add(c);
+            } else if (!list.isEmpty() && c == brackets.get(list.get(list.size() - 1))) {
+                list.remove(list.size() - 1);
+            } else if (brackets.containsValue(c)) { //Если это несоответствующая закрывающая, то преждевременно выходим, если не скобка, то просто идем дальше
+                return false;
+            }
+        }
+        return list.isEmpty();
     }
 }

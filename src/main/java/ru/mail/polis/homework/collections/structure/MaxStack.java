@@ -10,8 +10,26 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
+    private final Stack<Integer> stackMaxValues = new Stack<>();
+
+    @Override
+    public Integer push(Integer item) {
+        if (stackMaxValues.isEmpty() || item >= stackMaxValues.lastElement()) {
+            stackMaxValues.push(item);
+        }
+        return super.push(item);
+    }
+
+    @Override
+    public synchronized Integer pop() {
+        if (super.lastElement().equals(stackMaxValues.lastElement())) {
+            stackMaxValues.pop();
+        }
+        return super.pop();
+    }
+
     public Integer getMaxValue() {
-        return 0;
+        return stackMaxValues.lastElement();
     }
 
 }
