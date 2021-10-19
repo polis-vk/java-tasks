@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Задание оценивается в 2 балла.
@@ -35,15 +34,38 @@ public class SearchInTheShredderList {
      * @return - либо массив с реальными позициями подстрок если нашли, либо - null
      */
     public int[] positionPartString(String value) {
+        if (value == null || value.length() == 0) {
+            return null;
+        }
+        // Массив, на i-м элементе которого будет стоять индекс соответствующего обрывка.
         int[] indexes = new int[value.length()];
+        Arrays.fill(indexes, -1);
         for (int i = 0; i < partStrings.size(); i++) {
             int matchIndex = value.indexOf(partStrings.get(i));
             if (matchIndex != -1) {
-                for (int k = 0; i < partStrings.get(i).length(); i++) {
-                    indexes[matchIndex + k] = i;
-                }
+                // Соответственно заполняем все нужны элементы индексом обрывка.
+                Arrays.fill(indexes, matchIndex, matchIndex + partStrings.get(i).length(), i);
             }
         }
-        return null;
+        List<Integer> resultList = new LinkedList<>();
+        int lastIndex = -1;
+        // Достанем за O(n) уникальные индексы.
+        for (int i = 0; i < indexes.length; i++) {
+            if (indexes[i] == -1) {
+                return null;
+            }
+            if (indexes[i] != lastIndex) {
+                resultList.add(indexes[i]);
+                lastIndex = indexes[i];
+            }
+        }
+        int[] result = new int[resultList.size()];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = resultList.remove(0);
+        }
+        if (result.length != 2) {
+            return null;
+        }
+        return result;
     }
 }
