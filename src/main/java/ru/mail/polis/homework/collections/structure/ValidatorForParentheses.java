@@ -18,12 +18,13 @@ import java.util.Map;
  */
 public class ValidatorForParentheses {
 
+    private static final Map<Character, Character> brackets = Map.of('(', ')', '[', ']', '{', '}');
+
     public static boolean validate(String value) {
         if (value == null || value.equals("")) {
             return false;
         }
         List<Character> list = new ArrayList<>(); // ArrayList так как Stack deprecated
-        Map<Character, Character> brackets = Map.of('(', ')', '[', ']', '{', '}');
         for (char c : value.toCharArray()) {
             if (brackets.containsKey(c)) {
                 list.add(c);
