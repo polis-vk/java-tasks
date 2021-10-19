@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
+import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ValidatorForParenthesesTest {
@@ -11,11 +12,11 @@ public class ValidatorForParenthesesTest {
     }
 
     public void testValidationWithIncorrectString() {
-        assertTrue(ValidatorForParentheses.validate("Понедельники меня угнетают (("));
-        assertTrue(ValidatorForParentheses.validate("([)]"));
-        assertTrue(ValidatorForParentheses.validate("{{()<>}[]()<>"));
-        assertTrue(ValidatorForParentheses.validate(""));
-        assertTrue(ValidatorForParentheses.validate(null));
+        assertFalse(ValidatorForParentheses.validate("Понедельники меня угнетают (("));
+        assertFalse(ValidatorForParentheses.validate("([)]"));
+        assertFalse(ValidatorForParentheses.validate("{{()<>}[]()<>"));
+        assertFalse(ValidatorForParentheses.validate(""));
+        assertFalse(ValidatorForParentheses.validate(null));
     }
 
 }
