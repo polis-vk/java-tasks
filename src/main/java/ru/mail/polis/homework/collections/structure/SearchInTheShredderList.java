@@ -11,7 +11,14 @@ import java.util.List;
  * переданное слово. Отрабатывать метод должен за О(n).
  */
 public class SearchInTheShredderList {
-    private final List<String> partStrings = new ArrayList<>();
+    private List<String> partStrings = new ArrayList<>();
+
+    public SearchInTheShredderList() {
+    }
+
+    public SearchInTheShredderList(List<String> partStrings) {
+        this.partStrings = partStrings;
+    }
 
     public void add(String value) {
         partStrings.add(value);
@@ -23,6 +30,7 @@ public class SearchInTheShredderList {
 
     /**
      * Ищем позиции подстрок из которых можно составить передаваемое слово
+     *
      * @param value - передаваемоей слово
      * @return - либо массив с реальными позициями подстрок если нашли, либо - null
      */
