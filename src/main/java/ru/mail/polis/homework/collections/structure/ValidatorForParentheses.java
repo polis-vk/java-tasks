@@ -1,5 +1,12 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
+
+import static java.lang.System.out;
+import static java.util.Map.entry;
+
 /**
  * Задание оценивается в 2 балла.
  * Одна из самых популярных задач.
@@ -14,7 +21,38 @@ package ru.mail.polis.homework.collections.structure;
  */
 public class ValidatorForParentheses {
 
+    private static final Map<Character, Character> PAIR_BRACKETS = Map.ofEntries(
+            entry(')', '('),
+            entry(']', '['),
+            entry('>', '<'),
+            entry('}', '{')
+    );
+
+    private static final Set<Character> SET_OF_OPEN_BRACKETS = Set.of('(', '[', '<', '{');
+
     public static boolean validate(String value) {
-        return false;
+        if (value == null || value.isEmpty()) {
+            return false;
+        }
+
+        LinkedList<Character> stack = new LinkedList<>();
+        Character chekBracket;
+        for (char ch : value.toCharArray()) {
+            if (PAIR_BRACKETS.containsKey(ch)) {
+                if (stack.size() == 0) {
+                    return false;
+                }
+                chekBracket = stack.getLast();
+                if (chekBracket.equals(PAIR_BRACKETS.get(ch))) {
+                    stack.removeLast();
+                } else {
+                    return false;
+                }
+            }
+            if (SET_OF_OPEN_BRACKETS.contains(ch)) {
+                stack.add(ch);
+            }
+        }
+        return stack.size() == 0;
     }
 }
