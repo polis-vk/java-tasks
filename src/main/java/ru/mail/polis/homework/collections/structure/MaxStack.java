@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 /**
@@ -9,9 +10,37 @@ import java.util.Stack;
  * храниться в Stack. Отрабатывать метод должен за О(1).
  */
 public class MaxStack extends Stack<Integer> {
+    private int max = Integer.MIN_VALUE;
 
     public Integer getMaxValue() {
-        return 0;
+        if (size() == 0) {
+            throw new EmptyStackException();
+        }
+        return max;
+    }
+
+    @Override
+    public Integer push(Integer item) {
+        if (item > max) {
+            max = item;
+        }
+        return super.push(item);
+    }
+
+    @Override
+    public synchronized Integer pop() {
+        Integer poppedItem = super.pop();
+        if (poppedItem != max) {
+            return poppedItem;
+        }
+        int newMax = Integer.MIN_VALUE;
+        for (Integer element : this) {
+            if (element > newMax) {
+                newMax = element;
+            }
+        }
+        max = newMax;
+        return poppedItem;
     }
 
 }
