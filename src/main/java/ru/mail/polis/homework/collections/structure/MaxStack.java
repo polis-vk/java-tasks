@@ -12,31 +12,52 @@ import java.util.Stack;
 public class MaxStack extends Stack<Integer> {
 
     private int maxValue;
+    private int countMaxValues;
+    private LinkedList<Integer> stack;
 
     public MaxStack() {
-        super();
         maxValue = Integer.MIN_VALUE;
+        countMaxValues = 0;
+    }
+
+    @Override
+    public synchronized Integer peek() {
+        return stack.peekLast();
+    }
+
+    @Override
+    public boolean empty() {
+        return stack.isEmpty();
+    }
+
+    @Override
+    public synchronized int search(Object o) {
+        int i = stack.lastIndexOf((Integer) o);
+        return i >= 0 ? size() - i : -1;
     }
 
     @Override
     public Integer push(Integer item) {
+
         if (item > maxValue) {
             maxValue = item;
+            countMaxValues = 1;
+        } else if (item == maxValue) {
+            countMaxValues++;
         }
-        return super.push(item);
+        stack.addLast(item);
+        return item;
     }
 
     @Override
     public synchronized Integer pop() {
         int popElement = super.pop();
-        if (popElement == maxValue) {
+        if (popElement == maxValue && --countMaxValues == 0) {
             maxValue = Integer.MIN_VALUE;
-            LinkedList<Integer> stackForCopy = new LinkedList<>();
-            while (super.size() > 0) {
-                stackForCopy.addFirst(super.pop());
-                maxValue = Math.max(stackForCopy.getFirst(), maxValue);
+            for (Integer element : stack) {
+                maxValue = Math.max(element, maxValue);
             }
-            super.addAll(stackForCopy);
+            countMaxValues = 1;
         }
         return popElement;
     }
