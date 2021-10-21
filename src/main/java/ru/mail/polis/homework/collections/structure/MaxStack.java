@@ -9,9 +9,35 @@ import java.util.Stack;
  * храниться в Stack. Отрабатывать метод должен за О(1).
  */
 public class MaxStack extends Stack<Integer> {
+    private int max = Integer.MIN_VALUE;
 
-    public Integer getMaxValue() {
-        return 0;
+    @Override
+    public Integer push(Integer item) {
+        if (item != null) {
+            max = Math.max(max, item);
+            this.addElement(item);
+        }
+        return item;
     }
 
+    @Override
+    public synchronized Integer pop() {
+        int len = this.size();
+        if (len == 0) {
+            return null;
+        }
+        int obj = this.peek();
+        this.removeElementAt(len - 1);
+        if (max == obj) {
+            max = Integer.MIN_VALUE;
+            for (int el : this) {
+                max = Math.max(max, el);
+            }
+        }
+        return obj;
+    }
+
+    public Integer getMaxValue() {
+        return this.size() == 0 ? null : max;
+    }
 }
