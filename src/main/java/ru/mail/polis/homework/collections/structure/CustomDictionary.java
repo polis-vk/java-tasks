@@ -95,7 +95,7 @@ public class CustomDictionary {
      */
     public List<String> getSimilarWords(String value) {
         Set<Character> key = getSetFromString(value);
-        return List.copyOf(dictionary.getOrDefault(key, null));
+        return Collections.unmodifiableList(dictionary.getOrDefault(key, null));
     }
 
     /**
