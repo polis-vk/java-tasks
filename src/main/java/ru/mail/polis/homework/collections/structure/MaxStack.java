@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Stack;
 
@@ -12,17 +13,15 @@ import java.util.Stack;
 public class MaxStack extends Stack<Integer> {
 
     private int maxValue;
-    private int countMaxValues;
-    private LinkedList<Integer> stack;
+    private ArrayList<Integer> stack;
 
     public MaxStack() {
         maxValue = Integer.MIN_VALUE;
-        countMaxValues = 0;
     }
 
     @Override
     public synchronized Integer peek() {
-        return stack.peekLast();
+        return stack.get(stack.size() - 1);
     }
 
     @Override
@@ -38,26 +37,21 @@ public class MaxStack extends Stack<Integer> {
 
     @Override
     public Integer push(Integer item) {
-
         if (item > maxValue) {
             maxValue = item;
-            countMaxValues = 1;
-        } else if (item == maxValue) {
-            countMaxValues++;
         }
-        stack.addLast(item);
+        stack.add(item);
         return item;
     }
 
     @Override
     public synchronized Integer pop() {
-        int popElement = super.pop();
-        if (popElement == maxValue && --countMaxValues == 0) {
+        int popElement = stack.remove(stack.size() - 1);
+        if (popElement == maxValue) {
             maxValue = Integer.MIN_VALUE;
             for (Integer element : stack) {
                 maxValue = Math.max(element, maxValue);
             }
-            countMaxValues = 1;
         }
         return popElement;
     }
