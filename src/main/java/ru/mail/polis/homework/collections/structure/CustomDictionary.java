@@ -1,10 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import javafx.beans.binding.StringBinding;
 
 /**
  * Задание оценивается в 4 балла.
