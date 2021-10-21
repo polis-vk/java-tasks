@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.Stack;
 
 /**
@@ -10,8 +13,30 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
+    private final Deque<Integer> stack = new LinkedList<>();
+
+    @Override
+    public synchronized Integer pop() {
+        if (!stack.isEmpty() && super.peek().equals(stack.getLast())) {
+            stack.removeLast();
+        }
+        return super.pop();
+    }
+
+
+    @Override
+    public Integer push(Integer item) {
+        if (stack.isEmpty() || item > stack.getLast()) {
+            stack.addLast(item);
+        }
+        return super.push(item);
+    }
+
     public Integer getMaxValue() {
-        return 0;
+        if (stack.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return stack.getLast();
     }
 
 }

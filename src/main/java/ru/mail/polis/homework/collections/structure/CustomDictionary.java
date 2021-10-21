@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -11,15 +13,17 @@ import java.util.List;
  */
 public class CustomDictionary {
 
+    private final HashSet<String> dictionary = new HashSet<>();
+
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - []
+     * Сложность - [O(1)]
      */
     public boolean add(String value) {
-        return false;
+        return dictionary.add(value);
     }
 
     /**
@@ -27,10 +31,10 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - []
+     * Сложность - [O(1)]
      */
     public boolean contains(String value) {
-        return false;
+        return dictionary.contains(value);//false;
     }
 
     /**
@@ -38,10 +42,10 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - []
+     * Сложность - [O(1)]
      */
     public boolean remove(String value) {
-        return false;
+        return dictionary.remove(value);
     }
 
     /**
@@ -57,20 +61,31 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - []
+     * Сложность - [O(n * m), n - количество элементов в словаре, m - длина value]
      */
     public List<String> getSimilarWords(String value) {
-        return Collections.emptyList();
+        int[] newValue = value.toLowerCase().codePoints().sorted().toArray();
+        List<String> result = new ArrayList<>();
+        for (String s : dictionary) {
+            if (s.length() != newValue.length) {
+                continue;
+            }
+
+            if (Arrays.equals(s.toLowerCase().codePoints().sorted().toArray(), newValue)) {
+                result.add(s);
+            }
+        }
+        return result;
     }
 
     /**
      * Колл-во хранимых строк.
      * @return - Колл-во хранимых строк.
      *
-     * Сложность - []
+     * Сложность - [O(1)]
      */
     public int size() {
-        return 0;
+        return dictionary.size();
     }
 
 
