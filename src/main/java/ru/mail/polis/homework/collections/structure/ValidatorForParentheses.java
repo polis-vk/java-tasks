@@ -9,9 +9,9 @@ import java.util.Stack;
  * В строке помимо скобок могут содержаться и другие символы.
  * Скобки могут быть: [],{},<>,()
  * Примеры:
- *      "(-b + (x)^2)/(2+4)" - true
- *      "Понедельники меня угнетают ((" - false
- *
+ * "(-b + (x)^2)/(2+4)" - true
+ * "Понедельники меня угнетают ((" - false
+ * <p>
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
@@ -26,15 +26,16 @@ public class ValidatorForParentheses {
                 case '[':
                 case '(':
                 case '{':
-                case '<': stack.push(c); break;
+                case '<':
+                    stack.push(c);
+                    break;
                 case ']':
                 case ')':
                 case '}':
                 case '>':
                     if (isPair(stack.peek(), c)) {
                         stack.pop();
-                    }
-                    else {
+                    } else {
                         break;
                     }
             }
@@ -44,10 +45,14 @@ public class ValidatorForParentheses {
 
     private static boolean isPair(char a, char b) {
         switch (a) {
-            case '[': return b == ']';
-            case '{': return b == '}';
-            case '(': return b == ')';
-            case '<': return b == '>';
+            case '[':
+                return b == ']';
+            case '{':
+                return b == '}';
+            case '(':
+                return b == ')';
+            case '<':
+                return b == '>';
         }
         return false;
     }
