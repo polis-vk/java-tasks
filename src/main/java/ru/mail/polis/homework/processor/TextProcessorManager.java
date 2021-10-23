@@ -69,7 +69,7 @@ public class TextProcessorManager implements StringProcessable {
         }
         int currentOrder = 0;
         for (TextProcessor processor : processors) {
-            int processorOrder = processor.getStage().order;
+            int processorOrder = processor.getStage().getOrder();
             if (processorOrder < currentOrder) {
                 return false;
             }

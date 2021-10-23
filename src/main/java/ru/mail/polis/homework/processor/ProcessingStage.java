@@ -8,10 +8,13 @@ public enum ProcessingStage {
     PROCESSING(1),
     POSTPROCESSING(2);
 
+    private final int order;
+
     ProcessingStage(int order) {
         this.order = order;
     }
 
-    public int order;
-
+    public int getOrder() {
+        return order;
+    }
 }
