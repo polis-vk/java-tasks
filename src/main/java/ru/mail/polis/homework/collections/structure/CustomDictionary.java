@@ -1,25 +1,41 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Задание оценивается в 4 балла.
- * Необходимо реализовать класс которы умеет хранить строки и возвращать
- * список строк состоящий из того же набора буков, что ему передали строку.
- * Напишите какая сложность операций у вас получилась для каждого метода.
+ * Необходимо реализовать класс, который умеет хранить строки и возвращать
+ * список строк, состоящих из того же набора букв, что и переданная строка.
+ * Напишите, какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
+
+    private final Map<String, Words> dict;
+    private int size;
+
+    public CustomDictionary() {
+        this.dict = new HashMap<>();
+        this.size = 0;
+    }
 
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - []
+     * Сложность - O(1)
      */
     public boolean add(String value) {
-        return false;
+        if (dict.putIfAbsent(value, new Words(value)) == null) {
+            size++;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -27,51 +43,96 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - []
+     * Сложность - O(1)
      */
     public boolean contains(String value) {
-        return false;
+        return dict.containsKey(value);
     }
 
     /**
-     * Удаляем сохраненную строку если она есть
+     * Удаляем сохраненную строку, если она есть
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - []
+     * Сложность - O(1)
      */
     public boolean remove(String value) {
-        return false;
+        if (!dict.containsKey(value)) {
+            return false;
+        }
+        dict.remove(value);
+        size--;
+        return true;
     }
 
     /**
      * Возвращает список из сохраненных ранее строк, которые состоят
-     * из тех же букв что нам передали строку.
+     * из тех же букв, что и переданная строка.
      * Примеры: сохраняем строки ["aaa", "aBa", "baa", "aaB"]
      *          При поиске по строке "AAb" нам должен вернуться следующий
      *          список: ["aBa","baa","aaB"]
      *
      * Как можно заметить - регистр строки не должен влиять на поиск, при этом
-     * возвращаемые строки хранятся в том виде что нам передали изначально.
+     * возвращаемые строки хранятся в том виде, что нам передали изначально.
      *
-     * @return - список слов которые состоят из тех же букв, что и передаваемая
+     * @return - список слов, которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - []
+     * Сложность - O(n), где n - количество записей в словаре
      */
     public List<String> getSimilarWords(String value) {
-        return Collections.emptyList();
+        List<String> res = new ArrayList<>();
+        Words wordsOfValue = new Words(value);
+        for (Map.Entry<String, Words> entry: dict.entrySet()) {
+            if (wordsOfValue.equals(entry.getValue())) {
+                res.add(entry.getKey());
+            }
+        }
+        return res;
     }
 
     /**
      * Колл-во хранимых строк.
      * @return - Колл-во хранимых строк.
      *
-     * Сложность - []
+     * Сложность - O(1)
      */
     public int size() {
-        return 0;
+        return size;
     }
 
+    private static class Words {
 
+        private final Map<Character, Integer> words;
+
+        public Words(String str) {
+            String inputString = str.toLowerCase();
+            this.words = new HashMap<>();
+            for (int i = 0; i < inputString.length(); i++) {
+                char c = inputString.charAt(i);
+                if (words.containsKey(c)) {
+                    words.put(c, words.get(c) + 1);
+                } else {
+                    words.put(c, 1);
+                }
+            }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            Words other = (Words) o;
+            return Objects.equals(words, other.words);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(words);
+        }
+    }
 }
