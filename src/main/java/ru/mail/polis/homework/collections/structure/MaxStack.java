@@ -10,8 +10,24 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
+    private final Stack<Integer> maxStack = new Stack<>();
+
+    public Integer push(Integer item) {
+        Integer max = item;
+        if (!isEmpty() && max < maxStack.peek()) {
+            max = maxStack.peek();
+        }
+        maxStack.push(max);
+        return super.push(item);
+    }
+
+    public Integer pop() {
+        maxStack.pop();
+        return super.pop();
+    }
+
     public Integer getMaxValue() {
-        return 0;
+        return maxStack.peek();
     }
 
 }

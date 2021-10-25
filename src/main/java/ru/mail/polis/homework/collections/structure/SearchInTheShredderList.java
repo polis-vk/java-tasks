@@ -8,9 +8,7 @@ import java.util.List;
  * Одна из самых популярных задач.
  * Наша структура хранит обрывки слов. Надо реализовать метод positionPartString
  * который вернет: позиции где находятся подстроки, из которых можно составить
- * переданное слово. Так же известно что слова, которые писались в структуру, изначально
- * делились пополам для записи в нее.
- * Отрабатывать метод должен за О(n).
+ * переданное слово. Отрабатывать метод должен за О(n).
  */
 public class SearchInTheShredderList {
     private List<String> partStrings = new ArrayList<>();
@@ -37,6 +35,17 @@ public class SearchInTheShredderList {
      * @return - либо массив с реальными позициями подстрок если нашли, либо - null
      */
     public int[] positionPartString(String value) {
-        return null;
+        if (value == null || value.equals("")) {
+            return null;
+        }
+        final int midLen = value.length() / 2;
+        String[] valueParts = {value.substring(0, midLen), value.substring(midLen)};
+        final int[] indexArray = new int[2];
+        indexArray[0] = partStrings.indexOf(valueParts[0]);
+        indexArray[1] = partStrings.indexOf(valueParts[1]);
+        if (indexArray[0] == -1 || indexArray[1] == -1) {
+            return null;
+        }
+        return indexArray;
     }
 }
