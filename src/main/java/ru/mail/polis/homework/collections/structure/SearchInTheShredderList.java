@@ -41,10 +41,16 @@ public class SearchInTheShredderList {
         if (value == null) {
             return null;
         }
-        int[] partsIndexes = new int[] {
-                partStrings.indexOf(value.substring(0, value.length() / 2)),
-                partStrings.indexOf(value.substring(value.length() / 2))
-        };
+        int[] partsIndexes = new int[]{-1, -1};
+        String firstHalf = value.substring(0, value.length() / 2);
+        String secondHalf = value.substring(value.length() / 2);
+        for (int i = 0; i < partStrings.size(); i++) {
+            if (partStrings.get(i).equals(firstHalf)) {
+                partsIndexes[0] = i;
+            } else if (partStrings.get(i).equals(secondHalf)) {
+                partsIndexes[1] = i;
+            }
+        }
         return (partsIndexes[0] != -1 && partsIndexes[1] != -1) ? partsIndexes : null;
     }
 }

@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +24,7 @@ public class ValidatorForParentheses {
         if (value == null || value.equals("")) {
             return false;
         }
-        List<Character> list = new ArrayList<>(); // ArrayList так как Stack deprecated
+        List<Character> list = new LinkedList<>(); // LinkedList так как Stack deprecated
         for (char c : value.toCharArray()) {
             if (brackets.containsKey(c)) {
                 list.add(c);

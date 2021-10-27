@@ -1,10 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * Задание оценивается в 4 балла.
@@ -14,7 +10,8 @@ import java.util.stream.Collectors;
  */
 public class CustomDictionary {
 
-    private final Set<String> dictionary = new HashSet<>();
+    private final HashMap<Map<Character, Integer>, Set<String>> dictionary = new HashMap<>();
+    private int size = 0;
 
     /**
      * Сохранить строку в структуру данных
@@ -22,10 +19,25 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - O(1)
+     * Сложность - O(k)
      */
     public boolean add(String value) {
-        return dictionary.add(value);
+        if (value == null || value.equals("")) {
+            throw new IllegalArgumentException();
+        }
+        boolean isAdd;
+        Map<Character, Integer> countCharsMap = createCountCharsMap(value);
+        if (dictionary.containsKey(countCharsMap)) {
+            isAdd = dictionary.get(countCharsMap).add(value);
+        } else {
+            Set<String> words = new HashSet<>();
+            isAdd = words.add(value);
+            dictionary.put(countCharsMap, words);
+        }
+        if (isAdd) {
+            size++;
+        };
+        return isAdd;
     }
 
     /**
@@ -34,10 +46,14 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - O(1)
+     * Сложность - O(k)
      */
     public boolean contains(String value) {
-        return dictionary.contains(value);
+        Map<Character, Integer> countCharsMap = createCountCharsMap(value);
+        if (!dictionary.containsKey(countCharsMap)) {
+            return false;
+        }
+        return dictionary.get(countCharsMap).contains(value);
     }
 
     /**
@@ -46,32 +62,46 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - O(1)
+     * Сложность - O(k)
      */
     public boolean remove(String value) {
-        return dictionary.remove(value);
+        Map<Character, Integer> countCharsMap = createCountCharsMap(value);
+        if (!dictionary.containsKey(countCharsMap)) {
+            return false;
+        }
+        Set<String> charsWords = dictionary.get(countCharsMap);
+        boolean isRemoved = charsWords.remove(value);
+        if (charsWords.isEmpty()) {
+            dictionary.remove(countCharsMap);
+        }
+        if (isRemoved) {
+            size--;
+        };
+        return isRemoved;
     }
 
     /**
      * Возвращает список из сохраненных ранее строк, которые состоят
-     * из тех же букв что нам передали строку.
-     * Примеры: сохраняем строки ["aaa", "aBa", "baa", "aaB"]
+     * из того же набора букв что нам передали строку.
+     * Примеры:
+     * сохраняем строки ["aaa", "aBa", "baa", "aaB"]
      * При поиске по строке "AAb" нам должен вернуться следующий
      * список: ["aBa","baa","aaB"]
      * <p>
+     * сохраняем строки ["aaa", "aAa", "a"]
+     * поиск "aaaa"
+     * результат: []
      * Как можно заметить - регистр строки не должен влиять на поиск, при этом
      * возвращаемые строки хранятся в том виде что нам передали изначально.
      *
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - O(n * k, где k - максимальная длина строки из dictionary)
+     * Сложность - O(k)
      */
     public List<String> getSimilarWords(String value) {
-        Set<Integer> valueSet = value.toLowerCase(Locale.ROOT).chars().boxed().collect(Collectors.toSet());
-        return dictionary.stream()
-                .filter(s -> valueSet.equals(s.toLowerCase(Locale.ROOT).chars().boxed().collect(Collectors.toSet())))
-                .collect(Collectors.toList());
+        Map<Character, Integer> countCharsMap = createCountCharsMap(value);
+        return dictionary.containsKey(countCharsMap) ? new LinkedList<>(dictionary.get(countCharsMap)) : Collections.emptyList();
     }
 
     /**
@@ -82,8 +112,18 @@ public class CustomDictionary {
      * Сложность - O(1)
      */
     public int size() {
-        return dictionary.size();
+        return size;
     }
 
-
+    private Map<Character, Integer> createCountCharsMap(String value) {
+        Map<Character, Integer> countCharsMap = new HashMap<>();
+        for (char c : value.toLowerCase(Locale.ROOT).toCharArray()) {
+            if (countCharsMap.containsKey(c)) {
+                countCharsMap.replace(c, countCharsMap.get(c) + 1);
+            } else {
+                countCharsMap.put(c, 1);
+            }
+        }
+        return countCharsMap;
+    }
 }
