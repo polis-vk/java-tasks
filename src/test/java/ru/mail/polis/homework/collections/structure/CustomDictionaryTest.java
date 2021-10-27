@@ -2,6 +2,9 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
