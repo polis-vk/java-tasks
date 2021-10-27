@@ -23,7 +23,7 @@ public class MaxStackTest {
         stack.push(4);
         stack.push(5);
 
-        assertEquals(Integer.valueOf(5), stack.getMaxValue());
+        assertEquals(5, stack.getMaxValue());
     }
 
     @Test
@@ -35,7 +35,7 @@ public class MaxStackTest {
         stack.push(2);
         stack.push(1);
 
-        assertEquals(Integer.valueOf(5), stack.getMaxValue());
+        assertEquals(5, stack.getMaxValue());
     }
 
     @Test
@@ -49,7 +49,7 @@ public class MaxStackTest {
         stack.push(1);
         stack.push(1);
 
-        assertEquals(Integer.valueOf(5), stack.getMaxValue());
+        assertEquals(5, stack.getMaxValue());
     }
 
     @Test
@@ -59,11 +59,11 @@ public class MaxStackTest {
         stack.push(1);
         stack.push(5);
 
-        assertEquals(Integer.valueOf(5), stack.getMaxValue());
+        assertEquals(5, stack.getMaxValue());
 
         stack.pop();
 
-        assertEquals(Integer.valueOf(1), stack.getMaxValue());
+        assertEquals(1, stack.getMaxValue());
     }
 
     @Test
@@ -73,24 +73,24 @@ public class MaxStackTest {
         stack.push(3);
         stack.push(3);
         stack.push(3);
-        assertEquals(Integer.valueOf(3), stack.getMaxValue());
+        assertEquals(3, stack.getMaxValue());
 
         stack.push(2);
         stack.push(1);
         stack.push(0);
-        assertEquals(Integer.valueOf(3), stack.getMaxValue());
+        assertEquals(3, stack.getMaxValue());
 
         stack.push(4);
         stack.push(2);
         stack.push(1);
-        assertEquals(Integer.valueOf(4), stack.getMaxValue());
+        assertEquals(4, stack.getMaxValue());
 
         stack.pop();
-        assertEquals(Integer.valueOf(4), stack.getMaxValue());
+        assertEquals(4, stack.getMaxValue());
 
         stack.pop();
         stack.pop();
-        assertEquals(Integer.valueOf(3), stack.getMaxValue());
+        assertEquals(3, stack.getMaxValue());
     }
 
 }

@@ -61,7 +61,7 @@ public class CustomDictionary {
      */
     public boolean add(String value) {
         if (value == null || value.isEmpty()) {
-            return false;
+            throw new IllegalArgumentException();
         }
         Node current = root;
         boolean modified = false;
@@ -104,7 +104,7 @@ public class CustomDictionary {
      */
     public boolean remove(String value) {
         if (value == null || value.isEmpty()) {
-            return false;
+            throw new IllegalArgumentException();
         }
         String sWithZero = withZero(value);
         Node current = findNode(sWithZero);
@@ -184,10 +184,4 @@ public class CustomDictionary {
     }
 
 
-    public static void main(String[] args) {
-        CustomDictionary cd = new CustomDictionary();
-        String[] arr = new String[]{"aaa", "aBa", "baa", "aaB"};
-        Arrays.stream(arr).forEach(cd::add);
-        System.out.println(cd.getSimilarWords("AAb"));
-    }
 }

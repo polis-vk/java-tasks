@@ -58,8 +58,4 @@ public class SearchInTheShredderList {
         return null;
     }
 
-    public static void main(String[] args) {
-        SearchInTheShredderList s = new SearchInTheShredderList(Arrays.asList("олонка", "рим", "бензок"));
-        System.out.println(Arrays.toString(s.positionPartString("рим")));
-    }
 }

@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 /**
@@ -9,32 +10,42 @@ import java.util.Stack;
  * храниться в Stack. Отрабатывать метод должен за О(1).
  */
 public class MaxStack extends Stack<Integer> {
+    private int indexOfMax = 0;
+
     @Override
     public Integer push(Integer item) {
-        for (int i = 0; i < size(); i++) {
-            if (item < elementAt(i)) {
-                insertElementAt(item, i);
-                return item;
-            }
+        super.push(item);
+        if (item > elementAt(indexOfMax)) {
+            indexOfMax = size() - 1;
         }
-        addElement(item);
         return item;
     }
 
-    public int getMaxValue() {
-        return elementAt(size() - 1);
+    @Override
+    public synchronized Integer pop() {
+        if (indexOfMax == size() - 1) {
+            if (size() != 1) {
+                int max = elementAt(size() - 2);
+                int index = size() - 2;
+                for (int i = size() - 3; i >= 0; i--) {
+                    if (elementAt(i) > max) {
+                        max = elementAt(i);
+                        index = i;
+                    }
+                }
+                indexOfMax = index;
+            } else {
+                indexOfMax = 0;
+            }
+        }
+        return super.pop();
     }
 
-    public static void main(String[] args) {
-        MaxStack maxStack = new MaxStack();
-        int[] a = new int[]{1, 2, 4, 5, 23, 12, 45, 12, 43, 12};
-        for (int el : a) {
-            maxStack.push(el);
-            System.out.println(maxStack.getMaxValue());
+    public int getMaxValue() {
+        if (size() == 0) {
+            throw new EmptyStackException();
         }
-        System.out.println("\n");
-        for (int el : a) {
-            System.out.println(maxStack.pop());
-        }
+        return elementAt(indexOfMax);
     }
+
 }
