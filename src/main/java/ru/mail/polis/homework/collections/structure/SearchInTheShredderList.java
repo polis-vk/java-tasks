@@ -37,6 +37,23 @@ public class SearchInTheShredderList {
      * @return - либо массив с реальными позициями подстрок если нашли, либо - null
      */
     public int[] positionPartString(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        int[] result = new int[]{-1, -1};
+
+        for (int i = 0; i < partStrings.size(); i++) {
+            if (value.startsWith(partStrings.get(i))) {
+                result[0] = i;
+                result[1] = partStrings.indexOf(value.substring(partStrings.get(i).length()));
+                break;
+            }
+        }
+
+        if (result[0] != -1 && result[1] != -1) {
+            return result;
+        }
         return null;
     }
 }
