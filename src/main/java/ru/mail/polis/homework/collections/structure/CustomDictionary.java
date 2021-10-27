@@ -27,6 +27,9 @@ public class CustomDictionary {
      * Сложность - [O(1) в среднем]
      */
     public boolean add(String value) {
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException("Empty or null string");
+        }
         return data.add(value);
     }
 
