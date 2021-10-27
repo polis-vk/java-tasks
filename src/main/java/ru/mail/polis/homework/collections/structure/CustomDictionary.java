@@ -23,6 +23,9 @@ public class CustomDictionary {
      * Сложность - [O(1)]
      */
     public boolean add(String value) {
+        if (value == null || value.equals("")) {
+            throw new IllegalArgumentException();
+        }
         return dictionary.add(value);
     }
 

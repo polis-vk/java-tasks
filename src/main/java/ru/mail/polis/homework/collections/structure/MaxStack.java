@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.Deque;
+import java.util.EmptyStackException;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Stack;
@@ -34,7 +35,7 @@ public class MaxStack extends Stack<Integer> {
 
     public Integer getMaxValue() {
         if (stack.isEmpty()) {
-            throw new NoSuchElementException();
+            throw new EmptyStackException();
         }
         return stack.getLast();
     }
