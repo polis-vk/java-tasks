@@ -21,7 +21,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - [O(1)]
+     * Сложность - [O(n), тк задействуется contains]
      */
     public boolean add(String value) {
         if (value == null || value.equals("")) {
@@ -78,14 +78,16 @@ public class CustomDictionary {
         }
         for (String s : list) {
             StringBuilder tmp = new StringBuilder(s.toLowerCase());
+            boolean isSimilar = true;
             for (int j = 0; j < value.length(); j++) {
                 int index = tmp.indexOf(String.valueOf(Character.toLowerCase(value.charAt(j))));
                 if (index < 0) {
+                    isSimilar = false;
                     break;
                 }
                 tmp.deleteCharAt(index);
             }
-            if (tmp.length() == 0) {
+            if (isSimilar && tmp.length() == 0) {
                 res.add(s);
             }
         }
