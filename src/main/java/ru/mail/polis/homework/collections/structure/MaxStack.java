@@ -12,10 +12,6 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
-    /** Из найденной мной информации метод Collections.max
-     *  отрабатывает за O(n), поэтому данное задание реализовано
-     *  именно таким образом.
-     */
     private int max = Integer.MIN_VALUE;
 
     @Override
