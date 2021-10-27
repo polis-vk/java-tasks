@@ -30,6 +30,9 @@ public class CustomDictionary {
      * Сложность - O(1)
      */
     public boolean add(String value) {
+        if (value == null || value.equals("")) {
+            throw new IllegalArgumentException();
+        }
         if (dict.putIfAbsent(value, new Words(value)) == null) {
             size++;
             return true;
