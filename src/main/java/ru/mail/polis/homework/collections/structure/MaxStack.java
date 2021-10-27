@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 /**
@@ -38,6 +39,9 @@ public class MaxStack extends Stack<Integer> {
     }
 
     public Integer getMaxValue() {
-        return this.size() == 0 ? null : max;
+        if (this.size() == 0) {
+            throw new EmptyStackException();
+        }
+        return max;
     }
 }
