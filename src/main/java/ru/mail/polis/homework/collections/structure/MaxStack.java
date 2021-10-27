@@ -11,23 +11,26 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
-    private Integer max = Integer.MIN_VALUE;
+    private final MaxHeap maxHeap = new MaxHeap();
 
     public Integer getMaxValue() {
         if (size() == 0) {
             throw new EmptyStackException();
         }
-        return max;
+        return maxHeap.peek();
     }
 
     @Override
     public Integer push(Integer item) {
-        if (item > max) {
-            max = item;
-        }
-        addElement(item);
+        maxHeap.heapInsert(item);
+        return super.push(item);
+    }
 
-        return item;
+    @Override
+    public Integer pop() {
+        int returned = super.pop();
+        maxHeap.remove(returned);
+        return returned;
     }
 
 }

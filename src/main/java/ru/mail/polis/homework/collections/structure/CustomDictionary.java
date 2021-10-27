@@ -1,10 +1,10 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * Задание оценивается в 4 балла.
@@ -14,7 +14,7 @@ import java.util.TreeSet;
  */
 public class CustomDictionary {
 
-    private final HashMap<String, ArrayList<String>> data = new HashMap<>();
+    private final HashMap<String, HashSet<String>> data = new HashMap<>();
     private int size = 0;
 
     /**
@@ -23,17 +23,19 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - O(1) аммортизационная
+     * Сложность - O(1) в среднем случае, O(n) в худшем
      */
     public boolean add(String value) {
-        if (value == null) {
-            throw new NullPointerException();
+        if (value == null || value.equals("")) {
+            throw new IllegalArgumentException();
         }
         String splitted = splitByLetter(value);
-        data.putIfAbsent(splitted, new ArrayList<>());
-        data.get(splitted).add(value);
-        size++;
-        return true;
+        data.putIfAbsent(splitted, new HashSet<>());
+        if (data.get(splitted).add(value)) {
+            size++;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -42,10 +44,10 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - O(n) в худшем случае, если у нас все слова из одних и тех же букв
+     * Сложность - O(1) в среднем случае, O(n) в худшем
      */
     public boolean contains(String value) {
-        if (value == null) {
+        if (value == null || value.equals("")) {
             return false;
         }
         String splitted = splitByLetter(value);
@@ -61,7 +63,7 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - O(n) в худшем случае, если у нас все слова из одних и тех же букв
+     * Сложность - O(1) в среднем случае, O(n) в худшем
      */
     public boolean remove(String value) {
         if (value == null) {
@@ -80,24 +82,28 @@ public class CustomDictionary {
 
     /**
      * Возвращает список из сохраненных ранее строк, которые состоят
-     * из тех же букв что нам передали строку.
-     * Примеры: сохраняем строки ["aaa", "aBa", "baa", "aaB"]
+     * из того же набора букв что нам передали строку.
+     * Примеры:
+     * сохраняем строки ["aaa", "aBa", "baa", "aaB"]
      * При поиске по строке "AAb" нам должен вернуться следующий
      * список: ["aBa","baa","aaB"]
      * <p>
+     * сохраняем строки ["aaa", "aAa", "a"]
+     * поиск "aaaa"
+     * результат: []
      * Как можно заметить - регистр строки не должен влиять на поиск, при этом
      * возвращаемые строки хранятся в том виде что нам передали изначально.
      *
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - O(1)
+     * Сложность - O(k), k - количество слов подходящий под даный шаблон
      */
     public List<String> getSimilarWords(String value) {
         if (value == null) {
             throw new NullPointerException();
         }
-        return data.getOrDefault(splitByLetter(value), new ArrayList<>());
+        return new ArrayList<>(data.getOrDefault(splitByLetter(value), new HashSet<>()));
     }
 
     /**
@@ -116,20 +122,15 @@ public class CustomDictionary {
      * <p>
      * Used in: add(), getSimilarWords(), remove(), contains()
      *
-     * @param value - разбиваемая на уникальные символы строка
-     * @return String букв из которых состоит слово
-     * <p>
-     * Сложность - O(n), n - длинна строки
-     * Память - O(k), k - количество уникальных символов
+     * @param value - разбиваемая на символы строка
+     * @return String упорядоченных букв из которых состоит слово
      */
     private String splitByLetter(String value) {
-        String loweredCased = value.toLowerCase();
+        char[] loweredCased = value.toLowerCase().toCharArray();
+        Arrays.sort(loweredCased);
         StringBuilder splitted = new StringBuilder();
-        SortedSet<Character> chars = new TreeSet<>();
-        for (int i = 0; i < loweredCased.length(); i++) {
-            chars.add(loweredCased.charAt(i));
-        }
-        for (Character letter : chars) {
+
+        for (Character letter : loweredCased) {
             splitted.append(letter);
         }
         return splitted.toString();
