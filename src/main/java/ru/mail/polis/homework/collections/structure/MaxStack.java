@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.EmptyStackException;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Задание оценивается в 2 балла.
@@ -11,11 +10,11 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
-    private final Stack<Integer> stackMaxValues;
+    private final Deque<Integer> stackMaxValues;
 
     public MaxStack() {
         super();
-        stackMaxValues = new Stack<>();
+        stackMaxValues = new ArrayDeque<>();
     }
 
     @Override
@@ -23,7 +22,7 @@ public class MaxStack extends Stack<Integer> {
         if (item == null) {
             throw new IllegalArgumentException();
         }
-        if (stackMaxValues.isEmpty() || item >= stackMaxValues.lastElement()) {
+        if (stackMaxValues.isEmpty() || item >= stackMaxValues.peek()) {
             stackMaxValues.push(item);
         }
         return super.push(item);
@@ -34,7 +33,7 @@ public class MaxStack extends Stack<Integer> {
         if (stackMaxValues.isEmpty()) {
             throw new EmptyStackException();
         }
-        if (super.peek().equals(stackMaxValues.lastElement())) {
+        if (super.peek().equals(stackMaxValues.peek())) {
             stackMaxValues.pop();
             return super.pop();
         }
@@ -45,7 +44,7 @@ public class MaxStack extends Stack<Integer> {
         if (super.isEmpty()) {
             throw new EmptyStackException();
         }
-        return stackMaxValues.lastElement();
+        return stackMaxValues.peek();
     }
 
 }
