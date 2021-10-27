@@ -87,7 +87,7 @@ public class CustomDictionary {
             for (Character ch : s.toCharArray()) {
                 strSet.add(Character.toLowerCase(ch));
             }
-            if (strSet.equals(valueSet)) {
+            if (s.length() == value.length() && strSet.equals(valueSet)) {
                 result.add(s);
             }
         }
