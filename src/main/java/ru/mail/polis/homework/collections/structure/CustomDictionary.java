@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class CustomDictionary {
 
-    private final HashMap<Set<Character>, LinkedList<String>> dictionary;
+    private final Map<Map<Character, Integer>, LinkedList<String>> dictionary;
     private int size;
 
     public CustomDictionary() {
@@ -26,7 +26,10 @@ public class CustomDictionary {
      * Сложность - [size(словаря) + length(слова), но если у нас хорошее распределение то length(слова)]
      */
     public boolean add(String value) {
-        Set<Character> key = getSetFromString(value);
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        Map<Character, Integer> key = getMapFromString(value);
         LinkedList<String> stringList = dictionary.getOrDefault(key, new LinkedList<>());
         if (stringList.contains(value)) {
             return false;
@@ -45,7 +48,7 @@ public class CustomDictionary {
      * Сложность - [size(словаря) + length(слова), но если у нас хорошее распределение то length(слова)]
      */
     public boolean contains(String value) {
-        Set<Character> key = getSetFromString(value);
+        Map<Character, Integer> key = getMapFromString(value);
         LinkedList<String> stringList = dictionary.getOrDefault(key, null);
         if (stringList == null) {
             return false;
@@ -68,8 +71,8 @@ public class CustomDictionary {
      * Сложность - [size(словаря) + length(слова), но если у нас хорошее распределение то length(слова)]
      */
     public boolean remove(String value) {
-        Set<Character> key = getSetFromString(value);
-        LinkedList<String> stringList = dictionary.getOrDefault(key, null);
+        Map<Character, Integer> key = getMapFromString(value);
+        List<String> stringList = dictionary.getOrDefault(key, null);
         if (stringList == null) {
             return false;
         }
@@ -98,8 +101,9 @@ public class CustomDictionary {
      * Сложность - [1]
      */
     public List<String> getSimilarWords(String value) {
-        Set<Character> key = getSetFromString(value);
-        return Collections.unmodifiableList(dictionary.getOrDefault(key, null));
+        Map<Character, Integer> key = getMapFromString(value);
+        List<String> result = dictionary.getOrDefault(key, null);
+        return result == null ? Collections.emptyList() : Collections.unmodifiableList(result);
     }
 
     /**
@@ -112,12 +116,18 @@ public class CustomDictionary {
         return size;
     }
 
-    private static Set<Character> getSetFromString(String value) {
-        Set<Character> set = new HashSet<>();
-        for(char c : value.toCharArray()) {
-            set.add(Character.toLowerCase(c));
+    private static Map<Character, Integer> getMapFromString(String value) {
+        Map<Character, Integer> mapFromString = new HashMap<>();
+        for(Character c : value.toCharArray()) {
+            c = Character.toLowerCase(c);
+            Integer nowCountChar = mapFromString.getOrDefault(c, null);
+            if (nowCountChar == null) {
+                mapFromString.put(c, 1);
+            } else  {
+                mapFromString.put(c, nowCountChar + 1);
+            }
         }
-        return set;
+        return mapFromString;
     }
 
 }

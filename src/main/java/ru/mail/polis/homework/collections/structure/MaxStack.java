@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 /**
@@ -11,52 +11,41 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
-    private int maxValue;
-    private ArrayList<Integer> stack;
+    private final Stack<Integer> stackMaxValues;
 
     public MaxStack() {
-        maxValue = Integer.MIN_VALUE;
-    }
-
-    @Override
-    public synchronized Integer peek() {
-        return stack.get(stack.size() - 1);
-    }
-
-    @Override
-    public boolean empty() {
-        return stack.isEmpty();
-    }
-
-    @Override
-    public synchronized int search(Object o) {
-        int i = stack.lastIndexOf((Integer) o);
-        return i >= 0 ? size() - i : -1;
+        super();
+        stackMaxValues = new Stack<>();
     }
 
     @Override
     public Integer push(Integer item) {
-        if (item > maxValue) {
-            maxValue = item;
+        if (item == null) {
+            throw new IllegalArgumentException();
         }
-        stack.add(item);
-        return item;
+        if (stackMaxValues.isEmpty() || item >= stackMaxValues.lastElement()) {
+            stackMaxValues.push(item);
+        }
+        return super.push(item);
     }
 
     @Override
     public synchronized Integer pop() {
-        int popElement = stack.remove(stack.size() - 1);
-        if (popElement == maxValue) {
-            maxValue = Integer.MIN_VALUE;
-            for (Integer element : stack) {
-                maxValue = Math.max(element, maxValue);
-            }
+        if (stackMaxValues.isEmpty()) {
+            throw new EmptyStackException();
         }
-        return popElement;
+        if (super.peek().equals(stackMaxValues.lastElement())) {
+            stackMaxValues.pop();
+            return super.pop();
+        }
+        return super.pop();
     }
 
     public Integer getMaxValue() {
-        return maxValue;
+        if (super.isEmpty()) {
+            throw new EmptyStackException();
+        }
+        return stackMaxValues.lastElement();
     }
 
 }
