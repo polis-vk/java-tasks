@@ -38,19 +38,19 @@ public class SearchInTheShredderList {
      * @return - либо массив с реальными позициями подстрок если нашли, либо - null
      */
     public int[] positionPartString(String value) {
-        if(value == null || value.isEmpty()) {
+        if (value == null || value.isEmpty()) {
             return null;
         }
         HashMap<String, Integer> additions = new HashMap<>();
 
         int index = 0;
-        for(String string : partStrings) {
-            if(additions.containsKey(string)) {
-                if(value.startsWith(string)) {
+        for (String string : partStrings) {
+            if (additions.containsKey(string)) {
+                if (value.startsWith(string)) {
                     return new int[]{index, additions.get(string)};
                 }
                 return new int[]{additions.get(string), index};
-            } else if(value.endsWith(string) || value.startsWith(string)){
+            } else if (value.endsWith(string) || value.startsWith(string)) {
                 additions.put(value.replaceFirst(string, ""), index);
             }
             index++;

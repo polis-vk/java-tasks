@@ -9,9 +9,9 @@ import java.util.LinkedList;
  * В строке помимо скобок могут содержаться и другие символы.
  * Скобки могут быть: [],{},<>,()
  * Примеры:
- *      "(-b + (x)^2)/(2+4)" - true
- *      "Понедельники меня угнетают ((" - false
- *
+ * "(-b + (x)^2)/(2+4)" - true
+ * "Понедельники меня угнетают ((" - false
+ * <p>
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
@@ -28,8 +28,8 @@ public class ValidatorForParentheses {
     }
 
     private static int getClosing(char character) {
-        for(int i = 0; i < closingBrackets.length; i++) {
-            if(closingBrackets[i] == character) {
+        for (int i = 0; i < closingBrackets.length; i++) {
+            if (closingBrackets[i] == character) {
                 return i;
             }
         }
@@ -37,15 +37,15 @@ public class ValidatorForParentheses {
     }
 
     public static boolean validate(String value) {
-        if(value == null || value.isEmpty()) {
+        if (value == null || value.isEmpty()) {
             return false;
         }
         LinkedList<Character> brackets = new LinkedList<>();
-        for(int i = 0; i < value.length(); i++) {
-            if(isOpening(value.charAt(i))) {
+        for (int i = 0; i < value.length(); i++) {
+            if (isOpening(value.charAt(i))) {
                 brackets.addLast(value.charAt(i));
-            } else if(getClosing(value.charAt(i)) != -1) {
-                if(brackets.isEmpty() || brackets.getLast() != openingBrackets[getClosing(value.charAt(i))]) {
+            } else if (getClosing(value.charAt(i)) != -1) {
+                if (brackets.isEmpty() || brackets.getLast() != openingBrackets[getClosing(value.charAt(i))]) {
                     return false;
                 }
                 brackets.removeLast();

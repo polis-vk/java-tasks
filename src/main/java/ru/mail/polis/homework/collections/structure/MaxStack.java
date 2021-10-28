@@ -13,7 +13,7 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
-    private PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
+    private final PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
 
     @Override
     public synchronized Integer pop() {
@@ -28,7 +28,7 @@ public class MaxStack extends Stack<Integer> {
     }
 
     public Integer getMaxValue() {
-        if(isEmpty()) {
+        if (isEmpty()) {
             throw new EmptyStackException();
         }
         return maxHeap.peek();

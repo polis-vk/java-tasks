@@ -14,24 +14,34 @@ import java.util.List;
  */
 public class CustomDictionary {
 
-    private HashMap<HashMap<Character, Integer>, HashSet<String>> data = new HashMap<>();
+    private final HashMap<HashMap<Character, Integer>, HashSet<String>> data = new HashMap<>();
     private int size = 0;
+
+    private static HashMap<Character, Integer> getHashMap(String value) {
+        HashMap<Character, Integer> characters = new HashMap<>();
+        for (int i = 0; i < value.length(); i++) {
+            char character = Character.toUpperCase(value.charAt(i));
+            characters.put(character, characters.getOrDefault(character, 0) + 1);
+        }
+        return characters;
+    }
 
     /**
      * Сохранить строку в структуру данных
+     *
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
-     *
+     * <p>
      * Сложность - [o(k)]
      */
     public boolean add(String value) {
-        if(value == null || value.isEmpty()) {
+        if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException();
         }
         HashMap<Character, Integer> parse = getHashMap(value);
         HashSet<String> strings = data.get(parse);
-        if(strings != null) {
-            if(strings.add(value)) {
+        if (strings != null) {
+            if (strings.add(value)) {
                 size++;
                 return true;
             }
@@ -47,39 +57,32 @@ public class CustomDictionary {
 
     /**
      * Проверяем, хранится ли такая строка уже у нас
+     *
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
-     *
+     * <p>
      * Сложность - [o(k)], где k - длина строки
      */
     public boolean contains(String value) {
         HashSet<String> strings = data.get(getHashMap(value));
-        if(strings != null) {
+        if (strings != null) {
             return strings.contains(value);
         }
         return false;
     }
 
-    private static HashMap<Character, Integer> getHashMap(String value) {
-        HashMap<Character, Integer> characters = new HashMap<>();
-        for(int i = 0; i < value.length(); i++) {
-            char character = Character.toUpperCase(value.charAt(i));
-            characters.put(character, characters.getOrDefault(character, 0) + 1);
-        }
-        return characters;
-    }
-
     /**
      * Удаляем сохраненную строку если она есть
+     *
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
-     *
+     * <p>
      * Сложность - [o(k)]
      */
     public boolean remove(String value) {
         HashSet<String> strings = data.get(getHashMap(value));
-        if(strings != null) {
-            if(strings.remove(value)) {
+        if (strings != null) {
+            if (strings.remove(value)) {
                 size--;
                 return true;
             }
@@ -94,7 +97,7 @@ public class CustomDictionary {
      * сохраняем строки ["aaa", "aBa", "baa", "aaB"]
      * При поиске по строке "AAb" нам должен вернуться следующий
      * список: ["aBa","baa","aaB"]
-     *
+     * <p>
      * сохраняем строки ["aaa", "aAa", "a"]
      * поиск "aaaa"
      * результат: []
@@ -103,12 +106,12 @@ public class CustomDictionary {
      *
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
-     *
+     * <p>
      * Сложность - [o(k)]
      */
     public List<String> getSimilarWords(String value) {
         HashSet<String> strings = data.get(getHashMap(value));
-        if(strings != null) {
+        if (strings != null) {
             return new LinkedList<>(strings);
         }
         return Collections.emptyList();
@@ -116,8 +119,9 @@ public class CustomDictionary {
 
     /**
      * Колл-во хранимых строк.
-     * @return - Колл-во хранимых строк.
      *
+     * @return - Колл-во хранимых строк.
+     * <p>
      * Сложность - [o(1)]
      */
     public int size() {
