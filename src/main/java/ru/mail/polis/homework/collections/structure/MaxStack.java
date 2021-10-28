@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.collections.structure;
 
+
+import java.util.Collections;
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 /**
@@ -10,8 +13,30 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
-    public Integer getMaxValue() {
-        return 0;
+    private int max = Integer.MIN_VALUE;
+
+    @Override
+    public Integer push(Integer value) {
+        if (value > max) {
+            max = value;
+        }
+        super.push(value);
+        return value;
     }
 
+    @Override
+    public Integer pop() {
+        int elementToRemove = super.pop();
+        if (elementToRemove == max) {
+            max = Collections.max(this);
+        }
+        return elementToRemove;
+    }
+
+    public Integer getMaxValue() {
+        if (size() == 0) {
+            throw new EmptyStackException();
+        }
+        return max;
+    }
 }
