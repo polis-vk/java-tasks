@@ -19,7 +19,7 @@ public class MaxStack extends Stack<Integer> {
 
     @Override
     public Integer push(Integer item) {
-        maxes.push(Integer.max(getMaxValue(), item));
+        maxes.push(maxes.isEmpty() ? item : Integer.max(getMaxValue(), item));
         return super.push(item);
     }
 
