@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
@@ -12,18 +13,22 @@ import java.util.Iterator;
  * тогда все элементы со значением 100 имеют нечетную позицию, а элементы = 0 - четную.
  */
 public class CustomArrayWrapper implements Iterable<Integer> {
-
+    boolean iterating = false;
     private final int[] array;          // массив
-    private int position;               // следующая позиция куда будет вставлен элемент
+    private int position = 0;               // следующая позиция куда будет вставлен элемент
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
     }
 
     public void add(int value) {
-        checkIndex(position);
-        array[position] = value;
-        position++;
+        if(!iterating){
+            checkIndex(position);
+            array[position] = value;
+            position++;
+        }else{
+            throw new ConcurrentModificationException();
+        }
     }
 
     public void edit(int index, int value) {
@@ -48,7 +53,19 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        iterating = true;
+        return new Iterator<Integer>() {
+            int readPosition = 0;
+            @Override
+            public boolean hasNext() {
+                return readPosition < size();
+            }
+
+            @Override
+            public Integer next() {
+                return get(readPosition++);
+            }
+        };
     }
 
     /**
@@ -58,7 +75,21 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        iterating = true;
+        return new Iterator<Integer>() {
+            int readPosition = 1;
+            @Override
+            public boolean hasNext() {
+                return readPosition < size();
+            }
+
+            @Override
+            public Integer next() {
+                int result = get(readPosition);
+                readPosition += 2;
+                return result;
+            }
+        };
     }
 
     /**
@@ -68,7 +99,21 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        iterating = true;
+        return new Iterator<Integer>() {
+            int readPosition = 0;
+            @Override
+            public boolean hasNext() {
+                return readPosition < size();
+            }
+
+            @Override
+            public Integer next() {
+                int result = get(readPosition);
+                readPosition += 2;
+                return result;
+            }
+        };
     }
 
     private void checkIndex(int index) {
