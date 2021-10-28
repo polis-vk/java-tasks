@@ -1,6 +1,14 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Задание оценивается в 4 балла.
@@ -18,7 +26,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - O(log(storage.size()) + log(cache.size()))
+     * Сложность - O(log(storage.size()) + log(index.size()))
      */
     public boolean add(String value) {
         if (value == null) {
@@ -43,7 +51,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - O(log(cache.size()))
+     * Сложность - O(log(index.size()))
      */
     public boolean contains(String value) {
         return index.containsKey(value);
@@ -55,7 +63,7 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - O(log(cache.size()) + log(set.size()))
+     * Сложность - O(log(index.size()) + log(set.size()))
      */
     public boolean remove(String value) {
         final Set<String> set = index.get(value);
