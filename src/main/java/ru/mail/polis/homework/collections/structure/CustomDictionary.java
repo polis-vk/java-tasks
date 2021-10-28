@@ -1,12 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ListIterator;
-import java.util.LinkedList;
-import java.util.BitSet;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Задание оценивается в 4 балла.
@@ -15,10 +9,8 @@ import java.util.Objects;
  * Напишите, какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-
-    public static final int ALPHABET_SIZE = 26;
-    private final Map<LetterSet, List<String>> storage = new HashMap<>();
-    private final Map<String, ListIterator<String>> cache = new HashMap<>();
+    private final Map<LetterSignature, Set<String>> storage = new HashMap<>();
+    private final Map<String, Set<String>> index = new HashMap<>();
 
     /**
      * Сохранить строку в структуру данных
@@ -30,16 +22,18 @@ public class CustomDictionary {
      */
     public boolean add(String value) {
         if (value == null) {
-            return false;
+            throw new IllegalArgumentException("Null is not permitted");
+        }
+        if (value.isEmpty()) {
+            throw new IllegalArgumentException("Empty string is not permitted");
         }
         if (contains(value)) {
             return false;
         }
-        final LetterSet letters = new LetterSet(value);
-        List<String> list = storage.computeIfAbsent(letters, k -> new LinkedList<>());
-        final ListIterator<String> it = list.listIterator(list.size());
-        cache.put(value, it);
-        it.add(value);
+        final LetterSignature letters = new LetterSignature(value);
+        Set<String> set = storage.computeIfAbsent(letters, k -> new HashSet<>());
+        index.put(value, set);
+        set.add(value);
         return true;
     }
 
@@ -52,7 +46,7 @@ public class CustomDictionary {
      * Сложность - O(log(cache.size()))
      */
     public boolean contains(String value) {
-        return cache.containsKey(value);
+        return index.containsKey(value);
     }
 
     /**
@@ -61,21 +55,21 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - O(log(cache.size()))
+     * Сложность - O(log(cache.size()) + log(set.size()))
      */
     public boolean remove(String value) {
-        final ListIterator<String> iterator = cache.get(value);
-        if (iterator == null) {
+        final Set<String> set = index.get(value);
+        if (set == null) {
             return false;
         }
-        iterator.remove();
-        cache.remove(value);
+        set.remove(value);
+        index.remove(value);
         return true;
     }
 
     /**
      * Возвращает список из сохраненных ранее строк, которые состоят
-     * из того же набора букв что и переданная ему строка.
+     * из того же набора букв, что и переданная ему строка.
      * Примеры:
      * сохраняем строки ["aaa", "aBa", "baa", "aaB"]
      * При поиске по строке "AAb" нам должен вернуться следующий
@@ -85,15 +79,19 @@ public class CustomDictionary {
      * поиск "aaaa"
      * результат: []
      * Как можно заметить - регистр строки не должен влиять на поиск, при этом
-     * возвращаемые строки хранятся в том виде что нам передали изначально.
+     * возвращаемые строки хранятся в том виде, что нам передали изначально.
      *
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - O(log(storage.size()))
+     * Сложность - O(log(storage.size()) + similar.size())
      */
     public List<String> getSimilarWords(String value) {
-        return storage.get(new LetterSet(value));
+        Collection<String> similar = storage.get(new LetterSignature(value));
+        if (similar == null) {
+            return Collections.emptyList();
+        }
+        return new ArrayList<>(similar);
     }
 
     /**
@@ -104,33 +102,37 @@ public class CustomDictionary {
      * Сложность - O(1)
      */
     public int size() {
-        return cache.size();
+        return index.size();
     }
 
-    private static class LetterSet {
-        final BitSet internal = new BitSet(ALPHABET_SIZE);
+    private static class LetterSignature {
+        private static final int ALPHABET_SIZE = 26;
+        private final int[] internal = new int[ALPHABET_SIZE];
 
-        public LetterSet(String word) {
+        public LetterSignature(String word) {
             for (char c : word.toCharArray()) {
                 if (!isLetter(c)) {
                     continue;
                 }
-                internal.set(index(lowerCase(c)), true);
+                internal[index(lowerCase(c))]++;
             }
         }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            if (!super.equals(o)) return false;
-            LetterSet that = (LetterSet) o;
-            return internal.equals(that.internal);
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            LetterSignature that = (LetterSignature) o;
+            return Arrays.equals(internal, that.internal);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(internal);
+            return Arrays.hashCode(internal);
         }
 
         private static int index(char c) {
