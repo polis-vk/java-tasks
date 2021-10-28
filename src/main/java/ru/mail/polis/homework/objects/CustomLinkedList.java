@@ -4,9 +4,8 @@ package ru.mail.polis.homework.objects;
  * Реализовать все методы односвязанного списка.
  */
 public class CustomLinkedList {
-    private Node root = null;
-    private Node head = null;
-    int size = 0;
+
+    private Node head;
 
     /**
      * Реализовать метод:
@@ -15,14 +14,7 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
-        Node node = new Node(value);
-        if(root == null) root = node;
-        if(head == null) head = root;
-        else{
-            head.setNext(node);
-            head = node;
-        }
-        size++;
+
     }
 
     /**
@@ -33,14 +25,7 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if(index < 0 || index >= size) throw new IndexOutOfBoundsException();
-        if(index == 0) root = root.next;
-        Node node = root;
-        for(int i = 1; i < index; i++){
-            node = node.next;
-        }
-        node.next = node.next.next;
-        size--;
+
     }
 
     /**
@@ -51,16 +36,7 @@ public class CustomLinkedList {
      *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-        Node current = root;
-        Node next = current.next;
-        while(next != null){
-            if(current == root){
-                current.next = null;
-                head = current;
-            }
-            current = next;
-            next = current.next;
-        }
+
     }
 
     /**
@@ -74,14 +50,7 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        Node head = root;
-        for (int i = 0; i < size; i++){
-            sb.append(head.value).append(" -> ");
-            head = head.next;
-        }
-
-        return sb.append("null").toString();
+        return "1 -> 2 -> 3 -> null";
     }
 
     private static class Node {
