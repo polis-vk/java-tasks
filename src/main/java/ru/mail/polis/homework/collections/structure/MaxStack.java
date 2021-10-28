@@ -9,9 +9,25 @@ import java.util.Stack;
  * храниться в Stack. Отрабатывать метод должен за О(1).
  */
 public class MaxStack extends Stack<Integer> {
+    private final Stack<Integer> maxElems = new Stack<>();
 
     public Integer getMaxValue() {
-        return 0;
+        return maxElems.peek();
     }
 
+    @Override
+    public Integer push(Integer item) {
+        if (maxElems.size() > 0 && maxElems.peek() > item) {
+            maxElems.push(maxElems.peek());
+        } else {
+            maxElems.push(item);
+        }
+        return super.push(item);
+    }
+
+    @Override
+    public synchronized Integer pop() {
+        maxElems.pop();
+        return super.pop();
+    }
 }
