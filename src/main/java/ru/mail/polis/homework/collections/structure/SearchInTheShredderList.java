@@ -24,17 +24,18 @@ public class SearchInTheShredderList {
 
     public SearchInTheShredderList(List<String> partStrings) {
         this.partStrings = partStrings;
-        for (final ListIterator<String> it = partStrings.listIterator(); it.hasNext(); ) {
-            int index = it.nextIndex();
-            String part = it.next();
+        int index = 0;
+        for (String part : partStrings) {
             prefixes.put(part, index);
             suffixes.put(part, index);
+            index++;
         }
     }
 
     public void add(String value) {
-        prefixes.put(value, partStrings.size());
-        suffixes.put(value, partStrings.size());
+        final int index = partStrings.size();
+        prefixes.put(value, index);
+        suffixes.put(value, index);
         partStrings.add(value);
     }
 
@@ -46,7 +47,7 @@ public class SearchInTheShredderList {
      * Ищем позиции подстрок из которых можно составить передаваемое слово
      *
      * @param value - передаваемое слово
-     * @return - либо массив с реальными позициями подстрок если нашли, либо - null
+     * @return - либо массив с реальными позициями подстрок если нашли, либо null
      */
     public int[] positionPartString(String value) {
         if (value == null) {
