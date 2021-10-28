@@ -10,10 +10,16 @@ package ru.mail.polis.homework.processor;
  * Сами статические методы мне нужны для создания тестов, что бы без реальных классов (которые вы напишите)
  * я смог "сэмулировать" их создание.
  *
- * Каждый обработчик 2 балла. Итого 8
+ * Каждый обработчик 2 балла. �?того 8
  */
 public interface TextProcessor {
+    final ProcessingStage stage = null;
 
+    String processText(String text);
+
+    default public ProcessingStage getStage() {
+        return stage;
+    }
     /**
      * Схлопывает все пустые символы в один пробел.
      * Более формально, заменить каждую подстроку, удовлетворяющую регулярному выражению \s+ на 1 пробел.
@@ -21,7 +27,7 @@ public interface TextProcessor {
      * Стадия: препроцессинг
      */
     static TextProcessor squashWhiteSpacesProcessor() {
-        return null;
+        return new SquashWhiteSpacesProcessor();
     }
 
     /**
@@ -31,7 +37,7 @@ public interface TextProcessor {
      * Стадия: процессинг
      */
     static TextProcessor replaceFirstProcessor(String regex, String replacement) {
-        return null;
+        return new ReplaceFirstProcessor(regex, replacement);
     }
 
     /**
@@ -43,7 +49,7 @@ public interface TextProcessor {
      * @param maxLength неотрицательное число
      */
     static TextProcessor trimProcessor(int maxLength) {
-        return null;
+        return new TrimProcessor(maxLength);
     }
 
     /**
@@ -52,6 +58,6 @@ public interface TextProcessor {
      * Стадия: постпроцессинг
      */
     static TextProcessor upperCaseProcessor() {
-        return null;
+        return new UpperCaseProcessor();
     }
 }
