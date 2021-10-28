@@ -2,6 +2,9 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -176,4 +179,18 @@ public class CustomDictionaryTest {
         dictionary.remove(TEST_STRING);
         assertEquals(2, dictionary.size());
     }
+
+    @Test
+    public void testSimilarWordsForDifferentLengthWords() {
+        CustomDictionary dictionary = new CustomDictionary();
+
+        dictionary.add("bbb");
+        dictionary.add("bbB");
+        dictionary.add("bBb");
+        dictionary.add("Bbb");
+
+        List<String> result = dictionary.getSimilarWords("bbbb");
+        assertTrue(result.isEmpty());
+    }
+
 }
