@@ -9,9 +9,13 @@ import java.util.*;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private final HashMap<String, ArrayList<String>> stringDict = new HashMap<>();
-    private int size = 0;
+    private final HashMap<String, ArrayList<String>> stringDict;
+    private int size;
 
+    CustomDictionary() {
+        stringDict = new HashMap<>();
+        size = 0;
+    }
     /**
      * Проверяем, хранится ли такая строка уже у нас
      *
@@ -67,13 +71,17 @@ public class CustomDictionary {
      * Сложность - [O(nlogn)]
      */
     public boolean add(String value) {
-        if (value == null) {
-            return false;
+        if (value == null || value.equals("")) {
+            throw new IllegalArgumentException();
         }
 
         String key = getKey(value);
         if (stringDict.containsKey(key)) {
-            stringDict.get(key).add(value);
+            if (!stringDict.get(key).contains(value)) {
+                stringDict.get(key).add(value);
+            } else {
+                return false;
+            }
         } else {
             ArrayList<String> arrForNewKey = new ArrayList<>();
             arrForNewKey.add(value);
@@ -91,7 +99,7 @@ public class CustomDictionary {
      * сохраняем строки ["aaa", "aBa", "baa", "aaB"]
      * При поиске по строке "AAb" нам должен вернуться следующий
      * список: ["aBa","baa","aaB"]
-     *
+     * <p>
      * сохраняем строки ["aaa", "aAa", "a"]
      * поиск "aaaa"
      * результат: []
@@ -107,7 +115,13 @@ public class CustomDictionary {
         if (value == null) {
             return Collections.emptyList();
         }
-        return stringDict.get(getKey(value));
+
+        List<String> founded = stringDict.get(getKey(value));
+        if (founded == null) {
+            founded = Collections.emptyList();
+        }
+
+        return founded;
     }
 
     /**

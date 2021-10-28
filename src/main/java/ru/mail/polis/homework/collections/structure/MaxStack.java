@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 /**
@@ -9,21 +10,42 @@ import java.util.Stack;
  * храниться в Stack. Отрабатывать метод должен за О(1).
  */
 public class MaxStack extends Stack<Integer> {
-    private static int maxValue = Integer.MIN_VALUE;
+    private int maxValue;
+
+    MaxStack() {
+        super();
+        maxValue = Integer.MIN_VALUE;
+    }
 
     @Override
     public Integer push(Integer item) {
-        if(item > maxValue) {
+        if (item > maxValue) {
             maxValue = item;
         }
 
         return super.push(item);
     }
 
-    // Здесь не учтен случай, когда максимальный элемент будет удален. Но если его учитывать,
-    // то операция pop перестанет работать за O(1).
+    @Override
+    public synchronized Integer pop() {
+        int deleted = super.pop();
+        if (deleted == maxValue) {
+            maxValue = Integer.MIN_VALUE;
+            for (int el : this) {
+                if (el > maxValue) {
+                    maxValue = el;
+                }
+            }
+        }
+
+        return deleted;
+    }
 
     public Integer getMaxValue() {
+        if (this.size() == 0) {
+            throw new EmptyStackException();
+        }
+
         return maxValue;
     }
 

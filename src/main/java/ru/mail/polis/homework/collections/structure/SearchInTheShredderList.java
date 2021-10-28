@@ -13,9 +13,10 @@ import java.util.List;
  * Отрабатывать метод должен за О(n).
  */
 public class SearchInTheShredderList {
-    private List<String> partStrings = new ArrayList<>();
+    private final List<String> partStrings;
 
     public SearchInTheShredderList() {
+        partStrings = new ArrayList<>();
     }
 
     public SearchInTheShredderList(List<String> partStrings) {
@@ -37,8 +38,9 @@ public class SearchInTheShredderList {
      * @return - либо массив с реальными позициями подстрок если нашли, либо - null
      */
     public int[] positionPartString(String value) {
-        if(value == null || value == "")
+        if (value == null || value.equals("")) {
             return null;
+        }
 
         int mid = value.length() >> 1;
         String leftPart = value.substring(0, mid - 1);
@@ -48,8 +50,7 @@ public class SearchInTheShredderList {
         int rightPartInd = partStrings.indexOf(rightPart);
 
         if (leftPartInd != -1 && rightPartInd != -1) {
-            int[] indArr = {leftPartInd, rightPartInd};
-            return indArr;
+            return new int[]{leftPartInd, rightPartInd};
         }
 
         return null;

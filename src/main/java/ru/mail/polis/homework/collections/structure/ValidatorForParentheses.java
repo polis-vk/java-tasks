@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.HashMap;
 import java.util.Stack;
 
 /**
@@ -44,17 +43,11 @@ public class ValidatorForParentheses {
         NOT_OPEN_BRACKET;
 
         public static boolean isOpenBracket(char bracket) {
-            if (bracket == '[' || bracket == '{' || bracket == '<' || bracket == '(') {
-                return true;
-            }
-            return false;
+            return bracket == '[' || bracket == '{' || bracket == '<' || bracket == '(';
         }
 
         public static boolean isCloseBracket(char bracket) {
-            if (bracket == ']' || bracket == '}' || bracket == '>' || bracket == ')') {
-                return true;
-            }
-            return false;
+            return bracket == ']' || bracket == '}' || bracket == '>' || bracket == ')';
         }
 
         public static BracketsType getType(char bracket) {
