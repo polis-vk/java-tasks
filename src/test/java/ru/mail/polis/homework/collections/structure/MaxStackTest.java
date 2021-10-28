@@ -67,6 +67,16 @@ public class MaxStackTest {
     }
 
     @Test
+    public void myTestEqualsElem(){
+        MaxStack stack = new MaxStack();
+        stack.push(2);
+        stack.push(2);
+        assertEquals(Integer.valueOf(2), stack.getMaxValue());
+        stack.pop();
+        assertEquals(Integer.valueOf(2), stack.getMaxValue());
+    }
+
+    @Test
     public void testGetMaxValueWhenRemoveAndAddElements() {
         MaxStack stack = new MaxStack();
 

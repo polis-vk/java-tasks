@@ -13,6 +13,7 @@ import java.util.List;
  * Отрабатывать метод должен за О(n).
  */
 public class SearchInTheShredderList {
+    private static final int ILLEGAL_INDEX = -1;
     private List<String> partStrings = new ArrayList<>();
 
     public SearchInTheShredderList() {
@@ -37,6 +38,21 @@ public class SearchInTheShredderList {
      * @return - либо массив с реальными позициями подстрок если нашли, либо - null
      */
     public int[] positionPartString(String value) {
-        return null;
+        if (value == null) {
+            return null;
+        }
+        String firstHalf = value.substring(0, value.length() / 2);
+        String secondHalf = value.substring(value.length() / 2);
+        int[] ans = new int[]{ILLEGAL_INDEX, ILLEGAL_INDEX};
+        for (int i = 0; i < partStrings.size(); i++) {
+            String onePartSting = partStrings.get(i);
+            if (onePartSting.equals(firstHalf)) {
+                ans[0] = i;
+            } else if (onePartSting.equals(secondHalf)) {
+                ans[1] = i;
+            }
+        }
+        return ans[0] == ILLEGAL_INDEX && ans[1] == ILLEGAL_INDEX
+                ? null : ans;
     }
 }
