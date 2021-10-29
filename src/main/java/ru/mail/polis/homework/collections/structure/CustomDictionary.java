@@ -25,6 +25,9 @@ public class CustomDictionary {
      * Сложность - [O(1)]
      */
     public boolean add(String value) {
+        if (value == null || value.equals("")) {
+            throw new IllegalArgumentException();
+        }
         return customDictionary.add(value);
     }
 
@@ -72,20 +75,26 @@ public class CustomDictionary {
         if (value == null || value.equals("") || size() == 0) {
             return result;
         }
-        for (String s : customDictionary) {
-            StringBuilder buffer = new StringBuilder(value.toLowerCase());
-            for (int i = 0; i < buffer.length(); i++) {
-                int currentIndex = s.toLowerCase().indexOf(buffer.charAt(i));
-                if (currentIndex == -1) {
-                    break;
-                }
-                buffer.deleteCharAt(currentIndex);
-            }
-            if (buffer.length() == 0) {
-                result.add(s);
+        for (String word : customDictionary) {
+            if (isSimilarWords(word, value)) {
+                result.add(word);
             }
         }
         return result;
+    }
+
+    private boolean isSimilarWords(String a, String b) {
+        StringBuilder buffer = new StringBuilder(a.toLowerCase());
+        boolean isSimilarSymbol = true;
+        for (int i = 0; i < b.length(); i++) {
+            int currentIndex = buffer.indexOf(String.valueOf(b.toLowerCase().charAt(i)));
+            if (currentIndex == -1) {
+                isSimilarSymbol = false;
+                break;
+            }
+            buffer.deleteCharAt(currentIndex);
+        }
+        return buffer.length() == 0 && isSimilarSymbol;
     }
 
     /**
