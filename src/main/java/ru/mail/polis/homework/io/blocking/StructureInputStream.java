@@ -15,7 +15,7 @@ public class StructureInputStream extends FileInputStream {
     private final byte[] readBuffer = new byte[bufferSize];
     private final BufferedInputStream bufferedInputStream;
 
-    public StructureInputStream(File fileName) throws IOException {
+    public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
         bufferedInputStream = new BufferedInputStream(this);
         bufferedInputStream.mark((int) fileName.length());
