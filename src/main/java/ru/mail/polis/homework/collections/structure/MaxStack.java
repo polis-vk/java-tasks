@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.EmptyStackException;
+import java.util.NoSuchElementException;
 import java.util.Stack;
 
 /**
@@ -10,8 +12,40 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
+    private int max = Integer.MIN_VALUE;
+    
+    @Override
+    public Integer push(Integer item) {
+        Integer ret = super.push(item);
+        if(this.size() == 1) {
+            this.max = ret;
+        } else {
+            this.max = Math.max(this.max, ret);
+        }
+        return ret;
+    }
+    
+    @Override
+    public synchronized Integer pop() {
+        Integer ret = super.pop();
+        if(this.size() != 0) {
+            if(this.size() == 1) {
+                this.max = this.firstElement();
+            } else {
+                // нужно искать новый максимум в таком случае
+                this.max = this.stream().max((Integer i1, Integer i2) -> {return i1 - i2;}).get();
+            }
+        } else {
+            this.max = Integer.MIN_VALUE;
+        }
+        return ret;
+    }
+    
     public Integer getMaxValue() {
-        return 0;
+        if(this.size() == 0) {
+            throw new EmptyStackException();
+        }
+        return max;
     }
 
 }

@@ -1,5 +1,11 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.function.IntPredicate;
+
 /**
  * Задание оценивается в 2 балла.
  * Одна из самых популярных задач.
@@ -15,6 +21,54 @@ package ru.mail.polis.homework.collections.structure;
 public class ValidatorForParentheses {
 
     public static boolean validate(String value) {
-        return false;
+        if (value == null || value.length() < 2) {
+            return false;
+        }
+
+        boolean valid = false;
+        Deque<Character> stack = new ArrayDeque<Character>();
+
+        for (int i = 0; i < value.length(); ++i) {
+            final char ch = value.charAt(i);
+            switch (ch) {
+                case '(':
+                case '[':
+                case '{':
+                case '<': {
+                    valid = true;
+                    stack.push(ch);
+                    continue;
+                }
+                case ')': {
+                    if (!stack.isEmpty() && stack.pop() == '(') {
+                        continue;
+                    }
+                    break;
+                }
+                case ']': {
+                    if (!stack.isEmpty() && stack.pop() == '[') {
+                        continue;
+                    }
+                    break;
+                }
+                case '}': {
+                    if (!stack.isEmpty() && stack.pop() == '{') {
+                        continue;
+                    }
+                    break;
+                }
+                case '>': {
+                    if (!stack.isEmpty() && stack.pop() == '<') {
+                        continue;
+                    }
+                    break;
+                }
+                default: {
+                    continue;
+                }
+            }
+            return false;
+        }
+        return valid && stack.isEmpty();
     }
 }

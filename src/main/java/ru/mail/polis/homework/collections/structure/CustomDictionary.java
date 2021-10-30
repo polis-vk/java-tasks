@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -10,16 +14,34 @@ import java.util.List;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
+    
+    private HashMap<String, char[]> dictionary;
+    
+    public CustomDictionary() {
+        // char[] т.к. приходится сортировать массив, и преобразование обратно
+        // в String - лишний шаг
+        this.dictionary = new HashMap<String, char[]>();
+    }
 
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - []
+     * Сложность - O(n)
      */
     public boolean add(String value) {
-        return false;
+        if (value == null || value.length() == 0) {
+            throw new IllegalArgumentException();
+        }
+        // проверка O(1)
+        if (this.contains(value)) {
+            return false;
+        }
+        // преобразование регистра, копирование и сортировка массива - O(n)
+        // вставка O(1)
+        this.dictionary.put(value, countSort(value.toLowerCase().toCharArray()));
+        return true;
     }
 
     /**
@@ -27,10 +49,13 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - []
+     * Сложность - O(1)
      */
     public boolean contains(String value) {
-        return false;
+        if (value == null || value.length() == 0) {
+            throw new IllegalArgumentException();
+        }
+        return this.dictionary.containsKey(value);
     }
 
     /**
@@ -38,10 +63,13 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - []
+     * Сложность - O(1)
      */
     public boolean remove(String value) {
-        return false;
+        if (value == null || value.length() == 0) {
+            throw new IllegalArgumentException();
+        }
+        return this.dictionary.remove(value) != null;
     }
 
     /**
@@ -61,10 +89,32 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - []
+     * Сложность - O(n * k), k - количество элементов в словаре, n - длина слова
      */
     public List<String> getSimilarWords(String value) {
-        return Collections.emptyList();
+        if (value == null || value.length() == 0) {
+            throw new IllegalArgumentException();
+        }
+        // преобразование регистра, копирование и сортировка массива - O(n)
+        char[] charset1 = countSort(value.toLowerCase().toCharArray());
+
+        // неизвестно что нужно внешним методам, поэтому не LinkedList
+        List<String> ret = new ArrayList();
+
+        // k сравнений
+        this.dictionary.forEach((String word, char[] charset2) -> {
+            // от 1 (в случае несовпадения длин) до n итераций, O(n)
+            if (Arrays.equals(charset1, charset2)) {
+                ret.add(word); // вставка в список O(1)
+            }
+        }); // итогово O(k * n)
+
+        // чтоб не возвращать пустые ArrayList'ы
+        if (ret.size() == 0) {
+            return Collections.emptyList();
+        } else {
+            return ret;
+        }
     }
 
     /**
@@ -74,8 +124,35 @@ public class CustomDictionary {
      * Сложность - []
      */
     public int size() {
-        return 0;
+        return this.dictionary.size();
     }
 
+    // сортировка счетом за O(n)
+    private static final char[] countSort(char[] array) {
+        char min = array[0];
+        char max = array[0];
+        for (int i = 1; i < array.length; ++i) {
+            if (array[i] < min) {
+                min = array[i];
+            }
+            if (array[i] > max) {
+                max = array[i];
+            }
+        }
 
+        int[] count = new int[max - min + 1];
+
+        for (int i = 0; i < array.length; ++i) {
+            ++count[array[i] - min];
+        }
+
+        int idx = 0;
+        for (int i = 0; i < count.length; ++i) {
+            for (int j = 0; j < count[i]; ++j) {
+                array[idx++] = (char) (i + min);
+            }
+        }
+        return array;
+    }
+    
 }
