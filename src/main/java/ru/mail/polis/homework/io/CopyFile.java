@@ -1,5 +1,10 @@
 package ru.mail.polis.homework.io;
 
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class CopyFile {
 
     /**
@@ -9,6 +14,12 @@ public class CopyFile {
      * 3 балла
      */
     public static String copyFiles(String pathFrom, String pathTo) {
+        Path from = Paths.get(pathFrom);
+        Path to = Paths.get(pathTo);
+        if (Files.notExists(from)) {
+            return "";
+        }
+
         return null;
     }
 
