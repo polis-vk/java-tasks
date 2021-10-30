@@ -1,10 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Deque;
-import java.util.function.IntPredicate;
 
 /**
  * Задание оценивается в 2 балла.

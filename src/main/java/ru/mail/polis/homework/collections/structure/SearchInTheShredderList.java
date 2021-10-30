@@ -1,11 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * Задание оценивается в 2 балла.
@@ -41,7 +37,7 @@ public class SearchInTheShredderList {
      * @return - либо массив с реальными позициями подстрок если нашли, либо - null
      */
     public int[] positionPartString(String value) {
-        if(value == null || value.length() < 2) {
+        if (value == null || value.length() < 2) {
             return null;
         }
         int l = value.length();
@@ -49,12 +45,13 @@ public class SearchInTheShredderList {
         // пополам это на 2 половины по разности длин не более 1?
         array[0] = this.partStrings.indexOf(value.substring(0, l / 2));
         array[1] = this.partStrings.indexOf(value.substring(l / 2, l));
-        if(array[0] == -1) { // если первой половины нет, то может быть есть вторая?
-            array = new int[] {array[1]};
-        } else if(array[1] == -1) { // если только второй половины нет, то передаем только первую
-            array = new int[] {array[0]};
+        if (array[0] == -1) { // если первой половины нет, то может быть есть вторая?
+            array = new int[]{array[1]};
+        } else if (array[1] == -1) { // если только второй половины нет, то передаем только первую
+            array = new int[]{array[0]};
         }
-        // массив может быть из 1 элемента, и если он -1, значит ничего полезного там нет
+        // массив может быть из 1 элемента, и если он -1, значит ничего полезного там
+        // нет
         return array[0] == -1 ? null : array;
     }
 }
