@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.LinkedList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Stack;
 
 /**
  * Задание оценивается в 2 балла.
@@ -20,35 +24,36 @@ public class ValidatorForParentheses {
         if (value == null || value.isEmpty()) {
             return false;
         }
-        return realizeValidate(value);
-    }
-
-    private static boolean realizeValidate(String value) {
-        LinkedList<Character> needToClose = new LinkedList<>();//last open bracket stack
-        for (Character symbol : value.toCharArray()) {
-            if (symbol.equals('(') || symbol.equals('[') || symbol.equals('{') || symbol.equals('<')) {
-                needToClose.add(symbol);
-            } else {
-                if (symbol.equals(')') || symbol.equals(']') || symbol.equals('}') || symbol.equals('>')) {
-                    if (needToClose.size() == 0 || !needToClose.pollLast().equals(getOpenBracket(symbol))) {
-                        return false;
-                    }
+        Stack<Character> stack = new Stack<>();
+        Set<Character> leftBrackets = new HashSet<>(Arrays.asList('[', '{', '<', '('));
+        Set<Character> rightBrackets = new HashSet<>(Arrays.asList(']', '}', '>', ')'));
+        boolean hasNoBrackets = true;
+        for (Character c : value.toCharArray()) {
+            if (leftBrackets.contains(c)) {
+                stack.push(c);
+                hasNoBrackets = false;
+            } else if (rightBrackets.contains(c)) {
+                if (stack.empty() || !stack.peek().equals(getLeftBracket(c))) {
+                    return false;
                 }
+                hasNoBrackets = false;
+                stack.pop();
             }
         }
-        return needToClose.isEmpty();
+        return stack.empty() && !hasNoBrackets;
     }
 
-    private static Character getOpenBracket(Character bracket) {
-        if (bracket.equals(')')) {
-            return '(';
+    private static char getLeftBracket(char c) {
+        switch (c) {
+            case ']':
+                return '[';
+            case '}':
+                return '{';
+            case '>':
+                return '<';
+            case ')':
+                return '(';
         }
-        if (bracket.equals(']')) {
-            return '[';
-        }
-        if (bracket.equals('>')) {
-            return '<';
-        }
-        return '{';
+        return ' ';
     }
 }
