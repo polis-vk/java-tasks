@@ -10,8 +10,8 @@ import java.util.*;
  */
 public class CustomDictionary {
 
-    private final HashMap<Map<Character, Integer>, Set<String>> dictionary = new HashMap<>();
-    private int size = 0;
+    private final Map<Map<Character, Integer>, Set<String>> dictionary = new HashMap<>();
+    private int size;
 
     /**
      * Сохранить строку в структуру данных
