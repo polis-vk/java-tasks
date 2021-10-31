@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,6 +48,21 @@ public class CopyFile {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return null;
+        }
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(from)) {
+            Files.createDirectories(to);
+            for (Path currentFromPath : stream) {
+                Path currentToPath = Paths.get(pathTo, currentFromPath.toString().substring(pathFrom.length()));
+                if (Files.isDirectory(currentFromPath)) {
+                    Files.createDirectories(currentToPath);
+                } else {
+                    copyFile(currentFromPath, currentToPath);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return null;
