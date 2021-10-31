@@ -15,7 +15,7 @@ import static ru.mail.polis.homework.io.blocking.StructureOutputStream.NULL_OBJE
  */
 public class StructureInputStream extends FileInputStream {
 
-    private static Structure[] structures;
+    private Structure[] structures;
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
@@ -124,6 +124,7 @@ public class StructureInputStream extends FileInputStream {
 
     private String readString(int length) throws IOException {
         byte[] bytes = new byte[length];
+        read(bytes);
         String inputString = new String(bytes);
         if (length == 4 && inputString.charAt(0) != '\"') {
             return null;
