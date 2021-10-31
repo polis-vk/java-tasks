@@ -22,8 +22,6 @@ public class StructureOutputStream extends FileOutputStream {
         String name = structure.getName();
         if (name == null) {
             writeInt(-1);
-        } else if (name.isEmpty()) {
-            writeInt(0);
         } else {
             writeInt(name.length());
             writeString(name);
