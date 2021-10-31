@@ -51,6 +51,9 @@ public class SearchInTheShredderList {
             } else if (onePartSting.equals(secondHalf)) {
                 ans[1] = i;
             }
+            if (ans[0] != ILLEGAL_INDEX && ans[1] != ILLEGAL_INDEX) {
+                break;
+            }
         }
         return ans[0] == ILLEGAL_INDEX && ans[1] == ILLEGAL_INDEX
                 ? null : ans;
