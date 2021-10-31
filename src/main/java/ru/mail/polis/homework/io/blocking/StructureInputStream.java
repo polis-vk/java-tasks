@@ -30,19 +30,18 @@ public class StructureInputStream extends FileInputStream {
         if (available() == 0) {
             return null;
         }
-
-        long id = readLong();
+        Structure inputStructure = new Structure();
+        inputStructure.setId(readLong());
         int sizeString = readInt();
-        String name = readString(sizeString);
-        SubStructure[] subStructures = readSubStructures();
-        double coeff = readDouble();
-        boolean flag1 = readBoolean();
-        boolean flag2 = readBoolean();
-        boolean flag3 = readBoolean();
-        boolean flag4 = readBoolean();
-        byte param = (byte) read();
-
-        return addElementInStructure(new Structure(id, name, subStructures, coeff, flag1, flag2, flag3, flag4, param));
+        inputStructure.setName(readString(sizeString));
+        inputStructure.setSubStructures(readSubStructures());
+        inputStructure.setCoeff((float) readDouble());
+        inputStructure.setFlag1(readBoolean());
+        inputStructure.setFlag2(readBoolean());
+        inputStructure.setFlag3(readBoolean());
+        inputStructure.setFlag4(readBoolean());
+        inputStructure.setParam((byte) read());
+        return addElementInStructure(inputStructure);
     }
 
     /**
