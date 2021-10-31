@@ -10,29 +10,27 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
-    private int maxValue;
-    private int prevMaxValue;
+    private final Stack<Integer> maxes = new Stack<>();
 
     @Override
     public Integer push(Integer item) {
-        if (maxValue < item) {
-            prevMaxValue = maxValue;
-            maxValue = item;
+        if (maxes.isEmpty() || maxes.peek() < item) {
+            maxes.push(item);
         }
         return super.push(item);
     }
 
     @Override
     public synchronized Integer pop() {
-        if (peek() == maxValue) {
-            maxValue = prevMaxValue;
+        Integer poppedVal = super.pop();
+        if (maxes.peek().equals(poppedVal)) {
+            return maxes.pop();
         }
-        return super.pop();
+        return poppedVal;
     }
 
     public Integer getMaxValue() {
-        peek();
-        return maxValue;
+        return maxes.peek();
     }
 
 }

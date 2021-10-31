@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.LinkedList;
+import java.util.Map;
+import java.util.Stack;
 
 /**
  * Задание оценивается в 2 балла.
@@ -16,39 +17,31 @@ import java.util.LinkedList;
  */
 public class ValidatorForParentheses {
 
+    private static final Map<Character, Character> parenthesis =
+            Map.of('[', ']',
+                    '{', '}',
+                    '<', '>',
+                    '(', ')');
+
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
         }
-        return realizeValidate(value);
-    }
-
-    private static boolean realizeValidate(String value) {
-        LinkedList<Character> needToClose = new LinkedList<>();//last open bracket stack
-        for (Character symbol : value.toCharArray()) {
-            if (symbol.equals('(') || symbol.equals('[') || symbol.equals('{') || symbol.equals('<')) {
-                needToClose.add(symbol);
-            } else {
-                if (symbol.equals(')') || symbol.equals(']') || symbol.equals('}') || symbol.equals('>')) {
-                    if (needToClose.size() == 0 || !needToClose.pollLast().equals(getOpenBracket(symbol))) {
-                        return false;
-                    }
+        boolean hasParenthesis = false;
+        Stack<Character> stack = new Stack<>();
+        char[] valueCharArray = value.toCharArray();
+        for (char c : valueCharArray) {
+            if (parenthesis.containsKey(c)) {
+                stack.push(parenthesis.get(c));
+                hasParenthesis = true;
+            }
+            if (parenthesis.containsValue(c)) {
+                hasParenthesis = true;
+                if (stack.isEmpty() || stack.pop() != c) {
+                    return false;
                 }
             }
         }
-        return needToClose.isEmpty();
-    }
-
-    private static Character getOpenBracket(Character bracket) {
-        if (bracket.equals(')')) {
-            return '(';
-        }
-        if (bracket.equals(']')) {
-            return '[';
-        }
-        if (bracket.equals('>')) {
-            return '<';
-        }
-        return '{';
+        return stack.isEmpty() && hasParenthesis;
     }
 }

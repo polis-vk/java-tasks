@@ -24,7 +24,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - [O(n log(n)]
+     * Сложность - [O(m log(m)], где m - длина передаваемой строки
      */
     public boolean add(String value) {
         if (value == null || value.isEmpty()) {
@@ -53,7 +53,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - [O(n log(n)]
+     * Сложность - [O(m log(m) + n]
      */
     public boolean contains(String value) {
         List<String> valueList = dictionary.get(valueTransform(value));
@@ -69,7 +69,7 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - [O(n log(n)]
+     * Сложность - [O(m log(m) + n]
      */
     public boolean remove(String value) {
         if (contains(value)) {
@@ -97,7 +97,7 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - [O(n log(n))]
+     * Сложность - [O(m log(m)]
      */
     public List<String> getSimilarWords(String value) {
         List<String> valueList = dictionary.get(valueTransform(value));

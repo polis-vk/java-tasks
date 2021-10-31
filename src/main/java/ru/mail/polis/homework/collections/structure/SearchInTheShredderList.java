@@ -46,14 +46,12 @@ public class SearchInTheShredderList {
         int[] resultIndices = new int[2];
         int counter = 0;
         for (int i = 0; i < partStrings.size(); i++) {
-            if (partStrings.get(i).equals(firstHalfValue)) {
-                resultIndices[0] = i;
-                counter++;
-                if (counter == 2) {
-                    return resultIndices;
+            if (partStrings.get(i).equals(firstHalfValue) || partStrings.get(i).equals(secondHalfValue)) {
+                if (partStrings.get(i).equals(firstHalfValue)) {
+                    resultIndices[0] = i;
+                } else if (partStrings.get(i).equals(secondHalfValue)) {
+                    resultIndices[1] = i;
                 }
-            } else if (partStrings.get(i).equals(secondHalfValue)) {
-                resultIndices[1] = i;
                 counter++;
                 if (counter == 2) {
                     return resultIndices;
