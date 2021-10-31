@@ -43,7 +43,6 @@ public class CopyFile {
 
         try {
             Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
-
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     Files.createDirectories(Paths.get(pathTo, dir.toString().substring(pathFrom.length())));
