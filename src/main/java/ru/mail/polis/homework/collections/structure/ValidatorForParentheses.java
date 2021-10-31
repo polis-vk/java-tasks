@@ -1,5 +1,4 @@
 package ru.mail.polis.homework.collections.structure;
-
 import java.util.Stack;
 
 /**
@@ -69,5 +68,4 @@ public class ValidatorForParentheses {
             }
         }
     }
-
 }
