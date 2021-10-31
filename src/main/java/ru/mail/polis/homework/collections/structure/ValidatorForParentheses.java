@@ -1,6 +1,11 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
+
+import jdk.nashorn.internal.ir.annotations.Immutable;
 
 /**
  * Задание оценивается в 2 балла.
@@ -16,6 +21,16 @@ import java.util.LinkedList;
  */
 public class ValidatorForParentheses {
 
+    @Immutable
+    private static final Map<Character, Character> OPEN_BRACKETS = new HashMap<>();
+
+    static {
+        OPEN_BRACKETS.put(')', '(');
+        OPEN_BRACKETS.put(']', '[');
+        OPEN_BRACKETS.put('>', '<');
+        OPEN_BRACKETS.put('}', '{');
+    }
+
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
@@ -24,13 +39,13 @@ public class ValidatorForParentheses {
     }
 
     private static boolean realizeValidate(String value) {
-        LinkedList<Character> needToClose = new LinkedList<>();//last open bracket stack
+        Deque<Character> needToClose = new LinkedList<>();
         for (Character symbol : value.toCharArray()) {
             if (symbol.equals('(') || symbol.equals('[') || symbol.equals('{') || symbol.equals('<')) {
                 needToClose.add(symbol);
             } else {
                 if (symbol.equals(')') || symbol.equals(']') || symbol.equals('}') || symbol.equals('>')) {
-                    if (needToClose.size() == 0 || !needToClose.pollLast().equals(getOpenBracket(symbol))) {
+                    if (needToClose.size() == 0 || !needToClose.pollLast().equals(OPEN_BRACKETS.get(symbol))) {
                         return false;
                     }
                 }
@@ -39,16 +54,4 @@ public class ValidatorForParentheses {
         return needToClose.isEmpty();
     }
 
-    private static Character getOpenBracket(Character bracket) {
-        if (bracket.equals(')')) {
-            return '(';
-        }
-        if (bracket.equals(']')) {
-            return '[';
-        }
-        if (bracket.equals('>')) {
-            return '<';
-        }
-        return '{';
-    }
 }

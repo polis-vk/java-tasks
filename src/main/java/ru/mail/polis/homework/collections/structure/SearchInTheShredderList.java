@@ -40,10 +40,6 @@ public class SearchInTheShredderList {
         if (value == null) {
             return null;
         }
-        return realizePartString(value);
-    }
-
-    private int[] realizePartString(String value) {
         int mid = value.length() >> 1;
         String left = value.substring(0, mid);
         String right = value.substring(mid);
@@ -52,9 +48,11 @@ public class SearchInTheShredderList {
         for (int i = 0; i < partStrings.size(); i++) {
             if (partStrings.get(i).equals(left)) {
                 indexOfLeft = i;
+                if (indexOfRight != -1) break;
             }
             if (partStrings.get(i).equals(right)) {
                 indexOfRight = i;
+                if (indexOfLeft != -1) break;
             }
         }
         if (indexOfLeft == -1 || indexOfRight == -1) {
@@ -62,4 +60,5 @@ public class SearchInTheShredderList {
         }
         return new int[]{indexOfLeft, indexOfRight};
     }
+
 }

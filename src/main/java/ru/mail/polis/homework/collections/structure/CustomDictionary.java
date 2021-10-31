@@ -2,6 +2,7 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -23,7 +24,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - O(1) в среднем случае, O(n) в худшем
+     * Сложность - O(m * log(m)) в среднем случае, O(n) в худшем, где m - длинна строки, n - количество элемнтов
      */
     public boolean add(String value) {
         if (value == null || value.equals("")) {
@@ -44,7 +45,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - O(1) в среднем случае, O(n) в худшем
+     * Сложность - O(m * log(m)) в среднем случае, O(n) в худшем, где m - длинна строки, n - количество элемнтов
      */
     public boolean contains(String value) {
         if (value == null || value.equals("")) {
@@ -63,7 +64,7 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - O(1) в среднем случае, O(n) в худшем
+     * Сложность - O(m * log(m)) в среднем случае, O(n) в худшем, где m - длинна строки, n - количество элемнтов
      */
     public boolean remove(String value) {
         if (value == null) {
@@ -87,7 +88,7 @@ public class CustomDictionary {
      * сохраняем строки ["aaa", "aBa", "baa", "aaB"]
      * При поиске по строке "AAb" нам должен вернуться следующий
      * список: ["aBa","baa","aaB"]
-     *
+     * <p>
      * сохраняем строки ["aaa", "aAa", "a"]
      * поиск "aaaa"
      * результат: []
@@ -103,7 +104,11 @@ public class CustomDictionary {
         if (value == null) {
             throw new NullPointerException();
         }
-        return new ArrayList<>(data.getOrDefault(splitByLetter(value), new HashSet<>()));
+        String key = splitByLetter(value);
+        if (data.containsKey(key)) {
+            return new ArrayList<>(data.get(key));
+        }
+        return Collections.emptyList();
     }
 
     /**
@@ -124,6 +129,8 @@ public class CustomDictionary {
      *
      * @param value - разбиваемая на символы строка
      * @return String упорядоченных букв из которых состоит слово
+     *
+     * Сложность - O(m * log(m)), где m - длинна строки
      */
     private String splitByLetter(String value) {
         char[] loweredCased = value.toLowerCase().toCharArray();
