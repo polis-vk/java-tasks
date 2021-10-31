@@ -1,4 +1,5 @@
 package ru.mail.polis.homework.collections.structure;
+
 import java.util.Stack;
 
 /**
@@ -19,10 +20,14 @@ public class ValidatorForParentheses {
             return false;
         }
 
+        boolean valHasBracket = false;
         Stack<BracketsType> brStack = new Stack<>();
         for (char sym : value.toCharArray()) {
             if (BracketsType.isOpenBracket(sym)) {
                 brStack.push(BracketsType.getType(sym));
+                if (!valHasBracket) {
+                    valHasBracket = true;
+                }
             } else if (BracketsType.isCloseBracket(sym)) {
                 if (!brStack.pop().equals(BracketsType.getType(sym))) {
                     return false;
@@ -30,7 +35,10 @@ public class ValidatorForParentheses {
             }
         }
 
-        return brStack.size() == 0;
+        if (valHasBracket) {
+            return brStack.size() == 0;
+        }
+        return false;
     }
 
 
