@@ -1,9 +1,12 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Задание оценивается в 4 балла.
@@ -13,20 +16,26 @@ import java.util.List;
  */
 public class CustomDictionary {
 
-    private final HashSet<String> dictionary = new HashSet<>();
+    private final HashMap<String, HashSet<String>> map = new HashMap<>();
+    private int size = 0;
 
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - [O(1)]
+     * Сложность - [O(m * log(m)), m - длина value]
      */
     public boolean add(String value) {
         if (value == null || value.equals("")) {
             throw new IllegalArgumentException();
         }
-        return dictionary.add(value);
+
+        String key = Stream.of(value.toLowerCase().split("")).sorted()
+                .collect(Collectors.joining());
+        map.computeIfAbsent(key, k -> new HashSet<>());
+        size++;
+        return map.get(key).add(value);
     }
 
     /**
@@ -34,10 +43,15 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - [O(1)]
+     * Сложность - [O(m * log(m)), m - длина value]
      */
     public boolean contains(String value) {
-        return dictionary.contains(value);//false;
+        String key = Stream.of(value.toLowerCase().split("")).sorted()
+                .collect(Collectors.joining());
+        if (map.get(key) == null) {
+            return false;
+        }
+        return map.get(key).contains(value);
     }
 
     /**
@@ -45,10 +59,16 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - [O(1)]
+     * Сложность - [O(m * log(m)), m - длина value]
      */
     public boolean remove(String value) {
-        return dictionary.remove(value);
+        String key = Stream.of(value.toLowerCase().split("")).sorted()
+                .collect(Collectors.joining());
+        if (map.get(key) == null) {
+            return false;
+        }
+        size--;
+        return map.get(key).remove(value);
     }
 
     /**
@@ -64,21 +84,12 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - [O(n * m), n - количество элементов в словаре, m - длина value]
+     * Сложность - [O(m * log(m)), m - длина value]
      */
     public List<String> getSimilarWords(String value) {
-        int[] newValue = value.toLowerCase().codePoints().sorted().toArray();
-        List<String> result = new ArrayList<>();
-        for (String s : dictionary) {
-            if (s.length() != newValue.length) {
-                continue;
-            }
-
-            if (Arrays.equals(s.toLowerCase().codePoints().sorted().toArray(), newValue)) {
-                result.add(s);
-            }
-        }
-        return result;
+        String key = Stream.of(value.toLowerCase().split("")).sorted()
+                .collect(Collectors.joining());
+        return map.get(key) != null ? new ArrayList<>(map.get(key)) : Collections.emptyList();
     }
 
     /**
@@ -88,8 +99,6 @@ public class CustomDictionary {
      * Сложность - [O(1)]
      */
     public int size() {
-        return dictionary.size();
+        return this.size;
     }
-
-
 }
