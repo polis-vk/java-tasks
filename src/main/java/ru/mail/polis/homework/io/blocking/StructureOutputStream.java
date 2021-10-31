@@ -10,9 +10,6 @@ import java.nio.ByteBuffer;
  */
 public class StructureOutputStream extends FileOutputStream {
 
-    public static final String NULL_OBJECT = "null";
-    public static final String EMPTY_OBJECT = "\"\"";
-
     public StructureOutputStream(File name) throws FileNotFoundException {
         super(name);
     }
@@ -24,13 +21,10 @@ public class StructureOutputStream extends FileOutputStream {
         writeLong(structure.getId());
         String name = structure.getName();
         if (name == null) {
-            writeInt(NULL_OBJECT.length());
-            writeString(NULL_OBJECT);
+            writeInt(-1);
         } else if (name.isEmpty()) {
-            writeInt(EMPTY_OBJECT.length());
-            writeString(EMPTY_OBJECT);
+            writeInt(0);
         } else {
-            name = '\"' + name + '\"';
             writeInt(name.length());
             writeString(name);
         }
@@ -60,7 +54,7 @@ public class StructureOutputStream extends FileOutputStream {
 
     private void writeSubStructure(SubStructure subStructure) throws IOException {
         writeInt(subStructure.getId());
-        String name = '\"' + subStructure.getName() + '\"';
+        String name = subStructure.getName();
         writeInt(name.length());
         writeString(name);
         writeBoolean(subStructure.isFlag());
@@ -69,15 +63,7 @@ public class StructureOutputStream extends FileOutputStream {
 
     private void writeSubStructures(SubStructure[] subStructures) throws IOException {
         if (subStructures == null) {
-            writeInt(0);
-            writeInt(NULL_OBJECT.length());
-            writeString(NULL_OBJECT);
-            return;
-        }
-        if (subStructures.length == 0) {
-            writeInt(0);
-            writeInt(EMPTY_OBJECT.length());
-            writeString(EMPTY_OBJECT);
+            writeInt(-1);
             return;
         }
         writeInt(subStructures.length);

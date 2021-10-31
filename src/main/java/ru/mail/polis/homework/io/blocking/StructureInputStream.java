@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static ru.mail.polis.homework.io.blocking.StructureOutputStream.NULL_OBJECT;
 
 /**
  * Вам нужно реализовать StructureInputStream, который умеет читать данные из файла.
@@ -77,16 +76,9 @@ public class StructureInputStream extends FileInputStream {
             return null;
         }
         int size = readInt();
-        if (size == 0) {
-            int sizeWord = readInt();
-            if (sizeWord == NULL_OBJECT.length()) {
-                readString(sizeWord);
-                return null;
-            }
-            readString(sizeWord);
-            return new SubStructure[0];
+        if (size == -1) {
+            return null;
         }
-
         List<SubStructure> subStructuresList = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             subStructuresList.add(readSubStructure());
@@ -123,13 +115,12 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private String readString(int length) throws IOException {
-        byte[] bytes = new byte[length];
-        read(bytes);
-        String inputString = new String(bytes);
-        if (length == 4 && inputString.charAt(0) != '\"') {
+        if (length == -1) {
             return null;
         }
-        return inputString.substring(1, length - 1);
+        byte[] bytes = new byte[length];
+        read(bytes);
+        return new String(bytes);
     }
 
     private boolean readBoolean() throws IOException {
@@ -144,5 +135,4 @@ public class StructureInputStream extends FileInputStream {
         structures[structures.length - 1] = structure;
         return structure;
     }
-
 }
