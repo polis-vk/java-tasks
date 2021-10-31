@@ -1,6 +1,15 @@
 package ru.mail.polis.homework.io;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 public class CopyFile {
+
+    private static final int BUFF_SIZE = 8192;
 
     /**
      * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
@@ -9,7 +18,62 @@ public class CopyFile {
      * 3 балла
      */
     public static String copyFiles(String pathFrom, String pathTo) {
+        if (pathFrom == null || pathTo == null || pathFrom.equals(pathTo)) {
+           return null;
+        }
+
+        try {
+            Path pathFromDirectory = Path.of(pathFrom);
+            Path pathToDirectory = Path.of(pathTo);
+
+            if (Files.notExists(pathFromDirectory)) {
+                return null;
+            }
+
+            if (Files.isRegularFile(pathFromDirectory)) {
+                copyFile(pathFromDirectory, pathToDirectory);
+                return null;
+            }
+
+            if (Files.notExists(pathToDirectory)) {
+                Files.createDirectories(pathToDirectory);
+            }
+
+            try (DirectoryStream<Path> paths = Files.newDirectoryStream(pathFromDirectory)) {
+                for (Path path : paths) {
+                    copyFiles(path.toString(), pathToDirectory.resolve(path.getFileName()).toString());
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return null;
+    }
+
+    private static int copyFile(Path fromFile, Path toFile) throws IOException {
+        if (fromFile == null || toFile == null) {
+            throw new IllegalArgumentException();
+        }
+        if (Files.notExists(toFile.getParent())) {
+            Files.createDirectories(toFile.getParent());
+        }
+        Files.createFile(toFile);
+
+        int totalBytes = 0;
+        try (InputStream inputStream = Files.newInputStream(toFile)) {
+            try (OutputStream outputStream = Files.newOutputStream(fromFile)) {
+                byte[] buffer = new byte[BUFF_SIZE];
+                int blockSize;
+                while ((blockSize = inputStream.read(buffer)) > 0) {
+                    totalBytes += blockSize;
+                    outputStream.write(buffer, 0, blockSize);
+                }
+            }
+        }
+
+        return totalBytes;
     }
 
 }
