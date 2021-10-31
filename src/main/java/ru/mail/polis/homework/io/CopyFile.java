@@ -1,13 +1,14 @@
 package ru.mail.polis.homework.io;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 public class CopyFile {
 
@@ -40,27 +41,23 @@ public class CopyFile {
             return null;
         }
 
-        Path to = Paths.get(pathTo);
-        if (Files.isRegularFile(from)) {
-            try {
-                Files.createDirectories(to.getParent());
-                copyFile(from, to);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
+        try {
+            Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
 
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(from)) {
-            Files.createDirectories(to);
-            for (Path currentFromPath : stream) {
-                Path currentToPath = Paths.get(pathTo, currentFromPath.toString().substring(pathFrom.length()));
-                if (Files.isDirectory(currentFromPath)) {
-                    Files.createDirectories(currentToPath);
-                } else {
-                    copyFile(currentFromPath, currentToPath);
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    Files.createDirectories(Paths.get(pathTo, dir.toString().substring(pathFrom.length())));
+                    return FileVisitResult.CONTINUE;
                 }
-            }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Path currentToPath = Paths.get(pathTo, file.toString().substring(pathFrom.length()));
+                    Files.createDirectories(currentToPath.getParent());
+                    copyFile(file, currentToPath);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
