@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Задание оценивается в 2 балла.
@@ -9,9 +9,9 @@ import java.util.ArrayList;
  * В строке помимо скобок могут содержаться и другие символы.
  * Скобки могут быть: [],{},<>,()
  * Примеры:
- *      "(-b + (x)^2)/(2+4)" - true
- *      "Понедельники меня угнетают ((" - false
- *
+ * "(-b + (x)^2)/(2+4)" - true
+ * "Понедельники меня угнетают ((" - false
+ * <p>
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
@@ -20,41 +20,35 @@ public class ValidatorForParentheses {
         if (value == null || value.isEmpty()) {
             return false;
         }
-        ArrayList<Character> stack = new ArrayList<>();
-        for (Character c : value.toCharArray()) {
-            switch (c) {
-                case '[':
-                case '{':
-                case '<':
-                case '(':
-                    stack.add(c);
-                    break;
-                case ']':
-                case '}':
-                case '>':
-                case ')':
-                    int index = stack.lastIndexOf(getLeftBracket(c));
-                    if (index == -1 || index != stack.size() - 1) {
-                        return false;
-                    }
-                    stack.remove(index);
-                    break;
-            }
-        }
-        return stack.isEmpty();
+        return realizeValidate(value);
     }
 
-    private static char getLeftBracket(char c) {
-        switch (c) {
-            case ']':
-                return '[';
-            case '}':
-                return '{';
-            case '>':
-                return '<';
-            case ')':
-                return '(';
+    private static boolean realizeValidate(String value) {
+        LinkedList<Character> needToClose = new LinkedList<>();//last open bracket stack
+        for (Character symbol : value.toCharArray()) {
+            if (symbol.equals('(') || symbol.equals('[') || symbol.equals('{') || symbol.equals('<')) {
+                needToClose.add(symbol);
+            } else {
+                if (symbol.equals(')') || symbol.equals(']') || symbol.equals('}') || symbol.equals('>')) {
+                    if (needToClose.size() == 0 || !needToClose.pollLast().equals(getOpenBracket(symbol))) {
+                        return false;
+                    }
+                }
+            }
         }
-        return ' ';
+        return needToClose.isEmpty();
+    }
+
+    private static Character getOpenBracket(Character bracket) {
+        if (bracket.equals(')')) {
+            return '(';
+        }
+        if (bracket.equals(']')) {
+            return '[';
+        }
+        if (bracket.equals('>')) {
+            return '<';
+        }
+        return '{';
     }
 }
