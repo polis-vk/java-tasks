@@ -2,6 +2,7 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Задание оценивается в 2 балла.
@@ -17,6 +18,13 @@ import java.util.LinkedList;
  */
 public class ValidatorForParentheses {
 
+    private final static Map<Character, Character> braces = Map.of(
+            '[', ']',
+            '{', '}',
+            '<', '>',
+            '(', ')'
+    );
+
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
@@ -31,7 +39,7 @@ public class ValidatorForParentheses {
                 if (last == null) {
                     return false;
                 }
-                if (!isPairedBraces(last, temp) && !isPairedBraces(temp, last)) {
+                if (!isPairedBraces(last, temp)) {
                     return false;
                 }
             }
@@ -39,16 +47,16 @@ public class ValidatorForParentheses {
         return list.isEmpty();
     }
 
-    private static boolean isPairedBraces(char a, char b) {
-        return a == '(' && b == ')' || a == '[' && b == ']' || a == '{' && b == '}' || a == '<' && b == '>';
+    private static boolean isPairedBraces(char open, char close) {
+        return braces.get(open) == close;
     }
 
     private static boolean isCloseBrace(char c) {
-        return c == ')' || c == ']' || c == '}' || c == '>';
+        return braces.containsValue(c);
     }
 
     private static boolean isOpenBrace(char c) {
-        return c == '(' || c == '[' || c == '{' || c == '<';
+        return braces.containsKey(c);
     }
 
 }

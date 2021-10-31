@@ -1,7 +1,8 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.Deque;
 import java.util.EmptyStackException;
-import java.util.Objects;
+import java.util.LinkedList;
 import java.util.Stack;
 
 /**
@@ -11,33 +12,28 @@ import java.util.Stack;
  * храниться в Stack. Отрабатывать метод должен за О(1).
  */
 public class MaxStack extends Stack<Integer> {
-    private Integer maxValue = Integer.MIN_VALUE;
+    private final Deque<Integer> maximums = new LinkedList<>();
 
     public Integer getMaxValue() {
         if (this.isEmpty()) {
             throw new EmptyStackException();
         }
-        return maxValue;
+        return maximums.getFirst();
     }
 
     @Override
     public synchronized Integer pop() {
         Integer retval = super.pop();
-        if (Objects.equals(maxValue, retval)) {
-            maxValue = Integer.MIN_VALUE;
-            for (Integer tmp : this) {
-                if (tmp > maxValue) {
-                    maxValue = tmp;
-                }
-            }
+        if (retval.equals(maximums.getFirst())) {
+            maximums.pop();
         }
         return retval;
     }
 
     @Override
     public Integer push(Integer item) {
-        if (item > maxValue) {
-            maxValue = item;
+        if (this.isEmpty() || maximums.getFirst() < item) {
+            maximums.push(item);
         }
         return super.push(item);
     }

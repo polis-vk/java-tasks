@@ -44,16 +44,22 @@ public class SearchInTheShredderList {
         int[] result = new int[]{-1, -1};
 
         for (int i = 0; i < partStrings.size(); i++) {
-            if (value.startsWith(partStrings.get(i))) {
+            String part = partStrings.get(i);
+            if (value.startsWith(part) && result[0] == -1) {
                 result[0] = i;
-                result[1] = partStrings.indexOf(value.substring(partStrings.get(i).length()));
-                break;
+                if (result[1] != -1) {
+                    break;
+                }
+            } else if (value.endsWith(part) && result[1] == -1) {
+                result[1] = i;
+                if (result[0] != -1) {
+                    break;
+                }
             }
         }
-
-        if (result[0] != -1 && result[1] != -1) {
-            return result;
+        if (result[0] == -1 || result[1] == -1) {
+            result = null;
         }
-        return null;
+        return result;
     }
 }
