@@ -17,41 +17,52 @@ import java.util.Deque;
  */
 public class ValidatorForParentheses {
 
+    private static final char[] openBrackets = new char[]{'(', '[', '{', '<'};
+    private static final char[] closeBrackets = new char[]{')', ']', '}', '>'};
+
+    private static boolean isOpenBracket(char bracket) {
+        for (char openBracket : openBrackets) {
+            if (openBracket == bracket) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isCloseBracket(char bracket) {
+        for (char closeBracket : closeBrackets) {
+            if (closeBracket == bracket) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Character getOpenBracket(char closeBracket) {
+        for (int i = 0; i < closeBrackets.length; i++) {
+            if (closeBrackets[i] == closeBracket) {
+                return openBrackets[i];
+            }
+        }
+        return null;
+    }
+
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
         }
+        boolean check = false;
         Deque<Character> stack = new ArrayDeque<>();
         for (int i = 0; i < value.length(); i++) {
-            switch (value.charAt(i)) {
-                case '(':
-                case '[':
-                case '{':
-                case '<':
-                    stack.add(value.charAt(i));
-                    break;
-                case ')':
-                    if (stack.isEmpty() || stack.removeLast() != '(') {
-                        return false;
-                    }
-                    break;
-                case ']':
-                    if (stack.isEmpty() || stack.removeLast() != '[') {
-                        return false;
-                    }
-                    break;
-                case '}':
-                    if (stack.isEmpty() || stack.removeLast() != '{') {
-                        return false;
-                    }
-                    break;
-                case '>':
-                    if (stack.isEmpty() || stack.removeLast() != '<') {
-                        return false;
-                    }
-                    break;
+            if (isOpenBracket(value.charAt(i))) {
+                check = true;
+                stack.add(value.charAt(i));
+            } else if (isCloseBracket(value.charAt(i))) {
+                if (stack.isEmpty() || !stack.removeLast().equals(getOpenBracket(value.charAt(i)))) {
+                    return false;
+                }
             }
         }
-        return stack.isEmpty();
+        return check && stack.isEmpty();
     }
 }
