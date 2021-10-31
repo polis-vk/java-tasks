@@ -9,6 +9,8 @@ package ru.mail.polis.homework.simple;
  */
 public class IntegerAdvancedTask {
 
+    private static final double EPS = 1e-10;
+
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
@@ -16,7 +18,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (Math.abs(q - 1) < EPS) {
+            return (long) a * n;
+        }
+        return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
@@ -28,7 +33,28 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int distanceX = grassX - right;
+        int distanceY = grassY - up;
+
+        if (distanceX <= 0 || distanceY <= 0) {
+            return 1;
+        }
+
+        int xPerDay = right - left;
+        int yPerDay = up - down;
+
+        if (xPerDay <= 0 && yPerDay <= 0) {
+            return Integer.MAX_VALUE;
+        }
+
+        int xDays = (int) Math.ceil((double) distanceX / xPerDay) + 1;
+        int yDays = (int) Math.ceil((double) distanceY / yPerDay) + 1;
+
+        if (xDays > 0 && yDays > 0) {
+            return Math.min(xDays, yDays);
+        }
+
+        return Math.max(xDays, yDays);
     }
 
     /**
@@ -38,7 +64,16 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int i = 1;
+        int number = n;
+
+        while (i < order) {
+            number /= 16;
+            i++;
+        }
+        number %= 16;
+
+        return (char) (number < 10 ? '0' + number : 'A' + number - 10);
     }
 
     /**
@@ -49,7 +84,24 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        char min = 'F';
+        int index = 0;
+        int i = 0;
+        long number = a;
+
+        while (number > 0) {
+            if ((int) (number % 16) < min) {
+                min = (char) (number % 16);
+                index = i;
+            }
+
+            if (min == 0) {
+                break;
+            }
+            number /= 16;
+            i++;
+        }
+        return (byte) (index + 1);
     }
 
 }
