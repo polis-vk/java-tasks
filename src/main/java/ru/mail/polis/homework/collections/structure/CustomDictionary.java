@@ -14,7 +14,6 @@ import java.util.List;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private final HashSet<String> d1 = new HashSet<>();
     private final HashMap<String, HashSet<String>> dictionary = new HashMap<>();
     private int size;
 
