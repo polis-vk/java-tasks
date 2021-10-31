@@ -2,6 +2,7 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.util.NoSuchElementException;
 import java.util.Stack;
+import java.util.LinkedList;
 
 /**
  * Задание оценивается в 2 балла.
