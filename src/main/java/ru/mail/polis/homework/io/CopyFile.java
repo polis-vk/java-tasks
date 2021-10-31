@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.io;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class CopyFile {
@@ -12,7 +13,11 @@ public class CopyFile {
      * 3 балла
      */
     public static String copyFiles(String pathFrom, String pathTo) {
-        if (pathFrom == null || pathTo == null || Files.notExists(Paths.get(pathFrom))) {
+        if (pathFrom == null || pathTo == null) {
+            return null;
+        }
+        Path from = Paths.get(pathFrom);
+        if (Files.notExists(from)) {
             return null;
         }
 
