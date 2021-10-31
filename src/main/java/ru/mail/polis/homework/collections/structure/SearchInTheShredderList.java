@@ -47,7 +47,7 @@ public class SearchInTheShredderList {
         String firstPart;
         String secondPart;
 
-        for (int i = 0; i < mapOfStringToIndex.size(); i++) {
+        for (int i = 0; i < size; i++) {
             firstPart = maoOfIndexToString.get(i);
             if (value.startsWith(firstPart)) {
                 positionFirstPart = i;
