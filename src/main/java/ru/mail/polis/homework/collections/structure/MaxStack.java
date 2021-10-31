@@ -10,12 +10,7 @@ import java.util.*;
  */
 public class MaxStack extends Stack<Integer> {
 
-    private final Deque<Integer> stackMaxValues;
-
-    public MaxStack() {
-        super();
-        stackMaxValues = new ArrayDeque<>();
-    }
+    private final Deque<Integer> stackMaxValues = new ArrayDeque<>();
 
     @Override
     public Integer push(Integer item) {
@@ -30,9 +25,6 @@ public class MaxStack extends Stack<Integer> {
 
     @Override
     public synchronized Integer pop() {
-        if (stackMaxValues.isEmpty()) {
-            throw new EmptyStackException();
-        }
         if (super.peek().equals(stackMaxValues.peek())) {
             stackMaxValues.pop();
             return super.pop();

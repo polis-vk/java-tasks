@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Задание оценивается в 2 балла.
@@ -13,21 +12,23 @@ import java.util.List;
  * Отрабатывать метод должен за О(n).
  */
 public class SearchInTheShredderList {
-    private List<String> partStrings = new ArrayList<>();
-
-    public SearchInTheShredderList() {
-    }
+    private final Map<String, Integer> mapOfStringToIndex = new HashMap<>();
+    private final Map<Integer, String> maoOfIndexToString = new HashMap<>();
+    int size;
 
     public SearchInTheShredderList(List<String> partStrings) {
-        this.partStrings = partStrings;
+        for (String value : partStrings) {
+            this.mapOfStringToIndex.put(value, size);
+            maoOfIndexToString.put(size++, value);
+        }
     }
 
     public void add(String value) {
-        partStrings.add(value);
+        mapOfStringToIndex.put(value, size++);
     }
 
     public String get(int index) {
-        return partStrings.get(index);
+        return maoOfIndexToString.get(index);
     }
 
     /**
@@ -46,12 +47,12 @@ public class SearchInTheShredderList {
         String firstPart;
         String secondPart;
 
-        for (int i = 0; i < partStrings.size(); i++) {
-            firstPart = partStrings.get(i);
+        for (int i = 0; i < mapOfStringToIndex.size(); i++) {
+            firstPart = maoOfIndexToString.get(i);
             if (value.startsWith(firstPart)) {
                 positionFirstPart = i;
                 secondPart = value.substring(firstPart.length());
-                positionSecondPart = partStrings.indexOf(secondPart);
+                positionSecondPart = mapOfStringToIndex.getOrDefault(secondPart, -1);
             }
         }
 

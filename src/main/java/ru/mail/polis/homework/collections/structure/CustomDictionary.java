@@ -10,27 +10,22 @@ import java.util.*;
  */
 public class CustomDictionary {
 
-    private final Map<Map<Character, Integer>, LinkedList<String>> dictionary;
+    private final Map<Map<Character, Integer>, List<String>> dictionary = new HashMap<>();
     private int size;
-
-    public CustomDictionary() {
-        dictionary = new HashMap<>();
-        size = 0;
-    }
 
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - [size(словаря) + length(слова), но если у нас хорошее распределение то length(слова)]
+     * Сложность - [O(n + m), где m - длина слова, n - количество коллизий]
      */
     public boolean add(String value) {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException();
         }
         Map<Character, Integer> key = getMapFromString(value);
-        LinkedList<String> stringList = dictionary.getOrDefault(key, new LinkedList<>());
+        List<String> stringList = dictionary.getOrDefault(key, new LinkedList<>());
         if (stringList.contains(value)) {
             return false;
         }
@@ -45,11 +40,11 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - [size(словаря) + length(слова), но если у нас хорошее распределение то length(слова)]
+     * Сложность - [O(n + m), где m - длина слова, n - количество коллизий]
      */
     public boolean contains(String value) {
         Map<Character, Integer> key = getMapFromString(value);
-        LinkedList<String> stringList = dictionary.getOrDefault(key, null);
+        List<String> stringList = dictionary.getOrDefault(key, null);
         if (stringList == null) {
             return false;
         }
@@ -68,7 +63,7 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - [size(словаря) + length(слова), но если у нас хорошее распределение то length(слова)]
+     * Сложность - [O(n + m), где m - длина слова, n - количество коллизий]
      */
     public boolean remove(String value) {
         Map<Character, Integer> key = getMapFromString(value);
@@ -98,7 +93,7 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - [1]
+     * Сложность - [O(m), где m - длина слова]
      */
     public List<String> getSimilarWords(String value) {
         Map<Character, Integer> key = getMapFromString(value);
@@ -110,7 +105,7 @@ public class CustomDictionary {
      * Колл-во хранимых строк.
      * @return - Колл-во хранимых строк.
      *
-     * Сложность - [1]
+     * Сложность - [O(1)]
      */
     public int size() {
         return size;
