@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -15,6 +14,7 @@ import java.util.List;
  */
 public class SearchInTheShredderList {
     private List<String> partStrings = new ArrayList<>();
+    private final int BREAK_POINT = 2;
 
     public SearchInTheShredderList() {
     }
@@ -46,14 +46,22 @@ public class SearchInTheShredderList {
         String first = value.substring(0, (value.length() - 1) / 2);
         String second = value.substring((value.length() - 1) / 2);
 
+        int stop = 0;
         for (int i = 0; i < partStrings.size(); i++) {
             if (partStrings.get(i).equals(first)) {
                 result[0] = i;
+                stop++;
+                if (stop == BREAK_POINT) {
+                    break;
+                }
             }
             if (partStrings.get(i).equals(second)) {
                 result[1] = i;
+                stop++;
+                if (stop == BREAK_POINT) {
+                    break;
+                }
             }
-
         }
         return result[0] == 0 && result[1] == 0 ? null : result;
     }
