@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Задание оценивается в 4 балла.
@@ -18,7 +19,7 @@ import java.util.*;
 
 public class CustomDictionary extends HashSet<String> {
 
-    private Map<Set<Character>, List<String>> similarWords = new HashMap<>();
+    private Map<MultiSet<Character>, List<String>> similarWords = new HashMap<>();
 
     /**
      * Сохранить строку в структуру данных
@@ -29,6 +30,9 @@ public class CustomDictionary extends HashSet<String> {
      * Сложность - [O(m)], где m - длина строки
      */
     public boolean add(String value) {
+        if (value == null || value.equals("")) {
+            throw new IllegalArgumentException();
+        }
         boolean isInsertSucceed = super.add(value);
         if (isInsertSucceed) {
             addWordToSimilar(value);
@@ -36,26 +40,21 @@ public class CustomDictionary extends HashSet<String> {
         return isInsertSucceed;
     }
 
-    private Set<Character> getCharacterSet(String value) {
-        HashSet<Character> characterValueRepresentation = new HashSet<>();
-        for (Character c : value.toLowerCase().toCharArray()) {
-            characterValueRepresentation.add(c);
-        }
-
-        return characterValueRepresentation;
+    private MultiSet<Character> getCharacterSet(String value) {
+        return new MultiSet<>(value.toLowerCase().chars()
+                .mapToObj(e -> (char) e).collect(Collectors.toList()));
     }
 
     private void addWordToSimilar(String value) {
-        Set<Character> characterValueRepresentation = getCharacterSet(value);
-        if (similarWords.containsKey(characterValueRepresentation)) {
-            similarWords.get(characterValueRepresentation).add(value);
-        } else {
-            similarWords.put(characterValueRepresentation, Arrays.asList(value));
+        MultiSet<Character> characterValueRepresentation = getCharacterSet(value);
+        if (!similarWords.containsKey(characterValueRepresentation)) {
+            similarWords.put(characterValueRepresentation, new ArrayList<>());
         }
+        similarWords.get(characterValueRepresentation).add(value);
     }
 
     private void removeWordFromSimilar(String value) {
-        Set<Character> characterValueRepresentation = getCharacterSet(value);
+        MultiSet<Character> characterValueRepresentation = getCharacterSet(value);
         assert similarWords.containsKey(characterValueRepresentation);
         boolean removeResult = similarWords.get(characterValueRepresentation).remove(value);
         assert removeResult;
@@ -97,7 +96,7 @@ public class CustomDictionary extends HashSet<String> {
      * сохраняем строки ["aaa", "aBa", "baa", "aaB"]
      * При поиске по строке "AAb" нам должен вернуться следующий
      * список: ["aBa","baa","aaB"]
-     *
+     * <p>
      * сохраняем строки ["aaa", "aAa", "a"]
      * поиск "aaaa"
      * результат: []
@@ -110,7 +109,7 @@ public class CustomDictionary extends HashSet<String> {
      * Сложность - [O(m)], где m - длина строки
      */
     public List<String> getSimilarWords(String value) {
-        Set<Character> characterValueRepresentation = getCharacterSet(value);
+        MultiSet<Character> characterValueRepresentation = getCharacterSet(value);
         return similarWords.getOrDefault(characterValueRepresentation, new ArrayList<>());
     }
 

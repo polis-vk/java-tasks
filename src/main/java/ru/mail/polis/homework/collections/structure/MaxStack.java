@@ -12,7 +12,13 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
     private Stack<Integer> maxValues;
-    private Integer maxValue;
+    private Integer maxValue = Integer.MIN_VALUE;
+
+
+    MaxStack() {
+        super();
+        maxValues = new Stack<>();
+    }
 
     @Override
     public Integer push(Integer item) {

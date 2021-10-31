@@ -20,7 +20,7 @@ public class ValidatorForParentheses {
     public static boolean validate(String value) {
         // For my point of view, empty string is CORRECT parentheses sequence,
         // but tests insist on opposite
-        if (value == null || value.isEmpty()) {
+        if (value == null) {
             return false;
         }
         Stack<Character> openParentheses = new Stack<>();
@@ -45,12 +45,14 @@ public class ValidatorForParentheses {
             }
         }
 
+        boolean hasAtListOneOpenParenthesis = false;
         for (Character c : value.toCharArray()) {
             switch (c) {
                 case '{':
                 case '[':
                 case '<':
                 case '(':
+                    hasAtListOneOpenParenthesis = true;
                     openParentheses.push(c);
                     break;
                 case '}':
@@ -63,6 +65,6 @@ public class ValidatorForParentheses {
                     openParentheses.pop();
             }
         }
-        return openParentheses.size() == 0;
+        return hasAtListOneOpenParenthesis && openParentheses.size() == 0;
     }
 }
