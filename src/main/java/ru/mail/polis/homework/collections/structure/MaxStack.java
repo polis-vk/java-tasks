@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.Deque;
 import java.util.EmptyStackException;
 import java.util.LinkedList;
 import java.util.Stack;
@@ -12,13 +13,13 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
-    private final LinkedList<Integer> maxes = new LinkedList<>();
+    private final Deque<Integer> maxStack = new LinkedList<>();
 
     public Integer getMaxValue() {
         if (size() == 0) {
             throw new EmptyStackException();
         }
-        return maxes.getLast();
+        return maxStack.getLast();
     }
 
     @Override
@@ -29,17 +30,15 @@ public class MaxStack extends Stack<Integer> {
 
     @Override
     public Integer pop() {
-        int returned = super.pop();
-        maxes.remove((Object) returned);
-        return returned;
+        maxStack.removeLast();
+        return super.pop();
     }
 
     private void insertMax(Integer value) {
-        for (int i = 0; i <= maxes.size(); i++) {
-            if (i == maxes.size() || value <= maxes.get(i)) {
-                maxes.add(i, value);
-                return;
-            }
+        if (maxStack.isEmpty() || maxStack.getLast() < value) {
+            maxStack.add(value);
+        } else {
+            maxStack.add(maxStack.getLast());
         }
     }
 
