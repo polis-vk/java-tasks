@@ -15,7 +15,7 @@ public class StructureInputStream extends FileInputStream {
 
     private static final int COUNT_FLAGS = 4;
 
-    private List<Structure> structures = new ArrayList<>();
+    private final List<Structure> structures = new ArrayList<>();
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
