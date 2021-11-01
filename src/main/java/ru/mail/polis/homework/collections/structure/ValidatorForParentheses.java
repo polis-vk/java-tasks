@@ -40,18 +40,20 @@ public class ValidatorForParentheses {
 
     private static boolean realizeValidate(String value) {
         Deque<Character> needToClose = new LinkedList<>();
+        boolean hasAnyBracket = false;
         for (Character symbol : value.toCharArray()) {
-            if (symbol.equals('(') || symbol.equals('[') || symbol.equals('{') || symbol.equals('<')) {
+            if (OPEN_BRACKETS.containsValue(symbol)) {
                 needToClose.add(symbol);
+                hasAnyBracket = true;
             } else {
-                if (symbol.equals(')') || symbol.equals(']') || symbol.equals('}') || symbol.equals('>')) {
+                if (OPEN_BRACKETS.containsKey(symbol)) {
                     if (needToClose.size() == 0 || !needToClose.pollLast().equals(OPEN_BRACKETS.get(symbol))) {
                         return false;
                     }
                 }
             }
         }
-        return needToClose.isEmpty();
+        return hasAnyBracket && needToClose.isEmpty();
     }
 
 }
