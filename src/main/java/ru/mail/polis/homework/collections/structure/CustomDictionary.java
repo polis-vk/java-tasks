@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Задание оценивается в 4 балла.
@@ -11,15 +10,18 @@ import java.util.List;
  */
 public class CustomDictionary {
 
+    private final Set<String> words = new HashSet<String>();
+
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - []
+     * Сложность - [O(n)]
      */
     public boolean add(String value) {
-        return false;
+        checkForValueValidity(value);
+        return words.add(value);
     }
 
     /**
@@ -27,10 +29,11 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - []
+     * Сложность - [O(n)]
      */
     public boolean contains(String value) {
-        return false;
+        checkForValueValidity(value);
+        return words.contains(value);
     }
 
     /**
@@ -38,10 +41,11 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - []
+     * Сложность - [O(n)]
      */
     public boolean remove(String value) {
-        return false;
+        checkForValueValidity(value);
+        return words.remove(value);
     }
 
     /**
@@ -61,21 +65,69 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - []
+     * Сложность - [O(k)(составление главной карты)
+     *   + n*(O(k) + O(m))(для каждого из n слов создаём карту и сверяемся с главной картой)
+     *   |-> O(max(k, m)*n), где k - среднее кол-во символов в строке, а m - средний размер карты
+     *   (не можем гарантировать, что k,m < n, и уж тем более что k,m << n]
      */
     public List<String> getSimilarWords(String value) {
-        return Collections.emptyList();
+        checkForValueValidity(value);
+        HashMap<String, Integer> valueMap = createTableOfFrequency(value);
+
+        // Для каждого слова составляем специальную табличку
+        // и сопоставляем с уже созданной табличкой valueMap
+        List<String> matched = new ArrayList<>();
+        for (String curWord: words) {
+            HashMap<String, Integer> curMap = createTableOfFrequency(curWord);
+            if (areEqualTables(valueMap, curMap)) {
+                matched.add(curWord);
+            }
+        }
+        return matched;
+    }
+
+    // Сопоставляем псевдо-регулярное выражение [tT] с частотой его встречаемости
+    // Сложность - [2*k |-> O(k), где k - кол-во символов в строке]
+    private HashMap<String /*regexForLetter*/, Integer /*frequency*/> createTableOfFrequency(String s) {
+        HashMap<String, Integer> sMap = new HashMap<String, Integer>();
+        for (int i = 0; i < s.length(); ++i) {
+            String curCh = s.substring(i, i + 1);
+            String curRegex = curCh.toLowerCase(Locale.ROOT) + curCh.toUpperCase(Locale.ROOT);
+            sMap.put(curRegex, sMap.getOrDefault(curRegex, 0) + 1);
+        }
+        return sMap;
+    }
+
+    // Сложность - O(1)|O(m), где m = lhs.size()
+    private boolean areEqualTables(HashMap<String, Integer> lhs, HashMap<String, Integer> rhs) {
+        boolean isMatched = true;
+        if (lhs.size() != rhs.size()) {
+            isMatched = false;
+        } else {
+            for (Map.Entry<String, Integer> mainPair: lhs.entrySet()) {
+                isMatched = rhs.get(mainPair.getKey()).equals(mainPair.getValue());
+                if (!isMatched) {
+                    break;
+                }
+            }
+        }
+        return isMatched;
     }
 
     /**
      * Колл-во хранимых строк.
      * @return - Колл-во хранимых строк.
      *
-     * Сложность - []
+     * Сложность - [O(1)]
      */
     public int size() {
-        return 0;
+        return words.size();
     }
 
+    private static void checkForValueValidity(String value) {
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException("Illegal value");
+        }
+    }
 
 }

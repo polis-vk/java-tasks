@@ -1,18 +1,23 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
- * Р—Р°РґР°РЅРёРµ РѕС†РµРЅРёРІР°РµС‚СЃСЏ РІ 2 Р±Р°Р»Р»Р°.
- * РћРґРЅР° РёР· СЃР°РјС‹С… РїРѕРїСѓР»СЏСЂРЅС‹С… Р·Р°РґР°С‡.
- * РќР°С€Р° СЃС‚СЂСѓРєС‚СѓСЂР° С…СЂР°РЅРёС‚ РѕР±СЂС‹РІРєРё СЃР»РѕРІ. РќР°РґРѕ СЂРµР°Р»РёР·РѕРІР°С‚СЊ РјРµС‚РѕРґ positionPartString
- * РєРѕС‚РѕСЂС‹Р№ РІРµСЂРЅРµС‚: РїРѕР·РёС†РёРё РіРґРµ РЅР°С…РѕРґСЏС‚СЃСЏ РїРѕРґСЃС‚СЂРѕРєРё, РёР· РєРѕС‚РѕСЂС‹С… РјРѕР¶РЅРѕ СЃРѕСЃС‚Р°РІРёС‚СЊ
- * РїРµСЂРµРґР°РЅРЅРѕРµ СЃР»РѕРІРѕ. РўР°Рє Р¶Рµ РёР·РІРµСЃС‚РЅРѕ С‡С‚Рѕ СЃР»РѕРІР°, РєРѕС‚РѕСЂС‹Рµ РїРёСЃР°Р»РёСЃСЊ РІ СЃС‚СЂСѓРєС‚СѓСЂСѓ, РёР·РЅР°С‡Р°Р»СЊРЅРѕ
- * РґРµР»РёР»РёСЃСЊ РїРѕРїРѕР»Р°Рј РґР»СЏ Р·Р°РїРёСЃРё РІ РЅРµРµ.
- * РћС‚СЂР°Р±Р°С‚С‹РІР°С‚СЊ РјРµС‚РѕРґ РґРѕР»Р¶РµРЅ Р·Р° Рћ(n).
+ * Задание оценивается в 2 балла.
+ * Одна из самых популярных задач.
+ * Наша структура хранит обрывки слов. Надо реализовать метод positionPartString
+ * который вернет: позиции где находятся подстроки, из которых можно составить
+ * переданное слово. Так же известно что слова, которые писались в структуру, изначально
+ * делились пополам для записи в нее.
+ * Отрабатывать метод должен за О(n).
  */
 public class SearchInTheShredderList {
+
+    private static int N_PART_STRINGS = 28;
+    private static int NO_POSITION = -1;
+
     private List<String> partStrings = new ArrayList<>();
 
     public SearchInTheShredderList() {
@@ -31,12 +36,39 @@ public class SearchInTheShredderList {
     }
 
     /**
-     * РС‰РµРј РїРѕР·РёС†РёРё РїРѕРґСЃС‚СЂРѕРє РёР· РєРѕС‚РѕСЂС‹С… РјРѕР¶РЅРѕ СЃРѕСЃС‚Р°РІРёС‚СЊ РїРµСЂРµРґР°РІР°РµРјРѕРµ СЃР»РѕРІРѕ
+     * Ищем позиции подстрок из которых можно составить передаваемое слово
      *
-     * @param value - РїРµСЂРµРґР°РІР°РµРјРѕРµР№ СЃР»РѕРІРѕ
-     * @return - Р»РёР±Рѕ РјР°СЃСЃРёРІ СЃ СЂРµР°Р»СЊРЅС‹РјРё РїРѕР·РёС†РёСЏРјРё РїРѕРґСЃС‚СЂРѕРє РµСЃР»Рё РЅР°С€Р»Рё, Р»РёР±Рѕ - null
+     * @param value - передаваемоей слово
+     * @return - либо массив с реальными позициями подстрок если нашли, либо - null
      */
     public int[] positionPartString(String value) {
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
+
+        int[] positions = new int[N_PART_STRINGS];
+        Arrays.fill(positions, NO_POSITION);
+        int count = 0;
+        // для f(k) подстрок [left, right) ищем совпадения
+        int left = 0, right = 1;
+        while (right <= value.length()) {
+            for (int i = 0; i < N_PART_STRINGS; ++i) {
+                int substringIndex = partStrings.indexOf(value.substring(left, right));
+                if (substringIndex != -1) {
+                    left = right;
+                    positions[count++] = substringIndex;
+                }
+                ++right;
+                if (right > value.length()) {
+                    break;
+                }
+            }
+        }
+        if (count > 1) {
+            int[] realPositions = new int[count];
+            System.arraycopy(positions, 0, realPositions, 0, count);
+            return realPositions;
+        }
         return null;
     }
 }
