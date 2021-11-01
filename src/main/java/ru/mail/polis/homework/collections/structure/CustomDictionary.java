@@ -25,14 +25,15 @@ public class CustomDictionary {
         if (value == null || value.equals("")) {
             throw new IllegalArgumentException();
         }
-        boolean isAdd;
+        boolean isAdd = false;
         Map<Character, Integer> countCharsMap = createCountCharsMap(value);
         if (dictionary.containsKey(countCharsMap)) {
             isAdd = dictionary.get(countCharsMap).add(value);
         } else {
             Set<String> words = new HashSet<>();
-            isAdd = words.add(value);
-            dictionary.put(countCharsMap, words);
+            if (words.add(value)) {
+                isAdd = dictionary.put(countCharsMap, words) == null;
+            }
         }
         if (isAdd) {
             size++;
