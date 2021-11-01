@@ -1,7 +1,9 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Задание оценивается в 4 балла.
@@ -10,24 +12,20 @@ import java.util.List;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private ArrayList<String> list;
-
-    public CustomDictionary() {
-        this.list = new ArrayList<>();
-    }
+    private final Set<String> dictionary = new HashSet<>();
 
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - [O(n), тк задействуется contains]
+     * Сложность - [O(1)]
      */
     public boolean add(String value) {
         if (value == null || value.equals("")) {
             throw new IllegalArgumentException();
         }
-        return !contains(value) && list.add(value);
+        return !contains(value) && dictionary.add(value);
     }
 
     /**
@@ -35,10 +33,10 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - [O(n)]
+     * Сложность - [O(1)]
      */
     public boolean contains(String value) {
-        return list.contains(value);
+        return dictionary.contains(value);
     }
 
     /**
@@ -46,10 +44,10 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - [O(n)]
+     * Сложность - [O(1)]
      */
     public boolean remove(String value) {
-        return list.remove(value);
+        return dictionary.remove(value);
     }
 
     /**
@@ -76,7 +74,10 @@ public class CustomDictionary {
         if (value == null || value.equals("")) {
             return res;
         }
-        for (String s : list) {
+        for (String s : dictionary) {
+            if (s.length() != value.length()) {
+                continue;
+            }
             StringBuilder tmp = new StringBuilder(s.toLowerCase());
             boolean isSimilar = true;
             for (int j = 0; j < value.length(); j++) {
@@ -101,6 +102,6 @@ public class CustomDictionary {
      * Сложность - [O(1)]
      */
     public int size() {
-        return list.size();
+        return dictionary.size();
     }
 }
