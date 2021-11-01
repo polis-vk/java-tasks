@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.EmptyStackException;
+import java.util.LinkedList;
 import java.util.Stack;
 
 /**
@@ -10,8 +12,28 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
-    public Integer getMaxValue() {
-        return 0;
+    private final LinkedList<Integer> maxList = new LinkedList<>();
+
+    @Override
+    public Integer push(Integer item) {
+        if (isEmpty() || item > maxList.getLast()) {
+            maxList.addLast(item);
+        }
+        return super.push(item);
     }
 
+    @Override
+    public synchronized Integer pop() {
+        if (peek().equals(maxList.getLast())) {
+            maxList.removeLast();
+        }
+        return super.pop();
+    }
+
+    public Integer getMaxValue() {
+        if (isEmpty()) {
+            throw new EmptyStackException();
+        }
+        return maxList.getLast();
+    }
 }

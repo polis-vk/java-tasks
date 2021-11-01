@@ -1,7 +1,17 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Задание оценивается в 4 балла.
@@ -11,15 +21,33 @@ import java.util.List;
  */
 public class CustomDictionary {
 
+    private final Map<String, Set<String>> map = new HashMap<>();
+    private int size;
+
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - []
+     * Сложность - [k*log(k)]
      */
     public boolean add(String value) {
-        return false;
+        if ((value == null) || (value.length() == 0)) {
+            throw new IllegalArgumentException();
+        }
+        String key = getSortedKey(value);
+        boolean isAdded = true;
+        if (map.containsKey(key)) {
+            isAdded = map.get(key).add(value);
+        } else {
+            Set<String> set = new HashSet<>();
+            set.add(value);
+            map.put(key, set);
+        }
+        if (isAdded) {
+            size++;
+        }
+        return isAdded;
     }
 
     /**
@@ -27,10 +55,11 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - []
+     * Сложность - [k*log(k)]
      */
     public boolean contains(String value) {
-        return false;
+        String key = getSortedKey(value);
+        return map.get(key).contains(value);
     }
 
     /**
@@ -38,10 +67,24 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - []
+     * Сложность - [k*log(k)]
      */
     public boolean remove(String value) {
-        return false;
+        String key = getSortedKey(value);
+        Set<String> set = map.get(key);
+        boolean isRemoved;
+        if (set == null) {
+            isRemoved = false;
+        } else if ((set.size() == 1) && set.contains(value)) {
+            map.remove(key);
+            isRemoved = true;
+        } else {
+            isRemoved = map.get(key).remove(value);
+        }
+        if (isRemoved) {
+            size--;
+        }
+        return isRemoved;
     }
 
     /**
@@ -61,21 +104,27 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - []
+     * Сложность - [k*log(k) + O(n)]
      */
     public List<String> getSimilarWords(String value) {
-        return Collections.emptyList();
+        String key = getSortedKey(value);
+        Set<String> set = map.get(key);
+        return (set == null) ? new ArrayList<>() : new ArrayList<>(set);
     }
 
     /**
      * Колл-во хранимых строк.
      * @return - Колл-во хранимых строк.
      *
-     * Сложность - []
+     * Сложность - [O(1)]
      */
     public int size() {
-        return 0;
+        return size;
     }
 
-
+    private String getSortedKey(String key) {
+        byte[] array = key.toLowerCase().getBytes();
+        Arrays.sort(array);
+        return Arrays.toString(array);
+    }
 }

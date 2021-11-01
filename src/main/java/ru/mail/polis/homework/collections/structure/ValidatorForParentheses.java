@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
 /**
  * Задание оценивается в 2 балла.
  * Одна из самых популярных задач.
@@ -14,7 +17,33 @@ package ru.mail.polis.homework.collections.structure;
  */
 public class ValidatorForParentheses {
 
+    private static final HashMap<Character, Character> actions = new HashMap<>();
+    static {
+        actions.put(')', '(');
+        actions.put(']', '[');
+        actions.put('}', '{');
+        actions.put('>', '<');
+    }
+
     public static boolean validate(String value) {
-        return false;
+        LinkedList<Character> stack = new LinkedList<>();
+        if ((value == null) || (value.length() < 2)) {
+            return false;
+        }
+        boolean containsParentheses = false;
+        for (int i = 0; i < value.length(); i++) {
+            if (actions.containsValue(value.charAt(i))) {
+                stack.addLast(value.charAt(i));
+                containsParentheses = true;
+            }
+            if (actions.containsKey(value.charAt(i))) {
+                if (stack.peekLast() == actions.get(value.charAt(i))) {
+                    stack.removeLast();
+                } else {
+                    break;
+                }
+            }
+        }
+        return stack.isEmpty() && containsParentheses;
     }
 }
