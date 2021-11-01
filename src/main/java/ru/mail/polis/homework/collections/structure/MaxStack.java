@@ -31,10 +31,14 @@ public class MaxStack extends Stack<Integer> {
             if (this.size() == 1) {
                 this.max = this.firstElement();
             } else {
-                // нужно искать новый максимум в таком случае
-                this.max = this.stream().max((Integer i1, Integer i2) -> {
-                    return i1 - i2;
-                }).get();
+                // не знаю ситуаций, при которых извлечение из стека любого
+                // элемента вдруг добавит новый элемент, который больше максимального
+                if(this.max == ret) {
+                    // нужно искать новый максимум в таком случае
+                    this.max = this.stream().max((Integer i1, Integer i2) -> {
+                        return i1 - i2;
+                    }).get();
+                }
             }
         } else {
             this.max = Integer.MIN_VALUE;
