@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Задание оценивается в 4 балла.
@@ -14,7 +15,7 @@ import java.util.List;
  */
 public class CustomDictionary {
     
-    private HashMap<String, char[]> dictionary;
+    private Map<String, char[]> dictionary;
     
     public CustomDictionary() {
         // char[] т.к. приходится сортировать массив, и преобразование обратно
@@ -27,18 +28,19 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - O(n)
+     * Сложность - O(m + log(n) * (k / n)), m - количество символов в слове,
+     * n - количество символов в слове, k - количество коллизий
      */
     public boolean add(String value) {
         if (value == null || value.length() == 0) {
             throw new IllegalArgumentException();
         }
-        // проверка O(1)
+        // проверка O(1 + log(n) * (k / n))
         if (this.contains(value)) {
             return false;
         }
-        // преобразование регистра, копирование и сортировка массива - O(n)
-        // вставка O(1)
+        // преобразование регистра, копирование и сортировка массива - O(m)
+        // вставка O(1 + log(n) * (k / n))
         this.dictionary.put(value, countSort(value.toLowerCase().toCharArray()));
         return true;
     }
@@ -48,7 +50,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - O(1)
+     * Сложность - O(1 + log(n) * (k / n)), n - количество элементов в словаре, k - количество коллизий
      */
     public boolean contains(String value) {
         if (value == null || value.length() == 0) {
@@ -62,7 +64,7 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - O(1)
+     * Сложность - O(1 + log(n) * (k / n)), n - количество символов в слове, k - количество коллизий
      */
     public boolean remove(String value) {
         if (value == null || value.length() == 0) {
@@ -88,7 +90,7 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - O(n * k), k - количество элементов в словаре, n - длина слова
+     * Сложность - O(n * m), n - количество элементов в словаре, m - длина слова
      */
     public List<String> getSimilarWords(String value) {
         if (value == null || value.length() == 0) {
@@ -100,13 +102,13 @@ public class CustomDictionary {
         // неизвестно что нужно внешним методам, поэтому не LinkedList
         List<String> ret = new ArrayList();
 
-        // k сравнений
+        // n сравнений
         this.dictionary.forEach((String word, char[] charset2) -> {
-            // от 1 (в случае несовпадения длин) до n итераций, O(n)
+            // от 1 (в случае несовпадения длин) до m итераций, O(m)
             if (Arrays.equals(charset1, charset2)) {
                 ret.add(word); // вставка в список O(1)
             }
-        }); // итогово O(k * n)
+        }); // итогово O(m * n)
 
         // чтоб не возвращать пустые ArrayList'ы
         if (ret.size() == 0) {
@@ -120,13 +122,13 @@ public class CustomDictionary {
      * Колл-во хранимых строк.
      * @return - Колл-во хранимых строк.
      *
-     * Сложность - []
+     * Сложность - O(1)
      */
     public int size() {
         return this.dictionary.size();
     }
 
-    // сортировка счетом за O(n)
+    // сортировка счетом за O(n), n - длина массива
     private static final char[] countSort(char[] array) {
         char min = array[0];
         char max = array[0];
