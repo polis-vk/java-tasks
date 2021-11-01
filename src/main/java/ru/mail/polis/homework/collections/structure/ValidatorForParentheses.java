@@ -70,6 +70,6 @@ public class ValidatorForParentheses {
                 return openBrackets[i];
             }
         }
-        throw new IllegalArgumentException("Input: \'" + bracket + "\', but it should be one of brackets");
+        throw new IllegalArgumentException("Input: '" + bracket + "', but it should be one of brackets");
     }
 }
