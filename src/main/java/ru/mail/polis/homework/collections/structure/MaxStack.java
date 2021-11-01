@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
@@ -11,12 +13,12 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
-    private Integer maxValue = Integer.MIN_VALUE;
+    private final Deque<Integer> maxValues = new ArrayDeque<>();
 
     @Override
     public Integer push(Integer item) {
-        if (item.compareTo(maxValue) > 0) {
-            maxValue = item;
+        if (maxValues.size() == 0 || item.compareTo(maxValues.peek()) >= 0) {
+            maxValues.push(item);
         }
         return super.push(item);
     }
@@ -26,14 +28,8 @@ public class MaxStack extends Stack<Integer> {
         if (size() == 0) {
             throw new EmptyStackException();
         }
-        if (peek().equals(maxValue)) {
-            Integer max = Integer.MIN_VALUE;
-            for (int i = 0; i < size() - 1; i++) {
-                if (((Integer) elementData[i]).compareTo(max) > 0) {
-                    max = (Integer) elementData[i];
-                }
-            }
-            maxValue = max;
+        if (peek().equals(maxValues.peek())) {
+            maxValues.pop();
         }
         return super.pop();
     }
@@ -42,7 +38,7 @@ public class MaxStack extends Stack<Integer> {
         if (size() == 0) {
             throw new EmptyStackException();
         }
-        return maxValue;
+        return maxValues.peek();
     }
 
 }
