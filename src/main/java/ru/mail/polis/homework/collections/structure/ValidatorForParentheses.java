@@ -22,28 +22,29 @@ public class ValidatorForParentheses {
         }
 
         ArrayDeque<Character> stack = new ArrayDeque<>();
-        for (int i = 0; i < value.length(); i++) {
-            switch (value.charAt(i)) {
-                case '[':
-                case '{':
-                case '<':
-                case '(':
-                    stack.push(value.charAt(i));
-                    break;
-                case ']':
-                case '}':
-                case '>':
-                case ')':
-                    if (!isPairBrackets(stack.pop(), value.charAt(i))) {
-                        return false;
-                    }
+        for (int i = 0; i < value.length(); ++i) {
+            if (isOpenBracket(value.charAt(i))) {
+                stack.push(value.charAt(i));
+            } else if (isCloseBracket(value.charAt(i))) {
+                if (!isPairedBrackets(stack.pop(), value.charAt(i))) {
+                    return false;
+                }
             }
         }
         return stack.isEmpty();
     }
 
-    private static boolean isPairBrackets(char ch1, char ch2) {
+    private static boolean isOpenBracket(char ch) {
+        return ch == '(' || ch == '[' || ch == '{' || ch == '<';
+    }
+
+    private static boolean isCloseBracket(char ch) {
+        return ch == ')' || ch == ']' || ch == '}' || ch == '>';
+    }
+
+    private static boolean isPairedBrackets(char ch1, char ch2) {
         return (ch1 == '(' && ch2 == ')') || (ch1 == '[' && ch2 == ']')
                 || (ch1 == '{' && ch2 == '}') || (ch1 == '<' && ch2 == '>');
     }
+
 }

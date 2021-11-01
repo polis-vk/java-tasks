@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.EmptyStackException;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Задание оценивается в 2 балла.
@@ -11,31 +10,30 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
-    private int MAX_VALUE = Integer.MIN_VALUE;
+    private final Deque<Integer> maximums = new ArrayDeque<>();
 
     @Override
     public Integer push(Integer item) {
-        MAX_VALUE = Math.max(MAX_VALUE, item);
+        if (maximums.isEmpty() || maximums.getFirst() <= item) {
+            maximums.push(item);
+        }
         return super.push(item);
     }
 
     @Override
     public synchronized Integer pop() {
-        int lastElem = super.pop();
-        if (lastElem == MAX_VALUE) {
-            MAX_VALUE = peek();
-            for (int i = 0; i < size(); ++i) {
-                MAX_VALUE = Math.max(MAX_VALUE, elementAt(i));
-            }
+        int curElem = super.pop();
+        if (curElem == maximums.getFirst()) {
+            maximums.pop();
         }
-        return MAX_VALUE;
+        return curElem;
     }
 
     public Integer getMaxValue() {
         if (empty()) {
             throw new EmptyStackException();
         }
-        return MAX_VALUE;
+        return maximums.getFirst();
     }
 
 }

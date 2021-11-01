@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * «адание оцениваетс€ в 2 балла.
@@ -14,9 +12,6 @@ import java.util.List;
  * ќтрабатывать метод должен за ќ(n).
  */
 public class SearchInTheShredderList {
-
-    private static int N_PART_STRINGS = 28;
-    private static int NO_POSITION = -1;
 
     private List<String> partStrings = new ArrayList<>();
 
@@ -40,33 +35,37 @@ public class SearchInTheShredderList {
      *
      * @param value - передаваемоей слово
      * @return - либо массив с реальными позици€ми подстрок если нашли, либо - null
-     */
+     * —ложность - [n + k^2 => O(n) амортизированно (исключение: k = n),
+     * k - количество найденных подслов слова value среди ShredderList.size() значений]
+     * */
     public int[] positionPartString(String value) {
         if (value == null || value.isEmpty()) {
             return null;
         }
 
-        int[] positions = new int[N_PART_STRINGS];
-        Arrays.fill(positions, NO_POSITION);
         int count = 0;
-        // дл€ f(k) подстрок [left, right) ищем совпадени€
-        int left = 0, right = 1;
-        while (right <= value.length()) {
-            for (int i = 0; i < N_PART_STRINGS; ++i) {
-                int substringIndex = partStrings.indexOf(value.substring(left, right));
-                if (substringIndex != -1) {
-                    left = right;
-                    positions[count++] = substringIndex;
-                }
-                ++right;
-                if (right > value.length()) {
-                    break;
-                }
+        int[] positions = new int[partStrings.size()];
+        for (int i = 0; i < partStrings.size(); ++i) {
+            if (value.contains(partStrings.get(i))) {
+                positions[count++] = i;
             }
         }
         if (count > 1) {
             int[] realPositions = new int[count];
-            System.arraycopy(positions, 0, realPositions, 0, count);
+            int _count = 0;
+            int begin = 0;
+            boolean isNeededToExitFromCycle = false;
+            for (int i = 0; i < count && !isNeededToExitFromCycle; ++i) {
+                for (int j = 0; j < count && !isNeededToExitFromCycle; ++j) {
+                    if (value.startsWith(partStrings.get(positions[j]), begin)) {
+                        realPositions[_count++] = positions[j];
+                        begin += partStrings.get(positions[j]).length();
+                    }
+                    if (begin >= value.length()) {
+                        isNeededToExitFromCycle = true;
+                    }
+                }
+            }
             return realPositions;
         }
         return null;
