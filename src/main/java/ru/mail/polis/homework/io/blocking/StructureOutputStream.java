@@ -58,6 +58,7 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     private void writeLong(long v) throws IOException {
+        writeBuffer = new byte[8];
         writeBuffer[0] = (byte) (v >>> 56);
         writeBuffer[1] = (byte) (v >>> 48);
         writeBuffer[2] = (byte) (v >>> 40);
