@@ -32,7 +32,7 @@ public class MaxStack extends Stack<Integer> {
 
     @Override
     public Integer push(Integer item) {
-        if (this.isEmpty() || maximums.getFirst() < item) {
+        if (this.isEmpty() || maximums.getFirst() <= item) {
             maximums.push(item);
         }
         return super.push(item);
