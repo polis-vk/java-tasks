@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.HashMap;
 import java.util.Stack;
 
 /**
@@ -20,39 +21,22 @@ public class ValidatorForParentheses {
         if ((value == null) || (value.equals(""))) {
             return false;
         }
+        boolean isAnyBracketsContained = false;
         Stack<Character> stack = new Stack<>();
+        HashMap<Character, Character> map = new HashMap<>();
+        map.put(']', '[');
+        map.put('}', '{');
+        map.put('>', '<');
+        map.put(')', '(');
         for (char el : value.toCharArray()) {
-            switch (el) {
-                case '[':
-                case '{':
-                case '<':
-                case '(':
-                    stack.push(el);
-                    break;
-                case ']':
-                    if (!stack.pop().equals('[')) {
-                        return false;
-                    }
-                    break;
-                case '}':
-                    if (!stack.pop().equals('{')) {
-                        return false;
-                    }
-                    break;
-                case '>':
-                    if (!stack.pop().equals('<')) {
-                        return false;
-                    }
-                    break;
-                case ')':
-                    if (!stack.pop().equals('(')) {
-                        return false;
-                    }
-                    break;
-                default:
+            if (map.containsValue(el)) {
+                stack.push(el);
+                isAnyBracketsContained = true;
+            } else if (map.containsKey(el) && (!stack.pop().equals(map.get(el)))) {
+                return false;
             }
         }
-        if (stack.size() == 0) {
+        if ((stack.size() == 0) && isAnyBracketsContained) {
             return true;
         } else {
             return false;

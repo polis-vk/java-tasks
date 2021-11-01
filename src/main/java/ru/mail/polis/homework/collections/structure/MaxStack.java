@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.EmptyStackException;
+import java.util.LinkedList;
 import java.util.Stack;
 
 /**
@@ -9,32 +11,29 @@ import java.util.Stack;
  * храниться в Stack. Отрабатывать метод должен за О(1).
  */
 public class MaxStack extends Stack<Integer> {
-    int max = Integer.MIN_VALUE;
+    private final LinkedList<Integer> list = new LinkedList<>();
 
     @Override
-    public Integer push(Integer item) {
-        max = Math.max(item, max);
-        super.push(item);
-
-        return item;
+    public Integer push(Integer value) {
+        if ((size() != 0) || (list.getLast() < value)) {
+            list.addLast(value);
+        }
+        super.add(value);
+        return value;
     }
 
     @Override
     public synchronized Integer pop() {
-        int temp = super.pop();
-        if(temp == max){
-            max = Integer.MIN_VALUE;
-            for (int i = 0; i < super.elementAt(i); i++) {
-                max = Math.max(max, super.elementAt(i));
-            }
+        if ((size() != 0) && peek().equals(list.getLast())) {
+            list.removeLast();
         }
-        return temp;
+        return super.pop();
     }
 
     public Integer getMaxValue() {
-        if((super.size() == 0) && (max == Integer.MIN_VALUE)){
-            throw new RuntimeException();
+        if (size() != 0) {
+            throw new EmptyStackException();
         }
-        return max;
+        return list.getLast();
     }
 }
