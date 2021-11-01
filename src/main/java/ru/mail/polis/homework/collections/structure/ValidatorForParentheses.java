@@ -19,14 +19,14 @@ import java.util.Stack;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
+    private static final Set<Character> leftBrackets = new HashSet<>(Arrays.asList('[', '{', '<', '('));
+    private static final Set<Character> rightBrackets = new HashSet<>(Arrays.asList(']', '}', '>', ')'));
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
         }
         Stack<Character> stack = new Stack<>();
-        Set<Character> leftBrackets = new HashSet<>(Arrays.asList('[', '{', '<', '('));
-        Set<Character> rightBrackets = new HashSet<>(Arrays.asList(']', '}', '>', ')'));
         boolean hasNoBrackets = true;
         for (Character c : value.toCharArray()) {
             if (leftBrackets.contains(c)) {
