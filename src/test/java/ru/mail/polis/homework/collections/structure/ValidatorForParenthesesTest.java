@@ -12,6 +12,7 @@ public class ValidatorForParenthesesTest {
         assertTrue(ValidatorForParentheses.validate("{}[]()<>"));
         assertTrue(ValidatorForParentheses.validate("{{()<>}}[]()<>"));
         assertTrue(ValidatorForParentheses.validate("(-b + (x)^2)/(2+4)"));
+        assertFalse(ValidatorForParentheses.validate("((())"));
     }
 
     @Test
