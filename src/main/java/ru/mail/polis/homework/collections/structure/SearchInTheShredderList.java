@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -13,6 +14,7 @@ import java.util.List;
  * Отрабатывать метод должен за О(n).
  */
 public class SearchInTheShredderList {
+
     private List<String> partStrings = new ArrayList<>();
 
     public SearchInTheShredderList() {
@@ -37,6 +39,35 @@ public class SearchInTheShredderList {
      * @return - либо массив с реальными позициями подстрок если нашли, либо - null
      */
     public int[] positionPartString(String value) {
-        return null;
+        int[] poses = new int[]{-1, -1}; // инициализация невозможными индексами
+        if (partStrings == null
+                || partStrings.isEmpty()
+                || value == null
+                || value.equals("")) {
+            return null;
+        }
+        for (int i = 0; i < partStrings.size(); i++) {
+            String part = partStrings.get(i);
+            if (value.contains(part)) {
+                if (getFirstLetter(value).equals(getFirstLetter(part))) {
+                    poses[0] = i; // first word
+                } else if (getLastLetter(value).equals(getLastLetter(part))) {
+                    poses[1] = i; // last word
+                }
+            }
+        }
+        if (poses[0] == -1 || poses[1] == -1) {
+            return null;
+        } else {
+            return poses;
+        }
+    }
+
+    private String getFirstLetter(String value) {
+        return value.substring(0, 1);
+    }
+
+    private String getLastLetter(String value) {
+        return value.substring(value.length() - 1);
     }
 }
