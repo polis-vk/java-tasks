@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.LinkedList;
+import java.util.*;
 
 /**
  * Задание оценивается в 2 балла.
@@ -15,28 +15,29 @@ import java.util.LinkedList;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
+    private static final Set<Character> OPEN_BRACKETS = new HashSet<>(Arrays.asList('(', '[', '{', '<'));
+    private static final Set<Character> CLOSE_BRACKETS = new HashSet<>(Arrays.asList(')', ']', '}', '>'));
 
     public static boolean validate(String value) {
-        if (value == null || value.isEmpty()) {
+        if (value == null) {
             return false;
         }
-        return realizeValidate(value);
-    }
-
-    private static boolean realizeValidate(String value) {
-        LinkedList<Character> needToClose = new LinkedList<>();//last open bracket stack
-        for (Character symbol : value.toCharArray()) {
-            if (symbol.equals('(') || symbol.equals('[') || symbol.equals('{') || symbol.equals('<')) {
-                needToClose.add(symbol);
-            } else {
-                if (symbol.equals(')') || symbol.equals(']') || symbol.equals('}') || symbol.equals('>')) {
-                    if (needToClose.size() == 0 || !needToClose.pollLast().equals(getOpenBracket(symbol))) {
-                        return false;
-                    }
-                }
+        boolean wasBracket = false;
+        Deque<Character> stack = new ArrayDeque<>();
+        for (char ch : value.toCharArray()) {
+            if (!OPEN_BRACKETS.contains(ch) && !CLOSE_BRACKETS.contains(ch)) {
+                continue;
+            }
+            wasBracket = true;
+            if (OPEN_BRACKETS.contains(ch)) {
+                stack.push(ch);
+                continue;
+            }
+            if (stack.isEmpty() || stack.pop() != getOpenBracket(ch)) {
+                return false;
             }
         }
-        return needToClose.isEmpty();
+        return stack.isEmpty() && wasBracket;
     }
 
     private static Character getOpenBracket(Character bracket) {
@@ -51,4 +52,5 @@ public class ValidatorForParentheses {
         }
         return '{';
     }
+
 }
