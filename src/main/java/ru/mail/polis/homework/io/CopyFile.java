@@ -17,37 +17,37 @@ public class CopyFile {
      * В тесте для создания нужных файлов для первого запуска надо расскоментировать код в setUp()
      * 3 балла
      */
-    public static String copyFiles(String pathFrom, String pathTo) {
+    public static String copyFiles(String pathFrom, String pathTo) throws IOException {
         if (pathFrom == null || pathTo == null || pathFrom.equals(pathTo)) {
-           return null;
+            return null;
         }
 
-        try {
-            Path pathFromDirectory = Path.of(pathFrom);
-            Path pathToDirectory = Path.of(pathTo);
 
-            if (Files.notExists(pathFromDirectory)) {
-                return null;
-            }
+        Path pathFromDirectory = Path.of(pathFrom);
+        Path pathToDirectory = Path.of(pathTo);
 
-            if (Files.isRegularFile(pathFromDirectory)) {
-                copyFile(pathFromDirectory, pathToDirectory);
-                return null;
-            }
-
-            if (Files.notExists(pathToDirectory)) {
-                Files.createDirectories(pathToDirectory);
-            }
-
-            try (DirectoryStream<Path> paths = Files.newDirectoryStream(pathFromDirectory)) {
-                for (Path path : paths) {
-                    copyFiles(path.toString(), pathToDirectory.resolve(path.getFileName()).toString());
-                }
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (Files.notExists(pathFromDirectory)) {
+            return null;
         }
+
+        if (Files.isRegularFile(pathFromDirectory)) {
+            if (Files.notExists(pathToDirectory.getParent())) {
+                Files.createDirectories(pathToDirectory.getParent());
+            }
+            copyFile(pathFromDirectory, pathToDirectory);
+            return null;
+        }
+
+        if (Files.notExists(pathToDirectory)) {
+            Files.createDirectories(pathToDirectory);
+        }
+
+        try (DirectoryStream<Path> paths = Files.newDirectoryStream(pathFromDirectory)) {
+            for (Path path : paths) {
+                copyFiles(path.toString(), pathToDirectory.resolve(path.getFileName()).toString());
+            }
+        }
+
 
         return null;
     }
@@ -56,9 +56,7 @@ public class CopyFile {
         if (fromFile == null || toFile == null) {
             throw new IllegalArgumentException();
         }
-        if (Files.notExists(toFile.getParent())) {
-            Files.createDirectories(toFile.getParent());
-        }
+
         Files.createFile(toFile);
 
         int totalBytes = 0;
