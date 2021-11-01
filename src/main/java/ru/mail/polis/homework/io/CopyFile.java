@@ -26,7 +26,10 @@ public class CopyFile {
             return;
         }
         try {
-            Files.createDirectories(destination.getParent());
+            Path destinationParent = destination.getParent();
+            if (destinationParent != null) {
+                Files.createDirectories(destinationParent);
+            }
             deepDirectoryCopy(source, destination);
         } catch (IOException e) {
             e.printStackTrace();
