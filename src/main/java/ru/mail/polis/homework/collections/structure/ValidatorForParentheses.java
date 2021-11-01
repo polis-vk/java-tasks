@@ -22,16 +22,19 @@ public class ValidatorForParentheses {
         }
 
         ArrayDeque<Character> stack = new ArrayDeque<>();
+        boolean wereBrackets = false;
         for (int i = 0; i < value.length(); ++i) {
             if (isOpenBracket(value.charAt(i))) {
                 stack.push(value.charAt(i));
+                wereBrackets = true;
             } else if (isCloseBracket(value.charAt(i))) {
                 if (!isPairedBrackets(stack.pop(), value.charAt(i))) {
                     return false;
                 }
+                wereBrackets = true;
             }
         }
-        return stack.isEmpty();
+        return stack.isEmpty() && wereBrackets;
     }
 
     private static boolean isOpenBracket(char ch) {
