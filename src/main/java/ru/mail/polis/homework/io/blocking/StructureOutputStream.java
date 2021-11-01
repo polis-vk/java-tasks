@@ -12,9 +12,6 @@ import java.io.IOException;
  */
 public class StructureOutputStream extends FileOutputStream {
 
-    private final short BUFFER_SIZE = 8;
-    private byte[] writeBuffer = new byte[BUFFER_SIZE];
-
     public StructureOutputStream(File name) throws FileNotFoundException {
         super(name);
     }
@@ -59,6 +56,7 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     private void writeLong(long v) throws IOException {
+        byte[] writeBuffer = new byte[8];
         writeBuffer[0] = (byte) (v >>> 56);
         writeBuffer[1] = (byte) (v >>> 48);
         writeBuffer[2] = (byte) (v >>> 40);
