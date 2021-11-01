@@ -78,8 +78,8 @@ public final class CustomDictionary {
      * т.к. get - за О(1) и сортировка за O(nlogn)
      */
     public List<String> getSimilarWords(String value) {
-        List<String> valueList = relation.getOrDefault(sortedString(value), null);
-        return valueList != null ? valueList : Collections.emptyList();
+        List<String> originalStringList = relation.getOrDefault(sortedString(value), null);
+        return originalStringList != null ? originalStringList : Collections.emptyList();
     }
 
     /**
