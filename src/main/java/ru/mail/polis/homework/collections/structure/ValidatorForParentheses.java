@@ -1,7 +1,10 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,56 +21,36 @@ import java.util.stream.Stream;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
-    private static final Set<Character> opens = Stream.of('(', '{', '[', '<').collect(Collectors.toSet());
-    private static final Set<Character> closers = Stream.of(')', '}', ']', '>').collect(Collectors.toSet());
+    static HashMap<Character, Character> hm = new HashMap<>();
+
+    static {
+        hm.put('(', ')');
+        hm.put('{', '}');
+        hm.put('[', ']');
+        hm.put('<', '>');
+    }
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
         }
-        Character result;
-        MyStack<Character> stack = new MyStack<>();
+        boolean wasBracket = false;
+        Stack<Character> stack = new Stack<>();
         for (char bracketCandidate : value.toCharArray()) {
-            if (opens.contains(bracketCandidate)) {
+            if (hm.containsKey(bracketCandidate)) { //O(1)
                 stack.push(bracketCandidate);
-            } else if (closers.contains(bracketCandidate)) {
-                result = stack.pop();
-                if (result == null || (result == '[' && bracketCandidate != ']')
-                        || (result == '{' && bracketCandidate != '}')
-                        || (result == '(' && bracketCandidate != ')')
-                        || (result == '<' && bracketCandidate != '>')) {
-                    return false;
+                wasBracket = true;
+            } else {
+                for (Map.Entry<Character, Character> entry : hm.entrySet()) {//O(1)
+                    if (entry.getValue() == bracketCandidate) {
+                        if (entry.getKey() != stack.pop()) {
+                            return false;
+                        }
+                    }
                 }
             }
         }
-        return stack.size() == 0;
+        return stack.size() == 0 && wasBracket;
     }
 
-    private static class MyStack<T> {
-        private final LinkedList<T> stack;
-
-        public MyStack() {
-            this.stack = new LinkedList<>();
-        }
-
-        public void push(T el) {
-            stack.addFirst(el);
-        }
-
-        public T pop() {
-            return !stack.isEmpty() ? stack.removeFirst() : null;
-        }
-
-        public T back() {
-            return !stack.isEmpty() ? stack.getFirst() : null;
-        }
-
-        public int size() {
-            return stack.size();
-        }
-
-        public void clear() {
-            stack.clear();
-        }
-    }
 }

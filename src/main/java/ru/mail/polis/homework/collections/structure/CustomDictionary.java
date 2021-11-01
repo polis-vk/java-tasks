@@ -16,6 +16,8 @@ import java.util.Map;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
+    HashMap<Character, Integer> hm = new HashMap<>();
+
     private static class Node {
         private final Map<Character, Node> children = new LinkedHashMap<>();
         private final Node parent;
@@ -57,7 +59,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - [O(log(n))]
+     * Сложность - [O(log(m))]
      */
     public boolean add(String value) {
         if (value == null || value.isEmpty()) {
@@ -131,7 +133,7 @@ public class CustomDictionary {
      * сохраняем строки ["aaa", "aBa", "baa", "aaB"]
      * При поиске по строке "AAb" нам должен вернуться следующий
      * список: ["aBa","baa","aaB"]
-     *
+     * <p>
      * сохраняем строки ["aaa", "aAa", "a"]
      * поиск "aaaa"
      * результат: []
@@ -145,12 +147,13 @@ public class CustomDictionary {
      */
 
     public List<String> getSimilarWords(String value) {
-        HashMap<Character, Integer> hm = new HashMap<>();
         for (char letter : value.toLowerCase(Locale.ROOT).toCharArray()) {
             hm.computeIfPresent(letter, (k, v) -> v + 1);
             hm.putIfAbsent(letter, 1);
         }
-        return depthSearch(root, hm, new StringBuilder(), new ArrayList<>());
+        List<String> result = depthSearch(root, hm, new StringBuilder(), new ArrayList<>());
+        hm.clear();
+        return result;
     }
 
     private List<String> depthSearch(Node current, HashMap<Character, Integer> localHm, StringBuilder word, List<String> result) {
@@ -176,6 +179,7 @@ public class CustomDictionary {
         }
         return result;
     }
+
     /**
      * Колл-во хранимых строк.
      *

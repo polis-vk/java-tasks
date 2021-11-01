@@ -10,42 +10,31 @@ import java.util.Stack;
  * храниться в Stack. Отрабатывать метод должен за О(1).
  */
 public class MaxStack extends Stack<Integer> {
-    private int indexOfMax = 0;
+    Stack<Integer> maxIndices = new Stack<>();
 
     @Override
-    public Integer push(Integer item) {
-        super.push(item);
-        if (item > elementAt(indexOfMax)) {
-            indexOfMax = size() - 1;
+    public Integer push(Integer item) { //O(1)
+        if (maxIndices.isEmpty()) {
+            maxIndices.push(0);
+        } else if (item > elementAt(maxIndices.peek())) {
+            maxIndices.push(size());
         }
-        return item;
+        return super.push(item);
     }
 
     @Override
-    public synchronized Integer pop() {
-        if (indexOfMax == size() - 1) {
-            if (size() != 1) {
-                int max = elementAt(size() - 2);
-                int index = size() - 2;
-                for (int i = size() - 3; i >= 0; i--) {
-                    if (elementAt(i) > max) {
-                        max = elementAt(i);
-                        index = i;
-                    }
-                }
-                indexOfMax = index;
-            } else {
-                indexOfMax = 0;
-            }
+    public synchronized Integer pop() {//O(1)
+        if (maxIndices.size() > 0 && size() - 1 == maxIndices.peek()) {
+            maxIndices.pop();
         }
         return super.pop();
     }
 
-    public int getMaxValue() {
+    public int getMaxValue() {//O(1)
         if (size() == 0) {
             throw new EmptyStackException();
         }
-        return elementAt(indexOfMax);
+        return elementAt(maxIndices.peek());
     }
 
 }
