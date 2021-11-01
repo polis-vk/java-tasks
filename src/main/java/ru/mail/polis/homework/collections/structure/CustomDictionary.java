@@ -99,6 +99,6 @@ public class CustomDictionary {
      * Сложность - [O(1)]
      */
     public int size() {
-        return this.size;
+        return size;
     }
 }
