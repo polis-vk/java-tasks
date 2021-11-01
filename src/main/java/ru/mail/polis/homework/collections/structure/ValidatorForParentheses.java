@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.LinkedList;
 
 /**
  * Задание оценивается в 2 балла.
@@ -18,65 +17,38 @@ import java.util.Deque;
 public class ValidatorForParentheses {
 
     public static boolean validate(String value) {
-        if (value == null || value.length() == 0) {
+        if (value == null || value.isEmpty()) {
             return false;
         }
-        Deque<Character> stack = new ArrayDeque<>();
-        for (char ch : value.toCharArray()) {
-            if (!isBracket(ch)) {
-                continue;
+        return realizeValidate(value);
+    }
+
+    private static boolean realizeValidate(String value) {
+        LinkedList<Character> needToClose = new LinkedList<>();//last open bracket stack
+        for (Character symbol : value.toCharArray()) {
+            if (symbol.equals('(') || symbol.equals('[') || symbol.equals('{') || symbol.equals('<')) {
+                needToClose.add(symbol);
+            } else {
+                if (symbol.equals(')') || symbol.equals(']') || symbol.equals('}') || symbol.equals('>')) {
+                    if (needToClose.size() == 0 || !needToClose.pollLast().equals(getOpenBracket(symbol))) {
+                        return false;
+                    }
+                }
             }
-            if (isOpening(ch)) {
-                stack.push(ch);
-                continue;
-            }
-            if (stack.isEmpty() || stack.pop() != pair(ch)) {
-                return false;
-            }
         }
-        return stack.isEmpty();
+        return needToClose.isEmpty();
     }
 
-    private static boolean isBracket(char ch) {
-        return isClosing(ch) || isOpening(ch);
-    }
-
-    private static boolean isOpening(char bracket) {
-        switch (bracket) {
-            case '[':
-            case '{':
-            case '<':
-            case '(':
-                return true;
-            default:
-                return false;
+    private static Character getOpenBracket(Character bracket) {
+        if (bracket.equals(')')) {
+            return '(';
         }
-    }
-
-    private static char pair(char bracket) {
-        switch (bracket) {
-            case ']':
-                return '[';
-            case '}':
-                return '{';
-            case '>':
-                return '<';
-            case ')':
-                return '(';
-            default:
-                return '?';
+        if (bracket.equals(']')) {
+            return '[';
         }
-    }
-
-    private static boolean isClosing(char bracket) {
-        switch (bracket) {
-            case ']':
-            case '}':
-            case '>':
-            case ')':
-                return true;
-            default:
-                return false;
+        if (bracket.equals('>')) {
+            return '<';
         }
+        return '{';
     }
 }
