@@ -11,14 +11,12 @@ import java.util.List;
  */
 public class StructureInputStream extends FileInputStream {
 
-    public static final short bufferSize = 8;
-    private final byte[] readBuffer = new byte[bufferSize];
-    private final BufferedInputStream bufferedInputStream;
+    private final short BUFFER_SIZE = 8;
+    private byte[] readBuffer = new byte[BUFFER_SIZE];
+    private List<Structure> structureList = new ArrayList<>();
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
-        bufferedInputStream = new BufferedInputStream(this);
-        bufferedInputStream.mark((int) fileName.length());
     }
 
     /**
@@ -26,17 +24,22 @@ public class StructureInputStream extends FileInputStream {
      * Если структур в файле больше нет, то вернуть null
      */
     public Structure readStructure() throws IOException {
-        if (bufferedInputStream.available() == 0) {
+        if (super.available() == 0) {
             return null;
         }
-        return new Structure(
-                readLong(),
-                readString(),
-                readSubStructures(),
-                readDouble(),
-                readByte(),
-                readByte()
-        );
+        Structure structure = new Structure();
+        structure.setId(readLong());
+        structure.setName(readString());
+        structure.setSubStructures(readSubStructures());
+        structure.setCoeff(readFloat());
+        byte flagsAsByte = readByte();
+        structure.setFlag1((flagsAsByte / 8) % 2 == 1);
+        structure.setFlag2((flagsAsByte / 4) % 2 == 1);
+        structure.setFlag3((flagsAsByte / 2) % 2 == 1);
+        structure.setFlag4(flagsAsByte % 2 == 1);
+        structure.setParam(readByte());
+        structureList.add(structure);
+        return structure;
     }
 
     /**
@@ -44,44 +47,41 @@ public class StructureInputStream extends FileInputStream {
      * Если файл уже прочитан, но возвращается полный массив.
      */
     public Structure[] readStructures() throws IOException {
-        bufferedInputStream.reset();
-        List<Structure> structureList = new ArrayList<>();
-        while (bufferedInputStream.available() > 0) {
-            structureList.add(readStructure());
+        while (super.available() > 0) {
+            readStructure();
         }
-        Structure[] structures = new Structure[structureList.size()];
-        for (int i = 0; i < structureList.size(); i++) {
-            structures[i] = structureList.get(i);
-        }
-        return structures;
+        return structureList.toArray(new Structure[0]);
     }
 
     private boolean readBoolean() throws IOException {
-        int ch = bufferedInputStream.read();
-        if (ch < 0)
+        int ch = super.read();
+        if (ch < 0) {
             throw new EOFException();
+        }
         return (ch != 0);
     }
 
     private byte readByte() throws IOException {
-        int ch = bufferedInputStream.read();
-        if (ch < 0)
+        int ch = super.read();
+        if (ch < 0) {
             throw new EOFException();
+        }
         return (byte) (ch);
     }
 
     private int readInt() throws IOException {
-        int ch1 = bufferedInputStream.read();
-        int ch2 = bufferedInputStream.read();
-        int ch3 = bufferedInputStream.read();
-        int ch4 = bufferedInputStream.read();
-        if ((ch1 | ch2 | ch3 | ch4) < 0)
+        int ch1 = super.read();
+        int ch2 = super.read();
+        int ch3 = super.read();
+        int ch4 = super.read();
+        if ((ch1 | ch2 | ch3 | ch4) < 0) {
             throw new EOFException();
+        }
         return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
     }
 
     private long readLong() throws IOException {
-        if (bufferedInputStream.read(readBuffer) != readBuffer.length) {
+        if (super.read(readBuffer) != readBuffer.length) {
             throw new IOException();
         }
         return (((long) readBuffer[0] << 56) +
@@ -94,6 +94,10 @@ public class StructureInputStream extends FileInputStream {
                 ((readBuffer[7] & 255) << 0));
     }
 
+    private float readFloat() throws IOException {
+        return Float.intBitsToFloat(readInt());
+    }
+
     private double readDouble() throws IOException {
         return Double.longBitsToDouble(readLong());
     }
@@ -104,7 +108,7 @@ public class StructureInputStream extends FileInputStream {
             return null;
         }
         byte[] b = new byte[stringLength];
-        if (bufferedInputStream.read(b) != stringLength) {
+        if (super.read(b) != stringLength) {
             throw new IOException();
         }
         StringBuilder stringBuilder = new StringBuilder();

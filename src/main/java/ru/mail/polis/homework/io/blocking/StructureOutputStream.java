@@ -12,8 +12,8 @@ import java.io.IOException;
  */
 public class StructureOutputStream extends FileOutputStream {
 
-    public static final short bufferSize = 8;
-    private final byte[] writeBuffer = new byte[bufferSize];
+    private final short BUFFER_SIZE = 8;
+    private byte[] writeBuffer = new byte[BUFFER_SIZE];
 
     public StructureOutputStream(File name) throws FileNotFoundException {
         super(name);
@@ -26,8 +26,11 @@ public class StructureOutputStream extends FileOutputStream {
         writeLong(structure.getId());
         writeString(structure.getName());
         writeSubStructures(structure.getSubStructures());
-        writeDouble(structure.getCoeff());
-        writeByte(structure.getFlagsAsByte());
+        writeFloat((float) structure.getCoeff());
+        writeByte(Byte.parseByte(String.valueOf(boolToInt(structure.isFlag1()))
+                + boolToInt(structure.isFlag2())
+                + boolToInt(structure.isFlag3())
+                + boolToInt(structure.isFlag4()), 2));
         writeByte(structure.getParam());
     }
 
@@ -67,6 +70,10 @@ public class StructureOutputStream extends FileOutputStream {
         super.write(writeBuffer);
     }
 
+    private void writeFloat(float v) throws IOException {
+        writeInt(Float.floatToIntBits(v));
+    }
+
     private void writeDouble(double v) throws IOException {
         writeLong(Double.doubleToLongBits(v));
     }
@@ -96,5 +103,9 @@ public class StructureOutputStream extends FileOutputStream {
         for (SubStructure subStructure : subStructures) {
             writeSubStructure(subStructure);
         }
+    }
+
+    private int boolToInt(boolean b) {
+        return b ? 1 : 0;
     }
 }

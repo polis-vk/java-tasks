@@ -31,21 +31,6 @@ public class Structure {
     private boolean flag4;
     private byte param;
 
-    public Structure() {
-    }
-
-    public Structure(long id, String name, SubStructure[] subStructures, double coeff, byte flagsAsByte, byte param) {
-        this.id = id;
-        this.name = name;
-        this.subStructures = subStructures;
-        this.coeff = coeff;
-        this.flag1 = (flagsAsByte / 8) % 2 == 1;
-        this.flag2 = (flagsAsByte / 4) % 2 == 1;
-        this.flag3 = (flagsAsByte / 2) % 2 == 1;
-        this.flag4 = flagsAsByte % 2 == 1;
-        this.param = param;
-    }
-
     public long getId() {
         return id;
     }
@@ -118,10 +103,6 @@ public class Structure {
         this.param = param;
     }
 
-    public byte getFlagsAsByte() {
-        return Byte.parseByte(String.valueOf(boolToInt(flag1)) + boolToInt(flag2) + boolToInt(flag3) + boolToInt(flag4), 2);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -153,9 +134,5 @@ public class Structure {
                 ", flag4=" + flag4 +
                 ", param=" + param +
                 '}';
-    }
-
-    private int boolToInt(boolean b) {
-        return b ? 1 : 0;
     }
 }
