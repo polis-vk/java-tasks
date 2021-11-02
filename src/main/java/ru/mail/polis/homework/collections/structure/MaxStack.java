@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Comparator;
 import java.util.EmptyStackException;
-import java.util.PriorityQueue;
 import java.util.Stack;
 
 /**
@@ -13,17 +11,21 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
-    private final PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
+    private final Stack<Integer> maxStack = new Stack<>();
 
     @Override
     public synchronized Integer pop() {
-        maxHeap.remove(peek());
+        if (peek().equals(maxStack.peek())) {
+            maxStack.pop();
+        }
         return super.pop();
     }
 
     @Override
     public Integer push(Integer item) {
-        maxHeap.add(item);
+        if (maxStack.empty() || item.compareTo(maxStack.peek()) >= 0) {
+            maxStack.push(item);
+        }
         return super.push(item);
     }
 
@@ -31,7 +33,7 @@ public class MaxStack extends Stack<Integer> {
         if (isEmpty()) {
             throw new EmptyStackException();
         }
-        return maxHeap.peek();
+        return maxStack.peek();
     }
 
 }

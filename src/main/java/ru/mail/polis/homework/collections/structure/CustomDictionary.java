@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Задание оценивается в 4 балла.
@@ -14,16 +16,16 @@ import java.util.List;
  */
 public class CustomDictionary {
 
-    private final HashMap<HashMap<Character, Integer>, HashSet<String>> data = new HashMap<>();
+    private final Map<Map<Character, Integer>, Set<String>> data = new HashMap<>();
     private int size = 0;
 
     private static HashMap<Character, Integer> getHashMap(String value) {
-        HashMap<Character, Integer> characters = new HashMap<>();
+        Map<Character, Integer> characters = new HashMap<>();
         for (int i = 0; i < value.length(); i++) {
             char character = Character.toUpperCase(value.charAt(i));
             characters.put(character, characters.getOrDefault(character, 0) + 1);
         }
-        return characters;
+        return (HashMap<Character, Integer>) characters;
     }
 
     /**
@@ -38,8 +40,8 @@ public class CustomDictionary {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        HashMap<Character, Integer> parse = getHashMap(value);
-        HashSet<String> strings = data.get(parse);
+        Map<Character, Integer> parse = getHashMap(value);
+        Set<String> strings = data.get(parse);
         if (strings != null) {
             if (strings.add(value)) {
                 size++;
@@ -64,7 +66,7 @@ public class CustomDictionary {
      * Сложность - [o(k)], где k - длина строки
      */
     public boolean contains(String value) {
-        HashSet<String> strings = data.get(getHashMap(value));
+        Set<String> strings = data.get(getHashMap(value));
         if (strings != null) {
             return strings.contains(value);
         }
@@ -80,9 +82,13 @@ public class CustomDictionary {
      * Сложность - [o(k)]
      */
     public boolean remove(String value) {
-        HashSet<String> strings = data.get(getHashMap(value));
+        Map<Character, Integer> key = getHashMap(value);
+        Set<String> strings = data.get(key);
         if (strings != null) {
             if (strings.remove(value)) {
+                if (strings.isEmpty()) {
+                    data.remove(key);
+                }
                 size--;
                 return true;
             }
@@ -110,7 +116,7 @@ public class CustomDictionary {
      * Сложность - [o(k)]
      */
     public List<String> getSimilarWords(String value) {
-        HashSet<String> strings = data.get(getHashMap(value));
+        Set<String> strings = data.get(getHashMap(value));
         if (strings != null) {
             return new LinkedList<>(strings);
         }

@@ -3,6 +3,7 @@ package ru.mail.polis.homework.collections.structure;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Задание оценивается в 2 балла.
@@ -41,7 +42,7 @@ public class SearchInTheShredderList {
         if (value == null || value.isEmpty()) {
             return null;
         }
-        HashMap<String, Integer> additions = new HashMap<>();
+        Map<String, Integer> additions = new HashMap<>();
 
         int index = 0;
         for (String string : partStrings) {

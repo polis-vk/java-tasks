@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Задание оценивается в 2 балла.
@@ -15,47 +18,29 @@ import java.util.LinkedList;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
-    private static final char[] openingBrackets = new char[]{'[', '{', '<', '('};
-    private static final char[] closingBrackets = new char[]{']', '}', '>', ')'};
-
-    private static boolean isOpening(char character) {
-        for (char openingBracket : openingBrackets) {
-            if (openingBracket == character) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static int getClosing(char character) {
-        for (int i = 0; i < closingBrackets.length; i++) {
-            if (closingBrackets[i] == character) {
-                return i;
-            }
-        }
-        return -1;
-    }
+    private static final Map<Character, Character> brackets = Map.ofEntries(Map.entry('[', ']'),
+            Map.entry('(', ')'), Map.entry('{', '}'), Map.entry('<', '>'));
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
         }
         boolean wereBracketsPresent = false;
-        LinkedList<Character> brackets = new LinkedList<>();
-        for (int i = 0; i < value.length(); i++) {
-            if (isOpening(value.charAt(i))) {
+        Deque<Character> currBrackets = new LinkedList<>();
+        for (char character : value.toCharArray()) {
+            if (brackets.containsKey(character)) {
                 wereBracketsPresent = true;
-                brackets.addLast(value.charAt(i));
-            } else if (getClosing(value.charAt(i)) != -1) {
-                if (brackets.isEmpty() || brackets.getLast() != openingBrackets[getClosing(value.charAt(i))]) {
+                currBrackets.addLast(character);
+            } else if (brackets.containsValue(character)) {
+                if (currBrackets.isEmpty() || brackets.get(currBrackets.getLast()) != character) {
                     return false;
                 }
-                brackets.removeLast();
+                currBrackets.removeLast();
             }
         }
-        if(!wereBracketsPresent) {
+        if (!wereBracketsPresent) {
             return false;
         }
-        return brackets.isEmpty();
+        return currBrackets.isEmpty();
     }
 }
