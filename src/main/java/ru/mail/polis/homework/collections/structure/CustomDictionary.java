@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Задание оценивается в 4 балла.
@@ -14,7 +16,7 @@ import java.util.List;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private final HashMap<String, HashSet<String>> dictionary = new HashMap<>();
+    private final Map<String, Set<String>> dictionary = new HashMap<>();
     private int size;
 
     /**
@@ -62,7 +64,11 @@ public class CustomDictionary {
             return false;
         }
         size--;
-        return dictionary.get(key).remove(value);
+        final boolean removeFlag = dictionary.get(key).remove(value);
+        if (dictionary.get(key).size() == 0) {
+            dictionary.remove(key);
+        }
+        return removeFlag;
     }
 
     /**
@@ -83,7 +89,7 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - O(k * log(k)), n - размер словаря, k - длина строки value
+     * Сложность - O(k * log(k)), k - длина строки value
      */
     public List<String> getSimilarWords(String value) {
         String key = getLowerSortedString(value);

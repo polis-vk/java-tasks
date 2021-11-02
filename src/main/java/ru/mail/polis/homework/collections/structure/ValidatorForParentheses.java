@@ -16,7 +16,9 @@ import java.util.Map;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
-    private static final Map<Character, Character> brackets = Map.of('(', ')', '{', '}', '[', ']');
+    private static final Map<Character, Character> brackets = Map.of(
+            '(', ')', '{', '}', '[', ']', '<', '>'
+    );
 
     public static boolean validate(String value) {
         if (value == null || value.equals("")) {
