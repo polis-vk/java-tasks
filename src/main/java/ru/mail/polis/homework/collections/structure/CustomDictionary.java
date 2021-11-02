@@ -14,13 +14,7 @@ import java.util.Objects;
  */
 public class CustomDictionary {
 
-    private final Map<String, Words> dict;
-    private int size;
-
-    public CustomDictionary() {
-        this.dict = new HashMap<>();
-        this.size = 0;
-    }
+    private final Map<String, Words> dict = new HashMap<>();
 
     /**
      * Сохранить строку в структуру данных
@@ -33,12 +27,7 @@ public class CustomDictionary {
         if (value == null || value.equals("")) {
             throw new IllegalArgumentException();
         }
-        if (dict.putIfAbsent(value, new Words(value)) == null) {
-            size++;
-            return true;
-        } else {
-            return false;
-        }
+        return dict.putIfAbsent(value, new Words(value)) == null;
     }
 
     /**
@@ -64,7 +53,6 @@ public class CustomDictionary {
             return false;
         }
         dict.remove(value);
-        size--;
         return true;
     }
 
@@ -101,18 +89,17 @@ public class CustomDictionary {
      * Сложность - O(1)
      */
     public int size() {
-        return size;
+        return dict.size();
     }
 
     private static class Words {
 
-        private final Map<Character, Integer> words;
+        private final Map<Character, Integer> words = new HashMap<>();
 
         public Words(String str) {
-            String inputString = str.toLowerCase();
-            this.words = new HashMap<>();
-            for (int i = 0; i < inputString.length(); i++) {
-                char c = inputString.charAt(i);
+            String lowCaseString = str.toLowerCase();
+            for (int i = 0; i < lowCaseString.length(); i++) {
+                char c = lowCaseString.charAt(i);
                 if (words.containsKey(c)) {
                     words.put(c, words.get(c) + 1);
                 } else {

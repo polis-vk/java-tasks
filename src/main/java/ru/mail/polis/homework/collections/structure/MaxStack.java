@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
@@ -12,32 +11,32 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
-    private int max = Integer.MIN_VALUE;
+    private final Stack<Integer> stackOfMax = new Stack<>();
 
     @Override
     public Integer push(Integer item) {
-        if (item > max) {
-            max = item;
+        if (stackOfMax.size() == 0 || stackOfMax.peek() < item) {
+            stackOfMax.push(item);
+        } else {
+            stackOfMax.push(stackOfMax.peek());
         }
-        addElement(item);
-        return item;
-    }
-
-    public Integer getMaxValue() {
-        if (size() == 0) {
-            throw new EmptyStackException();
-        }
-        return max;
+        return super.push(item);
     }
 
     @Override
     public Integer pop() {
-        int elementToRemove = this.peek();
-        removeElementAt(size() - 1);
-        if (elementToRemove == max) {
-            max = Collections.max(this);
+        if (stackOfMax.empty()) {
+            throw new EmptyStackException();
         }
-        return elementToRemove;
+        stackOfMax.pop();
+        return super.pop();
     }
 
+    public Integer getMaxValue() {
+        if (stackOfMax.empty()) {
+            throw new EmptyStackException();
+        } else {
+            return stackOfMax.peek();
+        }
+    }
 }
