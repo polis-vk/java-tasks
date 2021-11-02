@@ -17,6 +17,8 @@ import java.util.Deque;
  */
 public class ValidatorForParentheses {
 
+    public static final char[] BRACKETS = new char[] {'(',')','[',']','{','}','<','>'};
+    
     public static boolean validate(String value) {
         if (value == null || value.length() < 2) {
             return false;
@@ -24,47 +26,24 @@ public class ValidatorForParentheses {
 
         boolean valid = false;
         Deque<Character> stack = new ArrayDeque<Character>();
-
+        
         for (int i = 0; i < value.length(); ++i) {
             final char ch = value.charAt(i);
-            switch (ch) {
-                case '(':
-                case '[':
-                case '{':
-                case '<': {
+            
+            // формально просто свернутый switch
+            // т.к. BRACKETS.length = const то метод работает за O(n)
+            for (int j = 0; j < BRACKETS.length; ++j) {
+                if (ch == BRACKETS[j]) {
                     valid = true;
-                    stack.push(ch);
-                    continue;
-                }
-                case ')': {
-                    if (!stack.isEmpty() && stack.pop() == '(') {
+                    if (j % 2 == 0) {
+                        stack.push(ch);
+                        continue;
+                    } else if (stack.pop() == BRACKETS[j - 1]){
                         continue;
                     }
-                    break;
-                }
-                case ']': {
-                    if (!stack.isEmpty() && stack.pop() == '[') {
-                        continue;
-                    }
-                    break;
-                }
-                case '}': {
-                    if (!stack.isEmpty() && stack.pop() == '{') {
-                        continue;
-                    }
-                    break;
-                }
-                case '>': {
-                    if (!stack.isEmpty() && stack.pop() == '<') {
-                        continue;
-                    }
-                    break;
-                }
-                default: {
-                    continue;
+                    return false;
                 }
             }
-            return false;
         }
         return valid && stack.isEmpty();
     }

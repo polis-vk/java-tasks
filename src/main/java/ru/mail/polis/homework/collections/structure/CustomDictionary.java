@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -14,34 +13,41 @@ import java.util.Map;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    
-    private Map<String, char[]> dictionary;
-    
-    public CustomDictionary() {
-        // char[] т.к. приходится сортировать массив, и преобразование обратно
-        // в String - лишний шаг
-        this.dictionary = new HashMap<String, char[]>();
-    }
+    // какой-то лютый способ
+    private Map<String, List<String>> dictionary = new HashMap<String, List<String>>();
 
+    private int size = 0;
+    
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - O(m + log(n) * (k / n)), m - количество символов в слове,
-     * n - количество символов в слове, k - количество коллизий
+     * Сложность - O(k + m), 
+     * k - количество элементов в словаре, имеющих тот же набор букв что и value,
+     * m - количество символов в слове
      */
     public boolean add(String value) {
         if (value == null || value.length() == 0) {
             throw new IllegalArgumentException();
         }
-        // проверка O(1 + log(n) * (k / n))
-        if (this.contains(value)) {
-            return false;
-        }
         // преобразование регистра, копирование и сортировка массива - O(m)
-        // вставка O(1 + log(n) * (k / n))
-        this.dictionary.put(value, countSort(value.toLowerCase().toCharArray()));
+        String charset = sortString(value);
+        // O(1)
+        List<String> list = this.dictionary.get(charset);
+        if (list != null) {
+            // O(k)
+            if (list.contains(value)) {
+                return false;
+            }
+        } else {
+            list = new ArrayList<String>();
+            // O(1)
+            this.dictionary.put(charset, list);
+        }
+        // O(1) амортизированная (ArrayList)
+        list.add(value);
+        ++this.size;
         return true;
     }
 
@@ -50,13 +56,21 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - O(1 + log(n) * (k / n)), n - количество элементов в словаре, k - количество коллизий
+     * Сложность - O(k + m), 
+     * k - количество элементов в словаре, имеющих тот же набор букв что и value,
+     * m - количество символов в слове
      */
     public boolean contains(String value) {
         if (value == null || value.length() == 0) {
             throw new IllegalArgumentException();
         }
-        return this.dictionary.containsKey(value);
+        // O(1) на get() и O(m) на sortString(), т.е. O(m)
+        List<String> list = this.dictionary.get(sortString(value));
+        if (list != null) {
+            // O(k) (ArrayList)
+            return list.contains(value);
+        }
+        return false;
     }
 
     /**
@@ -64,13 +78,22 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - O(1 + log(n) * (k / n)), n - количество символов в слове, k - количество коллизий
+     * Сложность - O(k + m), 
+     * k - количество элементов в словаре, имеющих тот же набор букв что и value,
+     * m - количество символов в слове
      */
     public boolean remove(String value) {
         if (value == null || value.length() == 0) {
             throw new IllegalArgumentException();
         }
-        return this.dictionary.remove(value) != null;
+        // O(1) на get() и O(m) на sortString(), т.е. O(m)
+        List<String> list = this.dictionary.get(sortString(value));
+        // O(k) (ArrayList)
+        if (list == null || !list.remove(value)) {
+            return false;
+        }
+        --this.size;
+        return true;
     }
 
     /**
@@ -90,32 +113,19 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - O(n * m), n - количество элементов в словаре, m - длина слова
+     * Сложность - O(m),
+     * m - количество символов в слове
      */
     public List<String> getSimilarWords(String value) {
         if (value == null || value.length() == 0) {
             throw new IllegalArgumentException();
         }
-        // преобразование регистра, копирование и сортировка массива - O(n)
-        char[] charset1 = countSort(value.toLowerCase().toCharArray());
-
-        // неизвестно что нужно внешним методам, поэтому не LinkedList
-        List<String> ret = new ArrayList();
-
-        // n сравнений
-        this.dictionary.forEach((String word, char[] charset2) -> {
-            // от 1 (в случае несовпадения длин) до m итераций, O(m)
-            if (Arrays.equals(charset1, charset2)) {
-                ret.add(word); // вставка в список O(1)
-            }
-        }); // итогово O(m * n)
-
-        // чтоб не возвращать пустые ArrayList'ы
-        if (ret.size() == 0) {
+        // O(1) на get() и O(m) на sortString(), т.е. O(m)
+        List<String> ret = this.dictionary.get(sortString(value));
+        if (ret == null) {
             return Collections.emptyList();
-        } else {
-            return ret;
         }
+        return ret;
     }
 
     /**
@@ -125,7 +135,12 @@ public class CustomDictionary {
      * Сложность - O(1)
      */
     public int size() {
-        return this.dictionary.size();
+        return this.size;
+    }
+    
+    // O(m), m - длина слова
+    private static String sortString(String toSort) {
+        return String.valueOf(countSort(toSort.toLowerCase().toCharArray()));
     }
 
     // сортировка счетом за O(n), n - длина массива

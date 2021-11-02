@@ -41,10 +41,18 @@ public class SearchInTheShredderList {
             return null;
         }
         int l = value.length();
-        int[] array = new int[2];
+        String sub1 = value.substring(0, l / 2);
+        String sub2 = value.substring(l / 2, l);
+        int[] array = new int[] {-1, -1};
         // пополам это на 2 половины по разности длин не более 1?
-        array[0] = this.partStrings.indexOf(value.substring(0, l / 2));
-        array[1] = this.partStrings.indexOf(value.substring(l / 2, l));
+        for (int i = 0; i < this.partStrings.size(); ++i) {
+            if (sub1.equals(this.partStrings.get(i))) {
+                array[0] = i;
+            }
+            if (sub2.equals(this.partStrings.get(i))) {
+                array[1] = i;
+            }
+        }
         if (array[0] == -1) { // если первой половины нет, то может быть есть вторая?
             array = new int[]{array[1]};
         } else if (array[1] == -1) { // если только второй половины нет, то передаем только первую

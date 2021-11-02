@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
@@ -10,47 +12,32 @@ import java.util.Stack;
  * храниться в Stack. Отрабатывать метод должен за О(1).
  */
 public class MaxStack extends Stack<Integer> {
-
-    private int max = Integer.MIN_VALUE;
+    
+    private final Deque<Integer> stack = new ArrayDeque<Integer>();
 
     @Override
     public Integer push(Integer item) {
-        Integer ret = super.push(item);
-        if (this.size() == 1) {
-            this.max = ret;
-        } else {
-            this.max = Math.max(this.max, ret);
+        if (this.size() == 0) {
+            this.stack.push(0);
+        } else if (item >= (Integer) this.elementData[this.stack.peek()]) {
+            this.stack.push(this.size());
         }
-        return ret;
+        return super.push(item);
     }
 
     @Override
     public synchronized Integer pop() {
-        Integer ret = super.pop();
-        if (this.size() != 0) {
-            if (this.size() == 1) {
-                this.max = this.firstElement();
-            } else {
-                // не знаю ситуаций, при которых извлечение из стека любого
-                // элемента вдруг добавит новый элемент, который больше максимального
-                if(this.max == ret) {
-                    // нужно искать новый максимум в таком случае
-                    this.max = this.stream().max((Integer i1, Integer i2) -> {
-                        return i1 - i2;
-                    }).get();
-                }
-            }
-        } else {
-            this.max = Integer.MIN_VALUE;
+        if (this.stack.size() > 0 && this.size() - 1 == this.stack.peek()) {
+            this.stack.pop();
         }
-        return ret;
+        return super.pop();
     }
 
     public Integer getMaxValue() {
         if (this.size() == 0) {
             throw new EmptyStackException();
         }
-        return max;
+        return (Integer) this.elementData[this.stack.peek()];
     }
 
 }
