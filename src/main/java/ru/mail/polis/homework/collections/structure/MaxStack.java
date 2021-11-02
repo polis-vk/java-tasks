@@ -30,7 +30,7 @@ public class MaxStack extends Stack<Integer> {
         return super.pop();
     }
 
-    public int getMaxValue() {//O(1)
+    public Integer getMaxValue() {//O(1)
         if (size() == 0) {
             throw new EmptyStackException();
         }

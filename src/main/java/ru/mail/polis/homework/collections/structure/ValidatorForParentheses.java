@@ -35,22 +35,18 @@ public class ValidatorForParentheses {
             return false;
         }
         boolean wasBracket = false;
-        Stack<Character> stack = new Stack<>();
+        Stack<Character> closersStack = new Stack<>();
         for (char bracketCandidate : value.toCharArray()) {
             if (hm.containsKey(bracketCandidate)) { //O(1)
-                stack.push(bracketCandidate);
+                closersStack.push(hm.get(bracketCandidate));
                 wasBracket = true;
             } else {
-                for (Map.Entry<Character, Character> entry : hm.entrySet()) {//O(1)
-                    if (entry.getValue() == bracketCandidate) {
-                        if (entry.getKey() != stack.pop()) {
-                            return false;
-                        }
-                    }
+                if (!closersStack.isEmpty() && closersStack.peek() == bracketCandidate) {
+                    closersStack.pop();
                 }
             }
         }
-        return stack.size() == 0 && wasBracket;
+        return closersStack.size() == 0 && wasBracket;
     }
 
 }
