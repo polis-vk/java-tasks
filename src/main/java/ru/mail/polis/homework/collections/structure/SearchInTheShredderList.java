@@ -15,10 +15,6 @@ import java.util.List;
 public class SearchInTheShredderList {
     private final List<String> partStrings;
 
-    public SearchInTheShredderList() {
-        partStrings = new ArrayList<>();
-    }
-
     public SearchInTheShredderList(List<String> partStrings) {
         this.partStrings = partStrings;
     }

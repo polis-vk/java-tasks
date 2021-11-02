@@ -9,30 +9,25 @@ import java.util.*;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private final HashMap<String, ArrayList<String>> stringDict;
+    private final HashMap<Integer, HashSet<String>> dictionary = new HashMap<>();
     private int size;
 
-    CustomDictionary() {
-        stringDict = new HashMap<>();
-        size = 0;
-    }
     /**
      * Проверяем, хранится ли такая строка уже у нас
      *
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - [O(nlogn), поскольку при получении ключа происходит сортировка символов. Эта операция самая затратная]
+     * Сложность - [O(m), m - количество букв в переданном слове]
      */
     public boolean contains(String value) {
         if (value == null) {
             return false;
         }
 
-        String key = getKey(value);
-
-        if (stringDict.containsKey(key)) {
-            return stringDict.get(key).contains(value);
+        int key = getKey(value);
+        if (dictionary.containsKey(key)) {
+            return dictionary.get(key).contains(value);
         }
 
         return false;
@@ -44,7 +39,7 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - [O(nlogn)]
+     * Сложность - [O(m)]
      */
     public boolean remove(String value) {
         if (value == null) {
@@ -55,8 +50,11 @@ public class CustomDictionary {
             return false;
         }
 
-        String key = getKey(value);
-        stringDict.get(key).remove(value);
+        int key = getKey(value);
+        dictionary.get(key).remove(value);
+        if(dictionary.get(key).isEmpty()) {
+            dictionary.remove(key);
+        }
 
         size--;
         return true;
@@ -68,24 +66,24 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - [O(nlogn)]
+     * Сложность - [O(m)]
      */
     public boolean add(String value) {
         if (value == null || value.equals("")) {
             throw new IllegalArgumentException();
         }
 
-        String key = getKey(value);
-        if (stringDict.containsKey(key)) {
-            if (!stringDict.get(key).contains(value)) {
-                stringDict.get(key).add(value);
+        int key = getKey(value);
+        if (dictionary.containsKey(key)) {
+            if (!dictionary.get(key).contains(value)) {
+                dictionary.get(key).add(value);
             } else {
                 return false;
             }
         } else {
-            ArrayList<String> arrForNewKey = new ArrayList<>();
-            arrForNewKey.add(value);
-            stringDict.put(key, arrForNewKey);
+            HashSet<String> setForNewKey = new HashSet<>();
+            setForNewKey.add(value);
+            dictionary.put(key, setForNewKey);
         }
         size++;
 
@@ -109,19 +107,19 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - [O(nlogn)]
+     * Сложность - [O(k), k - количество коллизий. Поскольку будет затрачено время при переносе слов из Set в List]
      */
     public List<String> getSimilarWords(String value) {
         if (value == null) {
             return Collections.emptyList();
         }
 
-        List<String> founded = stringDict.get(getKey(value));
-        if (founded == null) {
-            founded = Collections.emptyList();
+        HashSet<String> words = dictionary.get(getKey(value));
+        if(words != null) {
+            return new LinkedList<>(words);
         }
 
-        return founded;
+        return Collections.emptyList();
     }
 
     /**
@@ -135,11 +133,13 @@ public class CustomDictionary {
         return size;
     }
 
-    private static String getKey(String value) {
+    //Сложность - [O(m), m - количество букв]
+    private static int getKey(String value) {
         char[] key = (value.toLowerCase()).toCharArray();
-        Arrays.sort(key);
-        // Ключ является String, а не массивом char, потому что у массивов одинаковый hashCode,
-        // только если объекты те же, а не само содержимое
-        return Arrays.toString(key);
+        int res = 0;
+        for(char el : key) {
+            res += el;
+        }
+        return res * key.length;
     }
 }
