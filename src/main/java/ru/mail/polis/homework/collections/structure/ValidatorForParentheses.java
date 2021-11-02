@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.NoSuchElementException;
-import java.util.Stack;
-import java.util.LinkedList;
+import java.util.*;
 
 /**
  * Задание оценивается в 2 балла.
@@ -17,6 +15,14 @@ import java.util.LinkedList;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
+    private static Map<Character, Character> parenthesesPairs;
+    static {
+        parenthesesPairs = new HashMap<>();
+        parenthesesPairs.put('(', ')');
+        parenthesesPairs.put('{', '}');
+        parenthesesPairs.put('[', ']');
+        parenthesesPairs.put('<', '>');
+    }
     public static boolean validate(String value) {
         // For my point of view, empty string is CORRECT parentheses sequence,
         // but tests insist on opposite
@@ -26,43 +32,23 @@ public class ValidatorForParentheses {
         Stack<Character> openParentheses = new Stack<>();
         class Local {
             boolean isLastOpenIsReversedTo(Character c) {
-                if (openParentheses.isEmpty()) {
-                    return false;
-                }
                 Character topElement = openParentheses.peek();
-                switch (c) {
-                    case '}':
-                        return topElement == '{';
-                    case ')':
-                        return topElement == '(';
-                    case ']':
-                        return topElement == '[';
-                    case '>':
-                        return topElement == '<';
-                    default:
-                        throw new NoSuchElementException("This method accepts only parentheses");
-                }
+                assert parenthesesPairs.containsKey(c);
+
+                return parenthesesPairs.get(c) == topElement;
             }
         }
 
         boolean hasAtListOneOpenParenthesis = false;
         for (Character c : value.toCharArray()) {
-            switch (c) {
-                case '{':
-                case '[':
-                case '<':
-                case '(':
-                    hasAtListOneOpenParenthesis = true;
-                    openParentheses.push(c);
-                    break;
-                case '}':
-                case ')':
-                case ']':
-                case '>':
-                    if (!new Local().isLastOpenIsReversedTo(c)) {
-                        return false;
-                    }
-                    openParentheses.pop();
+            if (parenthesesPairs.containsKey(c)) {
+                hasAtListOneOpenParenthesis = true;
+                openParentheses.push(c);
+            } else if (parenthesesPairs.containsValue(c)) {
+                if (!new Local().isLastOpenIsReversedTo(c)) {
+                    return false;
+                }
+                openParentheses.pop();
             }
         }
         return hasAtListOneOpenParenthesis && openParentheses.size() == 0;

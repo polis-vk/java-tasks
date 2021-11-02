@@ -11,14 +11,9 @@ import java.util.Stack;
  * храниться в Stack. Отрабатывать метод должен за О(1).
  */
 public class MaxStack extends Stack<Integer> {
-    private Stack<Integer> maxValues;
+    private Stack<Integer> maxValues = new Stack<>();
     private Integer maxValue = Integer.MIN_VALUE;
 
-
-    MaxStack() {
-        super();
-        maxValues = new Stack<>();
-    }
 
     @Override
     public Integer push(Integer item) {

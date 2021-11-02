@@ -40,26 +40,6 @@ public class CustomDictionary extends HashSet<String> {
         return isInsertSucceed;
     }
 
-    private MultiSet<Character> getCharacterSet(String value) {
-        return new MultiSet<>(value.toLowerCase().chars()
-                .mapToObj(e -> (char) e).collect(Collectors.toList()));
-    }
-
-    private void addWordToSimilar(String value) {
-        MultiSet<Character> characterValueRepresentation = getCharacterSet(value);
-        if (!similarWords.containsKey(characterValueRepresentation)) {
-            similarWords.put(characterValueRepresentation, new ArrayList<>());
-        }
-        similarWords.get(characterValueRepresentation).add(value);
-    }
-
-    private void removeWordFromSimilar(String value) {
-        MultiSet<Character> characterValueRepresentation = getCharacterSet(value);
-        assert similarWords.containsKey(characterValueRepresentation);
-        boolean removeResult = similarWords.get(characterValueRepresentation).remove(value);
-        assert removeResult;
-    }
-
     /**
      * Проверяем, хранится ли такая строка уже у нас
      *
@@ -124,5 +104,23 @@ public class CustomDictionary extends HashSet<String> {
         return super.size();
     }
 
+    private MultiSet<Character> getCharacterSet(String value) {
+        return new MultiSet<>(value.toLowerCase().chars()
+                .mapToObj(e -> (char) e).collect(Collectors.toList()));
+    }
 
+    private void addWordToSimilar(String value) {
+        MultiSet<Character> characterValueRepresentation = getCharacterSet(value);
+        if (!similarWords.containsKey(characterValueRepresentation)) {
+            similarWords.put(characterValueRepresentation, new ArrayList<>());
+        }
+        similarWords.get(characterValueRepresentation).add(value);
+    }
+
+    private void removeWordFromSimilar(String value) {
+        MultiSet<Character> characterValueRepresentation = getCharacterSet(value);
+        assert similarWords.containsKey(characterValueRepresentation);
+        boolean removeResult = similarWords.get(characterValueRepresentation).remove(value);
+        assert removeResult;
+    }
 }

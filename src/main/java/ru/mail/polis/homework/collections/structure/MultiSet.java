@@ -2,10 +2,11 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class MultiSet<E> {
-    private HashMap<E, Integer> elementsCounter;
+    private Map<E, Integer> elementsCounter;
 
     public MultiSet(List<E> elements) {
         elementsCounter = new HashMap<>();
