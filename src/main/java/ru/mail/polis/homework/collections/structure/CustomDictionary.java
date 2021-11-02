@@ -21,7 +21,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - O(1)
+     * Сложность - O(n), где n - количество букв строке
      */
     public boolean add(String value) {
         if (value == null || value.equals("")) {
@@ -69,7 +69,7 @@ public class CustomDictionary {
      * @return - список слов, которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - O(n), где n - количество записей в словаре
+     * Сложность - O(n * m), где n - количество записей в словаре, где m - количество букв в строке, по которой ищем
      */
     public List<String> getSimilarWords(String value) {
         List<String> res = new ArrayList<>();
