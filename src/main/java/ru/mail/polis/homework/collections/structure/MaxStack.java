@@ -10,17 +10,21 @@ import java.util.Stack;
  * храниться в Stack. Отрабатывать метод должен за О(1).
  */
 public class MaxStack extends Stack<Integer> {
-    private int maxValue;
+    //Будем хранить в стеке не только сами элементы, а пары элемент + максимум
+    //Для хранения максимумов при каждом элементе будем использовать стек maxValues
+    private final Stack<Integer> maxValues = new Stack<>();
 
     MaxStack() {
         super();
-        maxValue = Integer.MIN_VALUE;
     }
 
     @Override
     public Integer push(Integer item) {
-        if (item > maxValue) {
-            maxValue = item;
+        if (maxValues.isEmpty() || item >= maxValues.peek()) {
+            maxValues.push(item);
+        }
+        else {
+            maxValues.push(maxValues.peek());
         }
 
         return super.push(item);
@@ -28,17 +32,8 @@ public class MaxStack extends Stack<Integer> {
 
     @Override
     public synchronized Integer pop() {
-        int deleted = super.pop();
-        if (deleted == maxValue) {
-            maxValue = Integer.MIN_VALUE;
-            for (int el : this) {
-                if (el > maxValue) {
-                    maxValue = el;
-                }
-            }
-        }
-
-        return deleted;
+        maxValues.pop();
+        return super.pop();
     }
 
     public Integer getMaxValue() {
@@ -46,7 +41,6 @@ public class MaxStack extends Stack<Integer> {
             throw new EmptyStackException();
         }
 
-        return maxValue;
+        return maxValues.peek();
     }
-
 }

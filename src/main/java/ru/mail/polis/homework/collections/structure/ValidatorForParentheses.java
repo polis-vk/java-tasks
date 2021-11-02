@@ -21,15 +21,15 @@ public class ValidatorForParentheses {
         }
 
         boolean valHasBracket = false;
-        Stack<BracketsType> brStack = new Stack<>();
+        Stack<Character> brStack = new Stack<>();
         for (char sym : value.toCharArray()) {
-            if (BracketsType.isOpenBracket(sym)) {
-                brStack.push(BracketsType.getType(sym));
+            if (isOpenBracket(sym)) {
+                brStack.push(sym);
                 if (!valHasBracket) {
                     valHasBracket = true;
                 }
-            } else if (BracketsType.isCloseBracket(sym)) {
-                if (!brStack.pop().equals(BracketsType.getType(sym))) {
+            } else if (isCloseBracket(sym)) {
+                if (!isFitted(brStack.pop(), sym)) {
                     return false;
                 }
             }
@@ -41,39 +41,16 @@ public class ValidatorForParentheses {
         return false;
     }
 
+    private static boolean isFitted(char opBr, char clBr) {
+        return (opBr == '[' && clBr == ']') || (opBr == '{' && clBr == '}')
+                || (opBr == '<' && clBr == '>') || (opBr == '(' && clBr == ')');
+    }
 
-    private enum BracketsType {
-        SQUARE,
-        FIGURE,
-        TRIANGLE,
-        ROUND,
-        NOT_OPEN_BRACKET;
+    private static boolean isOpenBracket(char bracket) {
+        return bracket == '[' || bracket == '{' || bracket == '<' || bracket == '(';
+    }
 
-        public static boolean isOpenBracket(char bracket) {
-            return bracket == '[' || bracket == '{' || bracket == '<' || bracket == '(';
-        }
-
-        public static boolean isCloseBracket(char bracket) {
-            return bracket == ']' || bracket == '}' || bracket == '>' || bracket == ')';
-        }
-
-        public static BracketsType getType(char bracket) {
-            switch (bracket) {
-                case '[':
-                case ']':
-                    return SQUARE;
-                case '{':
-                case '}':
-                    return FIGURE;
-                case '<':
-                case '>':
-                    return TRIANGLE;
-                case '(':
-                case ')':
-                    return ROUND;
-                default:
-                    return NOT_OPEN_BRACKET;
-            }
-        }
+    private static boolean isCloseBracket(char bracket) {
+        return bracket == ']' || bracket == '}' || bracket == '>' || bracket == ')';
     }
 }

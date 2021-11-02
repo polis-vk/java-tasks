@@ -13,7 +13,10 @@ import java.util.List;
  * Отрабатывать метод должен за О(n).
  */
 public class SearchInTheShredderList {
-    private final List<String> partStrings;
+    private List<String> partStrings = new ArrayList<>();
+
+    public SearchInTheShredderList() {
+    }
 
     public SearchInTheShredderList(List<String> partStrings) {
         this.partStrings = partStrings;
@@ -42,8 +45,23 @@ public class SearchInTheShredderList {
         String leftPart = value.substring(0, mid - 1);
         String rightPart = value.substring(mid - 1);
 
-        int leftPartInd = partStrings.indexOf(leftPart);
-        int rightPartInd = partStrings.indexOf(rightPart);
+        int leftPartInd = -1;
+        int rightPartInd = -1;
+
+        int ind = 0;
+        for (String el : partStrings) {
+            if (el.equals(leftPart)) {
+                leftPartInd = ind;
+            } else if (el.equals(rightPart)) {
+                rightPartInd = ind;
+            }
+
+            if (leftPartInd != -1 && rightPartInd != -1) {
+                break;
+            }
+
+            ind++;
+        }
 
         if (leftPartInd != -1 && rightPartInd != -1) {
             return new int[]{leftPartInd, rightPartInd};
