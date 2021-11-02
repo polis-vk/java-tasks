@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 public class CustomLinkedListTest {
 
     private static final int[] DEFAULT_ARRAY = new int[]{5, 3, 7, 4, 5};
-
+ 
     @Test
     public void testAdd() {
         CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
