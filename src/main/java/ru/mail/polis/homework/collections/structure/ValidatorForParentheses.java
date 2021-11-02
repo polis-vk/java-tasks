@@ -40,9 +40,11 @@ public class ValidatorForParentheses {
         if (value == null || value.isEmpty()) {
             return false;
         }
+        boolean wereBracketsPresent = false;
         LinkedList<Character> brackets = new LinkedList<>();
         for (int i = 0; i < value.length(); i++) {
             if (isOpening(value.charAt(i))) {
+                wereBracketsPresent = true;
                 brackets.addLast(value.charAt(i));
             } else if (getClosing(value.charAt(i)) != -1) {
                 if (brackets.isEmpty() || brackets.getLast() != openingBrackets[getClosing(value.charAt(i))]) {
@@ -50,6 +52,9 @@ public class ValidatorForParentheses {
                 }
                 brackets.removeLast();
             }
+        }
+        if(!wereBracketsPresent) {
+            return false;
         }
         return brackets.isEmpty();
     }
