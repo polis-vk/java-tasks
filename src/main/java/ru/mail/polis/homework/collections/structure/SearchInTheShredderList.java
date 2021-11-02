@@ -14,7 +14,7 @@ import java.util.*;
 public class SearchInTheShredderList {
     private final Map<String, Integer> mapOfStringToIndex = new HashMap<>();
     private final Map<Integer, String> maoOfIndexToString = new HashMap<>();
-    int size;
+    private int size;
 
     public SearchInTheShredderList(List<String> partStrings) {
         for (String value : partStrings) {

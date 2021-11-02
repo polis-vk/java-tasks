@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Map.entry;
 
@@ -36,7 +33,7 @@ public class ValidatorForParentheses {
         }
 
         boolean hasBrackets = false;
-        List<Character> stack = new LinkedList<>();
+        Deque<Character> stack = new ArrayDeque<>();
         Character chekBracket;
         for (char ch : value.toCharArray()) {
             if (PAIR_BRACKETS.containsKey(ch)) {
@@ -44,15 +41,15 @@ public class ValidatorForParentheses {
                 if (stack.size() == 0) {
                     return false;
                 }
-                chekBracket = stack.get(stack.size() - 1);
+                chekBracket = stack.peek();
                 if (chekBracket.equals(PAIR_BRACKETS.get(ch))) {
-                    stack.remove(stack.size() - 1);
+                    stack.pop();
                 } else {
                     return false;
                 }
             }
             if (SET_OF_OPEN_BRACKETS.contains(ch)) {
-                stack.add(ch);
+                stack.push(ch);
             }
         }
         return stack.size() == 0 && hasBrackets;
