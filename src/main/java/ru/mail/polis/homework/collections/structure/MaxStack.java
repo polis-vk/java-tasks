@@ -22,6 +22,7 @@ public class MaxStack extends Stack<Integer> {
         }
         return super.push(item);
     }
+
     @Override
     public Integer pop() {
         if (!maxStack.isEmpty() && maxStack.getLast().equals(super.peek())) {
