@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,42 +15,91 @@ import java.util.Set;
  */
 public class CustomDictionary {
 
-    Set<String> data = new LinkedHashSet<>();
+    private final HashMap<HashMap<Character, Integer>, LinkedHashSet<String>> values = new HashMap<>();
+    private int size = 0;
+
+    /**
+     * Получить отображение каждого символа на его количество в строке.
+     *
+     * @param value передаваемая строка
+     * @return отображение каждого символа на его количество в строке.
+     * <p>
+     * Сложность - [O(n) в среднем], где n - длина value.
+     */
+
+    private HashMap<Character, Integer> getFrequencyMap(String value) {
+        if (value == null || value.length() == 0) {
+            throw new IllegalArgumentException();
+        }
+        HashMap<Character, Integer> result = new HashMap<>();
+        for (Character character : value.toCharArray()) {
+            character = Character.toLowerCase(character);
+            result.put(character, result.containsKey(character) ? result.get(character) + 1 : 1);
+        }
+        return result;
+    }
 
     /**
      * Сохранить строку в структуру данных
+     *
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
-     *
-     * Сложность - [O(1) в среднем]
+     * <p>
+     * Сложность - [O(n) в среднем], где n - длина value.
      */
     public boolean add(String value) {
-        if (value == null || value.isEmpty()) {
-            throw new IllegalArgumentException("Empty or null string");
+        if (value == null || value.length() == 0) {
+            throw new IllegalArgumentException();
         }
-        return data.add(value);
+        HashMap<Character, Integer> frequencyMap = getFrequencyMap(value);
+        if (values.containsKey(frequencyMap)) {
+            if (values.get(frequencyMap).add(value)) {
+                size++;
+                return true;
+            }
+            return false;
+        }
+        LinkedHashSet<String> added = new LinkedHashSet<>();
+        added.add(value);
+        values.put(frequencyMap, added);
+        size++;
+        return true;
     }
 
     /**
      * Проверяем, хранится ли такая строка уже у нас
+     *
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
-     *
-     * Сложность - [O(1) в среднем]
+     * <p>
+     * Сложность - [O(n) в среднем], где n - длина value.
      */
     public boolean contains(String value) {
-        return data.contains(value);
+        HashMap<Character, Integer> frequencyMap = getFrequencyMap(value);
+        if (values.containsKey(frequencyMap)) {
+            return values.get(frequencyMap).contains(value);
+        }
+        return false;
     }
 
     /**
      * Удаляем сохраненную строку если она есть
+     *
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
-     *
-     * Сложность - [O(1) в среднем]
+     * <p>
+     * Сложность - [O(n) в среднем], где n - длина value.
      */
     public boolean remove(String value) {
-        return data.remove(value);
+        HashMap<Character, Integer> frequencyMap = getFrequencyMap(value);
+        if (!values.containsKey(frequencyMap)) {
+            return false;
+        }
+        if (values.get(frequencyMap).remove(value)) {
+            size--;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -62,7 +109,7 @@ public class CustomDictionary {
      * сохраняем строки ["aaa", "aBa", "baa", "aaB"]
      * При поиске по строке "AAb" нам должен вернуться следующий
      * список: ["aBa","baa","aaB"]
-     *
+     * <p>
      * сохраняем строки ["aaa", "aAa", "a"]
      * поиск "aaaa"
      * результат: []
@@ -71,37 +118,26 @@ public class CustomDictionary {
      *
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
-     *
-     * Сложность - [O(n) в среднем]
+     * <p>
+     * Сложность - [O(n*m)], где n - длина value, m - количество подходящих слов.
      */
     public List<String> getSimilarWords(String value) {
-        List<String> result = new LinkedList<>();
-
-        Set<Character> valueSet = new HashSet<>();
-        for (Character ch : value.toCharArray()) {
-            valueSet.add(Character.toLowerCase(ch));
+        HashMap<Character, Integer> frequencyMap = getFrequencyMap(value);
+        if (values.containsKey(frequencyMap)) {
+            return new LinkedList<>(values.get(frequencyMap));
         }
-
-        for (String s : data) {
-            Set<Character> strSet = new HashSet<>();
-            for (Character ch : s.toCharArray()) {
-                strSet.add(Character.toLowerCase(ch));
-            }
-            if (s.length() == value.length() && strSet.equals(valueSet)) {
-                result.add(s);
-            }
-        }
-        return result;
+        return new LinkedList<String>();
     }
 
     /**
      * Колл-во хранимых строк.
-     * @return - Колл-во хранимых строк.
      *
+     * @return - Колл-во хранимых строк.
+     * <p>
      * Сложность - [O(1)]
      */
     public int size() {
-        return data.size();
+        return size;
     }
 
 
