@@ -18,10 +18,10 @@ public class ValidatorForParentheses {
     private static Map<Character, Character> parenthesesPairs;
     static {
         parenthesesPairs = new HashMap<>();
-        parenthesesPairs.put('(', ')');
-        parenthesesPairs.put('{', '}');
-        parenthesesPairs.put('[', ']');
-        parenthesesPairs.put('<', '>');
+        parenthesesPairs.put(')', '(');
+        parenthesesPairs.put('}', '{');
+        parenthesesPairs.put(']', '[');
+        parenthesesPairs.put('>', '<');
     }
     public static boolean validate(String value) {
         // For my point of view, empty string is CORRECT parentheses sequence,
@@ -32,19 +32,22 @@ public class ValidatorForParentheses {
         Stack<Character> openParentheses = new Stack<>();
         class Local {
             boolean isLastOpenIsReversedTo(Character c) {
-                Character topElement = openParentheses.peek();
+                if (openParentheses.isEmpty()) {
+                    return false;
+                }
+                Character lastOpen = openParentheses.peek();
                 assert parenthesesPairs.containsKey(c);
 
-                return parenthesesPairs.get(c) == topElement;
+                return parenthesesPairs.get(c) == lastOpen;
             }
         }
 
         boolean hasAtListOneOpenParenthesis = false;
         for (Character c : value.toCharArray()) {
-            if (parenthesesPairs.containsKey(c)) {
+            if (parenthesesPairs.containsValue(c)) {
                 hasAtListOneOpenParenthesis = true;
                 openParentheses.push(c);
-            } else if (parenthesesPairs.containsValue(c)) {
+            } else if (parenthesesPairs.containsKey(c)) {
                 if (!new Local().isLastOpenIsReversedTo(c)) {
                     return false;
                 }

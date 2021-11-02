@@ -4,7 +4,9 @@ package ru.mail.polis.homework.collections.structure;
 import ru.mail.polis.homework.objects.RepeatingCharacters.Pair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Задание оценивается в 2 балла.
@@ -40,33 +42,29 @@ public class SearchInTheShredderList {
         if (value == null) {
             return null;
         }
-        ArrayList<Pair<Integer, Integer>> startStringsLengthsAndIndexes = new ArrayList<>();
-        ArrayList<Pair<Integer, Integer>> endStringsLengthsAndIndexes = new ArrayList<>();
-        int i = 0;
-        for (String s : partStrings) {
-            if (s.length() == value.length() / 2 || s.length() == value.length() / 2 + 1) {
-                if (value.startsWith(s)) {
-                    startStringsLengthsAndIndexes.add(new Pair<>(s.length(), i));
-                }
-                if (value.endsWith(s)) {
-                    endStringsLengthsAndIndexes.add(new Pair<>(s.length(), i));
-                }
-            }
 
+        Map<String, Integer> stringsToCompleteWord = new HashMap<>();
+
+        int i = 0;
+        int[] result = null;
+        for (String s : partStrings) {
+            if (stringsToCompleteWord.containsKey(s)) {
+                if (value.startsWith(s)) {
+                    result = new int[]{i, stringsToCompleteWord.get(s)};
+                } else {
+                    result = new int[]{stringsToCompleteWord.get(s), i};
+                }
+                break;
+            }
+            if (value.startsWith(s)) {
+                stringsToCompleteWord.put(value.substring(s.length()), i);
+            }
+            if (value.endsWith(s)) {
+                stringsToCompleteWord.put(value.substring(0, s.length() - 1), i);
+            }
             i++;
         }
 
-        int[] result = new int[2];
-        for (Pair<Integer, Integer> possibleStart : startStringsLengthsAndIndexes) {
-            for (Pair<Integer, Integer> possibleEnd : endStringsLengthsAndIndexes) {
-                if (possibleStart.getFirst() + possibleEnd.getFirst() == value.length()
-                        && !possibleStart.getFirst().equals(possibleEnd.getFirst())) {
-                    result[0] = possibleStart.getSecond();
-                    result[1] = possibleEnd.getSecond();
-                    return result;
-                }
-            }
-        }
-        return null;
+        return result;
     }
 }
