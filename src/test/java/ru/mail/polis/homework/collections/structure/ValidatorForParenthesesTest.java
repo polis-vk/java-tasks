@@ -19,7 +19,9 @@ public class ValidatorForParenthesesTest {
         assertFalse(ValidatorForParentheses.validate("Понедельники меня угнетают (("));
         assertFalse(ValidatorForParentheses.validate("([)]"));
         assertFalse(ValidatorForParentheses.validate("{{()<>}[]()<>"));
+        assertFalse(ValidatorForParentheses.validate(">>>"));
         assertFalse(ValidatorForParentheses.validate(""));
+        assertFalse(ValidatorForParentheses.validate("Понедельники меня угнетают"));
         assertFalse(ValidatorForParentheses.validate(null));
     }
 
