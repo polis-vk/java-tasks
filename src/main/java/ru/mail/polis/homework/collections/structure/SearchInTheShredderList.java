@@ -51,16 +51,14 @@ public class SearchInTheShredderList {
             if (partStrings.get(i).equals(first)) {
                 result[0] = i;
                 stop++;
-                if (stop == BREAK_POINT) {
-                    break;
-                }
             }
             if (partStrings.get(i).equals(second)) {
                 result[1] = i;
                 stop++;
-                if (stop == BREAK_POINT) {
-                    break;
-                }
+            }
+
+            if (stop == BREAK_POINT) {
+                break;
             }
         }
         return result[0] == 0 && result[1] == 0 ? null : result;

@@ -35,11 +35,11 @@ public class ValidatorForParentheses {
 
         for (int i = 0; i < value.length(); i++) {
             symbol = value.charAt(i);
-            if (symbol == '[' || symbol == '(' || symbol == '<' || symbol == '{') {
+            if (map.get(symbol) != null) {
                 stack.addLast(symbol);
             }
 
-            if (symbol == ']' || symbol == ')' || symbol == '>' || symbol == '}') {
+            if (map.containsValue(symbol)) {
                 if (stack.isEmpty()) {
                     return false;
                 }

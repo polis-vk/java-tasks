@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,7 +17,7 @@ import java.util.stream.Stream;
  */
 public class CustomDictionary {
 
-    private final HashMap<String, HashSet<String>> map = new HashMap<>();
+    private final Map<String, HashSet<String>> map = new HashMap<>();
     private int size = 0;
 
     /**
@@ -31,8 +32,7 @@ public class CustomDictionary {
             throw new IllegalArgumentException();
         }
 
-        String key = Stream.of(value.toLowerCase().split("")).sorted()
-                .collect(Collectors.joining());
+        String key = getKey(value);
         map.computeIfAbsent(key, k -> new HashSet<>());
         size++;
         return map.get(key).add(value);
@@ -46,8 +46,7 @@ public class CustomDictionary {
      * Сложность - [O(m * log(m)), m - длина value]
      */
     public boolean contains(String value) {
-        String key = Stream.of(value.toLowerCase().split("")).sorted()
-                .collect(Collectors.joining());
+        String key = getKey(value);
         if (map.get(key) == null) {
             return false;
         }
@@ -62,8 +61,7 @@ public class CustomDictionary {
      * Сложность - [O(m * log(m)), m - длина value]
      */
     public boolean remove(String value) {
-        String key = Stream.of(value.toLowerCase().split("")).sorted()
-                .collect(Collectors.joining());
+        String key = getKey(value);
         if (map.get(key) == null) {
             return false;
         }
@@ -87,8 +85,7 @@ public class CustomDictionary {
      * Сложность - [O(m * log(m)), m - длина value]
      */
     public List<String> getSimilarWords(String value) {
-        String key = Stream.of(value.toLowerCase().split("")).sorted()
-                .collect(Collectors.joining());
+        String key = getKey(value);
         return map.get(key) != null ? new ArrayList<>(map.get(key)) : Collections.emptyList();
     }
 
@@ -100,5 +97,10 @@ public class CustomDictionary {
      */
     public int size() {
         return size;
+    }
+
+    private String getKey(String value) {
+        return Stream.of(value.toLowerCase().split("")).sorted()
+                .collect(Collectors.joining());
     }
 }
