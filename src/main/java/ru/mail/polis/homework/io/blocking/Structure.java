@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * Нельзя изменять/удалять/добавлять поля.
  * Можно изменять/удалять СУЩЕСТВУЮЩИЕ методы.
- *
+ * <p>
  * Все остальное можно
  */
 public class Structure {
@@ -134,5 +134,50 @@ public class Structure {
                 ", flag4=" + flag4 +
                 ", param=" + param +
                 '}';
+    }
+
+    public static class Builder {
+        private final Structure structure;
+
+        public Builder() {
+            structure = new Structure();
+        }
+
+        public Builder setId(long id) {
+            structure.id = id;
+            return this;
+        }
+
+        public Builder setName(String name) {
+            structure.name = name;
+            return this;
+        }
+
+        public Builder setSubStructures(SubStructure[] subStructures) {
+            structure.subStructures = subStructures;
+            return this;
+        }
+
+        public Builder setCoeff(double coeff) {
+            structure.coeff = coeff;
+            return this;
+        }
+
+        public Builder setFlags(boolean[] flags) {
+            structure.flag1 = flags[0];
+            structure.flag2 = flags[1];
+            structure.flag3 = flags[2];
+            structure.flag4 = flags[3];
+            return this;
+        }
+
+        public Builder setParam(byte param) {
+            structure.param = param;
+            return this;
+        }
+
+        public Structure build() {
+            return structure;
+        }
     }
 }

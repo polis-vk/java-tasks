@@ -1,9 +1,12 @@
 package ru.mail.polis.homework.io.blocking;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Вам нужно реализовать StructureOutputStream, который умеет писать данные в файл.
@@ -20,12 +23,75 @@ public class StructureOutputStream extends FileOutputStream {
      * Метод должен вернуть записать прочитанную структуру.
      */
     public void write(Structure structure) throws IOException {
+        writeLong(structure.getId());
+        writeString(structure.getName());
+        writeSubStructures(structure.getSubStructures());
+        writeDouble(structure.getCoeff());
+        writeBoolean(structure.isFlag1());
+        writeBoolean(structure.isFlag2());
+        writeBoolean(structure.isFlag3());
+        writeBoolean(structure.isFlag4());
+        writeByte(structure.getParam());
     }
 
     /**
      * Метод должен вернуть записать массив прочитанных структур.
      */
     public void write(Structure[] structures) throws IOException {
+        for (Structure structure : structures) {
+            write(structure);
+        }
+    }
 
+    private void writeLong(long id) throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+        write(buffer.putLong(id).array());
+    }
+
+    private void writeInt(int meta) throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+        write(buffer.putInt(meta).array());
+    }
+
+    private void writeString(String name) throws IOException {
+        if (name == null) {
+            writeInt(0);
+            return;
+        }
+
+        writeInt(name.length());
+        write(name.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private void writeDouble(double coeff) throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(Double.BYTES);
+        write(buffer.putDouble(coeff).array());
+    }
+
+    private void writeBoolean(boolean flag) throws IOException {
+        write((byte) (flag ? 1 : 0));
+    }
+
+    private void writeByte(byte value) throws IOException {
+        write(value);
+    }
+
+    private void writeSubStructures(SubStructure[] structures) throws IOException {
+        if (structures == null) {
+            writeInt(0);
+            return;
+        }
+
+        writeInt(structures.length);
+        for (SubStructure structure : structures) {
+            writeSubStructure(structure);
+        }
+    }
+
+    private void writeSubStructure(SubStructure structure) throws IOException {
+        writeInt(structure.getId());
+        writeString(structure.getName());
+        writeBoolean(structure.isFlag());
+        writeDouble(structure.getScore());
     }
 }
