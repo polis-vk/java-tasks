@@ -43,10 +43,8 @@ public class MaxStack extends Stack<Integer> {
     }
 
     private void maxStackPop() {
-        if (maxStack.getLast().second == 1) {
+        if (maxStack.getLast().second-- == 1) {
             maxStack.removeLast();
-        } else {
-            maxStack.getLast().second--;
         }
     }
 
