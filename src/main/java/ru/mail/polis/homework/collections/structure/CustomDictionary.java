@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Задание оценивается в 4 балла.
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public class CustomDictionary {
 
-    private final HashMap<String, HashSet<String>> data = new HashMap<>();
+    private final Map<String, HashSet<String>> data = new HashMap<>();
     private int size = 0;
 
     /**

@@ -13,13 +13,13 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
-    private final Deque<Integer> maxStack = new LinkedList<>();
+    private final Deque<MutablePair> maxStack = new LinkedList<>();
 
     public Integer getMaxValue() {
         if (size() == 0) {
             throw new EmptyStackException();
         }
-        return maxStack.getLast();
+        return maxStack.getLast().first;
     }
 
     @Override
@@ -30,15 +30,33 @@ public class MaxStack extends Stack<Integer> {
 
     @Override
     public Integer pop() {
-        maxStack.removeLast();
+        maxStackPop();
         return super.pop();
     }
 
     private void insertMax(Integer value) {
-        if (maxStack.isEmpty() || maxStack.getLast() < value) {
-            maxStack.add(value);
+        if (maxStack.isEmpty() || maxStack.getLast().first < value) {
+            maxStack.add(new MutablePair(value, 1));
         } else {
-            maxStack.add(maxStack.getLast());
+            maxStack.getLast().second++;
+        }
+    }
+
+    private void maxStackPop() {
+        if (maxStack.getLast().second == 1) {
+            maxStack.removeLast();
+        } else {
+            maxStack.getLast().second--;
+        }
+    }
+
+    private static class MutablePair {
+        int first;
+        int second;
+
+        MutablePair(int first, int second) {
+            this.first = first;
+            this.second = second;
         }
     }
 
