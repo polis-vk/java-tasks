@@ -11,8 +11,6 @@ import java.util.stream.Stream;
 
 public class CopyFile {
 
-    private static boolean start = true;
-
     /**
      * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
      * Файлы копировать ручками через стримы. Исползуем новый API
@@ -26,21 +24,18 @@ public class CopyFile {
 
         Path source = Path.of(pathFrom);
         Path distance = Path.of(pathTo);
-        if (start) {
-            start = false;
-            try {
-                Files.createDirectories(distance.getParent());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (!Files.isDirectory(source)) {
-            copyFile(source, distance);
-            return;
+        try {
+            Files.createDirectories(distance.getParent());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(source)) {
+            if (!Files.isDirectory(source)) {
+                copyFile(source, distance);
+                return;
+            }
+
             Files.createDirectories(distance);
             for (Path path : stream) {
                 copyFiles(path.toString(), distance.resolve(path.getFileName()).toString());
