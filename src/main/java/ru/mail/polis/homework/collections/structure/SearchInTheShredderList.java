@@ -44,8 +44,18 @@ public class SearchInTheShredderList {
         tmpParts[0] = value.substring(0, value.length() / 2);
         tmpParts[1] = value.substring(value.length() / 2);
         int[] indexes = new int[2];
-        indexes[0] = partStrings.indexOf(tmpParts[0]);
-        indexes[1] = partStrings.indexOf(tmpParts[1]);
-        return indexes[0] != -1 && indexes[1] != -1 ? indexes : null;
+        indexes[0] = -1;
+        indexes[1] = -1;
+        for (int i = 0; i < partStrings.size(); i++) {
+            if (partStrings.get(i).equals(tmpParts[0])) {
+                indexes[0] = i;
+            } else if (partStrings.get(i).equals(tmpParts[1])) {
+                indexes[1] = i;
+            }
+            if (indexes[0] != -1 && indexes[1] != -1) {
+                return indexes;
+            }
+        }
+        return null;
     }
 }
