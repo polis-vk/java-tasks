@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -19,8 +16,8 @@ import java.util.Stack;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
-    private static final Set<Character> leftBrackets = new HashSet<>(Arrays.asList('[', '{', '<', '('));
-    private static final Set<Character> rightBrackets = new HashSet<>(Arrays.asList(']', '}', '>', ')'));
+    private static final Map<Character, Character> bracketsMap = Map.of('[', ']', '{', '}',
+            '<', '>', '(', ')');
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
@@ -29,11 +26,11 @@ public class ValidatorForParentheses {
         Stack<Character> stack = new Stack<>();
         boolean hasNoBrackets = true;
         for (Character c : value.toCharArray()) {
-            if (leftBrackets.contains(c)) {
+            if (bracketsMap.containsKey(c)) {
                 stack.push(c);
                 hasNoBrackets = false;
-            } else if (rightBrackets.contains(c)) {
-                if (stack.empty() || !stack.peek().equals(getLeftBracket(c))) {
+            } else if (bracketsMap.containsValue(c)) {
+                if (stack.empty() || c != bracketsMap.get(stack.peek())) {
                     return false;
                 }
                 hasNoBrackets = false;
@@ -41,19 +38,5 @@ public class ValidatorForParentheses {
             }
         }
         return stack.empty() && !hasNoBrackets;
-    }
-
-    private static char getLeftBracket(char c) {
-        switch (c) {
-            case ']':
-                return '[';
-            case '}':
-                return '{';
-            case '>':
-                return '<';
-            case ')':
-                return '(';
-        }
-        return ' ';
     }
 }
