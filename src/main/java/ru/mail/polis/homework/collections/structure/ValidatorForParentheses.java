@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Задание оценивается в 2 балла.
@@ -10,32 +10,49 @@ import java.util.Deque;
  * В строке помимо скобок могут содержаться и другие символы.
  * Скобки могут быть: [],{},<>,()
  * Примеры:
- *      "(-b + (x)^2)/(2+4)" - true
- *      "Понедельники меня угнетают ((" - false
- *
+ * "(-b + (x)^2)/(2+4)" - true
+ * "Понедельники меня угнетают ((" - false
+ * <p>
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
 
-    public static final String OPEN_BRACKETS = "([{<";
-    public static final String CLOSING_BRACKETS = ")]}>";
+    private static final Map<Character, Character> brackets = mapOf(
+            entry('(', ')'),
+            entry('[', ']'),
+            entry('{', '}'),
+            entry('<', '>')
+    );
 
     public static boolean validate(String value) {
-        if (value == null || value.isEmpty()) {
+        boolean hasParentheses = false;
+        if (value == null) {
             return false;
         }
         Deque<Character> stack = new ArrayDeque<>();
         for (char token : value.toCharArray()) {
-            if (OPEN_BRACKETS.indexOf(token) != -1) {
+            if (brackets.containsKey(token)) {
                 stack.push(token);
+                hasParentheses = true;
                 continue;
             }
 
-            final int index = CLOSING_BRACKETS.indexOf(token);
-            if (index != -1 && (stack.isEmpty() || index != OPEN_BRACKETS.indexOf(stack.pop()))) {
+            if (brackets.containsValue(token) && (stack.isEmpty() || brackets.get(stack.pop()) != token)) {
                 return false;
             }
         }
-        return stack.isEmpty();
+        return stack.isEmpty() && hasParentheses;
+    }
+
+    private static <K, V> Map.Entry<K, V> entry(K key, V value) {
+        return new AbstractMap.SimpleImmutableEntry<>(key, value);
+    }
+
+    @SafeVarargs
+    private static <K, V> Map<K, V> mapOf(Map.Entry<K, V>... entries) {
+        return Collections.unmodifiableMap(
+                Arrays.stream(entries)
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
+        );
     }
 }
