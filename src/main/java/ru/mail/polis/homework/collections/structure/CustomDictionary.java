@@ -18,9 +18,9 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - O(m log(m) + log(n)),
+     * Сложность - O(m log(m) + j),
      * где m - длина строки,
-     * n - this.size()
+     * j - количество коллизий
      */
     public boolean add(String value) {
         if (value == null) {
@@ -44,9 +44,9 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - O(m + log(n)),
+     * Сложность - O(m + j),
      * где m - длина строки,
-     * n - this.size()
+     * j - количество коллизий
      */
     public boolean contains(String value) {
         return index.containsKey(value);
@@ -58,9 +58,9 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - O(m + log(n)),
+     * Сложность - O(m + j),
      * где m - длина строки,
-     * n - this.size()
+     * j - количество коллизий
      */
     public boolean remove(String value) {
         final Set<String> set = index.remove(value);
@@ -88,9 +88,9 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - O(m log(m) + log(k) + p),
+     * Сложность - O(m log(m) + j + p),
      * где m - длина строки,
-     * k - количество различных (по набору букв) строк,
+     * j - количество коллизий,
      * p - количество строк с тем же набором букв, что и value
      */
     public List<String> getSimilarWords(String value) {
