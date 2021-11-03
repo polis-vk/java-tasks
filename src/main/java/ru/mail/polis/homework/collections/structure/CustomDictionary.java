@@ -63,12 +63,11 @@ public class CustomDictionary {
      * n - this.size()
      */
     public boolean remove(String value) {
-        final Set<String> set = index.get(value);
+        final Set<String> set = index.remove(value);
         if (set == null) {
             return false;
         }
         set.remove(value);
-        index.remove(value);
         return true;
     }
 
