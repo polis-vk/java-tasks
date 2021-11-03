@@ -28,31 +28,19 @@ public class StructureInputStream extends FileInputStream {
      * Если структур в файле больше нет, то вернуть null
      */
     public Structure readStructure() throws IOException {
-        byte[] buffer = new byte[8];
-        if (super.read(buffer) == -1) {
+        if (super.available() == 0) {
             return null;
         }
 
         Structure structure = new Structure();
-        structure.setId(readLong(buffer));
+        structure.setId(readLong());
         structure.setName(readString());
 
-        int length = readInt();
-        if (length == -1) {
-            structure.setSubStructures(null);
-        } else {
-            SubStructure[] subStructures = new SubStructure[length];
-            for (int i = 0; i < length; i++) {
-                subStructures[i] = readSubStructure();
-            }
-            structure.setSubStructures(subStructures);
-        }
+        structure.setSubStructures(readSubStructures());
 
-        structure.setCoeff((float) readDouble());
-        structure.setFlag1(readBoolean());
-        structure.setFlag2(readBoolean());
-        structure.setFlag3(readBoolean());
-        structure.setFlag4(readBoolean());
+        structure.setCoeff(readDouble());
+
+        setFlags(structure);
         structure.setParam((byte) super.read());
 
         if (n >= structures.length) {
@@ -74,7 +62,9 @@ public class StructureInputStream extends FileInputStream {
         return structures;
     }
 
-    private long readLong(byte[] buffer) {
+    private long readLong() throws IOException {
+        byte[] buffer = new byte[8];
+        super.read(buffer);
         return (((long) buffer[0] << 56) +
                 ((long) (buffer[1] & 255) << 48) +
                 ((long) (buffer[2] & 255) << 40) +
@@ -105,29 +95,62 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private double readDouble() throws IOException {
-        byte[] buffer = new byte[8];
-        super.read(buffer);
-        return Double.longBitsToDouble(readLong(buffer));
+        return Double.longBitsToDouble(readLong());
     }
 
     private boolean readBoolean() throws IOException {
         int ch = super.read();
-        if (ch < 0)
+        if (ch < 0) {
             throw new EOFException();
+        }
         return (ch != 0);
     }
+
+    private void setFlags(Structure structure) throws IOException {
+        int ch = super.read();
+        if (ch < 0) {
+            throw new EOFException();
+        }
+        structure.setFlag1(byteToBoolean((byte) (ch >> 3)));
+        structure.setFlag2(byteToBoolean((byte) (ch >> 2)));
+        structure.setFlag3(byteToBoolean((byte) (ch >> 1)));
+        structure.setFlag4(byteToBoolean((byte) ch));
+    }
+
+    private boolean byteToBoolean(byte b) {
+        return (b % 2) != 0;
+    }
+
 
     private int readInt() throws IOException {
         int ch1 = super.read();
         int ch2 = super.read();
         int ch3 = super.read();
         int ch4 = super.read();
-        if ((ch1 | ch2 | ch3 | ch4) < 0)
+        if ((ch1 | ch2 | ch3 | ch4) < 0) {
             throw new EOFException();
+        }
         return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4));
     }
 
     private SubStructure readSubStructure() throws IOException {
         return new SubStructure(readInt(), readString(), readBoolean(), readDouble());
+    }
+
+    private SubStructure[] readSubStructures() throws IOException {
+        SubStructure[] result;
+        int length = readInt();
+
+        if (length == -1) {
+            result = null;
+        } else {
+            SubStructure[] subStructures = new SubStructure[length];
+            for (int i = 0; i < length; i++) {
+                subStructures[i] = readSubStructure();
+            }
+            result = subStructures;
+        }
+
+        return result;
     }
 }

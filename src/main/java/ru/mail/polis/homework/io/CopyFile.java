@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.io;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -10,6 +9,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+
+import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.FileVisitResult.TERMINATE;
 
 public class CopyFile {
 
@@ -28,16 +30,8 @@ public class CopyFile {
 
         Path to = Paths.get(pathTo);
 
-        if (!Files.isDirectory(from)) {
-            Path targetDir = to.resolve(from.relativize(from)).getParent();
-            if (!Files.exists(targetDir)) {
-                try {
-                    Files.createDirectories(targetDir);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return "error";
-                }
-            }
+        if (!Files.isDirectory(from) && !checkDirectory(to.resolve(from.relativize(from)).getParent())) {
+            return "error";
         }
 
         try {
@@ -46,38 +40,17 @@ public class CopyFile {
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                     try (InputStream input = Files.newInputStream(file);
                          OutputStream output = Files.newOutputStream(to.resolve(from.relativize(file)))) {
-
-                        byte[] buffer = new byte[1024];
-                        int blockSize = input.read(buffer);
-
-                        while (blockSize > 0) {
-                            output.write(buffer, 0, blockSize);
-                            blockSize = input.read(buffer);
-                        }
-
-                        output.flush();
+                        copyFileContent(input, output);
                     } catch (IOException e) {
                         e.printStackTrace();
-                        return FileVisitResult.TERMINATE;
+                        return TERMINATE;
                     }
-                    return FileVisitResult.CONTINUE;
+                    return CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                    if (!Files.exists(dir)) {
-                        return FileVisitResult.CONTINUE;
-                    }
-                    Path targetDir = to.resolve(from.relativize(dir));
-                    if (!Files.exists(targetDir)) {
-                        try {
-                            Files.createDirectories(targetDir);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return FileVisitResult.TERMINATE;
-                        }
-                    }
-                    return FileVisitResult.CONTINUE;
+                    return checkDirectory(to.resolve(from.relativize(dir))) ? CONTINUE : TERMINATE;
                 }
             });
         } catch (IOException e) {
@@ -85,5 +58,28 @@ public class CopyFile {
             return "error";
         }
         return "done";
+    }
+
+    private static void copyFileContent(InputStream input, OutputStream output) throws IOException {
+        byte[] buffer = new byte[1024];
+        int blockSize;
+
+        while ((blockSize = input.read(buffer)) > 0) {
+            output.write(buffer, 0, blockSize);
+        }
+
+        output.flush();
+    }
+
+    private static boolean checkDirectory(Path dir) {
+        if (!Files.exists(dir)) {
+            try {
+                Files.createDirectories(dir);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
     }
 }

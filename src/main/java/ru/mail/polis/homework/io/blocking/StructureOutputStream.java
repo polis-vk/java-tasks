@@ -11,9 +11,11 @@ import java.io.IOException;
  * 3 балла
  */
 public class StructureOutputStream extends FileOutputStream {
+    private int size = 0;
 
     public StructureOutputStream(File name) throws FileNotFoundException {
         super(name);
+        //writeSize();
     }
 
     /**
@@ -23,21 +25,11 @@ public class StructureOutputStream extends FileOutputStream {
         writeLong(structure.getId());
         writeString(structure.getName());
 
-        SubStructure[] subStructures = structure.getSubStructures();
-        if (subStructures == null) {
-            writeInt(-1);
-        } else {
-            writeInt(subStructures.length);
-            for (SubStructure subStructure : subStructures) {
-                writeSubStricture(subStructure);
-            }
-        }
+        writeSubStructures(structure.getSubStructures());
 
         writeDouble(structure.getCoeff());
-        writeBoolean(structure.isFlag1());
-        writeBoolean(structure.isFlag2());
-        writeBoolean(structure.isFlag3());
-        writeBoolean(structure.isFlag4());
+        writeFlags(structure.isFlag1(), structure.isFlag2(), structure.isFlag3(), structure.isFlag4());
+
         super.write(structure.getParam());
     }
 
@@ -69,7 +61,7 @@ public class StructureOutputStream extends FileOutputStream {
             return;
         }
         writeInt(s.length());
-        for (int i = 0 ; i < s.length() ; i++) {
+        for (int i = 0; i < s.length(); i++) {
             int v = s.charAt(i);
             super.write((byte) (v >>> 8));
             super.write((byte) (v));
@@ -84,6 +76,14 @@ public class StructureOutputStream extends FileOutputStream {
         super.write(b ? 1 : 0);
     }
 
+    private void writeFlags(boolean f1, boolean f2, boolean f3, boolean f4) throws IOException {
+        super.write((byte) ((boolToNumber(f1) << 3) + (boolToNumber(f2) << 2) + (boolToNumber(f3) << 1) + boolToNumber(f4)));
+    }
+
+    private byte boolToNumber(boolean b) {
+        return (byte) (b ? 1 : 0);
+    }
+
     private void writeInt(int i) throws IOException {
         byte[] buffer = new byte[4];
         buffer[0] = (byte) (i >>> 24);
@@ -93,10 +93,21 @@ public class StructureOutputStream extends FileOutputStream {
         super.write(buffer);
     }
 
-    private void writeSubStricture(SubStructure subStructure) throws IOException {
+    private void writeSubStructure(SubStructure subStructure) throws IOException {
         writeInt(subStructure.getId());
         writeString(subStructure.getName());
         writeBoolean(subStructure.isFlag());
         writeDouble(subStructure.getScore());
+    }
+
+    private void writeSubStructures(SubStructure[] subStructures) throws IOException {
+        if (subStructures == null) {
+            writeInt(-1);
+        } else {
+            writeInt(subStructures.length);
+            for (SubStructure subStructure : subStructures) {
+                writeSubStructure(subStructure);
+            }
+        }
     }
 }
