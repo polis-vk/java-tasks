@@ -40,17 +40,19 @@ public class ValidatorForParentheses {
             return false;
         }
 
+        boolean hasBrackets = false;
         Deque<Character> stack = new ArrayDeque<>();
         for (int i = 0; i < value.length(); i++) {
             char current = value.charAt(i);
             if (isOpeningBracket(current)) {
+                hasBrackets = true;
                 stack.push(current);
             } else if (isCLosingBracket(current) && !checkClosingBracket(current, stack)) {
                 return false;
             }
         }
 
-        return stack.isEmpty();
+        return hasBrackets && stack.isEmpty();
     }
 
     private static boolean isOpeningBracket(char c) {
