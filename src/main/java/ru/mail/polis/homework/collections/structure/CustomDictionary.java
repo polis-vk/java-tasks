@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Задание оценивается в 4 балла.
@@ -11,15 +10,33 @@ import java.util.List;
  */
 public class CustomDictionary {
 
+    private Map<Letters, Set<String>> dict = new HashMap<>();
+
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - []
+     * Сложность - O(value.size() + dict.size())
      */
     public boolean add(String value) {
-        return false;
+        if (value == null) {
+            throw new IllegalArgumentException("Can't add null");
+        }
+        if (value.isEmpty()) {
+            throw new IllegalArgumentException("Can't add empty line");
+        }
+        Letters letters = new Letters(value);
+
+        boolean result;
+        Set<String> strings;
+        if (!dict.containsKey(letters)) {
+            result = (strings = new HashSet<>()).add(value);
+        } else {
+            result = (strings = dict.get(letters)).add(value);
+        }
+        dict.put(letters, strings);
+        return result;
     }
 
     /**
@@ -27,10 +44,19 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - []
+     * Сложность - O(value.size())
      */
     public boolean contains(String value) {
-        return false;
+        if (value == null) {
+            return false;
+        }
+
+        Letters letters = new Letters(value);
+        if (!dict.containsKey(letters)) {
+            return false;
+        } else {
+            return dict.get(letters).contains(value);
+        }
     }
 
     /**
@@ -38,10 +64,19 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - []
+     * Сложность - O(value.size())
      */
     public boolean remove(String value) {
-        return false;
+        if (value == null) {
+            return false;
+        }
+
+        Letters letters = new Letters(value);
+        if (!dict.containsKey(letters)) {
+            return false;
+        } else {
+            return dict.get(letters).remove(value);
+        }
     }
 
     /**
@@ -61,21 +96,64 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - []
+     * Сложность - O(value.size() + dict.size())
      */
     public List<String> getSimilarWords(String value) {
-        return Collections.emptyList();
+        if (value == null) {
+            return Collections.emptyList();
+        }
+
+        List<String> result = new LinkedList<>();
+        Letters letters = new Letters(value);
+
+        if (dict.containsKey(letters)) {
+            result.addAll(dict.get(letters));
+        }
+
+        return result;
     }
 
     /**
      * Колл-во хранимых строк.
      * @return - Колл-во хранимых строк.
      *
-     * Сложность - []
+     * Сложность - O(dict.size())
      */
     public int size() {
-        return 0;
+        if (dict.isEmpty()) {
+            return 0;
+        }
+
+        int size = 0;
+        for (Set<String> s : dict.values()) {
+            size += s.size();
+        }
+        return size;
     }
 
+    private class Letters {
+        private static final int LETTERS_COUNT = 26;
+        private int[] letters = new int[LETTERS_COUNT];
 
+        Letters(String value) {
+            for(int i = 0; i < value.length(); ++i) {
+                if (Character.isLetter(value.charAt(i))) {
+                    letters[Character.toLowerCase(value.charAt(i)) - 'a']++;
+                }
+            }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o.getClass() != Letters.class) {
+                return false;
+            }
+            return this.hashCode() == ((Letters) o).hashCode();
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(letters);
+        }
+    }
 }
