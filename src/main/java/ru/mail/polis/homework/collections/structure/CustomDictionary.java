@@ -9,12 +9,8 @@ import java.util.*;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-
-    HashSet<String> customDictionary;
-
-    public CustomDictionary() {
-        customDictionary = new HashSet<>();
-    }
+    private final Map<Map<Character, Integer>, Set<String>> customDictionary = new HashMap<>();
+    private int dictSize = 0;
 
     /**
      * Сохранить строку в структуру данных
@@ -22,13 +18,27 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - [O(1)]
+     * Сложность - [O(m), где m - длина переданной строки]
      */
     public boolean add(String value) {
         if (value == null || value.equals("")) {
             throw new IllegalArgumentException();
         }
-        return customDictionary.add(value);
+        Map<Character, Integer> valueMap = newHashMap(value);
+        Set<String> allCollectedStrings = customDictionary.get(valueMap);
+        if (allCollectedStrings != null) {
+            if (allCollectedStrings.add(value)) {
+                dictSize++;
+                return true;
+            }
+        } else {
+            allCollectedStrings = new HashSet<>();
+            allCollectedStrings.add(value);
+            customDictionary.put(valueMap, allCollectedStrings);
+            dictSize++;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -37,10 +47,14 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - [O(n)]
+     * Сложность - [O(m)]
      */
     public boolean contains(String value) {
-        return customDictionary.contains(value);
+        Set<String> allCollectedStrings = customDictionary.get(newHashMap(value));
+        if (allCollectedStrings != null) {
+            return allCollectedStrings.contains(value);
+        }
+        return false;
     }
 
     /**
@@ -49,10 +63,21 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - [O(n)]
+     * Сложность - [O(m)]
      */
     public boolean remove(String value) {
-        return customDictionary.remove(value);
+        Map<Character, Integer> valueMap = newHashMap(value);
+        Set<String> allCollectedStrings = customDictionary.get(valueMap);
+        if (allCollectedStrings != null) {
+            if (allCollectedStrings.remove(value)) {
+                if (allCollectedStrings.isEmpty()) {
+                    customDictionary.remove(valueMap);
+                }
+                dictSize--;
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -68,33 +93,14 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - [O(m * n), где m - длина переданной строки, n - количество сохраненных строк]
+     * Сложность - [O(m)]
      */
     public List<String> getSimilarWords(String value) {
-        List<String> result = new ArrayList<>();
-        if (value == null || value.equals("") || size() == 0) {
-            return result;
+        Set<String> allCollectedStrings = customDictionary.get(newHashMap(value));
+        if (allCollectedStrings != null) {
+            return new LinkedList<>(allCollectedStrings);
         }
-        for (String word : customDictionary) {
-            if (isSimilarWords(word, value)) {
-                result.add(word);
-            }
-        }
-        return result;
-    }
-
-    private boolean isSimilarWords(String a, String b) {
-        StringBuilder buffer = new StringBuilder(a.toLowerCase());
-        boolean isSimilarSymbol = true;
-        for (int i = 0; i < b.length(); i++) {
-            int currentIndex = buffer.indexOf(String.valueOf(b.toLowerCase().charAt(i)));
-            if (currentIndex == -1) {
-                isSimilarSymbol = false;
-                break;
-            }
-            buffer.deleteCharAt(currentIndex);
-        }
-        return buffer.length() == 0 && isSimilarSymbol;
+        return Collections.emptyList();
     }
 
     /**
@@ -105,6 +111,15 @@ public class CustomDictionary {
      * Сложность - [O(1)]
      */
     public int size() {
-        return customDictionary.size();
+        return dictSize;
+    }
+
+    private HashMap<Character, Integer> newHashMap(String value) {
+        HashMap<Character, Integer> allChars = new HashMap<>();
+        for (int i = 0; i < value.length(); i++) {
+            char c = Character.toLowerCase(value.charAt(i));
+            allChars.put(c, allChars.getOrDefault(c, 0) + 1);
+        }
+        return allChars;
     }
 }

@@ -15,8 +15,7 @@ import java.util.List;
 public class SearchInTheShredderList {
     private List<String> partStrings = new ArrayList<>();
 
-    public SearchInTheShredderList() {
-    }
+    public SearchInTheShredderList() {}
 
     public SearchInTheShredderList(List<String> partStrings) {
         this.partStrings = partStrings;
@@ -51,10 +50,10 @@ public class SearchInTheShredderList {
             } else if (partStrings.get(i).equals(value2)) {
                 twoParts[1] = i;
             }
-            if (twoParts[0] != -1 && twoParts[1] != -1) {
-                return twoParts;
-            }
         }
-        return null;
+        if (twoParts[0] == -1 || twoParts[1] == -1) {
+            return null;
+        }
+        return twoParts;
     }
 }

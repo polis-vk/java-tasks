@@ -15,6 +15,8 @@ import java.util.Stack;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
+    private static final String OPEN_BRACKETS = "[({<";
+    private static final String CLOSE_BRACKETS = "])}>";
 
     public static boolean validate(String value) {
         if (value == null || value.equals("")) {
@@ -22,38 +24,21 @@ public class ValidatorForParentheses {
         }
         Stack<Character> stack = new Stack<>();
         for (char c : value.toCharArray()) {
-            switch (c) {
-                case '[':
-                case '(':
-                case '{':
-                case '<':
-                    stack.push(c);
-                    break;
-                case ']':
-                case ')':
-                case '}':
-                case '>':
-                    if (isPair(stack.peek(), c)) {
-                        stack.pop();
-                    } else {
-                        break;
-                    }
+            if (OPEN_BRACKETS.indexOf(c) != -1) {
+                stack.push(c);
+            }
+            else if (CLOSE_BRACKETS.indexOf(c) != -1) {
+                if (isPair(stack.peek(), c)) {
+                    stack.pop();
+                }
             }
         }
         return stack.isEmpty();
     }
 
     private static boolean isPair(char a, char b) {
-        switch (a) {
-            case '[':
-                return b == ']';
-            case '{':
-                return b == '}';
-            case '(':
-                return b == ')';
-            case '<':
-                return b == '>';
-        }
-        return false;
+        int posA = OPEN_BRACKETS.indexOf(a);
+        int posB = CLOSE_BRACKETS.indexOf(b);
+        return posA != -1 && posA == posB;
     }
 }

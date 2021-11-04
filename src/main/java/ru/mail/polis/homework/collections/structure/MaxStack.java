@@ -10,40 +10,28 @@ import java.util.Stack;
  * храниться в Stack. Отрабатывать метод должен за О(1).
  */
 public class MaxStack extends Stack<Integer> {
-    public int maxValue;
-
-    public MaxStack() {
-        maxValue = Integer.MIN_VALUE;
-    }
+    private final Stack<Integer> maxValue = new Stack<>();
 
     @Override
     public Integer push(Integer value) {
-        if (value != null) {
-            maxValue = Math.max(value, maxValue);
-            addElement(value);
+        if (value != null && (maxValue.isEmpty() || value >= getMaxValue())) {
+            maxValue.push(value);
         }
-        return value;
+        return super.push(value);
     }
 
     @Override
     public Integer pop() {
-        int obj = peek();
-        int len = size();
-        removeElementAt(len - 1);
-        if (obj == maxValue) {
-            maxValue = Integer.MIN_VALUE;
-            for (int num : this) {
-                maxValue = Math.max(num, maxValue);
-            }
+        if (super.peek().equals(getMaxValue())) {
+            maxValue.pop();
         }
-        return obj;
+        return super.pop();
     }
 
     public Integer getMaxValue() {
         if (size() == 0) {
             throw new EmptyStackException();
-        } else {
-            return maxValue;
         }
+        return maxValue.peek();
     }
 }
