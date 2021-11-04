@@ -47,7 +47,6 @@ public class CopyFile {
                     try (InputStream in = Files.newInputStream(file);
                          OutputStream out = Files.newOutputStream(concatenated)) {
                         out.write(in.readAllBytes());
-                        out.write(123);
                     }
                     return FileVisitResult.CONTINUE;
                 }
