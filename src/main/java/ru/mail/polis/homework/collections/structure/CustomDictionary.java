@@ -129,12 +129,3 @@ public class CustomDictionary {
         return Arrays.toString(arr);
     }
 }
-
-class Main {
-    public static void main(String[] args) {
-        CustomDictionary cd = new CustomDictionary();
-        String test = "Test";
-        cd.add(test);
-        boolean res = cd.contains(test);
-    }
-}
