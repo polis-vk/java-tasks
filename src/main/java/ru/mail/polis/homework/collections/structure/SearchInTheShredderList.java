@@ -53,6 +53,6 @@ public class SearchInTheShredderList {
                 break;
             }
         }
-        return ((indexes[0] != -1) && (indexes[1] != -1)) ? null : indexes;
+        return ((indexes[0] == -1) && (indexes[1] == -1)) ? null : indexes;
     }
 }

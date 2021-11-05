@@ -54,7 +54,8 @@ public class CustomDictionary {
      */
     public boolean contains(String value) {
         String key = getSortedKey(value);
-        return map.get(key).contains(value);
+        Set<String> set = map.get(key);
+        return set != null && set.contains(value);
     }
 
     /**
@@ -100,6 +101,8 @@ public class CustomDictionary {
      * строка.
      *
      * Сложность - [k*log(k) + O(n)]
+     * O(n) - потому что конструктор ArrayList из Set будет вызывать Arrays.copyOf
+     * Который в худшем случает и переберет все строки которые у нас хранятся
      */
     public List<String> getSimilarWords(String value) {
         String key = getSortedKey(value);
