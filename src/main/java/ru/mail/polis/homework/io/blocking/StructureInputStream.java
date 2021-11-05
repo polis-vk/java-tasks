@@ -122,7 +122,7 @@ public class StructureInputStream extends FileInputStream {
         int ch4 = super.read();
         if ((ch1 | ch2 | ch3 | ch4) < 0)
             throw new EOFException();
-        return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4));
+        return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + ch4);
     }
 
     private char readChar() throws IOException {

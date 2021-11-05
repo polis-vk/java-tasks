@@ -85,15 +85,15 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     private void writeInt(int value) throws IOException {
-        super.write((value >>> 24) & 255);
-        super.write((value >>> 16) & 255);
-        super.write((value >>> 8) & 255);
-        super.write(value & 255);
+        super.write(value >>> 24);
+        super.write(value >>> 16);
+        super.write(value >>> 8);
+        super.write(value);
     }
 
     private void writeChar(char value) throws IOException {
-        super.write((value >>> 8) & 255);
-        super.write(value & 255);
+        super.write(value >>> 8);
+        super.write(value);
     }
 
     private void writeSubStructure(SubStructure value) throws IOException {
