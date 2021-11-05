@@ -29,7 +29,7 @@ public class ValidatorForParentheses {
                     valHasBracket = true;
                 }
             } else if (isCloseBracket(sym)) {
-                if (!isFitted(brStack.pop(), sym)) {
+                if (!brStack.isEmpty() && !isFitted(brStack.pop(), sym)) {
                     return false;
                 }
             }
