@@ -13,6 +13,7 @@ import java.util.*;
  */
 public class SearchInTheShredderList {
 
+    private static final int NO_POSITION = -1;
     private List<String> partStrings = new ArrayList<>();
 
     public SearchInTheShredderList() {
@@ -43,31 +44,22 @@ public class SearchInTheShredderList {
             return null;
         }
 
-        int count = 0;
-        int[] positions = new int[partStrings.size()];
+        int[] positions = new int[]{NO_POSITION, NO_POSITION};
         for (int i = 0; i < partStrings.size(); ++i) {
-            if (value.contains(partStrings.get(i))) {
-                positions[count++] = i;
+            String curPartOfWord = partStrings.get(i);
+            if (value.startsWith(curPartOfWord)) {
+                positions[0] = i;
+            } else if (value.endsWith(curPartOfWord)) {
+                positions[1] = i;
+            }
+            if (positions[0] != NO_POSITION && positions[1] != NO_POSITION) {
+                break;
             }
         }
-        if (count > 1) {
-            int[] realPositions = new int[count];
-            int _count = 0;
-            int begin = 0;
-            boolean isNeededToExitFromCycle = false;
-            for (int i = 0; i < count && !isNeededToExitFromCycle; ++i) {
-                for (int j = 0; j < count && !isNeededToExitFromCycle; ++j) {
-                    if (value.startsWith(partStrings.get(positions[j]), begin)) {
-                        realPositions[_count++] = positions[j];
-                        begin += partStrings.get(positions[j]).length();
-                    }
-                    if (begin >= value.length()) {
-                        isNeededToExitFromCycle = true;
-                    }
-                }
-            }
-            return realPositions;
+        if (positions[0] != NO_POSITION && positions[1] != NO_POSITION) {
+            return positions;
+        } else {
+            return null;
         }
-        return null;
     }
 }

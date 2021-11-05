@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Задание оценивается в 2 балла.
@@ -16,6 +18,16 @@ import java.util.ArrayDeque;
  */
 public class ValidatorForParentheses {
 
+    private static final Map<Character, Character> brackets = new HashMap<Character, Character>()
+    {
+            {
+                put('(', ')');
+                put('[', ']');
+                put('{', '}');
+                put('<', '>');
+            }
+    };
+
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
@@ -24,30 +36,29 @@ public class ValidatorForParentheses {
         ArrayDeque<Character> stack = new ArrayDeque<>();
         boolean wereBrackets = false;
         for (int i = 0; i < value.length(); ++i) {
-            if (isOpenBracket(value.charAt(i))) {
-                stack.push(value.charAt(i));
+            char curCh = value.charAt(i);
+            if (isOpenBracket(curCh)) {
+                stack.push(curCh);
                 wereBrackets = true;
-            } else if (isCloseBracket(value.charAt(i))) {
-                if (!isPairedBrackets(stack.pop(), value.charAt(i))) {
+            } else if (isCloseBracket(curCh)) {
+                if (stack.isEmpty() || !isPairedBrackets(stack.pop(), curCh)) {
                     return false;
                 }
-                wereBrackets = true;
             }
         }
         return stack.isEmpty() && wereBrackets;
     }
 
     private static boolean isOpenBracket(char ch) {
-        return ch == '(' || ch == '[' || ch == '{' || ch == '<';
+        return brackets.containsKey(ch);
     }
 
     private static boolean isCloseBracket(char ch) {
-        return ch == ')' || ch == ']' || ch == '}' || ch == '>';
+        return brackets.containsValue(ch);
     }
 
     private static boolean isPairedBrackets(char ch1, char ch2) {
-        return (ch1 == '(' && ch2 == ')') || (ch1 == '[' && ch2 == ']')
-                || (ch1 == '{' && ch2 == '}') || (ch1 == '<' && ch2 == '>');
+        return brackets.get(ch1) == ch2;
     }
 
 }

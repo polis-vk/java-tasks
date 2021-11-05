@@ -17,7 +17,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - [O(n)]
+     * Сложность - [O(1)]
      */
     public boolean add(String value) {
         checkForValueValidity(value);
@@ -29,7 +29,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - [O(n)]
+     * Сложность - [O(1)]
      */
     public boolean contains(String value) {
         checkForValueValidity(value);
@@ -41,7 +41,7 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - [O(n)]
+     * Сложность - [O(1)]
      */
     public boolean remove(String value) {
         checkForValueValidity(value);
@@ -65,20 +65,18 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - [O(k)(составление главной карты)
-     *   + n*(O(k) + O(m))(для каждого из n слов создаём карту и сверяемся с главной картой)
-     *   |-> O(max(k, m)*n), где k - среднее кол-во символов в строке, а m - средний размер карты
-     *   (не можем гарантировать, что k,m < n, и уж тем более что k,m << n]
+     * Сложность - [O(1)(составление главной карты)
+     *   + n*(O(1) + O(1))(для каждого из n слов создаём карту и сверяемся с главной картой) => O(n)]
      */
     public List<String> getSimilarWords(String value) {
         checkForValueValidity(value);
-        HashMap<String, Integer> valueMap = createTableOfFrequency(value);
+        Map<String, Integer> valueMap = createTableOfFrequency(value);
 
         // Для каждого слова составляем специальную табличку
         // и сопоставляем с уже созданной табличкой valueMap
         List<String> matched = new ArrayList<>();
         for (String curWord: words) {
-            HashMap<String, Integer> curMap = createTableOfFrequency(curWord);
+            Map<String, Integer> curMap = createTableOfFrequency(curWord);
             if (areEqualTables(valueMap, curMap)) {
                 matched.add(curWord);
             }
@@ -86,10 +84,21 @@ public class CustomDictionary {
         return matched;
     }
 
+    /**
+     * Колл-во хранимых строк.
+     * @return - Колл-во хранимых строк.
+     *
+     * Сложность - [O(1)]
+     */
+    public int size() {
+        return words.size();
+    }
+
     // Сопоставляем псевдо-регулярное выражение [tT] с частотой его встречаемости
-    // Сложность - [2*k |-> O(k), где k - кол-во символов в строке]
-    private HashMap<String /*regexForLetter*/, Integer /*frequency*/> createTableOfFrequency(String s) {
-        HashMap<String, Integer> sMap = new HashMap<String, Integer>();
+    // Сложность - [2*k => O(k), где k - кол-во символов в строке
+    // в сущности, в нашей задаче - O(1)]
+    private Map<String /*regexForLetter*/, Integer /*frequency*/> createTableOfFrequency(String s) {
+        Map<String, Integer> sMap = new HashMap<String, Integer>();
         for (int i = 0; i < s.length(); ++i) {
             String curCh = s.substring(i, i + 1);
             String curRegex = curCh.toLowerCase(Locale.ROOT) + curCh.toUpperCase(Locale.ROOT);
@@ -99,7 +108,8 @@ public class CustomDictionary {
     }
 
     // Сложность - O(1)|O(m), где m = lhs.size()
-    private boolean areEqualTables(HashMap<String, Integer> lhs, HashMap<String, Integer> rhs) {
+    // в сущности, в нашей задаче - O(1)
+    private boolean areEqualTables(Map<String, Integer> lhs, Map<String, Integer> rhs) {
         boolean isMatched = true;
         if (lhs.size() != rhs.size()) {
             isMatched = false;
@@ -112,16 +122,6 @@ public class CustomDictionary {
             }
         }
         return isMatched;
-    }
-
-    /**
-     * Колл-во хранимых строк.
-     * @return - Колл-во хранимых строк.
-     *
-     * Сложность - [O(1)]
-     */
-    public int size() {
-        return words.size();
     }
 
     private static void checkForValueValidity(String value) {
