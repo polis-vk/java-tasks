@@ -24,7 +24,7 @@ public class Structure {
     private String name;
     //Nullable
     private SubStructure[] subStructures;
-    private double coeff;
+    private float coeff; // поменял на float, т. к. в setter'e и тестах float
     private boolean flag1;
     private boolean flag2;
     private boolean flag3;
@@ -55,9 +55,9 @@ public class Structure {
         this.subStructures = subStructures;
     }
 
-    public double getCoeff() {
+    public float getCoeff() {
         return coeff;
-    }
+    } // поменял на float, т. к. в setter'e и тестах float
 
     public void setCoeff(float coeff) {
         this.coeff = coeff;
