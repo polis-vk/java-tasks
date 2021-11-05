@@ -9,7 +9,7 @@ import java.util.*;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private final Set<String> words = new HashSet<>();
+    private final Map<String, Set<Character>> words = new HashMap<>();
 
     /**
      * Сохранить строку в структуру данных
@@ -17,10 +17,13 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - []
+     * Сложность - O(value.length())
      */
     public boolean add(String value) {
-        return words.add(value);
+        if (value == null || value.equals("")) {
+            throw new IllegalArgumentException();
+        }
+        return words.put(value, getLetters(value)) == null;
     }
 
     /**
@@ -29,10 +32,10 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - []
+     * Сложность - O(1)
      */
     public boolean contains(String value) {
-        return words.contains(value);
+        return words.containsKey(value);
     }
 
     /**
@@ -41,10 +44,10 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - []
+     * Сложность - O(1)
      */
     public boolean remove(String value) {
-        return words.remove(value);
+        return words.remove(value) != null;
     }
 
     /**
@@ -64,16 +67,13 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - []
+     * Сложность - O(size())
      */
     public List<String> getSimilarWords(String value) {
         List<String> similar = new ArrayList<>();
-        char[] valueSorted = value.toLowerCase().toCharArray();
-        Arrays.sort(valueSorted);
-        for (String word : words) {
-            char[] wordSorted = word.toLowerCase().toCharArray();
-            Arrays.sort(wordSorted);
-            if (consistOfSameLetters(valueSorted, wordSorted)) {
+        Set<Character> valueLetters = getLetters(value);
+        for (String word : words.keySet()) {
+            if (word.length() == value.length() && words.get(word).equals(valueLetters)) {
                 similar.add(word);
             }
         }
@@ -85,27 +85,17 @@ public class CustomDictionary {
      *
      * @return - Колл-во хранимых строк.
      * <p>
-     * Сложность - []
+     * Сложность - O(1)
      */
     public int size() {
         return words.size();
     }
 
-    private static boolean consistOfSameLetters(char[] a1, char[] a2) {
-        int i = 0;
-        int j = 0;
-        while (i < a1.length || j < a2.length) {
-            if ((i >= a1.length) || (j >= a2.length) || (a1[i] != a2[j])) {
-                return false;
-            }
-            do {
-                i++;
-            } while ((i < a1.length) && (a1[i - 1] == a1[i]));
-            do {
-                j++;
-            } while ((j < a2.length) && (a2[j - 1] == a2[j]));
+    private static Set<Character> getLetters(String word) {
+        Set<Character> letters = new HashSet<>();
+        for (char ch : word.toUpperCase().toCharArray()) {
+            letters.add(ch);
         }
-        return true;
+        return letters;
     }
-
 }

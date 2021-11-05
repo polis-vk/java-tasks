@@ -25,15 +25,19 @@ public class MaxStack extends Stack<Integer> {
             maxValues.push(item);
             return super.push(item);
         }
-        int max = maxValues.peek();
-        maxValues.push(Math.max(item, max));
+        if (item >= maxValues.peek()) {
+            maxValues.push(item);
+        }
         return super.push(item);
     }
 
     @Override
     public synchronized Integer pop() {
-        maxValues.pop();
-        return super.pop();
+        int popped = super.pop();
+        if (popped == maxValues.peek()) {
+            maxValues.pop();
+        }
+        return popped;
     }
 
 }
