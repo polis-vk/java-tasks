@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * Нельзя изменять/удалять/добавлять поля.
  * Можно изменять/удалять СУЩЕСТВУЮЩИЕ методы.
- *
+ * <p>
  * Все остальное можно
  */
 public class Structure {
@@ -59,7 +59,7 @@ public class Structure {
         return coeff;
     }
 
-    public void setCoeff(float coeff) {
+    public void setCoeff(double coeff) {
         this.coeff = coeff;
     }
 
@@ -101,6 +101,13 @@ public class Structure {
 
     public void setParam(byte param) {
         this.param = param;
+    }
+
+    public void setFlags(boolean[] flags) {
+        flag1 = flags[0];
+        flag2 = flags[1];
+        flag3 = flags[2];
+        flag4 = flags[3];
     }
 
     @Override
