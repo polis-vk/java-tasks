@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.collections.structure;
 
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -16,20 +18,12 @@ import java.util.Stack;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
-    public static char getOtherParentheses(char par) {
-        switch (par) {
-            case ')':
-                return '(';
-            case ']':
-                return '[';
-            case '}':
-                return '{';
-            case '>':
-                return '<';
-            default:
-                return 0;
-        }
-    }
+    private static final Map<Character, Character> parentheses = Map.ofEntries(
+            Map.entry('(', ')'),
+            Map.entry('[', ']'),
+            Map.entry('{', '}'),
+            Map.entry('<', '>')
+    );
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
@@ -38,26 +32,17 @@ public class ValidatorForParentheses {
         boolean parenthesesExist = false;
         Stack<Character> parenthesesStack = new Stack<>();
         for (char sym : value.toCharArray()) {
-            switch (sym) {
-                case '(':
-                case '[':
-                case '{':
-                case '<':
-                    parenthesesExist = true;
-                    parenthesesStack.push(sym);
-                    break;
-                case ')':
-                case ']':
-                case '}':
-                case '>':
-                    if (parenthesesStack.empty()
-                            || parenthesesStack.peek() != getOtherParentheses(sym)) {
-                        return false;
-                    }
+            Character closed = parentheses.get(sym);
+            if (closed != null) {
+                parenthesesStack.push(closed);
+                parenthesesExist = true;
+            }
+            if (parentheses.containsValue(sym)) {
+                if (parenthesesStack.empty() || !parenthesesStack.peek().equals(sym)) {
+                    return false;
+                } else {
                     parenthesesStack.pop();
-                    break;
-                default:
-                    break;
+                }
             }
         }
         return parenthesesStack.empty() && parenthesesExist;

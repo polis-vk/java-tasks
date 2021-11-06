@@ -12,7 +12,7 @@ import java.util.Stack;
 public class MaxStack extends Stack<Integer> {
 
     private Integer maxValue = Integer.MIN_VALUE;
-
+    private final Stack<Integer> maxIndexes = new Stack<>();
     public Integer getMaxValue() {
         if (this.isEmpty()) {
             throw new EmptyStackException();
@@ -24,21 +24,17 @@ public class MaxStack extends Stack<Integer> {
     public Integer push(Integer integer) {
         if (maxValue < integer) {
             maxValue = integer;
+            maxIndexes.push(this.size());
         }
         return super.push(integer);
     }
 
     @Override
     public Integer pop() {
-        Integer result = super.pop();
-        if (result.equals(maxValue)) {
-            maxValue = Integer.MIN_VALUE;
-            for (Integer num : this) {
-                if (num > maxValue) {
-                    maxValue = num;
-                }
-            }
+        if (maxIndexes.peek().equals(this.size() - 1)) {
+            maxIndexes.pop();
+            maxValue = this.get(maxIndexes.peek());
         }
-        return result;
+        return super.pop();
     }
 }
