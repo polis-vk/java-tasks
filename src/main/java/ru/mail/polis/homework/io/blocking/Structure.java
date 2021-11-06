@@ -31,6 +31,22 @@ public class Structure {
     private boolean flag4;
     private byte param;
 
+    public Structure() {
+    }
+
+    public Structure(long id, String name, SubStructure[] subStructures, double coeff, boolean flag1, boolean flag2,
+                     boolean flag3, boolean flag4, byte param) {
+        this.id = id;
+        this.name = name;
+        this.subStructures = subStructures;
+        this.coeff = coeff;
+        this.flag1 = flag1;
+        this.flag2 = flag2;
+        this.flag3 = flag3;
+        this.flag4 = flag4;
+        this.param = param;
+    }
+
     public long getId() {
         return id;
     }
