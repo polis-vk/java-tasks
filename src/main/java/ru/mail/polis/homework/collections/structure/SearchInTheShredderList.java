@@ -40,22 +40,18 @@ public class SearchInTheShredderList {
      * @return - либо массив с реальными позициями подстрок если нашли, либо - null
      */
     public int[] positionPartString(String value) {
-        List<Integer> result = new ArrayList<>();
-        int index = -1;
-        int cursor = 0;
-        for (int i = 0; i <= value.length(); i++) {
-            index = partStrings.indexOf(value.substring(cursor, i));
-            if (index != -1) {
-                cursor = i;
-                result.add(index);
-            }
-        }
-        if (index == -1) {
+        if (value == null) {
             return null;
         }
-        int[] res = new int[result.size()];
-        for (int i = 0; i < result.size(); i++) {
-            res[i] = result.get(i);
+        int[] res = new int[2];
+        String[] parts = {
+                value.substring(0, value.length() / 2),
+                value.substring(value.length() / 2)};
+        for (int i = 0; i < parts.length; i++) {
+            res[i] = partStrings.indexOf(parts[i]);
+            if (res[i] == -1) {
+                return null;
+            }
         }
         return res;
     }

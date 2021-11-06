@@ -16,11 +16,26 @@ import java.util.Stack;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
+    public static char getOtherParentheses(char par) {
+        switch (par) {
+            case ')':
+                return '(';
+            case ']':
+                return '[';
+            case '}':
+                return '{';
+            case '>':
+                return '<';
+            default:
+                return 0;
+        }
+    }
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
         }
+        boolean parenthesesExist = false;
         Stack<Character> parenthesesStack = new Stack<>();
         for (char sym : value.toCharArray()) {
             switch (sym) {
@@ -28,28 +43,15 @@ public class ValidatorForParentheses {
                 case '[':
                 case '{':
                 case '<':
+                    parenthesesExist = true;
                     parenthesesStack.push(sym);
                     break;
                 case ')':
-                    if (parenthesesStack.peek() != '(') {
-                        return false;
-                    }
-                    parenthesesStack.pop();
-                    break;
                 case ']':
-                    if (parenthesesStack.peek() != '[') {
-                        return false;
-                    }
-                    parenthesesStack.pop();
-                    break;
                 case '}':
-                    if (parenthesesStack.peek() != '{') {
-                        return false;
-                    }
-                    parenthesesStack.pop();
-                    break;
                 case '>':
-                    if (parenthesesStack.peek() != '<') {
+                    if (parenthesesStack.empty()
+                            || parenthesesStack.peek() != getOtherParentheses(sym)) {
                         return false;
                     }
                     parenthesesStack.pop();
@@ -58,6 +60,6 @@ public class ValidatorForParentheses {
                     break;
             }
         }
-        return parenthesesStack.empty();
+        return parenthesesStack.empty() && parenthesesExist;
     }
 }
