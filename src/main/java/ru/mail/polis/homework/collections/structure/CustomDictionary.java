@@ -1,8 +1,12 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.HashSet;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Задание оценивается в 4 балла.
@@ -12,10 +16,12 @@ import java.util.List;
  */
 public class CustomDictionary {
 
-    private final HashSet<String> dictionary;
+    private final Map<String, HashSet<String>> dictionary;
+    private int size;
 
     public CustomDictionary() {
-        this.dictionary = new HashSet<>();
+        this.dictionary = new HashMap<>();
+        this.size = 0;
     }
 
     /**
@@ -24,13 +30,16 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - O(1)
+     * Сложность - O(k*log(k)), где k - количество букв в строке
      */
     public boolean add(String value) {
         if (value == null || value.equals("")) {
             throw new IllegalArgumentException();
         }
-        return dictionary.add(value);
+        String key = sortLettersInValue(value);
+        dictionary.putIfAbsent(key, new HashSet<>());
+        size++;
+        return dictionary.get(key).add(value);
     }
 
     /**
@@ -39,10 +48,17 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - O(1) В среднем, в худшем O(logn), так как структура bucket = TreeMap
+     * Сложность - O(k*log(k)), где k - количество букв в строке
      */
     public boolean contains(String value) {
-        return dictionary.contains(value);
+        if (value == null || value.equals("")) {
+            throw new IllegalArgumentException();
+        }
+        String key = sortLettersInValue(value);
+        if (!dictionary.containsKey(key)) {
+            return false;
+        }
+        return dictionary.get(key).contains(value);
     }
 
     /**
@@ -51,10 +67,15 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - O(1)
+     * Сложность - O(k*log(k)), где k - количество букв в строке
      */
     public boolean remove(String value) {
-        return dictionary.remove(value);
+        String key = sortLettersInValue(value);
+        if (!dictionary.containsKey(key)) {
+            return false;
+        }
+        size--;
+        return dictionary.get(key).remove(value);
     }
 
     /**
@@ -74,31 +95,15 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - O(i*j), где i - длина слова, а j - размер массива слов в dictionary
+     * Сложность - O(k*log(k)), где k - количество букв в строке
      */
     public List<String> getSimilarWords(String value) {
-        final ArrayList<String> wordsToReturn = new ArrayList<>();
-        for (String word : dictionary) {
-            if (compareWords(word, value)) {
-                if (word.length() != value.length()) {
-                    continue;
-                }
-                wordsToReturn.add(word);
-            }
+        String key = sortLettersInValue(value);
+        if (dictionary.containsKey(key)) {
+            return new ArrayList<>(dictionary.get(key));
+        } else {
+            return Collections.emptyList();
         }
-        return wordsToReturn;
-    }
-
-    private boolean compareWords(String word, String value) {
-        ArrayList<Character> chars = new ArrayList<>();
-        for (char character : word.toCharArray()) {
-            chars.add(Character.toLowerCase(character));
-        }
-        for (char character : value.toCharArray()) {
-            Character temp = Character.toLowerCase(character);
-            chars.remove(temp);
-        }
-        return chars.isEmpty();
     }
 
     /**
@@ -109,6 +114,23 @@ public class CustomDictionary {
      * Сложность - O(1)
      */
     public int size() {
-        return dictionary.size();
+        return size;
+    }
+
+    /**
+     * Ключ для dictionary
+     *
+     * @return - строка отсортированных букв исходной строки
+     *
+     * Сложность - O(k*log(k)), где k - количество букв в строке
+     */
+    private String sortLettersInValue(String value) {
+        char[] arrayOfLettersInUpperCase = value.toUpperCase().toCharArray();
+        Arrays.sort(arrayOfLettersInUpperCase);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Character letter : arrayOfLettersInUpperCase) {
+            stringBuilder.append(letter);
+        }
+        return stringBuilder.toString();
     }
 }

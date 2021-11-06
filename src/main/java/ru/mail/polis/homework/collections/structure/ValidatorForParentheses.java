@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
 
 /**
  * Задание оценивается в 2 балла.
@@ -16,40 +19,27 @@ import java.util.ArrayList;
  */
 public class ValidatorForParentheses {
 
+    private static final Map<Character, Character> bracket = new HashMap<>();
+
+    static {
+        bracket.put(')', '(');
+        bracket.put('}', '{');
+        bracket.put('>', '<');
+        bracket.put(']', '[');
+    }
+
     public static boolean validate(String value) {
         if (value == null || value.equals("") || value.length() == 1) {
             return false;
         }
-        ArrayList<Character> stack = new ArrayList<>();
+        Stack<Character> stack = new Stack<>();
         for (Character i : value.toCharArray()) {
-            if (i.equals('[') || i.equals('{') || i.equals('<') || i.equals('(')) {
-                stack.add(i);
-            }
-            if (i.equals(']') || i.equals('}') || i.equals('>') || i.equals(')')) {
-                if (stack.size() == 0 || !stack.get(stack.size() - 1).equals(returnOpenBracket(i))) {
-                    return false;
-                }
-                stack.remove(stack.size() - 1);
+            if (bracket.containsValue(i)) {
+                stack.push(i);
+            } else if (bracket.containsKey(i) && (stack.size() == 0 || !bracket.get(i).equals(stack.pop()))) {
+                return false;
             }
         }
         return stack.isEmpty();
-    }
-
-    static private char returnOpenBracket(Character bracket) {
-        switch (bracket) {
-            case ']': {
-                return '[';
-            }
-            case '}': {
-                return '{';
-            }
-            case '>': {
-                return '<';
-            }
-            case ')': {
-                return '(';
-            }
-        }
-        return 0;
     }
 }

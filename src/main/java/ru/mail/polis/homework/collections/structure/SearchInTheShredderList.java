@@ -31,7 +31,7 @@ public class SearchInTheShredderList {
     }
 
     /**
-     * Ищем позиции подстрок из которых можно составить передаваемое слово
+     * щем позиции подстрок из которых можно составить передаваемое слово
      *
      * @param value - передаваемоей слово
      * @return - либо массив с реальными позициями подстрок если нашли, либо - null
@@ -53,9 +53,9 @@ public class SearchInTheShredderList {
                 result[1] = i;
             }
         }
-        if (result[0] != notPositionInArray && result[1] != notPositionInArray) {
-            return result;
+        if (result[0] == notPositionInArray && result[1] == notPositionInArray) {
+            return null;
         }
-        return null;
+        return result;
     }
 }
