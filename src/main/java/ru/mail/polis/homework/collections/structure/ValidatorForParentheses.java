@@ -25,17 +25,20 @@ public class ValidatorForParentheses {
             return false;
         }
         LinkedList<Character> stack = new LinkedList<>();
+        boolean bracketsFlag = false;
         for (int i = 0; i < value.length(); i++) {
             final char charElement = value.charAt(i);
             if (brackets.containsKey(charElement)) {
+                bracketsFlag = true;
                 stack.add(charElement);
             } else if (brackets.containsValue(charElement)) {
+                bracketsFlag = true;
                 if (stack.isEmpty() || brackets.get(stack.getLast()) != charElement) {
                     return false;
                 }
                 stack.removeLast();
             }
         }
-        return stack.isEmpty();
+        return bracketsFlag && stack.isEmpty();
     }
 }
