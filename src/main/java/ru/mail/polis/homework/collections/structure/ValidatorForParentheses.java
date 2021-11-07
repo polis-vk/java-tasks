@@ -15,18 +15,16 @@ import java.util.regex.Pattern;
 public class ValidatorForParentheses {
 
     private static final Map<Character, Character> brackets = Map.of('(', ')', '[', ']', '{', '}');
-
-    public static boolean validate(String value) {
+    
+     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
         }
-        return Pattern.compile("[({\\[<)}\\]>]+[\\s\\w\\W]*").matcher(value).matches() && realizeValidate(value);
-    }
-
-    private static boolean realizeValidate(String value) {
         Deque<Character> deque = new LinkedList<>();
-        for (Character symbol : value.toCharArray()) {
+        boolean hasBrackets = false;
+        for (Character symbol: value.toCharArray()) {
             if (brackets.containsKey(symbol)) {
+                hasBrackets = true;
                 deque.addFirst(symbol);
             } else {
                 if (brackets.containsValue(symbol)) {
@@ -38,6 +36,7 @@ public class ValidatorForParentheses {
                 }
             }
         }
-        return deque.isEmpty();
+        return deque.isEmpty() && hasBrackets;
     }
+    
 }
