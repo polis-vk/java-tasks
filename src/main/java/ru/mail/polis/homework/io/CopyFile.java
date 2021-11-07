@@ -12,14 +12,12 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
-import static java.nio.file.FileVisitResult.TERMINATE;
 
 public class CopyFile {
 
     public final static String ERROR = "Error";
     public final static String COMPLETED = "Done";
     private final static int BUFFER_SIZE = 1024;
-    private final static byte[] BUFFER = new byte[BUFFER_SIZE];
 
     /**
      * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
@@ -33,11 +31,15 @@ public class CopyFile {
             return ERROR;
         }
         Path to = Paths.get(pathTo);
-        if (Files.isRegularFile(from) && !createDirIfPossible(to.getParent())) {
+        if ((Files.isRegularFile(from) && dirNotCreated(to.getParent()))
+                || (Files.isDirectory(from) && dirNotCreated(to))) {
             return ERROR;
         }
+
+        final byte[] buffer = new byte[BUFFER_SIZE];
+
         try {
-            Files.walkFileTree(from, createCopyVisitor(from, to));
+            Files.walkFileTree(from, createCopyVisitor(from, to, buffer));
         } catch (IOException e) {
             e.printStackTrace();
             return ERROR;
@@ -45,45 +47,37 @@ public class CopyFile {
         return COMPLETED;
     }
 
-    private static void copyFileContent(InputStream input, OutputStream output) throws IOException {
-        int readSize;
-        while ((readSize = input.read(BUFFER)) > 0) {
-            output.write(BUFFER, 0, readSize);
-        }
-        output.flush();
-    }
-
-    private static FileVisitor<Path> createCopyVisitor(Path from, Path to) {
+    private static FileVisitor<Path> createCopyVisitor(Path from, Path to, byte[] buffer) {
         return new SimpleFileVisitor<Path>() {
             @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 try (InputStream input = Files.newInputStream(file);
                      OutputStream output = Files.newOutputStream(to.resolve(from.relativize(file)))) {
-                    copyFileContent(input, output);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return TERMINATE;
+                    copyFileContent(input, output, buffer);
                 }
                 return CONTINUE;
             }
 
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                return createDirIfPossible(to.resolve(from.relativize(dir))) ? CONTINUE : TERMINATE;
+            private void copyFileContent(InputStream input, OutputStream output, byte[] buffer) throws IOException {
+                int readSize;
+                while ((readSize = input.read(buffer)) > 0) {
+                    output.write(buffer, 0, readSize);
+                }
+                output.flush();
             }
         };
     }
 
-    private static boolean createDirIfPossible(Path dir) {
+    private static boolean dirNotCreated(Path dir) {
         if (!Files.exists(dir)) {
             try {
                 Files.createDirectories(dir);
             } catch (IOException e) {
                 e.printStackTrace();
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
 }
