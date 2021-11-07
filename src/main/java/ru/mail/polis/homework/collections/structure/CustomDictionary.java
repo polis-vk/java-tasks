@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class CustomDictionary {
 
-    private final HashMap<String, List<String>> dictionary = new HashMap<>();
+    private final Map<String, List<String>> dictionary = new HashMap<>();
     private int size;
 
     /**
@@ -19,7 +19,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - [O(m log(m) + k + v], где m - длина передаваемой строки, k - количество ключей в структуре, v - количество элементов в значении ключа (в списке)
+     * Сложность - [O(m log(m) + v], где m - длина передаваемой строки, v - количество элементов в значении ключа (в списке), элемент по ключу берется за O(1) при грамотной реализации equals и hashCode
      */
     public boolean add(String value) {
         if (value == null || value.isEmpty()) {
@@ -48,7 +48,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - [O(m log(m) + k + v]
+     * Сложность - [O(m log(m) + v]
      */
     public boolean contains(String value) {
         List<String> valueList = dictionary.get(valueTransform(value));
@@ -64,7 +64,7 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - [O(m log(m) + k + v]
+     * Сложность - [O(m log(m) + v]
      */
     public boolean remove(String value) {
         if (contains(value)) {
@@ -92,7 +92,7 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - [O(m log(m) + k]
+     * Сложность - [O(m log(m)]
      */
     public List<String> getSimilarWords(String value) {
         List<String> valueList = dictionary.get(valueTransform(value));
