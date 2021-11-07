@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Deque;
-import java.util.LinkedList;
+import java.util.*;
 
 /**
  * Задание оценивается в 2 балла.
@@ -17,8 +16,16 @@ import java.util.LinkedList;
  */
 public class ValidatorForParentheses {
 
-    private static final char[] openBrackets = new char[]{'(', '{', '[', '<'};
-    private static final char[] closeBrackets = new char[]{')', '}', ']', '>'};
+    private static final Map<Character, Character> brackets = new HashMap<>();
+    //private static final char[] openBrackets = new char[]{'(', '{', '[', '<'};
+    //private static final char[] closeBrackets = new char[]{')', '}', ']', '>'};
+
+    static {
+        brackets.put(')', '(');
+        brackets.put('}', '{');
+        brackets.put(']', '[');
+        brackets.put('>', '<');
+    }
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
@@ -32,12 +39,12 @@ public class ValidatorForParentheses {
         Deque<Character> needToClose = new LinkedList<>();
         boolean bracketChecker = false;
         for (Character symbol : value.toCharArray()) {
-            if (isOpenBracket(symbol)) {
+            if (brackets.containsValue(symbol)) {
                 needToClose.add(symbol);
                 bracketChecker = true;
             } else {
-                if (isCloseBracket(symbol)) {
-                    if (needToClose.size() == 0 || !needToClose.pollLast().equals(getOpenBracket(symbol))) {
+                if (brackets.containsKey(symbol)) {
+                    if (needToClose.size() == 0 || !needToClose.pollLast().equals(brackets.get(symbol))) {
                         return false;
                     }
                 }
@@ -46,30 +53,4 @@ public class ValidatorForParentheses {
         return needToClose.isEmpty() && bracketChecker;
     }
 
-    private static boolean isOpenBracket(Character c) {
-        for (Character element : openBrackets) {
-            if (element.equals(c)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean isCloseBracket(Character c) {
-        for (Character element : closeBrackets) {
-            if (element.equals(c)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static Character getOpenBracket(Character bracket) {
-        for (int i = 0; i < closeBrackets.length; i++) {
-            if (closeBrackets[i] == bracket) {
-                return openBrackets[i];
-            }
-        }
-        throw new IllegalArgumentException("Input: '" + bracket + "', but it should be one of brackets");
-    }
 }

@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class MaxStack extends Stack<Integer> {
 
-    private final Deque<Integer> maxVals = new LinkedList<>();
+    private final Deque<Integer> maxValsIndex = new LinkedList<>();
 
     public MaxStack() {
         super();
@@ -18,25 +18,30 @@ public class MaxStack extends Stack<Integer> {
 
     @Override
     public Integer push(Integer item) {
-        if (maxVals.isEmpty()) {
-            maxVals.add(item);
+        if (maxValsIndex.isEmpty()) {
+            maxValsIndex.push(0);
         } else {
-            maxVals.add(Math.max(maxVals.peekLast(), item));
+            if (get(maxValsIndex.peek()) < item) {
+                maxValsIndex.push(size());
+            }
         }
+
         return super.push(item);
     }
 
     @Override
     public synchronized Integer pop() {
-        maxVals.removeLast();
+        if (maxValsIndex.peek() == size() - 1) {
+            maxValsIndex.pop();
+        }
         return super.pop();
     }
 
     public Integer getMaxValue() {
-        if (maxVals.isEmpty()) {
+        if (maxValsIndex.isEmpty()) {
             throw new EmptyStackException();
         }
-        return maxVals.peekLast();
+        return get(maxValsIndex.peek());
     }
 
 }
