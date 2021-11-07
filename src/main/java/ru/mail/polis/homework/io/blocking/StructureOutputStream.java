@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.io.blocking;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Вам нужно реализовать StructureOutputStream, который умеет писать данные в файл.
@@ -19,13 +21,42 @@ public class StructureOutputStream extends FileOutputStream {
      * Метод должен вернуть записать прочитанную структуру.
      */
     public void write(Structure structure) throws IOException {
+        this.writeLong(structure.getId());
+        this.writeUTF(structure.getName());
+        this.write(structure.getSubStructures());
+        this.writeDouble(structure.getCoeff());
+        this.writeBoolean(structure.isFlag1());
+        this.writeBoolean(structure.isFlag2());
+        this.writeBoolean(structure.isFlag3());
+        this.writeBoolean(structure.isFlag4());
+        this.writeByte(structure.getParam());
     }
 
     /**
      * Метод должен вернуть записать массив прочитанных структур.
      */
     public void write(Structure[] structures) throws IOException {
+        for (Structure structure : structures) {
+            this.write(structure);
+        }
+    }
 
+    public void write(SubStructure subStructure) throws IOException {
+        this.writeInt(subStructure.getId());
+        this.writeUTF(subStructure.getName());
+        this.writeBoolean(subStructure.isFlag());
+        this.writeDouble(subStructure.getScore());
+    }
+
+    public void write(SubStructure[] subStructures) throws IOException {
+        if (subStructures == null) {
+            this.writeInt(-1);
+            return;
+        }
+        this.writeInt(subStructures.length);
+        for (SubStructure subStructure : subStructures) {
+            this.write(subStructure);
+        }
     }
 
     private void incCount(int value) {
@@ -75,6 +106,10 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     int writeUTF(String str) throws IOException {
+        if (str == null) {
+            writeInt(-1);
+            return 4;
+        }
         final int strlen = str.length();
         long utflen = strlen; // optimized for ASCII
 
@@ -90,7 +125,7 @@ public class StructureOutputStream extends FileOutputStream {
         final byte[] bytearr = new byte[(int) utflen + 4];
 
         int count = 0;
-        bytearr[count++] = (byte) ((utflen >>> 32) & 0xFF);
+        bytearr[count++] = (byte) ((utflen >>> 24) & 0xFF);
         bytearr[count++] = (byte) ((utflen >>> 16) & 0xFF);
         bytearr[count++] = (byte) ((utflen >>> 8) & 0xFF);
         bytearr[count++] = (byte) ((utflen >>> 0) & 0xFF);

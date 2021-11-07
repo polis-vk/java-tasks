@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.io.blocking;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -10,7 +12,8 @@ import java.util.Objects;
  */
 public class StructureInputStream extends FileInputStream {
 
-    private Structure[] structures;
+    //private Structure[] structures;
+    List<Structure> structures = new ArrayList<>();
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
@@ -21,8 +24,24 @@ public class StructureInputStream extends FileInputStream {
      * Метод должен вернуть следующую прочитанную структуру.
      * Если структур в файле больше нет, то вернуть null
      */
-    public Structure readStructure() throws IOException {
-        return null;
+    public final Structure readStructure() throws IOException {
+        Structure structure;
+        try {
+            long id = this.readLong();
+            String name = this.readUTF();
+            SubStructure[] subStructures = this.readSubStructures();
+            double coeff = this.readDouble();
+            boolean flag1 = this.readBoolean();
+            boolean flag2 = this.readBoolean();
+            boolean flag3 = this.readBoolean();
+            boolean flag4 = this.readBoolean();
+            byte param = this.readByte();
+            structure = new Structure(id, name, subStructures, coeff, flag1, flag2, flag3, flag4, param);
+            structures.add(structure);
+            return structure;
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     /**
@@ -30,7 +49,10 @@ public class StructureInputStream extends FileInputStream {
      * Если файл уже прочитан, но возвращается полный массив.
      */
     public Structure[] readStructures() throws IOException {
-        return new Structure[0];
+        while (available() != 0) {
+            readStructure();
+        }
+        return structures.toArray(new Structure[0]);
     }
 
     public SubStructure readSubStructure() throws IOException {
@@ -43,7 +65,7 @@ public class StructureInputStream extends FileInputStream {
 
     public SubStructure[] readSubStructures() throws IOException {
         int len = this.readInt();
-        if (len < 0) {
+        if (len == -1) {
             return null;
         }
         SubStructure[] subStructures = new SubStructure[len];
@@ -72,11 +94,11 @@ public class StructureInputStream extends FileInputStream {
         return (ch != 0);
     }
 
-    public final int readByte() throws IOException {
+    public final byte readByte() throws IOException {
         int ch = super.read();
         if (ch < 0)
             throw new EOFException();
-        return ch;
+        return (byte) ch;
     }
 
     private byte readBuffer[] = new byte[8];
@@ -94,18 +116,11 @@ public class StructureInputStream extends FileInputStream {
     }
 
     public final int readInt() throws IOException {
-//        int ch1 = super.read();
-//        int ch2 = super.read();
-//        int ch3 = super.read();
-//        int ch4 = super.read();
-//        if ((ch1 | ch2 | ch3 | ch4) < 0)
-//            throw new EOFException();
-//        return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
         readFully(readBuffer, 0, 4);
-        return (((readBuffer[4] & 255) << 24) +
-                ((readBuffer[5] & 255) << 16) +
-                ((readBuffer[6] & 255) << 8) +
-                ((readBuffer[7] & 255) << 0));
+        return (((readBuffer[0] & 255) << 24) +
+                ((readBuffer[1] & 255) << 16) +
+                ((readBuffer[2] & 255) << 8) +
+                ((readBuffer[3] & 255) << 0));
     }
 
     public final double readDouble() throws IOException {
@@ -114,6 +129,10 @@ public class StructureInputStream extends FileInputStream {
 
     public final String readUTF() throws IOException {
         int utflen = this.readInt();
+
+        if (utflen == -1) {
+            return null;
+        }
         byte[] bytearr = new byte[utflen];
         char[] chararr = new char[utflen];
 
