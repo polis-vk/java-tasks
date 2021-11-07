@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class SearchInTheShredderListTest {
@@ -49,10 +50,10 @@ public class SearchInTheShredderListTest {
     private SearchInTheShredderList generate() {
         //"кобольд", "триппер", "предпринимательство",
         //            "клювонос", "счерчивание", "тёска", "мошенница", "косость", "велорикша", "агамия",
-        //            "жаворонок", "тоскливость", "трансформировка", "пронзительность", "уставший"
+        //            "жаворонок", "тоскливость", "трансформировка", "пронзительность", "уставший", "шары"
         List<String> data = Arrays.asList("ронок", "ольд", "ельность", "уста","рмировка", "ость","ивость","кос","вело",
             "моше","рикша","нница","счерч","ппер","трансфо","предприни","три", "клюв", "ска", "мательство", "ага", "онос",
-            "мия", "жаво", "пронзит", "тё", "ивание", "тоскл", "коб", "вший");
+            "мия", "жаво", "пронзит", "тё", "ивание", "тоскл", "коб", "вший", "ры", "ша");
         return new SearchInTheShredderList(data);
 
     }
