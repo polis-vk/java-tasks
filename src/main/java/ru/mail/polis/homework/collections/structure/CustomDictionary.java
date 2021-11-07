@@ -18,7 +18,7 @@ import java.util.Set;
 public class CustomDictionary {
 
     private final Map<String, Set<String>> data = new HashMap<>();
-    private int size = 0;
+    private int size;
 
     /**
      * Сохранить строку в структуру данных
@@ -78,6 +78,9 @@ public class CustomDictionary {
         }
         if (data.get(splitted).remove(value)) {
             size--;
+            if (data.get(splitted).isEmpty()) {
+                data.remove(splitted);
+            }
             return true;
         }
         return false;
@@ -100,7 +103,7 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - O(k), k - количество слов подходящий под даный шаблон
+     * Сложность - O(k + O(m * log(m))) в среднем, где k - количество слов подходящий под даный шаблон, m - длинна строки
      */
     public List<String> getSimilarWords(String value) {
         if (value == null) {
@@ -131,8 +134,8 @@ public class CustomDictionary {
      *
      * @param value - разбиваемая на символы строка
      * @return String упорядоченных букв из которых состоит слово
-     *
-     * Сложность - в среднем O(m * log(m)), O(m^2) в худшем, где m - длинна строки, где m - длинна строки
+     * <p>
+     * Сложность - в среднем O(m * log(m)), O(m^2) в худшем, где m - длинна строки
      */
     private String splitByLetter(String value) {
         char[] loweredCased = value.toLowerCase().toCharArray();
