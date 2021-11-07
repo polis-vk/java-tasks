@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Задание оценивается в 4 балла.
@@ -16,7 +17,7 @@ import java.util.Map;
  */
 public class CustomDictionary {
 
-    private final Map<String, HashSet<String>> data = new HashMap<>();
+    private final Map<String, Set<String>> data = new HashMap<>();
     private int size = 0;
 
     /**
@@ -136,12 +137,7 @@ public class CustomDictionary {
     private String splitByLetter(String value) {
         char[] loweredCased = value.toLowerCase().toCharArray();
         Arrays.sort(loweredCased);
-        StringBuilder splitted = new StringBuilder();
-
-        for (Character letter : loweredCased) {
-            splitted.append(letter);
-        }
-        return splitted.toString();
+        return new String(loweredCased);
     }
 
 }
