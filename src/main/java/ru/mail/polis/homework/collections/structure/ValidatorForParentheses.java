@@ -31,12 +31,12 @@ public class ValidatorForParentheses {
             if (brackets.containsKey(charElement)) {
                 bracketsFlag = true;
                 stack.add(charElement);
-            } else if (brackets.containsValue(charElement)) {
-                bracketsFlag = true;
-                if (stack.isEmpty() || brackets.get(stack.getLast()) != charElement) {
-                    return false;
-                }
+            } else if (!stack.isEmpty() && brackets.get(stack.getLast()) == charElement) {
                 stack.removeLast();
+            } else if (stack.isEmpty() && brackets.containsValue(charElement)) {
+                /* оставил перебор закрывающих скобок, но он отрабатывает не на каждой итерации цикла
+                и оптимизирует поиск ответа для длинных заведомо невалидныхх строк */
+                return false;
             }
         }
         return bracketsFlag && stack.isEmpty();
