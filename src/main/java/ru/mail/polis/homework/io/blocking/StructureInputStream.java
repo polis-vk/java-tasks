@@ -24,18 +24,19 @@ public class StructureInputStream extends FileInputStream {
      * Метод должен вернуть следующую прочитанную структуру.
      * Если структур в файле больше нет, то вернуть null
      */
-    public final Structure readStructure() throws IOException {
+    public final Structure readStructure() {
         Structure structure;
         try {
             long id = this.readLong();
             String name = this.readUTF();
             SubStructure[] subStructures = this.readSubStructures();
             double coeff = this.readDouble();
-            boolean flag1 = this.readBoolean();
-            boolean flag2 = this.readBoolean();
-            boolean flag3 = this.readBoolean();
-            boolean flag4 = this.readBoolean();
-            byte param = this.readByte();
+            byte k = (byte) super.read();
+            boolean flag1 = (k & 8) != 0;
+            boolean flag2 = (k & 4) != 0;
+            boolean flag3 = (k & 2) != 0;
+            boolean flag4 = (k & 1) != 0;
+            byte param = (byte) super.read();
             structure = new Structure(id, name, subStructures, coeff, flag1, flag2, flag3, flag4, param);
             structures.add(structure);
             return structure;
@@ -76,7 +77,7 @@ public class StructureInputStream extends FileInputStream {
         return subStructures;
     }
 
-    public final void readFully(byte b[], int off, int len) throws IOException {
+    public final void readFully(byte[] b, int off, int len) throws IOException {
         Objects.checkFromIndexSize(off, len, b.length);
         int n = 0;
         while (n < len) {
@@ -94,14 +95,7 @@ public class StructureInputStream extends FileInputStream {
         return (ch != 0);
     }
 
-    public final byte readByte() throws IOException {
-        int ch = super.read();
-        if (ch < 0)
-            throw new EOFException();
-        return (byte) ch;
-    }
-
-    private byte readBuffer[] = new byte[8];
+    private final byte[] readBuffer = new byte[8];
 
     public final long readLong() throws IOException {
         readFully(readBuffer, 0, 8);
@@ -112,7 +106,7 @@ public class StructureInputStream extends FileInputStream {
                 ((long) (readBuffer[4] & 255) << 24) +
                 ((readBuffer[5] & 255) << 16) +
                 ((readBuffer[6] & 255) << 8) +
-                ((readBuffer[7] & 255) << 0));
+                ((readBuffer[7] & 255)));
     }
 
     public final int readInt() throws IOException {
@@ -120,7 +114,7 @@ public class StructureInputStream extends FileInputStream {
         return (((readBuffer[0] & 255) << 24) +
                 ((readBuffer[1] & 255) << 16) +
                 ((readBuffer[2] & 255) << 8) +
-                ((readBuffer[3] & 255) << 0));
+                ((readBuffer[3] & 255)));
     }
 
     public final double readDouble() throws IOException {
@@ -171,7 +165,7 @@ public class StructureInputStream extends FileInputStream {
                     if (count > utflen)
                         throw new UTFDataFormatException(
                                 "malformed input: partial character at end");
-                    char2 = (int) bytearr[count - 1];
+                    char2 = bytearr[count - 1];
                     if ((char2 & 0xC0) != 0x80)
                         throw new UTFDataFormatException(
                                 "malformed input around byte " + count);
@@ -184,14 +178,14 @@ public class StructureInputStream extends FileInputStream {
                     if (count > utflen)
                         throw new UTFDataFormatException(
                                 "malformed input: partial character at end");
-                    char2 = (int) bytearr[count - 2];
-                    char3 = (int) bytearr[count - 1];
+                    char2 = bytearr[count - 2];
+                    char3 = bytearr[count - 1];
                     if (((char2 & 0xC0) != 0x80) || ((char3 & 0xC0) != 0x80))
                         throw new UTFDataFormatException(
                                 "malformed input around byte " + (count - 1));
                     chararr[chararr_count++] = (char) (((c & 0x0F) << 12) |
                             ((char2 & 0x3F) << 6) |
-                            ((char3 & 0x3F) << 0));
+                            ((char3 & 0x3F)));
                     break;
                 default:
                     /* 10xx xxxx,  1111 xxxx */

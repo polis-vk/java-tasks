@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.io.blocking;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Вам нужно реализовать StructureOutputStream, который умеет писать данные в файл.
@@ -25,10 +23,13 @@ public class StructureOutputStream extends FileOutputStream {
         this.writeUTF(structure.getName());
         this.write(structure.getSubStructures());
         this.writeDouble(structure.getCoeff());
-        this.writeBoolean(structure.isFlag1());
-        this.writeBoolean(structure.isFlag2());
-        this.writeBoolean(structure.isFlag3());
-        this.writeBoolean(structure.isFlag4());
+        byte k = (byte) (
+                (((byte) (structure.isFlag1() ? 1 : 0)) << 3)
+                        + (((byte) (structure.isFlag2() ? 1 : 0)) << 2)
+                        + (((byte) (structure.isFlag3() ? 1 : 0)) << 1)
+                        + (((byte) (structure.isFlag4() ? 1 : 0)))
+        );
+        this.writeByte(k);
         this.writeByte(structure.getParam());
     }
 
@@ -83,7 +84,7 @@ public class StructureOutputStream extends FileOutputStream {
         writeBuffer[0] = (byte) (v >>> 24);
         writeBuffer[1] = (byte) (v >>> 16);
         writeBuffer[2] = (byte) (v >>> 8);
-        writeBuffer[3] = (byte) (v >>> 0);
+        writeBuffer[3] = (byte) (v);
         super.write(writeBuffer, 0, 4);
         incCount(4);
     }
@@ -96,7 +97,7 @@ public class StructureOutputStream extends FileOutputStream {
         writeBuffer[4] = (byte) (v >>> 24);
         writeBuffer[5] = (byte) (v >>> 16);
         writeBuffer[6] = (byte) (v >>> 8);
-        writeBuffer[7] = (byte) (v >>> 0);
+        writeBuffer[7] = (byte) (v);
         super.write(writeBuffer, 0, 8);
         incCount(8);
     }
@@ -105,10 +106,10 @@ public class StructureOutputStream extends FileOutputStream {
         writeLong(Double.doubleToLongBits(v));
     }
 
-    int writeUTF(String str) throws IOException {
+    void writeUTF(String str) throws IOException {
         if (str == null) {
             writeInt(-1);
-            return 4;
+            return;
         }
         final int strlen = str.length();
         long utflen = strlen; // optimized for ASCII
@@ -128,9 +129,9 @@ public class StructureOutputStream extends FileOutputStream {
         bytearr[count++] = (byte) ((utflen >>> 24) & 0xFF);
         bytearr[count++] = (byte) ((utflen >>> 16) & 0xFF);
         bytearr[count++] = (byte) ((utflen >>> 8) & 0xFF);
-        bytearr[count++] = (byte) ((utflen >>> 0) & 0xFF);
+        bytearr[count++] = (byte) (utflen & 0xFF);
 
-        int i = 0;
+        int i;
         for (i = 0; i < strlen; i++) { // optimized for initial run of ASCII
             int c = str.charAt(i);
             if (c >= 0x80 || c == 0) break;
@@ -144,14 +145,13 @@ public class StructureOutputStream extends FileOutputStream {
             } else if (c >= 0x800) {
                 bytearr[count++] = (byte) (0xE0 | ((c >> 12) & 0x0F));
                 bytearr[count++] = (byte) (0x80 | ((c >> 6) & 0x3F));
-                bytearr[count++] = (byte) (0x80 | ((c >> 0) & 0x3F));
+                bytearr[count++] = (byte) (0x80 | ((c) & 0x3F));
             } else {
                 bytearr[count++] = (byte) (0xC0 | ((c >> 6) & 0x1F));
-                bytearr[count++] = (byte) (0x80 | ((c >> 0) & 0x3F));
+                bytearr[count++] = (byte) (0x80 | ((c) & 0x3F));
             }
         }
         super.write(bytearr, 0, (int) utflen + 4);
-        return (int) utflen + 4;
     }
 
     private static String tooLongMsg(String s, int bits32) {

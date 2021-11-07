@@ -40,13 +40,73 @@ public class StructureTest {
     }
 
     @Test
+    public void intCheck() throws IOException {
+        Path file = Paths.get("src", "test", "resources", "blocking", "structure.bin");
+        Files.createFile(file);
+        int i = -741341;
+
+        try (StructureOutputStream outputStream = new StructureOutputStream(file.toFile())) {
+            outputStream.writeInt(i);
+            assertTrue(Files.size(file) > 3);
+        }
+        try (StructureInputStream inputStream = new StructureInputStream(file.toFile())) {
+            assertEquals(i, inputStream.readInt());
+        }
+    }
+
+    @Test
+    public void longCheck() throws IOException {
+        Path file = Paths.get("src", "test", "resources", "blocking", "structure.bin");
+        Files.createFile(file);
+        long i = 17242415134L;
+
+        try (StructureOutputStream outputStream = new StructureOutputStream(file.toFile())) {
+            outputStream.writeLong(i);
+            assertTrue(Files.size(file) > 3);
+        }
+        try (StructureInputStream inputStream = new StructureInputStream(file.toFile())) {
+            assertEquals(i, inputStream.readLong());
+        }
+    }
+
+    @Test
+    public void doubleCheck() throws IOException {
+        Path file = Paths.get("src", "test", "resources", "blocking", "structure.bin");
+        Files.createFile(file);
+        double i = 585641.353251;
+
+        try (StructureOutputStream outputStream = new StructureOutputStream(file.toFile())) {
+            outputStream.writeDouble(i);
+            assertTrue(Files.size(file) > 3);
+        }
+        try (StructureInputStream inputStream = new StructureInputStream(file.toFile())) {
+            assertEquals(i, inputStream.readDouble(), 0.0000001);
+        }
+    }
+
+    @Test
+    public void stringCheck() throws IOException {
+        Path file = Paths.get("src", "test", "resources", "blocking", "structure.bin");
+        Files.createFile(file);
+        String str = generateString();
+
+        try (StructureOutputStream outputStream = new StructureOutputStream(file.toFile())) {
+            outputStream.writeUTF(str);
+            assertTrue(Files.size(file) > 2);
+        }
+        try (StructureInputStream inputStream = new StructureInputStream(file.toFile())) {
+            assertEquals(str, inputStream.readUTF());
+        }
+    }
+
+    @Test
     public void oneObject() throws IOException {
         Path file = Paths.get("src", "test", "resources", "blocking", "structure.bin");
         Files.createFile(file);
         Structure structure = new Structure();
         structure.setId(1233554344533L);
         structure.setName("oneObject");
-        structure.setSubStructures(new SubStructure[] {
+        structure.setSubStructures(new SubStructure[]{
                 new SubStructure(12313, "sub-oneObject", true, 0.1),
                 new SubStructure(12314, "sub-oneObject-4", false, 0.2)});
         structure.setCoeff((float) Math.E);
@@ -109,7 +169,7 @@ public class StructureTest {
             }
             structure.setSubStructures(subStructures);
         }
-        structure.setCoeff(rnd.nextFloat());
+        structure.setCoeff(rnd.nextDouble());
         structure.setFlag1(rnd.nextBoolean());
         structure.setFlag2(rnd.nextBoolean());
         structure.setFlag3(rnd.nextBoolean());
