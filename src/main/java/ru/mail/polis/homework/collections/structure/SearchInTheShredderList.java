@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -35,17 +36,19 @@ public class SearchInTheShredderList {
         if (value == null || value.isEmpty() || partStrings == null || partStrings.isEmpty()) {
             return null;
         }
-        Map<String, Integer> half = Map.of(value.substring(0, value.length() / 2), 0,
-                value.substring(value.length() / 2), 1);
-        int[] result = new int[]{Integer.MIN_VALUE, Integer.MIN_VALUE};
+        String first = value.substring(0, value.length() / 2);
+        String second = value.substring(value.length() / 2);
+        int[] result = new int[] {Integer.MIN_VALUE, Integer.MIN_VALUE};
         int i = 0;
-        byte j = 0;
-        for (String string : partStrings) {
-            for (String part : half.keySet()) {
-                if (string.equals(part)) {
-                    result[half.get(part)] = i;
-                    ++j;
-                }
+        int j = 0;
+        for (String string: partStrings) {
+            if (first.equals(string)) {
+                result[0] = i;
+                j++;
+            }
+            if (second.equals(string)) {
+                result[1] = i;
+                j++;
             }
             if (j == result.length) {
                 break;
