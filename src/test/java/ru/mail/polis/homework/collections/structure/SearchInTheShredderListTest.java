@@ -48,7 +48,6 @@ public class SearchInTheShredderListTest {
         assertNull(list.positionPartString(""));
         assertNull(list.positionPartString("рикша"));
         assertNull(list.positionPartString("троглодит"));
-        assertNotNull(list.positionPartString("тото"));
     }
 
     private SearchInTheShredderList generate() {
