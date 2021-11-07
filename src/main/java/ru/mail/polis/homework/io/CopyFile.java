@@ -14,74 +14,59 @@ public class CopyFile {
      * В тесте для создания нужных файлов для первого запуска надо расскоментировать код в setUp()
      * 3 балла
      */
-    public static boolean copyFiles(String pathFrom, String pathTo) {
+    public static String copyFiles(String pathFrom, String pathTo) {
         if (pathFrom == null || pathTo == null) {
-            return false;
+            return null;
         }
 
         Path dirFrom = Paths.get(pathFrom);
+        if (Files.notExists(dirFrom)) {
+            return null;
+        }
         Path dirTo = Paths.get(pathTo);
 
-        if (Files.notExists(dirFrom)) {
-            return false;
-        }
-
-        if (Files.isRegularFile(dirFrom)) {
-            try {
-                Files.createDirectories(dirTo.subpath(0, dirTo.getNameCount() - 1));
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-            copyFile(dirFrom, dirTo);
-            return true;
-        }
-
         try {
+            Files.createDirectories(dirTo.subpath(0, dirTo.getNameCount() - 1));
+
+            if (Files.isRegularFile(dirFrom)) {
+                copyFile(dirFrom, dirTo);
+                return null;
+            }
+
             Files.walkFileTree(dirFrom, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
                         throws IOException {
-                    Files.createDirectories(getSamePathInTo(dir, dirFrom, dirTo));
+                    Files.createDirectory(dirTo.resolve(dirFrom.relativize(dir)));
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
                         throws IOException {
-                    copyFile(file, getSamePathInTo(file, dirFrom, dirTo));
+                    copyFile(file, dirTo.resolve(dirFrom.relativize(file)));
                     return FileVisitResult.CONTINUE;
                 }
             });
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
 
-        return true;
+        return null;
     }
 
     private static void copyFile(Path from, Path to) {
         try (
-                BufferedInputStream fis = new BufferedInputStream(new FileInputStream(String.valueOf(from)), BUFFER_SIZE);
-                BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(String.valueOf(to)), BUFFER_SIZE);
+                BufferedInputStream fis = new BufferedInputStream(Files.newInputStream(from), BUFFER_SIZE);
+                BufferedOutputStream fos = new BufferedOutputStream(Files.newOutputStream(to), BUFFER_SIZE);
         ) {
-            int dataByte = fis.read();
-            while (dataByte != END_OF_STREAM) {
+            int dataByte;
+            while ((dataByte = fis.read()) != END_OF_STREAM) {
                 fos.write(dataByte);
-                dataByte = fis.read();
             }
         } catch (
                 IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private static Path getSamePathInTo(Path needPathFr, Path dirFrom, Path dirTo) {
-        if (dirFrom.getNameCount() == needPathFr.getNameCount()) {
-            return dirTo;
-        }
-
-        return dirTo.resolve(needPathFr.subpath(dirFrom.getNameCount(), needPathFr.getNameCount()));
     }
 }
