@@ -26,7 +26,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - O(m * log(m)) в среднем случае, O(n) в худшем, где m - длинна строки, n - количество элемнтов
+     * Сложность - O(m * log(m)) в среднем случае, O(m^2) в худшем, где m - длинна строки
      */
     public boolean add(String value) {
         if (value == null || value.equals("")) {
@@ -47,7 +47,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - O(m * log(m)) в среднем случае, O(n) в худшем, где m - длинна строки, n - количество элемнтов
+     * Сложность - O(m * log(m)) в среднем случае, O(m^2) в худшем, где m - длинна строки
      */
     public boolean contains(String value) {
         if (value == null || value.equals("")) {
@@ -66,7 +66,7 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - O(m * log(m)) в среднем случае, O(n) в худшем, где m - длинна строки, n - количество элемнтов
+     * Сложность - O(m * log(m)) в среднем случае, O(m^2) в худшем, где m - длинна строки
      */
     public boolean remove(String value) {
         if (value == null) {
@@ -132,7 +132,7 @@ public class CustomDictionary {
      * @param value - разбиваемая на символы строка
      * @return String упорядоченных букв из которых состоит слово
      *
-     * Сложность - O(m * log(m)), где m - длинна строки
+     * Сложность - в среднем O(m * log(m)), O(m^2) в худшем, где m - длинна строки, где m - длинна строки
      */
     private String splitByLetter(String value) {
         char[] loweredCased = value.toLowerCase().toCharArray();
