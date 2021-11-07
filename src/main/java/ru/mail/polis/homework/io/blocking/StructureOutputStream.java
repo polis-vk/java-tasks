@@ -22,7 +22,7 @@ public class StructureOutputStream extends FileOutputStream {
         this.writeLong(structure.getId());
         this.writeUTF(structure.getName());
         this.write(structure.getSubStructures());
-        this.writeDouble(structure.getCoeff());
+        this.writeFloat(structure.getCoeff());
         byte k = (byte) (
                 (((byte) (structure.isFlag1() ? 1 : 0)) << 3)
                         + (((byte) (structure.isFlag2() ? 1 : 0)) << 2)
@@ -100,6 +100,10 @@ public class StructureOutputStream extends FileOutputStream {
         writeBuffer[7] = (byte) (v);
         super.write(writeBuffer, 0, 8);
         incCount(8);
+    }
+
+    public final void writeFloat(float v) throws IOException {
+        writeInt(Float.floatToIntBits(v));
     }
 
     public final void writeDouble(double v) throws IOException {

@@ -34,7 +34,7 @@ public class Structure {
     public Structure() {
     }
 
-    public Structure(long id, String name, SubStructure[] subStructures, double coeff, boolean flag1, boolean flag2, boolean flag3, boolean flag4, byte param) {
+    public Structure(long id, String name, SubStructure[] subStructures, float coeff, boolean flag1, boolean flag2, boolean flag3, boolean flag4, byte param) {
         this.id = id;
         this.name = name;
         this.subStructures = (subStructures == null) ? null : subStructures.clone();
@@ -74,7 +74,7 @@ public class Structure {
         return coeff;
     }
 
-    public void setCoeff(double coeff) {
+    public void setCoeff(float coeff) {
         this.coeff = coeff;
     }
 

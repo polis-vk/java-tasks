@@ -30,7 +30,7 @@ public class StructureInputStream extends FileInputStream {
             long id = this.readLong();
             String name = this.readUTF();
             SubStructure[] subStructures = this.readSubStructures();
-            double coeff = this.readDouble();
+            float coeff = this.readFloat();
             byte k = (byte) super.read();
             boolean flag1 = (k & 8) != 0;
             boolean flag2 = (k & 4) != 0;
@@ -115,6 +115,10 @@ public class StructureInputStream extends FileInputStream {
                 ((readBuffer[1] & 255) << 16) +
                 ((readBuffer[2] & 255) << 8) +
                 ((readBuffer[3] & 255)));
+    }
+
+    public final float readFloat() throws IOException {
+        return Float.intBitsToFloat(readInt());
     }
 
     public final double readDouble() throws IOException {
