@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,8 +44,8 @@ public class SearchInTheShredderList {
         }
 
         int mid = value.length() >> 1;
-        String leftPart = value.substring(0, mid - 1);
-        String rightPart = value.substring(mid - 1);
+        String leftPart = value.substring(0, mid);
+        String rightPart = value.substring(mid);
 
         int leftPartInd = -1;
         int rightPartInd = -1;
