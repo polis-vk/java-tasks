@@ -20,10 +20,10 @@ public class StructureOutputStream extends FileOutputStream {
      * Метод должен вернуть записать прочитанную структуру.
      */
     public void write(Structure structure) throws IOException {
-        writeValue(structure.getId(), Long.BYTES);
+        writeLong(structure.getId());
         writeName(structure.getName());
         writeSubStructures(structure.getSubStructures());
-        writeDouble(structure.getCoeff());
+        writeFloat(structure.getCoeff());
         writeFlagsByte(new boolean[]{
                 structure.isFlag1(),
                 structure.isFlag2(),
@@ -44,17 +44,17 @@ public class StructureOutputStream extends FileOutputStream {
 
     private void writeSubStructures(SubStructure[] subStructures) throws IOException {
         if (subStructures == null) {
-            writeValue(-1, Integer.BYTES);
+            writeInt(-1);
             return;
         }
-        writeValue(subStructures.length, Integer.BYTES);
+        writeInt(subStructures.length);
         for (SubStructure subStructure : subStructures) {
             writeSubStructure(subStructure);
         }
     }
 
     private void writeSubStructure(SubStructure subStructure) throws IOException {
-        writeValue(subStructure.getId(), Integer.BYTES);
+        writeInt(subStructure.getId());
         writeName(subStructure.getName());
         writeFlagsByte(new boolean[]{subStructure.isFlag()});
         writeDouble(subStructure.getScore());
@@ -62,32 +62,48 @@ public class StructureOutputStream extends FileOutputStream {
 
     private void writeName(String name) throws IOException {
         if (name == null) {
-            writeValue(-1, Integer.BYTES);
+            writeInt(-1);
             return;
         }
-        writeValue(name.length(), Integer.BYTES);
-        for (char ch : name.toCharArray()) {
-            writeValue(ch, Character.BYTES);
-        }
+        byte[] bytes = name.getBytes();
+        writeInt(bytes.length);
+        write(bytes);
     }
 
     private void writeDouble(double d) throws IOException {
-        writeValue(Double.doubleToLongBits(d), Double.BYTES);
+        writeLong(Double.doubleToLongBits(d));
     }
 
-    private void writeValue(long value, int size) throws IOException {
-        int shift = 0;
-        byte[] bytes = new byte[size];
-        for (int i = size - 1; i >= 0; i--) {
-            bytes[i] = (byte) (value >>> shift);
-            shift += 8;
-        }
+    private void writeFloat(float value) throws IOException {
+        writeInt(Float.floatToIntBits(value));
+    }
+
+    private void writeInt(int value) throws IOException {
+        byte[] bytes = new byte[]{
+                (byte) (value >>> 24),
+                (byte) (value >>> 16),
+                (byte) (value >>> 8),
+                (byte) (value)
+        };
+        write(bytes);
+    }
+
+    private void writeLong(long value) throws IOException {
+        byte[] bytes = new byte[]{
+                (byte) (value >>> 56),
+                (byte) (value >>> 48),
+                (byte) (value >>> 40),
+                (byte) (value >>> 32),
+                (byte) (value >>> 24),
+                (byte) (value >>> 16),
+                (byte) (value >>> 8),
+                (byte) (value)
+        };
         write(bytes);
     }
 
     private void writeFlagsByte(boolean[] flags) throws IOException {
         int flagsByte = 0;
-        //0 0 0 0 flags[0]...flags[3]
         for (int i = 0; i < flags.length; i++) {
             flagsByte |= ((flags[i] ? 1 : 0) << (flags.length - 1 - i));
         }

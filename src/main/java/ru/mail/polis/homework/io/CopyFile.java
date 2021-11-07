@@ -20,7 +20,9 @@ public class CopyFile {
         }
         Path to = Paths.get(pathTo);
         try {
-            Files.createDirectories(to.getParent());
+            if (Files.notExists(to.getParent())) {
+                Files.createDirectories(to.getParent());
+            }
             if (Files.isRegularFile(from)) {
                 copyFile(from, to);
                 return null;

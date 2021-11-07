@@ -59,7 +59,7 @@ public class Structure {
         return coeff;
     }
 
-    public void setCoeff(double coeff) {
+    public void setCoeff(float coeff) {
         this.coeff = coeff;
     }
 

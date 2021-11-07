@@ -33,7 +33,7 @@ public class StructureInputStream extends FileInputStream {
         structure.setId(readLong());
         structure.setName(readString());
         structure.setSubStructures(readSubstructures());
-        structure.setCoeff(readDouble());
+        structure.setCoeff(readFloat());
         boolean[] flags = readFlags(4);
         structure.setFlag1(flags[0]);
         structure.setFlag2(flags[1]);
@@ -54,7 +54,7 @@ public class StructureInputStream extends FileInputStream {
             structure = readStructure();
         }
         while (structure != null);
-        return Arrays.copyOf(structures.toArray(), structures.size(), Structure[].class);
+        return structures.toArray(new Structure[0]);
     }
 
     private SubStructure[] readSubstructures() throws IOException {
@@ -70,25 +70,27 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private SubStructure readSubStructure() throws IOException {
-        return new SubStructure(readInt(), readString(), readFlags(1)[0], readDouble());
+        int id = readInt();
+        String name = readString();
+        if (name == null) {
+            throw new IOException();
+        }
+        boolean flag = readFlags(1)[0];
+        double score = readDouble();
+        return new SubStructure(id, name, flag, score);
     }
 
     private String readString() throws IOException {
-        int length = readInt();
-        if (length == -1) {
+        int size = readInt();
+        if (size == -1) {
             return null;
         }
-        char[] str = new char[length];
-        for (int i = 0; i < length; i++) {
-            int ch1 = read();
-            int ch2 = read();
-            if ((ch1 | ch2) < 0) {
-                throw new IOException();
-            }
-            str[i] = (char) ((ch1 << 8) + (ch2));
+        byte[] bytes = new byte[size];
+        int total = read(bytes);
+        if (total != size) {
+            throw new IOException();
         }
-
-        return String.valueOf(str);
+        return new String(bytes);
     }
 
     private long readLong() throws IOException {
@@ -120,6 +122,10 @@ public class StructureInputStream extends FileInputStream {
 
     private double readDouble() throws IOException {
         return Double.longBitsToDouble(readLong());
+    }
+
+    private float readFloat() throws IOException {
+        return Float.intBitsToFloat(readInt());
     }
 
     private boolean[] readFlags(int numberOfFlags) throws IOException {
