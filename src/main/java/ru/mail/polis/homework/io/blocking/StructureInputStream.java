@@ -39,9 +39,7 @@ public class StructureInputStream extends FileInputStream {
         }
         double coeff = bytesToDouble();
         boolean flag1 = bytesToBool();
-        boolean flag2 = bytesToBool();//structure.setSubStructures(new SubStructure[] {
-        //        new SubStructure(12313, "sub-oneObject", true, 0.1),
-        //        new SubStructure(12314, "sub-oneObject-4", false, 0.2)});
+        boolean flag2 = bytesToBool();
         boolean flag3 = bytesToBool();
         boolean flag4 = bytesToBool();
         byte param = (byte) read();
