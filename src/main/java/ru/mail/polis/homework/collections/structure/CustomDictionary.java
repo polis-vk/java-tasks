@@ -9,7 +9,7 @@ import java.util.*;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private final HashMap<String, Set<String>> map = new HashMap<>();
+    private final Map<String, Set<String>> map = new HashMap<>();
     private int size = 0;
 
     /**
@@ -38,7 +38,9 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - O[1]
+     * Сложность - O(l*log(l) + log(n))
+     * l - value.lenght()
+     * n - map.size()
      */
     public boolean contains(String value) {
         if (value == null || value.isEmpty()) {
@@ -57,7 +59,9 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - O[1]
+     * Сложность - O(l*log(l) + log(n))
+     * l - value.lenght()
+     * n - map.size()
      */
     public boolean remove(String value) {
         if (value == null || value.isEmpty()) {
@@ -91,7 +95,9 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - O[1]
+     * Сложность - O(l*log(l) + log(n))
+     * l - value.lenght()
+     * n - map.size()
      */
     public List<String> getSimilarWords(String value) {
         if (value == null || value.isEmpty()) {

@@ -10,11 +10,10 @@ import java.util.*;
  */
 public class MaxStack extends Stack<Integer> {
 
-    private final LinkedList<Integer> maxVals;
+    private final Deque<Integer> maxVals = new LinkedList<>();
 
     public MaxStack() {
         super();
-        maxVals = new LinkedList<>();
     }
 
     @Override
