@@ -58,13 +58,17 @@ public class StructureInputStream extends FileInputStream {
 
     private double readDouble() throws IOException {
         byte[] data = new byte[Double.BYTES];
-        read(data);
+        if (read(data) == -1) {
+            return Structure.UNDEFINED_DOUBLE;
+        }
         return ByteBuffer.allocate(data.length).put(data).flip().getDouble();
     }
 
     private float readFloat() throws IOException {
         byte[] data = new byte[Float.BYTES];
-        read(data);
+        if (read(data) == -1) {
+            return Structure.UNDEFINED_FLOAT;
+        }
         return ByteBuffer.allocate(data.length).put(data).flip().getFloat();
     }
 
@@ -81,13 +85,14 @@ public class StructureInputStream extends FileInputStream {
 
     private int readInt() throws IOException {
         byte[] data = new byte[Integer.BYTES];
-        read(data);
+        if (read(data) == -1) {
+            return Structure.UNDEFINED_INT;
+        }
         return ByteBuffer.allocate(data.length).put(data).flip().getInt();
     }
 
     private boolean[] read4Booleans() throws IOException {
         byte flags = (byte) read();
-        System.out.println(flags);
         boolean[] result = new boolean[4];
         for (int i = 0; i < 4; i++) {
             result[i] = (flags & 1) == 1;
