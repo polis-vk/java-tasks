@@ -19,7 +19,6 @@ public class StructureOutputStream extends FileOutputStream {
      */
     public void write(Structure structure) throws IOException {
         if (structure == null) {
-            System.out.println("WRITING STRUCTURE: NULL");
             return;
         }
 
@@ -29,7 +28,6 @@ public class StructureOutputStream extends FileOutputStream {
         writeDouble(structure.getCoeff());
         write(structure.getParam());
         write(structure.getSubStructures());
-        System.out.println("WRITING STRUCTURE: " + structure);
     }
 
     /**

@@ -32,7 +32,6 @@ public class StructureInputStream extends FileInputStream {
                     readString(), readDouble(), (byte)read(), readSubStructures());
             structs.add(struct);
         }
-        System.out.println("READING STRUCTURE: " + struct);
         return struct;
     }
 
@@ -44,7 +43,6 @@ public class StructureInputStream extends FileInputStream {
         while (available() != 0) {
             readStructure();
         }
-        System.out.println("READING STRUCTURES: " + structs);
         return structs.toArray(new Structure[0]);
     }
 
