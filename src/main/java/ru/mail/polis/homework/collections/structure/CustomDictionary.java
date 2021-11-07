@@ -63,8 +63,10 @@ public class CustomDictionary {
         if (dictionary.get(key) == null) {
             return false;
         }
-        size--;
         final boolean removeFlag = dictionary.get(key).remove(value);
+        if (removeFlag) {
+            size--;
+        }
         if (dictionary.get(key).size() == 0) {
             dictionary.remove(key);
         }
