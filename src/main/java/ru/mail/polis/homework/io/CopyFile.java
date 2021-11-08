@@ -13,7 +13,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 public class CopyFile {
 
     private static void copyFile(Path from, Path to) {
-        try (InputStream input = Files.newInputStream(from); OutputStream output = Files.newOutputStream(to)) {
+        try (InputStream input = Files.newInputStream(from);
+             OutputStream output = Files.newOutputStream(to)) {
             byte[] buffer = new byte[1024];
             int recorded = input.read(buffer);
             while (recorded > 0) {
