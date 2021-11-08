@@ -68,7 +68,7 @@ public class CustomDictionary {
      * Сложность - [ O(k*log k) ]
      */
     public boolean contains(String value) {
-        return data.containsKey(makeKey(value));
+        return data.containsKey(value);
     }
 
     /**
