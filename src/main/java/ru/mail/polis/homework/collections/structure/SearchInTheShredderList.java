@@ -47,15 +47,16 @@ public class SearchInTheShredderList {
         int[] res = new int[]{-1, -1};
 
         for (int i = 0; i < partStrings.size(); i++) {
-            if (partStrings.get(i).equals(left)) {
+            if (res[0] == -1 && partStrings.get(i).equals(left)) {
                 res[0] = i;
             } else if (partStrings.get(i).equals(right)) {
                 res[1] = i;
             }
+
+            if (res[0] != -1 && res[1] != -1) {
+                return res;
+            }
         }
-        if (res[0] == -1 || res[1] == -1) {
-            return null;
-        }
-        return res;
+        return null;
     }
 }

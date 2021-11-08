@@ -1,15 +1,9 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 /**
  * Задание оценивается в 2 балла.
@@ -25,8 +19,6 @@ import java.util.Stack;
  */
 public class ValidatorForParentheses {
     private static final Map<Character, Character> openingBracketToClosing = new HashMap<>();
-    private static final List<Character> openingBrackets = new ArrayList<>(Arrays.asList('(', '[', '{', '<'));
-    private static final List<Character> closingBrackets = new ArrayList<>(Arrays.asList(')', ']', '}', '>'));
 
     static {
         openingBracketToClosing.put('(', ')');
@@ -56,11 +48,11 @@ public class ValidatorForParentheses {
     }
 
     private static boolean isOpeningBracket(char c) {
-        return openingBrackets.contains(c);
+        return openingBracketToClosing.containsKey(c);
     }
 
     private static boolean isCLosingBracket(char c) {
-        return closingBrackets.contains(c);
+        return openingBracketToClosing.containsValue(c);
     }
 
     private static boolean checkClosingBracket(char c, Deque<Character> stack) {

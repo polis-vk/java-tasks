@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Задание оценивается в 4 балла.
@@ -12,7 +9,9 @@ import java.util.Map;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private final List<Word> words = new ArrayList<>();
+    private final Map<Map<Character, Integer>, Set<String>> words = new HashMap<>();
+    private int size = 0;
+
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
@@ -24,12 +23,24 @@ public class CustomDictionary {
         if (value == null || value.length() == 0) {
             throw new IllegalArgumentException();
         }
-        for (Word item : words) {
-            if (item.getValue().equals(value)) {
-                return false;
-            }
+        Map<Character, Integer> charsToNumbers = convertWord(value);
+        Set<String> similarValues = words.get(charsToNumbers);
+
+        if (similarValues == null) {
+            similarValues = new HashSet<>();
+            similarValues.add(value);
+            words.put(charsToNumbers, similarValues);
+            size++;
+            return true;
         }
-        return words.add(new Word(value));
+
+        if (similarValues.contains(value)) {
+            return false;
+        }
+
+        similarValues.add(value);
+        size++;
+        return true;
     }
 
     /**
@@ -40,12 +51,9 @@ public class CustomDictionary {
      * Сложность - O(n)
      */
     public boolean contains(String value) {
-        for (Word word : words) {
-            if (word.getValue().equals(value)) {
-                return true;
-            }
-        }
-        return false;
+        Map<Character, Integer> charsToNumbers = convertWord(value);
+        Set<String> similarValues = words.get(charsToNumbers);
+        return similarValues != null && similarValues.contains(value);
     }
 
     /**
@@ -56,17 +64,18 @@ public class CustomDictionary {
      * Сложность - O(n)
      */
     public boolean remove(String value) {
-        int indexToRemove = -1;
-        for (int i = 0; i < words.size(); i++) {
-            if (words.get(i).getValue().equals(value)) {
-                indexToRemove = i;
-            }
-        }
-        if (indexToRemove == -1) {
+        Map<Character, Integer> charsToNumbers = convertWord(value);
+        Set<String> similarValues = words.get(charsToNumbers);
+        if (similarValues == null || !similarValues.contains(value)) {
             return false;
         }
-        words.remove(indexToRemove);
-        return true;
+
+        size--;
+        if (similarValues.size() == 1) {
+            return words.remove(charsToNumbers, similarValues);
+        }
+
+        return similarValues.remove(value);
     }
 
     /**
@@ -89,15 +98,14 @@ public class CustomDictionary {
      * Сложность - O(n * m), m - длина слова
      */
     public List<String> getSimilarWords(String value) {
-        List<String> res = new ArrayList<>();
-        Word word = new Word(value);
+        Map<Character, Integer> charsToNumbers = convertWord(value);
+        Set<String> similarValues = words.get(charsToNumbers);
 
-        for (Word item : words) {
-            if (word.consistOfSameLetters(item)) {
-                res.add(item.value);
-            }
+        if (similarValues == null) {
+            return Collections.emptyList();
         }
-        return res;
+
+        return new ArrayList<>(words.get(convertWord(value)));
     }
 
     /**
@@ -107,29 +115,27 @@ public class CustomDictionary {
      * Сложность - O(1)
      */
     public int size() {
-        return words.size();
+        return size;
     }
 
-    private static class Word {
-        private final String value;
-        private final Map<Character, Integer> chars = new HashMap<>();
 
-        private Word(String value) {
-            this.value = value;
+    /**
+     * Преобразует строку в Map, где к символу в нижнем регистре
+     * сопоставляется число, сколько раз он встречается в слове.
+     * <p>
+     *  @param value - исходная строка.
+     *  @return - Map символ -> его количество в слове.
+     * Сложность - O(m), m - длина слова.
+     */
+    private Map<Character, Integer> convertWord(String value) {
+        Map<Character, Integer> chars = new HashMap<>();
+        String valueAtLowerCase = value.toLowerCase();
 
-            String valueAtLowerCase = value.toLowerCase();
-            for (int i = 0; i < valueAtLowerCase.length(); i++) {
-                char currentChar = valueAtLowerCase.charAt(i);
-                chars.put(currentChar, chars.getOrDefault(currentChar, 0) + 1);
-            }
+        for (int i = 0; i < valueAtLowerCase.length(); i++) {
+            char currentChar = valueAtLowerCase.charAt(i);
+            chars.put(currentChar, chars.getOrDefault(currentChar, 0) + 1);
         }
 
-        private String getValue() {
-            return value;
-        }
-
-        private boolean consistOfSameLetters(Word other) {
-            return chars.equals(other.chars);
-        }
+        return chars;
     }
 }

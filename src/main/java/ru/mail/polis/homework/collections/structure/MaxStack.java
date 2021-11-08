@@ -17,9 +17,7 @@ public class MaxStack extends Stack<Integer> {
 
     @Override
     public Integer push(Integer item) {
-        if (maxElems.size() > 0 && maxElems.peek() > item) {
-            maxElems.push(maxElems.peek());
-        } else {
+        if (maxElems.size() == 0 || maxElems.peek() <= item) {
             maxElems.push(item);
         }
         return super.push(item);
@@ -27,7 +25,9 @@ public class MaxStack extends Stack<Integer> {
 
     @Override
     public synchronized Integer pop() {
-        maxElems.pop();
+        if (peek().equals(maxElems.peek())) {
+            maxElems.pop();
+        }
         return super.pop();
     }
 }
