@@ -1,9 +1,9 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Задание оценивается в 2 балла.
@@ -18,8 +18,9 @@ import java.util.Map;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
-    private static final Map<Character, Character> brackets = Map.ofEntries(Map.entry('[', ']'),
+    private static final Map<Character, Character> openingBrackets = Map.ofEntries(Map.entry('[', ']'),
             Map.entry('(', ')'), Map.entry('{', '}'), Map.entry('<', '>'));
+    private static final Set<Character> closingBrackets = Set.of(']', ')', '}', '>');
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
@@ -28,11 +29,11 @@ public class ValidatorForParentheses {
         boolean wereBracketsPresent = false;
         Deque<Character> currBrackets = new LinkedList<>();
         for (char character : value.toCharArray()) {
-            if (brackets.containsKey(character)) {
+            if (openingBrackets.containsKey(character)) {
                 wereBracketsPresent = true;
                 currBrackets.addLast(character);
-            } else if (brackets.containsValue(character)) {
-                if (currBrackets.isEmpty() || brackets.get(currBrackets.getLast()) != character) {
+            } else if (closingBrackets.contains(character)) {
+                if (currBrackets.isEmpty() || openingBrackets.get(currBrackets.getLast()) != character) {
                     return false;
                 }
                 currBrackets.removeLast();

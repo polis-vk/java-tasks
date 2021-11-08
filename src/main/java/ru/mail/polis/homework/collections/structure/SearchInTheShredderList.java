@@ -47,10 +47,10 @@ public class SearchInTheShredderList {
         int index = 0;
         for (String string : partStrings) {
             if (additions.containsKey(string)) {
-                if (value.startsWith(string)) {
-                    return new int[]{index, additions.get(string)};
+                if (value.endsWith(string)) {
+                    return new int[]{additions.get(string), index};
                 }
-                return new int[]{additions.get(string), index};
+                return new int[]{index, additions.get(string)};
             } else if (value.endsWith(string) || value.startsWith(string)) {
                 additions.put(value.replaceFirst(string, ""), index);
             }

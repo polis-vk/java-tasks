@@ -19,15 +19,6 @@ public class CustomDictionary {
     private final Map<Map<Character, Integer>, Set<String>> data = new HashMap<>();
     private int size = 0;
 
-    private static HashMap<Character, Integer> getHashMap(String value) {
-        Map<Character, Integer> characters = new HashMap<>();
-        for (int i = 0; i < value.length(); i++) {
-            char character = Character.toUpperCase(value.charAt(i));
-            characters.put(character, characters.getOrDefault(character, 0) + 1);
-        }
-        return (HashMap<Character, Integer>) characters;
-    }
-
     /**
      * Сохранить строку в структуру данных
      *
@@ -134,5 +125,13 @@ public class CustomDictionary {
         return size;
     }
 
+    private HashMap<Character, Integer> getHashMap(String value) {
+        Map<Character, Integer> characters = new HashMap<>();
+        for (int i = 0; i < value.length(); i++) {
+            char character = Character.toUpperCase(value.charAt(i));
+            characters.put(character, characters.getOrDefault(character, 0) + 1);
+        }
+        return (HashMap<Character, Integer>) characters;
+    }
 
 }
