@@ -11,8 +11,6 @@ import java.util.List;
  */
 public class StructureInputStream extends FileInputStream {
 
-    private final short BUFFER_SIZE = 8;
-    private byte[] readBuffer = new byte[BUFFER_SIZE];
     private List<Structure> structureList = new ArrayList<>();
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
@@ -24,7 +22,7 @@ public class StructureInputStream extends FileInputStream {
      * Если структур в файле больше нет, то вернуть null
      */
     public Structure readStructure() throws IOException {
-        if (super.available() == 0) {
+        if (available() == 0) {
             return null;
         }
         Structure structure = new Structure();
@@ -47,41 +45,27 @@ public class StructureInputStream extends FileInputStream {
      * Если файл уже прочитан, но возвращается полный массив.
      */
     public Structure[] readStructures() throws IOException {
-        while (super.available() > 0) {
+        while (available() > 0) {
             readStructure();
         }
         return structureList.toArray(new Structure[0]);
     }
 
     private boolean readBoolean() throws IOException {
-        int ch = super.read();
-        if (ch < 0) {
-            throw new EOFException();
-        }
-        return (ch != 0);
+        return read() == 1;
     }
 
     private byte readByte() throws IOException {
-        int ch = super.read();
-        if (ch < 0) {
-            throw new EOFException();
-        }
-        return (byte) (ch);
+        return (byte) read();
     }
 
     private int readInt() throws IOException {
-        int ch1 = super.read();
-        int ch2 = super.read();
-        int ch3 = super.read();
-        int ch4 = super.read();
-        if ((ch1 | ch2 | ch3 | ch4) < 0) {
-            throw new EOFException();
-        }
-        return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
+        return ((read() << 24) + (read() << 16) + (read() << 8) + (read() << 0));
     }
 
     private long readLong() throws IOException {
-        if (super.read(readBuffer) != readBuffer.length) {
+        byte[] readBuffer = new byte[Long.BYTES];
+        if (read(readBuffer) != readBuffer.length) {
             throw new IOException();
         }
         return (((long) readBuffer[0] << 56) +
@@ -104,18 +88,14 @@ public class StructureInputStream extends FileInputStream {
 
     private String readString() throws IOException {
         int stringLength = readInt();
-        if (stringLength == 0) {
+        if (stringLength == -1) {
             return null;
         }
         byte[] b = new byte[stringLength];
-        if (super.read(b) != stringLength) {
+        if (read(b) != stringLength) {
             throw new IOException();
         }
-        StringBuilder stringBuilder = new StringBuilder();
-        for (byte stringByte : b) {
-            stringBuilder.append((char) stringByte);
-        }
-        return stringBuilder.toString();
+        return new String(b);
     }
 
     private SubStructure readSubStructure() throws IOException {
@@ -129,7 +109,7 @@ public class StructureInputStream extends FileInputStream {
 
     private SubStructure[] readSubStructures() throws IOException {
         int subStructuresNumber = readInt();
-        if (subStructuresNumber == 0) {
+        if (subStructuresNumber == -1) {
             return null;
         }
         SubStructure[] subStructures = new SubStructure[subStructuresNumber];

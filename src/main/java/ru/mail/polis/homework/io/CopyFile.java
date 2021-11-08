@@ -10,8 +10,7 @@ import java.nio.file.Paths;
 
 public class CopyFile {
 
-    private static final short BUFFER_SIZE = 1024;
-    private static byte[] buffer = new byte[BUFFER_SIZE];
+    private static final int BUFFER_SIZE = 1024;
 
     /**
      * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
@@ -52,6 +51,7 @@ public class CopyFile {
     }
 
     private static void copyFileData(Path source, Path destination) throws IOException {
+        byte[] buffer = new byte[BUFFER_SIZE];
         try (InputStream in = Files.newInputStream(source);
              OutputStream out = Files.newOutputStream(destination)) {
             int length;

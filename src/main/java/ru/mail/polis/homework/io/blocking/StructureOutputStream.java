@@ -12,8 +12,6 @@ import java.io.IOException;
  */
 public class StructureOutputStream extends FileOutputStream {
 
-    private byte[] writeBuffer;
-
     public StructureOutputStream(File name) throws FileNotFoundException {
         super(name);
     }
@@ -26,10 +24,13 @@ public class StructureOutputStream extends FileOutputStream {
         writeString(structure.getName());
         writeSubStructures(structure.getSubStructures());
         writeFloat((float) structure.getCoeff());
-        writeByte(Byte.parseByte(String.valueOf(boolToInt(structure.isFlag1()))
-                + boolToInt(structure.isFlag2())
-                + boolToInt(structure.isFlag3())
-                + boolToInt(structure.isFlag4()), 2));
+        writeByte(Byte.parseByte(new StringBuilder()
+                        .append(boolToInt(structure.isFlag1()))
+                        .append(boolToInt(structure.isFlag2()))
+                        .append(boolToInt(structure.isFlag3()))
+                        .append(boolToInt(structure.isFlag4()))
+                        .toString()
+                , 2));
         writeByte(structure.getParam());
     }
 
@@ -43,22 +44,22 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     private void writeBoolean(boolean v) throws IOException {
-        super.write(v ? 1 : 0);
+        write(v ? 1 : 0);
     }
 
     private void writeByte(byte v) throws IOException {
-        super.write(v);
+        write(v);
     }
 
     private void writeInt(int v) throws IOException {
-        super.write((v >>> 24) & 0xFF);
-        super.write((v >>> 16) & 0xFF);
-        super.write((v >>> 8) & 0xFF);
-        super.write((v >>> 0) & 0xFF);
+        write((v >>> 24) & 0xFF);
+        write((v >>> 16) & 0xFF);
+        write((v >>> 8) & 0xFF);
+        write((v >>> 0) & 0xFF);
     }
 
     private void writeLong(long v) throws IOException {
-        writeBuffer = new byte[8];
+        byte[] writeBuffer = new byte[Long.BYTES];
         writeBuffer[0] = (byte) (v >>> 56);
         writeBuffer[1] = (byte) (v >>> 48);
         writeBuffer[2] = (byte) (v >>> 40);
@@ -67,7 +68,7 @@ public class StructureOutputStream extends FileOutputStream {
         writeBuffer[5] = (byte) (v >>> 16);
         writeBuffer[6] = (byte) (v >>> 8);
         writeBuffer[7] = (byte) (v >>> 0);
-        super.write(writeBuffer);
+        write(writeBuffer);
     }
 
     private void writeFloat(float v) throws IOException {
@@ -80,11 +81,11 @@ public class StructureOutputStream extends FileOutputStream {
 
     private void writeString(String v) throws IOException {
         if (v == null) {
-            writeInt(0);
+            writeInt(-1);
             return;
         }
         writeInt(v.length());
-        super.write(v.getBytes());
+        write(v.getBytes());
     }
 
     private void writeSubStructure(SubStructure subStructure) throws IOException {
@@ -96,7 +97,7 @@ public class StructureOutputStream extends FileOutputStream {
 
     private void writeSubStructures(SubStructure[] subStructures) throws IOException {
         if (subStructures == null) {
-            writeInt(0);
+            writeInt(-1);
             return;
         }
         writeInt(subStructures.length);
