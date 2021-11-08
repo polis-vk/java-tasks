@@ -47,10 +47,10 @@ public class SearchInTheShredderList {
         int rightPartIndex = -1;
 
         for (int i = 0; i < partStrings.size(); i++) {
-            if (partStrings.get(i).equals(leftPart)) {
+            if (leftPartIndex == -1 && partStrings.get(i).equals(leftPart)) {
                 leftPartIndex = i;
             }
-            if (partStrings.get(i).equals(rightPart)) {
+            if (i != leftPartIndex && partStrings.get(i).equals(rightPart)) {
                 rightPartIndex = i;
             }
             if (leftPartIndex != -1 && rightPartIndex != -1) {
