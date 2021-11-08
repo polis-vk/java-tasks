@@ -17,24 +17,34 @@ import java.util.Stack;
  */
 public class ValidatorForParentheses {
 
-    private static final Map<Character, Character> mapOfBrackets = Map.of(
-            ')', '(',
-            ']', '[',
-            '}', '{',
-            '>', '<');
+    /* Map, содержащая пару символ скобки и условный номер, соответствующий ей.
+       Нечётные номера - открывающие скобки, чётные - закрывающие.
+       Номера скобок одной категории (к примеру, '(' и ')') отличаются на единицу */
+    private static final Map<Character, Integer> mapOfBrackets = Map.of(
+            '(', 1,
+            ')', 2,
+            '[', 3,
+            ']', 4,
+            '{', 5,
+            '}', 6,
+            '<', 7,
+            '>', 8);
 
     public static boolean validate(String value) {
         if (value == null || value.equals("") || !containsBrackets(value)) {
             return false;
         }
-        Stack<Character> stack = new Stack<>();
+        Stack<Integer> stack = new Stack<>();
         char currentSymbol;
         for (int i = 0; i < value.length(); i++) {
             currentSymbol = value.charAt(i);
-            if (mapOfBrackets.containsValue(currentSymbol)) {
-                stack.push(currentSymbol);
-            } else if (mapOfBrackets.containsKey(currentSymbol) && (stack.size() == 0
-                    || !mapOfBrackets.get(currentSymbol).equals(stack.pop()))) {
+            if (mapOfBrackets.get(currentSymbol) == null) {
+                continue;
+            }
+            int currentAccessToMap = mapOfBrackets.get(currentSymbol);
+            if (currentAccessToMap % 2 != 0) {
+                stack.push(currentAccessToMap);
+            } else if (stack.size() == 0 || currentAccessToMap != stack.pop() + 1) {
                 return false;
             }
         }
@@ -43,8 +53,7 @@ public class ValidatorForParentheses {
 
     private static boolean containsBrackets(String value) {
         for (int i = 0; i < value.length(); i++) {
-            char currentChar = value.charAt(i);
-            if (mapOfBrackets.containsKey(currentChar) || mapOfBrackets.containsValue(currentChar)) {
+            if (mapOfBrackets.get(value.charAt(i)) != null) {
                 return true;
             }
         }
