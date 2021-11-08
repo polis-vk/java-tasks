@@ -2,9 +2,6 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -96,6 +93,15 @@ public class CustomDictionaryTest {
     public void testIsEmptyContains() {
         CustomDictionary dictionary = new CustomDictionary();
         boolean result = dictionary.contains(TEST_STRING);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void testSimilarContains() {
+        CustomDictionary dictionary = new CustomDictionary();
+        dictionary.add(TEST_STRING);
+        boolean result = dictionary.contains(REVERT_TEST_STRING);
 
         assertFalse(result);
     }
@@ -195,6 +201,19 @@ public class CustomDictionaryTest {
 
         dictionary.remove(TEST_STRING);
         assertEquals(2, dictionary.size());
+    }
+
+    @Test
+    public void testRemoveNonExistentSize() {
+        CustomDictionary dictionary = new CustomDictionary();
+        assertEquals(0, dictionary.size());
+
+        dictionary.add(TEST_STRING);
+        assertEquals(1, dictionary.size());
+
+        dictionary.remove(REVERT_TEST_STRING);
+
+        assertEquals(1, dictionary.size());
     }
 
     @Test
