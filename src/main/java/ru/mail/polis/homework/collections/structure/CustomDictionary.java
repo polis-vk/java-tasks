@@ -9,7 +9,8 @@ import java.util.*;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private final Map<String, Set<Character>> words = new HashMap<>();
+    private final Map<DictionaryKey, Set<String>> words = new HashMap<>();
+    private int size;
 
     /**
      * Сохранить строку в структуру данных
@@ -23,7 +24,13 @@ public class CustomDictionary {
         if (value == null || value.equals("")) {
             throw new IllegalArgumentException();
         }
-        return words.put(value, getLetters(value)) == null;
+        DictionaryKey key = new DictionaryKey(value);
+        words.putIfAbsent(key, new HashSet<>());
+        if (!words.get(key).add(value)) {
+            return false;
+        }
+        size++;
+        return true;
     }
 
     /**
@@ -32,10 +39,18 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - O(1)
+     * Сложность - O(value.length())
      */
     public boolean contains(String value) {
-        return words.containsKey(value);
+        if (value == null || value.equals("")) {
+            return false;
+        }
+        DictionaryKey key = new DictionaryKey(value);
+        Set<String> container = words.get(key);
+        if (container == null) {
+            return false;
+        }
+        return container.contains(value);
     }
 
     /**
@@ -44,10 +59,25 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - O(1)
+     * Сложность - O(value.length())
      */
     public boolean remove(String value) {
-        return words.remove(value) != null;
+        if (value == null || value.equals("")) {
+            return false;
+        }
+        DictionaryKey key = new DictionaryKey(value);
+        Set<String> container = words.get(key);
+        if (container == null) {
+            return false;
+        }
+        if (!container.remove(value)) {
+            return false;
+        }
+        size--;
+        if (container.isEmpty()) {
+            words.remove(key);
+        }
+        return true;
     }
 
     /**
@@ -67,17 +97,18 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - O(size())
+     * Сложность - O(value.length())
      */
     public List<String> getSimilarWords(String value) {
-        List<String> similar = new ArrayList<>();
-        Set<Character> valueLetters = getLetters(value);
-        for (String word : words.keySet()) {
-            if (word.length() == value.length() && words.get(word).equals(valueLetters)) {
-                similar.add(word);
-            }
+        if (value == null || value.equals("")) {
+            return Collections.emptyList();
         }
-        return similar;
+        DictionaryKey key = new DictionaryKey(value);
+        Set<String> container = words.get(key);
+        if (container == null) {
+            return Collections.emptyList();
+        }
+        return new ArrayList<>(container);
     }
 
     /**
@@ -88,14 +119,35 @@ public class CustomDictionary {
      * Сложность - O(1)
      */
     public int size() {
-        return words.size();
+        return size;
     }
 
-    private static Set<Character> getLetters(String word) {
-        Set<Character> letters = new HashSet<>();
-        for (char ch : word.toUpperCase().toCharArray()) {
-            letters.add(ch);
+    private static class DictionaryKey {
+        private final int wordLength;
+        private final Set<Character> letters;
+
+        public DictionaryKey(String word) {
+            this.wordLength = word.length();
+            Set<Character> letters = new HashSet<>();
+            for (char ch : word.toUpperCase().toCharArray()) {
+                letters.add(ch);
+            }
+            this.letters = letters;
         }
-        return letters;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            DictionaryKey key = (DictionaryKey) o;
+            return wordLength == key.wordLength &&
+                    letters.equals(key.letters);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(wordLength, letters);
+        }
     }
+
 }

@@ -40,22 +40,27 @@ public class SearchInTheShredderList {
         if (value == null || value.equals("")) {
             return null;
         }
-        String part1 = value.substring(0, value.length() / 2 - 1);
-        String part2 = value.substring(value.length() / 2 - 1);
+        int mid = value.length() >> 1;
+        String part1 = value.substring(0, mid);
+        String part2 = value.substring(mid);
         int part1Address = -1;
         int part2Address = -1;
         for (int i = 0; i < partStrings.size(); i++) {
             String part = partStrings.get(i);
-            if (part.equals(part1)) {
+            if (part1Address == -1 && part1.equals(part)) {
                 part1Address = i;
+                continue;
             }
             if (part2.equals(part)) {
                 part2Address = i;
-            }
-            if (part1Address != -1 && part2Address != -1) {
-                return new int[]{part1Address, part2Address};
+                if (part1Address != -1) {
+                    break;
+                }
             }
         }
-        return null;
+        if (part1Address == -1 || part2Address == -1) {
+            return null;
+        }
+        return new int[]{part1Address, part2Address};
     }
 }
