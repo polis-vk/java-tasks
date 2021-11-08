@@ -39,6 +39,10 @@ public class SearchInTheShredderListTest {
 
         result = list.get(23) + list.get(0);
         assertEquals("жаворонок", result);
+
+        result = list.get(32) + list.get(33);
+        assertEquals("мама", result);
+
     }
 
     @Test
