@@ -41,25 +41,21 @@ public class SearchInTheShredderList {
             return null;
         }
         int midIndex = value.length() / 2;
-
         String left = value.substring(0, midIndex);
         String right = value.substring(midIndex);
 
         int leftIndex = -1;
         int rightIndex = -1;
-
-        for (int i = 0; i < partStrings.size(); i++) {
+        int i = 0;
+        while (i < partStrings.size() && (leftIndex == -1 || rightIndex == -1) ) {
 
             if (leftIndex == -1 && partStrings.get(i).equals(left)) {
                 leftIndex = i;
-            }
-            if (rightIndex == -1 && partStrings.get(i).equals(right)) {
+            } else if (rightIndex == -1 && partStrings.get(i).equals(right)) {
                 rightIndex = i;
             }
-            if (leftIndex != -1 && rightIndex != -1) {
-                return new int[]{leftIndex, rightIndex};
-            }
+            i++;
         }
-        return null;
+        return (leftIndex != -1 && rightIndex != -1 ?  new int[]{leftIndex, rightIndex} : null);
     }
 }

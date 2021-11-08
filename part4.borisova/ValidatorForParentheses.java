@@ -38,10 +38,11 @@ public class ValidatorForParentheses {
                 if (!useStack) {
                     useStack = true;
                 }
-            } else if (BRACKETS.containsValue(value.charAt(i))){
-                if (stack.empty() || BRACKETS.get(stack.pop()) != value.charAt(i)) {
-                    return false;
-                }
+            } else if (!stack.empty() && BRACKETS.get(stack.peek()) == value.charAt(i)) {
+                stack.pop();
+            }
+            else if (BRACKETS.containsValue(value.charAt(i)) ) {
+                return false;
             }
         }
         return (stack.empty() && useStack);

@@ -12,13 +12,12 @@ public class CustomDictionary {
 
     private final Map<String, Set<String>> map = new HashMap<>();
     private int size;
-
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - [O(log(n) + m*log(m))]
+     * Сложность - [O(1)]
      */
     public boolean add(String value) {
         String key = makeKey(value);
@@ -42,10 +41,11 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - [O(log(n) + m*log(m))]
+     * Сложность - [O(1)]
      */
     public boolean contains(String value) {
-        return map.containsKey(makeKey(value));
+        String key = makeKey(value);
+        return (map.containsKey(key) && map.get(key).contains(value));
     }
 
     /**
@@ -53,7 +53,7 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - [O(log(n) + m*log(m))]
+     * Сложность - [O(1)]
      */
     public boolean remove(String value) {
         if (!contains(value)) {
@@ -88,13 +88,12 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - [O(log(n) + m*log(m))]
+     * Сложность - [O(1)]
      */
     public List<String> getSimilarWords(String value) {
         String key = makeKey(value);
         return (map.containsKey(key) ? new ArrayList<>(map.get(key)) : Collections.emptyList());
     }
-
 
     /**
      * Колл-во хранимых строк.
@@ -107,7 +106,6 @@ public class CustomDictionary {
     }
 
 
-    //Сложность - [O(m*log(m))]
     private String makeKey(String value) {
         if (value == null || value.equals("")) {
             throw new IllegalArgumentException();
