@@ -42,17 +42,18 @@ public class CopyFile {
             return null;
         }
 
+        Path to = Paths.get(pathTo);
         try {
             Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    Files.createDirectories(Paths.get(pathTo, dir.toString().substring(pathFrom.length())));
+                    Files.createDirectories(to.resolve(from.relativize(dir)));
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Path currentToPath = Paths.get(pathTo, file.toString().substring(pathFrom.length()));
+                    Path currentToPath = to.resolve(from.relativize(file));
                     Files.createDirectories(currentToPath.getParent());
                     copyFile(file, currentToPath);
                     return FileVisitResult.CONTINUE;
