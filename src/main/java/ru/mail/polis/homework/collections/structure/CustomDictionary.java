@@ -29,7 +29,7 @@ public class CustomDictionary {
             throw new IllegalArgumentException();
         }
         String tmp = toSortedLowRegisterCharArray(value);
-        if (contains(value)) {
+        if (dictionary.containsKey(tmp)) {
             if (dictionary.get(tmp).contains(value)) {
                 return false;
             }
@@ -51,7 +51,8 @@ public class CustomDictionary {
      * Сложность - [O(m*log(m)), где m - длина строки value]
      */
     public boolean contains(String value) {
-        return dictionary.containsKey(toSortedLowRegisterCharArray(value));
+        String tmp = toSortedLowRegisterCharArray(value);
+        return dictionary.get(tmp) != null && dictionary.get(tmp).contains(value);
     }
 
     /**
@@ -63,7 +64,12 @@ public class CustomDictionary {
      */
     public boolean remove(String value) {
         String tmp = toSortedLowRegisterCharArray(value);
-        if (contains(tmp)) {
+        if (contains(value)) {
+            if (dictionary.get(tmp).size() == 1) {
+                size--;
+                dictionary.remove(tmp);
+                return true;
+            }
             size--;
             return dictionary.get(tmp).remove(value);
         }
@@ -90,10 +96,14 @@ public class CustomDictionary {
      * Сложность - [O(m*log(m)), где m - длина строки value]
      */
     public List<String> getSimilarWords(String value) {
-        if (value == null || value.equals("") || !contains(value)) {
+        if (value == null || value.equals("")) {
             return Collections.emptyList();
         }
-        return dictionary.get(toSortedLowRegisterCharArray(value));
+        String tmp = toSortedLowRegisterCharArray(value);
+        if (!dictionary.containsKey(tmp)) {
+            return Collections.emptyList();
+        }
+        return dictionary.get(tmp);
     }
 
     /**
