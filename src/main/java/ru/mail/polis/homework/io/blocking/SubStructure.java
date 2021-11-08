@@ -1,19 +1,26 @@
 package ru.mail.polis.homework.io.blocking;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Нельзя изменять/удалять/добавлять поля.
  * Можно изменять/удалять СУЩЕСТВУЮЩИЕ методы.
- *
  * Все остальное можно
  */
-public class SubStructure {
+public class SubStructure implements Serializable {
+
+    /**
+     * All next fields are used in serialization.
+     * If you change order / number of fields / types
+     * it will cause side effects in io streams which work with this class
+     */
     private final int id;
     //NotNull
     private final String name;
     private final boolean flag;
     private final double score;
+
     public SubStructure(int id, String name, boolean flag, double score) {
         this.id = id;
         this.name = name;
