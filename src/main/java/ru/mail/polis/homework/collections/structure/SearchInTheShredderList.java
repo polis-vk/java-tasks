@@ -46,7 +46,7 @@ public class SearchInTheShredderList {
         String right = value.substring(center);
         for (int i = 0; i < partStrings.size(); i++) {
             String currentString = partStrings.get(i);
-            if (currentString.equals(left)) {
+            if (currentString.equals(left) && res[0] == -1) {
                 res[0] = i;
             } else if (currentString.equals(right)) {
                 res[1] = i;
