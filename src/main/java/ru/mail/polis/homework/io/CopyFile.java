@@ -21,15 +21,13 @@ public class CopyFile {
         if (pathFrom == null || pathTo == null || pathFrom.equals(pathTo)) {
             return null;
         }
+        Path pathFromDirectory = Path.of(pathFrom);
+        Path pathToDirectory = Path.of(pathTo);
+        if (Files.notExists(pathFromDirectory)) {
+            return null;
+        }
 
         try {
-            Path pathFromDirectory = Path.of(pathFrom);
-            Path pathToDirectory = Path.of(pathTo);
-
-            if (Files.notExists(pathFromDirectory)) {
-                return null;
-            }
-
             if (Files.isRegularFile(pathFromDirectory)) {
                 if (Files.notExists(pathToDirectory.getParent())) {
                     Files.createDirectories(pathToDirectory.getParent());
@@ -50,8 +48,7 @@ public class CopyFile {
                     copyFiles(path.toString(), pathToDirectory.resolve(path.getFileName()).toString());
                 }
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
