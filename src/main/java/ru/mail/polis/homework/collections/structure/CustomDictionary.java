@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,7 +18,7 @@ import java.util.stream.Stream;
  */
 public class CustomDictionary {
 
-    private final Map<String, HashSet<String>> map = new HashMap<>();
+    private final Map<String, Set<String>> map = new HashMap<>();
     private int size = 0;
 
     /**
@@ -65,8 +66,12 @@ public class CustomDictionary {
         if (map.get(key) == null) {
             return false;
         }
-        size--;
-        return map.get(key).remove(value);
+
+        if (map.get(key).remove(value)) {
+            size--;
+            return true;
+        }
+        return false;
     }
 
     /**

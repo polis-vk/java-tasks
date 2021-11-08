@@ -14,7 +14,6 @@ import java.util.List;
  */
 public class SearchInTheShredderList {
     private List<String> partStrings = new ArrayList<>();
-    private final int BREAK_POINT = 2;
 
     public SearchInTheShredderList() {
     }
@@ -42,25 +41,26 @@ public class SearchInTheShredderList {
             return null;
         }
 
-        int[] result = new int[2];
-        String first = value.substring(0, (value.length() - 1) / 2);
-        String second = value.substring((value.length() - 1) / 2);
+        int[] result = new int[]{-1, -1};
+        int mid = value.length() % 2 == 0 ? (value.length() - 1) / 2 + 1 : (value.length() - 1) / 2;
+        String first = value.substring(0, mid);
+        String second = value.substring(mid);
 
-        int stop = 0;
         for (int i = 0; i < partStrings.size(); i++) {
-            if (partStrings.get(i).equals(first)) {
+            if (result[0] == -1 && partStrings.get(i).equals(first)) {
                 result[0] = i;
-                stop++;
-            }
-            if (partStrings.get(i).equals(second)) {
-                result[1] = i;
-                stop++;
+                continue;
             }
 
-            if (stop == BREAK_POINT) {
-                break;
+            if (result[0] != i && partStrings.get(i).equals(second)) {
+                result[1] = i;
             }
+
+            if (result[0] != -1 && result[1] != -1) {
+                return result;
+            }
+
         }
-        return result[0] == 0 && result[1] == 0 ? null : result;
+        return null;
     }
 }

@@ -32,11 +32,14 @@ public class ValidatorForParentheses {
 
         Deque<Character> stack = new LinkedList<>();
         char symbol;
+        boolean flag = false;
 
         for (int i = 0; i < value.length(); i++) {
             symbol = value.charAt(i);
             if (map.get(symbol) != null) {
                 stack.addLast(symbol);
+                flag = true;
+                continue;
             }
 
             if (map.containsValue(symbol)) {
@@ -50,6 +53,6 @@ public class ValidatorForParentheses {
                 return false;
             }
         }
-        return stack.isEmpty();
+        return flag && stack.isEmpty();
     }
 }
