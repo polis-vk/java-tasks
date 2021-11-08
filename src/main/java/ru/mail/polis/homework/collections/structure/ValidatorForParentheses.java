@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 /**
@@ -18,6 +20,7 @@ import java.util.Stack;
 public class ValidatorForParentheses {
     private static final Map<Character, Character> bracketsMap = Map.of('[', ']', '{', '}',
             '<', '>', '(', ')');
+    private static final Set<Character> rightBrackets = Set.of(']', '}', '>', ')');
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
@@ -29,7 +32,7 @@ public class ValidatorForParentheses {
             if (bracketsMap.containsKey(c)) {
                 stack.push(c);
                 hasNoBrackets = false;
-            } else if (bracketsMap.containsValue(c)) {
+            } else if (rightBrackets.contains(c)) {
                 if (stack.empty() || c != bracketsMap.get(stack.peek())) {
                     return false;
                 }

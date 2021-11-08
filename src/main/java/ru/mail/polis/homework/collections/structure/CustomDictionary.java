@@ -1,9 +1,11 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * Задание оценивается в 4 балла.
@@ -12,20 +14,33 @@ import java.util.Set;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private final Set<String> dictionary = new HashSet<>();
+    private final Map<String, List<String>> dictionary = new HashMap<>();
+    private int size;
 
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - [O(1)]
+     * Сложность - [O(m*log(m) + k), где m - длина строки value, k - количество элементов в List]
      */
     public boolean add(String value) {
         if (value == null || value.equals("")) {
             throw new IllegalArgumentException();
         }
-        return !contains(value) && dictionary.add(value);
+        String tmp = toSortedLowRegisterCharArray(value);
+        if (contains(value)) {
+            if (dictionary.get(tmp).contains(value)) {
+                return false;
+            }
+            size++;
+            return dictionary.get(tmp).add(value);
+        }
+        List<String> list = new ArrayList<>();
+        list.add(value);
+        dictionary.put(tmp, list);
+        size++;
+        return true;
     }
 
     /**
@@ -33,10 +48,10 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - [O(1)]
+     * Сложность - [O(m*log(m)), где m - длина строки value]
      */
     public boolean contains(String value) {
-        return dictionary.contains(value);
+        return dictionary.containsKey(toSortedLowRegisterCharArray(value));
     }
 
     /**
@@ -44,10 +59,15 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - [O(1)]
+     * Сложность - [O(m*log(m) + k), где m - длина строки value, k - количество элементов в List]
      */
     public boolean remove(String value) {
-        return dictionary.remove(value);
+        String tmp = toSortedLowRegisterCharArray(value);
+        if (contains(tmp)) {
+            size--;
+            return dictionary.get(tmp).remove(value);
+        }
+        return false;
     }
 
     /**
@@ -67,32 +87,13 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - [O(n*m) или примерно O(max(n,m)^2), n - размер словаря, m - длина шаблона]
+     * Сложность - [O(m*log(m)), где m - длина строки value]
      */
     public List<String> getSimilarWords(String value) {
-        ArrayList<String> res = new ArrayList<>();
-        if (value == null || value.equals("")) {
-            return res;
+        if (value == null || value.equals("") || !contains(value)) {
+            return Collections.emptyList();
         }
-        for (String s : dictionary) {
-            if (s.length() != value.length()) {
-                continue;
-            }
-            StringBuilder tmp = new StringBuilder(s.toLowerCase());
-            boolean isSimilar = true;
-            for (int j = 0; j < value.length(); j++) {
-                int index = tmp.indexOf(String.valueOf(Character.toLowerCase(value.charAt(j))));
-                if (index < 0) {
-                    isSimilar = false;
-                    break;
-                }
-                tmp.deleteCharAt(index);
-            }
-            if (isSimilar && tmp.length() == 0) {
-                res.add(s);
-            }
-        }
-        return res;
+        return dictionary.get(toSortedLowRegisterCharArray(value));
     }
 
     /**
@@ -102,6 +103,15 @@ public class CustomDictionary {
      * Сложность - [O(1)]
      */
     public int size() {
-        return dictionary.size();
+        return size;
+    }
+
+    /**
+     * Сложность - [O(m*log(m)), где m - длина строки value]
+     */
+    private String toSortedLowRegisterCharArray(String value) {
+        char[] tmp = value.toLowerCase().toCharArray();
+        Arrays.sort(tmp);
+        return String.valueOf(tmp);
     }
 }

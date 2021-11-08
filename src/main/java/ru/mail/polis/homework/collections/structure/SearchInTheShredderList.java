@@ -53,9 +53,9 @@ public class SearchInTheShredderList {
                 indexes[1] = i;
             }
             if (indexes[0] != -1 && indexes[1] != -1) {
-                return indexes;
+                break;
             }
         }
-        return null;
+        return indexes[0] != -1 && indexes[1] != -1 ? indexes : null;
     }
 }
