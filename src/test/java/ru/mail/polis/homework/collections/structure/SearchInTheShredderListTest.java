@@ -25,7 +25,7 @@ public class SearchInTheShredderListTest {
         assertArrayEquals(new int[]{23, 0}, result);
 
         result = list.positionPartString("мама");
-        assertArrayEquals(new int[]{32, 33}, result); // Здесь вроде бы ошибка в тесте
+        assertArrayEquals(new int[]{32, 33}, result);
     }
 
     @Test
@@ -39,6 +39,10 @@ public class SearchInTheShredderListTest {
 
         result = list.get(23) + list.get(0);
         assertEquals("жаворонок", result);
+
+        result = list.get(32) + list.get(33);
+        assertEquals("мама", result);
+
     }
 
     @Test
