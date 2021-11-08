@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -15,6 +17,14 @@ import java.util.Stack;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
+    private static final Map<Character, Character> bracketsPairs = new HashMap<>();
+
+    static {
+        bracketsPairs.put('[', ']');
+        bracketsPairs.put('{', '}');
+        bracketsPairs.put('<', '>');
+        bracketsPairs.put('(', ')');
+    }
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
@@ -25,38 +35,14 @@ public class ValidatorForParentheses {
         boolean hasBrackets = false;
 
         for (int i = 0; i < value.length(); ++i) {
-            switch (value.charAt(i)) {
-                case '[':
-                case '{':
-                case '<':
-                case '(': {
-                    brackets.push(value.charAt(i));
-                    hasBrackets = true;
-                    break;
-                }
-                case ']': {
-                    if (brackets.isEmpty() || brackets.pop() != '[') {
-                        return false;
-                    }
-                    break;
-                }
-                case '}': {
-                    if (brackets.isEmpty() || brackets.pop() != '{') {
-                        return false;
-                    }
-                    break;
-                }
-                case '>': {
-                    if (brackets.isEmpty() || brackets.pop() != '<') {
-                        return false;
-                    }
-                    break;
-                }
-                case ')': {
-                    if (brackets.isEmpty() || brackets.pop() != '(') {
-                        return false;
-                    }
-                    break;
+            if (bracketsPairs.containsKey(value.charAt(i))) {
+                brackets.push(bracketsPairs.get(value.charAt(i)));
+                hasBrackets = true;
+            }
+            if (bracketsPairs.containsValue(value.charAt(i))) {
+                hasBrackets = true;
+                if (brackets.isEmpty() || brackets.pop() != value.charAt(i)) {
+                    return false;
                 }
             }
         }
