@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.io.blocking;
 
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -10,7 +11,7 @@ import java.util.Objects;
  *
  * Все остальное можно
  */
-public class Structure {
+public class Structure implements Serializable {
 
     public static final int UNDEFINED_INT = 0;
     public static final long UNDEFINED_LONG = -1_000_000;
@@ -55,8 +56,8 @@ public class Structure {
         this.subStructures = subStructures;
     }
 
-    public double getCoeff() {
-        return coeff;
+    public float getCoeff() {
+        return (float) coeff;//сеттер принимает float, а поля менять нельзя (можно было еще сеттер поменять на double)
     }
 
     public void setCoeff(float coeff) {
