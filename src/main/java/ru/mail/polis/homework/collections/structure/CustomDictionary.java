@@ -48,11 +48,11 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - [O(m*log(m)), где m - длина строки value]
+     * Сложность - [O(m*log(m) + k), где m - длина строки value, k - количество элементов в List]
      */
     public boolean contains(String value) {
         String tmp = toSortedLowRegisterCharArray(value);
-        return dictionary.get(tmp) != null && dictionary.get(tmp).contains(value);
+        return dictionary.containsKey(tmp) && dictionary.get(tmp).contains(value);
     }
 
     /**
