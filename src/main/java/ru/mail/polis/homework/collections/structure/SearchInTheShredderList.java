@@ -47,12 +47,11 @@ public class SearchInTheShredderList {
         int[] ans = new int[]{-1, -1};
         for (int i = 0; i < partStrings.size(); i++) {
             String s = partStrings.get(i);
-            if (firstPart.equals(s)) {
+            if (ans[0] == -1 && firstPart.equals(s)) {
                 ans[0] = i;
-            } else if (secondPart.equals(s)) {
+            } else if (ans[1] == -1 && secondPart.equals(s)) {
                 ans[1] = i;
-            }
-            if (ans[0] != -1 && ans[1] != -1) {
+            } else if (ans[0] != -1 && ans[1] != -1) {
                 break;
             }
         }
