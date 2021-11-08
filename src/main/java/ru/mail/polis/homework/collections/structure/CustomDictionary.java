@@ -9,7 +9,7 @@ import java.util.*;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private final HashMap<Integer, HashSet<String>> dictionary = new HashMap<>();
+    private final Map<Integer, Set<String>> dictionary = new HashMap<>();
     private int size;
 
     /**
@@ -52,7 +52,7 @@ public class CustomDictionary {
 
         int key = getKey(value);
         dictionary.get(key).remove(value);
-        if(dictionary.get(key).isEmpty()) {
+        if (dictionary.get(key).isEmpty()) {
             dictionary.remove(key);
         }
 
@@ -74,20 +74,13 @@ public class CustomDictionary {
         }
 
         int key = getKey(value);
-        if (dictionary.containsKey(key)) {
-            if (!dictionary.get(key).contains(value)) {
-                dictionary.get(key).add(value);
-            } else {
-                return false;
-            }
-        } else {
-            HashSet<String> setForNewKey = new HashSet<>();
-            setForNewKey.add(value);
+        if (!dictionary.containsKey(key)) {
+            Set<String> setForNewKey = new HashSet<>();
             dictionary.put(key, setForNewKey);
         }
-        size++;
 
-        return true;
+        size++;
+        return dictionary.get(key).add(value);
     }
 
     /**
@@ -107,15 +100,16 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - [O(k), k - количество коллизий. Поскольку будет затрачено время при переносе слов из Set в List]
+     * Сложность - [O(m + k), m - количество букв в переданном слове,
+     * k - количество коллизий(слов с одинаковым алфавитом). Поскольку будет затрачено время при переносе слов из Set в List]
      */
     public List<String> getSimilarWords(String value) {
         if (value == null) {
             return Collections.emptyList();
         }
 
-        HashSet<String> words = dictionary.get(getKey(value));
-        if(words != null) {
+        Set<String> words = dictionary.get(getKey(value));
+        if (words != null) {
             return new LinkedList<>(words);
         }
 
@@ -137,7 +131,7 @@ public class CustomDictionary {
     private static int getKey(String value) {
         char[] key = (value.toLowerCase()).toCharArray();
         int res = 0;
-        for(char el : key) {
+        for (char el : key) {
             res += el;
         }
         return res * key.length;

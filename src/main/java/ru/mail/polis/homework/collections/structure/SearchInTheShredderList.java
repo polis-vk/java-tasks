@@ -52,9 +52,9 @@ public class SearchInTheShredderList {
 
         int ind = 0;
         for (String el : partStrings) {
-            if (el.equals(leftPart)) {
+            if (leftPartInd == -1 && el.equals(leftPart)) {
                 leftPartInd = ind;
-            } else if (el.equals(rightPart)) {
+            } else if (rightPartInd == -1 && el.equals(rightPart)) {
                 rightPartInd = ind;
             }
 

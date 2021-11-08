@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -15,6 +17,15 @@ import java.util.Stack;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
+    private static final Map<Character, Character> brackTypes = new HashMap<Character, Character>();
+
+    static {
+        brackTypes.put(']', '[');
+        brackTypes.put('}', '{');
+        brackTypes.put('>', '<');
+        brackTypes.put(')', '(');
+    }
+
     public static boolean validate(String value) {
         if (value == null || value.equals("")) {
             return false;
@@ -23,13 +34,13 @@ public class ValidatorForParentheses {
         boolean valHasBracket = false;
         Stack<Character> brStack = new Stack<>();
         for (char sym : value.toCharArray()) {
-            if (isOpenBracket(sym)) {
+            if (brackTypes.containsValue(sym)) {
                 brStack.push(sym);
                 if (!valHasBracket) {
                     valHasBracket = true;
                 }
-            } else if (isCloseBracket(sym)) {
-                if (!brStack.isEmpty() && !isFitted(brStack.pop(), sym)) {
+            } else if (brackTypes.containsKey(sym)) {
+                if (!brStack.isEmpty() && !brackTypes.get(sym).equals(brStack.pop())) {
                     return false;
                 }
             }
@@ -39,18 +50,5 @@ public class ValidatorForParentheses {
             return brStack.size() == 0;
         }
         return false;
-    }
-
-    private static boolean isFitted(char opBr, char clBr) {
-        return (opBr == '[' && clBr == ']') || (opBr == '{' && clBr == '}')
-                || (opBr == '<' && clBr == '>') || (opBr == '(' && clBr == ')');
-    }
-
-    private static boolean isOpenBracket(char bracket) {
-        return bracket == '[' || bracket == '{' || bracket == '<' || bracket == '(';
-    }
-
-    private static boolean isCloseBracket(char bracket) {
-        return bracket == ']' || bracket == '}' || bracket == '>' || bracket == ')';
     }
 }
