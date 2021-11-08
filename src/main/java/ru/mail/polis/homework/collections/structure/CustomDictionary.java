@@ -72,8 +72,9 @@ public class CustomDictionary {
             return false;
         }
 
-        size--;
-        return stringList.remove(value);
+        boolean isRemove = stringList.remove(value);
+        size -= isRemove ? 1 : 0;
+        return isRemove;
     }
 
     /**

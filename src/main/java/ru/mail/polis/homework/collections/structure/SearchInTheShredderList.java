@@ -53,6 +53,9 @@ public class SearchInTheShredderList {
                 positionFirstPart = i;
                 secondPart = value.substring(firstPart.length());
                 positionSecondPart = mapOfStringToIndex.getOrDefault(secondPart, -1);
+                if (positionSecondPart != -1) {
+                    break;
+                }
             }
         }
 

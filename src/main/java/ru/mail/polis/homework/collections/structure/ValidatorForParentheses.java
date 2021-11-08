@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.LinkedList;
+import java.util.*;
+
+import static java.util.Map.entry;
 
 /**
  * Задание оценивается в 2 балла.
@@ -9,46 +11,45 @@ import java.util.LinkedList;
  * В строке помимо скобок могут содержаться и другие символы.
  * Скобки могут быть: [],{},<>,()
  * Примеры:
- * "(-b + (x)^2)/(2+4)" - true
- * "Понедельники меня угнетают ((" - false
- * <p>
+ *      "(-b + (x)^2)/(2+4)" - true
+ *      "Понедельники меня угнетают ((" - false
+ *
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
+
+    private static final Map<Character, Character> PAIR_BRACKETS = Map.ofEntries(
+            entry(')', '('),
+            entry(']', '['),
+            entry('>', '<'),
+            entry('}', '{')
+    );
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
         }
-        return realizeValidate(value);
-    }
 
-    private static boolean realizeValidate(String value) {
-        LinkedList<Character> needToClose = new LinkedList<>();//last open bracket stack
-        for (Character symbol : value.toCharArray()) {
-            if (symbol.equals('(') || symbol.equals('[') || symbol.equals('{') || symbol.equals('<')) {
-                needToClose.add(symbol);
-            } else {
-                if (symbol.equals(')') || symbol.equals(']') || symbol.equals('}') || symbol.equals('>')) {
-                    if (needToClose.size() == 0 || !needToClose.pollLast().equals(getOpenBracket(symbol))) {
-                        return false;
-                    }
+        boolean hasBrackets = false;
+        Deque<Character> stack = new ArrayDeque<>();
+        Character chekBracket;
+        for (char ch : value.toCharArray()) {
+            if (PAIR_BRACKETS.containsKey(ch)) {
+                hasBrackets = true;
+                if (stack.size() == 0) {
+                    return false;
+                }
+                chekBracket = stack.peek();
+                if (chekBracket.equals(PAIR_BRACKETS.get(ch))) {
+                    stack.pop();
+                } else {
+                    return false;
                 }
             }
+            if (PAIR_BRACKETS.containsValue(ch)) {
+                stack.push(ch);
+            }
         }
-        return needToClose.isEmpty();
-    }
-
-    private static Character getOpenBracket(Character bracket) {
-        if (bracket.equals(')')) {
-            return '(';
-        }
-        if (bracket.equals(']')) {
-            return '[';
-        }
-        if (bracket.equals('>')) {
-            return '<';
-        }
-        return '{';
+        return stack.size() == 0 && hasBrackets;
     }
 }
