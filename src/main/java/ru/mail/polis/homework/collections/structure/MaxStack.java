@@ -22,7 +22,10 @@ public class MaxStack extends Stack<Integer> {
 
     @Override
     public Integer push(Integer item) {
-        maxStack.push(maxStack.isEmpty() ? item : (getMaxValue() > item ? getMaxValue() : item));
+        if (maxStack.isEmpty() || item >= getMaxValue()) {
+            maxStack.push(item);
+        }
+
         return super.push(item);
     }
 
@@ -32,7 +35,10 @@ public class MaxStack extends Stack<Integer> {
             throw new EmptyStackException();
         }
 
-        maxStack.pop();
+        if (maxStack.peek() == super.peek()) {
+            maxStack.pop();
+        }
+
         return super.pop();
     }
 
