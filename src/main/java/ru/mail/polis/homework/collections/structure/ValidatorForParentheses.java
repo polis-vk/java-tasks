@@ -1,7 +1,11 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 
 /**
  * Задание оценивается в 2 балла.
@@ -18,7 +22,13 @@ import java.util.LinkedList;
 public class ValidatorForParentheses {
 
     private static final HashMap<Character, Character> actions = new HashMap<>();
+    private static final Set<Character> openParentheses = new HashSet<>();
+
     static {
+        openParentheses.add('(');
+        openParentheses.add('[');
+        openParentheses.add('{');
+        openParentheses.add('<');
         actions.put(')', '(');
         actions.put(']', '[');
         actions.put('}', '{');
@@ -26,19 +36,19 @@ public class ValidatorForParentheses {
     }
 
     public static boolean validate(String value) {
-        LinkedList<Character> stack = new LinkedList<>();
+        Stack<Character> stack = new Stack<>();
         if ((value == null) || (value.length() < 2)) {
             return false;
         }
         boolean containsParentheses = false;
         for (int i = 0; i < value.length(); i++) {
-            if (actions.containsValue(value.charAt(i))) {
-                stack.addLast(value.charAt(i));
+            if (openParentheses.contains(value.charAt(i))) {
+                stack.push(value.charAt(i));
                 containsParentheses = true;
             }
             if (actions.containsKey(value.charAt(i))) {
-                if (stack.peekLast() == actions.get(value.charAt(i))) {
-                    stack.removeLast();
+                if (!stack.empty() && (stack.peek() == actions.get(value.charAt(i)))) {
+                    stack.pop();
                 } else {
                     break;
                 }
