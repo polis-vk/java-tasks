@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -14,8 +13,8 @@ import java.nio.charset.StandardCharsets;
  * 3 балла
  */
 public class StructureOutputStream extends FileOutputStream {
-    public static final String STRUCTURE_BEGIN = "Structure";
-    public static final Charset STRING_CHARSET = StandardCharsets.UTF_8;
+    public static final int NULL_PTR = -1;
+    private static final int BITS_COUNT_IN_BYTE = 8;
 
     public StructureOutputStream(File name) throws FileNotFoundException {
         super(name);
@@ -25,35 +24,31 @@ public class StructureOutputStream extends FileOutputStream {
      * Метод должен вернуть записать прочитанную структуру.
      */
     public void write(Structure structure) throws IOException {
-        writeString(STRUCTURE_BEGIN);
         writeLong(structure.getId());
         writeString(structure.getName());
         writeSubStructures(structure.getSubStructures());
-        writeDouble(structure.getCoeff());
-        writeBoolean(structure.isFlag1());
-        writeBoolean(structure.isFlag2());
-        writeBoolean(structure.isFlag3());
-        writeBoolean(structure.isFlag4());
-        super.write(structure.getParam());
+        writeFloat((float) structure.getCoeff());
+        writeFlags(new boolean[]{structure.isFlag1(), structure.isFlag2(), structure.isFlag3(), structure.isFlag4()});
+        write(structure.getParam());
     }
 
     /**
      * Метод должен вернуть записать массив прочитанных структур.
      */
     public void write(Structure[] structures) throws IOException {
-        for(Structure structure : structures) {
+        for (Structure structure : structures) {
             write(structure);
         }
     }
 
     private void writeSubStructures(SubStructure[] subStructures) throws IOException {
-        if(subStructures == null) {
-            writeInt(0);
+        if (subStructures == null) {
+            writeInt(NULL_PTR);
             return;
         }
 
         writeInt(subStructures.length);
-        for(SubStructure subStructure : subStructures) {
+        for (SubStructure subStructure : subStructures) {
             writeSubStructure(subStructure);
         }
     }
@@ -65,36 +60,54 @@ public class StructureOutputStream extends FileOutputStream {
         writeDouble(subStructure.getScore());
     }
 
+    private void writeFlags(boolean[] flags) throws IOException {
+        int buffByte = 0;
+        for (boolean flag : flags) {
+            buffByte = ((buffByte << 1) | (flag ? 1 : 0));
+        }
+        buffByte <<= (BITS_COUNT_IN_BYTE - flags.length);
+        write(buffByte);
+    }
+
     private void writeLong(long val) throws IOException {
         ByteBuffer buff = ByteBuffer.allocate(Long.BYTES);
         buff.putLong(val);
-        super.write(buff.array());
+        write(buff.array());
     }
 
     private void writeInt(int val) throws IOException {
         ByteBuffer buff = ByteBuffer.allocate(Integer.BYTES);
         buff.putInt(val);
-        super.write(buff.array());
+        write(buff.array());
     }
 
     private void writeString(String str) throws IOException {
-        if(str == null) {
-            writeInt(0);
+        if (str == null) {
+            writeInt(NULL_PTR);
             return;
         }
 
-        byte[] strBuff = str.getBytes(STRING_CHARSET);
-        writeInt(strBuff.length);
-        super.write(strBuff);
+        int strLen = str.length();
+        writeInt(strLen);
+        if (strLen != 0) {
+            byte[] strBuff = str.getBytes(StandardCharsets.UTF_8);
+            write(strBuff);
+        }
     }
 
     private void writeDouble(double val) throws IOException {
         ByteBuffer buff = ByteBuffer.allocate(Double.BYTES);
         buff.putDouble(val);
-        super.write(buff.array());
+        write(buff.array());
+    }
+
+    private void writeFloat(float val) throws IOException {
+        ByteBuffer buff = ByteBuffer.allocate(Float.BYTES);
+        buff.putFloat(val);
+        write(buff.array());
     }
 
     private void writeBoolean(boolean val) throws IOException {
-        super.write(val ? 1 : 0);
+        write(val ? 1 : 0);
     }
 }

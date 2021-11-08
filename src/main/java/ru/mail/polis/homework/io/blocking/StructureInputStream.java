@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Вам нужно реализовать StructureInputStream, который умеет читать данные из файла.
@@ -14,8 +14,7 @@ import java.util.ArrayList;
  * 3 балла
  */
 public class StructureInputStream extends FileInputStream {
-    private static final String STRUCTURE_BEGIN = "Structure";
-    private final ArrayList<Structure> structures = new ArrayList<>();
+    private final LinkedList<Structure> structures = new LinkedList<>();
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
@@ -27,14 +26,7 @@ public class StructureInputStream extends FileInputStream {
      * Если структур в файле больше нет, то вернуть null
      */
     public Structure readStructure() throws IOException {
-        String structureBeg;
-        try {
-            structureBeg = readString();
-        } catch (IOException e) {
-            return null;
-        }
-
-        if (!structureBeg.equals(STRUCTURE_BEGIN)) {
+        if (available() == 0) {
             return null;
         }
 
@@ -42,12 +34,13 @@ public class StructureInputStream extends FileInputStream {
         structure.setId(readLong());
         structure.setName(readString());
         structure.setSubStructures(readSubStructures());
-        structure.setCoeff((float) readDouble());
-        structure.setFlag1(readBoolean());
-        structure.setFlag2(readBoolean());
-        structure.setFlag3(readBoolean());
-        structure.setFlag4(readBoolean());
-        structure.setParam((byte) super.read());
+        structure.setCoeff(readFloat());
+        boolean[] flags = readFlags();
+        structure.setFlag1(flags[0]);
+        structure.setFlag2(flags[1]);
+        structure.setFlag3(flags[2]);
+        structure.setFlag4(flags[3]);
+        structure.setParam((byte) read());
 
         structures.add(structure);
         return structure;
@@ -58,18 +51,14 @@ public class StructureInputStream extends FileInputStream {
      * Если файл уже прочитан, но возвращается полный массив.
      */
     public Structure[] readStructures() throws IOException {
-        Structure structure = readStructure();
-        while (structure != null) {
-            structure = readStructure();
-        }
-
+        while (readStructure() != null) ;
         return structures.toArray(new Structure[0]);
     }
 
     private SubStructure[] readSubStructures() throws IOException {
         int subCount = readInt();
 
-        if (subCount == 0) {
+        if (subCount == StructureOutputStream.NULL_PTR) {
             return null;
         }
 
@@ -95,26 +84,43 @@ public class StructureInputStream extends FileInputStream {
 
     private String readString() throws IOException {
         int strSize = readInt();
-        if(strSize == 0) {
+        if (strSize == StructureOutputStream.NULL_PTR) {
             return null;
+        }
+        if (strSize == 0) {
+            return "";
         }
 
         byte[] stringBuff = new byte[strSize];
-        super.read(stringBuff);
-        return new String(stringBuff, StructureOutputStream.STRING_CHARSET);
+        read(stringBuff);
+        return new String(stringBuff, StandardCharsets.UTF_8);
     }
 
     private double readDouble() throws IOException {
         return getByteBuff(Double.BYTES).getDouble();
     }
 
+    private float readFloat() throws IOException {
+        return getByteBuff(Float.BYTES).getFloat();
+    }
+
+    private boolean[] readFlags() throws IOException {
+        byte buffByte = (byte) read();
+        boolean[] flags = new boolean[4];
+        for (int i = 0; i < 4; i++) {
+            flags[i] = ((buffByte >> (7 - i)) & 0x01) == 1;
+        }
+
+        return flags;
+    }
+
     private boolean readBoolean() throws IOException {
-        return super.read() == 1;
+        return read() == 1;
     }
 
     private ByteBuffer getByteBuff(int bytesC) throws IOException {
         byte[] buff = new byte[bytesC];
-        int readBytesC = super.read(buff);
+        int readBytesC = read(buff);
         if (readBytesC != bytesC) {
             throw new IOException();
         }
