@@ -93,4 +93,23 @@ public class MaxStackTest {
         assertEquals(Integer.valueOf(3), stack.getMaxValue());
     }
 
+    @Test
+    public void testRemoveDuplicateMaxValue(){
+        MaxStack stack = new MaxStack();
+
+        stack.push(3);
+        assertEquals(Integer.valueOf(3), stack.getMaxValue());
+
+        stack.push(5);
+        assertEquals(Integer.valueOf(5), stack.getMaxValue());
+        stack.push(5);
+        assertEquals(Integer.valueOf(5), stack.getMaxValue());
+
+        stack.pop();
+        assertEquals(Integer.valueOf(5), stack.getMaxValue());
+
+        stack.pop();
+        assertEquals(Integer.valueOf(3), stack.getMaxValue());
+
+    }
 }

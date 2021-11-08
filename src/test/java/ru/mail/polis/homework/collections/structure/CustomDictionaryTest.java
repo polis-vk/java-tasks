@@ -2,9 +2,6 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -81,6 +78,32 @@ public class CustomDictionaryTest {
         assertTrue(dictionary.contains(TEST_STRING));
         assertTrue(dictionary.contains(REVERT_TEST_STRING));
         assertTrue(dictionary.contains(UPPER_TEST_STRING));
+    }
+
+    @Test
+    public void testNonExistentContains() {
+        CustomDictionary dictionary = new CustomDictionary();
+        dictionary.add("Any String");
+        boolean result = dictionary.contains(TEST_STRING);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void testIsEmptyContains() {
+        CustomDictionary dictionary = new CustomDictionary();
+        boolean result = dictionary.contains(TEST_STRING);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void testSimilarContains() {
+        CustomDictionary dictionary = new CustomDictionary();
+        dictionary.add(TEST_STRING);
+        boolean result = dictionary.contains(REVERT_TEST_STRING);
+
+        assertFalse(result);
     }
 
     @Test
@@ -181,6 +204,19 @@ public class CustomDictionaryTest {
     }
 
     @Test
+    public void testRemoveNonExistentSize() {
+        CustomDictionary dictionary = new CustomDictionary();
+        assertEquals(0, dictionary.size());
+
+        dictionary.add(TEST_STRING);
+        assertEquals(1, dictionary.size());
+
+        dictionary.remove(REVERT_TEST_STRING);
+
+        assertEquals(1, dictionary.size());
+    }
+
+    @Test
     public void testSimilarWordsForDifferentLengthWords() {
         CustomDictionary dictionary = new CustomDictionary();
 
@@ -192,5 +228,39 @@ public class CustomDictionaryTest {
         List<String> result = dictionary.getSimilarWords("bbbb");
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    public void testStrangeString() {
+        CustomDictionary dictionary = new CustomDictionary();
+        char[] arrayChar1 = new char[3];
+        arrayChar1[0] = 0;
+        arrayChar1[1] = 100;
+        arrayChar1[2] = 0;
+
+        String str1 = new String(arrayChar1);
+        dictionary.add(str1);
+
+        char[] arrayChar2 = new char[3];
+        arrayChar2[0] = 100;
+        arrayChar2[1] = 0;
+        arrayChar2[2] = 0;
+
+        String str2 = new String(arrayChar2);
+        dictionary.add(str2);
+
+        char[] arrayChar3 = new char[3];
+        arrayChar3[0] = 0;
+        arrayChar3[1] = 0;
+        arrayChar3[2] = 100;
+
+        String str3 = new String(arrayChar3);
+
+        List<String> result = dictionary.getSimilarWords(str3);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(str1));
+        assertTrue(result.contains(str2));
+    }
+
+
 
 }
