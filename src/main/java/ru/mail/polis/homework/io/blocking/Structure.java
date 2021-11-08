@@ -24,7 +24,7 @@ public class Structure {
     private String name;
     //Nullable
     private SubStructure[] subStructures;
-    private double coeff;
+    private float coeff;
     private boolean flag1;
     private boolean flag2;
     private boolean flag3;
@@ -55,7 +55,7 @@ public class Structure {
         this.subStructures = subStructures;
     }
 
-    public double getCoeff() {
+    public float getCoeff() {
         return coeff;
     }
 
