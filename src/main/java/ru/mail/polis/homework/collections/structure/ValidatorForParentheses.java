@@ -29,17 +29,13 @@ public class ValidatorForParentheses {
         map.put('>', '<');
         map.put(')', '(');
         for (char el : value.toCharArray()) {
-            if (map.containsValue(el)) {
+            if ((el == '{') || (el == '[') || (el == '<') || (el == '(')) {
                 stack.push(el);
                 isAnyBracketsContained = true;
-            } else if (map.containsKey(el) && (!stack.pop().equals(map.get(el)))) {
+            } else if (map.containsKey(el) && !stack.isEmpty() && (!stack.pop().equals(map.get(el)))) {
                 return false;
             }
         }
-        if ((stack.size() == 0) && isAnyBracketsContained) {
-            return true;
-        } else {
-            return false;
-        }
+        return (stack.size() == 0) && isAnyBracketsContained;
     }
 }

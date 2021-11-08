@@ -11,12 +11,12 @@ import java.util.Stack;
  * храниться в Stack. Отрабатывать метод должен за О(1).
  */
 public class MaxStack extends Stack<Integer> {
-    private final LinkedList<Integer> list = new LinkedList<>();
+    private final Stack<Integer> stack = new Stack<>();
 
     @Override
     public Integer push(Integer value) {
-        if ((size() != 0) || (list.getLast() < value)) {
-            list.addLast(value);
+        if (isEmpty() || (stack.peek() <= value)) {
+            stack.push(value);
         }
         super.add(value);
         return value;
@@ -24,16 +24,16 @@ public class MaxStack extends Stack<Integer> {
 
     @Override
     public synchronized Integer pop() {
-        if ((size() != 0) && peek().equals(list.getLast())) {
-            list.removeLast();
+        if (!isEmpty() && peek().equals(stack.peek())) {
+            stack.pop();
         }
         return super.pop();
     }
 
     public Integer getMaxValue() {
-        if (size() != 0) {
+        if (size() == 0) {
             throw new EmptyStackException();
         }
-        return list.getLast();
+        return stack.peek();
     }
 }
