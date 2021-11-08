@@ -24,11 +24,8 @@ public class StructureOutputStream extends FileOutputStream {
         writeLong(structure.getId());
         writeString(structure.getName());
         writeSubStructures(structure.getSubStructures());
-        writeDouble(structure.getCoeff());
-        writeBoolean(structure.isFlag1());
-        writeBoolean(structure.isFlag2());
-        writeBoolean(structure.isFlag3());
-        writeBoolean(structure.isFlag4());
+        writeFloat((float) structure.getCoeff());
+        writeFlags(structure.isFlag1(), structure.isFlag2(), structure.isFlag3(), structure.isFlag4());
         write(structure.getParam());
         flush();
     }
@@ -72,8 +69,18 @@ public class StructureOutputStream extends FileOutputStream {
         write(byteBuffer.array());
     }
 
+    private void writeFloat(float a) throws IOException {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(4);
+        byteBuffer.putFloat(a);
+        write(byteBuffer.array());
+    }
+
     private void writeBoolean(boolean a) throws IOException {
         write(a ? 1 : 0);
+    }
+
+    private void writeFlags(boolean a, boolean b, boolean c, boolean d) throws IOException {
+        write((byte) ((a ? 1 : 0) + (b ? (1 << 1) : 0) + (c ? (1 << 2) : 0) + (d ? (1 << 3) : 0)));
     }
 
     private void writeSubStructure(SubStructure subStructure) throws IOException {

@@ -22,25 +22,20 @@ public class CopyFile {
         if (pathFrom == null || pathTo == null || Files.notExists(Paths.get(pathFrom))) {
             return null;
         }
+        Path toPath = Paths.get(pathTo);
+        Path fromPath = Paths.get(pathFrom);
         try {
-            Files.walkFileTree(Path.of(pathFrom), new SimpleFileVisitor<Path>() {
+            Files.createDirectories(toPath.getParent());
+            Files.walkFileTree(fromPath, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    Path tmp = Paths.get(pathTo, String.valueOf((Paths.get(pathFrom).relativize(dir))));
-                    Files.createDirectories(tmp);
+                    Files.createDirectory(toPath.resolve(fromPath.relativize(dir)));
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Path tmp = Paths.get(pathTo, String.valueOf((Paths.get(pathFrom).relativize(file))));
-                    try {
-                        Files.createFile(tmp);
-                    } catch (IOException exception) {
-                        Files.createDirectories(tmp.getParent());
-                        Files.createFile(tmp);
-                    }
-                    copyFile(file, tmp);
+                    copyFile(file, toPath.resolve(fromPath.relativize(file)));
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -53,7 +48,7 @@ public class CopyFile {
     private static void copyFile(Path pathFrom, Path pathTo) throws IOException {
         try (InputStream input = Files.newInputStream(pathFrom);
              OutputStream output = Files.newOutputStream(pathTo)) {
-            byte[] b = new byte[(int) Files.size(pathFrom)];
+            byte[] b = new byte[1024];
             input.read(b);
             output.write(b);
             output.flush();

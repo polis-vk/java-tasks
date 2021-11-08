@@ -30,8 +30,17 @@ public class StructureInputStream extends FileInputStream {
         if (available() == 0) {
             return null;
         }
-        Structure structure = new Structure(readLong(), readString(), readSubStructures(), readDouble(), readBoolean(),
-                readBoolean(), readBoolean(), readBoolean(), (byte) read());
+        Structure structure = new Structure();
+        structure.setId(readLong());
+        structure.setName(readString());
+        structure.setSubStructures(readSubStructures());
+        structure.setCoeff(readFloat());
+        boolean[] flags = readFlags(4);
+        structure.setFlag1(flags[0]);
+        structure.setFlag2(flags[1]);
+        structure.setFlag3(flags[2]);
+        structure.setFlag4(flags[3]);
+        structure.setParam((byte) read());
         structures.add(structure);
         return structure;
     }
@@ -69,27 +78,44 @@ public class StructureInputStream extends FileInputStream {
         return new String(b);
     }
 
+    private String readSubstructureName() throws IOException {
+        String tmp = readString();
+        if (tmp == null) {
+            throw new IOException();
+        }
+        return tmp;
+    }
+
     private double readDouble() throws IOException {
         byte[] b = new byte[8];
         read(b);
         return ByteBuffer.wrap(b).getDouble();
     }
 
+    private float readFloat() throws IOException {
+        byte[] b = new byte[4];
+        read(b);
+        return ByteBuffer.wrap(b).getFloat();
+    }
+
     private boolean readBoolean() throws IOException {
         return read() == 1;
     }
 
-    private SubStructure readSubStructure() throws IOException {
-        if (available() == 0) {
-            return null;
+    private boolean[] readFlags(int n) throws IOException {
+        boolean[] res = new boolean[n];
+        int tmp = read();
+        for (int i = 0; i < n; i++) {
+            res[i] = ((tmp >> i) & 1) == 1;
         }
-        return new SubStructure(readInt(), readString(), readBoolean(), readDouble());
+        return res;
+    }
+
+    private SubStructure readSubStructure() throws IOException {
+        return new SubStructure(readInt(), readSubstructureName(), readBoolean(), readDouble());
     }
 
     private SubStructure[] readSubStructures() throws IOException {
-        if (available() == 0) {
-            return null;
-        }
         int size = readInt();
         if (size < 0) {
             return null;
