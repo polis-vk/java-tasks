@@ -11,14 +11,14 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
 
-    private final Stack<Integer> stackOfMax = new Stack<>();
+    private final Stack<Pair> stackOfMax = new Stack<>();
 
     @Override
     public Integer push(Integer item) {
-        if (stackOfMax.size() == 0 || stackOfMax.peek() < item) {
-            stackOfMax.push(item);
+        if (stackOfMax.size() == 0 || getMaxValue() < item) {
+            stackOfMax.push(new Pair(item, 1));
         } else {
-            stackOfMax.push(stackOfMax.peek());
+            stackOfMax.peek().value++;
         }
         return super.push(item);
     }
@@ -28,7 +28,9 @@ public class MaxStack extends Stack<Integer> {
         if (stackOfMax.empty()) {
             throw new EmptyStackException();
         }
-        stackOfMax.pop();
+        if (stackOfMax.peek().value-- == 1) {
+            stackOfMax.pop();
+        }
         return super.pop();
     }
 
@@ -36,7 +38,19 @@ public class MaxStack extends Stack<Integer> {
         if (stackOfMax.empty()) {
             throw new EmptyStackException();
         } else {
-            return stackOfMax.peek();
+            return stackOfMax.peek().key;
         }
+    }
+
+    private class Pair {
+
+        int key;
+        int value;
+
+        public Pair(int key, int value) {
+            this.key = key;
+            this.value = value;
+        }
+
     }
 }

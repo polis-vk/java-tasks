@@ -48,16 +48,13 @@ public class SearchInTheShredderList {
             String currentString = partStrings.get(i);
             if (currentString.equals(left)) {
                 res[0] = i;
-                if (res[1] != -1) {
-                    return res;
-                }
             } else if (currentString.equals(right)) {
                 res[1] = i;
                 if (res[0] != -1) {
-                    return res;
+                    break;
                 }
             }
         }
-        return null;
+        return (res[0] == -1 || res[1] == -1) ? null : res;
     }
 }
