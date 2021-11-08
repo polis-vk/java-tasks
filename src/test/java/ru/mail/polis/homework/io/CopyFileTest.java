@@ -120,7 +120,7 @@ public class CopyFileTest {
     }
 
     @Test
-    public void copyDirEmpty() throws IOException {
+    public void copyDirEmpty() {
         Path source = Paths.get("src", "test", "resources", "directories", "copy", "forth");
         Path dest = Paths.get("src", "test", "resources", "directories", "copy1", "forth");
         CopyFile.copyFiles(source.toString(), dest.toString());
