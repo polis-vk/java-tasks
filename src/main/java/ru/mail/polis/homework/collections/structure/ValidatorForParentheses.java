@@ -16,16 +16,8 @@ import java.util.*;
  */
 public class ValidatorForParentheses {
 
-    private static final Map<Character, Character> brackets = new HashMap<>();
-    //private static final char[] openBrackets = new char[]{'(', '{', '[', '<'};
-    //private static final char[] closeBrackets = new char[]{')', '}', ']', '>'};
-
-    static {
-        brackets.put(')', '(');
-        brackets.put('}', '{');
-        brackets.put(']', '[');
-        brackets.put('>', '<');
-    }
+    private static final Map<Character, Character> brackets = Map.ofEntries(Map.entry(')', '('), Map.entry('}', '{'), Map.entry(']', '['), Map.entry('>', '<'));
+    private static final Set<Character> openBrackets = Set.of('[', '(', '{', '<');
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
@@ -35,11 +27,10 @@ public class ValidatorForParentheses {
     }
 
     private static boolean realizeValidate(String value) {
-        //LinkedList<Character> needToClose = new LinkedList<>();//last open bracket stack
         Deque<Character> needToClose = new LinkedList<>();
         boolean bracketChecker = false;
         for (Character symbol : value.toCharArray()) {
-            if (brackets.containsValue(symbol)) {
+            if (openBrackets.contains(symbol)) {
                 needToClose.add(symbol);
                 bracketChecker = true;
             } else {
