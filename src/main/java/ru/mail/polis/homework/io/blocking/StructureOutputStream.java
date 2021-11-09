@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.io.blocking;
 
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -26,11 +25,11 @@ public class StructureOutputStream extends FileOutputStream {
         writeLong(structure.getId());
         writeString(structure.getName());
         writeSubStructures(structure.getSubStructures());
-        writeDouble(structure.getCoeff());
-        writeBoolean(structure.isFlag1());
-        writeBoolean(structure.isFlag2());
-        writeBoolean(structure.isFlag3());
-        writeBoolean(structure.isFlag4());
+        writeFloat((float)structure.getCoeff());
+        writeBooleans(structure.isFlag1(),
+                structure.isFlag2(),
+                structure.isFlag3(),
+                structure.isFlag4());
         writeByte(structure.getParam());
     }
 
@@ -54,7 +53,7 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     private void writeString(String name) throws IOException {
-        if (name == null) {
+        if (name == null || name.equals("")) {
             writeInt(0);
             return;
         }
@@ -63,13 +62,22 @@ public class StructureOutputStream extends FileOutputStream {
         write(name.getBytes(StandardCharsets.UTF_8));
     }
 
+    private void writeFloat(float coeff) throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(Float.BYTES);
+        write(buffer.putFloat(coeff).array());
+    }
+
     private void writeDouble(double coeff) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(Double.BYTES);
         write(buffer.putDouble(coeff).array());
     }
 
-    private void writeBoolean(boolean flag) throws IOException {
-        write((byte) (flag ? 1 : 0));
+    private void writeBooleans(boolean... flags) throws IOException {
+        byte result = 0;
+        for (int i = 0; i < flags.length; i++) {
+            result += flags[i] ? 1 << i : 0;
+        }
+        write(result);
     }
 
     private void writeByte(byte value) throws IOException {
@@ -77,7 +85,7 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     private void writeSubStructures(SubStructure[] structures) throws IOException {
-        if (structures == null) {
+        if (structures == null || structures.length == 0) {
             writeInt(0);
             return;
         }
@@ -91,7 +99,7 @@ public class StructureOutputStream extends FileOutputStream {
     private void writeSubStructure(SubStructure structure) throws IOException {
         writeInt(structure.getId());
         writeString(structure.getName());
-        writeBoolean(structure.isFlag());
+        writeBooleans(structure.isFlag());
         writeDouble(structure.getScore());
     }
 }

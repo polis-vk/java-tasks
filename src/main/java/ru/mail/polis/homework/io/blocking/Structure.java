@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.io.blocking;
 
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -10,7 +11,7 @@ import java.util.Objects;
  * <p>
  * Все остальное можно
  */
-public class Structure {
+public class Structure implements Serializable {
 
     public static final int UNDEFINED_INT = 0;
     public static final long UNDEFINED_LONG = -1_000_000;
@@ -158,16 +159,16 @@ public class Structure {
             return this;
         }
 
-        public Builder setCoeff(double coeff) {
+        public Builder setCoeff(float coeff) {
             structure.coeff = coeff;
             return this;
         }
 
-        public Builder setFlags(boolean[] flags) {
-            structure.flag1 = flags[0];
-            structure.flag2 = flags[1];
-            structure.flag3 = flags[2];
-            structure.flag4 = flags[3];
+        public Builder setFlags(byte flags) {
+            structure.flag1 = ((flags) & 1) == 1;
+            structure.flag2 = ((flags >> 1) & 1) == 1;
+            structure.flag3 = ((flags >> 2) & 1) == 1;
+            structure.flag4 = ((flags >> 3) & 1) == 1;
             return this;
         }
 

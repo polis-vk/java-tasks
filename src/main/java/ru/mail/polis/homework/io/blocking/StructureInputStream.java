@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Вам нужно реализовать StructureInputStream, который умеет читать данные из файла.
@@ -15,7 +16,7 @@ import java.util.ArrayList;
  */
 public class StructureInputStream extends FileInputStream {
 
-    private final ArrayList<Structure> structures = new ArrayList<>();
+    private final List<Structure> structures = new ArrayList<>();
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
@@ -35,7 +36,7 @@ public class StructureInputStream extends FileInputStream {
                 .setId(readLong())
                 .setName(readString())
                 .setSubStructures(readSubStructures())
-                .setCoeff(readDouble())
+                .setCoeff(readFloat())
                 .setFlags(readBooleans())
                 .setParam(readByte())
                 .build();
@@ -51,10 +52,7 @@ public class StructureInputStream extends FileInputStream {
         while (available() != 0) {
             readStructure();
         }
-
-        Structure[] result = new Structure[structures.size()];
-        structures.toArray(result);
-        return result;
+        return structures.toArray(new Structure[0]);
     }
 
     private long readLong() throws IOException {
@@ -65,6 +63,10 @@ public class StructureInputStream extends FileInputStream {
 
         ByteBuffer changer = ByteBuffer.allocate(Long.BYTES);
         return changer.put(buffer).flip().getLong();
+    }
+
+    private float readFloat() throws IOException {
+        return Float.intBitsToFloat(readInt());
     }
 
     private double readDouble() throws IOException {
@@ -81,12 +83,8 @@ public class StructureInputStream extends FileInputStream {
         return changer.put(buffer).flip().getInt();
     }
 
-    private boolean[] readBooleans() throws IOException {
-        boolean[] result = new boolean[4];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = read() == 1;
-        }
-        return result;
+    private byte readBooleans() throws IOException {
+        return readByte();
     }
 
     private byte readByte() throws IOException {
@@ -130,6 +128,9 @@ public class StructureInputStream extends FileInputStream {
     private SubStructure readSubStructure() throws IOException {
         int id = readInt();
         String name = readString();
+        if (name == null) {
+            throw new IllegalArgumentException();
+        }
         boolean flag = read() == 1;
         double score = readDouble();
         return new SubStructure(id, name, flag, score);
