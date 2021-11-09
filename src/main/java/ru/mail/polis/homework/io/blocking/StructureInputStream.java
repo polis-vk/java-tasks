@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Вам нужно реализовать StructureInputStream, который умеет читать данные из файла.
@@ -36,10 +37,13 @@ public class StructureInputStream extends FileInputStream {
         struct.setSubStructures(this.readSubStructures());
         struct.setCoeff(this.readFloat());
         byte flags = (byte) this.read();
+        this.byteToFlags(flags, struct::setFlag1, struct::setFlag2, struct::setFlag3, struct::setFlag4);
+        /* решил что через Consumer будет интереснее и универсальнее
         struct.setFlag1((flags & 1) == 1);
         struct.setFlag2(((flags >> 1) & 1) == 1);
         struct.setFlag3(((flags >> 2) & 1) == 1);
         struct.setFlag4(((flags >> 3) & 1) == 1);
+        */
         struct.setParam((byte) this.read());
         this.structures.add(struct);
         return struct;
@@ -54,6 +58,14 @@ public class StructureInputStream extends FileInputStream {
             this.readStructure();
         }
         return this.structures.toArray(new Structure[this.structures.size()]);
+    }
+    
+    private byte byteToFlags(byte flags, Consumer<Boolean>... consumer) throws IOException {
+        byte b = 0;
+        for (int i = 0; i < consumer.length; ++i) {
+            consumer[i].accept(((flags >> i) & 1) == 1);
+        }
+        return b;
     }
 
     private SubStructure readSubStructure() throws IOException {
