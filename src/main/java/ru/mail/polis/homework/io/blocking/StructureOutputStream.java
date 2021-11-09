@@ -21,20 +21,17 @@ public class StructureOutputStream extends FileOutputStream {
      * Метод должен вернуть записать прочитанную структуру.
      */
     public void write(Structure structure) throws IOException {
-        write(0);//startOfStructure
         writeLong(structure.getId());
+
         writeString(structure.getName());
 
         writeSubstructures(structure.getSubStructures());
 
-        writeDouble(structure.getCoeff());
+        writeFloat(structure.getCoeff());
 
-        writeBoolean(structure.isFlag1());
-        writeBoolean(structure.isFlag2());
-        writeBoolean(structure.isFlag3());
-        writeBoolean(structure.isFlag4());
+        writeFlags(structure.isFlag1(), structure.isFlag2(), structure.isFlag3(), structure.isFlag4());
 
-        super.write(structure.getParam());
+        write(structure.getParam());
     }
 
     /**
@@ -49,7 +46,7 @@ public class StructureOutputStream extends FileOutputStream {
     private void writeSubstructure(SubStructure subStructure) throws IOException {
         writeInt(subStructure.getId());
         writeString(subStructure.getName());
-        writeBoolean(subStructure.isFlag());
+        writeFlags(subStructure.isFlag());
         writeDouble(subStructure.getScore());
     }
 
@@ -75,7 +72,7 @@ public class StructureOutputStream extends FileOutputStream {
                 (byte) (in >>> 48),
                 (byte) (in >>> 56)
         };
-        super.write(b);
+        write(b);
     }
 
 
@@ -86,12 +83,19 @@ public class StructureOutputStream extends FileOutputStream {
                 (byte) (in >>> 16),
                 (byte) (in >>> 24)
         };
-        super.write(b);
+        write(b);
     }
 
 
-    private void writeBoolean(boolean in) throws IOException {
-        super.write((in) ? 1 : 0);
+    private void writeFlags(boolean... flags) throws IOException {
+        if (flags.length > 8) {
+            throw new IllegalArgumentException();
+        }
+        byte out = 0;
+        for (int i = flags.length - 1; i >= 0; i--) {
+            out |= (flags[i]) ? 0x1 << i : 0;
+        }
+        write(out);
     }
 
     private void writeString(String in) throws IOException {
@@ -100,11 +104,14 @@ public class StructureOutputStream extends FileOutputStream {
             return;
         }
         writeInt(in.length());
-        super.write(in.getBytes(StandardCharsets.UTF_8));
+        write(in.getBytes(StandardCharsets.UTF_8));
     }
 
     private void writeDouble(double in) throws IOException {
         writeLong(Double.doubleToLongBits(in));
     }
 
+    private void writeFloat(float in) throws IOException {
+        writeInt(Float.floatToIntBits(in));
+    }
 }

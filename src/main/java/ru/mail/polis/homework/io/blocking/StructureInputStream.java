@@ -18,12 +18,19 @@ public class StructureInputStream extends FileInputStream {
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
-        structures = new Structure[0];
+        structures = new Structure[10];
         index = 0;
     }
 
-    private void structuresBuilder() {
-        structures = Arrays.copyOf(structures, structures.length + 1);
+    private void extendStructureArrayIfNeed() {
+        if (index != structures.length - 1) {
+            return;
+        }
+        structures = Arrays.copyOf(structures, structures.length * 2);
+    }
+
+    private Structure[] clearedStructuresArray() {
+        return (index == structures.length - 1) ? structures : Arrays.copyOf(structures, index);
     }
 
     /**
@@ -31,26 +38,19 @@ public class StructureInputStream extends FileInputStream {
      * Если структур в файле больше нет, то вернуть null
      */
     public Structure readStructure() throws IOException {
-        if (isEnd()) {
+        if (available() == 0) {
             return null;
         }
-        structuresBuilder();
+        extendStructureArrayIfNeed();
         Structure structure = new Structure();
         structure.setId(readLong());
         structure.setName(readString());
         structure.setSubStructures(readSubstructures());
-        structure.setCoeff(readDouble());
-        structure.setFlag1(readBoolean());
-        structure.setFlag2(readBoolean());
-        structure.setFlag3(readBoolean());
-        structure.setFlag4(readBoolean());
-        structure.setParam((byte) super.read());
+        structure.setCoeff(readFloat());
+        readFlags(structure);
+        structure.setParam((byte) read());
         structures[index++] = structure;
         return structure;
-    }
-
-    private boolean isEnd() throws IOException {
-        return super.read() == -1;
     }
 
     /**
@@ -58,15 +58,13 @@ public class StructureInputStream extends FileInputStream {
      * Если файл уже прочитан, но возвращается полный массив.
      */
     public Structure[] readStructures() throws IOException {
-        Structure readStructure = readStructure();
-        while (readStructure != null) {
-            readStructure = readStructure();
+        while (readStructure() != null) {
         }
-        return structures;
+        return clearedStructuresArray();
     }
 
     private long readLong() throws IOException {
-        byte[] b = super.readNBytes(8);
+        byte[] b = readNBytes(8);
         return ((long) b[7] << 56)
                 | ((long) b[6] & 0xff) << 48
                 | ((long) b[5] & 0xff) << 40
@@ -78,7 +76,7 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private int readInt() throws IOException {
-        byte[] b = super.readNBytes(4);
+        byte[] b = readNBytes(4);
         return ((int) b[3] & 0xff) << 24
                 | ((int) b[2] & 0xff) << 16
                 | ((int) b[1] & 0xff) << 8
@@ -106,11 +104,28 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private boolean readBoolean() throws IOException {
-        return super.read() == 1;
+        byte in = (byte) read();
+        return (in & 0x1) != 0;
+    }
+
+    private void readFlags(Structure structure) throws IOException {
+        byte in = (byte) read();
+        boolean[] flags = new boolean[4];
+        for (int i = flags.length - 1; i >= 0; i--) {
+            flags[i] = (in & (1 << i)) != 0;
+        }
+        structure.setFlag1(flags[0]);
+        structure.setFlag2(flags[1]);
+        structure.setFlag3(flags[2]);
+        structure.setFlag4(flags[3]);
     }
 
     private double readDouble() throws IOException {
         return Double.longBitsToDouble(readLong());
+    }
+
+    private float readFloat() throws IOException {
+        return Float.intBitsToFloat(readInt());
     }
 
     private SubStructure readSubstructure() throws IOException {
