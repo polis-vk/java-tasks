@@ -45,7 +45,6 @@ public class StructureOutputStream extends FileOutputStream {
         return buffer.array();
     }
 
-
     private byte[] getBytesFromFloat(float x) {
         ByteBuffer buffer = ByteBuffer.allocate(Float.BYTES);
         buffer.putFloat(x);
