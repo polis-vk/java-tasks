@@ -42,12 +42,13 @@ public class SearchInTheShredderList {
         int[] twoParts = new int[2];
         twoParts[0] = -1;
         twoParts[1] = -1;
-        String value1 = value.substring(0, value.length() / 2 - 1);
-        String value2 = value.substring(value.length() / 2 - 1);
+        String value1 = value.substring(0, value.length() / 2);
+        String value2 = value.substring(value.length() / 2);
         for (int i = 0; i < partStrings.size(); i++) {
-            if (partStrings.get(i).equals(value1)) {
+            if (partStrings.get(i).equals(value1) && twoParts[0] == -1) {
                 twoParts[0] = i;
-            } else if (partStrings.get(i).equals(value2)) {
+            }
+            if (partStrings.get(i).equals(value2)) {
                 twoParts[1] = i;
             }
         }
