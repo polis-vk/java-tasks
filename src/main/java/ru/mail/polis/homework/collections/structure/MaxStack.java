@@ -9,14 +9,11 @@ import java.util.Stack;
  * храниться в Stack. Отрабатывать метод должен за О(1).
  */
 public class MaxStack extends Stack<Integer> {
-
     private final Stack<Integer> max = new Stack<>();
 
     @Override
     public Integer push(Integer value) {
-        if (!max.isEmpty() && value < max.peek()) {
-            max.push(max.peek());
-        } else {
+        if (max.isEmpty() || value >= max.peek()) {
             max.push(value);
         }
         return super.push(value);
@@ -24,7 +21,9 @@ public class MaxStack extends Stack<Integer> {
 
     @Override
     public Integer pop() {
-        max.pop();
+        if (peek().equals(max.peek())) {
+            max.pop();
+        }
         return super.pop();
     }
 

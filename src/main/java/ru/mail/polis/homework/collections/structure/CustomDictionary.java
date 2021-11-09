@@ -74,8 +74,14 @@ public class CustomDictionary {
         if (!dictionary.containsKey(key)) {
             return false;
         }
-        size--;
-        return dictionary.get(key).remove(value);
+        if (dictionary.get(key).remove(value)) {
+            size--;
+            if (dictionary.get(key).isEmpty()) {
+                dictionary.remove(key);
+            }
+            return true;
+        }
+        return false;
     }
 
     /**

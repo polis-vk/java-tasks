@@ -22,24 +22,28 @@ public class ValidatorForParentheses {
     private static final Map<Character, Character> bracket = new HashMap<>();
 
     static {
-        bracket.put(')', '(');
-        bracket.put('}', '{');
-        bracket.put('>', '<');
-        bracket.put(']', '[');
+        bracket.put('(', ')');
+        bracket.put('{', '}');
+        bracket.put('<', '>');
+        bracket.put('[', ']');
     }
 
     public static boolean validate(String value) {
-        if (value == null || value.equals("") || value.length() == 1) {
+        if (value == null || value.equals("")) {
             return false;
         }
         Stack<Character> stack = new Stack<>();
-        for (Character i : value.toCharArray()) {
-            if (bracket.containsValue(i)) {
-                stack.push(i);
-            } else if (bracket.containsKey(i) && (stack.size() == 0 || !bracket.get(i).equals(stack.pop()))) {
+        boolean hasAnyBracket = false;
+        for (char c : value.toCharArray()) {
+            if (bracket.containsKey(c)) {
+                stack.push(c);
+                hasAnyBracket = true;
+            } else if (!stack.isEmpty() && c == bracket.get(stack.peek())) {
+                stack.pop();
+            } else if (bracket.containsValue(c)) {
                 return false;
             }
         }
-        return stack.isEmpty();
+        return stack.isEmpty() && hasAnyBracket;
     }
 }
