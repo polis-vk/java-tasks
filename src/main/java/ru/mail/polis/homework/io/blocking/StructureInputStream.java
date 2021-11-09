@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Вам нужно реализовать StructureInputStream, который умеет читать данные из файла.
@@ -14,7 +15,7 @@ import java.util.LinkedList;
  * 3 балла
  */
 public class StructureInputStream extends FileInputStream {
-    private final LinkedList<Structure> structures = new LinkedList<>();
+    private final List<Structure> structures = new LinkedList<>();
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
