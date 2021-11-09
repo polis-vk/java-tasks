@@ -17,47 +17,61 @@ public class CopyFile {
      * В тесте для создания нужных файлов для первого запуска надо расскоментировать код в setUp()
      * 3 балла
      */
-    public static void copyFiles(String pathFrom, String pathTo) {
+    public static String copyFiles(String pathFrom, String pathTo) {
         Path from = Paths.get(pathFrom);
         Path to = Paths.get(pathTo);
         if (!Files.exists(from)) {
-            return;
+            return null;
         }
-        if (Files.isRegularFile(from)) {
-            if (Files.isDirectory(to)) {
-                return;
-            }
-            try {
-                Files.createDirectories(to.getParent());
+        try {
+            if (Files.isRegularFile(from)) {
+                if (Files.isDirectory(to)) {
+                    return null;
+                }
+                if(!Files.exists(to.getParent()))
+                {
+                    Files.createDirectories(to.getParent());
+                }
                 copyFile(from, to);
-            } catch (IOException e) {
-                e.printStackTrace();
+                return pathTo;
             }
-        }
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(from)) {
             if (!Files.exists(to)) {
                 Files.createDirectories(to);
             }
+            copyDirectory(from, to);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return pathTo;
+    }
+
+    public static void copyDirectory(Path fromDirectory, Path toDirectory) {
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(fromDirectory)) {
+            if (!Files.exists(toDirectory)) {
+                Files.createDirectory(toDirectory);
+            }
             for (Path path : directoryStream) {
-                copyFiles(pathFrom + File.separator + path.getFileName(), pathTo + File.separator + path.getFileName());
+                if(Files.isDirectory(path)) {
+                    copyDirectory(path, Paths.get(toDirectory.toString(), path.getFileName().toString()));
+                }
+                else {
+                    copyFile(path, Paths.get(toDirectory.toString(), path.getFileName().toString()));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
-    public static long copyFile(Path fromFile, Path toFile) throws IOException {
-        long total = 0;
-        try (InputStream in = Files.newInputStream(fromFile); OutputStream out = Files.newOutputStream(toFile)) {
+    public static void copyFile(Path fromFile, Path toFile) throws IOException {
+        try (InputStream in = Files.newInputStream(fromFile);
+             OutputStream out = Files.newOutputStream(toFile)) {
             byte[] buffer = new byte[1024];
             int blockSize = 0;
             do {
                 blockSize = in.read(buffer);
                 out.write(buffer, 0, blockSize == -1 ? 0 : blockSize);
-                total += blockSize;
             } while (blockSize > 0);
-            return total;
         }
     }
 

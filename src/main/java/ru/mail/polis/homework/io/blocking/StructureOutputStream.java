@@ -22,21 +22,11 @@ public class StructureOutputStream extends FileOutputStream {
      */
     public void write(Structure structure) throws IOException {
         write(longToBytes(structure.getId()));
-        stringToBytes(structure.getName());
-        write(doubleToBytes(structure.getCoeff()));
-        write(boolToBytes(structure.isFlag1()));
-        write(boolToBytes(structure.isFlag2()));
-        write(boolToBytes(structure.isFlag3()));
-        write(boolToBytes(structure.isFlag4()));
+        write(structure.getName());
+        write(floatToBytes((float) structure.getCoeff()));
+        write(boolsToByte(new boolean[]{structure.isFlag1(), structure.isFlag2(), structure.isFlag3(), structure.isFlag4()}));
         write(structure.getParam());
-        if (structure.getSubStructures() == null) {
-            write(intToBytes(-1));
-        } else {
-            write(intToBytes(structure.getSubStructures().length));
-            for (SubStructure subStructure : structure.getSubStructures()) {
-                write(subStructure);
-            }
-        }
+        write(structure.getSubStructures());
     }
 
     /**
@@ -50,15 +40,32 @@ public class StructureOutputStream extends FileOutputStream {
 
     private void write(SubStructure subStructure) throws IOException {
         write(intToBytes(subStructure.getId()));
-        stringToBytes(subStructure.getName());
-        write(boolToBytes(subStructure.isFlag()));
+        write(subStructure.getName());
+        write(boolsToByte(new boolean[]{subStructure.isFlag()}));
         write(doubleToBytes(subStructure.getScore()));
+    }
+
+    private void write(SubStructure[] subStructures) throws IOException {
+        if (subStructures == null) {
+            write(intToBytes(-1));
+        } else {
+            write(intToBytes(subStructures.length));
+            for (SubStructure subStructure : subStructures) {
+                write(subStructure);
+            }
+        }
     }
 
     private byte[] longToBytes(long x) {
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
         buffer.putLong(x);
         return buffer.array();
+    }
+
+    private byte[] floatToBytes(float number) {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(Float.BYTES);
+        byteBuffer.putFloat(number);
+        return byteBuffer.array();
     }
 
     private byte[] doubleToBytes(double number) {
@@ -73,11 +80,21 @@ public class StructureOutputStream extends FileOutputStream {
         return byteBuffer.array();
     }
 
-    private byte boolToBytes(boolean b) {
-        return b ? (byte) 1 : 0;
+    private byte boolsToByte(boolean[] bools) throws IOException {
+        if(bools.length > 7) {
+            throw new IOException();
+        }
+        byte result = 0;
+        byte curr = 0;
+        for(int i = 0; i < bools.length; i++) {
+            curr = (byte) Math.pow(2, i);
+            curr = bools[i] ? curr : 0;
+            result = (byte) (result | curr);
+        }
+        return result;
     }
 
-    private void stringToBytes(String str) throws IOException {
+    private void write(String str) throws IOException {
         if (str == null) {
             write(intToBytes(-1));
             return;

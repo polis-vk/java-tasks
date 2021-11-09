@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Вам нужно реализовать StructureInputStream, который умеет читать данные из файла.
@@ -14,7 +15,7 @@ import java.util.ArrayList;
  */
 public class StructureInputStream extends FileInputStream {
 
-    private final ArrayList<Structure> structures = new ArrayList<>();
+    private final List<Structure> structures = new ArrayList<>();
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
@@ -29,40 +30,17 @@ public class StructureInputStream extends FileInputStream {
         if (available() == 0) {
             return null;
         }
-        long id = bytesToLong();
-        int length = bytesToInt();
-        String name;
-        if (length == -1) {
-            name = null;
-        } else {
-            name = bytesToString(length);
-        }
-        double coeff = bytesToDouble();
-        boolean flag1 = bytesToBool();
-        boolean flag2 = bytesToBool();
-        boolean flag3 = bytesToBool();
-        boolean flag4 = bytesToBool();
-        byte param = (byte) read();
-        int sLength = bytesToInt();
-        SubStructure[] subStructures;
-        if (sLength == -1) {
-            subStructures = null;
-        } else {
-            subStructures = new SubStructure[sLength];
-            for (int i = 0; i < sLength; i++) {
-                subStructures[i] = readSubStructure();
-            }
-        }
         Structure structure = new Structure();
-        structure.setId(id);
-        structure.setName(name);
-        structure.setCoeff((float) coeff);
-        structure.setFlag1(flag1);
-        structure.setFlag2(flag2);
-        structure.setFlag3(flag3);
-        structure.setFlag4(flag4);
-        structure.setParam(param);
-        structure.setSubStructures(subStructures);
+        structure.setId(bytesToLong());
+        structure.setName(bytesToString());
+        structure.setCoeff(bytesToFloat());
+        boolean[] flags = byteToBools();
+        structure.setFlag1(flags[0]);
+        structure.setFlag2(flags[1]);
+        structure.setFlag3(flags[2]);
+        structure.setFlag4(flags[3]);
+        structure.setParam((byte) read());
+        structure.setSubStructures(readSubStructures());
         structures.add(structure);
         return structure;
     }
@@ -73,9 +51,6 @@ public class StructureInputStream extends FileInputStream {
      */
     public Structure[] readStructures() throws IOException {
         if (structures.isEmpty()) {
-            if (available() == 0) {
-                return new Structure[0];
-            }
             while (available() != 0) {
                 readStructure();
             }
@@ -83,13 +58,25 @@ public class StructureInputStream extends FileInputStream {
         return structures.toArray(new Structure[0]);
     }
 
+    public SubStructure[] readSubStructures() throws IOException {
+        int sLength = bytesToInt();
+        if (sLength == -1) {
+            return null;
+        } else {
+            SubStructure[] subStructures = new SubStructure[sLength];
+            for (int i = 0; i < sLength; i++) {
+                subStructures[i] = readSubStructure();
+            }
+            return subStructures;
+        }
+    }
+
     public SubStructure readSubStructure() throws IOException {
         int id = bytesToInt();
-        int length = bytesToInt();
-        String name = bytesToString(length);
-        boolean flag = bytesToBool();
+        String name = bytesToString();
+        boolean flag = byteToBools()[0];
         double score = bytesToDouble();
-        return new SubStructure(id, name, flag, score);
+        return new SubStructure(id, name == null ? Structure.UNDEFINED_STRING : name, flag, score);
     }
 
     public long bytesToLong() throws IOException {
@@ -110,6 +97,15 @@ public class StructureInputStream extends FileInputStream {
         return buffer.getDouble();
     }
 
+    public float bytesToFloat() throws IOException {
+        byte[] bytes = new byte[Float.BYTES];
+        read(bytes);
+        ByteBuffer buffer = ByteBuffer.allocate(Float.BYTES);
+        buffer.put(bytes);
+        buffer.flip();
+        return buffer.getFloat();
+    }
+
     public int bytesToInt() throws IOException {
         byte[] bytes = new byte[Integer.BYTES];
         read(bytes);
@@ -119,14 +115,24 @@ public class StructureInputStream extends FileInputStream {
         return buffer.getInt();
     }
 
-    public String bytesToString(int length) throws IOException {
+    public String bytesToString() throws IOException {
+        int length = bytesToInt();
+        if(length == -1) {
+            return null;
+        }
         byte[] bytes = new byte[length];
         read(bytes);
         return new String(bytes);
     }
 
-    private boolean bytesToBool() throws IOException {
-        return read() == 1;
+    private boolean[] byteToBools() throws IOException {
+        byte flags = (byte) read();
+        boolean[] bools = new boolean[7];
+        for(int i = 0; i < bools.length; i++) {
+            bools[i] = flags % 2 == 1;
+            flags = (byte) (flags / 2);
+        }
+        return bools;
     }
 
 }
