@@ -21,6 +21,9 @@ public class StructureOutputStream extends FileOutputStream {
      * Метод должен записать прочитанную структуру.
      */
     public void write(Structure structure) throws IOException {
+        if (structure == null) {
+            return;
+        }
         this.writeLong(structure.getId());
         this.writeString(structure.getName());
         this.writeSubStructures(structure.getSubStructures());

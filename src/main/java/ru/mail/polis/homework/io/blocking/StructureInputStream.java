@@ -27,9 +27,6 @@ public class StructureInputStream extends FileInputStream {
      * Если структур в файле больше нет, то вернуть null
      */
     public Structure readStructure() throws IOException {
-        if (this.available() == 0) {
-            return null;
-        }
         Structure struct = new Structure();
         struct.setId(this.readLong());
         struct.setName(this.readString());
