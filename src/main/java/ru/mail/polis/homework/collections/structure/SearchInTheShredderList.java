@@ -46,7 +46,7 @@ public class SearchInTheShredderList {
         int[] ans = new int[]{ILLEGAL_INDEX, ILLEGAL_INDEX};
         for (int i = 0; i < partStrings.size(); i++) {
             String onePartSting = partStrings.get(i);
-            if (onePartSting.equals(firstHalf)) {
+            if (onePartSting.equals(firstHalf) && ans[0] == ILLEGAL_INDEX) {
                 ans[0] = i;
             } else if (onePartSting.equals(secondHalf)) {
                 ans[1] = i;
