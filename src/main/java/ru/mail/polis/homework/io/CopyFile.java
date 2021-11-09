@@ -3,13 +3,14 @@ package ru.mail.polis.homework.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class CopyFile {
+    
+    public static final int BYTE_BUFFER_SIZE = 1024;
 
     /**
      * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
@@ -55,11 +56,12 @@ public class CopyFile {
         }
     }
     
+    
     private static void copyFile(Path from, Path to) throws IOException {
         try (InputStream in = Files.newInputStream(from);
             OutputStream out = Files.newOutputStream(to)) {
 
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[BYTE_BUFFER_SIZE];
             int size;
             while ((size = in.read(buffer)) > 0) {
                 out.write(buffer, 0, size);
