@@ -31,7 +31,7 @@ public class StructureOutputStream extends FileOutputStream {
                 structure.isFlag4()
         };
         writeFlags(flags);
-        super.write(structure.getParam());
+        write(structure.getParam());
     }
 
     /**
@@ -54,7 +54,7 @@ public class StructureOutputStream extends FileOutputStream {
                 (byte) (value >>> 8),
                 (byte) value
         };
-        super.write(buffer, 0, 8);
+        write(buffer, 0, 8);
     }
 
     private void writeString(String value) throws IOException {
@@ -93,14 +93,14 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     private void writeBoolean(boolean value) throws IOException {
-        super.write(value ? 1 : 0);
+        write(value ? 1 : 0);
     }
 
     private void writeInt(int value) throws IOException {
-        super.write(value >>> 24);
-        super.write(value >>> 16);
-        super.write(value >>> 8);
-        super.write(value);
+        write(value >>> 24);
+        write(value >>> 16);
+        write(value >>> 8);
+        write(value);
     }
 
     private void writeSubStructure(SubStructure value) throws IOException {

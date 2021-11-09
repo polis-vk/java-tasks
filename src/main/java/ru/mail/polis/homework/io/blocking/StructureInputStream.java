@@ -29,7 +29,7 @@ public class StructureInputStream extends FileInputStream {
      * Если структур в файле больше нет, то вернуть null
      */
     public Structure readStructure() throws IOException {
-        if (super.available() == 0) {
+        if (available() == 0) {
             return null;
         }
         Structure readableStructure = new Structure();
@@ -43,7 +43,7 @@ public class StructureInputStream extends FileInputStream {
         readableStructure.setFlag2(flags[1]);
         readableStructure.setFlag3(flags[2]);
         readableStructure.setFlag4(flags[3]);
-        int param = super.read();
+        int param = read();
         if (param < 0) {
             throw new EOFException();
         }
@@ -59,7 +59,7 @@ public class StructureInputStream extends FileInputStream {
      * Если файл уже прочитан, то возвращается полный массив.
      */
     public Structure[] readStructures() throws IOException {
-        while (super.available() != 0) {
+        while (available() != 0) {
             readStructure();
         }
         return structures.toArray(new Structure[0]);
@@ -67,7 +67,7 @@ public class StructureInputStream extends FileInputStream {
 
     private long readLong() throws IOException {
         byte[] buffer = new byte[LONG_BUFFER_SIZE];
-        if (super.read(buffer) < 0) {
+        if (read(buffer) < 0) {
             throw new EOFException();
         }
         return (((long) buffer[0] << 56) +
@@ -109,7 +109,7 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private boolean[] readFlags() throws IOException {
-        int ch = super.read();
+        int ch = read();
         if (ch < 0) {
             throw new EOFException();
         }
@@ -126,10 +126,10 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private int readInt() throws IOException {
-        int ch1 = super.read();
-        int ch2 = super.read();
-        int ch3 = super.read();
-        int ch4 = super.read();
+        int ch1 = read();
+        int ch2 = read();
+        int ch3 = read();
+        int ch4 = read();
         if ((ch1 | ch2 | ch3 | ch4) < 0) {
             throw new EOFException();
         }
@@ -149,7 +149,7 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private boolean readBoolean() throws IOException {
-        int ch = super.read();
+        int ch = read();
         if (ch < 0) {
             throw new EOFException();
         }
