@@ -23,11 +23,14 @@ public class StructureOutputStream extends FileOutputStream {
         writeLong(structure.getId());
         writeString(structure.getName());
         writeSubStructures(structure.getSubStructures());
-        writeDouble(structure.getCoeff());
-        writeBoolean(structure.isFlag1());
-        writeBoolean(structure.isFlag2());
-        writeBoolean(structure.isFlag3());
-        writeBoolean(structure.isFlag4());
+        writeFloat((float) structure.getCoeff());
+        boolean[] flags = new boolean[]{
+                structure.isFlag1(),
+                structure.isFlag2(),
+                structure.isFlag3(),
+                structure.isFlag4()
+        };
+        writeFlags(flags);
         writeByte(structure.getParam());
     }
 
@@ -40,6 +43,14 @@ public class StructureOutputStream extends FileOutputStream {
         }
     }
 
+    private void writeFlags(boolean[] flags) throws IOException {
+        byte needToWrite = 0;
+        for (int i = 0, j = 3; i < flags.length; ++i, --j) {
+            needToWrite += (byte) (flags[i] ? 1 : 0) << j;
+        }
+        write(needToWrite);
+    }
+
     private void writeBoolean(boolean value) throws IOException {
         write(value ? 1 : 0);
     }
@@ -49,7 +60,7 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     private void writeInt(int value) throws IOException {
-        byte[] buffer = new byte[] {
+        byte[] buffer = new byte[]{
                 (byte) (value >>> 24),
                 (byte) (value >>> 16),
                 (byte) (value >>> 8),
@@ -76,16 +87,8 @@ public class StructureOutputStream extends FileOutputStream {
         writeInt(Float.floatToIntBits(value));
     }
 
-    private void writeDouble(double value)  throws IOException {
+    private void writeDouble(double value) throws IOException {
         writeLong(Double.doubleToLongBits(value));
-    }
-
-    private void writeChar(char value) throws IOException {
-        byte[] buffer = new byte[] {
-                (byte) (value >>> 8),
-                (byte) value
-        };
-        write(buffer);
     }
 
     private void writeString(String value) throws IOException {
@@ -94,9 +97,7 @@ public class StructureOutputStream extends FileOutputStream {
             return;
         }
         writeInt(value.length());
-        for (int i = 0; i < value.length(); ++i) {
-            writeChar(value.charAt(i));
-        }
+        write(value.getBytes());
     }
 
     private void writeSubStructure(SubStructure value) throws IOException {
@@ -112,7 +113,7 @@ public class StructureOutputStream extends FileOutputStream {
             return;
         }
         writeInt(value.length);
-        for (SubStructure subStructure: value) {
+        for (SubStructure subStructure : value) {
             writeSubStructure(subStructure);
         }
     }
