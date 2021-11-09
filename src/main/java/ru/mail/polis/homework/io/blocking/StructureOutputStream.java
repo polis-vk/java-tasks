@@ -23,7 +23,7 @@ public class StructureOutputStream extends FileOutputStream {
     public void write(Structure structure) throws IOException {
         write(longToBytes(structure.getId()));
         write(structure.getName());
-        write(floatToBytes((float) structure.getCoeff()));
+        write(floatToBytes(structure.getCoeff()));
         write(boolsToByte(new boolean[]{structure.isFlag1(), structure.isFlag2(), structure.isFlag3(), structure.isFlag4()}));
         write(structure.getParam());
         write(structure.getSubStructures());
