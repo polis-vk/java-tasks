@@ -12,6 +12,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 public class CopyFile {
 
+    private final static int BUFFER_SIZE = 1024;
+
     /**
      * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
      * Файлы копировать ручками через стримы. Исползуем новый API
@@ -37,44 +39,25 @@ public class CopyFile {
             } else {
                 createDirsByPath(to.getParent());
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "Some exception occurred while creating dirs";
-        }
 
-        try {
             Files.walkFileTree(from, new SimpleFileVisitor<>() {
-
                 @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     Path pathToDir = getPathToFile(from, to, dir);
-                    try {
-                        Files.createDirectories(pathToDir);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return FileVisitResult.TERMINATE;
-                    }
+                    Files.createDirectory(pathToDir);
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    Path pathToFile = getPathToFile(from, to, file);
-                    try (InputStream in = Files.newInputStream(file);
-                         OutputStream out = Files.newOutputStream(pathToFile)) {
-                        out.write(in.readAllBytes());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return FileVisitResult.TERMINATE;
-                    }
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Path pathToNewFile = getPathToFile(from, to, file);
+                    copyFileContent(file, pathToNewFile);
                     return FileVisitResult.CONTINUE;
                 }
-
-
             });
         } catch (IOException e) {
             e.printStackTrace();
-            return "Some exception occurred while walking file tree";
+            return "Some exception occurred while working with IO streams";
         }
         return "Succeed";
     }
@@ -87,5 +70,15 @@ public class CopyFile {
 
     private static Path getPathToFile(Path from, Path to, Path with) {
         return to.resolve(from.relativize(with));
+    }
+
+    private static void copyFileContent(Path PathToOldFile, Path pathToNewFile) throws IOException {
+        byte[] buffer = new byte[BUFFER_SIZE];
+        try (InputStream in = Files.newInputStream(PathToOldFile);
+             OutputStream out = Files.newOutputStream(pathToNewFile)) {
+            for (int length; (length = in.read(buffer)) > 0; ) {
+                out.write(buffer, 0, length);
+            }
+        }
     }
 }

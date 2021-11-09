@@ -1,10 +1,13 @@
 package ru.mail.polis.homework.io.blocking;
 
+import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Вам нужно реализовать StructureInputStream, который умеет читать данные из файла.
@@ -13,12 +16,12 @@ import java.io.IOException;
  */
 public class StructureInputStream extends FileInputStream {
 
-    private Structure[] structures;
-    private int currentPosition = 0;
+    private final static int LONG_BUFFER_SIZE = 8;
+
+    private final List<Structure> structures = new ArrayList<>();
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
-        this.structures = new Structure[0];
     }
 
     /**
@@ -35,24 +38,21 @@ public class StructureInputStream extends FileInputStream {
         readableStructure.setName(readString());
         readableStructure.setSubStructures(readSubStructures());
         readableStructure.setCoeff(readFloat());
-        readableStructure.setFlag1(readBoolean());
-        readableStructure.setFlag2(readBoolean());
-        readableStructure.setFlag3(readBoolean());
-        readableStructure.setFlag4(readBoolean());
-        readableStructure.setParam(readByte());
-
-        if (currentPosition == structures.length) {
-            resize();
+        boolean[] flags = readFlags();
+        readableStructure.setFlag1(flags[0]);
+        readableStructure.setFlag2(flags[1]);
+        readableStructure.setFlag3(flags[2]);
+        readableStructure.setFlag4(flags[3]);
+        int param = super.read();
+        if (param < 0) {
+            throw new EOFException();
         }
-        structures[currentPosition++] = readableStructure;
-            return readableStructure;
+        readableStructure.setParam((byte) param);
+
+        structures.add(readableStructure);
+        return readableStructure;
     }
 
-    private void resize() {
-        Structure[] newArray = new Structure[structures.length + 1];
-        System.arraycopy(structures, 0, newArray, 0, structures.length);
-        structures = newArray;
-    }
 
     /**
      * Метод должен вернуть все структуры, которые есть в файле.
@@ -62,11 +62,11 @@ public class StructureInputStream extends FileInputStream {
         while (super.available() != 0) {
             readStructure();
         }
-        return structures;
+        return structures.toArray(new Structure[0]);
     }
 
-    private long readLong() throws IOException{
-        byte[] buffer = new byte[8];
+    private long readLong() throws IOException {
+        byte[] buffer = new byte[LONG_BUFFER_SIZE];
         if (super.read(buffer) < 0) {
             throw new EOFException();
         }
@@ -76,7 +76,7 @@ public class StructureInputStream extends FileInputStream {
                 ((long) (buffer[3] & 255) << 32) +
                 ((long) (buffer[4] & 255) << 24) +
                 ((buffer[5] & 255) << 16) +
-                ((buffer[6] & 255) <<  8) +
+                ((buffer[6] & 255) << 8) +
                 ((buffer[7] & 255)));
     }
 
@@ -85,11 +85,11 @@ public class StructureInputStream extends FileInputStream {
         if (length < 0) {
             return null;
         }
-        char[] charsOfString = new char[length];
-        for (int i = 0; i < length; i++) {
-            charsOfString[i] = readChar();
+        byte[] stringBuffer = new byte[length];
+        if (read(stringBuffer) != length) {
+            throw new EOFException();
         }
-        return String.valueOf(charsOfString);
+        return new String(stringBuffer);
     }
 
     private SubStructure[] readSubStructures() throws IOException {
@@ -108,11 +108,21 @@ public class StructureInputStream extends FileInputStream {
         return Float.intBitsToFloat(readInt());
     }
 
-    private boolean readBoolean() throws IOException{
+    private boolean[] readFlags() throws IOException {
         int ch = super.read();
-        if (ch < 0)
+        if (ch < 0) {
             throw new EOFException();
-        return (ch != 0);
+        }
+        return new boolean[] {
+                byteToBoolean((byte) ch),
+                byteToBoolean((byte) (ch >> 1)),
+                byteToBoolean((byte) (ch >> 2)),
+                byteToBoolean((byte) (ch >> 3))
+        };
+    }
+
+    private boolean byteToBoolean(byte b) {
+        return (b % 2) != 0;
     }
 
     private int readInt() throws IOException {
@@ -120,18 +130,10 @@ public class StructureInputStream extends FileInputStream {
         int ch2 = super.read();
         int ch3 = super.read();
         int ch4 = super.read();
-        if ((ch1 | ch2 | ch3 | ch4) < 0)
-            throw new EOFException();
-        return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + ch4);
-    }
-
-    private char readChar() throws IOException {
-        int ch1 = super.read();
-        int ch2 = super.read();
-        if ((ch1 | ch2) < 0) {
+        if ((ch1 | ch2 | ch3 | ch4) < 0) {
             throw new EOFException();
         }
-        return (char) ((ch1 << 8) + ch2);
+        return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + ch4);
     }
 
     private SubStructure readSubStructure() throws IOException {
@@ -146,14 +148,15 @@ public class StructureInputStream extends FileInputStream {
         return res;
     }
 
-    private double readDouble() throws IOException {
-        return Double.longBitsToDouble(readLong());
+    private boolean readBoolean() throws IOException {
+        int ch = super.read();
+        if (ch < 0) {
+            throw new EOFException();
+        }
+        return (ch != 0);
     }
 
-    public final byte readByte() throws IOException {
-        int ch = super.read();
-        if (ch < 0)
-            throw new EOFException();
-        return (byte) ch;
+    private double readDouble() throws IOException {
+        return Double.longBitsToDouble(readLong());
     }
 }
