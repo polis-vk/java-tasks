@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.stream.Stream;
 
 public class CopyFile {
 
@@ -17,6 +16,8 @@ public class CopyFile {
      * В тесте для создания нужных файлов для первого запуска надо расскоментировать код в setUp()
      * 3 балла
      */
+    private static final int BUFFER_SIZE = 1024;
+
     public static void copyFiles(String pathFrom, String pathTo) {
         if (pathFrom == null || pathTo == null) {
             return;
@@ -24,16 +25,15 @@ public class CopyFile {
 
         Path source = Path.of(pathFrom);
         Path distance = Path.of(pathTo);
-        try {
-            Files.createDirectories(distance.getParent());
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        if (!Files.isDirectory(source)) {
+            copyFile(source, distance);
+            return;
         }
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(source)) {
-            if (!Files.isDirectory(source)) {
-                copyFile(source, distance);
-                return;
+            if (Files.notExists(distance.getParent())) {
+                Files.createDirectories(distance.getParent());
             }
 
             Files.createDirectories(distance);
@@ -48,11 +48,11 @@ public class CopyFile {
     private static void copyFile(Path source, Path distance) {
         try (FileInputStream in = new FileInputStream(String.valueOf(source));
              FileOutputStream out = new FileOutputStream(String.valueOf(distance))) {
-            byte[] buffer = new byte[(int) Files.size(source)];
-            if (in.read(buffer) == -1) {
-                throw new EOFException();
+            byte[] buffer = new byte[BUFFER_SIZE];
+            while (in.read(buffer) != -1) {
+                out.write(buffer);
             }
-            out.write(buffer);
+            out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
