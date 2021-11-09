@@ -2,6 +2,8 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Задание оценивается в 2 балла.
@@ -17,7 +19,14 @@ import java.util.Deque;
  */
 public class ValidatorForParentheses {
 
-    public static final char[] BRACKETS = new char[] {'(',')','[',']','{','}','<','>'};
+    private static final Map<Character, Character> BRACKETS = new HashMap<Character, Character>();
+    
+    static {
+        BRACKETS.put(')', '(');
+        BRACKETS.put(']', '[');
+        BRACKETS.put('}', '{');
+        BRACKETS.put('>', '<');
+    }
     
     public static boolean validate(String value) {
         if (value == null || value.length() < 2) {
@@ -26,24 +35,24 @@ public class ValidatorForParentheses {
 
         boolean valid = false;
         Deque<Character> stack = new ArrayDeque<Character>();
-        
+
         for (int i = 0; i < value.length(); ++i) {
             final char ch = value.charAt(i);
-            
-            // формально просто свернутый switch
-            // т.к. BRACKETS.length = const то метод работает за O(n)
-            for (int j = 0; j < BRACKETS.length; ++j) {
-                if (ch == BRACKETS[j]) {
-                    valid = true;
-                    if (j % 2 == 0) {
-                        stack.push(ch);
-                        continue;
-                    } else if (stack.pop() == BRACKETS[j - 1]){
+
+            if (BRACKETS.containsKey(ch)) {
+                valid = true;
+                if (stack.size() != 0) {
+                    if (stack.pop() == BRACKETS.get(ch)) {
                         continue;
                     }
-                    return false;
                 }
+                return false;
             }
+
+            if (BRACKETS.containsValue(ch)) {
+                stack.push(ch);
+            }
+
         }
         return valid && stack.isEmpty();
     }
