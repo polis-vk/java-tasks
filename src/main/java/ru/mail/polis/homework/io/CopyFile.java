@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.io;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,8 +27,7 @@ public class CopyFile {
                 if (Files.isDirectory(to)) {
                     return null;
                 }
-                if(!Files.exists(to.getParent()))
-                {
+                if (!Files.exists(to.getParent())) {
                     Files.createDirectories(to.getParent());
                 }
                 copyFile(from, to);
@@ -51,10 +49,9 @@ public class CopyFile {
                 Files.createDirectory(toDirectory);
             }
             for (Path path : directoryStream) {
-                if(Files.isDirectory(path)) {
+                if (Files.isDirectory(path)) {
                     copyDirectory(path, Paths.get(toDirectory.toString(), path.getFileName().toString()));
-                }
-                else {
+                } else {
                     copyFile(path, Paths.get(toDirectory.toString(), path.getFileName().toString()));
                 }
             }

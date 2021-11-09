@@ -81,12 +81,12 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     private byte boolsToByte(boolean[] bools) throws IOException {
-        if(bools.length > 7) {
+        if (bools.length > 7) {
             throw new IOException();
         }
         byte result = 0;
         byte curr = 0;
-        for(int i = 0; i < bools.length; i++) {
+        for (int i = 0; i < bools.length; i++) {
             curr = (byte) Math.pow(2, i);
             curr = bools[i] ? curr : 0;
             result = (byte) (result | curr);

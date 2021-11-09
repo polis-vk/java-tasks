@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * Нельзя изменять/удалять/добавлять поля.
  * Можно изменять/удалять СУЩЕСТВУЮЩИЕ методы.
- *
+ * <p>
  * Все остальное можно
  */
 public class SubStructure implements Serializable {
@@ -15,6 +15,7 @@ public class SubStructure implements Serializable {
     private final String name;
     private final boolean flag;
     private final double score;
+
     public SubStructure(int id, String name, boolean flag, double score) {
         this.id = id;
         this.name = name;

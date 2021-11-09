@@ -117,7 +117,7 @@ public class StructureInputStream extends FileInputStream {
 
     public String bytesToString() throws IOException {
         int length = bytesToInt();
-        if(length == -1) {
+        if (length == -1) {
             return null;
         }
         byte[] bytes = new byte[length];
@@ -128,7 +128,7 @@ public class StructureInputStream extends FileInputStream {
     private boolean[] byteToBools() throws IOException {
         byte flags = (byte) read();
         boolean[] bools = new boolean[7];
-        for(int i = 0; i < bools.length; i++) {
+        for (int i = 0; i < bools.length; i++) {
             bools[i] = flags % 2 == 1;
             flags = (byte) (flags / 2);
         }
