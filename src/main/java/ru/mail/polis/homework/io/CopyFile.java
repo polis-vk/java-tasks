@@ -30,29 +30,9 @@ public class CopyFile {
 
         Path to = Paths.get(pathTo);
 
-        if (!Files.isDirectory(from) && !checkDirectory(to.resolve(from.relativize(from)).getParent())) {
-            return "error";
-        }
-
         try {
-            Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    try (InputStream input = Files.newInputStream(file);
-                         OutputStream output = Files.newOutputStream(to.resolve(from.relativize(file)))) {
-                        copyFileContent(input, output);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return TERMINATE;
-                    }
-                    return CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                    return checkDirectory(to.resolve(from.relativize(dir))) ? CONTINUE : TERMINATE;
-                }
-            });
+            checkPathFrom(from, to);
+            visitFiles(from, to);
         } catch (IOException e) {
             e.printStackTrace();
             return "error";
@@ -60,26 +40,45 @@ public class CopyFile {
         return "done";
     }
 
-    private static void copyFileContent(InputStream input, OutputStream output) throws IOException {
-        byte[] buffer = new byte[1024];
-        int blockSize;
+    private static void visitFiles(Path from, Path to) throws IOException {
+        Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                copyFileContent(file, to.resolve(from.relativize(file)));
+                return CONTINUE;
+            }
 
-        while ((blockSize = input.read(buffer)) > 0) {
-            output.write(buffer, 0, blockSize);
-        }
-
-        output.flush();
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                checkAndCreateDirectory(to.resolve(from.relativize(dir)));
+                return CONTINUE;
+            }
+        });
     }
 
-    private static boolean checkDirectory(Path dir) {
-        if (!Files.exists(dir)) {
-            try {
-                Files.createDirectories(dir);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
+    private static void copyFileContent(Path in, Path out) throws IOException {
+        try (InputStream input = Files.newInputStream(in);
+             OutputStream output = Files.newOutputStream(out)) {
+            byte[] buffer = new byte[1024];
+            int blockSize;
+
+            while ((blockSize = input.read(buffer)) > 0) {
+                output.write(buffer, 0, blockSize);
             }
+
+            output.flush();
         }
-        return true;
+    }
+
+    private static void checkPathFrom(Path from, Path to) throws IOException {
+        if (!Files.isDirectory(from)) {
+            checkAndCreateDirectory(to.getParent());
+        }
+    }
+
+    private static void checkAndCreateDirectory(Path dir) throws IOException {
+        if (!Files.exists(dir)) {
+            Files.createDirectories(dir);
+        }
     }
 }
