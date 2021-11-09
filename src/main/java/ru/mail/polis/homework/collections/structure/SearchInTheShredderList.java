@@ -46,10 +46,10 @@ public class SearchInTheShredderList {
         int[] array = new int[] {-1, -1};
         // пополам это на 2 половины по разности длин не более 1?
         for (int i = 0; i < this.partStrings.size(); ++i) {
-            if (sub1.equals(this.partStrings.get(i))) {
+            if (array[0] == -1 && sub1.equals(this.partStrings.get(i))) {
                 array[0] = i;
             }
-            if (sub2.equals(this.partStrings.get(i))) {
+            if (array[1] == -1 && i != array[0] && sub2.equals(this.partStrings.get(i))) {
                 array[1] = i;
             }
         }
@@ -58,8 +58,8 @@ public class SearchInTheShredderList {
         } else if (array[1] == -1) { // если только второй половины нет, то передаем только первую
             array = new int[]{array[0]};
         }
-        // массив может быть из 1 элемента, и если он -1, значит ничего полезного там
-        // нет
+        // массив может быть из 1 элемента, и если он -1
+        // значит ничего полезного там нет
         return array[0] == -1 ? null : array;
     }
 }
