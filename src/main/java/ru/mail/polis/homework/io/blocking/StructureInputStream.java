@@ -21,7 +21,6 @@ public class StructureInputStream extends FileInputStream {
         super(fileName);
     }
 
-
     /**
      * Метод должен вернуть следующую прочитанную структуру.
      * Если структур в файле больше нет, то вернуть null
