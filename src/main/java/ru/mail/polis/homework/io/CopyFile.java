@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.io;
 
-import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -24,38 +23,36 @@ public class CopyFile {
         Path to = Path.of(pathTo);
         try {
             Files.createDirectories(to.getParent());
+            copyFilesRecursively(from, to);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        CopyFilesRecursively(from, to);
         return null;
     }
 
-    private static void CopyFilesRecursively(Path from, Path to) {
-        if (!Files.isDirectory(from)) {
-            CopyOneFile(from, to);
+    private static void copyFilesRecursively(Path from, Path to) throws IOException {
+        if (Files.isRegularFile(from)) {
+            copyOneFile(from, to);
             return;
         }
+        if (!Files.exists(to)) {
+            Files.createDirectory(to);
+        }
         try (DirectoryStream<Path> folder = Files.newDirectoryStream(from)) {
-            Files.createDirectories(to);
             for (Path path : folder) {
-                CopyFilesRecursively(path, to.resolve(path.getFileName()));
+                copyFilesRecursively(path, to.resolve(path.getFileName()));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
-    private static void CopyOneFile(Path from, Path to) {
+    private static void copyOneFile(Path from, Path to) throws IOException {
+        byte[] buffer = new byte[1024];
+        int size;
         try (FileInputStream in = new FileInputStream(String.valueOf(from));
              FileOutputStream out = new FileOutputStream(String.valueOf(to))) {
-            byte[] buffer = new byte[(int) Files.size(from)];
-            if (in.read(buffer) == -1) {
-                throw new EOFException();
+            while ((size = in.read(buffer)) > 0) {
+                out.write(buffer, 0, size);
             }
-            out.write(buffer);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

@@ -54,20 +54,14 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private SubStructure readSubStructure() throws IOException {
-        if (available() == 0) {
-            return null;
-        }
         int id = readInt();
-        String name = readString();
+        String name = readSubstructureString();
         boolean flag = readBoolean();
         double score = readDouble();
         return new SubStructure(id, name, flag, score);
     }
 
     private SubStructure[] readSubStructures() throws IOException {
-        if (available() == 0) {
-            return null;
-        }
         int size = readInt();
         if (size == -1) {
             return null;
@@ -154,5 +148,13 @@ public class StructureInputStream extends FileInputStream {
             flags[i] = ((inputFlags >> i) & 1) == 1;
         }
         return flags;
+    }
+
+    private String readSubstructureString() throws IOException {
+        String substructureName = readString();
+        if (substructureName == null) {
+            throw new IOException();
+        }
+        return substructureName;
     }
 }
