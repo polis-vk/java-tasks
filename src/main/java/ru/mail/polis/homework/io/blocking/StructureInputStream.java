@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.io.blocking;
 
 import java.io.*;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -55,6 +56,9 @@ public class StructureInputStream extends FileInputStream {
     public SubStructure readSubStructure() throws IOException {
         int id = readInt();
         String name = readUTF();
+        if (name == null) {
+            throw new InvalidParameterException("Name of Substring must be @NonNull");
+        }
         boolean flag = readBoolean();
         double score = readDouble();
         return new SubStructure(id, name, flag, score);
