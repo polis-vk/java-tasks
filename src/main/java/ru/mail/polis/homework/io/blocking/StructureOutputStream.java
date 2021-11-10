@@ -23,14 +23,23 @@ public class StructureOutputStream extends FileOutputStream {
         this.writeUTF(structure.getName());
         this.write(structure.getSubStructures());
         this.writeFloat(structure.getCoeff());
-        byte k = (byte) (
-                (((byte) (structure.isFlag1() ? 1 : 0)) << 3)
-                        + (((byte) (structure.isFlag2() ? 1 : 0)) << 2)
-                        + (((byte) (structure.isFlag3() ? 1 : 0)) << 1)
-                        + (((byte) (structure.isFlag4() ? 1 : 0)))
-        );
+        byte k = getBitsFlag(structure.isFlag1(), structure.isFlag2(), structure.isFlag3(), structure.isFlag4());
+        incCount(1);
         this.writeByte(k);
         this.writeByte(structure.getParam());
+    }
+
+    private byte getBitsFlag(boolean flag1, boolean flag2, boolean flag3, boolean flag4) {
+        return (byte) (
+                (boolToByte(flag1) << 3)
+                        + (boolToByte(flag2) << 2)
+                        + (boolToByte(flag3) << 1)
+                        + (boolToByte(flag4))
+        );
+    }
+
+    private byte boolToByte(boolean b) {
+        return (byte) (b ? 1 : 0);
     }
 
     /**
@@ -43,20 +52,20 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     public void write(SubStructure subStructure) throws IOException {
-        this.writeInt(subStructure.getId());
-        this.writeUTF(subStructure.getName());
-        this.writeBoolean(subStructure.isFlag());
-        this.writeDouble(subStructure.getScore());
+        writeInt(subStructure.getId());
+        writeUTF(subStructure.getName());
+        writeBoolean(subStructure.isFlag());
+        writeDouble(subStructure.getScore());
     }
 
     public void write(SubStructure[] subStructures) throws IOException {
         if (subStructures == null) {
-            this.writeInt(-1);
+            writeInt(-1);
             return;
         }
-        this.writeInt(subStructures.length);
+        writeInt(subStructures.length);
         for (SubStructure subStructure : subStructures) {
-            this.write(subStructure);
+            write(subStructure);
         }
     }
 
@@ -69,12 +78,12 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     public final void writeBoolean(boolean v) throws IOException {
-        super.write(v ? 1 : 0);
+        write(v ? 1 : 0);
         incCount(1);
     }
 
     public final void writeByte(int v) throws IOException {
-        super.write(v);
+        write(v);
         incCount(1);
     }
 
@@ -110,62 +119,14 @@ public class StructureOutputStream extends FileOutputStream {
         writeLong(Double.doubleToLongBits(v));
     }
 
-    void writeUTF(String str) throws IOException {
+    public void writeUTF(String str) throws IOException {
         if (str == null) {
             writeInt(-1);
             return;
         }
-        final int strlen = str.length();
-        long utflen = strlen; // optimized for ASCII
-
-        for (int i = 0; i < strlen; i++) {
-            int c = str.charAt(i);
-            if (c >= 0x80 || c == 0)
-                utflen += (c >= 0x800) ? 2 : 1;
-        }
-
-        if (utflen > Integer.MAX_VALUE || /* overflow */ utflen < strlen)
-            throw new UTFDataFormatException(tooLongMsg(str, (int) utflen));
-
-        final byte[] bytearr = new byte[(int) utflen + 4];
-
-        int count = 0;
-        bytearr[count++] = (byte) ((utflen >>> 24) & 0xFF);
-        bytearr[count++] = (byte) ((utflen >>> 16) & 0xFF);
-        bytearr[count++] = (byte) ((utflen >>> 8) & 0xFF);
-        bytearr[count++] = (byte) (utflen & 0xFF);
-
-        int i;
-        for (i = 0; i < strlen; i++) { // optimized for initial run of ASCII
-            int c = str.charAt(i);
-            if (c >= 0x80 || c == 0) break;
-            bytearr[count++] = (byte) c;
-        }
-
-        for (; i < strlen; i++) {
-            int c = str.charAt(i);
-            if (c < 0x80 && c != 0) {
-                bytearr[count++] = (byte) c;
-            } else if (c >= 0x800) {
-                bytearr[count++] = (byte) (0xE0 | ((c >> 12) & 0x0F));
-                bytearr[count++] = (byte) (0x80 | ((c >> 6) & 0x3F));
-                bytearr[count++] = (byte) (0x80 | ((c) & 0x3F));
-            } else {
-                bytearr[count++] = (byte) (0xC0 | ((c >> 6) & 0x1F));
-                bytearr[count++] = (byte) (0x80 | ((c) & 0x3F));
-            }
-        }
-        super.write(bytearr, 0, (int) utflen + 4);
-    }
-
-    private static String tooLongMsg(String s, int bits32) {
-        int slen = s.length();
-        String head = s.substring(0, 8);
-        String tail = s.substring(slen - 8, slen);
-        // handle int overflow with max 3x expansion
-        long actualLength = (long) slen + Integer.toUnsignedLong(bits32 - slen);
-        return "encoded string (" + head + "..." + tail + ") too long: "
-                + actualLength + " bytes";
+        writeInt(str.length());
+        write(str.getBytes());
+        incCount(str.getBytes().length);
     }
 
     public final int size() {

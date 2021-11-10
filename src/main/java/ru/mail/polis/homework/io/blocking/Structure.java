@@ -1,16 +1,17 @@
 package ru.mail.polis.homework.io.blocking;
 
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
 /**
  * Нельзя изменять/удалять/добавлять поля.
  * Можно изменять/удалять СУЩЕСТВУЮЩИЕ методы.
- *
+ * <p>
  * Все остальное можно
  */
-public class Structure {
+public class Structure implements Serializable {
 
     public static final int UNDEFINED_INT = 0;
     public static final long UNDEFINED_LONG = -1_000_000;
@@ -32,18 +33,6 @@ public class Structure {
     private byte param;
 
     public Structure() {
-    }
-
-    public Structure(long id, String name, SubStructure[] subStructures, float coeff, boolean flag1, boolean flag2, boolean flag3, boolean flag4, byte param) {
-        this.id = id;
-        this.name = name;
-        this.subStructures = (subStructures == null) ? null : subStructures.clone();
-        this.coeff = coeff;
-        this.flag1 = flag1;
-        this.flag2 = flag2;
-        this.flag3 = flag3;
-        this.flag4 = flag4;
-        this.param = param;
     }
 
     public long getId() {

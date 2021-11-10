@@ -1,13 +1,12 @@
 package ru.mail.polis.homework.io;
 
-import ru.mail.polis.homework.io.blocking.StructureInputStream;
-import ru.mail.polis.homework.io.blocking.StructureOutputStream;
-
 import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
 public class CopyFile {
+
+    private static final int BUFFER_SIZE = 1024;
 
     /**
      * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
@@ -21,47 +20,46 @@ public class CopyFile {
         if (!Files.exists(from)) {
             return "Wrong path";
         }
-
         try {
             if (Files.isRegularFile(from)) {
                 Files.createDirectories(to.getParent());
-                try (FileInputStream structureInputStream = new StructureInputStream(from.toFile())) {
-                    try (FileOutputStream structureOutputStream = new StructureOutputStream(to.toFile())) {
-                        structureOutputStream.write(structureInputStream.read());
-                    }
-                }
-                return "Done";
+                return copyFile(from, to);
             } else {
                 Files.createDirectories(to);
             }
             Files.walkFileTree(from, new SimpleFileVisitor<>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attributes) throws IOException {
-                    Path targetDirectory = to.resolve(from.relativize(directory));
-                    System.out.println("Copying dir: " + from.relativize(directory));
-                    if (!Files.exists(targetDirectory)) {
-                        Files.createDirectory(targetDirectory);
-                    }
+                    createDirs(to.resolve(from.relativize(directory)));
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    System.out.println("Copying file: " + from.relativize(file));
-                    try (FileInputStream structureInputStream = new StructureInputStream(file.toFile())) {
-                        try (FileOutputStream structureOutputStream = new StructureOutputStream(to.resolve(from.relativize(file)).toFile())) {
-                            structureOutputStream.write(structureInputStream.read());
-                        }
-                    }
+                    copyFile(file, to.resolve(from.relativize(file)));
                     return FileVisitResult.CONTINUE;
                 }
-
             });
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return "Done";
     }
 
+    private static void createDirs(Path targetDirectory) throws IOException {
+        if (!Files.exists(targetDirectory)) {
+            Files.createDirectory(targetDirectory);
+        }
+    }
+
+    private static String copyFile(Path from, Path to) throws IOException {
+        byte[] buffer = new byte[BUFFER_SIZE];
+        try (InputStream in = Files.newInputStream(from);
+             OutputStream out = Files.newOutputStream(to)) {
+            while (in.read(buffer) > 0) {
+                out.write(buffer);
+            }
+        }
+        return "Done";
+    }
 }
