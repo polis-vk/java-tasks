@@ -16,10 +16,9 @@ public class CopyFile {
         try (InputStream input = Files.newInputStream(from);
              OutputStream output = Files.newOutputStream(to)) {
             byte[] buffer = new byte[1024];
-            int recorded = input.read(buffer);
-            while (recorded > 0) {
+            int recorded;
+            while ((recorded = input.read(buffer)) > 0) {
                 output.write(buffer, 0, recorded);
-                recorded = input.read(buffer);
             }
         }
     }
