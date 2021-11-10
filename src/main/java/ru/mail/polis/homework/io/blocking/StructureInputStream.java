@@ -76,14 +76,6 @@ public class StructureInputStream extends FileInputStream {
         return new String(bytes);
     }
 
-    private String readStringForSubStructure() throws IOException {
-        String name = readString();
-        if (name == null) {
-            throw new EOFException("SubStructure name can't be null");
-        }
-        return name;
-    }
-
     private double readDouble() throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(Double.BYTES);
         byte[] bytes = new byte[Double.BYTES];
@@ -142,7 +134,12 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private SubStructure readSubStructure() throws IOException {
-        return new SubStructure(readInt(), readStringForSubStructure(), readBoolean(), readDouble());
+        int id = readInt();
+        String name = readString();
+        if (name == null) {
+            throw new EOFException("SubStructure name can't be null");
+        }
+        return new SubStructure(id, name, readBoolean(), readDouble());
     }
 
     private SubStructure[] readSubStructures() throws IOException {

@@ -31,20 +31,24 @@ public class CopyFile {
             return ERROR;
         }
         Path to = Paths.get(pathTo);
-        if ((Files.isRegularFile(from) && pathNotCreated(to.getParent()))
-                || (Files.isDirectory(from) && pathNotCreated(to))) {
-            return ERROR;
-        }
-
-        final byte[] buffer = new byte[BUFFER_SIZE];
-
         try {
-            Files.walkFileTree(from, createCopyVisitor(from, to, buffer));
+            if (Files.isRegularFile(from)) {
+                createPathIfNotExist(to.getParent());
+            } else {
+                createPathIfNotExist(to);
+            }
+            Files.walkFileTree(from, createCopyVisitor(from, to, new byte[BUFFER_SIZE]));
         } catch (IOException e) {
             e.printStackTrace();
             return ERROR;
         }
         return COMPLETED;
+    }
+
+    private static void createPathIfNotExist(Path dir) throws IOException {
+        if (!Files.exists(dir)) {
+            Files.createDirectories(dir);
+        }
     }
 
     private static FileVisitor<Path> createCopyVisitor(Path from, Path to, byte[] buffer) {
@@ -53,7 +57,10 @@ public class CopyFile {
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 try (InputStream input = Files.newInputStream(file);
                      OutputStream output = Files.newOutputStream(to.resolve(from.relativize(file)))) {
-                    copyFileContent(input, output, buffer);
+                    int readSize;
+                    while ((readSize = input.read(buffer)) > 0) {
+                        output.write(buffer, 0, readSize);
+                    }
                 }
                 return CONTINUE;
             }
@@ -70,27 +77,7 @@ public class CopyFile {
                 }
                 return CONTINUE;
             }
-
-            private void copyFileContent(InputStream input, OutputStream output, byte[] buffer) throws IOException {
-                int readSize;
-                while ((readSize = input.read(buffer)) > 0) {
-                    output.write(buffer, 0, readSize);
-                }
-                output.flush();
-            }
         };
-    }
-
-    private static boolean pathNotCreated(Path dir) {
-        if (!Files.exists(dir)) {
-            try {
-                Files.createDirectories(dir);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return true;
-            }
-        }
-        return false;
     }
 
 }
