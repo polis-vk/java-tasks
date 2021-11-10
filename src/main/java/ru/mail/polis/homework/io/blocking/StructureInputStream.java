@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class StructureInputStream extends FileInputStream {
 
-    private final List<Structure> STRUCTURES = new ArrayList<>();
+    private final List<Structure> structureList = new ArrayList<>();
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
@@ -38,7 +38,7 @@ public class StructureInputStream extends FileInputStream {
         setFlags(structure);
         structure.setParam((byte) read());
 
-        STRUCTURES.add(structure);
+        structureList.add(structure);
         return structure;
     }
 
@@ -50,7 +50,7 @@ public class StructureInputStream extends FileInputStream {
         while (available() > 0) {
             readStructure();
         }
-        return STRUCTURES.toArray(new Structure[0]);
+        return structureList.toArray(new Structure[0]);
     }
 
     private long readLong() throws IOException {

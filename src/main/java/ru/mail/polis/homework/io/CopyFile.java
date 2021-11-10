@@ -31,8 +31,8 @@ public class CopyFile {
             return ERROR;
         }
         Path to = Paths.get(pathTo);
-        if ((Files.isRegularFile(from) && dirNotCreated(to.getParent()))
-                || (Files.isDirectory(from) && dirNotCreated(to))) {
+        if ((Files.isRegularFile(from) && pathNotCreated(to.getParent()))
+                || (Files.isDirectory(from) && pathNotCreated(to))) {
             return ERROR;
         }
 
@@ -58,6 +58,19 @@ public class CopyFile {
                 return CONTINUE;
             }
 
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                Path current = to.resolve(from.relativize(dir));
+                if (Files.notExists(current)) {
+                    try {
+                        Files.createDirectory(current);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return CONTINUE;
+            }
+
             private void copyFileContent(InputStream input, OutputStream output, byte[] buffer) throws IOException {
                 int readSize;
                 while ((readSize = input.read(buffer)) > 0) {
@@ -68,7 +81,7 @@ public class CopyFile {
         };
     }
 
-    private static boolean dirNotCreated(Path dir) {
+    private static boolean pathNotCreated(Path dir) {
         if (!Files.exists(dir)) {
             try {
                 Files.createDirectories(dir);
