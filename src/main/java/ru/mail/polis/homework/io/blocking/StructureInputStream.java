@@ -15,7 +15,6 @@ import java.util.List;
  */
 public class StructureInputStream extends FileInputStream {
 
-
     private final List<Structure> structures = new ArrayList<>();
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
