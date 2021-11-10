@@ -78,14 +78,6 @@ public class StructureInputStream extends FileInputStream {
         return new String(b);
     }
 
-    private String readSubstructureName() throws IOException {
-        String tmp = readString();
-        if (tmp == null) {
-            throw new IOException();
-        }
-        return tmp;
-    }
-
     private double readDouble() throws IOException {
         byte[] b = new byte[8];
         read(b);
@@ -112,7 +104,12 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private SubStructure readSubStructure() throws IOException {
-        return new SubStructure(readInt(), readSubstructureName(), readBoolean(), readDouble());
+        int id = readInt();
+        String name = readString();
+        if (name == null) {
+            throw new IOException();
+        }
+        return new SubStructure(id, name, readBoolean(), readDouble());
     }
 
     private SubStructure[] readSubStructures() throws IOException {

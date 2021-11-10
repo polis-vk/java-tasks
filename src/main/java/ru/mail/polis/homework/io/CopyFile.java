@@ -51,7 +51,6 @@ public class CopyFile {
             byte[] b = new byte[1024];
             input.read(b);
             output.write(b);
-            output.flush();
         }
     }
 }

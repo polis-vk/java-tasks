@@ -24,7 +24,7 @@ public class StructureOutputStream extends FileOutputStream {
         writeLong(structure.getId());
         writeString(structure.getName());
         writeSubStructures(structure.getSubStructures());
-        writeFloat((float) structure.getCoeff());
+        writeFloat(structure.getCoeff());
         writeFlags(structure.isFlag1(), structure.isFlag2(), structure.isFlag3(), structure.isFlag4());
         write(structure.getParam());
         flush();
