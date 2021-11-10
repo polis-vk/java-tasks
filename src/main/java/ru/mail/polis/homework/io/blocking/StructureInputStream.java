@@ -16,12 +16,11 @@ import java.util.List;
 public class StructureInputStream extends FileInputStream {
 
     private Structure[] structures;
-    private List<Structure> list;
+    private final List<Structure> list = new ArrayList<>();;
     private int index = 0;
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
-        list = new ArrayList<>();
     }
 
 
@@ -36,7 +35,7 @@ public class StructureInputStream extends FileInputStream {
         Structure structure = new Structure();
         structure.setId(readLong());
         structure.setName(readString());
-        structure.setCoeff((float) readDouble());
+        structure.setCoeff(readFloat());
         boolean[] flags = read4Booleans();
         structure.setFlag1(flags[3]);
         structure.setFlag2(flags[2]);

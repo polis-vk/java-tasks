@@ -27,8 +27,16 @@ public class CopyFile {
                 copyFile(from, to);
                 return "Copy file";
             }
-            if (!Files.exists(to)) {
-                Files.createDirectories(to);
+            if (!Files.exists(to))
+            {
+                if (!Files.exists(to.getParent()))
+                {
+                    Files.createDirectories(to);
+                }
+                else
+                {
+                    Files.createDirectory(to);
+                }
             }
 
             try (DirectoryStream<Path> paths = Files.newDirectoryStream(from)) {
@@ -51,9 +59,12 @@ public class CopyFile {
             while ((length = in.read(buf)) > 0) {
                 out.write(buf, 0, length);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+    }
+
+    public static void copyDirectories(Path from, Path to)
+    {
+
     }
 
 }

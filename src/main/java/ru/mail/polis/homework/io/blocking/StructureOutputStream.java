@@ -67,6 +67,10 @@ public class StructureOutputStream extends FileOutputStream {
         write(double2ByteArray(value));
     }
 
+    private void writeFloat(float value) throws IOException {
+        write(float2ByteArray(value));
+    }
+
     private void writeLong(long value) throws IOException {
         write(long2ByteArray(value));
     }
