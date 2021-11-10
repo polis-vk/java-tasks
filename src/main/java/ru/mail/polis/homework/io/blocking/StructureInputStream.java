@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Вам нужно реализовать StructureInputStream, который умеет читать данные из файла.
@@ -114,6 +115,9 @@ public class StructureInputStream extends FileInputStream {
     private SubStructure readSubStructure() throws IOException {
         int id = readInt();
         String name = readString();
+        if (name == null) {
+            throw new NoSuchElementException();
+        }
         boolean flag = read() == 1;
         double score = readDouble();
         return new SubStructure(id, name, flag, score);
