@@ -5,15 +5,15 @@ plugins {
 group 'ru.mail.polis.homework'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 11
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation group: 'junit', name: 'junit', version: '4.12'
-    implementation group: 'org.mockito', name: 'mockito-core', version: '2.23.0'
-    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.23.0'
+    testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
 
 }

@@ -53,11 +53,11 @@ public class StructureOutputStream extends FileOutputStream {
     private void writeSubstructures(SubStructure[] subStructures) throws IOException {
         if (subStructures == null) {
             writeInt(-1);
-        } else {
-            writeInt(subStructures.length);
-            for (SubStructure sub : subStructures) {
-                writeSubstructure(sub);
-            }
+            return;
+        }
+        writeInt(subStructures.length);
+        for (SubStructure sub : subStructures) {
+            writeSubstructure(sub);
         }
     }
 

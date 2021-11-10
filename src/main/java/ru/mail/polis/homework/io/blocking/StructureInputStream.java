@@ -1,11 +1,13 @@
 package ru.mail.polis.homework.io.blocking;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Вам нужно реализовать StructureInputStream, который умеет читать данные из файла.
@@ -13,24 +15,11 @@ import java.util.Arrays;
  * 3 балла
  */
 public class StructureInputStream extends FileInputStream {
-    private int index;
-    private Structure[] structures;
+    private final List<Structure> structures;
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
-        structures = new Structure[10];
-        index = 0;
-    }
-
-    private void extendStructureArrayIfNeed() {
-        if (index != structures.length - 1) {
-            return;
-        }
-        structures = Arrays.copyOf(structures, structures.length * 2);
-    }
-
-    private Structure[] clearedStructuresArray() {
-        return (index == structures.length - 1) ? structures : Arrays.copyOf(structures, index);
+        structures = new ArrayList<>();
     }
 
     /**
@@ -41,7 +30,6 @@ public class StructureInputStream extends FileInputStream {
         if (available() == 0) {
             return null;
         }
-        extendStructureArrayIfNeed();
         Structure structure = new Structure();
         structure.setId(readLong());
         structure.setName(readString());
@@ -49,7 +37,7 @@ public class StructureInputStream extends FileInputStream {
         structure.setCoeff(readFloat());
         readFlags(structure);
         structure.setParam((byte) read());
-        structures[index++] = structure;
+        structures.add(structure);
         return structure;
     }
 
@@ -59,8 +47,9 @@ public class StructureInputStream extends FileInputStream {
      */
     public Structure[] readStructures() throws IOException {
         while (readStructure() != null) {
+            //ignore
         }
-        return clearedStructuresArray();
+        return structures.toArray(Structure[]::new);
     }
 
     private long readLong() throws IOException {
@@ -129,6 +118,11 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private SubStructure readSubstructure() throws IOException {
-        return new SubStructure(readInt(), readString(), readBoolean(), readDouble());
+        int id = readInt();
+        String name = readString();
+        if (name == null) {
+            throw new EOFException();
+        }
+        return new SubStructure(id, name, readBoolean(), readDouble());
     }
 }
