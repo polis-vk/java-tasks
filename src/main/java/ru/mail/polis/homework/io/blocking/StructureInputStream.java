@@ -62,7 +62,7 @@ public class StructureInputStream extends FileInputStream {
         int id = readInt();
         String name = readString();
         if(name == null){
-            throw new IllegalAccessError();
+            throw new IllegalArgumentException();
         }
         boolean flag = readBoolean();
         double score = readDouble();
