@@ -22,27 +22,22 @@ public class CopyFile {
             return null;
         }
         Path pathFromDirectory = Path.of(pathFrom);
-        Path pathToDirectory = Path.of(pathTo);
         if (Files.notExists(pathFromDirectory)) {
             return null;
         }
+        Path pathToDirectory = Path.of(pathTo);
 
         try {
+            if (Files.notExists(pathToDirectory.getParent())) {
+                Files.createDirectories(pathToDirectory.getParent());
+            }
             if (Files.isRegularFile(pathFromDirectory)) {
-                if (Files.notExists(pathToDirectory.getParent())) {
-                    Files.createDirectories(pathToDirectory.getParent());
-                }
                 Files.createFile(pathToDirectory);
                 copyFile(pathFromDirectory, pathToDirectory);
                 return null;
             }
 
-            if (Files.exists(pathToDirectory.getParent())) {
-                Files.createDirectory(pathToDirectory);
-            } else {
-                Files.createDirectories(pathToDirectory);
-            }
-
+            Files.createDirectory(pathToDirectory);
             try (DirectoryStream<Path> paths = Files.newDirectoryStream(pathFromDirectory)) {
                 for (Path path : paths) {
                     copyFiles(path.toString(), pathToDirectory.resolve(path.getFileName()).toString());
@@ -56,10 +51,6 @@ public class CopyFile {
     }
 
     private static int copyFile(Path fromFile, Path toFile) throws IOException {
-        if (fromFile == null || toFile == null) {
-            throw new IllegalArgumentException();
-        }
-
         int totalBytes = 0;
         try (InputStream inputStream = Files.newInputStream(toFile)) {
             try (OutputStream outputStream = Files.newOutputStream(fromFile)) {

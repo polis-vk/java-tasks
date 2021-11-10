@@ -60,7 +60,7 @@ public class StructureInputStream extends FileInputStream {
         int id = readInt();
         String name = readString();
         if (name == null) {
-            name = "null";
+            throw new StructureInputException();
         }
         boolean flag = readBoolean();
         double score = readDouble();
@@ -82,7 +82,9 @@ public class StructureInputStream extends FileInputStream {
     private long readLong() throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
         byte[] bytes = new byte[Long.BYTES];
-        read(bytes);
+        if (read(bytes) != Long.BYTES) {
+            throw new StructureInputException();
+        }
         buffer.put(bytes);
         buffer.flip();
         return buffer.getLong();
@@ -91,7 +93,9 @@ public class StructureInputStream extends FileInputStream {
     private int readInt() throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
         byte[] bytes = new byte[Integer.BYTES];
-        read(bytes);
+        if (read(bytes) != Integer.BYTES) {
+            throw new StructureInputException();
+        }
         buffer.put(bytes);
         buffer.flip();
         return buffer.getInt();
@@ -100,7 +104,9 @@ public class StructureInputStream extends FileInputStream {
     private double readDouble() throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(Double.BYTES);
         byte[] bytes = new byte[Double.BYTES];
-        read(bytes);
+        if (read(bytes) != Double.BYTES) {
+            throw new StructureInputException();
+        }
         buffer.put(bytes);
         buffer.flip();
         return buffer.getDouble();
@@ -109,7 +115,9 @@ public class StructureInputStream extends FileInputStream {
     private float readFloat() throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(Float.BYTES);
         byte[] bytes = new byte[Float.BYTES];
-        read(bytes);
+        if (read(bytes) != Float.BYTES) {
+            throw new StructureInputException();
+        }
         buffer.put(bytes);
         buffer.flip();
         return buffer.getFloat();
@@ -121,7 +129,9 @@ public class StructureInputStream extends FileInputStream {
             return null;
         }
         byte[] bytes = new byte[length];
-        read(bytes);
+        if (read(bytes) != length) {
+            throw new StructureInputException();
+        }
         return new String(bytes);
     }
 
@@ -130,6 +140,11 @@ public class StructureInputStream extends FileInputStream {
         int inputFlags = read();
         for (int i = 0; i < COUNT_FLAGS; i++) {
             flags[i] = ((inputFlags >> i) & 1) == 1;
+        }
+        for (int i = COUNT_FLAGS; i < Byte.SIZE; i++) {
+            if (((inputFlags >> i) & 1) == 1) {
+                throw new StructureInputException();
+            }
         }
         return flags;
     }
