@@ -11,13 +11,14 @@ import java.util.*;
 public class CustomDictionary {
 
     private Map<Letters, Set<String>> dict = new HashMap<>();
+    private int size = 0;
 
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - O(value.size() + dict.size())
+     * Сложность - O(value.size())
      */
     public boolean add(String value) {
         if (value == null) {
@@ -26,16 +27,14 @@ public class CustomDictionary {
         if (value.isEmpty()) {
             throw new IllegalArgumentException("Can't add empty line");
         }
-        Letters letters = new Letters(value);
 
-        boolean result;
-        Set<String> strings;
-        if (!dict.containsKey(letters)) {
-            result = (strings = new HashSet<>()).add(value);
-        } else {
-            result = (strings = dict.get(letters)).add(value);
+        Letters letters = new Letters(value);
+        Set<String> strings = dict.computeIfAbsent(letters, s -> new HashSet<>());
+
+        boolean result = strings.add(value);
+        if (result) {
+            size++;
         }
-        dict.put(letters, strings);
         return result;
     }
 
@@ -75,7 +74,16 @@ public class CustomDictionary {
         if (!dict.containsKey(letters)) {
             return false;
         } else {
-            return dict.get(letters).remove(value);
+            boolean result = dict.get(letters).remove(value);
+            if (result) {
+                size--;
+            }
+
+            if (dict.get(letters).isEmpty()) {
+                dict.remove(letters);
+            }
+
+            return result;
         }
     }
 
@@ -103,31 +111,18 @@ public class CustomDictionary {
             return Collections.emptyList();
         }
 
-        List<String> result = new LinkedList<>();
         Letters letters = new Letters(value);
 
-        if (dict.containsKey(letters)) {
-            result.addAll(dict.get(letters));
-        }
-
-        return result;
+        return dict.containsKey(letters) ? new LinkedList<>(dict.get(letters)) : Collections.emptyList();
     }
 
     /**
      * Колл-во хранимых строк.
      * @return - Колл-во хранимых строк.
      *
-     * Сложность - O(dict.size())
+     * Сложность - O(1)
      */
     public int size() {
-        if (dict.isEmpty()) {
-            return 0;
-        }
-
-        int size = 0;
-        for (Set<String> s : dict.values()) {
-            size += s.size();
-        }
         return size;
     }
 
