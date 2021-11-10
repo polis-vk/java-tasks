@@ -105,13 +105,10 @@ public class StructureInputStream extends FileInputStream {
         String name = readString();
         double score = readDouble();
         boolean flag = read() == 1;
-        return new SubStructure(id, name, flag, score);
+        return new SubStructure(id, name == null ? Structure.UNDEFINED_STRING : name, flag, score);
     }
 
     private SubStructure[] readSubStructures() throws IOException {
-        if (available() == 0) {
-            return null;
-        }
         int size = readInt();
         if (size == -1) {
             return null;

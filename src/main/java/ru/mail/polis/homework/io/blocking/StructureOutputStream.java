@@ -40,7 +40,7 @@ public class StructureOutputStream extends FileOutputStream {
     public void write(Structure structure) throws IOException {
         writeLong(structure.getId());
         writeString(structure.getName());
-        writeDouble(structure.getCoeff());
+        writeFloat(structure.getCoeff());
         write4BooleansAsInt(new boolean[]{structure.isFlag1(), structure.isFlag2(), structure.isFlag3(), structure.isFlag4()});
         writeInt(structure.getParam());
         writeSubStructures(structure.getSubStructures());
@@ -97,7 +97,6 @@ public class StructureOutputStream extends FileOutputStream {
             res <<= 1;
             res |= value[i] ? 1 : 0;
         }
-        System.out.println(res);
         write(res);
     }
 
