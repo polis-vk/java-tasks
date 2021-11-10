@@ -23,13 +23,10 @@ public class StructureOutputStream extends FileOutputStream {
      */
     public void write(Structure structure) throws IOException {
         writeLong(structure.getId());
-        writeBytes(structure.getName());
+        writeChars(structure.getName());
         writeSubstructures(structure.getSubStructures());
-        writeDouble(structure.getCoeff());
-        writeBoolean(structure.isFlag1());
-        writeBoolean(structure.isFlag2());
-        writeBoolean(structure.isFlag3());
-        writeBoolean(structure.isFlag4());
+        writeFloat(structure.getCoeff());
+        writeFlags(structure);
         writeByte(structure.getParam());
     }
 
@@ -37,13 +34,22 @@ public class StructureOutputStream extends FileOutputStream {
      * Метод должен вернуть записать массив прочитанных структур.
      */
     public void write(Structure[] structures) throws IOException {
-        for(Structure structure: structures) {
+        for (Structure structure : structures) {
             write(structure);
         }
     }
 
     private void writeBoolean(boolean v) throws IOException {
         write(v ? 1 : 0);
+    }
+
+    private void writeFlags(Structure structure) throws IOException {
+        int result = 0;
+        result += structure.isFlag1() ? 1 : 0;
+        result += structure.isFlag2() ? 2 : 0;
+        result += structure.isFlag3() ? 4 : 0;
+        result += structure.isFlag4() ? 8 : 0;
+        writeByte(result);
     }
 
     private void writeByte(int v) throws IOException {
@@ -53,19 +59,19 @@ public class StructureOutputStream extends FileOutputStream {
     private void writeInt(int v) throws IOException {
         write((v >>> 24) & 0xFF);
         write((v >>> 16) & 0xFF);
-        write((v >>>  8) & 0xFF);
+        write((v >>> 8) & 0xFF);
         write((v) & 0xFF);
     }
 
     private void writeLong(long v) throws IOException {
-        writeBuffer[0] = (byte)(v >>> 56);
-        writeBuffer[1] = (byte)(v >>> 48);
-        writeBuffer[2] = (byte)(v >>> 40);
-        writeBuffer[3] = (byte)(v >>> 32);
-        writeBuffer[4] = (byte)(v >>> 24);
-        writeBuffer[5] = (byte)(v >>> 16);
-        writeBuffer[6] = (byte)(v >>>  8);
-        writeBuffer[7] = (byte)(v);
+        writeBuffer[0] = (byte) (v >>> 56);
+        writeBuffer[1] = (byte) (v >>> 48);
+        writeBuffer[2] = (byte) (v >>> 40);
+        writeBuffer[3] = (byte) (v >>> 32);
+        writeBuffer[4] = (byte) (v >>> 24);
+        writeBuffer[5] = (byte) (v >>> 16);
+        writeBuffer[6] = (byte) (v >>> 8);
+        writeBuffer[7] = (byte) (v);
         write(writeBuffer, 0, 8);
     }
 
@@ -77,20 +83,30 @@ public class StructureOutputStream extends FileOutputStream {
         writeLong(Double.doubleToLongBits(v));
     }
 
-    private void writeBytes(String s) throws IOException {
+    private void writeChars(String s) throws IOException {
+        if (s == null) {
+            writeInt(-1);
+            return;
+        }
         int len = s.length();
         writeInt(len);
-        for (int i = 0 ; i < len ; i++) {
-            write((byte)s.charAt(i));
+        for (int i = 0; i < len; i++) {
+            int v = s.charAt(i);
+            write((v >>> 8) & 0xFF);
+            write((v) & 0xFF);
         }
     }
 
     private void writeSubstructures(SubStructure[] subStructures) throws IOException {
+        if (subStructures == null) {
+            writeInt(-1);
+            return;
+        }
         int len = subStructures.length;
         writeInt(len);
-        for(SubStructure subStructure: subStructures) {
+        for (SubStructure subStructure : subStructures) {
             writeInt(subStructure.getId());
-            writeBytes(subStructure.getName());
+            writeChars(subStructure.getName());
             writeBoolean(subStructure.isFlag());
             writeDouble(subStructure.getScore());
         }

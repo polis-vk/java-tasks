@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.io;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
@@ -14,30 +14,36 @@ public class CopyFile {
      * В тесте для создания нужных файлов для первого запуска надо расскоментировать код в setUp()
      * 3 балла
      */
-    public static String copyFiles(String pathFrom, String pathTo) throws IOException {
+    public static String copyFiles(String pathFrom, String pathTo) {
         Path fromFilePath = Paths.get(pathFrom);
         Path toFilePath = Paths.get(pathTo);
 
-        if (Files.exists(fromFilePath) && Files.isDirectory(fromFilePath)) {
+        if (!Files.exists(fromFilePath)) {
+            return "Path you want to copy from doesn't exist";
+        }
+
+        try {
+            Files.createDirectories(toFilePath.getParent());
+
             Files.walkFileTree(fromFilePath, new SimpleFileVisitor<Path>() {
                 Path currentFilePath = toFilePath.getParent();
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     Files.createFile(currentFilePath.resolve(file.getFileName()));
-                    FileInputStream fromFileInputStream = new FileInputStream(file.toFile());
-                    FileOutputStream toFileOutputStream = new FileOutputStream(currentFilePath.resolve(file.getFileName()).toFile());
-                    fromFileInputStream.transferTo(toFileOutputStream);
-                    fromFileInputStream.close();
-                    toFileOutputStream.close();
+                    try (InputStream fromInputStream = Files.newInputStream(file);
+                         OutputStream toOutputStream =
+                                 Files.newOutputStream(currentFilePath.resolve(file.getFileName()))) {
+                        fromInputStream.transferTo(toOutputStream);
+                    }
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     currentFilePath = currentFilePath.resolve(dir.getFileName());
-                    Files.createDirectories(currentFilePath);
-                    return FileVisitResult.CONTINUE;
+                    Files.createDirectory(currentFilePath);
+                    return super.preVisitDirectory(dir, attrs);
                 }
 
                 @Override
@@ -46,10 +52,10 @@ public class CopyFile {
                     return FileVisitResult.CONTINUE;
                 }
             });
-        } else if (Files.exists(fromFilePath)) {
-            Files.createDirectories(toFilePath.getParent());
-            Files.createFile(toFilePath);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
         return null;
     }
 

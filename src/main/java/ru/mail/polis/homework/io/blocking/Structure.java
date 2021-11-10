@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * Нельзя изменять/удалять/добавлять поля.
  * Можно изменять/удалять СУЩЕСТВУЮЩИЕ методы.
- *
+ * <p>
  * Все остальное можно
  */
 public class Structure {
@@ -40,9 +40,6 @@ public class Structure {
     }
 
     public String getName() {
-        if(name == null) {
-            return UNDEFINED_STRING;
-        }
         return name;
     }
 
@@ -51,9 +48,6 @@ public class Structure {
     }
 
     public SubStructure[] getSubStructures() {
-        if(subStructures == null) {
-            return new SubStructure[] {new SubStructure(UNDEFINED_INT, UNDEFINED_STRING, false, UNDEFINED_DOUBLE)};
-        }
         return subStructures;
     }
 
