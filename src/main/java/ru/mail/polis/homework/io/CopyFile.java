@@ -37,9 +37,12 @@ public class CopyFile {
         if (Files.notExists(from)) {
             return null;
         }
-
         Path to = Paths.get(pathTo);
+
         try {
+            if (Files.isRegularFile(from)) {
+                Files.createDirectories(to.resolve(from.relativize(to)).getParent());
+            }
             Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -49,9 +52,7 @@ public class CopyFile {
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Path currentToPath = to.resolve(from.relativize(file));
-                    Files.createDirectories(currentToPath.getParent());
-                    copyFile(file, currentToPath);
+                    copyFile(file, to.resolve(from.relativize(file)));
                     return FileVisitResult.CONTINUE;
                 }
             });
