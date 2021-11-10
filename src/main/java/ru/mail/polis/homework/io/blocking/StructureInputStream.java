@@ -15,7 +15,6 @@ import java.util.List;
  */
 public class StructureInputStream extends FileInputStream {
 
-    private final static int LONG_BUFFER_SIZE = 8;
 
     private final List<Structure> structures = new ArrayList<>();
 
@@ -65,7 +64,7 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private long readLong() throws IOException {
-        byte[] buffer = new byte[LONG_BUFFER_SIZE];
+        byte[] buffer = new byte[Long.BYTES];
         if (read(buffer) < 0) {
             throw new EOFException();
         }

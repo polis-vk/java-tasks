@@ -43,14 +43,14 @@ public class CopyFile {
             Files.walkFileTree(from, new SimpleFileVisitor<>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    Path pathToDir = getPathToFile(from, to, dir);
+                    Path pathToDir = to.resolve(from.relativize(dir));
                     Files.createDirectory(pathToDir);
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Path pathToNewFile = getPathToFile(from, to, file);
+                    Path pathToNewFile = to.resolve(from.relativize(file));
                     copyFileContent(file, pathToNewFile);
                     return FileVisitResult.CONTINUE;
                 }
@@ -66,10 +66,6 @@ public class CopyFile {
         if (!Files.exists(dirs)) {
             Files.createDirectories(dirs);
         }
-    }
-
-    private static Path getPathToFile(Path from, Path to, Path with) {
-        return to.resolve(from.relativize(with));
     }
 
     private static void copyFileContent(Path PathToOldFile, Path pathToNewFile) throws IOException {
