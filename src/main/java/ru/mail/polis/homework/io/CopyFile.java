@@ -27,13 +27,11 @@ public class CopyFile {
                 copyFile(from, to);
                 return null;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(from)) {
-            Files.createDirectory(to);
-            for (Path path : directoryStream) {
-                copyFiles(path.toString(), to.resolve(path.getFileName()).toString());
+            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(from)) {
+                Files.createDirectory(to);
+                for (Path path : directoryStream) {
+                    copyFiles(path.toString(), to.resolve(path.getFileName()).toString());
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -45,10 +43,9 @@ public class CopyFile {
         try (InputStream inputStream = Files.newInputStream(from);
              OutputStream outputStream = Files.newOutputStream(to)) {
             byte[] buffer = new byte[1024];
-            int blockSize = inputStream.read(buffer);
-            while (blockSize > 0) {
+            int blockSize;
+            while ((blockSize = inputStream.read(buffer)) > 0) {
                 outputStream.write(buffer, 0, blockSize);
-                blockSize = inputStream.read(buffer);
             }
         }
     }

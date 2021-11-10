@@ -52,8 +52,7 @@ public class StructureInputStream extends FileInputStream {
         Structure structure;
         do {
             structure = readStructure();
-        }
-        while (structure != null);
+        } while (structure != null);
         return structures.toArray(new Structure[0]);
     }
 

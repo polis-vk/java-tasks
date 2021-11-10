@@ -56,7 +56,7 @@ public class StructureOutputStream extends FileOutputStream {
     private void writeSubStructure(SubStructure subStructure) throws IOException {
         writeInt(subStructure.getId());
         writeName(subStructure.getName());
-        writeFlagsByte(new boolean[]{subStructure.isFlag()});
+        write(subStructure.isFlag() ? 1 : 0);
         writeDouble(subStructure.getScore());
     }
 
