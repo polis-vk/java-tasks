@@ -16,11 +16,10 @@ import java.util.List;
  */
 public class StructureInputStream extends FileInputStream {
 
-    private final List<Structure> structures;
+    private final List<Structure> structures = new ArrayList<>();
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
-        structures = new ArrayList<>();
     }
 
 
@@ -54,7 +53,10 @@ public class StructureInputStream extends FileInputStream {
      * Если файл уже прочитан, но возвращается полный массив.
      */
     public Structure[] readStructures() throws IOException {
-        while (readStructure() != null) ;
+        while (readStructure() != null) {
+            //ignoring
+        }
+
         return structures.toArray(new Structure[0]);
     }
 
@@ -78,14 +80,7 @@ public class StructureInputStream extends FileInputStream {
         }
 
         byte[] res = new byte[length];
-        for (int i = 0; i < length; i++) {
-            int ch = read();
-            if (ch < 0) {
-                throw new EOFException();
-            }
-            res[i] = (byte) ch;
-        }
-
+        read(res);
         return new String(res);
     }
 

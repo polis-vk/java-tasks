@@ -50,7 +50,10 @@ public class CopyFile {
 
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                checkAndCreateDirectory(to.resolve(from.relativize(dir)));
+                Path current = to.resolve(from.relativize(dir));
+                if (!Files.exists(current)) {
+                    Files.createDirectory(current);
+                }
                 return CONTINUE;
             }
         });
@@ -65,18 +68,19 @@ public class CopyFile {
             while ((blockSize = input.read(buffer)) > 0) {
                 output.write(buffer, 0, blockSize);
             }
-
-            output.flush();
         }
     }
 
     private static void checkPathFrom(Path from, Path to) throws IOException {
         if (!Files.isDirectory(from)) {
-            checkAndCreateDirectory(to.getParent());
+            checkAndCreateDirectories(to.getParent());
+            return;
         }
+
+        checkAndCreateDirectories(to);
     }
 
-    private static void checkAndCreateDirectory(Path dir) throws IOException {
+    private static void checkAndCreateDirectories(Path dir) throws IOException {
         if (!Files.exists(dir)) {
             Files.createDirectories(dir);
         }
