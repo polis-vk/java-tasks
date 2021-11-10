@@ -61,10 +61,4 @@ public class CopyFile {
             }
         }
     }
-
-    public static void copyDirectories(Path from, Path to)
-    {
-
-    }
-
 }
