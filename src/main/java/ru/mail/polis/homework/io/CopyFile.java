@@ -6,7 +6,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 public class CopyFile {
     private static final int BUFFER_SIZE = 1024;
-    private static final int END_OF_STREAM = -1;
 
     /**
      * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
@@ -26,7 +25,7 @@ public class CopyFile {
         Path dirTo = Paths.get(pathTo);
 
         try {
-            Files.createDirectories(dirTo.subpath(0, dirTo.getNameCount() - 1));
+            Files.createDirectories(dirTo.getParent());
 
             if (Files.isRegularFile(dirFrom)) {
                 copyFile(dirFrom, dirTo);
@@ -55,18 +54,17 @@ public class CopyFile {
         return null;
     }
 
-    private static void copyFile(Path from, Path to) {
-        try (
-                BufferedInputStream fis = new BufferedInputStream(Files.newInputStream(from), BUFFER_SIZE);
-                BufferedOutputStream fos = new BufferedOutputStream(Files.newOutputStream(to), BUFFER_SIZE);
-        ) {
-            int dataByte;
-            while ((dataByte = fis.read()) != END_OF_STREAM) {
-                fos.write(dataByte);
-            }
-        } catch (
-                IOException e) {
-            e.printStackTrace();
+    private static void copyFile(Path from, Path to) throws IOException {
+        BufferedInputStream fis = new BufferedInputStream(Files.newInputStream(from));
+        BufferedOutputStream fos = new BufferedOutputStream(Files.newOutputStream(to));
+
+        byte[] buff = new byte[BUFFER_SIZE];
+        int readN;
+        while ((readN = fis.readNBytes(buff, 0, BUFFER_SIZE)) != 0) {
+            fos.write(buff, 0, readN);
         }
+
+        fis.close();
+        fos.close();
     }
 }

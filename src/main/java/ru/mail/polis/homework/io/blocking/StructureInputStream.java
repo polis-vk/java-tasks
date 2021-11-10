@@ -52,7 +52,9 @@ public class StructureInputStream extends FileInputStream {
      * Если файл уже прочитан, но возвращается полный массив.
      */
     public Structure[] readStructures() throws IOException {
-        while (readStructure() != null) ;
+        while (readStructure() != null) {
+            //ignoring
+        }
         return structures.toArray(new Structure[0]);
     }
 
@@ -72,7 +74,13 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private SubStructure readSubStructure() throws IOException {
-        return new SubStructure(readInt(), readString(), readBoolean(), readDouble());
+        int id = readInt();
+        String name = readString();
+        if (name == null) {
+            throw new IllegalArgumentException();
+        }
+
+        return new SubStructure(id, name, readBoolean(), readDouble());
     }
 
     private long readLong() throws IOException {

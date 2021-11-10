@@ -14,7 +14,6 @@ import java.nio.charset.StandardCharsets;
  */
 public class StructureOutputStream extends FileOutputStream {
     public static final int NULL_PTR = -1;
-    private static final int BITS_COUNT_IN_BYTE = 8;
 
     public StructureOutputStream(File name) throws FileNotFoundException {
         super(name);
@@ -65,7 +64,7 @@ public class StructureOutputStream extends FileOutputStream {
         for (boolean flag : flags) {
             buffByte = ((buffByte << 1) | (flag ? 1 : 0));
         }
-        buffByte <<= (BITS_COUNT_IN_BYTE - flags.length);
+        buffByte <<= (8 - flags.length);
         write(buffByte);
     }
 
