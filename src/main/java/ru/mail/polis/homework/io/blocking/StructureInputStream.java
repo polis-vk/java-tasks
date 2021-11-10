@@ -18,7 +18,7 @@ public class StructureInputStream extends FileInputStream {
     private static final int COUNT_OF_FLAGS = 4;
     private static final int NULL_ELEM_VALUE = -1;
 
-    private final List<Structure> structureList = new ArrayList<>();
+    private List<Structure> structureList = new ArrayList<>();
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
@@ -37,7 +37,7 @@ public class StructureInputStream extends FileInputStream {
         structure.setName(readString());
         structure.setSubStructures(readSubStructures());
         structure.setCoeff(readFloat());
-        final boolean[] flags = readFlags();
+        boolean[] flags = readFlags();
         structure.setFlag1(flags[0]);
         structure.setFlag2(flags[1]);
         structure.setFlag3(flags[2]);
@@ -59,15 +59,18 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private SubStructure readSubStructure() throws IOException {
-        final int id = readInt();
-        final String name = readString();
-        final boolean flag = readBoolean();
-        final double score = readDouble();
+        int id = readInt();
+        String name = readString();
+        if(name == null){
+            throw new IllegalAccessError();
+        }
+        boolean flag = readBoolean();
+        double score = readDouble();
         return new SubStructure(id, name, flag, score);
     }
 
     private SubStructure[] readSubStructures() throws IOException {
-        final int size = readInt();
+        int size = readInt();
         if (size == NULL_ELEM_VALUE) {
             return null;
         }
@@ -83,7 +86,7 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private byte readByte() throws IOException {
-        final int value = read();
+        int value = read();
         if (value == -1) {
             throw new EOFException();
         }
@@ -106,7 +109,7 @@ public class StructureInputStream extends FileInputStream {
         return abstractReadVariable(Double.BYTES).getDouble();
     }
 
-    private ByteBuffer abstractReadVariable(final int byteSize) throws IOException {
+    private ByteBuffer abstractReadVariable(int byteSize) throws IOException {
         byte[] bytes = new byte[byteSize];
         if (read(bytes) != bytes.length) {
             throw new EOFException();
@@ -116,8 +119,8 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private String readString() throws IOException {
-        final int length;
-        if ((length = readInt()) == NULL_ELEM_VALUE) {
+        int length = readInt();
+        if (length == NULL_ELEM_VALUE) {
             return null;
         }
         byte[] bytes = new byte[length];
@@ -128,7 +131,7 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private boolean[] readFlags() throws IOException {
-        final int flagValue = read();
+        int flagValue = read();
         boolean[] flags = new boolean[COUNT_OF_FLAGS];
         for (int i = 0; i < COUNT_OF_FLAGS; i++) {
             flags[i] = ((flagValue >> i) & 1) == 1;

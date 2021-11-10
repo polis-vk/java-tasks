@@ -51,8 +51,8 @@ public class CopyFile {
     }
 
     private static void copyFile(Path from, Path to) throws IOException {
-        try (InputStream in = new FileInputStream(String.valueOf(from));
-             OutputStream out = new FileOutputStream(String.valueOf(to))) {
+        try (InputStream in = Files.newInputStream(from);
+             OutputStream out = Files.newOutputStream(to)) {
             byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
             int lenRead;
             while ((lenRead = in.read(buffer)) > 0) {
