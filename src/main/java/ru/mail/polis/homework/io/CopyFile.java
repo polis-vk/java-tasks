@@ -21,7 +21,6 @@ public class CopyFile {
                 output.write(buffer, 0, recorded);
                 recorded = input.read(buffer);
             }
-            output.flush();
         }
     }
 
