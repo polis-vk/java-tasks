@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class CustomDictionary {
 
-    private final HashMap<HashMap<Character, Integer>, LinkedHashSet<String>> values = new HashMap<>();
+    private final Map<Map<Character, Integer>, Set<String>> values = new HashMap<>();
     private int size = 0;
 
     /**
@@ -27,11 +27,11 @@ public class CustomDictionary {
      * Сложность - [O(n) в среднем], где n - длина value.
      */
 
-    private HashMap<Character, Integer> getFrequencyMap(String value) {
+    private Map<Character, Integer> getFrequencyMap(String value) {
         if (value == null || value.length() == 0) {
             throw new IllegalArgumentException();
         }
-        HashMap<Character, Integer> result = new HashMap<>();
+        Map<Character, Integer> result = new HashMap<>();
         for (Character character : value.toCharArray()) {
             character = Character.toLowerCase(character);
             result.put(character, result.containsKey(character) ? result.get(character) + 1 : 1);
@@ -51,7 +51,7 @@ public class CustomDictionary {
         if (value == null || value.length() == 0) {
             throw new IllegalArgumentException();
         }
-        HashMap<Character, Integer> frequencyMap = getFrequencyMap(value);
+        Map<Character, Integer> frequencyMap = getFrequencyMap(value);
         if (values.containsKey(frequencyMap)) {
             if (values.get(frequencyMap).add(value)) {
                 size++;
@@ -59,7 +59,7 @@ public class CustomDictionary {
             }
             return false;
         }
-        LinkedHashSet<String> added = new LinkedHashSet<>();
+        Set<String> added = new LinkedHashSet<>();
         added.add(value);
         values.put(frequencyMap, added);
         size++;
@@ -75,7 +75,7 @@ public class CustomDictionary {
      * Сложность - [O(n) в среднем], где n - длина value.
      */
     public boolean contains(String value) {
-        HashMap<Character, Integer> frequencyMap = getFrequencyMap(value);
+        Map<Character, Integer> frequencyMap = getFrequencyMap(value);
         if (values.containsKey(frequencyMap)) {
             return values.get(frequencyMap).contains(value);
         }
@@ -91,7 +91,7 @@ public class CustomDictionary {
      * Сложность - [O(n) в среднем], где n - длина value.
      */
     public boolean remove(String value) {
-        HashMap<Character, Integer> frequencyMap = getFrequencyMap(value);
+        Map<Character, Integer> frequencyMap = getFrequencyMap(value);
         if (!values.containsKey(frequencyMap)) {
             return false;
         }
@@ -122,7 +122,7 @@ public class CustomDictionary {
      * Сложность - [O(n*m)], где n - длина value, m - количество подходящих слов.
      */
     public List<String> getSimilarWords(String value) {
-        HashMap<Character, Integer> frequencyMap = getFrequencyMap(value);
+        Map<Character, Integer> frequencyMap = getFrequencyMap(value);
         if (values.containsKey(frequencyMap)) {
             return new LinkedList<>(values.get(frequencyMap));
         }
