@@ -36,7 +36,7 @@ public class CopyFile {
                 Files.createDirectories(distance.getParent());
             }
 
-            Files.createDirectories(distance);
+            Files.createDirectory(distance);
             for (Path path : stream) {
                 copyFiles(path.toString(), distance.resolve(path.getFileName()).toString());
             }
@@ -49,10 +49,10 @@ public class CopyFile {
         try (FileInputStream in = new FileInputStream(String.valueOf(source));
              FileOutputStream out = new FileOutputStream(String.valueOf(distance))) {
             byte[] buffer = new byte[BUFFER_SIZE];
-            while (in.read(buffer) != -1) {
-                out.write(buffer);
+            int size;
+            while ((size = in.read(buffer)) != -1) {
+                out.write(buffer, 0, size);
             }
-            out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
