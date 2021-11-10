@@ -40,13 +40,11 @@ public class CopyFile {
         Path to = Paths.get(pathTo);
 
         try {
-            if (Files.isRegularFile(from)) {
-                Files.createDirectories(to.resolve(from.relativize(to)).getParent());
-            }
+            Files.createDirectories(to.resolve(from.relativize(to)).getParent());
             Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    Files.createDirectories(to.resolve(from.relativize(dir)));
+                    Files.createDirectory(to.resolve(from.relativize(dir)));
                     return FileVisitResult.CONTINUE;
                 }
 
