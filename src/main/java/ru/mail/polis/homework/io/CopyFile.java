@@ -24,6 +24,9 @@ public class CopyFile {
         }
         try {
             if (Files.isRegularFile(from)) {
+                if (!Files.exists(to.getParent())) {
+                    Files.createDirectories(to.getParent());
+                }
                 copyFile(from, to);
                 return "Copy file";
             }
@@ -49,9 +52,6 @@ public class CopyFile {
     }
 
     public static void copyFile(Path from, Path to) throws IOException {
-        if (!Files.exists(to.getParent())) {
-            Files.createDirectories(to.getParent());
-        }
         try (BufferedInputStream in = new BufferedInputStream(Files.newInputStream(from));
              BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(to))) {
             byte[] buf = new byte[1024];
