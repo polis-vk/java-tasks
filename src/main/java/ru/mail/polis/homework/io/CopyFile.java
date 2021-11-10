@@ -12,7 +12,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 public class CopyFile {
 
-    private static void copyFile(Path from, Path to) {
+    private static void copyFile(Path from, Path to) throws IOException {
         try (InputStream input = Files.newInputStream(from);
              OutputStream output = Files.newOutputStream(to)) {
             byte[] buffer = new byte[1024];
@@ -22,8 +22,6 @@ public class CopyFile {
                 recorded = input.read(buffer);
             }
             output.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
