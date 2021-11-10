@@ -98,8 +98,6 @@ public class StructureInputStream extends FileInputStream {
     private String readString() throws IOException {
         int length;
         if ((length = readInt()) == -1) {
-            throw new EOFException();
-        } else if (length == 0) {
             return null;
         }
 
@@ -113,8 +111,6 @@ public class StructureInputStream extends FileInputStream {
     private SubStructure[] readSubStructures() throws IOException {
         int count;
         if ((count = readInt()) == -1) {
-            throw new EOFException();
-        } else if (count == 0) {
             return null;
         }
 

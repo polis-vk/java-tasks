@@ -53,8 +53,8 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     private void writeString(String name) throws IOException {
-        if (name == null || name.equals("")) {
-            writeInt(0);
+        if (name == null) {
+            writeInt(-1);
             return;
         }
 
@@ -85,8 +85,8 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     private void writeSubStructures(SubStructure[] structures) throws IOException {
-        if (structures == null || structures.length == 0) {
-            writeInt(0);
+        if (structures == null) {
+            writeInt(-1);
             return;
         }
 
