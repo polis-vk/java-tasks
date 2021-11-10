@@ -25,7 +25,7 @@ public class Structure implements Serializable {
     private String name;
     //Nullable
     private SubStructure[] subStructures;
-    private double coeff;
+    private float coeff;
     private boolean flag1;
     private boolean flag2;
     private boolean flag3;
@@ -57,7 +57,7 @@ public class Structure implements Serializable {
     }
 
     public float getCoeff() {
-        return (float) coeff;//сеттер принимает float, а поля менять нельзя (можно было еще сеттер поменять на double)
+        return (float) coeff;//сеттер принимает float, а поля менять нельзя (можно было еще сеттер поменять на doubl
     }
 
     public void setCoeff(float coeff) {
