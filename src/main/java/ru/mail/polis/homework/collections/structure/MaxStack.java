@@ -17,8 +17,8 @@ public class MaxStack extends Stack<Integer> {
 
     @Override
     public Integer push(Integer item) {
-        maxValues.push(maxValue);
-        if (item > maxValue) {
+        if (item >= maxValue) {
+            maxValues.push(maxValue);
             maxValue = item;
         }
 
@@ -28,9 +28,12 @@ public class MaxStack extends Stack<Integer> {
     @Override
     public synchronized Integer pop() {
         assert !maxValues.isEmpty();
-        maxValue = maxValues.pop();
+        int item = super.pop();
+        if (item == maxValue) {
+            maxValue = maxValues.pop();
+        }
 
-        return super.pop();
+        return item;
     }
 
     public Integer getMaxValue() {

@@ -17,9 +17,10 @@ import java.util.stream.Collectors;
  * как O(n).
  */
 
-public class CustomDictionary extends HashSet<String> {
+public class CustomDictionary {
 
     private Map<MultiSet<Character>, List<String>> similarWords = new HashMap<>();
+    private int size = 0;
 
     /**
      * Сохранить строку в структуру данных
@@ -33,11 +34,14 @@ public class CustomDictionary extends HashSet<String> {
         if (value == null || value.equals("")) {
             throw new IllegalArgumentException();
         }
-        boolean isInsertSucceed = super.add(value);
-        if (isInsertSucceed) {
-            addWordToSimilar(value);
+
+        if (contains(value)) {
+            return false;
         }
-        return isInsertSucceed;
+
+        addWordToSimilar(value);
+        size++;
+        return true;
     }
 
     /**
@@ -49,7 +53,11 @@ public class CustomDictionary extends HashSet<String> {
      * Сложность - [O(1)]
      */
     public boolean contains(String value) {
-        return super.contains(value);
+        MultiSet<Character> characterValueRepresentation = getCharacterSet(value);
+        if (!similarWords.containsKey(characterValueRepresentation)) {
+            return false;
+        }
+        return similarWords.get(characterValueRepresentation).contains(value);
     }
 
     /**
@@ -62,11 +70,16 @@ public class CustomDictionary extends HashSet<String> {
      * O(k) возникло из-за удаления элемента из списка по значению
      */
     public boolean remove(String value) {
-        boolean isRemoveSucceed = super.remove(value);
-        if (isRemoveSucceed) {
-            removeWordFromSimilar(value);
+        MultiSet<Character> characterValueRepresentation = getCharacterSet(value);
+        if (!similarWords.containsKey(characterValueRepresentation)) {
+            return false;
         }
-        return isRemoveSucceed;
+
+        boolean deleteSuccessful = similarWords.get(characterValueRepresentation).remove(value);
+        if (deleteSuccessful) {
+            size--;
+        }
+        return deleteSuccessful;
     }
 
     /**
@@ -101,7 +114,7 @@ public class CustomDictionary extends HashSet<String> {
      * Сложность - [O(1)]
      */
     public int size() {
-        return super.size();
+        return size;
     }
 
     private MultiSet<Character> getCharacterSet(String value) {
@@ -115,12 +128,5 @@ public class CustomDictionary extends HashSet<String> {
             similarWords.put(characterValueRepresentation, new ArrayList<>());
         }
         similarWords.get(characterValueRepresentation).add(value);
-    }
-
-    private void removeWordFromSimilar(String value) {
-        MultiSet<Character> characterValueRepresentation = getCharacterSet(value);
-        assert similarWords.containsKey(characterValueRepresentation);
-        boolean removeResult = similarWords.get(characterValueRepresentation).remove(value);
-        assert removeResult;
     }
 }

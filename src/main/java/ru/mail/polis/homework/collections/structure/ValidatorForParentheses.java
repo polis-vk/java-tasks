@@ -16,13 +16,17 @@ import java.util.*;
  */
 public class ValidatorForParentheses {
     private static Map<Character, Character> parenthesesPairs;
+    private static Set<Character> openParenthesesTypes;
+
     static {
         parenthesesPairs = new HashMap<>();
         parenthesesPairs.put(')', '(');
         parenthesesPairs.put('}', '{');
         parenthesesPairs.put(']', '[');
         parenthesesPairs.put('>', '<');
+        openParenthesesTypes = new HashSet<>(parenthesesPairs.values());
     }
+
     public static boolean validate(String value) {
         // For my point of view, empty string is CORRECT parentheses sequence,
         // but tests insist on opposite
@@ -30,30 +34,24 @@ public class ValidatorForParentheses {
             return false;
         }
         Stack<Character> openParentheses = new Stack<>();
-        class Local {
-            boolean isLastOpenIsReversedTo(Character c) {
-                if (openParentheses.isEmpty()) {
-                    return false;
-                }
-                Character lastOpen = openParentheses.peek();
-                assert parenthesesPairs.containsKey(c);
-
-                return parenthesesPairs.get(c) == lastOpen;
-            }
-        }
 
         boolean hasAtListOneOpenParenthesis = false;
         for (Character c : value.toCharArray()) {
-            if (parenthesesPairs.containsValue(c)) {
+            if (openParenthesesTypes.contains(c)) {
                 hasAtListOneOpenParenthesis = true;
                 openParentheses.push(c);
             } else if (parenthesesPairs.containsKey(c)) {
-                if (!new Local().isLastOpenIsReversedTo(c)) {
+                if (openParentheses.isEmpty()) {
                     return false;
                 }
-                openParentheses.pop();
+                Character lastOpen = openParentheses.pop();
+
+                if (parenthesesPairs.get(c) != lastOpen) {
+                    return false;
+                }
             }
         }
         return hasAtListOneOpenParenthesis && openParentheses.size() == 0;
     }
+
 }
