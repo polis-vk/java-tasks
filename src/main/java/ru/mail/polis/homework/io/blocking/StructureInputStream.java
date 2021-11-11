@@ -28,7 +28,7 @@ public class StructureInputStream extends FileInputStream {
      * Если структур в файле больше нет, то вернуть null
      */
     public Structure readStructure() throws IOException {
-        if(available() == 0) {
+        if (available() == 0) {
             return null;
         }
         Structure struct = new Structure();
@@ -38,17 +38,17 @@ public class StructureInputStream extends FileInputStream {
         struct.setCoeff(readFloat());
         byte flags = (byte) read();
         byteToFlags(flags, struct::setFlag1, struct::setFlag2, struct::setFlag3, struct::setFlag4);
-        /* решил что через Consumer будет интереснее и универсальнее
-        struct.setFlag1((flags & 1) == 1);
-        struct.setFlag2(((flags >> 1) & 1) == 1);
-        struct.setFlag3(((flags >> 2) & 1) == 1);
-        struct.setFlag4(((flags >> 3) & 1) == 1);
-        */
+        /*
+         * решил что через Consumer будет интереснее и универсальнее
+         * struct.setFlag1((flags & 1) == 1); struct.setFlag2(((flags >> 1) & 1) == 1);
+         * struct.setFlag3(((flags >> 2) & 1) == 1); struct.setFlag4(((flags >> 3) & 1)
+         * == 1);
+         */
         struct.setParam((byte) read());
         structures.add(struct);
         return struct;
     }
-    
+
     /**
      * Метод должен вернуть все структуры, которые есть в файле.
      * Если файл уже прочитан, то возвращается полный массив.
@@ -59,13 +59,11 @@ public class StructureInputStream extends FileInputStream {
         }
         return structures.toArray(new Structure[structures.size()]);
     }
-    
-    private byte byteToFlags(byte flags, Consumer<Boolean>... consumer) throws IOException {
-        byte b = 0;
+
+    private void byteToFlags(byte flags, Consumer<Boolean>... consumer) throws IOException {
         for (int i = 0; i < consumer.length; ++i) {
             consumer[i].accept(((flags >> i) & 1) == 1);
         }
-        return b;
     }
 
     private SubStructure readSubStructure() throws IOException {
@@ -130,5 +128,5 @@ public class StructureInputStream extends FileInputStream {
         read(bytes);
         return new String(bytes).intern();
     }
-    
+
 }

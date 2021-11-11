@@ -31,6 +31,7 @@ public class StructureOutputStream extends FileOutputStream {
         write(flagsToByte(structure.isFlag1(), structure.isFlag2(),
                 structure.isFlag3(), structure.isFlag4()));
         write(structure.getParam());
+        flush();
     }
 
     /**
@@ -43,7 +44,6 @@ public class StructureOutputStream extends FileOutputStream {
         for (Structure temp : structures) {
             write(temp);
         }
-        flush();
     }
 
     private byte flagsToByte(boolean... flags) throws IOException {
@@ -101,5 +101,5 @@ public class StructureOutputStream extends FileOutputStream {
         writeInt(s.length());
         write(s.getBytes());
     }
-    
+
 }
