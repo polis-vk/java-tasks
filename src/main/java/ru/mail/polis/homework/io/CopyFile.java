@@ -23,30 +23,17 @@ public class CopyFile {
             return "File doesn't exists";
         }
         try {
+            if (!Files.exists(to.getParent())) {
+                Files.createDirectories(to.getParent());
+            }
             if (Files.isRegularFile(from)) {
-                if (!Files.exists(to.getParent())) {
-                    Files.createDirectories(to.getParent());
-                }
                 copyFile(from, to);
                 return "Copy file";
             }
-            if (!Files.exists(to))
-            {
-                if (!Files.exists(to.getParent()))
-                {
-                    Files.createDirectories(to);
-                }
-                else
-                {
-                    Files.createDirectory(to);
-                }
-            }
-
-            try (DirectoryStream<Path> paths = Files.newDirectoryStream(from)) {
-                paths.forEach(path -> copyFiles(path.toString(), to.resolve(path.getFileName()).toString()));
-            }
+            copyDirectory(from, to);
         } catch (IOException e) {
             e.printStackTrace();
+            return e.toString();
         }
         return "Copy directories";
     }
@@ -58,6 +45,21 @@ public class CopyFile {
             int length;
             while ((length = in.read(buf)) > 0) {
                 out.write(buf, 0, length);
+            }
+        }
+    }
+
+    public static void copyDirectory(Path from, Path to) throws IOException {
+        try (DirectoryStream<Path> paths = Files.newDirectoryStream(from)) {
+            if (!Files.exists(to)) {
+                Files.createDirectory(to);
+            }
+            for (Path path : paths) {
+                if (Files.isDirectory(path)) {
+                    copyDirectory(path, to.resolve(path.getFileName()));
+                } else {
+                    copyFile(path, to.resolve(path.getFileName()));
+                }
             }
         }
     }
