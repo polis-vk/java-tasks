@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.io.blocking;
 
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -10,7 +11,7 @@ import java.util.Objects;
  *
  * Все остальное можно
  */
-public class Structure {
+public class Structure implements Serializable{
 
     public static final int UNDEFINED_INT = 0;
     public static final long UNDEFINED_LONG = -1_000_000;
@@ -35,72 +36,81 @@ public class Structure {
         return id;
     }
 
-    public void setId(long id) {
+    public Structure setId(long id) {
         this.id = id;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public Structure setName(String name) {
         this.name = name;
+        return this;
     }
 
     public SubStructure[] getSubStructures() {
         return subStructures;
     }
 
-    public void setSubStructures(SubStructure[] subStructures) {
+    public Structure setSubStructures(SubStructure[] subStructures) {
         this.subStructures = subStructures;
+        return this;
     }
 
     public float getCoeff() {
         return coeff;
     }
 
-    public void setCoeff(float coeff) {
+    public Structure setCoeff(float coeff) {
         this.coeff = coeff;
+        return this;
     }
 
     public boolean isFlag1() {
         return flag1;
     }
 
-    public void setFlag1(boolean flag1) {
+    public Structure setFlag1(boolean flag1) {
         this.flag1 = flag1;
+        return this;
     }
 
     public boolean isFlag2() {
         return flag2;
     }
 
-    public void setFlag2(boolean flag2) {
+    public Structure setFlag2(boolean flag2) {
         this.flag2 = flag2;
+        return this;
     }
 
     public boolean isFlag3() {
         return flag3;
     }
 
-    public void setFlag3(boolean flag3) {
+    public Structure setFlag3(boolean flag3) {
         this.flag3 = flag3;
+        return this;
     }
 
     public boolean isFlag4() {
         return flag4;
     }
 
-    public void setFlag4(boolean flag4) {
+    public Structure setFlag4(boolean flag4) {
         this.flag4 = flag4;
+        return this;
     }
 
     public byte getParam() {
         return param;
     }
 
-    public void setParam(byte param) {
+    public Structure setParam(byte param) {
         this.param = param;
+        return this;
     }
 
     @Override
