@@ -49,8 +49,10 @@ public class CopyFile {
         try (InputStream input = Files.newInputStream(pathFrom);
              OutputStream output = Files.newOutputStream(pathTo)) {
             byte[] b = new byte[1024];
-            input.read(b);
-            output.write(b);
+            int data;
+            while ((data = input.read(b)) > 0) {
+                output.write(b, 0, data);
+            }
         }
     }
 }
