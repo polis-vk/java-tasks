@@ -40,7 +40,7 @@ public class SearchInTheShredderList {
         if (value == null || value.isEmpty()) {
             return null;
         }
-        int midLength = value.length() / 2 - 1;
+        int midLength = value.length() / 2;
         String firstHalfValue = value.substring(0, midLength);
         String secondHalfValue = value.substring(midLength);
         int[] resultIndices = {-1, -1};
