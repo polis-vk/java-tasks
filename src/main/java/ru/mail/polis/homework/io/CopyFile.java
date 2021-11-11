@@ -19,7 +19,7 @@ public class CopyFile {
         }
         try {
             prepareFiles(from, to);
-            return recursiveCopy(from, to);
+            return recursiveCopyFiles(from, to);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -44,20 +44,20 @@ public class CopyFile {
         }
     }
 
-    private static String recursiveCopy(Path from, Path to) throws IOException {
+    private static String recursiveCopyFiles(Path from, Path to) throws IOException {
         if (Files.isRegularFile(from)) {
-            return copyFile(from, to);
+            return copyRegularFile(from, to);
         }
 
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(from)) {
             for (Path file: directoryStream) {
-                recursiveCopy(file, to.resolve(file.getFileName()));
+                recursiveCopyFiles(file, to.resolve(file.getFileName()));
             }
         }
         return null;
     }
 
-    private static String copyFile(Path from, Path to) throws IOException {
+    private static String copyRegularFile(Path from, Path to) throws IOException {
         try (InputStream fin = Files.newInputStream(from);
              OutputStream fout = Files.newOutputStream(to)) {
             byte[] bytes = new byte[fin.available()];
@@ -70,7 +70,7 @@ public class CopyFile {
     }
 
     private static void recursiveCreateDirectories(Path from, Path to) throws IOException {
-        if (Files.isRegularFile(from)) {
+        if (Files.isRegularFile(from) || Files.exists(to)) {
             return;
         }
 
