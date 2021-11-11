@@ -48,11 +48,11 @@ public class StructureOutputStream extends FileOutputStream {
     private void write(SubStructure[] subStructures) throws IOException {
         if (subStructures == null) {
             write(intToBytes(-1));
-        } else {
-            write(intToBytes(subStructures.length));
-            for (SubStructure subStructure : subStructures) {
-                write(subStructure);
-            }
+            return;
+        }
+        write(intToBytes(subStructures.length));
+        for (SubStructure subStructure : subStructures) {
+            write(subStructure);
         }
     }
 
@@ -81,7 +81,7 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     private byte boolsToByte(boolean[] bools) throws IOException {
-        if (bools.length > 7) {
+        if (bools.length > 4) {
             throw new IOException();
         }
         byte result = 0;

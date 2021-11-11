@@ -43,20 +43,18 @@ public class CopyFile {
         return pathTo;
     }
 
-    public static void copyDirectory(Path fromDirectory, Path toDirectory) {
+    public static void copyDirectory(Path fromDirectory, Path toDirectory) throws IOException {
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(fromDirectory)) {
             if (!Files.exists(toDirectory)) {
                 Files.createDirectory(toDirectory);
             }
             for (Path path : directoryStream) {
                 if (Files.isDirectory(path)) {
-                    copyDirectory(path, Paths.get(toDirectory.toString(), path.getFileName().toString()));
+                    copyDirectory(path, toDirectory.resolve(path.getFileName()));
                 } else {
-                    copyFile(path, Paths.get(toDirectory.toString(), path.getFileName().toString()));
+                    copyFile(path, toDirectory.resolve(path.getFileName()));
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -71,5 +69,4 @@ public class CopyFile {
             } while (blockSize > 0);
         }
     }
-
 }

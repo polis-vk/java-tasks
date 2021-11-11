@@ -34,7 +34,7 @@ public class StructureInputStream extends FileInputStream {
         structure.setId(bytesToLong());
         structure.setName(bytesToString());
         structure.setCoeff(bytesToFloat());
-        boolean[] flags = byteToBools();
+        boolean[] flags = byteToFlags();
         structure.setFlag1(flags[0]);
         structure.setFlag2(flags[1]);
         structure.setFlag3(flags[2]);
@@ -62,19 +62,18 @@ public class StructureInputStream extends FileInputStream {
         int sLength = bytesToInt();
         if (sLength == -1) {
             return null;
-        } else {
-            SubStructure[] subStructures = new SubStructure[sLength];
-            for (int i = 0; i < sLength; i++) {
-                subStructures[i] = readSubStructure();
-            }
-            return subStructures;
         }
+        SubStructure[] subStructures = new SubStructure[sLength];
+        for (int i = 0; i < sLength; i++) {
+            subStructures[i] = readSubStructure();
+        }
+        return subStructures;
     }
 
     public SubStructure readSubStructure() throws IOException {
         int id = bytesToInt();
         String name = bytesToString();
-        boolean flag = byteToBools()[0];
+        boolean flag = byteToFlags()[0];
         double score = bytesToDouble();
         return new SubStructure(id, name == null ? Structure.UNDEFINED_STRING : name, flag, score);
     }
@@ -125,9 +124,9 @@ public class StructureInputStream extends FileInputStream {
         return new String(bytes);
     }
 
-    private boolean[] byteToBools() throws IOException {
+    private boolean[] byteToFlags() throws IOException {
         byte flags = (byte) read();
-        boolean[] bools = new boolean[7];
+        boolean[] bools = new boolean[4];
         for (int i = 0; i < bools.length; i++) {
             bools[i] = flags % 2 == 1;
             flags = (byte) (flags / 2);
