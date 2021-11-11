@@ -31,6 +31,9 @@ public class Structure implements Serializable {
     private boolean flag4;
     private byte param;
 
+    public Structure() {
+    }
+
     public long getId() {
         return id;
     }
@@ -101,9 +104,6 @@ public class Structure implements Serializable {
 
     public void setParam(byte param) {
         this.param = param;
-    }
-
-    public Structure() {
     }
 
     public boolean isFlagI(int i) {
