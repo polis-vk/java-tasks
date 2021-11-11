@@ -24,13 +24,13 @@ public class StructureOutputStream extends FileOutputStream {
         if (structure == null) {
             return;
         }
-        this.writeLong(structure.getId());
-        this.writeString(structure.getName());
-        this.writeSubStructures(structure.getSubStructures());
-        this.writeFloat(structure.getCoeff());
-        this.write(flagsToByte(structure.isFlag1(), structure.isFlag2(),
+        writeLong(structure.getId());
+        writeString(structure.getName());
+        writeSubStructures(structure.getSubStructures());
+        writeFloat(structure.getCoeff());
+        write(flagsToByte(structure.isFlag1(), structure.isFlag2(),
                 structure.isFlag3(), structure.isFlag4()));
-        this.write(structure.getParam());
+        write(structure.getParam());
     }
 
     /**
@@ -41,9 +41,9 @@ public class StructureOutputStream extends FileOutputStream {
             return;
         }
         for (Structure temp : structures) {
-            this.write(temp);
+            write(temp);
         }
-        this.flush();
+        flush();
     }
 
     private byte flagsToByte(boolean... flags) throws IOException {
@@ -55,51 +55,51 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     private void writeSubStructure(SubStructure sub) throws IOException {
-        this.writeInt(sub.getId());
-        this.writeString(sub.getName());
-        this.writeBoolean(sub.isFlag());
-        this.writeDouble(sub.getScore());
+        writeInt(sub.getId());
+        writeString(sub.getName());
+        writeBoolean(sub.isFlag());
+        writeDouble(sub.getScore());
     }
 
     private void writeSubStructures(SubStructure[] subs) throws IOException {
         if (subs == null) {
-            this.writeInt(-1);
+            writeInt(-1);
             return;
         }
-        this.writeInt(subs.length);
+        writeInt(subs.length);
         for (SubStructure sub : subs) {
-            this.writeSubStructure(sub);
+            writeSubStructure(sub);
         }
     }
 
     private void writeBoolean(boolean b) throws IOException {
-        this.write(b ? 1 : 0);
+        write(b ? 1 : 0);
     }
 
     private void writeInt(int i) throws IOException {
-        this.write(ByteBuffer.allocate(Integer.BYTES).putInt(i).array());
+        write(ByteBuffer.allocate(Integer.BYTES).putInt(i).array());
     }
 
     private void writeLong(long l) throws IOException {
-        this.write(ByteBuffer.allocate(Long.BYTES).putLong(l).array());
+        write(ByteBuffer.allocate(Long.BYTES).putLong(l).array());
     }
 
     private void writeFloat(float f) throws IOException {
-        this.write(ByteBuffer.allocate(Float.BYTES).putFloat(f).array());
+        write(ByteBuffer.allocate(Float.BYTES).putFloat(f).array());
     }
 
     private void writeDouble(double d) throws IOException {
-        this.write(ByteBuffer.allocate(Double.BYTES).putDouble(d).array());
+        write(ByteBuffer.allocate(Double.BYTES).putDouble(d).array());
     }
 
     private void writeString(String s) throws IOException {
         if (s == null) {
-            this.writeInt(-1);
+            writeInt(-1);
             return;
         }
 
-        this.writeInt(s.length());
-        this.write(s.getBytes());
+        writeInt(s.length());
+        write(s.getBytes());
     }
     
 }

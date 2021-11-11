@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 /**
  * Вам нужно реализовать StructureInputStream, который умеет читать данные из файла.
- * Читать поля нужно ручками, с помощью массива байт и методов {@link #this.read()}, {@link #this.read(byte[])} и так далее
+ * Читать поля нужно ручками, с помощью массива байт и методов {@link #read()}, {@link #read(byte[])} и так далее
  * 3 балла
  */
 public class StructureInputStream extends FileInputStream {
@@ -28,24 +28,24 @@ public class StructureInputStream extends FileInputStream {
      * Если структур в файле больше нет, то вернуть null
      */
     public Structure readStructure() throws IOException {
-        if(this.available() == 0) {
+        if(available() == 0) {
             return null;
         }
         Structure struct = new Structure();
-        struct.setId(this.readLong());
-        struct.setName(this.readString());
-        struct.setSubStructures(this.readSubStructures());
-        struct.setCoeff(this.readFloat());
-        byte flags = (byte) this.read();
-        this.byteToFlags(flags, struct::setFlag1, struct::setFlag2, struct::setFlag3, struct::setFlag4);
+        struct.setId(readLong());
+        struct.setName(readString());
+        struct.setSubStructures(readSubStructures());
+        struct.setCoeff(readFloat());
+        byte flags = (byte) read();
+        byteToFlags(flags, struct::setFlag1, struct::setFlag2, struct::setFlag3, struct::setFlag4);
         /* решил что через Consumer будет интереснее и универсальнее
         struct.setFlag1((flags & 1) == 1);
         struct.setFlag2(((flags >> 1) & 1) == 1);
         struct.setFlag3(((flags >> 2) & 1) == 1);
         struct.setFlag4(((flags >> 3) & 1) == 1);
         */
-        struct.setParam((byte) this.read());
-        this.structures.add(struct);
+        struct.setParam((byte) read());
+        structures.add(struct);
         return struct;
     }
     
@@ -54,10 +54,10 @@ public class StructureInputStream extends FileInputStream {
      * Если файл уже прочитан, то возвращается полный массив.
      */
     public Structure[] readStructures() throws IOException {
-        while (this.available() > 0) {
-            this.readStructure();
+        while (available() > 0) {
+            readStructure();
         }
-        return this.structures.toArray(new Structure[this.structures.size()]);
+        return structures.toArray(new Structure[structures.size()]);
     }
     
     private byte byteToFlags(byte flags, Consumer<Boolean>... consumer) throws IOException {
@@ -92,42 +92,42 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private boolean readBoolean() throws IOException {
-        return this.read() == 1;
+        return read() == 1;
     }
 
     private int readInt() throws IOException {
         byte[] bytes = new byte[Integer.BYTES];
-        this.read(bytes);
+        read(bytes);
         return ((ByteBuffer) ByteBuffer.allocateDirect(Integer.BYTES).put(bytes).flip()).getInt();
     }
 
     private long readLong() throws IOException {
         byte[] bytes = new byte[Long.BYTES];
-        this.read(bytes);
+        read(bytes);
         return ((ByteBuffer) ByteBuffer.allocateDirect(Long.BYTES).put(bytes).flip()).getLong();
 
     }
 
     private float readFloat() throws IOException {
         byte[] bytes = new byte[Float.BYTES];
-        this.read(bytes);
+        read(bytes);
         return ((ByteBuffer) ByteBuffer.allocateDirect(Float.BYTES).put(bytes).flip()).getFloat();
     }
 
     private double readDouble() throws IOException {
         byte[] bytes = new byte[Double.BYTES];
-        this.read(bytes);
+        read(bytes);
         return ((ByteBuffer) ByteBuffer.allocateDirect(Double.BYTES).put(bytes).flip()).getDouble();
     }
 
     private String readString() throws IOException {
-        int len = this.readInt();
+        int len = readInt();
         if (len == -1) {
             return null;
         }
 
         byte[] bytes = new byte[len];
-        this.read(bytes);
+        read(bytes);
         return new String(bytes).intern();
     }
     
