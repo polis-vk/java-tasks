@@ -14,6 +14,8 @@ import java.nio.charset.StandardCharsets;
  */
 public class StructureOutputStream extends FileOutputStream {
 
+    private static final int NULL_OBJECT = -1;
+
     public StructureOutputStream(File name) throws FileNotFoundException {
         super(name);
     }
@@ -26,10 +28,8 @@ public class StructureOutputStream extends FileOutputStream {
         writeString(structure.getName());
         writeSubstructureArray(structure.getSubStructures());
         writeFloat(structure.getCoeff());
-        writeBoolean(structure.isFlag1());
-        writeBoolean(structure.isFlag2());
-        writeBoolean(structure.isFlag3());
-        writeBoolean(structure.isFlag4());
+        boolean[] flags = {structure.isFlag1(), structure.isFlag2(), structure.isFlag3(), structure.isFlag4()};
+        writeFLags(flags);
         writeByte(structure.getParam());
     }
 
@@ -68,10 +68,9 @@ public class StructureOutputStream extends FileOutputStream {
 
     private void writeString(String str) throws IOException {
         if (str == null) {
-            writeBoolean(false);
+            writeInteger(NULL_OBJECT);
             return;
         }
-        writeBoolean(true);
         byte[] byteStr = str.getBytes(StandardCharsets.UTF_8);
         writeInteger(byteStr.length);
         write(byteStr);
@@ -79,6 +78,14 @@ public class StructureOutputStream extends FileOutputStream {
 
     private void writeBoolean(boolean bool) throws IOException {
         write(bool ? 1 : 0);
+    }
+
+    private void writeFLags(boolean[] flags) throws IOException {
+        byte b = (byte) ((flags[0] ? 1 : 0) +
+                (flags[1] ? 1 << 1 : 0) +
+                (flags[2] ? 1 << 2 : 0) +
+                (flags[3] ? 1 << 3 : 0));
+        writeByte(b);
     }
 
     private void writeByte(byte number) throws IOException {
@@ -94,10 +101,9 @@ public class StructureOutputStream extends FileOutputStream {
 
     private void writeSubstructureArray(SubStructure[] subStructures) throws IOException {
         if (subStructures == null) {
-            writeBoolean(false);
+            writeInteger(NULL_OBJECT);
             return;
         }
-        writeBoolean(true);
         writeInteger(subStructures.length);
         for (SubStructure subStructure : subStructures) {
             writeSubstructure(subStructure);

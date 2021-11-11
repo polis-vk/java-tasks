@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.io.blocking;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Objects;
  *
  * Все остальное можно
  */
-public class SubStructure {
+public class SubStructure implements Serializable {
     private final int id;
     //NotNull
     private final String name;

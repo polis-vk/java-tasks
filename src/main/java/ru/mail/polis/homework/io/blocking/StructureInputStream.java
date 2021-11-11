@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -15,6 +14,8 @@ import java.util.Arrays;
  * 3 балла
  */
 public class StructureInputStream extends FileInputStream {
+
+    private static final int NULL_OBJECT = -1;
 
     private Structure[] structures;
     private int size;
@@ -38,13 +39,14 @@ public class StructureInputStream extends FileInputStream {
         structure.setName(readString());
         structure.setSubStructures(readSubstructureArray());
         structure.setCoeff(readFloat());
-        structure.setFlag1(readBoolean());
-        structure.setFlag2(readBoolean());
-        structure.setFlag3(readBoolean());
-        structure.setFlag4(readBoolean());
+        boolean[] flags = readFlags();
+        structure.setFlag1(flags[0]);
+        structure.setFlag2(flags[1]);
+        structure.setFlag3(flags[2]);
+        structure.setFlag4(flags[3]);
         structure.setParam(readByte());
         if (size == structures.length) {
-            structures = Arrays.copyOf(structures, size + 1);
+            structures = Arrays.copyOf(structures, size * 2 + 1);
         }
         structures[size++] = structure;
         return structure;
@@ -55,16 +57,10 @@ public class StructureInputStream extends FileInputStream {
      * Если файл уже прочитан, но возвращается полный массив.
      */
     public Structure[] readStructures() throws IOException {
-        if (available() == 0) {
-            return structures;
-        }
-        Structure structure = new Structure();
-        int len = 0;
         while (available() != 0) {
             readStructure();
-            len++;
         }
-        return Arrays.copyOfRange(structures, size - len, size);
+        return Arrays.copyOf(structures, size);
     }
 
     private int readInteger() throws IOException {
@@ -96,11 +92,10 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private String readString() throws IOException {
-        boolean notNull = readBoolean();
-        if (!notNull) {
+        int len = readInteger();
+        if (len == NULL_OBJECT) {
             return null;
         }
-        int len = readInteger();
         byte[] byteStr = new byte[len];
         read(byteStr);
         return new String(byteStr, StandardCharsets.UTF_8);
@@ -108,6 +103,16 @@ public class StructureInputStream extends FileInputStream {
 
     private boolean readBoolean() throws IOException {
         return read() == 1;
+    }
+
+    private boolean[] readFlags() throws IOException {
+        byte b = readByte();
+        boolean[] flags = new boolean[4];
+        flags[0] = (b & 1) == 1;
+        flags[1] = (b >> 1 & 1) == 1;
+        flags[2] = (b >> 2 & 1) == 1;
+        flags[3] = (b >> 3 & 1) == 1;
+        return flags;
     }
 
     private byte readByte() throws IOException {
@@ -121,15 +126,14 @@ public class StructureInputStream extends FileInputStream {
         String name = readString();
         boolean flag = readBoolean();
         double score = readDouble();
-        return new SubStructure(id, name, flag, score);
+        return new SubStructure(id, name == null ? Structure.UNDEFINED_STRING : name, flag, score);
     }
 
     private SubStructure[] readSubstructureArray() throws IOException {
-        boolean notNull = readBoolean();
-        if (!notNull) {
+        int len = readInteger();
+        if (len == NULL_OBJECT) {
             return null;
         }
-        int len = readInteger();
         SubStructure[] subStructures = new SubStructure[len];
         for (int i = 0; i < len; i++) {
             subStructures[i] = readSubstructure();
