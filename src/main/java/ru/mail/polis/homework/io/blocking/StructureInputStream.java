@@ -79,8 +79,7 @@ public class StructureInputStream extends FileInputStream {
     private double readDouble() throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(Double.BYTES);
         byte[] bytes = new byte[Double.BYTES];
-        int read = read(bytes);
-        if (read != Double.BYTES) {
+        if (read(bytes) != Double.BYTES) {
             throw new EOFException("Error parse double");
         }
         buffer.put(bytes);
