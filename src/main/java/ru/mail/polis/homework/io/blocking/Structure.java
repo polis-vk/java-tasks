@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.io.blocking;
 
-
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -10,7 +10,7 @@ import java.util.Objects;
  *
  * Все остальное можно
  */
-public class Structure {
+public class Structure implements Serializable {
 
     public static final int UNDEFINED_INT = 0;
     public static final long UNDEFINED_LONG = -1_000_000;
@@ -19,47 +19,48 @@ public class Structure {
     public static final float UNDEFINED_FLOAT = Float.NaN;
     public static final double UNDEFINED_DOUBLE = Double.NaN;
 
+    private long id;
+    //Nullable
+    private String name;
+    //Nullable
+    private SubStructure[] subStructures;
+    private float coeff;
     private boolean flag1;
     private boolean flag2;
     private boolean flag3;
     private boolean flag4;
-    private long id;
-    //Nullable
-    private String name;
-    private double coeff;
     private byte param;
-    //Nullable
-    private SubStructure[] subStructures;
 
-    public Structure() {
+    public long getId() {
+        return id;
     }
 
-    public Structure(boolean flag1, boolean flag2, boolean flag3, boolean flag4, long id,
-                     String name, double coeff, byte param, SubStructure[] subStructures) {
-        this.flag1 = flag1;
-        this.flag2 = flag2;
-        this.flag3 = flag3;
-        this.flag4 = flag4;
+    public void setId(long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
         this.name = name;
-        this.coeff = coeff;
-        this.param = param;
+    }
+
+    public SubStructure[] getSubStructures() {
+        return subStructures;
+    }
+
+    public void setSubStructures(SubStructure[] subStructures) {
         this.subStructures = subStructures;
     }
 
-    public boolean isFlagI(int i) {
-        switch(i) {
-            case 1:
-                return isFlag1();
-            case 2:
-                return isFlag2();
-            case 3:
-                return isFlag3();
-            case 4:
-                return isFlag4();
-            default:
-                throw new IllegalArgumentException();
-        }
+    public float getCoeff() {
+        return coeff;
+    }
+
+    public void setCoeff(float coeff) {
+        this.coeff = coeff;
     }
 
     public boolean isFlag1() {
@@ -94,30 +95,6 @@ public class Structure {
         this.flag4 = flag4;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public double getCoeff() {
-        return coeff;
-    }
-
-    public void setCoeff(double coeff) {
-        this.coeff = coeff;
-    }
-
     public byte getParam() {
         return param;
     }
@@ -126,12 +103,22 @@ public class Structure {
         this.param = param;
     }
 
-    public SubStructure[] getSubStructures() {
-        return subStructures;
+    public Structure() {
     }
 
-    public void setSubStructures(SubStructure[] subStructures) {
-        this.subStructures = subStructures;
+    public boolean isFlagI(int i) {
+        switch(i) {
+            case 1:
+                return isFlag1();
+            case 2:
+                return isFlag2();
+            case 3:
+                return isFlag3();
+            case 4:
+                return isFlag4();
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     @Override
@@ -168,4 +155,3 @@ public class Structure {
     }
 
 }
-

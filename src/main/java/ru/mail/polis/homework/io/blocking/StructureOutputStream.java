@@ -17,17 +17,21 @@ public class StructureOutputStream extends FileOutputStream {
     /**
      * Метод должен вернуть записать прочитанную структуру.
      */
-    public void write(Structure structure) throws IOException {
+    public void write(Structure structure) {
         if (structure == null) {
             return;
         }
 
-        writeFlags(structure);
-        writeLong(structure.getId());
-        writeString(structure.getName());
-        writeDouble(structure.getCoeff());
-        write(structure.getParam());
-        write(structure.getSubStructures());
+        try {
+            writeFlags(structure);
+            writeLong(structure.getId());
+            writeString(structure.getName());
+            write(structure.getSubStructures());
+            writeFloat(structure.getCoeff());
+            write(structure.getParam());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -63,12 +67,16 @@ public class StructureOutputStream extends FileOutputStream {
         write(ByteBuffer.allocate(Long.BYTES).putLong(a).array());
     }
 
+    private void writeFloat(float f) throws IOException {
+        writeInt(Float.floatToIntBits(f));
+    }
+
     private void writeDouble(double d) throws IOException {
         writeLong(Double.doubleToLongBits(d));
     }
 
     private void writeString(String s) throws IOException {
-        if (s == null || s.isEmpty()) {
+        if (s == null) {
             writeInt(-1);
             return;
         }
@@ -82,14 +90,15 @@ public class StructureOutputStream extends FileOutputStream {
         }
 
         writeInt(subStructure.getId());
-        writeString(subStructure.getName());
+        String subStructureName = subStructure.getName();
+        writeString(subStructureName == null ? Structure.UNDEFINED_STRING : subStructureName);
         write(subStructure.isFlag() ? 1 : 0);
         writeDouble(subStructure.getScore());
     }
 
     private void write(SubStructure[] subStructures) throws IOException {
-        if (subStructures == null || subStructures.length == 0) {
-            writeInt(0);
+        if (subStructures == null) {
+            writeInt(-1);
             return;
         }
 

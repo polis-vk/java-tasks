@@ -22,15 +22,25 @@ public class StructureInputStream extends FileInputStream {
      * Метод должен вернуть следующую прочитанную структуру.
      * Если структур в файле больше нет, то вернуть null
      */
-    public Structure readStructure() throws IOException {
-        Structure struct;
-        if (available() == 0) {
-            struct = null;
-        } else {
-            boolean[] flags = readFlags();
-            struct = new Structure(flags[0], flags[1], flags[2], flags[3], readLong(),
-                    readString(), readDouble(), (byte)read(), readSubStructures());
-            structs.add(struct);
+    public Structure readStructure() {
+        Structure struct = null;
+        try {
+            if (available() != 0) {
+                struct = new Structure();
+                boolean[] flags = readFlags();
+                struct.setFlag1(flags[0]);
+                struct.setFlag2(flags[1]);
+                struct.setFlag3(flags[2]);
+                struct.setFlag4(flags[3]);
+                struct.setId(readLong());
+                struct.setName(readString());
+                struct.setSubStructures(readSubStructures());
+                struct.setCoeff(readFloat());
+                struct.setParam((byte)read());
+                structs.add(struct);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return struct;
     }
@@ -39,9 +49,13 @@ public class StructureInputStream extends FileInputStream {
      * Метод должен вернуть все структуры, которые есть в файле.
      * Если файл уже прочитан, но возвращается полный массив.
      */
-    public Structure[] readStructures() throws IOException {
-        while (available() != 0) {
-            readStructure();
+    public Structure[] readStructures() {
+        try {
+            while (available() != 0) {
+                readStructure();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return structs.toArray(new Structure[0]);
     }
@@ -52,7 +66,7 @@ public class StructureInputStream extends FileInputStream {
 
     private SubStructure[] readSubStructures() throws IOException {
         int size = readInt();
-        if (size == -1 || size == 0) {
+        if (size == -1) {
             return null;
         }
         SubStructure[] subStructs = new SubStructure[size];
@@ -72,6 +86,10 @@ public class StructureInputStream extends FileInputStream {
         byte[] bytes = new byte[Long.BYTES];
         read(bytes);
         return ByteBuffer.allocate(bytes.length).put(bytes).flip().getLong();
+    }
+
+    private float readFloat() throws IOException {
+        return Float.intBitsToFloat(readInt());
     }
 
     private double readDouble() throws IOException {
