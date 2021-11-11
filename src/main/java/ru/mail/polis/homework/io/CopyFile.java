@@ -26,11 +26,13 @@ public class CopyFile {
         Path from = Paths.get(pathFrom);
         Path to = Paths.get(pathTo);
 
-        if (Files.notExists(from) || from.toAbsolutePath().equals(to.toAbsolutePath())) {
+        if (Files.notExists(from)) {
             return null;
         }
 
         try {
+            // создаем все родительские папки, один раз
+            Files.createDirectories(to.getParent()); 
             deepCopy(from, to);
         } catch (IOException e) {
             e.printStackTrace();
@@ -40,19 +42,23 @@ public class CopyFile {
     }
 
     private static void deepCopy(Path from, Path to) throws IOException {
-        if (Files.isDirectory(from)) {
-            Files.createDirectories(to);
-            try (DirectoryStream<Path> dir = Files.newDirectoryStream(from)) {
-                for (Path path : dir) {
-                    deepCopy(path, to.resolve(path.getFileName()));
-                }
-            }
-        } else {
-            if (Files.notExists(to.getParent())) {
-                Files.createDirectories(to.getParent());
-            }
+        // вместо !Files.isDirectory(from) для наглядности
+        // хотя в общем случае это не одно и то же,
+        // но для задачи копируются только файлы и папки
+        if (Files.isRegularFile(from)) {
             // Files.copy(from, to);
             copyFile(from, to);
+            return;
+        }
+        // для копирования подпапок и пустых папок
+        if (Files.notExists(to)) {
+            Files.createDirectory(to);
+        }
+
+        try (DirectoryStream<Path> dir = Files.newDirectoryStream(from)) {
+            for (Path path : dir) {
+                deepCopy(path, to.resolve(path.getFileName()));
+            }
         }
     }
     
@@ -67,7 +73,6 @@ public class CopyFile {
                 out.write(buffer, 0, size);
                 size = in.read(buffer);
             }
-            out.flush();
         }
     }
 
