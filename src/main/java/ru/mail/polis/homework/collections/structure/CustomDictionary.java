@@ -82,7 +82,7 @@ public class CustomDictionary {
                 size--;
                 result = true;
             }
-            if (map.get(key).size() == 0 && result) {
+            if (map.get(key).size() == 0) {
                 map.remove(key);
             }
         }
