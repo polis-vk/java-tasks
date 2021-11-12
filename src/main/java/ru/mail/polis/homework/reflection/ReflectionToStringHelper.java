@@ -1,5 +1,12 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Comparator;
+
+import static java.lang.reflect.Modifier.isPrivate;
+import static java.lang.reflect.Modifier.isStatic;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -41,9 +48,113 @@ package ru.mail.polis.homework.reflection;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
+    private static final String NULL_STRING = "null";
+    private static final String SEPARATOR_BETWEEN_FIELDS = ", ";
+    private static final String SEPARATOR_INSIDE_FIELDS = ": ";
+    private static final String OPENING_BRACKET_FOR_ARRAY = "[";
+    private static final String CLOSING_BRACKET_FOR_ARRAY = "]";
+    private static final String OPENING_BRACKET_FOR_CLASS = "{";
+    private static final String CLOSING_BRACKET_FOR_CLASS = "}";
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return NULL_STRING;
+        }
+
+        StringBuilder res = new StringBuilder(OPENING_BRACKET_FOR_CLASS);
+        Class<?> clazz = object.getClass();
+
+        boolean first = true;
+        do {
+            if (!first) {
+                res.append(SEPARATOR_BETWEEN_FIELDS);
+            }
+            first = false;
+
+            res.append(objToString(object, clazz, false));
+            clazz = clazz.getSuperclass();
+        } while (clazz != Object.class);
+
+        res.append(CLOSING_BRACKET_FOR_CLASS);
+
+        return res.toString();
+    }
+
+
+    private static String objToString(Object object, Class<?> clazz, boolean needBrackets) {
+        StringBuilder res = new StringBuilder();
+        if (needBrackets) {
+            res.append(OPENING_BRACKET_FOR_CLASS);
+        }
+
+        Field[] fields = clazz.getDeclaredFields();
+        Arrays.sort(fields, Comparator.comparing(Field::getName));
+
+        boolean first = true;
+        for (Field field : fields) {
+            if (isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
+                continue;
+            }
+
+            if (isPrivate(field.getModifiers())) {
+                field.setAccessible(true);
+            }
+
+            if (!first) {
+                res.append(SEPARATOR_BETWEEN_FIELDS);
+            }
+            first = false;
+
+            res.append(field.getName()).append(SEPARATOR_INSIDE_FIELDS).append(getFieldContent(field, object));
+        }
+
+        if (needBrackets) {
+            res.append(CLOSING_BRACKET_FOR_CLASS);
+        }
+
+        return res.toString();
+    }
+
+    private static String getFieldContent(Field field, Object object) {
+        Class<?> type = field.getType();
+        Object value;
+
+        try {
+            value = field.get(object);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return "";
+        }
+
+        if (value == null) {
+            return NULL_STRING;
+        }
+
+        if (type.isArray()) {
+            return arrayToString((Object[]) value);
+        }
+
+        if (type.isPrimitive() || type.isAssignableFrom(String.class) || type.isEnum()) {
+            return String.valueOf(value);
+        }
+
+        return objToString(value, type, true);
+    }
+
+    private static String arrayToString(Object[] array) {
+        StringBuilder res = new StringBuilder(OPENING_BRACKET_FOR_ARRAY);
+        boolean first = true;
+
+        for (Object o : array) {
+            if (!first) {
+                res.append(SEPARATOR_BETWEEN_FIELDS);
+            }
+
+            first = false;
+            res.append(o);
+        }
+
+        res.append(CLOSING_BRACKET_FOR_ARRAY);
+        return res.toString();
     }
 }
