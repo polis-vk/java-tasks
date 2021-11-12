@@ -35,7 +35,7 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     /**
-     * Метод должен вернуть записать массив прочитанных структур.
+     * Метод должен записать массив прочитанных структур.
      */
     public void write(Structure[] structures) throws IOException {
         for (Structure structure : structures) {
