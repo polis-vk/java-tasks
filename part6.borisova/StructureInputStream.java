@@ -1,12 +1,8 @@
 package ru.mail.polis.homework.io.blocking;
 
-import com.sun.tools.javac.util.ArrayUtils;
-import sun.security.util.ArrayUtil;
-
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,26 +32,29 @@ public class StructureInputStream extends FileInputStream {
         structure.setSubStructures(readSubStructures());
         structure.setCoeff(readDouble());
         byte flags = (byte) read();
-        structure.setFlag1(flags % 2 == 1);
+        structure.setFlag1(setFlag(flags));
         flags >>= 1;
-        structure.setFlag2(flags % 2 == 1);
+        structure.setFlag2(setFlag(flags));
         flags >>= 1;
-        structure.setFlag3(flags % 2 == 1);
+        structure.setFlag3(setFlag(flags));
         flags >>= 1;
-        structure.setFlag4(flags % 2 == 1);
-        //structure.setFlag1(readBoolean());
-        //structure.setFlag2(readBoolean());
-        //structure.setFlag3(readBoolean());
-        //structure.setFlag4(readBoolean());
-        structure.setParam((byte) read());
+        structure.setFlag4(setFlag(flags));
+        structure.setParam(readByte());
         list.add(structure);
         return structure;
+    }
+
+    private boolean setFlag(byte flags) {
+        return flags % 2 == 1;
+    }
+
+    private byte readByte() throws IOException {
+        return (byte) read();
     }
 
     private long readLong() throws IOException {
         byte[] inputBytes = new byte[Long.BYTES];
         read(inputBytes);
-        //ArrayUtil.reverse(inputBytes);
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
         buffer.put(inputBytes);
         buffer.flip();
@@ -65,33 +64,23 @@ public class StructureInputStream extends FileInputStream {
     private int readInt() throws IOException {
         byte[] inputBytes = new byte[Integer.BYTES];
         read(inputBytes);
-        //ArrayUtil.reverse(inputBytes);
         ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
         buffer.put(inputBytes);
         buffer.flip();
         return buffer.getInt();
     }
 
-    /*private long readLong() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-        byte[] bytes = new byte[Long.BYTES];
-        read(bytes);
-        buffer.put(bytes);
-        buffer.flip();
-        return buffer.getLong();
-    }*/
 
     private Character readCharacter() throws IOException {
         byte[] inputBytes = new byte[Character.BYTES];
         read(inputBytes);
-        //ArrayUtil.reverse(inputBytes);
         ByteBuffer buffer = ByteBuffer.allocate(Character.BYTES);
         buffer.put(inputBytes);
         buffer.flip();
         return buffer.getChar();
     }
 
-    private String readString() throws IOException { //???????????????
+    private String readString() throws IOException {
         StringBuilder sb = new StringBuilder();
         Character c = readCharacter();
 
@@ -113,8 +102,7 @@ public class StructureInputStream extends FileInputStream {
     private float readFloat() throws IOException {
         byte[] inputBytes = new byte[Float.BYTES];
         read(inputBytes);
-        //ArrayUtil.reverse(inputBytes);
-        ByteBuffer buffer = ByteBuffer.allocate(Float.BYTES); //??????
+        ByteBuffer buffer = ByteBuffer.allocate(Float.BYTES);
         buffer.put(inputBytes);
         buffer.flip();
         return buffer.getFloat();
@@ -123,8 +111,7 @@ public class StructureInputStream extends FileInputStream {
     private double readDouble() throws IOException {
         byte[] inputBytes = new byte[Double.BYTES];
         read(inputBytes);
-        //ArrayUtil.reverse(inputBytes);
-        ByteBuffer buffer = ByteBuffer.allocate(Double.BYTES); //??????
+        ByteBuffer buffer = ByteBuffer.allocate(Double.BYTES);
         buffer.put(inputBytes);
         buffer.flip();
         return buffer.getDouble();
@@ -146,43 +133,6 @@ public class StructureInputStream extends FileInputStream {
         }
         return subStructures;
     }
-
-    /*
-    private String readString() throws IOException { //???????????????
-        int stringLength = readInt();
-        if (stringLength == -1) {
-            return null;
-        }
-        byte[] b = new byte[stringLength];
-        if (read(b) != stringLength) {
-            throw new IOException();
-        }
-        return new String(b);
-    }
-
-
-
-    private double readDouble() throws IOException {
-        return Double.longBitsToDouble(readLong());
-    }
-
-    private int readInt() throws IOException { //?????????????????
-        return ((read() << 24) + (read() << 16) + (read() << 8) + (read()));
-    }
-
-    private float readFloat() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(Float.BYTES); //??????
-        byte[] bytes = new byte[Float.BYTES];
-        read(bytes);
-        buffer.put(bytes);
-        buffer.flip();
-        return buffer.getFloat();
-    }
-
-    private byte readByte() throws IOException {
-        return (byte) read();
-    }
-    */
 
     /**
      * Метод должен вернуть все структуры, которые есть в файле.

@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class CopyFile {
-    private static byte[] buffer = new byte[0];
     /**
      * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
      * Файлы копировать ручками через стримы. Исползуем новый API
@@ -51,6 +50,7 @@ public class CopyFile {
     }
 
     private static void copyFileData(Path from, Path to) throws IOException {
+        byte[] buffer = new byte[1024];
         try (InputStream in = Files.newInputStream(from);
              OutputStream out = Files.newOutputStream(to)) {
             int length;

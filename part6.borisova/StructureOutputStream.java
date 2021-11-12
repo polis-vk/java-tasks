@@ -25,6 +25,11 @@ public class StructureOutputStream extends FileOutputStream {
         write(stringToBytes(structure.getName()));
         write(structure.getSubStructures());
         write(doubleToBytes(structure.getCoeff()));
+        write(flagsToByte(structure));
+        write(structure.getParam());
+    }
+
+    private byte flagsToByte(Structure structure) {
         byte flags = 0;
         flags += (structure.isFlag4() ? (byte) 1 : (byte) 0);
         flags <<= 1;
@@ -33,22 +38,20 @@ public class StructureOutputStream extends FileOutputStream {
         flags += (structure.isFlag2() ? (byte) 1 : (byte) 0);
         flags <<= 1;
         flags += (structure.isFlag1() ? (byte) 1 : (byte) 0);
-        write(flags);
-        write(structure.getParam());
+        return flags;
     }
-
 
     /**
      * Метод должен вернуть записать массив прочитанных структур.
      */
     public void write(Structure[] structures) throws IOException {
-        for(Structure structure : structures) {
+        for (Structure structure : structures) {
             write(structure);
         }
     }
 
     private void write(SubStructure[] subStructures) throws IOException {
-       if (subStructures == null) {
+       if (subStructures == null || subStructures.length == 0) {
             write(intToBytes(0));
             return;
        }
@@ -77,12 +80,6 @@ public class StructureOutputStream extends FileOutputStream {
         return buffer.array();
     }
 
-    private byte[] floatToBytes(float input) {
-        ByteBuffer buffer = ByteBuffer.allocate(Float.BYTES);
-        buffer.putFloat(input);
-        return buffer.array();
-    }
-
     private byte[] intToBytes(int input) {
         ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
         buffer.putInt(input);
@@ -96,7 +93,7 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     private byte[] stringToBytes(String input) {
-        if (input == null) {
+        if (input == null || input.equals("")) {
             return charToBytes('\0');
         }
         ByteBuffer buffer = ByteBuffer.allocate((input.length() + 1) * Character.BYTES);
