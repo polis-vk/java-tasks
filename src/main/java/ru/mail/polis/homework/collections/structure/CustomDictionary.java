@@ -73,21 +73,20 @@ public class CustomDictionary {
         if (value == null || value.equals("")) {
             return false;
         }
+        boolean result = false;
 
         String key = createKey(value);
 
         if (map.containsKey(key)) {
             if (map.get(key).remove(value)) {
                 size--;
-            } else {
-                return false;
+                result = true;
             }
-            if (map.get(key).size() == 0) {
+            if (map.get(key).size() == 0 && result) {
                 map.remove(key);
             }
-            return true;
         }
-        return false;
+        return result;
     }
 
     /**
