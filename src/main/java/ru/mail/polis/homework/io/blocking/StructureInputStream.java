@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Вам нужно реализовать StructureInputStream, который умеет читать данные из файла.
@@ -15,11 +16,10 @@ import java.util.ArrayList;
  */
 public class StructureInputStream extends FileInputStream {
 
-    private final ArrayList<Structure> structures;
+    private final List<Structure> structures = new ArrayList<>();
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
-        this.structures = new ArrayList<>();
     }
 
     /**
@@ -139,7 +139,12 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private SubStructure readSubStructure() throws IOException {
-        return new SubStructure(readInt(), readStringForSubStructure(), readBoolean(), readDouble());
+        int id = readInt();
+        String name = readString();
+        if (name == null) {
+            throw new EOFException();
+        }
+        return new SubStructure(id, name, readBoolean(), readDouble());
     }
 
     private SubStructure[] readSubStructures() throws IOException {
@@ -152,13 +157,5 @@ public class StructureInputStream extends FileInputStream {
             subStructures[i] = readSubStructure();
         }
         return subStructures;
-    }
-
-    private String readStringForSubStructure() throws IOException {
-        String string = readString();
-        if (string == null) {
-            throw new EOFException();
-        }
-        return string;
     }
 }

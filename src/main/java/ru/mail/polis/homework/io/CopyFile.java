@@ -11,7 +11,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 public class CopyFile {
-    private final static Integer BUFFER_SIZE = 1024;
+    private final static int BUFFER_SIZE = 1024;
     private final static String ERROR_MESSAGE_1 = "The path to the file does not specified";
     private final static String ERROR_MESSAGE_2 = "Directory does not exist";
     private final static String SUCCESS_MESSAGE = "Copy successful";
@@ -23,12 +23,16 @@ public class CopyFile {
      * 3 балла
      */
     public static String copyFiles(String pathFrom, String pathTo) {
-        if (checkNullPath(pathFrom, pathTo)) return ERROR_MESSAGE_1;
+        if (checkNullPath(pathFrom, pathTo)) {
+            return ERROR_MESSAGE_1;
+        }
 
         Path from = Paths.get(pathFrom);
         Path to = Paths.get(pathTo);
 
-        if (checkNoExistFiles(from)) return ERROR_MESSAGE_2;
+        if (!Files.exists(from)) {
+            return ERROR_MESSAGE_2;
+        }
         try {
             createDirectory(to);
             Files.walkFileTree(from, new SimpleFileVisitor<>() {
@@ -59,10 +63,6 @@ public class CopyFile {
         return from == null || to == null;
     }
 
-    private static boolean checkNoExistFiles(Path from) {
-        return !Files.exists(from);
-    }
-
     private static void createDirectory(Path to) throws IOException {
         if (Files.isDirectory(to)) {
             Files.createDirectories(to);
@@ -75,8 +75,10 @@ public class CopyFile {
         try (InputStream inputStream = Files.newInputStream(from);
              OutputStream outputStream = Files.newOutputStream(to)) {
             byte[] buffer = new byte[BUFFER_SIZE];
-            outputStream.write(inputStream.read(buffer));
-            outputStream.flush();
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
         }
     }
 }
