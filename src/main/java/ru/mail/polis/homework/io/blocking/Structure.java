@@ -1,16 +1,12 @@
 package ru.mail.polis.homework.io.blocking;
 
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
-/**
- * Нельзя изменять/удалять/добавлять поля.
- * Можно изменять/удалять СУЩЕСТВУЮЩИЕ методы.
- *
- * Все остальное можно
- */
-public class Structure {
+
+public class Structure implements Serializable {
 
     public static final int UNDEFINED_INT = 0;
     public static final long UNDEFINED_LONG = -1_000_000;
@@ -18,6 +14,7 @@ public class Structure {
     public static final byte UNDEFINED_BYTE = Byte.MIN_VALUE;
     public static final float UNDEFINED_FLOAT = Float.NaN;
     public static final double UNDEFINED_DOUBLE = Double.NaN;
+    private static final long serialVersionUID = 1L;
 
     private long id;
     //Nullable
