@@ -29,27 +29,34 @@ public class CopyFile {
         }
         Path to = Paths.get(pathTo);
         try {
-            if (!Files.exists(to)) {
-                Files.createDirectories(Files.isRegularFile(from) ? to.getParent() : to);
-            }
-            copyFileInside(from, to);
+            copyDirectoryOrFile(from, to);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return pathTo;
     }
 
-    private static void copyFileInside(Path from, Path to) throws IOException {
-        if (!Files.isDirectory(from)) {
-            copyFile(from, to);
+    public static void copyDirectoryOrFile(Path from, Path to) throws IOException {
+        if (Files.isDirectory(from)) {
+            Files.createDirectories(to);
+            copyFolder(from, to);
             return;
         }
+        Files.createDirectories(to.getParent());
+        copyFile(from, to);
+    }
+
+    private static void copyFolder(Path from, Path to) throws IOException {
         if (!Files.exists(to)) {
             Files.createDirectory(to);
         }
         try (DirectoryStream<Path> paths = Files.newDirectoryStream(from)) {
             for (Path path : paths) {
-                copyFileInside(path, to.resolve(from.relativize(path)));
+                if (Files.isDirectory(path)) {
+                    copyFolder(path, to.resolve(from.relativize(path)));
+                    continue;
+                }
+                copyFile(path, to.resolve(from.relativize(path)));
             }
         }
     }
