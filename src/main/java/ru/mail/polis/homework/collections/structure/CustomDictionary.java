@@ -11,7 +11,7 @@ import java.util.*;
  */
 public class CustomDictionary {
 
-    private HashMap<String, LinkedList<String>> map = new HashMap<>();
+    private Map<String, List<String>> map = new HashMap<>();
     private int size = 0;
 
     /**
@@ -23,18 +23,20 @@ public class CustomDictionary {
      * Сложность - [O(mlogm) +O(1) в среднем или O(n) в худшем случае)] n - число элементов в словаре, m - длина добавляемой строки
      */
     public boolean add(String value) {
-        if (value == null || value.equals(""))
+        if (value == null || value.equals("")) {
             throw new IllegalArgumentException("trying to add null/empty string");
+        }
 
-        if (contains(value))
+        if (contains(value)) {
             return false;
+        }
 
         String key = createKey(value);
 
         if (map.containsKey(key)) {
             map.get(key).add(value);
         } else {
-            LinkedList<String> lst = new LinkedList<>();
+            List<String> lst = new LinkedList<>();
             lst.add(value);
             map.put(key, lst);
         }
@@ -52,7 +54,7 @@ public class CustomDictionary {
      */
     public boolean contains(String value) {
         String key = createKey(value);
-        LinkedList<String> lst = map.get(key);
+        List<String> lst = map.get(key);
         if (lst != null) {
             return lst.contains(value);
         }
@@ -68,18 +70,21 @@ public class CustomDictionary {
      * Сложность - [O(mlogm) +O(1) в среднем или O(n) в худшем случае)] n - число элементов в словаре, m - длина удаляемой строки
      */
     public boolean remove(String value) {
-        if (value == null || value.equals(""))
+        if (value == null || value.equals("")) {
             return false;
+        }
 
         String key = createKey(value);
 
         if (map.containsKey(key)) {
-            if (map.get(key).remove(value))
+            if (map.get(key).remove(value)) {
                 size--;
-            else
+            } else {
                 return false;
-            if (map.get(key).size() == 0)
+            }
+            if (map.get(key).size() == 0) {
                 map.remove(key);
+            }
             return true;
         }
         return false;
@@ -107,8 +112,9 @@ public class CustomDictionary {
     public List<String> getSimilarWords(String value) {
         String key = createKey(value);
         List<String> result = map.get(key);
-        if (result != null)
+        if (result != null) {
             return result;
+        }
         return Collections.emptyList();
     }
 

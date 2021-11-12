@@ -30,8 +30,7 @@ public class ValidatorForParentheses {
             if (map.containsKey(c)) {
                 deq.push(c);
                 bracketsExist = true;
-            }
-            if (map.containsValue(c)) {
+            }else if (map.containsValue(c)) {
                 if (deq.isEmpty() || c!= map.get(deq.getFirst()))
                     return false;
                 deq.pollFirst();
