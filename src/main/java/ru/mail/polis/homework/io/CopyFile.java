@@ -16,11 +16,12 @@ public class CopyFile {
         Path from = Paths.get(pathFrom);
         Path to = Paths.get(pathTo);
         try {
+            Files.createDirectories(to.getParent());
             Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
                         throws IOException {
-                    Files.createDirectories(to.resolve(from.relativize(dir)));
+                    Files.createDirectory(to.resolve(from.relativize(dir)));
                     return FileVisitResult.CONTINUE;
                 }
 
@@ -28,18 +29,17 @@ public class CopyFile {
                 public FileVisitResult visitFile(Path fileCopyFrom, BasicFileAttributes attrs)
                         throws IOException {
                     Path fileCopyTo = to.resolve(from.relativize(fileCopyFrom));
-                    try {
-                        Files.createFile(fileCopyTo);
-                    } catch (IOException exception) {
-                        Files.createDirectories(fileCopyTo.getParent());
-                        Files.createFile(fileCopyTo);
-                    }
 
-                    copy(new FileInputStream(fileCopyFrom.toString()),
-                            new FileOutputStream(fileCopyTo.toString()));
+                    FileInputStream fileInputStream = new FileInputStream(fileCopyFrom.toString());
+                    FileOutputStream fileOutputStream = new FileOutputStream(fileCopyTo.toString());
+                    copy(fileInputStream, fileOutputStream);
+
+                    fileInputStream.close();
+                    fileOutputStream.close();
                     return FileVisitResult.CONTINUE;
                 }
             });
+
         } catch (IOException exception) {
             System.out.println("Something bad happened");
         }
@@ -47,13 +47,13 @@ public class CopyFile {
 
     private static void copy(InputStream inputStream, OutputStream outputStream) throws IOException {
         byte[] buffer = new byte[1024];
-        int bytesRead;
-        do {
+        int bytesRead = inputStream.read(buffer);
+
+        while (bytesRead > 0) {
+            outputStream.write(buffer, 0, bytesRead);
             bytesRead = inputStream.read(buffer);
-            if (bytesRead > 0) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-        } while (bytesRead > 0);
+        }
+
         outputStream.flush();
     }
 }

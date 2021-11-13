@@ -13,6 +13,10 @@ import java.util.ArrayList;
  */
 public class StructureInputStream extends FileInputStream {
 
+    public static final int SIZE_OF_INT = 4;
+    public static final int SIZE_OF_LONG = 8;
+    public static final int SIZE_OF_FLOAT = 4;
+    public static final int SIZE_OF_DOUBLE = 8;
     private ArrayList<Structure> structures = new ArrayList<>();
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
@@ -27,35 +31,27 @@ public class StructureInputStream extends FileInputStream {
     public Structure readStructure() throws IOException {
         Structure resultStructure = new Structure();
 
-        byte[] buffer = new byte[18];
-        if (super.read(buffer) != 18) {
+        int firstPart = SIZE_OF_LONG + SIZE_OF_DOUBLE + 1 + 1;
+        byte[] buffer = new byte[firstPart];
+        if (read(buffer) != firstPart) {
             return null;
-        } else {
-            resultStructure.setId(toLong(buffer, 0));
-            resultStructure.setCoeff(Double.longBitsToDouble(toLong(buffer, 8)));
-            resultStructure.setFlags(byteToFlags(buffer[16]));
-            resultStructure.setParam(buffer[17]);
         }
+        resultStructure.setId(toLong(buffer, 0));
+        resultStructure.setCoeff(Double.longBitsToDouble(toLong(buffer, SIZE_OF_LONG)));
+        resultStructure.setFlags(byteToFlags(buffer[SIZE_OF_LONG + SIZE_OF_DOUBLE]));
+        resultStructure.setParam(buffer[SIZE_OF_LONG + SIZE_OF_DOUBLE + 1]);
         resultStructure.setName(readString());
 
-        if (super.read() == 1) {
+        if (read() == 1) {
             resultStructure.setSubStructures(null);
         } else {
             int subStructuresAmount;
-            try {
-                subStructuresAmount = readInt();
-            } catch (IOException exception) {
-                return null;
-            }
+            subStructuresAmount = readInt();
 
             SubStructure[] subStructures = new SubStructure[subStructuresAmount];
 
             for (int i = 0; i < subStructuresAmount; i++) {
-                try {
-                    subStructures[i] = readSubStructure();
-                } catch (IOException exception) {
-                    return null;
-                }
+                subStructures[i] = readSubStructure();
             }
             resultStructure.setSubStructures(subStructures);
         }
@@ -72,12 +68,7 @@ public class StructureInputStream extends FileInputStream {
         while ((readStructure()) != null) {
         }
 
-        Structure[] resultStructures = new Structure[structures.size()];
-        for (int i = 0; i < structures.size(); i++) {
-            resultStructures[i] = structures.get(i);
-        }
-
-        return resultStructures;
+        return structures.toArray(new Structure[structures.size()]);
     }
 
     private static long toLong(byte[] data, int offset) {
@@ -111,7 +102,7 @@ public class StructureInputStream extends FileInputStream {
 
     private int readInt() throws IOException {
         byte[] buffer = new byte[4];
-        if (super.read(buffer) != 4) {
+        if (read(buffer) != 4) {
             throw new IOException();
         }
 
@@ -122,35 +113,30 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private SubStructure readSubStructure() throws IOException {
-        int id;
-        String name;
-        double coefficient;
-        boolean flag = false;
+        int id = readInt();
+        String name = readString();
 
-        id = readInt();
-        name = readString();
-
-        byte[] buffer = new byte[9];
-        if (super.read(buffer) != 9) {
+        byte[] buffer = new byte[SIZE_OF_DOUBLE + 1];
+        if (read(buffer) != SIZE_OF_DOUBLE + 1) {
             return null;
         }
-        coefficient = Double.longBitsToDouble(toLong(buffer, 0));
-        if ((buffer[8] >> 7 & 1) == 1) {
+        double coefficient = Double.longBitsToDouble(toLong(buffer, 0));
+        boolean flag = false;
+        if ((buffer[SIZE_OF_DOUBLE] >> (SIZE_OF_DOUBLE - 1) & 1) == 1) {
             flag = true;
         }
         return new SubStructure(id, name, flag, coefficient);
     }
 
     private String readString() throws IOException {
-        if (super.read() == 1) {
+        if (read() == 1) {
             return null;
-        } else {
-            int length = readInt();
-            byte[] buffer = new byte[length];
-            if (super.read(buffer) != length) {
-                throw new IOException();
-            }
-            return new String(buffer);
         }
-    }
+
+        int length = readInt();
+        byte[] buffer = new byte[length];
+        if (read(buffer) != length) {
+            throw new IOException();
+        }
+        return new String(buffer);
 }

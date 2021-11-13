@@ -19,10 +19,6 @@ public class Directories {
      * 2 балла
      */
     public static int removeWithFile(String path) {
-        if (path == null) {
-            return 0;
-        }
-
         File file = new File(path);
         if (!file.exists()) {
             return 0;
@@ -53,10 +49,6 @@ public class Directories {
      * 2 балла
      */
     public static int removeWithPath(String path) throws IOException {
-        if (path == null) {
-            return 0;
-        }
-
         Path dir = Paths.get(path);
         if (!Files.exists(dir) || !Files.exists(dir)) {
             return 0;
