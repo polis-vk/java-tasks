@@ -3,9 +3,8 @@ package ru.mail.polis.homework.reflection;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,58 +52,53 @@ public class ReflectionToStringHelper {
         if (object == null) {
             return "null";
         }
-        StringBuilder sb = new StringBuilder("{");
+        StringBuilder builder = new StringBuilder("{");
         try {
-            Class<?> c = Class.forName(object.getClass().getName());
-            getFieldsToString(c.getDeclaredFields(), sb, object);
-            Class<?> parent = c.getSuperclass();
+            Class<?> clazz = Class.forName(object.getClass().getName());
+            getFieldsToString(clazz.getDeclaredFields(), builder, object);
+            Class<?> parent = clazz.getSuperclass();
             while (parent != null) {
-                getFieldsToString(parent.getDeclaredFields(), sb, object);
+                getFieldsToString(parent.getDeclaredFields(), builder, object);
                 parent = parent.getSuperclass();
             }
-            if (sb.length() > 1) {
-                sb.delete(sb.lastIndexOf(","), sb.lastIndexOf(" ") + 1);
+            if (builder.length() > 1) {
+                builder.setLength(builder.length() - 2);
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        sb.append("}");
-        return sb.toString();
+        builder.append("}");
+        return builder.toString();
     }
 
-    private static void getFieldsToString(Field[] fields, StringBuilder sb, Object object) {
+    private static void getFieldsToString(Field[] fields, StringBuilder builder, Object object) {
         if (fields == null || fields.length == 0) {
             return;
         }
-        List<StringBuilder> array = new ArrayList<>();
+        Arrays.sort(fields, Comparator.comparing(Field::getName));
         for (Field field : fields) {
             field.setAccessible(true);
             if (field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
-            Object tmp = null;
+            Object value = null;
             try {
-                tmp = field.get(object);
+                value = field.get(object);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
-            if (tmp != null && tmp.getClass().isArray()) {
+            if (value != null && value.getClass().isArray()) {
                 StringBuilder tmpArray = new StringBuilder("[");
-                for (int i = 0; i < Array.getLength(tmp); i++) {
-                    tmpArray.append(Array.get(tmp, i));
-                    if (i != Array.getLength(tmp) - 1) {
+                for (int i = 0; i < Array.getLength(value); i++) {
+                    tmpArray.append(Array.get(value, i));
+                    if (i != Array.getLength(value) - 1) {
                         tmpArray.append(", ");
                     }
                 }
                 tmpArray.append("]");
-                tmp = tmpArray.toString();
+                value = tmpArray.toString();
             }
-            array.add(new StringBuilder(field.getName()).append(": ").append(tmp == null ? "null" : String.valueOf(tmp))
-                    .append(", "));
-        }
-        Collections.sort(array);
-        for (StringBuilder s : array) {
-            sb.append(s);
+            builder.append(field.getName()).append(": ").append(value).append(", ");
         }
     }
 }
