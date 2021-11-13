@@ -71,7 +71,7 @@ public class ReflectionToStringHelper {
             }
             first = false;
 
-            res.append(objToString(object, clazz, false));
+            appendObj(object, clazz, false, res);
             clazz = clazz.getSuperclass();
         } while (clazz != Object.class);
 
@@ -81,10 +81,9 @@ public class ReflectionToStringHelper {
     }
 
 
-    private static String objToString(Object object, Class<?> clazz, boolean needBrackets) {
-        StringBuilder res = new StringBuilder();
+    private static void appendObj(Object object, Class<?> clazz, boolean needBrackets, StringBuilder sb) {
         if (needBrackets) {
-            res.append(OPENING_BRACKET_FOR_CLASS);
+            sb.append(OPENING_BRACKET_FOR_CLASS);
         }
 
         Field[] fields = clazz.getDeclaredFields();
@@ -101,21 +100,20 @@ public class ReflectionToStringHelper {
             }
 
             if (!first) {
-                res.append(SEPARATOR_BETWEEN_FIELDS);
+                sb.append(SEPARATOR_BETWEEN_FIELDS);
             }
             first = false;
 
-            res.append(field.getName()).append(SEPARATOR_INSIDE_FIELDS).append(getFieldContent(field, object));
+            sb.append(field.getName()).append(SEPARATOR_INSIDE_FIELDS);
+            appendFieldContent(field, object, sb);
         }
 
         if (needBrackets) {
-            res.append(CLOSING_BRACKET_FOR_CLASS);
+            sb.append(CLOSING_BRACKET_FOR_CLASS);
         }
-
-        return res.toString();
     }
 
-    private static String getFieldContent(Field field, Object object) {
+    private static void appendFieldContent(Field field, Object object, StringBuilder sb) {
         Class<?> type = field.getType();
         Object value;
 
@@ -123,38 +121,40 @@ public class ReflectionToStringHelper {
             value = field.get(object);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
-            return "";
+            return;
         }
 
         if (value == null) {
-            return NULL_STRING;
+            sb.append(NULL_STRING);
+            return;
         }
 
         if (type.isArray()) {
-            return arrayToString((Object[]) value);
+            appendArray((Object[]) value, sb);
+            return;
         }
 
         if (type.isPrimitive() || type.isAssignableFrom(String.class) || type.isEnum()) {
-            return String.valueOf(value);
+            sb.append(value);
+            return;
         }
 
-        return objToString(value, type, true);
+        appendObj(value, type, true, sb);
     }
 
-    private static String arrayToString(Object[] array) {
-        StringBuilder res = new StringBuilder(OPENING_BRACKET_FOR_ARRAY);
-        boolean first = true;
+    private static void appendArray(Object[] array, StringBuilder sb) {
+        sb.append(OPENING_BRACKET_FOR_ARRAY);
 
+        boolean first = true;
         for (Object o : array) {
             if (!first) {
-                res.append(SEPARATOR_BETWEEN_FIELDS);
+                sb.append(SEPARATOR_BETWEEN_FIELDS);
             }
 
             first = false;
-            res.append(o);
+            sb.append(o);
         }
 
-        res.append(CLOSING_BRACKET_FOR_ARRAY);
-        return res.toString();
+        sb.append(CLOSING_BRACKET_FOR_ARRAY);
     }
 }
