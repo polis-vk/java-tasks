@@ -1,5 +1,12 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -43,7 +50,61 @@ package ru.mail.polis.homework.reflection;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        StringBuilder sb = new StringBuilder("{");
+        try {
+            Class<?> c = Class.forName(object.getClass().getName());
+            getFieldsToString(c.getDeclaredFields(), sb, object);
+            Class<?> parent = c.getSuperclass();
+            while (parent != null) {
+                getFieldsToString(parent.getDeclaredFields(), sb, object);
+                parent = parent.getSuperclass();
+            }
+            if (sb.length() > 1) {
+                sb.delete(sb.lastIndexOf(","), sb.lastIndexOf(" ") + 1);
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+    private static void getFieldsToString(Field[] fields, StringBuilder sb, Object object) {
+        if (fields == null || fields.length == 0) {
+            return;
+        }
+        List<StringBuilder> array = new ArrayList<>();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+            Object tmp = null;
+            try {
+                tmp = field.get(object);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            if (tmp != null && tmp.getClass().isArray()) {
+                StringBuilder tmpArray = new StringBuilder("[");
+                for (int i = 0; i < Array.getLength(tmp); i++) {
+                    tmpArray.append(Array.get(tmp, i));
+                    if (i != Array.getLength(tmp) - 1) {
+                        tmpArray.append(", ");
+                    }
+                }
+                tmpArray.append("]");
+                tmp = tmpArray.toString();
+            }
+            array.add(new StringBuilder(field.getName()).append(": ").append(tmp == null ? "null" : String.valueOf(tmp))
+                    .append(", "));
+        }
+        Collections.sort(array);
+        for (StringBuilder s : array) {
+            sb.append(s);
+        }
     }
 }
