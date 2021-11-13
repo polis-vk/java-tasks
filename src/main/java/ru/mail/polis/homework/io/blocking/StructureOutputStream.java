@@ -17,23 +17,23 @@ public class StructureOutputStream extends FileOutputStream {
      * Метод должен вернуть записать прочитанную структуру.
      */
     public void write(Structure structure) throws IOException {
-        super.write(toByte(structure.getId()));
-        super.write(toByte(structure.getCoeff()));
-        super.write(toByte(structure.isFlag1(),
+        write(toByte(structure.getId()));
+        write(toByte(structure.getCoeff()));
+        write(toByte(structure.isFlag1(),
                 structure.isFlag2(),
                 structure.isFlag3(),
                 structure.isFlag4()));
-        super.write(structure.getParam());
+        write(structure.getParam());
         writeString(structure.getName());
 
         if (structure.getSubStructures() != null) {
-            super.write(0);
+            write(0);
             writeInt(structure.getSubStructures().length);
             for (SubStructure subStructure : structure.getSubStructures()) {
                 writeSubStructure(subStructure);
             }
         } else {
-            super.write(1);
+            write(1);
         }
     }
 
@@ -49,17 +49,17 @@ public class StructureOutputStream extends FileOutputStream {
     private void writeSubStructure(SubStructure subStructure) throws IOException {
         writeInt(subStructure.getId());
         writeString(subStructure.getName());
-        super.write(toByte(subStructure.getScore()));
-        super.write(toByte(subStructure.isFlag()));
+        write(toByte(subStructure.getScore()));
+        write(toByte(subStructure.isFlag()));
     }
 
     private void writeString(String string) throws IOException {
         if (string == null) {
-            super.write(1);
+            write(1);
         } else {
-            super.write(0);
+            write(0);
             writeInt(string.getBytes().length);
-            super.write(string.getBytes());
+            write(string.getBytes());
         }
     }
 
@@ -74,13 +74,11 @@ public class StructureOutputStream extends FileOutputStream {
 
     private void writeInt(int data) throws IOException {
         byte[] buffer = toByte(data);
-        super.write(buffer);
+        write(buffer);
     }
 
     private static byte[] toByte(boolean flag1, boolean flag2, boolean flag3, boolean flag4) {
-        byte[] result = new byte[]{
-                (byte) (0),
-        };
+        byte[] result = new byte[]{0};
         if (flag1) {
             result[0] |= 1 << 7;
         }

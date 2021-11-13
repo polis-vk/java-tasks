@@ -30,7 +30,6 @@ public class StructureInputStream extends FileInputStream {
      */
     public Structure readStructure() throws IOException {
         Structure resultStructure = new Structure();
-
         int firstPart = SIZE_OF_LONG + SIZE_OF_DOUBLE + 1 + 1;
         byte[] buffer = new byte[firstPart];
         if (read(buffer) != firstPart) {
@@ -41,21 +40,7 @@ public class StructureInputStream extends FileInputStream {
         resultStructure.setFlags(byteToFlags(buffer[SIZE_OF_LONG + SIZE_OF_DOUBLE]));
         resultStructure.setParam(buffer[SIZE_OF_LONG + SIZE_OF_DOUBLE + 1]);
         resultStructure.setName(readString());
-
-        if (read() == 1) {
-            resultStructure.setSubStructures(null);
-        } else {
-            int subStructuresAmount;
-            subStructuresAmount = readInt();
-
-            SubStructure[] subStructures = new SubStructure[subStructuresAmount];
-
-            for (int i = 0; i < subStructuresAmount; i++) {
-                subStructures[i] = readSubStructure();
-            }
-            resultStructure.setSubStructures(subStructures);
-        }
-
+        resultStructure.setSubStructures(readSubStructures());
         structures.add(resultStructure);
         return resultStructure;
     }
@@ -139,4 +124,19 @@ public class StructureInputStream extends FileInputStream {
             throw new IOException();
         }
         return new String(buffer);
+    }
+
+    private SubStructure[] readSubStructures() throws IOException {
+        SubStructure[] subStructures = null;
+        if (read() != 1) {
+            int subStructuresAmount;
+            subStructuresAmount = readInt();
+            subStructures = new SubStructure[subStructuresAmount];
+            for (int i = 0; i < subStructuresAmount; i++) {
+                subStructures[i] = readSubStructure();
+            }
+        }
+
+        return subStructures;
+    }
 }
