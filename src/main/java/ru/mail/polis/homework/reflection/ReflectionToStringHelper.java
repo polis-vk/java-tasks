@@ -65,13 +65,13 @@ public class ReflectionToStringHelper {
                 field.setAccessible(true);
                 try {
                     Object value = field.get(object);
-                    String string;
+                    String stringValue;
                     if (field.getType().isArray()) {
-                        string = Arrays.toString((Object[]) field.get(object));
+                        stringValue = Arrays.toString((Object[]) value);
                     } else {
-                        string = value == null ? null : value.toString();
+                        stringValue = value == null ? null : value.toString();
                     }
-                    sb.append(name).append(": ").append(string).append(", ");
+                    sb.append(name).append(": ").append(stringValue).append(", ");
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
