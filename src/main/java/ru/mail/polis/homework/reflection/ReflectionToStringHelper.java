@@ -51,6 +51,9 @@ public class ReflectionToStringHelper {
             return "null";
         }
         Field[] toStringFields = getToStringFields(object);
+        if (toStringFields.length == 0) {
+            return "{}";
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         for (Field field : toStringFields) {
