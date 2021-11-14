@@ -61,7 +61,7 @@ public class StructureInputStream extends FileInputStream {
     private SubStructure readSubStructure() throws IOException {
         int id = readInt();
         String name = readString();
-        if(name == null){
+        if (name == null) {
             throw new IllegalArgumentException();
         }
         boolean flag = readBoolean();
