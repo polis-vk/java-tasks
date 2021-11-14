@@ -80,7 +80,7 @@ public class ReflectionToStringHelper {
             return new StringBuilder();
         }
         StringBuilder bufferFields = new StringBuilder();
-        Arrays.sort(fields,  Comparator.comparing(Field::getName));
+        Arrays.sort(fields, Comparator.comparing(Field::getName));
 
         Object valueOfField;
         for (Field field : fields) {
