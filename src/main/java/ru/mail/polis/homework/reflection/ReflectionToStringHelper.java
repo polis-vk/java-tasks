@@ -1,8 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -73,8 +76,15 @@ public class ReflectionToStringHelper {
     }
 
     public static Field[] getToStringFields(Object object) {
-        Field[] fields = object.getClass().getDeclaredFields();
-        Arrays.sort(fields, Comparator.comparing(Field::getName));
-        return fields;
+        Field[] allFields = object.getClass().getDeclaredFields();
+        List<Field> fields = new ArrayList<>(allFields.length);
+        for (Field field : allFields) {
+            if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
+                continue;
+            }
+            fields.add(field);
+        }
+        fields.sort(Comparator.comparing(Field::getName));
+        return fields.toArray(new Field[0]);
     }
 }
