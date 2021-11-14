@@ -1,5 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Comparator;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -42,8 +48,66 @@ package ru.mail.polis.homework.reflection;
  */
 public class ReflectionToStringHelper {
 
+    private static final String NULL = "null";
+    private static final String SEPARATOR_BETWEEN_NAME_VALUE = ": ";
+    private static final String SEPARATOR_BETWEEN_MEANINGS = ", ";
+
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return NULL;
+        }
+        StringBuilder result = new StringBuilder("{");
+
+        try {
+            Class<?> clazz = Class.forName(object.getClass().getName());
+            result.append(getFieldsFromObject(clazz.getDeclaredFields(), object));
+            for (Class<?> superClazz = clazz.getSuperclass(); superClazz != null;
+                 superClazz = superClazz.getSuperclass()) {
+                result.append(getFieldsFromObject(superClazz.getDeclaredFields(), object));
+            }
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+        }
+
+        if (result.length() > 1) {
+            result.setLength(result.length() - 2);
+        }
+        return result.append("}").toString();
+    }
+
+    private static StringBuilder getFieldsFromObject(Field[] fields, Object object) throws IllegalAccessException {
+        if (fields == null || fields.length == 0) {
+            return new StringBuilder();
+        }
+        StringBuilder bufferFields = new StringBuilder();
+        Arrays.sort(fields,  Comparator.comparing(Field::getName));
+
+        Object valueOfField;
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
+                continue;
+            }
+            valueOfField = field.get(object);
+            bufferFields.append(field.getName())
+                    .append(SEPARATOR_BETWEEN_NAME_VALUE);
+
+            if (valueOfField != null && valueOfField.getClass().isArray()) {
+                bufferFields.append("[");
+                for (int i = 0; i < Array.getLength(valueOfField) - 1; i++) {
+                    bufferFields.append(Array.get(valueOfField, i))
+                            .append(SEPARATOR_BETWEEN_MEANINGS);
+                }
+                if (Array.getLength(valueOfField) > 0) {
+                    bufferFields.append(Array.get(valueOfField, Array.getLength(valueOfField) - 1));
+                }
+                bufferFields.append("]")
+                        .append(SEPARATOR_BETWEEN_MEANINGS);
+                continue;
+            }
+            bufferFields.append(valueOfField)
+                    .append(SEPARATOR_BETWEEN_MEANINGS);
+        }
+        return bufferFields;
     }
 }
