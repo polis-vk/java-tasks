@@ -47,6 +47,9 @@ import java.util.Comparator;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
+        if (object == null) {
+            return "null";
+        }
         Field[] toStringFields = getToStringFields(object);
         StringBuilder sb = new StringBuilder();
         sb.append("{");
