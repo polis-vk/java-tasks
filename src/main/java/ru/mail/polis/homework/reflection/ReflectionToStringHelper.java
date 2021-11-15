@@ -1,5 +1,12 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Objects;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -43,7 +50,65 @@ package ru.mail.polis.homework.reflection;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
+        if (Objects.isNull(object)) {
+            return "null";
+        }
+        StringBuilder result = new StringBuilder("{");
+        Class<?> clazz = object.getClass();
+        while (clazz != Object.class) {
+            Field[] fields = getSortedFields(clazz);
+            boolean isFirstField = true;
+            for (Field field : fields) {
+                if (field.getAnnotation(SkipField.class) != null || Modifier.isStatic(field.getModifiers())) {
+                    continue;
+                }
+                if (!isFirstField) {
+                    result.append(", ");
+                }
+                isFirstField = false;
+                result.append(field.getName()).append(": ");
+                Object fieldValue = getFieldValue(object, field);
+                if (fieldValue != null && fieldValue.getClass().isArray()) {
+                    arrayParser(result, fieldValue);
+                } else {
+                    result.append(fieldValue);
+                }
+            }
+            clazz = clazz.getSuperclass();
+            if (clazz != Object.class) {
+                result.append(", ");
+            }
+        }
+        return result + "}";
+    }
+
+    private static Object getFieldValue(Object object, Field field) {
+        field.setAccessible(true);
+        try {
+            return field.get(object);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } finally {
+            field.setAccessible(false);
+        }
         return null;
+    }
+
+    private static Field[] getSortedFields(Class<?> clazz) {
+        Field[] fields = clazz.getDeclaredFields();
+        Arrays.sort(fields, Comparator.comparing(Field::getName));
+        return fields;
+    }
+
+    private static void arrayParser(StringBuilder result, Object fieldValue) {
+        int length = Array.getLength(fieldValue);
+        result.append("[");
+        for (int i = 0; i < length; i++) {
+            result.append(Array.get(fieldValue, i));
+            if (i != Array.getLength(fieldValue) - 1) {
+                result.append(", ");
+            }
+        }
+        result.append("]");
     }
 }
