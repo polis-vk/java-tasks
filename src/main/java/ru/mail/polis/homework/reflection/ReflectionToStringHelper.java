@@ -1,5 +1,14 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -41,9 +50,62 @@ package ru.mail.polis.homework.reflection;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
+    private static final Logger logger = LogManager.getLogManager().getLogger(ReflectionToStringHelper.class.getName());
+    private static final String SEPARATOR = ", ";
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        StringBuilder builder = new StringBuilder("{");
+        Class<?> currentClass = object.getClass();
+        while (currentClass != Object.class) {
+            fieldsToString(currentClass, object, builder);
+            currentClass = currentClass.getSuperclass();
+        }
+        int commaPos = builder.lastIndexOf(SEPARATOR);
+        if (commaPos > 0) {
+            builder.setLength(builder.length() - SEPARATOR.length());
+        }
+        builder.append("}");
+        return builder.toString();
+    }
+
+    private static void fieldsToString(Class<?> clazz, Object object, StringBuilder builder) {
+        Field[] fields = clazz.getDeclaredFields();
+        Arrays.sort(fields, Comparator.comparing(Field::getName));
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+            builder.append(field.getName()).append(": ");
+            Object value = null;
+            try {
+                value = field.get(object);
+            } catch (IllegalAccessException e) {
+                logger.log(Level.WARNING, "Error while reading field", e);
+            }
+            if (value == null) {
+                builder.append("null");
+            } else if (field.getType().isArray()) {
+                arrayToString(builder, value);
+            } else {
+                builder.append(value);
+            }
+            builder.append(SEPARATOR);
+        }
+    }
+
+    private static void arrayToString(StringBuilder builder, Object value) {
+        builder.append("[");
+        int length = Array.getLength(value);
+        if (length > 0) {
+            builder.append(Array.get(value, 0));
+        }
+        for (int i = 1; i < length; i++) {
+            builder.append(SEPARATOR).append(Array.get(value, i));
+        }
+        builder.append("]");
     }
 }
