@@ -65,7 +65,7 @@ public class ReflectionToStringHelper {
         }
         int commaPos = builder.lastIndexOf(SEPARATOR);
         if (commaPos > 0) {
-            builder.setLength(builder.length() - SEPARATOR.length());
+            builder.setLength(commaPos);
         }
         builder.append("}");
         return builder.toString();
