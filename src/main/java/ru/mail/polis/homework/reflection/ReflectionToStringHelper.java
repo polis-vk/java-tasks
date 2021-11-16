@@ -1,5 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -42,8 +48,74 @@ package ru.mail.polis.homework.reflection;
  */
 public class ReflectionToStringHelper {
 
-    public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+    public static String reflectiveToString(Object object) {        
+        if (object == null) {
+            return "null";
+        }
+
+        Class clazz = object.getClass();
+
+        final StringBuilder builder = new StringBuilder();
+        builder.append("{");
+
+        // сортирую
+        Map<String, Object> fields = new TreeMap<String, Object>();
+        try {
+            do {
+                for (Field field : clazz.getDeclaredFields()) {
+                    if (Modifier.isStatic(field.getModifiers())
+                            || field.getAnnotation(SkipField.class) != null) {
+                        continue;
+                    }
+                    field.setAccessible(true);
+                    fields.put(field.getName(), field.get(object));
+                }
+                // добавляю в builder
+                fields.forEach((name, value) -> appendValue(builder.append(name)
+                        .append(": "), value).append(", "));
+                fields.clear();
+                clazz = clazz.getSuperclass();
+
+            } while (clazz != Object.class);
+            
+        } catch (IllegalAccessException access) {
+            RuntimeException runtime = new RuntimeException();
+            runtime.addSuppressed(access);
+            throw runtime;
+        }
+        
+        // полей нет
+        if (builder.length() == 1) {
+            return "{}";
+        }
+        // удаляю последнее ", "
+        builder.delete(builder.length() - 2, builder.length());
+        builder.append("}");
+        
+        return builder.toString();
+    }
+
+    private static StringBuilder appendValue(StringBuilder builder, Object o) {
+        if (o == null || o == null) {
+            return builder.append("null");
+        }
+
+        if (o.getClass().isArray()) {
+            int length = Array.getLength(o);
+            if (length == 0) {
+                return builder.append("[]");
+            }
+            builder.append("[");
+            for (int i = 0; i < length; ++i) {
+                // рекурсивный обход на случай если это n-мерный массив
+                appendValue(builder, Array.get(o, i)).append(", ");
+            }
+            builder.delete(builder.length() - 2, builder.length());
+            builder.append("]");
+
+            return builder;
+        }
+
+        return builder.append(o.toString());
     }
 }
