@@ -1,5 +1,10 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Comparator;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -43,7 +48,37 @@ package ru.mail.polis.homework.reflection;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+
+        StringBuilder result = new StringBuilder("{");
+
+        try {
+            Class<?> clazz = object.getClass();
+            Field[] fields = clazz.getDeclaredFields();
+            Arrays.sort(fields, Comparator.comparing(Field::getName));
+
+            for (Field field : fields) {
+                field.setAccessible(true);
+
+                if (Modifier.isStatic(field.getModifiers()) || field.getAnnotation(SkipField.class) != null) {
+                    continue;
+                }
+
+                Object value = field.get(object);
+                result.append(field.getName()).append(": ").append(value).append(", ");
+
+                field.setAccessible(false);
+            }
+
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        if (result.length() > 1) {
+            result.setLength(result.length() - 2);
+        }
+        return result.append('}').toString();
     }
 }
