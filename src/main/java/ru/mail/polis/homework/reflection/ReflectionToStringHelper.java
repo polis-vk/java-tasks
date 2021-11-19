@@ -67,13 +67,20 @@ public class ReflectionToStringHelper {
                         .append(": ");
                 if (field.getType().isArray()) {
                     Object array = field.get(object);
-                    sb.append("[");
-                    for (int i = 0; i < Array.getLength(array); i++) {
-                        sb.append(Array.get(array, i));
-                        sb.append(", ");
+                    if (array == null) {
+                        sb.append("null");
+                    } else {
+                        int length = Array.getLength(array);
+                        sb.append("[");
+                        for (int i = 0; i < length; i++) {
+                            sb.append(Array.get(array, i));
+                            sb.append(", ");
+                        }
+                        if (length > 0) {
+                            sb.setLength(sb.length() - 2);
+                        }
+                        sb.append("]");
                     }
-                    sb.setLength(sb.length() - 2);
-                    sb.append("]");
                 } else {
                     sb.append(field.get(object));
                 }
