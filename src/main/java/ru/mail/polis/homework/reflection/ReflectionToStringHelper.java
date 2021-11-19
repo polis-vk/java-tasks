@@ -63,15 +63,16 @@ public class ReflectionToStringHelper {
                         field.getAnnotationsByType(SkipField.class).length != 0) {
                     continue;
                 }
-                if (sbResult.length() != 1) {
-                    sbResult.append(", ");
-                }
                 try {
                     sbResult.append(fieldToString(object, field));
                 } catch (IllegalAccessException ignored) {
                 }
+                sbResult.append(", ");
             }
             currentClass = currentClass.getSuperclass();
+        }
+        if (sbResult.length() != 1) {
+            sbResult.delete(sbResult.length() - 2, sbResult.length());
         }
         sbResult.append("}");
         return sbResult.toString();
@@ -91,10 +92,11 @@ public class ReflectionToStringHelper {
         if (value.getClass().isArray()) {
             sbResult.append("[");
             for (int i = 0; i < Array.getLength(value); i++) {
-                if (i != 0) {
-                    sbResult.append(", ");
-                }
                 sbResult.append(Array.get(value, i));
+                sbResult.append(", ");
+            }
+            if (Array.getLength(value) != 0) {
+                sbResult.delete(sbResult.length() - 2, sbResult.length());
             }
             sbResult.append("]");
         } else {
