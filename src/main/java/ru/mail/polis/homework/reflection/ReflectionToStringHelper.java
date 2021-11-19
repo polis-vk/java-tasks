@@ -111,8 +111,8 @@ public class ReflectionToStringHelper {
             return;
         }
         for (int i = 0; i < length; i++) {
-            sb.append(Array.get(array, i));
-            sb.append(", ");
+            sb.append(Array.get(array, i))
+                    .append(", ");
         }
         sb.setLength(sb.length() - 2);
         sb.append("]");
