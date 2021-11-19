@@ -54,48 +54,53 @@ public class ReflectionToStringHelper {
         if (object == null) {
             return "null";
         }
-        Field[] toStringFields = getToStringFields(object);
+        Class<?> clazz = object.getClass();
+        Field[] toStringFields = getToStringFields(clazz);
         if (toStringFields.length == 0) {
             return "{}";
         }
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        for (Field field : toStringFields) {
-            try {
-                field.setAccessible(true);
-                sb.append(field.getName())
-                        .append(": ");
-                if (field.getType().isArray()) {
-                    Object array = field.get(object);
-                    if (array == null) {
-                        sb.append("null");
+        while (clazz != Object.class) {
+            for (Field field : toStringFields) {
+                try {
+                    field.setAccessible(true);
+                    sb.append(field.getName())
+                            .append(": ");
+                    if (field.getType().isArray()) {
+                        Object array = field.get(object);
+                        if (array == null) {
+                            sb.append("null");
+                        } else {
+                            int length = Array.getLength(array);
+                            sb.append("[");
+                            for (int i = 0; i < length; i++) {
+                                sb.append(Array.get(array, i));
+                                sb.append(", ");
+                            }
+                            if (length > 0) {
+                                sb.setLength(sb.length() - 2);
+                            }
+                            sb.append("]");
+                        }
                     } else {
-                        int length = Array.getLength(array);
-                        sb.append("[");
-                        for (int i = 0; i < length; i++) {
-                            sb.append(Array.get(array, i));
-                            sb.append(", ");
-                        }
-                        if (length > 0) {
-                            sb.setLength(sb.length() - 2);
-                        }
-                        sb.append("]");
+                        sb.append(field.get(object));
                     }
-                } else {
-                    sb.append(field.get(object));
+                    sb.append(", ");
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
                 }
-                sb.append(", ");
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
             }
+            clazz = clazz.getSuperclass();
+            toStringFields = getToStringFields(clazz);
         }
         sb.setLength(sb.length() - 2);
         sb.append("}");
         return sb.toString();
     }
 
-    public static Field[] getToStringFields(Object object) {
-        Field[] allFields = object.getClass().getDeclaredFields();
+    public static Field[] getToStringFields(Class<?> clazz) {
+        Field[] allFields = clazz.getDeclaredFields();
         List<Field> fields = new ArrayList<>(allFields.length);
         for (Field field : allFields) {
             if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
