@@ -15,6 +15,10 @@ import java.util.concurrent.Executor;
  */
 public class SimpleExecutor implements Executor {
 
+    public SimpleExecutor(int maxThreadCount) {
+
+    }
+
     /**
      * Ставит задачу в очередь на исполнение, если надо -- создает новый поток.
      * 8 баллов
