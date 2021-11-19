@@ -1,5 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Comparator;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -43,7 +49,57 @@ package ru.mail.polis.homework.reflection;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        StringBuilder sbResult = new StringBuilder();
+        sbResult.append("{");
+        if (object == null) {
+            return "null";
+        }
+        Class<?> currentClass = object.getClass();
+        while (currentClass != null) {
+            Field[] fields = currentClass.getDeclaredFields();
+            Arrays.sort(fields, Comparator.comparing(Field::getName));
+            for (Field field : fields) {
+                if ((field.getModifiers() & Modifier.STATIC) != 0 ||
+                        field.getAnnotationsByType(SkipField.class).length != 0) {
+                    continue;
+                }
+                if (sbResult.length() != 1) {
+                    sbResult.append(", ");
+                }
+                try {
+                    sbResult.append(fieldToString(object, field));
+                } catch (IllegalAccessException ignored) {
+                }
+            }
+            currentClass = currentClass.getSuperclass();
+        }
+        sbResult.append("}");
+        return sbResult.toString();
+    }
+
+    private static String fieldToString(Object object, Field field) throws IllegalAccessException {
+        StringBuilder sbResult = new StringBuilder();
+        sbResult.append(field.getName()).append(": ");
+        if (!field.canAccess(object)) {
+            field.setAccessible(true);
+        }
+        Object value = field.get(object);
+        if (value == null) {
+            sbResult.append("null");
+            return sbResult.toString();
+        }
+        if (value.getClass().isArray()) {
+            sbResult.append("[");
+            for (int i = 0; i < Array.getLength(value); i++) {
+                if (i != 0) {
+                    sbResult.append(", ");
+                }
+                sbResult.append(Array.get(value, i));
+            }
+            sbResult.append("]");
+        } else {
+            sbResult.append(value);
+        }
+        return sbResult.toString();
     }
 }
