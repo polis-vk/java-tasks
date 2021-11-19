@@ -55,10 +55,8 @@ public class ReflectionToStringHelper {
         }
         Class<?> clazz = object.getClass();
         Field[] toStringFields = getToStringFields(clazz);
-        if (toStringFields.length == 0) {
-            return "{}";
-        }
         StringBuilder sb = new StringBuilder();
+        boolean isSomethingRecorded = false;
         sb.append("{");
         while (clazz != Object.class) {
             for (Field field : toStringFields) {
@@ -72,6 +70,7 @@ public class ReflectionToStringHelper {
                         sb.append(field.get(object));
                     }
                     sb.append(", ");
+                    isSomethingRecorded = true;
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -79,7 +78,9 @@ public class ReflectionToStringHelper {
             clazz = clazz.getSuperclass();
             toStringFields = getToStringFields(clazz);
         }
-        sb.setLength(sb.length() - 2);
+        if (isSomethingRecorded) {
+            sb.setLength(sb.length() - 2);
+        }
         sb.append("}");
         return sb.toString();
     }
