@@ -68,21 +68,7 @@ public class ReflectionToStringHelper {
                     sb.append(field.getName())
                             .append(": ");
                     if (field.getType().isArray()) {
-                        Object array = field.get(object);
-                        if (array == null) {
-                            sb.append("null");
-                        } else {
-                            int length = Array.getLength(array);
-                            sb.append("[");
-                            for (int i = 0; i < length; i++) {
-                                sb.append(Array.get(array, i));
-                                sb.append(", ");
-                            }
-                            if (length > 0) {
-                                sb.setLength(sb.length() - 2);
-                            }
-                            sb.append("]");
-                        }
+                        fillStringBuilderFromArray(sb, field, object);
                     } else {
                         sb.append(field.get(object));
                     }
@@ -99,7 +85,7 @@ public class ReflectionToStringHelper {
         return sb.toString();
     }
 
-    public static Field[] getToStringFields(Class<?> clazz) {
+    private static Field[] getToStringFields(Class<?> clazz) {
         Field[] allFields = clazz.getDeclaredFields();
         List<Field> fields = new ArrayList<>(allFields.length);
         for (Field field : allFields) {
@@ -110,5 +96,25 @@ public class ReflectionToStringHelper {
         }
         fields.sort(Comparator.comparing(Field::getName));
         return fields.toArray(new Field[0]);
+    }
+
+    private static void fillStringBuilderFromArray(StringBuilder sb, Field field, Object object) throws IllegalAccessException {
+        Object array = field.get(object);
+        if (array == null) {
+            sb.append("null");
+            return;
+        }
+        sb.append("[");
+        int length = Array.getLength(array);
+        if (length == 0) {
+            sb.append("]");
+            return;
+        }
+        for (int i = 0; i < length; i++) {
+            sb.append(Array.get(array, i));
+            sb.append(", ");
+        }
+        sb.setLength(sb.length() - 2);
+        sb.append("]");
     }
 }
