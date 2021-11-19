@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -63,9 +64,20 @@ public class ReflectionToStringHelper {
             try {
                 field.setAccessible(true);
                 sb.append(field.getName())
-                        .append(": ")
-                        .append(field.get(object))
-                        .append(", ");
+                        .append(": ");
+                if (field.getType().isArray()) {
+                    Object array = field.get(object);
+                    sb.append("[");
+                    for (int i = 0; i < Array.getLength(array); i++) {
+                        sb.append(Array.get(array, i));
+                        sb.append(", ");
+                    }
+                    sb.setLength(sb.length() - 2);
+                    sb.append("]");
+                } else {
+                    sb.append(field.get(object));
+                }
+                sb.append(", ");
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
