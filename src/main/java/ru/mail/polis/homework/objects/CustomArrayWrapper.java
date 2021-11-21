@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.objects;
 
-import java.util.ConcurrentModificationException;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -17,7 +15,6 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
-    private int countModification;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -27,13 +24,11 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
-        countModification++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
-        countModification++;
     }
 
     public int get(int index) {
@@ -53,7 +48,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new Iter();
+        return null;
     }
 
     /**
@@ -63,7 +58,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new Iter(1);
+        return null;
     }
 
     /**
@@ -73,48 +68,12 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new Iter(0);
+        return null;
     }
 
     private void checkIndex(int index) {
         if (index < 0 || index >= array.length) {
             throw new IndexOutOfBoundsException();
-        }
-    }
-
-    private class Iter implements Iterator<Integer> {
-        int position;
-        int increment;
-        int fixedCountModification = countModification;
-
-        private static final int INCREMENT_FOR_ODD_OR_EVEN = 2;
-        private static final int DEFAULT_INCREMENT = 1;
-
-        public Iter(int position) {
-            this.position = position;
-            this.increment = INCREMENT_FOR_ODD_OR_EVEN;
-        }
-
-        public Iter() {
-            this.increment = DEFAULT_INCREMENT;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return position < array.length;
-        }
-
-        @Override
-        public Integer next() {
-            if (fixedCountModification != countModification) {
-                throw new ConcurrentModificationException();
-            }
-            if (position >= array.length) {
-                throw new NoSuchElementException();
-            }
-
-            position += increment;
-            return array[position - increment];
         }
     }
 

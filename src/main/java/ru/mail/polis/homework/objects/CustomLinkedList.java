@@ -5,12 +5,7 @@ package ru.mail.polis.homework.objects;
  */
 public class CustomLinkedList {
 
-    private static final String DELIMITER = " -> ";
-    private static final String NULL = "null";
-
     private Node head;
-    private Node tail;
-    private int countOfElements;
 
     /**
      * Реализовать метод:
@@ -19,16 +14,7 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
-        countOfElements++;
 
-        if (head == null) {
-            head = new Node(value);
-            tail = head;
-            return;
-        }
-        Node prevTail = tail;
-        tail = new Node(value);
-        prevTail.setNext(tail);
     }
 
     /**
@@ -39,76 +25,36 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (index < 0 || index >= countOfElements) {
-            throw new IndexOutOfBoundsException();
-        }
 
-        countOfElements--;
-        if (index == 0) {
-            head = head.next;
-            return;
-        }
-
-        Node prevNode = null;
-        Node nowNode = head;
-        for (int i = 0; i < index; i++) {
-            prevNode = nowNode;
-            nowNode = nowNode.next;
-        }
-
-        prevNode.setNext(nowNode.next);
     }
 
     /**
      * Реализовать метод:
      * Переварачивает все элементы списка.
      * Пример:
-     * Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
-     * После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
+     *  Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
+     *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-        if (head == null || countOfElements == 1) {
-            return;
-        }
 
-        Node nowNode = head;
-        for (Node nodeForIter = head, prevNode = null; nodeForIter != null; ) {
-            nowNode = nodeForIter;
-            nodeForIter = nodeForIter.next;
-            nowNode.setNext(prevNode);
-            prevNode = nowNode;
-        }
-
-        head = nowNode;
     }
 
     /**
      * Метод выводит всю последовательность хранящуюся в списке начиная с head.
      * Формат вывода:
-     * - значение каждой Node должно разделяться " -> "
-     * - последовательность всегда заканчивается на null
-     * - если в списке нет элементов - верните строку "null"
+     *  - значение каждой Node должно разделяться " -> "
+     *  - последовательность всегда заканчивается на null
+     *  - если в списке нет элементов - верните строку "null"
+     *
+     * @return - String with description all list
      */
-
     @Override
     public String toString() {
-        if (head == null) {
-            return NULL;
-        }
-
-        StringBuilder listToString = new StringBuilder();
-        for (Node nowNode = head; nowNode != null; ) {
-            listToString.append(nowNode.value);
-            listToString.append(DELIMITER);
-            nowNode = nowNode.next;
-        }
-        listToString.append(NULL);
-
-        return listToString.toString();
+        return "1 -> 2 -> 3 -> null";
     }
 
     private static class Node {
-        private final int value;
+        private int value;
         private Node next;
 
         public Node(int value) {
