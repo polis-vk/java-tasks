@@ -1,5 +1,10 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -42,8 +47,103 @@ package ru.mail.polis.homework.reflection;
  */
 public class ReflectionToStringHelper {
 
+    private static final String COMPLEX_CLASS_START = "{";
+    private static final String NULL = "null";
+    private static final String PAIR_SEPARATOR = ": ";
+    private static final String ELEMENTS_SEPARATOR = ", ";
+    private static final String ARRAY_BEGIN = "[";
+    private static final String ARRAY_END = "]";
+    private static final String COMPLEX_CLASS_END = "}";
+
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        StringBuilder sb = new StringBuilder();
+        try {
+            printFields(object, sb);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
     }
+
+    private static void printFields(Object o, StringBuilder sb) throws IllegalAccessException {
+        if (o == null) {
+            sb.append(NULL);
+            return;
+        }
+        Class<?> curClass = o.getClass();
+        List<List<Field>> allFields = new ArrayList<>();
+        int curIndex = 0;
+        sb.append(COMPLEX_CLASS_START);
+        while (!curClass.equals(Object.class)) {
+            if (curIndex != 0) {
+                sb.append(ELEMENTS_SEPARATOR);
+            }
+            List<Field> fields = filterFields(curClass.getDeclaredFields());
+            sortFields(fields);
+            if (!fields.isEmpty()) {
+                for (int i = 0; i < fields.size() - 1; i++) {
+                    printField(o, fields.get(i), sb);
+                    sb.append(ELEMENTS_SEPARATOR);
+                }
+                printField(o, fields.get(fields.size() - 1), sb);
+            }
+            allFields.add(new LinkedList<>());
+            allFields.set(curIndex, fields);
+            ++curIndex;
+            curClass = curClass.getSuperclass();
+        }
+        sb.append(COMPLEX_CLASS_END);
+    }
+
+    private static ArrayList<Field> filterFields(Field[] fields) {
+        ArrayList<Field> res = new ArrayList<>();
+        for (Field field: fields) {
+            if (isRequiredField(field)) {
+                res.add(field);
+            }
+        }
+        return res;
+    }
+
+    private static void sortFields(List<Field> fields) {
+        fields.sort(Comparator.comparing(Field::getName));
+    }
+
+    private static void printField(Object o, Field field, StringBuilder sb) throws IllegalAccessException {
+        field.setAccessible(true);
+        sb.append(field.getName()).append(PAIR_SEPARATOR);
+        if (field.getType().isArray()) {
+            try {
+                field.get(o);
+            } catch (NullPointerException e) {
+                sb.append(NULL);
+                return;
+            }
+            Object arr = field.get(o);
+            if (arr == null) {
+                sb.append(NULL);
+                return;
+            }
+            if (Array.getLength(arr) == 0) {
+                sb.append(ARRAY_BEGIN).append(ARRAY_END);
+                return;
+            }
+            sb.append(ARRAY_BEGIN);
+            for (int i = 0; i < Array.getLength(arr) - 1; i++) {
+                sb.append(Array.get(arr, i)).append(ELEMENTS_SEPARATOR);
+            }
+            sb.append(Array.get(arr, Array.getLength(arr) - 1)).append(ARRAY_END);
+        } else {
+            try {
+                sb.append(field.get(o));
+            } catch (NullPointerException e) {
+                sb.append(NULL);
+            }
+        }
+    }
+
+    private static boolean isRequiredField(Field f) {
+        return !f.isAnnotationPresent(SkipField.class) && !Modifier.isStatic(f.getModifiers());
+    }
+
 }
