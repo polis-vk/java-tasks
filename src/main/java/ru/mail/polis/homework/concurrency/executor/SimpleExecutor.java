@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -22,7 +23,7 @@ public class SimpleExecutor implements Executor {
 
     private final AtomicInteger freeThreads;
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
-    private final HashSet<Worker> workers = new HashSet<>();
+    private final List<Worker> workers = new LinkedList<>();
     private final int maxThreadCount;
     private boolean isStop;
 
