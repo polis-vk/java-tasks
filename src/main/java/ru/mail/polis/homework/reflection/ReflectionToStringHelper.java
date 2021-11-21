@@ -58,44 +58,43 @@ public class ReflectionToStringHelper {
         result.append('{');
 
         do {
-            result.append(getFields(objClass, object));
+            getFields(objClass, object, result);
             objClass = objClass.getSuperclass();
         } while (!objClass.equals(Object.class));
         if (result.length() > 1) {
             result.setLength(result.length() - 2);
         }
+
         result.append('}');
         return result.toString();
     }
 
-    private static String getFields(Class<?> objClass, Object object) {
-        StringBuilder result = new StringBuilder();
+    private static void getFields(Class<?> objClass, Object object, StringBuilder result) {
         List<Field> fields = Arrays.asList(objClass.getDeclaredFields());
         fields.sort(Comparator.comparing(Field::getName));
         for (Field field : fields) {
             try {
-                if (!field.isAnnotationPresent(SkipField.class) && !Modifier.isStatic(field.getModifiers())) {
-                    result.append(field.getName());
-                    result.append(": ");
-                    field.setAccessible(true);
-                    if (field.get(object) == null) {
-                        result.append("null");
-                    } else if (field.getType().isArray()) {
-                        result.append(printArray(field.get(object)));
-                    } else {
-                        result.append(field.get(object));
-                    }
-                    result.append(", ");
+                if (field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers())) {
+                    continue;
                 }
+                result.append(field.getName());
+                result.append(": ");
+                field.setAccessible(true);
+                if (field.get(object) == null) {
+                    result.append("null");
+                } else if (field.getType().isArray()) {
+                    printArray(field.get(object), result);
+                } else {
+                    result.append(field.get(object));
+                }
+                result.append(", ");
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
-        return result.toString();
     }
 
-    private static String printArray(Object arr) {
-        StringBuilder result = new StringBuilder();
+    private static void printArray(Object arr, StringBuilder result) {
         result.append("[");
 
         Object element;
@@ -108,11 +107,10 @@ public class ReflectionToStringHelper {
             }
             result.append(", ");
         }
-        if (result.length() > 1) {
+        if (Array.getLength(arr) > 0) {
             result.setLength(result.length() - 2);
         }
 
         result.append("]");
-        return result.toString();
     }
 }
