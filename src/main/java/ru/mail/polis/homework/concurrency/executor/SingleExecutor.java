@@ -1,16 +1,28 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
- *
+ * <p>
  * Задачи должны выполняться в порядке FIFO
- *
+ * <p>
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
 
+    private final BlockingQueue<Runnable> queue;
+    private final Thread thread;
+    private boolean isStop;
+
+    public SingleExecutor() {
+        queue = new LinkedBlockingQueue<>();
+        thread = new Thread(this::execute, "Executor");
+        thread.start();
+    }
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -18,6 +30,21 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (isStop) {
+            throw new RejectedExecutionException();
+        }
+        queue.add(command);
+    }
+
+    private void execute() {
+        while (!isStop) {
+            try {
+                Runnable task = queue.take();
+                task.run();
+            } catch (InterruptedException e) {
+                break;
+            }
+        }
     }
 
     /**
@@ -25,6 +52,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
+        isStop = true;
     }
 
     /**
@@ -32,6 +60,7 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
-
+        thread.interrupt();
+        isStop = true;
     }
 }
