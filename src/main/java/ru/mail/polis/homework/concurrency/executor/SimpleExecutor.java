@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SimpleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> queueOfTasks;
-    private final List<Worker> poolOfThreads;
+    private final List<Worker> poolOfThreads = new ArrayList<>();
     private final AtomicBoolean canAdd = new AtomicBoolean(true);
     private final int maxCountOfThreads;
 
@@ -29,7 +29,6 @@ public class SimpleExecutor implements Executor {
         }
         this.maxCountOfThreads = maxCountThreads;
         this.queueOfTasks = new ArrayBlockingQueue<>(maxCountThreads);
-        poolOfThreads = new ArrayList<>();
     }
 
     /**
@@ -81,7 +80,7 @@ public class SimpleExecutor implements Executor {
     private class Worker extends Thread {
         @Override
         public void run() {
-            while (canAdd.get()) {
+            while (canAdd.get() || !queueOfTasks.isEmpty()) {
                 try {
                     queueOfTasks.take().run();
                 } catch (InterruptedException e) {
