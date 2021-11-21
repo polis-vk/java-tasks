@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+import java.util.concurrent.*;
 import java.util.concurrent.Executor;
 
 /**
@@ -11,6 +14,9 @@ import java.util.concurrent.Executor;
  */
 public class SingleExecutor implements Executor {
 
+    private final Queue<Runnable> queueOfTasks = new ArrayDeque<>();
+    private boolean canAdd = true;
+    private final EternalThread singleThread = new EternalThread();
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -18,6 +24,13 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (!canAdd) {
+            throw new RejectedExecutionException();
+        }
+        queueOfTasks.add(command);
+        if (singleThread.getState() == Thread.State.NEW) {
+            singleThread.start();
+        }
     }
 
     /**
@@ -25,6 +38,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
+        canAdd = false;
     }
 
     /**
@@ -32,6 +46,19 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
+        canAdd = false;
+        singleThread.interrupt();
+    }
 
+    private class EternalThread extends Thread {
+
+        @Override
+        public void run() {
+            while (canAdd || !queueOfTasks.isEmpty()) {
+                if (!queueOfTasks.isEmpty()) {
+                    queueOfTasks.poll().run();
+                }
+            }
+        }
     }
 }
