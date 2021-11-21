@@ -1,5 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Comparator;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -37,13 +43,80 @@ package ru.mail.polis.homework.reflection;
  *   Medium - нет наследования, массивов, но есть статические поля и поля с аннотацией SkipField (6 баллов)
  *   Hard - нужно реализовать все требования задания (10 баллов)
  *
- * Итого, по заданию можно набрать 20 баллов
+ * �?того, по заданию можно набрать 20 баллов
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        Class<?> objectClass = object.getClass();
+        StringBuilder answer = new StringBuilder();
+        while (objectClass != Object.class) {
+            Field[] fields = objectClass.getDeclaredFields();
+            Arrays.sort(fields, Comparator.comparing(Field::getName));
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers())) {
+                } else {
+                    field.setAccessible(true);
+                    if (field.getType().isArray()) {
+                        arrayFieldToStringBuilder(field, answer, object);
+                    } else {
+                        toStringBuilder(field, answer, object);
+                    }
+                    answer.append(", ");
+                }
+            }
+            objectClass = objectClass.getSuperclass();
+        }
+        if (answer.length() >= 2) {
+            answer.setLength(answer.length() - 2); // im too lazy to make it better
+        }
+
+        return wrapInBracketsCurly(answer);
+    }
+
+    private static void arrayFieldToStringBuilder(Field field, StringBuilder answer, Object object) {
+        try {
+            answer.append(field.getName()).append(": ");
+            if (field.get(object) == null) {
+                answer.append("null");
+            } else {
+                StringBuilder answerPart = new StringBuilder();
+                Object arrayObject = field.get(object);
+                for (int iter = 0; iter < Array.getLength(arrayObject); iter++) {
+                    answerPart.append(Array.get(arrayObject, iter)).append(", ");
+                }
+                if (Array.getLength(arrayObject) > 0) {
+                    answerPart.setLength(answerPart.length() - 2); // im too lazy to make it better
+                }
+                answer.append(wrapInBracketsSquare(answerPart));
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void toStringBuilder(Field field, StringBuilder answer, Object object) {
+        try {
+            answer.append(field.getName()).append(": ");
+            if (field.get(object) == null) {
+                answer.append("null");
+            } else {
+                answer.append(field.get(object));
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String wrapInBracketsCurly(StringBuilder answer){
+        return "{" + answer.toString() + "}";
+    }
+
+    private static StringBuilder wrapInBracketsSquare(StringBuilder answer){
+        return new StringBuilder("[").append(answer).append("]");
     }
 }
