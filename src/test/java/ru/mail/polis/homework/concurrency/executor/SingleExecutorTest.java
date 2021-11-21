@@ -77,12 +77,13 @@ public class SingleExecutorTest {
         CountDownLatch first = new CountDownLatch(1);
         CountDownLatch second = new CountDownLatch(1);
         CountDownLatch executeSecond = new CountDownLatch(1);
+        CountDownLatch countDownLatch108 = new CountDownLatch(1);
         AtomicInteger counter = new AtomicInteger();
         AtomicInteger error = new AtomicInteger();
 
         executor.execute(() -> {
-            first.countDown();
             counter.incrementAndGet();
+            first.countDown();
             try {
                 executeSecond.await(2, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
@@ -92,13 +93,19 @@ public class SingleExecutorTest {
         });
 
         executor.execute(() -> {
-            second.countDown();
+            try {
+                countDownLatch108.await(2, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                error.incrementAndGet();
+            }
             counter.incrementAndGet();
+            second.countDown();
         });
         executeSecond.countDown();
 
         assertTrue(first.await(5, TimeUnit.SECONDS));
         assertEquals(1, counter.get());
+        countDownLatch108.countDown();
 
         try {
             executor.execute(counter::incrementAndGet);
