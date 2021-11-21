@@ -1,16 +1,25 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
- *
+ * <p>
  * Задачи должны выполняться в порядке FIFO
- *
+ * <p>
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
+    private boolean isActive = true;
+    private final Thread worker = new Thread(this::run);
 
+    public SingleExecutor() {
+        worker.start();
+    }
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -18,6 +27,21 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (!isActive()) {
+            throw new RejectedExecutionException();
+        }
+        tasks.add(command);
+    }
+
+
+    private void run() {
+        while (isActive()) {
+            try {
+                tasks.take().run();
+            } catch (InterruptedException e) {
+                break;
+            }
+        }
     }
 
     /**
@@ -25,6 +49,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
+        setActive(false);
     }
 
     /**
@@ -32,6 +57,15 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
+        shutdown();
+        worker.interrupt();
+    }
 
+    public synchronized boolean isActive() {
+        return isActive;
+    }
+
+    public synchronized void setActive(boolean active) {
+        isActive = active;
     }
 }
