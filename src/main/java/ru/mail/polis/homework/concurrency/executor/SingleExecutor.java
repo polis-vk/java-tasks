@@ -35,7 +35,7 @@ public class SingleExecutor implements Executor {
 
 
     private void run() {
-        while (isActive()) {
+        while (isActive() || !tasks.isEmpty()) {
             try {
                 tasks.take().run();
             } catch (InterruptedException e) {

@@ -99,7 +99,7 @@ public class SimpleExecutor implements Executor {
         @Override
         public void run() {
             firstTask.run();
-            while (isActive()) {
+            while (isActive() || !tasks.isEmpty()) {
                 freeWorkers.incrementAndGet();
                 try {
                     Runnable task = tasks.take();
