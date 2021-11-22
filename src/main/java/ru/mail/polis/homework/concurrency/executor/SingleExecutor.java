@@ -1,16 +1,26 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
- *
+ * <p>
  * Задачи должны выполняться в порядке FIFO
- *
+ * <p>
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
 
+    private final BlockingQueue<Runnable> workQueue = new LinkedBlockingDeque<>();
+    private boolean isShuttingDown;
+    private final Worker worker = new Worker();
+
+    public SingleExecutor() {
+        worker.start();
+    }
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -18,6 +28,14 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (command == null) {
+            throw new NullPointerException();
+        }
+        if (isShuttingDown) {
+            throw new RejectedExecutionException();
+        }
+
+        workQueue.add(command);
     }
 
     /**
@@ -25,6 +43,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
+        isShuttingDown = true;
     }
 
     /**
@@ -32,6 +51,30 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
+        isShuttingDown = true;
+        worker.interrupt();
+    }
 
+    class Worker extends Thread {
+
+        public boolean isBusy = false;
+
+        @Override
+        public void run() {
+            while (!isShuttingDown) {
+                Runnable r = null;
+                if (!workQueue.isEmpty()) {
+                    r = workQueue.poll();
+                }
+                if (r != null) {
+                    isBusy = true;
+                    r.run();
+                    isBusy = false;
+                }
+            }
+            while (!workQueue.isEmpty()) {
+                workQueue.poll().run();
+            }
+        }
     }
 }
