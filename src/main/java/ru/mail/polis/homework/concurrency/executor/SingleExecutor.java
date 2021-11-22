@@ -4,18 +4,19 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
- *
+ * <p>
  * Задачи должны выполняться в порядке FIFO
- *
+ * <p>
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
 
     private final Queue<Runnable> queueOfTasks = new ArrayDeque<>();
-    private boolean canAdd = true;
+    private final AtomicBoolean canAdd = new AtomicBoolean(true);
     private final EternalThread singleThread = new EternalThread();
 
     /**
@@ -24,7 +25,7 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (!canAdd) {
+        if (!canAdd.get()) {
             throw new RejectedExecutionException();
         }
         queueOfTasks.add(command);
@@ -38,7 +39,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        canAdd = false;
+        canAdd.set(false);
     }
 
     /**
@@ -46,7 +47,7 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
-        canAdd = false;
+        canAdd.set(false);
         singleThread.interrupt();
     }
 
@@ -54,7 +55,7 @@ public class SingleExecutor implements Executor {
 
         @Override
         public void run() {
-            while (canAdd || !queueOfTasks.isEmpty()) {
+            while (canAdd.get() || !queueOfTasks.isEmpty()) {
                 if (!queueOfTasks.isEmpty()) {
                     queueOfTasks.poll().run();
                 }
