@@ -64,7 +64,7 @@ public class ReflectionToStringHelper {
                     continue;
                 }
                 try {
-                    sbResult.append(fieldToString(object, field));
+                    parseField(object, field, sbResult);
                 } catch (IllegalAccessException ignored) {
                 }
                 sbResult.append(", ");
@@ -78,8 +78,7 @@ public class ReflectionToStringHelper {
         return sbResult.toString();
     }
 
-    private static String fieldToString(Object object, Field field) throws IllegalAccessException {
-        StringBuilder sbResult = new StringBuilder();
+    private static void parseField(Object object, Field field, StringBuilder sbResult) throws IllegalAccessException {
         sbResult.append(field.getName()).append(": ");
         if (!field.canAccess(object)) {
             field.setAccessible(true);
@@ -87,7 +86,7 @@ public class ReflectionToStringHelper {
         Object value = field.get(object);
         if (value == null) {
             sbResult.append("null");
-            return sbResult.toString();
+            return;
         }
         if (value.getClass().isArray()) {
             sbResult.append("[");
@@ -102,6 +101,5 @@ public class ReflectionToStringHelper {
         } else {
             sbResult.append(value);
         }
-        return sbResult.toString();
     }
 }
