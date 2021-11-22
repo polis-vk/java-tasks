@@ -1,13 +1,13 @@
 package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -23,7 +23,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SimpleExecutor implements Executor {
 
     private final List<Worker> threadPool;
-    private final AtomicInteger addingThreadIndex = new AtomicInteger(0);
     private boolean shutdown = false;
     private int maxThreadCount;
 
@@ -41,7 +40,7 @@ public class SimpleExecutor implements Executor {
      * 8 баллов
      */
     @Override
-    public void execute(Runnable command) {
+    public synchronized void execute(Runnable command) {
         if (command == null) {
             throw new NullPointerException();
         }
@@ -57,10 +56,7 @@ public class SimpleExecutor implements Executor {
         } else if (freeWorker.isPresent()) {
             freeWorker.get().addCommand(command);
         } else {
-            if (addingThreadIndex.incrementAndGet() >= threadPool.size()) {
-                addingThreadIndex.set(0);
-            }
-            threadPool.get(addingThreadIndex.get()).addCommand(command);
+            threadPool.stream().min(Comparator.comparingInt(Worker::commandsNumber)).get().addCommand(command);
         }
     }
 
@@ -136,6 +132,10 @@ public class SimpleExecutor implements Executor {
 
         public boolean isFree() {
             return !isWorking;
+        }
+
+        public int commandsNumber() {
+            return commands.size();
         }
     }
 }
