@@ -41,23 +41,20 @@ public class SimpleExecutor implements Executor {
         if (!canAdd.get()) {
             throw new RejectedExecutionException();
         }
+        synchronized (this) {
+            queueOfTasks.offer(command);
 
-        queueOfTasks.offer(command);
-        if (countOfFreeThread.get() > 0) {
-            return;
-        }
-
-        if (poolOfThreads.size() < maxCountOfThreads && !queueOfTasks.isEmpty()) {
-            Worker worker = new Worker();
             if (countOfFreeThread.get() > 0) {
                 return;
             }
-            poolOfThreads.add(worker);
-            countOfFreeThread.incrementAndGet();
-            worker.start();
+
+            if (poolOfThreads.size() < maxCountOfThreads && !queueOfTasks.isEmpty()) {
+                Worker worker = new Worker();
+                poolOfThreads.add(worker);
+                countOfFreeThread.incrementAndGet();
+                worker.start();
+            }
         }
-
-
     }
 
     /**
