@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class SingleExecutor implements Executor {
 
-    private final Queue<Runnable> queueOfTasks = new ArrayDeque<>();
+    private final ConcurrentLinkedQueue<Runnable> queueOfTasks = new ConcurrentLinkedQueue<>();
     private final AtomicBoolean canAdd = new AtomicBoolean(true);
     private final EternalThread singleThread = new EternalThread();
 
@@ -28,7 +28,7 @@ public class SingleExecutor implements Executor {
         if (!canAdd.get()) {
             throw new RejectedExecutionException();
         }
-        queueOfTasks.add(command);
+        queueOfTasks.offer(command);
         if (singleThread.getState() == Thread.State.NEW) {
             singleThread.start();
         }
