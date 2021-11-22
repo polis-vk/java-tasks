@@ -53,78 +53,64 @@ public class ReflectionToStringHelper {
             return "null";
         }
 
-        StringBuilder strB = new StringBuilder();
-        strB.append("{");
+        StringBuilder builder = new StringBuilder();
+        builder.append("{");
 
         Class<?> clazz = object.getClass();
         String prefix = "";
         while (clazz != Object.class) {
-            strB.append(prefix);
-            addClassFields(strB, clazz, object);
+            builder.append(prefix);
+            addClassFields(builder, clazz, object);
             clazz = clazz.getSuperclass();
             prefix = ", ";
         }
 
-        strB.append("}");
+        builder.append("}");
 
-        return strB.toString();
+        return builder.toString();
     }
 
-    private static void addClassFields(StringBuilder strB, Class<?> clazz, Object object) {
+    private static void addClassFields(StringBuilder builder, Class<?> clazz, Object object) {
         List<Field> fields = Arrays.stream(clazz.getDeclaredFields())
                 .filter(field -> !(Modifier.isStatic(field.getModifiers())))
                 .filter(field -> !(field.isAnnotationPresent(SkipField.class)))
+                .peek(field -> field.setAccessible(true))
+                .sorted(Comparator.comparing(Field::getName))
                 .collect(Collectors.toList());
 
-        Map<String, Object> pairs = getPairs(fields, object);
-
-        putPairs(strB, pairs);
-    }
-
-    private static Map<String, Object> getPairs(List<Field> fields, Object object) {
-        HashMap<String, Object> pairs = new HashMap<>();
+        String prefix = "";
         for (Field field : fields) {
-            field.setAccessible(true);
+            builder.append(prefix);
+            builder.append(field.getName());
+            builder.append(": ");
+
+            Object value = null;
             try {
-                pairs.put(field.getName(), field.get(object));
+                value = field.get(object);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
-        }
-        return pairs;
-    }
-
-    private static void putPairs(StringBuilder strB, Map<String, Object> pairs) {
-        List<String> names = new ArrayList<>(pairs.keySet());
-        java.util.Collections.sort(names);
-
-        String prefix = "";
-        for (String name : names) {
-            strB.append(prefix);
-            strB.append(name);
-            strB.append(": ");
-
-            Object value = pairs.get(name);
             if (value != null && value.getClass().isArray()) {
-                putArray(strB, value);
+                putArray(builder, value);
             } else {
-                strB.append(value);
+                builder.append(value);
             }
+
             prefix = ", ";
         }
     }
 
-    private static void putArray(StringBuilder strB, Object array) {
-        strB.append("[");
+    private static void putArray(StringBuilder builder, Object array) {
+        builder.append("[");
 
         int length = Array.getLength(array);
         String prefix = "";
         for (int i = 0; i < length; i++) {
-            strB.append(prefix);
-            strB.append(Array.get(array, i));
+            builder.append(prefix);
+            builder.append(Array.get(array, i));
             prefix = ", ";
         }
 
-        strB.append("]");
+        builder.append("]");
     }
 }
