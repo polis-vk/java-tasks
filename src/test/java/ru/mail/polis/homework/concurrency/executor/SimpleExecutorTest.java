@@ -4,8 +4,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
@@ -64,6 +67,30 @@ public class SimpleExecutorTest {
     @Test
     public void sevenThreadTest() throws InterruptedException {
         execute(7, 5);
+        assertEquals(5, executor.getLiveThreadsCount());
+    }
+
+    @Test
+    public void tenSimultaneousThreadTest() throws InterruptedException {
+        CountDownLatch cdl = new CountDownLatch(10);
+        CyclicBarrier barrier = new CyclicBarrier(10);
+        IntStream.range(0, 10)
+                .mapToObj(i -> new Thread(null , () -> {
+                    try {
+                        barrier.await();
+                        CountDownLatch latch = new CountDownLatch(2);
+                        executor.execute(new Worker(latch, latch));
+                        assertTrue(latch.await(10, TimeUnit.SECONDS));
+                        cdl.countDown();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (BrokenBarrierException e) {
+                        e.printStackTrace();
+                    }
+                }, "Thread [" + i + "]", 0))
+                .forEach(Thread::start);
+
+        assertTrue(cdl.await(15, TimeUnit.SECONDS));
         assertEquals(5, executor.getLiveThreadsCount());
     }
 
