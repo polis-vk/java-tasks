@@ -62,10 +62,10 @@ public class ReflectionToStringHelper {
 
         try {
             Class<?> clazz = Class.forName(object.getClass().getName());
-            getFieldsFromObject(clazz.getDeclaredFields(), object, result);
+            fieldsToStringBuilder(clazz.getDeclaredFields(), object, result);
             Class<?> superClazz = clazz.getSuperclass();
             while (superClazz != null) {
-                getFieldsFromObject(superClazz.getDeclaredFields(), object, result);
+                fieldsToStringBuilder(superClazz.getDeclaredFields(), object, result);
                 superClazz = superClazz.getSuperclass();
             }
         } catch (ReflectiveOperationException e) {
@@ -78,7 +78,7 @@ public class ReflectionToStringHelper {
         return result.append("}").toString();
     }
 
-    private static void getFieldsFromObject(Field[] fields, Object object, StringBuilder buffer)
+    private static void fieldsToStringBuilder(Field[] fields, Object object, StringBuilder buffer)
             throws IllegalAccessException {
         if (buffer == null || fields == null || fields.length == 0) {
             return;
@@ -95,7 +95,7 @@ public class ReflectionToStringHelper {
             buffer.append(field.getName()).append(SEPARATOR_BETWEEN_NAME_VALUE);
 
             if (valueOfField != null && valueOfField.getClass().isArray()) {
-                getArrayFromField(buffer, valueOfField);
+                arrayToStringBuilder(buffer, valueOfField);
             } else {
                 buffer.append(valueOfField);
             }
@@ -103,7 +103,7 @@ public class ReflectionToStringHelper {
         }
     }
 
-    private static void getArrayFromField(@NotNull StringBuilder bufferFields, @NotNull Object valueOfField) {
+    private static void arrayToStringBuilder(@NotNull StringBuilder bufferFields, @NotNull Object valueOfField) {
         bufferFields.append("[");
         for (int i = 0; i < Array.getLength(valueOfField) - 1; i++) {
             bufferFields.append(Array.get(valueOfField, i))
