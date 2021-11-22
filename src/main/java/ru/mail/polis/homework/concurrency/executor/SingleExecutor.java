@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
-
     private final ConcurrentLinkedQueue<Runnable> queueOfTasks = new ConcurrentLinkedQueue<>();
     private final AtomicBoolean canAdd = new AtomicBoolean(true);
     private final EternalThread singleThread = new EternalThread();
@@ -59,5 +58,6 @@ public class SingleExecutor implements Executor {
                 }
             }
         }
+
     }
 }

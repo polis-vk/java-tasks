@@ -18,7 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Max 10 баллов
  */
 public class SimpleExecutor implements Executor {
-
     private final BlockingQueue<Runnable> queueOfTasks = new LinkedBlockingQueue<>();
     private final List<Worker> poolOfThreads = new ArrayList<>();
     private final AtomicBoolean canAdd = new AtomicBoolean(true);
@@ -41,17 +40,13 @@ public class SimpleExecutor implements Executor {
         if (!canAdd.get()) {
             throw new RejectedExecutionException();
         }
-        synchronized (this) {
+
+        synchronized (queueOfTasks) {
             queueOfTasks.offer(command);
 
-            if (countOfFreeThread.get() > 0) {
-                return;
-            }
-
-            if (poolOfThreads.size() < maxCountOfThreads && !queueOfTasks.isEmpty()) {
+            if (countOfFreeThread.get() == 0 && poolOfThreads.size() < maxCountOfThreads && !queueOfTasks.isEmpty()) {
                 Worker worker = new Worker();
                 poolOfThreads.add(worker);
-                countOfFreeThread.incrementAndGet();
                 worker.start();
             }
         }
@@ -86,12 +81,14 @@ public class SimpleExecutor implements Executor {
         public void run() {
             while (canAdd.get() || !queueOfTasks.isEmpty()) {
                 try {
+                    countOfFreeThread.incrementAndGet();
                     Runnable task = queueOfTasks.take();
                     countOfFreeThread.decrementAndGet();
                     task.run();
-                    countOfFreeThread.incrementAndGet();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                    Thread.currentThread().interrupt();
+                    return;
                 }
             }
         }
