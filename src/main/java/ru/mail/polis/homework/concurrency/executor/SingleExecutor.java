@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
