@@ -3,9 +3,8 @@ package ru.mail.polis.homework.reflection;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -54,64 +53,57 @@ public class ReflectionToStringHelper {
         }
         StringBuilder res = new StringBuilder();
         try {
-            processObject(object, object.getClass(), res);
+            processObject(object, res);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
         return res.toString();
     }
 
-    private static void processObject(Object object, Class<?> clazz, StringBuilder res) throws IllegalAccessException {
-        TreeMap<String, String> name_values = new TreeMap<>();
-        Field[] fields = clazz.getDeclaredFields();
-        for (Field field : fields) {
-            field.setAccessible(true);
-            if (!field.isAnnotationPresent(SkipField.class) && !isModifierSet(field.getModifiers(), Modifier.STATIC)) {
-                if (field.getType().isArray()) {
-                    name_values.put(field.getName(), processArray(field, object));
-                } else if (isPrimitiveOrPrimitiveWrapperOrStringOrEnum(field.getType())) {
-                    name_values.put(field.getName(), String.valueOf(field.get(object)));
-                } else {
-                    Object obj = field.get(object);
-                    if (obj != null) {
-                        processObject(obj, obj.getClass(), res);
-                        name_values.put(field.getName(), res.toString());
-                    } else {
-                        name_values.put(field.getName(), "null");
+    private static void processObject(Object object, StringBuilder res) throws IllegalAccessException {
+        Class<?> clazz = object.getClass();
+        res.append('{');
+        boolean isNotFirstObjField = false;
+        while (clazz != Object.class) {
+            Field[] fields = clazz.getDeclaredFields();
+            Arrays.sort(fields, Comparator.comparing(Field::getName));
+            for (Field field : fields) {
+                field.setAccessible(true);
+                if (!field.isAnnotationPresent(SkipField.class) && !Modifier.isStatic(field.getModifiers())) {
+                    if (isNotFirstObjField) {
+                        res.append(", ");
                     }
+                    res.append(field.getName()).append(": ");
+                    if (field.getType().isArray()) {
+                        processArray(field, object, res);
+                    } else if (isPrimitiveOrPrimitiveWrapperOrStringOrEnum(field.getType())) {
+                        res.append(field.get(object));
+                    } else {
+                        res.append(field.get(object));
+                    }
+                    isNotFirstObjField = true;
                 }
             }
+            clazz = clazz.getSuperclass();
         }
-        if (clazz.getSuperclass() != Object.class) {
-            res.delete(0, res.length());
-            processObject(object, clazz.getSuperclass(), res);
-            if (res.length() != 2) {
-                res.deleteCharAt(0);
-                res.deleteCharAt(res.length() - 1);
-                if (!name_values.isEmpty()) {
-                    res.insert(0, ", ");
-                }
-            }
-        }
-        res.insert(0, mapToString(name_values));
         res.append('}');
     }
 
-    private static String mapToString(Map<String, String> map) {
-        Iterator<Map.Entry<String, String>> i = map.entrySet().iterator();
-        if (!i.hasNext())
-            return "{";
-
-        StringBuilder sb = new StringBuilder();
-        sb.append('{');
-        for (; ; ) {
-            Map.Entry<String, String> e = i.next();
-            sb.append(e.getKey()).append(": ").append(e.getValue());
-            if (!i.hasNext())
-                return sb.toString();
-//            .append('}')
-            sb.append(',').append(' ');
+    private static void processArray(Field field, Object object, StringBuilder sb) throws IllegalAccessException {
+        Object arr = field.get(object);
+        if (arr == null) {
+            sb.append("null");
+            return;
         }
+        sb.append('[');
+        int length = Array.getLength(arr);
+        for (int i = 0; i < length; i++) {
+            sb.append(Array.get(arr, i));
+            if (i != length - 1) {
+                sb.append(", ");
+            }
+        }
+        sb.append(']');
     }
 
     private static boolean isPrimitiveOrPrimitiveWrapperOrStringOrEnum(Class<?> type) {
@@ -119,28 +111,6 @@ public class ReflectionToStringHelper {
                 type == Double.class || type == Float.class || type == Long.class ||
                 type == Integer.class || type == Short.class || type == Character.class ||
                 type == Byte.class || type == Boolean.class || type == String.class;
-    }
-
-    private static String processArray(Field field, Object object) throws IllegalAccessException {
-        Object arr = field.get(object);
-        if (arr == null) {
-            return "null";
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append('[');
-        int length = Array.getLength(arr);
-        for (int i = 0; i < length; i++) {
-            sb.append(Array.get(arr, i)).append(", ");
-        }
-        if (length != 0) {
-            sb.delete(sb.length() - 2, sb.length());
-        }
-        sb.append(']');
-        return sb.toString();
-    }
-
-    private static boolean isModifierSet(int allModifiers, int specificModifier) {
-        return (allModifiers & specificModifier) > 0;
     }
 
 }
