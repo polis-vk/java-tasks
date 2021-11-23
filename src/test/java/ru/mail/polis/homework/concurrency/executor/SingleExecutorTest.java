@@ -77,35 +77,46 @@ public class SingleExecutorTest {
         CountDownLatch first = new CountDownLatch(1);
         CountDownLatch second = new CountDownLatch(1);
         CountDownLatch executeSecond = new CountDownLatch(1);
+        CountDownLatch countDownLatch110 = new CountDownLatch(1);
+        CountDownLatch afterShutdown = new CountDownLatch(1);
         AtomicInteger counter = new AtomicInteger();
         AtomicInteger error = new AtomicInteger();
 
         executor.execute(() -> {
-            first.countDown();
             counter.incrementAndGet();
+            first.countDown();
             try {
                 executeSecond.await(2, TimeUnit.SECONDS);
+                executor.shutdown();
             } catch (InterruptedException e) {
                 error.incrementAndGet();
             }
-            executor.shutdown();
+            afterShutdown.countDown();
         });
 
         executor.execute(() -> {
-            second.countDown();
+            try {
+                countDownLatch110.await(2, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                error.incrementAndGet();
+            }
             counter.incrementAndGet();
+            second.countDown();
         });
         executeSecond.countDown();
 
         assertTrue(first.await(5, TimeUnit.SECONDS));
         assertEquals(1, counter.get());
+        countDownLatch110.countDown();
 
+        afterShutdown.await(5, TimeUnit.SECONDS);
         try {
             executor.execute(counter::incrementAndGet);
             fail();
         } catch (java.util.concurrent.RejectedExecutionException e) {
 
         } catch (Throwable t) {
+            t.printStackTrace();
             fail(t.getClass().getName());
         }
 
