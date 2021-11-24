@@ -40,13 +40,13 @@ public class SimpleExecutor implements Executor {
         if (finish) {
             throw new RejectedExecutionException();
         }
-        if (!doWeHaveWaitingThreads() && canWeCreateThread()) {
-            createThread();
+        synchronized (threads) {
+            if (!doWeHaveWaitingThreads() && canWeCreateThread()) {
+                createThread();
+            }
         }
-        synchronized (tasks) {
-            tasks.add(command);
-            tasks.notify();
-        }
+
+        tasks.add(command);
     }
 
     /**
@@ -78,11 +78,9 @@ public class SimpleExecutor implements Executor {
     }
 
     private boolean doWeHaveWaitingThreads() {
-        synchronized (threads) {
-            for (Thread thread : threads) {
-                if (thread.getState() == Thread.State.WAITING) {
-                    return true;
-                }
+        for (Thread thread : threads) {
+            if (thread.getState() == Thread.State.WAITING) {
+                return true;
             }
         }
 
@@ -90,29 +88,17 @@ public class SimpleExecutor implements Executor {
     }
 
     private boolean canWeCreateThread() {
-        synchronized (threads) {
-            return threads.size() < maxThreads;
-        }
+        return threads.size() < maxThreads;
     }
 
     private void createThread() {
         Thread newThread = new Thread(() -> {
             while (true) {
-                Runnable task;
-
-                synchronized (tasks) {
-                    while (tasks.isEmpty()) {
-                        try {
-                            tasks.wait();
-                        } catch (InterruptedException e) {
-                            return;
-                        }
-                    }
-
-                    task = tasks.poll();
+                try {
+                    tasks.take().run();
+                } catch (InterruptedException e) {
+                    return;
                 }
-
-                task.run();
             }
         });
 
