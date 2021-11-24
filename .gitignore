@@ -5,7 +5,6 @@
 *.ipr
 gradlew
 gradlew.bat
-build.gradle
 
 # Mobile Tools for Java (J2ME)
 .gradle/
