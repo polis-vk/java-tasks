@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
@@ -10,7 +13,13 @@ import java.util.concurrent.Executor;
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
+    private final List<Runnable> queue = new LinkedList<>();
+    private final Thread thread = new Thread(this::run);
+    private boolean isWorking = true;
 
+    public SingleExecutor() {
+        this.thread.start();
+    }
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -18,6 +27,10 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (!isWorking) {
+            throw new RejectedExecutionException();
+        }
+        queue.add(command);
     }
 
     /**
@@ -25,6 +38,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
+        isWorking = false;
     }
 
     /**
@@ -32,6 +46,15 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
+        thread.interrupt();
+        isWorking = false;
+    }
 
+    private void run() {
+        while (isWorking) {
+            while (!queue.isEmpty()) {
+                queue.remove(0).run();
+            }
+        }
     }
 }
