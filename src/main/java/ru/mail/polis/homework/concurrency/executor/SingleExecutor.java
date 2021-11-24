@@ -20,7 +20,7 @@ public class SingleExecutor implements Executor {
 
     public SingleExecutor() {
         queue = new LinkedBlockingQueue<>();
-        thread = new Thread(this::execute, "Executor");
+        thread = new Thread(new Worker(), "Executor");
         thread.start();
     }
 
@@ -34,17 +34,6 @@ public class SingleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
         queue.add(command);
-    }
-
-    private void execute() {
-        while (!isStop) {
-            try {
-                Runnable task = queue.take();
-                task.run();
-            } catch (InterruptedException e) {
-                break;
-            }
-        }
     }
 
     /**
@@ -62,5 +51,19 @@ public class SingleExecutor implements Executor {
     public void shutdownNow() {
         thread.interrupt();
         isStop = true;
+    }
+
+    private class Worker implements Runnable {
+        @Override
+        public void run() {
+            while (!thread.isInterrupted()) {
+                try {
+                    Runnable task = queue.take();
+                    task.run();
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+        }
     }
 }

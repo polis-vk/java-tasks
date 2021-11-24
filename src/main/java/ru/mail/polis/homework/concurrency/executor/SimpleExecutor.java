@@ -37,7 +37,7 @@ public class SimpleExecutor implements Executor {
      * 8 баллов
      */
     @Override
-    public void execute(Runnable command) {
+    public synchronized void execute(Runnable command) {
         if (isStop) {
             throw new RejectedExecutionException();
         }
@@ -95,12 +95,13 @@ public class SimpleExecutor implements Executor {
         @Override
         public void run() {
             command.run();
+            freeThreads.incrementAndGet();
             while (!isStop) {
                 try {
-                    freeThreads.incrementAndGet();
                     Runnable task = tasks.take();
                     freeThreads.decrementAndGet();
                     task.run();
+                    freeThreads.incrementAndGet();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
