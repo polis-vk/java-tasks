@@ -1,5 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Comparator;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -42,8 +48,69 @@ package ru.mail.polis.homework.reflection;
  */
 public class ReflectionToStringHelper {
 
+    public static final String ITEM_SEPARATOR = ", ";
+    public static final String FIELD_SEPARATOR = ": ";
+    public static final String NULL = "null";
+    public static final char OBJECT_BEGIN = '{';
+    public static final char OBJECT_END = '}';
+    public static final char ARRAY_BEGIN = '[';
+    public static final char ARRAY_END = ']';
+
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        return append(new StringBuilder(), object).toString();
+    }
+
+    private static StringBuilder append(StringBuilder sb, Object object) {
+        if (object == null) {
+            return sb.append(NULL);
+        }
+        sb.append(OBJECT_BEGIN);
+        boolean first = true;
+        for (Class<?> aClass = object.getClass(); aClass != null; aClass = aClass.getSuperclass()) {
+            Field[] fields = aClass.getDeclaredFields();
+            Arrays.sort(fields, Comparator.comparing(Field::getName));
+            for (Field field : fields) {
+                if (shouldSkip(field)) {
+                    continue;
+                }
+                if (first) {
+                    first = false;
+                } else {
+                    sb.append(ITEM_SEPARATOR);
+                }
+                field.setAccessible(true);
+                try {
+                    sb.append(field.getName()).append(FIELD_SEPARATOR);
+                    if (field.getType().isArray()) {
+                        appendArray(sb, field.get(object));
+                    } else {
+                        sb.append(field.get(object));
+                    }
+                } catch (IllegalAccessException ignored) {
+                }
+            }
+        }
+        return sb.append(OBJECT_END);
+    }
+
+    private static StringBuilder appendArray(StringBuilder sb, Object objects) {
+        if (objects == null) {
+            return sb.append(NULL);
+        }
+        sb.append(ARRAY_BEGIN);
+        boolean first = true;
+        for (int i = 0; i < Array.getLength(objects); i++) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append(ITEM_SEPARATOR);
+            }
+            sb.append(Array.get(objects, i));
+        }
+        return sb.append(ARRAY_END);
+    }
+
+    private static boolean shouldSkip(Field field) {
+        return field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers());
     }
 }
