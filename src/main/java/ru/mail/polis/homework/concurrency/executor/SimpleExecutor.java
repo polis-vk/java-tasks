@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -30,7 +30,7 @@ public class SimpleExecutor implements Executor {
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
-        this.threads = new ArrayList<>(maxThreadCount);
+        this.threads = new CopyOnWriteArrayList();
     }
 
     public void run() {
@@ -52,17 +52,26 @@ public class SimpleExecutor implements Executor {
         if (stop) {
             throw new RejectedExecutionException();
         }
+
         tasks.add(command);
-        // запуск
-        if (threads.size() < maxThreadCount
-                && threads.stream().allMatch(thread -> thread.getState() != Thread.State.WAITING)) {
-            if (!tasks.isEmpty()) {
-                Thread t = new Thread(this::run);
-                threads.add(t);
-                t.start();
+
+        // double checked locking для оптимизации
+        if (canCreateThread()) {
+            synchronized (threads) {
+                if (canCreateThread()) {
+                    Thread t = new Thread(this::run);
+                    threads.add(t);
+                    t.start();
+                }
             }
         }
     }
+    
+    private boolean canCreateThread() {
+        return !stop && !tasks.isEmpty() && threads.size() < maxThreadCount
+                && threads.stream().allMatch(thread -> thread.getState() != Thread.State.WAITING);
+    }
+
 
     /**
      * Дает текущим задачам выполниться. Добавление новых - бросает RejectedExecutionException
@@ -78,7 +87,7 @@ public class SimpleExecutor implements Executor {
      */
     
     public void shutdownNow() {
-        shutdown();
+        stop = true;
         threads.forEach(Thread::interrupt);
     }
 
