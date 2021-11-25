@@ -89,7 +89,6 @@ public class SimpleExecutorTest {
                     }
                 }, "Thread [" + i + "]", 0))
                 .forEach(Thread::start);
-
         assertTrue(cdl.await(15, TimeUnit.SECONDS));
         assertEquals(5, executor.getLiveThreadsCount());
     }
@@ -107,6 +106,7 @@ public class SimpleExecutorTest {
             start.await(10, TimeUnit.SECONDS);
             long measureTime = System.currentTimeMillis();
             finish.await(10, TimeUnit.SECONDS);
+            
             if (threadsCount <= 5) {
                 assertEquals(SLEEP_TIME, System.currentTimeMillis() - measureTime, DELTA_TIME);
             } else {
