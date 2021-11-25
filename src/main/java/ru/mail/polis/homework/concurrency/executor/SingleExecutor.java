@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -14,18 +14,20 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SingleExecutor implements Executor {
 
-    private final Queue<Runnable> tasks = new ConcurrentLinkedQueue<>();
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
 
-    private Thread thread = null;
+    private volatile Thread thread = null;
 
-    private boolean stop = false;
+    private volatile boolean stop = false;
 
     private void run() {
-        while (!stop || !tasks.isEmpty()) {
-            if (!tasks.isEmpty()) {
-                tasks.poll().run();
+        try {
+            while (!stop || !tasks.isEmpty()) {
+                tasks.take().run();
             }
-        }
+       } catch (InterruptedException e) {
+           return;
+       }
     }
     
     /**
@@ -37,8 +39,12 @@ public class SingleExecutor implements Executor {
         if (stop) {
             throw new RejectedExecutionException();
         }
-        tasks.add(command);
-
+        
+        try {
+            tasks.put(command);
+        } catch (InterruptedException e) {
+            return;
+        }
         // запуск
         if (this.thread == null) {
             this.thread = new Thread(this::run);

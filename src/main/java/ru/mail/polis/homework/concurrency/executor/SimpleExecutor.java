@@ -24,9 +24,9 @@ public class SimpleExecutor implements Executor {
 
     private final int maxThreadCount;
 
-    private final List<Thread> threads;
+    private volatile List<Thread> threads;
 
-    private boolean stop = false;
+    private volatile boolean stop = false;
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
@@ -39,7 +39,7 @@ public class SimpleExecutor implements Executor {
                 tasks.take().run();
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            return;
         }
     }
 
@@ -52,18 +52,20 @@ public class SimpleExecutor implements Executor {
         if (stop) {
             throw new RejectedExecutionException();
         }
-
-        synchronized (this) {
-            // запуск
-            if (threads.size() < maxThreadCount
-                    && threads.stream().allMatch(thread -> thread.getState() != Thread.State.WAITING)) {
-                Thread t = new Thread(this::run);
-                threads.add(t);
-                t.start();
-            }
-
-            tasks.add(command);
+             
+        // запуск
+        if (threads.size() < maxThreadCount
+                && threads.stream().allMatch(thread -> thread.getState() != Thread.State.WAITING)) {
+            Thread t = new Thread(this::run);
+            threads.add(t);
+            t.start();
         }
+        try {
+            tasks.put(command);
+        } catch (InterruptedException e) {
+            return;
+        }
+
     }
 
     /**
