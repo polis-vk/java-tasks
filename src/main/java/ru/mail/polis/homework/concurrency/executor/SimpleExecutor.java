@@ -22,7 +22,6 @@ public class SimpleExecutor implements Executor {
     private final List<Worker> workers = new LinkedList<>();
     private final int maxThreadCount;
     private boolean running = true;
-    private boolean interrupted = false;
 
     public SimpleExecutor(int maxThreadCount) {
         if (maxThreadCount < 1) {
@@ -37,7 +36,7 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public synchronized void execute(Runnable command) {
-        if (!running || interrupted) {
+        if (!running) {
             throw new RejectedExecutionException();
         }
         for (Worker worker : workers) {
@@ -80,7 +79,6 @@ public class SimpleExecutor implements Executor {
         for (Worker worker : workers) {
             worker.runner.interrupt();
         }
-        interrupted = true;
     }
 
     /**

@@ -27,7 +27,7 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (executorThread.isInterrupted() || !running) {
+        if (!running) {
             throw new RejectedExecutionException();
         }
         commands.add(command);
