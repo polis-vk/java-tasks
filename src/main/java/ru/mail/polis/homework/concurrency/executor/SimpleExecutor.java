@@ -1,6 +1,11 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -15,8 +20,41 @@ import java.util.concurrent.Executor;
  */
 public class SimpleExecutor implements Executor {
 
-    public SimpleExecutor(int maxThreadCount) {
+    private class Task implements Runnable {
+        @Override
+        public void run() {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    Runnable active;
 
+                    if (isShutdown) {
+                        if ((active = blockingQueue.poll()) == null) {
+                            break;
+                        }
+                    } else {
+                        active = blockingQueue.take();
+                    }
+
+                    active.run();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+    }
+
+    private final int maxThreadCount;
+
+    private final List<Thread> threads;
+    private final BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>();
+    private boolean isShutdown = false;
+
+    public SimpleExecutor(int maxThreadCount) {
+        if (maxThreadCount <= 0) {
+            throw new IllegalArgumentException("maxThreadCount must be a positive number");
+        }
+        this.maxThreadCount = maxThreadCount;
+        threads = new ArrayList<>(maxThreadCount);
     }
 
     /**
@@ -25,7 +63,19 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-
+        if (isShutdown) {
+            throw new RejectedExecutionException("Adding new tasks while running others");
+        }
+        try {
+            blockingQueue.put(command);
+            Utils.pause(10);
+            if (!blockingQueue.isEmpty() && threads.size() < maxThreadCount) {
+                Thread t = new Thread(new Task());
+                threads.add(t);
+                t.start();
+            }
+        } catch (InterruptedException ignored) {
+        }
     }
 
     /**
@@ -33,6 +83,7 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
+        isShutdown = true;
     }
 
     /**
@@ -40,13 +91,17 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-
+        isShutdown = true;
+        for (Thread t: threads) {
+            t.interrupt();
+        }
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        return threads.size();
     }
+
 }

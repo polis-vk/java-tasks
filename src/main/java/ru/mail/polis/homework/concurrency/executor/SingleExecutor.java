@@ -15,20 +15,27 @@ import java.util.concurrent.RejectedExecutionException;
 public class SingleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>(5);
-    private Runnable active;
+    private boolean isShutdown = false;
     private final Thread thread = new Thread(() -> {
-        System.out.println("Is in Runnable object");
         while (!Thread.currentThread().isInterrupted()) {
             try {
-                active = blockingQueue.take();
-            } catch (InterruptedException e) {
-                return;
+                if (isShutdown) {
+                    Runnable active;
+                    if ((active = blockingQueue.poll()) == null) {
+                        break;
+                    }
+                    active.run();
+                } else {
+                    blockingQueue.take().run();
+                }
+            } catch (InterruptedException ignored) {
             }
-            System.out.println("RUNNING begin");
-            active.run();
-            System.out.println("RUNNING end");
         }
     });
+
+    public SingleExecutor() {
+        thread.start();
+    }
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -36,15 +43,12 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        System.out.println("Is in execute");
-        if (active != null || thread.isInterrupted()) {
+        if (isShutdown) {
             throw new RejectedExecutionException("Adding new tasks while running others");
         }
         try {
             blockingQueue.put(command);
-            System.out.println("Added new command");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ignored) {
         }
     }
 
@@ -53,10 +57,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        System.out.println("Start");
-        thread.start();
-        thread.interrupt();
-        System.out.println("End");
+        isShutdown = true;
     }
 
     /**
@@ -64,7 +65,7 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
-        System.out.println("ShutdownNow");
+        isShutdown = true;
         thread.interrupt();
     }
 
