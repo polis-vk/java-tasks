@@ -40,11 +40,7 @@ public class SingleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
         
-        try {
-            tasks.put(command);
-        } catch (InterruptedException e) {
-            return;
-        }
+        tasks.add(command);
         // запуск
         if (this.thread == null) {
             this.thread = new Thread(this::run);

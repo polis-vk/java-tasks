@@ -52,20 +52,16 @@ public class SimpleExecutor implements Executor {
         if (stop) {
             throw new RejectedExecutionException();
         }
-             
+        tasks.add(command);
         // запуск
         if (threads.size() < maxThreadCount
                 && threads.stream().allMatch(thread -> thread.getState() != Thread.State.WAITING)) {
-            Thread t = new Thread(this::run);
-            threads.add(t);
-            t.start();
+            if (!tasks.isEmpty()) {
+                Thread t = new Thread(this::run);
+                threads.add(t);
+                t.start();
+            }
         }
-        try {
-            tasks.put(command);
-        } catch (InterruptedException e) {
-            return;
-        }
-
     }
 
     /**
