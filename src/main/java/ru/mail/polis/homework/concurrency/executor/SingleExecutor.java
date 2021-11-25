@@ -14,13 +14,11 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SingleExecutor implements Executor {
 
-    private final BlockingQueue<Runnable> queue;
-    private final Thread thread;
-    private boolean isStop;
+    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+    private final Thread thread = new Thread(new Worker(), "Executor");
+    private volatile boolean isStop;
 
     public SingleExecutor() {
-        queue = new LinkedBlockingQueue<>();
-        thread = new Thread(new Worker(), "Executor");
         thread.start();
     }
 
@@ -49,20 +47,19 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
-        thread.interrupt();
         isStop = true;
+        thread.interrupt();
     }
 
     private class Worker implements Runnable {
         @Override
         public void run() {
-            while (!thread.isInterrupted()) {
-                try {
-                    Runnable task = queue.take();
-                    task.run();
-                } catch (InterruptedException e) {
-                    break;
+            try {
+                while (!thread.isInterrupted()) {
+                    queue.take().run();
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }

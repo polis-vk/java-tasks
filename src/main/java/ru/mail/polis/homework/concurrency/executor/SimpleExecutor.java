@@ -1,12 +1,14 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -23,12 +25,14 @@ public class SimpleExecutor implements Executor {
 
     private final AtomicInteger freeThreads;
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
-    private final List<Worker> workers = new LinkedList<>();
+    private final List<Worker> workers;
     private final int maxThreadCount;
-    private boolean isStop;
+    private volatile boolean isStop;
+    private final Lock lock = new ReentrantLock();
 
     public SimpleExecutor(int maxThreadCount) {
         freeThreads = new AtomicInteger();
+        workers = new ArrayList<>(maxThreadCount);
         this.maxThreadCount = maxThreadCount;
     }
 
@@ -37,23 +41,26 @@ public class SimpleExecutor implements Executor {
      * 8 баллов
      */
     @Override
-    public synchronized void execute(Runnable command) {
+    public void execute(Runnable command) {
         if (isStop) {
             throw new RejectedExecutionException();
         }
-        if ((freeThreads.get() != 0) || !addWorker(command)) {
-            tasks.add(command);
+        tasks.add(command);
+        if (freeThreads.get() == 0) {
+            addWorker();
         }
     }
 
-    private boolean addWorker(Runnable command) {
-        if (workers.size() == maxThreadCount) {
-            return false;
+    private void addWorker() {
+        lock.lock();
+        try {
+            if (!isStop && (freeThreads.get() == 0) && (workers.size() != maxThreadCount)) {
+                Worker worker = new Worker();
+                workers.add(worker);
+            }
+        } finally {
+            lock.unlock();
         }
-        Worker worker = new Worker(command);
-        workers.add(worker);
-        worker.thread.start();
-        return true;
     }
 
     /**
@@ -69,9 +76,14 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-        isStop = true;
-        for (Worker worker : workers) {
-            worker.thread.interrupt();
+        lock.lock();
+        try {
+            isStop = true;
+            for (Worker worker : workers) {
+                worker.thread.interrupt();
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -85,26 +97,24 @@ public class SimpleExecutor implements Executor {
     private class Worker implements Runnable {
 
         private final Thread thread;
-        private final Runnable command;
 
-        public Worker(Runnable command) {
-            this.command = command;
+        public Worker() {
             thread = new Thread(this, "Worker");
+            thread.start();
         }
 
         @Override
         public void run() {
-            command.run();
             freeThreads.incrementAndGet();
-            while (!isStop) {
-                try {
+            try {
+                while (!isStop) {
                     Runnable task = tasks.take();
                     freeThreads.decrementAndGet();
                     task.run();
                     freeThreads.incrementAndGet();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
