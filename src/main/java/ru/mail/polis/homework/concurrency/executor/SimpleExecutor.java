@@ -1,6 +1,13 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -14,9 +21,14 @@ import java.util.concurrent.Executor;
  * Max 10 баллов
  */
 public class SimpleExecutor implements Executor {
+    private final List<Thread> threads = new LinkedList<>();
+    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+    private final AtomicInteger freeThreadCount = new AtomicInteger(0);
+    private final AtomicBoolean isWorking = new AtomicBoolean(true);
+    private final int maxThreadCount;
 
     public SimpleExecutor(int maxThreadCount) {
-
+        this.maxThreadCount = maxThreadCount;
     }
 
     /**
@@ -25,7 +37,19 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-
+        if (!isWorking.get()) {
+            throw new RejectedExecutionException();
+        }
+        queue.add(command);
+        if (threads.size() < maxThreadCount && freeThreadCount.get() == 0 && !queue.isEmpty()) {
+            synchronized (this) {
+                if (threads.size() < maxThreadCount && freeThreadCount.get() == 0 && !queue.isEmpty()) {
+                    Thread thread = new Thread(this::run);
+                    thread.start();
+                    threads.add(thread);
+                }
+            }
+        }
     }
 
     /**
@@ -33,6 +57,7 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
+        isWorking.set(false);
     }
 
     /**
@@ -40,13 +65,29 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-
+        isWorking.set(false);
+        for (Thread thread : threads) {
+            thread.interrupt();
+        }
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        return threads.size();
+    }
+
+    public void run() {
+        while (isWorking.get()) {
+            try {
+                freeThreadCount.incrementAndGet();
+                Runnable command = queue.take();
+                freeThreadCount.decrementAndGet();
+                command.run();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
