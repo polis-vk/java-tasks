@@ -46,11 +46,7 @@ public class SimpleExecutor implements Executor {
             }
         }
         if (maxThreadCount > workers.size()) {
-            Execution execution = new Execution();
-            execution.commands.add(command);
-            Worker worker = new Worker(execution);
-            worker.runner.start();
-            workers.add(worker);
+            workers.add(new Worker(command));
             return;
         }
         Worker freestWorker = workers.get(0);
@@ -88,13 +84,16 @@ public class SimpleExecutor implements Executor {
         return workers.size();
     }
 
-    private static class Worker {
+    private class Worker {
         public final Thread runner;
         public final Queue<Runnable> commands;
 
-        public Worker(Execution executor) {
-            runner = new Thread(executor);
-            commands = executor.commands;
+        public Worker(Runnable command) {
+            Execution execution = new Execution();
+            runner = new Thread(execution);
+            commands = execution.commands;
+            commands.add(command);
+            runner.start();
         }
     }
 
