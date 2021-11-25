@@ -34,12 +34,12 @@ public class SimpleExecutor implements Executor {
     }
 
     public void run() {
-        while (!stop || !tasks.isEmpty()) {
-            try {
+        try {
+            while (!stop || !tasks.isEmpty()) {
                 tasks.take().run();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
