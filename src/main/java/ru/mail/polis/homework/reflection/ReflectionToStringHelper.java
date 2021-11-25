@@ -1,5 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Comparator;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -43,7 +49,66 @@ package ru.mail.polis.homework.reflection;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+
+        StringBuilder resultSB = new StringBuilder();
+        resultSB.append("{");
+
+        Class<?> currClass = object.getClass();
+
+        while (currClass != null) {
+            Field[] fields = currClass.getDeclaredFields();
+            Arrays.sort(fields, Comparator.comparing(Field::getName));
+
+            for (Field field : fields) {
+                if (!Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class)) {
+                    try {
+                        parseField(object, field, resultSB);
+                    } catch (IllegalAccessException ignored) {
+                        continue;
+                    }
+                    resultSB.append(", ");
+                }
+            }
+            currClass = currClass.getSuperclass();
+        }
+        if (resultSB.length() != 1) {
+            resultSB.delete(resultSB.length() - 2, resultSB.length());
+        }
+
+        resultSB.append("}");
+
+        return resultSB.toString();
+    }
+
+    private static void parseField(Object object, Field field, StringBuilder resultSB) throws IllegalAccessException {
+        resultSB.append(field.getName()).append(": ");
+        if (!field.canAccess(object)) {
+            field.setAccessible(true);
+        }
+
+        Object value = field.get(object);
+        if (value == null || !value.getClass().isArray()) {
+            resultSB.append(value);
+        } else {
+            parseArray(value, resultSB);
+        }
+    }
+
+    private static void parseArray(Object object, StringBuilder resultSB) {
+        resultSB.append("[");
+
+        for (int i = 0; i < Array.getLength(object); i++) {
+            resultSB.append(Array.get(object, i));
+            resultSB.append(", ");
+        }
+
+        if (Array.getLength(object) != 0) {
+            resultSB.delete(resultSB.length() - 2, resultSB.length());
+        }
+
+        resultSB.append("]");
     }
 }
