@@ -84,21 +84,16 @@ public class SimpleExecutor implements Executor {
         return workers.size();
     }
 
-    private class Worker {
+    private class Worker implements Runnable {
         public final Thread runner;
         public final Queue<Runnable> commands;
 
         public Worker(Runnable command) {
-            Execution execution = new Execution();
-            runner = new Thread(execution);
-            commands = execution.commands;
+            runner = new Thread(this);
+            commands = new ConcurrentLinkedQueue<>();;
             commands.add(command);
             runner.start();
         }
-    }
-
-    private class Execution implements Runnable {
-        public final Queue<Runnable> commands = new ConcurrentLinkedQueue<>();
 
         @Override
         public void run() {
@@ -109,5 +104,7 @@ public class SimpleExecutor implements Executor {
                 }
             }
         }
+
     }
+
 }
