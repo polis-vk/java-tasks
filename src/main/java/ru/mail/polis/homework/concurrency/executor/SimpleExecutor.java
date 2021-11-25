@@ -63,7 +63,7 @@ public class SimpleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
         synchronized (activeWorkers) {
-            if (numberAliveWorkers.get() == activeWorkers.get()) {
+            if (numberAliveWorkers.get() == activeWorkers.get() || !scheduler.isEmpty() && numberAliveWorkers.get() > activeWorkers.get()) {
                 if (numberAliveWorkers.get() < maxNumberWorkers) {
                     Worker w = new Worker(numberAliveWorkers.get());
                     w.start();
@@ -71,16 +71,10 @@ public class SimpleExecutor implements Executor {
                     numberAliveWorkers.incrementAndGet();
                 }
             }
-
             try {
                 scheduler.put(command);
             } catch (InterruptedException er) {
                 er.printStackTrace();
-            }
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
     }
