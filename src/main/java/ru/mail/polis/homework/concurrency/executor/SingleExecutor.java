@@ -46,6 +46,9 @@ public class SingleExecutor implements Executor {
         if (isShutdown) {
             throw new RejectedExecutionException("Adding new tasks while running others");
         }
+        if (command == null) {
+            throw new IllegalArgumentException("Illegal null-command");
+        }
         try {
             blockingQueue.put(command);
         } catch (InterruptedException ignored) {
@@ -65,7 +68,7 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
-        isShutdown = true;
+        shutdown();
         thread.interrupt();
     }
 

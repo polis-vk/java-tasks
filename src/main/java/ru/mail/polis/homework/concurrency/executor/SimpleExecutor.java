@@ -28,11 +28,11 @@ public class SimpleExecutor implements Executor {
                     Runnable active;
 
                     if (isShutdown) {
-                        if ((active = blockingQueue.poll()) == null) {
+                        if ((active = tasks.poll()) == null) {
                             break;
                         }
                     } else {
-                        active = blockingQueue.take();
+                        active = tasks.take();
                     }
 
                     active.run();
@@ -44,10 +44,10 @@ public class SimpleExecutor implements Executor {
     }
 
     private final int maxThreadCount;
-
     private final List<Thread> threads;
-    private final BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private boolean isShutdown = false;
+    private volatile int threadsSize = 0;
 
     public SimpleExecutor(int maxThreadCount) {
         if (maxThreadCount <= 0) {
@@ -66,10 +66,14 @@ public class SimpleExecutor implements Executor {
         if (isShutdown) {
             throw new RejectedExecutionException("Adding new tasks while running others");
         }
+        if (command == null) {
+            throw new IllegalArgumentException("Illegal null-command");
+        }
         try {
-            blockingQueue.put(command);
-            Utils.pause(10);
-            if (!blockingQueue.isEmpty() && threads.size() < maxThreadCount) {
+            tasks.put(command);
+            Utils.pause(10); // Wait for notifying
+            if (!tasks.isEmpty() && threadsSize < maxThreadCount) {
+                ++threadsSize;
                 Thread t = new Thread(new Task());
                 threads.add(t);
                 t.start();
@@ -91,7 +95,7 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-        isShutdown = true;
+        shutdown();
         for (Thread t: threads) {
             t.interrupt();
         }
@@ -101,7 +105,7 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return threads.size();
+        return threadsSize;
     }
 
 }
