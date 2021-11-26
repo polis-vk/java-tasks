@@ -42,9 +42,13 @@ public class SingleExecutor implements Executor {
         
         tasks.add(command);
         // запуск
-        if (this.thread == null) {
-            this.thread = new Thread(this::run);
-            thread.start();
+        if (thread == null) {
+            synchronized (this) {
+                if (thread == null) {
+                    this.thread = new Thread(this::run);
+                    thread.start();
+                }
+            }
         }
     }
         
@@ -53,7 +57,7 @@ public class SingleExecutor implements Executor {
      * Дает текущим задачам выполниться. Добавление новых - бросает RejectedExecutionException
      * 1 балл за метод
      */
-    public void shutdown() {
+    public synchronized void shutdown() {
         stop = true;
     }
 
@@ -61,8 +65,8 @@ public class SingleExecutor implements Executor {
      * Прерывает текущие задачи. При добавлении новых - бросает RejectedExecutionException
      * 2 балла за метод
      */
-    public void shutdownNow() {
-        shutdown();
+    public synchronized void shutdownNow() {
+        stop = true;
         thread.interrupt();
     }
 }

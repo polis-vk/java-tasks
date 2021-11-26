@@ -78,7 +78,9 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        stop = true;
+        synchronized (threads) {
+            stop = true;
+        }
     }
 
     /**
@@ -87,15 +89,19 @@ public class SimpleExecutor implements Executor {
      */
     
     public void shutdownNow() {
-        stop = true;
-        threads.forEach(Thread::interrupt);
+        synchronized (threads) {
+            stop = true;
+            threads.forEach(Thread::interrupt);
+        }
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return threads.size();
+        synchronized (threads) {
+            return threads.size();
+        }
     }
 
 }
