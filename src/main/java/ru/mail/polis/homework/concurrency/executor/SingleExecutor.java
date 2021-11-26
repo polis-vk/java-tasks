@@ -14,8 +14,8 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SingleExecutor implements Executor {
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
-    private final SingleThread worker = new SingleThread();
-    volatile boolean shutdownFlag = false;
+    private final WorkerThread worker = new WorkerThread();
+    private volatile boolean shutdownFlag = false;
 
     public SingleExecutor() {
         worker.start();
@@ -47,11 +47,11 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
-        worker.interrupt();
         shutdownFlag = true;
+        worker.interrupt();
     }
 
-    private class SingleThread extends Thread {
+    private class WorkerThread extends Thread {
         @Override
         public void run() {
             try {
