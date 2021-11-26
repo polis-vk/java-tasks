@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
-    private AtomicBoolean shutdownFlag = new AtomicBoolean(false);
+    private final AtomicBoolean shutdownFlag = new AtomicBoolean(false);
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private final SingleThread worker = new SingleThread();
 
@@ -40,7 +40,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        shutdownFlag = new AtomicBoolean(true);
+        shutdownFlag.set(true);
     }
 
     /**
@@ -49,7 +49,7 @@ public class SingleExecutor implements Executor {
      */
     public void shutdownNow() {
         worker.interrupt();
-        shutdownFlag = new AtomicBoolean(true);
+        shutdownFlag.set(true);
     }
 
     private class SingleThread extends Thread {
