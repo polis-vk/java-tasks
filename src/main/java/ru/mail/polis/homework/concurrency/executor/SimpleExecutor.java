@@ -6,6 +6,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -23,14 +24,14 @@ public class SimpleExecutor implements Executor {
     private final List<SimpleWorker> workers = new LinkedList<>();
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private final int maxThreadCount;
-    private final AtomicInteger freeWorkers;
-    private boolean isActive = true;
+    private final AtomicInteger freeWorkers = new AtomicInteger(0);
+    private final AtomicBoolean isActive = new AtomicBoolean(true);
+    private final Object lock = new Object();
 
     public SimpleExecutor(int maxThreadCount) {
         if (maxThreadCount <= 0) {
             throw new IllegalArgumentException();
         }
-        freeWorkers = new AtomicInteger(0);
         this.maxThreadCount = maxThreadCount;
     }
 
@@ -46,12 +47,18 @@ public class SimpleExecutor implements Executor {
         if (!isActive()) {
             throw new RejectedExecutionException();
         }
-        if (freeWorkers.get() != 0 || workers.size() == maxThreadCount) {
+        if (freeWorkers.get() != 0) {
             tasks.add(command);
         } else {
-            SimpleWorker worker = new SimpleWorker(command);
-            workers.add(worker);
-            worker.start();
+            synchronized (lock) {
+                if (getLiveThreadsCount() == maxThreadCount) {
+                    tasks.add(command);
+                } else {
+                    SimpleWorker worker = new SimpleWorker(command);
+                    workers.add(worker);
+                    worker.start();
+                }
+            }
         }
     }
 
@@ -74,19 +81,21 @@ public class SimpleExecutor implements Executor {
         }
     }
 
-    private synchronized void setIsActive(boolean isActive) {
-        this.isActive = isActive;
+    private void setIsActive(boolean isActive) {
+        this.isActive.set(isActive);
     }
 
-    private synchronized boolean isActive() {
-        return isActive;
+    private boolean isActive() {
+        return isActive.get();
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return workers.size();
+        synchronized (lock) {
+            return workers.size();
+        }
     }
 
     private class SimpleWorker extends Thread {
@@ -99,15 +108,16 @@ public class SimpleExecutor implements Executor {
         @Override
         public void run() {
             firstTask.run();
-            while (isActive() || !tasks.isEmpty()) {
-                freeWorkers.incrementAndGet();
-                try {
+            try {
+                while (isActive() || !tasks.isEmpty()) {
+                    freeWorkers.incrementAndGet();
+
                     Runnable task = tasks.take();
                     freeWorkers.decrementAndGet();
                     task.run();
-                } catch (InterruptedException e) {
-                    break;
+
                 }
+            } catch (InterruptedException ignored) {
             }
             firstTask = null;
         }

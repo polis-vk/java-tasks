@@ -4,6 +4,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
@@ -14,8 +15,8 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SingleExecutor implements Executor {
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
-    private boolean isActive = true;
     private final Thread worker = new Thread(this::run);
+    private final AtomicBoolean isActive = new AtomicBoolean(true);
 
     public SingleExecutor() {
         worker.start();
@@ -33,14 +34,12 @@ public class SingleExecutor implements Executor {
         tasks.add(command);
     }
 
-
     private void run() {
-        while (isActive() || !tasks.isEmpty()) {
-            try {
+        try {
+            while (isActive() || !tasks.isEmpty()) {
                 tasks.take().run();
-            } catch (InterruptedException e) {
-                break;
             }
+        } catch (InterruptedException ignored) {
         }
     }
 
@@ -61,11 +60,11 @@ public class SingleExecutor implements Executor {
         worker.interrupt();
     }
 
-    public synchronized boolean isActive() {
-        return isActive;
+    public boolean isActive() {
+        return isActive.get();
     }
 
-    public synchronized void setActive(boolean active) {
-        isActive = active;
+    public void setActive(boolean active) {
+        isActive.set(active);
     }
 }
