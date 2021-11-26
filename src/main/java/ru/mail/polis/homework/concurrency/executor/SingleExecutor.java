@@ -13,9 +13,9 @@ import java.util.concurrent.RejectedExecutionException;
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
-    volatile boolean shutdownFlag = false;
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private final SingleThread worker = new SingleThread();
+    volatile boolean shutdownFlag = false;
 
     public SingleExecutor() {
         worker.start();
@@ -56,8 +56,7 @@ public class SingleExecutor implements Executor {
         public void run() {
             try {
                 while (!shutdownFlag || !tasks.isEmpty()) {
-                    Runnable task = tasks.take();
-                    task.run();
+                    tasks.take().run();
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
