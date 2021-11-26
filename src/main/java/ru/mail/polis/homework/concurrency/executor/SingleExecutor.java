@@ -14,8 +14,9 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SingleExecutor implements Executor {
 
-    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+    private volatile boolean addMode = true;
     private final CustomThread thread = new CustomThread();
+    private final BlockingQueue<Runnable> commands = new LinkedBlockingQueue<>();
 
     public SingleExecutor() {
         thread.start();
@@ -27,8 +28,8 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (thread.getRunningStatus()) {
-            queue.add(command);
+        if (addMode) {
+            commands.add(command);
         } else {
             throw new RejectedExecutionException();
         }
@@ -39,8 +40,8 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        thread.setFlushTrue();
-        thread.setRunningFalse();
+        addMode = false;
+        thread.setStop();
     }
 
     /**
@@ -48,39 +49,27 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
-        thread.setRunningFalse();
+        addMode = false;
         thread.interrupt();
     }
 
     private class CustomThread extends Thread {
 
-        private boolean running = true;
-        private boolean flush = false;
+        private boolean stop = false;
 
         @Override
         public void run() {
-            while (running) {
-                if (!queue.isEmpty()) {
-                    queue.poll().run();
+            try {
+                while (!stop || !commands.isEmpty()) {
+                    commands.take().run();
                 }
-            }
-            if (flush) {
-                for (Runnable runnable : queue) {
-                    runnable.run();
-                }
+            } catch (InterruptedException e) {
+                System.out.println("ShutdownNow");
             }
         }
 
-        public void setRunningFalse() {
-            running = false;
-        }
-
-        public boolean getRunningStatus() {
-            return running;
-        }
-
-        public void setFlushTrue() {
-            flush = true;
+        public void setStop() {
+            stop = true;
         }
     }
 }
