@@ -14,12 +14,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
-    private AtomicBoolean stop = new AtomicBoolean(false);
+    private AtomicBoolean shutdownFlag = new AtomicBoolean(false);
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
-    private final SingleThread singleThread = new SingleThread();
+    private final SingleThread worker = new SingleThread();
 
     public SingleExecutor() {
-        singleThread.start();
+        worker.start();
     }
 
     /**
@@ -28,7 +28,7 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (stop.get()) {
+        if (shutdownFlag.get()) {
             throw new RejectedExecutionException();
         }
         tasks.add(command);
@@ -40,7 +40,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        stop = new AtomicBoolean(true);
+        shutdownFlag = new AtomicBoolean(true);
     }
 
     /**
@@ -48,15 +48,15 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
-        singleThread.interrupt();
-        stop = new AtomicBoolean(true);
+        worker.interrupt();
+        shutdownFlag = new AtomicBoolean(true);
     }
 
     private class SingleThread extends Thread {
         @Override
         public void run() {
             try {
-                while (!stop.get() || !tasks.isEmpty()) {
+                while (!shutdownFlag.get() || !tasks.isEmpty()) {
                     Runnable task = tasks.take();
                     task.run();
                 }
