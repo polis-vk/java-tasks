@@ -4,7 +4,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
@@ -14,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
-    private final AtomicBoolean shutdownFlag = new AtomicBoolean(false);
+    volatile boolean shutdownFlag = false;
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private final SingleThread worker = new SingleThread();
 
@@ -28,7 +27,7 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (shutdownFlag.get()) {
+        if (shutdownFlag) {
             throw new RejectedExecutionException();
         }
         tasks.add(command);
@@ -40,7 +39,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        shutdownFlag.set(true);
+        shutdownFlag = true;
     }
 
     /**
@@ -49,14 +48,14 @@ public class SingleExecutor implements Executor {
      */
     public void shutdownNow() {
         worker.interrupt();
-        shutdownFlag.set(true);
+        shutdownFlag = true;
     }
 
     private class SingleThread extends Thread {
         @Override
         public void run() {
             try {
-                while (!shutdownFlag.get() || !tasks.isEmpty()) {
+                while (!shutdownFlag || !tasks.isEmpty()) {
                     Runnable task = tasks.take();
                     task.run();
                 }
