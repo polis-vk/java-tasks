@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -13,9 +13,9 @@ import java.util.concurrent.RejectedExecutionException;
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
-    private final Queue<Runnable> tasks = new LinkedList<>();
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private final Thread thread = new CustomThread();
-    private boolean isWorking = true;
+    private volatile boolean isWorking = true;
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -26,9 +26,11 @@ public class SingleExecutor implements Executor {
         if (!isWorking) {
             throw new RejectedExecutionException();
         }
-        tasks.add(command);
-        if (!thread.isAlive()) {
-            thread.start();
+        else {
+            tasks.add(command);
+            if (!thread.isAlive()) {
+                thread.start();
+            }
         }
     }
 
@@ -52,12 +54,14 @@ public class SingleExecutor implements Executor {
     private class CustomThread extends Thread {
         @Override
         public void run() {
-            while (isWorking || !tasks.isEmpty()) {
-                if (tasks.peek() != null) {
-                    tasks.poll().run();
+            try {
+                while (isWorking || !tasks.isEmpty()) {
+                    tasks.take().run();
                 }
             }
-            super.run();
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

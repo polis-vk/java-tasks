@@ -19,14 +19,13 @@ import java.util.concurrent.RejectedExecutionException;
 public class SimpleExecutor implements Executor {
     private final int maxThreadCount;
     private final LazyThread[] lazyThreads;
-    private final BlockingQueue<Runnable> tasks;
-    private boolean isWorking = true;
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
+    private volatile boolean isWorking = true;
     private int threadsCount = 0;
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
         lazyThreads = new LazyThread[maxThreadCount];
-        tasks = new LinkedBlockingQueue<>();
     }
 
     /**
@@ -43,7 +42,7 @@ public class SimpleExecutor implements Executor {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (threadsCount < maxThreadCount && !isAvailableSomeThread()) {
+        if (threadsCount < maxThreadCount && !isAvailableSomeThread() && !tasks.isEmpty()) {
             LazyThread worker = new LazyThread();
             worker.start();
             lazyThreads[threadsCount++] = worker;
@@ -77,21 +76,21 @@ public class SimpleExecutor implements Executor {
     }
 
     private class LazyThread extends Thread {
-        private boolean available = false;
+        private volatile boolean available = false;
 
         @Override
         public void run() {
-            while (isWorking || !tasks.isEmpty()) {
-                try {
+            try {
+                while (isWorking || !tasks.isEmpty()) {
                     Runnable task = tasks.take();
                     available = false;
                     task.run();
                     available = true;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
-            super.run();
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         public boolean isAvailable() {
