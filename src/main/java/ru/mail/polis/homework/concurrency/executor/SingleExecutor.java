@@ -1,7 +1,9 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -14,24 +16,28 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SingleExecutor implements Executor {
 
-    private final BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>(5);
-    private boolean isShutdown = false;
-    private final Thread thread = new Thread(() -> {
-        while (!Thread.currentThread().isInterrupted()) {
+    private class Task implements Runnable {
+        @Override
+        public void run() {
+            Runnable active;
             try {
-                if (isShutdown) {
-                    Runnable active;
-                    if ((active = blockingQueue.poll()) == null) {
+                while (!Thread.currentThread().isInterrupted()) {
+                    active = getTask();
+                    if (active == null) {
                         break;
                     }
                     active.run();
-                } else {
-                    blockingQueue.take().run();
                 }
             } catch (InterruptedException ignored) {
             }
         }
-    });
+    }
+
+    private final Lock lock = new ReentrantLock();
+    private final Thread thread = new Thread(new Task());
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>(5);
+
+    private boolean isShutdown = false;
 
     public SingleExecutor() {
         thread.start();
@@ -43,16 +49,15 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        lock.lock();
         if (isShutdown) {
             throw new RejectedExecutionException("Adding new tasks while running others");
         }
+        lock.unlock();
         if (command == null) {
             throw new IllegalArgumentException("Illegal null-command");
         }
-        try {
-            blockingQueue.put(command);
-        } catch (InterruptedException ignored) {
-        }
+        addTask(command);
     }
 
     /**
@@ -60,7 +65,9 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
+        lock.lock();
         isShutdown = true;
+        lock.unlock();
     }
 
     /**
@@ -70,6 +77,17 @@ public class SingleExecutor implements Executor {
     public void shutdownNow() {
         shutdown();
         thread.interrupt();
+    }
+
+    private void addTask(Runnable task) {
+        try {
+            tasks.put(task);
+        } catch (InterruptedException ignored) {
+        }
+    }
+
+    private Runnable getTask() throws InterruptedException {
+        return isShutdown ? tasks.poll() : tasks.take();
     }
 
 }
