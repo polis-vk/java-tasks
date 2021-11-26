@@ -6,6 +6,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -21,13 +22,13 @@ import java.util.concurrent.RejectedExecutionException;
 public class SimpleExecutor implements Executor {
 
     private final int maxThreadCount;
-    private final BlockingQueue<Runnable> workQueue;
+    private final BlockingQueue<Runnable> workQueue = new LinkedBlockingDeque<>();
     private final List<Worker> workers;
     private boolean isShuttingDown;
+    private final AtomicInteger ctl = new AtomicInteger(0);
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
-        workQueue = new LinkedBlockingDeque<>();
         workers = new ArrayList<>(maxThreadCount);
     }
 
@@ -43,29 +44,13 @@ public class SimpleExecutor implements Executor {
         if (isShuttingDown) {
             throw new RejectedExecutionException();
         }
-        //Проходит чаще тест tenSimultaneousThreadTest(), если как-то тормозить выполнение execute
-        //Также можно вставить пустой счетчик до 1000, но с принтом чаще проходит тест, с чем связано не могу разобраться
-        //Инчае:
-//        expected:<5> but was:<4>
-//        Expected :5
-//        Actual   :4
-        System.out.println(Thread.currentThread().getName() + " " + isFreeWorkerPresent());
 
-        if (!isFreeWorkerPresent() && getLiveThreadsCount() < maxThreadCount) {
+        if (ctl.get() == 0 && getLiveThreadsCount() < maxThreadCount) {
             Worker worker = new Worker();
             worker.start();
             workers.add(worker);
         }
         workQueue.add(command);
-    }
-
-    public boolean isFreeWorkerPresent() {
-        for (Worker worker : workers) {
-            if (!worker.isBusy) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void interruptAllWorkers() {
@@ -78,7 +63,7 @@ public class SimpleExecutor implements Executor {
      * Дает текущим задачам выполниться. Добавление новых - бросает RejectedExecutionException
      * 1 балл за метод
      */
-    public void shutdown() {
+    public synchronized void shutdown() {
         isShuttingDown = true;
     }
 
@@ -86,7 +71,7 @@ public class SimpleExecutor implements Executor {
      * Прерывает текущие задачи. При добавлении новых - бросает RejectedExecutionException
      * 1 балла за метод
      */
-    public void shutdownNow() {
+    public synchronized void shutdownNow() {
         isShuttingDown = true;
         interruptAllWorkers();
     }
@@ -94,29 +79,25 @@ public class SimpleExecutor implements Executor {
     /**
      * Должен возвращать количество созданных потоков.
      */
-    public int getLiveThreadsCount() {
+    public synchronized int getLiveThreadsCount() {
         return workers.size();
     }
 
     class Worker extends Thread {
 
-        public boolean isBusy = false;
-
         @Override
         public void run() {
-            while (!isShuttingDown) {
-                Runnable r = null;
-                if (!workQueue.isEmpty()) {
-                    r = workQueue.poll();
+            while (!isShuttingDown || !workQueue.isEmpty()) {
+                Runnable r;
+                ctl.incrementAndGet();
+                try {
+                    r = workQueue.take();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    return;
                 }
-                if (r != null) {
-                    isBusy = true;
-                    r.run();
-                    isBusy = false;
-                }
-            }
-            while (!workQueue.isEmpty()) {
-                workQueue.poll().run();
+                ctl.decrementAndGet();
+                r.run();
             }
         }
     }

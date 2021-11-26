@@ -27,7 +27,7 @@ public class SingleExecutor implements Executor {
      * 3 балла за метод
      */
     @Override
-    public void execute(Runnable command) {
+    public synchronized void execute(Runnable command) {
         if (command == null) {
             throw new NullPointerException();
         }
@@ -42,7 +42,7 @@ public class SingleExecutor implements Executor {
      * Дает текущим задачам выполниться. Добавление новых - бросает RejectedExecutionException
      * 1 балл за метод
      */
-    public void shutdown() {
+    public synchronized void shutdown() {
         isShuttingDown = true;
     }
 
@@ -50,30 +50,24 @@ public class SingleExecutor implements Executor {
      * Прерывает текущие задачи. При добавлении новых - бросает RejectedExecutionException
      * 2 балла за метод
      */
-    public void shutdownNow() {
+    public synchronized void shutdownNow() {
         isShuttingDown = true;
         worker.interrupt();
     }
 
     class Worker extends Thread {
 
-        public boolean isBusy = false;
-
         @Override
         public void run() {
-            while (!isShuttingDown) {
-                Runnable r = null;
-                if (!workQueue.isEmpty()) {
-                    r = workQueue.poll();
+            while (!isShuttingDown || !workQueue.isEmpty()) {
+                Runnable r;
+                try {
+                    r = workQueue.take();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    return;
                 }
-                if (r != null) {
-                    isBusy = true;
-                    r.run();
-                    isBusy = false;
-                }
-            }
-            while (!workQueue.isEmpty()) {
-                workQueue.poll().run();
+                r.run();
             }
         }
     }
