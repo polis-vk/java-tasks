@@ -8,6 +8,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
  * Ленивая инициализация означает, что если вам приходит раз в 5 секунд задача, которую вы выполняете 2 секунды,
@@ -21,14 +22,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class SimpleExecutor implements Executor {
 
-    private final List<CustomThread> threads = new CopyOnWriteArrayList<>();
-    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
-    private final AtomicInteger available = new AtomicInteger(0);
-    private final int MAX_COUNT;
-    private boolean ending = true;
+    private final int maxThreadCount;
+    private final List<CustomThread> readyThreads = new CopyOnWriteArrayList<>();
+    private final AtomicInteger busyCountThreads = new AtomicInteger(0);
+    private final BlockingQueue<Runnable> commands = new LinkedBlockingQueue<>();
+    private volatile boolean addMode = true;
 
     public SimpleExecutor(int maxThreadCount) {
-        MAX_COUNT = maxThreadCount;
+        this.maxThreadCount = maxThreadCount;
     }
 
     /**
@@ -36,15 +37,15 @@ public class SimpleExecutor implements Executor {
      * 8 баллов
      */
     @Override
-    public synchronized void execute(Runnable command) {
-        if (command == null) {
-            throw new NullPointerException();
-        }
-
-        if (ending) {
-            queue.add(command);
-            if (available.get() == threads.size() && threads.size() < MAX_COUNT) {
-                threads.add(new CustomThread());
+    public void execute(Runnable command) {
+        if (addMode) {
+            commands.add(command);
+            synchronized (this) {
+                if (readyThreads.size() == busyCountThreads.get() && readyThreads.size() < maxThreadCount) {
+                    CustomThread newThread = new CustomThread();
+                    readyThreads.add(newThread);
+                    newThread.start();
+                }
             }
         } else {
             throw new RejectedExecutionException();
@@ -56,10 +57,7 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        ending = false;
-        for (CustomThread thread : threads) {
-            thread.kill();
-        }
+        addMode = false;
     }
 
     /**
@@ -67,56 +65,35 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-        ending = false;
-        for (CustomThread thread : threads) {
-            thread.kill();
-            thread.interrupt();
+        addMode = false;
+        for (CustomThread readyThread : readyThreads) {
+            readyThread.interrupt();
         }
-
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return threads.size();
+        return readyThreads.size();
     }
 
     private class CustomThread extends Thread {
 
-        private boolean alive = true;
-        private boolean start = false;
-
         public CustomThread() {
-            available.incrementAndGet();
-            start();
+            busyCountThreads.incrementAndGet();
         }
 
         @Override
         public void run() {
-            Runnable check;
-
-            while (alive) {
-                if (!queue.isEmpty()) {
-                    try {
-                        check = queue.take();
-                        if (start) {
-                            available.incrementAndGet();
-                        }
-
-                        check.run();
-                        available.decrementAndGet();
-                        start = true;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+            try {
+                while (addMode || !commands.isEmpty()) {
+                    commands.take().run();
+                    busyCountThreads.decrementAndGet();
                 }
+            } catch (InterruptedException e) {
+                System.out.println("shutdownNow");
             }
         }
-
-        public void kill() {
-            alive = false;
-        }
-
     }
 }
