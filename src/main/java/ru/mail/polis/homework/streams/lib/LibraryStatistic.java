@@ -167,7 +167,7 @@ public class LibraryStatistic {
         return outOfBounds <= UNRELIABLE_MIN_SHARE * (inBounds + outOfBounds);
     }
 
-    private <T, K>Collector<T, ?, Integer> countingDistinctBy(Function<? super T, ? extends K> classifier) {
+    private <T, K> Collector<T, ?, Integer> countingDistinctBy(Function<? super T, ? extends K> classifier) {
         return Collectors.collectingAndThen(
                 Collectors.mapping(classifier, Collectors.toSet()),
                 Set::size);
