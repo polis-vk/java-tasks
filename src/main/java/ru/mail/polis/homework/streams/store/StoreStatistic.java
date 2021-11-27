@@ -1,8 +1,10 @@
 package ru.mail.polis.homework.streams.store;
 
 import java.sql.Timestamp;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Класс для работы со статистикой по заказам магазина.
@@ -20,7 +22,10 @@ public class StoreStatistic {
      * @return - кол-во проданного товара
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
-        return 0L;
+        return orders.stream()
+                .filter(i -> i.getTime().compareTo(from) >= 0 && i.getTime().compareTo(to) <= 0)
+                .mapToLong(i -> i.getItemCount().get(typeItem) == null ? 0 : i.getItemCount().get(typeItem))
+                .sum();
     }
 
     /**
@@ -30,7 +35,8 @@ public class StoreStatistic {
      * значение - map товар/кол-во
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
-        return null;
+        return orders.stream()
+                .collect(Collectors.toMap(i -> dayStart(i.getTime().toString()), Order::getItemCount));
     }
 
     /**
@@ -39,7 +45,8 @@ public class StoreStatistic {
      * @return - товар
      */
     public Item mostPopularItem(List<Order> orders) {
-        return null;
+         return orders.stream().flatMap(i -> i.getItemCount().entrySet().stream())
+                .max(Comparator.comparingInt(Map.Entry::getValue)).orElseThrow(NullPointerException::new).getKey();
     }
 
     /**
@@ -48,6 +55,13 @@ public class StoreStatistic {
      * @return map - заказ / общая сумма заказа
      */
     public Map<Order, Long> sum5biggerOrders(List<Order> orders) {
-        return null;
+        return orders.stream().collect(Collectors.toMap(i -> i, i -> i.getItemCount().values().stream()
+                .mapToLong(j -> j).sum())).entrySet().stream()
+                .sorted(Comparator.comparingLong(Map.Entry::getValue))
+                .limit(5).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    private Timestamp dayStart(String date) {
+        return Timestamp.valueOf(date.substring(0,10) + " 00:00:00");
     }
 }
