@@ -40,8 +40,8 @@ public class SingleExecutorTest {
         AtomicInteger counter = new AtomicInteger();
         AtomicInteger error = new AtomicInteger();
         executor.execute(() -> {
+            counter.incrementAndGet();
             first.countDown();
-            counter.incrementAndGet();
         });
         executor.execute(() -> {
             try {
@@ -49,8 +49,8 @@ public class SingleExecutorTest {
             } catch (InterruptedException e) {
                 error.incrementAndGet();
             }
+            counter.incrementAndGet();
             second.countDown();
-            counter.incrementAndGet();
         });
         executor.execute(() -> {
             try {
@@ -58,8 +58,8 @@ public class SingleExecutorTest {
             } catch (InterruptedException e) {
                 error.incrementAndGet();
             }
-            third.countDown();
             counter.incrementAndGet();
+            third.countDown();
         });
         assertTrue(first.await(5, TimeUnit.SECONDS));
         assertEquals(1, counter.get());
@@ -133,8 +133,8 @@ public class SingleExecutorTest {
         AtomicInteger counter = new AtomicInteger();
         AtomicInteger error = new AtomicInteger();
         executor.execute(() -> {
-            first.countDown();
             counter.incrementAndGet();
+            first.countDown();
         });
         executor.execute(() -> {
             try {
@@ -149,8 +149,8 @@ public class SingleExecutorTest {
             } catch (InterruptedException e) {
                 error.incrementAndGet();
             }
-            second.countDown();
             counter.incrementAndGet();
+            second.countDown();
         });
         assertTrue(first.await(5, TimeUnit.SECONDS));
         assertEquals(1, counter.get());
