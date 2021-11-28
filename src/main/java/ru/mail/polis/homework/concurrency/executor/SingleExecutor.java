@@ -2,7 +2,6 @@ package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.concurrent.*;
 import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
@@ -12,9 +11,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
-    private final ConcurrentLinkedQueue<Runnable> queueOfTasks = new ConcurrentLinkedQueue<>();
-    private final AtomicBoolean canAdd = new AtomicBoolean(true);
+    private final BlockingQueue<Runnable> queueOfTasks = new LinkedBlockingQueue<>();
+    private volatile boolean isRunning = true;
     private final EternalThread singleThread = new EternalThread();
+
+    public SingleExecutor() {
+        singleThread.start();
+    }
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -22,13 +25,10 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (!canAdd.get()) {
+        if (!isRunning) {
             throw new RejectedExecutionException();
         }
         queueOfTasks.offer(command);
-        if (singleThread.getState() == Thread.State.NEW) {
-            singleThread.start();
-        }
     }
 
     /**
@@ -36,7 +36,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        canAdd.set(false);
+        isRunning = false;
     }
 
     /**
@@ -44,7 +44,7 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
-        canAdd.set(false);
+        isRunning = false;
         singleThread.interrupt();
     }
 
@@ -52,10 +52,13 @@ public class SingleExecutor implements Executor {
 
         @Override
         public void run() {
-            while (canAdd.get() || !queueOfTasks.isEmpty()) {
-                if (!queueOfTasks.isEmpty()) {
-                    queueOfTasks.poll().run();
+            try {
+                while (isRunning || !queueOfTasks.isEmpty()) {
+                    queueOfTasks.take().run();
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
         }
 

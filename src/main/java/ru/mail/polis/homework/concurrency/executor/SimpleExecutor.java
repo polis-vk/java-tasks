@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SimpleExecutor implements Executor {
     private final BlockingQueue<Runnable> queueOfTasks = new LinkedBlockingQueue<>();
     private final List<Worker> poolOfThreads = new ArrayList<>();
-    private final AtomicBoolean canAdd = new AtomicBoolean(true);
+    private volatile boolean isRunning = true;
     private final AtomicInteger countOfFreeThread = new AtomicInteger();
     private final int maxCountOfThreads;
 
@@ -37,17 +37,18 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (!canAdd.get()) {
+        if (!isRunning) {
             throw new RejectedExecutionException();
         }
 
-        synchronized (queueOfTasks) {
-            queueOfTasks.offer(command);
-
-            if (countOfFreeThread.get() == 0 && poolOfThreads.size() < maxCountOfThreads && !queueOfTasks.isEmpty()) {
-                Worker worker = new Worker();
-                poolOfThreads.add(worker);
-                worker.start();
+        queueOfTasks.offer(command);
+        if (countOfFreeThread.compareAndSet(0, 0)) {
+            synchronized (poolOfThreads) {
+                if (poolOfThreads.size() < maxCountOfThreads) {
+                    Worker worker = new Worker();
+                    poolOfThreads.add(worker);
+                    worker.start();
+                }
             }
         }
     }
@@ -57,7 +58,7 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        canAdd.set(false);
+        isRunning = false;
     }
 
     /**
@@ -65,8 +66,10 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-        canAdd.set(false);
-        poolOfThreads.forEach(Thread::interrupt);
+        isRunning = false;
+        synchronized (poolOfThreads) {
+            poolOfThreads.forEach(Thread::interrupt);
+        }
     }
 
     /**
@@ -79,17 +82,16 @@ public class SimpleExecutor implements Executor {
     private class Worker extends Thread {
         @Override
         public void run() {
-            while (canAdd.get() || !queueOfTasks.isEmpty()) {
-                try {
+            try {
+                while (isRunning || !queueOfTasks.isEmpty()) {
                     countOfFreeThread.incrementAndGet();
                     Runnable task = queueOfTasks.take();
                     countOfFreeThread.decrementAndGet();
                     task.run();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    Thread.currentThread().interrupt();
-                    return;
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
         }
     }
