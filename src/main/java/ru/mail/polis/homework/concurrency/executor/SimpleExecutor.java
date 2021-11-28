@@ -1,13 +1,12 @@
 package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -22,16 +21,19 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SimpleExecutor implements Executor {
 
-    private final List<Worker> threadPool;
-    private boolean shutdown = false;
+    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+    private final AtomicInteger workingOrWaitingThreadsCount = new AtomicInteger(0);
+    private final AtomicInteger threadsCount = new AtomicInteger(0);
+    private volatile boolean shutdown = false;
     private int maxThreadCount;
+    private final List<Worker> threadPool = new ArrayList<>(maxThreadCount);
+
 
     public SimpleExecutor(int maxThreadCount) {
         if (maxThreadCount < 1) {
             throw new IllegalArgumentException();
         }
         this.maxThreadCount = maxThreadCount;
-        threadPool = new ArrayList<>(maxThreadCount);
     }
 
 
@@ -40,23 +42,23 @@ public class SimpleExecutor implements Executor {
      * 8 баллов
      */
     @Override
-    public synchronized void execute(Runnable command) {
+    public void execute(Runnable command) {
         if (command == null) {
             throw new NullPointerException();
         }
         if (shutdown) {
             throw new RejectedExecutionException();
         }
-        Optional<Worker> freeWorker = threadPool.stream().filter(Worker::isFree).findAny();
-        if (freeWorker.isEmpty() && threadPool.size() < maxThreadCount) {
+        try {
+            queue.put(command);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (threadsCount.get() < maxThreadCount && (workingOrWaitingThreadsCount.get() != threadsCount.get() || threadPool.isEmpty())) {
+            threadsCount.incrementAndGet();
             Worker newWorker = new Worker();
-            newWorker.addCommand(command);
             newWorker.start();
             threadPool.add(newWorker);
-        } else if (freeWorker.isPresent()) {
-            freeWorker.get().addCommand(command);
-        } else {
-            threadPool.stream().min(Comparator.comparingInt(Worker::commandsNumber)).get().addCommand(command);
         }
     }
 
@@ -66,9 +68,6 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdown() {
         shutdown = true;
-        for (Worker worker : threadPool) {
-            worker.shutdown();
-        }
     }
 
     /**
@@ -77,8 +76,10 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         shutdown = true;
-        for (Worker worker : threadPool) {
-            worker.interrupt();
+        synchronized (threadPool) {
+            for (Worker worker : threadPool) {
+                worker.interrupt();
+            }
         }
     }
 
@@ -86,56 +87,22 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return threadPool.size();
+        return threadsCount.get();
     }
 
-    private static class Worker extends Thread {
-
-        private final BlockingQueue<Runnable> commands = new LinkedBlockingQueue<>();
-        private boolean isWorking = false;
-        private boolean shutdown = false;
+    private class Worker extends Thread {
 
         @Override
         public void run() {
-            while (!shutdown) {
-                while (!commands.isEmpty()) {
-                    isWorking = true;
-                    takeCommand();
-                    isWorking = !commands.isEmpty();
+            try {
+                while (true) {
+                    workingOrWaitingThreadsCount.incrementAndGet();
+                    queue.take().run();
+                    workingOrWaitingThreadsCount.decrementAndGet();
                 }
+            } catch (InterruptedException exception) {
+                exception.printStackTrace();
             }
-            while (!commands.isEmpty()) {
-                takeCommand();
-            }
-        }
-
-        public void addCommand(Runnable command) {
-            try {
-                commands.put(command);
-                isWorking = true;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        private void takeCommand() {
-            try {
-                commands.take().run();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void shutdown() {
-            this.shutdown = true;
-        }
-
-        public boolean isFree() {
-            return !isWorking;
-        }
-
-        public int commandsNumber() {
-            return commands.size();
         }
     }
 }
