@@ -4,6 +4,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -24,8 +25,8 @@ public class SimpleExecutor implements Executor {
 
     private final AtomicInteger freeWorkers = new AtomicInteger();
     private final int maxThreadCount;
-    private int currentThreadCount = 0;
-    private boolean shutdownCalled = false;
+    private final AtomicInteger currentThreadCount = new AtomicInteger();
+    private final AtomicBoolean shutdownCalled = new AtomicBoolean();
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
@@ -38,7 +39,7 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (shutdownCalled) {
+        if (shutdownCalled.get()) {
             throw new RejectedExecutionException();
         }
         addCommand(command);
@@ -49,7 +50,7 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        shutdownCalled = true;
+        shutdownCalled.set(true);
     }
 
     /**
@@ -57,8 +58,8 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-        shutdownCalled = true;
-        for (int i = 0; i < currentThreadCount; i++) {
+        shutdownCalled.set(true);
+        for (int i = 0; i < currentThreadCount.get(); i++) {
             threads[i].interrupt();
         }
     }
@@ -67,18 +68,24 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return currentThreadCount;
+        return currentThreadCount.get();
     }
 
 
-    private synchronized void addCommand(Runnable command) {
+    private void addCommand(Runnable command) {
         workQueue.add(command);
 
-        if (currentThreadCount < maxThreadCount && !workQueue.isEmpty() && freeWorkers.get() == 0) {
-            Thread thread = new Thread(new Worker());
-            thread.start();
-            threads[currentThreadCount++] = thread;
+        synchronized (currentThreadCount) {
+            if (!(currentThreadCount.get() < maxThreadCount && !workQueue.isEmpty() && freeWorkers.get() == 0)) {
+                return;
+            }
+
+            currentThreadCount.getAndIncrement();
         }
+
+        Thread thread = new Thread(new Worker());
+        thread.start();
+        threads[currentThreadCount.get() - 1] = thread;
     }
 
 
@@ -86,17 +93,15 @@ public class SimpleExecutor implements Executor {
 
         @Override
         public void run() {
-            while (!shutdownCalled || !workQueue.isEmpty()) {
-                freeWorkers.incrementAndGet();
-                Runnable task;
-                try {
-                    task = workQueue.take();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    return;
+            try {
+                while (!shutdownCalled.get() || !workQueue.isEmpty()) {
+                    freeWorkers.incrementAndGet();
+                    Runnable task = workQueue.take();
+                    freeWorkers.decrementAndGet();
+                    task.run();
                 }
-                freeWorkers.decrementAndGet();
-                task.run();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }

@@ -4,6 +4,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
@@ -16,7 +17,7 @@ public class SingleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
     private final Thread thread = new Thread(new Worker());
-    private boolean shutdownCalled = false;
+    private final AtomicBoolean shutdownCalled = new AtomicBoolean();
 
     public SingleExecutor() {
         thread.start();
@@ -29,7 +30,7 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (shutdownCalled) {
+        if (shutdownCalled.get()) {
             throw new RejectedExecutionException();
         }
 
@@ -42,7 +43,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        shutdownCalled = true;
+        shutdownCalled.set(true);
     }
 
     /**
@@ -50,7 +51,7 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
-        shutdownCalled = true;
+        shutdownCalled.set(true);
         thread.interrupt();
     }
 
@@ -58,11 +59,10 @@ public class SingleExecutor implements Executor {
     class Worker implements Runnable {
         @Override
         public void run() {
-            while (!shutdownCalled || !workQueue.isEmpty()) {
-                try {
-                    workQueue.take().run();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            while (!shutdownCalled.get() || !workQueue.isEmpty()) {
+                Runnable task = workQueue.poll();
+                if (task != null) {
+                    task.run();
                 }
             }
         }
