@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.streams.lib;
 
+import java.util.Objects;
+
 public class User {
     private final String name;
     private final int age;
@@ -27,5 +29,18 @@ public class User {
 
     public int getReadedPages() {
         return readedPages;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return age == user.age && readedPages == user.readedPages && name.equals(user.name) && Objects.equals(book, user.book);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, age, book, readedPages);
     }
 }
