@@ -14,19 +14,17 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SingleExecutor implements Executor {
     private final Thread worker;
-    private final BlockingQueue<Runnable> tasks;
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private volatile boolean finish = false;
 
     public SingleExecutor() {
-        tasks = new LinkedBlockingQueue<>();
         worker = new Thread(() -> {
-            while (true) {
-                try {
+            try {
+                while (true) {
                     tasks.take().run();
-                } catch (InterruptedException e) {
-                    return;
                 }
             }
+            catch (InterruptedException e) {}
         });
         worker.start();
     }
