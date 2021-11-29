@@ -28,7 +28,7 @@ public class SimpleExecutor implements Executor {
 
     private final int maxThreadCount;
 
-    private final List<Thread> threads; //= new CopyOnWriteArrayList();
+    private volatile List<Thread> threads; //= new CopyOnWriteArrayList();
 
     private volatile boolean stop = false;
 
@@ -46,23 +46,27 @@ public class SimpleExecutor implements Executor {
         if (stop) {
             throw new RejectedExecutionException();
         }
-
-        tasks.offer(command);
+        
+        if (!canCreateThread()) {
+            tasks.offer(command);
+            return;
+        }
         
         // double checked locking для оптимизации
-        if (canCreateThread()) {
-            synchronized (threads) {
-                if (canCreateThread()) {
-                    Thread t = new Thread(this::run);
-                    threads.add(t);
-                    t.start();
-                }
+        synchronized (threads) {
+            if (canCreateThread()) {
+                Thread t = new LiveThread(command);
+                threads.add(t);
+                t.start();
+                return;
             }
+            tasks.offer(command);
         }
+        
     }
     
     private boolean canCreateThread() {
-        return !stop && threads.size() < maxThreadCount && !tasks.isEmpty() && freeThreads.get() == 0;
+        return !stop && threads.size() < maxThreadCount && freeThreads.get() == 0;
     }
 
 
@@ -93,20 +97,28 @@ public class SimpleExecutor implements Executor {
         return threads.size();
     }
     
-
-    private void run() {
-        try {
-            while (!stop || !tasks.isEmpty()) {
-                freeThreads.incrementAndGet();                
-                Runnable task = tasks.take();
-                freeThreads.decrementAndGet();
-                task.run();
-
-            }
-        } catch (InterruptedException e) {
-            return;
+    class LiveThread extends Thread {
+        
+        Runnable target;
+        
+        public LiveThread(Runnable target) {
+           this.target = target;
         }
+        
+        @Override
+        public void run() {
+            try {
+                while (!stop || !tasks.isEmpty()) {
+                    target.run();
+                    
+                    freeThreads.incrementAndGet();
+                    target = tasks.take();
+                    freeThreads.decrementAndGet();
+                }
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
+
     }
-
-
 }
