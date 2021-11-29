@@ -6,6 +6,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -22,25 +23,16 @@ public class SimpleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
 
+    private final AtomicInteger freeThreads = new AtomicInteger();
+
     private final int maxThreadCount;
 
-    private volatile List<Thread> threads;
+    private final List<Thread> threads = new CopyOnWriteArrayList();
 
     private volatile boolean stop = false;
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
-        this.threads = new CopyOnWriteArrayList();
-    }
-
-    public void run() {
-        try {
-            while (!stop || !tasks.isEmpty()) {
-                tasks.take().run();
-            }
-        } catch (InterruptedException e) {
-            return;
-        }
     }
 
     /**
@@ -53,11 +45,19 @@ public class SimpleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
 
-        tasks.add(command);
-
+        tasks.offer(command);
+        
+        /* это бы пригодилось не используй я LinkedBlockingQueue
+        synchronized (this) {
+            if (!tasks.isEmpty()) {
+                notifyAll();
+            }
+        }
+        */
+        
         // double checked locking для оптимизации
         if (canCreateThread()) {
-            synchronized (threads) {
+            synchronized (this) {
                 if (canCreateThread()) {
                     Thread t = new Thread(this::run);
                     threads.add(t);
@@ -68,8 +68,7 @@ public class SimpleExecutor implements Executor {
     }
     
     private boolean canCreateThread() {
-        return !stop && !tasks.isEmpty() && threads.size() < maxThreadCount
-                && threads.stream().allMatch(thread -> thread.getState() != Thread.State.WAITING);
+        return !stop && threads.size() < maxThreadCount && !tasks.isEmpty() && freeThreads.get() == 0;
     }
 
 
@@ -78,9 +77,7 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        synchronized (threads) {
-            stop = true;
-        }
+        stop = true;
     }
 
     /**
@@ -89,19 +86,41 @@ public class SimpleExecutor implements Executor {
      */
     
     public void shutdownNow() {
-        synchronized (threads) {
-            stop = true;
-            threads.forEach(Thread::interrupt);
-        }
+        stop = true;
+        threads.forEach(Thread::interrupt);
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        synchronized (threads) {
-            return threads.size();
+        return threads.size();
+    }
+    
+
+    private void run() {
+        try {
+            while (!stop || !tasks.isEmpty()) {
+                freeThreads.incrementAndGet();
+                /* это бы пригодилось не используй я LinkedBlockingQueue
+                if (tasks.isEmpty()) {
+                    synchronized (this) {
+                        while (tasks.isEmpty()) {
+                            wait();
+                        }
+                    }
+                }
+                */
+                
+                Runnable task = tasks.take();
+                freeThreads.decrementAndGet();
+                task.run();
+
+            }
+        } catch (InterruptedException e) {
+            return;
         }
     }
+
 
 }

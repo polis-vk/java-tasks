@@ -19,16 +19,6 @@ public class SingleExecutor implements Executor {
     private volatile Thread thread = null;
 
     private volatile boolean stop = false;
-
-    private void run() {
-        try {
-            while (!stop || !tasks.isEmpty()) {
-                tasks.take().run();
-            }
-       } catch (InterruptedException e) {
-           return;
-       }
-    }
     
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -40,12 +30,12 @@ public class SingleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
         
-        tasks.add(command);
+        tasks.offer(command);
         // запуск
         if (thread == null) {
             synchronized (this) {
                 if (thread == null) {
-                    this.thread = new Thread(this::run);
+                    thread = new Thread(this::run);
                     thread.start();
                 }
             }
@@ -68,5 +58,15 @@ public class SingleExecutor implements Executor {
     public synchronized void shutdownNow() {
         stop = true;
         thread.interrupt();
+    }
+    
+    private void run() {
+        try {
+            while (!stop || !tasks.isEmpty()) {
+                tasks.take().run();
+            }
+       } catch (InterruptedException e) {
+           return;
+       }
     }
 }
