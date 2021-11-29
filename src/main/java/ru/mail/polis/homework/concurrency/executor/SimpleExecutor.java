@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SimpleExecutor implements Executor {
     private final int maxThreadCount;
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
-    private final List<Thread> threads = new LinkedList<>();
+    private final List<Thread> threads = new CopyOnWriteArrayList<>();
     private final AtomicInteger countFreeThreads = new AtomicInteger();
     private volatile boolean shutdownFlag = false;
 
@@ -79,9 +79,10 @@ public class SimpleExecutor implements Executor {
         @Override
         public void run() {
             try {
+                Runnable task;
                 while (!shutdownFlag) {
                     countFreeThreads.incrementAndGet();
-                    final Runnable task = tasks.take();
+                    task = tasks.take();
                     countFreeThreads.decrementAndGet();
                     task.run();
                 }
