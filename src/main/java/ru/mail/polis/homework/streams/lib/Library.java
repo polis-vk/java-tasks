@@ -12,4 +12,16 @@ public class Library {
         this.books = books;
         this.archive = archive;
     }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public List<ArchivedData> getArchive() {
+        return archive;
+    }
 }
