@@ -43,8 +43,8 @@ public class SimpleExecutor implements Executor {
             throw new NullPointerException();
         }
 
+        tasks.offer(command);
         synchronized (tasks) {
-            tasks.offer(command);
             if (freeThreads.get() == 0 && threads.size() != maxThreadCount) {
                 Thread thread = new Thread(this::run);
                 threads.add(thread);
