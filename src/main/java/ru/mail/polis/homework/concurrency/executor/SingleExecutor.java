@@ -17,6 +17,10 @@ public class SingleExecutor implements Executor {
     private final Thread thread = new CustomThread();
     private volatile boolean isWorking = true;
 
+    public SingleExecutor() {
+        thread.start();
+    }
+
     /**
      * Метод ставит задачу в очередь на исполнение.
      * 3 балла за метод
@@ -26,12 +30,7 @@ public class SingleExecutor implements Executor {
         if (!isWorking) {
             throw new RejectedExecutionException();
         }
-        else {
-            tasks.add(command);
-            if (!thread.isAlive()) {
-                thread.start();
-            }
-        }
+        tasks.add(command);
     }
 
     /**
@@ -58,8 +57,7 @@ public class SingleExecutor implements Executor {
                 while (isWorking || !tasks.isEmpty()) {
                     tasks.take().run();
                 }
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }

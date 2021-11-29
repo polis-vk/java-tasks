@@ -1,9 +1,12 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -18,14 +21,14 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SimpleExecutor implements Executor {
     private final int maxThreadCount;
-    private final LazyThread[] lazyThreads;
+    private final List<LazyThread> lazyThreads;
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private volatile boolean isWorking = true;
-    private int threadsCount = 0;
+    private final AtomicInteger threadsCount = new AtomicInteger(0);
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
-        lazyThreads = new LazyThread[maxThreadCount];
+        lazyThreads = new ArrayList<>(maxThreadCount);
     }
 
     /**
@@ -37,15 +40,16 @@ public class SimpleExecutor implements Executor {
         if (!isWorking) {
             throw new RejectedExecutionException();
         }
+        if (threadsCount.get() < maxThreadCount && !isAvailableSomeThread()) {
+            LazyThread worker = new LazyThread();
+            worker.start();
+            lazyThreads.add(worker);
+            threadsCount.incrementAndGet();
+        }
         try {
             tasks.put(command);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
-        if (threadsCount < maxThreadCount && !isAvailableSomeThread() && !tasks.isEmpty()) {
-            LazyThread worker = new LazyThread();
-            worker.start();
-            lazyThreads[threadsCount++] = worker;
         }
     }
 
@@ -63,8 +67,8 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         isWorking = false;
-        for (int i = 0; i < threadsCount; i++) {
-            lazyThreads[i].interrupt();
+        for (int i = 0; i < threadsCount.get(); i++) {
+            lazyThreads.get(i).interrupt();
         }
     }
 
@@ -72,7 +76,7 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return threadsCount;
+        return threadsCount.get();
     }
 
     private class LazyThread extends Thread {
@@ -99,8 +103,8 @@ public class SimpleExecutor implements Executor {
     }
 
     private boolean isAvailableSomeThread() {
-        for (int i = 0; i < threadsCount; i++) {
-            if (lazyThreads[i].isAvailable()) {
+        for (int i = 0; i < threadsCount.get(); i++) {
+            if (lazyThreads.get(i).isAvailable()) {
                 return true;
             }
         }
