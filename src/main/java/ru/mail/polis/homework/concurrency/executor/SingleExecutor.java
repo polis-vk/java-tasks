@@ -16,16 +16,16 @@ public class SingleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> scheduler = new LinkedBlockingDeque<>();
     private final Thread worker = new Worker();
-    private boolean isShutdown = false;
+    private volatile boolean isShutdown = false;
 
     private class Worker extends Thread {
         @Override
         public void run() {
-            while (true) {
-                try {
+            try {
+                while (!isShutdown || !scheduler.isEmpty()) {
                     scheduler.take().run();
-                } catch (InterruptedException ignored) {
                 }
+            } catch (InterruptedException ignored) {
             }
         }
     }
@@ -55,9 +55,6 @@ public class SingleExecutor implements Executor {
      */
     public void shutdown() {
         isShutdown = true;
-        if (scheduler.isEmpty()) {
-            worker.interrupt();
-        }
     }
 
     /**

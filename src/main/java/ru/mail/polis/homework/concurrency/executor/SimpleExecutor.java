@@ -5,6 +5,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -21,11 +22,10 @@ public class SimpleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> scheduler = new LinkedBlockingDeque<>();
     private final Thread[] workers;
-    private boolean isShutdown = false;
+    private volatile Boolean isShutdown = false;
     private final AtomicInteger activeWorkers = new AtomicInteger(0);
     private final AtomicInteger numberAliveWorkers = new AtomicInteger(0);
     private final int maxNumberWorkers;
-
 
     private class Worker extends Thread {
         public final int id;
@@ -36,14 +36,14 @@ public class SimpleExecutor implements Executor {
 
         @Override
         public void run() {
-            while (true) {
-                try {
+            try {
+                while (!isShutdown || !scheduler.isEmpty()) {
                     Runnable task = scheduler.take();
                     activeWorkers.incrementAndGet();
                     task.run();
                     activeWorkers.decrementAndGet();
-                } catch (InterruptedException ignored) {
                 }
+            } catch (InterruptedException ignored) {
             }
         }
     }
@@ -59,22 +59,24 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (isShutdown) {
-            throw new RejectedExecutionException();
-        }
-        synchronized (activeWorkers) {
-            if (numberAliveWorkers.get() == activeWorkers.get() || !scheduler.isEmpty() && numberAliveWorkers.get() > activeWorkers.get()) {
-                if (numberAliveWorkers.get() < maxNumberWorkers) {
-                    Worker w = new Worker(numberAliveWorkers.get());
-                    w.start();
-                    workers[w.id] = w;
-                    numberAliveWorkers.incrementAndGet();
-                }
+        synchronized (isShutdown) {
+            if (isShutdown) {
+                throw new RejectedExecutionException();
             }
-            try {
-                scheduler.put(command);
-            } catch (InterruptedException er) {
-                er.printStackTrace();
+            synchronized (activeWorkers) {
+                if (scheduler.size() + activeWorkers.get() >= numberAliveWorkers.get()) {
+                    if (numberAliveWorkers.get() < maxNumberWorkers) {
+                        Worker w = new Worker(numberAliveWorkers.get());
+                        w.start();
+                        workers[w.id] = w;
+                        numberAliveWorkers.incrementAndGet();
+                    }
+                }
+                try {
+                    scheduler.put(command);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -84,7 +86,9 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        isShutdown = false;
+        synchronized (isShutdown) {
+            isShutdown = true;
+        }
     }
 
     /**
@@ -92,9 +96,11 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-        isShutdown = false;
-        for (Thread thread : workers) {
-            thread.interrupt();
+        synchronized (isShutdown) {
+            isShutdown = true;
+            for (int i = 0; i < numberAliveWorkers.get(); i++) {
+                workers[i].interrupt();
+            }
         }
     }
 
