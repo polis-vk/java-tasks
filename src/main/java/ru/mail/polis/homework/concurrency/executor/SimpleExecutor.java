@@ -24,7 +24,7 @@ public class SimpleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private final List<Worker> threadPool = new CopyOnWriteArrayList<>();
-    private volatile AtomicInteger waitingThreadsCounter = new AtomicInteger(0);
+    private final AtomicInteger waitingThreadsCounter = new AtomicInteger(0);
     private final int maxThreadCount;
     private volatile boolean isShutDown;
     private final ReentrantLock lock = new ReentrantLock();
@@ -42,14 +42,14 @@ public class SimpleExecutor implements Executor {
         if (isShutDown) {
             throw new RejectedExecutionException();
         }
+        tasks.add(command);
         lock.lock();
-        if (waitingThreadsCounter.get() == 0 && threadPool.size() < maxThreadCount) {
+        if (threadPool.size() < maxThreadCount && !tasks.isEmpty() && waitingThreadsCounter.get() == 0) {
             Worker worker = new Worker();
             worker.start();
             threadPool.add(worker);
         }
         lock.unlock();
-        tasks.add(command);
     }
 
     /**
@@ -84,13 +84,9 @@ public class SimpleExecutor implements Executor {
             Runnable task;
             try {
                 while (!isShutDown && !Thread.currentThread().isInterrupted()) {
-                    lock.lock();
                     waitingThreadsCounter.incrementAndGet();
-                    lock.unlock();
                     task = tasks.take();
-                    lock.lock();
                     waitingThreadsCounter.decrementAndGet();
-                    lock.unlock();
                     task.run();
                 }
             } catch (InterruptedException e) {
