@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.streams.lib;
 
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.Collectors;
 
 /**
@@ -11,7 +10,7 @@ import java.util.stream.Collectors;
 public class LibraryStatistic {
     private final static int EXPERT_READING_TIME = 14;
     private final static int EXPERT_READ_BOOKS = 5;
-    private final static int DEBTOR_READING_TIME = 14;
+    private final static int DEBTOR_READING_TIME = 30;
     private final static double DEBT_RATIO = 0.5;
 
 
@@ -53,16 +52,7 @@ public class LibraryStatistic {
                 .filter(archivedData -> archivedData.getUser().equals(user))
                 .collect(Collectors.groupingBy(data -> data.getBook().getGenre()))
                 .entrySet().stream()
-                .max((o1, o2) -> {
-                    boolean containsUnreturned1 = o1.getValue().stream().anyMatch(data -> data.getReturned() == null);
-                    boolean containsUnreturned2 = o2.getValue().stream().anyMatch(data -> data.getReturned() == null);
-                    int books1 = o1.getValue().size();
-                    int books2 = o2.getValue().size();
-                    int onlyReturned1 = containsUnreturned1 ? books1 - 1 : books1;
-                    int onlyReturned2 = containsUnreturned2 ? books2 - 1 : books2;
-                    int onlyReturnedDifference = onlyReturned1 - onlyReturned2;
-                    return onlyReturnedDifference != 0 ? onlyReturnedDifference : books1 - books2;
-                })
+                .max((o1, o2) -> compareGenresByBooks(o1.getValue(), o2.getValue()))
                 .get().getKey();
     }
 
@@ -75,7 +65,7 @@ public class LibraryStatistic {
      */
     public List<User> unreliableUsers(Library library) {
         return library.getArchive().stream()
-                .collect(DataConsumer::new, DataConsumer::accept, DataConsumer::combine).getMap()
+                .collect(Collectors.groupingBy(ArchivedData::getUser))
                 .entrySet().stream()
                 .filter(entry -> {
                     int numberOfBooks = entry.getValue().size();
@@ -113,7 +103,7 @@ public class LibraryStatistic {
                 .collect(Collectors.groupingBy(Book::getGenre, Collectors.groupingBy(Book::getAuthor, Collectors.counting())))
                 .entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey,
-                        genreMapEntry -> genreMapEntry.getValue().entrySet().stream()
+                        authorToBooks -> authorToBooks.getValue().entrySet().stream()
                                 .max(Comparator.comparingLong(Map.Entry<String, Long>::getValue)
                                         .thenComparing(Map.Entry.comparingByKey())).get().getKey()));
     }
@@ -124,28 +114,15 @@ public class LibraryStatistic {
         return (int) (from - to) / (1000 * 60 * 60 * 24);
     }
 
-    private static class DataConsumer implements Consumer<ArchivedData> {
-        private final Map<User, List<ArchivedData>> map = new HashMap<>();
-
-        @Override
-        public void accept(ArchivedData archivedData) {
-            List<ArchivedData> records = map.computeIfAbsent(
-                    archivedData.getUser(), k -> new ArrayList<>()
-            );
-            records.add(archivedData);
-
-        }
-
-        public Map<User, List<ArchivedData>> getMap() {
-            return map;
-        }
-
-        public void combine(DataConsumer other) {
-            map.putAll(other.getMap());
-        }
+    private static int compareGenresByBooks(List<ArchivedData> data1, List<ArchivedData> data2) {
+        boolean containsUnreturned1 = data1.stream().anyMatch(data -> data.getReturned() == null);
+        boolean containsUnreturned2 = data2.stream().anyMatch(data -> data.getReturned() == null);
+        int books1 = data1.size();
+        int books2 = data2.size();
+        int onlyReturned1 = containsUnreturned1 ? books1 - 1 : books1;
+        int onlyReturned2 = containsUnreturned2 ? books2 - 1 : books2;
+        int onlyReturnedDifference = onlyReturned1 - onlyReturned2;
+        return onlyReturnedDifference != 0 ? onlyReturnedDifference : books1 - books2;
     }
 
-    public static void main(String[] args) {
-
-    }
 }

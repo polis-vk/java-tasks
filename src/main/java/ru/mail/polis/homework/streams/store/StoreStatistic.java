@@ -25,7 +25,7 @@ public class StoreStatistic {
         return orders.stream()
                 .filter(order -> order.getTime().after(from) && order.getTime().before(to))
                 .flatMap(order -> order.getItemCount().entrySet().stream())
-                .filter(itemIntegerEntry -> itemIntegerEntry.getKey().equals(typeItem))
+                .filter(entry -> entry.getKey().equals(typeItem))
                 .map(Map.Entry::getValue)
                 .reduce(Integer::sum).orElse(0);
     }
