@@ -2,12 +2,17 @@ package ru.mail.polis.homework.streams.lib;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Класс для работы со статистикой по библиотеке.
  * Оценка 5-ть баллов
  */
 public class LibraryStatistic {
+
+    private final static int SPECIALIST_DAYS = 14;
 
     /**
      * Вернуть "специалистов" в литературном жанре с кол-вом прочитанных страниц.
@@ -18,7 +23,19 @@ public class LibraryStatistic {
      * @return - map пользователь / кол-во прочитанных страниц
      */
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
-        return null;
+        List<ArchivedData> archivedData = library.getArchive();
+        List<User> users = library.getUsers();
+        return users.stream().filter(user -> archivedData.stream()
+                .filter(archivedData1 -> archivedData1.getUser().equals(user))
+                .filter(archivedData1 -> archivedData1.getBook().getGenre().equals(genre))
+                .filter(archivedData1 ->
+                        (archivedData1.getReturned() != null
+                        && TimeUnit.MILLISECONDS.toDays(archivedData1.getReturned().getTime() - archivedData1.getTake().getTime()) >= SPECIALIST_DAYS)
+                        || (archivedData1.getReturned() == null
+                        && TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() -  archivedData1.getTake().getTime()) >= SPECIALIST_DAYS))
+                        .limit(5)
+                        .count() == 5)
+                .collect(Collectors.toMap(Function.identity(), User::getReadedPages));
     }
 
     /**
@@ -29,6 +46,7 @@ public class LibraryStatistic {
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
+
         return null;
     }
 
