@@ -1,9 +1,11 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.Comparator;
-import java.util.LinkedList;
+import java.util.*;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -18,8 +20,11 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SimpleExecutor implements Executor {
     private final int maxThreadCount;
-    LinkedList<SingleExecutor> workers = new LinkedList<>();
-    private boolean isShutDown = false;
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
+    private final List<Thread> threads = new ArrayList<>();
+
+    private final AtomicInteger freeThreads = new AtomicInteger();
+    private volatile boolean isShutDown;
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
@@ -38,18 +43,13 @@ public class SimpleExecutor implements Executor {
             throw new NullPointerException();
         }
 
-        for (SingleExecutor worker : workers) {
-            if (worker.isFree()) {
-                worker.execute(command);
-                return;
+        synchronized (tasks) {
+            tasks.offer(command);
+            if (freeThreads.get() == 0 && threads.size() != maxThreadCount) {
+                Thread thread = new Thread(this::run);
+                threads.add(thread);
+                thread.start();
             }
-        }
-
-        if (workers.size() < maxThreadCount) {
-            workers.add(new SingleExecutor());
-            workers.getLast().execute(command);
-        } else {
-            workers.stream().min(Comparator.comparingInt(SingleExecutor::getCommandCount)).get().execute(command);
         }
     }
 
@@ -59,9 +59,6 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdown() {
         isShutDown = true;
-        for (SingleExecutor worker : workers) {
-            worker.shutdown();
-        }
     }
 
     /**
@@ -70,8 +67,8 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         isShutDown = true;
-        for (SingleExecutor worker : workers) {
-            worker.shutdownNow();
+        for (Thread thread : threads) {
+            thread.interrupt();
         }
     }
 
@@ -79,6 +76,18 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return workers.size();
+        return threads.size();
+    }
+
+    private void run() {
+        try {
+            while (!isShutDown || !tasks.isEmpty()) {
+                freeThreads.incrementAndGet();
+                Runnable task = tasks.take();
+                freeThreads.decrementAndGet();
+                task.run();
+            }
+        } catch (InterruptedException ignored) {
+        }
     }
 }

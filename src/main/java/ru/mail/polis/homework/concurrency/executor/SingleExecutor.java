@@ -15,10 +15,9 @@ import java.util.concurrent.RejectedExecutionException;
 public class SingleExecutor implements Executor {
     private final Thread thread = new Thread(this::run);
     private final Queue<Runnable> commands = new ConcurrentLinkedQueue<>();
-    private boolean isShutDown = false;
-    private boolean isFree = true;
+    private volatile boolean isShutDown;
 
-    SingleExecutor() {
+    public SingleExecutor() {
         thread.start();
     }
 
@@ -55,20 +54,10 @@ public class SingleExecutor implements Executor {
         thread.interrupt();
     }
 
-    public boolean isFree() {
-        return isFree;
-    }
-
-    public int getCommandCount() {
-        return commands.size();
-    }
-
     private void run() {
         while (!isShutDown || !commands.isEmpty()) {
             if (!commands.isEmpty()) {
-                isFree = false;
                 commands.poll().run();
-                isFree = commands.isEmpty();
             }
         }
     }
