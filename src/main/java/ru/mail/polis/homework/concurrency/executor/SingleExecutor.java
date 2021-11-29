@@ -15,7 +15,7 @@ import java.util.concurrent.RejectedExecutionException;
 public class SingleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> workQueue = new LinkedBlockingDeque<>();
-    private boolean isShuttingDown;
+    private volatile boolean isShuttingDown;
     private final Worker worker = new Worker();
 
     public SingleExecutor() {
@@ -27,7 +27,7 @@ public class SingleExecutor implements Executor {
      * 3 балла за метод
      */
     @Override
-    public synchronized void execute(Runnable command) {
+    public void execute(Runnable command) {
         if (command == null) {
             throw new NullPointerException();
         }
@@ -42,7 +42,7 @@ public class SingleExecutor implements Executor {
      * Дает текущим задачам выполниться. Добавление новых - бросает RejectedExecutionException
      * 1 балл за метод
      */
-    public synchronized void shutdown() {
+    public void shutdown() {
         isShuttingDown = true;
     }
 
@@ -50,7 +50,7 @@ public class SingleExecutor implements Executor {
      * Прерывает текущие задачи. При добавлении новых - бросает RejectedExecutionException
      * 2 балла за метод
      */
-    public synchronized void shutdownNow() {
+    public void shutdownNow() {
         isShuttingDown = true;
         worker.interrupt();
     }
@@ -59,15 +59,12 @@ public class SingleExecutor implements Executor {
 
         @Override
         public void run() {
-            while (!isShuttingDown || !workQueue.isEmpty()) {
-                Runnable r;
-                try {
-                    r = workQueue.take();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    return;
+            try {
+                while (true) {
+                    workQueue.take().run();
                 }
-                r.run();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }

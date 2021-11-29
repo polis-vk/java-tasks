@@ -24,8 +24,9 @@ public class SimpleExecutor implements Executor {
     private final int maxThreadCount;
     private final BlockingQueue<Runnable> workQueue = new LinkedBlockingDeque<>();
     private final List<Worker> workers;
-    private boolean isShuttingDown;
-    private final AtomicInteger ctl = new AtomicInteger(0);
+    private volatile boolean isShuttingDown;
+    private final AtomicInteger waitingWorkers = new AtomicInteger(0);
+    private final AtomicInteger liveThreads = new AtomicInteger(0);
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
@@ -37,7 +38,7 @@ public class SimpleExecutor implements Executor {
      * 8 баллов
      */
     @Override
-    public synchronized void execute(Runnable command) {
+    public void execute(Runnable command) {
         if (command == null) {
             throw new NullPointerException();
         }
@@ -45,15 +46,18 @@ public class SimpleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
 
-        if (ctl.get() == 0 && getLiveThreadsCount() < maxThreadCount) {
-            Worker worker = new Worker();
-            worker.start();
-            workers.add(worker);
+        synchronized (this) {
+            if (waitingWorkers.get() == 0 && getLiveThreadsCount() < maxThreadCount) {
+                Worker worker = new Worker();
+                worker.start();
+                workers.add(worker);
+                liveThreads.incrementAndGet();
+            }
         }
         workQueue.add(command);
     }
 
-    public void interruptAllWorkers() {
+    public synchronized void interruptAllWorkers() {
         for (Worker worker : workers) {
             worker.interrupt();
         }
@@ -63,7 +67,7 @@ public class SimpleExecutor implements Executor {
      * Дает текущим задачам выполниться. Добавление новых - бросает RejectedExecutionException
      * 1 балл за метод
      */
-    public synchronized void shutdown() {
+    public void shutdown() {
         isShuttingDown = true;
     }
 
@@ -71,7 +75,7 @@ public class SimpleExecutor implements Executor {
      * Прерывает текущие задачи. При добавлении новых - бросает RejectedExecutionException
      * 1 балла за метод
      */
-    public synchronized void shutdownNow() {
+    public void shutdownNow() {
         isShuttingDown = true;
         interruptAllWorkers();
     }
@@ -79,25 +83,22 @@ public class SimpleExecutor implements Executor {
     /**
      * Должен возвращать количество созданных потоков.
      */
-    public synchronized int getLiveThreadsCount() {
-        return workers.size();
+    public int getLiveThreadsCount() {
+        return liveThreads.get();
     }
 
     class Worker extends Thread {
-
         @Override
         public void run() {
-            while (!isShuttingDown || !workQueue.isEmpty()) {
-                Runnable r;
-                ctl.incrementAndGet();
-                try {
-                    r = workQueue.take();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    return;
+            try {
+                while (true) {
+                    waitingWorkers.incrementAndGet();
+                    Runnable r = workQueue.take();
+                    waitingWorkers.decrementAndGet();
+                    r.run();
                 }
-                ctl.decrementAndGet();
-                r.run();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
