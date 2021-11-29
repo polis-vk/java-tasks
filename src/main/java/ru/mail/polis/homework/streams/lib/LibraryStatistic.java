@@ -1,7 +1,9 @@
 package ru.mail.polis.homework.streams.lib;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Класс для работы со статистикой по библиотеке.
@@ -29,7 +31,16 @@ public class LibraryStatistic {
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
-        return null;
+        return library.getArchive()
+                .stream()
+                .filter(e -> e.getUser() == user)
+                .collect(Collectors.groupingBy(e -> e.getBook().getGenre()))
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                    e -> e.getKey(),
+                    e -> e.getValue()));
     }
 
     /**
@@ -49,7 +60,10 @@ public class LibraryStatistic {
      * @return - список книг
      */
     public List<Book> booksWithMoreCountPages(Library library, int countPage) {
-        return null;
+        return library.getBooks()
+                .stream()
+                .filter(book -> book.getPage() >= countPage)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -58,6 +72,21 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return null;
+        return library.getBooks()
+                .stream()
+                .collect(
+                        Collectors.groupingBy(Book::getGenre,
+                                Collectors.groupingBy(Book::getAuthor, Collectors.counting())))
+                .entrySet()
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                e -> e.getKey(),
+                                e -> e.getValue()
+                                        .entrySet()
+                                        .stream()
+                                        .max(Comparator.comparingLong(Map.Entry::getValue)).get().getKey()
+                        )
+                );
     }
 }

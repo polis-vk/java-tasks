@@ -1,8 +1,10 @@
 package ru.mail.polis.homework.streams.store;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Класс для работы со статистикой по заказам магазина.
@@ -20,7 +22,11 @@ public class StoreStatistic {
      * @return - кол-во проданного товара
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
-        return 0L;
+        return orders
+                .stream()
+                .filter(order -> from.before(order.getTime()) && to.after(order.getTime()))
+                .map(order -> order.getItemCount().getOrDefault(typeItem, 0))
+                .reduce(0, Integer::sum);
     }
 
     /**
@@ -30,7 +36,11 @@ public class StoreStatistic {
      * значение - map товар/кол-во
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
-        return null;
+        return orders
+                .stream()
+                .collect(Collectors.groupingBy(Order::getTime),
+                        Collectors.groupingBy(order -> order.getItem()));
+
     }
 
     /**
@@ -48,6 +58,14 @@ public class StoreStatistic {
      * @return map - заказ / общая сумма заказа
      */
     public Map<Order, Long> sum5biggerOrders(List<Order> orders) {
-        return null;
+        orders
+                .stream()
+                .map(order -> (order.getItemCount().values()
+                        .stream()
+                        .reduce(0, Integer::sum), order))
+                .limit(5)
+                .reduce(0, Integer::sum);
     }
 }
+
+
