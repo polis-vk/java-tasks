@@ -24,6 +24,9 @@ public class SimpleExecutor implements Executor {
     private final int maxThreads;
     private volatile boolean finish = false;
     private boolean canCreateMoreThreads = true;
+    // doesn't represent the amount of created threads
+    private AtomicInteger threadCountHelper = new AtomicInteger(0);
+    private Map<Long, ThreadInformation> threads = new ConcurrentHashMap<>();
 
     private class ThreadInformation {
         public AtomicBoolean isBusy;
@@ -36,10 +39,6 @@ public class SimpleExecutor implements Executor {
             this.thread = thread;
         }
     }
-
-    // doesn't represent the amount of created threads
-    private AtomicInteger threadCountHelper = new AtomicInteger(0);
-    private Map<Long, ThreadInformation> threads = new ConcurrentHashMap<>();
 
     public SimpleExecutor(int maxThreadCount) {
         maxThreads = maxThreadCount;
@@ -61,6 +60,7 @@ public class SimpleExecutor implements Executor {
             } else {
                 canCreateMoreThreads = false;
                 tasks.add(command);
+                wakeUpSomebody();
             }
         }
     }
@@ -79,8 +79,8 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         finish = true;
-        for (ThreadInformation thread : threads.values()) {
-            thread.thread.interrupt();
+        for (ThreadInformation threadInformation : threads.values()) {
+            threadInformation.thread.interrupt();
         }
     }
 
@@ -102,19 +102,21 @@ public class SimpleExecutor implements Executor {
                     }
 
                     task = currentThreadInfo.task;
-                    if (task == null) {
-                        task = tasks.poll();
-                        if (task == null) {
-                            synchronized (currentThreadInfo) {
-                                currentThreadInfo.isBusy.set(false);
-                                currentThreadInfo.wait(100L);
-                            }
-                        }
-                    } else {
+                    if (task != null) {
                         currentThreadInfo.task = null;
+                    } else {
+                        task = tasks.poll();
+                    }
+
+                    if (task == null) {
+                        synchronized (currentThreadInfo) {
+                            currentThreadInfo.isBusy.set(false);
+                            currentThreadInfo.wait();
+                        }
                     }
                 }
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException e) {
+            }
         });
 
         threads.put(newThread.getId(), new ThreadInformation(true, null, newThread));
@@ -122,17 +124,27 @@ public class SimpleExecutor implements Executor {
     }
 
     private boolean peekWaitingThread(Runnable task) {
-        for (ThreadInformation thread : threads.values()) {
-            if (thread.isBusy.compareAndSet(false, true)) {
-                thread.task = task;
-                synchronized (thread) {
-                    thread.notify();
+        for (ThreadInformation threadInformation : threads.values()) {
+            if (threadInformation.isBusy.compareAndSet(false, true)) {
+                threadInformation.task = task;
+                synchronized (threadInformation) {
+                    threadInformation.notify();
                 }
                 return true;
             }
         }
-
         return false;
+    }
+
+    private void wakeUpSomebody() {
+        for (ThreadInformation threadInformation : threads.values()) {
+            if (threadInformation.isBusy.compareAndSet(false, true)) {
+                synchronized (threadInformation) {
+                    threadInformation.notify();
+                }
+                return;
+            }
+        }
     }
 }
 
