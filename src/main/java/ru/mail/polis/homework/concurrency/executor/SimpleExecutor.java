@@ -91,8 +91,7 @@ public class SimpleExecutor implements Executor {
                     task.run();
                     available = true;
                 }
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
