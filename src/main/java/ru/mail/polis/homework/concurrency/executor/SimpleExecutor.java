@@ -3,7 +3,6 @@ package ru.mail.polis.homework.concurrency.executor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -22,13 +21,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class SimpleExecutor implements Executor {
 
-    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
 
     private final AtomicInteger freeThreads = new AtomicInteger();
 
     private final int maxThreadCount;
 
-    private volatile List<Thread> threads; //= new CopyOnWriteArrayList();
+    private volatile List<Thread> threads;
 
     private volatile boolean stop = false;
 
@@ -46,29 +45,24 @@ public class SimpleExecutor implements Executor {
         if (stop) {
             throw new RejectedExecutionException();
         }
-        
-        if (!canCreateThread()) {
-            tasks.offer(command);
-            return;
-        }
-        
+
         // double checked locking для оптимизации
-        synchronized (threads) {
-            if (canCreateThread()) {
-                Thread t = new LiveThread(command);
-                threads.add(t);
-                t.start();
-                return;
+        if (canCreateThread()) {
+            synchronized (threads) {
+                if (canCreateThread()) {
+                    Thread t = new LiveThread(command);
+                    threads.add(t);
+                    t.start();
+                    return;
+                }
             }
-            tasks.offer(command);
         }
-        
+        tasks.offer(command);
     }
-    
+
     private boolean canCreateThread() {
         return !stop && threads.size() < maxThreadCount && freeThreads.get() == 0;
     }
-
 
     /**
      * Дает текущим задачам выполниться. Добавление новых - бросает RejectedExecutionException
@@ -82,9 +76,8 @@ public class SimpleExecutor implements Executor {
      * Прерывает текущие задачи. При добавлении новых - бросает RejectedExecutionException
      * 1 балла за метод
      */
-    
     public void shutdownNow() {
-        stop = true;
+        shutdown();
         synchronized (threads) {
             threads.forEach(Thread::interrupt);
         }
@@ -97,20 +90,20 @@ public class SimpleExecutor implements Executor {
         return threads.size();
     }
     
-    class LiveThread extends Thread {
-        
-        Runnable target;
-        
+    private class LiveThread extends Thread {
+
+        private Runnable target;
+
         public LiveThread(Runnable target) {
-           this.target = target;
+            this.target = target;
         }
-        
+
         @Override
         public void run() {
             try {
                 while (!stop || !tasks.isEmpty()) {
                     target.run();
-                    
+
                     freeThreads.incrementAndGet();
                     target = tasks.take();
                     freeThreads.decrementAndGet();
