@@ -58,7 +58,6 @@ public class SingleExecutor implements Executor {
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                Thread.currentThread().interrupt();
             }
         }
 

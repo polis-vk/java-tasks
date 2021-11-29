@@ -42,7 +42,7 @@ public class SimpleExecutor implements Executor {
         }
 
         queueOfTasks.offer(command);
-        if (countOfFreeThread.compareAndSet(0, 0)) {
+        if (countOfFreeThread.get() == 0 && !queueOfTasks.isEmpty()) {
             synchronized (poolOfThreads) {
                 if (poolOfThreads.size() < maxCountOfThreads) {
                     Worker worker = new Worker();
@@ -91,7 +91,6 @@ public class SimpleExecutor implements Executor {
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                Thread.currentThread().interrupt();
             }
         }
     }
