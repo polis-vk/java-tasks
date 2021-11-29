@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -27,12 +29,13 @@ public class SimpleExecutor implements Executor {
 
     private final int maxThreadCount;
 
-    private final List<Thread> threads = new CopyOnWriteArrayList();
+    private volatile List<Thread> threads; //= new CopyOnWriteArrayList();
 
     private volatile boolean stop = false;
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
+        this.threads = Collections.synchronizedList(new ArrayList<Thread>(maxThreadCount));
     }
 
     /**
@@ -46,18 +49,18 @@ public class SimpleExecutor implements Executor {
         }
 
         tasks.offer(command);
-        
-        /* это бы пригодилось не используй я LinkedBlockingQueue
-        synchronized (this) {
-            if (!tasks.isEmpty()) {
-                notifyAll();
+
+        if (!tasks.isEmpty()) {
+            synchronized (this) {
+                if (!tasks.isEmpty()) {
+                    notifyAll();
+                }
             }
         }
-        */
         
         // double checked locking для оптимизации
         if (canCreateThread()) {
-            synchronized (this) {
+            synchronized (threads) {
                 if (canCreateThread()) {
                     Thread t = new Thread(this::run);
                     threads.add(t);
@@ -102,7 +105,6 @@ public class SimpleExecutor implements Executor {
         try {
             while (!stop || !tasks.isEmpty()) {
                 freeThreads.incrementAndGet();
-                /* это бы пригодилось не используй я LinkedBlockingQueue
                 if (tasks.isEmpty()) {
                     synchronized (this) {
                         while (tasks.isEmpty()) {
@@ -110,7 +112,6 @@ public class SimpleExecutor implements Executor {
                         }
                     }
                 }
-                */
                 
                 Runnable task = tasks.take();
                 freeThreads.decrementAndGet();
