@@ -22,12 +22,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SimpleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
-    private final AtomicInteger workingOrWaitingThreadsCount = new AtomicInteger(0);
+    private final AtomicInteger freeThreadsCount = new AtomicInteger(0);
     private final AtomicInteger threadsCount = new AtomicInteger(0);
     private volatile boolean shutdown = false;
     private int maxThreadCount;
     private final List<Worker> threadPool = new ArrayList<>(maxThreadCount);
-
 
     public SimpleExecutor(int maxThreadCount) {
         if (maxThreadCount < 1) {
@@ -49,18 +48,20 @@ public class SimpleExecutor implements Executor {
         if (shutdown) {
             throw new RejectedExecutionException();
         }
-        try {
-            queue.put(command);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (threadsCount.get() < maxThreadCount && (workingOrWaitingThreadsCount.get() != threadsCount.get() || threadPool.isEmpty())) {
-            threadsCount.incrementAndGet();
-            Worker newWorker = new Worker();
+        if (threadsCount.incrementAndGet() <= maxThreadCount && freeThreadsCount.get() == 0) {
+            Worker newWorker = new Worker(command);
             newWorker.start();
             threadPool.add(newWorker);
+        } else {
+            threadsCount.decrementAndGet();
+            try {
+                queue.put(command);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
+
 
     /**
      * Дает текущим задачам выполниться. Добавление новых - бросает RejectedExecutionException
@@ -76,9 +77,21 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         shutdown = true;
-        synchronized (threadPool) {
-            for (Worker worker : threadPool) {
-                worker.interrupt();
+        while (threadsCount.get() != 0) {
+            if (!threadPool.isEmpty()) {
+                threadPool.remove(0).interrupt();
+                threadsCount.decrementAndGet();
+                continue;
+            }
+            synchronized (threadPool) {
+                try {
+                    while (threadPool.isEmpty()) {
+                        wait();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
     }
@@ -92,13 +105,21 @@ public class SimpleExecutor implements Executor {
 
     private class Worker extends Thread {
 
+        private Runnable currentTask;
+
+        public Worker(Runnable currentTask) {
+            this.currentTask = currentTask;
+        }
+
         @Override
         public void run() {
             try {
-                while (true) {
-                    workingOrWaitingThreadsCount.incrementAndGet();
-                    queue.take().run();
-                    workingOrWaitingThreadsCount.decrementAndGet();
+                currentTask.run();
+                while (!shutdown) {
+                    freeThreadsCount.incrementAndGet();
+                    currentTask = queue.take();
+                    freeThreadsCount.decrementAndGet();
+                    currentTask.run();
                 }
             } catch (InterruptedException exception) {
                 exception.printStackTrace();

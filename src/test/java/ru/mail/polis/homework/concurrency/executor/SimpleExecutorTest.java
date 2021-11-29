@@ -96,14 +96,14 @@ public class SimpleExecutorTest {
 
     private void execute(int threadsCount, int maxCount) throws InterruptedException {
         for (int i = 0; i < 4; i++) {
-            //System.out.println("str72");
+            System.out.println("str72");
             CountDownLatch start = new CountDownLatch(maxCount);
             CountDownLatch finish = new CountDownLatch(threadsCount);
             for (int j = 0; j < threadsCount; j++) {
                 executor.execute(new Worker(start, finish));
-                //System.out.println("str77 + i= " + i);
+                System.out.println("str77 + i= " + i);
             }
-            //System.out.println("str78");
+            System.out.println("str78");
             start.await(10, TimeUnit.SECONDS);
             long measureTime = System.currentTimeMillis();
             finish.await(10, TimeUnit.SECONDS);
