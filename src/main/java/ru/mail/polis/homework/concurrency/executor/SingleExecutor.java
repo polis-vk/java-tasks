@@ -28,11 +28,10 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (addMode) {
-            commands.add(command);
-        } else {
+        if (!addMode) {
             throw new RejectedExecutionException();
         }
+        commands.add(command);
     }
 
     /**
@@ -55,7 +54,7 @@ public class SingleExecutor implements Executor {
 
     private class CustomThread extends Thread {
 
-        private boolean stop = false;
+        private volatile boolean stop = false;
 
         @Override
         public void run() {
