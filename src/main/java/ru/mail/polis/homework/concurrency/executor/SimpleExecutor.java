@@ -40,15 +40,15 @@ public class SimpleExecutor implements Executor {
         if (!inProcess) {
             throw new RejectedExecutionException();
         }
-        try {
-            tasks.put(command);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         if (activeWorkers.get() < maxThreadCount && !isAvailableWorker()) {
             Worker worker = new Worker();
             worker.start();
             workers[activeWorkers.getAndIncrement()] = worker;
+        }
+        try {
+            tasks.put(command);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
