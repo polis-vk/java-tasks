@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -29,7 +28,7 @@ public class SimpleExecutor implements Executor {
 
     private final int maxThreadCount;
 
-    private volatile List<Thread> threads; //= new CopyOnWriteArrayList();
+    private final List<Thread> threads; //= new CopyOnWriteArrayList();
 
     private volatile boolean stop = false;
 
@@ -49,14 +48,6 @@ public class SimpleExecutor implements Executor {
         }
 
         tasks.offer(command);
-
-        if (!tasks.isEmpty()) {
-            synchronized (this) {
-                if (!tasks.isEmpty()) {
-                    notifyAll();
-                }
-            }
-        }
         
         // double checked locking для оптимизации
         if (canCreateThread()) {
@@ -90,7 +81,9 @@ public class SimpleExecutor implements Executor {
     
     public void shutdownNow() {
         stop = true;
-        threads.forEach(Thread::interrupt);
+        synchronized (threads) {
+            threads.forEach(Thread::interrupt);
+        }
     }
 
     /**
@@ -104,15 +97,7 @@ public class SimpleExecutor implements Executor {
     private void run() {
         try {
             while (!stop || !tasks.isEmpty()) {
-                freeThreads.incrementAndGet();
-                if (tasks.isEmpty()) {
-                    synchronized (this) {
-                        while (tasks.isEmpty()) {
-                            wait();
-                        }
-                    }
-                }
-                
+                freeThreads.incrementAndGet();                
                 Runnable task = tasks.take();
                 freeThreads.decrementAndGet();
                 task.run();
