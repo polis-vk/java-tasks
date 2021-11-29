@@ -2,8 +2,7 @@ package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.Executor;
-import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.*;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
@@ -13,23 +12,25 @@ import java.util.concurrent.RejectedExecutionException;
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
-    private final Queue<Runnable> tasks = new LinkedList<>();
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private final Thread thread = new Worker();
 
-    private boolean inProcess = true;
+    private volatile boolean inProcess = true;
 
     /**
      * Метод ставит задачу в очередь на исполнение.
      * 3 балла за метод
      */
     @Override
-    public synchronized void execute(Runnable command) {
+    public void execute(Runnable command) {
         if (!inProcess) {
             throw new RejectedExecutionException();
         }
         tasks.add(command);
-        if (!thread.isAlive()) {
-            thread.start();
+        synchronized (this) {
+            if (!thread.isAlive()) {
+                thread.start();
+            }
         }
     }
 
@@ -53,12 +54,13 @@ public class SingleExecutor implements Executor {
     private class Worker extends Thread {
         @Override
         public void run() {
-            while (inProcess || !tasks.isEmpty()) {
-                if (tasks.peek() != null) {
-                    tasks.poll().run();
+            try {
+                while (inProcess || !tasks.isEmpty()) {
+                    tasks.take().run();
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            super.run();
         }
     }
 }

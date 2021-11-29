@@ -4,6 +4,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -19,14 +20,14 @@ import java.util.concurrent.RejectedExecutionException;
 public class SimpleExecutor implements Executor {
     private final int maxThreadCount;
     private final Worker[] workers;
-    private final BlockingQueue<Runnable> tasks;
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
+    private final AtomicInteger activeWorkers = new AtomicInteger(0);
 
-    private boolean inProcess = true;
-    private int activeWorkers = 0;
+    private volatile boolean inProcess = true;
+
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
-        this.tasks = new LinkedBlockingQueue<>();
         this.workers = new Worker[maxThreadCount];
     }
 
@@ -44,12 +45,11 @@ public class SimpleExecutor implements Executor {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (activeWorkers < maxThreadCount && !isAvailableWorker()) {
+        if (activeWorkers.get() < maxThreadCount && !isAvailableWorker()) {
             Worker worker = new Worker();
             worker.start();
-            workers[activeWorkers++] = worker;
+            workers[activeWorkers.getAndIncrement()] = worker;
         }
-
     }
 
     /**
@@ -66,7 +66,7 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         inProcess = false;
-        for (int i = 0; i < activeWorkers; i++) {
+        for (int i = 0; i < activeWorkers.get(); i++) {
             workers[i].interrupt();
         }
     }
@@ -75,11 +75,11 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return activeWorkers;
+        return activeWorkers.get();
     }
 
     private boolean isAvailableWorker() {
-        for (int i = 0; i < activeWorkers; i++) {
+        for (int i = 0; i < activeWorkers.get(); i++) {
             if (workers[i].isAvailable()) {
                 return true;
             }
@@ -88,21 +88,20 @@ public class SimpleExecutor implements Executor {
     }
 
     private class Worker extends Thread {
-        private boolean available = false;
+        private volatile boolean available = false;
 
         @Override
         public void run() {
-            while (inProcess || !tasks.isEmpty()) {
-                try {
+            try {
+                while (inProcess || !tasks.isEmpty()) {
                     Runnable task = tasks.take();
                     available = false;
                     task.run();
                     available = true;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            super.run();
         }
 
         public boolean isAvailable() {
