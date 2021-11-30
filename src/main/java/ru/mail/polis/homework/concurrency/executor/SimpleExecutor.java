@@ -1,6 +1,13 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -14,9 +21,15 @@ import java.util.concurrent.Executor;
  * Max 10 баллов
  */
 public class SimpleExecutor implements Executor {
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingDeque<>();
+    private final List<Thread> pool;
+    private final int maximumPoolSize;
+    private final AtomicInteger busyThreadsCount = new AtomicInteger();
+    private volatile boolean isShutDown;
 
     public SimpleExecutor(int maxThreadCount) {
-
+        maximumPoolSize = maxThreadCount;
+        pool = Collections.synchronizedList(new ArrayList<>(maxThreadCount));
     }
 
     /**
@@ -25,7 +38,16 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-
+        if (isShutDown) {
+            throw new RejectedExecutionException();
+        }
+        tasks.add(command);
+        // mb sync???
+        if (busyThreadsCount.get() == maximumPoolSize) {
+            Thread thread = new Worker();
+            pool.add(thread);
+            thread.start();
+        }
     }
 
     /**
@@ -33,6 +55,7 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
+        isShutDown = true;
     }
 
     /**
@@ -40,13 +63,30 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-
+        isShutDown = true;
+        for (Thread thread : pool) {
+            thread.interrupt();
+        }
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        return pool.size();
+    }
+
+    private class Worker extends Thread {
+        @Override
+        public void run() {
+            while (!isShutDown || !tasks.isEmpty()) {
+                try {
+                    busyThreadsCount.incrementAndGet();
+                    tasks.take().run();
+                    busyThreadsCount.decrementAndGet();
+                } catch (InterruptedException ignored) {
+                }
+            }
+        }
     }
 }
