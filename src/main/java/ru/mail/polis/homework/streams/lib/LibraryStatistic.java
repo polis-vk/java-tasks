@@ -102,8 +102,8 @@ public class LibraryStatistic {
                                         || (archivedData1.getReturned() == null
                                         && TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - archivedData1.getTake().getTime()) > UNRELIABLE_DAYS))
                         .count() > archivedData.stream()
-                                .filter(archivedData1 -> archivedData1.getUser().equals(user))
-                                .count()/2)
+                        .filter(archivedData1 -> archivedData1.getUser().equals(user))
+                        .count() / 2)
                 .collect(Collectors.toList());
     }
 
@@ -141,13 +141,13 @@ public class LibraryStatistic {
                                     .filter(stringLongEntry -> stringLongEntry.getValue().equals(max))
                                     .map(Map.Entry::getKey)
                                     .collect(Collectors.toList());
-                            if(authorMaxes.size() > 1) {
+                            if (authorMaxes.size() > 1) {
                                 return authorMaxes.stream()
                                         .max(comparing(Function.identity()))
                                         .get();
                             }
                             return authorMaxes.get(0);
                         }
-                    ));
+                ));
     }
 }
