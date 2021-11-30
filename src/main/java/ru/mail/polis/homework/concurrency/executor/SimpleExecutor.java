@@ -50,14 +50,17 @@ public class SimpleExecutor implements Executor {
         if (freeWorkers.get() != 0) {
             tasks.add(command);
         } else {
+            SimpleWorker worker = null;
             synchronized (lock) {
                 if (getLiveThreadsCount() == maxThreadCount) {
                     tasks.add(command);
                 } else {
-                    SimpleWorker worker = new SimpleWorker(command);
+                    worker = new SimpleWorker(command);
                     workers.add(worker);
-                    worker.start();
                 }
+            }
+            if (worker != null) {
+                worker.start();
             }
         }
     }
