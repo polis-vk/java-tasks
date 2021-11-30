@@ -1,16 +1,18 @@
 package ru.mail.polis.homework.streams.store;
 
 import java.sql.Timestamp;
-import java.util.Comparator;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Класс для работы со статистикой по заказам магазина.
  * Оценка 5-ть баллов
  */
 public class StoreStatistic {
+    private static final double secondsInDay = 86400d;
 
     /**
      * Вернуть сколько было продано определенного товара за переданный промежуток времени
@@ -23,9 +25,10 @@ public class StoreStatistic {
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
         return orders.stream().
-                filter(x -> x.getTime().compareTo(from) >= 0 && x.getTime().compareTo(to) < 0 && x.getItemCount().containsKey(typeItem)).
-                mapToLong(x -> x.getItemCount().get(typeItem))
-                .sum();
+                filter(order -> order.getTime().compareTo(from) >= 0 &&
+                        order.getTime().compareTo(to) < 0 && order.getItemCount().containsKey(typeItem)).
+                mapToLong(order -> order.getItemCount().get(typeItem)).
+                sum();
     }
 
     /**
@@ -36,9 +39,13 @@ public class StoreStatistic {
      * значение - map товар/кол-во
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
-        Map<Timestamp, Map<Item, Integer>> map = new HashMap<>();
-        orders.stream().sorted(Comparator.comparing(Order::getTime));
-        return null;
+        return orders.stream().
+                map(order -> new Order(startOfDay(order.getTime()), order.getItemCount())).
+                collect(Collectors.groupingBy(Order::getTime)).entrySet().stream().
+                collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream().
+                        flatMap(order -> order.getItemCount().entrySet().stream()).
+                        collect(Collectors.groupingBy(Map.Entry::getKey,
+                                Collectors.summingInt(Map.Entry::getValue)))));
     }
 
     /**
@@ -48,8 +55,13 @@ public class StoreStatistic {
      * @return - товар
      */
     public Item mostPopularItem(List<Order> orders) {
-        orders.stream();
-        return null;
+        return orders.stream().
+                flatMap(order -> order.getItemCount().entrySet().stream()).
+                collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue))).
+                entrySet().stream().
+                max(Map.Entry.comparingByValue()).
+                orElseThrow(NullPointerException::new).
+                getKey();
     }
 
     /**
@@ -59,6 +71,16 @@ public class StoreStatistic {
      * @return map - заказ / общая сумма заказа
      */
     public Map<Order, Long> sum5biggerOrders(List<Order> orders) {
-        return null;
+        return orders.stream().
+                map(order -> new AbstractMap.SimpleEntry<>(order, order.getItemCount().values().stream().
+                        mapToLong(Integer::longValue).
+                        sum())).
+                sorted((o1, o2) -> o2.getValue().compareTo(o1.getValue())).
+                limit(5).
+                collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (o1, o2) -> o2, HashMap::new));
+    }
+
+    private static Timestamp startOfDay(Timestamp ts) {
+        return new Timestamp((long) (Math.floor(ts.getTime() / secondsInDay) * secondsInDay));
     }
 }
