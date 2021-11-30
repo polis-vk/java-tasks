@@ -21,13 +21,11 @@ public class SingleExecutor implements Executor {
     public SingleExecutor() {
         thread = new Thread(() -> {
             while (true) {
-                Runnable task = null;
                 try {
-                    task = queue.take();
+                    queue.take().run();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                task.run();
             }
         });
         thread.start();
