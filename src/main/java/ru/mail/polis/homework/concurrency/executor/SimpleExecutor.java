@@ -14,10 +14,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Ленивая инициализация означает, что если вам приходит раз в 5 секунд задача, которую вы выполняете 2 секунды,
  * то вы создаете только один поток. Если приходит сразу 2 задачи - то два потока.  То есть, если приходит задача
  * и есть свободный запущенный поток - он берет задачу, если такого нет, то создается новый поток.
- *
+ * <p>
  * Задачи должны выполняться в порядке FIFO
  * Потоки после завершения выполнения задачи НЕ умирают, а ждут.
- *
+ * <p>
  * Max 10 баллов
  */
 public class SimpleExecutor implements Executor {
@@ -42,11 +42,12 @@ public class SimpleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
         tasks.add(command);
-        // mb sync???
-        if (busyThreadsCount.get() == maximumPoolSize) {
-            Thread thread = new Worker();
-            pool.add(thread);
-            thread.start();
+        synchronized (tasks) {
+            if (busyThreadsCount.get() == maximumPoolSize) {
+                Thread thread = new Worker();
+                pool.add(thread);
+                thread.start();
+            }
         }
     }
 
@@ -79,13 +80,13 @@ public class SimpleExecutor implements Executor {
     private class Worker extends Thread {
         @Override
         public void run() {
-            while (!isShutDown || !tasks.isEmpty()) {
-                try {
+            try {
+                while (!isShutDown || !tasks.isEmpty()) {
                     busyThreadsCount.incrementAndGet();
                     tasks.take().run();
                     busyThreadsCount.decrementAndGet();
-                } catch (InterruptedException ignored) {
                 }
+            } catch (InterruptedException ignored) {
             }
         }
     }
