@@ -40,7 +40,7 @@ public class StoreStatistic {
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
         return orders.stream().
-                map(order -> new Order(startOfDay(order.getTime()), order.getItemCount())).
+                map(order -> new Order(resetTime(order.getTime()), order.getItemCount())).
                 collect(Collectors.groupingBy(Order::getTime)).entrySet().stream().
                 collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream().
                         flatMap(order -> order.getItemCount().entrySet().stream()).
@@ -80,7 +80,8 @@ public class StoreStatistic {
                 collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (o1, o2) -> o2, HashMap::new));
     }
 
-    private static Timestamp startOfDay(Timestamp ts) {
-        return new Timestamp((long) (Math.floor(ts.getTime() / secondsInDay) * secondsInDay));
+    private static Timestamp resetTime(Timestamp ts) {
+        return new Timestamp((long)
+                (Math.floor(ts.getTime() / secondsInDay) * secondsInDay));
     }
 }
