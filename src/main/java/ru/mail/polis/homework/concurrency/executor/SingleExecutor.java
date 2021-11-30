@@ -37,9 +37,6 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (command == null) {
-            throw new IllegalArgumentException();
-        }
         if (isShutdown) {
             throw new RejectedExecutionException();
         }
