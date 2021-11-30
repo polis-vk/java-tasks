@@ -14,7 +14,7 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SingleExecutor implements Executor {
 
-    Thread thread = new Thread();
+    Thread thread;
     boolean isShutdown = false;
     BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
 
