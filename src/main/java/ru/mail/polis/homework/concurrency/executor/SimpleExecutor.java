@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -14,9 +18,16 @@ import java.util.concurrent.Executor;
  * Max 10 баллов
  */
 public class SimpleExecutor implements Executor {
+    private final BlockingQueue<Runnable> instructions = new LinkedBlockingQueue<>();
+    private final AtomicInteger counterOfThreads = new AtomicInteger(0);
+    private final AtomicInteger counterOfFreeThreads = new AtomicInteger(0);
+    private final CustomThread[] arrayOfThreads;
+    private final int counterOfMaxThreads;
+    private volatile boolean isShutDown;
 
     public SimpleExecutor(int maxThreadCount) {
-
+        arrayOfThreads = new CustomThread[maxThreadCount];
+        this.counterOfMaxThreads = maxThreadCount;
     }
 
     /**
@@ -25,7 +36,19 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (isShutDown) {
+            throw new RejectedExecutionException();
+        }
+        instructions.add(command);
 
+        synchronized (counterOfThreads) {
+            if (!instructions.isEmpty() && counterOfFreeThreads.get() == 0 && counterOfThreads.get() < counterOfMaxThreads) {
+                counterOfThreads.getAndIncrement();
+                CustomThread singleThread = new CustomThread();
+                singleThread.start();
+                arrayOfThreads[counterOfThreads.get() - 1] = singleThread;
+            }
+        }
     }
 
     /**
@@ -33,6 +56,7 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
+        isShutDown = true;
     }
 
     /**
@@ -40,13 +64,33 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-
+        isShutDown = true;
+        for (int i = 0; i < counterOfThreads.get(); ++i) {
+            arrayOfThreads[i].interrupt();
+        }
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        return counterOfThreads.get();
+    }
+
+    private class CustomThread extends Thread {
+        @Override
+        public void run() {
+            Runnable thread;
+            while (!isShutDown) {
+                try {
+                    counterOfFreeThreads.incrementAndGet();
+                    thread = instructions.take();
+                    counterOfFreeThreads.decrementAndGet();
+                    thread.run();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
