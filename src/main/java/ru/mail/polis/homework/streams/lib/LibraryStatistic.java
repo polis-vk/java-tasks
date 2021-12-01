@@ -27,16 +27,15 @@ public class LibraryStatistic {
         return library.getArchive().stream()
                 .filter(archivedData -> archivedData.getReturned() != null)
                 .filter(archivedData -> archivedData.getBook().getGenre().equals(genre))
-                .collect(Collectors.groupingBy(
-                        ArchivedData::getUser,
+                .collect(Collectors.groupingBy(ArchivedData::getUser,
                         Collectors.groupingBy(ArchivedData::getBook,
                                 Collectors.summingInt(LibraryStatistic::calculateDays))))
                 .entrySet().stream()
                 .filter(userToBooks -> userToBooks.getValue().keySet().size() >= EXPERT_READ_BOOKS)
                 .filter(userToBooks -> userToBooks.getValue().entrySet().stream()
                         .allMatch(bookToDays -> bookToDays.getValue() >= EXPERT_READING_TIME))
-                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(value ->
-                        value.getValue().keySet().stream().mapToInt(Book::getPage).sum())));
+                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(userToBooks ->
+                        userToBooks.getValue().keySet().stream().mapToInt(Book::getPage).sum())));
     }
 
     /**

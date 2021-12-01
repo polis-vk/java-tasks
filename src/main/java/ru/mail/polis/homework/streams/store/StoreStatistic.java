@@ -26,8 +26,8 @@ public class StoreStatistic {
                 .filter(order -> order.getTime().after(from) && order.getTime().before(to))
                 .flatMap(order -> order.getItemCount().entrySet().stream())
                 .filter(entry -> entry.getKey().equals(typeItem))
-                .map(Map.Entry::getValue)
-                .reduce(Integer::sum).orElse(0);
+                .mapToInt(Map.Entry::getValue)
+                .sum();
     }
 
     /**
@@ -56,7 +56,7 @@ public class StoreStatistic {
                 .flatMap(order -> order.getItemCount().entrySet().stream())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Integer::sum))
                 .entrySet().stream()
-                .max(Comparator.comparingLong(Map.Entry::getValue)).get().getKey();
+                .max(Comparator.comparingInt(Map.Entry::getValue)).get().getKey();
 
     }
 
@@ -70,11 +70,10 @@ public class StoreStatistic {
         return orders.stream().collect(Collectors.toMap(Function.identity(),
                 order -> order.getItemCount().entrySet().stream()
                         .mapToLong(itemCount -> itemCount.getKey().getPrice() * itemCount.getValue())
-                        .reduce(Long::sum).orElse(0L)))
+                        .sum()))
                 .entrySet().stream()
                 .sorted(Comparator.comparingLong(Map.Entry<Order, Long>::getValue).reversed())
                 .limit(5)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
-
 }
