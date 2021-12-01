@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -14,9 +18,16 @@ import java.util.concurrent.Executor;
  * Max 10 баллов
  */
 public class SimpleExecutor implements Executor {
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
+    private final AtomicInteger threadsCount = new AtomicInteger(0); // просто ++ работает не так удобно
+    private final int maxThreadsCount;
+    private final CustomThread[] threads;
+    private int freeThreadsCount = 0;
+    private boolean inWork = true;
 
     public SimpleExecutor(int maxThreadCount) {
-
+        threads = new CustomThread[maxThreadCount];
+        this.maxThreadsCount = maxThreadCount;
     }
 
     /**
@@ -25,7 +36,17 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-
+        if (!inWork) {
+            throw new RejectedExecutionException();
+        }
+        tasks.add(command);
+        synchronized (threadsCount) {
+            if (threadsCount.get() < maxThreadsCount && freeThreadsCount == 0 && !tasks.isEmpty()) {
+                CustomThread singleThread = new CustomThread();
+                singleThread.start();
+                threads[threadsCount.getAndIncrement()] = singleThread;
+            }
+        }
     }
 
     /**
@@ -33,6 +54,7 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
+        inWork = false;
     }
 
     /**
@@ -40,13 +62,32 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-
+        inWork = false;
+        for (int i = 0; i < threadsCount.get(); i++) {
+            threads[i].interrupt();
+        }
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        return threadsCount.get();
+    }
+
+    private class CustomThread extends Thread {
+        @Override
+        public void run() {
+            try {
+                while (inWork) {
+                    freeThreadsCount++;
+                    Runnable runnable = tasks.take();
+                    freeThreadsCount--;
+                    runnable.run();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
