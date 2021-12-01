@@ -42,14 +42,17 @@ public class SimpleExecutor implements Executor {
         if (isShutDown) {
             throw new RejectedExecutionException();
         }
-        tasks.add(command);
-        lock.lock();
-        if (threadPool.size() < maxThreadCount && !tasks.isEmpty() && waitingThreadsCounter.get() == 0) {
-            Worker worker = new Worker();
-            worker.start();
-            threadPool.add(worker);
+        try {
+            lock.lock();
+            if (threadPool.size() == 0 || threadPool.size() < maxThreadCount && waitingThreadsCounter.get() == 0) {
+                Worker worker = new Worker();
+                worker.start();
+                threadPool.add(worker);
+            }
+        } finally {
+            lock.unlock();
         }
-        lock.unlock();
+        tasks.add(command);
     }
 
     /**

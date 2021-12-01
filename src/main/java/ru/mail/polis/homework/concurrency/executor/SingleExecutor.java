@@ -16,7 +16,7 @@ public class SingleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private volatile boolean isShutDown;
-    private volatile Worker worker = new Worker();
+    private final Worker worker = new Worker();
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -28,10 +28,6 @@ public class SingleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
         tasks.add(command);
-        if (!worker.isAlive()) {
-            worker = new Worker();
-            worker.start();
-        }
     }
 
     /**
@@ -54,10 +50,14 @@ public class SingleExecutor implements Executor {
 
     private class Worker extends Thread {
 
+        public Worker() {
+            this.start();
+        }
+
         @Override
         public void run() {
             try {
-                while (!Thread.currentThread().isInterrupted() && !tasks.isEmpty()) {
+                while (!Thread.currentThread().isInterrupted()) {
                     tasks.take().run();
                 }
             } catch (InterruptedException e) {
