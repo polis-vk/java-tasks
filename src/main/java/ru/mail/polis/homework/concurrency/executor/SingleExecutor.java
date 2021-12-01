@@ -15,15 +15,14 @@ import java.util.concurrent.Executor;
 public class SingleExecutor implements Executor {
     private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
     private volatile boolean isStopped = false;
-    private final Thread thread = new Thread("executor") {
+    private final Thread thread = new Thread("worker") {
         @Override
         public void run() {
             try {
-                while (!queue.isEmpty() || isStopped) {
+                while (!isInterrupted()) {
                     queue.take().run();
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException ignored) {
             }
         }
     };
@@ -41,11 +40,7 @@ public class SingleExecutor implements Executor {
         if (isStopped) {
             throw new RejectedExecutionException();
         }
-        try {
-            queue.put(command);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        queue.add(command);
     }
 
     /**
