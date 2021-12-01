@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,10 +21,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Max 10 баллов
  */
 public class SimpleExecutor implements Executor {
-    private final BlockingQueue<Runnable> tasks = new LinkedBlockingDeque<>();
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private final List<Thread> pool;
     private final int maximumPoolSize;
-    private final AtomicInteger busyThreadsCount = new AtomicInteger();
+    private final AtomicInteger waitingThreads = new AtomicInteger();
     private volatile boolean isShutDown;
 
     public SimpleExecutor(int maxThreadCount) {
@@ -41,9 +41,9 @@ public class SimpleExecutor implements Executor {
         if (isShutDown) {
             throw new RejectedExecutionException();
         }
-        tasks.add(command);
-        synchronized (tasks) {
-            if (busyThreadsCount.get() == maximumPoolSize) {
+        synchronized (this) {
+            tasks.add(command);
+            if (canAddThread()) {
                 Thread thread = new Worker();
                 pool.add(thread);
                 thread.start();
@@ -64,9 +64,11 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-        isShutDown = true;
-        for (Thread thread : pool) {
-            thread.interrupt();
+        shutdown();
+        synchronized (pool) {
+            for (Thread thread : pool) {
+                thread.interrupt();
+            }
         }
     }
 
@@ -77,16 +79,23 @@ public class SimpleExecutor implements Executor {
         return pool.size();
     }
 
+    private boolean canAddThread() {
+        return getLiveThreadsCount() < maximumPoolSize && waitingThreads.get() == 0;
+    }
+
     private class Worker extends Thread {
         @Override
         public void run() {
-            try {
-                while (!isShutDown || !tasks.isEmpty()) {
-                    busyThreadsCount.incrementAndGet();
-                    tasks.take().run();
-                    busyThreadsCount.decrementAndGet();
+            while (!isShutDown || !tasks.isEmpty()) {
+                Runnable task;
+                try {
+                    waitingThreads.incrementAndGet();
+                    task = tasks.take();
+                } catch (InterruptedException ignored) {
+                    return;
                 }
-            } catch (InterruptedException ignored) {
+                waitingThreads.decrementAndGet();
+                task.run();
             }
         }
     }
