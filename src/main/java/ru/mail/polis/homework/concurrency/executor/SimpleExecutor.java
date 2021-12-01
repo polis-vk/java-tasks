@@ -1,11 +1,13 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -19,9 +21,11 @@ import java.util.concurrent.RejectedExecutionException;
  * Max 10 баллов
  */
 public class SimpleExecutor implements Executor {
-    private final List<Worker> workers = new LinkedList<>();
+    private final Queue<Thread> workers = new ConcurrentLinkedQueue<>();
+    private final BlockingQueue<Runnable> commands = new LinkedBlockingQueue<>();
     private final int maxThreadCount;
-    private boolean running = true;
+    private final AtomicInteger freeThreadCount = new AtomicInteger(0);
+    private final AtomicBoolean running = new AtomicBoolean(true);
 
     public SimpleExecutor(int maxThreadCount) {
         if (maxThreadCount < 1) {
@@ -35,35 +39,31 @@ public class SimpleExecutor implements Executor {
      * 8 баллов
      */
     @Override
-    public synchronized void execute(Runnable command) {
-        if (!running) {
+    public void execute(Runnable command) {
+        if (!running.get()) {
             throw new RejectedExecutionException();
         }
-        for (Worker worker : workers) {
-            if (worker.commands.isEmpty()) {
-                worker.commands.add(command);
-                return;
+        try {
+            commands.put(command);
+        } catch (InterruptedException ignored) {
+        }
+        if (workers.size() < maxThreadCount && freeThreadCount.get() == 0) {
+            synchronized (this) {
+                if (workers.size() < maxThreadCount && freeThreadCount.get() == 0) {
+                    Thread worker = new Thread(new Execution());
+                    worker.start();
+                    workers.add(worker);
+                }
             }
         }
-        if (maxThreadCount > workers.size()) {
-            workers.add(new Worker(command));
-            return;
-        }
-        Worker freestWorker = workers.get(0);
-        for (Worker worker : workers) {
-            if (worker.commands.size() < freestWorker.commands.size()) {
-                freestWorker = worker;
-            }
-        }
-        freestWorker.commands.add(command);
     }
 
     /**
      * Дает текущим задачам выполниться. Добавление новых - бросает RejectedExecutionException
      * 1 балл за метод
      */
-    public void shutdown() {
-        running = false;
+    public synchronized void shutdown() {
+        running.set(false);
     }
 
     /**
@@ -72,9 +72,7 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         shutdown();
-        for (Worker worker : workers) {
-            worker.runner.interrupt();
-        }
+        workers.forEach(Thread::interrupt);
     }
 
     /**
@@ -84,27 +82,19 @@ public class SimpleExecutor implements Executor {
         return workers.size();
     }
 
-    private class Worker implements Runnable {
-        public final Thread runner;
-        public final Queue<Runnable> commands;
-
-        public Worker(Runnable command) {
-            runner = new Thread(this);
-            commands = new ConcurrentLinkedQueue<>();;
-            commands.add(command);
-            runner.start();
-        }
-
+    private class Execution implements Runnable {
         @Override
         public void run() {
-            while (running) {
-                while (!commands.isEmpty()) {
-                    commands.peek().run();
-                    commands.remove();
+            try {
+                while (running.get() || !commands.isEmpty()) {
+                    freeThreadCount.incrementAndGet();
+                    Runnable command = commands.take();
+                    freeThreadCount.decrementAndGet();
+                    command.run();
                 }
+            } catch (InterruptedException ignored) {
             }
         }
-
     }
 
 }

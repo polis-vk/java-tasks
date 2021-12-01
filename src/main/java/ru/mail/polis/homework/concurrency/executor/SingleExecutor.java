@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -14,8 +14,8 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SingleExecutor implements Executor {
     private final Thread executorThread = new Thread(new Execution());
-    private final Queue<Runnable> commands = new ConcurrentLinkedQueue<>();
-    private boolean running = true;
+    private final BlockingQueue<Runnable> commands = new LinkedBlockingQueue<>();
+    private volatile boolean running = true;
 
     public SingleExecutor() {
         executorThread.start();
@@ -27,8 +27,10 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (!running) {
-            throw new RejectedExecutionException();
+        synchronized (this) {
+            if (!running) {
+                throw new RejectedExecutionException();
+            }
         }
         commands.add(command);
     }
@@ -37,7 +39,7 @@ public class SingleExecutor implements Executor {
      * Дает текущим задачам выполниться. Добавление новых - бросает RejectedExecutionException
      * 1 балл за метод
      */
-    public void shutdown() {
+    public synchronized void shutdown() {
         running = false;
     }
 
@@ -53,10 +55,11 @@ public class SingleExecutor implements Executor {
     private class Execution implements Runnable {
         @Override
         public void run() {
-            while (running) {
-                while (!commands.isEmpty()) {
-                    commands.remove().run();
+            try {
+                while (running || !commands.isEmpty()) {
+                    commands.take().run();
                 }
+            } catch (InterruptedException ignored) {
             }
         }
     }
