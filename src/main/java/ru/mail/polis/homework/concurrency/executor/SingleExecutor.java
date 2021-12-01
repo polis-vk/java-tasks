@@ -4,20 +4,19 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
- *
+ * <p>
  * Задачи должны выполняться в порядке FIFO
- *
+ * <p>
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
     private final Thread thread = new Thread(new Worker());
-    private final AtomicBoolean shutdownCalled = new AtomicBoolean();
+    private volatile boolean shutdownCalled = false;
 
     public SingleExecutor() {
         thread.start();
@@ -30,7 +29,7 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (shutdownCalled.get()) {
+        if (shutdownCalled) {
             throw new RejectedExecutionException();
         }
 
@@ -43,7 +42,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        shutdownCalled.set(true);
+        shutdownCalled = true;
     }
 
     /**
@@ -51,19 +50,19 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
-        shutdownCalled.set(true);
+        shutdownCalled = true;
         thread.interrupt();
     }
-
 
     class Worker implements Runnable {
         @Override
         public void run() {
-            while (!shutdownCalled.get() || !workQueue.isEmpty()) {
-                Runnable task = workQueue.poll();
-                if (task != null) {
-                    task.run();
+            try {
+                while (!shutdownCalled || !workQueue.isEmpty()) {
+                    workQueue.take().run();
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
