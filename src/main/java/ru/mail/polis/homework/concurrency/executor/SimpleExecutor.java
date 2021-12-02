@@ -15,6 +15,8 @@ import java.util.concurrent.Executor;
  */
 public class SimpleExecutor implements Executor {
 
+    private volatile boolean isShutdown = false;
+
     public SimpleExecutor(int maxThreadCount) {
 
     }
@@ -33,6 +35,7 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
+        isShutdown = true; // =)
     }
 
     /**
