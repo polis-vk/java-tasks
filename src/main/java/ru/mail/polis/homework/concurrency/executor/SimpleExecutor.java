@@ -1,13 +1,14 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
-import java.util.concurrent.locks.Lock;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -22,30 +23,33 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SimpleExecutor implements Executor {
 
+    private final int maxThreadCount;
+    private final List<Thread> threads;
+    private final Lock lock = new ReentrantLock();
+    private final AtomicInteger threadsSize = new AtomicInteger(0);
+    private final AtomicInteger nFreeThreads = new AtomicInteger(0);
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
+
+    private volatile boolean isShutdown = false;
+
     private class Task implements Runnable {
         @Override
         public void run() {
             Runnable active;
             try {
                 while (!Thread.currentThread().isInterrupted()) {
+                    nFreeThreads.incrementAndGet();
                     active = getTask();
                     if (active == null) {
                         break;
                     }
+                    nFreeThreads.decrementAndGet();
                     active.run();
                 }
             } catch (InterruptedException ignored) {
             }
         }
     }
-
-    private final int maxThreadCount;
-    private final List<Thread> threads;
-    private final Lock lock = new ReentrantLock();
-    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
-
-    private boolean isShutdown = false;
-    private volatile int threadsSize = 0;
 
     public SimpleExecutor(int maxThreadCount) {
         if (maxThreadCount <= 0) {
@@ -61,21 +65,30 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        lock.lock();
         if (isShutdown) {
             throw new RejectedExecutionException("Adding new tasks while running others");
         }
-        lock.unlock();
+
         if (command == null) {
             throw new IllegalArgumentException("Illegal null-command");
         }
+
         addTask(command);
-        Utils.pause(10); // Wait for notifying
-        if (!tasks.isEmpty() && threadsSize < maxThreadCount) {
-            ++threadsSize;
+        if (unableToCreateNewThread()) {
+            return;
+        }
+
+        try {
+            lock.lock();
+            if (unableToCreateNewThread()) {
+                return;
+            }
+            threadsSize.incrementAndGet();
             Thread t = new Thread(new Task());
             threads.add(t);
             t.start();
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -84,16 +97,17 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        lock.lock();
         isShutdown = true;
-        lock.unlock();
     }
 
     /**
      * Прерывает текущие задачи. При добавлении новых - бросает RejectedExecutionException
      * 1 балла за метод
      */
-    public void shutdownNow() {
+    public synchronized void shutdownNow() {
+        if (isShutdown) {
+            return;
+        }
         shutdown();
         for (Thread t: threads) {
             t.interrupt();
@@ -104,7 +118,7 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return threadsSize;
+        return threadsSize.get();
     }
 
     private void addTask(Runnable task) {
@@ -116,6 +130,10 @@ public class SimpleExecutor implements Executor {
 
     private Runnable getTask() throws InterruptedException {
         return isShutdown ? tasks.poll() : tasks.take();
+    }
+
+    private boolean unableToCreateNewThread() {
+        return nFreeThreads.get() != 0 || threadsSize.get() >= maxThreadCount;
     }
 
 }

@@ -1,9 +1,7 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -15,6 +13,11 @@ import java.util.concurrent.RejectedExecutionException;
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
+
+    private final Thread thread = new Thread(new Task());
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
+
+    private volatile boolean isShutdown = false;
 
     private class Task implements Runnable {
         @Override
@@ -33,12 +36,6 @@ public class SingleExecutor implements Executor {
         }
     }
 
-    private final Lock lock = new ReentrantLock();
-    private final Thread thread = new Thread(new Task());
-    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>(5);
-
-    private boolean isShutdown = false;
-
     public SingleExecutor() {
         thread.start();
     }
@@ -49,14 +46,14 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        lock.lock();
         if (isShutdown) {
             throw new RejectedExecutionException("Adding new tasks while running others");
         }
-        lock.unlock();
+
         if (command == null) {
             throw new IllegalArgumentException("Illegal null-command");
         }
+
         addTask(command);
     }
 
@@ -65,16 +62,17 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        lock.lock();
         isShutdown = true;
-        lock.unlock();
     }
 
     /**
      * Прерывает текущие задачи. При добавлении новых - бросает RejectedExecutionException
      * 2 балла за метод
      */
-    public void shutdownNow() {
+    public synchronized void shutdownNow() {
+        if (isShutdown) {
+            return;
+        }
         shutdown();
         thread.interrupt();
     }
