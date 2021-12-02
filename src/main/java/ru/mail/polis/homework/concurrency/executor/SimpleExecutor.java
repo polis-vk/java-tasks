@@ -23,15 +23,13 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class SimpleExecutor implements Executor {
 
-    private final AtomicInteger freeThreads;
+    private final AtomicInteger freeThreads = new AtomicInteger();
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private final List<Worker> workers;
     private final int maxThreadCount;
     private volatile boolean isStop;
-    private final Lock lock = new ReentrantLock();
 
     public SimpleExecutor(int maxThreadCount) {
-        freeThreads = new AtomicInteger();
         workers = new ArrayList<>(maxThreadCount);
         this.maxThreadCount = maxThreadCount;
     }
@@ -45,21 +43,15 @@ public class SimpleExecutor implements Executor {
         if (isStop) {
             throw new RejectedExecutionException();
         }
+        addWorker();
         tasks.add(command);
-        if (freeThreads.get() == 0) {
-            addWorker();
-        }
     }
 
-    private void addWorker() {
-        lock.lock();
-        try {
-            if (!isStop && (freeThreads.get() == 0) && (workers.size() != maxThreadCount)) {
-                Worker worker = new Worker();
-                workers.add(worker);
-            }
-        } finally {
-            lock.unlock();
+    private synchronized void addWorker() {
+        if (!isStop && (freeThreads.get() == 0) && (workers.size() != maxThreadCount)) {
+            Worker worker = new Worker();
+            workers.add(worker);
+            worker.start();
         }
     }
 
@@ -75,15 +67,10 @@ public class SimpleExecutor implements Executor {
      * Прерывает текущие задачи. При добавлении новых - бросает RejectedExecutionException
      * 1 балла за метод
      */
-    public void shutdownNow() {
-        lock.lock();
-        try {
-            isStop = true;
-            for (Worker worker : workers) {
-                worker.thread.interrupt();
-            }
-        } finally {
-            lock.unlock();
+    public synchronized void shutdownNow() {
+        isStop = true;
+        for (Worker worker : workers) {
+            worker.interrupt();
         }
     }
 
@@ -94,15 +81,7 @@ public class SimpleExecutor implements Executor {
         return workers.size();
     }
 
-    private class Worker implements Runnable {
-
-        private final Thread thread;
-
-        public Worker() {
-            thread = new Thread(this, "Worker");
-            thread.start();
-        }
-
+    private class Worker extends Thread {
         @Override
         public void run() {
             freeThreads.incrementAndGet();
