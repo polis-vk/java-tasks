@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -13,11 +14,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
-    private final LinkedBlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
-    private final AtomicBoolean shutdownCalled = new AtomicBoolean(false);
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
+    private volatile boolean shutdownCalled = false;
     private final SingleThread singleThread = new SingleThread();
 
-    {
+
+    public SingleExecutor() {
         singleThread.start();
     }
 
@@ -27,7 +29,7 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (shutdownCalled.get()) {
+        if (shutdownCalled) {
             throw new RejectedExecutionException();
         }
         tasks.add(command);
@@ -38,7 +40,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        shutdownCalled.set(true);
+        shutdownCalled = true;
     }
 
     /**
@@ -46,21 +48,20 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
-        shutdownCalled.set(true);
+        shutdownCalled = true;
         singleThread.interrupt();
     }
 
     private class SingleThread extends Thread {
         @Override
         public void run() {
-            while (!shutdownCalled.get() || !tasks.isEmpty()) {
-                try {
+            try {
+                while (!shutdownCalled || !tasks.isEmpty()) {
                     Runnable task = tasks.take();
                     task.run();
-                } catch (InterruptedException e) {
-                    System.out.println("I was interrupted");
-                    return;
                 }
+            } catch (InterruptedException e) {
+                System.out.println("I was interrupted");
             }
         }
     }

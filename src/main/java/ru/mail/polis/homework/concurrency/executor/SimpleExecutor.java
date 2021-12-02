@@ -1,9 +1,9 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -18,10 +18,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Max 10 баллов
  */
 public class SimpleExecutor implements Executor {
-    private final LinkedBlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private final AtomicInteger threadsCount = new AtomicInteger(0);
     private final int maxThreadsCount;
-    private final AtomicBoolean shutdownCalled = new AtomicBoolean(false);
+    private volatile boolean shutdownCalled = false;
     private final AtomicInteger freeThreadsCount = new AtomicInteger(0);
     private final SingleThread[] threads;
 
@@ -36,18 +36,19 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (shutdownCalled.get()) {
+        if (shutdownCalled) {
             throw new RejectedExecutionException();
         }
 
-        tasks.add(command);
+
         synchronized (threadsCount) {
-            if (threadsCount.get() < maxThreadsCount && !tasks.isEmpty() && freeThreadsCount.get() == 0) {
+            if (threadsCount.get() == 0 || threadsCount.get() < maxThreadsCount && freeThreadsCount.get() == 0) {
                 SingleThread singleThread = new SingleThread();
                 singleThread.start();
                 threads[threadsCount.getAndIncrement()] = singleThread;
             }
         }
+        tasks.add(command);
     }
 
     /**
@@ -55,7 +56,7 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        shutdownCalled.set(true);
+        shutdownCalled = true;
     }
 
     /**
@@ -63,9 +64,11 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-        shutdownCalled.set(true);
+        shutdownCalled = true;
         for (int i = 0; i < threadsCount.get(); i++) {
-            threads[i].interrupt();
+            while (!threads[i].isInterrupted()) {
+                threads[i].interrupt();
+            }
         }
     }
 
@@ -80,7 +83,7 @@ public class SimpleExecutor implements Executor {
         @Override
         public void run() {
             try {
-                while (!shutdownCalled.get()) {
+                while (!shutdownCalled) {
                     freeThreadsCount.incrementAndGet();
                     Runnable task = tasks.take();
                     freeThreadsCount.decrementAndGet();
