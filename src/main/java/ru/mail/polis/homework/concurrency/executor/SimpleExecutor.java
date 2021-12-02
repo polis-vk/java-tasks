@@ -35,16 +35,16 @@ public class SimpleExecutor implements Executor {
     private class Task implements Runnable {
         @Override
         public void run() {
-            Runnable active;
+            Runnable activeTask;
             try {
                 while (!Thread.currentThread().isInterrupted()) {
                     nFreeThreads.incrementAndGet();
-                    active = getTask();
-                    if (active == null) {
+                    activeTask = getTask();
+                    if (activeTask == null) {
                         break;
                     }
                     nFreeThreads.decrementAndGet();
-                    active.run();
+                    activeTask.run();
                 }
             } catch (InterruptedException ignored) {
             }
@@ -66,11 +66,11 @@ public class SimpleExecutor implements Executor {
     @Override
     public void execute(Runnable command) {
         if (isShutdown) {
-            throw new RejectedExecutionException("Adding new tasks while running others");
+            throw new RejectedExecutionException("Unable to add new task when shutdown");
         }
 
         if (command == null) {
-            throw new IllegalArgumentException("Illegal null-command");
+            throw new IllegalArgumentException("Illegal null command");
         }
 
         addTask(command);
@@ -84,9 +84,9 @@ public class SimpleExecutor implements Executor {
                 return;
             }
             threadsSize.incrementAndGet();
-            Thread t = new Thread(new Task());
-            threads.add(t);
-            t.start();
+            Thread newThread = new Thread(new Task());
+            threads.add(newThread);
+            newThread.start();
         } finally {
             lock.unlock();
         }
@@ -109,8 +109,8 @@ public class SimpleExecutor implements Executor {
             return;
         }
         shutdown();
-        for (Thread t: threads) {
-            t.interrupt();
+        for (Thread thread: threads) {
+            thread.interrupt();
         }
     }
 

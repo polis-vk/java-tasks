@@ -22,14 +22,14 @@ public class SingleExecutor implements Executor {
     private class Task implements Runnable {
         @Override
         public void run() {
-            Runnable active;
+            Runnable activeTask;
             try {
                 while (!Thread.currentThread().isInterrupted()) {
-                    active = getTask();
-                    if (active == null) {
+                    activeTask = getTask();
+                    if (activeTask == null) {
                         break;
                     }
-                    active.run();
+                    activeTask.run();
                 }
             } catch (InterruptedException ignored) {
             }
@@ -47,11 +47,11 @@ public class SingleExecutor implements Executor {
     @Override
     public void execute(Runnable command) {
         if (isShutdown) {
-            throw new RejectedExecutionException("Adding new tasks while running others");
+            throw new RejectedExecutionException("Unable to add new task when shutdown");
         }
 
         if (command == null) {
-            throw new IllegalArgumentException("Illegal null-command");
+            throw new IllegalArgumentException("Illegal null command");
         }
 
         addTask(command);
