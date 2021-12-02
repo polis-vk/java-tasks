@@ -24,7 +24,7 @@ public class SimpleExecutor implements Executor {
 
     private final int maxThreadCount;
     private final List<CustomThread> readyThreads = new CopyOnWriteArrayList<>();
-    private final AtomicInteger busyCountThreads = new AtomicInteger(0);
+    private final AtomicInteger countThreads = new AtomicInteger(0);
     private final BlockingQueue<Runnable> commands = new LinkedBlockingQueue<>();
     private volatile boolean addMode = true;
 
@@ -38,17 +38,19 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (addMode) {
-            commands.add(command);
-            synchronized (this) {
-                if (readyThreads.size() == busyCountThreads.get() && readyThreads.size() < maxThreadCount) {
-                    CustomThread newThread = new CustomThread();
-                    readyThreads.add(newThread);
-                    newThread.start();
-                }
-            }
-        } else {
+        if (!addMode) {
             throw new RejectedExecutionException();
+        }
+
+        synchronized (this) {
+            if (countThreads.get() == readyThreads.size() && readyThreads.size() < maxThreadCount) {
+                CustomThread newThread = new CustomThread(command);
+                newThread.start();
+                readyThreads.add(newThread);
+            } else {
+                countThreads.decrementAndGet();
+                commands.add(command);
+            }
         }
     }
 
@@ -80,19 +82,24 @@ public class SimpleExecutor implements Executor {
 
     private class CustomThread extends Thread {
 
-        public CustomThread() {
-            busyCountThreads.incrementAndGet();
+        private Runnable currentCommand;
+
+        CustomThread(Runnable currentCommand) {
+            countThreads.incrementAndGet();
+            this.currentCommand = currentCommand;
         }
 
         @Override
         public void run() {
             try {
                 while (addMode || !commands.isEmpty()) {
-                    commands.take().run();
-                    busyCountThreads.decrementAndGet();
+                    currentCommand.run();
+                    countThreads.decrementAndGet();
+                    currentCommand = commands.take();
+                    countThreads.incrementAndGet();
                 }
             } catch (InterruptedException e) {
-                System.out.println("shutdownNow");
+                e.printStackTrace();
             }
         }
     }
