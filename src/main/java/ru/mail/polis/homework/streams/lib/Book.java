@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.streams.lib;
 
+import java.util.Objects;
+
 public class Book {
     private final String name;
     private final String author;
@@ -27,5 +29,18 @@ public class Book {
 
     public int getPage() {
         return page;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return page == book.page && name.equals(book.name) && author.equals(book.author) && genre == book.genre;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, author, genre, page);
     }
 }
