@@ -36,7 +36,7 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return age == user.age && readedPages == user.readedPages && name.equals(user.name) && Objects.equals(book, user.book);
+        return age == user.age && name.equals(user.name);
     }
 
     @Override
