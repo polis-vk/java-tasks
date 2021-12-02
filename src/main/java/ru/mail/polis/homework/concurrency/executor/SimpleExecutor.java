@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -25,7 +24,7 @@ public class SimpleExecutor implements Executor {
     private final BlockingQueue<Runnable> commands = new LinkedBlockingQueue<>();
     private final int maxThreadCount;
     private final AtomicInteger freeThreadCount = new AtomicInteger(0);
-    private final AtomicBoolean running = new AtomicBoolean(true);
+    private volatile boolean running = true;
 
     public SimpleExecutor(int maxThreadCount) {
         if (maxThreadCount < 1) {
@@ -40,7 +39,7 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (!running.get()) {
+        if (!running) {
             throw new RejectedExecutionException();
         }
         try {
@@ -63,14 +62,14 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public synchronized void shutdown() {
-        running.set(false);
+        running = false;
     }
 
     /**
      * Прерывает текущие задачи. При добавлении новых - бросает RejectedExecutionException
      * 1 балла за метод
      */
-    public void shutdownNow() {
+    public synchronized void shutdownNow() {
         shutdown();
         workers.forEach(Thread::interrupt);
     }
@@ -86,7 +85,7 @@ public class SimpleExecutor implements Executor {
         @Override
         public void run() {
             try {
-                while (running.get() || !commands.isEmpty()) {
+                while (running || !commands.isEmpty()) {
                     freeThreadCount.incrementAndGet();
                     Runnable command = commands.take();
                     freeThreadCount.decrementAndGet();
