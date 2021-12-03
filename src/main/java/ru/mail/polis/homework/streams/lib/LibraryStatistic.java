@@ -93,7 +93,7 @@ public class LibraryStatistic {
                 Collectors.partitioningBy(
                         entry -> durationDays(entry, now) <= UNRELIABLE_MIN_DURATION_DAYS,
                         countingDistinctBy(ArchivedData::getBook)),
-                this::isReliable);
+                LibraryStatistic::isReliable);
         return library.getArchive().stream()
                 .collect(Collectors.groupingBy(ArchivedData::getUser, collectingIsReliable))
                 .entrySet()
@@ -143,7 +143,7 @@ public class LibraryStatistic {
         return map;
     }
 
-    private long durationDays(ArchivedData rent, Timestamp defaultReturned) {
+    private static long durationDays(ArchivedData rent, Timestamp defaultReturned) {
         Timestamp returned = rent.getReturned();
         if (returned == null) {
             returned = defaultReturned;
@@ -151,7 +151,7 @@ public class LibraryStatistic {
         return ChronoUnit.DAYS.between(returned.toInstant(), rent.getTake().toInstant());
     }
 
-    private int readingProgress(User user, Genre genre) {
+    private static int readingProgress(User user, Genre genre) {
         if (user.getBook() == null) {
             return 0;
         }
@@ -161,13 +161,14 @@ public class LibraryStatistic {
         return user.getReadedPages();
     }
 
-    private boolean isReliable(Map<Boolean, Integer> distribution) {
+    private static boolean isReliable(Map<Boolean, Integer> distribution) {
         int inBounds = distribution.getOrDefault(true, 0);
         int outOfBounds = distribution.getOrDefault(false, 0);
         return outOfBounds <= UNRELIABLE_MIN_SHARE * (inBounds + outOfBounds);
     }
 
-    private <T, K> Collector<T, ?, Integer> countingDistinctBy(Function<? super T, ? extends K> classifier) {
+    private static <T, K>
+    Collector<T, ?, Integer> countingDistinctBy(Function<? super T, ? extends K> classifier) {
         return Collectors.collectingAndThen(
                 Collectors.mapping(classifier, Collectors.toSet()),
                 Set::size);
