@@ -88,7 +88,7 @@ public class LibraryStatistic {
      * @return - список ненадежных пользователей
      */
     public List<User> unreliableUsers(Library library) {
-        Timestamp now = Timestamp.from(Instant.now());
+        Timestamp now = now();
         Collector<ArchivedData, Object, Boolean> collectingIsReliable = Collectors.collectingAndThen(
                 Collectors.partitioningBy(
                         entry -> durationDays(entry, now) <= UNRELIABLE_MIN_DURATION_DAYS,
@@ -141,6 +141,10 @@ public class LibraryStatistic {
             map.putIfAbsent(genre, null);
         }
         return map;
+    }
+
+    protected Timestamp now() {
+        return Timestamp.from(Instant.now());
     }
 
     private static long durationDays(ArchivedData rent, Timestamp defaultReturned) {
