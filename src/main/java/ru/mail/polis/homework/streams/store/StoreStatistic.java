@@ -1,9 +1,7 @@
 package ru.mail.polis.homework.streams.store;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -38,8 +36,16 @@ public class StoreStatistic {
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
         return orders
                 .stream()
-                .collect(Collectors.groupingBy(Order::getTime),
-                        Collectors.groupingBy(order -> order.getItem()));
+                .collect(
+                    Collectors.groupingBy(Order::getDay,
+                        Collectors.collectingAndThen(
+                            Collectors.reducing((Order x, Order y) -> {
+                                    for (Item item : y.getItemCount().keySet()) {
+                                        x.getItemCount().put(item, x.getItemCount().getOrDefault(item, 0)
+                                                + y.getItemCount().get(item));
+                                    }
+                                    return x;
+                                    }), o -> o.get().getItemCount())));
 
     }
 
@@ -49,7 +55,19 @@ public class StoreStatistic {
      * @return - товар
      */
     public Item mostPopularItem(List<Order> orders) {
-        return null;
+        return orders
+                .stream()
+                .reduce((x, y) -> {
+                    for (Item item : y.getItemCount().keySet()) {
+                        x.getItemCount().put(item, x.getItemCount().getOrDefault(item, 0)
+                                + y.getItemCount().get(item));
+                    }
+                    return x;
+                }).get().getItemCount()
+                .entrySet()
+                .stream()
+                .max(Comparator.comparingInt(Map.Entry::getValue))
+                .get().getKey();
     }
 
     /**
@@ -58,13 +76,30 @@ public class StoreStatistic {
      * @return map - заказ / общая сумма заказа
      */
     public Map<Order, Long> sum5biggerOrders(List<Order> orders) {
-        orders
+        return orders
                 .stream()
-                .map(order -> (order.getItemCount().values()
-                        .stream()
-                        .reduce(0, Integer::sum), order))
+                .collect(
+                        Collectors.toMap(
+                                o -> o,
+                                o -> {
+                                    Long totalCount = 0L;
+                                    for (Integer count : o.getItemCount().values()) {
+                                        totalCount += count;
+                                    }
+                                    return totalCount;
+                                }
+                        )
+                )
+                .entrySet()
+                .stream()
+                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
                 .limit(5)
-                .reduce(0, Integer::sum);
+                .collect(
+                        Collectors.toMap(
+                                Map.Entry::getKey,
+                                Map.Entry::getValue
+                        )
+                );
     }
 }
 
