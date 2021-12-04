@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.streams.store;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Item {

@@ -6,13 +6,13 @@ public class Book {
     private final String name;
     private final String author;
     private final Genre genre;
-    private final int page;
+    private final int pages;
 
     public Book(String name, String author, Genre genre, int page) {
         this.name = name;
         this.author = author;
         this.genre = genre;
-        this.page = page;
+        this.pages = page;
     }
 
     public String getName() {
@@ -27,8 +27,8 @@ public class Book {
         return genre;
     }
 
-    public int getPage() {
-        return page;
+    public int getPages() {
+        return pages;
     }
 
     @Override
@@ -36,11 +36,11 @@ public class Book {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
-        return page == book.page && name.equals(book.name) && author.equals(book.author) && genre == book.genre;
+        return pages == book.pages && name.equals(book.name) && author.equals(book.author) && genre == book.genre;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, author, genre, page);
+        return Objects.hash(name, author, genre, pages);
     }
 }
