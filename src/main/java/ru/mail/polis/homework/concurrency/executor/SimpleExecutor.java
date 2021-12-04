@@ -6,7 +6,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -25,7 +24,7 @@ public class SimpleExecutor implements Executor {
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private final int maxThreadCount;
     private final AtomicInteger freeWorkers = new AtomicInteger(0);
-    private final AtomicBoolean isActive = new AtomicBoolean(true);
+    private volatile boolean isActive = true;
     private final Object lock = new Object();
 
     public SimpleExecutor(int maxThreadCount) {
@@ -44,25 +43,26 @@ public class SimpleExecutor implements Executor {
         if (command == null) {
             throw new IllegalArgumentException();
         }
-        if (!isActive()) {
+        if (!isActive) {
             throw new RejectedExecutionException();
         }
         if (freeWorkers.get() != 0) {
             tasks.add(command);
-        } else {
-            SimpleWorker worker = null;
-            synchronized (lock) {
-                if (getLiveThreadsCount() == maxThreadCount) {
-                    tasks.add(command);
-                } else {
-                    worker = new SimpleWorker(command);
-                    workers.add(worker);
-                }
-            }
-            if (worker != null) {
-                worker.start();
+            return;
+        }
+        SimpleWorker worker = null;
+        synchronized (lock) {
+            if (getLiveThreadsCount() == maxThreadCount) {
+                tasks.add(command);
+            } else {
+                worker = new SimpleWorker(command);
+                workers.add(worker);
             }
         }
+        if (worker != null && isActive) {
+            worker.start();
+        }
+
     }
 
     /**
@@ -70,7 +70,9 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        setIsActive(false);
+        synchronized (lock) {
+            isActive = false;
+        }
     }
 
     /**
@@ -78,19 +80,14 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-        shutdown();
-        for (SimpleWorker worker : workers) {
-            worker.interrupt();
+        synchronized (lock) {
+            isActive = false;
+            for (SimpleWorker worker : workers) {
+                worker.interrupt();
+            }
         }
     }
 
-    private void setIsActive(boolean isActive) {
-        this.isActive.set(isActive);
-    }
-
-    private boolean isActive() {
-        return isActive.get();
-    }
 
     /**
      * Должен возвращать количество созданных потоков.
@@ -112,17 +109,14 @@ public class SimpleExecutor implements Executor {
         public void run() {
             firstTask.run();
             try {
-                while (isActive() || !tasks.isEmpty()) {
+                while (isActive || !tasks.isEmpty()) {
                     freeWorkers.incrementAndGet();
-
                     Runnable task = tasks.take();
                     freeWorkers.decrementAndGet();
                     task.run();
-
                 }
             } catch (InterruptedException ignored) {
             }
-            firstTask = null;
         }
     }
 }
