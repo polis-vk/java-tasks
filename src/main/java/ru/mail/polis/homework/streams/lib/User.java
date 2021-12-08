@@ -6,13 +6,13 @@ public class User {
     private final String name;
     private final int age;
     private final Book book;
-    private final int readedPages;
+    private final int readPages;
 
-    public User(String name, int age, Book book, int readedPages) {
+    public User(String name, int age, Book book, int readPages) {
         this.name = name;
         this.age = age;
         this.book = book;
-        this.readedPages = readedPages;
+        this.readPages = readPages;
     }
 
     public String getName() {
@@ -27,8 +27,8 @@ public class User {
         return book;
     }
 
-    public int getReadedPages() {
-        return readedPages;
+    public int getReadPages() {
+        return readPages;
     }
 
     @Override
@@ -41,6 +41,6 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, age, book, readedPages);
+        return Objects.hash(name, age, book, readPages);
     }
 }
