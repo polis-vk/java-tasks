@@ -24,11 +24,11 @@ public class StoreStatistic {
      * @return - кол-во проданного товара
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
-        return orders.stream().
-                filter(order -> order.getTime().compareTo(from) >= 0 &&
-                        order.getTime().compareTo(to) < 0 && order.getItemCount().containsKey(typeItem)).
-                mapToLong(order -> order.getItemCount().get(typeItem)).
-                sum();
+        return orders.stream()
+                .filter(order -> order.getTime().compareTo(from) >= 0 &&
+                        order.getTime().compareTo(to) < 0 && order.getItemCount().containsKey(typeItem))
+                .mapToLong(order -> order.getItemCount().get(typeItem))
+                .sum();
     }
 
     /**
@@ -39,12 +39,12 @@ public class StoreStatistic {
      * значение - map товар/кол-во
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
-        return orders.stream().
-                map(order -> new Order(resetTime(order.getTime()), order.getItemCount())).
-                collect(Collectors.groupingBy(Order::getTime)).entrySet().stream().
-                collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream().
-                        flatMap(order -> order.getItemCount().entrySet().stream()).
-                        collect(Collectors.groupingBy(Map.Entry::getKey,
+        return orders.stream()
+                .map(order -> new Order(resetTime(order.getTime()), order.getItemCount()))
+                .collect(Collectors.groupingBy(Order::getTime)).entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream()
+                        .flatMap(order -> order.getItemCount().entrySet().stream())
+                        .collect(Collectors.groupingBy(Map.Entry::getKey,
                                 Collectors.summingInt(Map.Entry::getValue)))));
     }
 
@@ -55,13 +55,13 @@ public class StoreStatistic {
      * @return - товар
      */
     public Item mostPopularItem(List<Order> orders) {
-        return orders.stream().
-                flatMap(order -> order.getItemCount().entrySet().stream()).
-                collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue))).
-                entrySet().stream().
-                max(Map.Entry.comparingByValue()).
-                orElseThrow(NullPointerException::new).
-                getKey();
+        return orders.stream()
+                .flatMap(order -> order.getItemCount().entrySet().stream())
+                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .orElseThrow(NullPointerException::new)
+                .getKey();
     }
 
     /**
@@ -71,13 +71,13 @@ public class StoreStatistic {
      * @return map - заказ / общая сумма заказа
      */
     public Map<Order, Long> sum5biggerOrders(List<Order> orders) {
-        return orders.stream().
-                map(order -> new AbstractMap.SimpleEntry<>(order, order.getItemCount().values().stream().
-                        mapToLong(Integer::longValue).
-                        sum())).
-                sorted((o1, o2) -> o2.getValue().compareTo(o1.getValue())).
-                limit(5).
-                collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (o1, o2) -> o2, HashMap::new));
+        return orders.stream()
+                .map(order -> new AbstractMap.SimpleEntry<>(order, order.getItemCount().values().stream()
+                        .mapToLong(Integer::longValue)
+                        .sum()))
+                .sorted((o1, o2) -> o2.getValue().compareTo(o1.getValue()))
+                .limit(5)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (o1, o2) -> o2, HashMap::new));
     }
 
     private static Timestamp resetTime(Timestamp ts) {
