@@ -23,14 +23,18 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Каждому запросу присваивается уникальная интовая айдишка. Клиент может быть закрыт.
  */
 public class Client {
-    private static final List<SocketChannel> clientSockets = new ArrayList<>();
-    private static final int REQUEST_ANSWER_RESPONSE = 0;
-    private static final int FULL_REQUEST_RECEIVED_CODE = 1;
-    private static final int REQUEST_CANCELED_RESPONSE_CODE = 2;
-    private static final int CANSEL_REQUEST_CODE = 3;
-    private static final int OPERATION_HEADER_CODE = 0;
-    private static final int WRITE_OPERAND_CODE = 1;
-    private static final int CLIENT_CLOSED_CODE = -1;
+    private static final int RESULT_RESPONSE             = 0;
+    private static final int OPERATION_RECEIVED_RESPONSE = 1;
+    private static final int REQUEST_CANCELED_RESPONSE   = 2;
+
+    // all messages start with clientId and message type code
+    private static final int OPERATION_HEADER_MESSAGE = 0;
+    private static final int OPERAND_MESSAGE          = 1;
+    private static final int CLOSE_CLIENT_MESSAGE     = 2;
+    private static final int CANSEL_REQUEST_MESSAGE   = 3;
+    private static final int REGISTER_CLIENT_MESSAGE  = 4;
+
+    private final List<SocketChannel> clientSockets = new ArrayList<>();
     private final Executor sendExecutor;
     private final Map<Integer, Result> requests = new HashMap<>();
     private final Integer serverPort;
@@ -91,6 +95,16 @@ public class Client {
                 e.printStackTrace();
             }
         }
+
+        // actually we should wait until server answers that is registers the user, but it will add a lot of
+        // complexity, so we assume that server will register user before it will receive  requests,
+        // produced by calculate
+        SocketChannel chanel = peekClientChanel();
+        try {
+            registerOnServerRequest(chanel, serverPort);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -99,10 +113,10 @@ public class Client {
      * Возвращает Result с отложенным заполнением ответа.
      */
     public Result calculate(List<Operand> operands) {
-        SocketChannel client = peekClientChanel();
+        SocketChannel chanel = peekClientChanel();
         Integer operationId = nextOperationId.incrementAndGet();
         try {
-            writeOperationHeader(client, operationId, serverPort, operands.size());
+            writeOperationHeader(chanel, operationId, operands.size());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -112,17 +126,20 @@ public class Client {
             requests.put(operationId, newResult);
         }
 
+        int operandOrder = 0;
         for (Operand operand : operands) {
-            client = peekClientChanel();
-            SocketChannel finalClient = client;
+            chanel = peekClientChanel();
+            SocketChannel finalClient = chanel;
+            int finalOperandOrder = operandOrder;
             sendExecutor.execute(() -> {
                 newResult.setState(ClientState.SENDING);
                 try {
-                    writeOperand(finalClient, operationId, operand);
+                    writeOperand(finalClient, operationId, finalOperandOrder, operand);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
+            ++operandOrder;
         }
 
         return newResult;
@@ -197,19 +214,19 @@ public class Client {
     }
 
     private static void register(Selector selector, ServerSocketChannel serverSocket) throws IOException {
-        SocketChannel client = serverSocket.accept();
-        client.configureBlocking(false);
-        client.register(selector, SelectionKey.OP_READ);
+        SocketChannel chanel = serverSocket.accept();
+        chanel.configureBlocking(false);
+        chanel.register(selector, SelectionKey.OP_READ);
     }
 
 
-    private void writeOperationHeader(SocketChannel chanel, Integer operationId, Integer responsePort,
+    private void writeOperationHeader(SocketChannel chanel, Integer operationId,
                                       Integer operandsAmount) throws IOException {
         synchronized (chanel) {
             ByteBuffer bb = ByteBuffer.allocate(256);
-            bb.putInt(OPERATION_HEADER_CODE);
+            bb.putInt(clientId);
+            bb.putInt(OPERATION_HEADER_MESSAGE);
             bb.putInt(operationId);
-            bb.putInt(responsePort);
             bb.putInt(operandsAmount);
             chanel.write(bb);
         }
@@ -218,28 +235,43 @@ public class Client {
     private void canselOperationRequest(SocketChannel chanel, Integer operationId) throws IOException {
         synchronized (chanel) {
             ByteBuffer bb = ByteBuffer.allocate(256);
-            bb.putInt(CANSEL_REQUEST_CODE);
+            bb.putInt(clientId);
+            bb.putInt(CANSEL_REQUEST_MESSAGE);
             bb.putInt(operationId);
             chanel.write(bb);
         }
     }
 
-
-    private void writeOperand(SocketChannel chanel, Integer operationId, Operand operand) throws IOException {
+    private void registerOnServerRequest(SocketChannel chanel, Integer responsePort)
+            throws IOException {
         synchronized (chanel) {
             ByteBuffer bb = ByteBuffer.allocate(256);
-            bb.putInt(WRITE_OPERAND_CODE);
-            bb.putInt(operationId);
+            bb.putInt(clientId);
+            bb.putInt(REGISTER_CLIENT_MESSAGE);
+            bb.putInt(responsePort);
             chanel.write(bb);
-            chanel.write(ByteBuffer.wrap(operand.getCharacterRepresentation()));
+        }
+    }
+
+    private void writeOperand(SocketChannel chanel, Integer operationId, Integer operandOrder,
+                              Operand operand) throws IOException {
+        synchronized (chanel) {
+            ByteBuffer bb = ByteBuffer.allocate(256);
+            bb.putInt(clientId);
+            bb.putInt(OPERAND_MESSAGE);
+            bb.putInt(operationId);
+            bb.putInt(operandOrder);
+            operand.writeIntoBuffer(bb);
+//            bb.put(operand.getCharacterRepresentation());
+            chanel.write(bb);
         }
     }
 
     private void writeCloseCommand(SocketChannel chanel, Integer clientId) throws IOException {
         synchronized (chanel) {
             ByteBuffer bb = ByteBuffer.allocate(256);
-            bb.putInt(CLIENT_CLOSED_CODE);
             bb.putInt(clientId);
+            bb.putInt(CLOSE_CLIENT_MESSAGE);
             chanel.write(bb);
         }
     }
@@ -251,7 +283,7 @@ public class Client {
         }
         Integer answerType = buffer.getInt();
         Integer id = buffer.getInt();
-        if (answerType == REQUEST_ANSWER_RESPONSE) {
+        if (answerType == RESULT_RESPONSE) {
             Double resultValue = buffer.getDouble();
             buffer.clear();
             if (getResult(id) != null) {
@@ -262,12 +294,12 @@ public class Client {
                     result.notifyListeners();
                 }
             }
-        } else if (answerType == FULL_REQUEST_RECEIVED_CODE) {
+        } else if (answerType == OPERATION_RECEIVED_RESPONSE) {
             if (getResult(id) != null) {
                 Result result = getResult(id);
                 result.setState(ClientState.SENT);
             }
-        } else if (answerType == REQUEST_CANCELED_RESPONSE_CODE) {
+        } else if (answerType == REQUEST_CANCELED_RESPONSE) {
             if (getResult(id) != null) {
                 Result result = getResult(id);
                 result.setState(ClientState.CANCEL);

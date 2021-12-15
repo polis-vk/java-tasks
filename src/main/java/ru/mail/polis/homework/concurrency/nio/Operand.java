@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.concurrency.nio;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 
 /**
  * Операнд для вычислений.
@@ -29,6 +31,12 @@ public class Operand implements Serializable {
         this.operationSecond = operationSecond;
     }
 
+    public Operand(ByteBuffer bb) {
+        this.operationFirst = OperandType.values()[bb.getInt()];
+        this.a = bb.getDouble();
+        this.operationSecond = OperandType.values()[bb.getInt()];
+    }
+
     public OperandType getOperationFirst() {
         return operationFirst;
     }
@@ -39,6 +47,12 @@ public class Operand implements Serializable {
 
     public OperandType getOperationSecond() {
         return operationSecond;
+    }
+
+    public void writeIntoBuffer(ByteBuffer bb) {
+        bb.putInt(operationFirst.ordinal());
+        bb.putDouble(a);
+        bb.putInt(operationSecond.ordinal());
     }
 
     public byte[] getCharacterRepresentation() {
