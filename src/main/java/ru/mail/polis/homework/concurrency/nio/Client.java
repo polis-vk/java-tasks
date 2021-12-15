@@ -282,12 +282,13 @@ public class Client {
             channel.read(buffer);
         }
         Integer answerType = buffer.getInt();
-        Integer id = buffer.getInt();
+        Integer resultId = buffer.getInt();
+
         if (answerType == RESULT_RESPONSE) {
             Double resultValue = buffer.getDouble();
-            buffer.clear();
-            if (getResult(id) != null) {
-                Result result = getResult(id);
+
+            if (getResult(resultId) != null) {
+                Result result = getResult(resultId);
                 result.setValue(resultValue);
                 result.setState(ClientState.DONE);
                 synchronized (result) {
@@ -295,18 +296,19 @@ public class Client {
                 }
             }
         } else if (answerType == OPERATION_RECEIVED_RESPONSE) {
-            if (getResult(id) != null) {
-                Result result = getResult(id);
+            if (getResult(resultId) != null) {
+                Result result = getResult(resultId);
                 result.setState(ClientState.SENT);
             }
         } else if (answerType == REQUEST_CANCELED_RESPONSE) {
-            if (getResult(id) != null) {
-                Result result = getResult(id);
+            if (getResult(resultId) != null) {
+                Result result = getResult(resultId);
                 result.setState(ClientState.CANCEL);
             }
         } else {
             throw new RemoteException();
         }
+
         buffer.clear();
     }
 

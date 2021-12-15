@@ -10,9 +10,10 @@ import java.util.Set;
 public class ServerOperation {
     private final Integer totalOperands;
     private Operand[] operands;
-    public ServerState state = ServerState.LOADING;
+    private ServerState state = ServerState.LOADING;
     private final Set<Integer> receivedOperands;
     private final Integer id;
+    private Double result;
     public boolean readyForCalculation;
 
     ServerOperation(Integer totalOperands, Integer id) {
@@ -21,6 +22,33 @@ public class ServerOperation {
         receivedOperands = new HashSet<>();
         this.id = id;
     }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Double getResult() {
+        return result;
+    }
+
+    public Double execute() {
+        assert receivedOperands.size() == totalOperands;
+        assert receivedOperands.size() > 0;
+
+        Double tempResultValue = operands[0].getA();
+        OperandType operation = operands[0].getOperationSecond();
+        for (int i = 1; i < operands.length; i++) {
+            tempResultValue += operands[i].getA();
+            if (operands[i].getOperationSecond() == OperandType.EQUALS) {
+                break;
+            }
+        }
+        this.state = ServerState.CALCULATING;
+
+        result = tempResultValue;
+        return result;
+    }
+
 
     synchronized public boolean AddOperand(Operand operand, Integer order) {
         if (receivedOperands.contains(order)) {
@@ -33,6 +61,10 @@ public class ServerOperation {
             }
             return true;
         }
+    }
+
+    synchronized void setState(ServerState state) {
+        this.state = state;
     }
 
     public ServerState getState() {

@@ -35,6 +35,7 @@ public class Server {
     private static final int REGISTER_CLIENT_MESSAGE  = 4;
 
     private final Executor calculateExecutor;
+    private final Executor resultSender;
     class ClientInfo {
         Map<Integer, ServerOperation> operations;
         final Integer port;
@@ -52,8 +53,9 @@ public class Server {
     }
     private final Map<Integer, ClientInfo> clients = new HashMap<>();
 
-    public Server(int[] serverPorts, int calculateThreadsCount) throws IOException {
+    public Server(int[] serverPorts, int calculateThreadsCount) {
         calculateExecutor = Executors.newFixedThreadPool(calculateThreadsCount);
+        resultSender = Executors.newSingleThreadExecutor();
         new Thread(() -> {
             try (Selector selector = Selector.open()) {
                 try (ServerSocketChannel serverSocket = ServerSocketChannel.open()) {
@@ -140,9 +142,9 @@ public class Server {
                 ServerOperation operation = clients.get(clientId).operations.getOrDefault(operationId, null);
                 if (operation != null) {
                     synchronized (operation) {
-                        if (operation.state != ServerState.CLOSE || operation.state != ServerState.DONE) {
-                            operation.state = ServerState.CANCEL;
-                            sendRequestCanselledResponse(clients.get(clientId).chanel);
+                        if (operation.getState() != ServerState.CLOSE || operation.getState() != ServerState.DONE) {
+                            operation.setState(ServerState.CANCEL);
+                            sendRequestCanceledResponse(clients.get(clientId).chanel, operationId);
                         }
                     }
                 }
@@ -156,9 +158,9 @@ public class Server {
                 if (operation != null) {
                     operation.AddOperand(operand, operandOrder);
                     synchronized (operation) {
-                        if (operation.state == ServerState.WAITING_CALCULATE) {
-                            sendOperationFullRecievedResponse(clients.get(clientId).chanel);
-                            startCalculation(operation);
+                        if (operation.getState() == ServerState.WAITING_CALCULATE) {
+                            sendOperationFullReceivedResponse(clients.get(clientId).chanel, operationId);
+                            startCalculation(channel, operation);
                         }
                     }
                 }
@@ -167,17 +169,60 @@ public class Server {
             case CLOSE_CLIENT_MESSAGE -> {
                 for (ServerOperation operation : clients.get(clientId).operations.values()) {
                     synchronized (operation) {
-                        if (operation.state != ServerState.CLOSE || operation.state != ServerState.DONE) {
-                            operation.state = ServerState.CLOSE;
+                        if (operation.getState() != ServerState.CLOSE || operation.getState() != ServerState.DONE) {
+                            operation.setState(ServerState.CLOSE);
                         }
                     }
                 }
                 synchronized (clients.get(clientId)) {
                     clients.get(clientId).chanel.close();
                 }
-                sendClientClosedResponse(clients.get(clientId).chanel);
             }
         }
         buffer.clear();
+    }
+
+    private void sendOperationFullReceivedResponse(SocketChannel chanel, Integer operationId) throws IOException {
+        synchronized (chanel) {
+            ByteBuffer bb = ByteBuffer.allocate(256);
+            bb.putInt(OPERATION_RECEIVED_RESPONSE);
+            bb.putInt(operationId);
+            chanel.write(bb);
+        }
+    }
+
+    private void sendRequestCanceledResponse(SocketChannel chanel, Integer operationId) throws IOException {
+        synchronized (chanel) {
+            ByteBuffer bb = ByteBuffer.allocate(256);
+            bb.putInt(REQUEST_CANCELED_RESPONSE);
+            bb.putInt(operationId);
+            chanel.write(bb);
+        }
+    }
+
+    private void sendResultResponse(SocketChannel chanel, ServerOperation operation) throws IOException {
+        operation.setState(ServerState.SENDING);
+        synchronized (chanel) {
+            ByteBuffer bb = ByteBuffer.allocate(256);
+            bb.putInt(REQUEST_CANCELED_RESPONSE);
+            bb.putInt(operation.getId());
+            bb.putDouble(operation.getResult());
+            chanel.write(bb);
+        }
+    }
+
+    private void startCalculation(SocketChannel chanelForResult, ServerOperation operation) {
+        operation.setState(ServerState.WAITING_CALCULATE);
+        calculateExecutor.execute(()-> {
+            Double result = operation.execute();
+            operation.setState(ServerState.WAITING_TO_SEND);
+            resultSender.execute(() -> {
+                try {
+                    sendResultResponse(chanelForResult, operation);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        });
     }
 }
