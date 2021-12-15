@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.streams.store;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,9 +22,11 @@ public class StoreStatistic {
      * @return - кол-во проданного товара
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
-        return orders.stream().
-                filter(a -> a.getTime().compareTo(from) >= 0 && a.getTime().compareTo(to) <= 0).
-                count();
+        return orders.stream()
+                .filter(a -> a.getTime().compareTo(from) >= 0
+                        && a.getTime().compareTo(to) <= 0)
+                .mapToLong(order -> order.getItemCount().get(typeItem)).reduce(Long::sum)
+                .orElse(0L);
     }
 
     /**
@@ -33,7 +36,12 @@ public class StoreStatistic {
      * значение - map товар/кол-во
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
-        return orders.stream().collect(Collectors.toMap());
+        return orders.stream()
+                .map(order -> new Order(new Timestamp(new Date(order.getTime().getTime()).getTime()), order.getItemCount()))
+                .collect(Collectors.toMap(Order::getTime, Order::getItemCount, (firstMap, secondMap) -> {
+                    secondMap.forEach((key, value) -> firstMap.merge(key, value, Integer::sum));
+                    return firstMap;
+                }));
     }
 
     /**
@@ -42,7 +50,9 @@ public class StoreStatistic {
      * @return - товар
      */
     public Item mostPopularItem(List<Order> orders) {
-        return orders.stream().reduce();
+        return orders.stream().flatMap(order -> order.getItemCount().entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Integer::sum))
+                .entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
     }
 
     /**
@@ -51,6 +61,12 @@ public class StoreStatistic {
      * @return map - заказ / общая сумма заказа
      */
     public Map<Order, Long> sum5biggerOrders(List<Order> orders) {
-        return null;
+        return orders.stream()
+                .map(order -> Map.entry(order, order.getItemCount().entrySet().stream()
+                        .mapToLong(e -> e.getValue() * e.getKey().getPrice())
+                        .sum()))
+                .sorted((entry1, entry2) -> Long.compare(entry2.getValue(), entry1.getValue()))
+                .limit(5)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }

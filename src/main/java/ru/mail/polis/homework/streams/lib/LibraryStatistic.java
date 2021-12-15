@@ -2,6 +2,7 @@ package ru.mail.polis.homework.streams.lib;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Класс для работы со статистикой по библиотеке.
@@ -18,7 +19,12 @@ public class LibraryStatistic {
      * @return - map пользователь / кол-во прочитанных страниц
      */
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
-        return null;
+        return library.getArchive().stream()
+                .filter(a -> a.getBook().getGenre().equals(genre)
+                        && (((a.getReturned().getTime() - a.getTake().getTime()) / (1000 * 60 * 60 * 24)) % 365) > 14)
+                .collect(Collectors.groupingBy(ArchivedData::getUser))
+                .entrySet().stream().filter(a -> a.getValue().size() >= 5)
+                .collect(Collectors.toMap(Map.Entry::getKey, v -> v.getValue().size()));
     }
 
     /**
@@ -29,7 +35,16 @@ public class LibraryStatistic {
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
-        return null;
+        return library.getArchive().stream().filter(a -> a.getUser().equals(user))
+                .collect(Collectors.groupingBy(a -> a.getBook().getGenre()))
+                .entrySet().stream().max(this::genreComparator).map(Map.Entry::getKey).orElse(null);
+    }
+
+    private int genreComparator(Map.Entry<Genre, List<ArchivedData>> arc1, Map.Entry<Genre, List<ArchivedData>> arc2) {
+        if (arc1.getValue().size() == arc2.getValue().size()) {
+            return arc1.getValue().stream().noneMatch(a -> a.getReturned() != null) ? 1 : 0;
+        }
+        return arc1.getValue().size() - arc2.getValue().size();
     }
 
     /**
@@ -39,7 +54,12 @@ public class LibraryStatistic {
      * @return - список ненадежных пользователей
      */
     public List<User> unreliableUsers(Library library) {
-        return null;
+        return library.getArchive().stream().filter(a ->
+                (a.getReturned() == null
+                        && (((System.currentTimeMillis() - a.getTake().getTime()) / (1000 * 60 * 60 * 24)) % 365) > 30)
+                        || (((a.getReturned().getTime() - a.getTake().getTime()) / (1000 * 60 * 60 * 24)) % 365) > 30)
+                .map(ArchivedData::getUser)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -49,7 +69,9 @@ public class LibraryStatistic {
      * @return - список книг
      */
     public List<Book> booksWithMoreCountPages(Library library, int countPage) {
-        return null;
+        return library.getBooks().stream()
+                .filter(a -> a.getPage() >= countPage)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -58,6 +80,13 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return null;
+        return library.getBooks().stream()
+                .collect(Collectors.groupingBy(Book::getGenre,
+                        Collectors.groupingBy(Book::getAuthor, Collectors.counting())))
+                .entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, author -> author.getValue().entrySet().stream()
+                        .max(Map.Entry.<String, Long>comparingByValue()
+                                .thenComparing(Map.Entry.comparingByKey()))
+                        .map(Map.Entry::getKey).orElse("")));
     }
 }
