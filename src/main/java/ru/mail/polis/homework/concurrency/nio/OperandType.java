@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.concurrency.nio;
 
-public enum OperandType {
+import java.io.Serializable;
+
+public enum OperandType implements Serializable {
     EQUALS,
     PLUS,
     MINUS,
@@ -12,5 +14,6 @@ public enum OperandType {
     ABS,
     TAN,
     SQUARE,
-    LN
+    LN,
+    EMPTY
 }
