@@ -67,12 +67,12 @@ public class LibraryStatistic {
      * @return - список ненадежных пользователей
      */
     public List<User> unreliableUsers(Library library) {
-        return library.getArchive().stream()
+        return Collections.unmodifiableList(library.getArchive().stream()
                 .collect(Collectors.groupingBy(ArchivedData::getUser)).entrySet().stream()
                 .filter(dataList -> dataList.getValue().stream()
                         .filter(archivedData ->
                                 controlDay(archivedData, COUNT_DAY_LIMIT)).count() > dataList.getValue().size() / 2)
-                .map(Map.Entry::getKey).collect(Collectors.toList());
+                .map(Map.Entry::getKey).collect(Collectors.toList()));
     }
 
     /**
@@ -83,7 +83,7 @@ public class LibraryStatistic {
      * @return - список книг
      */
     public List<Book> booksWithMoreCountPages(Library library, int countPage) {
-        return library.getBooks().stream().filter(book -> book.getPage() >= countPage).collect(Collectors.toList());
+        return Collections.unmodifiableList(library.getBooks().stream().filter(book -> book.getPage() >= countPage).collect(Collectors.toList()));
     }
 
     /**
@@ -93,7 +93,7 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return library.getBooks().stream()
+        return Collections.unmodifiableMap(library.getBooks().stream()
                 .collect(Collectors.groupingBy(Book::getGenre, Collectors.groupingBy(Book::getAuthor, Collectors.counting())))
                 .entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
@@ -101,6 +101,6 @@ public class LibraryStatistic {
                             .max(Comparator.comparingLong(Map.Entry<String, Long>::getValue)
                                     .thenComparing(Map.Entry.comparingByKey())).orElse(null);
                     return res == null ? "Unknown" : res.getKey();
-                }));
+                })));
     }
 }
