@@ -36,7 +36,7 @@ public class Client {
     private static final int CANCELLING_REQUEST_CODE = -1;
     private static final int CLOSE_CLIENT_REQUEST_CODE = -2;
 
-    private static final AtomicInteger resultIdCounter = new AtomicInteger(100);
+    private static final AtomicInteger resultIdCounter = new AtomicInteger(1);
     private static final AtomicInteger clientIdCounter = new AtomicInteger(1);
     private final int clientId = clientIdCounter.getAndIncrement();
     private final CountDownLatch closeClientCountDown = new CountDownLatch(1);
