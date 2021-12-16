@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.concurrency.nio;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -7,6 +9,8 @@ import java.util.function.Consumer;
  */
 public class Result {
 
+    private final List<Consumer<Double>> resultListeners = new ArrayList<>();
+    private Double result;
     private final int id;
 
     public Result(int id) {
@@ -21,14 +25,23 @@ public class Result {
      * Позволяет добавить слушателя, который вызовется при получении результата
      */
     public void addListener(Consumer<Double> listener) {
-
+        resultListeners.add(listener);
     }
 
     /**
      * Блокирующий метод. Возвращает результат
      */
     public double get() {
-        return 0;
+        for (; ; ) {
+            if (result != null) {
+                callListeners();
+                return result;
+            }
+        }
+    }
+
+    private void callListeners() {
+        resultListeners.forEach(doubleConsumer -> doubleConsumer.accept(result));
     }
 
 
@@ -36,7 +49,7 @@ public class Result {
      * Неблокирующий метод. Возвращает результат или null, если его еще нет
      */
     public Double getNonBlocking() {
-        return null;
+        return result;
     }
 
     /**
@@ -53,5 +66,9 @@ public class Result {
      */
     public void cancel() {
 
+    }
+
+    public void setResult(double result) {
+        this.result = result;
     }
 }

@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.concurrency.nio;
 
+import java.io.Serializable;
+
 /**
  * Операнд для вычислений.
  * Пример:
@@ -7,7 +9,7 @@ package ru.mail.polis.homework.concurrency.nio;
  * Op(10, PLUS), Op(23, MINUS), Op(123123, PLUS), Op(SIN, 123, DIVIDE), Op(ABS, -123213, PLUS),
  * Op(TAN, 123.94, MULT), Op(EXP, 3, DIVIDE), Op(LN, 25, EQUALS)
  */
-public class Operand {
+public class Operand implements Serializable {
     private final OperandType operationFirst;
     private final double a;
     private final OperandType operationSecond;
