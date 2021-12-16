@@ -77,7 +77,7 @@ public class Server {
                             register(selector, (ServerSocketChannel) key.channel());
                         }
 
-                        if (key.isReadable()) {
+                        if (key.isReadable() && key.isValid()) {
                             processClientRequest(key);
                         }
                         iterator.remove();
@@ -181,9 +181,6 @@ public class Server {
                             operation.setState(ServerState.CLOSE);
                         }
                     }
-                }
-                synchronized (clients.get(clientId)) {
-                    clients.get(clientId).chanel.close();
                 }
                 synchronized (clients) {
                     clients.remove(clientId);

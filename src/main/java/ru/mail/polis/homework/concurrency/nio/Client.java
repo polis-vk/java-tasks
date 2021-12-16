@@ -42,6 +42,8 @@ public class Client {
     private final AtomicInteger nextOperationId = new AtomicInteger(0);
     private Integer nextSocketToUse = 0;
     private final Integer clientId;
+    private Thread answerProcessingThread;
+    private ServerSocketChannel serverSocket;
 
     /**
      * @param clientsPort         массив портов для отправки
@@ -53,30 +55,29 @@ public class Client {
     public Client(int[] clientsPort, int serverPort, int threadsCountForSend, int clientId) {
         this.clientId = clientId;
         sendExecutor = Executors.newFixedThreadPool(threadsCountForSend);
-        Thread answerProcessingThread = new Thread(() -> {
+        answerProcessingThread = new Thread(() -> {
             try (Selector selector = Selector.open()) {
-                try (ServerSocketChannel serverSocket = ServerSocketChannel.open()) {
-                    serverSocket.bind(new InetSocketAddress("localhost", serverPort));
-                    serverSocket.configureBlocking(false);
-                    serverSocket.register(selector, SelectionKey.OP_ACCEPT);
-                    ByteBuffer buffer = ByteBuffer.allocate(256);
-                    while (true) {
-                        selector.select();
-                        Set<SelectionKey> selectedKeys = selector.selectedKeys();
-                        Iterator<SelectionKey> iterator = selectedKeys.iterator();
-                        while (iterator.hasNext()) {
+                serverSocket = ServerSocketChannel.open();
+                serverSocket.bind(new InetSocketAddress("localhost", serverPort));
+                serverSocket.configureBlocking(false);
+                serverSocket.register(selector, SelectionKey.OP_ACCEPT);
+                ByteBuffer buffer = ByteBuffer.allocate(256);
+                while (true) {
+                    selector.select();
+                    Set<SelectionKey> selectedKeys = selector.selectedKeys();
+                    Iterator<SelectionKey> iterator = selectedKeys.iterator();
+                    while (iterator.hasNext()) {
 
-                            SelectionKey key = iterator.next();
+                        SelectionKey key = iterator.next();
 
-                            if (key.isAcceptable()) {
-                                register(selector, serverSocket);
-                            }
-
-                            if (key.isReadable()) {
-                                processAnswer(buffer, key);
-                            }
-                            iterator.remove();
+                        if (key.isAcceptable()) {
+                            register(selector, serverSocket);
                         }
+
+                        if (key.isReadable()) {
+                            processAnswer(buffer, key);
+                        }
+                        iterator.remove();
                     }
                 }
             } catch (IOException e) {
@@ -180,24 +181,24 @@ public class Client {
      */
     public void close() {
         SocketChannel client = peekClientChanel();
-        Integer operationId = nextOperationId.incrementAndGet();
         synchronized (requests) {
             for (Result request : requests.values()) {
-                try {
-                    writeCloseCommand(client, clientId);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 request.setState(ClientState.CLOSE);
             }
         }
-        for (SocketChannel clientSocket : clientSockets) {
+        synchronized (client) {
             try {
-                clientSocket.close();
+                writeCloseCommand(client);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        answerProcessingThread.interrupt();
     }
 
     // we use Round Robin algorithm to peek socket
@@ -275,7 +276,7 @@ public class Client {
         }
     }
 
-    private void writeCloseCommand(SocketChannel chanel, Integer clientId) throws IOException {
+    private void writeCloseCommand(SocketChannel chanel) throws IOException {
         synchronized (chanel) {
             System.out.println("Client: send close");
             ByteBuffer bb = ByteBuffer.allocate(256);

@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.concurrency.nio;
 
-import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -45,7 +44,43 @@ public class ClientTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("Got result: " + resultValue);
         Assert.assertEquals(resultValue, 32, 0.001);
+        client.close();
+    }
+
+    @Test
+    public void testBasicFunctionality2() {
+        int[] serverPorts = new int[]{8081, 8082};
+        
+        try {
+            sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Starting client...");
+        Client client = new Client(serverPorts, 8070, 3, 1);
+
+
+        try {
+            sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Result result = client.calculate(Arrays.asList(
+                new Operand(OperandType.SQUARE, 4, OperandType.PLUS),
+                new Operand(OperandType.ABS, -20, OperandType.MINUS),
+                new Operand(10, OperandType.EQUALS)
+        ));
+
+        double resultValue = 0;
+        try {
+            resultValue = result.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Assert.assertEquals(resultValue, 26, 0.001);
+        client.close();
     }
 }
