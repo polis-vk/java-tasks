@@ -16,26 +16,27 @@ import java.util.concurrent.Executors;
  * и отправляет результат на указанный порт. Для каждого клиента свой уникальный порт.
  * Чтение из всех сокетов должно происходить в один поток.
  * Отправка результата тоже в один поток, отличный от потока чтения.
- *
+ * <p>
  * Вычисления должны производиться в отдельном экзекьюторе.
- *
+ * <p>
  * Сервер умеет принимать сигналы о закрытии запроса (должен перестать принимать/вычислять и отправлять что либо
  * по заданному запросу) и о закрытии клиента (должен завершить все вычисления от клиента и закрыть клиентский сокет).
  */
 public class Server {
-    private static final int RESULT_RESPONSE             = 0;
+    private static final int RESULT_RESPONSE = 0;
     private static final int OPERATION_RECEIVED_RESPONSE = 1;
-    private static final int REQUEST_CANCELED_RESPONSE   = 2;
+    private static final int REQUEST_CANCELED_RESPONSE = 2;
 
     // all messages start with clientId and message type code
     private static final int OPERATION_HEADER_MESSAGE = 0;
-    private static final int OPERAND_MESSAGE          = 1;
-    private static final int CLOSE_CLIENT_MESSAGE     = 2;
-    private static final int CANSEL_REQUEST_MESSAGE   = 3;
-    private static final int REGISTER_CLIENT_MESSAGE  = 4;
+    private static final int OPERAND_MESSAGE = 1;
+    private static final int CLOSE_CLIENT_MESSAGE = 2;
+    private static final int CANSEL_REQUEST_MESSAGE = 3;
+    private static final int REGISTER_CLIENT_MESSAGE = 4;
 
     private final Executor calculateExecutor;
     private final Executor resultSender;
+
     class ClientInfo {
         Map<Integer, ServerOperation> operations;
         final Integer port;
@@ -51,6 +52,7 @@ public class Server {
             }
         }
     }
+
     private final Map<Integer, ClientInfo> clients = new HashMap<>();
 
     public Server(int[] serverPorts, int calculateThreadsCount) {
@@ -58,36 +60,33 @@ public class Server {
         resultSender = Executors.newSingleThreadExecutor();
         new Thread(() -> {
             try (Selector selector = Selector.open()) {
-                try (ServerSocketChannel serverSocket = ServerSocketChannel.open()) {
-                    for (int serverPort : serverPorts) {
-                        serverSocket.bind(new InetSocketAddress("localhost", serverPort));
-                    }
+                for (int serverPort : serverPorts) {
+                    ServerSocketChannel serverSocket = ServerSocketChannel.open();
+                    serverSocket.bind(new InetSocketAddress("localhost", serverPort));
                     serverSocket.configureBlocking(false);
                     serverSocket.register(selector, SelectionKey.OP_ACCEPT);
-                    ByteBuffer buffer = ByteBuffer.allocate(256);
-                    while (true) {
-                        selector.select();
-                        Set<SelectionKey> selectedKeys = selector.selectedKeys();
-                        Iterator<SelectionKey> iterator = selectedKeys.iterator();
-                        while (iterator.hasNext()) {
+                }
 
-                            SelectionKey key = iterator.next();
-
-                            if (key.isAcceptable()) {
-                                register(selector, serverSocket);
-                            }
-
-                            if (key.isReadable()) {
-                                processClientRequest(buffer, key);
-                            }
-                            iterator.remove();
+                while (true) {
+                    selector.select();
+                    Set<SelectionKey> selectedKeys = selector.selectedKeys();
+                    Iterator<SelectionKey> iterator = selectedKeys.iterator();
+                    while (iterator.hasNext()) {
+                        SelectionKey key = iterator.next();
+                        if (key.isAcceptable()) {
+                            register(selector, (ServerSocketChannel) key.channel());
                         }
+
+                        if (key.isReadable()) {
+                            processClientRequest(key);
+                        }
+                        iterator.remove();
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        });
+        }).start();
     }
 
     /**
@@ -116,13 +115,17 @@ public class Server {
         client.register(selector, SelectionKey.OP_READ);
     }
 
-    private void processClientRequest(ByteBuffer buffer, SelectionKey key) throws IOException {
+    private void processClientRequest(SelectionKey key) throws IOException {
         SocketChannel channel = (SocketChannel) key.channel();
+        ByteBuffer buffer = ByteBuffer.allocate(256);
+
         synchronized (channel) {
             channel.read(buffer);
         }
+        buffer.flip();
         Integer clientId = buffer.getInt();
         if (!clients.containsKey(clientId) && buffer.getInt() == REGISTER_CLIENT_MESSAGE) {
+            System.out.println("Server: got register message");
             Integer responsePort = buffer.getInt();
             clients.put(clientId, new ClientInfo(responsePort));
             buffer.clear();
@@ -132,13 +135,16 @@ public class Server {
         Integer messageType = buffer.getInt();
         switch (messageType) {
             case OPERATION_HEADER_MESSAGE -> {
+                System.out.println("Server: got header");
+
                 Integer operationId = buffer.getInt();
                 Integer operandsAmount = buffer.getInt();
                 clients.get(clientId).operations.put(operationId, new ServerOperation(operandsAmount, operationId));
                 break;
             }
             case CANSEL_REQUEST_MESSAGE -> {
-                Integer operationId  = buffer.getInt();
+                System.out.println("Server: got cansel message");
+                Integer operationId = buffer.getInt();
                 ServerOperation operation = clients.get(clientId).operations.getOrDefault(operationId, null);
                 if (operation != null) {
                     synchronized (operation) {
@@ -151,7 +157,8 @@ public class Server {
                 break;
             }
             case OPERAND_MESSAGE -> {
-                Integer operationId  = buffer.getInt();
+                System.out.println("Server: got operand message");
+                Integer operationId = buffer.getInt();
                 Integer operandOrder = buffer.getInt();
                 Operand operand = new Operand(buffer);
                 ServerOperation operation = clients.get(clientId).operations.getOrDefault(operationId, null);
@@ -160,13 +167,14 @@ public class Server {
                     synchronized (operation) {
                         if (operation.getState() == ServerState.WAITING_CALCULATE) {
                             sendOperationFullReceivedResponse(clients.get(clientId).chanel, operationId);
-                            startCalculation(channel, operation);
+                            startCalculation(clients.get(clientId).chanel, operation);
                         }
                     }
                 }
                 break;
             }
             case CLOSE_CLIENT_MESSAGE -> {
+                System.out.println("Server: got close message");
                 for (ServerOperation operation : clients.get(clientId).operations.values()) {
                     synchronized (operation) {
                         if (operation.getState() != ServerState.CLOSE || operation.getState() != ServerState.DONE) {
@@ -177,6 +185,9 @@ public class Server {
                 synchronized (clients.get(clientId)) {
                     clients.get(clientId).chanel.close();
                 }
+                synchronized (clients) {
+                    clients.remove(clientId);
+                }
             }
         }
         buffer.clear();
@@ -184,18 +195,22 @@ public class Server {
 
     private void sendOperationFullReceivedResponse(SocketChannel chanel, Integer operationId) throws IOException {
         synchronized (chanel) {
+            System.out.println("Server: send got full");
             ByteBuffer bb = ByteBuffer.allocate(256);
             bb.putInt(OPERATION_RECEIVED_RESPONSE);
             bb.putInt(operationId);
+            bb.flip();
             chanel.write(bb);
         }
     }
 
     private void sendRequestCanceledResponse(SocketChannel chanel, Integer operationId) throws IOException {
         synchronized (chanel) {
+            System.out.println("Server: send canseled");
             ByteBuffer bb = ByteBuffer.allocate(256);
             bb.putInt(REQUEST_CANCELED_RESPONSE);
             bb.putInt(operationId);
+            bb.flip();
             chanel.write(bb);
         }
     }
@@ -203,20 +218,24 @@ public class Server {
     private void sendResultResponse(SocketChannel chanel, ServerOperation operation) throws IOException {
         operation.setState(ServerState.SENDING);
         synchronized (chanel) {
+            System.out.println("Server: send result");
             ByteBuffer bb = ByteBuffer.allocate(256);
-            bb.putInt(REQUEST_CANCELED_RESPONSE);
+            bb.putInt(RESULT_RESPONSE);
             bb.putInt(operation.getId());
             bb.putDouble(operation.getResult());
+            bb.flip();
             chanel.write(bb);
         }
     }
 
     private void startCalculation(SocketChannel chanelForResult, ServerOperation operation) {
         operation.setState(ServerState.WAITING_CALCULATE);
-        calculateExecutor.execute(()-> {
+        calculateExecutor.execute(() -> {
+            System.out.println("Server: calculation started");
             Double result = operation.execute();
             operation.setState(ServerState.WAITING_TO_SEND);
             resultSender.execute(() -> {
+                System.out.println("Server: sending result");
                 try {
                     sendResultResponse(chanelForResult, operation);
                 } catch (IOException e) {

@@ -2,7 +2,6 @@ package ru.mail.polis.homework.concurrency.nio;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 /**
@@ -43,9 +42,9 @@ public class Result {
      * Блокирующий метод. Возвращает результат
      */
     public double get() throws InterruptedException {
-        synchronized (state) {
+        synchronized (this) {
             while (state != ClientState.DONE && state != ClientState.CANCEL && state != ClientState.CLOSE) {
-                state.wait();
+                wait();
             }
         }
         return resultValue;
@@ -77,20 +76,22 @@ public class Result {
         setState(ClientState.CANCEL);
     }
 
-    public void setState(ClientState state) {
-        synchronized (this.state) {
-            this.state = state;
-        }
+    synchronized public void setState(ClientState state) {
+        this.state = state;
     }
 
-    public void setValue(Double resultValue) {
-        synchronized (this.resultValue) {
-            this.resultValue = resultValue;
+    synchronized public void setValue(Double resultValue) {
+        this.resultValue = resultValue;
+        synchronized (this) {
+            notifyAll();
         }
     }
 
 
     public void notifyListeners() {
         listenersExecutor.start();
+        synchronized (this) {
+            notifyAll();
+        }
     }
 }

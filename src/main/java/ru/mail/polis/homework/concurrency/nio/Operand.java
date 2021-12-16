@@ -32,7 +32,12 @@ public class Operand implements Serializable {
     }
 
     public Operand(ByteBuffer bb) {
-        this.operationFirst = OperandType.values()[bb.getInt()];
+        int firstOperand = bb.getInt();
+        if (firstOperand == -1) {
+            this.operationFirst = null;
+        } else {
+            this.operationFirst = OperandType.values()[firstOperand];
+        }
         this.a = bb.getDouble();
         this.operationSecond = OperandType.values()[bb.getInt()];
     }
@@ -50,7 +55,11 @@ public class Operand implements Serializable {
     }
 
     public void writeIntoBuffer(ByteBuffer bb) {
-        bb.putInt(operationFirst.ordinal());
+        if (operationFirst == null) {
+            bb.putInt(-1);
+        } else {
+            bb.putInt(operationFirst.ordinal());
+        }
         bb.putDouble(a);
         bb.putInt(operationSecond.ordinal());
     }

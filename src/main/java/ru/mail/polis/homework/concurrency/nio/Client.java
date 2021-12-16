@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.concurrency.nio;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -23,16 +24,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Каждому запросу присваивается уникальная интовая айдишка. Клиент может быть закрыт.
  */
 public class Client {
-    private static final int RESULT_RESPONSE             = 0;
+    private static final int RESULT_RESPONSE = 0;
     private static final int OPERATION_RECEIVED_RESPONSE = 1;
-    private static final int REQUEST_CANCELED_RESPONSE   = 2;
+    private static final int REQUEST_CANCELED_RESPONSE = 2;
 
     // all messages start with clientId and message type code
     private static final int OPERATION_HEADER_MESSAGE = 0;
-    private static final int OPERAND_MESSAGE          = 1;
-    private static final int CLOSE_CLIENT_MESSAGE     = 2;
-    private static final int CANSEL_REQUEST_MESSAGE   = 3;
-    private static final int REGISTER_CLIENT_MESSAGE  = 4;
+    private static final int OPERAND_MESSAGE = 1;
+    private static final int CLOSE_CLIENT_MESSAGE = 2;
+    private static final int CANSEL_REQUEST_MESSAGE = 3;
+    private static final int REGISTER_CLIENT_MESSAGE = 4;
 
     private final List<SocketChannel> clientSockets = new ArrayList<>();
     private final Executor sendExecutor;
@@ -97,7 +98,7 @@ public class Client {
         }
 
         // actually we should wait until server answers that is registers the user, but it will add a lot of
-        // complexity, so we assume that server will register user before it will receive  requests,
+        // complexity, so we assume that server will register user before it will receive requests,
         // produced by calculate
         SocketChannel chanel = peekClientChanel();
         try {
@@ -228,16 +229,19 @@ public class Client {
             bb.putInt(OPERATION_HEADER_MESSAGE);
             bb.putInt(operationId);
             bb.putInt(operandsAmount);
+            bb.rewind();
             chanel.write(bb);
         }
     }
 
     private void canselOperationRequest(SocketChannel chanel, Integer operationId) throws IOException {
         synchronized (chanel) {
+            System.out.println("Client: send cansel");
             ByteBuffer bb = ByteBuffer.allocate(256);
             bb.putInt(clientId);
             bb.putInt(CANSEL_REQUEST_MESSAGE);
             bb.putInt(operationId);
+            bb.rewind();
             chanel.write(bb);
         }
     }
@@ -245,10 +249,12 @@ public class Client {
     private void registerOnServerRequest(SocketChannel chanel, Integer responsePort)
             throws IOException {
         synchronized (chanel) {
+            System.out.println("Client: send register");
             ByteBuffer bb = ByteBuffer.allocate(256);
             bb.putInt(clientId);
             bb.putInt(REGISTER_CLIENT_MESSAGE);
             bb.putInt(responsePort);
+            bb.rewind();
             chanel.write(bb);
         }
     }
@@ -257,11 +263,13 @@ public class Client {
                               Operand operand) throws IOException {
         synchronized (chanel) {
             ByteBuffer bb = ByteBuffer.allocate(256);
+            System.out.println("Client: send operand");
             bb.putInt(clientId);
             bb.putInt(OPERAND_MESSAGE);
             bb.putInt(operationId);
             bb.putInt(operandOrder);
             operand.writeIntoBuffer(bb);
+            bb.rewind();
 //            bb.put(operand.getCharacterRepresentation());
             chanel.write(bb);
         }
@@ -269,9 +277,11 @@ public class Client {
 
     private void writeCloseCommand(SocketChannel chanel, Integer clientId) throws IOException {
         synchronized (chanel) {
+            System.out.println("Client: send close");
             ByteBuffer bb = ByteBuffer.allocate(256);
             bb.putInt(clientId);
             bb.putInt(CLOSE_CLIENT_MESSAGE);
+            bb.rewind();
             chanel.write(bb);
         }
     }
@@ -281,26 +291,33 @@ public class Client {
         synchronized (channel) {
             channel.read(buffer);
         }
+
+        buffer.rewind();
+
         Integer answerType = buffer.getInt();
         Integer resultId = buffer.getInt();
 
         if (answerType == RESULT_RESPONSE) {
+            System.out.println("Client: got result");
             Double resultValue = buffer.getDouble();
 
             if (getResult(resultId) != null) {
                 Result result = getResult(resultId);
-                result.setValue(resultValue);
                 result.setState(ClientState.DONE);
+                result.setValue(resultValue);
+                System.out.println("Client: got result: " + resultValue);
                 synchronized (result) {
                     result.notifyListeners();
                 }
             }
         } else if (answerType == OPERATION_RECEIVED_RESPONSE) {
+            System.out.println("Client: got received");
             if (getResult(resultId) != null) {
                 Result result = getResult(resultId);
                 result.setState(ClientState.SENT);
             }
         } else if (answerType == REQUEST_CANCELED_RESPONSE) {
+            System.out.println("Client: got cansel");
             if (getResult(resultId) != null) {
                 Result result = getResult(resultId);
                 result.setState(ClientState.CANCEL);
