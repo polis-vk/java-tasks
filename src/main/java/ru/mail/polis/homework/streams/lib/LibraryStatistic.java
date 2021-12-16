@@ -21,7 +21,7 @@ public class LibraryStatistic {
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
         return library.getArchive().stream()
                 .filter(a -> a.getBook().getGenre().equals(genre)
-                        && (((a.getReturned().getTime() - a.getTake().getTime()) / (1000 * 60 * 60 * 24)) % 365) > 14)
+                        && ((a.getReturned().getTime() - a.getTake().getTime()) / (1000 * 60 * 60 * 24)) > 14)
                 .collect(Collectors.groupingBy(ArchivedData::getUser))
                 .entrySet().stream().filter(a -> a.getValue().size() >= 5)
                 .collect(Collectors.toMap(Map.Entry::getKey, v -> v.getValue().size()));
@@ -55,9 +55,8 @@ public class LibraryStatistic {
      */
     public List<User> unreliableUsers(Library library) {
         return library.getArchive().stream().filter(a ->
-                (a.getReturned() == null
-                        && (((System.currentTimeMillis() - a.getTake().getTime()) / (1000 * 60 * 60 * 24)) % 365) > 30)
-                        || (((a.getReturned().getTime() - a.getTake().getTime()) / (1000 * 60 * 60 * 24)) % 365) > 30)
+                (a.getReturned() == null && ((System.currentTimeMillis() - a.getTake().getTime()) / (1000 * 60 * 60 * 24)) > 30)
+                        || ((a.getReturned().getTime() - a.getTake().getTime()) / (1000 * 60 * 60 * 24)) > 30)
                 .map(ArchivedData::getUser)
                 .collect(Collectors.toList());
     }
