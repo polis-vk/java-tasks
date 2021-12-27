@@ -5,15 +5,19 @@ plugins {
 group 'ru.mail.polis.homework'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.9
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.8.9'
+    implementation 'io.vertx:vertx-core:3.5.3'
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.23.0'
     testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
-
 }
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
