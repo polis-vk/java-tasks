@@ -19,9 +19,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @JsonAutoDetect
 public class Operand {
     private final OperandType operationFirst;
-    private final double a;
     private final OperandType operationSecond;
     private int position;
+    private double a;
 
     @JsonCreator
     public Operand(@JsonProperty("operationFirst") OperandType operationFirst,  @JsonProperty("a") double a,
@@ -62,4 +62,12 @@ public class Operand {
         return position;
     }
 
+    public void setNewA(double a) {
+        this.a = a;
+    }
+
+    @Override
+    public String toString() {
+        return operationFirst + " " + operationSecond + " " + a;
+    }
 }

@@ -3,6 +3,7 @@ package ru.mail.polis.homework.concurrency.nio;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -21,7 +22,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Client {
 
+    private static int id = 0;
+
     private final String END_POINT = "END_POINT";
+    private final int listenerPort = 8585;
 
     private final String ADDRESS = "localhost";
     private final AtomicInteger currentChannel = new AtomicInteger(0);
@@ -31,6 +35,8 @@ public class Client {
     private final int threadsCountForSend;
     private SocketChannel[] channels;
     private List<Operand> tasks;
+
+    private boolean start = true;
 
     /**
      * @param clientsPort         массив портов для отправки
@@ -50,8 +56,13 @@ public class Client {
      * Возвращает Result с отложенным заполнением ответа.
      */
     public Result calculate(List<Operand> operands) throws IOException {
-        openSockets();
+        if (start) {
+            openSockets();
+            start = false;
+        }
+
         tasks = operands;
+        sendMeta();
 
         ExecutorService service = Executors.newFixedThreadPool(threadsCountForSend);
         service.execute(new Sender());
@@ -62,6 +73,9 @@ public class Client {
             e.printStackTrace();
         }
         channels[0].write(ByteBuffer.wrap(END_POINT.getBytes()));
+
+        Thread listen = new Thread(new Listener());
+        listen.start();
 
         return null;
     }
@@ -95,6 +109,17 @@ public class Client {
         }
     }
 
+    private void sendMeta() {
+        ByteBuffer buffer;
+        try {
+            buffer = ByteBuffer.wrap((listenerPort + "|" + id++).getBytes());
+            channels[0].write(buffer);
+            buffer.clear();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private class Sender implements Runnable {
         @Override
         public void run() {
@@ -104,6 +129,25 @@ public class Client {
                             .write(ByteBuffer.wrap(tasks
                                     .get(currentTask.getAndIncrement()).serialization().getBytes()));
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class Listener implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                ServerSocketChannel sSocket = ServerSocketChannel.open();
+                sSocket.bind(new InetSocketAddress(listenerPort));
+                sSocket.configureBlocking(false);
+                SocketChannel client;
+                while ((client = sSocket.accept()) == null);
+                ByteBuffer buffer = ByteBuffer.allocate(256);
+                client.read(buffer);
+                System.out.println("RESULT: " + new String(buffer.array()).trim());
             } catch (IOException e) {
                 e.printStackTrace();
             }
