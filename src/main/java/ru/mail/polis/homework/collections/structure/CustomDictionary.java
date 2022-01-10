@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Задание оценивается в 4 балла.
@@ -12,7 +9,17 @@ import java.util.Locale;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    public List<String> strgs = new ArrayList<>();
+    private Map<String, Set<String>> dictionary = new HashMap<>();
+    private int size = 0;
+
+    private String toKey(String value) {
+        if (value == null || value.equals("")) {
+            throw new IllegalArgumentException();
+        }
+        char[] temp = value.toLowerCase(Locale.ROOT).toCharArray();
+        Arrays.sort(temp);
+        return new String(temp);
+    }
 
     /**
      * Сохранить строку в структуру данных
@@ -20,17 +27,18 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - O(n)
+     * Сложность - O(1)
      */
+
     public boolean add(String value) {
         if (value == null || value.equals("")) {
             throw new IllegalArgumentException();
         }
-        if (strgs.contains(value)) {
-            return false;
+        boolean flag = dictionary.computeIfAbsent(toKey(value), k -> new HashSet<>()).add(value);
+        if (flag) {
+            ++size;
         }
-        strgs.add(value);
-        return true;
+        return flag;
     }
 
     /**
@@ -39,12 +47,18 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - O(n)
+     * Сложность - O(1)
      */
+
     public boolean contains(String value) {
         if (value == null || value.equals("")) {
             throw new IllegalArgumentException();
-        } else return strgs.contains(value);
+        } else {
+            if (!dictionary.isEmpty()) {
+                return dictionary.get(toKey(value)).contains(value);
+            }
+            return false;
+        }
     }
 
     /**
@@ -53,17 +67,19 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - O(n)
+     * Сложность - O(1)
      */
+
     public boolean remove(String value) {
         if (value == null || value.equals("")) {
             throw new IllegalArgumentException();
         }
-        if (!strgs.contains(value)) {
+        if (contains(value)) {
+            --size;
+            return dictionary.get(toKey(value)).remove(value);
+        } else {
             return false;
         }
-        strgs.remove(value);
-        return true;
     }
 
     /**
@@ -83,39 +99,11 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - O(N^2)
+     * Сложность - O(1)
      */
+
     public List<String> getSimilarWords(String value) {
-        List<String> founded = new ArrayList<>();
-        for (String strg : strgs) {
-            if (findSimilars(strg, value)) {
-                founded.add(strg);
-            }
-        }
-        return founded;
-    }
-
-    public boolean findSimilars(String word, String str) {
-        List<Character> letters = new ArrayList<>();
-        List<Character> similarLetters = new ArrayList<>();
-        for (char ch : word.toLowerCase().toCharArray()) {
-            letters.add(ch);
-        }
-        for (char ch : str.toLowerCase().toCharArray()) {
-            similarLetters.add(ch);
-        }
-
-        for (int i = 0; i < letters.size(); i++) {
-            for (int j = 0; j < similarLetters.size(); j++) {
-                if (letters.get(i) == similarLetters.get(j)) {
-                    letters.remove(i);
-                    similarLetters.remove(j);
-                    i = -1;
-                    break;
-                }
-            }
-        }
-        return letters.size() == 0 && similarLetters.size() == 0;
+        return (dictionary.containsKey(toKey(value)) ? new ArrayList<>(dictionary.get(toKey(value))) : Collections.emptyList());
     }
 
     /**
@@ -126,8 +114,6 @@ public class CustomDictionary {
      * Сложность - O(1)
      */
     public int size() {
-        return strgs.size();
+        return size;
     }
-
-
 }

@@ -36,6 +36,7 @@ public class SearchInTheShredderList {
      * @param value - передаваемоей слово
      * @return - либо массив с реальными позициями подстрок если нашли, либо - null
      */
+
     public int[] positionPartString(String value) {
         if (value == null) {
             return null;
@@ -54,7 +55,8 @@ public class SearchInTheShredderList {
         }
         if (parts[0] > 0 || parts[1] > 0) {
             return parts;
+        } else {
+            return null;
         }
-        return null;
     }
 }

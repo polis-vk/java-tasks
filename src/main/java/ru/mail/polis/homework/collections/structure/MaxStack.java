@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 /**
@@ -10,51 +11,35 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
     private final Stack<Integer> orderedStack = new Stack<>();
+    private int max;
+
+    int lastElement;
 
     public Integer getMaxValue() {
+        if (this.isEmpty()) {
+            throw new EmptyStackException();
+        }
         return orderedStack.peek();
     }
 
     @Override
     public Integer push(Integer val) {
-        if (orderedStack.isEmpty()) {
+        if (max <= val) {
+            max = val;
             orderedStack.push(val);
-            return val;
         }
-        Stack<Integer> elems = new Stack<>();
-        int size = orderedStack.size();
-        for (int i = 0; i < size; i++) {
-            Integer currVal = orderedStack.peek();
-            if (val >= currVal) {
-                break;
-            }
-            elems.push(orderedStack.pop());
-        }
-        orderedStack.push(val);
-        int elemsSize = elems.size();
-        for (int i = 0; i < elemsSize; i++) {
-            orderedStack.push(elems.pop());
-        }
+        lastElement = val;
         return super.push(val);
     }
 
     @Override
     public Integer pop() {
-        Integer removedVal = super.pop();
-        int sizeOrdered = orderedStack.size();
-        Stack<Integer> elems = new Stack<>();
-        for (int i = 0; i < sizeOrdered; i++) {
-            Integer currVal = orderedStack.peek();
-            if (removedVal.equals(currVal)) {
-                orderedStack.pop();
-                break;
-            }
-            elems.push(orderedStack.pop());
+        if (this.isEmpty()) {
+            throw new EmptyStackException();
         }
-        int elemsSize = elems.size();
-        for (int i = 0; i < elemsSize; i++) {
-            orderedStack.push(elems.pop());
+        if (orderedStack.peek() == super.peek()) {
+            orderedStack.pop();
         }
-        return removedVal;
+        return super.pop();
     }
 }

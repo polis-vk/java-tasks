@@ -14,6 +14,7 @@ import java.util.*;
  * <p>
  * Отрабатывать метод должен за О(n)
  */
+
 public class ValidatorForParentheses {
     private static final Map<Character, Character> brackets = Map.of('(', ')', '[', ']', '{', '}');
 
