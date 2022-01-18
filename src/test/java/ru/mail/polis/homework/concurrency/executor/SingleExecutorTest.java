@@ -33,6 +33,18 @@ public class SingleExecutorTest {
     }
 
     @Test
+    public void simple_second_Test() throws InterruptedException {
+        CountDownLatch count = new CountDownLatch(1);
+        executor.execute(count::countDown);
+        assertTrue(count.await(5, TimeUnit.SECONDS));
+        Thread.sleep(10000);
+        count = new CountDownLatch(1);
+        executor.execute(count::countDown);
+        assertTrue(count.await(5, TimeUnit.SECONDS));
+    }
+
+
+    @Test
     public void manyRunnableTest() throws InterruptedException {
         CountDownLatch first = new CountDownLatch(1);
         CountDownLatch second = new CountDownLatch(1);
