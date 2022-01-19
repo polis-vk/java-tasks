@@ -16,11 +16,18 @@ import java.util.*;
  */
 
 public class ValidatorForParentheses {
-    private static final Map<Character, Character> brackets = Map.of('(', ')', '[', ']', '{', '}');
+    private static final Map<Character, Character> brackets = Map.of('(', ')', '[', ']', '{', '}', '<', '>');
 
     public static boolean validate(String value) {
         if (value == null || value.equals("")) {
             return false;
+        }
+        //роверка на отсутствие скобок в строке
+        boolean flag = false;
+        for (char c : value.toCharArray()) {
+            if (brackets.containsKey(c)) {
+                flag = true;
+            }
         }
         Stack<Character> stack = new Stack<>();
         for (char c : value.toCharArray()) {
@@ -32,6 +39,6 @@ public class ValidatorForParentheses {
                 return false;
             }
         }
-        return stack.isEmpty();
+        return stack.isEmpty() && flag;
     }
 }
