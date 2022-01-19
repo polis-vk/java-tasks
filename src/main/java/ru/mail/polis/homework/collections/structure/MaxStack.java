@@ -11,9 +11,6 @@ import java.util.Stack;
  */
 public class MaxStack extends Stack<Integer> {
     private final Stack<Integer> orderedStack = new Stack<>();
-    private int max;
-
-    int lastElement;
 
     public Integer getMaxValue() {
         if (this.isEmpty()) {
@@ -24,11 +21,9 @@ public class MaxStack extends Stack<Integer> {
 
     @Override
     public Integer push(Integer val) {
-        if (max <= val) {
-            max = val;
+        if (orderedStack.isEmpty() || orderedStack.peek() <= val) {
             orderedStack.push(val);
         }
-        lastElement = val;
         return super.push(val);
     }
 

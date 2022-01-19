@@ -55,7 +55,9 @@ public class CustomDictionary {
             throw new IllegalArgumentException();
         } else {
             if (!dictionary.isEmpty()) {
-                return dictionary.get(toKey(value)).contains(value);
+                if (dictionary.get(toKey(value)) != null) {
+                    return dictionary.get(toKey(value)).contains(value);
+                }
             }
             return false;
         }
