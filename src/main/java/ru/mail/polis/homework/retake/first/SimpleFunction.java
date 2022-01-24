@@ -7,6 +7,9 @@ import java.util.function.IntBinaryOperator;
 import java.util.function.IntUnaryOperator;
 import java.util.function.UnaryOperator;
 
+/**
+ * 22 балла
+ */
 public class SimpleFunction {
 
     /**
@@ -36,7 +39,7 @@ public class SimpleFunction {
      * f(str) -> square(square(g(str)))
      * square(x) -> a * x * x + b * x + c
      * doubleStringEquation(1, 1, 1, 1, 0, 2, String::length).apply("cat") = (9 + 2) * (9 + 2) + (9 + 2) + 1 = 133
-     * 4 балла
+     * 6 балла
      */
     static Function<String, Double> doubleStringEquation(double a1, double b1, double c1,
                                                          double a2, double b2, double c2,
@@ -49,7 +52,7 @@ public class SimpleFunction {
      * Превращает список унарных операторов в один унарный оператор для списка чисел. Получившийся оператор
      * берет каждый элемент из списка чисел и последовательно применяет все входящие операторы.
      * Пример: multifunctionalMapper.apply([x -> x, x -> x + 1, x -> x * x]).apply([1, 2]) = [1, 2, 4, 2, 3, 9]
-     * 10 балла (доп задание)
+     * 10 балла
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
             a -> null;

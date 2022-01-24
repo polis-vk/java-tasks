@@ -2,6 +2,8 @@ package ru.mail.polis.homework.retake.first;
 
 /**
  * Все по 2 балла
+ *
+ * 12 баллов
  */
 public class Simple {
 
