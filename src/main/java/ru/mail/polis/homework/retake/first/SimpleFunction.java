@@ -1,11 +1,15 @@
 package ru.mail.polis.homework.retake.first;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
 import java.util.function.IntUnaryOperator;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 /**
  * 22 балла
@@ -17,8 +21,15 @@ public class SimpleFunction {
      * Функция должна походить на {@link BiFunction}
      * 2 балла
      */
-    interface TerFunction {
+    interface TerFunction<T, U, V, R> {
+        R apply(T first, U second, V third);
 
+        default <S> TerFunction<T, U, V, S> andThen(Function<? super R, ? extends S> after) {
+            Objects.requireNonNull(after);
+            return (first, second, third) -> {
+                return after.apply(this.apply(first, second, third));
+            };
+        }
     }
 
     /**
@@ -30,8 +41,8 @@ public class SimpleFunction {
      * Не забывайте использовать дженерики.
      * 2 балла
      */
-    static Object curring(TerFunction terFunction) {
-        return null;
+    static <T, U, V, R> curring(TerFunction<T, U, V, R> terFunction) {
+        return arg1 -> arg2 -> arg3 -> terFunction.apply(arg1, arg2, arg3);
     }
 
     /**
@@ -55,7 +66,8 @@ public class SimpleFunction {
      * 10 балла
      */
     public static final Function<List<IntUnaryOperator>, UnaryOperator<List<Integer>>> multifunctionalMapper =
-            a -> null;
+            a -> ArrayList::new;
+    public static final UnaryOperator<List<Integer>> allOp = multifunctionalMapper.apply(Arrays.asList(x -> x, x -> x + 1, x -> x * x));
 
 
     /**
@@ -67,5 +79,14 @@ public class SimpleFunction {
      * reduceIntOperator.apply(начальное значение, (x,y) -> ...).apply(2, 10) = 54
      * 2 балла
      */
-    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (a, b) -> null;
+    public static final BiFunction<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator =
+            (initial, v) -> (l, r) -> {
+                int res = initial;
+                for (int i = l; i <= r; i++) {
+                    res = v.applyAsInt(res, i);
+                }
+                return res;
+            };
+
+    public static final IntBinaryOperator sum = reduceIntOperator.apply(0, Integer::sum);
 }
