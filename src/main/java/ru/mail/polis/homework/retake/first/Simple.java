@@ -13,6 +13,19 @@ public class Simple {
     public static String equation(int a, int b, int c) {
         double x1 = 0;
         double x2 = 0;
+        double d = b * b - 4 * a * c;
+        if (d > 0) {
+            x1 = (-b - Math.sqrt(d)) / (2 * a);
+            x2 = (-b + Math.sqrt(d)) / (2 * a);
+        } else {
+            x1 = -b / (2 * a);
+            x2 = x1;
+        }
+        if (x2 > x1) {
+            double temp = x2;
+            x2 = x1;
+            x1 = temp;
+        }
         return x1 + ", " + x2;
     }
 
@@ -21,7 +34,7 @@ public class Simple {
      * Пример: (0, 0, 3, 4) -> 5.0
      */
     public static float length(double x1, double y1, double x2, double y2) {
-        return 0;
+        return (float) Math.hypot(x1 - x2, y1 - y2);
     }
 
     /**
@@ -29,7 +42,7 @@ public class Simple {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return 0;
+        return (n * (n + 1) / 2);
     }
 
     /**
@@ -39,7 +52,13 @@ public class Simple {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        return 0;
+        if (bottom >= top && height > top) {
+            return Integer.MAX_VALUE;
+        }
+        if (height < top) {
+            return 1;
+        }
+        return (int) Math.ceil((double) (height - top) / (top - bottom)) + 1;
     }
 
     /**
@@ -47,7 +66,13 @@ public class Simple {
      * Пример: (454355, 3) -> 3. Строки использовать нельзя
      */
     public static int kDecimal(int n, int order) {
-        return 0;
+        int result = 1;
+        int number = n;
+        for (int i = 1; i <= order; i++) {
+            result = number % 10;
+            number = number / 10;
+        }
+        return Math.abs(result);
     }
 
 
@@ -56,6 +81,13 @@ public class Simple {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        if (n == 1) {
+            return 1;
+        }
+        long result = 1;
+        for (int i = 1; i <= n; i++) {
+            result = result * i;
+        }
+        return result;
     }
 }
