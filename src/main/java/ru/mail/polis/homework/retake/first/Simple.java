@@ -13,8 +13,7 @@ public class Simple {
      * Пример: (1, 5, 4) -> "-1.0, -4.0"
      */
     public static String equation(int a, int b, int c) {
-        double x1 = 0;
-        double x2 = 0;
+        double x1, x2;
         double cd = 1.0 * c / a;
         double bd = 1.0 * b / a;
         double d = bd * bd - 4 * cd;
