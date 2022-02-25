@@ -59,10 +59,7 @@ public class IntegerTask {
         int count = 0;
         while (cloneN != 0) {
             if (count == order) {
-                if (cloneN < 0) {
-                    return cloneN % 10 * (-1);
-                }
-                return cloneN % 10;
+                return Math.abs(cloneN % 10);
             }
             if (count + 1 != order) {
                 cloneN /= 10;
