@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.simple;
 
+
 public class Main {
 
     public static void main(String[] args) {
@@ -7,6 +8,8 @@ public class Main {
     }
 
     static String hello() {
-        return "Hello world! I am а first program";
+        return "Hello world! I am a first program";
     }
+
+
 }
