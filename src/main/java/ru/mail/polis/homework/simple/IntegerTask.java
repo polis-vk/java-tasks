@@ -14,7 +14,7 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return 0;
+        return n * (n + 1) / 2;
     }
 
     /**
@@ -24,15 +24,28 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        return 0;
+        int end = 0, count = 0;
+        if ((bottom >= top) && (top < height)) {
+            return Integer.MAX_VALUE;
+        }
+        while (true) {
+            end += top;
+            count++;
+            if (end >= height) {
+                break;
+            }
+            end -= bottom;
+        }
+        return count;
     }
+
 
     /**
      * Дано число n и номер разряда order. Выведите цифру стояющую на нужном разряде
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return 0;
+        return (int) (Math.abs(n) / Math.pow(10, order - 1)) % 10;
     }
 
 
@@ -41,6 +54,11 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        long fact = 1;
+        while (n != 0) {
+            fact *= n;
+            n--;
+        }
+        return fact;
     }
 }
