@@ -10,7 +10,11 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double sum = 0;
+        for (double i = a; i < b; i += delta) {
+            sum += function.applyAsDouble(i) * delta;
+        }
+        return sum;
     }
 
     /**
@@ -18,7 +22,20 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        byte max = -1; // максимальная цифра числа
+        byte num; // некоторая цифра числа
+        byte digit = 0; // номер цифры числа (справа налево)
+        byte NumberOfDigits = 0; // количество цифр в числе
+        while (a > 0) {
+            num = (byte) (a % 10);
+            NumberOfDigits++;
+            if (num >= max) {
+                max = num;
+                digit = NumberOfDigits;
+            }
+            a /= 10;
+        }
+        return (byte) (NumberOfDigits - digit + 1);
     }
 
 
@@ -27,7 +44,8 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+
+        return (double) -((x1 * y2 - x2 * y1) + (y1 - y2) * x3) / (x2 - x1);
     }
 
     /**
@@ -36,7 +54,12 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        return TriangleSquare(x1, y1, x2, y2, x3, y3) + TriangleSquare(x1, y1, x3, y3, x4, y4);
+    }
+
+    // Вычисление площади треугольника.
+    private static double TriangleSquare(double x1, double y1, double x2, double y2, double x3, double y3) {
+        return Math.abs(((x1 - x2) * (y3 - y2) - (y1 - y2) * (x3 - x2)) / 2);
     }
 
 }
