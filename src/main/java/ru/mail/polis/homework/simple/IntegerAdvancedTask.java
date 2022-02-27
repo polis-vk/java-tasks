@@ -103,5 +103,4 @@ public class IntegerAdvancedTask {
         }
         return (byte) (index + 1);
     }
-
 }
