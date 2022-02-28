@@ -10,11 +10,11 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        double i = a;
+        double x = a;
         double ans = 0;
-        while (i < b) {
-            ans += function.applyAsDouble(i);
-            i += delta;
+        while (x < b) {
+            ans += function.applyAsDouble(x);
+            x += delta;
         }
         return ans * delta;
     }
@@ -25,19 +25,23 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
         byte n = a == 0 ? 1 : (byte) Math.ceil(Math.log10(a));
-        byte b = n, max = -1, index = 0, maxIndex = 0;
+        byte nCopy = n;
+        byte max = -1;
+        byte index = 0;
+        byte maxIndex = 0;
+        byte digit;
         do {
             index++;
-            n--;
-            byte p = (byte) (a / (Math.pow(10, n)) % 10);
-            if (p == 9) {
+            nCopy--;
+            digit = (byte) (a / (Math.pow(10, nCopy)) % 10);
+            if (digit == 9) {
                 return index;
             }
-            if (max < p) {
+            if (max < digit) {
                 maxIndex = index;
-                max = p;
+                max = digit;
             }
-        } while (index < b);
+        } while (index < n);
         return maxIndex;
     }
 
