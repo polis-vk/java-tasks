@@ -3,7 +3,8 @@ package ru.mail.polis.homework.simple;
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println(hello());
+        System.out.println(IntegerTask.factorial((byte) 5));
+//        System.out.println(hello());
     }
 
     static String hello() {
