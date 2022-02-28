@@ -6,10 +6,11 @@ public class IntegerTask {
 
     public static int sum(int n) {
         int result = 0;
+        int number = n;
         do {
-            result += n;
-            n -= 1;
-        } while (n > 0);
+            result += number;
+            number -= 1;
+        } while (number > 0);
         return result;
     }
 
@@ -17,31 +18,33 @@ public class IntegerTask {
         if (top <= bottom && height > top) {
             return Integer.MAX_VALUE;
         }
+        int peak = height;
         int result = 0;
         while (true) {
             result += 1;
-            height -= top;
-            if (height <= 0) {
+            peak -= top;
+            if (peak <= 0) {
                 return result;
             } else {
-                height += bottom;
+                peak += bottom;
             }
         }
     }
 
     public static int kDecimal(int n, int order) {
+        int number = n;
         for (int i = 1; i < order; i++) {
-            n /= 10;
+            number /= 10;
         }
-        int result = Math.abs(n) % 10;
-        return result;
+        return Math.abs(number) % 10;
     }
 
     public static long factorial(byte n) {
         long result = 1;
-        while (n != 0) {
-            result *= n;
-            n -= 1;
+        byte number = n;
+        while (number != 0) {
+            result *= number;
+            number -= 1;
         }
         return result;
     }
