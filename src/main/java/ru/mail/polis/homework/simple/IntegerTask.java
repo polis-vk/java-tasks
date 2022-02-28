@@ -28,20 +28,20 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        if ((bottom > top && top < height) || (top == bottom && top != height)) {
+        if (bottom >= top && top < height) {
             return Integer.MAX_VALUE;
         }
         int counter = 0;
-        int cloneHeight = 0;
+        int heightSnake = 0;
         boolean chekTime = true;
-        while (cloneHeight < height) {
+        while (heightSnake < height) {
             if (chekTime) {//день
-                cloneHeight += top;
-                if (cloneHeight >= height) {
+                heightSnake += top;
+                if (heightSnake >= height) {
                     counter++;
                 }
             } else {//ночь
-                cloneHeight -= bottom;
+                heightSnake -= bottom;
                 counter++;
             }
             chekTime = !chekTime;
@@ -55,14 +55,14 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int cloneN = n;
+        int num = n;
         int count = 0;
-        while (cloneN != 0) {
+        while (num != 0) {
             if (count == order) {
-                return Math.abs(cloneN % 10);
+                return Math.abs(num % 10);
             }
             if (count + 1 != order) {
-                cloneN /= 10;
+                num /= 10;
             }
             count++;
         }

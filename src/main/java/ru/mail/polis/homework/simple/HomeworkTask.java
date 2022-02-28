@@ -10,11 +10,11 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        double rez = 0;
-        for (double i = a; i < b; i += delta) {
-            rez += function.applyAsDouble(i) * delta;
+        double calcIntegral = 0;
+        for (double step = a; step < b; step += delta) {
+            calcIntegral += function.applyAsDouble(step) * delta;
         }
-        return rez;
+        return calcIntegral;
     }
 
     /**
@@ -22,10 +22,12 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte buffer = 0, maxNum = 0, count = 1;
+        byte buffer = 0;
+        byte maxNum = 0;
+        byte count = 1;
         long cloneA = a;
         while (cloneA != 0) {
-            if (cloneA % 10 >= maxNum) {
+            if (Math.abs(cloneA % 10) >= maxNum) {
                 maxNum = (byte) (cloneA % 10);
                 buffer = count;
             }

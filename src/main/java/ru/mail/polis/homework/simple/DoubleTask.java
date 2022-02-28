@@ -17,18 +17,13 @@ public class DoubleTask {
         double x1 = 0;
         double x2 = 0;
         int d = b * b - (4 * a * c);
-        if (d > 0) {
-            x1 = (-b + Math.sqrt(d)) / (2 * a);
-            x2 = (-b - Math.sqrt(d)) / (2 * a);
-            double buff;
-            if (x1 < x2) {
-                buff = x1;
-                x1 = x2;
-                x2 = buff;
-            }
-        } else {//на паре вы сказали, что ситуации где d<0 ее можно не рассматривать, по этому выбрать такую конструкцию
-            x1 = (-b) * 1. / (2 * a);
-            x2 = x1;
+        x1 = (-b + Math.sqrt(d)) / (2 * a);
+        x2 = (-b - Math.sqrt(d)) / (2 * a);
+        double buff;
+        if (x1 < x2) {
+            buff = x1;
+            x1 = x2;
+            x2 = buff;
         }
         return x1 + ", " + x2;
     }
