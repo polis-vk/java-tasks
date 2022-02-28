@@ -10,15 +10,23 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double tmp  = a;
+        double sum = 0;
+        while (tmp < b) {
+            sum += function.applyAsDouble(tmp);
+            tmp += delta;
+        }
+
+        return delta * sum;
     }
 
     /**
-     * Вывести номер максимальной цифры. Счет начинается слева направо,
+         * Вывести номер максимальной цифры. Счет начинается слева направо,
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+
+    return 0;
     }
 
 
@@ -35,8 +43,7 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      * Это дополнительное задание, необязательное для выполнения
      */
-    public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
+    public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4){
         return 0;
     }
-
 }
