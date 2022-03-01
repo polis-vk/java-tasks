@@ -9,5 +9,5 @@ public class Main {
     static String hello() {
         return "Hello world! I am a first program";
     }
-    // Тест падал из-за того что 'a' перед 'first' была русская, а не английская
+    // Тест падал из-за того что 'a' перед 'first' была русская, а не английская;
 }
