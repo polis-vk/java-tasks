@@ -61,15 +61,15 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int value_of_index = -1;
+        int valueOfIndex = -1;
 
         for ( int i = 0; i < order; i++){
-            value_of_index = n % 10;
+            valueOfIndex = n % 10;
             n /= 10;
 
 
         }
-        return Math.abs( value_of_index);
+        return Math.abs(valueOfIndex);
     }
 
 
