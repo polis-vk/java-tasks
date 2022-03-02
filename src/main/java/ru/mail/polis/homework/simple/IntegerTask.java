@@ -34,9 +34,8 @@ public class IntegerTask {
         int distPerDay = top - bottom;
         if (distPerDay <= 0) {
             return Integer.MAX_VALUE;
-        } else {
-            return (int) (Math.ceil((double) (height - top) / distPerDay) + 1);
         }
+        return (int) (Math.ceil((double) (height - top) / distPerDay) + 1);
     }
 
     /**
@@ -57,7 +56,7 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long res = 1;
-        for (int i = 1; i < n + 1; i++) {
+        for (byte i = 1; i < n + 1; i++) {
             res *= i;
         }
         return res;

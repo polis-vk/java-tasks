@@ -11,8 +11,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integral = 0;
-        for (double i = a; i <= b; i += delta) {
-            integral += function.applyAsDouble(i) * delta;
+        for (double x = a; x <= b; x += delta) {
+            integral += function.applyAsDouble(x) * delta;
         }
         return integral;
     }
@@ -25,15 +25,16 @@ public class HomeworkTask {
         byte number = 0;
         byte count = 0;
         byte maxNum = 0;
-        do {
-            byte curNum = (byte) (a % 10);
-            a /= 10;
+        long originalNum = a;
+        while (originalNum > 0) {
+            byte curNum = (byte) (originalNum % 10);
+            originalNum /= 10;
             count++;
             if (curNum >= maxNum) {
                 maxNum = curNum;
                 number = count;
             }
-        } while (a > 0);
+        }
         return (byte) (count + 1 - number);
     }
 
