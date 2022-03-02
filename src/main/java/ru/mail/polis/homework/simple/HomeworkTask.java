@@ -11,8 +11,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double sum = 0;
-        for (double i = a; i < b; i += delta) {
-            sum += function.applyAsDouble(i) * delta;
+        for (double value = a; value < b; value += delta) {
+            sum += function.applyAsDouble(value) * delta;
         }
         return sum;
     }
@@ -22,22 +22,22 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte max = -1; // максимальная цифра числа
-        byte num; // некоторая цифра числа
-        byte digit = 0; // номер цифры числа (справа налево)
-        byte NumberOfDigits = 0; // количество цифр в числе
-        while (a > 0) {
-            num = (byte) (a % 10);
-            NumberOfDigits++;
+        byte max = -1;           // максимальная цифра числа
+        byte num;                // некоторая цифра числа
+        byte digit = 0;          // номер цифры числа (справа налево)
+        byte numberOfDigits = 0; // количество цифр в числе
+        long temp = a;
+        while (temp > 0) {
+            num = (byte) (temp % 10);
+            numberOfDigits++;
             if (num >= max) {
                 max = num;
-                digit = NumberOfDigits;
+                digit = numberOfDigits;
             }
-            a /= 10;
+            temp /= 10;
         }
-        return (byte) (NumberOfDigits - digit + 1);
+        return (byte) (numberOfDigits - digit + 1);
     }
-
 
     /**
      * Даны две точки в пространстве (x1, y1) и (x2, y2). Вам нужно найти Y координату третьей точки (x3, y3),
@@ -54,11 +54,11 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return TriangleSquare(x1, y1, x2, y2, x3, y3) + TriangleSquare(x1, y1, x3, y3, x4, y4);
+        return getTriangleSquare(x1, y1, x2, y2, x3, y3) + getTriangleSquare(x1, y1, x3, y3, x4, y4);
     }
 
-    // Вычисление площади треугольника.
-    private static double TriangleSquare(double x1, double y1, double x2, double y2, double x3, double y3) {
+    //Вычисление площади треугольника
+    private static double getTriangleSquare(double x1, double y1, double x2, double y2, double x3, double y3) {
         return Math.abs(((x1 - x2) * (y3 - y2) - (y1 - y2) * (x3 - x2)) / 2);
     }
 
