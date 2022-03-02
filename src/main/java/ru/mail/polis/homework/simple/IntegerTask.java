@@ -48,16 +48,14 @@ public class IntegerTask {
         return (int) (Math.abs(n) / Math.pow(10, order - 1)) % 10;
     }
 
-
     /**
      * Выведите факториал от числа n
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
         long fact = 1;
-        while (n != 0) {
-            fact *= n;
-            n--;
+        for (int i = n; i != 0; i--) {
+            fact *= i;
         }
         return fact;
     }
