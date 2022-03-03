@@ -23,15 +23,13 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
         int count = (int) Math.ceil(Math.log10(Math.abs(a)));
-        int max = 0, figure;
+        int curNumb;
+        int max = 0;
         int number = 1;
         for (int i = count; i > 0; i--) {
-            figure = (int) (a / Math.pow(10, i - 1)) % 10;
-            if (figure == 9) {
-                return (byte) (count - i + 1);
-            }
-            if (figure > max) {
-                max = figure;
+            curNumb = (int) (a / Math.pow(10, i - 1)) % 10;
+            if (curNumb > max) {
+                max = curNumb;
                 number = count - i + 1;
             }
         }
