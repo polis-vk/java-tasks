@@ -11,8 +11,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double sum = 0;
-        for (double value = a; value < b; value += delta) {
-            sum += function.applyAsDouble(value) * delta;
+        for (double interval = a; interval < b; interval += delta) {
+            sum += function.applyAsDouble(interval) * delta;
         }
         return sum;
     }
@@ -22,21 +22,21 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte max = -1;           // максимальная цифра числа
-        byte num;                // некоторая цифра числа
-        byte digit = 0;          // номер цифры числа (справа налево)
-        byte numberOfDigits = 0; // количество цифр в числе
+        byte max = -1;
+        byte digit;
+        byte sequenceNumber = 0;    // from right to left
+        byte numberOfDigits = 0;
         long temp = a;
         while (temp > 0) {
-            num = (byte) (temp % 10);
+            digit = (byte) (temp % 10);
             numberOfDigits++;
-            if (num >= max) {
-                max = num;
-                digit = numberOfDigits;
+            if (digit >= max) {
+                max = digit;
+                sequenceNumber = numberOfDigits;
             }
             temp /= 10;
         }
-        return (byte) (numberOfDigits - digit + 1);
+        return (byte) (numberOfDigits - sequenceNumber + 1);
     }
 
     /**
@@ -44,7 +44,6 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-
         return (double) -((x1 * y2 - x2 * y1) + (y1 - y2) * x3) / (x2 - x1);
     }
 
@@ -57,7 +56,7 @@ public class HomeworkTask {
         return getTriangleSquare(x1, y1, x2, y2, x3, y3) + getTriangleSquare(x1, y1, x3, y3, x4, y4);
     }
 
-    //Вычисление площади треугольника
+    // Calculating the area of a triangle
     private static double getTriangleSquare(double x1, double y1, double x2, double y2, double x3, double y3) {
         return Math.abs(((x1 - x2) * (y3 - y2) - (y1 - y2) * (x3 - x2)) / 2);
     }
