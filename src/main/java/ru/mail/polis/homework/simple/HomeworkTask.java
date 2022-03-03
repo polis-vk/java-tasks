@@ -53,8 +53,9 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-
-        return 0;
+        double sq = Math.abs(((double)((x1-x3)*(y2-y3)-(x2-x3)*(y1-y3)))/2);
+        sq += Math.abs(((double)((x1-x3)*(y4-y3)-(x4-x3)*(y1-y3))))/2;
+        return sq;
     }
 }
 
