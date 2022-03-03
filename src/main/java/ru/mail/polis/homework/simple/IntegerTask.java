@@ -33,20 +33,15 @@ public class IntegerTask {
         }
         int counter = 0;
         int heightSnake = 0;
-        boolean chekTime = true;
         while (heightSnake < height) {
-            if (chekTime) {//день
-                heightSnake += top;
-                if (heightSnake >= height) {
-                    counter++;
-                }
-            } else {//ночь
-                heightSnake -= bottom;
+            heightSnake += top;
+            if (heightSnake >= height) {
                 counter++;
+                break;
             }
-            chekTime = !chekTime;
+            heightSnake -= bottom;
+            counter++;
         }
-
         return counter;
     }
 
@@ -57,18 +52,14 @@ public class IntegerTask {
     public static int kDecimal(int n, int order) {
         int num = n;
         int count = 0;
-        while (num != 0) {
+        while (num != 0 && count + 1 != order) {
             if (count == order) {
                 return Math.abs(num % 10);
             }
-            if (count + 1 != order) {
-                num /= 10;
-            }
+            num /= 10;
             count++;
         }
-        return Integer.MAX_VALUE;//тут оно просило что-то вернуть, решил вернуть Integer.MAX_VALUE, не хочу
-        // -1 тубрика не знал что вернуть, в тестах нет ситуации, когда у числа разрядов меньше
-        // чем запрашиваемый выводимый разряд
+        return Math.abs(num % 10);
     }
 
 
@@ -77,10 +68,10 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        long factorial = 1;
+        long result = 1;
         for (byte i = 2; i <= n; i++) {
-            factorial *= i;
+            result *= i;
         }
-        return factorial;
+        return result;
     }
 }
