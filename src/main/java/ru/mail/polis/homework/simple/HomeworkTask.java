@@ -11,8 +11,10 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integral = 0;
-        for (double index = a; index < b; index += delta){
-            integral = integral + (delta * function.applyAsDouble(index));
+        double diff = a;
+        while (b - diff >= 0.00000001) {
+            integral = integral + (delta * function.applyAsDouble(diff));
+            diff += delta;
         }
         return integral;
     }
@@ -26,14 +28,8 @@ public class HomeworkTask {
         byte orders = 1;
         int max = 0;
         long number = a;
-        if (a == Long.MIN_VALUE) {
-            number = Long.MAX_VALUE;
-        }
-        else {
-            number = Math.abs(a);
-        }
-        while (number > 0) {
-            if (number % 10 >= max) {
+        while (Math.abs(number) > 0) {
+            if (Math.abs(number % 10) >= Math.abs(max)) {
                 max = (int) (number % 10);
                 position = orders;
             }
@@ -49,12 +45,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        int x2_copy = x2;
-        int y2_copy = y2;
-        int x3_copy = x3;
-        double numerator = (y2_copy - y1) * (x3_copy - x1);
-        double y3 = numerator / (x2_copy - x1) + y1;
-        return y3;
+        return ((double) ((y2 - y1) * (x3 - x1)) / (double) ((x2 - x1)) + y1);
     }
 
     /**
@@ -63,8 +54,6 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        double s = 0.5 * Math.abs((x1 * y2 + x2 * y3 + x3 * y4 + x4 * y1 - x2 * y1 - x3 * y2 - x4 * y3 - x1 * y4));;
-        return s;
+        return 0.5 * Math.abs(x1 * y2 + x2 * y3 + x3 * y4 + x4 * y1 - x2 * y1 - x3 * y2 - x4 * y3 - x1 * y4);
     }
-
 }

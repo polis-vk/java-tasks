@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.simple;
+
 import java.lang.Math.*;
-import static java.lang.StrictMath.abs;
 
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
@@ -16,7 +16,7 @@ public class IntegerTask {
      */
     public static int sum(int n) {
         int sum = 0;
-        for (int i = 0; i <= n; i++){
+        for (int i = 0; i <= n; i++) {
             sum += i;
         }
         return sum;
@@ -29,15 +29,18 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        int rest = height;
-        int days = 0;
-        if (bottom - top >= 0 && top < height){
+        if (top >= height) {
+            return 1;
+        }
+        if (bottom - top >= 0) {
             return Integer.MAX_VALUE;
         }
-        while (rest > 0){
+        int rest = height;
+        int days = 0;
+        while (rest > 0) {
             ++days;
             rest -= top;
-            if (rest > 0){
+            if (rest > 0) {
                 rest += bottom;
             }
         }
@@ -51,20 +54,20 @@ public class IntegerTask {
     public static int kDecimal(int n, int order) {
         int number = n;
         int current_order = 1;
-        while(current_order < order) {
+        while (current_order < order) {
             number = number / 10;
             ++current_order;
         }
-        number = Math.abs(number) % 10;
-        return number;
+        return Math.abs(number) % 10;
     }
+
     /**
      * Выведите факториал от числа n
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
         long fact = 1;
-        for (int i = 1; i <= n; i++){
+        for (byte i = 1; i <= n; i++) {
             fact = fact * i;
         }
         return fact;
