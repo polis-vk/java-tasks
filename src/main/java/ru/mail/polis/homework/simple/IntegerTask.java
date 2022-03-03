@@ -6,16 +6,17 @@ public class IntegerTask {
 
     public static int sum(int n) {
         int result = 0;
-        int number = n;
-        do {
+        for (int number = 1; number <= n; number++) {
             result += number;
-            number -= 1;
-        } while (number > 0);
+        }
         return result;
     }
 
     public static int snake(int height, int top, int bottom) {
-        if (top <= bottom && height > top) {
+        if (height <= top) {
+            return 1;
+        }
+        if (top <= bottom) {
             return Integer.MAX_VALUE;
         }
         int peak = height;
@@ -41,10 +42,8 @@ public class IntegerTask {
 
     public static long factorial(byte n) {
         long result = 1;
-        byte number = n;
-        while (number != 0) {
-            result *= number;
-            number -= 1;
+        for (byte i = 1; i <= n; i++) {
+            result *= i;
         }
         return result;
     }
