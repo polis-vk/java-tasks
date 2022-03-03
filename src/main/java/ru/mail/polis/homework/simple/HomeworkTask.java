@@ -16,12 +16,11 @@ public class HomeworkTask {
             sum += function.applyAsDouble(tmp);
             tmp += delta;
         }
-
         return delta * sum;
     }
 
     /**
-         * Вывести номер максимальной цифры. Счет начинается слева направо,
+     * Вывести номер максимальной цифры. Счет начинается слева направо,
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
@@ -29,17 +28,16 @@ public class HomeworkTask {
         byte maxRank = 0;
         byte maxRankValue = 0;
 
-        do{
-            if(a % 10 >= maxRankValue){
-                maxRankValue = (byte) (a % 10);
+        do {
+            if (Math.abs(a % 10) >= maxRankValue) {
+                maxRankValue = (byte) Math.abs(a % 10);
                 maxRank = currentRank;
-
             }
             currentRank++;
 
-        }while ((a /= 10) != 0 );
+        } while ((a /= 10) != 0 );
 
-        return  (byte) (currentRank - maxRank );
+        return (byte) (currentRank - maxRank);
     }
 
 
@@ -48,7 +46,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return ( ( double) (x3 - x1) * (y2 - y1) / (x2 - x1) + y1 );
+        return ((double) (x3 - x1) * (y2 - y1) / (x2 - x1) + y1);
     }
 
     /**
@@ -57,9 +55,7 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4){
-
-
-
-        return 0;
+        return (double) Math.abs(((x1 - x2) * (y3 - y2) - (y1 - y2) * (x3 - x2))) / 2
+                            + (double) Math.abs(((x1 - x3) * (y4 - y3) - (y1 - y3) * (x4 - x3))) / 2;
     }
 }
