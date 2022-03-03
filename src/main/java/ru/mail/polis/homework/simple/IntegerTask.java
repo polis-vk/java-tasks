@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -8,13 +7,17 @@ package ru.mail.polis.homework.simple;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class IntegerTask {
-
     /**
      * Сумма чисел от 1 до n (1 + 2 + 3 + ... + n)
      * Пример: (5) -> 15
      */
+
     public static int sum(int n) {
-        return 0;
+        int sum = 0;
+        for (int i = 1; i <= n; i++) {
+            sum = sum + i;
+        }
+        return sum;
     }
 
     /**
@@ -23,8 +26,29 @@ public class IntegerTask {
      * Верните число Integer.MAX_VALUE;
      * Пример: (10, 3, 2) -> 8
      */
+
     public static int snake(int height, int top, int bottom) {
-        return 0;
+        int currentPosition = 0;
+        int days = 0;
+
+        if (top >= height) {
+            days++;
+            return days;
+        }
+
+        if (top <= bottom) {
+            return Integer.MAX_VALUE;
+        }
+
+        while (currentPosition < height) {
+            days++;
+            currentPosition = currentPosition + top;
+            if (currentPosition >= height) {
+                return days;
+            }
+            currentPosition = currentPosition - bottom;
+        }
+        return days;
     }
 
     /**
@@ -32,7 +56,11 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return 0;
+        int kDecimal = 0;
+        for (int i = 1; i <= order; i++) {
+            kDecimal = (n / ((int) Math.pow(10, order - 1))) % 10;
+        }
+       return Math.abs(kDecimal);
     }
 
 
@@ -41,6 +69,13 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        long factorial = 1;
+        if (n == 0) {
+            return factorial;
+        }
+        for (int i = 1; i<=n; i++) {
+            factorial = factorial * i;
+        }
+        return factorial;
     }
 }
