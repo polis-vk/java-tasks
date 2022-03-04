@@ -38,8 +38,9 @@ public class IntegerTask {
             h = h - top;
             if (h <= 0) {
                 break;
+            } else {
+                h = h + bottom;
             }
-            h = h + bottom;
         }
         return n;
     }
@@ -49,11 +50,13 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int number = n;
-        for (int i = 1; i < order; i++) {
-            number = number / 10;
+        int i = 1;
+        n = Math.abs(n);
+        while (i < order) {
+            n = n / 10;
+            i++;
         }
-        return Math.abs(number % 10);
+        return n % 10;
     }
 
 
@@ -63,8 +66,10 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long fac = 1;
-        for (int i = 1; i <= n; i++) {
+        int i = 1;
+        while (i <= n) {
             fac = fac * i;
+            i++;
         }
         return fac;
     }
