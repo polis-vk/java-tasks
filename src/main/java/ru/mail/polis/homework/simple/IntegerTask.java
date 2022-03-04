@@ -29,17 +29,17 @@ public class IntegerTask {
      */
     public static int snake(int height, int top, int bottom) {
         int path = 0;
+        if (top - bottom <= 0) {
+            return Integer.MAX_VALUE;
+        }
         int days;
         for (days = 1; days <= height; days++) {
             path += top;
             if (path >= height) {
-                break;
+                return days;
             }
             path -= bottom;
-            if (top - bottom <= 0) {
-                days = Integer.MAX_VALUE;
-                break;
-            }
+
         }
         return days;
     }
@@ -66,11 +66,11 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        long fuc = 1;
-        for (int i = 1; i <= n; i++) {
-            fuc = fuc * i;
+        long fac = 1;
+        for (byte i = 1; i <= n; i++) {
+            fac = fac * i;
         }
-        return fuc;
+        return fac;
     }
 }
 
