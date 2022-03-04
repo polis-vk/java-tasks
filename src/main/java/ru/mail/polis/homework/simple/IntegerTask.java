@@ -50,13 +50,11 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int i = 1;
-        n = Math.abs(n);
-        while (i < order) {
-            n = n / 10;
-            i++;
+        int number = n;
+        for (int i = 1; i < order; i++) {
+            number = number / 10;
         }
-        return n % 10;
+        return Math.abs(number % 10);
     }
 
 
