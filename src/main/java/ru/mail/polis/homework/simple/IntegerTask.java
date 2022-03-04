@@ -64,10 +64,8 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long fac = 1;
-        int i = 1;
-        while (i <= n) {
+        for (int i = 1; i <= n; i++) {
             fac = fac * i;
-            i++;
         }
         return fac;
     }
