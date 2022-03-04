@@ -27,11 +27,14 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        int currHeight = 0;
-        int days = 0;
-        if (top - bottom <= 0 && top < height) {
+        if (top >= height) {
+            return 1;
+        }
+        if (top <= bottom) {
             return Integer.MAX_VALUE;
         }
+        int currHeight = 0;
+        int days = 0;
         while (true) {
             currHeight += top;
             days++;
@@ -48,11 +51,11 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int nCopy = n;
+        int temp = n;
         for (int i = 0; i < order - 1; i++) {
-            nCopy /= 10;
+            temp /= 10;
         }
-        return Math.abs(nCopy % 10);
+        return Math.abs(temp % 10);
     }
 
 

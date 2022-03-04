@@ -24,16 +24,16 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte n = a == 0 ? 1 : (byte) Math.ceil(Math.log10(a));
-        byte nCopy = n;
+        byte numberOfDigits = a == 0 ? 1 : (byte) Math.ceil(Math.log10(a));
+        byte temp = numberOfDigits;
         byte max = -1;
         byte index = 0;
         byte maxIndex = 0;
         byte digit;
         do {
             index++;
-            nCopy--;
-            digit = (byte) (a / (Math.pow(10, nCopy)) % 10);
+            temp--;
+            digit = (byte) (a / (Math.pow(10, temp)) % 10);
             if (digit == 9) {
                 return index;
             }
@@ -41,7 +41,7 @@ public class HomeworkTask {
                 maxIndex = index;
                 max = digit;
             }
-        } while (index < n);
+        } while (index < numberOfDigits);
         return maxIndex;
     }
 
