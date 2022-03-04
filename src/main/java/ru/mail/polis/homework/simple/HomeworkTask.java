@@ -11,8 +11,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integral = 0;
-        for (double i = a; i <= b; i = i + delta){
-            integral = integral + function.applyAsDouble(i) * delta;
+        for (double d = a; d <= b; d = d + delta) {
+            integral = integral + function.applyAsDouble(d) * delta;
         }
         return integral;
     }
@@ -22,15 +22,17 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        a = Math.abs(a);
+        long number = a;
+        int lastDigit;
         int max = 0, n = 0, i = 0;
-        while (a > 0) {
+        while (number > 0) {
             n++;
-            if (a % 10 >= max) {
-                max = (int) (a % 10);
+            lastDigit = Math.abs((int) (number % 10));
+            if (lastDigit >= max) {
+                max = lastDigit;
                 i = n;
             }
-            a = a / 10;
+            number = number / 10;
         }
         return (byte) (n - i + 1);
     }
@@ -50,9 +52,7 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        double S;
-        S = 1.0 / 2 * Math.abs(x1 * y2 + x2 * y3 + x3 * y4 + x4 * y1 - x2 * y1 - x3 * y2 - x4 * y3 - x1 * y4);
-        return S;
+        return 1.0 / 2 * Math.abs(x1 * y2 + x2 * y3 + x3 * y4 + x4 * y1 - x2 * y1 - x3 * y2 - x4 * y3 - x1 * y4);
     }
 
 }

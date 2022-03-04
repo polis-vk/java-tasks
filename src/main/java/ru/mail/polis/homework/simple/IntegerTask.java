@@ -31,20 +31,17 @@ public class IntegerTask {
         if (top <= bottom && top < height) {
             return Integer.MAX_VALUE;
         }
-        else {
-            int n = 0;
-            while (height > 0) {
-                n++;
-                height = height - top;
-                if (height <= 0) {
-                    break;
-                }
-                else {
-                    height = height + bottom;
-                }
+        int n = 0;
+        int h = height;
+        while (h > 0) {
+            n++;
+            h = h - top;
+            if (h <= 0) {
+                break;
             }
-            return n;
+            h = h + bottom;
         }
+        return n;
     }
 
     /**
@@ -52,13 +49,11 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int i = 1;
-        n = Math.abs(n);
-        while (i < order) {
-            n = n / 10;
-            i++;
+        int number = n;
+        for (int i = 1; i < order; i++) {
+            number = number / 10;
         }
-        return n % 10;
+        return Math.abs(number % 10);
     }
 
 
@@ -68,10 +63,8 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long fac = 1;
-        int i = 1;
-        while (i <= n) {
+        for (int i = 1; i <= n; i++) {
             fac = fac * i;
-            i++;
         }
         return fac;
     }
