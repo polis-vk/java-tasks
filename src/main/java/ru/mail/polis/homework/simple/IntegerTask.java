@@ -14,27 +14,34 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        int sum = 0;
+        int s = 0;
         for (int i = 1; i <= n; i++) {
-            sum += i;
+            s += i;
         }
-        return sum;
+        return s;
     }
 
     /**
      * Гусеница поднимается по стене длиной height на высоту top за день, ночью гусеница сползает на bottom.
      * Сколько дней понадобится гусенице, чтобы доползти до потолка. Если она этого никогда не сможет сделать,
      * Верните число Integer.MAX_VALUE;
-     * Пример: (10, 3, 2)*/
+     * Пример: (10, 3, 2) -> 8
+     */
     public static int snake(int height, int top, int bottom) {
+        double h;
         if (top >= height) {
-            return 1;
+            return (1);
+        } else {
+            if (bottom >= top) {
+                return (Integer.MAX_VALUE);
+            } else {
+                int s = top - bottom;
+                height = height - top;
+                h = Math.ceil(height * 1.0 / s);
+                height = (int) h;
+                return (height + 1);
+            }
         }
-        if (bottom >= top) {
-            return (Integer.MAX_VALUE);
-        }
-        double daysCount = Math.ceil((height - top)*1.0 / (top - bottom));
-        return ((int)daysCount + 1);
     }
 
     /**
@@ -42,13 +49,14 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int tensCount = 1;
+        n = Math.abs(n);
+        int d = 1;
         for (int i = 0; i < order; i++) {
-            tensCount *= 10;
+            d *= 10;
         }
-        int number = n % tensCount;
-        tensCount = tensCount / 10;
-        return (Math.abs(number) / tensCount);
+        n = n % d;
+        d = d / 10;
+        return (n / d);
     }
 
 
@@ -57,10 +65,10 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        long factorial = 1;
+        long f = 1;
         for (int i = 1; i <= n; i++) {
-            factorial *= i;
+            f *= i;
         }
-        return (factorial);
+        return (f);
     }
 }
