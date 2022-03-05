@@ -6,7 +6,7 @@ public class Main {
         System.out.println(hello());
     }
 
-    static String hello() {
-        return "Hello world! I am а first program";
+    public static String hello() {
+        return "Hello world! I am a first program";
     }
 }

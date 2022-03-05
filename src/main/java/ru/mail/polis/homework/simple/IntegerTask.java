@@ -57,10 +57,8 @@ public class IntegerTask {
      */
     public static int kDecimal(int n, int order) {
         int kDecimal = 0;
-        for (int i = 1; i <= order; i++) {
-            kDecimal = (n / ((int) Math.pow(10, order - 1))) % 10;
-        }
-       return Math.abs(kDecimal);
+        kDecimal = (n / ((int) Math.pow(10, order - 1))) % 10;
+        return Math.abs(kDecimal);
     }
 
 
@@ -73,7 +71,7 @@ public class IntegerTask {
         if (n == 0) {
             return factorial;
         }
-        for (int i = 1; i<=n; i++) {
+        for (int i = 1; i <= n; i++) {
             factorial = factorial * i;
         }
         return factorial;
