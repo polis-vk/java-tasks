@@ -10,11 +10,11 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        double numIntegral = 0;
+        double calcIntegral = 0;
         for (double i = a; i <= b; i += delta) {
-            numIntegral = numIntegral + delta * function.applyAsDouble(i);
+            calcIntegral = calcIntegral + delta * function.applyAsDouble(i);
         }
-        return numIntegral;
+        return calcIntegral;
     }
 
     /**
@@ -26,9 +26,11 @@ public class HomeworkTask {
         long comparator = Math.abs(a);
         long maxNumber = 0;
         byte indexOfMax = 0;
+
         if (a == 0) {
             return 1;
         }
+
         if (a == Long.MIN_VALUE) {
             return 1;
         }
@@ -40,9 +42,11 @@ public class HomeworkTask {
             numberOfIndexes++;
             comparator = comparator / 10;
         }
+
         System.out.println(comparator);
         System.out.println(numberOfIndexes);
         comparator = Long.MIN_VALUE;
+
         for (byte i = 1; i <= numberOfIndexes; i++) {
             maxNumber = ((Math.abs(a) / ((long) Math.pow(10, numberOfIndexes - i))) % 10);
             System.out.println(maxNumber);

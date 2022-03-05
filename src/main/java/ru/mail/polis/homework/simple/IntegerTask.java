@@ -29,11 +29,11 @@ public class IntegerTask {
 
     public static int snake(int height, int top, int bottom) {
         int currentPosition = 0;
-        int days = 0;
+        int snake = 0;
 
         if (top >= height) {
-            days++;
-            return days;
+            snake++;
+            return snake;
         }
 
         if (top <= bottom) {
@@ -41,14 +41,14 @@ public class IntegerTask {
         }
 
         while (currentPosition < height) {
-            days++;
+            snake++;
             currentPosition = currentPosition + top;
             if (currentPosition >= height) {
-                return days;
+                return snake;
             }
             currentPosition = currentPosition - bottom;
         }
-        return days;
+        return snake;
     }
 
     /**
@@ -57,8 +57,8 @@ public class IntegerTask {
      */
     public static int kDecimal(int n, int order) {
         int kDecimal = 0;
-        kDecimal = (n / ((int) Math.pow(10, order - 1))) % 10;
-        return Math.abs(kDecimal);
+        kDecimal = Math.abs((n / ((int) Math.pow(10, order - 1))) % 10);
+        return kDecimal;
     }
 
 
