@@ -40,10 +40,7 @@ public class HomeworkTask {
             comparator = comparator / 10;
         }
 
-        System.out.println(comparator);
-        System.out.println(numberOfIndexes);
         comparator = Long.MIN_VALUE;
-
         for (int i = 1; i <= numberOfIndexes; i++) {
             maxDigitOfNumber = ((Math.abs(a) / ((long) Math.pow(10, numberOfIndexes - i))) % 10);
             if (maxDigitOfNumber > comparator) {
@@ -69,13 +66,15 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        if (((x1 == x2) & (y1 == y2)) || ((x1 == x3) & (y1 == y3)) || ((x1 == x4) & (y1 == y4)) ||
-                ((x2 == x3) & (y2 == y3)) || ((x2 == x4) & (y2 == y4)) || ((x3 == x4) & (y3 == y4))) {
-            return 0;
-        }
         // узнаем диагонали четырехугольника
         double lengthAC = Math.sqrt((x1 - x3) * (x1 - x3) + (y1 - y3) * (y1 - y3));
         double lengthBD = Math.sqrt((x2 - x4) * (x2 - x4) + (y2 - y4) * (y2 - y4));
+
+        //проверяем, не совпали ли точки диагональные
+        if (lengthAC == 0 || lengthBD == 0) {
+            return 0;
+        }
+
         // узнаем угол между диагоналями
         double angle = ((x1 - x3) * (x2 - x4) + (y1 - y3) * (y2 - y4)) /
                 Math.sqrt(((x1 - x3) * (x1 - x3) + (y1 - y3) * (y1 - y3)) *
