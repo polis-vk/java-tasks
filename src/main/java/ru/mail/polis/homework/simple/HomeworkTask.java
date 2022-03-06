@@ -11,8 +11,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double calcIntegral = 0;
-        for (double i = a; i <= b; i += delta) {
-            calcIntegral = calcIntegral + delta * function.applyAsDouble(i);
+        for (double step = a; step <= b; step += delta) {
+            calcIntegral = calcIntegral + delta * function.applyAsDouble(step);
         }
         return calcIntegral;
     }
@@ -24,8 +24,8 @@ public class HomeworkTask {
     public static byte maxNumber(long a) {
         byte numberOfIndexes = 0;
         long comparator = Math.abs(a);
-        long maxNumber = 0;
-        byte indexOfMax = 0;
+        long maxDigitOfNumber;
+        byte maxNumber = 0;
 
         if (a == 0) {
             return 1;
@@ -44,15 +44,14 @@ public class HomeworkTask {
         System.out.println(numberOfIndexes);
         comparator = Long.MIN_VALUE;
 
-        for (byte i = 1; i <= numberOfIndexes; i++) {
-            maxNumber = ((Math.abs(a) / ((long) Math.pow(10, numberOfIndexes - i))) % 10);
-            System.out.println(maxNumber);
-            if (maxNumber > comparator) {
-                comparator = maxNumber;
-                indexOfMax = i;
+        for (int i = 1; i <= numberOfIndexes; i++) {
+            maxDigitOfNumber = ((Math.abs(a) / ((long) Math.pow(10, numberOfIndexes - i))) % 10);
+            if (maxDigitOfNumber > comparator) {
+                comparator = maxDigitOfNumber;
+                maxNumber = (byte) i;
             }
         }
-        return indexOfMax;
+        return maxNumber;
     }
 
     /**
@@ -75,8 +74,8 @@ public class HomeworkTask {
             return 0;
         }
         // узнаем диагонали четырехугольника
-        double lengthAC = (double) Math.sqrt((x1 - x3) * (x1 - x3) + (y1 - y3) * (y1 - y3));
-        double lengthBD = (double) Math.sqrt((x2 - x4) * (x2 - x4) + (y2 - y4) * (y2 - y4));
+        double lengthAC = Math.sqrt((x1 - x3) * (x1 - x3) + (y1 - y3) * (y1 - y3));
+        double lengthBD = Math.sqrt((x2 - x4) * (x2 - x4) + (y2 - y4) * (y2 - y4));
         // узнаем угол между диагоналями
         double angle = ((x1 - x3) * (x2 - x4) + (y1 - y3) * (y2 - y4)) /
                 Math.sqrt(((x1 - x3) * (x1 - x3) + (y1 - y3) * (y1 - y3)) *

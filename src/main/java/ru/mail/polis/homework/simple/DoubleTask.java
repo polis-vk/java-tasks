@@ -14,8 +14,8 @@ public class DoubleTask {
      * Пример: (1, 5, 4) -> "-1.0, -4.0"
      */
     public static String equation(int a, int b, int c) {
-        double x1 = 0;
-        double x2 = 0;
+        double x1;
+        double x2;
         double D = b * b - 4 * a * c;
 
         if (D < 0) {
