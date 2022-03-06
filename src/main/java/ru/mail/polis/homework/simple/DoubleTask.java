@@ -20,9 +20,9 @@ public class DoubleTask {
         x1 = ((-1 * b) + discriminant) / (2 * a * 1.0);
         x2 = ((-1 * b) - discriminant) / (2 * a * 1.0);
         if (x1 < x2) {
-            discriminant = x1;
-            x1 = x2;
-            x2 = discriminant;
+            discriminant = x2;
+            x2 = x1;
+            x1 = discriminant;
         }
         return x1 + ", " + x2;
     }

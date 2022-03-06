@@ -28,7 +28,6 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        double h;
         if (top >= height) {
             return 1;
         }

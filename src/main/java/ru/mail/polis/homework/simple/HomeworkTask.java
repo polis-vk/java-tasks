@@ -30,7 +30,7 @@ public class HomeworkTask {
         }
         int numberIndex = 0;
         int number = 0;
-        int maxNumber = 0;
+        int maxNumber = -1;
         tmp=a;
         while (tmp > 0) {
             numberIndex += 1;
