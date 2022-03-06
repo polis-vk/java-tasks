@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.objects;
 
+import java.lang.Math;
+
 public class StringTasks {
 
     /**
@@ -76,22 +78,186 @@ public class StringTasks {
             }
         }
         String result = temporary.toString();
-        if (memoryDot != -1) {
-            return Double.valueOf(result); // если есть точка - сразу дабл
+        if (memoryDot != -1 || memoryMinus != -1 || memoryEps != -1) {
+            if (result.charAt(0) == '-') {
+                return toDouble(result, memoryDot, memoryEps, memoryMinus, true);
+            } else {
+                return toDouble(result, memoryDot, memoryEps, memoryMinus, false);
+            }
         }
-        if (memoryMinus != -1) {
-            return Double.valueOf(result); //если есть минус - тоже сразу дабл
-        }
-        if (memoryEps != -1) {
-            return Double.valueOf(result);
-        }
-        long numberResult = Long.valueOf(result);
-        if (Integer.MIN_VALUE > numberResult || numberResult > Integer.MAX_VALUE) {
-            return numberResult;
-        } else if (Integer.MIN_VALUE <= numberResult && numberResult <= Integer.MAX_VALUE) {
-            return Integer.valueOf(result);
+        long resultNumber = Long.valueOf(result);
+        if (Integer.MIN_VALUE > resultNumber || resultNumber > Integer.MAX_VALUE) {
+            if (result.charAt(0) == '-') {
+                return toLong(result, true);
+            } else {
+                return toLong(result, false);
+            }
+        } else if (Integer.MIN_VALUE <= resultNumber && resultNumber <= Integer.MAX_VALUE) {
+            if (result.charAt(0) == '-') {
+                return toInt(result, true);
+            } else {
+                return toInt(result, false);
+            }
         }
         return 0;
+    }
+
+    public static double toDouble(String result, int memoryDot, int memoryEps, int memoryMinus, boolean choice) {
+        int epsPart = 0;
+        long integerPart = -1;
+        double doublePart = 0;
+        boolean intPart = true;
+        boolean flagDot = true;
+        boolean flagEps = true;
+        boolean flagMinus = true;
+        if (memoryDot == -1) {
+            flagDot = false;
+        }
+        if (memoryEps == -1) {
+            flagEps = false;
+        }
+        if (memoryMinus == -1) {
+            flagMinus = false;
+        }
+        if (!choice) {
+            if (flagDot) {
+                intPart = false;
+                integerPart = 0;
+                int rank = memoryDot - 1;
+                for (int i = 0; i < memoryDot; i++) {
+                    integerPart += CheckInt(result.charAt(i)) * Math.pow(10, rank);
+                    rank -= 1;
+                }
+                if (flagEps) {
+                    rank = 1;
+                    for (int i = memoryDot + 1; i < memoryEps; i++) {
+                        doublePart += CheckInt(result.charAt(i)) * Math.pow(10, -rank);
+                        rank += 1;
+                    }
+                } else {
+                    rank = 1;
+                    for (int i = memoryDot + 1; i < result.length(); i++) {
+                        doublePart += CheckInt(result.charAt(i)) * Math.pow(10, -rank);
+                        rank += 1;
+                    }
+                    return integerPart + doublePart;
+                }
+            }
+            if (flagEps) {
+                if (intPart) {
+                    integerPart = 0;
+                    int rank = memoryEps - 1;
+                    for (int i = 0; i < memoryEps; i++) {
+                        integerPart += CheckInt(result.charAt(i)) * Math.pow(10, rank);
+                        rank -= 1;
+                    }
+                }
+                if (flagMinus) {
+                    int rank = result.length() - memoryEps - 3;
+                    for (int i = memoryEps + 2; i < result.length(); i++) {
+                        epsPart += CheckInt(result.charAt(i)) * Math.pow(10, rank);
+                        rank -= 1;
+                    }
+                } else {
+                    int rank = result.length() - memoryEps - 2;
+                    for (int i = memoryEps + 1; i < result.length(); i++) {
+                        epsPart += CheckInt(result.charAt(i)) * Math.pow(10, rank);
+                        rank -= 1;
+                    }
+                }
+            }
+            if (flagMinus) {
+                return (integerPart + doublePart) * Math.pow(10, (-1 * epsPart));
+            } else {
+                return (integerPart + doublePart) * Math.pow(10, epsPart);
+            }
+        } else {
+            if (flagDot) {
+                intPart = false;
+                integerPart = 0;
+                int rank = memoryDot - 2;
+                for (int i = 1; i < memoryDot; i++) {
+                    integerPart -= CheckInt(result.charAt(i)) * Math.pow(10, rank);
+                    rank -= 1;
+                }
+                if (flagEps) {
+                    rank = 1;
+                    for (int i = memoryDot + 1; i < memoryEps; i++) {
+                        doublePart -= CheckInt(result.charAt(i)) * Math.pow(10, -1 * rank);
+                        rank += 1;
+                    }
+                } else {
+                    rank = 1;
+                    for (int i = memoryDot + 1; i < result.length(); i++) {
+                        doublePart -= CheckInt(result.charAt(i)) * Math.pow(10, -1 * rank);
+                        rank += 1;
+                    }
+                    return integerPart + doublePart;
+                }
+            }
+            if (flagEps) {
+                if (intPart) {
+                    integerPart = 0;
+                    int rank = memoryEps - 2;
+                    for (int i = 1; i < memoryEps; i++) {
+                        integerPart -= CheckInt(result.charAt(i)) * Math.pow(10, rank);
+                        rank -= 1;
+                    }
+                }
+                if (flagMinus) {
+                    int rank = result.length() - memoryEps - 3;
+                    for (int i = memoryEps + 2; i < result.length(); i++) {
+                        epsPart += CheckInt(result.charAt(i)) * Math.pow(10, rank);
+                        rank -= 1;
+                    }
+                } else {
+                    int rank = result.length() - memoryEps - 2;
+                    for (int i = memoryEps + 1; i < result.length(); i++) {
+                        epsPart += CheckInt(result.charAt(i)) * Math.pow(10, rank);
+                        rank -= 1;
+                    }
+                }
+            }
+            if (flagMinus) {
+                return (integerPart + doublePart) * Math.pow(10, (-1 * epsPart));
+            } else {
+                return (integerPart + doublePart) * Math.pow(10, epsPart);
+            }
+        }
+    }
+
+    public static int toInt(String result, boolean choice) {
+        int toInt = 0;
+        int rank = result.length() - 1;
+        if (!choice) {
+            for (int i = 0; i < result.length(); i++) {
+                toInt += CheckInt(result.charAt(i)) * Math.pow(10, rank);
+                rank -= 1;
+            }
+        } else {
+            for (int i = 0; i < result.length(); i++) {
+                toInt -= CheckInt(result.charAt(i)) * Math.pow(10, rank);
+                rank -= 1;
+            }
+        }
+        return toInt;
+    }
+
+    public static long toLong(String result, boolean choice) {
+        long toLong = 0;
+        int rank = result.length() - 1;
+        if (!choice) {
+            for (int i = 0; i < result.length(); i++) {
+                toLong += CheckInt(result.charAt(i)) * Math.pow(10, rank);
+                rank -= 1;
+            }
+        } else {
+            for (int i = 0; i < result.length(); i++) {
+                toLong -= CheckInt(result.charAt(i)) * Math.pow(10, rank);
+                rank -= 1;
+            }
+        }
+        return toLong;
     }
 
     public static int CheckInt(char buff) {
