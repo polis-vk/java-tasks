@@ -35,10 +35,7 @@ public class HomeworkTask {
             return 1;
         }
 
-        while (true) {
-            if (comparator < 1) {
-                break;
-            }
+        while (comparator >= 1) {
             numberOfIndexes++;
             comparator = comparator / 10;
         }
