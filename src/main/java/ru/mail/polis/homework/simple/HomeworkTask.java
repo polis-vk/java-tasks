@@ -11,8 +11,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double sum = 0;
-        for (double i = a; i < b; i += delta) {
-            sum += function.applyAsDouble(i) * delta;
+        for (double x = a; x < b; x += delta) {
+            sum += function.applyAsDouble(x) * delta;
         }
         return sum;
     }
@@ -22,24 +22,25 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        long b = a;
-        int dlina = 0;
-        while (b > 0) {
-            dlina += 1;
-            b /= 10;
+        long tmp = a;
+        int length = 0;
+        while (tmp > 0) {
+            length += 1;
+            tmp /= 10;
         }
-        int i = 0;
-        int n = 0;
-        int max = 0;
-        while (a > 0) {
-            i += 1;
-            if (a % 10 >= max) {
-                max = (int) a % 10;
-                n = dlina - i;
+        int numberIndex = 0;
+        int number = 0;
+        int maxNumber = 0;
+        tmp=a;
+        while (tmp > 0) {
+            numberIndex += 1;
+            if (tmp % 10 >= maxNumber) {
+                maxNumber = (int) tmp % 10;
+                number = length - numberIndex;
             }
-            a = a / 10;
+            tmp = tmp / 10;
         }
-        return ((byte) (n + 1));
+        return (byte) (number + 1);
     }
 
 
@@ -48,7 +49,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return (((1.0 * x3 - x1) * (y1 - y2)) / (x1 - x2) + y1);
+        return ((1.0 * x3 - x1) * (y1 - y2)) / (x1 - x2) + y1;
     }
 
     /**
@@ -56,8 +57,6 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      * Это дополнительное задание, необязательное для выполнения
      */
-    public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return (0);
-    }
+    public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {return 0;}
 
 }

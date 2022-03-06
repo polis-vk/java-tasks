@@ -14,11 +14,11 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        int s = 0;
+        int sum = 0;
         for (int i = 1; i <= n; i++) {
-            s += i;
+            sum += i;
         }
-        return s;
+        return sum;
     }
 
     /**
@@ -30,18 +30,15 @@ public class IntegerTask {
     public static int snake(int height, int top, int bottom) {
         double h;
         if (top >= height) {
-            return (1);
-        } else {
-            if (bottom >= top) {
-                return (Integer.MAX_VALUE);
-            } else {
-                int s = top - bottom;
-                height = height - top;
-                h = Math.ceil(height * 1.0 / s);
-                height = (int) h;
-                return (height + 1);
-            }
+            return 1;
         }
+        if (bottom >= top) {
+            return Integer.MAX_VALUE;
+        }
+        double days = Math.ceil((height-top)*1.0/(top-bottom));
+        return (int)days + 1;
+
+
     }
 
     /**
@@ -49,14 +46,12 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        n = Math.abs(n);
-        int d = 1;
+
+        int tensCount = 1;
         for (int i = 0; i < order; i++) {
-            d *= 10;
+            tensCount *= 10;
         }
-        n = n % d;
-        d = d / 10;
-        return (n / d);
+        return Math.abs(n%tensCount) / (tensCount/10);
     }
 
 
@@ -65,10 +60,10 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        long f = 1;
+        long factorial = 1;
         for (int i = 1; i <= n; i++) {
-            f *= i;
+            factorial *= i;
         }
-        return (f);
+        return factorial;
     }
 }
