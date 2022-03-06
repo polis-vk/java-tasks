@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.simple;
 
 
+import java.math.BigInteger;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -14,7 +16,10 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return 0;
+        if (n < 0) {
+            throw new IllegalArgumentException("The value of the function parameter must be greater than or equal to zero");
+        }
+        return (1 + n) * n / 2;
     }
 
     /**
@@ -24,7 +29,14 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        return 0;
+        if (top >= height) {
+            return 1;
+        }
+        int deltaUp = top - bottom;
+        if (deltaUp <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        return (int) Math.ceil((height - top) / (double) deltaUp) + 1;
     }
 
     /**
@@ -32,7 +44,10 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return 0;
+        if (order < 1) {
+            throw new IllegalArgumentException("The digit of a number is a positive number");
+        }
+        return Math.abs((n / (int) Math.pow(10, order - 1)) % 10);
     }
 
 
@@ -41,6 +56,12 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        if (n == 0) {
+            return 1;
+        }
+        if (n <= 2) {
+            return n;
+        }
+        return n * factorial((byte) (n - 1));
     }
 }

@@ -10,7 +10,12 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double x = a;
+        double integralSum = 0;
+        for (; x < b; x += delta) {
+            integralSum += delta * function.applyAsDouble(x);
+        }
+        return integralSum;
     }
 
     /**
@@ -18,7 +23,23 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        byte offset = -1;
+        byte positionMaxValue = 1;
+        byte lengthA = 0;
+        int maxValue = 0;
+        long comparator = 1;
+        int currentNumber;
+        while (comparator <= a) {
+            lengthA++;
+            currentNumber = (int) ((a / comparator) % 10);
+            if (maxValue <= currentNumber) {
+                maxValue = currentNumber;
+                offset = lengthA;
+            }
+            positionMaxValue = (byte) (lengthA - offset + 1);
+            comparator *= 10;
+        }
+        return positionMaxValue;
     }
 
 
@@ -27,7 +48,10 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        if (x1 == x2) {
+            throw new IllegalArgumentException("The entered coordinates x match. The value is not defined");
+        }
+        return y1 + (y2 - y1) * (x3 - x1) / (double) (x2 - x1);
     }
 
     /**
