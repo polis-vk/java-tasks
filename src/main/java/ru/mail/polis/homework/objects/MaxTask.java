@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.objects;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 public class MaxTask {
 
@@ -44,17 +43,22 @@ public class MaxTask {
         return index;
     }
 
-    // Добавить оптимизацию в сортировку (flag)
     static int[] mySort(int[] array) {
         int temp;
+        boolean flag;
         int[] current = Arrays.copyOf(array, array.length);
-        for (int i = 0; i < array.length; i++) {
+        for (int i = 0; i < array.length - 1; i++) {
+            flag = false;
             for (int j = 0; j < array.length - i - 1; j++) {
                 if (current[j] < current[j + 1]) {
                     temp = current[j];
                     current[j] = current[j + 1];
                     current[j + 1] = temp;
+                    flag = true;
                 }
+            }
+            if (!flag) {
+                break;
             }
         }
         return current;
