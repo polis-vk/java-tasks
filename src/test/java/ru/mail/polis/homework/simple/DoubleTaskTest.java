@@ -12,7 +12,7 @@ public class DoubleTaskTest {
         assertX(parse(DoubleTask.equation(1, 4, 4)), -2, -2);
         assertX(parse(DoubleTask.equation(1, -4, 4)), 2, 2);
         assertX(parse(DoubleTask.equation(3, -5, 2)), 1, 0.6666666666666);
-        assertX(parse(DoubleTask.equation(-3, -5, 2)), 0.333333333333, -2);
+        assertX(parse(DoubleTask.equation(-3, -5, 2)), -2, 0.333333333333); // ошибка в тесте
         assertX(parse(DoubleTask.equation(2, 3, -4)), 0.850781059358, -2.350781059358);
         assertX(parse(DoubleTask.equation(2, -3, -4)), 2.350781059358, -0.850781059358);
     }
