@@ -27,6 +27,7 @@ public class RepeatingCharacters {
                 if (charAt == str.charAt(j)) {
                     count++;
                 } else {
+                    i = j - 1;
                     break;
                 }
             }
