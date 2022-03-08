@@ -26,29 +26,26 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
         // Находим длину числа
-        long b = a;
+        long numForFindLen = a;
         byte len = 0;
-        if (b == 0) {
+        if (numForFindLen == 0) {
             len = 1;
         }
-        if (a == Long.MIN_VALUE) {
-            return 1;
-        }
-        while (b != 0) {
-            b /= 10;
+        while (numForFindLen != 0) {
+            numForFindLen /= 10;
             len++;
         }
 
         // Находим максималную цифру числа
 
-        double maxNum = Math.abs(a) / Math.pow(10, len - 1);
+        double maxNum = Math.abs((double) a) / Math.pow(10, len - 1);
         byte max = (byte) maxNum;
         byte indexOfMax = 1;
         byte indexOfNum = 1;
 
         for (int i = len - 2; i >= 0; i--) {
             indexOfNum++;
-            double num = Math.abs(a) % Math.pow(10, i + 1) / Math.pow(10, i);
+            double num = Math.abs((double) a) % Math.pow(10, i + 1) / Math.pow(10, i);
             byte maybeItIsMax = (byte) num;
             if (maybeItIsMax > max) {
                 max = maybeItIsMax;
@@ -66,7 +63,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return ((double)x3 - x1) / (x2 - x1) * (y2 - y1) + y1;
+        return ((double) x3 - x1) / (x2 - x1) * (y2 - y1) + y1;
     }
 
     /**
