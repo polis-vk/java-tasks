@@ -59,7 +59,16 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        double lengthAB = DoubleTask.length(x1, y1, x2, y2);
+        double lengthBC = DoubleTask.length(x2, y2, x3, y3);
+        double lengthAC = DoubleTask.length(x1, y1, x3, y3);
+        double lengthAD = DoubleTask.length(x1, y1, x4, y4);
+        double lengthDC = DoubleTask.length(x4, y4, x3, y3);
+        return squareTriangle(lengthAB, lengthBC, lengthAC) + squareTriangle(lengthAD, lengthDC, lengthAC);
     }
 
+    private static double squareTriangle(double a, double b, double c) {
+        double p = 0.5 * (a + b + c);
+        return Math.sqrt(p * (p - a) * (p - b) * (p - c));
+    }
 }
