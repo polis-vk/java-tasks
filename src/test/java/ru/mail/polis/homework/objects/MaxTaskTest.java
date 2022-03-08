@@ -8,6 +8,7 @@ public class MaxTaskTest {
 
     @Test
     public void getMaxArray() {
+        assertArrayEquals(null, MaxTask.getMaxArray(null, 0));
         assertArrayEquals(new int[] {}, MaxTask.getMaxArray(new int[] {}, 0));
         assertArrayEquals(new int[] {}, MaxTask.getMaxArray(new int[] {1, 2, 3}, 0));
         assertArrayEquals(null, MaxTask.getMaxArray(new int[] {1, 2, 3}, 4));
