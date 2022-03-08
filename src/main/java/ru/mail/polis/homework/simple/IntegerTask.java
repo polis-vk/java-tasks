@@ -1,8 +1,7 @@
 package ru.mail.polis.homework.simple;
 
 
-import static java.lang.Math.abs;
-import static java.lang.Math.pow;
+import java.lang.Math;
 
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
@@ -35,12 +34,11 @@ public class IntegerTask {
             return 1;
         }
         if (top > bottom) {
-            final int res = (height - top + 1) / (top - bottom);
-            if ((height - top + 1) % (top - bottom) > 0) {
-                return (res + 1);
-            }
-            return res;
-        } else return Integer.MAX_VALUE;
+            if ((height - top) % (top - bottom) > 0) {
+                return 2 + (height - top) / (top - bottom);
+            } else return 1 + (height - top) / (top - bottom);
+        }
+        return Integer.MAX_VALUE;
     }
 
     /**
@@ -49,10 +47,10 @@ public class IntegerTask {
      */
     public static int kDecimal(int n, int order) {
         if (order - 1 != 0) {
-            int a = (int) pow(10, order - 1);
-            return abs((n / a) % 10);
+            int rank = (int) Math.pow(10, order - 1);
+            return Math.abs((n / rank) % 10);
         }
-        return abs(n % 10);
+        return Math.abs(n % 10);
     }
 
 
@@ -61,11 +59,8 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        if (n <= 1) {
-            return 1;
-        }
         long sum = 1;
-        for (int i = 2; i <= n; i++) {
+        for (byte i = 2; i <= n; i++) {
             sum *= i;
         }
         return sum;
