@@ -10,9 +10,8 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        double x = a;
         double integralSum = 0;
-        for (; x < b; x += delta) {
+        for (double x = a; x < b; x += delta) {
             integralSum += delta * function.applyAsDouble(x);
         }
         return integralSum;

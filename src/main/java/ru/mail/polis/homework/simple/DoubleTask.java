@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-import ru.mail.polis.homework.objects.RepeatingCharacters;
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
