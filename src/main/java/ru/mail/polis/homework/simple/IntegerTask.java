@@ -43,5 +43,4 @@ public class IntegerTask {
     public static long factorial(byte n) {
         return 0;
     }
-
 }
