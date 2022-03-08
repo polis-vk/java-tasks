@@ -24,8 +24,6 @@ public class HomeworkTask {
     public static byte maxNumber(long a) {
         byte numberOfIndexes = 0;
         long comparator = Math.abs(a);
-        long maxDigitOfNumber;
-        byte maxNumber = 0;
 
         if (a == 0) {
             return 1;
@@ -40,6 +38,8 @@ public class HomeworkTask {
             comparator = comparator / 10;
         }
 
+        long maxDigitOfNumber;
+        byte maxNumber = 0;
         comparator = Long.MIN_VALUE;
         for (int i = 1; i <= numberOfIndexes; i++) {
             maxDigitOfNumber = ((Math.abs(a) / ((long) Math.pow(10, numberOfIndexes - i))) % 10);

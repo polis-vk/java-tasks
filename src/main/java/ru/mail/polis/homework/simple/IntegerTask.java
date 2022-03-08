@@ -32,8 +32,7 @@ public class IntegerTask {
         int snake = 0;
 
         if (top >= height) {
-            snake++;
-            return snake;
+            return 1;
         }
 
         if (top <= bottom) {
@@ -56,9 +55,7 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int kDecimal;
-        kDecimal = Math.abs((n / ((int) Math.pow(10, order - 1))) % 10);
-        return kDecimal;
+        return Math.abs((n / ((int) Math.pow(10, order - 1))) % 10);
     }
 
 
