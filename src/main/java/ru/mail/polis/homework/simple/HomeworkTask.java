@@ -6,8 +6,8 @@ public class HomeworkTask {
 
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double result = 0;
-        for (double difference = a; difference <= b; difference += delta) {
-            result += function.applyAsDouble(difference) * delta;
+        for (double x = a; x <= b; x += delta) {
+            result += function.applyAsDouble(x) * delta;
         }
         return result;
     }

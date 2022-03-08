@@ -26,9 +26,8 @@ public class IntegerTask {
             peak -= top;
             if (peak <= 0) {
                 return result;
-            } else {
-                peak += bottom;
             }
+            peak += bottom;
         }
     }
 
