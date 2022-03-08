@@ -13,7 +13,7 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integ = 0;
-        for (int i = 0; i <= (b - a) / delta; i ++) {
+        for (int i = 0; i <= (b - a) / delta; i++) {
             double fun = function.applyAsDouble(a + i * delta);
             integ += fun * delta;
         }
