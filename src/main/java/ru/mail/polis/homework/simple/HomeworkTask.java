@@ -39,4 +39,5 @@ public class HomeworkTask {
         return 0;
     }
 
+
 }
