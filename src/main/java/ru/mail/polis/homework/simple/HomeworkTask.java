@@ -24,25 +24,25 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte numberOfDigits = a == 0 ? 1 : (byte) Math.ceil(Math.log10(a));
-        byte temp = numberOfDigits;
-        byte max = -1;
-        byte index = 0;
-        byte maxIndex = 0;
-        byte digit;
+        int numberOfDigits = a == 0 ? 1 : (int) Math.ceil(Math.log10(a));
+        int temp = numberOfDigits;
+        int max = -1;
+        int index = 0;
+        int maxIndex = 0;
+        int digit;
         do {
             index++;
             temp--;
-            digit = (byte) (a / (Math.pow(10, temp)) % 10);
+            digit = (int) (a / (Math.pow(10, temp)) % 10);
             if (digit == 9) {
-                return index;
+                return (byte) index;
             }
             if (max < digit) {
                 maxIndex = index;
                 max = digit;
             }
         } while (index < numberOfDigits);
-        return maxIndex;
+        return (byte) maxIndex;
     }
 
 
