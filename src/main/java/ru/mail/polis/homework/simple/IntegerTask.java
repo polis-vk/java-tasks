@@ -28,21 +28,13 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        if (bottom >= top && top < height) {
+        if (top >= height) {
+            return 1;
+        }
+        if (bottom >= top) {
             return Integer.MAX_VALUE;
         }
-        int counter = 0;
-        int heightSnake = 0;
-        while (heightSnake < height) {
-            heightSnake += top;
-            if (heightSnake >= height) {
-                counter++;
-                break;
-            }
-            heightSnake -= bottom;
-            counter++;
-        }
-        return counter;
+        return (int) Math.ceil(1. * (height - top) / (top - bottom)) + 1;
     }
 
     /**
