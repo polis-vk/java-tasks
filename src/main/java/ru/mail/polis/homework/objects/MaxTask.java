@@ -27,7 +27,9 @@ public class MaxTask {
         for (int i = count; i < array.length; i++) {
             for (int j = 0; j < count; j++) {
                 if (array[i] > max[j]) {
-                    if (count - 1 - j >= 0) System.arraycopy(max, j, max, j + 1, count - 1 - j);
+                    if (count - 1 - j >= 0) {
+                        System.arraycopy(max, j, max, j + 1, count - 1 - j);
+                    }
                     max[j] = array[i];
                     break;
                 }
