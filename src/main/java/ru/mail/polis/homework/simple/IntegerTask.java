@@ -29,10 +29,15 @@ public class IntegerTask {
      */
     public static int snake(int height, int top, int bottom) {
         int currentHeight = height;
-        if (top < height && top <= bottom) {
+        int days = 0;
+
+        if (height <= top) {
+            return 1;
+        }
+        if (top <= bottom) {
             return Integer.MAX_VALUE;
         }
-        int days = 0;
+
         while (currentHeight >= 0) {
             currentHeight -= top;
             days += 1;
