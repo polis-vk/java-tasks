@@ -28,8 +28,6 @@ public class IntegerTask {
      */
 
     public static int snake(int height, int top, int bottom) {
-        int currentPosition = 0;
-        int snake = 0;
 
         if (top >= height) {
             return 1;
@@ -39,6 +37,8 @@ public class IntegerTask {
             return Integer.MAX_VALUE;
         }
 
+        int currentPosition = 0;
+        int snake = 0;
         while (currentPosition < height) {
             snake++;
             currentPosition = currentPosition + top;
