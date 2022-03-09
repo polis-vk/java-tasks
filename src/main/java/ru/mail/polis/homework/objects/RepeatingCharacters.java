@@ -13,31 +13,33 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if (str == null || str.length() == 0) {
-            return null;
+        if (str == null || str.isEmpty()) {
+            return null; // если строка пустая или nullptr вернуть null
         }
         if (str.length() == 1) {
-            return new Pair<>(str.charAt(0), 1);
+            return new Pair<>(str.charAt(0), 1); // если в строке 1 символ, вернуть его же
         }
         int count = 1;
-        Integer record = 0;
-        Character result = str.charAt(0);
+        int recordLength = 0;
+        char symbol = str.charAt(0);
         for (int i = 0; i < str.length() - 1; i++) {
-            if (str.charAt(i) == str.charAt(i + 1)) {
+            if (str.charAt(i) == str.charAt(i + 1)) { // если следующий элемент равен элементу в данный момент
                 count += 1;
-                if (count > record) {
-                    record = count;
-                    result = str.charAt(i);
+                if (count > recordLength) {
+                    recordLength = count; // обновляю рекордную длину
+                    symbol = str.charAt(i); // заменяю на новый рекордный по длине элемент
                 }
-                continue;
-            } else {
-                count = 1;
+                continue; // продолжаю дальше цикл, тк след элемент из условия выше точно равен нынешнему
+            }
+            count = 1;
+            if (str.length() - 1 - i <= recordLength) { // если длина рекордной строки больше, чем количество оставшихся элементов
+                break; // выхожу досрочно из цикла
             }
         }
-        if (record == 0) {
+        if (recordLength == 0) {
             return new Pair<>(str.charAt(0), 1);
         }
-        return new Pair<>(result, record);
+        return new Pair<>(symbol, recordLength);
     }
 
     public static class Pair<T, V> {

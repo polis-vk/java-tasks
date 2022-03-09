@@ -12,32 +12,32 @@ public class MaxTask {
      */
     public static int[] getMaxArray(int[] array, int count) {
         if (array.length < count) {
-            return null;
+            return null; // если длина массива меньше, чем количество чисел для возвращения - вернуть null
         }
-        int[] result = new int[count];
+        int[] result = new int[count]; // массив значений, который вернется
         if (count == 0) {
-            return result;
+            return result; // если количество максимальных значений равно 0, вернуть нулевой массив
         }
-        int buff = array[0];
-        int index = 0;
-        int min = 0;
-        int[][] temporary = new int[2][array.length];
+        int buff = array[0]; // переменная для сравнения и нахождения в дальнейшем наибольшего числа в массиве
+        int indexOfMinNumber = 0;
+        int[][] temporary = new int[2][array.length]; // двумерный массив для отслеживания записанных уже чисел
         for (int i = 0; i < array.length; i++) {
-            temporary[0][i] = array[i];
-            temporary[1][i] = 1;
+            temporary[0][i] = array[i]; // первую строку делаю копией изначального массива
+            temporary[1][i] = 1; // заполняю единицами для отслеживания изменений
             if (temporary[0][i] <= buff) {
-                min = i;
+                indexOfMinNumber = i; // нахожу индекс наименьшего числа в массиве
             }
         }
+        int indexOfMaxNumber = 0;
         for (int k = 0; k < count; k++) {
-            buff = array[min];
+            buff = array[indexOfMinNumber]; // изначально самое маленькое число в массиве
             for (int i = 0; i < array.length; i++) {
                 if (temporary[0][i] >= buff && temporary[1][i] != -1) {
                     buff = temporary[0][i];
-                    index = i;
+                    indexOfMaxNumber = i; // индекс наибольшего найденного числа согласно условиям
                 }
             }
-            temporary[1][index] = -1;
+            temporary[1][indexOfMaxNumber] = -1; // изменение для понимания того, что данное число уже было записано
             result[k] = buff;
         }
         return result;
