@@ -13,99 +13,83 @@ public class StringTasks {
      * Работайте со строкой, НЕ надо ее переводить в массив байт (это можно использовать только для цикла)
      * У класса Character есть полезные методы, например Character.isDigit()
      */
+
     public static Number valueOf(String str) {
-        if (str == null || str.equals("")) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
-        StringBuilder num = new StringBuilder();
-        boolean chekPoint = false;
-        boolean chekE = false;
-        boolean chekMinus = false;
-        boolean chekNum = false;
-        for (int i = 0; i < str.length(); i++) {
-            char buffChar = str.charAt(i);
-            boolean chekLast = str.charAt(str.length() - 1) == buffChar;
-            switch (buffChar) {
-                case '.':
-                    if (((chekPoint || !chekE) && !chekNum) || chekLast) {
-                        return null;
-                    }
-                    num.append(buffChar);
-                    chekPoint = true;
-                    break;
-                case 'e':
-                    if (chekE || chekLast) {
-                        return null;
-                    }
-                    num.append(buffChar);
-                    chekE = true;
-                    chekMinus = false;
-                    chekNum = false;
-                    break;
-                case '-':
-                    if (chekE) {
-                        if (chekMinus || chekLast) {
-                            return null;
-                        }
-                        num.append(buffChar);
-                        chekMinus = true;
-                        break;
-                    }
-                    if (chekMinus || chekNum) {
-                        return null;
-                    }
-                    num.append(buffChar);
-                    chekMinus = true;
-                    break;
-                default:
-                    if (Character.isDigit(buffChar)) {
-                        if (!chekE) {
-                            chekNum = true;
-                        }
-                        num.append(buffChar);
-                    }
-                    break;
+        String intStr = "";
+        String fracStr = "";
+        String eString = "";
+        String[] splitStr = str.split("\\.");
+        if (splitStr.length > 2 || splitStr[0].length() == str.length() - 1) {
+            return null;
+        }
+        if (splitStr.length == 1) {
+            if (!splitStr[0].contains("e")) {
+                intStr = partInteger(splitStr[0]);
+            } else {
+                String[] currentSplit = splitStr[0].split("e");
+                if (currentSplit.length > 2 || currentSplit.length == 1) {
+                    return null;
+                }
+                intStr = partInteger(currentSplit[0]);
+                eString = partInteger(currentSplit[1]);
             }
         }
-        int resultInt = 0;
-        long resultLong = 0L;
-        double resultDoubleAndFloat = 0.;
-        String resultNumber = num.toString();
-        chekMinus = resultNumber.contains("-");
-        if (!resultNumber.contains(".") && !resultNumber.contains("e")) {
-            resultNumber = resultNumber.replaceFirst("-", "");
-            resultLong = castToLong(resultNumber);
+        if (splitStr.length == 2) {
+            if (splitStr[0].contains("e")) {
+                return null;
+            }
+            intStr = partInteger(splitStr[0]);
+            if (!splitStr[1].contains("e")) {
+                fracStr = partFractional(splitStr[1]);
+            } else {
+                String[] currentSplit = splitStr[1].split("e");
+                if (currentSplit.length > 2 || currentSplit.length == 1) {
+                    return null;
+                }
+                fracStr = partFractional(currentSplit[0]);
+                eString = partInteger(currentSplit[1]);
+            }
+        }
+        if (intStr == null || fracStr == null || eString == null) {
+            return null;
+        }
+        long resultLong;
+        double resultDoubleAndFloat = 0;
+        boolean chekMinus = intStr.contains("-");
+        intStr = intStr.replaceFirst("-", "");
+        if (fracStr.isEmpty() && eString.isEmpty()) {
+            resultLong = castToLong(intStr);
             if (chekMinus) {
                 resultLong *= -1;
             }
             if (resultLong >= Integer.MIN_VALUE && resultLong <= Integer.MAX_VALUE) {
-                resultInt += resultLong;
-                return resultInt;
+                return (int) resultLong;
             }
             return resultLong;
         }
-        String[] splitStr = resultNumber.split("e");
         int degree = 0;
-        if (resultNumber.split("e").length > 1) {
-            degree = (int) castToLong(splitStr[1]);
-            boolean chekMinusDegree = splitStr[1].contains("-");
+        if (!eString.isEmpty()) {
+            boolean chekMinusDegree = eString.contains("-");
+            eString = eString.replaceFirst("-", "");
+            degree = (int) castToLong(eString);
             if (chekMinusDegree) {
                 degree *= -1;
             }
         }
-        String part1 = splitStr[0].split("\\.")[0];
-        for (int i = 0; i < part1.length(); i++) {
-            resultDoubleAndFloat += charToInt(part1.charAt(i)) * Math.pow(10, part1.length() - i - 1);
+        for (int i = 0; i < intStr.length(); i++) {
+            resultDoubleAndFloat += charToInt(intStr.charAt(i)) * Math.pow(10, intStr.length() - i - 1);
         }
-        if (splitStr[0].split("\\.").length > 1) {
-            String part2 = splitStr[0].split("\\.")[1];
-            for (int i = 0; i < part2.length(); i++) {
-                resultDoubleAndFloat += charToInt(part2.charAt(i)) / Math.pow(10, i + 1);
+        if (!fracStr.isEmpty()) {
+            for (int i = 0; i < fracStr.length(); i++) {
+                resultDoubleAndFloat += charToInt(fracStr.charAt(i)) / Math.pow(10, i + 1);
             }
         }
         resultDoubleAndFloat *= Math.pow(10, degree);
-        if (splitStr[0].contains("-")) {
-            resultDoubleAndFloat *= -1.;
+        if (chekMinus) {
+            resultDoubleAndFloat *= -1;
         }
         return resultDoubleAndFloat;
     }
@@ -119,36 +103,50 @@ public class StringTasks {
     }
 
     public static int charToInt(char num) {
-        int numInt = 0;
-        switch (num) {
-            case '1':
-                numInt = 1;
-                break;
-            case '2':
-                numInt = 2;
-                break;
-            case '3':
-                numInt = 3;
-                break;
-            case '4':
-                numInt = 4;
-                break;
-            case '5':
-                numInt = 5;
-                break;
-            case '6':
-                numInt = 6;
-                break;
-            case '7':
-                numInt = 7;
-                break;
-            case '8':
-                numInt = 8;
-                break;
-            case '9':
-                numInt = 9;
-                break;
-        }
-        return numInt;
+        return num - '0';
     }
+
+    private static String partInteger(String str) {
+        StringBuilder result = new StringBuilder();
+        byte countMinus = 0;
+        boolean chekNum = false;
+        for (int i = 0; i < str.length(); i++) {
+            char currentChar = str.charAt(i);
+            if (Character.isDigit(currentChar)) {
+                result.append(currentChar);
+                chekNum = true;
+            }
+            if (currentChar == '-') {
+                countMinus++;
+                if (chekNum || countMinus > 1) {
+                    return null;
+                }
+            }
+        }
+        if (countMinus == 1) {
+            return "-" + result;
+        }
+        return result.toString();
+    }
+
+    private static String partFractional(String str) {
+        if (str.contains("-")) {
+            return null;
+        }
+        StringBuilder result = new StringBuilder();
+        boolean chekNum = false;
+        for (int i = 0; i < str.length(); i++) {
+            char currentChar = str.charAt(i);
+            if (Character.isDigit(currentChar)) {
+                result.append(currentChar);
+                chekNum = true;
+            }
+        }
+        if (!chekNum) {
+            return null;
+        }
+        return result.toString();
+    }
+
 }
+

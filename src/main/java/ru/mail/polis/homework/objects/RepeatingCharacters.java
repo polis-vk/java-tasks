@@ -15,16 +15,19 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if (str == null || str.equals("")) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
         char buffAt = 0;
         int buffCount = 0;
         for (int i = 0; i < str.length(); i++) {
-            char charAt = str.charAt(i);
+            if(buffCount>=str.length()-i){
+                break;
+            }
+            char currentChar = str.charAt(i);
             int count = 1;
             for (int j = i + 1; j < str.length(); j++) {
-                if (charAt == str.charAt(j)) {
+                if (currentChar == str.charAt(j)) {
                     count++;
                 } else {
                     i = j - 1;
@@ -32,7 +35,7 @@ public class RepeatingCharacters {
                 }
             }
             if (count > buffCount) {
-                buffAt = charAt;
+                buffAt = currentChar;
                 buffCount = count;
             }
         }

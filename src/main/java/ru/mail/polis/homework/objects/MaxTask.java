@@ -16,22 +16,23 @@ public class MaxTask {
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копии
      */
     public static int[] getMaxArray(int[] array, int count) {
+        int initialCapacity = count;
         if (array.length < count) {
             return null;
         }
-        int[] arrMaxElement = new int[count];
+        int[] arrMaxElement = new int[initialCapacity];
         Set<Integer> indexSet = new HashSet<>();
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < initialCapacity; i++) {
             int maxNum = Integer.MIN_VALUE;
-            int buffJ = 0;
+            int maxIndex = 0;
             for (int j = 0; j < array.length; j++) {
                 if (array[j] > maxNum && !indexSet.contains(j)) {
                     maxNum = array[j];
-                    buffJ = j;
+                    maxIndex = j;
                 }
             }
             arrMaxElement[i] = maxNum;
-            indexSet.add(buffJ);
+            indexSet.add(maxIndex);
         }
         return arrMaxElement;
     }
