@@ -14,7 +14,7 @@ public class MaxTask {
     public static int[] getMaxArray(int[] array, int count) {
         int[] maxs = new int[count];
 
-        if (array.length < count) {
+        if (array == null || array.length < count) {
             return null;
         }
 //        if (array.length == 0) {
