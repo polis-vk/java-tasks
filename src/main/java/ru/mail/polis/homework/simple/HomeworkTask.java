@@ -10,7 +10,12 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double result = 0;
+        double x;
+        for (x = a; x < b; x += delta) {
+            result += delta * function.applyAsDouble(x);
+        }
+        return result;
     }
 
     /**
@@ -27,7 +32,10 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        if (x1 == x2) {
+            throw new ArithmeticException("Деление на 0.");
+        }
+        return y1 + ((x3 - x1) * (y2 - y1) / (double) (x2 - x1));
     }
 
     /**
