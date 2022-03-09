@@ -12,15 +12,13 @@ public class HomeworkTask {
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integral = 0;
         double quadrangleArea;
-        double t = a;
         while (a < b) {
             if (a + delta >= b) {
-                quadrangleArea = (b - a) * function.applyAsDouble(t);
+                quadrangleArea = (b - a) * function.applyAsDouble(a);
                 integral += quadrangleArea;
             }
-            quadrangleArea = delta * function.applyAsDouble(t);
+            quadrangleArea = delta * function.applyAsDouble(a);
             integral += quadrangleArea;
-            t += delta;
             a += delta;
         }
         return integral;
@@ -38,14 +36,14 @@ public class HomeworkTask {
         if (a == 0)
             return (byte) 1;
         for (int i = 1; a != 0; a /= 10, i++) {
-            reminder = a % 10;
+            reminder = Math.abs(a % 10);
             if (reminder >= maxNumber) {
                 maxNumber = reminder;
                 maxNumberPosition = i;
             }
             numberLength = i + 1;
         }
-        return (byte) (numberLength - maxNumberPosition);
+        return (byte) Math.abs(numberLength - maxNumberPosition);
     }
 
 
