@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-import java.lang.Math.*;
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -53,10 +51,10 @@ public class IntegerTask {
      */
     public static int kDecimal(int n, int order) {
         int number = n;
-        int current_order = 1;
-        while (current_order < order) {
+        int currentOrder = 1;
+        while (currentOrder < order) {
             number = number / 10;
-            ++current_order;
+            ++currentOrder;
         }
         return Math.abs(number) % 10;
     }
