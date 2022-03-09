@@ -23,33 +23,33 @@ public class StringTasks {
         boolean isE = false;
         boolean isPoint = false;
         boolean isDigit = false;
-        char c;
+        char currentChar;
         for (int i = 0; i < str.length(); i++) {
-            c = str.charAt(i);
-            if (Character.isDigit(c)) {
-                strBuilder.append(c);
+            currentChar = str.charAt(i);
+            if (Character.isDigit(currentChar)) {
+                strBuilder.append(currentChar);
                 isDigit = true;
             } else {
-                if (c == '-') {
+                if (currentChar == '-') {
                     if (isMinus || isDigit || isPoint) {
                         return null;
                     }
-                    strBuilder.append(c);
+                    strBuilder.append(currentChar);
                     isMinus = true;
-                } else if (c == 'e') {
+                } else if (currentChar == 'e') {
                     if (isE) {
                         return null;
                     }
-                    strBuilder.append(c);
+                    strBuilder.append(currentChar);
                     isE = true;
                     isDigit = false;
                     isMinus = false;
                     isPoint = false;
-                } else if (c == '.') {
+                } else if (currentChar == '.') {
                     if (isPoint) {
                         return null;
                     }
-                    strBuilder.append(c);
+                    strBuilder.append(currentChar);
                     isPoint = true;
                 }
             }
@@ -112,29 +112,10 @@ public class StringTasks {
     }
 
     public static int getDigit(char c) {
-        switch (c) {
-            case '0':
-                return 0;
-            case '1':
-                return '1' - '0';
-            case '2':
-                return '2' - '0';
-            case '3':
-                return '3' - '0';
-            case '4':
-                return '4' - '0';
-            case '5':
-                return '5' - '0';
-            case '6':
-                return '6' - '0';
-            case '7':
-                return '7' - '0';
-            case '8':
-                return '8' - '0';
-            case '9':
-                return '9' - '0';
-            default:
-                return -1;
+        if (Character.isDigit(c)) {
+            return c - '0';
         }
+        return -1;
     }
 }
+
