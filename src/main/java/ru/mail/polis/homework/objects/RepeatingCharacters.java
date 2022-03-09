@@ -16,22 +16,25 @@ public class RepeatingCharacters {
         if (str == null || str.isEmpty()) {
             return null;
         }
-        LinkedHashMap<Character, Integer> temp = new LinkedHashMap<>();
-        char c;
-        temp.put(str.charAt(0), 1);
+        char currentChar = str.charAt(0);
+        int currentCount = 1;
+        Pair<Character, Integer> ans = new Pair<>(currentChar, currentCount);
         for (int i = 1; i < str.length(); i++) {
-            c = str.charAt(i);
-            if (temp.containsKey(c) && str.charAt(i - 1) == c) {
-                temp.put(c, temp.get(c) + 1);
+            if (currentChar == str.charAt(i)) {
+                currentCount++;
             } else {
-                temp.put(c, 1);
+                if (ans.getSecond() > str.length() - i) {
+                    break;
+                }
+                if (ans.getSecond() < currentCount) {
+                    ans = new Pair<>(currentChar, currentCount);
+                }
+                currentChar = str.charAt(i);
+                currentCount = 1;
             }
         }
-        Pair<Character, Integer> ans = new Pair<>(' ', 0);
-        for (Map.Entry<Character, Integer> pair : temp.entrySet()) {
-            if (pair.getValue() > ans.getSecond()) {
-                ans = new Pair<>(pair.getKey(), pair.getValue());
-            }
+        if (ans.getSecond() < currentCount) {
+            ans = new Pair<>(currentChar, currentCount);
         }
         return ans;
     }
