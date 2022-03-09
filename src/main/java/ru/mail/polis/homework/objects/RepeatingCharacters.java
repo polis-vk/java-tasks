@@ -16,9 +16,9 @@ public class RepeatingCharacters {
         if (str == null || str.isEmpty()) {
             return null;
         }
-        Pair<Character, Integer> pair = new Pair<>(str.charAt(0), 1);
         int curCount = 1;
         char curChar = str.charAt(0);
+        Pair<Character, Integer> pair = new Pair<>(curChar, curCount);
         for (int i = 1; i < str.length(); i++) {
             if (str.charAt(i) == curChar) {
                 curCount++;
@@ -26,10 +26,12 @@ public class RepeatingCharacters {
                 if (curCount > pair.getSecond()) {
                     pair = new Pair<>(str.charAt(i - 1), curCount);
                 }
+                if(str.length() - (i + 1) < pair.getSecond()){
+                    break;
+                }
                 curCount = 1;
                 curChar = str.charAt(i);
             }
-
         }
         if (curCount > pair.getSecond()) {
             pair = new Pair<>(str.charAt(str.length() - 1), curCount);
