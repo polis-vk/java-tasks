@@ -31,6 +31,9 @@ public class IntegerTask {
         if (top <= bottom && top < height) {
             return Integer.MAX_VALUE;
         }
+        if (top >= height) {
+            return 1;
+        }
         int n = 0;
         int h = height;
         while (h > 0) {
@@ -38,12 +41,12 @@ public class IntegerTask {
             h = h - top;
             if (h <= 0) {
                 break;
-            } else {
-                h = h + bottom;
             }
+            h = h + bottom;
         }
         return n;
     }
+
 
     /**
      * Дано число n и номер разряда order. Выведите цифру стояющую на нужном разряде
@@ -64,7 +67,7 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long fac = 1;
-        for (int i = 1; i <= n; i++) {
+        for (byte i = 1; i <= n; i++) {
             fac = fac * i;
         }
         return fac;

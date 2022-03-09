@@ -11,8 +11,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integral = 0;
-        for (double d = a; d <= b; d = d + delta) {
-            integral = integral + function.applyAsDouble(d) * delta;
+        for (double x = a; x <= b; x = x + delta) {
+            integral = integral + function.applyAsDouble(x) * delta;
         }
         return integral;
     }
@@ -24,7 +24,9 @@ public class HomeworkTask {
     public static byte maxNumber(long a) {
         long number = a;
         int lastDigit;
-        int max = 0, n = 0, i = 0;
+        int max = 0;
+        int n = 0;
+        int i = 0;
         while (number > 0) {
             n++;
             lastDigit = Math.abs((int) (number % 10));
