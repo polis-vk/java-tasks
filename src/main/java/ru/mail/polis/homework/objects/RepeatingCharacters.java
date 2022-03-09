@@ -13,7 +13,34 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        return new Pair<>('s', 4);
+        // Граничный случай
+        if (str == null || str.equals("")) {
+            return null;
+        }
+
+        int quantOfSym = 1; // Кол-во повторяющихся символов на данный момент
+        int maxSym = quantOfSym; // Максимальное кол-во повторяющихся символов
+
+        char currentChar = str.charAt(0); // Первый символ
+        char maxRepChar = currentChar; // Самый часто повторяющийся символ
+
+        for (int i = 1; i < str.length(); i++) {
+            if (currentChar == str.charAt(i)) {
+                quantOfSym += 1;
+            } else {
+                currentChar = str.charAt(i);
+                quantOfSym = 1;
+            }
+
+            if (quantOfSym > maxSym) {
+                maxSym = quantOfSym;
+                maxRepChar = currentChar;
+
+            }
+        }
+
+
+        return new Pair<>(maxRepChar, maxSym);
     }
 
     public static class Pair<T, V> {
