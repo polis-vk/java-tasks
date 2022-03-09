@@ -40,13 +40,13 @@ public class HomeworkTaskTest {
         assertEquals(1.5, HomeworkTask.lineFunction(0, 0, 2, 3, 1), 1e-2);
     }
 
-   // @Test
-   /* public void square() {
+    @Test
+   public void square() {
         assertEquals(0, HomeworkTask.square(0, 0, 0, 0, 0, 0, 0, 0), 1e-2);
         assertEquals(4, HomeworkTask.square(1, 1, 1, -1, -1, -1, -1, 1), 1e-2);
         assertEquals(2, HomeworkTask.square(0, -1, -1, 0, 0, 1, 1, 0), 1e-2);
         assertEquals(2, HomeworkTask.square(5, 4, 4, 5, 5, 6, 6, 5), 1e-2);
         assertEquals(17.5, HomeworkTask.square(1, 4, 3, 2, 8, 11, 6, 10), 1e-2);
         assertEquals(16, HomeworkTask.square(2, 4, 4, 7, 9, 13, 6, 5), 1e-2);
-    }*/
+    }
 }

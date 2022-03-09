@@ -34,10 +34,7 @@ public class IntegerTask {
         if (bottom >= top) {
             return Integer.MAX_VALUE;
         }
-        double days = Math.ceil((height-top)*1.0/(top-bottom));
-        return (int)days + 1;
-
-
+        return (int) Math.ceil((height - top) * 1.0 / (top - bottom)) + 1;
     }
 
     /**
@@ -45,14 +42,12 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-
         int tensCount = 1;
         for (int i = 0; i < order; i++) {
             tensCount *= 10;
         }
-        return Math.abs(n%tensCount) / (tensCount/10);
+        return Math.abs(n % tensCount) / (tensCount / 10);
     }
-
 
     /**
      * Выведите факториал от числа n
@@ -60,7 +55,7 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long factorial = 1;
-        for (int i = 1; i <= n; i++) {
+        for (byte i = 1; i <= n; i++) {
             factorial *= i;
         }
         return factorial;

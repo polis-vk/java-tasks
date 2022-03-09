@@ -31,7 +31,7 @@ public class HomeworkTask {
         int numberIndex = 0;
         int number = 0;
         int maxNumber = -1;
-        tmp=a;
+        tmp = a;
         while (tmp > 0) {
             numberIndex += 1;
             if (tmp % 10 >= maxNumber) {
@@ -42,7 +42,6 @@ public class HomeworkTask {
         }
         return (byte) (number + 1);
     }
-
 
     /**
      * Даны две точки в пространстве (x1, y1) и (x2, y2). Вам нужно найти Y координату третьей точки (x3, y3),
@@ -58,5 +57,4 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {return 0;}
-
 }
