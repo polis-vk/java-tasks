@@ -28,23 +28,21 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        int countOfDays = 0;
-        int step = Math.abs(top - bottom);
-        int len = 0;
-
         if (bottom >= top && top < height) {
             return Integer.MAX_VALUE;
         }
-
+        int result = 0;
+        int step = Math.abs(top - bottom);
+        int len = 0;
         for (int i = 0; i < height; i += step) {
             if (len + top >= height) {
-                countOfDays++;
+                result++;
                 break;
             }
             len += step;
-            countOfDays++;
+            result++;
         }
-        return countOfDays;
+        return result;
     }
 
     /**
@@ -52,13 +50,11 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int result;
-        int n1 = n;
+        int currentNum = n;
         for (int i = 0; i < order - 1; i++) {
-            n1 = n1 / 10;
+            currentNum = currentNum / 10;
         }
-        result = n1 % 10;
-        return Math.abs(result);
+        return Math.abs(currentNum % 10);
     }
 
 
