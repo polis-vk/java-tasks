@@ -11,10 +11,10 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integral = 0;
-        double diff = a;
-        while (b - diff >= 0.00000001) {
-            integral = integral + (delta * function.applyAsDouble(diff));
-            diff += delta;
+        double x = a;
+        while (b >= x) {
+            integral = integral + (delta * function.applyAsDouble(x));
+            x += delta;
         }
         return integral;
     }
