@@ -40,7 +40,7 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return Math.abs((int) ((n % pow(10, order)) / pow(10, order - 1)));
+        return Math.abs((int) ((n % Math.pow(10, order)) / Math.pow(10, order - 1)));
     }
 
 
@@ -49,10 +49,10 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        long factorial_n = 1;
-        for (int i = 2; i <= n; i++) {
-            factorial_n *= i;
+        long factorial_value = 1;
+        for (byte i = 2; i <= n; i++) {
+            factorial_value *= i;
         }
-        return factorial_n;
+        return factorial_value;
     }
 }
