@@ -33,16 +33,15 @@ public class MaxTask {
              * Заполняю возвращаемый массив
              * (использую цикл для того, чтобы разрешить проблему коллизии)
              */
-            if(array.length - counter <= count) {
-                while(array.length - counter - 1 < count){
-                    if(array[i] < 0 && array[i] < max[array.length - counter - 1]){
+            if (array.length - counter <= count) {
+                while (array.length - counter - 1 < count) {
+                    if (array[i] < 0 && array[i] < max[array.length - counter - 1]) {
                         max[array.length - counter - 1] = array[i];
                         break;
-                    }
-                    else if(array[i] > max[array.length - counter - 1]) {
+                    } else if (array[i] > max[array.length - counter - 1]) {
                         max[array.length - counter - 1] = array[i];
                         break;
-                    }else{
+                    } else {
                         counter--;
                     }
                 }
