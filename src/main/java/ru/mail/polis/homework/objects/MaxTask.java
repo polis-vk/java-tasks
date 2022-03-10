@@ -11,26 +11,22 @@ public class MaxTask {
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копии
      */
     public static int[] getMaxArray(int[] array, int count) {
-        if (array.length < count) {
+        if (array == null || array.length < count ) {
             return null; // если длина массива меньше, чем количество чисел для возвращения - вернуть null
         }
         int[] result = new int[count]; // массив значений, который вернется
         if (count == 0) {
             return result; // если количество максимальных значений равно 0, вернуть нулевой массив
         }
-        int buff = array[0]; // переменная для сравнения и нахождения в дальнейшем наибольшего числа в массиве
-        int indexOfMinNumber = 0;
+        int buff; // переменная для сравнения и нахождения в дальнейшем наибольшего числа в массиве
         int[][] temporary = new int[2][array.length]; // двумерный массив для отслеживания записанных уже чисел
         for (int i = 0; i < array.length; i++) {
             temporary[0][i] = array[i]; // первую строку делаю копией изначального массива
             temporary[1][i] = 1; // заполняю единицами для отслеживания изменений
-            if (temporary[0][i] <= buff) {
-                indexOfMinNumber = i; // нахожу индекс наименьшего числа в массиве
-            }
         }
         int indexOfMaxNumber = 0;
         for (int k = 0; k < count; k++) {
-            buff = array[indexOfMinNumber]; // изначально самое маленькое число в массиве
+            buff = Integer.MIN_VALUE;
             for (int i = 0; i < array.length; i++) {
                 if (temporary[0][i] >= buff && temporary[1][i] != -1) {
                     buff = temporary[0][i];

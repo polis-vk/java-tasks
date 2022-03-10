@@ -17,15 +17,9 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        if (str == null || str.length() == 0) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
-        int checkDot = 0;
-        int checkEps = 0;
-        int checkMinus = 0;
-        int memoryMinus = -1;
-        int memoryEps = -1;
-        int memoryDot = -1;
         StringBuilder temporary = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
             Character buff = str.charAt(i);
@@ -33,6 +27,9 @@ public class StringTasks {
                 temporary.append(buff);
             }
         }
+        int checkDot = 0;
+        int checkEps = 0;
+        int checkMinus = 0;
         for (int i = 0; i < temporary.length(); i++) {
             if (temporary.charAt(i) == '.') {
                 checkDot += 1;
@@ -53,19 +50,20 @@ public class StringTasks {
         if (temporary.charAt(0) == '.' || temporary.charAt(temporary.length() - 1) == '.') {
             return null;
         }
+        if ((temporary.charAt(temporary.length() - 1)) == '-') {
+            return null;
+        }
         for (int i = 0; i < temporary.length() - 1; i++) {
             if (temporary.charAt(i) == '-' && temporary.charAt(i + 1) == '-') {
                 return null;
             }
-        }
-        if ((temporary.charAt(temporary.length() - 1)) == '-') {
-            return null;
-        }
-        for (int i = 0; i < temporary.length(); i++) {
             if (temporary.charAt(i) == 'e' && (temporary.charAt(i - 1) == '.' || temporary.charAt(i - 1) == '-')) {
                 return null;
             }
         }
+        int memoryMinus = -1;
+        int memoryEps = -1;
+        int memoryDot = -1;
         for (int i = 0; i < temporary.length(); i++) {
             if (temporary.charAt(i) == '-' && i != 0) {
                 memoryMinus = i;
@@ -85,28 +83,21 @@ public class StringTasks {
                 return toDouble(result, memoryDot, memoryEps, memoryMinus, false);
             }
         }
-        long resultNumber = Long.valueOf(result);
+        long resultNumber = 0;
+        if (result.charAt(0) == '-') {
+            resultNumber = toLong(result, true);
+        } else {
+            resultNumber = toLong(result, false);
+        }
         if (Integer.MIN_VALUE > resultNumber || resultNumber > Integer.MAX_VALUE) {
-            if (result.charAt(0) == '-') {
-                return toLong(result, true);
-            } else {
-                return toLong(result, false);
-            }
+            return resultNumber;
         } else if (Integer.MIN_VALUE <= resultNumber && resultNumber <= Integer.MAX_VALUE) {
-            if (result.charAt(0) == '-') {
-                return toInt(result, true);
-            } else {
-                return toInt(result, false);
-            }
+            return (int) resultNumber;
         }
         return 0;
     }
 
     public static double toDouble(String result, int memoryDot, int memoryEps, int memoryMinus, boolean choice) {
-        int epsPart = 0;
-        long integerPart = -1;
-        double doublePart = 0;
-        boolean intPart = true;
         boolean flagDot = true;
         boolean flagEps = true;
         boolean flagMinus = true;
@@ -119,6 +110,10 @@ public class StringTasks {
         if (memoryMinus == -1) {
             flagMinus = false;
         }
+        long integerPart = -1;
+        int epsPart = 0;
+        double doublePart = 0;
+        boolean intPart = true;
         if (!choice) {
             if (flagDot) {
                 intPart = false;
@@ -128,14 +123,13 @@ public class StringTasks {
                     integerPart += CheckInt(result.charAt(i)) * Math.pow(10, rank);
                     rank -= 1;
                 }
+                rank = 1;
                 if (flagEps) {
-                    rank = 1;
                     for (int i = memoryDot + 1; i < memoryEps; i++) {
                         doublePart += CheckInt(result.charAt(i)) * Math.pow(10, -rank);
                         rank += 1;
                     }
                 } else {
-                    rank = 1;
                     for (int i = memoryDot + 1; i < result.length(); i++) {
                         doublePart += CheckInt(result.charAt(i)) * Math.pow(10, -rank);
                         rank += 1;
@@ -166,11 +160,6 @@ public class StringTasks {
                     }
                 }
             }
-            if (flagMinus) {
-                return (integerPart + doublePart) * Math.pow(10, (-1 * epsPart));
-            } else {
-                return (integerPart + doublePart) * Math.pow(10, epsPart);
-            }
         } else {
             if (flagDot) {
                 intPart = false;
@@ -180,14 +169,13 @@ public class StringTasks {
                     integerPart -= CheckInt(result.charAt(i)) * Math.pow(10, rank);
                     rank -= 1;
                 }
+                rank = 1;
                 if (flagEps) {
-                    rank = 1;
                     for (int i = memoryDot + 1; i < memoryEps; i++) {
                         doublePart -= CheckInt(result.charAt(i)) * Math.pow(10, -1 * rank);
                         rank += 1;
                     }
                 } else {
-                    rank = 1;
                     for (int i = memoryDot + 1; i < result.length(); i++) {
                         doublePart -= CheckInt(result.charAt(i)) * Math.pow(10, -1 * rank);
                         rank += 1;
@@ -218,29 +206,12 @@ public class StringTasks {
                     }
                 }
             }
-            if (flagMinus) {
-                return (integerPart + doublePart) * Math.pow(10, (-1 * epsPart));
-            } else {
-                return (integerPart + doublePart) * Math.pow(10, epsPart);
-            }
         }
-    }
-
-    public static int toInt(String result, boolean choice) {
-        int toInt = 0;
-        int rank = result.length() - 1;
-        if (!choice) {
-            for (int i = 0; i < result.length(); i++) {
-                toInt += CheckInt(result.charAt(i)) * Math.pow(10, rank);
-                rank -= 1;
-            }
+        if (flagMinus) {
+            return (integerPart + doublePart) * Math.pow(10, (-1 * epsPart));
         } else {
-            for (int i = 0; i < result.length(); i++) {
-                toInt -= CheckInt(result.charAt(i)) * Math.pow(10, rank);
-                rank -= 1;
-            }
+            return (integerPart + doublePart) * Math.pow(10, epsPart);
         }
-        return toInt;
     }
 
     public static long toLong(String result, boolean choice) {
@@ -262,8 +233,6 @@ public class StringTasks {
 
     public static int CheckInt(char buff) {
         switch (buff) {
-            case '0':
-                return 0;
             case '1':
                 return 1;
             case '2':
@@ -293,9 +262,7 @@ public class StringTasks {
         }
         switch (buff) {
             case '-':
-                return true;
             case '.':
-                return true;
             case 'e':
                 return true;
             default:
