@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.PriorityQueue;
 
 public class MaxTask {
 
@@ -13,54 +15,28 @@ public class MaxTask {
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копии
      */
     public static int[] getMaxArray(int[] array, int count) {
+        if (array == null || count > array.length) {
+            return null;
+        }
         if (count == 0) {
             return new int[0];
         }
-        if (count > array.length) {
-            return null;
+        PriorityQueue<Integer> currQueue = new PriorityQueue<>();
+        for (int i = 0; i < count; i++) {
+            currQueue.add(array[i]);
         }
-        int[] ans = Arrays.copyOf(array, count);
-        int index = -1;
-        boolean flag = false;
         for (int i = count; i < array.length; i++) {
-            if (!flag) {
-                index = minValueIndex(ans);
-                flag = true;
-            }
-            if (array[i] > ans[index]) {
-                ans[index] = array[i];
-                flag = false;
+            if (currQueue.element() < array[i]) {
+                currQueue.remove();
+                currQueue.add(array[i]);
             }
         }
-        return mySort(ans);
-    }
-
-    static int minValueIndex(int[] array) {
-        int index = 0;
-        for (int i = 1; i < array.length; i++) {
-            if (array[i] < array[index]) index = i;
+        Object[] temp = currQueue.toArray();
+        Arrays.sort(temp, Collections.reverseOrder());
+        int[] ans = new int[count];
+        for (int i = 0; i < count; i++) {
+            ans[i] = (int) temp[i];
         }
-        return index;
-    }
-
-    static int[] mySort(int[] array) {
-        int temp;
-        boolean flag;
-        int[] current = Arrays.copyOf(array, array.length);
-        for (int i = 0; i < array.length - 1; i++) {
-            flag = false;
-            for (int j = 0; j < array.length - i - 1; j++) {
-                if (current[j] < current[j + 1]) {
-                    temp = current[j];
-                    current[j] = current[j + 1];
-                    current[j + 1] = temp;
-                    flag = true;
-                }
-            }
-            if (!flag) {
-                break;
-            }
-        }
-        return current;
+        return ans;
     }
 }
