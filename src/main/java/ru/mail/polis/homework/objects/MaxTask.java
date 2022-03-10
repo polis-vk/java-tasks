@@ -14,26 +14,40 @@ public class MaxTask {
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копии
      */
     public static int[] getMaxArray(int[] array, int count) {
-        if (count > array.length) {
+        if (array == null || count > array.length) {
             return null;
         }
-        int[] max = Arrays.copyOf(array, count);
-        Arrays.sort(max);
-        for (int i = 0; i < count / 2; i++) {
-            int buf = max[i];
-            max[i] = max[count - i - 1];
-            max[count - i - 1] = buf;
-        }
-        for (int i = count; i < array.length; i++) {
-            for (int j = 0; j < count; j++) {
-                if (array[i] > max[j]) {
-                    if (count - 1 - j >= 0) {
-                        System.arraycopy(max, j, max, j + 1, count - 1 - j);
-                    }
-                    max[j] = array[i];
-                    break;
+        int[] max = new int[count];
+        int counter = 0;
+        /*
+         * Для каждого элемента узнаю больше скольких он из данного массива,
+         * тем самым заранее узнаю его номер в возвращаемом массиве
+         */
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array.length; j++) {
+                if (array[i] >= array[j] && i != j) {
+                    counter++;
                 }
             }
+            /*
+             * Заполняю возвращаемый массив
+             * (использую цикл для того, чтобы разрешить проблему коллизии)
+             */
+            if(array.length - counter <= count) {
+                while(array.length - counter - 1 < count){
+                    if(array[i] < 0 && array[i] < max[array.length - counter - 1]){
+                        max[array.length - counter - 1] = array[i];
+                        break;
+                    }
+                    else if(array[i] > max[array.length - counter - 1]) {
+                        max[array.length - counter - 1] = array[i];
+                        break;
+                    }else{
+                        counter--;
+                    }
+                }
+            }
+            counter = 0;
         }
         return max;
     }
