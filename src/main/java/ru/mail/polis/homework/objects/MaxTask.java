@@ -17,19 +17,25 @@ public class MaxTask {
             return null;
         }
         int[] result = new int[count];
+        if (count == 0) {
+            return result;
+        }
         Arrays.fill(result, Integer.MIN_VALUE);
+        int minResult = Integer.MIN_VALUE;
         int j;
         for (int value : array) {
-            for (j = 0; j < count; j++) {
+            if (minResult < value) {
+                j = count - 1;
+                while (j > 0 && result[j] < value) {
+                    result[j] = result[j - 1];
+                    j--;
+                }
                 if (result[j] < value) {
-                    break;
+                    result[j] = value;
+                } else {
+                    result[j + 1] = value;
                 }
-            }
-            if (j != count) {
-                for (int k = count - 1; k != j; k--) {
-                    result[k] = result[k - 1];
-                }
-                result[j] = value;
+                minResult = result[count - 1];
             }
         }
         return result;
