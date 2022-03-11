@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.Arrays;
+
 public class MaxTask {
 
     /**
@@ -15,20 +17,44 @@ public class MaxTask {
         if (array.length < count) {
             return null;
         }
-        int[] currencyArray = array.clone();
-        int[] arrMaxElement = new int[count];
-        for (int i = 0; i < count; i++) {
-            int maxNum = Integer.MIN_VALUE;
-            int maxIndex = 0;
-            for (int j = 0; j < currencyArray.length; j++) {
-                if (currencyArray[j] > maxNum) {
-                    maxNum = currencyArray[j];
-                    maxIndex = j;
-                }
-            }
-            arrMaxElement[i] = maxNum;
-            currencyArray[maxIndex] = Integer.MIN_VALUE;
+        int[] resultArray = new int[count];
+        if (count == 0) {
+            return resultArray;
         }
-        return arrMaxElement;
+        int[] currentArray = array.clone();
+        quickSelect(currentArray, 0, currentArray.length - 1, currentArray.length - 1);
+        for (int i = 1; i <= count; i++) {
+            resultArray[i - 1] = currentArray[currentArray.length - i];
+        }
+        return resultArray;
     }
+
+    private static void quickSelect(int[] array, int start, int end, int length) {
+        int pivotIndex = start + ((end - start) / 2);
+        int pivot = array[pivotIndex];
+        swap(array, pivotIndex, end);
+        pivotIndex = start;
+        for (int i = start; i < end; i++) {
+            if (array[i] < pivot) {
+                swap(array, pivotIndex, i);
+                pivotIndex++;
+            }
+        }
+        swap(array, pivotIndex, end);
+        if (pivotIndex == length) {
+            return;
+        }
+        if (pivotIndex < length) {
+            quickSelect(array, pivotIndex + 1, end, length);
+            return;
+        }
+        quickSelect(array, start, pivotIndex - 1, length);
+    }
+
+    private static void swap(int[] array, int firstIndex, int secondIndex) {
+        int temp = array[firstIndex];
+        array[firstIndex] = array[secondIndex];
+        array[secondIndex] = temp;
+    }
+
 }
