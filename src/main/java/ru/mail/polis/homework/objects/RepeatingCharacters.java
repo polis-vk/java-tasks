@@ -26,7 +26,7 @@ public class RepeatingCharacters {
                 if (curCount > pair.getSecond()) {
                     pair = new Pair<>(str.charAt(i - 1), curCount);
                 }
-                if (str.length() - (i + 1) < pair.getSecond()) {
+                if (str.length() - i <= pair.getSecond()) {
                     break;
                 }
                 curCount = 1;
