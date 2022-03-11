@@ -14,26 +14,32 @@ public class MaxTask {
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копии
      */
     public static int[] getMaxArray(int[] array, int count) {
-        if (count > array.length) {
+        if (array == null || count > array.length) {
             return null;
         }
-        int[] max = Arrays.copyOf(array, count);
+        int[] max = new int[count];
+        System.arraycopy(array, 0, max, 0, count);
         Arrays.sort(max);
+        for (int i = count; i < array.length; i++) {
+            for (int j = 0; j < count; j++) {
+                if (array[i] <= max[j]) {
+                    if (j == 0) {
+                        break;
+                    }
+                    System.arraycopy(max, 1, max, 0, j);
+                    max[j - 1] = array[i];
+                    break;
+                }
+                if (j == count - 1) {
+                    System.arraycopy(max, 1, max, 0, j);
+                    max[j] = array[i];
+                }
+            }
+        }
         for (int i = 0; i < count / 2; i++) {
             int buf = max[i];
             max[i] = max[count - i - 1];
             max[count - i - 1] = buf;
-        }
-        for (int i = count; i < array.length; i++) {
-            for (int j = 0; j < count; j++) {
-                if (array[i] > max[j]) {
-                    if (count - 1 - j >= 0){
-                        System.arraycopy(max, j, max, j + 1, count - 1 - j);
-                    }
-                    max[j] = array[i];
-                    break;
-                }
-            }
         }
         return max;
     }
