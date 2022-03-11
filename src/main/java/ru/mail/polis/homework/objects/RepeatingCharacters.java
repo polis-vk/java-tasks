@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.objects;
 
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -18,10 +16,10 @@ public class RepeatingCharacters {
         if (str == null || str.isEmpty()) {
             return null;
         }
-        char buffAt = 0;
-        int buffCount = 0;
+        char resultChar = 0;
+        int resultCount = 0;
         for (int i = 0; i < str.length(); i++) {
-            if(buffCount>=str.length()-i){
+            if (resultCount >= str.length() - i) {
                 break;
             }
             char currentChar = str.charAt(i);
@@ -34,12 +32,12 @@ public class RepeatingCharacters {
                     break;
                 }
             }
-            if (count > buffCount) {
-                buffAt = currentChar;
-                buffCount = count;
+            if (count > resultCount) {
+                resultChar = currentChar;
+                resultCount = count;
             }
         }
-        return new Pair<>(buffAt, buffCount);
+        return new Pair<>(resultChar, resultCount);
     }
 
     public static class Pair<T, V> {
