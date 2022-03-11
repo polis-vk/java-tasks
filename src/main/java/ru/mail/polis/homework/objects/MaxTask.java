@@ -21,22 +21,40 @@ public class MaxTask {
         if (count == 0) {
             return new int[0];
         }
-        PriorityQueue<Integer> currQueue = new PriorityQueue<>();
-        for (int i = 0; i < count; i++) {
-            currQueue.add(array[i]);
-        }
+        int[] result = Arrays.copyOf(array, count);
+        int index = -1;
+        boolean flag = false;
         for (int i = count; i < array.length; i++) {
-            if (currQueue.element() < array[i]) {
-                currQueue.remove();
-                currQueue.add(array[i]);
+            if (!flag) {
+                index = minValueIndex(result);
+                flag = true;
+            }
+            if (array[i] >= result[index]) {
+                result[index] = array[i];
+                flag = false;
             }
         }
-        Object[] temp = currQueue.toArray();
-        Arrays.sort(temp, Collections.reverseOrder());
-        int[] ans = new int[count];
-        for (int i = 0; i < count; i++) {
-            ans[i] = (int) temp[i];
+        reverse(result);
+        return result;
+    }
+
+    static int minValueIndex(int[] array) {
+        int index = 0;
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] < array[index]) {
+                index = i;
+            }
         }
-        return ans;
+        return index;
+    }
+
+    public static void reverse(int[] array) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = -1 * array[i];
+        }
+        Arrays.sort(array);
+        for (int i = 0; i < array.length; i++) {
+            array[i] = -1 * array[i];
+        }
     }
 }
