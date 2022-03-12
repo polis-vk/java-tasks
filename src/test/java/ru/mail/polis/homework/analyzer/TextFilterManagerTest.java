@@ -112,6 +112,18 @@ public class TextFilterManagerTest {
     }
 
     @Test
+    public void analyzeSpaceLength() {
+        TextFilterManager manager = new TextFilterManager(
+                new TextAnalyzer[]{TextAnalyzer.createSpaceLengthAnalyzer()});
+        assertEquals("GOOD", manager.analyze("Привет, я Петя :(").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("SPACE_LENGTH", manager.analyze("Скажите  код из смс  :(").toString());
+        assertEquals("SPACE_LENGTH", manager.analyze("С  кажите код из смс пожалуйста ").toString());
+        assertEquals("GOOD", manager.analyze("Ооооооочень длиннннннаааааяяяя стрроооооооккккаааааа").toString());
+    }
+
+    @Test
     public void analyzeAllFiltersMany() {
         manyFilters(false);
     }
