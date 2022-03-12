@@ -18,12 +18,12 @@ public class MaxTask {
         if (count == 0) {
             return result; // если количество максимальных значений равно 0, вернуть нулевой массив
         }
-        int buff; // переменная для сравнения и нахождения в дальнейшем наибольшего числа в массиве
         int[][] temporary = new int[2][array.length]; // двумерный массив для отслеживания записанных уже чисел
         for (int i = 0; i < array.length; i++) {
             temporary[0][i] = array[i]; // первую строку делаю копией изначального массива
             temporary[1][i] = 1; // заполняю единицами для отслеживания изменений
         }
+        int buff = 0;
         int indexOfMaxNumber = 0;
         for (int k = 0; k < count; k++) {
             buff = Integer.MIN_VALUE;

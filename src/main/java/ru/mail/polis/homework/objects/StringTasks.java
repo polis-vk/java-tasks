@@ -53,6 +53,9 @@ public class StringTasks {
         if ((temporary.charAt(temporary.length() - 1)) == '-') {
             return null;
         }
+        int memoryMinus = -1;
+        int memoryEps = -1;
+        int memoryDot = -1;
         for (int i = 0; i < temporary.length() - 1; i++) {
             if (temporary.charAt(i) == '-' && temporary.charAt(i + 1) == '-') {
                 return null;
@@ -60,11 +63,6 @@ public class StringTasks {
             if (temporary.charAt(i) == 'e' && (temporary.charAt(i - 1) == '.' || temporary.charAt(i - 1) == '-')) {
                 return null;
             }
-        }
-        int memoryMinus = -1;
-        int memoryEps = -1;
-        int memoryDot = -1;
-        for (int i = 0; i < temporary.length(); i++) {
             if (temporary.charAt(i) == '-' && i != 0) {
                 memoryMinus = i;
                 continue;
