@@ -13,22 +13,22 @@ public class RepeatingCharacters {
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
         if (str == null || str.isEmpty()) { return null; }
 
-        int comparator = 1;
         int currNumOfRepChar = 1;
+        int maxNumOfRepChar = 1;
         int indexOfMaxRepChar = 0;
 
         for (int i = 0; i < str.length() - 1; i++) {
             if (!(str.charAt(i) == str.charAt(i+1))) {
-                comparator = 1;
+                currNumOfRepChar = 1;
                 continue;
             }
-            comparator++;
-            if (comparator > currNumOfRepChar) {
-                currNumOfRepChar = comparator;
+            currNumOfRepChar++;
+            if (currNumOfRepChar > maxNumOfRepChar) {
+                maxNumOfRepChar = currNumOfRepChar;
                 indexOfMaxRepChar = i;
             }
         }
-        return new Pair<>(str.charAt(indexOfMaxRepChar), currNumOfRepChar);
+        return new Pair<>(str.charAt(indexOfMaxRepChar), maxNumOfRepChar);
     }
 
     public static class Pair<T, V> {
