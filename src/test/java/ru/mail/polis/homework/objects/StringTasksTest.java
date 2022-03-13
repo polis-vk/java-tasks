@@ -9,6 +9,10 @@ public class StringTasksTest {
 
     @Test
     public void valueOf() {
+        assertEquals(null, StringTasks.valueOf("15e-5-5959"));
+        assertEquals(null, StringTasks.valueOf("154-54e-5"));
+        assertEquals(null, StringTasks.valueOf("15e-"));
+        assertEquals(null, StringTasks.valueOf("-e1"));
         assertEquals(null, StringTasks.valueOf(null));
         assertEquals(null, StringTasks.valueOf(""));
         assertEquals(0, StringTasks.valueOf("0"));
