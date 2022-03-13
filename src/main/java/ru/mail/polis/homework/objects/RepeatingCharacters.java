@@ -10,36 +10,29 @@ import java.util.Objects;
  * Пример abbasbdlbdbfklsssbb -> (s, 3)
  */
 public class RepeatingCharacters {
-
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
+        if (str == null || str.isEmpty()) { return null; }
 
-        if (str == null || str.equals("")) { return null; }
-
-        String[] arrayOfString = str.split("");
-        int counter = 0;
-        int[] arrayOfNumRepChar = new int[arrayOfString.length];
-
-        for (int i = 0; i < arrayOfString.length; i++) {
-            for (int j = i; j < arrayOfString.length; j++) {
-                if (!arrayOfString[i].equals(arrayOfString[j])) { break;}
-                    counter++;
-            }
-            arrayOfNumRepChar[i] = counter;
-            counter = 0;
-        }
-
+        int comparator = 1;
+        int currNumOfRepChar = 1;
         int indexOfMaxRepChar = 0;
-        int maxNumOfRepChar = Integer.MIN_VALUE;
 
-        for (int i = 0; i < arrayOfNumRepChar.length; i++) {
-            if (arrayOfNumRepChar[i] > maxNumOfRepChar) {
-                maxNumOfRepChar =  arrayOfNumRepChar[i];
+        for (int i = 0; i < str.length() - 1; i++) {
+            if (!(str.charAt(i) == str.charAt(i+1))) {
+                if (comparator > currNumOfRepChar) {
+                    currNumOfRepChar = comparator;
+                    indexOfMaxRepChar = i;
+                }
+                comparator = 1;
+                continue;
+            }
+            comparator++;
+            if (comparator > currNumOfRepChar) {
+                currNumOfRepChar = comparator;
                 indexOfMaxRepChar = i;
             }
         }
-
-        char maxRepChar = arrayOfString[indexOfMaxRepChar].charAt(0);
-        return new Pair<>(maxRepChar, maxNumOfRepChar);
+        return new Pair<>(str.charAt(indexOfMaxRepChar), currNumOfRepChar);
     }
 
     public static class Pair<T, V> {
