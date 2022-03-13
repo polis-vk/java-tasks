@@ -28,7 +28,7 @@ public class RepeatingCharacters {
                     maxRepeatingSymbol = curSymbol;
                 }
             } else {
-                if (max >= str.length() / 2) {
+                if (max >= str.length() - i) {
                     return new Pair<>(maxRepeatingSymbol, max);
                 }
                 curSymbol = str.charAt(i + 1);
