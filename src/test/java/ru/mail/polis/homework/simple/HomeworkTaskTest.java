@@ -28,6 +28,7 @@ public class HomeworkTaskTest {
         assertEquals(7, HomeworkTask.maxNumber(62467293));
         assertEquals(5, HomeworkTask.maxNumber(62467237));
         assertEquals(1, HomeworkTask.maxNumber(Long.MIN_VALUE));
+        assertEquals(1, HomeworkTask.maxNumber(Long.MIN_VALUE - 1));
     }
 
     @Test
