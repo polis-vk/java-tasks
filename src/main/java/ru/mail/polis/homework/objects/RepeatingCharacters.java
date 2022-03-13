@@ -19,10 +19,6 @@ public class RepeatingCharacters {
 
         for (int i = 0; i < str.length() - 1; i++) {
             if (!(str.charAt(i) == str.charAt(i+1))) {
-                if (comparator > currNumOfRepChar) {
-                    currNumOfRepChar = comparator;
-                    indexOfMaxRepChar = i;
-                }
                 comparator = 1;
                 continue;
             }
