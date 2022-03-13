@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
 public class CapsLockAnalyzer implements TextAnalyzer {
+    private static final int PRIORITY = 4;
+
     @Override
     public FilterType analyze(String text) {
         String[] currentText = text.split("[ .,;:)(|!]+");
@@ -14,7 +16,7 @@ public class CapsLockAnalyzer implements TextAnalyzer {
 
     @Override
     public int getPriority() {
-        return 4;
+        return PRIORITY;
     }
 
     public boolean isCapsLock(String word) {

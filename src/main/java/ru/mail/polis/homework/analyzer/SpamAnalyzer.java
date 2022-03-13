@@ -2,6 +2,7 @@ package ru.mail.polis.homework.analyzer;
 
 public class SpamAnalyzer implements TextAnalyzer {
     private final String[] spam;
+    private static final int PRIORITY = 1;
 
     public SpamAnalyzer(String[] spam) {
         this.spam = spam;
@@ -19,6 +20,6 @@ public class SpamAnalyzer implements TextAnalyzer {
 
     @Override
     public int getPriority() {
-        return 1;
+        return PRIORITY;
     }
 }

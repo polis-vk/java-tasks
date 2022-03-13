@@ -2,6 +2,7 @@ package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyzer implements TextAnalyzer {
     private final String[] negativeWords = new String[]{"=(", ":(", ":|"};
+    private static final int PRIORITY = 3;
 
     @Override
     public FilterType analyze(String text) {
@@ -15,6 +16,6 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
 
     @Override
     public int getPriority() {
-        return 3;
+        return PRIORITY;
     }
 }
