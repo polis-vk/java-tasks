@@ -15,6 +15,65 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        return null;
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+
+        boolean existExp = false;
+        boolean existDot = false;
+        boolean existsFirstMinus = false;
+        boolean existsSecondMinus = false;
+
+        StringBuilder resultBuilder = new StringBuilder();
+        for (int i = 0; i < str.length(); i++) {
+            if (Character.isDigit(str.charAt(i))) {
+                resultBuilder.append(str.charAt(i));
+            } else {
+                if (str.charAt(i) == 'e') {
+                    if (existExp) {
+                        return null;
+                    }
+                    resultBuilder.append(str.charAt(i));
+                    existExp = true;
+                } else if (str.charAt(i) == '-') {
+                    if (existExp) {
+                        if (existsSecondMinus || resultBuilder.toString().indexOf('e') != resultBuilder.length() - 1) {
+                            return null;
+                        }
+                        existsSecondMinus = true;
+                    } else {
+                        if (existsFirstMinus || resultBuilder.length() != 0) {
+                            return null;
+                        }
+                        existsFirstMinus = true;
+                    }
+                    resultBuilder.append(str.charAt(i));
+                } else if (str.charAt(i) == '.') {
+                    if (existDot || existExp) {
+                        return null;
+                    }
+                    existDot = true;
+                    resultBuilder.append(str.charAt(i));
+                }
+            }
+        }
+
+        String resultString = resultBuilder.toString();
+        if (resultString.indexOf('e') == resultString.length() - 1) {
+            return null;
+        }
+
+        if (existDot || existExp) {
+            return Double.parseDouble(resultString);
+        } else {
+            try {
+                return Integer.parseInt(resultString);
+            } catch (NumberFormatException e) {
+                return Long.parseLong(resultString);
+            }
+        }
     }
 }
+
+
+

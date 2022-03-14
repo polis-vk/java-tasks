@@ -1,8 +1,4 @@
 package ru.mail.polis.homework.objects;
-import java.sql.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class MaxTask {
 
@@ -31,13 +27,9 @@ public class MaxTask {
                     indexMaxValue = j;
                 }
             }
-
             tmpArray[indexMaxValue] = Integer.MIN_VALUE;
             resultArray[i] = maxValue;
         }
-
         return resultArray;
     }
 }
-
-

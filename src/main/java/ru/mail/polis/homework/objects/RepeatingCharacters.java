@@ -17,23 +17,21 @@ public class RepeatingCharacters {
             return null;
         }
 
-        int maxCountSymbol = 1;
+        int maxCountRepeatingCharacters = 1;
         char symbol = str.charAt(0);
-        int countSymbol = 1;
-        for (int i = 0; i < str.length(); i++) {
+        int countRepeatingCharacters = 1;
+        for (int i = 0; i < str.length() && maxCountRepeatingCharacters < str.length() + countRepeatingCharacters - i; i++) {
             if (i != str.length() - 1 && str.charAt(i) == str.charAt(i + 1)) {
-                countSymbol++;
+                countRepeatingCharacters++;
             } else {
-                if (countSymbol > maxCountSymbol) {
-                    maxCountSymbol = countSymbol;
+                if (countRepeatingCharacters > maxCountRepeatingCharacters) {
+                    maxCountRepeatingCharacters = countRepeatingCharacters;
                     symbol = str.charAt(i);
                 }
-
-                countSymbol = 1;
+                countRepeatingCharacters = 1;
             }
         }
-
-        return new Pair<>(symbol, maxCountSymbol);
+        return new Pair<>(symbol, maxCountRepeatingCharacters);
     }
 
     public static class Pair<T, V> {
@@ -64,9 +62,5 @@ public class RepeatingCharacters {
             Pair<?, ?> pair = (Pair<?, ?>) o;
             return Objects.equals(first, pair.first) && Objects.equals(second, pair.second);
         }
-
     }
-
-
-
 }
