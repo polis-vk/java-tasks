@@ -24,6 +24,7 @@ public class StringTasksTest {
         assertEquals(-1e-2, StringTasks.valueOf("asd-asd1asddecvxv-dsf2fsdv"));
         assertEquals(1e-3, StringTasks.valueOf("1e-asdsad3"));
         assertEquals(null, StringTasks.valueOf("1-easdsad3"));
+        assertEquals(null, StringTasks.valueOf("-1-easdsad3"));
         assertEquals(null, StringTasks.valueOf("1e--asdsad3"));
         assertEquals(null, StringTasks.valueOf("--1easdsad3"));
         assertEquals(null, StringTasks.valueOf("-1e-asdsad3-"));
