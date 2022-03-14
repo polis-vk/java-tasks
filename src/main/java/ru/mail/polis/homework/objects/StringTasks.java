@@ -155,16 +155,16 @@ public class StringTasks {
         }
 
         StringBuilder result = new StringBuilder();
-        boolean isNum = false;
+        boolean alreadyHasDigits = false;
         for (int i = 0; i < str.length(); i++) {
             char currentChar = str.charAt(i);
             if (Character.isDigit(currentChar)) {
                 result.append(currentChar);
-                isNum = true;
+                alreadyHasDigits = true;
             }
         }
 
-        if (!isNum) {
+        if (!alreadyHasDigits) {
             return null;
         }
 
