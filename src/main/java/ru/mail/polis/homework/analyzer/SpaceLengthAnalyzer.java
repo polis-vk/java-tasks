@@ -2,7 +2,6 @@ package ru.mail.polis.homework.analyzer;
 
 public class SpaceLengthAnalyzer implements TextAnalyzer {
 
-
     @Override
     public FilterType analyze(String text) {
         int countRepeatSpace = 0;
@@ -12,15 +11,17 @@ public class SpaceLengthAnalyzer implements TextAnalyzer {
             } else {
                 countRepeatSpace = 0;
             }
+
             if (countRepeatSpace == 2) {
                 return FilterType.SPACE_LENGTH;
             }
         }
+
         return FilterType.GOOD;
     }
 
     @Override
-    public int getPriority() {
-        return 4;
+    public FilterType getPriority() {
+        return FilterType.SPACE_LENGTH;
     }
 }

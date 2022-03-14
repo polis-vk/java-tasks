@@ -41,16 +41,17 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        Arrays.sort(filters, (filter1, filter2) -> {
-                    if (filter1.getPriority() < filter2.getPriority()) {
+        TextAnalyzer[] filter = filters.clone();
+        Arrays.sort(filter, (filter1, filter2) -> {
+                    if (filter1.getPriority().priority < filter2.getPriority().priority) {
                         return -1;
-                    } else if (filter1.getPriority() == filter2.getPriority()) {
+                    } else if (filter1.getPriority().priority == filter2.getPriority().priority) {
                         return 0;
                     }
                     return 1;
                 }
         );
-        this.filters = filters;
+        this.filters = filter;
     }
 
     /**
@@ -60,12 +61,14 @@ public class TextFilterManager {
         if (text == null || text.isEmpty()) {
             return FilterType.GOOD;
         }
+
         for (TextAnalyzer filter : filters) {
             FilterType filterType = filter.analyze(text);
             if (filterType != FilterType.GOOD) {
                 return filterType;
             }
         }
+
         return FilterType.GOOD;
     }
 }
