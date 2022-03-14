@@ -15,21 +15,21 @@ public class MaxTask {
     public static int[] getMaxArray(int[] array, int count) {
         if (array == null || array.length < count) {
             return null;
-        } else if (array.length == 0 || count == 0) {
+        } else if (count == 0) {
             return new int[0];
         }
         int[] maxArray = new int[count];
         Arrays.fill(maxArray, Integer.MIN_VALUE);
-        for (int digit : array) {
-            if (digit >= maxArray[count - 1]) {
-                maxArray[count - 1] = digit;
-                int j = 1;
+        for (int number : array) {
+            if (number >= maxArray[count - 1]) {
+                maxArray[count - 1] = number;
                 int temp;
-                while (count - j - 1 >= 0 && maxArray[count - j] > maxArray[count - j - 1]) {
-                    temp = maxArray[count - j - 1];
-                    maxArray[count - j - 1] = maxArray[count - j];
-                    maxArray[count - j] = temp;
-                    j++;
+                for (int j = 1; j < count; j++) {
+                    if (maxArray[count - j] > maxArray[count - j - 1]) {
+                        temp = maxArray[count - j - 1];
+                        maxArray[count - j - 1] = maxArray[count - j];
+                        maxArray[count - j] = temp;
+                    }
                 }
             }
         }
