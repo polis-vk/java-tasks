@@ -15,19 +15,53 @@ public class MaxTask {
         if (array.length < count) {
             return null;
         }
-        int[] resultArray = new int[count];
+
         if (count == 0) {
-            return resultArray;
+            return new int[]{};
         }
+
         int[] currentArray = array.clone();
-        quickSelect(currentArray, 0, currentArray.length - 1, currentArray.length - 1);
-        for (int i = 1; i <= count; i++) {
-            resultArray[i - 1] = currentArray[currentArray.length - i];
+        if (currentArray.length == count) {
+            quickSort(currentArray, 0, currentArray.length - 1);
+            return currentArray;
         }
+
+        quickSelect(currentArray, 0, currentArray.length - 1, currentArray.length - count - 1);
+        int[] resultArray = new int[count];
+        int j = 0;
+        for (int i = currentArray.length - count; i < array.length; i++) {
+            resultArray[j] = currentArray[i];
+            j++;
+        }
+
+        quickSort(resultArray, 0, resultArray.length - 1);
         return resultArray;
     }
 
-    private static void quickSelect(int[] array, int start, int end, int length) {
+    static void quickSort(int[] arr, int start, int end) {
+        if (start < end) {
+            int pi = partition(arr, start, end);
+            quickSort(arr, start, pi - 1);
+            quickSort(arr, pi + 1, end);
+        }
+    }
+
+    static int partition(int[] arr, int start, int end) {
+        int pivot = arr[end];
+        int i = (start - 1);
+
+        for (int j = start; j <= end; j++) {
+            if (arr[j] > pivot) {
+                i++;
+                swap(arr, i, j);
+            }
+        }
+
+        swap(arr, i + 1, end);
+        return (i + 1);
+    }
+
+    private static void quickSelect(int[] array, int start, int end, int k) {
         int pivotIndex = start + ((end - start) / 2);
         int pivot = array[pivotIndex];
         swap(array, pivotIndex, end);
@@ -38,15 +72,18 @@ public class MaxTask {
                 pivotIndex++;
             }
         }
+
         swap(array, pivotIndex, end);
-        if (pivotIndex == length) {
+        if (pivotIndex == k) {
             return;
         }
-        if (pivotIndex < length) {
-            quickSelect(array, pivotIndex + 1, end, length);
+
+        if (pivotIndex < k) {
+            quickSelect(array, pivotIndex + 1, end, k);
             return;
         }
-        quickSelect(array, start, pivotIndex - 1, length);
+
+        quickSelect(array, start, pivotIndex - 1, k);
     }
 
     private static void swap(int[] array, int firstIndex, int secondIndex) {

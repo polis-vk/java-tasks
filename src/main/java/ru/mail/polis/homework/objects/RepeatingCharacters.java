@@ -16,27 +16,36 @@ public class RepeatingCharacters {
         if (str == null || str.isEmpty()) {
             return null;
         }
+
+        if (str.length() == 1) {
+            return new Pair<>(str.charAt(0), 1);
+        }
+
         char resultChar = 0;
         int resultCount = 0;
-        for (int i = 0; i < str.length(); i++) {
-            if (resultCount >= str.length() - i) {
-                break;
-            }
-            char currentChar = str.charAt(i);
-            int count = 1;
-            for (int j = i + 1; j < str.length(); j++) {
-                if (currentChar == str.charAt(j)) {
-                    count++;
-                } else {
-                    i = j - 1;
-                    break;
+        int count = 1;
+        char currentChar = str.charAt(0);
+        for (int i = 1; i < str.length(); i++) {
+            if (currentChar != str.charAt(i)) {
+                if (resultCount < count) {
+                    resultChar = currentChar;
+                    resultCount = count;
+                    if (resultCount >= str.length() - i && str.charAt(i + 1) != currentChar) {
+                        break;
+                    }
                 }
+
+                count = 0;
             }
-            if (count > resultCount) {
-                resultChar = currentChar;
-                resultCount = count;
-            }
+
+            currentChar = str.charAt(i);
+            count++;
         }
+
+        if (count > resultCount) {
+            return new Pair<>(currentChar, count);
+        }
+
         return new Pair<>(resultChar, resultCount);
     }
 
