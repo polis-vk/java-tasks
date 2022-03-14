@@ -15,6 +15,40 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        return null;
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+        StringBuilder resultString = new StringBuilder();
+        for (int i = 0; i < str.length(); ++i) {
+            if (Character.isDigit(str.charAt(i)) || Constant.isConstant(str.charAt(i))) {
+                resultString.append(str.charAt(i));
+            }
+        }
+        int indexDot = resultString.indexOf(Constant.DOT.toString());
+        int indexExp = resultString.indexOf(Constant.EXP.toString());
+        try {
+            if (indexDot != -1 || indexExp != -1) {
+            return Double.valueOf(resultString.toString());
+        }
+            long resValue = Long.parseLong(resultString.toString());
+            if (resValue > Integer.MAX_VALUE || resValue < Integer.MIN_VALUE) {
+                return resValue;
+            }
+
+            return Integer.valueOf(resultString.toString());
+        }
+        catch (NumberFormatException e)
+        {
+            return null;
+        }
+    }
+
+    private static class Constant {
+        private final static Character MINUS = '-';
+        private final static Character EXP = 'e';
+        private final static Character DOT = '.';
+        private static boolean isConstant(Character el) {
+            return el.equals(MINUS) || el.equals(EXP) || el.equals(DOT);
+        }
     }
 }
