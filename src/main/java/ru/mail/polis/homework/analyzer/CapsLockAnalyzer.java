@@ -1,10 +1,11 @@
 package ru.mail.polis.homework.analyzer;
 
 public class CapsLockAnalyzer implements TextAnalyzer {
+    private final static String REGEX = "[ .,;:)(|!]+";
 
     @Override
     public FilterType analyze(String text) {
-        String[] currentText = text.split("[ .,;:)(|!]+");
+        String[] currentText = text.split(REGEX);
         for (String word : currentText) {
             if (word.length() > 1 && isCapsLock(word)) {
                 return FilterType.CAPSLOCK;
