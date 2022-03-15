@@ -16,26 +16,9 @@ public class HomeworkTask {
     /**
      * Вывести номер максимальной цифры. Счет начинается слева направо,
      * выводим номер первой максимальной цифры (если их несколько)
-     * <p>
-     * a=1945
      */
     public static byte maxNumber(long a) {
-        long maxNum = 0;
-        long wholePart = a;
-        long remainderPart = 0;
-        byte count = 0;
-        byte count1 = 1;
-
-        while (wholePart > 0) {
-            remainderPart = wholePart % 10;
-            wholePart /= 10;
-            if (Math.abs(remainderPart) >= maxNum) {
-                maxNum = remainderPart;
-                count = count1;
-            }
-            count1++;
-        }
-        return (byte) (count1 - count);
+        return 0;
     }
 
 
@@ -44,7 +27,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return (((x3 - x1) * (y2 - y1) * 1.0) / (x2 - x1)) + y1;
+        return 0;
     }
 
     /**
