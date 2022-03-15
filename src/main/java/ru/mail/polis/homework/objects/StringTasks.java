@@ -30,15 +30,15 @@ public class StringTasks {
                 } else {
                     return null;
                 }
-                if (counterE == 2) {
+                if (counterE >= 2) {
                     return null;
                 }
             } else if (curStr.charAt(i) > '9' || curStr.charAt(i) < '-' || curStr.charAt(i) == '/') {
-                curStr = curStr.substring(0, i) + curStr.substring(i + 1);
+                curStr = curStr.replace(String.valueOf(curStr.charAt(i)), "");
                 i--;
             } else if (curStr.charAt(i) == '.') {
                 counterPoint++;
-                if (counterPoint == 2) {
+                if (counterPoint >= 2) {
                     return null;
                 }
             } else if (curStr.charAt(i) == '-') {
@@ -46,7 +46,7 @@ public class StringTasks {
                     return null;
                 }
                 counterDash++;
-                if (counterDash == 3) {
+                if (counterDash >= 3) {
                     return null;
                 }
             }
@@ -56,7 +56,7 @@ public class StringTasks {
             long result = 0;
             for (int i = 0; i < curStr.length(); i++) {
                 if (Character.isDigit(curStr.charAt(i))) {
-                    result += (curStr.charAt(i) - 48) * Math.pow(10, curStr.length() - i - 1);
+                    result += (curStr.charAt(i) - '0') * Math.pow(10, curStr.length() - i - 1);
                 }
             }
             if (counterDash == 1) {
@@ -82,10 +82,10 @@ public class StringTasks {
                     isNumFractional = true;
                 } else if (Character.isDigit(curStr.charAt(i))) {
                     if (isNumFractional) {
-                        result += (curStr.charAt(i) - 48) / Math.pow(10, numAfterPoint);
+                        result += (curStr.charAt(i) - '0') / Math.pow(10, numAfterPoint);
                         numAfterPoint++;
                     } else {
-                        result += (curStr.charAt(i) - 48) * Math.pow(10, curStr.length() - i - 1);
+                        result += (curStr.charAt(i) - '0') * Math.pow(10, curStr.length() - i - 1);
                     }
                 } else if (curStr.charAt(i) == 'e') {
                     if (!isNumFractional) {
@@ -100,7 +100,7 @@ public class StringTasks {
                     }
                     for (int j = i + 1; j < curStr.length(); j++) {
                         if (Character.isDigit(curStr.charAt(j))) {
-                            degree += (curStr.charAt(j) - 48) * Math.pow(10, curStr.length() - j - 1);
+                            degree += (curStr.charAt(j) - '0') * Math.pow(10, curStr.length() - j - 1);
                         }
                     }
                     if (isNegativeDegree) {
