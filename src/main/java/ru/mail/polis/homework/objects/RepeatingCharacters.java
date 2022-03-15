@@ -13,8 +13,31 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        return new Pair<>('s', 4);
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+
+        char maxLetter = '~';
+        char currLetter = '~';
+        int maxCount = 0;
+        int currCount = 0;
+        char[] strCharArray = str.toCharArray();
+        for (char c : strCharArray) {
+            if (c == currLetter) {
+                currCount++;
+            } else {
+                currLetter = c;
+                currCount = 1;
+            }
+            if (maxCount < currCount) {
+                maxCount = currCount;
+                maxLetter = currLetter;
+            }
+        }
+
+        return new Pair<>(maxLetter, maxCount);
     }
+
 
     public static class Pair<T, V> {
         private final T first;
