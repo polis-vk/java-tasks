@@ -21,10 +21,12 @@ public class StringTasks {
         int dotCount = 0;
         int eCount = 0;
         int minusCount = 0;
+        char prevChar = ' ';
         StringBuilder numberBuild = new StringBuilder();
-        for (char curChar : str.toCharArray()) {
+        for (int i = 0; i < str.length(); i++) {
+            char curChar = str.charAt(i);
             if (curChar == '.' || curChar == 'e' || curChar == '-' || Character.isDigit(curChar)) {
-                numberBuild.append(curChar);
+                numberBuild.append(str.charAt(i));
             }
             if (curChar == '.') {
                 dotCount++;
@@ -35,28 +37,37 @@ public class StringTasks {
             if (curChar == '-') {
                 minusCount++;
             }
+            if (dotCount > 1 || eCount > 1 || minusCount > 2) {
+                return null;
+            }
+            if (Character.isDigit(prevChar) && curChar == '-') {
+                return null;
+            }
+            if (prevChar == '-' && curChar == '-') {
+                return null;
+            }
+            if (prevChar == '-' && curChar == 'e') {
+                return null;
+            }
+            prevChar = curChar;
         }
         String numberStr = numberBuild.toString();
 
-        if (numberStr.contains("--") || numberStr.contains("-e") || numberStr.endsWith("e") || numberStr.endsWith("-")) {
-            return null;
-        }
-        if (dotCount > 1 || eCount > 1 || minusCount > 2) {
+        if (str.charAt(str.length() - 1) == 'e' || str.charAt(str.length() - 1) == '.' || str.charAt(str.length() - 1) == '-') {
             return null;
         }
         if (dotCount + eCount >= 1) {
-            return ParseDouble(numberStr, dotCount, eCount);
+            return parseDouble(numberStr, dotCount, eCount);
         }
-
-        double result = 0;
-        result = (double) ParseNumber(numberStr, result);
+        double result = parseNumber(numberStr);
         if (result <= Integer.MAX_VALUE && result >= Integer.MIN_VALUE) {
             return (int) result;
         }
         return (long) result;
     }
 
-    public static Number ParseNumber(String numberStr, double result) {
+    public static double parseNumber(String numberStr) {
+        double result = 0;
         for (int i = 1; i < numberStr.length(); i++) {
             result += Character.digit(numberStr.charAt(i), 10) * Math.pow(10, numberStr.length() - i - 1);
         }
@@ -68,28 +79,27 @@ public class StringTasks {
         return result;
     }
 
-    public static Number ParseDouble(String numberStr, int dotCount, int eCount) {
-        String strAfterE = numberStr.substring(numberStr.indexOf('e') + 1, numberStr.length());
-        double numAfterE = 0;
+    public static double parseDouble(String numberStr, int dotCount, int eCount) {
+
+        String strAfterE = numberStr.substring(numberStr.indexOf('e') + 1);
+        int indexOfE = numberStr.indexOf('e');
+
         if (eCount == 1 && dotCount == 0) {
-            double numBeforeE = 0;
-            String strBeforeE = numberStr.substring(0, numberStr.indexOf('e'));
-            return (double) (ParseNumber(strBeforeE, numBeforeE)) * Math.pow(10.0, (Double) ParseNumber(strAfterE, numAfterE));
+            String strBeforeE = numberStr.substring(0, indexOfE);
+            return parseNumber(strBeforeE) * Math.pow(10, parseNumber(strAfterE));
         }
+
+        int indexOfDot = numberStr.indexOf('.');
         if (eCount == 0 && dotCount == 1) {
-            double numBeforeDot = 0;
-            double numAfterDot = 0;
-            String strBeforeDot = numberStr.substring(0, numberStr.indexOf('.'));
-            String strAfterDot = numberStr.substring(numberStr.indexOf('.') + 1, numberStr.length());
-            return (double) (ParseNumber(strBeforeDot, numBeforeDot)) + (double) ParseNumber(strAfterDot, numAfterDot) / Math.pow(10, strAfterDot.length());
+            String strBeforeDot = numberStr.substring(0, indexOfDot);
+            String strAfterDot = numberStr.substring(indexOfDot + 1);
+            return parseNumber(strBeforeDot) + parseNumber(strAfterDot) / Math.pow(10, strAfterDot.length());
         }
-        double numBeforeDot = 0;
-        double numAfterDotToE = 0;
-        String strBeforeDot = numberStr.substring(0, numberStr.indexOf('.'));
-        String strAfterDotToE = numberStr.substring(numberStr.indexOf('.') + 1, numberStr.indexOf('e'));
-        double NumPart1 = (double) ParseNumber(strBeforeDot, numBeforeDot);
-        double NumPart2 = (double) ParseNumber(strAfterDotToE, numAfterDotToE) / Math.pow(10, strAfterDotToE.length());
-        double NumPart3 = (double) Math.pow(10.0, (Double) ParseNumber(strAfterE, numAfterE));
-        return (double) (NumPart1 + NumPart2) * NumPart3;
+
+        String strBeforeDot = numberStr.substring(0, indexOfDot);
+        String strAfterDotToE = numberStr.substring(indexOfDot + 1, indexOfE);
+        double numPart1 = parseNumber(strBeforeDot) + parseNumber(strAfterDotToE) / Math.pow(10, strAfterDotToE.length());
+        double numPart2 = Math.pow(10, parseNumber(strAfterE));
+        return numPart1 * numPart2;
     }
 }

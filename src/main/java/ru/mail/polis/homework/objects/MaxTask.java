@@ -13,7 +13,7 @@ public class MaxTask {
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копии
      */
     public static int[] getMaxArray(int[] array, int count) {
-        if (array == null||array.length < count) {
+        if (array == null || array.length < count) {
             return null;
         }
         int[] result = new int[count];
