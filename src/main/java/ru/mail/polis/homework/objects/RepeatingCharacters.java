@@ -16,17 +16,19 @@ public class RepeatingCharacters {
         if (str == null || str.isEmpty()) {
             return null;
         }
-        int count = 1;
+        int currentSequenceLength = 1;
         int max = 1;
         int indexOfLongest = 0;
         for (int i = 1; i < str.length(); i++) {
             if (str.charAt(i) == str.charAt(i - 1)) {
-                count++;
+                currentSequenceLength++;
+            } else if (max >= str.length() - i) {
+                break;
             } else {
-                count = 1;
+                currentSequenceLength = 1;
             }
-            if (count > max) {
-                max = count;
+            if (currentSequenceLength > max) {
+                max = currentSequenceLength;
                 indexOfLongest = i;
             }
         }

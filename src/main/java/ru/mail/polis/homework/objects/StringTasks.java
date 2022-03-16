@@ -6,7 +6,7 @@ public class StringTasks {
      * Убрать все лишние символы из строки и вернуть получившееся число.
      * Разрешенные символы: цифры, '-', '.', 'e'
      * Если '.' и 'e' больше чем 1, возвращаем null
-     * Правила на '-' является валидность числа. --3 не валидно. -3e-1 валидно
+     * Правила на '-' является валидность числа. --3 не валидно. -3e-1 валдино
      * Любой класс-обертка StringTasksTest над примитивами наследуется от Number
      * Если вы используете функции типа Double.valueOf() -- получите только половину тугриков.
      * Для полного количества тугриков надо парсить в ручную.
@@ -18,76 +18,78 @@ public class StringTasks {
         if (str == null || str.isEmpty()) {
             return null;
         }
-        String copy = "";
+        StringBuilder copy = new StringBuilder();
         char temp;
-        boolean findExp = false;
-        boolean findPoint = false;
+        boolean hasExp = false;
+        boolean hasPoint = false;
         for (int i = 0; i < str.length(); i++) {
             temp = str.charAt(i);
-            if ((findExp && temp == 'e') || (findPoint && temp == '.')) {
+            if (hasExp && temp == 'e' || hasPoint && temp == '.') {
                 return null;
             }
             if (temp == 'e') {
-                findExp = true;
+                hasExp = true;
             }
             if (temp == '.') {
-                findPoint = true;
+                hasPoint = true;
             }
             if (Character.isDigit(temp) || temp == 'e' || temp == '-' || temp == '.') {
-                copy = copy + temp;
+                copy.append(temp);
             }
         }
-        if (copy.isEmpty()) {
+        if (copy.length() == 0) {
             return null;
         }
-        if (findExp) {
-            String[] numbers = copy.split("e");
-            if (numbers.length != 2 || checkFormat(numbers[0]) || checkFormat(numbers[1])) {
+        if (hasExp) {
+            String[] numbers = copy.toString().split("e");
+            if (numbers.length != 2 || !isCorrectFormat(numbers[0]) || !isCorrectFormat(numbers[1])) {
                 return null;
             }
             return toNumber(numbers[0]).doubleValue() * Math.pow(10, toNumber(numbers[1]).doubleValue());
         }
-        if (checkFormat(copy)) {
+        String copyToString = copy.toString();
+        if (!isCorrectFormat(copyToString)) {
             return null;
         }
-        if (findPoint) {
-            return toNumber(copy);
+        if (hasPoint) {
+            return toNumber(copyToString);
         }
-        if (toNumber(copy).longValue() == toNumber(copy).intValue()) {
-            return toNumber(copy).intValue();
+        long numberLongValue = toNumber(copyToString).longValue();
+        if ((int) numberLongValue != numberLongValue) {
+            return numberLongValue;
         }
-        return toNumber(copy).longValue();
+        return (int) numberLongValue;
     }
 
     private static Number toNumber(String str) {
         double result = 0;
         int tenPow = 0;
         int indexOfPoint = str.length();
-        boolean findPoint = false;
-        boolean findMinus = false;
+        boolean hasPoint = false;
+        boolean hasMinus = false;
         char temp;
         for (int i = str.length() - 1; i >= 0; i--) {
             temp = str.charAt(i);
             if (temp == '.') {
                 indexOfPoint = i;
-                findPoint = true;
+                hasPoint = true;
             } else if (temp == '-') {
-                findMinus = true;
+                hasMinus = true;
             } else if (Character.isDigit(temp)) {
                 result += (temp - '0') * Math.pow(10.0, tenPow);
                 tenPow++;
             }
         }
-        if (findMinus) {
+        if (hasMinus) {
             result = -result;
         }
-        if (findPoint) {
+        if (hasPoint) {
             return result / Math.pow(10.0, str.length() - indexOfPoint - 1);
         }
         return result;
     }
 
-    private static boolean checkFormat(String number) {
-        return number.contains("-") && (number.length() == 1 || number.lastIndexOf('-') != 0);
+    private static boolean isCorrectFormat(String number) {
+        return !(number.contains("-") && (number.length() == 1 || number.lastIndexOf('-') != 0));
     }
 }

@@ -12,23 +12,31 @@ public class MaxTask {
      * ({1, 3, 22, 11, 22, 0}, 3) -> {22, 22, 11}
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копии
      */
+    // в общем я додумался только до O(n * log(count)), где log(count) - binarySearch
     public static int[] getMaxArray(int[] array, int count) {
         if (array == null || count > array.length) {
             return null;
         }
-        int[] result = new int[count];
+        int[] result = Arrays.copyOf(array, count);
         if (count != 0) {
-            Arrays.fill(result, Integer.MIN_VALUE);
-            for (int element : array) {
-                if (element > result[count - 1]) {
-                    result[count - 1] = element;
-                    for (int i = count - 2; i >= 0; i--) {
-                        if (element > result[i]) {
-                            result[i + 1] = result[i];
-                            result[i] = element;
-                        }
-                    }
+            Arrays.sort(result);
+            int min = result[0];
+            int indexForInsert;
+
+            for (int i = count; i < array.length; i++) {
+                if (array[i] > min) {
+                    indexForInsert = Arrays.binarySearch(result, array[i]);
+                    indexForInsert = indexForInsert < 0 ? (-indexForInsert - 2) : indexForInsert;
+                    System.arraycopy(result, 1, result, 0, indexForInsert);
+                    result[indexForInsert] = array[i];
+                    min = result[0];
                 }
+            }
+
+            for (int i = 0; i < count / 2; i++) {
+                int temp = result[i];
+                result[i] = result[count - i - 1];
+                result[count - i - 1] = temp;
             }
         }
         return result;
