@@ -12,11 +12,7 @@ public class MaxTask {
      *
      */
     public static int[] getMaxArray(int[] array, int count) {
-        if (array == null) {
-            return null;
-        }
-        int length = array.length;
-        if (length < count) {
+        if (array == null || array.length < count) {
             return null;
         }
         int[] arrayClone = array.clone();
@@ -26,7 +22,7 @@ public class MaxTask {
         for (int i = 0; i < count; i++) {
             max = Integer.MIN_VALUE;
             maxIndex = 0;
-            for (int j = 0; j < length; j++) {
+            for (int j = 0; j < arrayClone.length; j++) {
                 if (arrayClone[j] > max) {
                     max = arrayClone[j];
                     maxIndex = j;
