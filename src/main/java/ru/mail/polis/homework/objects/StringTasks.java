@@ -61,7 +61,6 @@ public class StringTasks {
                 numberStrTwoFiltered.append(numberStrOneFiltered.charAt(i));
             }
         }
-        System.out.println(numberStrTwoFiltered);
         // проверим, были ли '.' или 'e'
         firstMeetDot = !firstMeetDot;
         firstMeetE = !firstMeetE;
@@ -73,6 +72,7 @@ public class StringTasks {
         boolean needInversePow = false;
         boolean isItDouble = false;
         int countOfNumAfterDot = 0;
+        double numAfterDot = 0;
         int countOfNumAfterE = 0;
         if (firstMeetDot || firstMeetE) {
             isItDouble = true;
@@ -92,11 +92,11 @@ public class StringTasks {
                         countOfNumAfterE = Character.digit((numberStrTwoFiltered.charAt(i)), 10) + 10 * countOfNumAfterE;
                     }
                     isDigitAfterE = true;
-                    firstMeetE = true; // условия на встречу везде через else
+                    firstMeetE = true;
                 }
-                if ((numberStrTwoFiltered.charAt(i) == '.' || firstMeetDot) && !firstMeetE) { // после точки условие на цифру не должно сработать
+                if ((numberStrTwoFiltered.charAt(i) == '.' || firstMeetDot) && !firstMeetE) {
                     if (firstMeetDot) {
-                        numForDouble = Character.digit((numberStrTwoFiltered.charAt(i)), 10) + 10 * numForDouble;
+                        numAfterDot = Character.digit((numberStrTwoFiltered.charAt(i)), 10) + 10 * numAfterDot;
                         countOfNumAfterDot++;
                     }
                     isDigitAfterDot = true;
@@ -112,7 +112,7 @@ public class StringTasks {
             if (needInversePow) {
                 countOfNumAfterE *= -1;
             }
-            numForDouble = numForDouble * Math.pow(10, -countOfNumAfterDot + countOfNumAfterE); // объедини степени - yes
+            numForDouble = (numForDouble + numAfterDot * Math.pow(10, -countOfNumAfterDot)) * Math.pow(10, countOfNumAfterE);
         } else {
             int step = 0;
             if (numberStrTwoFiltered.charAt(0) == '-') {
