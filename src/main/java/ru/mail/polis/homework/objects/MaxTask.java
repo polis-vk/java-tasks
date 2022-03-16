@@ -11,44 +11,49 @@ public class MaxTask {
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копии
      */
     public static int[] getMaxArray(int[] array, int count) {
-        int[] maxArray = new int[count];
-        int[] unsortedArray = new int[count + 1];
-        for (int i = 0; i < count + 1; i++) {
-            unsortedArray[i] = Integer.MIN_VALUE;
-        }
-        if (array.length < count) {
+        if ((array == null) || (array.length < count)) {
             return null;
         }
         if (count == 0) {
-            int arr[] = {};
-            return arr;
+            return new int[0];
         }
-        int length = array.length;
-        for (int i = 0; i < length; i++) {
-            findMaxArray(array[i], maxArray, count, unsortedArray);
+        int[] maxArray = new int[count];
+        for (int i = 0; i < count; i++) {
+            maxArray[i] = Integer.MIN_VALUE;
         }
-        sortMaxArray(maxArray, count - 1);
+        int min = findMinMaxArray(maxArray, count)[0];
+        int number = findMinMaxArray(maxArray, count)[1];
+        for (int i = 0; i < array.length; i++) {
+            if (min < array[i]) {
+                maxArray[number] = array[i];
+                min = findMinMaxArray(maxArray, count)[0];
+                number = findMinMaxArray(maxArray, count)[1];
+            }
+        }
+        sortMaxArray(maxArray, count);
         return maxArray;
     }
 
-    public static int[] findMaxArray(int a, int[] maxArray, int count, int[] unsortedArray) {
-        unsortedArray[count] = a;
+    public static int[] findMinMaxArray(int[] maxArray, int count) {
+        int min = Integer.MAX_VALUE;
+        int number = 0;
         for (int i = 0; i < count; i++) {
-            sortMaxArray(unsortedArray, count);
+            if (maxArray[i] < min) {
+                min = maxArray[i];
+                number = i;
+            }
         }
-        for (int i = 0; i < count; i++) {
-            maxArray[i] = unsortedArray[i];
-        }
-        return maxArray;
+        return new int[]{min, number};
     }
 
     public static int[] sortMaxArray(int[] maxArray, int count) {
-        int tmp;
-        for (int i = 0; i < count; i++) {
-            if (maxArray[i] < maxArray[i + 1]) {
-                tmp = maxArray[i];
-                maxArray[i] = maxArray[i + 1];
-                maxArray[i + 1] = tmp;
+        for (int i = maxArray.length - 1; i > 0; i--) {
+            for (int j = 0; j < i; j++) {
+                if (maxArray[j] < maxArray[j + 1]) {
+                    int tmp = maxArray[j];
+                    maxArray[j] = maxArray[j + 1];
+                    maxArray[j + 1] = tmp;
+                }
             }
         }
         return maxArray;
