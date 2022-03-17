@@ -1,18 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
 public class BadWordsAnalyzer implements TextAnalyzer {
-    private final String[] badWords;
-    private final FilterType filterType;
-
-    public BadWordsAnalyzer(String[] spam) {
-        badWords = spam;
-        filterType = FilterType.SPAM;
-    }
-
-    public BadWordsAnalyzer() {
-        badWords = new String[]{"=(", ":(", ":|"};
-        filterType = FilterType.NEGATIVE_TEXT;
-    }
+    protected String[] badWords;
+    protected FilterType filterType;
 
     @Override
     public FilterType getFilterType() {
