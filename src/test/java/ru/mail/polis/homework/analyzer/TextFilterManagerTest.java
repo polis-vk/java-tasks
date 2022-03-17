@@ -112,8 +112,15 @@ public class TextFilterManagerTest {
     }
 
     @Test
-    public void analyzeAllFiltersMany() {
-        manyFilters(false);
+    public void analyzeOnlyEnglishTestFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createEnglishTextAnalyzer()});
+        assertEquals("ENGLISH_TEXT", manager.analyze("cvv and card number").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("ENGLISH_TEXT", manager.analyze("text ...").toString());
+        assertEquals("GOOD", manager.analyze("Добрый день, я из компании ОК.ru").toString());
+        assertEquals("ENGLISH_TEXT", manager.analyze("Good afternoon, I am from the company OK.ru").toString());
+        assertEquals("GOOD", manager.analyze("Ооооооочень длиннннннаааааяяяя стрроооооооккккаааааа").toString());
     }
 
 
@@ -140,6 +147,4 @@ public class TextFilterManagerTest {
                     manager.analyze("смс пожалуйста           =(").toString()));
         }
     }
-
-
 }
