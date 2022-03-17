@@ -52,16 +52,16 @@ public class TextFilterManager {
         if (text == null || text.isEmpty()) {
             return FilterType.GOOD;
         }
-        TextAnalyzer[] temp = Arrays.copyOf(filters, filters.length);
-        Arrays.sort(temp, (filter1, filter2) -> {
-            if (filter1.getPriority() < filter2.getPriority()) {
+        TextAnalyzer[] priorityFilters = Arrays.copyOf(filters, filters.length);
+        Arrays.sort(priorityFilters, (filter1, filter2) -> {
+            if (filter1.getAnalyzerType().getPriority() < filter2.getAnalyzerType().getPriority()) {
                 return -1;
-            } else if (filter1.getPriority() == filter2.getPriority()) {
+            } else if (filter1.getAnalyzerType().getPriority() == filter2.getAnalyzerType().getPriority()) {
                 return 0;
             }
             return 1;
         });
-        for (TextAnalyzer filter : temp) {
+        for (TextAnalyzer filter : priorityFilters) {
             FilterType currFilterType = filter.analyze(text);
             if (currFilterType != FilterType.GOOD) {
                 return currFilterType;

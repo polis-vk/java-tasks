@@ -88,7 +88,7 @@ public class TextFilterManagerTest {
     }
 
     @Test
-    public void analyzeOnlyCapsLockFilter(){
+    public void analyzeOnlyCapsLockFilter() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCapsLockAnalyzer()});
         assertEquals("CAPSLOCK", manager.analyze("ОФОРМИТЕ ПОДПИСКУ БЕЗ СМС").toString());
         assertEquals("GOOD", manager.analyze("Привет, я Вова :)").toString());

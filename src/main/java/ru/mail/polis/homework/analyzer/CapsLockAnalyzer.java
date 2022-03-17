@@ -16,8 +16,8 @@ public class CapsLockAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public int getPriority() {
-        return FILTER_TYPE.getPriority();
+    public FilterType getAnalyzerType() {
+        return FILTER_TYPE;
     }
 
     public boolean isCapsLock(String word) {
