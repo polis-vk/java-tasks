@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.Locale;
+import java.util.regex.Pattern;
+
 public class StringTasks {
 
     /**
@@ -15,6 +18,9 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
         return null;
     }
 }
