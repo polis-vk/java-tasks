@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
 
+import java.util.Arrays;
+
 /**
  * Задание написать систему фильтрации комментариев.
  * Надо реализовать три типа обязательных фильтров
@@ -17,21 +19,21 @@ package ru.mail.polis.homework.analyzer;
  * (SPAM, TOO_LONG, NEGATIVE_TEXT, CUSTOM - в таком порядке) и возвращать тип с максимальным приоритетом.
  * Отсортировать фильтра можно с помощью функции
  * Arrays.sort(filter, (filter1, filter2) -> {
- *     if (filter1 < filter2) {
- *         return -1;
- *     } else if (filter1 == filter2) {
- *         return 0;
- *     }
- *     return 1;
+ * if (filter1 < filter2) {
+ * return -1;
+ * } else if (filter1 == filter2) {
+ * return 0;
+ * }
+ * return 1;
  * }
  * где вместо сравнение самих фильтров должно быть стравнение каких-то количественных параметров фильтра
- *
+ * <p>
  * 2 балла ( + 2 балла за доп приоритет)
  * Итого 15 баллов + 2 дополнительных
  */
 public class TextFilterManager {
 
-    private final TextAnalyzer[] filters;
+    private final TextAnalyzer[] filter;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -39,7 +41,15 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = filters;
+        this.filter = filters.clone();
+        Arrays.sort(filter, (filter1, filter2) -> {
+            if (filter1.getType().priority < filter2.getType().priority) {
+                return -1;
+            } else if (filter1.getType().priority == filter2.getType().priority) {
+                return 0;
+            }
+            return 1;
+        });
     }
 
     /**
@@ -49,22 +59,16 @@ public class TextFilterManager {
         if (text == null || text.isEmpty()) {
             return FilterType.GOOD;
         }
-        FilterType resultFilter = FilterType.GOOD;
-        for (TextAnalyzer filter : filters) {
-            FilterType filterType = filter.analyze(text);
-            if (filterType != FilterType.GOOD) {
-                if (filterType.priority == 1) {
-                    return filterType;
-                }
 
-                if (filterType.priority < resultFilter.priority) {
-                    resultFilter = filterType;
+        for (TextAnalyzer temp : filter) {
+            FilterType filterType = temp.analyze(text);
+            if (filterType != FilterType.GOOD) {
+                if(temp.getType() == filterType){
+                    return filterType;
                 }
             }
         }
 
-        return resultFilter;
+        return FilterType.GOOD;
     }
-
-
 }

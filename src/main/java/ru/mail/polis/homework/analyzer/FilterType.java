@@ -8,11 +8,13 @@ public enum FilterType {
     SPAM(1),
     NEGATIVE_TEXT(3),
     SPACE_LENGTH(4),
-    GOOD(5);
+    GOOD(0);
 
     public int priority;
 
     FilterType(int priority) {
         this.priority = priority;
     }
+
+
 }

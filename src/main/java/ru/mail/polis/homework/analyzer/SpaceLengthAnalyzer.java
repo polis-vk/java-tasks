@@ -19,4 +19,9 @@ public class SpaceLengthAnalyzer implements TextAnalyzer {
 
         return FilterType.GOOD;
     }
+
+    @Override
+    public FilterType getType() {
+        return FilterType.SPACE_LENGTH;
+    }
 }

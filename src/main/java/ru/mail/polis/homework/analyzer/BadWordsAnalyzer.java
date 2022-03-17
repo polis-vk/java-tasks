@@ -28,4 +28,12 @@ public class BadWordsAnalyzer implements TextAnalyzer {
         return FilterType.GOOD;
     }
 
+    @Override
+    public FilterType getType() {
+        if (receivedSpam) {
+            return FilterType.SPAM;
+        }
+
+        return FilterType.NEGATIVE_TEXT;
+    }
 }
