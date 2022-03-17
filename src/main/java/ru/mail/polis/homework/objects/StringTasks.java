@@ -93,7 +93,7 @@ public class StringTasks {
         int dotsNumber = 0;
         for (int i = 0; i < requiredSymbolsStr.length(); i++) {
             currentSymbol = requiredSymbolsStr.charAt(i);
-            if (dotsNumber == 0 && Character.isDigit(currentSymbol)) {
+            if (dotsNumber == 0 && Character.isDigit(currentSymbol) && i < positionE) {
                 digitNumberBeforeDot++;
                 numberWas = true;
             }
