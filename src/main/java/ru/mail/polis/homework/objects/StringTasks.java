@@ -57,13 +57,13 @@ public class StringTasks {
                 return null;
             }
 
-            if (((c_sign == 1 && res_str.charAt(0) == '-') || c_sign == 0) && start_i != res_l && fl < 2) {
+            if (((c_sign == 1 && res_str.charAt(start_i) == '-') || c_sign == 0) && start_i != res_l && fl < 3) {
                 if (c_p == 1 && str.charAt(i - 1) != '.') {
-                    res[c_e] = toNumber(res_str.substring(start_i, res_l));
+                    res[fl - 1] = toNumber(res_str.substring(start_i, res_l));
                 } else if (str.charAt(i - 1) == '.') {
                     return null;
                 } else if (c_p == 0) {
-                    res[c_e] = toInt(res_str.substring(start_i, res_l));
+                    res[fl - 1] = toInt(res_str.substring(start_i, res_l));
                 }
             } else if (start_i != res_l) {
                 return null;
@@ -72,13 +72,18 @@ public class StringTasks {
                 res_str.append(str.charAt(i));
                 res_l++;
             }
+            if (i == str.length()-1 && (res_str.charAt(res_l-1) == 'e' || res_str.charAt(res_l-1) == '.')) {
+                return null;
+            }
+            i++;
         }
         if (res[1] == 0) {
-            if (res[0] > Integer.MAX_VALUE){
+            if ((long) res[0] == res[0] && (res[0] > Integer.MAX_VALUE || res[0] < -1 * Integer.MAX_VALUE - 1)) {
                 return (long) res[0];
-            }
-            else{
+            } else if ((int) res[0] == res[0]) {
                 return (int) res[0];
+            } else {
+                return res[0];
             }
         } else {
             return res[0] * Math.pow(10, res[1]);
@@ -95,21 +100,20 @@ public class StringTasks {
         while (i < str.length() && str.charAt(i) != '.') {
             i++;
         }
-        long int_num = toInt(str.substring(start_i, i - 1));
-        double dot_num = toInt(str.substring(i + 1, str.length() - 1)) / Math.pow(10, str.length() - i - 2);
+        long int_num = toInt(str.substring(start_i, i));
+        double dot_num = toInt(str.substring(i + 1)) / Math.pow(10, str.length() - i - 1);
         return (double) int_num + dot_num;
     }
 
     private static long toInt(String str) {
         long res = 0;
-        int sign = 1, j = 0, delta = 0;
+        int sign = 1, j = 0;
         if (str.charAt(0) == '-') {
             sign = -1;
-            delta = 1;
             j = 1;
         }
         for (int i = j; i < str.length(); i++) {
-            double pow = Math.pow(10, str.length() - i - delta);
+            double pow = Math.pow(10, str.length() - i - 1);
             switch (str.charAt(i)) {
                 case '1':
                     res += 1 * pow;
