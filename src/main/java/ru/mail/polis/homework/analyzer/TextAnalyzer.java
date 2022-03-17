@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
 
+import org.w3c.dom.Text;
+
 /**
  * Базовый интерфейс фильтра, наследники этого интерфейса должны инкапсулировать в себе всю логику
  * анализа текста.
@@ -17,21 +19,26 @@ package ru.mail.polis.homework.analyzer;
 public interface TextAnalyzer {
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return null;
+        return new TooLongAnalyzer(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return null;
+        return new SpamAnalyzer(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return null;
+        return new NegativeTextAnalyzer();
     }
+
+    FilterType typeOfType(String text);
 
     /**
      * придумать свой фильтр
      */
-    static <T> TextAnalyzer createCustomAnalyzer(T something) {
-        return null;
+
+    static TextAnalyzer createForeignSymbols() {
+        return new ForeignSymbols();
     }
+
+    int priority();
 }
