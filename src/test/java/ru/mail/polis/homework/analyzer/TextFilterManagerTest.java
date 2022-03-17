@@ -141,5 +141,16 @@ public class TextFilterManagerTest {
         }
     }
 
-
+    @Test
+    public void analyzeOnlyCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer(5)});
+        assertEquals("CUSTOM", manager.analyze("").toString());
+        assertEquals("CUSTOM", manager.analyze("раз два три").toString());
+        assertEquals("CUSTOM", manager.analyze("   ").toString());
+        assertEquals("CUSTOM", manager.analyze("  , .  ,   , ,,  ").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("раз, два, три. четыре пять шесть").toString());
+        assertEquals("GOOD", manager.analyze("раз   два  три   четыре,    пять.    шесть семь.").toString());
+        assertEquals("GOOD", manager.analyze("раз ДВА три,four 56").toString());
+    }
 }
