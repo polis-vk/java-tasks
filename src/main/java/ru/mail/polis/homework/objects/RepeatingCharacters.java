@@ -25,11 +25,11 @@ public class RepeatingCharacters {
             } else {
                 if (counter > max) {
                     max = counter;
-                    maxSymbol = str.charAt(i - 1);
+                    maxSymbol = str.charAt(i);
                 }
                 counter = 1;
                 if (max > str.length() - i - 1) {
-                    break;
+                    return new Pair<>(maxSymbol, max);
                 }
             }
         }

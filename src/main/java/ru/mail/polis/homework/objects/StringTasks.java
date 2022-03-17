@@ -18,48 +18,58 @@ public class StringTasks {
         if (str == null || str.equals("") || str.indexOf('.') != str.lastIndexOf('.') || str.indexOf('e') != str.lastIndexOf('e')) {
             return null;
         }
-        String newStr = "";
-        char current;
-        int countMinus = 0;
+        StringBuilder newStr = new StringBuilder();
+        int indexE = -1;
+        int indexPoint = -1;
+        int lenght = 0;
         for (int i = 0; i < str.length(); i++) {
-            current = str.charAt(i);
-            if (Character.isDigit(current) || current == '-' || current == '.' || current == 'e') {
-                newStr = newStr + current;
-                if (current == '-') {
-                    countMinus++;
-                    if (countMinus > 2) {
-                        return null;
-                    }
+            char current = str.charAt(i);
+            if (Character.isDigit(current)) {
+                newStr.append(current);
+                lenght++;
+                }
+            else {
+                switch (current) {
+                    case '-':
+                        newStr.append(current);
+                        int indexMinus = lenght;
+                        if (indexE + 1 != indexMinus) {
+                            return null;
+                        }
+                        lenght++;
+                        break;
+                    case 'e':
+                        newStr.append(current);
+                        indexE = lenght;
+                        lenght++;
+                        break;
+                    case '.':
+                        newStr.append(current);
+                        indexPoint = lenght;
+                        if (indexE != -1 && indexPoint > indexE) {
+                            return null;
+                        }
+                        lenght++;
+                        break;
                 }
             }
         }
-        if (newStr.contains("--")) {
-            return null;
-        }
-        if (countMinus == 1 && newStr.indexOf('-') != 0 && newStr.lastIndexOf('-') - 1 != newStr.indexOf('e')) {
-            return null;
-        }
-        if (countMinus == 2 && (newStr.indexOf('-') != 0 || newStr.lastIndexOf('-') - 1 != newStr.indexOf('e'))) {
-            return null;
-        }
-        if (newStr.contains("e")) {
-            if (newStr.indexOf('e') < newStr.indexOf('.') || newStr.indexOf('e') == newStr.length() - 1) {
+        String numberString = newStr.toString();
+        if (indexE == lenght - 1){
                 return null;
-            } else {
-                return ToDouble(newStr);
             }
+        if (indexE != -1 || indexPoint != -1) {
+            return toDouble(numberString);
         }
-        if (newStr.contains(".")) {
-            return ToDouble(newStr);
-        }
-        long l = ToLong(newStr);
+        long l = toLong(numberString);
+
         if (l <= Integer.MAX_VALUE && l >= Integer.MIN_VALUE) {
             return ((int) l);
         }
         return l;
     }
 
-    private static long ToLong(String str) {
+    private static long toLong(String str) {
         long number = 0;
         int i = 0;
         if (str.charAt(0) == '-') {
@@ -74,14 +84,13 @@ public class StringTasks {
         return number;
     }
 
-    private static double ToDouble(String str) {
+    private static double toDouble(String str) {
         double number = 0;
-        int i = 0;
-        if (str.charAt(0) == '-') {
-            i = 1;
-        }
-        for (; i < str.length() && str.charAt(i) != 'e' ; i++) {
-            number = number * 10 + (int) str.charAt(i) - 48;
+        int i;
+        for (i = 0; i < str.length() && str.charAt(i) != 'e' ; i++) {
+            if (Character.isDigit(str.charAt(i))) {
+                number = number * 10 + (int) str.charAt(i) - 48;
+            }
         }
         if (str.charAt(0) == '-') {
             number = -number;
@@ -97,7 +106,9 @@ public class StringTasks {
         if (i < str.length() && str.charAt(i) == 'e') {
             int pow = 0;
             for (int k = i + 1; k < str.length(); k++) {
-                pow = pow * 10 + (int) str.charAt(k) - 48;
+                if (Character.isDigit(str.charAt(k))) {
+                    pow = pow * 10 + (int) str.charAt(k) - 48;
+                }
             }
             if (str.charAt(i + 1) == '-') {
                 number = number / Math.pow(10, pow);
