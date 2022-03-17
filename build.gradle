@@ -1,7 +1,9 @@
 plugins {
     id 'java'
 }
-
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
 group 'ru.mail.polis.homework'
 version '1.0-SNAPSHOT'
 

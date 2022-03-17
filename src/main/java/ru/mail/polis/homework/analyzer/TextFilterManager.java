@@ -17,15 +17,15 @@ package ru.mail.polis.homework.analyzer;
  * (SPAM, TOO_LONG, NEGATIVE_TEXT, CUSTOM - в таком порядке) и возвращать тип с максимальным приоритетом.
  * Отсортировать фильтра можно с помощью функции
  * Arrays.sort(filter, (filter1, filter2) -> {
- *     if (filter1 < filter2) {
- *         return -1;
- *     } else if (filter1 == filter2) {
- *         return 0;
- *     }
- *     return 1;
+ * if (filter1 < filter2) {
+ * return -1;
+ * } else if (filter1 == filter2) {
+ * return 0;
+ * }
+ * return 1;
  * }
  * где вместо сравнение самих фильтров должно быть стравнение каких-то количественных параметров фильтра
- *
+ * <p>
  * 2 балла ( + 2 балла за доп приоритет)
  * Итого 15 баллов + 2 дополнительных
  */
@@ -36,14 +36,28 @@ public class TextFilterManager {
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
      * что в них реализован интерфейс TextAnalyzer
      */
-    public TextFilterManager(TextAnalyzer[] filters) {
+    private TextAnalyzer[] analyzers;
 
+    public TextFilterManager(TextAnalyzer[] filters) {
+        this.analyzers = filters;
     }
 
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-        return null;
+        if (analyzers == null || analyzers.length == 0) {
+            return FilterType.GOOD;
+        }
+        if (text == null || text.isEmpty()) {
+            return FilterType.GOOD;
+        }
+        for (TextAnalyzer analyzer : analyzers) {
+            FilterType filterVal = analyzer.FilterValue(text);
+            if (filterVal != FilterType.GOOD) {
+                return filterVal;
+            }
+        }
+        return FilterType.GOOD;
     }
 }
