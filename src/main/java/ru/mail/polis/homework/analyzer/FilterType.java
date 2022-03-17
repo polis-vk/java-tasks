@@ -8,7 +8,7 @@ public enum FilterType {
     SPAM(1),
     NEGATIVE_TEXT(3),
     SPACE_LENGTH(4),
-    GOOD(0);
+    GOOD(5);
 
     public int priority;
 

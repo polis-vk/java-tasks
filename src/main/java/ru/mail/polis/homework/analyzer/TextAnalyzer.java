@@ -21,11 +21,11 @@ public interface TextAnalyzer {
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return new SpamAndNegativeTextAnalyzer(spam, FilterType.SPAM);
+        return new BadWordsAnalyzer(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return new SpamAndNegativeTextAnalyzer(new String[]{"=(", ":(", ":|"}, FilterType.NEGATIVE_TEXT);
+        return new BadWordsAnalyzer();
     }
 
     /**
@@ -36,6 +36,4 @@ public interface TextAnalyzer {
     }
 
     FilterType analyze(String text);
-
-    FilterType getPriority();
 }

@@ -22,6 +22,7 @@ public class StringTasksTest {
         assertEquals(-2147483649L, StringTasks.valueOf("asd-dgsdf2fg1474asdfg8364asd9asd"));
         assertEquals(1e2, StringTasks.valueOf("1e2"));
         assertEquals(-1e-2, StringTasks.valueOf("asd-asd1asddecvxv-dsf2fsdv"));
+        assertEquals(null, StringTasks.valueOf("1.23-a1"));
         assertEquals(1e-3, StringTasks.valueOf("1e-asdsad3"));
         assertEquals(null, StringTasks.valueOf("1-easdsad3"));
         assertEquals(null, StringTasks.valueOf("1e--asdsad3"));

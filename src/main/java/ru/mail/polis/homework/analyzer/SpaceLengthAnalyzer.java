@@ -19,9 +19,4 @@ public class SpaceLengthAnalyzer implements TextAnalyzer {
 
         return FilterType.GOOD;
     }
-
-    @Override
-    public FilterType getPriority() {
-        return FilterType.SPACE_LENGTH;
-    }
 }
