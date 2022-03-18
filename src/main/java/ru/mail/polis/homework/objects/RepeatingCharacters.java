@@ -16,32 +16,24 @@ public class RepeatingCharacters {
         if (str == null || str.isEmpty()) {
             return null;
         }
-        char popularSymbol = str.charAt(0);
-        int countPopularSymbol = 0;
-        for (int i = 0; i < str.length(); ++i) {
-            char currentSymbol = str.charAt(i);
-            int resultCountForCurrentSymbol = 0;
-            for (int j = i; j < str.length(); ++j) {
-                if (currentSymbol == str.charAt(j)) {
-                    int localCount = 0;
-                    while (j < str.length() && currentSymbol == str.charAt(j)) {
-                        localCount++;
-                        j++;
-                    }
-                    if (j - i == localCount) {
-                        i += localCount - 1;
-                    }
-                    if (localCount > resultCountForCurrentSymbol) {
-                        resultCountForCurrentSymbol = localCount;
-                    }
-                }
+        int currentMaxSequenceLength = 1;
+        int maxSequenceLength = 1;
+        char currentSymbol = str.charAt(0);
+        for (int i = 1; i < str.length(); ++i) {
+            if (maxSequenceLength > (str.length() - i + currentMaxSequenceLength)) {
+                break;
             }
-            if (resultCountForCurrentSymbol  > countPopularSymbol) {
-                popularSymbol = currentSymbol;
-                countPopularSymbol = resultCountForCurrentSymbol;
+            if (str.charAt(i - 1) == str.charAt(i)) {
+                currentMaxSequenceLength++;
+            } else {
+                currentMaxSequenceLength = 1;
+            }
+            if (currentMaxSequenceLength > maxSequenceLength) {
+                maxSequenceLength = currentMaxSequenceLength;
+                currentSymbol = str.charAt(i);
             }
         }
-        return new Pair<>(popularSymbol, countPopularSymbol);
+        return new Pair<>(currentSymbol, maxSequenceLength);
     }
 
     public static class Pair<T, V> {

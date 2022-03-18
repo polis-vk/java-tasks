@@ -24,31 +24,30 @@ public class StringTasks {
                 resultString.append(str.charAt(i));
             }
         }
-        int indexDot = resultString.indexOf(Constant.DOT.toString());
-        int indexExp = resultString.indexOf(Constant.EXP.toString());
+        int indexDot = resultString.indexOf(String.valueOf(Constant.DOT));
+        int indexExp = resultString.indexOf(String.valueOf(Constant.EXP));
         try {
             if (indexDot != -1 || indexExp != -1) {
-            return Double.valueOf(resultString.toString());
-        }
+                return Double.valueOf(resultString.toString());
+            }
             long resValue = Long.parseLong(resultString.toString());
             if (resValue > Integer.MAX_VALUE || resValue < Integer.MIN_VALUE) {
                 return resValue;
             }
 
-            return Integer.valueOf(resultString.toString());
-        }
-        catch (NumberFormatException e)
-        {
+            return (int) resValue;
+        } catch (NumberFormatException e) {
             return null;
         }
     }
 
     private static class Constant {
-        private final static Character MINUS = '-';
-        private final static Character EXP = 'e';
-        private final static Character DOT = '.';
-        private static boolean isConstant(Character el) {
-            return el.equals(MINUS) || el.equals(EXP) || el.equals(DOT);
+        private final static char MINUS = '-';
+        private final static char EXP = 'e';
+        private final static char DOT = '.';
+
+        private static boolean isConstant(char el) {
+            return el == MINUS || el == EXP || el == DOT;
         }
     }
 }
