@@ -6,6 +6,8 @@ package ru.mail.polis.homework.objects;
 public class CustomLinkedList {
 
     private Node head;
+    private Node lastNode;
+    int size = 0;
 
     /**
      * Реализовать метод:
@@ -14,7 +16,16 @@ public class CustomLinkedList {
      * @param value - data for create Node.
      */
     public void add(int value) {
+        if (head == null) {
+            head = new Node(value);
+            lastNode = head;
+            size++;
+            return;
+        }
 
+        lastNode.setNext(new Node(value));
+        lastNode = lastNode.next;
+        size++;
     }
 
     /**
@@ -25,7 +36,46 @@ public class CustomLinkedList {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
+        if (index >= size || index < 0 || head == null) {
+            throw new IndexOutOfBoundsException();
+        }
 
+        if (index == 0) {
+            if (head.next != null) {
+                head = head.next;
+                size--;
+                return;
+            }
+
+            head = null;
+            size--;
+            return;
+        }
+
+        Node nextNode = head.next;
+        Node beforeNode = null;
+        int count = 1;
+        while (nextNode.next != null) {
+            if (index - 1 == count) {
+                beforeNode = nextNode;
+            }
+
+            if (beforeNode != null && index + 1 == count) {
+                if (count == size) {
+                    beforeNode.next = null;
+                    lastNode = beforeNode;
+                    size--;
+                    return;
+                }
+
+                beforeNode.next = nextNode;
+                size--;
+                return;
+            }
+
+            nextNode = nextNode.next;
+            count++;
+        }
     }
 
     /**
@@ -36,7 +86,16 @@ public class CustomLinkedList {
      *  После исполнения метода последовательность должа быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-
+        Node beforeNode = null;
+        Node currentNode = head;
+        Node nextNode;
+        while (currentNode != null) {
+            nextNode = currentNode.next;
+            currentNode.next = beforeNode;
+            beforeNode = currentNode;
+            currentNode = nextNode;
+        }
+        head = beforeNode;
     }
 
     /**
@@ -50,7 +109,19 @@ public class CustomLinkedList {
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        if (head == null) {
+            return "null";
+        }
+
+        StringBuilder stringBuilder = new StringBuilder();
+        Node nextNode = head;
+        while (nextNode.next != null) {
+            stringBuilder.append(nextNode.value).append(" -> ");
+            nextNode = nextNode.next;
+        }
+        stringBuilder.append(nextNode.value).append(" -> null");
+
+        return stringBuilder.toString();
     }
 
     private static class Node {
