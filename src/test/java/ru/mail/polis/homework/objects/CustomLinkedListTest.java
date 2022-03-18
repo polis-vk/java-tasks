@@ -16,6 +16,36 @@ public class CustomLinkedListTest {
         assertEquals(generateString(DEFAULT_ARRAY), list.toString());
         list.add(9);
         assertEquals(generateString(new int[]{5, 3, 7, 4, 5, 9}), list.toString());
+        assertEquals(6, list.size());
+    }
+
+    @Test
+    public void testAddByIndex() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        assertEquals(generateString(DEFAULT_ARRAY), list.toString());
+        list.add(3, 9);
+        assertEquals(generateString(new int[]{5, 3, 7, 9, 4, 5}), list.toString());
+        assertEquals(6, list.size());
+
+        list.add(0, 1);
+        assertEquals(generateString(new int[]{1, 5, 3, 7, 9, 4, 5}), list.toString());
+        assertEquals(7, list.size());
+
+
+        list.add(7, 1);
+        assertEquals(generateString(new int[]{1, 5, 3, 7, 9, 4, 5, 1}), list.toString());
+        assertEquals(8, list.size());
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testAddByIndex_withException() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        assertEquals(generateString(DEFAULT_ARRAY), list.toString());
+        list.add(3, 9);
+        assertEquals(generateString(new int[]{5, 3, 7, 9, 4, 5}), list.toString());
+        assertEquals(6, list.size());
+
+        list.add(7, 1);
     }
 
     @Test
@@ -23,6 +53,7 @@ public class CustomLinkedListTest {
         CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
         list.removeElement(2);
         assertEquals(generateString(new int[]{5, 3, 4, 5}), list.toString());
+        assertEquals(4, list.size());
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
@@ -35,12 +66,14 @@ public class CustomLinkedListTest {
     @Test(expected = IndexOutOfBoundsException.class)
     public void removeElementFromEmptyList() {
         CustomLinkedList list = new CustomLinkedList();
+        assertEquals(0, list.size());
         list.removeElement(0);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void testRemoveIndexOutOfBounds() {
         CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        assertEquals(DEFAULT_ARRAY.length, list.size());
         list.removeElement(DEFAULT_ARRAY.length);
     }
 
@@ -53,6 +86,7 @@ public class CustomLinkedListTest {
             .map(i -> DEFAULT_ARRAY[DEFAULT_ARRAY.length - i]).toArray();
 
         assertEquals(generateString(revertArray), list.toString());
+        assertEquals(DEFAULT_ARRAY.length, list.size());
     }
 
     @Test
