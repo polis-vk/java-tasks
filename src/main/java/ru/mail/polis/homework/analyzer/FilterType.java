@@ -7,6 +7,6 @@ public enum FilterType {
     SPAM,
     TOO_LONG,
     NEGATIVE_TEXT,
-    CUSTOM,
+    FOREIGN,
     GOOD;
 }

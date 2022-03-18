@@ -89,12 +89,12 @@ public class TextFilterManagerTest {
 
     @Test
     public void analyzeOnlyForeignSymbols() {
-        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createForeignSymbols()});
-        assertEquals("CUSTOM", manager.analyze("Я в свoем познании настoлько преиспoлнился").toString());
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createForeignAnalyzer()});
+        assertEquals("FOREIGN", manager.analyze("Я в свoем познании настoлько преиспoлнился").toString());
         assertEquals("GOOD", manager.analyze("что я как будто бы уже сто триллионов миллиардов лет проживаю на триллионах и триллионах таких же планет").toString());
-        assertEquals("CUSTOM", manager.analyze("мне этoт мир абсолютно понятен, и я здeсь ищу только одного - покоя, yмиротворения").toString());
+        assertEquals("FOREIGN", manager.analyze("мне этoт мир абсолютно понятен, и я здeсь ищу только одного - покоя, yмиротворения").toString());
         assertEquals("GOOD", manager.analyze("от слияния с бесконечно вечным, от созерцания великого фрактального подобия").toString());
-        assertEquals("CUSTOM", manager.analyze("и oт вот этого замечательного всeединства сyщества бесконечно вeчного, куда ни пoсмотри").toString());
+        assertEquals("FOREIGN", manager.analyze("и oт вот этого замечательного всeединства сyщества бесконечно вeчного, куда ни пoсмотри").toString());
         assertEquals("GOOD", manager.analyze("хоть вглубь - бесконечно малое, хоть ввысь - бесконечное большое, понимаешь?").toString());
     }
 

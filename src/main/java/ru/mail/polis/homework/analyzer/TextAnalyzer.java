@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 
-import org.w3c.dom.Text;
+import java.util.logging.Filter;
 
 /**
  * Базовый интерфейс фильтра, наследники этого интерфейса должны инкапсулировать в себе всю логику
@@ -30,15 +30,15 @@ public interface TextAnalyzer {
         return new NegativeTextAnalyzer();
     }
 
-    FilterType typeOfType(String text);
+    FilterType filterOfType(String text);
 
     /**
      * придумать свой фильтр
      */
 
-    static TextAnalyzer createForeignSymbols() {
-        return new ForeignSymbols();
+    static TextAnalyzer createForeignAnalyzer() {
+        return new ForeignAnalyzer();
     }
 
-    int priority();
+    FilterType priority();
 }
