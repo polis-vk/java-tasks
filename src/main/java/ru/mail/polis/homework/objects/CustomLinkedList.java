@@ -1,13 +1,17 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.Iterator;
+
 /**
+ * 13 тугриков
  * Реализовать все методы односвязанного списка.
  */
-public class CustomLinkedList {
+public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
 
     /**
+     * 1 тугрик
      * Возвращает количество элементов в списке
      *
      * @return size
@@ -17,6 +21,7 @@ public class CustomLinkedList {
     }
 
     /**
+     * 2 тугрика
      * Реализовать метод:
      * Добавляет элемент в односвязный список.
      *
@@ -27,6 +32,7 @@ public class CustomLinkedList {
     }
 
     /**
+     * 2 тугрика
      * Реализовать метод:
      * Добавляет элемент в односвязный список на заданную позицию.
      * Если был передан невалидный index - надо выкинуть исключение IndexOutOfBoundsException.
@@ -40,6 +46,7 @@ public class CustomLinkedList {
     }
 
     /**
+     * 2 тугрика
      * Реализовать метод:
      * Удаляет элемент в указанной позиции, при это связывая его соседние элементы друг с другом.
      * Если был передан невалидный index - надо выкинуть исключение IndexOutOfBoundsException.
@@ -52,6 +59,7 @@ public class CustomLinkedList {
     }
 
     /**
+     * 2 тугрика
      * Реализовать метод:
      * Переворачивает все элементы списка.
      * Пример:
@@ -63,6 +71,7 @@ public class CustomLinkedList {
     }
 
     /**
+     * 1 тугрик
      * Метод выводит всю последовательность хранящуюся в списке начиная с head.
      * Формат вывода:
      *  - значение каждой Node должно разделяться " -> "
@@ -74,6 +83,17 @@ public class CustomLinkedList {
     @Override
     public String toString() {
         return "1 -> 2 -> 3 -> null";
+    }
+
+    /**
+     * 3 тугрика
+     * Возвращает итератор, который умеет только итерироваться. БЕЗ удаления!
+     *
+     * @return iterator
+     */
+    @Override
+    public Iterator<Integer> iterator() {
+        return null;
     }
 
     private static class Node {

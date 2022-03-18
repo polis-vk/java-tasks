@@ -2,9 +2,13 @@ package ru.mail.polis.homework.objects;
 
 import org.junit.Test;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class CustomLinkedListTest {
 
@@ -95,6 +99,33 @@ public class CustomLinkedListTest {
         assertEquals("null", list.toString());
     }
 
+    @Test
+    public void testIterator() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        assertEquals(generateString(DEFAULT_ARRAY), list.toString());
+        list.add(9);
+        iteratorCheck(list.iterator(), new int[]{5, 3, 7, 4, 5, 9});
+        iteratorCheck(list.iterator(), new int[]{5, 3, 7, 4, 5, 9});
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void testIteratorException() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        assertEquals(generateString(DEFAULT_ARRAY), list.toString());
+        list.add(9);
+        Iterator<Integer> iterator = list.iterator();
+        iteratorCheck(iterator, new int[]{5, 3, 7, 4, 5, 9});
+        iterator.next();
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void testEmptyIteratorException() {
+        CustomLinkedList list = new CustomLinkedList();
+        Iterator<Integer> iterator = list.iterator();
+        iteratorCheck(iterator, new int[] {});
+        iterator.next();
+    }
+
     private String generateString(int[] data) {
         StringBuilder sb = new StringBuilder();
 
@@ -113,5 +144,17 @@ public class CustomLinkedListTest {
             list.add(value);
         }
         return list;
+    }
+
+    private void iteratorCheck(Iterator<Integer> it, int[] expected) {
+        if (expected.length == 0) {
+            assertFalse(it.hasNext());
+            return;
+        }
+        for (int j : expected) {
+            assertTrue(it.hasNext());
+            assertEquals(j, (int) it.next());
+        }
+        assertFalse(it.hasNext());
     }
 }
