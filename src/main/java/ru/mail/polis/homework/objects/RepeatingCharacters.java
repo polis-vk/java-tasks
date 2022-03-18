@@ -16,6 +16,7 @@ public class RepeatingCharacters {
         if (str == null || str.isEmpty()) {
             return null;
         }
+        
         int currentMaxSequenceLength = 1;
         int maxSequenceLength = 1;
         char currentSymbol = str.charAt(0);
