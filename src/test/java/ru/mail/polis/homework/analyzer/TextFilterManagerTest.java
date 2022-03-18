@@ -141,5 +141,15 @@ public class TextFilterManagerTest {
         }
     }
 
+    @Test
+    public void analyzeOnlyMarksFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createMarksAnalyzer()});
+        assertEquals("GOOD", manager.analyze("Привет я Петя").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("Это цифра один 1").toString());
+        assertEquals("MARKS", manager.analyze("Привет, я Петя :(").toString());
+        assertEquals("MARKS", manager.analyze("Это цифра один - 1").toString());
+    }
 
 }
