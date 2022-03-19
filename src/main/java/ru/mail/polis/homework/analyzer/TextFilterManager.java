@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
+import java.util.Arrays;
 
 /**
  * Задание написать систему фильтрации комментариев.
@@ -36,22 +37,32 @@ public class TextFilterManager {
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
      * что в них реализован интерфейс TextAnalyzer
      */
-    private TextAnalyzer[] analyzers;
+    private final TextAnalyzer[] analyzers;
 
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.analyzers = filters;
+        this.analyzers = Arrays.copyOf(filters, filters.length);
+
     }
 
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
+
         if (analyzers == null || analyzers.length == 0) {
             return FilterType.GOOD;
         }
         if (text == null || text.isEmpty()) {
             return FilterType.GOOD;
         }
+        Arrays.sort(analyzers, (filter1, filter2) -> {
+            if (filter1.FilterValue(text).priority < filter2.FilterValue(text).priority) {
+                return -1;
+            } else if (filter1.FilterValue(text).priority == filter2.FilterValue(text).priority) {
+                return 0;
+            }
+            return 1;
+        });
         for (TextAnalyzer analyzer : analyzers) {
             FilterType filterVal = analyzer.FilterValue(text);
             if (filterVal != FilterType.GOOD) {

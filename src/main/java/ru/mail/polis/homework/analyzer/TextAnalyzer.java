@@ -32,5 +32,13 @@ public interface TextAnalyzer {
      * придумать свой фильтр
      */
 
+    /**
+     * Фильтр по проверке орфографической ошибки жы и шы
+     */
+    static TextAnalyzer createOrthographicTextAnalyzer() {
+        return new OrthographicTextAnalyzer();
+    }
+
+
     FilterType FilterValue(String text);
 }
