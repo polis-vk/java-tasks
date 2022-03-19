@@ -13,7 +13,7 @@ public class TooLongAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public FilterType analyze(String text) {
-        return text.length() > maxLength ? FilterType.TOO_LONG : FilterType.GOOD;
+    public boolean analyze(String text) {
+        return text.length() > maxLength;
     }
 }

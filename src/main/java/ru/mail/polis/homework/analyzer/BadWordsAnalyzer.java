@@ -10,12 +10,12 @@ public class BadWordsAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public FilterType analyze(String text) {
+    public boolean analyze(String text) {
         for (String word : badWords) {
             if (text.contains(word)) {
-                return filterType;
+                return true;
             }
         }
-        return FilterType.GOOD;
+        return false;
     }
 }

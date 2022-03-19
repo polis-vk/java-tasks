@@ -30,12 +30,13 @@ public interface TextAnalyzer {
 
     /**
      * придумать свой фильтр
+     * MinWordsCountAnalyzer проверяет, что в тексте не меньше minWordsCount слов
      */
     static TextAnalyzer createCustomAnalyzer(int minWordsCount) {
-        return new WordsCountAnalyzer(minWordsCount);
+        return new MinWordsCountAnalyzer(minWordsCount);
     }
 
-    FilterType analyze(String text);
+    boolean analyze(String text);
 
     FilterType getFilterType();
 }
