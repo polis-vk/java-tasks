@@ -12,14 +12,14 @@ public abstract class BaseFindSomething implements TextAnalyzer {
     }
 
     @Override
-    public FilterType analyze(String text) {
+    public boolean analyze(String text) {
         for (String word : SOMETHING) {
             if (text.contains(word)) {
-                return type();
+                return true;
             }
         }
-        return FilterType.GOOD;
+        return false;
     }
 
-    public abstract FilterType type();
+    public abstract FilterType getType();
 }

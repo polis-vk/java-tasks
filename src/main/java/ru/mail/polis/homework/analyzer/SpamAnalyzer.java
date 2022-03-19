@@ -6,7 +6,7 @@ public class SpamAnalyzer extends BaseFindSomething {
         super(spam);
     }
 
-    public FilterType type() {
+    public FilterType getType() {
         return FilterType.SPAM;
     }
 }

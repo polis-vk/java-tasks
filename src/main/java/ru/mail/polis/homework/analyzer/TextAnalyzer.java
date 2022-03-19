@@ -38,7 +38,7 @@ public interface TextAnalyzer {
         return null;
     }
 
-    FilterType analyze(String text);
+    boolean analyze(String text);
 
-    FilterType type();
+    FilterType getType();
 }
