@@ -71,79 +71,79 @@ public class CustomLinkedListTest {
         list.get(5);
     }
 
-//    @Test
-//    public void removeElement() {
-//        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
-//        list.removeElement(2);
-//        assertEquals(generateString(new int[]{5, 3, 4, 5}), list.toString());
-//        assertEquals(4, list.size());
-//    }
-//
-//    @Test(expected = IndexOutOfBoundsException.class)
-//    public void removeElementWithNegativeIndex() {
-//        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
-//        list.removeElement(-2);
-//        assertEquals(generateString(new int[]{5, 3, 4, 5}), list.toString());
-//    }
-//
-//    @Test(expected = IndexOutOfBoundsException.class)
-//    public void removeElementFromEmptyList() {
-//        CustomLinkedList list = new CustomLinkedList();
-//        assertEquals(0, list.size());
-//        list.removeElement(0);
-//    }
-//
-//    @Test(expected = IndexOutOfBoundsException.class)
-//    public void testRemoveIndexOutOfBounds() {
-//        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
-//        assertEquals(DEFAULT_ARRAY.length, list.size());
-//        list.removeElement(DEFAULT_ARRAY.length);
-//    }
-//
-//    @Test
-//    public void revertList() {
-//        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
-//        list.revertList();
-//
-//        int[] revertArray = IntStream.rangeClosed(1, DEFAULT_ARRAY.length)
-//            .map(i -> DEFAULT_ARRAY[DEFAULT_ARRAY.length - i]).toArray();
-//
-//        assertEquals(generateString(revertArray), list.toString());
-//        assertEquals(DEFAULT_ARRAY.length, list.size());
-//    }
-//
-//    @Test
-//    public void testToStringWithEmptyList() {
-//        CustomLinkedList list = new CustomLinkedList();
-//        assertEquals("null", list.toString());
-//    }
-//
-//    @Test
-//    public void testIterator() {
-//        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
-//        assertEquals(generateString(DEFAULT_ARRAY), list.toString());
-//        list.add(9);
-//        iteratorCheck(list.iterator(), new int[]{5, 3, 7, 4, 5, 9});
-//        iteratorCheck(list.iterator(), new int[]{5, 3, 7, 4, 5, 9});
-//    }
-//
-//    @Test(expected = NoSuchElementException.class)
-//    public void testIteratorException() {
-//        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
-//        assertEquals(generateString(DEFAULT_ARRAY), list.toString());
-//        list.add(9);
-//        Iterator<Integer> iterator = list.iterator();
-//        iteratorCheck(iterator, new int[]{5, 3, 7, 4, 5, 9});
-//        iterator.next();
-//    }
-//
-//    @Test(expected = NoSuchElementException.class)
-//    public void testEmptyIteratorException() {
-//        CustomLinkedList list = new CustomLinkedList();
-//        Iterator<Integer> iterator = list.iterator();
-//        iteratorCheck(iterator, new int[] {});
-//        iterator.next();
-//    }
+    @Test
+    public void removeElement() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        list.removeElement(2);
+        assertEquals(generateString(new int[]{5, 3, 4, 5}), list.toString());
+        assertEquals(4, list.size());
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void removeElementWithNegativeIndex() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        list.removeElement(-2);
+        assertEquals(generateString(new int[]{5, 3, 4, 5}), list.toString());
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void removeElementFromEmptyList() {
+        CustomLinkedList list = new CustomLinkedList();
+        assertEquals(0, list.size());
+        list.removeElement(0);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testRemoveIndexOutOfBounds() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        assertEquals(DEFAULT_ARRAY.length, list.size());
+        list.removeElement(DEFAULT_ARRAY.length);
+    }
+
+    @Test
+    public void revertList() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        list.revertList();
+
+        int[] revertArray = IntStream.rangeClosed(1, DEFAULT_ARRAY.length)
+            .map(i -> DEFAULT_ARRAY[DEFAULT_ARRAY.length - i]).toArray();
+
+        assertEquals(generateString(revertArray), list.toString());
+        assertEquals(DEFAULT_ARRAY.length, list.size());
+    }
+
+    @Test
+    public void testToStringWithEmptyList() {
+        CustomLinkedList list = new CustomLinkedList();
+        assertEquals("null", list.toString());
+    }
+
+    @Test
+    public void testIterator() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        assertEquals(generateString(DEFAULT_ARRAY), list.toString());
+        list.add(9);
+        iteratorCheck(list.iterator(), new int[]{5, 3, 7, 4, 5, 9});
+        iteratorCheck(list.iterator(), new int[]{5, 3, 7, 4, 5, 9});
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void testIteratorException() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        assertEquals(generateString(DEFAULT_ARRAY), list.toString());
+        list.add(9);
+        Iterator<Integer> iterator = list.iterator();
+        iteratorCheck(iterator, new int[]{5, 3, 7, 4, 5, 9});
+        iterator.next();
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void testEmptyIteratorException() {
+        CustomLinkedList list = new CustomLinkedList();
+        Iterator<Integer> iterator = list.iterator();
+        iteratorCheck(iterator, new int[] {});
+        iterator.next();
+    }
 
     private String generateString(int[] data) {
         StringBuilder sb = new StringBuilder();
@@ -165,15 +165,15 @@ public class CustomLinkedListTest {
         return list;
     }
 
-//    private void iteratorCheck(Iterator<Integer> it, int[] expected) {
-//        if (expected.length == 0) {
-//            assertFalse(it.hasNext());
-//            return;
-//        }
-//        for (int j : expected) {
-//            assertTrue(it.hasNext());
-//            assertEquals(j, (int) it.next());
-//        }
-//        assertFalse(it.hasNext());
-//    }
+    private void iteratorCheck(Iterator<Integer> it, int[] expected) {
+        if (expected.length == 0) {
+            assertFalse(it.hasNext());
+            return;
+        }
+        for (int j : expected) {
+            assertTrue(it.hasNext());
+            assertEquals(j, (int) it.next());
+        }
+        assertFalse(it.hasNext());
+    }
 }
