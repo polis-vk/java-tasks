@@ -3,24 +3,30 @@ package ru.mail.polis.homework.analyzer;
 //Возвращает ENGLISH_TEXT, если все буквы text английские. Допустимые символы - пробелы, запятая и точка
 public class EnglishTextAnalyzer implements TextAnalyzer {
 
+
+    public boolean englishLetter(char letter) {
+        return letter >= 65 && letter <= 90 || letter >= 97 && letter <= 122;
+    }
+
+    public boolean validCharacter(char character) {
+        return character == 44 || character == 46 || character == 32;
+    }
+
     @Override
-    public FilterType filterType(String text) {
+    public boolean analyze(String text) {
+        if (text.isEmpty()) {
+            return false;
+        }
         for (int i = 0; i < text.length(); i++) {
-            if (!((text.charAt(i) >= 65 && text.charAt(i) <= 90 || text.charAt(i) >= 97 && text.charAt(i) <= 122)
-                    || text.charAt(i) == 44 || text.charAt(i) == 46 || text.charAt(i) == 32)) {
-                return FilterType.GOOD;
+            if (!(englishLetter(text.charAt(i)) || validCharacter(text.charAt(i)))) {
+                return false;
             }
         }
-        return FilterType.ENGLISH_TEXT;
+        return true;
     }
 
     @Override
-    public FilterType type(String text) {
+    public FilterType getType() {
         return FilterType.ENGLISH_TEXT;
-    }
-
-    @Override
-    public int priorityInfo() {
-        return 3;
     }
 }

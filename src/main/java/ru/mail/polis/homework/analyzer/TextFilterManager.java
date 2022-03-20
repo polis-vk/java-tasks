@@ -43,11 +43,11 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = filters;
-        Arrays.sort(filters, (filter1, filter2) -> {
-            if (filter1.priorityInfo() < filter2.priorityInfo()) {
+        this.filters = Arrays.copyOf(filters, filters.length);
+        Arrays.sort(this.filters, (filter1, filter2) -> {
+            if (filter1.getType().priority < filter2.getType().priority) {
                 return -1;
-            } else if (filter1.priorityInfo() == filter2.priorityInfo()) {
+            } else if (filter1.getType().priority == filter2.getType().priority) {
                 return 0;
             }
             return 1;
@@ -58,13 +58,12 @@ public class TextFilterManager {
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-
-        if (text == null || text.isEmpty()) {
+        if (text == null) {
             return FilterType.GOOD;
         }
         for (TextAnalyzer filter : filters) {
-            if (filter.filterType(text) != FilterType.GOOD) {
-                return filter.filterType(text);
+            if (filter.analyze(text)) {
+                return filter.getType();
             }
         }
         return FilterType.GOOD;

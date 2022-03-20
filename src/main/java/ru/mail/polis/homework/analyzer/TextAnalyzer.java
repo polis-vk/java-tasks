@@ -35,9 +35,7 @@ public interface TextAnalyzer {
         return new EnglishTextAnalyzer();
     }
 
-    FilterType filterType(String text);
+    boolean analyze(String text);
 
-    int priorityInfo();
-
-    FilterType type(String text);
+    FilterType getType();
 }
