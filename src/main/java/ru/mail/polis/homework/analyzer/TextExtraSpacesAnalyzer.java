@@ -4,8 +4,7 @@ public class TextExtraSpacesAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean analyze(String text) {
-        String copyText = String.copyValueOf(text.toCharArray());
-        return !copyText.equals(copyText.replaceAll("[\\s]{2,}", " ").trim());
+        return !text.equals(text.replaceAll("[\\s]{2,}", " ").trim());
     }
 
     @Override

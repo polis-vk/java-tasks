@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
 
-import org.w3c.dom.Text;
-
 /**
  * Базовый интерфейс фильтра, наследники этого интерфейса должны инкапсулировать в себе всю логику
  * анализа текста.
@@ -17,8 +15,6 @@ import org.w3c.dom.Text;
  * 2 тугрика + (2 тугрика за каждый фильтр + 1 тугрик за тест на свой фильтр) ИТОГО 11
  */
 public interface TextAnalyzer {
-
-    FilterType inactiveFilter = FilterType.GOOD;
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
         return new TextTooLongAnalyzer(maxLength);
@@ -40,6 +36,15 @@ public interface TextAnalyzer {
     }
 
     boolean analyze(String text);
+
+    default boolean isContainsMorphemes(String text, String[] morphemes) {
+        for (String s : morphemes) {
+            if (text.contains(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     FilterType getType();
 }

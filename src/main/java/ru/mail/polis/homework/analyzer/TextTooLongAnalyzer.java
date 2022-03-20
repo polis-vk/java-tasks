@@ -2,7 +2,7 @@ package ru.mail.polis.homework.analyzer;
 
 public class TextTooLongAnalyzer implements TextAnalyzer {
 
-    long maxLength;
+    private final long maxLength;
 
     public TextTooLongAnalyzer(long maxLength) {
         this.maxLength = maxLength;

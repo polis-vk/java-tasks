@@ -2,16 +2,11 @@ package ru.mail.polis.homework.analyzer;
 
 public class TextNegativeTextAnalyzer implements TextAnalyzer {
 
-    private final String[] negativeMorphemes = {"=(", ":(", ":|"};
+    private final static String[] NEGATIVE_MORPHEMES = {"=(", ":(", ":|"};
 
     @Override
     public boolean analyze(String text) {
-        for (String s : negativeMorphemes) {
-            if (text.contains(s)) {
-                return true;
-            }
-        }
-        return false;
+        return this.isContainsMorphemes(text, NEGATIVE_MORPHEMES);
     }
 
     @Override

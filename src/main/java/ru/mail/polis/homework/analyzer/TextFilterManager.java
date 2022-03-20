@@ -44,9 +44,9 @@ public class TextFilterManager {
     public TextFilterManager(TextAnalyzer[] filters) {
         managerFilters = Arrays.copyOf(filters, filters.length);
         Arrays.sort(managerFilters, (first, second) -> {
-            if (first.getType().ordinal() < second.getType().ordinal()) {
+            if (first.getType().getPriority() < second.getType().getPriority()) {
                 return -1;
-            } else if (first.getType().ordinal() == second.getType().ordinal()) {
+            } else if (first.getType().getPriority() == second.getType().getPriority()) {
                 return 0;
             }
             return 1;
@@ -58,13 +58,13 @@ public class TextFilterManager {
      */
     public FilterType analyze(String text) {
         if (text == null || text.isEmpty()) {
-            return TextAnalyzer.inactiveFilter;
+            return FilterType.GOOD;
         }
         for (TextAnalyzer filter : managerFilters) {
             if (filter.analyze(text)) {
                 return filter.getType();
             }
         }
-        return TextAnalyzer.inactiveFilter;
+        return FilterType.GOOD;
     }
 }
