@@ -151,12 +151,12 @@ public class CustomLinkedList implements Iterable<Integer> {
             return listDescription.toString();
         }
 
-        listDescription.append(head.value).append(" -> ");
         Node currentNode = head;
-        while (currentNode.next != null) {
-            listDescription.append(currentNode.next.value).append(" -> ");
+        do {
+            listDescription.append(currentNode.value).append(" -> ");
             currentNode = currentNode.next;
         }
+        while (currentNode != null);
         listDescription.append("null");
         return listDescription.toString();
     }
