@@ -9,6 +9,7 @@ import java.util.Iterator;
 public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
+    private Node firstNode;
 
     /**
      * 1 тугрик
@@ -17,7 +18,13 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @return size
      */
     public int size() {
-        return 0;
+        int sizeOfList = 0;
+        Node currentNode = firstNode;
+        while (currentNode != null) {
+            sizeOfList += 1;
+            currentNode = currentNode.next;
+        }
+        return sizeOfList;
     }
 
     /**
@@ -28,7 +35,13 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int value) {
-
+        Node node = new Node(value);
+        if (head == null) {
+            head = node;
+            firstNode = node;
+        }
+        head.setNext(node);
+        head = node;
     }
 
     /**
@@ -38,7 +51,19 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index
      */
     public int get(int index) {
-       return 0;
+        if (index < 0 || size() <= index) {
+            throw  new IndexOutOfBoundsException(index);
+        }
+        int currentPosition = 0;
+        Node currentNode = firstNode;
+        while (currentNode != null) {
+            if (currentPosition == index) {
+                return currentNode.value;
+            }
+            currentPosition += 1;
+            currentNode = currentNode.next;
+        }
+        return 0;
     }
 
     /**
@@ -48,11 +73,30 @@ public class CustomLinkedList implements Iterable<Integer> {
      * Если был передан невалидный index - надо выкинуть исключение IndexOutOfBoundsException.
      * throw new IndexOutOfBoundsException(i);
      *
-     * @param i - index
+     * @param i     - index
      * @param value - data for create Node.
      */
     public void add(int i, int value) {
-
+        if (i < 0 || size() < i) {
+            throw new IndexOutOfBoundsException(i);
+        }
+        int currentPosition = 0;
+        Node currentNode = firstNode;
+        if (i == 0) {
+            Node node = new Node(value);
+            node.next = firstNode;
+            firstNode = node;
+        }
+        while (currentNode != null) {
+            if (currentPosition == i - 1) {
+                Node node = new Node(value);
+                node.next = currentNode.next;
+                currentNode.next = node;
+                break;
+            }
+            currentPosition += 1;
+            currentNode = currentNode.next;
+        }
     }
 
     /**
@@ -73,8 +117,8 @@ public class CustomLinkedList implements Iterable<Integer> {
      * Реализовать метод:
      * Переворачивает все элементы списка.
      * Пример:
-     *  Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
-     *  После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
+     * Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
+     * После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
 
@@ -84,15 +128,27 @@ public class CustomLinkedList implements Iterable<Integer> {
      * 1 тугрик
      * Метод выводит всю последовательность хранящуюся в списке начиная с head.
      * Формат вывода:
-     *  - значение каждой Node должно разделяться " -> "
-     *  - последовательность всегда заканчивается на null
-     *  - если в списке нет элементов - верните строку "null"
+     * - значение каждой Node должно разделяться " -> "
+     * - последовательность всегда заканчивается на null
+     * - если в списке нет элементов - верните строку "null"
      *
      * @return - String with description all list
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        StringBuilder resultList = new StringBuilder();
+        if (firstNode == null) {
+            return resultList.append("null").toString();
+        }
+        Node currentNode = firstNode;
+        resultList.append(currentNode.value).append(" -> ");
+        currentNode = currentNode.next;
+        while (currentNode != null) {
+            resultList.append(currentNode.value).append(" -> ");
+            currentNode = currentNode.next;
+        }
+        resultList.append("null");
+        return resultList.toString();
     }
 
     /**
