@@ -5,14 +5,14 @@ public class CapsLockAnalyzer implements TextAnalyzer {
     private final static FilterType FILTER_TYPE = FilterType.CAPSLOCK;
 
     @Override
-    public FilterType analyze(String text) {
+    public boolean analyze(String text) {
         String[] currentText = text.split(REGEX);
         for (String word : currentText) {
             if (word.length() > 1 && isCapsLock(word)) {
-                return FILTER_TYPE;
+                return true;
             }
         }
-        return FilterType.GOOD;
+        return false;
     }
 
     @Override

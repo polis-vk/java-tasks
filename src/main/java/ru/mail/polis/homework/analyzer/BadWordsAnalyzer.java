@@ -5,13 +5,13 @@ public abstract class BadWordsAnalyzer implements TextAnalyzer {
     protected FilterType filterType;
 
     @Override
-    public FilterType analyze(String text) {
+    public boolean analyze(String text) {
         for (String word : wordList) {
             if (text.contains(word)) {
-                return filterType;
+                return true;
             }
         }
-        return FilterType.GOOD;
+        return false;
     }
 
     @Override

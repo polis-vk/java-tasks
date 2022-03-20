@@ -62,9 +62,8 @@ public class TextFilterManager {
             return 1;
         });
         for (TextAnalyzer filter : priorityFilters) {
-            FilterType currFilterType = filter.analyze(text);
-            if (currFilterType != FilterType.GOOD) {
-                return currFilterType;
+            if (filter.analyze(text)) {
+                return filter.getAnalyzerType();
             }
         }
         return FilterType.GOOD;

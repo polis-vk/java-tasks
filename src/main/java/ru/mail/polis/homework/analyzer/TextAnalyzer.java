@@ -35,7 +35,7 @@ public interface TextAnalyzer {
         return new CapsLockAnalyzer();
     }
 
-    FilterType analyze(String text);
+    boolean analyze(String text);
 
     FilterType getAnalyzerType();
 }
