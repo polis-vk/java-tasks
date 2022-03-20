@@ -3,7 +3,6 @@ package ru.mail.polis.homework.analyzer;
 //Возвращает ENGLISH_TEXT, если все буквы text английские. Допустимые символы - пробелы, запятая и точка
 public class EnglishTextAnalyzer implements TextAnalyzer {
 
-
     public boolean englishLetter(char letter) {
         return letter >= 65 && letter <= 90 || letter >= 97 && letter <= 122;
     }
