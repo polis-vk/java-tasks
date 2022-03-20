@@ -106,7 +106,7 @@ public class CustomLinkedListTest {
         list.revertList();
 
         int[] revertArray = IntStream.rangeClosed(1, DEFAULT_ARRAY.length)
-                .map(i -> DEFAULT_ARRAY[DEFAULT_ARRAY.length - i]).toArray();
+            .map(i -> DEFAULT_ARRAY[DEFAULT_ARRAY.length - i]).toArray();
 
         assertEquals(generateString(revertArray), list.toString());
         assertEquals(DEFAULT_ARRAY.length, list.size());
