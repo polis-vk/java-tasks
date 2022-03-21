@@ -4,7 +4,7 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
 
     private static final String[] EMOTION = new String[]{"=(", ":(", ":|"};
 
-    SpamTextAnalyzer negativeTextAnalyzer = new SpamTextAnalyzer(EMOTION);
+    private final SpamTextAnalyzer negativeTextAnalyzer = new SpamTextAnalyzer(EMOTION);
 
     @Override
     public boolean analyze(String text) {
