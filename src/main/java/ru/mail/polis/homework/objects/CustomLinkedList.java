@@ -63,7 +63,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * Если был передан невалидный index - надо выкинуть исключение IndexOutOfBoundsException.
      * throw new IndexOutOfBoundsException(i);
      *
-     * @param i     - index
+     * @param i - index
      * @param value - data for create Node.
      */
     public void add(int i, int value) {
