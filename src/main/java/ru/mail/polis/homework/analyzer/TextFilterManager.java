@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
 
+import java.util.Arrays;
+
 import static ru.mail.polis.homework.analyzer.FilterType.GOOD;
 
 /**
@@ -50,6 +52,15 @@ public class TextFilterManager {
      */
     public FilterType analyze(String text) {
         FilterType result;
+
+        Arrays.sort(filters, (filter1, filter2) -> {
+            if (filter1.getPriority() < filter2.getPriority()) {
+                return -1;
+            } else if (filter1.getPriority() == filter2.getPriority()) {
+                return 0;
+            }
+            return 1;
+        });
         
         for (TextAnalyzer textAnalyzer : filters) {
             result = textAnalyzer.analyze(text);

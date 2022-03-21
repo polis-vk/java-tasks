@@ -2,10 +2,17 @@ package ru.mail.polis.homework.analyzer;
 
 public class SpamAnalyzer implements TextAnalyzer {
 
+    private final int priority;
     private final String[] spam;
 
     public SpamAnalyzer(String[] spam) {
         this.spam = spam;
+        this.priority = FilterType.SPAM.getPriority();
+    }
+
+    @Override
+    public int getPriority() {
+        return priority;
     }
 
     @Override
