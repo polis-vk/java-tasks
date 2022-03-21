@@ -1,17 +1,20 @@
 package ru.mail.polis.homework.analyzer;
 
-public class MarksFilter extends Filter {
-    MarksFilter(FilterType t) {
-        super(t);
+class MarksFilter implements TextAnalyzer {
+    private static final char leftBorderMarks = '!', rightBorderMarks = '/';
+
+    @Override
+    public boolean filterText(String text) {
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) >= leftBorderMarks && text.charAt(i) <= rightBorderMarks) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
-    public FilterType filterText(String text) {
-        for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) <= '/' && text.charAt(i) >= '!') {
-                return type;
-            }
-        }
-        return FilterType.GOOD;
+    public FilterType getType() {
+        return FilterType.MARKS;
     }
 }

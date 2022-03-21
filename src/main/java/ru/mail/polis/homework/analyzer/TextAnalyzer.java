@@ -15,24 +15,25 @@ package ru.mail.polis.homework.analyzer;
  * 2 тугрика + (2 тугрика за каждый фильтр + 1 тугрик за тест на свой фильтр) ИТОГО 11
  */
 public interface TextAnalyzer {
+    String[] smiles = {"=(", ":(", ":|"};
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return new TooLongFilter(FilterType.TOO_LONG, maxLength);
+        return new TooLongFilter(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return new SpamFilter(FilterType.SPAM, spam);
+        return new SpamFilter(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return new NegativeTextFilter(FilterType.NEGATIVE_TEXT);
+        return new NegativeTextFilter(smiles);
     }
 
     static TextAnalyzer createMarksAnalyzer() {
-        return new MarksFilter(FilterType.MARKS);
+        return new MarksFilter();
     }
 
-    FilterType filterText(String text);
+    boolean filterText(String text);
 
-    int getTypeNumber();
+    FilterType getType();
 }
