@@ -60,11 +60,8 @@ public class TextFilterManager {
         }
 
         for (TextAnalyzer temp : filter) {
-            FilterType filterType = temp.analyze(text);
-            if (filterType != FilterType.GOOD) {
-                if (temp.getType() == filterType) {
-                    return filterType;
-                }
+            if (temp.analyze(text)) {
+                return temp.getType();
             }
         }
 

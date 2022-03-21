@@ -3,7 +3,7 @@ package ru.mail.polis.homework.analyzer;
 public class SpaceLengthAnalyzer implements TextAnalyzer {
 
     @Override
-    public FilterType analyze(String text) {
+    public boolean analyze(String text) {
         int countRepeatSpace = 0;
         for (int i = 0; i < text.length(); i++) {
             if (text.charAt(i) == ' ') {
@@ -13,11 +13,11 @@ public class SpaceLengthAnalyzer implements TextAnalyzer {
             }
 
             if (countRepeatSpace == 2) {
-                return FilterType.SPACE_LENGTH;
+                return true;
             }
         }
 
-        return FilterType.GOOD;
+        return false;
     }
 
     @Override
