@@ -142,4 +142,18 @@ public class TextFilterManagerTest {
     }
 
 
+    @Test
+    public void analyzeOnlyShortWordFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createTooShortWordAnalyzer(3)});
+        assertEquals("TOO_SHORT_WORD", manager.analyze("Привет, я Петя :(").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze(",,,,...\"/;;:)=(|!<>").toString());
+
+        manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createTooShortWordAnalyzer(1)});
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("смс  3212;!<>wfwdqdd").toString());
+        assertEquals("GOOD", manager.analyze("[ ,,,,...\"/;;:)=(|!<>").toString());
+    }
 }
