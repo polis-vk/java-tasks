@@ -88,6 +88,19 @@ public class TextFilterManagerTest {
     }
 
     @Test
+    public void analyzeOnlyCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer()});
+        assertEquals("GOOD", manager.analyze("Привет, я Петя :(").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("Скажите код из смс :-( ").toString());
+        assertEquals("CUSTOM", manager.analyze(
+                "ВСЕМ ПРИВЕТ, ПОДПИСЫВАЙТЕСЬ НА МОЙ КАНАЛ https://www.youtube.com/c/kriper2004").toString());
+        assertEquals("CUSTOM", manager.analyze("https://market.yandex.ru/?pp=900&clid=2483533&mclid=1003&distr_type=7").toString());
+        assertEquals("CUSTOM", manager.analyze("yandex.ru").toString());
+    }
+
+    @Test
     public void analyzeAllFiltersGood() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),

@@ -31,8 +31,8 @@ public interface TextAnalyzer {
     /**
      * придумать свой фильтр
      */
-    static <T> TextAnalyzer createCustomAnalyzer(T something) {
-        return null;
+    static TextAnalyzer createCustomAnalyzer() {
+        return new CustomAnalyzer();
     }
 
     FilterType analyze(String comment);
