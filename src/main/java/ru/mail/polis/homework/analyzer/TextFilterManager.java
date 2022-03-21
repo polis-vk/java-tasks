@@ -45,9 +45,9 @@ public class TextFilterManager {
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filters = Arrays.copyOf(filters, filters.length);
         Arrays.sort(this.filters, (filter1, filter2) -> {
-            if (filter1.priority().ordinal() < filter2.priority().ordinal()) {
+            if (filter1.getType().ordinal() < filter2.getType().ordinal()) {
                 return -1;
-            } else if (filter1.priority().ordinal() == filter2.priority().ordinal()) {
+            } else if (filter1.getType().ordinal() == filter2.getType().ordinal()) {
                 return 0;
             }
             return 1;
@@ -62,8 +62,8 @@ public class TextFilterManager {
             return FilterType.GOOD;
         }
         for (TextAnalyzer filter : filters) {
-            if (filter.filterOfType(text) != FilterType.GOOD) {
-                return filter.filterOfType(text);
+            if (filter.filterOfType(text)) {
+                return filter.getType();
             }
         }
         return FilterType.GOOD;

@@ -8,7 +8,7 @@ public class NegativeTextAnalyzer extends SpamAnalyzer {
         super(BAD_EMOTIONS);
     }
 
-    public FilterType priority() {
+    public FilterType getType() {
         return FilterType.NEGATIVE_TEXT;
     }
 }

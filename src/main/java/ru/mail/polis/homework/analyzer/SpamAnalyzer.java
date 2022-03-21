@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.analyzer;
 
-import java.util.logging.Filter;
-
 public class SpamAnalyzer implements TextAnalyzer {
 
     private final String[] badWords;
@@ -11,16 +9,16 @@ public class SpamAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public FilterType filterOfType(String text) {
+    public boolean filterOfType(String text) {
         for (String word : badWords) {
             if (text.contains(word)) {
-                return priority();
+                return true;
             }
         }
-        return FilterType.GOOD;
+        return false;
     }
 
-    public FilterType priority() {
+    public FilterType getType() {
         return FilterType.SPAM;
     }
 }

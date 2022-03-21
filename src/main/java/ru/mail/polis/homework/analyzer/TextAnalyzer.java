@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
 
-import java.util.logging.Filter;
-
 /**
  * Базовый интерфейс фильтра, наследники этого интерфейса должны инкапсулировать в себе всю логику
  * анализа текста.
@@ -30,7 +28,7 @@ public interface TextAnalyzer {
         return new NegativeTextAnalyzer();
     }
 
-    FilterType filterOfType(String text);
+    boolean filterOfType(String text);
 
     /**
      * придумать свой фильтр
@@ -40,5 +38,5 @@ public interface TextAnalyzer {
         return new ForeignAnalyzer();
     }
 
-    FilterType priority();
+    FilterType getType();
 }
