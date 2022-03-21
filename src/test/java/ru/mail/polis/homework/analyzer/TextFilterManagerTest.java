@@ -141,5 +141,16 @@ public class TextFilterManagerTest {
         }
     }
 
+    @Test
+    public void analyzeOnlyLongSpaceAnalyzer() {
+        TextFilterManager manager = new TextFilterManager(
+                new TextAnalyzer[]{TextAnalyzer.createLongSpaceAnalyzer()});
+        assertEquals("CUSTOM", manager.analyze("       я Петя :(").toString());
+        assertEquals("CUSTOM", manager.analyze("   ").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("CUSTOM", manager.analyze("Это  мой лучший друг: всегда в хорошем настроении и не задаёт лишних вопросов.").toString());
+        assertEquals("GOOD", manager.analyze("лучше синица в руках чем журавль в небе").toString());
+        assertEquals("GOOD", manager.analyze("Не зная броду, не суйся в воду").toString());
 
+    }
 }
