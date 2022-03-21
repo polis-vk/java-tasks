@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 public class SpamAnalyzer implements TextAnalyzer{
-    String[] spam;
+    private String[] spam;
     public SpamAnalyzer(String[] spam) {
         this.spam = spam;
     }
