@@ -14,8 +14,5 @@ public enum FilterType {
         this.priority = priority;
     }
 
-    FilterType() {
-    }
-
-    int priority;
+    final int priority;
 }
