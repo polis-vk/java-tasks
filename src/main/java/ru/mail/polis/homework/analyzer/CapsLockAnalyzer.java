@@ -2,7 +2,6 @@ package ru.mail.polis.homework.analyzer;
 
 public class CapsLockAnalyzer implements TextAnalyzer {
     private final static String REGEX = "[ .,;:)(|!]+";
-    private final static FilterType FILTER_TYPE = FilterType.CAPSLOCK;
 
     @Override
     public boolean analyze(String text) {
@@ -17,7 +16,7 @@ public class CapsLockAnalyzer implements TextAnalyzer {
 
     @Override
     public FilterType getAnalyzerType() {
-        return FILTER_TYPE;
+        return FilterType.CAPSLOCK;
     }
 
     public boolean isCapsLock(String word) {
