@@ -1,9 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
-public class SpamTextAnalyzer extends ForbiddenWords {
+public class SpamTextAnalyzer extends ForbiddenConstructionsAnalyzer {
 
     public SpamTextAnalyzer(String[] spam) {
-        forbiddenWords = spam;
-        filterType = FilterType.SPAM;
+        super(spam, FilterType.SPAM);
     }
 }
