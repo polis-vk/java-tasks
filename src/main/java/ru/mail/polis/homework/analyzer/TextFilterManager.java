@@ -55,11 +55,11 @@ public class TextFilterManager {
 
         Arrays.sort(filters, (filter1, filter2) -> {
             if (filter1.getPriority() < filter2.getPriority()) {
-                return -1;
+                return 1;
             } else if (filter1.getPriority() == filter2.getPriority()) {
                 return 0;
             }
-            return 1;
+            return -1;
         });
         
         for (TextAnalyzer textAnalyzer : filters) {
