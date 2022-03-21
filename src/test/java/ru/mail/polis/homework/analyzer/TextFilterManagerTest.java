@@ -146,10 +146,10 @@ public class TextFilterManagerTest {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createUniqueWordsAnalyzer()});
         assertEquals("GOOD", manager.analyze("").toString());
         assertEquals("GOOD", manager.analyze(null).toString());
-        assertEquals("CUSTOM", manager.analyze("Эта строка сотоит из уникальных слов").toString());
-        assertEquals("GOOD", manager.analyze("А эта нет, нет нет, совсем нет").toString());
-        assertEquals("CUSTOM", manager.analyze("здесь  есть   лишние      пробелы      !!!!!!!").toString());
-        assertEquals("GOOD", manager.analyze("Смс! смС, СМС? сМс пришла...").toString());
-        assertEquals("CUSTOM", manager.analyze("слово.").toString());
+        assertEquals("GOOD", manager.analyze("Эта строка сотоит из уникальных слов").toString());
+        assertEquals("CUSTOM", manager.analyze("Эта нет, нет нет, совсем совсем нет").toString());
+        assertEquals("CUSTOM", manager.analyze("   лиШниЕ      пРобелы      лИшнИе        прОбелы       лишние").toString());
+        assertEquals("CUSTOM", manager.analyze("Смс! смС, СМС? сМс...").toString());
+        assertEquals("GOOD", manager.analyze("слово.").toString());
     }
 }

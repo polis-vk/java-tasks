@@ -3,6 +3,8 @@ package ru.mail.polis.homework.analyzer;
 
 public class UniqueWordsAnalyzer implements TextAnalyzer {
 
+    private final double PERCENTAGE_OF_UNIQUE_WORDS = 0.5;
+
     @Override
     public FilterType getFilterType() {
         return FilterType.CUSTOM;
@@ -11,17 +13,20 @@ public class UniqueWordsAnalyzer implements TextAnalyzer {
     @Override
     public boolean doAnalyze(String text) {
         String copyText = text;
+        copyText = copyText.replaceAll("\\pP", "").toLowerCase();
         while (copyText.contains("  ")) {
             copyText = copyText.replaceAll("  ", " ");
         }
-        copyText = copyText.replaceAll("\\pP", "").toLowerCase();
-        System.out.println(copyText);
         String[] words = copyText.split(" ");
+        if (words.length == 1) {
+            return false;
+        }
+        int uniqueWordsCount = 0;
         for (String word : words) {
-            if (copyText.indexOf(word) != copyText.lastIndexOf(word)) {
-                return false;
+            if (copyText.indexOf(word) == copyText.lastIndexOf(word)) {
+                uniqueWordsCount++;
             }
         }
-        return true;
+        return uniqueWordsCount == 0 || PERCENTAGE_OF_UNIQUE_WORDS > (double) uniqueWordsCount / words.length;
     }
 }

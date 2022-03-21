@@ -2,27 +2,28 @@ package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextOrSpamAnalyzer implements TextAnalyzer {
 
-    private final String[] FILTER_WORDS;
-    private final FilterType FILTER_TYPE;
+    private String[] filter_words;
+    private FilterType filter_type;
 
     public NegativeTextOrSpamAnalyzer(String[] words) {
-        if (words == null) {
-            FILTER_WORDS = new String[]{"=(", ":(", ":|"};
-            FILTER_TYPE = FilterType.NEGATIVE_TEXT;
-        } else {
-            FILTER_WORDS = words;
-            FILTER_TYPE = FilterType.SPAM;
-        }
+        filter_words = words;
+        filter_type = FilterType.SPAM;
+    }
+
+    public NegativeTextOrSpamAnalyzer() {
+        filter_words = new String[]{"=(", ":(", ":|"};
+        filter_type = FilterType.NEGATIVE_TEXT;
     }
 
     @Override
     public FilterType getFilterType() {
-        return FILTER_TYPE;
+
+        return filter_type;
     }
 
     @Override
     public boolean doAnalyze(String text) {
-        for (String word : FILTER_WORDS) {
+        for (String word : filter_words) {
             if (text.contains(word)) {
                 return true;
             }
