@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.objects;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * 13 тугриков
@@ -176,7 +177,29 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new Iterator<Integer>() {
+            Node prevNode = head;
+            Node nextNode;
+
+            @Override
+            public boolean hasNext() {
+                if (prevNode != null) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            @Override
+            public Integer next() {
+                if (hasNext()) {
+                    nextNode = prevNode;
+                    prevNode = nextNode.next;
+                    return (int) nextNode.value;
+                }
+                throw new NoSuchElementException();
+            }
+        };
     }
 
     private static class Node {
