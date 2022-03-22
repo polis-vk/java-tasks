@@ -15,7 +15,7 @@ package ru.mail.polis.homework.analyzer;
  * 2 тугрика + (2 тугрика за каждый фильтр + 1 тугрик за тест на свой фильтр) ИТОГО 11
  */
 public interface TextAnalyzer {
-    String[] smiles = {"=(", ":(", ":|"};
+    String[] NEGATIVE_SMILES = {"=(", ":(", ":|"};
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
         return new TooLongFilter(maxLength);
@@ -26,14 +26,14 @@ public interface TextAnalyzer {
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return new NegativeTextFilter(smiles);
+        return new NegativeTextFilter(NEGATIVE_SMILES);
     }
 
     static TextAnalyzer createMarksAnalyzer() {
         return new MarksFilter();
     }
 
-    boolean filterText(String text);
+    boolean analyze(String text);
 
-    FilterType getType();
+    FilterType getFilterType();
 }

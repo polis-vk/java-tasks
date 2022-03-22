@@ -45,7 +45,7 @@ public class TextFilterManager {
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filters = filters.clone();
         Arrays.sort(this.filters, (filter1, filter2) -> {
-            if (filter1.getType().getNumber() < filter2.getType().getNumber()) {
+            if (filter1.getFilterType().getNumber() < filter2.getFilterType().getNumber()) {
                 return -1;
             } else if (filter1 == filter2) {
                 return 0;
@@ -61,8 +61,8 @@ public class TextFilterManager {
     public FilterType analyze(String text) {
         if (text != null) {
             for (TextAnalyzer filter : filters) {
-                if (filter.filterText(text)) {
-                    return filter.getType();
+                if (filter.analyze(text)) {
+                    return filter.getFilterType();
                 }
             }
         }

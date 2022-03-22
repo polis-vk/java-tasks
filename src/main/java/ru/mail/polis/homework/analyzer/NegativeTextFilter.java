@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.analyzer;
 
-import java.util.logging.Filter;
-
 public class NegativeTextFilter extends SpamFilter {
 
     public NegativeTextFilter(String[] spam) {
@@ -9,7 +7,7 @@ public class NegativeTextFilter extends SpamFilter {
     }
 
     @Override
-    public FilterType getType() {
+    public FilterType getFilterType() {
         return FilterType.NEGATIVE_TEXT;
     }
 }
