@@ -34,9 +34,9 @@ public interface TextAnalyzer {
     /**
      * придумать свой фильтр
      */
-    static <T> TextAnalyzer createCustomAnalyzer() {
+    static TextAnalyzer createHasSpaceAfterPointAnalyzer() {
 
-        return new CustomAnalyzer();
+        return new HasSpaceAfterPointAnalyzer();
     }
 
     boolean analyze(String text);

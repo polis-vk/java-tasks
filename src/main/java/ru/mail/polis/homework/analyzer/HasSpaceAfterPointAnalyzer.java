@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
-public class CustomAnalyzer implements TextAnalyzer { //Проверяет, что после всех знаков препинания есть пробелы
+public class HasSpaceAfterPointAnalyzer implements TextAnalyzer { //Находит такие строки, в которых после знака препинания нет пробела
 
     private final String[] PUNCTUATION = {".", ",", "!", "?", ":", ";"};
 
@@ -18,6 +18,6 @@ public class CustomAnalyzer implements TextAnalyzer { //Проверяет, чт
     }
 
     public FilterType getType() {
-        return FilterType.CUSTOM;
+        return FilterType.HAS_SPACE_AFTER_POINT;
     }
 }
