@@ -126,7 +126,7 @@ public class TextFilterManagerTest {
         assertEquals("GOOD", manager.analyze("Привет, я пишу жи и ши через и").toString());
         assertEquals("ORTHOGRAPHIC_ERR", manager.analyze("Жыыыыыыы и ШЫЫыыыыыы").toString());
     }
-    
+
     @Test
     public void analyzeAllFiltersManyWithPriority() {
         manyFilters(true);
