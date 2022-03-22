@@ -53,6 +53,25 @@ public class CustomLinkedListTest {
     }
 
     @Test
+    public void testGet() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        assertEquals(5, list.get(0));
+        assertEquals(3, list.get(1));
+        assertEquals(7, list.get(2));
+        assertEquals(4, list.get(3));
+        assertEquals(5, list.get(4));
+
+        assertEquals(generateString(DEFAULT_ARRAY), list.toString());
+        assertEquals(5, list.size());
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testGet_exception() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        list.get(5);
+    }
+
+    @Test
     public void removeElement() {
         CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
         list.removeElement(2);

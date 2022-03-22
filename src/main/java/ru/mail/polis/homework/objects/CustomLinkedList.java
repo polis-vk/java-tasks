@@ -48,6 +48,16 @@ public class CustomLinkedList implements Iterable<Integer> {
 
     /**
      * 2 тугрика
+     * Метод должен вернуть число на соответствующем индексе.
+     *
+     * @param index
+     */
+    public int get(int index) {
+       return 0;
+    }
+
+    /**
+     * 2 тугрика
      * Реализовать метод:
      * Добавляет элемент в односвязный список на заданную позицию.
      * Если был передан невалидный index - надо выкинуть исключение IndexOutOfBoundsException.
