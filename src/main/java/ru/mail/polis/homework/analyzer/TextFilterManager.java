@@ -42,7 +42,7 @@ public class TextFilterManager {
     private final TextAnalyzer[] analyzers;
 
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.analyzers = Arrays.copyOf(filters, filters.length);
+        this.analyzers = filters.clone();
     }
 
     /**
@@ -64,9 +64,8 @@ public class TextFilterManager {
             return 1;
         });
         for (TextAnalyzer analyzer : analyzers) {
-            FilterType filterVal = analyzer.FilterValue(text);
-            if (filterVal != FilterType.GOOD) {
-                return filterVal;
+            if (analyzer.FilterValue(text) != FilterType.GOOD) {
+                return analyzer.FilterValue(text);
             }
         }
         return FilterType.GOOD;

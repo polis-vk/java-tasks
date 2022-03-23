@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyzer implements TextAnalyzer {
-    private String[] banSym = {"=(", ":(", ":|"};
+    private static final String[] banSym = {"=(", ":(", ":|"};
 
     @Override
     public FilterType FilterValue(String text) {

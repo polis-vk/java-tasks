@@ -119,12 +119,12 @@ public class TextFilterManagerTest {
     @Test
     public void analyzeOnlyOrthographicFilter() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createOrthographicTextAnalyzer()});
-        assertEquals("ORTHOGRAPHIC_ERR", manager.analyze("Привет, я пишу жы через ы").toString());
+        assertEquals("ORTHOGRAPHIC_ERROR", manager.analyze("Привет, я пишу жы через ы").toString());
         assertEquals("GOOD", manager.analyze("").toString());
         assertEquals("GOOD", manager.analyze(null).toString());
         assertEquals("GOOD", manager.analyze("Скажите код из смс :-( ").toString());
         assertEquals("GOOD", manager.analyze("Привет, я пишу жи и ши через и").toString());
-        assertEquals("ORTHOGRAPHIC_ERR", manager.analyze("Жыыыыыыы и ШЫЫыыыыыы").toString());
+        assertEquals("ORTHOGRAPHIC_ERROR", manager.analyze("Жыыыыыыы и ШЫЫыыыыыы").toString());
     }
 
     @Test

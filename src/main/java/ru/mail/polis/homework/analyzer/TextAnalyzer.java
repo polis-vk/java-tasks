@@ -17,11 +17,11 @@ package ru.mail.polis.homework.analyzer;
 public interface TextAnalyzer {
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return new TooLongAnalyzer(maxLength);
+        return new TooLongTextAnalyzer(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return new SpamAnalyzer(spam);
+        return new SpamTextAnalyzer(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
@@ -29,16 +29,11 @@ public interface TextAnalyzer {
     }
 
     /**
-     * придумать свой фильтр
-     */
-
-    /**
-     * Фильтр по проверке орфографической ошибки жы и шы
+     * придумать свой фильтр. Фильтр по проверке орфографической ошибки жы и шы
      */
     static TextAnalyzer createOrthographicTextAnalyzer() {
         return new OrthographicTextAnalyzer();
     }
-
 
     FilterType FilterValue(String text);
 }
