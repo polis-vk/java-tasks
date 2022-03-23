@@ -3,8 +3,8 @@ package ru.mail.polis.homework.objects;
 import java.util.Iterator;
 
 /**
- * 13 тугриков
- * Реализовать все методы односвязанного списка.
+ * 15 тугриков
+ * Реализовать все методы односвязного списка.
  */
 public class CustomLinkedList implements Iterable<Integer> {
 
