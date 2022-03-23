@@ -96,8 +96,8 @@ public class CustomLinkedListTest {
     @Test
     public void removeFirstElement() {
         CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
-        assertEquals(0, list.size());
         list.removeElement(0);
+        assertEquals(DEFAULT_ARRAY.length - 1, list.size());
         assertEquals(generateString(new int[]{3, 7, 4, 5}), list.toString());
 
     }
