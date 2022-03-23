@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.objects;
 
+import java.awt.font.LineMetrics;
 import java.util.Iterator;
 import java.lang.IndexOutOfBoundsException;
 import java.util.NoSuchElementException;
@@ -10,8 +11,9 @@ import java.util.NoSuchElementException;
  */
 public class CustomLinkedList implements Iterable<Integer> {
 
-    private Node tail;
     private Node head;
+    private Node tail;
+    private int size = 0;
 
     /**
      * 1 тугрик
@@ -20,13 +22,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @return size
      */
     public int size() {
-        int sizeOfList = 0;
-        Node currentNode = head;
-        while (currentNode != null) {
-            sizeOfList += 1;
-            currentNode = currentNode.next;
-        }
-        return sizeOfList;
+        return size;
     }
 
     /**
@@ -41,9 +37,12 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (tail == null) {
             tail = node;
             head = node;
+            size++;
+            return;
         }
         tail.setNext(node);
         tail = node;
+        size++;
     }
 
     /**
@@ -56,15 +55,11 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (index < 0 || index >= size()) {
             throw new IndexOutOfBoundsException("Index out of range: " + index);
         }
-        int currentPosition = 0;
         Node currentNode = head;
-        while (true) {
-            if (currentPosition == index) {
-                return currentNode.value;
-            }
-            currentPosition += 1;
+        for (int i = 0; i < index; i++) {
             currentNode = currentNode.next;
         }
+        return currentNode.value;
     }
 
     /**
@@ -78,26 +73,25 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int i, int value) {
-        if (i < 0 || i > size()) {
+        if (i < 0 || i > size) {
             throw new IndexOutOfBoundsException("Index out of range: " + i);
         }
         if (i == 0) {
             Node node = new Node(value);
             node.setNext(head);
             head = node;
+            size++;
+            return;
         }
-        int currentPosition = 0;
         Node currentNode = head;
-        while (currentNode != null) {
-            if (currentPosition == i - 1) {
-                Node node = new Node(value);
-                node.setNext(currentNode.next);
-                currentNode.setNext(node);
-                break;
-            }
-            currentPosition += 1;
+        for (int index = 0; index < i - 1; index++) {
             currentNode = currentNode.next;
+
         }
+        Node node = new Node(value);
+        node.setNext(currentNode.next);
+        currentNode.setNext(node);
+        size++;
     }
 
     /**
@@ -110,7 +104,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (index <= 0 || index >= size()) {
+        if (index <= 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index out of range: " + index);
         }
         if (index == 0) {
@@ -121,6 +115,7 @@ public class CustomLinkedList implements Iterable<Integer> {
         while (currentNode != null) {
             if (currentPosition == index - 1) {
                 currentNode.setNext(currentNode.next.next);
+                size--;
                 break;
             }
             currentPosition += 1;
@@ -183,21 +178,18 @@ public class CustomLinkedList implements Iterable<Integer> {
     public Iterator<Integer> iterator() {
         return new Iterator<Integer>() {
             Node currentNode = head;
-            Node prevNode;
 
             public boolean hasNext() {
-                if (currentNode != null) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return currentNode != null;
             }
+
+            Node prevNode;
 
             public Integer next() {
                 if (hasNext()) {
                     prevNode = currentNode;
                     currentNode = prevNode.next;
-                    return (int) prevNode.value;
+                    return prevNode.value;
                 }
                 throw new NoSuchElementException();
             }
