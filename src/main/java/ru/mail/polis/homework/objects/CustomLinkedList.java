@@ -35,7 +35,7 @@ public class CustomLinkedList implements Iterable<Integer> {
         Node newNode = new Node(value);
         if (head == null) {
             head = newNode;
-        }else {
+        } else {
             lastNode.setNext(newNode);
         }
 
@@ -72,22 +72,22 @@ public class CustomLinkedList implements Iterable<Integer> {
             throw new IndexOutOfBoundsException();
         }
 
-        Node getNodeByIndex = getNodeByIndex(i - 1);
-        if (getNodeByIndex == null) {
+        if (i == size) {
+            add(value);
+            return;
+        }
+        Node previousNode = getNodeByIndex(i - 1);
+        if (previousNode == null) {
             Node newNode = new Node(value);
             newNode.setNext(head);
             head = newNode;
             size++;
             return;
         }
-        if(i == size){
-            add(value);
-            return;
-        }
 
-        Node newNode= new Node(value);
-        newNode.setNext(getNodeByIndex.next);
-        getNodeByIndex.setNext(newNode);
+        Node newNode = new Node(value);
+        newNode.setNext(previousNode.next);
+        previousNode.setNext(newNode);
         size++;
     }
 
@@ -112,8 +112,7 @@ public class CustomLinkedList implements Iterable<Integer> {
             return;
         }
 
-        Node nextNode = beforeNode.next.next;
-        beforeNode.setNext(nextNode);
+        beforeNode.setNext(beforeNode.next.next);
         size--;
 
         if (size - 1 == index) {
@@ -122,14 +121,14 @@ public class CustomLinkedList implements Iterable<Integer> {
     }
 
     private Node getNodeByIndex(int index) {
-        if(index < 0){
+        if (index < 0) {
             return null;
         }
 
         Node nextNode = head;
         int count = 0;
         while (nextNode.next != null) {
-            if(count == index){
+            if (count == index) {
                 break;
             }
 
@@ -209,7 +208,7 @@ public class CustomLinkedList implements Iterable<Integer> {
 
         @Override
         public Integer next() {
-            if(!hasNext()){
+            if (!hasNext()) {
                 throw new NoSuchElementException();
             }
 
