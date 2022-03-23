@@ -17,17 +17,14 @@ package ru.mail.polis.homework.analyzer;
 public interface TextAnalyzer {
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-
         return new TooLongAnalyzer(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-
         return new SpamAnalyzer(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-
         return new NegativeTextAnalyzer();
     }
 
@@ -35,7 +32,6 @@ public interface TextAnalyzer {
      * придумать свой фильтр
      */
     static TextAnalyzer createHasSpaceAfterPointAnalyzer() {
-
         return new HasSpaceAfterPointAnalyzer();
     }
 
