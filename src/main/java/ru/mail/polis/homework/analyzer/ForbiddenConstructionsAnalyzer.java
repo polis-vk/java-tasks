@@ -3,8 +3,8 @@ package ru.mail.polis.homework.analyzer;
 import java.util.Arrays;
 
 public class ForbiddenConstructionsAnalyzer implements TextAnalyzer {
-    final String[] forbiddenConstructions;
-    final FilterType filterType;
+    private final String[] forbiddenConstructions;
+    private final FilterType filterType;
 
     protected ForbiddenConstructionsAnalyzer(String[] forbiddenConstructions, FilterType filterType) {
         this.forbiddenConstructions = Arrays.copyOf(forbiddenConstructions, forbiddenConstructions.length);

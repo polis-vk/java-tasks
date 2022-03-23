@@ -34,15 +34,15 @@ import java.util.Arrays;
  * Итого 20 тугриков за все задание
  */
 public class TextFilterManager {
-    private TextAnalyzer[] analyzers;
+    private final TextAnalyzer[] analyzers;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
      * что в них реализован интерфейс TextAnalyzer
      */
-    public TextFilterManager(TextAnalyzer[] filters) {
-        this.analyzers = Arrays.copyOf(filters, filters.length);
+    public TextFilterManager(TextAnalyzer[] analyzers) {
+        this.analyzers = Arrays.copyOf(analyzers, analyzers.length);
         Arrays.sort(this.analyzers, (filter1, filter2) -> {
             if (filter1.getFilterType().priority < filter2.getFilterType().priority) {
                 return -1;
