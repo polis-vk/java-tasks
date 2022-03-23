@@ -9,6 +9,9 @@ public class TooLongAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean analyze(String text) {
+        if (text.isEmpty()) {
+            return false;
+        }
         return text.length() >= length;
     }
 

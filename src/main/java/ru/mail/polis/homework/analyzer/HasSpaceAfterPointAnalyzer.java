@@ -2,7 +2,7 @@ package ru.mail.polis.homework.analyzer;
 
 public class HasSpaceAfterPointAnalyzer implements TextAnalyzer { //Находит такие строки, в которых после знака препинания нет пробела
 
-    private final String[] PUNCTUATION = {".", ",", "!", "?", ":", ";"};
+    private final static String[] PUNCTUATION = {".", ",", "!", "?", ":", ";"};
 
     @Override
     public boolean analyze(String text) {
