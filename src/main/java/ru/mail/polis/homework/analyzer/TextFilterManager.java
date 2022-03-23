@@ -31,19 +31,30 @@ package ru.mail.polis.homework.analyzer;
  */
 public class TextFilterManager {
 
+    private TextAnalyzer[] filters;
+
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-
+        this.filters = filters.clone();
     }
 
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-        return null;
+        if(text == null || text.isEmpty()){
+            return FilterType.GOOD;
+        }
+
+        for(TextAnalyzer temp: filters){
+            if(temp.analyzer(text)!=FilterType.GOOD) {
+                return temp.analyzer(text);
+            }
+        }
+        return FilterType.GOOD;
     }
 }
