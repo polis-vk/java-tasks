@@ -33,7 +33,5 @@ public interface TextAnalyzer {
         return null;
     }
 
-    default FilterType analyze(String text) {
-        return null;
-    }
+    FilterType analyze(String text);
 }

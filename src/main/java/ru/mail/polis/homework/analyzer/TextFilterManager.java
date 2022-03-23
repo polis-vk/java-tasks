@@ -17,7 +17,7 @@ package ru.mail.polis.homework.analyzer;
  * (SPAM, TOO_LONG, NEGATIVE_TEXT, CUSTOM - в таком порядке) и возвращать тип с максимальным приоритетом.
  * Отсортировать фильтра можно с помощью функции
  * Arrays.sort(filter, (filter1, filter2) -> {
- *     if (filter1zx < filter2) {
+ *     if (filter1 < filter2) {
  *         return -1;
  *     } else if (filter1 == filter2) {
  *         return 0;
@@ -32,7 +32,7 @@ package ru.mail.polis.homework.analyzer;
  */
 
 public class TextFilterManager implements TextAnalyzer {
-    private TextAnalyzer[] filters;
+    private final TextAnalyzer[] filters;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -49,7 +49,7 @@ public class TextFilterManager implements TextAnalyzer {
      */
     public FilterType analyze(String text) {
         FilterType result;
-        for (TextAnalyzer currFilter:filters) {
+        for (TextAnalyzer currFilter : filters) {
             result = currFilter.analyze(text);
             if (result != FilterType.GOOD) {
                 return result;
