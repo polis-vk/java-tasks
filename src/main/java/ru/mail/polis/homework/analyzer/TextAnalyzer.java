@@ -37,14 +37,5 @@ public interface TextAnalyzer {
 
     boolean analyze(String text);
 
-    default boolean isContainsMorphemes(String text, String[] morphemes) {
-        for (String s : morphemes) {
-            if (text.contains(s)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     FilterType getType();
 }

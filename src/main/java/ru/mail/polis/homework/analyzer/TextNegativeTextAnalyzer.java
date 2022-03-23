@@ -6,7 +6,7 @@ public class TextNegativeTextAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean analyze(String text) {
-        return this.isContainsMorphemes(text, NEGATIVE_MORPHEMES);
+        return UtilsAnalyzer.isContainsMorphemes(text, NEGATIVE_MORPHEMES);
     }
 
     @Override

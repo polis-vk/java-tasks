@@ -10,7 +10,7 @@ public class TextSpamAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean analyze(String text) {
-        return isContainsMorphemes(text, spamMorphemes);
+        return UtilsAnalyzer.isContainsMorphemes(text, spamMorphemes);
     }
 
     @Override
