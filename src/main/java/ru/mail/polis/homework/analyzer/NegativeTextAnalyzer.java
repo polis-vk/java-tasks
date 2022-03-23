@@ -5,7 +5,6 @@ public class NegativeTextAnalyzer extends BadWordsAnalyzer {
     private static final String[] NEGATIVE_TEXT = new String[]{"=(", ":(", ":|"};
 
     public NegativeTextAnalyzer() {
-        badWords = NEGATIVE_TEXT;
-        filterType = FilterType.NEGATIVE_TEXT;
+        super(NEGATIVE_TEXT, FilterType.NEGATIVE_TEXT);
     }
 }
