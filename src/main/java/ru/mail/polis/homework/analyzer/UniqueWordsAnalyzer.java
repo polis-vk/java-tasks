@@ -3,7 +3,7 @@ package ru.mail.polis.homework.analyzer;
 
 public class UniqueWordsAnalyzer implements TextAnalyzer {
 
-    private final double PERCENTAGE_OF_UNIQUE_WORDS = 0.5;
+    private static final double PERCENTAGE_OF_UNIQUE_WORDS = 0.5;
 
     @Override
     public FilterType getFilterType() {

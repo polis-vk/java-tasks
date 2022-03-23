@@ -21,18 +21,17 @@ public interface TextAnalyzer {
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return new NegativeTextOrSpamAnalyzer(spam);
+        return new SpamAnalyzer(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return new NegativeTextOrSpamAnalyzer();
+        return new NegativeTextAnalyzer();
     }
 
     /**
      * придумать свой фильтр: фильтр срабатывает, если в троке уникальных слов меньше заданного процента (без учета регистра).
      */
     static TextAnalyzer createUniqueWordsAnalyzer() {
-
         return new UniqueWordsAnalyzer();
     }
 

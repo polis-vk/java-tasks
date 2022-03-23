@@ -45,31 +45,27 @@ public class TextFilterManager {
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filters = filters.clone();
         Arrays.sort(this.filters, (filter1, filter2) -> {
-            if (filter1.getFilterType().getPRIORITY() < filter2.getFilterType().getPRIORITY()) {
+            if (filter1.getFilterType().getPriority() < filter2.getFilterType().getPriority()) {
                 return -1;
-            } else if (filter1.getFilterType().getPRIORITY() == filter2.getFilterType().getPRIORITY()) {
+            } else if (filter1.getFilterType().getPriority() == filter2.getFilterType().getPriority()) {
                 return 0;
             }
             return 1;
         });
-
     }
 
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-
         if (text == null || text.isEmpty() || filters.length == 0) {
             return FilterType.GOOD;
         }
-
         for (TextAnalyzer filter : filters) {
             if (filter.doAnalyze(text)) {
                 return filter.getFilterType();
             }
         }
-
         return FilterType.GOOD;
     }
 }
