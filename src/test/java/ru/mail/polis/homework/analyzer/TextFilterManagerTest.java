@@ -142,7 +142,7 @@ public class TextFilterManagerTest {
     }
 
     @Test
-    public  void analyzeCustomFilter() {
+    public void analyzeCustomFilter() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer()});
         assertEquals("CROSSED_OUT_LETTERS", manager.analyze("я øбожаю собак").toString());
         assertEquals("GOOD", manager.analyze("").toString());
