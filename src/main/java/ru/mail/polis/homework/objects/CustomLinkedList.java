@@ -49,7 +49,14 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index
      */
     public int get(int index) {
-       return 0;
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException(index);
+        }
+        Node iNode = head;
+        for (int j = 1; j <= index; j++) {
+            iNode = iNode.next;
+        }
+        return iNode.value;
     }
 
     /**
