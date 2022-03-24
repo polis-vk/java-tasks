@@ -112,16 +112,19 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (head.next == null) {
             head = null;
             last = null;
-        }
-        Node current = head;
-        int iterator = 0;
-        while (iterator < index - 1) {
-            current = current.next;
-            iterator++;
-        }
-        current.next = current.next.next;
-        if (index == size - 1) {
-            last = current;
+        } else if (index == 0) {
+            head = head.next;
+        } else {
+            Node current = head;
+            int iterator = 0;
+            while (iterator < index - 1) {
+                current = current.next;
+                iterator++;
+            }
+            current.next = current.next.next;
+            if (index == size - 1) {
+                last = current;
+            }
         }
         size--;
     }
