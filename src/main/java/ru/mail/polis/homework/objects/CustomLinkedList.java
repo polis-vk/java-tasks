@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.objects;
 
-import java.awt.font.LineMetrics;
 import java.util.Iterator;
 import java.lang.IndexOutOfBoundsException;
 import java.util.NoSuchElementException;
@@ -17,7 +16,7 @@ public class CustomLinkedList implements Iterable<Integer> {
 
     public Node getNodeByIndex(int index) {
         Node node = head;
-        for (int i = 0; i<index; i++) {
+        for (int i = 0; i < index; i++) {
             node = node.next;
         }
         return node;
@@ -110,6 +109,8 @@ public class CustomLinkedList implements Iterable<Integer> {
         }
         if (index == 0) {
             head = head.next;
+            size--;
+            return;
         }
         Node currentNode = getNodeByIndex(index - 1);
         currentNode.setNext(currentNode.next.next);
