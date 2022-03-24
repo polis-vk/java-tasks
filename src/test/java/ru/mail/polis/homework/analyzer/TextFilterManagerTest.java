@@ -88,6 +88,16 @@ public class TextFilterManagerTest {
     }
 
     @Test
+    public void analyzeOnlyOneWordUpperCaseFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createOneWordUpperCaseAnalyzer()});
+        assertEquals("GOOD", manager.analyze("я люблю пельмени").toString());
+        assertEquals("ONE_WORD_UPPER_CASE", manager.analyze("я ОЧЕНЬ люблю пельмени").toString());
+        assertEquals("GOOD", manager.analyze("i really want to eat").toString());
+        assertEquals("ONE_WORD_UPPER_CASE", manager.analyze("i ate ALL pelmeni").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+    }
+
+    @Test
     public void analyzeAllFiltersGood() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
