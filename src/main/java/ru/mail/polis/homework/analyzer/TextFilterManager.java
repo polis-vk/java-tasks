@@ -40,10 +40,18 @@ public class TextFilterManager {
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
      * что в них реализован интерфейс TextAnalyzer
      */
-    private TextAnalyzer[] textFilters;
+    private final TextAnalyzer[] filters;
 
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.textFilters = filters;
+        this.filters = filters.clone();
+        Arrays.sort(this.filters, (first, second) -> {
+            if (first.getFilterType().getPriority() > second.getFilterType().getPriority()) {
+                return -1;
+            } else if (first.getFilterType().getPriority() == second.getFilterType().getPriority()) {
+                return 0;
+            }
+            return 1;
+        });
     }
 
     /**
@@ -54,23 +62,9 @@ public class TextFilterManager {
             return FilterType.GOOD;
         }
 
-        FilterType[] analyzeResults = new FilterType[this.textFilters.length];
-        for (int i = 0; i < textFilters.length; i++) {
-            analyzeResults[i] = textFilters[i].analyze(text);
-        }
-
-        Arrays.sort(analyzeResults, (first, second) -> {
-            if (first.ordinal() < second.ordinal()) {
-                return -1;
-            } else if (first.ordinal() == second.ordinal()) {
-                return 0;
-            }
-            return 1;
-        });
-
-        for (FilterType element : analyzeResults) {
-            if (element != FilterType.GOOD) {
-                return element;
+        for (TextAnalyzer filter : filters) {
+            if (filter.analyze(text)) {
+                return filter.getFilterType();
             }
         }
         return FilterType.GOOD;

@@ -35,5 +35,7 @@ public interface TextAnalyzer {
         return new CustomAnalyzer();
     }
 
-    FilterType analyze(String comment);
+    boolean analyze(String comment);
+
+    FilterType getFilterType();
 }

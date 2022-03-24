@@ -1,15 +1,14 @@
 package ru.mail.polis.homework.analyzer;
 
-public class NegativeTextAnalyzer implements TextAnalyzer {
-    private final String[] BANWORDS = {"=(", ":(", ":|"};
+public class NegativeTextAnalyzer extends SpamAnalyzer {
+    private static final String[] BAD_WORDS = {"=(", ":(", ":|"};
+
+    public NegativeTextAnalyzer() {
+        super(BAD_WORDS);
+    }
 
     @Override
-    public FilterType analyze(String comment) {
-        for (String word: BANWORDS) {
-            if (comment.contains(word)) {
-                return FilterType.NEGATIVE_TEXT;
-            }
-        }
-        return FilterType.GOOD;
+    public FilterType getFilterType() {
+        return FilterType.NEGATIVE_TEXT;
     }
 }
