@@ -12,9 +12,8 @@ package ru.mail.polis.homework.analyzer;
  * <p>
  * Класс TextFilterManager должен содержать все фильтры, которые передаются ему в конструкторе,
  * и при анализе текста через метод analyze должен выдавать первый "успешный" фильтр,
- * если ни один не прошел, то возвращать тип GOOD.
- *
- * Усложненное задание на полный балл: нужно всем типам фильтров задать приоритет
+ * если не один не прошел, то возвращать тип GOOD.
+ * Дополнительное задание: нужно всем типам фильтров задать приоритет
  * (SPAM, TOO_LONG, NEGATIVE_TEXT, CUSTOM - в таком порядке) и возвращать тип с максимальным приоритетом.
  * Отсортировать фильтра можно с помощью функции
  * Arrays.sort(filter, (filter1, filter2) -> {
@@ -25,13 +24,14 @@ package ru.mail.polis.homework.analyzer;
  *     }
  *     return 1;
  * }
- * где вместо сравнения самих фильтров должно быть сравнение каких-то количественных параметров фильтра
+ * где вместо сравнение самих фильтров должно быть стравнение каких-то количественных параметров фильтра
  *
- * 2 тугрика за класс
- * 5 тугриков за приоритет
- * Итого 20 тугриков за все задание
+ * 2 балла ( + 2 балла за доп приоритет)
+ * того 15 баллов + 2 дополнительных
  */
 public class TextFilterManager {
+
+    private TextAnalyzer[] filters;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -39,13 +39,22 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-
+        this.filters = filters;
     }
 
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-        return null;
+        if (text == null) {
+            return FilterType.GOOD;
+        }
+
+        for (TextAnalyzer analyzer : filters) {
+            if (analyzer.examine(text)) {
+                return analyzer.getFilterType();
+            }
+        }
+        return FilterType.GOOD;
     }
 }

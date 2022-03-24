@@ -142,4 +142,14 @@ public class TextFilterManagerTest {
     }
 
 
+    @Test
+    public void analyzeMailAnalyzer() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createMailAnalyzer()});
+        assertEquals("MAIL", manager.analyze("ffo@gmail.com").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("MAIL", manager.analyze("fsdfo@gmail.com:(").toString());
+        assertEquals("GOOD", manager.analyze("fsdfo@mail.comjsadaw").toString());
+        assertEquals("GOOD", manager.analyze("fsdfo@gmail.rujsadaw").toString());
+    }
+
 }
