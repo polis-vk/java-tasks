@@ -12,7 +12,6 @@ public class CustomLinkedList implements Iterable<Integer> {
     private Node head;
     private int size = 0;
 
-
     /**
      * 1 тугрик
      * Возвращает количество элементов в списке
@@ -51,7 +50,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public int get(int index) {
         if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException(index);
+            throw new IndexOutOfBoundsException("index: " + index);
         }
         Node curNode = head;
         for (int i = 0; i != index; i++) {
@@ -73,7 +72,7 @@ public class CustomLinkedList implements Iterable<Integer> {
     public void add(int i, int value) {
         size++;
         if (i < 0 || i >= size) {
-            throw new IndexOutOfBoundsException(i);
+            throw new IndexOutOfBoundsException("index: " + i);
         }
         Node curNode = head;
         if (i == 0) {
@@ -100,7 +99,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public void removeElement(int index) {
         if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException(index);
+            throw new IndexOutOfBoundsException("index: " + index);
         }
         if (head == null) {
             return;
