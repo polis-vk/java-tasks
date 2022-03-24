@@ -1,17 +1,11 @@
 package ru.mail.polis.homework.analyzer;
 
-public class NegativeTextAnalyzer implements TextAnalyzer {
+public class NegativeTextAnalyzer extends SpamAnalyzer {
 
     private static final String[] BAD_EMOTIONS = {"=(",":(", ":|"};
 
-    @Override
-    public boolean check(String text) {
-        for (String badEmotion : BAD_EMOTIONS) {
-            if (text.contains(badEmotion)) {
-                return true;
-            }
-        }
-        return false;
+    NegativeTextAnalyzer(){
+        super(BAD_EMOTIONS);
     }
 
     @Override
