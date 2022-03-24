@@ -4,7 +4,7 @@ public class NegativeTextAnalyzer extends SpamAnalyzer {
 
     private static final String[] BAD_EMOTIONS = {"=(",":(", ":|"};
 
-    NegativeTextAnalyzer(){
+   public NegativeTextAnalyzer(){
         super(BAD_EMOTIONS);
     }
 
