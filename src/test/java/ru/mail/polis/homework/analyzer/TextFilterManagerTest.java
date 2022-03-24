@@ -141,5 +141,13 @@ public class TextFilterManagerTest {
         }
     }
 
-
+    @Test
+    public  void analyzeCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer()});
+        assertEquals("CROSSED_OUT_LETTERS", manager.analyze("я øбожаю собак").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("CROSSED_OUT_LETTERS", manager.analyze("a̷ вы любите собак ?").toString());
+        assertEquals("GOOD", manager.analyze("Собак любят все").toString());
+    }
 }
