@@ -2,7 +2,7 @@ package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyzer implements TextAnalyzer {
 
-    private static final String[] BAD_EMOTIONS = { "=(",":(", ":|" };
+    private static final String[] BAD_EMOTIONS = {"=(",":(", ":|"};
 
     @Override
     public boolean check(String text) {

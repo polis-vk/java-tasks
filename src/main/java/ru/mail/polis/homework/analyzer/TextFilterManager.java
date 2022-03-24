@@ -4,11 +4,11 @@ import java.util.Arrays;
 
 public class TextFilterManager {
 
-    private final TextAnalyzer[] filtres;
+    private final TextAnalyzer[] filters;
 
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filtres = filters.clone();
-        Arrays.sort(filtres, (filter1, filter2) -> {
+        this.filters = filters.clone();
+        Arrays.sort(this.filters, (filter1, filter2) -> {
             if (filter1.getFilterType().getPriority() < filter2.getFilterType().getPriority()) {
                 return -1;
             } else if (filter1.getFilterType().getPriority() == filter2.getFilterType().getPriority()) {
@@ -23,7 +23,7 @@ public class TextFilterManager {
             return FilterType.GOOD;
         }
 
-        for (TextAnalyzer filter : filtres) {
+        for (TextAnalyzer filter : filters) {
             if (filter.check(text)) {
                 return filter.getFilterType();
             }
