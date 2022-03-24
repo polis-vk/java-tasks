@@ -141,5 +141,13 @@ public class TextFilterManagerTest {
         }
     }
 
-
+    @Test
+    public void analyzeOnlyCapsLockFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCapsLockTextAnalyzer()});
+        assertEquals("CAPSLOCK", manager.analyze("SPRING BOOT POTROSHITEL").toString());
+        assertEquals("CAPSLOCK", manager.analyze("SPRING BOOT ПОТРОШИТЕЛЬ").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("sPRING BOOT POTROSHITEL").toString());
+        assertEquals("GOOD", manager.analyze("Spring boot потрошитель 42").toString());
+    }
 }

@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
+import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * Задание написать систему фильтрации комментариев.
@@ -17,19 +19,20 @@ package ru.mail.polis.homework.analyzer;
  * (SPAM, TOO_LONG, NEGATIVE_TEXT, CUSTOM - в таком порядке) и возвращать тип с максимальным приоритетом.
  * Отсортировать фильтра можно с помощью функции
  * Arrays.sort(filter, (filter1, filter2) -> {
- *     if (filter1 < filter2) {
- *         return -1;
- *     } else if (filter1 == filter2) {
- *         return 0;
- *     }
- *     return 1;
+ * if (filter1 < filter2) {
+ * return -1;
+ * } else if (filter1 == filter2) {
+ * return 0;
+ * }
+ * return 1;
  * }
  * где вместо сравнение самих фильтров должно быть стравнение каких-то количественных параметров фильтра
- *
+ * <p>
  * 2 балла ( + 2 балла за доп приоритет)
  * Итого 15 баллов + 2 дополнительных
  */
 public class TextFilterManager {
+    final TextAnalyzer[] filters;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -37,13 +40,22 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-
+        this.filters = filters.clone();
+        Arrays.sort(this.filters, Comparator.comparingInt(filter -> filter.getFilterType().getPriority()));
     }
 
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-        return null;
+        if (text == null) {
+            return FilterType.GOOD;
+        }
+        for (TextAnalyzer filter : filters) {
+            if (filter.analyzeText(text)) {
+                return filter.getFilterType();
+            }
+        }
+        return FilterType.GOOD;
     }
 }
