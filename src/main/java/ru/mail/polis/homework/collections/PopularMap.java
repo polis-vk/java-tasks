@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.collections;
 
 
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -11,7 +10,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,21 +20,20 @@ import java.util.stream.Collectors;
  * Популярность - это количество раз, который этот ключ/значение учавствовал/ло в других методах мапы, такие как
  * containsKey, get, put, remove (в качестве параметра и возвращаемого значения).
  * Считаем, что null я вам не передаю ни в качестве ключа, ни в качестве значения
- * <p>
+ *
  * Так же надо сделать итератор (подробности ниже).
- * <p>
+ *
  * Важный момент, вам не надо реализовывать мапу, вы должны использовать композицию.
  * Вы можете использовать любые коллекции, которые есть в java.
- * <p>
- * Помните, что по мапе тоже можно итерироваться
- * <p>
- * for (Map.Entry<K, V> entry : map.entrySet()) {
- * entry.getKey();
- * entry.getValue();
- * }
- * <p>
- * Всего 9 баллов (3 за общие методы, 6 за специальные)
  *
+ * Помните, что по мапе тоже можно итерироваться
+ *
+ *         for (Map.Entry<K, V> entry : map.entrySet()) {
+ *             entry.getKey();
+ *             entry.getValue();
+ *         }
+ *
+ * Всего 9 баллов (3 за общие методы, 6 за специальные)
  * @param <K> - тип ключа
  * @param <V> - тип значения
  */
