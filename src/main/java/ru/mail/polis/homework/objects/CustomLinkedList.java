@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.objects;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * 15 тугриков
@@ -9,6 +10,7 @@ import java.util.Iterator;
 public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
+    private int size;
 
     /**
      * 1 тугрик
@@ -17,7 +19,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @return size
      */
     public int size() {
-        return 0;
+        return size;
     }
 
     /**
@@ -28,7 +30,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int value) {
-
+        add(size, value);
     }
 
     /**
@@ -38,7 +40,18 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index
      */
     public int get(int index) {
-       return 0;
+        return getNode(index).value;
+    }
+
+    public Node getNode(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
+        }
+        Node current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.next;
+        }
+        return current;
     }
 
     /**
@@ -52,7 +65,16 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int i, int value) {
-
+        Node newNode = new Node(value);
+        if (i == 0) {
+            newNode.setNext(head);
+            head = newNode;
+        } else {
+            Node parent = getNode(i - 1);
+            newNode.setNext(parent.next);
+            parent.setNext(newNode);
+        }
+        size++;
     }
 
     /**
@@ -65,7 +87,16 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-
+        if (size == 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (index == 0) {
+            head = head.next;
+        } else {
+            Node current = getNode(index - 1);
+            current.next = current.next.next;
+        }
+        size--;
     }
 
     /**
@@ -77,7 +108,14 @@ public class CustomLinkedList implements Iterable<Integer> {
      *  После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-
+        Node replaceable = head.next;
+        Node prevHead = head;
+        for (int i = 0; i < size - 1; i++) {
+            prevHead.next = replaceable.next;
+            replaceable.next = head;
+            head = replaceable;
+            replaceable = prevHead.next;
+        }
     }
 
     /**
@@ -92,7 +130,14 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        StringBuilder sb = new StringBuilder();
+        Node current = head;
+        while (current != null) {
+            sb.append(current.value).append(" -> ");
+            current = current.next;
+        }
+        sb.append("null");
+        return sb.toString();
     }
 
     /**
@@ -103,11 +148,35 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new CustomLinkedListIterator();
+    }
+
+    public class CustomLinkedListIterator implements Iterator<Integer> {
+
+        private Node current;
+
+        public CustomLinkedListIterator() {
+            current = head;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return current != null;
+        }
+
+        @Override
+        public Integer next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            int value = current.value;
+            current = current.next;
+            return value;
+        }
     }
 
     private static class Node {
-        private int value;
+        private final int value;
         private Node next;
 
         public Node(int value) {
