@@ -4,8 +4,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * 13 тугриков
- * Реализовать все методы односвязанного списка.
+ * 15 тугриков
+ * Реализовать все методы односвязного списка.
  */
 public class CustomLinkedList implements Iterable<Integer> {
 
