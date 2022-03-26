@@ -34,11 +34,12 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (head == null) {
             head = new Node(value);
             tail = head;
-        } else {
-            Node newNode = new Node(value);
-            tail.setNext(newNode);
-            tail = newNode;
+            size++;
+            return;
         }
+        Node newNode = new Node(value);
+        tail.setNext(newNode);
+        tail = newNode;
         size++;
     }
 
@@ -52,11 +53,15 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (index >= size || index < 0) {
             throw new IndexOutOfBoundsException(index);
         }
+        return getNodeByIndex(index).value;
+    }
+
+    public Node getNodeByIndex(int index) {
         Node iNode = head;
         for (int j = 1; j <= index; j++) {
             iNode = iNode.next;
         }
-        return iNode.value;
+        return iNode;
     }
 
     /**
@@ -73,19 +78,21 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (i > size || i < 0) {
             throw new IndexOutOfBoundsException(i);
         }
+        if (i == size) {
+            add(value);
+            return;
+        }
         Node newNode = new Node(value);
         if (i == 0) {
             newNode.setNext(head);
             head = newNode;
             size++;
-        } else if (i == size) {
-            add(value);
-        } else {
-            Node previousNode = getPreviousNode(i);
-            newNode.setNext(previousNode.next);
-            previousNode.setNext(newNode);
-            size++;
+            return;
         }
+        Node previousNode = getNodeByIndex(i - 1);
+        newNode.setNext(previousNode.next);
+        previousNode.setNext(newNode);
+        size++;
     }
 
     /**
@@ -103,19 +110,12 @@ public class CustomLinkedList implements Iterable<Integer> {
         }
         if (index == 0) {
             head = head.next;
-        } else {
-            Node previousNode = getPreviousNode(index);
-            previousNode.setNext(previousNode.next.next);
+            size--;
+            return;
         }
+        Node previousNode = getNodeByIndex(index - 1);
+        previousNode.setNext(previousNode.next.next);
         size--;
-    }
-
-    public Node getPreviousNode(int index) {
-        Node previousNode = head;
-        for (int j = 1; j < index; j++) {
-            previousNode = previousNode.next;
-        }
-        return previousNode;
     }
 
     /**
