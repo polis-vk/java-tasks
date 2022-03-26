@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.objects;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Stack;
 
 /**
@@ -170,6 +171,7 @@ public class CustomLinkedList implements Iterable<Integer> {
         Stack<Integer> stack = new Stack<Integer>();
         Node currentNode = head;
 
+
         while(currentNode != null) {
             stack.push(currentNode.value);
             currentNode = currentNode.next;
@@ -222,13 +224,16 @@ public class CustomLinkedList implements Iterable<Integer> {
 
             @Override
             public boolean hasNext() {
-                return current.next != null;
+                return current != null;
             }
 
             @Override
             public Integer next() {
-                Integer result = current.value;
+                if (current == null) {
+                    throw new NoSuchElementException();
+                }
 
+                Integer result = current.value;
                 current = current.next;
                 return result;
             }
