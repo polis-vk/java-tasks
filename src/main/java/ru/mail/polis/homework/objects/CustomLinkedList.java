@@ -97,14 +97,12 @@ public class CustomLinkedList implements Iterable<Integer> {
             head = newNode;
             return;
         }
-
         if (i == this.size()) {
             last.setNext(newNode);
             return;
         }
 
         while (nodeIndex <= i) {
-
             if (nodeIndex + 1 == i) {
                 Node tempNode = currentNode.next;
                 currentNode.setNext(newNode);
@@ -150,8 +148,6 @@ public class CustomLinkedList implements Iterable<Integer> {
             nextNode = nextNode.next;
             indexOfNode++;
         }
-
-
     }
 
     /**
