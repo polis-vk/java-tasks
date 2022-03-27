@@ -11,6 +11,8 @@ import java.util.Stack;
 public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
+    private Node last;
+    private int size;
 
     /**
      * 1 тугрик
@@ -19,17 +21,8 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @return size
      */
     public int size() {
-
         if (head == null) {
             return 0;
-        }
-
-        int size = 1;
-        Node nextNode = head.next;
-
-        while (nextNode != null) {
-            size++;
-            nextNode = nextNode.next;
         }
 
         return size;
@@ -43,18 +36,16 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int value) {
-
-        Node currentNode = head;
         Node nextNode = new Node(value);
         nextNode.setNext(null);
+        size++;
 
         if (head == null) {
             head = nextNode;
+            last = head;
         } else {
-            while (currentNode.next != null) {
-                currentNode = currentNode.next;
-            }
-            currentNode.setNext(nextNode);
+            last.setNext(nextNode);
+            last = nextNode;
         }
     }
 
@@ -72,7 +63,7 @@ public class CustomLinkedList implements Iterable<Integer> {
         int indexOfCurrentNode = 0;
         Node currentNode = head;
 
-        while(true) {
+        while (true) {
             if (indexOfCurrentNode == index) {
                 return currentNode.value;
             }
@@ -88,13 +79,18 @@ public class CustomLinkedList implements Iterable<Integer> {
      * Если был передан невалидный index - надо выкинуть исключение IndexOutOfBoundsException.
      * throw new IndexOutOfBoundsException(i);
      *
-     * @param i - index
+     * @param i     - index
      * @param value - data for create Node.
      */
     public void add(int i, int value) {
+        if (i > this.size()) {
+            throw new IndexOutOfBoundsException();
+        }
+
         Node currentNode = head;
         Node newNode = new Node(value);
         int nodeIndex = 0;
+        size++;
 
         if (i == 0) {
             newNode.setNext(head);
@@ -102,10 +98,12 @@ public class CustomLinkedList implements Iterable<Integer> {
             return;
         }
 
+        if (i == this.size()) {
+            last.setNext(newNode);
+            return;
+        }
+
         while (nodeIndex <= i) {
-            if (i > this.size()) {
-                throw new IndexOutOfBoundsException();
-            }
 
             if (nodeIndex + 1 == i) {
                 Node tempNode = currentNode.next;
@@ -131,6 +129,8 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (index > this.size() - 1 || index < 0) {
             throw new IndexOutOfBoundsException();
         }
+
+        size--;
 
         if (index == 0) {
             head = head.next;
@@ -159,27 +159,26 @@ public class CustomLinkedList implements Iterable<Integer> {
      * Реализовать метод:
      * Переворачивает все элементы списка.
      * Пример:
-     *  Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
-     *  После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
+     * Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
+     * После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
         if (head == null) {
             return;
         }
 
-        CustomLinkedList revertLinkedList = new CustomLinkedList();
-        Stack<Integer> stack = new Stack<Integer>();
+        Stack<Integer> stack = new Stack<>();
         Node currentNode = head;
 
 
-        while(currentNode != null) {
+        while (currentNode != null) {
             stack.push(currentNode.value);
             currentNode = currentNode.next;
         }
 
         head = new Node(stack.pop());
         currentNode = head;
-        while(!stack.empty()) {
+        while (!stack.empty()) {
             currentNode.setNext(new Node(stack.pop()));
             currentNode = currentNode.next;
         }
@@ -190,15 +189,14 @@ public class CustomLinkedList implements Iterable<Integer> {
      * 1 тугрик
      * Метод выводит всю последовательность хранящуюся в списке начиная с head.
      * Формат вывода:
-     *  - значение каждой Node должно разделяться " -> "
-     *  - последовательность всегда заканчивается на null
-     *  - если в списке нет элементов - верните строку "null"
+     * - значение каждой Node должно разделяться " -> "
+     * - последовательность всегда заканчивается на null
+     * - если в списке нет элементов - верните строку "null"
      *
      * @return - String with description all list
      */
     @Override
     public String toString() {
-
         StringBuilder result = new StringBuilder("");
         Node currentNode = head;
 
@@ -219,7 +217,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        Iterator<Integer> iterator = new Iterator<Integer>() {
+        return new Iterator<Integer>() {
             private Node current = head;
 
             @Override
@@ -238,7 +236,6 @@ public class CustomLinkedList implements Iterable<Integer> {
                 return result;
             }
         };
-        return iterator;
     }
 
     private static class Node {
