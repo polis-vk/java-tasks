@@ -9,23 +9,22 @@ import java.util.Iterator;
 public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
+    private int size = 0;
 
     public boolean isEmpty() {
         return head == null;
     }
 
     public int size() {
-        if (isEmpty()) {
-            return 0;
-        }
-        int size = 0;
-        Node tmpNode = head;
-        while (tmpNode.next != null) {
-            size += 1;
-            tmpNode = tmpNode.next;
-        }
-        return size + 1;
+        return size;
     }
+    private Node findNode (Node currentNode, int index){
+        for (int i = 0; i < index; i++) {
+            currentNode = currentNode.next;
+        }
+        return currentNode;
+    }
+
 
     /**
      * Реализовать метод:
@@ -36,6 +35,7 @@ public class CustomLinkedList implements Iterable<Integer> {
     public void add(int value) {
         if (isEmpty()) {
             head = new Node(value);
+            size+=1;
             return;
         }
         Node currentNode = head;
@@ -43,6 +43,7 @@ public class CustomLinkedList implements Iterable<Integer> {
             currentNode = currentNode.next;
         }
         currentNode.next = new Node(value);
+        size+=1;
     }
 
     /**
@@ -56,9 +57,7 @@ public class CustomLinkedList implements Iterable<Integer> {
             throw new IndexOutOfBoundsException(String.valueOf(index));
         }
         Node currentNode = head;
-        for (int i = 0; i < index; i++) {
-            currentNode = currentNode.next;
-        }
+        currentNode = findNode(currentNode, index);
         return currentNode.value;
     }
 
@@ -82,15 +81,14 @@ public class CustomLinkedList implements Iterable<Integer> {
             head = newNode;
         } else {
             Node currentNode = head;
-            for (int j = 0; j < i - 1; j++) {
-                currentNode = currentNode.next;
-            }
+            currentNode = findNode(currentNode, i-1);
             Node temp = currentNode.next;
             Node newNode = new Node(value);
 
             currentNode.setNext(newNode);
             newNode.setNext(temp);
         }
+        size+=1;
     }
 
 
@@ -108,14 +106,13 @@ public class CustomLinkedList implements Iterable<Integer> {
 
         if (index == 0) {
             head = head.next;
+            size-=1;
             return;
         }
-        Node curNode = head;
-        for (int i = 0; i != index - 1; i++) {
-            curNode = curNode.next;
-        }
-        curNode.next = curNode.next.next;
-
+        Node currentNode = head;
+        currentNode = findNode(currentNode, index-1);
+        currentNode.next = currentNode.next.next;
+        size-=1;
     }
 
     /**
@@ -130,15 +127,14 @@ public class CustomLinkedList implements Iterable<Integer> {
             return;
         }
         Node currentNode = head;
-        Node NewNode = new Node(currentNode.value);
+        Node newNode = new Node(currentNode.value);
         while (currentNode.next != null) {
             currentNode = currentNode.next;
             Node tmpNode = new Node(currentNode.value);
-            tmpNode.next = NewNode;
-            NewNode = tmpNode;
+            tmpNode.next = newNode;
+            newNode = tmpNode;
         }
-        head = NewNode;
-
+        head = newNode;
     }
 
     /**
@@ -174,12 +170,12 @@ public class CustomLinkedList implements Iterable<Integer> {
     @Override
     public Iterator<Integer> iterator() {
         return new Iterator<Integer>() {
-            Node currentNode = head;
-            Integer NodeValue;
+            Node lastReturn = head;
+            Integer nodeValue;
 
             @Override
             public boolean hasNext() {
-                return currentNode != null;
+                return lastReturn != null;
             }
 
             @Override
@@ -187,9 +183,9 @@ public class CustomLinkedList implements Iterable<Integer> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                NodeValue = currentNode.value;
-                currentNode = currentNode.next;
-                return NodeValue;
+                nodeValue = lastReturn.value;
+                lastReturn = lastReturn.next;
+                return nodeValue;
             }
         };
     }
