@@ -84,8 +84,9 @@ public class CustomLinkedList implements Iterable<Integer> {
         }
 
         size++;
-        Node bufferNode = head;
+        Node bufferNode;
         if (i == 0) {
+            bufferNode = head;
             head = new Node(value);
             head.setNext(bufferNode);
             return;
