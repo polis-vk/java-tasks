@@ -13,6 +13,8 @@ public class CustomLinkedList implements Iterable<Integer> {
 
     private Node tail;
 
+    private int size = 0;
+
     /**
      * 1 тугрик
      * Возвращает количество элементов в списке
@@ -20,12 +22,6 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @return size
      */
     public int size() {
-        int size = 0;
-        Node tmpNode = head;
-        while (tmpNode != null) {
-            ++size;
-            tmpNode = tmpNode.next;
-        }
         return size;
     }
 
@@ -44,6 +40,7 @@ public class CustomLinkedList implements Iterable<Integer> {
         }
         tail.setNext(newNode);
         tail = newNode;
+        ++size;
     }
 
     /**
@@ -81,6 +78,7 @@ public class CustomLinkedList implements Iterable<Integer> {
             Node newNode = new Node(value);
             newNode.setNext(head);
             head = newNode;
+            ++size;
         } else {
             Node tmpNode = head;
             Node newNode = new Node(value);
@@ -92,6 +90,7 @@ public class CustomLinkedList implements Iterable<Integer> {
             }
             newNode.setNext(tmpNode.next);
             tmpNode.setNext(newNode);
+            ++size;
         }
     }
 
@@ -110,6 +109,7 @@ public class CustomLinkedList implements Iterable<Integer> {
         }
         if (index == 0) {
             head = head.next;
+            --size;
         } else {
             Node tmpNode = head;
             for (int i = 0; i < index - 1; i++) {
@@ -119,6 +119,7 @@ public class CustomLinkedList implements Iterable<Integer> {
                 tmpNode = tmpNode.next;
             }
             tmpNode.setNext(tmpNode.next.next);
+            --size;
         }
     }
 
@@ -178,8 +179,7 @@ public class CustomLinkedList implements Iterable<Integer> {
     @Override
     public Iterator<Integer> iterator() {
         return new Iterator<Integer>() {
-            Node prevNode = head;
-            Node nextNode;
+            private Node prevNode = head;
 
             @Override
             public boolean hasNext() {
@@ -192,12 +192,12 @@ public class CustomLinkedList implements Iterable<Integer> {
 
             @Override
             public Integer next() {
-                if (hasNext()) {
-                    nextNode = prevNode;
-                    prevNode = nextNode.next;
-                    return (int) nextNode.value;
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
                 }
-                throw new NoSuchElementException();
+                int value = prevNode.value;
+                prevNode = prevNode.next;
+                return value;
             }
         };
     }
