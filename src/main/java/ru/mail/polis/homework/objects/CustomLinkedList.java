@@ -21,10 +21,6 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @return size
      */
     public int size() {
-        if (head == null) {
-            return 0;
-        }
-
         return size;
     }
 
