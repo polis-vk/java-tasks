@@ -12,7 +12,6 @@ public class CustomLinkedList implements Iterable<Integer> {
     private Node head;
     private int length;
 
-
     private Node findNode(int index) {
         Node current = head;
         for (int i = 0; i < index; i++) {
@@ -20,7 +19,6 @@ public class CustomLinkedList implements Iterable<Integer> {
         }
         return current;
     }
-
 
     /**
      * 1 тугрик
@@ -59,7 +57,7 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (index < length) {
             return findNode(index).value;
         }
-        throw new IndexOutOfBoundsException(index);
+        throw new IndexOutOfBoundsException(String.valueOf(index));
     }
 
     /**
@@ -74,7 +72,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public void add(int i, int value) {
         if (i > length || i < 0) {
-            throw new IndexOutOfBoundsException(i);
+            throw new IndexOutOfBoundsException(String.valueOf(i));
         }
 
         if (i == 0) {
@@ -103,7 +101,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public void removeElement(int index) {
         if (index >= length || index < 0) {
-            throw new IndexOutOfBoundsException(index);
+            throw new IndexOutOfBoundsException(String.valueOf(index));
         }
 
         if (index == 0) {
@@ -176,7 +174,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new Iterator<>() {
+        return new Iterator<Integer>() {
             private Node current = head;
 
             @Override
@@ -192,7 +190,6 @@ public class CustomLinkedList implements Iterable<Integer> {
                 }
                 throw new NoSuchElementException();
             }
-
         };
     }
 
