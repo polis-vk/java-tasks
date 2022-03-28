@@ -32,22 +32,22 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int value) {
+        Node fresh = new Node(value);
         if (head == null) {
-            head = new Node(value);
+            head = fresh;
             tail = head;
-        } else {
-            tail.next = new Node(value);
-            tail = tail.next;
+            size++;
+            return;
         }
+        tail.next = fresh;
+        tail = tail.next;
         size++;
     }
 
     private Node getNode(int index) {
         Node current = head;
-        int iterator = 0;
-        while (iterator < index) {
+        for (int i = 0; i < index; i++) {
             current = current.next;
-            iterator++;
         }
         return current;
     }
@@ -79,19 +79,22 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (i > size || i < 0) {
             throw new IndexOutOfBoundsException(String.valueOf(i));
         }
+        if (i == size) {
+            add(value);
+            return;
+        }
+        Node fresh = new Node(value);
         Node current = head;
         if (i == 0) {
-            head = new Node(value);
+            head = fresh;
             head.next = current;
-        } else {
-            current = getNode(i - 1);
-            Node bufNode = current.next;
-            current.next = new Node(value);
-            current.next.next = bufNode;
-            if (i == size - 1) {
-                tail = current.next;
-            }
+            size++;
+            return;
         }
+        current = getNode(i - 1);
+        Node buf = current.next;
+        current.next = fresh;
+        current.next.next = buf;
         size++;
     }
 
@@ -110,12 +113,13 @@ public class CustomLinkedList implements Iterable<Integer> {
         }
         if (index == 0) {
             head = head.next;
-        } else {
-            Node current = getNode(index - 1);
-            current.next = current.next.next;
-            if (index == size - 1) {
-                tail = current;
-            }
+            size--;
+            return;
+        }
+        Node current = getNode(index - 1);
+        current.next = current.next.next;
+        if (index == size - 1) {
+            tail = current;
         }
         size--;
     }
@@ -132,19 +136,18 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (head == null) {
             return;
         }
-        Node previous = head;
+        Node newHead = head;
         Node current = head.next;
-        Node next = head.next.next;
-        previous.next = null;
-        tail = previous;
-        while (next != null) {
-            current.next=previous;
-            previous = current;
-            current = next;
-            next = current.next;
-        }
-        current.next=previous;
-        head = current;
+        Node buf;
+        newHead.next = null;
+        tail = newHead;
+        do {
+            buf = newHead;
+            newHead = current;
+            current = current.next;
+            newHead.next = buf;
+        } while (current != null);
+        head = newHead;
     }
 
     /**
