@@ -73,7 +73,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public void add(int i, int value) {
         if (i > this.size) {
-            throw new IndexOutOfBoundsException(); // внутри цикла?
+            throw new IndexOutOfBoundsException();
         }
         size++;
         Node newNode = new Node(value);
