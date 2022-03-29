@@ -11,7 +11,7 @@ public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
     private Node tail;
-    private int size = 0;
+    private int size;
 
     /**
      * 1 тугрик
@@ -52,7 +52,7 @@ public class CustomLinkedList implements Iterable<Integer> {
         return getNode(index).value;
     }
 
-    public Node getNode(int index) {
+    private Node getNode(int index) {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException();
         }
@@ -77,20 +77,20 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (i < 0 || i > size) {
             throw new IndexOutOfBoundsException();
         }
-        size++;
-        if (i == size - 2) {
+        if (i == size) {
             add(value);
             return;
         }
+        size++;
         Node newNode = new Node(value);
         if (i == 0) {
             newNode.setNext(head);
             head = newNode;
             return;
         }
-        Node beforeNode = getNode(i - 1);
-        newNode.setNext(beforeNode.next);
-        beforeNode.setNext(newNode);
+        Node prevNode = getNode(i - 1);
+        newNode.setNext(prevNode.next);
+        prevNode.setNext(newNode);
     }
 
     /**
@@ -114,8 +114,8 @@ public class CustomLinkedList implements Iterable<Integer> {
             head = head.next;
             return;
         }
-        Node beforeNode = getNode(index - 1);
-        beforeNode.setNext(beforeNode.next.next);
+        Node prevNode = getNode(index - 1);
+        prevNode.setNext(prevNode.next.next);
     }
 
     /**
@@ -127,17 +127,20 @@ public class CustomLinkedList implements Iterable<Integer> {
      * После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-        for (int i = 0; i < (size - 1) / 2; i++) {
-            swapElements(i, size - 1 - i);
+        if (head == null || size == 1) {
+            return;
         }
-    }
-
-    public void swapElements(int index1, int index2) {
-        Node tempNode1 = getNode(index1);
-        Node tempNode2 = getNode(index2);
-        Node buf = new Node(tempNode1.value);
-        tempNode1.value = tempNode2.value;
-        tempNode2.value = buf.value;
+        Node currentNode = head;
+        Node prevNode = null;
+        Node nextNode;
+        while (currentNode != null) {
+            nextNode = currentNode.next;
+            currentNode.setNext(prevNode);
+            prevNode = currentNode;
+            currentNode = nextNode;
+        }
+        tail = head;
+        head = prevNode;
     }
 
     /**
@@ -173,7 +176,6 @@ public class CustomLinkedList implements Iterable<Integer> {
         return new Iterator<Integer>() {
             Node currentNode = head;
 
-
             @Override
             public boolean hasNext() {
                 return currentNode != null;
@@ -184,7 +186,7 @@ public class CustomLinkedList implements Iterable<Integer> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                Integer currentNodeValue = currentNode.value;
+                int currentNodeValue = currentNode.value;
                 currentNode = currentNode.next;
                 return currentNodeValue;
             }
