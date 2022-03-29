@@ -48,7 +48,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index
      */
 
-    public Node getNode(int index) {
+    private Node getNode(int index) {
         Node curNode = head;
         for (int i = 0; i != index; i++) {
             curNode = curNode.next;
@@ -82,16 +82,16 @@ public class CustomLinkedList implements Iterable<Integer> {
             return;
         }
         size++;
-        Node newNode = new Node(value);
+        Node node = new Node(value);
         if (i == 0) {
-            newNode.next = head;
-            head = newNode;
+            node.next = head;
+            head = node;
             return;
         }
-        newNode = getNode(i - 1);
-        Node nextNode = newNode.next;
-        newNode.next = new Node(value);
-        newNode.next.next = nextNode;
+        node = getNode(i - 1);
+        Node nextNode = node.next;
+        node.next = new Node(value);
+        node.next.next = nextNode;
     }
 
     /**
@@ -115,8 +115,8 @@ public class CustomLinkedList implements Iterable<Integer> {
             head = head.next;
             return;
         }
-        Node curNode = getNode(index - 1);
-        curNode.next = curNode.next.next;
+        Node node = getNode(index - 1);
+        node.next = node.next.next;
     }
 
     /**
@@ -190,9 +190,9 @@ public class CustomLinkedList implements Iterable<Integer> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                int curIndex = curNode.value;
+                int value = curNode.value;
                 curNode = curNode.next;
-                return curIndex;
+                return value;
             }
         };
     }
