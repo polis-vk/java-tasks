@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
+    private Node tail;
     private int length;
 
     private Node findNode(int index) {
@@ -40,9 +41,10 @@ public class CustomLinkedList implements Iterable<Integer> {
     public void add(int value) {
         if (length == 0) {
             head = new Node(value);
+            tail = head;
         } else {
-            Node next = new Node(value);
-            findNode(length - 1).setNext(next);
+            tail.setNext(new Node(value));
+            tail = tail.next;
         }
         length++;
     }
@@ -54,7 +56,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index
      */
     public int get(int index) {
-        if (index < length) {
+        if (index > -1 && index < length) {
             return findNode(index).value;
         }
         throw new IndexOutOfBoundsException(String.valueOf(index));
@@ -71,7 +73,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int i, int value) {
-        if (i > length || i < 0) {
+        if (i < 0 || i > length) {
             throw new IndexOutOfBoundsException(String.valueOf(i));
         }
 
@@ -80,12 +82,11 @@ public class CustomLinkedList implements Iterable<Integer> {
             newNode.setNext(head);
             head = newNode;
         } else {
-            Node current = findNode(i - 1);
-            Node temp = current.next;
+            Node prevNode = findNode(i - 1);
+            Node nextNode = prevNode.next;
             Node newNode = new Node(value);
-
-            current.setNext(newNode);
-            newNode.setNext(temp);
+            prevNode.setNext(newNode);
+            newNode.setNext(nextNode);
         }
         length++;
     }
@@ -100,17 +101,17 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (index >= length || index < 0) {
+        if (index < 0 || index >= length) {
             throw new IndexOutOfBoundsException(String.valueOf(index));
         }
 
         if (index == 0) {
             head = head.next;
         } else {
-            Node current = findNode(index - 1);
-            Node removing = current.next;
-            Node temp = removing.next;
-            current.setNext(temp);
+            Node prevNode = findNode(index - 1);
+            Node removing = prevNode.next;
+            Node nextNode = removing.next;
+            prevNode.setNext(nextNode);
         }
         length--;
     }
@@ -128,7 +129,6 @@ public class CustomLinkedList implements Iterable<Integer> {
         Node previousNode = head;
         previousNode.setNext(null);
         Node tempNode;
-
         for (int i = 0; i < length - 1; i++) {
             tempNode = currentNode.next;
             currentNode.setNext(previousNode);
@@ -153,17 +153,15 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (length == 0) {
             return "null";
         }
-
-        StringBuilder string = new StringBuilder();
+        StringBuilder listDiscription = new StringBuilder();
         Node current = head;
-
         for (int i = 0; i < length; i++) {
-            string.append(current.value);
-            string.append(" -> ");
+            listDiscription.append(current.value);
+            listDiscription.append(" -> ");
             current = current.next;
         }
-        string.append("null");
-        return string.toString();
+        listDiscription.append("null");
+        return listDiscription.toString();
     }
 
     /**
