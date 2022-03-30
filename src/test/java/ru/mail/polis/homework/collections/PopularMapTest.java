@@ -19,11 +19,11 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class PopularMapTest {
 
-    private PopularMap<TestObject, TestObject> popularMap1;
-    private PopularMap<TestObject, TestObject> popularMap2;
+    private PopularMap<TestObject, TestObjectValue> popularMap1;
+    private PopularMap<TestObject, TestObjectValue> popularMap2;
 
     @Mock
-    private Map<TestObject, TestObject> map;
+    private Map<TestObject, TestObjectValue> map;
 
     @Before
     public void setUp() {
@@ -36,7 +36,7 @@ public class PopularMapTest {
     public void popularKey_OnlyPutOne() {
 
         for (int i = 0; i < 10; i++) {
-            popularMap1.put(new TestObject("key" + i), new TestObject("value" + i));
+            popularMap1.put(new TestObject("key" + i), new TestObjectValue("value" + i));
         }
         TestObject popular = popularMap1.getPopularKey();
         assertTrue(popular.getStr().startsWith("key"));
@@ -46,7 +46,7 @@ public class PopularMapTest {
     @Test
     public void popularKey_operationCount() {
         TestObject key = new TestObject("key");
-        TestObject value = new TestObject("value");
+        TestObjectValue value = new TestObjectValue("value");
         popularMap1.get(key);
         popularMap1.remove(key);
         popularMap1.put(key, value);
@@ -68,7 +68,7 @@ public class PopularMapTest {
         TestObject key3 = new TestObject("key3");
         TestObject key4 = new TestObject("key4");
         TestObject key5 = new TestObject("key5");
-        TestObject value = new TestObject("value");
+        TestObjectValue value = new TestObjectValue("value");
         popularMap1.put(key1, value);
         popularMap1.remove(key1);
         popularMap1.put(key2, value);
@@ -90,18 +90,18 @@ public class PopularMapTest {
     public void popularValue_OnlyPutOne() {
 
         for (int i = 0; i < 10; i++) {
-            popularMap1.put(new TestObject("key" + i), new TestObject("value" + i));
+            popularMap1.put(new TestObject("key" + i), new TestObjectValue("value" + i));
         }
-        TestObject popular = popularMap1.getPopularValue();
+        TestObjectValue popular = popularMap1.getPopularValue();
         assertTrue(popular.getStr().startsWith("value"));
-        assertEquals(1, popularMap1.getValuePopularity(new TestObject("value2")));
+        assertEquals(1, popularMap1.getValuePopularity(new TestObjectValue("value2")));
     }
 
 
     @Test
     public void popularValue_operationCount() {
         TestObject key = new TestObject("key");
-        TestObject value = new TestObject("value");
+        TestObjectValue value = new TestObjectValue("value");
         popularMap1.get(key);
         popularMap1.remove(key);
         popularMap1.put(key, value);
@@ -121,10 +121,10 @@ public class PopularMapTest {
     public void popularKey_manyValues() {
         TestObject key1 = new TestObject("key1");
         TestObject key2 = new TestObject("key2");
-        TestObject value1 = new TestObject("value1");
-        TestObject value2 = new TestObject("value2");
-        TestObject value3 = new TestObject("value3");
-        TestObject value4 = new TestObject("value4");
+        TestObjectValue value1 = new TestObjectValue("value1");
+        TestObjectValue value2 = new TestObjectValue("value2");
+        TestObjectValue value3 = new TestObjectValue("value3");
+        TestObjectValue value4 = new TestObjectValue("value4");
         popularMap1.put(key1, value1);
         popularMap1.get(key1);
         popularMap1.remove(key1);
@@ -149,10 +149,10 @@ public class PopularMapTest {
     public void popularIterator() {
         TestObject key1 = new TestObject("key1");
         TestObject key2 = new TestObject("key2");
-        TestObject value1 = new TestObject("value1");
-        TestObject value2 = new TestObject("value2");
-        TestObject value3 = new TestObject("value3");
-        TestObject value4 = new TestObject("value4");
+        TestObjectValue value1 = new TestObjectValue("value1");
+        TestObjectValue value2 = new TestObjectValue("value2");
+        TestObjectValue value3 = new TestObjectValue("value3");
+        TestObjectValue value4 = new TestObjectValue("value4");
         popularMap1.put(key1, value1);
         popularMap1.remove(key1);
         popularMap1.put(key2, value1);
@@ -163,9 +163,9 @@ public class PopularMapTest {
         popularMap1.put(key1, value3);
         popularMap1.put(key2, value3);
 
-        List<TestObject> expected = Arrays.asList(value3, value2, value1);
+        List<TestObjectValue> expected = Arrays.asList(value3, value2, value1);
         int i = 0;
-        for (Iterator<TestObject> it = popularMap1.popularIterator(); it.hasNext(); ) {
+        for (Iterator<TestObjectValue> it = popularMap1.popularIterator(); it.hasNext(); ) {
             assertEquals(expected.get(i++), it.next());
         }
         assertEquals(3, i);
@@ -201,8 +201,8 @@ public class PopularMapTest {
     @Test
     public void put() {
 
-        popularMap2.put(new TestObject("key"), new TestObject("value"));
-        verify(map, times(1)).put(new TestObject("key"), new TestObject("value"));
+        popularMap2.put(new TestObject("key"), new TestObjectValue("value"));
+        verify(map, times(1)).put(new TestObject("key"), new TestObjectValue("value"));
     }
 
     @Test
@@ -212,7 +212,7 @@ public class PopularMapTest {
     }
 
     @Mock
-    Map<TestObject, TestObject> putAllMap;
+    Map<TestObject, TestObjectValue> putAllMap;
 
     @Test
     public void putAll() {

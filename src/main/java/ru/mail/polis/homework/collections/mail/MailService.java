@@ -11,13 +11,13 @@ import java.util.function.Consumer;
  * Зарплата состоит из получателя, отправителя и суммы.
  *
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
- * Всего 7 баллов за пакет mail
+ * Всего 7 тугриков за пакет mail
  */
 public class MailService implements Consumer {
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
-     * 1 балл
+     * 1 тугрик
      */
     @Override
     public void accept(Object o) {
@@ -26,7 +26,7 @@ public class MailService implements Consumer {
 
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
-     * 1 балл
+     * 1 тугрик
      */
     public Map<String, List> getMailBox() {
         return null;
@@ -34,7 +34,7 @@ public class MailService implements Consumer {
 
     /**
      * Возвращает самого популярного отправителя
-     * 1 балл
+     * 1 тугрик
      */
     public String getPopularSender() {
         return null;
@@ -42,7 +42,7 @@ public class MailService implements Consumer {
 
     /**
      * Возвращает самого популярного получателя
-     * 1 балл
+     * 1 тугрик
      */
     public String getPopularRecipient() {
         return null;
@@ -50,7 +50,7 @@ public class MailService implements Consumer {
 
     /**
      * Метод должен заставить обработать service все mails.
-     * 1 балл
+     * 1 тугрик
      */
     public static void process(MailService service, List mails) {
 

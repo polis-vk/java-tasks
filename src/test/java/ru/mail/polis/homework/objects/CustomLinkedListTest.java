@@ -53,6 +53,18 @@ public class CustomLinkedListTest {
     }
 
     @Test
+    public void testAddByIndex_checkSizeAfterException() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        assertEquals(generateString(DEFAULT_ARRAY), list.toString());
+        assertEquals(5, list.size());
+        try {
+            list.add(7, 1);
+        } catch (IndexOutOfBoundsException e) {
+            assertEquals(5, list.size());
+        }
+    }
+
+    @Test
     public void testGet() {
         CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
         assertEquals(5, list.get(0));
