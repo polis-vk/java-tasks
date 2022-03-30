@@ -32,14 +32,14 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int value) {
-        Node fresh = new Node(value);
+        Node newNode = new Node(value);
         if (head == null) {
-            head = fresh;
+            head = newNode;
             tail = head;
             size++;
             return;
         }
-        tail.next = fresh;
+        tail.next = newNode;
         tail = tail.next;
         size++;
     }
@@ -83,18 +83,17 @@ public class CustomLinkedList implements Iterable<Integer> {
             add(value);
             return;
         }
-        Node fresh = new Node(value);
-        Node current = head;
+        Node newNode = new Node(value);
         if (i == 0) {
-            head = fresh;
-            head.next = current;
+            newNode.next = head;
+            head = newNode;
             size++;
             return;
         }
-        current = getNode(i - 1);
+        Node current = getNode(i - 1);
         Node buf = current.next;
-        current.next = fresh;
-        current.next.next = buf;
+        current.next = newNode;
+        newNode.next = buf;
         size++;
     }
 
