@@ -136,9 +136,9 @@ public class CustomLinkedList implements Iterable<Integer> {
      * После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-        Node bufferNode;
         Node previousNode = null;
         Node currentNode = head;
+        Node bufferNode;
         while (currentNode != null) {
             bufferNode = currentNode.next;
             currentNode.next = previousNode;
