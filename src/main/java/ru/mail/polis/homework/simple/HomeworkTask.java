@@ -10,7 +10,18 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double integral = 0;
+        double quadrangleArea;
+        while (a < b) {
+            if (a + delta >= b) {
+                quadrangleArea = (b - a) * function.applyAsDouble(a);
+                integral += quadrangleArea;
+            }
+            quadrangleArea = delta * function.applyAsDouble(a);
+            integral += quadrangleArea;
+            a += delta;
+        }
+        return integral;
     }
 
     /**
@@ -18,7 +29,21 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        long reminder;
+        long maxNumber = 0;
+        long maxNumberPosition = 0;
+        long numberLength = 0;
+        if (a == 0)
+            return (byte) 1;
+        for (int i = 1; a != 0; a /= 10, i++) {
+            reminder = Math.abs(a % 10);
+            if (reminder >= maxNumber) {
+                maxNumber = reminder;
+                maxNumberPosition = i;
+            }
+            numberLength = i + 1;
+        }
+        return (byte) Math.abs(numberLength - maxNumberPosition);
     }
 
 
@@ -27,7 +52,9 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        double slope = (y2 - y1) * 1.0 / (x2 - x1);
+        double rise = y1 - slope * x1;
+        return slope * x3 + rise;
     }
 
     /**
@@ -36,7 +63,7 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        return 0.5 * Math.abs((x1 - x2) * (y1 + y2) + (x2 - x3) * (y2 + y3) + (x3 - x4) * (y3 + y4) + (x4 - x1) * (y4 + y1));
     }
 
 }
