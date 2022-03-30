@@ -28,7 +28,7 @@ public class PopularMapTest {
     @Before
     public void setUp() {
         popularMap1 = new PopularMap<>();
-        popularMap2 = spy(new PopularMap<>(map));
+        popularMap2 = spy(new PopularMap<>(map, keyPopularMap, valuePopularMap));
     }
 
 

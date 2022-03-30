@@ -34,48 +34,54 @@ import java.util.Set;
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
+    private final Map<K, Integer> keyPopularMap;
+    private final Map<V, Integer> valuePopularMap;
 
     public PopularMap() {
         this.map = new HashMap<>();
+        this.keyPopularMap = new HashMap<>();
+        this.valuePopularMap = new HashMap<>();
     }
 
-    public PopularMap(Map<K, V> map) {
+    public PopularMap(Map<K, V> map, Map<K, Integer> keyPopularMap, Map<V, Integer> valuePopularMap) {
         this.map = map;
+        this.keyPopularMap = keyPopularMap;
+        this.valuePopularMap = valuePopularMap;
     }
 
     @Override
     public int size() {
-        return 0;
+        return map.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return map.isEmpty();
     }
 
     @Override
     public boolean containsKey(Object key) {
-        return false;
+        return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        return false;
+        return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        return null;
+        return map.get(key);
     }
 
     @Override
     public V put(K key, V value) {
-        return null;
+        return map.put(key, value);
     }
 
     @Override
     public V remove(Object key) {
-        return null;
+        return map.remove(key);
     }
 
     @Override
@@ -85,22 +91,22 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public void clear() {
-
+        map.clear();
     }
 
     @Override
     public Set<K> keySet() {
-        return null;
+        return map.keySet();
     }
 
     @Override
     public Collection<V> values() {
-        return null;
+        return map.values();
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return null;
+        return map.entrySet();
     }
 
     /**
