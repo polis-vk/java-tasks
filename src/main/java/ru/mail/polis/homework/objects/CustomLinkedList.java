@@ -42,7 +42,8 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (length == 0) {
             head = new Node(value);
             tail = head;
-        } else {
+        }
+        else {
             tail.setNext(new Node(value));
             tail = tail.next;
         }
@@ -77,11 +78,16 @@ public class CustomLinkedList implements Iterable<Integer> {
             throw new IndexOutOfBoundsException(String.valueOf(i));
         }
 
+        if (i == length) {
+            add(value);
+            return;
+        }
         if (i == 0) {
             Node newNode = new Node(value);
             newNode.setNext(head);
             head = newNode;
-        } else {
+        }
+        else {
             Node prevNode = findNode(i - 1);
             Node nextNode = prevNode.next;
             Node newNode = new Node(value);
@@ -107,7 +113,8 @@ public class CustomLinkedList implements Iterable<Integer> {
 
         if (index == 0) {
             head = head.next;
-        } else {
+        }
+        else {
             Node prevNode = findNode(index - 1);
             Node removing = prevNode.next;
             Node nextNode = removing.next;
