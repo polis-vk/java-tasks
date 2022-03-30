@@ -125,14 +125,20 @@ public class CustomLinkedList implements Iterable<Integer> {
      * После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-        int currentIndex = 1;
-        Node currentNode = head.next;
-        while (currentNode != null) {
-            removeElement(currentIndex);
-            add(0, currentNode.value);
-            currentNode = currentNode.next;
-            currentIndex++;
+        if (head == null) {
+            return;
         }
+        Node previousNode = head;
+        Node currentNode = head.next;
+        Node nextNode;
+        previousNode.next = null;
+        while (currentNode != null) {
+            nextNode = currentNode.next;
+            currentNode.next = previousNode;
+            previousNode = currentNode;
+            currentNode = nextNode;
+        }
+        head = previousNode;
     }
 
     /**
@@ -169,8 +175,7 @@ public class CustomLinkedList implements Iterable<Integer> {
     @Override
     public Iterator<Integer> iterator() {
         return new Iterator<>() {
-            Node currentNode = head;
-            int currentValue;
+            private Node currentNode = head;
 
             @Override
             public boolean hasNext() {
@@ -180,7 +185,7 @@ public class CustomLinkedList implements Iterable<Integer> {
             @Override
             public Integer next() {
                 if (hasNext()) {
-                    currentValue = currentNode.value;
+                    int currentValue = currentNode.value;
                     currentNode = currentNode.next;
                     return currentValue;
                 }
