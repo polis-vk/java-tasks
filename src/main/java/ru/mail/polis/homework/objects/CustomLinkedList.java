@@ -33,14 +33,13 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public void add(int value) {
         Node newNode = new Node(value);
+        Node oldTail = tail;
+        tail = newNode;
         if (head == null) {
             head = newNode;
-            tail = head;
-            size++;
-            return;
+        } else {
+            oldTail.next = newNode;
         }
-        tail.next = newNode;
-        tail = tail.next;
         size++;
     }
 
@@ -132,21 +131,21 @@ public class CustomLinkedList implements Iterable<Integer> {
      * После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-        if (head == null) {
+        if (head == null || size == 1) {
             return;
         }
-        Node newHead = head;
+        Node currentHead = head;
+        tail = currentHead;
         Node current = head.next;
+        tail.next = null;
         Node buf;
-        newHead.next = null;
-        tail = newHead;
         do {
-            buf = newHead;
-            newHead = current;
+            buf = currentHead;
+            currentHead = current;
             current = current.next;
-            newHead.next = buf;
+            currentHead.next = buf;
         } while (current != null);
-        head = newHead;
+        head = currentHead;
     }
 
     /**
