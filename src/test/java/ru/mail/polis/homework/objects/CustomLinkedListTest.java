@@ -72,6 +72,7 @@ public class CustomLinkedListTest {
         assertEquals(7, list.get(2));
         assertEquals(4, list.get(3));
         assertEquals(5, list.get(4));
+
         assertEquals(generateString(DEFAULT_ARRAY), list.toString());
         assertEquals(5, list.size());
     }
