@@ -24,9 +24,9 @@ public class MailService<T> implements Consumer<Mail<T>> {
      * 1 тугрик
      */
     @Override
-    public void accept(Mail<T> o) {
-        recipientMailMap.computeIfAbsent(o.getRecipient(), (i) -> new ArrayList<>()).add(o);
-        popularMap.put(o.getSender(), o.getRecipient());
+    public void accept(Mail<T> obj) {
+        recipientMailMap.computeIfAbsent(obj.getRecipient(), (i) -> new ArrayList<>()).add(obj);
+        popularMap.put(obj.getSender(), obj.getRecipient());
     }
 
     /**

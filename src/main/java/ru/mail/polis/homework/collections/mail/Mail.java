@@ -6,12 +6,12 @@ package ru.mail.polis.homework.collections.mail;
 public class Mail<T> {
     private final String sender;
     private final String recipient;
-    private final T text;
+    private final T message;
 
     public Mail(String sender, String recipient, T text) {
         this.sender = sender;
         this.recipient = recipient;
-        this.text = text;
+        this.message = text;
     }
 
     public String getSender() {
@@ -23,6 +23,6 @@ public class Mail<T> {
     }
 
     public T getText() {
-        return text;
+        return message;
     }
 }

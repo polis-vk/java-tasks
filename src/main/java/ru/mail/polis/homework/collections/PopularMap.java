@@ -44,9 +44,7 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     private <T> void increasingPopularity(T value, Map<T, Integer> popularMap) {
         if (value != null) {
-            if (popularMap.get(value) == null) {
-                popularMap.put(value, 0);
-            }
+            popularMap.putIfAbsent(value, 0);
             popularMap.put(value, popularMap.get(value) + 1);
         }
     }
