@@ -9,16 +9,29 @@ import java.util.Iterator;
 public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
+    private Node tail;
     private int size = 0;
 
-    public boolean isEmpty() {
-        return head == null;
+    public void indexCheck(int index) {
+        if (index >= size() || index < 0) {
+            throw new IndexOutOfBoundsException(String.valueOf(index));
+        }
     }
 
     public int size() {
         return size;
     }
-    private Node findNode (Node currentNode, int index){
+
+    public boolean isEmpty() {
+        if (size() == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    private Node findNode(int index) {
+        indexCheck(index);
+        Node currentNode = head;
         for (int i = 0; i < index; i++) {
             currentNode = currentNode.next;
         }
@@ -33,17 +46,14 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int value) {
-        if (isEmpty()) {
+        if (head == null) {
             head = new Node(value);
-            size+=1;
-            return;
+            tail = head;
+        } else {
+            tail.setNext(new Node(value));
+            tail = tail.next;
         }
-        Node currentNode = head;
-        while (currentNode.next != null) {
-            currentNode = currentNode.next;
-        }
-        currentNode.next = new Node(value);
-        size+=1;
+        size++;
     }
 
     /**
@@ -53,12 +63,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index
      */
     public int get(int index) {
-        if (index >= size() || index < 0) {
-            throw new IndexOutOfBoundsException(String.valueOf(index));
-        }
-        Node currentNode = head;
-        currentNode = findNode(currentNode, index);
-        return currentNode.value;
+        return findNode(index).value;
     }
 
     /**
@@ -72,23 +77,24 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int i, int value) {
-        if (i > size() || i < 0) {
+        if (i < 0 || i > size) {
             throw new IndexOutOfBoundsException(String.valueOf(i));
         }
-        if (i == 0) {
-            Node newNode = new Node(value);
-            newNode.setNext(head);
-            head = newNode;
-        } else {
-            Node currentNode = head;
-            currentNode = findNode(currentNode, i-1);
-            Node temp = currentNode.next;
-            Node newNode = new Node(value);
-
-            currentNode.setNext(newNode);
-            newNode.setNext(temp);
+        if (i == size) {
+            add(value);
+            return;
         }
-        size+=1;
+        Node currentNode = new Node(value);
+        size++;
+        if (i == 0) {
+            currentNode.setNext(head);
+            head = currentNode;
+            return;
+        }
+        Node previousNode = findNode(i - 1);
+        currentNode.setNext(previousNode.next);
+        previousNode.setNext(currentNode);
+
     }
 
 
@@ -100,19 +106,16 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (isEmpty() || index < 0 || index >= size()) {
-            throw new IndexOutOfBoundsException(String.valueOf(index));
-        }
+        indexCheck(index);
 
         if (index == 0) {
             head = head.next;
-            size-=1;
+            size -= 1;
             return;
         }
-        Node currentNode = head;
-        currentNode = findNode(currentNode, index-1);
+        Node currentNode = findNode(index - 1);
         currentNode.next = currentNode.next.next;
-        size-=1;
+        size -= 1;
     }
 
     /**
@@ -171,7 +174,7 @@ public class CustomLinkedList implements Iterable<Integer> {
     public Iterator<Integer> iterator() {
         return new Iterator<Integer>() {
             Node lastReturn = head;
-            Integer nodeValue;
+            private Integer nodeValue;
 
             @Override
             public boolean hasNext() {
