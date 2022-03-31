@@ -1,14 +1,10 @@
 package ru.mail.polis.homework.collections;
 
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -51,7 +47,9 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private <T> void increasePopularity(T key, Map<T, Integer> mapPopularity) {
-        mapPopularity.merge(key, 1, Integer::sum);
+        if (key != null) {
+            mapPopularity.merge(key, 1, Integer::sum);
+        }
     }
 
     @Override
@@ -168,7 +166,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        Set<V> valuesSet = valuesWithPopularity.entrySet().stream()
+        Set<V> valuesSet = this.valuesWithPopularity.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
                 .map(Entry::getKey)
                 .collect(Collectors.toSet());
