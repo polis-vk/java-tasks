@@ -1,35 +1,40 @@
 package ru.mail.polis.homework.collections.mail;
 
 
-import java.util.List;
-import java.util.Map;
+import ru.mail.polis.homework.collections.PopularMap;
+
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
  * Нужно создать сервис, который умеет обрабатывать письма и зарплату.
  * Письма состоят из получателя, отправителя, текста сообщения
  * Зарплата состоит из получателя, отправителя и суммы.
- *
+ * <p>
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 тугриков за пакет mail
  */
-public class MailService implements Consumer {
+public class MailService<T> implements Consumer<Mail<T>> {
+
+    private final Map<String, List<Mail<T>>> recipientMailMap = new HashMap<>();
+    private final PopularMap<String, String> popularMap = new PopularMap<>();
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
      * 1 тугрик
      */
     @Override
-    public void accept(Object o) {
-
+    public void accept(Mail<T> o) {
+        recipientMailMap.computeIfAbsent(o.getRecipient(), (i) -> new ArrayList<>()).add(o);
+        popularMap.put(o.getSender(), o.getRecipient());
     }
 
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      * 1 тугрик
      */
-    public Map<String, List> getMailBox() {
-        return null;
+    public Map<String, List<Mail<T>>> getMailBox() {
+        return Collections.unmodifiableMap(recipientMailMap);
     }
 
     /**
@@ -37,7 +42,7 @@ public class MailService implements Consumer {
      * 1 тугрик
      */
     public String getPopularSender() {
-        return null;
+        return popularMap.getPopularKey();
     }
 
     /**
@@ -45,14 +50,14 @@ public class MailService implements Consumer {
      * 1 тугрик
      */
     public String getPopularRecipient() {
-        return null;
+        return popularMap.getPopularValue();
     }
 
     /**
      * Метод должен заставить обработать service все mails.
      * 1 тугрик
      */
-    public static void process(MailService service, List mails) {
-
+    public static <T extends Mail<Mail<T>>> void process(MailService<Mail<T>> service, List<T> mails) {
+        mails.forEach(service);
     }
 }
