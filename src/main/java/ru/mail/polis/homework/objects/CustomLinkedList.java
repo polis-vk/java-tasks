@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.objects;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * 15 тугриков
@@ -49,16 +50,14 @@ public class CustomLinkedList implements Iterable<Integer> {
     public int get(int index) {
         int currentIndex = 0;
         Node currentNode = head;
-        if (index > this.size() - 1) {
+        if (index > size - 1) {
             throw new IndexOutOfBoundsException();
         }
-        while (true) {
-            if (currentIndex == index) {
-                return currentNode.value;
-            }
+        while (currentIndex != index) {
             currentIndex++;
             currentNode = currentNode.next;
         }
+        return currentNode.value;
     }
 
     /**
@@ -72,7 +71,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int i, int value) {
-        if (i > this.size) {
+        if (i > size || i < 0) {
             throw new IndexOutOfBoundsException();
         }
         size++;
@@ -82,7 +81,7 @@ public class CustomLinkedList implements Iterable<Integer> {
             head = newNode;
             return;
         }
-        if (i == this.size - 1) {
+        if (i == size - 1) {
             tail.next = newNode;
             return;
         }
@@ -107,7 +106,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (index >= this.size || index < 0) {
+        if (index >= size || index < 0) {
             throw new IndexOutOfBoundsException();
         }
         size--;
@@ -174,7 +173,25 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new Iterator<Integer>() {
+            private Node currNode = head;
+
+            @Override
+            public Integer next() {
+                if (currNode == null) {
+                    throw new NoSuchElementException();
+                }
+
+                Integer result = currNode.value;
+                currNode = currNode.next;
+                return result;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return currNode != null;
+            }
+        };
     }
 
     private static class Node {
