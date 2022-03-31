@@ -1,11 +1,7 @@
 package ru.mail.polis.homework.collections;
 
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -33,7 +29,16 @@ import java.util.Set;
  */
 public class PopularMap<K, V> implements Map<K, V> {
 
+    private final Map<K, Integer> popularKey = new HashMap<>();
+    private final Map<V, Integer> popularValue = new HashMap<>();
     private final Map<K, V> map;
+
+    private <T> void popularity(T value, Map<T, Integer> popular) {
+        if (value != null) {
+            popular.putIfAbsent(value, 0);
+            popular.put(value, popular.get(value) + 1);
+        }
+    }
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -45,69 +50,83 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public int size() {
-        return 0;
+        return map.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return map.isEmpty();
     }
 
     @Override
     public boolean containsKey(Object key) {
-        return false;
+        popularity((K) key, popularKey);
+        return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        return false;
+        return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        return null;
+        V value = map.get(key);
+        popularity(value, popularValue);
+        popularity((K) key, popularKey);
+        return value;
     }
 
     @Override
     public V put(K key, V value) {
-        return null;
+        V prevValue = map.put(key, value);
+        popularity(key, popularKey);
+        popularity(value, popularValue);
+        popularity(prevValue, popularValue);
+        return prevValue;
     }
 
     @Override
     public V remove(Object key) {
-        return null;
+        V prevValue = map.remove(key);
+        popularity((K) key, popularKey);
+        popularity(prevValue, popularValue);
+        return prevValue;
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-        throw new UnsupportedOperationException("putAll");
+        map.putAll(m);
     }
 
     @Override
     public void clear() {
-
+        map.clear();
     }
 
     @Override
     public Set<K> keySet() {
-        return null;
+        return map.keySet();
     }
 
     @Override
     public Collection<V> values() {
-        return null;
+        return map.values();
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return null;
+        return map.entrySet();
     }
 
     /**
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return null;
+        return popularKey.entrySet().stream()
+                .max(Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
     }
 
 
@@ -115,14 +134,17 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        return 0;
+       return popularKey.get(key) == null ? 0 : popularKey.get(key);
     }
 
     /**
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        return null;
+        return popularValue.entrySet().stream()
+                .max(Entry.comparingByValue())
+                .map(Entry::getKey)
+                .orElse(null);
     }
 
     /**
@@ -130,7 +152,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        return 0;
+        return popularValue.get(value) == null ? 0 : popularValue.get(value);
     }
 
     /**
@@ -138,6 +160,8 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        return null;
+        List<V> values = new ArrayList<>(popularValue.keySet());
+        values.sort(Comparator.comparingInt(popularValue::get));
+        return values.iterator();
     }
 }
