@@ -173,8 +173,7 @@ public class CustomLinkedList implements Iterable<Integer> {
     @Override
     public Iterator<Integer> iterator() {
         return new Iterator<Integer>() {
-            Node lastReturn = head;
-            private Integer nodeValue;
+            private Node lastReturn = head;
 
             @Override
             public boolean hasNext() {
@@ -186,7 +185,7 @@ public class CustomLinkedList implements Iterable<Integer> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                nodeValue = lastReturn.value;
+                int nodeValue = lastReturn.value;
                 lastReturn = lastReturn.next;
                 return nodeValue;
             }
