@@ -108,17 +108,20 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (size == 0 || index >= size || index < 0) {
             throw new IndexOutOfBoundsException(Integer.toString(index));
         }
-        size--;
+
         if (index == 0) {
             head = head.next;
-            return;
         }
-        if (index == size - 1) {
-            tail = null;
-        } else {
+        else {
             Node preNode = searchSpecificNode(index - 1);
-            preNode.setNext(preNode.next.next);
+            if (index == size - 1) {
+                tail = preNode;
+                preNode.setNext(null);
+            } else {
+                preNode.setNext(preNode.next.next);
+            }
         }
+        size--;
     }
 
     /**
