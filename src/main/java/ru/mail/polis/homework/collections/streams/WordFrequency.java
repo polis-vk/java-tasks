@@ -1,9 +1,7 @@
 package ru.mail.polis.homework.collections.streams;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -30,7 +28,7 @@ public class WordFrequency {
         return lines.map(String::toLowerCase)
                 .flatMap((line) -> Arrays.stream(line.split("\\s*(\\s|\\?|:|-|;|,|!|\\.)\\s*")))
                 .collect(Collectors.groupingBy(
-                        i -> i,
+                        Function.identity(),
                         Collectors.counting()))
                 .entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
