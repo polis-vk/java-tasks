@@ -1,6 +1,15 @@
 package ru.mail.polis.homework.collections.streams;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.SplittableRandom;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -21,8 +30,18 @@ public class WordFrequency {
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-        return null;
+        final String splitters = "[ .,!?:;-]";
+        final int maxCountWords = 10;
+        return lines.map(String::toLowerCase)
+                .flatMap(str -> Arrays.stream(str.split(splitters)))
+                .filter(str-> str.length() > 0)
+                .collect(Collectors.groupingBy(str -> str, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .map(Map.Entry::getKey)
+                .limit(maxCountWords)
+                .collect(Collectors.toList());
     }
-
-
 }
