@@ -3,13 +3,13 @@ package ru.mail.polis.homework.collections.mail;
 /**
  * 1 тугрик
  */
-public class Mail {
+public class Mail<T> {
 
     private final String recipient;
     private final String sender;
-    private final String massageContent;
+    private final T massageContent;
 
-    public Mail(String recipient, String sender, String massageContent) {
+    public Mail(String recipient, String sender, T massageContent) {
         this.recipient = recipient;
         this.sender = sender;
         this.massageContent = massageContent;
@@ -23,7 +23,7 @@ public class Mail {
         return sender;
     }
 
-    public String getMassageContent() {
+    public T getMassageContent() {
         return massageContent;
     }
 }

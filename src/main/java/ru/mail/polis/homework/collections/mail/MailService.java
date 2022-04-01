@@ -32,15 +32,8 @@ public class MailService implements Consumer<Mail> {
      */
     @Override
     public void accept(Mail mail) {
-        List<Mail> senderList = new ArrayList<>();
-        senderList = senders.getOrDefault(mail.getSender(), senderList);
-        senderList.add(mail);
-        senders.put(mail.getSender(), senderList);
-
-        List<Mail> recipientList = new ArrayList<>();
-        recipientList = senders.getOrDefault(mail.getRecipient(), senderList);
-        recipientList.add(mail);
-        recipients.put(mail.getRecipient(), recipientList);
+        senders.computeIfAbsent(mail.getSender(), mails -> new ArrayList<>()).add(mail);
+        recipients.computeIfAbsent(mail.getRecipient(), mails -> new ArrayList<>()).add(mail);
     }
 
     /**
