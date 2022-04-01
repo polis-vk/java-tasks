@@ -32,13 +32,13 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public void add(int value) {
         size++;
-        Node node = new Node(value);
-        if (tail == null) {
-            head = node;
-        } else {
-            tail.next = node;
+        if (head == null) {
+            head = new Node(value);
+            tail = head;
+            return;
         }
-        tail = node;
+        tail.next = new Node(value);
+        tail = tail.next;
     }
 
     /**
