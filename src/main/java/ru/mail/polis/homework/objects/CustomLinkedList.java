@@ -111,8 +111,7 @@ public class CustomLinkedList implements Iterable<Integer> {
 
         if (index == 0) {
             head = head.next;
-        }
-        else {
+        } else {
             Node preNode = searchSpecificNode(index - 1);
             if (index == size - 1) {
                 tail = preNode;
