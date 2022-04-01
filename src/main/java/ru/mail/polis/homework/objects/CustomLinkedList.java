@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
 public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
-    private Node tailNode;
+    private Node tail;
     private int size;
 
     /**
@@ -34,13 +34,13 @@ public class CustomLinkedList implements Iterable<Integer> {
         Node newNode = new Node(value);
         if (head == null) {
             head = newNode;
-            tailNode = head;
+            tail = head;
         } else {
-            tailNode.setNext(newNode);
-            tailNode = newNode;
+            tail.setNext(newNode);
+            tail = newNode;
         }
         size++;
-        tailNode.setNext(null);
+        tail.setNext(null);
     }
 
     private Node searchSpecificNode(int index) {
@@ -59,7 +59,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public int get(int index) {
         if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException(index);
+            throw new IndexOutOfBoundsException(Integer.toString(index));
         }
         return this.searchSpecificNode(index).value;
     }
@@ -76,10 +76,10 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public void add(int i, int value) {
         if (i > size || i < 0) {
-            throw new IndexOutOfBoundsException(i);
+            throw new IndexOutOfBoundsException(Integer.toString(i));
         }
         if (i == size) {
-            this.add(value);
+            add(value);
             return;
         }
         Node newNode = new CustomLinkedList.Node(value);
@@ -106,7 +106,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public void removeElement(int index) {
         if (size == 0 || index >= size || index < 0) {
-            throw new IndexOutOfBoundsException(index);
+            throw new IndexOutOfBoundsException(Integer.toString(index));
         }
         size--;
         if (index == 0) {
@@ -114,7 +114,7 @@ public class CustomLinkedList implements Iterable<Integer> {
             return;
         }
         if (index == size - 1) {
-            tailNode = null;
+            tail = null;
         } else {
             Node preNode = searchSpecificNode(index - 1);
             preNode.setNext(preNode.next.next);
