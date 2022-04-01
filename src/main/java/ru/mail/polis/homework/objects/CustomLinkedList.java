@@ -82,15 +82,15 @@ public class CustomLinkedList implements Iterable<Integer> {
             return;
         }
 
+        Node element = new Node(value);
         if (i == 0) {
-            Node element = new Node(value);
             element.setNext(head);
             head = element;
             size++;
             return;
         }
 
-        Node element = new Node(value);
+
         Node previousNode = getNode(i - 1);
         element.setNext(previousNode.next);
         previousNode.setNext(element);
@@ -190,14 +190,13 @@ public class CustomLinkedList implements Iterable<Integer> {
 
             @Override
             public Integer next() {
-                if (hasNext()) {
-                    int currentNodeValue = currentNode.value;
-                    currentNode = currentNode.next;
-                    return currentNodeValue;
-                } else {
+                if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
 
+                int currentNodeValue = currentNode.value;
+                currentNode = currentNode.next;
+                return currentNodeValue;
             }
         };
     }
