@@ -134,6 +134,14 @@ public class CustomLinkedListTest {
     }
 
     @Test
+    public void addToTailAfterRevertList() {
+        CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
+        list.revertList();
+        list.add(1);
+        assertEquals(generateString(new int[]{5, 4, 7, 3, 5, 1}), list.toString());
+    }
+
+    @Test
     public void testToStringWithEmptyList() {
         CustomLinkedList list = new CustomLinkedList();
         assertEquals("null", list.toString());
