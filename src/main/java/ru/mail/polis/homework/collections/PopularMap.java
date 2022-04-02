@@ -2,6 +2,7 @@ package ru.mail.polis.homework.collections;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -10,20 +11,21 @@ import java.util.*;
  * Популярность - это количество раз, который этот ключ/значение учавствовал/ло в других методах мапы, такие как
  * containsKey, get, put, remove (в качестве параметра и возвращаемого значения).
  * Считаем, что null я вам не передаю ни в качестве ключа, ни в качестве значения
- *
+ * <p>
  * Так же надо сделать итератор (подробности ниже).
- *
+ * <p>
  * Важный момент, вам не надо реализовывать мапу, вы должны использовать композицию.
  * Вы можете использовать любые коллекции, которые есть в java.
- *
+ * <p>
  * Помните, что по мапе тоже можно итерироваться
- *
- *         for (Map.Entry<K, V> entry : map.entrySet()) {
- *             entry.getKey();
- *             entry.getValue();
- *         }
- *
+ * <p>
+ * for (Map.Entry<K, V> entry : map.entrySet()) {
+ * entry.getKey();
+ * entry.getValue();
+ * }
+ * <p>
  * Всего 10 тугриков (3 тугрика за общие методы, 2 тугрика за итератор, 5 тугриков за логику популярности)
+ *
  * @param <K> - тип ключа
  * @param <V> - тип значения
  */
@@ -134,7 +136,11 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-       return popularKey.get(key) == null ? 0 : popularKey.get(key);
+        V result = (V) popularKey.get(key);
+        if (result != null) {
+            return (int) result;
+        }
+        return 0;
     }
 
     /**
@@ -152,7 +158,11 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        return popularValue.get(value) == null ? 0 : popularValue.get(value);
+        V result = (V) popularValue.get(value);
+        if (result != null) {
+            return (int) result;
+        }
+        return 0;
     }
 
     /**
@@ -160,8 +170,31 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        List<V> values = new ArrayList<>(popularValue.keySet());
-        values.sort(Comparator.comparingInt(popularValue::get));
-        return values.iterator();
+        return new CustomIterator();
+    }
+
+    private class CustomIterator implements Iterator<V> {
+
+        List<V> popularList = new ArrayList<>();
+
+        public CustomIterator() {
+            popularList = popularValue.entrySet().stream()
+                    .sorted(Comparator.comparingInt(value -> value.getValue()))
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toList());
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !popularList.isEmpty();
+        }
+
+        @Override
+        public V next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return popularList.remove(0);
+        }
     }
 }

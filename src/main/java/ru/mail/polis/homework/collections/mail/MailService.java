@@ -18,6 +18,8 @@ import java.util.function.Consumer;
  */
 public class MailService implements Consumer<Mail> {
 
+    List<Mail> sender = new ArrayList<>();
+    List<Mail> recipient;
     private final PopularMap<String, List<Mail>> recipientsMap = new PopularMap<>();
     private final PopularMap<String, List<Mail>> sendersMap = new PopularMap<>();
 
@@ -27,11 +29,9 @@ public class MailService implements Consumer<Mail> {
      */
     @Override
     public void accept(Mail mail) {
-        List<Mail> sender = new ArrayList<>();
         sender = sendersMap.getOrDefault(mail.getSender(), sender);
         sender.add(mail);
         sendersMap.put(mail.getSender(), sender);
-        List<Mail> recipient;
         recipient = sendersMap.getOrDefault(mail.getRecipient(), sender);
         recipient.add(mail);
         recipientsMap.put(mail.getRecipient(), recipient);
