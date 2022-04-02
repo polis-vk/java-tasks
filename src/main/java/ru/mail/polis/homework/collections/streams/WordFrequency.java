@@ -25,19 +25,18 @@ import java.util.stream.Stream;
  * 5 тугриков
  */
 public class WordFrequency {
-
+    static final String splitters = "[ .,!?:;-]";
+    static final int maxCountWords = 10;
     /**
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-        final String splitters = "[ .,!?:;-]";
-        final int maxCountWords = 10;
+
         return lines.map(String::toLowerCase)
                 .flatMap(str -> Arrays.stream(str.split(splitters)))
-                .filter(str-> str.length() > 0)
+                .filter(str-> !str.isEmpty())
                 .collect(Collectors.groupingBy(str -> str, Collectors.counting()))
-                .entrySet()
-                .stream()
+                .entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .map(Map.Entry::getKey)
