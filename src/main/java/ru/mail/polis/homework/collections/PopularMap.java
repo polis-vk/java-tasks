@@ -1,9 +1,11 @@
 package ru.mail.polis.homework.collections;
 
-
-import java.util.*;
-
-import static java.util.Map.Entry.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashMap;
+import java.util.Comparator;
 
 
 /**
@@ -80,11 +82,10 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public V put(K key, V value) {
         increasePopularity(key, popularKeyMap);
-        V oldValue = map.get(key);
+        V oldValue = map.put(key, value);
         increasePopularity(value, popularValueMap);
         increasePopularity(oldValue, popularValueMap);
-        map.put(key, value);
-        return map.get(key);
+        return oldValue;
     }
 
     @Override
@@ -121,9 +122,10 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private <T> void increasePopularity(T key, Map<T, Integer> map) {
-        isChanged = true;
-        if (key != null && map.putIfAbsent(key, 1) != null)
-            map.put(key, map.get(key) + 1);
+        if (key != null) {
+            map.compute(key, (k, v) -> v = (v == null) ? 1 : ++v);
+            isChanged = true;
+        }
     }
 
     /**
@@ -134,7 +136,7 @@ public class PopularMap<K, V> implements Map<K, V> {
             isChanged = false;
             mostPopularKey = popularKeyMap
                     .entrySet().stream()
-                    .max(comparingByValue())
+                    .max(Entry.comparingByValue())
                     .get()
                     .getKey();
         }
@@ -157,7 +159,7 @@ public class PopularMap<K, V> implements Map<K, V> {
             isChanged = false;
             mostPopularValue = popularValueMap
                     .entrySet().stream()
-                    .max(comparingByValue())
+                    .max(Entry.comparingByValue())
                     .get()
                     .getKey();
         }
@@ -177,8 +179,9 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        List<V> values = new ArrayList<>(popularValueMap.keySet());
-        return values.stream()
+        return popularValueMap
+                .keySet()
+                .stream()
                 .sorted(Comparator.comparing(popularValueMap::get))
                 .iterator();
     }
