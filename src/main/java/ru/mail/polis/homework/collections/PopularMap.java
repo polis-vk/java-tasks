@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -38,12 +39,12 @@ import java.util.Set;
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
-    private final Map<Object, Integer> popularKeys = new HashMap<>();
-    private boolean keyChangeChek = false;
+    private final Map<K, Integer> popularKeys = new HashMap<>();
     private K popularKey = null;
-    private final Map<Object, Integer> popularValues = new HashMap<>();
-    private boolean valueChangeChek = false;
+    private boolean keyChangeChek = false;
+    private final Map<V, Integer> popularValues = new HashMap<>();
     private V popularValue = null;
+    private boolean valueChangeChek = false;
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -65,27 +66,31 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        addPopularKeyOrValue(popularKeys, key);
+        addPopularKeyOrValue(popularKeys, (K) key);
         keyChangeChek = true;
+        comparingKeysOrValues(popularKeys, popularKey, (K) key);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        addPopularKeyOrValue(popularValues, value);
+        addPopularKeyOrValue(popularValues, (V) value);
         valueChangeChek = true;
+        comparingKeysOrValues(popularValues, popularValue, (V) value);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        addPopularKeyOrValue(popularKeys, key);
+        addPopularKeyOrValue(popularKeys, (K) key);
         keyChangeChek = true;
+        comparingKeysOrValues(popularKeys, popularKey, (K) key);
 
         V value = map.get(key);
         if (value != null) {
             addPopularKeyOrValue(popularValues, value);
             valueChangeChek = true;
+            comparingKeysOrValues(popularValues, popularValue, value);
         }
 
         return value;
@@ -95,31 +100,32 @@ public class PopularMap<K, V> implements Map<K, V> {
     public V put(K key, V value) {
         addPopularKeyOrValue(popularKeys, key);
         keyChangeChek = true;
+        comparingKeysOrValues(popularKeys, popularKey, key);
 
         V oldValue = map.put(key, value);
-        if (oldValue != null) {
-            addPopularKeyOrValue(popularValues, oldValue);
-
-            if (oldValue.equals(value)) {
-                addPopularKeyOrValue(popularValues, value);
-                return oldValue;
-            }
-        }
         addPopularKeyOrValue(popularValues, value);
         valueChangeChek = true;
+        comparingKeysOrValues(popularValues, popularValue, value);
+        if (oldValue != null) {
+            addPopularKeyOrValue(popularValues, oldValue);
+            valueChangeChek = true;
+            comparingKeysOrValues(popularValues, popularValue, oldValue);
+        }
 
         return oldValue;
     }
 
     @Override
     public V remove(Object key) {
-        addPopularKeyOrValue(popularKeys, key);
+        addPopularKeyOrValue(popularKeys, (K) key);
         keyChangeChek = true;
+        comparingKeysOrValues(popularKeys, popularKey, (K) key);
 
         V removeValue = map.remove(key);
         if (removeValue != null) {
             addPopularKeyOrValue(popularValues, removeValue);
             valueChangeChek = true;
+            comparingKeysOrValues(popularValues, popularValue, removeValue);
         }
 
         return removeValue;
@@ -150,24 +156,29 @@ public class PopularMap<K, V> implements Map<K, V> {
         return map.entrySet();
     }
 
-    private void addPopularKeyOrValue(Map<Object, Integer> mapPopular, Object value) {
-        if (mapPopular.putIfAbsent(value, 1) != null) {
-            mapPopular.computeIfPresent(value, (k, v) -> v + 1);
-        }
+    private <T> void addPopularKeyOrValue(Map<T, Integer> mapPopular, T value) {
+        mapPopular.compute(value, (k, v) -> v = (v == null) ? 1 : ++v);
     }
 
+    private <T> void comparingKeysOrValues(Map<T, Integer> mapPopular, T thisValue, T valueForComparing) {
+        if (mapPopular.getOrDefault(thisValue, 0) < mapPopular.get(valueForComparing)) {
+            if(keyChangeChek){
+                popularKey = (K) valueForComparing;
+            }
+
+            if(valueChangeChek){
+                popularValue = (V) valueForComparing;
+            }
+        }
+
+        keyChangeChek = false;
+        valueChangeChek = false;
+    }
 
     /**
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        if (keyChangeChek) {
-            popularKey = (K) popularKeys.entrySet().stream()
-                    .max(Entry.comparingByValue())
-                    .get().getKey();
-        }
-
-        keyChangeChek = false;
         return popularKey;
     }
 
@@ -183,13 +194,6 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        if (valueChangeChek) {
-            popularValue = (V) popularValues.entrySet().stream()
-                    .max(Entry.comparingByValue())
-                    .get().getKey();
-        }
-
-        valueChangeChek = false;
         return popularValue;
     }
 
@@ -211,26 +215,24 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     private class PopularMapIterator implements Iterator<V> {
 
-        List<V> listPopular = new ArrayList<>();
+        Iterator<V> iteratorPopular;
 
         public PopularMapIterator() {
-            popularValues.entrySet().stream()
-                    .sorted(Comparator.comparingInt(e -> e.getValue()))
-                    .forEach((entry) -> listPopular.add((V) entry.getKey()));
+            iteratorPopular = popularValues.keySet()
+                    .stream()
+                    .sorted(Comparator.comparingInt(popularValues::get))
+                    .collect(Collectors.toList())
+                    .iterator();
         }
 
         @Override
         public boolean hasNext() {
-            return !listPopular.isEmpty();
+            return iteratorPopular.hasNext();
         }
 
         @Override
         public V next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
-
-            return listPopular.remove(0);
+            return iteratorPopular.next();
         }
     }
 
