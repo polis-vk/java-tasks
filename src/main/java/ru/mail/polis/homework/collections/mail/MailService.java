@@ -5,20 +5,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
 import ru.mail.polis.homework.collections.PopularMap;
 
 /**
  * Нужно создать сервис, который умеет обрабатывать письма и зарплату.
  * Письма состоят из получателя, отправителя, текста сообщения
  * Зарплата состоит из получателя, отправителя и суммы.
- *
+ * <p>
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 тугриков за пакет mail
  */
-public class MailService<V> implements Consumer<Mail<MailMessage<V>>> {
+public class MailService<V> implements Consumer<Mail<V>> {
 
-    private final PopularMap<String, List<Mail<MailMessage<V>>>> addressees;
-    private final PopularMap<String, List<Mail<MailMessage<V>>>> senders;
+    private final PopularMap<String, List<Mail<V>>> addressees;
+    private final PopularMap<String, List<Mail<V>>> senders;
 
     public MailService() {
         this.addressees = new PopularMap<>();
@@ -30,7 +31,7 @@ public class MailService<V> implements Consumer<Mail<MailMessage<V>>> {
      * 1 тугрик
      */
     @Override
-    public void accept(Mail<MailMessage<V>> mail) {
+    public void accept(Mail<V> mail) {
         senders.computeIfAbsent(mail.getSender(), mails -> new ArrayList<>()).add(mail);
         addressees.computeIfAbsent(mail.getAddressee(), mails -> new ArrayList<>()).add(mail);
     }
@@ -39,7 +40,7 @@ public class MailService<V> implements Consumer<Mail<MailMessage<V>>> {
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      * 1 тугрик
      */
-    public Map<String, List<Mail<MailMessage<V>>>> getMailBox() {
+    public Map<String, List<Mail<V>>> getMailBox() {
         return addressees;
     }
 

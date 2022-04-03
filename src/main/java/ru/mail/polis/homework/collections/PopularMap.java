@@ -4,9 +4,7 @@ package ru.mail.polis.homework.collections;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,13 +38,9 @@ public class PopularMap<K, V> implements Map<K, V> {
     private final Map<K, V> map;
     private final Map<K, Integer> keyPopularity = new HashMap<>();
     private final Map<V, Integer> valuePopularity = new HashMap<>();
+    private K maxKey;
+    private V maxValue;
 
-    private void addValuePopularity(Object key) {
-        V value = map.get(key);
-        if (value != null) {
-            valuePopularity.compute(value, (k, v) -> (v == null) ? 1 : v + 1);
-        }
-    }
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -68,38 +62,36 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        keyPopularity.compute((K) key, (k, v) -> (v == null) ? v = 1 : v + 1);
+        addPopularity((K) key, keyPopularity);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        valuePopularity.compute((V) value, (k, v) -> (v == null) ? 1 : v + 1);
+        addPopularity((V) value, valuePopularity);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        keyPopularity.compute((K) key, (k, v) -> (v == null) ? v = 1 : v + 1);
+        addPopularity((K) key, keyPopularity);
         V value = map.get(key);
-        if (value != null) {
-            valuePopularity.compute(value, (k, v) -> (v == null) ? 1 : v + 1);
-        }
+        addPopularity(value, valuePopularity);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
-        keyPopularity.compute(key, (k, v) -> (v == null) ? 1 : v + 1);
-        valuePopularity.compute(value, (k, v) -> (v == null) ? 1 : v + 1);
-        addValuePopularity(key);
+        addPopularity(key, keyPopularity);
+        addPopularity(value, valuePopularity);
+        addPopularity(map.get(key), valuePopularity);
         return map.put(key, value);
     }
 
     @Override
     public V remove(Object key) {
-        keyPopularity.compute( (K) key, (k, v) -> (v == null) ? 1 : v + 1);
-        addValuePopularity(key);
+        addPopularity((K) key, keyPopularity);
+        addPopularity(map.get(key), valuePopularity);
         return map.remove(key);
     }
 
@@ -132,11 +124,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return keyPopularity
-                .entrySet().stream()
-                .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
-                .limit(1)
-                .reduce((b,a) -> a).get().getKey();
+        return maxKey;
     }
 
     /**
@@ -150,11 +138,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        return valuePopularity
-                .entrySet().stream()
-                .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
-                .limit(1)
-                .reduce((b,a) -> a).get().getKey();
+        return maxValue;
     }
 
     /**
@@ -170,31 +154,29 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        return new MapIterator();
+        return valuePopularity.entrySet().stream()
+                .sorted(Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList()).iterator();
     }
 
-    private class MapIterator implements Iterator<V> {
-
-        List<V> list;
-
-        public MapIterator() {
-            list = valuePopularity.entrySet().stream()
-                    .sorted(Entry.comparingByValue())
-                    .map(Map.Entry::getKey)
-                    .collect(Collectors.toList());
+    private <T> void addPopularity(T value, Map<T, Integer> popularity) {
+        if (value != null) {
+            popularity.compute(value, (k, v) -> (v == null) ? 1 : v + 1);
         }
+        if (!popularity.isEmpty()) {
+            if (popularity.equals(keyPopularity)) {
+                maxKey = keyPopularity.entrySet().stream()
+                        .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+                        .limit(1)
+                        .reduce((b, a) -> a).get().getKey();
 
-        @Override
-        public boolean hasNext() {
-            return !list.isEmpty();
-        }
-
-        @Override
-        public V next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
+            } else {
+                maxValue = valuePopularity.entrySet().stream()
+                        .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+                        .limit(1)
+                        .reduce((b, a) -> a).get().getKey();
             }
-            return list.remove(0);
         }
     }
 }

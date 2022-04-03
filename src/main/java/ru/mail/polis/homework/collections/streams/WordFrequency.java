@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.streams;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -26,7 +27,7 @@ public class WordFrequency {
      */
     public static List<String> wordFrequency(Stream<String> lines) {
         return lines.map(String::toLowerCase)
-                .flatMap((line) -> Arrays.stream(line.split("\\s*(\\s|\\?|:|-|;|,|!|\\.)\\s*")))
+                .flatMap((line) -> Arrays.stream(line.split("(\\s|\\?|:|-|;|,|!|\\.)\\s*")))
                 .collect(Collectors.groupingBy(
                         Function.identity(),
                         Collectors.counting()))
