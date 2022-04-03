@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.streams;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +33,9 @@ public class WordFrequency {
                         Function.identity(),
                         Collectors.counting()))
                 .entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+                .sorted(Comparator.comparing(Map.Entry<String, Long>::getValue)
+                        .reversed()
+                        .thenComparing(Map.Entry::getKey))
                 .limit(10)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
