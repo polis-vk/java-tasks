@@ -1,9 +1,13 @@
 package ru.mail.polis.homework.collections.mail;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import ru.mail.polis.homework.collections.PopularMap;
 
 /**
  * Нужно создать сервис, который умеет обрабатывать письма и зарплату.
@@ -13,23 +17,28 @@ import java.util.function.Consumer;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 тугриков за пакет mail
  */
-public class MailService implements Consumer {
+public class MailService <T extends Mail> implements Consumer<T> {
 
+    private final Map<String, List<Mail>> allMailsForUser = new HashMap<>();
+    private final PopularMap<String, String> receiversPopularMap = new PopularMap<>();
+    private final PopularMap<String, String> sendersPopularMap = new PopularMap<>();
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
      * 1 тугрик
      */
     @Override
-    public void accept(Object o) {
-
+    public void accept(Mail mail) {
+        allMailsForUser.computeIfAbsent(mail.getReceiver(), i -> new ArrayList<>()).add(mail);
+        receiversPopularMap.put(mail.getReceiver(), mail.getSender());
+        sendersPopularMap.put(mail.getSender(), mail.getReceiver());
     }
 
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      * 1 тугрик
      */
-    public Map<String, List> getMailBox() {
-        return null;
+    public Map<String, List<Mail>> getMailBox() {
+        return allMailsForUser;
     }
 
     /**
@@ -37,7 +46,7 @@ public class MailService implements Consumer {
      * 1 тугрик
      */
     public String getPopularSender() {
-        return null;
+        return sendersPopularMap.getPopularKey();
     }
 
     /**
@@ -45,14 +54,16 @@ public class MailService implements Consumer {
      * 1 тугрик
      */
     public String getPopularRecipient() {
-        return null;
+        return receiversPopularMap.getPopularKey();
     }
 
     /**
      * Метод должен заставить обработать service все mails.
      * 1 тугрик
      */
-    public static void process(MailService service, List mails) {
-
+    public static <T extends Mail> void process(MailService<T> service, List<Mail> mails) {
+        for (Mail mail : mails) {
+            service.accept(mail);
+        }
     }
 }

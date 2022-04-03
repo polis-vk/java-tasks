@@ -46,7 +46,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         this.map = map;
     }
 
-    private <T> void increasePopularity(T key, Map<T, Integer> mapPopularity) {
+    private static <T> void increasePopularity(T key, Map<T, Integer> mapPopularity) {
         if (key != null) {
             mapPopularity.merge(key, 1, Integer::sum);
         }
@@ -96,8 +96,9 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public V remove(Object key) {
         increasePopularity((K) key, keysWithPopularity);
-        increasePopularity(map.get(key), valuesWithPopularity);
-        return map.remove(key);
+        V oldValue = map.remove(key);
+        increasePopularity(oldValue, valuesWithPopularity);
+        return oldValue;
     }
 
     @Override
@@ -129,10 +130,10 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return mostPopular(keysWithPopularity);
+        return getTheMostPopular(keysWithPopularity);
     }
 
-    public <T> T mostPopular(Map<T, Integer> map) {
+    private static <T> T getTheMostPopular(Map<T, Integer> map) {
         return map.entrySet()
                 .stream().max(Map.Entry.comparingByValue()).get().getKey();
     }
@@ -149,7 +150,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        return mostPopular(valuesWithPopularity);
+        return getTheMostPopular(valuesWithPopularity);
     }
 
     /**
