@@ -12,14 +12,12 @@ import java.util.function.Consumer;
  * Нужно создать сервис, который умеет обрабатывать письма и зарплату.
  * Письма состоят из получателя, отправителя, текста сообщения
  * Зарплата состоит из получателя, отправителя и суммы.
- *
+ * <p>
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 тугриков за пакет mail
  */
 public class MailService implements Consumer<Mail> {
 
-    List<Mail> sender = new ArrayList<>();
-    List<Mail> recipient;
     private final PopularMap<String, List<Mail>> recipientsMap = new PopularMap<>();
     private final PopularMap<String, List<Mail>> sendersMap = new PopularMap<>();
 
@@ -29,10 +27,18 @@ public class MailService implements Consumer<Mail> {
      */
     @Override
     public void accept(Mail mail) {
-        sender = sendersMap.getOrDefault(mail.getSender(), sender);
+        List<Mail> sender;
+        sender = sendersMap.getOrDefault(mail.getSender(), null);
+        if (sender == null) {
+            sender = new ArrayList<>();
+        }
         sender.add(mail);
         sendersMap.put(mail.getSender(), sender);
-        recipient = sendersMap.getOrDefault(mail.getRecipient(), sender);
+        List<Mail> recipient;
+        recipient = sendersMap.getOrDefault(mail.getRecipient(), null);
+        if (recipient == null) {
+            recipient = new ArrayList<>();
+        }
         recipient.add(mail);
         recipientsMap.put(mail.getRecipient(), recipient);
     }
