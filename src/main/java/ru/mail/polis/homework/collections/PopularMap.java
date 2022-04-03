@@ -2,7 +2,6 @@ package ru.mail.polis.homework.collections;
 
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Map.Entry.*;
 
@@ -36,6 +35,9 @@ public class PopularMap<K, V> implements Map<K, V> {
     private final Map<K, V> map;
     private final Map<K, Integer> popularKeyMap = new HashMap<>();
     private final Map<V, Integer> popularValueMap = new HashMap<>();
+    private K mostPopularKey = null;
+    private V mostPopularValue = null;
+    private boolean isChanged = true;
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -119,6 +121,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private <T> void increasePopularity(T key, Map<T, Integer> map) {
+        isChanged = true;
         if (key != null && map.putIfAbsent(key, 1) != null)
             map.put(key, map.get(key) + 1);
     }
@@ -127,11 +130,15 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return popularKeyMap
-                .entrySet().stream()
-                .max(comparingByValue())
-                .get()
-                .getKey();
+        if (isChanged) {
+            isChanged = false;
+            mostPopularKey = popularKeyMap
+                    .entrySet().stream()
+                    .max(comparingByValue())
+                    .get()
+                    .getKey();
+        }
+        return mostPopularKey;
     }
 
 
@@ -146,11 +153,15 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        return popularValueMap
-                .entrySet().stream()
-                .max(comparingByValue())
-                .get()
-                .getKey();
+        if (isChanged) {
+            isChanged = false;
+            mostPopularValue = popularValueMap
+                    .entrySet().stream()
+                    .max(comparingByValue())
+                    .get()
+                    .getKey();
+        }
+        return mostPopularValue;
     }
 
     /**
