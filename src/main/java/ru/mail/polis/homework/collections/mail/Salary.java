@@ -5,7 +5,7 @@ package ru.mail.polis.homework.collections.mail;
  */
 public class Salary extends Mail<Long> {
 
-    public Salary(String receiver, String sender, Long salary) {
-        super(receiver, sender, salary);
+    public Salary(String recipient, String sender, Long salary) {
+        super(recipient, sender, salary);
     }
 }

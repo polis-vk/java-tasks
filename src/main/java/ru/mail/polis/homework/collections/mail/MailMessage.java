@@ -5,7 +5,7 @@ package ru.mail.polis.homework.collections.mail;
  */
 public class MailMessage extends Mail<String> {
 
-    public MailMessage(String receiver, String sender, String text) {
-        super(receiver, sender, text);
+    public MailMessage(String recipient, String sender, String text) {
+        super(recipient, sender, text);
     }
 }

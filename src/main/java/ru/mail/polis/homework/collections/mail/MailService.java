@@ -28,8 +28,8 @@ public class MailService <T extends Mail> implements Consumer<T> {
      */
     @Override
     public void accept(Mail mail) {
-        allMailsForUser.computeIfAbsent(mail.getReceiver(), i -> new ArrayList<>()).add(mail);
-        popularMap.put(mail.getReceiver(), mail.getSender());
+        allMailsForUser.computeIfAbsent(mail.getRecipient(), i -> new ArrayList<>()).add(mail);
+        popularMap.put(mail.getRecipient(), mail.getSender());
     }
 
     /**
