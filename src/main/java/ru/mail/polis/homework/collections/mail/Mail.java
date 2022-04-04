@@ -8,10 +8,10 @@ public class Mail<T> {
     private final String recipient;
     private final T message;
 
-    public Mail(String sender, String recipient, T text) {
+    public Mail(String sender, String recipient, T message) {
         this.sender = sender;
         this.recipient = recipient;
-        this.message = text;
+        this.message = message;
     }
 
     public String getSender() {
@@ -22,7 +22,7 @@ public class Mail<T> {
         return recipient;
     }
 
-    public T getText() {
+    public T getMessage() {
         return message;
     }
 }
