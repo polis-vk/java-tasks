@@ -20,8 +20,8 @@ import ru.mail.polis.homework.collections.PopularMap;
 public class MailService <T extends Mail> implements Consumer<T> {
 
     private final Map<String, List<Mail>> allMailsForUser = new HashMap<>();
-    private final PopularMap<String, String> receiversPopularMap = new PopularMap<>();
-    private final PopularMap<String, String> sendersPopularMap = new PopularMap<>();
+    private final PopularMap<String, String> popularMap = new PopularMap<>();
+
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
      * 1 тугрик
@@ -29,8 +29,7 @@ public class MailService <T extends Mail> implements Consumer<T> {
     @Override
     public void accept(Mail mail) {
         allMailsForUser.computeIfAbsent(mail.getReceiver(), i -> new ArrayList<>()).add(mail);
-        receiversPopularMap.put(mail.getReceiver(), mail.getSender());
-        sendersPopularMap.put(mail.getSender(), mail.getReceiver());
+        popularMap.put(mail.getReceiver(), mail.getSender());
     }
 
     /**
@@ -46,7 +45,7 @@ public class MailService <T extends Mail> implements Consumer<T> {
      * 1 тугрик
      */
     public String getPopularSender() {
-        return sendersPopularMap.getPopularKey();
+        return popularMap.getPopularValue();
     }
 
     /**
@@ -54,7 +53,7 @@ public class MailService <T extends Mail> implements Consumer<T> {
      * 1 тугрик
      */
     public String getPopularRecipient() {
-        return receiversPopularMap.getPopularKey();
+        return popularMap.getPopularKey();
     }
 
     /**
