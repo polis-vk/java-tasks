@@ -89,9 +89,10 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V remove(Object key) {
+        V lastValue = map.remove(key);
         mostPopularKey = popularity((K) key, popularKey, mostPopularKey);
-        mostPopularValue = popularity(map.get(key), popularValue, mostPopularValue);
-        return map.remove(key);
+        mostPopularValue = popularity(lastValue, popularValue, mostPopularValue);
+        return lastValue;
     }
 
     @Override
@@ -154,32 +155,10 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        return new CustomIterator();
-    }
-
-    private class CustomIterator implements Iterator<V> {
-
-        List<V> popularList = new ArrayList<>();
-
-        public CustomIterator() {
-            popularList = popularValue.entrySet().stream()
-                    .sorted(Comparator.comparingInt(value -> value.getValue()))
-                    .map(Map.Entry::getKey)
-                    .collect(Collectors.toList());
-        }
-
-        @Override
-        public boolean hasNext() {
-            return !popularList.isEmpty();
-        }
-
-        @Override
-        public V next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
-            return popularList.remove(0);
-        }
+        return popularValue
+                .keySet().stream()
+                .sorted(Comparator.comparing(popularValue::get))
+                .iterator();
     }
 
     private <T> T popularity(T element, Map<T, Integer> mapPopularity, T popularElement) {
