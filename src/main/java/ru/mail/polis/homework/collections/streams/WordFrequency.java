@@ -2,13 +2,8 @@ package ru.mail.polis.homework.collections.streams;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.SplittableRandom;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,22 +20,22 @@ import java.util.stream.Stream;
  * 5 тугриков
  */
 public class WordFrequency {
-    static final String splitters = "[ .,!?:;-]";
-    static final int maxCountWords = 10;
+    private static final String SPLITTERS = "[ .,!?:;-]";
+    private static final int MAX_COUNT_WORDS = 10;
     /**
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
 
         return lines.map(String::toLowerCase)
-                .flatMap(str -> Arrays.stream(str.split(splitters)))
+                .flatMap(str -> Arrays.stream(str.split(SPLITTERS)))
                 .filter(str-> !str.isEmpty())
                 .collect(Collectors.groupingBy(str -> str, Collectors.counting()))
                 .entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .map(Map.Entry::getKey)
-                .limit(maxCountWords)
+                .limit(MAX_COUNT_WORDS)
                 .collect(Collectors.toList());
     }
 }

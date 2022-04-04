@@ -86,8 +86,7 @@ public class MailService implements Consumer<Mail> {
      * 1 тугрик
      */
     public static void process(MailService service, List<Mail> mails) {
-        for (Mail mail :
-                mails) {
+        for (Mail mail : mails) {
             service.accept(mail);
         }
     }

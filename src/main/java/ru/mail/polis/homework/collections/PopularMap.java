@@ -60,43 +60,43 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        raisePopular((Map<Object, Integer>) popularMapKeys, key);
+        raisePopular(popularMapKeys, (K) key);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        raisePopular((Map<Object, Integer>) popularMapValues, value);
+        raisePopular(popularMapValues, (V) value);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        raisePopular((Map<Object, Integer>) popularMapKeys, key);
+        raisePopular(popularMapKeys, (K) key);
         V value = map.get(key);
-        raisePopular((Map<Object, Integer>) popularMapValues, value);
+        raisePopular( popularMapValues, value);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
-        raisePopular((Map<Object, Integer>) popularMapKeys, key);
-        V oldValue = map.get(key);
+        raisePopular(popularMapKeys, key);
+        V oldValue = map.put(key, value);
         if (oldValue != null) {
-            raisePopular((Map<Object, Integer>) popularMapValues, oldValue);
+            raisePopular(popularMapValues, oldValue);
         }
-        raisePopular((Map<Object, Integer>) popularMapValues, value);
-        return map.put(key, value);
+        raisePopular(popularMapValues, value);
+        return oldValue;
     }
 
     @Override
     public V remove(Object key) {
-        raisePopular((Map<Object, Integer>) popularMapKeys, key);
-        V oldValue = map.get(key);
-        if(oldValue != null) {
-            raisePopular((Map<Object, Integer>) popularMapValues, oldValue);
+        raisePopular(popularMapKeys, (K) key);
+        V valueToDelete = map.remove(key);
+        if(valueToDelete != null) {
+            raisePopular(popularMapValues, valueToDelete);
         }
-        return map.remove(key);
+        return valueToDelete;
     }
 
     @Override
@@ -144,8 +144,8 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        Integer res = popularMapKeys.get(key);
-        return res != null ? res : 0;
+        Integer popularity = popularMapKeys.get(key);
+        return popularity != null ? popularity : 0;
     }
 
     /**
@@ -187,7 +187,8 @@ public class PopularMap<K, V> implements Map<K, V> {
         return result.iterator();
     }
 
-    private void raisePopular(Map<Object, Integer> popularMap, Object key) {
+
+    private <T> void raisePopular(Map<T, Integer> popularMap, T key) {
         if (popularMap.containsKey(key)) {
             popularMap.put(key, popularMap.get(key) + 1);
         } else {
