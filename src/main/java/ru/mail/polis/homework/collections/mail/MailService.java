@@ -16,17 +16,17 @@ import java.util.function.Consumer;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 тугриков за пакет mail
  */
-public class MailService implements Consumer<Mail> {
+public class MailService<T> implements Consumer<Mail<T>> {
 
-    private final PopularMap<String, List<Mail>> addresseePopularityMap = new PopularMap<>();
-    private final PopularMap<String, List<Mail>> addresserPopularityMap = new PopularMap<>();
+    private final PopularMap<String, List<Mail<T>>> addresseePopularityMap = new PopularMap<>();
+    private final PopularMap<String, List<Mail<T>>> addresserPopularityMap = new PopularMap<>();
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
      * 1 тугрик
      */
     @Override
-    public void accept(Mail mail) {
+    public void accept(Mail<T> mail) {
         addresseePopularityMap.computeIfAbsent(mail.getAddressee(), mails -> new ArrayList<>()).add(mail);
         addresserPopularityMap.computeIfAbsent(mail.getAddresser(), mails -> new ArrayList<>()).add(mail);
     }
@@ -35,7 +35,7 @@ public class MailService implements Consumer<Mail> {
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      * 1 тугрик
      */
-    public Map<String, List<Mail>> getMailBox() {
+    public Map<String, List<Mail<T>>> getMailBox() {
         return addresseePopularityMap;
     }
 

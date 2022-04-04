@@ -1,7 +1,13 @@
 package ru.mail.polis.homework.collections;
 
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -30,6 +36,8 @@ import java.util.*;
  */
 public class PopularMap<K, V> implements Map<K, V> {
 
+    private K rememberKey;
+    private V rememberValue;
     private final Map<K, V> map;
     private final Map<K, Integer> popularKey = new HashMap<>();
     private final Map<V, Integer> popularValue = new HashMap<>();
@@ -54,37 +62,39 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        popularityIncrease((K) key, popularKey);
+        rememberKey = popularityIncrease((K) key, popularKey, rememberKey);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
+        rememberValue = popularityIncrease((V) value, popularValue, rememberValue);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
         V value = map.get(key);
-        popularityIncrease(value, popularValue);
-        popularityIncrease((K) key, popularKey);
+        rememberKey = popularityIncrease((K) key, popularKey, rememberKey);
+        rememberValue = popularityIncrease(value, popularValue, rememberValue);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
         V lastValue = map.put(key, value);
-        popularityIncrease(lastValue, popularValue);
-        popularityIncrease(value, popularValue);
-        popularityIncrease((K) key, popularKey);
+        rememberValue = popularityIncrease(lastValue, popularValue, rememberValue);
+        rememberKey = popularityIncrease((K) key, popularKey, rememberKey);
+        rememberValue = popularityIncrease(value, popularValue, rememberValue);
         return lastValue;
     }
 
     @Override
     public V remove(Object key) {
+
+        rememberValue = popularityIncrease(map.get(key), popularValue, rememberValue);
+        rememberKey = popularityIncrease((K) key, popularKey, rememberKey);
         V lastValue = map.remove(key);
-        popularityIncrease(lastValue, popularValue);
-        popularityIncrease((K) key, popularKey);
         return lastValue;
     }
 
@@ -95,9 +105,7 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public void clear() {
-        if (!isEmpty()) {
-            map.clear();
-        }
+        map.clear();
     }
 
     @Override
@@ -119,10 +127,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return popularKey.entrySet().stream()
-                .max(Entry.comparingByValue())
-                .map(Entry::getKey)
-                .orElse(null);
+        return rememberKey;
     }
 
 
@@ -130,20 +135,17 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        if (popularKey.get(key) == null) {
-            return 0;
+        if (popularKey.get(key) != null) {
+            return popularKey.get(key);
         }
-        return popularKey.get(key);
+        return 0;
     }
 
     /**
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        return popularValue.entrySet().stream()
-                .max(Entry.comparingByValue())
-                .map(Entry::getKey)
-                .orElse(null);
+        return rememberValue;
     }
 
     /**
@@ -151,10 +153,10 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        if (popularValue.get(value) == null) {
-            return 0;
+        if (popularValue.get(value) != null) {
+            return popularValue.get(value);
         }
-        return popularValue.get(value);
+        return 0;
     }
 
     /**
@@ -162,19 +164,29 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        ArrayList<V> values = new ArrayList<>(popularValue.keySet());
-        values.sort(Comparator.comparingInt(popularValue::get));
-        return values.iterator();
+        Iterator<V> popularityIteraror;
+        popularityIteraror = popularValue.keySet().stream()
+                .sorted(Comparator.comparingInt(popularValue::get))
+                .collect(Collectors.toList())
+                .iterator();
+        return popularityIteraror;
     }
 
-    public <T> void popularityIncrease(T value, Map<T, Integer> popularMap) {
+    public <T> T popularityIncrease(T value, Map<T, Integer> popularMap, T rememberValue) {
         if (value == null) {
-            return;
+            return rememberValue;
         }
         if (!popularMap.containsKey(value)) {
             popularMap.put(value, 1);
-            return;
+        } else {
+            popularMap.put(value, popularMap.get(value) + 1);
         }
-        popularMap.put(value, popularMap.get(value) + 1);
+        if (rememberValue == null) {
+            return value;
+        }
+        if (popularMap.get(rememberValue) >= popularMap.get(value)) {
+            return rememberValue;
+        }
+        return value;
     }
 }
