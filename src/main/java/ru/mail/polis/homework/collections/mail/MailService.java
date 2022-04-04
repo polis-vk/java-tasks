@@ -17,8 +17,8 @@ import java.util.function.Consumer;
  * Всего 7 тугриков за пакет mail
  */
 public class MailService<T> implements Consumer<Mail<T>> {
-    Map<String, List<Mail<T>>> mailBox = new HashMap<>();
-    PopularMap<String, String> popularMap = new PopularMap<>();
+    private final Map<String, List<Mail<T>>> mailBox = new HashMap<>();
+    private final PopularMap<String, String> senderRecipientMap = new PopularMap<>();
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
@@ -26,11 +26,9 @@ public class MailService<T> implements Consumer<Mail<T>> {
      */
     @Override
     public void accept(Mail<T> mail) {
-        if (!mailBox.containsKey(mail.getRecipient())) {
-            mailBox.put(mail.getRecipient(), new ArrayList<>());
-        }
+        mailBox.putIfAbsent(mail.getRecipient(), new ArrayList<>());
         mailBox.get(mail.getRecipient()).add(mail);
-        popularMap.put(mail.getSender(), mail.getRecipient());
+        senderRecipientMap.put(mail.getSender(), mail.getRecipient());
     }
 
     /**
@@ -46,7 +44,7 @@ public class MailService<T> implements Consumer<Mail<T>> {
      * 1 тугрик
      */
     public String getPopularSender() {
-        return popularMap.getPopularKey();
+        return senderRecipientMap.getPopularKey();
     }
 
     /**
@@ -54,7 +52,7 @@ public class MailService<T> implements Consumer<Mail<T>> {
      * 1 тугрик
      */
     public String getPopularRecipient() {
-        return popularMap.getPopularValue();
+        return senderRecipientMap.getPopularValue();
     }
 
     /**
