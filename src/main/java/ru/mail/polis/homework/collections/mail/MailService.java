@@ -20,8 +20,13 @@ import java.util.Collections;
  */
 public class MailService implements Consumer<Mail<?>> {
 
-    private final Map<String, List<Mail<?>>> recipientMailMap = new HashMap<>();
-    private final PopularMap<String, String> popularMap = new PopularMap<>();
+    private final Map<String, List<Mail<?>>> recipientMailMap;
+    private final PopularMap<String, String> popularityMap;
+
+    public MailService(Map<String, List<Mail<?>>> recipientMailMap, PopularMap<String, String> popularityMap) {
+        this.recipientMailMap = new HashMap<>();
+        this.popularityMap = new PopularMap<>();
+    }
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
@@ -30,7 +35,7 @@ public class MailService implements Consumer<Mail<?>> {
     @Override
     public void accept(Mail<?> obj) {
         recipientMailMap.computeIfAbsent(obj.getRecipient(), (i) -> new ArrayList<>()).add(obj);
-        popularMap.put(obj.getSender(), obj.getRecipient());
+        popularityMap.put(obj.getSender(), obj.getRecipient());
     }
 
     /**
@@ -46,7 +51,7 @@ public class MailService implements Consumer<Mail<?>> {
      * 1 тугрик
      */
     public String getPopularSender() {
-        return popularMap.getPopularKey();
+        return popularityMap.getPopularKey();
     }
 
     /**
@@ -54,7 +59,7 @@ public class MailService implements Consumer<Mail<?>> {
      * 1 тугрик
      */
     public String getPopularRecipient() {
-        return popularMap.getPopularValue();
+        return popularityMap.getPopularValue();
     }
 
     /**

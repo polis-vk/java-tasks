@@ -38,18 +38,20 @@ import java.util.ArrayList;
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
-    private final Map<K, Integer> keyPopularMap = new HashMap<>();
-    private final Map<V, Integer> valuePopularMap = new HashMap<>();
+    private final Map<K, Integer> keyPopularMap;
+    private final Map<V, Integer> valuePopularMap;
 
     private K popularKey;
     private V popularValue;
 
     public PopularMap() {
-        this.map = new HashMap<>();
+        this(new HashMap<>());
     }
 
     public PopularMap(Map<K, V> map) {
         this.map = map;
+        this.keyPopularMap = new HashMap<>();
+        this.valuePopularMap = new HashMap<>();
     }
 
     @Override
@@ -64,38 +66,38 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        increasingPopularityKey((K) key);
+        popularKey = increasingPopularity((K) key, keyPopularMap, popularKey);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        increasingPopularityValue((V) value);
+        popularValue = increasingPopularity((V) value, valuePopularMap, popularValue);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        increasingPopularityKey((K) key);
+        popularKey = increasingPopularity((K) key, keyPopularMap, popularKey);
         V value = map.get(key);
-        increasingPopularityValue(value);
+        popularValue = increasingPopularity(value, valuePopularMap, popularValue);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
-        increasingPopularityKey(key);
-        increasingPopularityValue(value);
+        popularKey = increasingPopularity(key, keyPopularMap, popularKey);
+        popularValue = increasingPopularity(value, valuePopularMap, popularValue);
         V prevValue = map.put(key, value);
-        increasingPopularityValue(prevValue);
+        popularValue = increasingPopularity(prevValue, valuePopularMap, popularValue);
         return prevValue;
     }
 
     @Override
     public V remove(Object key) {
-        increasingPopularityKey((K) key);
+        popularKey = increasingPopularity((K) key, keyPopularMap, popularKey);
         V prevValue = map.remove(key);
-        increasingPopularityValue(prevValue);
+        popularValue = increasingPopularity(prevValue, valuePopularMap, popularValue);
         return prevValue;
     }
 
@@ -164,25 +166,17 @@ public class PopularMap<K, V> implements Map<K, V> {
         return values.iterator();
     }
 
-    private void increasingPopularityKey(K key) {
-        if (key != null) {
-            int popularity = keyPopularMap.merge(key, 1, Integer::sum);
-            if (!key.equals(popularKey)) {
-                if (popularKey == null || keyPopularMap.get(popularKey) < popularity) {
-                    popularKey = key;
-                }
-            }
+    private <T> T increasingPopularity(T element, Map<T, Integer> popularMap, T popularElement) {
+        if (element == null) {
+            return popularElement;
         }
-    }
-
-    private void increasingPopularityValue(V value) {
-        if (value != null) {
-            int popularity = valuePopularMap.merge(value, 1, Integer::sum);
-            if (!value.equals(popularValue)) {
-                if (popularValue == null || valuePopularMap.get(popularValue) < popularity) {
-                    popularValue = value;
-                }
-            }
+        int popularity = popularMap.merge(element, 1, Integer::sum);
+        if (element.equals(popularElement)) {
+            return element;
         }
+        if ((popularElement == null || popularMap.get(popularElement) < popularity)) {
+            return element;
+        }
+        return popularElement;
     }
 }

@@ -24,7 +24,7 @@ public class WordFrequency {
     /**
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
-    private static final String SPLITTERS = "[ .,!;:?\\n]+";
+    private static final String SPLITTERS = "[ .,!;:?]+";
 
     public static List<String> wordFrequency(Stream<String> lines) {
         return lines
