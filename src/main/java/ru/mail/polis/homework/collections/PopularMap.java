@@ -38,8 +38,9 @@ public class PopularMap<K, V> implements Map<K, V> {
     private final Map<K, Integer> popularKeyMap = new HashMap<>();
     private final Map<V, Integer> popularValueMap = new HashMap<>();
     private K mostPopularKey = null;
+    private int mostPopularKeyCount = 0;
     private V mostPopularValue = null;
-    private boolean isChanged = true;
+    private int mostPopularValueCount = 0;
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -61,38 +62,38 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        increasePopularity((K) key, popularKeyMap);
+        increasePopularity((K) key, popularKeyMap, true);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        increasePopularity((V) value, popularValueMap);
+        increasePopularity((V) value, popularValueMap, false);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        increasePopularity((K) key, popularKeyMap);
+        increasePopularity((K) key, popularKeyMap, true);
         V value = map.get(key);
-        increasePopularity(value, popularValueMap);
+        increasePopularity(value, popularValueMap, false);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
-        increasePopularity(key, popularKeyMap);
+        increasePopularity(key, popularKeyMap, true);
         V oldValue = map.put(key, value);
-        increasePopularity(value, popularValueMap);
-        increasePopularity(oldValue, popularValueMap);
+        increasePopularity(value, popularValueMap, false);
+        increasePopularity(oldValue, popularValueMap, false);
         return oldValue;
     }
 
     @Override
     public V remove(Object key) {
-        increasePopularity((K) key, popularKeyMap);
+        increasePopularity((K) key, popularKeyMap, true);
         V value = map.remove(key);
-        increasePopularity(value, popularValueMap);
+        increasePopularity(value, popularValueMap, false);
         return value;
     }
 
@@ -121,10 +122,20 @@ public class PopularMap<K, V> implements Map<K, V> {
         return map.entrySet();
     }
 
-    private <T> void increasePopularity(T key, Map<T, Integer> map) {
+    private <T> void increasePopularity(T key, Map<T, Integer> map, boolean isKey) {
         if (key != null) {
-            map.compute(key, (k, v) -> v = (v == null) ? 1 : ++v);
-            isChanged = true;
+            int currentPopularity = map.compute(key, (k, v) -> v = (v == null) ? 1 : ++v);
+            if (isKey) {
+                if (currentPopularity > mostPopularKeyCount) {
+                    mostPopularKey = (K) key;
+                    mostPopularKeyCount = currentPopularity;
+                }
+            } else {
+                if (currentPopularity > mostPopularValueCount) {
+                    mostPopularValue = (V) key;
+                    mostPopularValueCount = currentPopularity;
+                }
+            }
         }
     }
 
@@ -132,14 +143,6 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        if (isChanged) {
-            isChanged = false;
-            mostPopularKey = popularKeyMap
-                    .entrySet().stream()
-                    .max(Entry.comparingByValue())
-                    .get()
-                    .getKey();
-        }
         return mostPopularKey;
     }
 
@@ -155,14 +158,6 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        if (isChanged) {
-            isChanged = false;
-            mostPopularValue = popularValueMap
-                    .entrySet().stream()
-                    .max(Entry.comparingByValue())
-                    .get()
-                    .getKey();
-        }
         return mostPopularValue;
     }
 
