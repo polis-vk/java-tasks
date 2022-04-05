@@ -16,7 +16,7 @@ import ru.mail.polis.homework.collections.PopularMap;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 тугриков за пакет mail
  */
-public class MailService<T> implements Consumer<Mail<T>> {
+public class MailService<T extends Mail<T>> implements Consumer<Mail<T>> {
 
     private final PopularMap<String, List<Mail<T>>> recipients;
     private final PopularMap<String, List<Mail<T>>> senders;
@@ -64,7 +64,7 @@ public class MailService<T> implements Consumer<Mail<T>> {
      * Метод должен заставить обработать service все mails.
      * 1 тугрик
      */
-    public static <T> void process(MailService<T> service, List<Mail<T>> mails) {
+    public static <T extends Mail<T>> void process(MailService<T> service, List<? extends Mail<T>> mails) {
         mails.forEach(service);
     }
 }
