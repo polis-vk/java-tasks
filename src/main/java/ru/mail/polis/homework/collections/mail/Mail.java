@@ -8,8 +8,8 @@ public class Mail<T> {
     private final String sender;
     private final T content;
 
-    public Mail(String receiver, String sender, T textOrValue) {
-        this.content = textOrValue;
+    public Mail(String receiver, String sender, T content) {
+        this.content = content;
         this.recipient = receiver;
         this.sender = sender;
     }

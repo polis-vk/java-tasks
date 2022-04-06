@@ -30,11 +30,12 @@ public class WordFrequency {
         return lines
                 .flatMap(s -> Arrays.stream(s.split("[ .,!:-?;]").clone()))
                 .map(String::toLowerCase)
-                .filter(word -> word.length() > 0)
+                .filter(word -> !word.isEmpty())
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet().stream()
-                .sorted(Map.Entry.<String, Long>comparingByValue().reversed()
-                .thenComparing(Map.Entry.comparingByKey()))
+                .sorted(Map.Entry.<String, Long>comparingByValue()
+                        .reversed()
+                        .thenComparing(Map.Entry.comparingByKey()))
                 .limit(10)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
