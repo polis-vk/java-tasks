@@ -20,8 +20,13 @@ import java.util.Collections;
  */
 public class MailService implements Consumer<Mail<?>> {
 
-    private final Map<String, List<Mail<?>>> recipientMailMap = new HashMap<>();
-    private final PopularMap<String, String> popularityMap = new PopularMap<>();
+    private final Map<String, List<Mail<?>>> recipientMailMap;
+    private final PopularMap<String, String> popularityMap;
+
+    public MailService() {
+        recipientMailMap = new HashMap<>();
+        popularityMap = new PopularMap<>();
+    }
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
