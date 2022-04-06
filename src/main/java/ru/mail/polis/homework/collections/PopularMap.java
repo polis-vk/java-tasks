@@ -164,29 +164,19 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        Iterator<V> popularityIteraror;
-        popularityIteraror = popularValue.keySet().stream()
+        return popularValue.keySet().stream()
                 .sorted(Comparator.comparingInt(popularValue::get))
-                .collect(Collectors.toList())
                 .iterator();
-        return popularityIteraror;
     }
 
-    public <T> T popularityIncrease(T value, Map<T, Integer> popularMap, T rememberValue) {
-        if (value == null) {
+    public <T> T popularityIncrease(T value1, Map<T, Integer> popularMap, T rememberValue) {
+        if (value1 == null) {
             return rememberValue;
         }
-        if (!popularMap.containsKey(value)) {
-            popularMap.put(value, 1);
-        } else {
-            popularMap.put(value, popularMap.get(value) + 1);
-        }
+        popularMap.compute(value1, (key, value) -> value == null ? 1 : value + 1);
         if (rememberValue == null) {
-            return value;
+            return value1;
         }
-        if (popularMap.get(rememberValue) >= popularMap.get(value)) {
-            return rememberValue;
-        }
-        return value;
+        return popularMap.get(rememberValue) >= popularMap.get(value1) ? rememberValue : value1;
     }
 }
