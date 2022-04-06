@@ -3,9 +3,9 @@ package ru.mail.polis.homework.collections.mail;
 /**
  * 1 тугрик
  */
-public class MailMessage<T> extends Mail<T> {
+public class MailMessage extends Mail<String> {
 
-    public MailMessage(String recipient, String sender, T massageContent) {
+    public MailMessage(String recipient, String sender, String massageContent) {
         super(recipient, sender, massageContent);
     }
 
