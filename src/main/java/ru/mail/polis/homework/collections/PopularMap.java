@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashMap;
 import java.util.Comparator;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 
 /**
@@ -123,19 +125,16 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private <T> void increasePopularity(T key, Map<T, Integer> map, boolean isKey) {
-        if (key != null) {
-            int currentPopularity = map.compute(key, (k, v) -> v = (v == null) ? 1 : ++v);
-            if (isKey) {
-                if (currentPopularity > mostPopularKeyCount) {
-                    mostPopularKey = (K) key;
-                    mostPopularKeyCount = currentPopularity;
-                }
-            } else {
-                if (currentPopularity > mostPopularValueCount) {
-                    mostPopularValue = (V) key;
-                    mostPopularValueCount = currentPopularity;
-                }
-            }
+        if (key == null) {
+            return;
+        }
+        int currentPopularity = map.merge(key, 1, Integer::sum);
+        if (isKey && currentPopularity > mostPopularKeyCount) {
+            mostPopularKey = (K) key;
+            mostPopularKeyCount = currentPopularity;
+        } else if (!isKey && currentPopularity > mostPopularValueCount) {
+            mostPopularValue = (V) key;
+            mostPopularValueCount = currentPopularity;
         }
     }
 
@@ -175,9 +174,9 @@ public class PopularMap<K, V> implements Map<K, V> {
      */
     public Iterator<V> popularIterator() {
         return popularValueMap
-                .keySet()
-                .stream()
-                .sorted(Comparator.comparing(popularValueMap::get))
+                .entrySet().stream()
+                .sorted(Entry.comparingByValue())
+                .map(Map.Entry::getKey)
                 .iterator();
     }
 }
