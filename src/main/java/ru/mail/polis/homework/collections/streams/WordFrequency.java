@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 public class WordFrequency {
     private static final String SPLITTERS = "[ .,!?:;-]";
     private static final int MAX_COUNT_WORDS = 10;
+
     /**
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
@@ -29,7 +30,7 @@ public class WordFrequency {
 
         return lines.map(String::toLowerCase)
                 .flatMap(str -> Arrays.stream(str.split(SPLITTERS)))
-                .filter(str-> !str.isEmpty())
+                .filter(str -> !str.isEmpty())
                 .collect(Collectors.groupingBy(str -> str, Collectors.counting()))
                 .entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
