@@ -134,7 +134,7 @@ public class PopularMap<K, V> implements Map<K, V> {
             return;
         }
 
-        mapPopular.put(value, mapPopular.getOrDefault(value, 0) + 1);
+        mapPopular.merge(value, 1, Integer::sum);
 
         if (mapPopular.getOrDefault(comparingValue, 0) < mapPopular.get(value)) {
             if (isKey) {
