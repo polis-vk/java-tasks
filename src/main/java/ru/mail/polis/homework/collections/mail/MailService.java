@@ -16,7 +16,7 @@ import ru.mail.polis.homework.collections.PopularMap;
  * Зарплата состоит из получателя, отправителя и суммы.
  * <p>
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
- * Всего 7 баллов за пакет mail
+ * Всего 7 тугриков за пакет mail
  */
 public class MailService implements Consumer<Mail<?>> {
 
@@ -30,7 +30,7 @@ public class MailService implements Consumer<Mail<?>> {
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
-     * 1 балл
+     * 1 тугрик
      */
     @Override
     public void accept(Mail<?> mail) {
@@ -40,7 +40,7 @@ public class MailService implements Consumer<Mail<?>> {
 
     /**
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
-     * 1 балл
+     * 1 тугрик
      */
     public Map<String, List> getMailBox() {
         return Collections.unmodifiableMap(recipients);
@@ -48,7 +48,7 @@ public class MailService implements Consumer<Mail<?>> {
 
     /**
      * Возвращает самого популярного отправителя
-     * 1 балл
+     * 1 тугрик
      */
     public String getPopularSender() {
         return popularityMap.getPopularKey();
@@ -56,7 +56,7 @@ public class MailService implements Consumer<Mail<?>> {
 
     /**
      * Возвращает самого популярного получателя
-     * 1 балл
+     * 1 тугрик
      */
     public String getPopularRecipient() {
         return popularityMap.getPopularValue();
@@ -64,7 +64,7 @@ public class MailService implements Consumer<Mail<?>> {
 
     /**
      * Метод должен заставить обработать service все mails.
-     * 1 балл
+     * 1 тугрик
      */
     public static void process(MailService service, List<? extends Mail<?>> mails) {
         mails.forEach(service);
