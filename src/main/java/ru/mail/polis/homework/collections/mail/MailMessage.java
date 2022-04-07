@@ -3,11 +3,10 @@ package ru.mail.polis.homework.collections.mail;
 /**
  * 1 тугрик
  */
-public class MailMessage<T> extends Mail {
+public class MailMessage<T> {
     private final T message;
 
-    public MailMessage(String recipient, String sender, T message) {
-        super(recipient, sender);
+    public MailMessage(T message) {
         this.message = message;
     }
 

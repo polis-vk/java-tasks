@@ -17,9 +17,9 @@ import ru.mail.polis.homework.collections.PopularMap;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 тугриков за пакет mail
  */
-public class MailService implements Consumer<Mail> {
+public class MailService implements Consumer<Mail<?>> {
 
-    private final Map<String, List<Mail>> messages = new HashMap<>();
+    private final Map<String, List<Mail<?>>> messages = new HashMap<>();
     private final PopularMap<String, String> statistics = new PopularMap<>();
 
     /**
@@ -39,7 +39,7 @@ public class MailService implements Consumer<Mail> {
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      * 1 тугрик
      */
-    public Map<String, List<Mail>> getMailBox() {
+    public Map<String, List<Mail<?>>> getMailBox() {
         return messages;
     }
 
@@ -63,8 +63,8 @@ public class MailService implements Consumer<Mail> {
      * Метод должен заставить обработать service все mails.
      * 1 тугрик
      */
-    public static void process(MailService service, List<Mail> mails) {
-        for (Mail mail : mails) {
+    public static void process(MailService service, List<Mail<?>> mails) {
+        for (Mail<?> mail : mails) {
             service.accept(mail);
         }
     }
