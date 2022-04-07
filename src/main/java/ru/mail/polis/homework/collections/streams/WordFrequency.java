@@ -38,4 +38,3 @@ public class WordFrequency {
                 .collect(Collectors.toList());
     }
 }
-
