@@ -35,8 +35,8 @@ public class WordFrequency {
                 .sorted(Map.Entry.<String, Integer>comparingByValue()
                         .reversed()
                         .thenComparing(Map.Entry.comparingByKey(String::compareTo)))
-                .map(Map.Entry::getKey)
                 .limit(10)
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
 
