@@ -61,38 +61,38 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        increaseKeyPopularity((K) key);
+        increasePopularity((K) key, keyPopularityMap, true);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        increaseValuePopularity((V) value);
+        increasePopularity((V) value, valuePopularityMap, false);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        increaseKeyPopularity((K) key);
+        increasePopularity((K) key, keyPopularityMap, true);
         V value = map.get(key);
-        increaseValuePopularity(value);
+        increasePopularity(value, valuePopularityMap, false);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
-        increaseKeyPopularity(key);
-        increaseValuePopularity(value);
+        increasePopularity(key, keyPopularityMap, true);
+        increasePopularity(value, valuePopularityMap, false);
         V oldValue = map.put(key, value);
-        increaseValuePopularity(oldValue);
+        increasePopularity(oldValue, valuePopularityMap, false);
         return oldValue;
     }
 
     @Override
     public V remove(Object key) {
-        increaseKeyPopularity((K) key);
+        increasePopularity((K) key, keyPopularityMap, true);
         V oldValue = map.remove(key);
-        increaseValuePopularity(oldValue);
+        increasePopularity(oldValue, valuePopularityMap, false);
         return oldValue;
     }
 
@@ -158,30 +158,39 @@ public class PopularMap<K, V> implements Map<K, V> {
     public Iterator<V> popularIterator() {
         return valuePopularityMap.entrySet().stream()
                 .sorted(Entry.comparingByValue())
-                .map(Map.Entry::getKey).iterator();
+                .map(Map.Entry::getKey)
+                .iterator();
     }
 
-    private void increaseKeyPopularity (K key) {
-        if (key == null) {
+    private <T> void increasePopularity(T popularityMapKey, Map<T, Integer> popularityMap, boolean isKey) {
+        if (popularityMapKey == null) {
             return;
         }
-        keyPopularityMap.putIfAbsent(key, 0);
-        keyPopularityMap.put(key, keyPopularityMap.get(key) + 1);
-        if (keyPopularityMap.get(key) > maxKeyPopularity) {
+        popularityMap.compute(popularityMapKey, (key, popularity) -> {
+            if (popularity == null) {
+                popularity = 0;
+            }
+            popularity++;
+            if (isKey) {
+                updatePopularKey((K) popularityMapKey, popularity);
+            } else {
+                updatePopularValue((V) popularityMapKey, popularity);
+            }
+            return popularity;
+        });
+    }
+
+    private void updatePopularKey(K key, Integer popularity) {
+        if (popularity > maxKeyPopularity) {
+            maxKeyPopularity = popularity;
             popularKey = key;
-            maxKeyPopularity = keyPopularityMap.get(key);
         }
     }
 
-    private void increaseValuePopularity (V value) {
-        if (value == null) {
-            return;
-        }
-        valuePopularityMap.putIfAbsent(value, 0);
-        valuePopularityMap.put(value, valuePopularityMap.get(value) + 1);
-        if (valuePopularityMap.get(value) > maxValuePopularity) {
+    private void updatePopularValue(V value, Integer popularity) {
+        if (popularity > maxValuePopularity) {
+            maxValuePopularity = popularity;
             popularValue = value;
-            maxValuePopularity = valuePopularityMap.get(value);
         }
     }
 }

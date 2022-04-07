@@ -16,8 +16,8 @@ import java.util.function.Consumer;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 тугриков за пакет mail
  */
-public class MailService<T> implements Consumer<Mail<T>> {
-    private final Map<String, List<Mail<T>>> mailBox = new HashMap<>();
+public class MailService implements Consumer<Mail<?>> {
+    private final Map<String, List<Mail<?>>> mailBox = new HashMap<>();
     private final PopularMap<String, String> senderRecipientMap = new PopularMap<>();
 
     /**
@@ -25,9 +25,8 @@ public class MailService<T> implements Consumer<Mail<T>> {
      * 1 тугрик
      */
     @Override
-    public void accept(Mail<T> mail) {
-        mailBox.putIfAbsent(mail.getRecipient(), new ArrayList<>());
-        mailBox.get(mail.getRecipient()).add(mail);
+    public void accept(Mail<?> mail) {
+        mailBox.computeIfAbsent(mail.getRecipient(), recipient -> new ArrayList<>()).add(mail);
         senderRecipientMap.put(mail.getSender(), mail.getRecipient());
     }
 
@@ -35,7 +34,7 @@ public class MailService<T> implements Consumer<Mail<T>> {
      * Метод возвращает мапу получатель -> все объекты которые пришли к этому получателю через данный почтовый сервис
      * 1 тугрик
      */
-    public Map<String, List<Mail<T>>> getMailBox() {
+    public Map<String, List<Mail<?>>> getMailBox() {
         return mailBox;
     }
 
@@ -59,7 +58,7 @@ public class MailService<T> implements Consumer<Mail<T>> {
      * Метод должен заставить обработать service все mails.
      * 1 тугрик
      */
-    public static <T> void process(MailService<T> service, List<Mail<T>> mails) {
+    public static void process(MailService service, List<? extends Mail<?>> mails) {
         mails.forEach(service);
     }
 }
