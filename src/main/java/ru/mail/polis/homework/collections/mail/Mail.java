@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.collections.mail;
 
-public class Mail <T> {
+public class Mail<T> {
     private String sender;
     private String recipient;
     private T message;
