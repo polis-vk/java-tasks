@@ -1,6 +1,13 @@
 package ru.mail.polis.homework.collections.streams;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -13,7 +20,7 @@ import java.util.stream.Stream;
  * Если слов в стриме меньше 10, то вывести все слова. Если слова имеют одинаковое количество упоминаний, то выводить
  * в лексикографическом порядеке.
  * Слова надо сравнивать без учета регистра.
- * 3 балла
+ * 5 тугриков
  */
 public class WordFrequency {
 
@@ -21,7 +28,20 @@ public class WordFrequency {
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-        return null;
+        List<String> map = lines
+                .map(s -> s.toLowerCase())
+                .flatMap(Pattern.compile("[\\p{Punct}\\s]+")::splitAsStream)
+                .collect(Collectors.groupingBy(w -> w,
+                        Collectors.summingInt(w -> 1)))
+                .entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue()
+                        .reversed()
+                        .thenComparing(Map.Entry.comparingByKey()))
+                .map(Map.Entry::getKey)
+                .limit(10)
+                .collect(Collectors.toList());
+
+        return map;
     }
 
 
