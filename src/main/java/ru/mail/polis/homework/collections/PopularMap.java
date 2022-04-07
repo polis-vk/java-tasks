@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Comparator;
 
 /**
  * Написать структуру данных, реализующую интерфейс мапы + набор дополнительных методов.
