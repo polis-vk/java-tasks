@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * Вам нужно реализовать StructureInputStream, который умеет читать данные из файла.
  * Читать поля нужно ручками, с помощью массива байт и методов {@link #read()}, {@link #read(byte[])} и так далее
- * 3 балла
+ * 3 тугрика
  */
 public class StructureInputStream extends FileInputStream {
 
