@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * Вам нужно реализовать StructureOutputStream, который умеет писать данные в файл.
  * Писать поля нужно ручками, с помощью массива байт и методов {@link #write(int)}, {@link #write(byte[])} и так далее
- * 3 балла
+ * 3 тугрика
  */
 public class StructureOutputStream extends FileOutputStream {
 
