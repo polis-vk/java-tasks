@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * Вам нужно реализовать StructureOutputStream, который умеет писать данные в файл.
@@ -20,12 +21,81 @@ public class StructureOutputStream extends FileOutputStream {
      * Метод должен вернуть записать прочитанную структуру.
      */
     public void write(Structure structure) throws IOException {
+        if (structure == null) {
+            return;
+        }
+
+        writeLong(structure.getId());
+        writeString(structure.getName());
+        writeSubStructures(structure.getSubStructures());
+        writeFloat(structure.getCoeff());
+        writeBoolean(structure.isFlag1());
+        writeBoolean(structure.isFlag2());
+        writeBoolean(structure.isFlag3());
+        writeBoolean(structure.isFlag4());
+        write(structure.getParam());
+        flush();
     }
 
     /**
      * Метод должен вернуть записать массив прочитанных структур.
      */
     public void write(Structure[] structures) throws IOException {
+        if (structures == null) {
+            return;
+        }
 
+        for (Structure structure : structures) {
+            write(structure);
+        }
+    }
+
+    private void writeSubStructure(SubStructure subStructure) throws IOException {
+        writeInt(subStructure.getId());
+        writeString(subStructure.getName());
+        writeBoolean(subStructure.isFlag());
+        writeDouble(subStructure.getScore());
+    }
+
+    private void writeSubStructures(SubStructure[] subStructures) throws IOException {
+        if (subStructures == null) {
+            writeInt(-1);
+            return;
+        }
+
+        writeInt(subStructures.length);
+        for (SubStructure subStructure : subStructures) {
+            writeSubStructure(subStructure);
+        }
+    }
+
+    private void writeInt(int i) throws IOException {
+        write(ByteBuffer.allocate(Integer.BYTES).putInt(i).array());
+    }
+
+    private void writeLong(long i) throws IOException {
+        write(ByteBuffer.allocate(Long.BYTES).putLong(i).array());
+    }
+
+    private void writeDouble(double d) throws IOException {
+        write(ByteBuffer.allocate(Double.BYTES).putDouble(d).array());
+    }
+
+    private void writeFloat(float f) throws IOException {
+        write(ByteBuffer.allocate(Float.BYTES).putFloat(f).array());
+    }
+
+    private void writeBoolean(boolean b) throws IOException {
+        write(b ? 1 : 0);
+    }
+
+    private void writeString(String str) throws IOException {
+        if (str == null) {
+            writeInt(-1);
+            return;
+        }
+
+        writeInt(str.length());
+        write(str.getBytes());
     }
 }
