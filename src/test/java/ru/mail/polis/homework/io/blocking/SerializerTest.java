@@ -11,6 +11,7 @@ import java.util.Random;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -69,11 +70,12 @@ public class SerializerTest {
         System.out.println("Input speed: " + inputSpeed);
 
         startTime = System.currentTimeMillis();
-        StructureSerializer.defaultDeserialize(file.toString());
+        List<Structure> structuresList = StructureSerializer.defaultDeserialize(file.toString());
         System.out.println("Output speed: " + (System.currentTimeMillis() - startTime));
 
         File file1 = new File(file.toString());
         System.out.println("Size file: " + file1.length() + " mb");
+        Assert.assertEquals(structures, structuresList);
     }
 
     @Test
@@ -88,12 +90,12 @@ public class SerializerTest {
         System.out.println("Input speed: " + inputSpeed);
 
         startTime = System.currentTimeMillis();
-        List<Structure> structures = StructureSerializer.deserialize(file.toString());
+        List<Structure> structuresList = StructureSerializer.deserialize(file.toString());
         System.out.println("Output speed: " + (System.currentTimeMillis() - startTime));
-        System.out.println(structures.size());
 
         File file1 = new File(file.toString());
         System.out.println("Size file: " + file1.length() + " mb");
+        Assert.assertEquals(structures, structuresList);
     }
 
 }
