@@ -14,8 +14,9 @@ import java.util.Arrays;
  */
 public class StructureInputStream extends FileInputStream {
 
-    private Structure[] structures = new Structure[0];
-
+    private Structure[] structures = new Structure[1];
+    boolean isFirst = true;
+    private int size = 0;
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
@@ -42,10 +43,21 @@ public class StructureInputStream extends FileInputStream {
         structure.setFlag4(readBoolean());
         structure.setParam((byte) read());
 
-        structures = Arrays.copyOf(structures, structures.length + 1);
-        structures[structures.length - 1] = structure;
+//        structures = Arrays.copyOf(structures, structures.length + 1);
+//        structures[structures.length - 1] = structure;
+
+        add(structure);
 
         return structure;
+    }
+
+    private void add(Structure structure) {
+        if (size == structures.length) {
+            structures = Arrays.copyOf(structures, (int) (structures.length + Math.round(structures.length / 2.)));
+        }
+
+        structures[size] = structure;
+        size++;
     }
 
     private long readLong() throws IOException {
@@ -139,10 +151,15 @@ public class StructureInputStream extends FileInputStream {
      * Если файл уже прочитан, но возвращается полный массив.
      */
     public Structure[] readStructures() throws IOException {
+        if(available() != 0  && isFirst && size != 0){
+            isFirst = false;
+            return new Structure[0];
+        }
+
         while (available() != 0) {
             readStructure();
         }
 
-        return structures;
+        return Arrays.copyOfRange(structures, 0, size);
     }
 }
