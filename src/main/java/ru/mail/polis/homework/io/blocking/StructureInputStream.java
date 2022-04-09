@@ -43,9 +43,6 @@ public class StructureInputStream extends FileInputStream {
         structure.setFlag4(readBoolean());
         structure.setParam((byte) read());
 
-//        structures = Arrays.copyOf(structures, structures.length + 1);
-//        structures[structures.length - 1] = structure;
-
         add(structure);
 
         return structure;
@@ -151,7 +148,7 @@ public class StructureInputStream extends FileInputStream {
      * Если файл уже прочитан, но возвращается полный массив.
      */
     public Structure[] readStructures() throws IOException {
-        if(available() != 0  && isFirst && size != 0){
+        if (available() != 0 && isFirst && size != 0) {
             isFirst = false;
             return new Structure[0];
         }
