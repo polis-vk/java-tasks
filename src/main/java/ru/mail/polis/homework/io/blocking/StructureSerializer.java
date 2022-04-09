@@ -1,7 +1,13 @@
 package ru.mail.polis.homework.io.blocking;
 
 
-import java.util.Collections;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,8 +35,15 @@ public class StructureSerializer {
      * @param structures Список структур для сериализации
      * @param fileName файл в который "пишем" структуры
      */
-    public void defaultSerialize(List<Structure> structures, String fileName) {
+    public static void defaultSerialize(List<Structure> structures, String fileName) throws IOException {
+        List<Structure> structureList = new ArrayList<>(structures);
+        try (ObjectOutputStream outputStream =
+                     new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
 
+            for (Structure structure : structureList) {
+                outputStream.writeObject(structure);
+            }
+        }
     }
 
     /**
@@ -40,10 +53,23 @@ public class StructureSerializer {
      * @param fileName файл из которого "читаем" животных
      * @return список структур
      */
-    public List<Structure> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
-    }
+    public static List<Structure> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
+        List<Structure> structures = new ArrayList<>();
 
+        try (ObjectInputStream inputStream =
+                     new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
+
+            while (inputStream.available() == 0) {
+                try {
+                    structures.add((Structure) inputStream.readObject());
+                } catch (EOFException e) {
+                    break;
+                }
+            }
+        }
+
+        return structures;
+    }
 
 
     /**
@@ -52,8 +78,10 @@ public class StructureSerializer {
      * @param structures Список структур для сериализации
      * @param fileName файл в который "пишем" структуры
      */
-    public void serialize(List<Structure> structures, String fileName) {
-
+    public static void serialize(List<Structure> structures, String fileName) throws IOException {
+        try (StructureOutputStream outputStream = new StructureOutputStream(Paths.get(fileName).toFile())) {
+            outputStream.write(structures.toArray(Structure[]::new));
+        }
     }
 
     /**
@@ -63,9 +91,15 @@ public class StructureSerializer {
      * @param fileName файл из которого "читаем" животных
      * @return список структур
      */
-    public List<Structure> deserialize(String fileName) {
-        return Collections.emptyList();
+    public static List<Structure> deserialize(String fileName) throws IOException {
+        List<Structure> structures = new ArrayList<>();
+
+        try (StructureInputStream structureInputStream = new StructureInputStream(Paths.get(fileName).toFile())) {
+            while (structureInputStream.available() != 0) {
+                structures = List.of(structureInputStream.readStructures());
+            }
+        }
+
+        return structures;
     }
-
-
 }
