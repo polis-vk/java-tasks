@@ -1,6 +1,14 @@
 package ru.mail.polis.homework.io;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Directories {
 
@@ -13,7 +21,19 @@ public class Directories {
      * 2 тугрика
      */
     public static int removeWithFile(String path) {
-        return 0;
+        File file = new File(path);
+
+        if (!file.exists()) {
+            return 0;
+        }
+        int count = 0;
+        if (!file.isFile()) {
+            for (File temp : file.listFiles()) {
+                count += removeWithFile(temp.getPath());
+            }
+        }
+        file.delete();
+        return ++count;
     }
 
     /**
@@ -21,6 +41,26 @@ public class Directories {
      * 2 тугрика
      */
     public static int removeWithPath(String path) throws IOException {
-        return 0;
+        Path from = Paths.get(path);
+        if (!Files.exists(from)) {
+            return 0;
+        }
+        AtomicInteger count = new AtomicInteger();
+        Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                count.incrementAndGet();
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.delete(dir);
+                count.incrementAndGet();
+                return FileVisitResult.CONTINUE;
+            }
+        });
+        return count.get();
     }
 }
