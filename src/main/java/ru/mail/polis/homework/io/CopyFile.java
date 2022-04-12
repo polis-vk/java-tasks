@@ -39,7 +39,8 @@ public class CopyFile {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 try (InputStream inputStream = Files.newInputStream(file);
-                     OutputStream outputStream = Files.newOutputStream(target.resolve(source.relativize(file)))) {
+                     OutputStream outputStream =
+                             Files.newOutputStream(target.resolve(source.relativize(file)))) {
                     byte[] buffer = new byte[inputStream.available()];
                     int lengthRead = inputStream.read(buffer);
                     if (lengthRead > 0) {
