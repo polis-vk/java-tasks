@@ -36,7 +36,7 @@ public class SerializerTest {
             structure.setFlag2(random.nextBoolean());
             structure.setFlag3(random.nextBoolean());
             structure.setFlag4(random.nextBoolean());
-            structure.setParam((byte) 125);
+            structure.setParam((byte) random.nextInt(125));
             structures.add(structure);
         }
     }
@@ -74,7 +74,7 @@ public class SerializerTest {
         System.out.println("Output speed: " + (System.currentTimeMillis() - startTime));
 
         File file1 = new File(file.toString());
-        System.out.println("Size file: " + file1.length() + " mb");
+        System.out.println("Size file: " + file1.length() + " bytes");
         Assert.assertEquals(structures, structuresList);
     }
 
@@ -94,7 +94,7 @@ public class SerializerTest {
         System.out.println("Output speed: " + (System.currentTimeMillis() - startTime));
 
         File file1 = new File(file.toString());
-        System.out.println("Size file: " + file1.length() + " mb");
+        System.out.println("Size file: " + file1.length() + " bytes");
         Assert.assertEquals(structures, structuresList);
     }
 
