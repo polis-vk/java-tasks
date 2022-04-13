@@ -73,10 +73,9 @@ public class StructureSerializer {
 
     /**
      * 1 тугрик
-     * Реализовать дисериализацию, с помощью StructureInputStream
-     *
-     * @param fileName файл из которого "читаем" животных
-     * @return список структур
+     * Реализовать сериализацию, с помощью StructureOutputStream
+     * @param structures Список структур для сериализации
+     * @param fileName файл в который "пишем" структуры
      */
     public static void serialize(List<Structure> structures, String fileName) throws IOException {
         try (StructureOutputStream outputStream = new StructureOutputStream(Paths.get(fileName).toFile())) {
