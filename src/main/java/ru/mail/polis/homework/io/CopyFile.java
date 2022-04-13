@@ -2,7 +2,10 @@ package ru.mail.polis.homework.io;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,14 +55,18 @@ public class CopyFile {
         Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                copyInnerContent(file, to.resolve(from.relativize(file)));
+                copyInnerContent(file, Files.createFile(to.resolve(from.relativize(file))));
 
                 return FileVisitResult.CONTINUE;
             }
 
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                createDirectories(to.resolve(from.relativize(dir)));
+                Path targetPath = to.resolve(from.relativize(dir));
+
+                if (!Files.exists(targetPath)) {
+                    Files.createDirectory(targetPath);
+                }
 
                 return FileVisitResult.CONTINUE;
             }
@@ -67,15 +74,14 @@ public class CopyFile {
     }
 
     private static void copyInnerContent(Path from, Path to) throws IOException {
-        try (BufferedReader reader = Files.newBufferedReader(from);
-             BufferedWriter writer = Files.newBufferedWriter(to)) {
-            reader.lines().forEach(line -> {
-                try {
-                    writer.write(line + "\n");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
+        try (InputStream input = Files.newInputStream(from);
+             OutputStream output = Files.newOutputStream(to)) {
+            byte[] buffer = new byte[1024];
+            int sizeBlock;
+
+            while ((sizeBlock = input.read(buffer)) > 0) {
+                output.write(buffer, 0, sizeBlock);
+            }
         }
     }
 }

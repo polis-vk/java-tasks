@@ -28,7 +28,7 @@ public class Directories {
         }
 
         int count = 0;
-        if (!file.isFile()) {
+        if (file.isDirectory()) {
             for (File temp : file.listFiles()) {
                 count += removeWithFile(temp.getPath());
             }

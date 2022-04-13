@@ -15,7 +15,6 @@ import java.util.Arrays;
 public class StructureInputStream extends FileInputStream {
 
     private Structure[] structures = new Structure[1];
-    boolean isFirst = true;
     private int size = 0;
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
@@ -37,10 +36,12 @@ public class StructureInputStream extends FileInputStream {
         structure.setName(readString());
         structure.setSubStructures(readSubStructures());
         structure.setCoeff(readFloat());
-        structure.setFlag1(readBoolean());
-        structure.setFlag2(readBoolean());
-        structure.setFlag3(readBoolean());
-        structure.setFlag4(readBoolean());
+        byte tempFlag = (byte) read();
+        byte mask = 0b0000001;
+        structure.setFlag1((tempFlag & mask << 3) != 0);
+        structure.setFlag2((tempFlag & mask << 2) != 0);
+        structure.setFlag3((tempFlag & mask << 1) != 0);
+        structure.setFlag4((tempFlag & mask) != 0);
         structure.setParam((byte) read());
 
         add(structure);
@@ -148,13 +149,16 @@ public class StructureInputStream extends FileInputStream {
      * Если файл уже прочитан, но возвращается полный массив.
      */
     public Structure[] readStructures() throws IOException {
-        if (available() != 0 && isFirst && size != 0) {
-            isFirst = false;
+        while (available() != 0) {
+            readStructure();
+        }
+
+        if (size == 0) {
             return new Structure[0];
         }
 
-        while (available() != 0) {
-            readStructure();
+        if (structures.length == size) {
+            return structures;
         }
 
         return Arrays.copyOfRange(structures, 0, size);
