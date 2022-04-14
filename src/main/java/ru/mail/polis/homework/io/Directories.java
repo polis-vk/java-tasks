@@ -26,14 +26,11 @@ public class Directories {
             return 0;
         }
 
-        if (currentPath.isFile()) {
-            currentPath.delete();
-            return 1;
-        }
-
         int count = 0;
-        for (File temp : currentPath.listFiles()) {
-            count += removeWithFile(String.valueOf(temp));
+        if (currentPath.isDirectory()) {
+            for (File temp : currentPath.listFiles()) {
+                count += removeWithFile(String.valueOf(temp));
+            }
         }
         currentPath.delete();
         return ++count;

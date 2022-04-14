@@ -55,19 +55,19 @@ public class StructureOutputStream extends FileOutputStream {
     }
 
     private void writeInt(int i) throws IOException {
-        write(ByteBuffer.allocate(4).putInt(i).array());
+        write(ByteBuffer.allocate(Integer.BYTES).putInt(i).array());
     }
 
     private void writeFloat(float f) throws IOException {
-        write(ByteBuffer.allocate(4).putFloat(f).array());
+        write(ByteBuffer.allocate(Float.BYTES).putFloat(f).array());
     }
 
     private void writeLong(long l) throws IOException {
-        write(ByteBuffer.allocate(8).putLong(l).array());
+        write(ByteBuffer.allocate(Long.BYTES).putLong(l).array());
     }
 
     private void writeDouble(double d) throws IOException {
-        write(ByteBuffer.allocate(8).putDouble(d).array());
+        write(ByteBuffer.allocate(Double.BYTES).putDouble(d).array());
     }
 
     private void writeString(String s) throws IOException {

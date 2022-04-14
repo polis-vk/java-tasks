@@ -84,26 +84,26 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private int readInt() throws IOException {
-        byte[] readBuffer = new byte[4];
-        readFully(readBuffer, 4);
+        byte[] readBuffer = new byte[Integer.BYTES];
+        readFully(readBuffer, Integer.BYTES);
         return ByteBuffer.wrap(readBuffer).getInt();
     }
 
     private float readFloat() throws IOException {
-        byte[] readBuffer = new byte[4];
-        readFully(readBuffer, 4);
+        byte[] readBuffer = new byte[Float.BYTES];
+        readFully(readBuffer, Float.BYTES);
         return ByteBuffer.wrap(readBuffer).getFloat();
     }
 
     private long readLong() throws IOException {
-        byte[] readBuffer = new byte[8];
-        readFully(readBuffer, 8);
+        byte[] readBuffer = new byte[Long.BYTES];
+        readFully(readBuffer, Long.BYTES);
         return ByteBuffer.wrap(readBuffer).getLong();
     }
 
     private double readDouble() throws IOException {
-        byte[] readBuffer = new byte[8];
-        readFully(readBuffer, 8);
+        byte[] readBuffer = new byte[Double.BYTES];
+        readFully(readBuffer, Double.BYTES);
         return ByteBuffer.wrap(readBuffer).getDouble();
     }
 
