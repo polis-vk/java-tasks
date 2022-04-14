@@ -8,8 +8,7 @@ public class CopyFile {
      * В тесте для создания нужных файлов для первого запуска надо раскомментировать код в setUp()
      * 3 тугрика
      */
-    public static String copyFiles(String pathFrom, String pathTo) {
-        return null;
+    public static void copyFiles(String pathFrom, String pathTo) {
     }
 
 }
