@@ -18,13 +18,13 @@ public class CopyFile {
      */
     public static final int BUFFER_SIZE = 1024;
 
-    public static String copyFiles(String pathFrom, String pathTo) {
+    public static void copyFiles(String pathFrom, String pathTo) {
         if (pathFrom == null || pathTo == null) {
-            return null;
+            return;
         }
         Path from = Paths.get(pathFrom);
         if (Files.notExists(from)) {
-            return null;
+            return;
         }
         Path to = Paths.get(pathTo);
         try {
@@ -37,7 +37,6 @@ public class CopyFile {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return pathTo;
     }
 
     private static void copy(Path from, Path to) throws IOException {
