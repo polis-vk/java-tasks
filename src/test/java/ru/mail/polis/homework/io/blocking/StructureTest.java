@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -120,8 +122,58 @@ public class StructureTest {
         }
     }
 
+    @Test
+    public void defaultSerializerTest() throws IOException {
+        Path file = Paths.get("src", "test", "resources", "blocking", "structure.bin");
+        Files.createFile(file);
+        Structure[] structures = new Structure[10];
+        for (int i = 0; i < structures.length; i++) {
+            structures[i] = generate();
+        }
+
+        StructureSerializer serializer = new StructureSerializer();
+        long startWriteTime = System.currentTimeMillis();
+        for (int i = 0; i < 50; i++) {
+            serializer.defaultSerialize(Arrays.asList(structures), file.toString());
+        }
+        long endWriteTime = System.currentTimeMillis();
+        long startReadTime = System.currentTimeMillis();
+        List<Structure> testStructures = serializer.defaultDeserialize(file.toString());
+        long endReadTime = System.currentTimeMillis();
+        assertArrayEquals(structures, testStructures.toArray());
+        System.out.println("Default serializer test:");
+        System.out.println("Размер файла: " + Files.size(file) + " байт");
+        System.out.println("Время записи: " + (endWriteTime - startWriteTime) + " мс");
+        System.out.println("Время чтения: " + (endReadTime - startReadTime) + " мс\n");
+    }
+
+    @Test
+    public void serializerTest() throws IOException {
+        Path file = Paths.get("src", "test", "resources", "blocking", "structure.bin");
+        Files.createFile(file);
+        Structure[] structures = new Structure[10];
+        for (int i = 0; i < structures.length; i++) {
+            structures[i] = generate();
+        }
+
+        StructureSerializer serializer = new StructureSerializer();
+        long startWriteTime = System.currentTimeMillis();
+        for (int i = 0; i < 50; i++) {
+            serializer.serialize(Arrays.asList(structures), file.toString());
+        }
+        long endWriteTime = System.currentTimeMillis();
+        long startReadTime = System.currentTimeMillis();
+        List<Structure> testStructures = serializer.deserialize(file.toString());
+        long endReadTime = System.currentTimeMillis();
+        assertArrayEquals(structures, testStructures.toArray());
+        System.out.println("Serializer test:");
+        System.out.println("Размер файла: " + Files.size(file) + " байт");
+        System.out.println("Время записи: " + (endWriteTime - startWriteTime) + " мс");
+        System.out.println("Время чтения: " + (endReadTime - startReadTime) + " мс\n");
+    }
 
     private static final Random rnd = new Random();
+
     private static Structure generate() {
         Structure structure = new Structure();
         structure.setId(rnd.nextLong());
