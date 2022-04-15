@@ -26,14 +26,20 @@ public class Directories {
         if (!file.exists()) {
             return 0;
         }
-        int count = 0;
-        if (!file.isFile()) {
-            for (File temp : file.listFiles()) {
-                count += removeWithFile(temp.getPath());
-            }
+        if (file.isFile()) {
+            return file.delete() ? 1 : 0;
         }
-        file.delete();
-        return ++count;
+        int count = 0;
+        for (File temp : file.listFiles()) {
+            count += removeWithFile(temp.getPath());
+        }
+        if (file.delete()) {
+            file.delete();
+            ++count;
+        } else {
+            file.delete();
+        }
+        return count;
     }
 
     /**
@@ -45,6 +51,7 @@ public class Directories {
         if (!Files.exists(from)) {
             return 0;
         }
+
         AtomicInteger count = new AtomicInteger();
         Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
             @Override
@@ -61,6 +68,7 @@ public class Directories {
                 return FileVisitResult.CONTINUE;
             }
         });
+
         return count.get();
     }
 }

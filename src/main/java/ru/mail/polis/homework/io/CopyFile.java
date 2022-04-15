@@ -30,8 +30,8 @@ public class CopyFile {
             }
             Files.createDirectories(wayTo);
             fileCopy(pathFrom, pathTo);
-        } catch (IOException exception) {
-            exception.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -51,7 +51,7 @@ public class CopyFile {
     private static void fileCopy(String wayFrom, String wayTo) throws IOException {
         Path pathFrom = Paths.get(wayFrom);
         Path pathTo = Paths.get(wayTo);
-        Files.walkFileTree(Paths.get(wayFrom), new SimpleFileVisitor<>() {
+        Files.walkFileTree(Paths.get(wayFrom), new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 copy(file, pathTo.resolve(pathFrom.relativize(file)));
