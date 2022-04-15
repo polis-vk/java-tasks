@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.exception;
 
+import java.net.ConnectException;
+
 /**
  * Задание: Нужно создать свою мини библиотеку, с удаленным роботом и пультом управления.
  * Каждый класс оценивается отдельно
@@ -17,7 +19,16 @@ public class RobotRemoteControl {
      * Если это не удалось, то прокинуть эту ошибку на уровень выше.
      * Попытка считается успешной, если соединение открылось и вызвался метод moveRobotTo без исключений.
      */
-    public void moveTo(int robotId, int toX, int toY) {
+    public void moveTo(int robotId, int toX, int toY) throws ConnectException {
+        try {
+            connectionManager.getConnection(robotId).moveRobotTo(toX, toY);
+        } catch (ConnectException e) {
+            try {
+                connectionManager.getConnection(robotId).moveRobotTo(toX, toY);
+            } catch (ConnectException ex) {
+                connectionManager.getConnection(robotId).moveRobotTo(toX, toY);
+            }
+        }
 
     }
 

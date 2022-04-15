@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.exception;
 
+
+import java.net.ConnectException;
+
 /**
  * Класс отвечает за установку соединения с роботом.
  * Робот может управляться только через RobotConnection
@@ -12,5 +15,5 @@ public interface RobotConnectionManager {
      * Делает попытку соединиться с роботом, и если получилось, возвращает это соединение.
      * Если соединение не установилось - то метод кидает исключение
      */
-    RobotConnection getConnection(int robotId);
+    RobotConnection getConnection(int robotId) throws ConnectException;
 }
