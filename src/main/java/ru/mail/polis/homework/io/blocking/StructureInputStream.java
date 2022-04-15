@@ -13,7 +13,7 @@ import java.util.Arrays;
  */
 public class StructureInputStream extends FileInputStream {
 
-    private Structure[] structures;
+    private Structure[] structures = new Structure[0];
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
@@ -49,7 +49,11 @@ public class StructureInputStream extends FileInputStream {
      * Если файл уже прочитан, но возвращается полный массив.
      */
     public Structure[] readStructures() throws IOException {
-        return new Structure[0];
+        Structure structure;
+        do {
+            structure = readStructure();
+        } while (structure != null);
+        return structures;
     }
 
     private long readLong() throws IOException {
@@ -74,10 +78,10 @@ public class StructureInputStream extends FileInputStream {
         if (temp != 4) {
             throw new IOException();
         }
-        return (bytes[0] << 24)
-                | (bytes[1] << 16)
-                | (bytes[2] << 8)
-                | (bytes[3]);
+        return ((bytes[0] & 0xFF) << 24)
+                | ((bytes[1] & 0xFF) << 16)
+                | ((bytes[2] & 0xFF) << 8)
+                | (bytes[3] & 0xFF);
     }
 
     private double readDouble() throws IOException {
@@ -91,7 +95,7 @@ public class StructureInputStream extends FileInputStream {
     private String readString() throws IOException {
         int length = readInt();
         if (length == -1) {
-            throw new IOException();
+            return null;
         }
         byte[] bytes = new byte[length];
         int temp = read(bytes);
@@ -104,7 +108,7 @@ public class StructureInputStream extends FileInputStream {
     private SubStructure[] readSubStructures() throws IOException {
         int size = readInt();
         if (size == -1) {
-            throw new IOException();
+            return null;
         }
         SubStructure[] subStructures = new SubStructure[size];
         for (int i = 0; i < size; i++) {
