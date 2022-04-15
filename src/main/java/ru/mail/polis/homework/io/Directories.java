@@ -6,7 +6,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
 
 public class Directories {
 
@@ -25,7 +24,7 @@ public class Directories {
             return counter;
         }
         if (file.isDirectory()) {
-            for (File f : Objects.requireNonNull(file.listFiles())) {
+            for (File f : file.listFiles()) {
                 counter += removeWithFile(f.toString());
                 if (f.delete()) {
                     counter++;
@@ -45,21 +44,17 @@ public class Directories {
     public static int removeWithPath(String path) throws IOException {
         Path currentPath = Paths.get(path);
         int counter = 0;
-        if (!currentPath.toFile().exists()) {
-            return counter;
-        }
-        if (currentPath.toFile().isDirectory()) {
-            try (DirectoryStream<Path> files = Files.newDirectoryStream(currentPath)) {
-                for (Path nextPath : files) {
-                    counter += removeWithPath(nextPath.toString());
-                    if (currentPath.toFile().delete()) {
-                        counter++;
+        if (Files.exists(currentPath)) {
+            if (Files.isDirectory(currentPath)) {
+                try (DirectoryStream<Path> files = Files.newDirectoryStream(currentPath)) {
+                    for (Path nextPath : files) {
+                        counter += removeWithPath(nextPath.toString());
                     }
                 }
             }
-        }
-        if (currentPath.toFile().delete()) {
-            counter++;
+            if (Files.deleteIfExists(currentPath)) {
+                counter++;
+            }
         }
         return counter;
     }
