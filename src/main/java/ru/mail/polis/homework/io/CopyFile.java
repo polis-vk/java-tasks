@@ -18,10 +18,10 @@ public class CopyFile {
      * В тесте для создания нужных файлов для первого запуска надо раскомментировать код в setUp()
      * 3 тугрика
      */
-    public static String copyFiles(String pathFrom, String pathTo) throws IOException {
+    public static void copyFiles(String pathFrom, String pathTo) throws IOException {
         Path source = Paths.get(pathFrom);
         if (!Files.exists(source)) {
-            return null;
+            return;
         }
         Path target = Paths.get(pathTo);
         Files.createDirectories(target.getParent());
@@ -52,6 +52,6 @@ public class CopyFile {
             }
         });
 
-        return null;
+        return;
     }
 }
