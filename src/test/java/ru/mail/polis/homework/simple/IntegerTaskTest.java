@@ -31,6 +31,7 @@ public class IntegerTaskTest {
         assertEquals(0, IntegerTask.kDecimal(10, 1));
         assertEquals(1, IntegerTask.kDecimal(10, 2));
         assertEquals(1, IntegerTask.kDecimal(1010, 2));
+        assertEquals(4, IntegerTask.kDecimal(Integer.MIN_VALUE, 6));
         assertEquals(8, IntegerTask.kDecimal(Integer.MAX_VALUE, 5));
         assertEquals(3, IntegerTask.kDecimal(23472373, 3));
         assertEquals(7, IntegerTask.kDecimal(-23472373, 2));
