@@ -44,17 +44,18 @@ public class Directories {
     public static int removeWithPath(String path) throws IOException {
         Path currentPath = Paths.get(path);
         int counter = 0;
-        if (Files.exists(currentPath)) {
-            if (Files.isDirectory(currentPath)) {
-                try (DirectoryStream<Path> files = Files.newDirectoryStream(currentPath)) {
-                    for (Path nextPath : files) {
-                        counter += removeWithPath(nextPath.toString());
-                    }
+        if (!Files.exists(currentPath)) {
+            return counter;
+        }
+        if (Files.isDirectory(currentPath)) {
+            try (DirectoryStream<Path> files = Files.newDirectoryStream(currentPath)) {
+                for (Path nextPath : files) {
+                    counter += removeWithPath(nextPath.toString());
                 }
             }
-            if (Files.deleteIfExists(currentPath)) {
-                counter++;
-            }
+        }
+        if (Files.deleteIfExists(currentPath)) {
+            counter++;
         }
         return counter;
     }

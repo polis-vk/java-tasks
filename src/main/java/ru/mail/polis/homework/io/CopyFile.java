@@ -3,6 +3,8 @@ package ru.mail.polis.homework.io;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,40 +20,39 @@ public class CopyFile {
      */
     public static void copyFiles(String pathFrom, String pathTo) throws IOException {
         Path from = Paths.get(pathFrom);
-        if (Files.exists(from)) {
-            Path to = Paths.get(pathTo);
-            if (Files.isDirectory(from)) {
-                Files.createDirectories(to);
-                try (Stream<Path> walk = Files.walk(from)) {
-                    walk.forEach(departure -> {
-                        Path destination = Paths.get(pathTo, departure.toString().substring(pathFrom.length()));
-                        copy(departure, destination);
-                    });
-                }
-                return;
-            }
-            copy(from, to);
+        if (!Files.exists(from)) {
+            return;
         }
-    }
-
-    private static void copy(Path departure, Path destination) {
-        if (Files.isDirectory(departure)) {
-            try {
-                Files.createDirectories(destination);
-            } catch (IOException e) {
-                e.printStackTrace();
+        Path to = Paths.get(pathTo);
+        if (Files.isDirectory(from)) {
+            Files.createDirectories(to);
+            try (Stream<Path> walk = Files.walk(from)) {
+                walk.forEach(departure -> {
+                    Path destination = Paths.get(pathTo, String.valueOf(from.relativize(departure)));
+                    copy(departure, destination);
+                });
             }
             return;
         }
-        try (BufferedReader reader = Files.newBufferedReader(departure)) {
+        copy(from, to);
+
+    }
+
+    private static void copy(Path departure, Path destination) {
+        try {
+            if (Files.isDirectory(departure)) {
+                Files.createDirectories(destination);
+                return;
+            }
             Files.createDirectories(destination.getParent());
             Files.createFile(destination);
-            try (BufferedWriter writer = Files.newBufferedWriter(destination)) {
-                char[] buffer = new char[128];
-                while (reader.read(buffer) != -1) {
-                    writer.write(buffer);
-                }
-                writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try (InputStream input = Files.newInputStream(departure); OutputStream output = Files.newOutputStream(destination)) {
+            byte[] buffer = new byte[128];
+            while (input.read(buffer) != -1) {
+                output.write(buffer);
             }
         } catch (IOException e) {
             e.printStackTrace();
