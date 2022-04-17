@@ -35,7 +35,7 @@ public class StructureSerializer {
      * @param structures Список структур для сериализации
      * @param fileName файл в который "пишем" структуры
      */
-    public void defaultSerialize(List<Structure> structures, String fileName) {
+    public static void defaultSerialize(List<Structure> structures, String fileName) {
         Path file = Paths.get(fileName);
         if (Files.notExists(file)) {
             return;
@@ -56,7 +56,7 @@ public class StructureSerializer {
      * @param fileName файл из которого "читаем" животных
      * @return список структур
      */
-    public List<Structure> defaultDeserialize(String fileName) {
+    public static List<Structure> defaultDeserialize(String fileName) {
         Path file = Paths.get(fileName);
         if (Files.notExists(file)) {
             try {
@@ -83,7 +83,7 @@ public class StructureSerializer {
      * @param structures Список структур для сериализации
      * @param fileName файл в который "пишем" структуры
      */
-    public void serialize(List<Structure> structures, String fileName) {
+    public static void serialize(List<Structure> structures, String fileName) {
         File file = new File(fileName);
         if (!file.exists()) {
             return;
@@ -102,7 +102,7 @@ public class StructureSerializer {
      * @param fileName файл из которого "читаем" животных
      * @return список структур
      */
-    public List<Structure> deserialize(String fileName) {
+    public static List<Structure> deserialize(String fileName) {
         File file = new File(fileName);
         if (!file.exists()) {
             try {
