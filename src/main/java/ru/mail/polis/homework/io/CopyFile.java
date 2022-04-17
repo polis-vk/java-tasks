@@ -20,31 +20,30 @@ public class CopyFile {
      * В тесте для создания нужных файлов для первого запуска надо раскомментировать код в setUp()
      * 3 тугрика
      */
-    public static String copyFiles(String pathFrom, String pathTo) {
-        if (Files.notExists(Paths.get(pathFrom))) {
-            return null;
+    public static void copyFiles(String pathFrom, String pathTo) {
+        Path from = Paths.get(pathFrom);
+        if (Files.notExists(from)) {
+            return;
         }
 
         try {
             Path to = Paths.get(pathTo);
-            if (!Files.isDirectory(to)) {
-                to = to.getParent();
-            }
-            Files.createDirectories(to);
-            copyInternalFiles(Paths.get(pathFrom), Paths.get(pathTo));
+            Path dir = !Files.isDirectory(to) ? to.getParent() : to;
+            Files.createDirectories(dir);
+            copyInternalFiles(from, to);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
     }
 
     private static void copy(Path from, Path to) throws IOException {
-        try (InputStream inputStream = Files.newInputStream(from);
-             OutputStream outputStream = Files.newOutputStream(to)) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = inputStream.read(buffer)) > 0) {
-                outputStream.write(buffer, 0, length);
+        try (InputStream inputStream = Files.newInputStream(from)) {
+            try (OutputStream outputStream = Files.newOutputStream(to)) {
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, length);
+                }
             }
         }
     }
