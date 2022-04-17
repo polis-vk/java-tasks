@@ -1,6 +1,12 @@
 package ru.mail.polis.homework.io.blocking;
 
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,7 +36,17 @@ public class StructureSerializer {
      * @param fileName файл в который "пишем" структуры
      */
     public void defaultSerialize(List<Structure> structures, String fileName) {
-
+        Path file = Paths.get(fileName);
+        if (Files.notExists(file)) {
+            return;
+        }
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(file))) {
+            for (Structure structure : structures) {
+                outputStream.writeObject(structure);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -41,9 +57,24 @@ public class StructureSerializer {
      * @return список структур
      */
     public List<Structure> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
+        Path file = Paths.get(fileName);
+        if (Files.notExists(file)) {
+            try {
+                throw new NoSuchFileException(fileName);
+            } catch (NoSuchFileException e) {
+                e.printStackTrace();
+            }
+        }
+        List<Structure> structures = new ArrayList<>();
+        try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(file))) {
+            while (inputStream.available() > 0) {
+                structures.add((Structure) inputStream.readObject());
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return structures;
     }
-
 
 
     /**
@@ -53,7 +84,15 @@ public class StructureSerializer {
      * @param fileName файл в который "пишем" структуры
      */
     public void serialize(List<Structure> structures, String fileName) {
-
+        File file = new File(fileName);
+        if (!file.exists()) {
+            return;
+        }
+        try (StructureOutputStream outputStream = new StructureOutputStream(file)) {
+            outputStream.write(structures.toArray(Structure[]::new));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -64,8 +103,22 @@ public class StructureSerializer {
      * @return список структур
      */
     public List<Structure> deserialize(String fileName) {
-        return Collections.emptyList();
+        File file = new File(fileName);
+        if (!file.exists()) {
+            try {
+                throw new NoSuchFileException(fileName);
+            } catch (NoSuchFileException e) {
+                e.printStackTrace();
+            }
+        }
+        List<Structure> structures = new ArrayList<>();
+        try (StructureInputStream inputStream = new StructureInputStream(file)) {
+            while (inputStream.available() > 0) {
+                structures.add(inputStream.readStructure());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return structures;
     }
-
-
 }
