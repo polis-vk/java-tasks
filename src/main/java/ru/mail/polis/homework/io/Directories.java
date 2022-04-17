@@ -28,15 +28,15 @@ public class Directories {
         }
         int count = 0;
         if (file.isFile()) {
-            return ifDelete(file, count);
+            return deleteFile(file, count);
         }
         for (File f : Objects.requireNonNull(file.listFiles())) {
             count += removeWithFile(f.getPath());
         }
-        return ifDelete(file, count);
+        return deleteFile(file, count);
     }
 
-    private static int ifDelete(File file, int count) {
+    private static int deleteFile(File file, int count) {
         return file.delete() ? count + 1 : count;
     }
 
