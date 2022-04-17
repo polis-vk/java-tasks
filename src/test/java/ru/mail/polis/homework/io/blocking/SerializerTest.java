@@ -18,12 +18,13 @@ import org.junit.Test;
 
 public class SerializerTest {
 
-    private static List<Structure> structures = new ArrayList<>();
+    private final StructureSerializer structureSerializer = new StructureSerializer();
+    private static final List<Structure> structures = new ArrayList<>();
 
     @BeforeClass
     public static void randomStructure() {
         Random random = new Random();
-        for (int i = 0; i < 200000; i++) {
+        for (int i = 0; i < 700000; i++) {
             Structure structure = new Structure();
             structure.setId(random.nextLong());
             structure.setName(random.nextInt() + "Hello world!");
@@ -65,13 +66,13 @@ public class SerializerTest {
 
 
         long startTime = System.currentTimeMillis();
-        StructureSerializer.defaultSerialize(structures, file.toString());
+        structureSerializer.defaultSerialize(structures, file.toString());
         long inputSpeed = (System.currentTimeMillis() - startTime);
-        System.out.println("Input speed: " + inputSpeed);
+        System.out.println("Write speed: " + inputSpeed);
 
         startTime = System.currentTimeMillis();
-        List<Structure> structuresList = StructureSerializer.defaultDeserialize(file.toString());
-        System.out.println("Output speed: " + (System.currentTimeMillis() - startTime));
+        List<Structure> structuresList = structureSerializer.defaultDeserialize(file.toString());
+        System.out.println("Read speed: " + (System.currentTimeMillis() - startTime));
 
         File file1 = new File(file.toString());
         System.out.println("Size file: " + file1.length() + " bytes");
@@ -80,18 +81,18 @@ public class SerializerTest {
 
     @Test
     public void serializeAndDeserialize() throws IOException {
-        System.out.println("Not Default S/D");
+        System.out.println("My S/D");
         Path file = Paths.get("src", "test", "resources", "blocking", "structure.bin");
         Files.createFile(file);
 
         long startTime = System.currentTimeMillis();
-        StructureSerializer.serialize(structures, file.toString());
+        structureSerializer.serialize(structures, file.toString());
         long inputSpeed = (System.currentTimeMillis() - startTime);
-        System.out.println("Input speed: " + inputSpeed);
+        System.out.println("Write speed: " + inputSpeed);
 
         startTime = System.currentTimeMillis();
-        List<Structure> structuresList = StructureSerializer.deserialize(file.toString());
-        System.out.println("Output speed: " + (System.currentTimeMillis() - startTime));
+        List<Structure> structuresList = structureSerializer.deserialize(file.toString());
+        System.out.println("Read speed: " + (System.currentTimeMillis() - startTime));
 
         File file1 = new File(file.toString());
         System.out.println("Size file: " + file1.length() + " bytes");

@@ -38,9 +38,9 @@ public class StructureInputStream extends FileInputStream {
         structure.setCoeff(readFloat());
         byte tempFlag = (byte) read();
         byte mask = 0b0000001;
-        structure.setFlag1((tempFlag & mask << 3) != 0);
-        structure.setFlag2((tempFlag & mask << 2) != 0);
-        structure.setFlag3((tempFlag & mask << 1) != 0);
+        structure.setFlag1((tempFlag & (mask << 3)) != 0);
+        structure.setFlag2((tempFlag & (mask << 2)) != 0);
+        structure.setFlag3((tempFlag & (mask << 1)) != 0);
         structure.setFlag4((tempFlag & mask) != 0);
         structure.setParam((byte) read());
 

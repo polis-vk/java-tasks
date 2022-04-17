@@ -2,10 +2,12 @@ package ru.mail.polis.homework.io.blocking;
 
 
 import java.io.EOFException;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +38,7 @@ public class StructureSerializer {
      * @param structures Список структур для сериализации
      * @param fileName файл в который "пишем" структуры
      */
-    public static void defaultSerialize(List<Structure> structures, String fileName) throws IOException {
+    public void defaultSerialize(List<Structure> structures, String fileName) throws IOException {
         try (ObjectOutputStream outputStream =
                      new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
 
@@ -53,7 +55,7 @@ public class StructureSerializer {
      * @param fileName файл из которого "читаем" животных
      * @return список структур
      */
-    public static List<Structure> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
+    public List<Structure> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
         List<Structure> structures = new ArrayList<>();
 
         try (ObjectInputStream inputStream =
@@ -75,8 +77,8 @@ public class StructureSerializer {
      * @param structures Список структур для сериализации
      * @param fileName файл в который "пишем" структуры
      */
-    public static void serialize(List<Structure> structures, String fileName) throws IOException {
-        try (StructureOutputStream outputStream = new StructureOutputStream(Paths.get(fileName).toFile())) {
+    public void serialize(List<Structure> structures, String fileName) throws IOException {
+        try (StructureOutputStream outputStream = new StructureOutputStream(new File(fileName))) {
             outputStream.write(structures.toArray(Structure[]::new));
         }
     }
@@ -88,13 +90,11 @@ public class StructureSerializer {
      * @param fileName файл из которого "читаем" животных
      * @return список структур
      */
-    public static List<Structure> deserialize(String fileName) throws IOException {
-        List<Structure> structures = new ArrayList<>();
+    public List<Structure> deserialize(String fileName) throws IOException {
+        List<Structure> structures;
 
         try (StructureInputStream structureInputStream = new StructureInputStream(Paths.get(fileName).toFile())) {
-            while (structureInputStream.available() != 0) {
-                structures = Arrays.asList(structureInputStream.readStructures());
-            }
+            structures = Arrays.asList(structureInputStream.readStructures());
         }
 
         return structures;

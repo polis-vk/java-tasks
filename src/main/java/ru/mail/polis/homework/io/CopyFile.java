@@ -28,11 +28,10 @@ public class CopyFile {
         try {
             Path to = Paths.get(pathTo);
 
-            Path dir = to;
-            if (!Files.isDirectory(from)) {
-                dir = to.getParent();
+            Path dir = !Files.isDirectory(from) ? to.getParent() : to;
+            if (!Files.exists(dir)) {
+                Files.createDirectories(dir);
             }
-            createDirectories(dir);
 
             visitorFiles(from, to);
         } catch (IOException e) {
@@ -42,17 +41,11 @@ public class CopyFile {
         return null;
     }
 
-    private static void createDirectories(Path dir) throws IOException {
-        if (!Files.exists(dir)) {
-            Files.createDirectories(dir);
-        }
-    }
-
     private static void visitorFiles(Path from, Path to) throws IOException {
         Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                copyInnerContent(file, Files.createFile(to.resolve(from.relativize(file))));
+                copyInnerContent(file, to.resolve(from.relativize(file)));
 
                 return FileVisitResult.CONTINUE;
             }
@@ -71,13 +64,14 @@ public class CopyFile {
     }
 
     private static void copyInnerContent(Path from, Path to) throws IOException {
-        try (InputStream input = Files.newInputStream(from);
-             OutputStream output = Files.newOutputStream(to)) {
-            byte[] buffer = new byte[1024];
-            int sizeBlock;
+        try (InputStream input = Files.newInputStream(from)) {
+            try (OutputStream output = Files.newOutputStream(to)) {
+                byte[] buffer = new byte[1024];
+                int sizeBlock;
 
-            while ((sizeBlock = input.read(buffer)) > 0) {
-                output.write(buffer, 0, sizeBlock);
+                while ((sizeBlock = input.read(buffer)) > 0) {
+                    output.write(buffer, 0, sizeBlock);
+                }
             }
         }
     }
