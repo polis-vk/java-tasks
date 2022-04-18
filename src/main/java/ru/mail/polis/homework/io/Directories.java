@@ -18,55 +18,49 @@ public class Directories {
      * 2 тугрика
      */
 
-    public static int count;
-
     public static int removeWithFile(String path) {
         File sourcePath = new File(path);
         if (!sourcePath.exists()) {
             return 0;
         }
-        count = 0;
-        deleteWithFile(sourcePath);
-        return count;
-    }
-
-    private static void deleteWithFile(File path) {
-        File[] files = path.listFiles();
+        int count = 0;
+        File[] files = sourcePath.listFiles();
         if (files != null) {
             for (File file : files) {
-                deleteWithFile(file);
+                count += removeWithFile(file.toString());
             }
         }
-        if (path.delete()) {
-            count++;
+        if (sourcePath.delete()) {
+            return ++count;
         }
+        return count;
     }
 
     /**
      * С использованием Path
      * 2 тугрика
      */
-    public static int removeWithPath(String path) throws IOException {
+    public static int removeWithPath(String path) {
         Path sourcePath = Paths.get(path);
         if (Files.notExists(sourcePath)) {
             return 0;
         }
-        count = 0;
-        deleteWithPath(sourcePath);
-        return count;
-    }
-
-    private static void deleteWithPath(Path path) throws IOException {
-        if (Files.isDirectory(path)) {
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
+        int count = 0;
+        if (Files.isDirectory(sourcePath)) {
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(sourcePath)) {
                 for (Path file : stream) {
-                    deleteWithPath(file);
+                    count += removeWithPath(file.toString());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        Files.delete(path);
-        count++;
+        try {
+            Files.delete(sourcePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return ++count;
     }
 }

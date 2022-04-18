@@ -16,7 +16,7 @@ public class CopyFile {
      * В тесте для создания нужных файлов для первого запуска надо раскомментировать код в setUp()
      * 3 тугрика
      */
-    public static void copyFiles(String pathFrom, String pathTo) throws IOException {
+    public static void copyFiles(String pathFrom, String pathTo) {
         if (pathFrom == null || pathTo == null) {
             return;
         }
@@ -25,8 +25,16 @@ public class CopyFile {
             return;
         }
         Path to = Paths.get(pathTo);
-        Files.createDirectories(to.getParent());
-        copy(from, to);
+        try {
+            if (Files.isRegularFile(from)) {
+                Files.createDirectories(to.getParent());
+            } else {
+                Files.createDirectories(to);
+            }
+            copy(from, to);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void copy(Path from, Path to) throws IOException {
@@ -47,12 +55,13 @@ public class CopyFile {
     }
 
     private static void copyFile(Path from, Path to) {
-        try (InputStream in = Files.newInputStream(from);
-             OutputStream out = Files.newOutputStream(to)) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = in.read(buffer)) > 0) {
-                out.write(buffer, 0, length);
+        try (InputStream in = Files.newInputStream(from)) {
+            try (OutputStream out = Files.newOutputStream(to)) {
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, length);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
