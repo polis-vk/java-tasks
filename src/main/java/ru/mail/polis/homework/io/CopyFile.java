@@ -1,5 +1,4 @@
 package ru.mail.polis.homework.io;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
