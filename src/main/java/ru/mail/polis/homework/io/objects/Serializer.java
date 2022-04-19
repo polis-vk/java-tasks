@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import ru.mail.polis.homework.io.blocking.Structure;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -30,7 +32,7 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void defaultSerialize(List<Animal> animals, String fileName) {
+    public void defaultSerialize(List<Structure> animals, String fileName) {
 
     }
 
@@ -41,7 +43,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> defaultDeserialize(String fileName) {
+    public List<Structure> defaultDeserialize(String fileName) {
         return Collections.emptyList();
     }
 
@@ -94,11 +96,10 @@ public class Serializer {
      * 2 балла
      * Реализовать ручную сериализацию, с помощью высокоуровневых потоков. Сами ручками пишем поля,
      * без использования методов writeObject
-     *
-     * @param animals  Список животных для сериализации
+     *  @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
-    public void customSerialize(List<Animal> animals, String fileName) {
+    public void customSerialize(List<Structure> animals, String fileName) {
 
     }
 

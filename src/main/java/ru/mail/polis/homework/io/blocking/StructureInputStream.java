@@ -108,21 +108,23 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private SubStructure readSubStructure() throws IOException {
-        return new SubStructure(
-                readInt(),
-                readString(),
-                readBoolean(),
-                readDouble()
-        );
+        int id = readInt();
+        String name = readString();
+        if (name == null) {
+            throw new IllegalArgumentException();
+        }
+        boolean flag = readBoolean();
+        double score = readDouble();
+        return new SubStructure(id, name, flag, score);
     }
 
     private SubStructure[] readSubStructures() throws IOException {
-        int countOfStructures = readInt();
-        if (countOfStructures == -1) {
+        int structuresCount = readInt();
+        if (structuresCount == -1) {
             return null;
         }
-        SubStructure[] subStructures = new SubStructure[countOfStructures];
-        for (int i = 0; i < countOfStructures; i++) {
+        SubStructure[] subStructures = new SubStructure[structuresCount];
+        for (int i = 0; i < structuresCount; i++) {
             subStructures[i] = readSubStructure();
         }
         return subStructures;

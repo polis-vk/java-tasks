@@ -1,13 +1,14 @@
 package ru.mail.polis.homework.io.blocking;
 
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public class StructureSerializer {
      * @param structures Список структур для сериализации
      * @param fileName файл в который "пишем" структуры
      */
-    public static void defaultSerialize(List<Structure> structures, String fileName) {
+    public void defaultSerialize(List<Structure> structures, String fileName) {
         Path file = Paths.get(fileName);
         if (Files.notExists(file)) {
             return;
@@ -56,15 +57,8 @@ public class StructureSerializer {
      * @param fileName файл из которого "читаем" животных
      * @return список структур
      */
-    public static List<Structure> defaultDeserialize(String fileName) {
+    public List<Structure> defaultDeserialize(String fileName) {
         Path file = Paths.get(fileName);
-        if (Files.notExists(file)) {
-            try {
-                throw new NoSuchFileException(fileName);
-            } catch (NoSuchFileException e) {
-                e.printStackTrace();
-            }
-        }
         List<Structure> structures = new ArrayList<>();
         try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(file))) {
             while (inputStream.available() > 0) {
@@ -83,7 +77,7 @@ public class StructureSerializer {
      * @param structures Список структур для сериализации
      * @param fileName файл в который "пишем" структуры
      */
-    public static void serialize(List<Structure> structures, String fileName) {
+    public void serialize(List<Structure> structures, String fileName) {
         File file = new File(fileName);
         if (!file.exists()) {
             return;
@@ -102,15 +96,8 @@ public class StructureSerializer {
      * @param fileName файл из которого "читаем" животных
      * @return список структур
      */
-    public static List<Structure> deserialize(String fileName) {
+    public List<Structure> deserialize(String fileName) {
         File file = new File(fileName);
-        if (!file.exists()) {
-            try {
-                throw new NoSuchFileException(fileName);
-            } catch (NoSuchFileException e) {
-                e.printStackTrace();
-            }
-        }
         List<Structure> structures = new ArrayList<>();
         try (StructureInputStream inputStream = new StructureInputStream(file)) {
             while (inputStream.available() > 0) {

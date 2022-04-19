@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.io.blocking;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,16 +9,11 @@ import java.util.List;
 import java.util.Random;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 
 public class StructureSerializerTest {
-
-    private static final List<Structure> structures = new ArrayList<>();
-    private static final int SIZE_LIST = 100;
 
     @Before
     public void setUp() throws IOException {
@@ -32,69 +26,91 @@ public class StructureSerializerTest {
         FileUtils.forceDelete(Paths.get("src", "test", "resources", "blocking", "structure.bin").toFile());
     }
 
-    @BeforeClass
-    public static void randomStructure() {
-        Random random = new Random();
-        for (int i = 0; i < SIZE_LIST; i++) {
-            Structure structure = new Structure();
-            structure.setId(random.nextLong());
-            structure.setName(random.nextInt() + "Serialize? No problem");
-            SubStructure[] subStructures = new SubStructure[2];
-            subStructures[0] = randomSubStructure(random);
-            subStructures[1] = randomSubStructure(random);
-            structure.setSubStructures(subStructures);
-            structure.setCoeff(random.nextFloat());
-            structure.setFlag1(random.nextBoolean());
-            structure.setFlag2(random.nextBoolean());
-            structure.setFlag3(random.nextBoolean());
-            structure.setFlag4(random.nextBoolean());
-            structure.setParam((byte) random.nextInt(333));
-            structures.add(structure);
+    private static final Random rnd = new Random();
+
+    private static Structure generateStructure() {
+        Structure structure = new Structure();
+        structure.setId(rnd.nextLong());
+        if (rnd.nextBoolean()) {
+            structure.setName(generateString());
         }
+        int count = rnd.nextInt(5);
+        if (count > 0) {
+            SubStructure[] subStructures = new SubStructure[count];
+            for (int i = 0; i < count; i++) {
+                subStructures[i] = new SubStructure(rnd.nextInt(), generateString(), rnd.nextBoolean(), rnd.nextDouble());
+            }
+            structure.setSubStructures(subStructures);
+        }
+        structure.setCoeff(rnd.nextFloat());
+        structure.setFlag1(rnd.nextBoolean());
+        structure.setFlag2(rnd.nextBoolean());
+        structure.setFlag3(rnd.nextBoolean());
+        structure.setFlag4(rnd.nextBoolean());
+        byte[] b = new byte[1];
+        rnd.nextBytes(b);
+        structure.setParam(b[0]);
+        return structure;
     }
 
-    private static SubStructure randomSubStructure(Random random) {
-        return new SubStructure(random.nextInt(), random.nextInt() + "Name",
-                random.nextBoolean(), random.nextDouble());
+    private static String generateString() {
+        char[] chars = new char[rnd.nextInt(18) + 2];
+        for (int i = 0; i < chars.length; i++) {
+            chars[i] = (char) (rnd.nextInt('z' - '0') + '0');
+        }
+        return new String(chars);
+    }
+
+    public List<Structure> generateList() {
+        List<Structure> structuresList = new ArrayList<>(10);
+        for (int i = 0; i < 10; i++) {
+            structuresList.add(i, generateStructure());
+        }
+        return structuresList;
+    }
+
+    final long IO_COUNT = 6000;
+    private final StructureSerializer structureSerializer = new StructureSerializer();
+
+    @Test
+    public void defaultSerializeTest() throws IOException {
+        Path file = Paths.get("src", "test", "resources", "blocking", "structure.bin");
+        Files.createFile(file);
+        System.out.println("\nDefault serialize:");
+
+        long startInput = System.currentTimeMillis();
+        for (int i = 0; i < IO_COUNT; i++) {
+            structureSerializer.defaultSerialize(generateList(), file.toString());
+        }
+        long finishInput = System.currentTimeMillis();
+        System.out.println("Writing time: " + (finishInput - startInput) + "ms");
+
+        long startOutput = System.currentTimeMillis();
+        structureSerializer.defaultDeserialize(file.toString());
+        long finishOutput = System.currentTimeMillis();
+        System.out.println("Reading time: " + (finishOutput - startOutput) + "ms");
+
+        System.out.println("File size: " + Files.size(file) + " bytes\n");
     }
 
     @Test
-    public void defaultSerialize() throws IOException {
-        System.out.println("Default");
+    public void customSerializeTest() throws IOException {
         Path file = Paths.get("src", "test", "resources", "blocking", "structure.bin");
         Files.createFile(file);
+        System.out.println("Custom serialize:");
 
-        long start = System.currentTimeMillis();
-        StructureSerializer.defaultSerialize(structures, file.toString());
-        long inputSpeed = (System.currentTimeMillis() - start);
-        System.out.println("Input time " + inputSpeed + "ms");
+        long startInput = System.currentTimeMillis();
+        for (int i = 0; i < IO_COUNT; i++) {
+            structureSerializer.serialize(generateList(), file.toString());
+        }
+        long finishInput = System.currentTimeMillis();
+        System.out.println("Writing time: " + (finishInput - startInput) + "ms");
 
-        start = System.currentTimeMillis();
-        List<Structure> structuresList = StructureSerializer.defaultDeserialize(file.toString());
-        System.out.println("Output time: " + (System.currentTimeMillis() - start) + "ms");
+        long startOutput = System.currentTimeMillis();
+        structureSerializer.deserialize(file.toString());
+        long finishOutput = System.currentTimeMillis();
+        System.out.println("Reading time: " + (finishOutput - startOutput) + "ms");
 
-        File file1 = new File(file.toString());
-        System.out.println("Size file: " + file1.length() + " bytes");
-        Assert.assertEquals(structures, structuresList);
-    }
-
-    @Test
-    public void customSerialize() throws IOException {
-        System.out.println("Custom");
-        Path file = Paths.get("src", "test", "resources", "blocking", "structure.bin");
-        Files.createFile(file);
-
-        long start = System.currentTimeMillis();
-        StructureSerializer.serialize(structures, file.toString());
-        long inputSpeed = (System.currentTimeMillis() - start);
-        System.out.println("Input time: " + inputSpeed+"ms");
-
-        start = System.currentTimeMillis();
-        List<Structure> structuresList = StructureSerializer.deserialize(file.toString());
-        System.out.println("Output time: " + (System.currentTimeMillis() - start) + "ms");
-
-        File file1 = new File(file.toString());
-        System.out.println("Size file: " + file1.length() + " bytes");
-        Assert.assertEquals(structures, structuresList);
+        System.out.println("File size: " + Files.size(file) + " bytes");
     }
 }
