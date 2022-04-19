@@ -23,8 +23,7 @@ public class Directories {
     }
 
     private static int removeFile(File file) {
-        if (file.isFile()) {
-            file.delete();
+        if (file.isFile() && file.delete()) {
             return 1;
         }
 
@@ -36,8 +35,8 @@ public class Directories {
         for (File current : files) {
             result += removeFile(current);
         }
-        file.delete();
-        return result + 1;
+
+        return file.delete() ? result + 1 : result;
     }
 
     /**
@@ -46,24 +45,27 @@ public class Directories {
      */
     public static int removeWithPath(String path) throws IOException {
         Path directory = Paths.get(path);
-        int result = 0;
         if (Files.isRegularFile(directory)) {
             Files.delete(directory);
-            return 1;
+            return Files.exists(directory) ? 0 : 1;
         }
+
+        int result = 0;
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(path))) {
             for (Path file : directoryStream) {
                 if (Files.isDirectory(file)) {
                     result += removeWithPath(file.toString());
                 } else {
                     Files.delete(file);
-                    result++;
+                    result += Files.exists(directory) ? 1 : 0;
                 }
             }
         } catch (NoSuchFileException e) {
             return 0;
         }
+
         Files.delete(directory);
-        return result + 1;
+        return Files.exists(directory) ? result : result + 1;
     }
+
 }
