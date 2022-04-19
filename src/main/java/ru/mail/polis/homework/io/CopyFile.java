@@ -17,26 +17,16 @@ public class CopyFile {
      * 3 тугрика
      */
 
-    private static void copyFileIncludes(String pathFrom, String pathTo) throws IOException {
-        Path source = Paths.get(pathFrom);
-        Path destination = Paths.get(pathTo);
-        Files.createDirectories(destination.getParent());
-        try (InputStream is = Files.newInputStream(source);
-             OutputStream os = Files.newOutputStream(destination)) {
-            byte[] buffer = new byte[1024];
-            int length = is.read(buffer);
-            while (length > 0) {
-                os.write(buffer, 0, length);
-                length = is.read(buffer);
-            }
-        }
+    public static void copyFiles(String pathFrom, String pathTo) throws IOException {
+        detourAllFoldersAndCopyFiles(Paths.get(pathFrom), Paths.get(pathTo));
     }
 
-    private static void detourAllFoldersAndCopyFiles(String src, String dest) throws IOException {
-        Path source = Paths.get(src);
-        Path destination = Paths.get(dest);
+    private static void detourAllFoldersAndCopyFiles(Path source, Path destination) throws IOException {
+        if (!Files.exists(source)){
+            return;
+        }
         if (Files.isRegularFile(source)) {
-            copyFileIncludes(src, dest);
+            copyFileIncludes(source, destination);
             return;
         }
         try (DirectoryStream<Path> files = Files.newDirectoryStream(source)) {
@@ -46,12 +36,10 @@ public class CopyFile {
             for (Path path : files) {
                 if (Files.isRegularFile(path)) {
                     destination = destination.resolve(path.getFileName());
-                    Files.createFile(destination);
-                    copyFileIncludes(path.toString(), destination.toString());
+                    copyFileIncludes(path, destination);
                 } else {
                     destination = destination.resolve(path.getFileName());
-                    Files.createDirectories(destination);
-                    detourAllFoldersAndCopyFiles(path.toString(), destination.toString());
+                    detourAllFoldersAndCopyFiles(path, destination);
                 }
                 destination = destination.getParent();
             }
@@ -60,7 +48,17 @@ public class CopyFile {
         }
     }
 
-    public static void copyFiles(String pathFrom, String pathTo) throws IOException {
-        detourAllFoldersAndCopyFiles(pathFrom, pathTo);
+    private static void copyFileIncludes(Path source, Path destination) throws IOException {
+        Files.createDirectories(destination.getParent());
+        try (InputStream is = Files.newInputStream(source)) {
+            try (OutputStream os = Files.newOutputStream(destination)) {
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = is.read(buffer)) > 0) {
+                    os.write(buffer, 0, length);
+                }
+            }
+        }
     }
+
 }
