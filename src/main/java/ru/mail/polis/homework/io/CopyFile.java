@@ -22,7 +22,7 @@ public class CopyFile {
     }
 
     private static void detourAllFoldersAndCopyFiles(Path source, Path destination) throws IOException {
-        if (!Files.exists(source)){
+        if (!Files.exists(source)) {
             return;
         }
         if (Files.isRegularFile(source)) {
@@ -60,5 +60,4 @@ public class CopyFile {
             }
         }
     }
-
 }
