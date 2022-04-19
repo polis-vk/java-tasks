@@ -33,8 +33,7 @@ public class CopyFile {
         if (Files.notExists(recipient)) {
             if (Files.isRegularFile(source)) {
                 Files.createDirectories(recipient.getParent());
-            }
-            else {
+            } else {
                 Files.createDirectories(recipient);
             }
 
@@ -45,8 +44,7 @@ public class CopyFile {
     private static void copyPaths(Path source, Path recipient) throws IOException {
         if (Files.isRegularFile(source)) {
             copyFiles(source, recipient);
-        }
-        else {
+        } else {
             if (Files.notExists(recipient)) {
                 Files.createDirectory(recipient);
             }

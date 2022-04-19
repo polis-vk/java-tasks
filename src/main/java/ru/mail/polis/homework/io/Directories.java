@@ -59,8 +59,7 @@ public class Directories {
         try {
             Files.delete(pathFile);
             ++countDeletedElements;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return countDeletedElements;
