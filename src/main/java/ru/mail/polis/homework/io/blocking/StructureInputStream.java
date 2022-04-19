@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.BitSet;
 
 /**
  * Вам нужно реализовать StructureInputStream, который умеет читать данные из файла.
@@ -33,10 +34,11 @@ public class StructureInputStream extends FileInputStream {
         structure.setName(readString());
         structure.setSubStructures(readSubStructures());
         structure.setCoeff(readFloat());
-        structure.setFlag1(readFlag());
-        structure.setFlag2(readFlag());
-        structure.setFlag3(readFlag());
-        structure.setFlag4(readFlag());
+        boolean[] flags = readFlags(4);
+        structure.setFlag1(flags[0]);
+        structure.setFlag2(flags[1]);
+        structure.setFlag3(flags[2]);
+        structure.setFlag4(flags[3]);
         structure.setParam((byte) read());
 
         structures = Arrays.copyOf(structures, structures.length + 1);
@@ -120,12 +122,24 @@ public class StructureInputStream extends FileInputStream {
     private SubStructure readSubStructure() throws IOException {
         int id = readInt();
         String name = readString();
-        boolean flag = readFlag();
+        if (name == null) {
+            throw new NullPointerException("name cannot be null");
+        }
+        boolean[] flag = readFlags(1);
         double score = readDouble();
-        return new SubStructure(id, name, flag, score);
+        return new SubStructure(id, name, flag[0], score);
     }
 
-    private boolean readFlag() throws IOException {
-        return readInt() != 0;
+    private boolean[] readFlags(int size) throws IOException {
+        int flags = read();
+        boolean[] flagsArray = new boolean[size];
+        int bits = 0b00000001;
+        for (int i = 0; i < size; i++) {
+            if ((flags & bits) != 0) {
+                flagsArray[i] = true;
+            }
+            bits = bits << 1;
+        }
+        return flagsArray;
     }
 }

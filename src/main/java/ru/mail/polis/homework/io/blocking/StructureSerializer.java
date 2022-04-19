@@ -37,12 +37,14 @@ public class StructureSerializer {
      * @param structures Список структур для сериализации
      * @param fileName файл в который "пишем" структуры
      */
-    public static void defaultSerialize(List<Structure> structures, String fileName) throws IOException {
+    public void defaultSerialize(List<Structure> structures, String fileName) {
         try (ObjectOutputStream outputStream =
                      new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
             for (Structure structure : structures) {
                 outputStream.writeObject(structure);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -53,7 +55,7 @@ public class StructureSerializer {
      * @param fileName файл из которого "читаем" животных
      * @return список структур
      */
-    public static List<Structure> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
+    public List<Structure> defaultDeserialize(String fileName) {
         List<Structure> structures = new ArrayList<>();
 
         try (InputStream fileInputStream = Files.newInputStream(Paths.get(fileName));
@@ -61,6 +63,8 @@ public class StructureSerializer {
             while (fileInputStream.available() > 0) {
                 structures.add((Structure) inputStream.readObject());
             }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
         return structures;
     }
@@ -73,10 +77,12 @@ public class StructureSerializer {
      * @param structures Список структур для сериализации
      * @param fileName файл в который "пишем" структуры
      */
-    public static void serialize(List<Structure> structures, String fileName) throws IOException {
+    public void serialize(List<Structure> structures, String fileName) {
         try (StructureOutputStream outputStream =
                      new StructureOutputStream(new File(fileName))) {
             outputStream.write(structures.toArray(new Structure[0]));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -87,12 +93,14 @@ public class StructureSerializer {
      * @param fileName файл из которого "читаем" животных
      * @return список структур
      */
-    public static List<Structure> deserialize(String fileName) throws IOException {
-        List<Structure> structures;
+    public List<Structure> deserialize(String fileName) {
+        List<Structure> structures = new ArrayList<>();
 
         try (StructureInputStream inputStream =
                      new StructureInputStream(new File(fileName))) {
             structures = Arrays.asList(inputStream.readStructures());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return structures;
     }

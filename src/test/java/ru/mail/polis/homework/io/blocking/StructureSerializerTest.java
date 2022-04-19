@@ -18,10 +18,10 @@ import static org.junit.Assert.assertArrayEquals;
 public class StructureSerializerTest {
 
     private static final List<Structure> structures = new ArrayList<>();
-    private static final int recordsNumber = 100;
+    private static final StructureSerializer serializer = new StructureSerializer();
 
     private static void generateStructures() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 800_000; i++) {
             structures.add(generate());
         }
     }
@@ -36,35 +36,26 @@ public class StructureSerializerTest {
     @After
     public void tearDown() throws Exception {
         FileUtils.forceDelete(Paths.get("src", "test", "resources", "blocking", "structure.bin").toFile());
-        structures.clear();
     }
 
     @Test
-    public void defaultSerialize() throws IOException, ClassNotFoundException {
+    public void defaultSerialize() throws IOException {
         Path file = Paths.get("src", "test", "resources", "blocking", "structure.bin");
         Files.createFile(file);
         System.out.println("default serialize");
 
         long start = System.currentTimeMillis();
-        for (int i = 0; i < recordsNumber; i++) {
-            StructureSerializer.defaultSerialize(structures, file.toString());
-        }
-        System.out.println("time of default serialization  = " + (System.currentTimeMillis() - start) + "ms");
+        serializer.defaultSerialize(structures, file.toString());
 
-        System.out.println("file size = " + Files.size(file) + "bytes");
+        System.out.println("time of default serialization = " + (System.currentTimeMillis() - start) + " ms");
+
+        System.out.println("file size = " + Files.size(file) + " bytes");
 
         start = System.currentTimeMillis();
-        List<Structure> resultOfDeserialize = StructureSerializer.defaultDeserialize(file.toString());
-        System.out.println("time of default deserialization  = " + (System.currentTimeMillis() - start) + "ms\n");
+        List<Structure> resultOfDeserialize = serializer.defaultDeserialize(file.toString());
+        System.out.println("time of default deserialization = " + (System.currentTimeMillis() - start) + " ms\n");
 
-        // Не понимаю почему этот тест проходит, добавил его,
-        // из-за того что подозрительно маленькое время десериализации.
-        // Сравнил массивы через sout, они получились одинаковые, хотя такого не должно быть,
-        // ведь мы записываем десять раз structures в файл, то есть resultOfDeserialize должен быть в 100 раз больше?
-        // долго разбирался, так и не вяснил где ошибка(
         assertArrayEquals(structures.toArray(), resultOfDeserialize.toArray());
-//        System.out.println(resultOfDeserialize.toString());
-//        System.out.println(structures.toString());
     }
 
     @Test
@@ -74,16 +65,15 @@ public class StructureSerializerTest {
         System.out.println("structure serialize");
 
         long start = System.currentTimeMillis();
-        for (int i = 0; i < recordsNumber; i++) {
-            StructureSerializer.serialize(structures, file.toString());
-        }
-        System.out.println("time of structure serialization  = " + (System.currentTimeMillis() - start) + "ms");
+        serializer.serialize(structures, file.toString());
+
+        System.out.println("time of structure serialization = " + (System.currentTimeMillis() - start) + " ms");
 
         System.out.println("file size = " + Files.size(file) + " bytes");
 
         start = System.currentTimeMillis();
-        List<Structure> resultOfDeserialize = StructureSerializer.deserialize(file.toString());
-        System.out.println("time of structure deserialization  = " + (System.currentTimeMillis() - start) + "ms");
+        List<Structure> resultOfDeserialize = serializer.deserialize(file.toString());
+        System.out.println("time of structure deserialization = " + (System.currentTimeMillis() - start) + " ms");
 
         assertArrayEquals(structures.toArray(), resultOfDeserialize.toArray());
     }
