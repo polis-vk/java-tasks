@@ -30,7 +30,7 @@ public class Directories {
             }
         }
         item.delete();
-        return count + 1;
+        return ++count;
     }
 
     /**
@@ -54,6 +54,6 @@ public class Directories {
         } catch (NoSuchFileException e) {
             return 0;
         }
-        return count + 1;
+        return ++count;
     }
 }

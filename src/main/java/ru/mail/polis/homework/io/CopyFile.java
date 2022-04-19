@@ -26,40 +26,39 @@ public class CopyFile {
         Path whereTo = Paths.get(pathTo);
         try {
             if (Files.isRegularFile(whereFrom)) {
-                whereTo = whereTo.getParent();
+                Files.createDirectories(whereTo.getParent());
+            } else {
+                Files.createDirectories(whereTo);
             }
-            Files.createDirectories(whereTo);
-            doFileCopy(pathFrom, pathTo);
+            doFileCopy(whereFrom, whereTo);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static void doFileCopy(String pathFrom, String pathTo) throws IOException {
-        Path whereFrom = Paths.get(pathFrom);
-        Path whereTo = Paths.get(pathTo);
-        Files.walkFileTree(Paths.get(pathFrom), new SimpleFileVisitor<Path>() {
+    private static void doFileCopy(Path whereFrom, Path whereTo) throws IOException {
+        Files.walkFileTree(whereFrom, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                 Path targetPath = whereTo.resolve(whereFrom.relativize(dir));
                 if (Files.notExists(targetPath)) {
-                    Files.createDirectories(targetPath);
+                    Files.createDirectory(targetPath);
                 }
                 return FileVisitResult.CONTINUE;
             }
 
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                InputStream inputStream = Files.newInputStream(file);
-                OutputStream outputStream = Files.newOutputStream(whereTo.resolve(whereFrom.relativize(file)));
-                byte[] buffer = new byte[1024];
-                int blockSize = inputStream.read(buffer);;
-                while (blockSize > 0) {
-                    outputStream.write(buffer, 0, blockSize);
-                    blockSize = inputStream.read(buffer);
+                try (InputStream inputStream = Files.newInputStream(file);
+                     OutputStream outputStream = Files.newOutputStream(whereTo.resolve(whereFrom.relativize(file)));) {
+                    byte[] buffer = new byte[1024];
+                    int blockSize = inputStream.read(buffer);
+                    ;
+                    while (blockSize > 0) {
+                        outputStream.write(buffer, 0, blockSize);
+                        blockSize = inputStream.read(buffer);
+                    }
                 }
-                inputStream.close();
-                outputStream.close();
                 return FileVisitResult.CONTINUE;
             }
         });
