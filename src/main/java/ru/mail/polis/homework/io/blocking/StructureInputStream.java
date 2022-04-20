@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -110,7 +111,7 @@ public class StructureInputStream extends FileInputStream {
             throw new IllegalArgumentException();
         }
 
-        return new String(bytes);
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
     private boolean readBoolean() throws IOException {

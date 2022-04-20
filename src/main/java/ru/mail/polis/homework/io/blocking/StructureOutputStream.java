@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 /**
  * Вам нужно реализовать StructureOutputStream, который умеет писать данные в файл.
@@ -100,7 +103,8 @@ public class StructureOutputStream extends FileOutputStream {
             return;
         }
 
-        writeInt(str.length());
-        write(str.getBytes());
+        byte[] charArray = str.getBytes(StandardCharsets.UTF_8);
+        writeInt(charArray.length);
+        write(charArray);
     }
 }
