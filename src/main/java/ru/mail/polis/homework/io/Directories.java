@@ -53,7 +53,6 @@ public class Directories {
         AtomicInteger atomicCount = new AtomicInteger();
 
         Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
-
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 Files.delete(file);
