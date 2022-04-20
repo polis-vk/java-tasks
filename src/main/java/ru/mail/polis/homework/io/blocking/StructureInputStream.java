@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.BitSet;
 
 /**
  * Вам нужно реализовать StructureInputStream, который умеет читать данные из файла.
