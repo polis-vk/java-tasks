@@ -49,14 +49,14 @@ public class CopyFile {
 
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                try (InputStream inputStream = Files.newInputStream(file);
-                     OutputStream outputStream = Files.newOutputStream(whereTo.resolve(whereFrom.relativize(file)));) {
-                    byte[] buffer = new byte[1024];
-                    int blockSize = inputStream.read(buffer);
-                    ;
-                    while (blockSize > 0) {
-                        outputStream.write(buffer, 0, blockSize);
-                        blockSize = inputStream.read(buffer);
+                try (InputStream inputStream = Files.newInputStream(file)) {
+                    try (OutputStream outputStream = Files.newOutputStream(whereTo.resolve(whereFrom.relativize(file)))) {
+                        byte[] buffer = new byte[1024];
+                        int blockSize = inputStream.read(buffer);
+                        while (blockSize > 0) {
+                            outputStream.write(buffer, 0, blockSize);
+                            blockSize = inputStream.read(buffer);
+                        }
                     }
                 }
                 return FileVisitResult.CONTINUE;
