@@ -26,20 +26,18 @@ public class Directories {
         if (!dir.exists()) {
             return 0;
         }
-
-        int count = 1;
         if (dir.isFile() && dir.delete()) {
             return 1;
         }
 
+        int count = 1;
         for (File file : dir.listFiles()) {
-            if (file.isFile() && file.delete()) {
-                count++;
-            }
             count += removeWithFile(String.valueOf(file));
         }
-        dir.delete();
-        return count;
+        if (dir.delete()) {
+            return count;
+        }
+        return 0;
     }
 
     /**
@@ -54,14 +52,16 @@ public class Directories {
         }
         AtomicInteger atomicCount = new AtomicInteger();
 
-        Files.walkFileTree(source, new SimpleFileVisitor<>() {
+        Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
 
+            @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 Files.delete(file);
                 atomicCount.incrementAndGet();
                 return FileVisitResult.CONTINUE;
             }
 
+            @Override
             public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
                 Files.delete(dir);
                 atomicCount.incrementAndGet();
@@ -70,47 +70,5 @@ public class Directories {
         });
         return atomicCount.get();
     }
-
-
-  /*  Я запуталась к тем, какое решение имеется в виду. Но вот это работает тоже.
-  (почти, если не вклюсать все тесты сразу).
-
-  private static AtomicInteger atomicCount = new AtomicInteger();
-
-    public static int removeWithPath(String path) throws IOException {
-        DirectoryStream<Path> directoryStream = null;
-        Path dir = Paths.get(path);
-
-        if (!Files.exists(dir)) {
-            return 0;
-        }
-        if (!Files.isDirectory(dir)) {
-            Files.delete(dir);
-            return atomicCount.incrementAndGet();
-        }
-
-        atomicCount.incrementAndGet();
-        try {
-            directoryStream = Files.newDirectoryStream(dir);
-            for (Path directory : directoryStream) {
-                try {
-                    Files.delete(directory);
-                    atomicCount.incrementAndGet();
-                } catch (DirectoryNotEmptyException e) {
-                    removeWithPath(directory.toString());
-                }
-            }
-        } finally {
-            if (directoryStream != null) {
-                try {
-                    Files.delete(dir);
-                    directoryStream.close();
-                } catch (IOException e) {
-                }
-            }
-        }
-        return atomicCount.get();
-    }
-   */
 }
 
