@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.exception;
 
 public class Connection implements RobotConnection {
-    private Robot robot;
+    private final Robot robot;
     private boolean connection;
 
     public Connection(Robot robot, boolean connectionStatus) {
@@ -14,12 +14,12 @@ public class Connection implements RobotConnection {
     }
 
     public int getID() {
-        return this.robot.getId();
+        return robot.getId();
     }
 
     @Override
     public void moveRobotTo(double x, double y) throws ConnectionException, NoEnergyException {
-        if (getConnectionStatus() & robot != null) {
+        if (getConnectionStatus() && robot != null) {
             robot.setX(x);
             robot.setY(y);
         } else {
@@ -30,6 +30,5 @@ public class Connection implements RobotConnection {
     @Override
     public void close() {
         connection = false;
-        robot = null;
     }
 }

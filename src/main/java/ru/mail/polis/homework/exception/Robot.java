@@ -26,7 +26,7 @@ public class Robot {
     private double mineralFuel;
 
     private final double G = 9.81;
-    private final double EFFICIENCY;
+    private double EFFICIENCY;
 
     public Robot(double mineralFuel, double efficiency, int id) {
         this.id = id;
@@ -130,11 +130,5 @@ public class Robot {
         if (mineralFuel < 0.01 && electricalCapacity < 1) {
             throw new NoEnergyException("ElectricalCapacity now is below zero!");
         }
-    }
-}
-
-class NoEnergyException extends Exception {
-    public NoEnergyException(String message) {
-        super(message);
     }
 }

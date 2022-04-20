@@ -15,9 +15,3 @@ public interface RobotConnectionManager {
     RobotConnection getConnection(int robotId) throws ConnectionException, NoEnergyException;
 
 }
-
-class ConnectionException extends Exception {
-    public ConnectionException(String message) {
-        super(message);
-    }
-}
