@@ -11,6 +11,7 @@ import java.util.Random;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -20,8 +21,9 @@ public class StructureSerializerTest {
     private static final List<Structure> structures = new ArrayList<>();
     private static final StructureSerializer serializer = new StructureSerializer();
 
-    private static void generateStructures() {
-        for (int i = 0; i < 800_000; i++) {
+    @BeforeClass
+    public static void generateStructures() {
+        for (int i = 0; i < 300_000; i++) {
             structures.add(generate());
         }
     }
@@ -30,7 +32,6 @@ public class StructureSerializerTest {
     public void setUp() throws IOException {
         Path dir = Paths.get("src", "test", "resources", "blocking");
         Files.createDirectories(dir);
-        generateStructures();
     }
 
     @After
@@ -59,7 +60,7 @@ public class StructureSerializerTest {
     }
 
     @Test
-    public void structureSerialize() throws IOException, ClassNotFoundException {
+    public void structureSerialize() throws IOException {
         Path file = Paths.get("src", "test", "resources", "blocking", "structure.bin");
         Files.createFile(file);
         System.out.println("structure serialize");
