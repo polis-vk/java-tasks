@@ -27,14 +27,14 @@ public class StructureOutputStream extends FileOutputStream {
                 this.write(intToBytes(structure.getName().length()));
                 this.write(structure.getName().getBytes(StandardCharsets.UTF_8));
             } else {
-                this.write(intToBytes(0));
+                this.write(intToBytes(-1));
             }
             this.write(intToBytes(Float.floatToIntBits(structure.getCoeff())));
             this.write(new byte[]{flagsToByte(structure)});
             this.write(new byte[]{structure.getParam()});
             SubStructure[] subStructures = structure.getSubStructures();
             if (subStructures == null) {
-                this.write(intToBytes(0));
+                this.write(intToBytes(-1));
                 return;
             }
             this.write(intToBytes(subStructures.length));

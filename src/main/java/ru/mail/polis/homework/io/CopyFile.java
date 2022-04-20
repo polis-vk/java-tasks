@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.io;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,44 +16,58 @@ public class CopyFile {
      * В тесте для создания нужных файлов для первого запуска надо раскомментировать код в setUp()
      * 3 тугрика
      */
-    public static void copyFiles(String pathFrom, String pathTo) throws IOException {
+    public static void copyFiles(String pathFrom, String pathTo) {
         Path from = Paths.get(pathFrom);
         if (!Files.exists(from)) {
             return;
         }
         Path to = Paths.get(pathTo);
-        if (Files.isDirectory(from)) {
-            Files.createDirectories(to);
-            try (Stream<Path> walk = Files.walk(from)) {
-                walk.forEach(departure -> {
-                    Path destination = Paths.get(pathTo, String.valueOf(from.relativize(departure)));
-                    copy(departure, destination);
-                });
+        if (!Files.isDirectory(from)) {
+            try {
+                copyFile(from, to);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
             return;
         }
-        copy(from, to);
-
-    }
-
-    private static void copy(Path departure, Path destination) {
-        try {
-            if (Files.isDirectory(departure)) {
-                Files.createDirectories(destination);
-                return;
-            }
-            Files.createDirectories(destination.getParent());
-            Files.createFile(destination);
+        try (Stream<Path> walk = Files.walk(from)) {
+            Files.createDirectories(to);
+            walk.forEach(departure -> {
+                Path destination = to.resolve(from.relativize(departure));
+                try {
+                    if (Files.isDirectory(departure)) {
+                        copyDirectory(destination);
+                    } else {
+                        copyFile(departure, destination);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void copyDirectory(Path destination) throws IOException {
+        if (Files.exists(destination)) {
+            return;
+        }
+        Files.createDirectory(destination);
+    }
+
+    private static void copyFile(Path departure, Path destination) throws IOException {
+        if (!Files.exists(destination)) {
+            if (!Files.exists(destination.getParent())) {
+                Files.createDirectories(destination.getParent());
+            }
+            Files.createFile(destination);
         }
         try (InputStream input = Files.newInputStream(departure); OutputStream output = Files.newOutputStream(destination)) {
             byte[] buffer = new byte[128];
             while (input.read(buffer) != -1) {
                 output.write(buffer);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

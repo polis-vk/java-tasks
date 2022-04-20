@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
-
 /**
  * Вам нужно реализовать StructureInputStream, который умеет читать данные из файла.
  * Читать поля нужно ручками, с помощью массива байт и методов {@link #read()}, {@link #read(byte[])} и так далее
@@ -26,21 +24,17 @@ public class StructureInputStream extends FileInputStream {
      * Метод должен вернуть следующую прочитанную структуру.
      * Если структур в файле больше нет, то вернуть null
      */
-    public Structure readStructure() {
+    public Structure readStructure() throws IOException {
         Structure structure = new Structure();
-        try {
-            if (this.available() == 0) {
-                return null;
-            }
-            readId(structure);
-            readName(structure);
-            readCoeff(structure);
-            readFlags(structure);
-            readParam(structure);
-            readSubStructures(structure);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (available() == 0) {
+            return null;
         }
+        readId(structure);
+        readName(structure);
+        readCoeff(structure);
+        readFlags(structure);
+        readParam(structure);
+        readSubStructures(structure);
         structures = Arrays.copyOf(structures, structures.length + 1);
         structures[structures.length - 1] = structure;
         return structure;
@@ -64,33 +58,43 @@ public class StructureInputStream extends FileInputStream {
                 | ((int) bytes[0] & 0xff);
     }
 
-    private void readId(Structure structure) throws IOException {
+    public Long readLong() throws IOException {
         byte[] buffer = new byte[8];
-        this.read(buffer);
-        structure.setId(bytesToLong(buffer));
+        read(buffer);
+        return bytesToLong(buffer);
+    }
+
+    public String readString(int length) throws IOException {
+        byte[] buffer = new byte[length];
+        read(buffer);
+        return new String(buffer, StandardCharsets.UTF_8);
+    }
+
+    public int readInt() throws IOException {
+        byte[] buffer = new byte[4];
+        read(buffer);
+        return bytesToInt(buffer);
+    }
+
+    private void readId(Structure structure) throws IOException {
+        structure.setId(readLong());
     }
 
     private void readName(Structure structure) throws IOException {
-        byte[] buffer = new byte[4];
-        this.read(buffer);
-        int nameLength = bytesToInt(buffer);
-        if (nameLength == 0) {
+        int nameLength = readInt();
+        if (nameLength == -1) {
             structure.setName(null);
             return;
         }
-        buffer = new byte[nameLength];
-        this.read(buffer);
-        structure.setName(new String(buffer, StandardCharsets.UTF_8));
+        structure.setName(readString(nameLength));
     }
 
     private void readCoeff(Structure structure) throws IOException {
-        byte[] buffer = new byte[4];
-        this.read(buffer);
-        structure.setCoeff(Float.intBitsToFloat(bytesToInt(buffer)));
+        structure.setCoeff(Float.intBitsToFloat(readInt()));
     }
 
     private void readFlags(Structure structure) throws IOException {
-        byte flags = (byte) this.read();
+        byte flags = (byte) read();
         structure.setFlag1((flags & 8) >> 3 == 1);
         structure.setFlag2((flags & 4) >> 2 == 1);
         structure.setFlag3((flags & 2) >> 1 == 1);
@@ -98,32 +102,21 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private void readParam(Structure structure) throws IOException {
-        byte param = (byte) this.read();
-        structure.setParam(param);
+        structure.setParam((byte) read());
     }
 
     private void readSubStructures(Structure structure) throws IOException {
-        byte[] buffer4bytes = new byte[4];
-        this.read(buffer4bytes);
-        int subStructuresCount = bytesToInt(buffer4bytes);
-        if (subStructuresCount == 0) {
+        int subStructuresCount = readInt();
+        if (subStructuresCount == -1) {
             return;
         }
         SubStructure[] subStructures = new SubStructure[subStructuresCount];
-        byte[] buffer8bytes = new byte[8];
-        byte buffer1byte;
         for (int i = 0; i < subStructuresCount; i++) {
-            this.read(buffer4bytes);
-            int id = bytesToInt(buffer4bytes);
-            this.read(buffer4bytes);
-            int nameLengthSub = bytesToInt(buffer4bytes);
-            byte[] bufferForName = new byte[nameLengthSub];
-            this.read(bufferForName);
-            String name = new String(bufferForName, StandardCharsets.UTF_8);
-            buffer1byte = (byte) this.read();
-            boolean flag = (buffer1byte == 1);
-            this.read(buffer8bytes);
-            double score = Double.longBitsToDouble(bytesToLong(buffer8bytes));
+            int id = readInt();
+            int nameLengthSub = readInt();
+            String name = readString(nameLengthSub);
+            boolean flag = ((byte) read() == 1);
+            double score = Double.longBitsToDouble(readLong());
             subStructures[i] = new SubStructure(id, name, flag, score);
         }
         structure.setSubStructures(subStructures);
@@ -133,7 +126,7 @@ public class StructureInputStream extends FileInputStream {
      * Метод должен вернуть все структуры, которые есть в файле.
      * Если файл уже прочитан, но возвращается полный массив.
      */
-    public Structure[] readStructures() {
+    public Structure[] readStructures() throws IOException {
         Structure structure;
         do {
             structure = readStructure();
