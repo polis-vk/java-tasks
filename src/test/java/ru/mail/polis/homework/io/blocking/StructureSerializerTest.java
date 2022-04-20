@@ -69,7 +69,7 @@ public class StructureSerializerTest {
         return structuresList;
     }
 
-    final long IO_COUNT = 6000;
+    final long IO_COUNT = 10000;
     private final StructureSerializer structureSerializer = new StructureSerializer();
 
     @Test
@@ -83,12 +83,12 @@ public class StructureSerializerTest {
             structureSerializer.defaultSerialize(generateList(), file.toString());
         }
         long finishInput = System.currentTimeMillis();
-        System.out.println("Writing time: " + (finishInput - startInput) + "ms");
 
         long startOutput = System.currentTimeMillis();
         structureSerializer.defaultDeserialize(file.toString());
         long finishOutput = System.currentTimeMillis();
-        System.out.println("Reading time: " + (finishOutput - startOutput) + "ms");
+
+        System.out.println("Writing and reading time: " + (finishInput - startInput + finishOutput - startOutput) + "ms");
 
         System.out.println("File size: " + Files.size(file) + " bytes\n");
     }
@@ -104,12 +104,12 @@ public class StructureSerializerTest {
             structureSerializer.serialize(generateList(), file.toString());
         }
         long finishInput = System.currentTimeMillis();
-        System.out.println("Writing time: " + (finishInput - startInput) + "ms");
 
         long startOutput = System.currentTimeMillis();
         structureSerializer.deserialize(file.toString());
         long finishOutput = System.currentTimeMillis();
-        System.out.println("Reading time: " + (finishOutput - startOutput) + "ms");
+
+        System.out.println("Writing and reading time: " + (finishInput - startInput + finishOutput - startOutput) + "ms");
 
         System.out.println("File size: " + Files.size(file) + " bytes");
     }
