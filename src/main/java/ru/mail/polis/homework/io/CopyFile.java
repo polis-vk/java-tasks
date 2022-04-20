@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.io;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,14 +24,15 @@ public class CopyFile {
 
         try {
             if (Files.isRegularFile(dirIn)) {
-                Files.createDirectories(dirOut.getParent());
-                CopyFile(dirIn, dirOut);
-            } else if (Files.isDirectory(dirIn)) {
+                copyFile(dirIn, dirOut);
+                return null;
+            }
+            if (Files.notExists(dirOut)) {
                 Files.createDirectories(dirOut);
-                try (DirectoryStream<Path> paths = Files.newDirectoryStream(dirIn)) {
-                    for (Path path : paths) {
-                        copyFiles(path.toString(), dirOut.resolve(path.getFileName()).toString());
-                    }
+            }
+            try (DirectoryStream<Path> paths = Files.newDirectoryStream(dirIn)) {
+                for (Path path : paths) {
+                    copyFiles(path.toString(), dirOut.resolve(path.getFileName()).toString());
                 }
             }
         } catch (IOException e) {
@@ -43,11 +42,15 @@ public class CopyFile {
         return null;
     }
 
-    private static void CopyFile(Path dirIn, Path dirOut) throws IOException {
-        try (InputStream fileIn = Files.newInputStream(dirIn)) {
-            try (OutputStream fileOut = Files.newOutputStream(dirOut)) {
-                byte[] buffer = new byte[1];
-                int readLength;
+    private static void copyFile(Path dirIn, Path dirOut) throws IOException {
+        if (Files.notExists(dirOut)) {
+            Files.createDirectories(dirOut.getParent());
+        }
+        Files.createFile(dirOut);
+        try (BufferedInputStream fileIn = new BufferedInputStream(Files.newInputStream(dirIn))) {
+            try (BufferedOutputStream fileOut = new BufferedOutputStream(Files.newOutputStream(dirOut))) {
+                byte[] buffer = new byte[512];
+                int readLength = 0;
                 while ((readLength = fileIn.read(buffer)) > 0) {
                     fileOut.write(buffer, 0, readLength);
                 }
