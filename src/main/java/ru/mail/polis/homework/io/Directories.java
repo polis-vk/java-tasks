@@ -21,20 +21,20 @@ public class Directories {
      * 2 тугрика
      */
     public static int removeWithFile(String path) {
-        File dir = new File(path);
+        File forDelete = new File(path);
 
-        if (!dir.exists()) {
+        if (!forDelete.exists()) {
             return 0;
         }
-        if (dir.isFile() && dir.delete()) {
+        if (forDelete.isFile() && forDelete.delete()) {
             return 1;
         }
 
         int count = 1;
-        for (File file : dir.listFiles()) {
+        for (File file : forDelete.listFiles()) {
             count += removeWithFile(String.valueOf(file));
         }
-        if (dir.delete()) {
+        if (forDelete.delete()) {
             return count;
         }
         return 0;
