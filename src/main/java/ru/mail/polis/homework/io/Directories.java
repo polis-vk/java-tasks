@@ -11,11 +11,11 @@ public class Directories {
 
 
     /**
-     * Реализовать рекурсивное удаление всех файлов и дерикторий из директороии по заданному пути.
+     * Реализовать рекурсивное удаление всех файлов и директорий из директории по заданному пути.
      * Метод должен возвращать количество удаленных файлов и директорий.
      * Если директории по существующему пути нет, то возвращаем 0.
      * Написать двумя способами. С использованием File
-     * 2 балла
+     * 2 тугрика
      */
     public static int removeWithFile(String path) {
         File file = new File(path);
@@ -36,7 +36,7 @@ public class Directories {
 
     /**
      * С использованием Path
-     * 2 балла
+     * 2 тугрика
      */
     public static int removeWithPath(String path) throws IOException {
         Path dir = Paths.get(path);
