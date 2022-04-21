@@ -37,15 +37,10 @@ public class CopyFile {
     private static void walkTree(Path source, Path target) throws IOException {
         Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
                     @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        if (target.equals(dir)) {
-                            return FileVisitResult.CONTINUE;
-                        }
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attr) throws IOException {
                         Path newDirPath = target.resolve(source.relativize(dir));
-                        if (Files.exists(newDirPath.getParent())) {
+                        if (!Files.exists(newDirPath)) {
                             Files.createDirectory(newDirPath);
-                        } else {
-                            Files.createDirectories(newDirPath);
                         }
                         return FileVisitResult.CONTINUE;
                     }
@@ -61,12 +56,14 @@ public class CopyFile {
     }
 
     private static void copyContent(Path source, Path target) throws IOException {
-        try (FileInputStream inputStream = new FileInputStream(source.toFile());
-             FileOutputStream outputStream = new FileOutputStream(target.toFile())) {
-            byte[] buffer = new byte[1024];
-            while (inputStream.available() > 0) {
-                int count = inputStream.read(buffer);
-                outputStream.write(buffer, 0, count);
+        try (FileInputStream inputStream = new FileInputStream(source.toFile())) {
+            try (FileOutputStream outputStream = new FileOutputStream(target.toFile())) {
+                byte[] buffer = new byte[1024];
+                int count;
+                while (inputStream.available() > 0) {
+                    count = inputStream.read(buffer);
+                    outputStream.write(buffer, 0, count);
+                }
             }
         }
     }
