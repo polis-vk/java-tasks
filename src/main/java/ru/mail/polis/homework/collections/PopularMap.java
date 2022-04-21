@@ -27,7 +27,7 @@ import java.util.Set;
  *             entry.getValue();
  *         }
  *
- * Всего 9 баллов (3 за общие методы, 6 за специальные)
+ * Всего 10 тугриков (3 тугрика за общие методы, 2 тугрика за итератор, 5 тугриков за логику популярности)
  * @param <K> - тип ключа
  * @param <V> - тип значения
  */
@@ -105,7 +105,6 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     /**
      * Возвращает самый популярный, на данный момент, ключ
-     * 1 балл
      */
     public K getPopularKey() {
         return null;
@@ -114,7 +113,6 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     /**
      * Возвращает количество использование ключа
-     * 1 балл
      */
     public int getKeyPopularity(K key) {
         return 0;
@@ -122,7 +120,6 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     /**
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
-     * 1 балл
      */
     public V getPopularValue() {
         return null;
@@ -131,7 +128,6 @@ public class PopularMap<K, V> implements Map<K, V> {
     /**
      * Возвращает количество использований значений в методах: containsValue, get, put (учитывается 2 раза, если
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
-     * 1 балл
      */
     public int getValuePopularity(V value) {
         return 0;
@@ -139,7 +135,7 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     /**
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
-     * 2 балла
+     * 2 тугрика
      */
     public Iterator<V> popularIterator() {
         return null;

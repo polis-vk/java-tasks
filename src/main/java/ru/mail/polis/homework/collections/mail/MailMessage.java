@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.collections.mail;
 
 /**
- * 1 балл
+ * 1 тугрик
  */
 public class MailMessage {
 
