@@ -6,6 +6,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 public class Directories {
 
@@ -27,9 +28,10 @@ public class Directories {
         }
         int countDeletedElements = 0;
         if (filePath.isDirectory()) {
-            for (File currentFilePath : filePath.listFiles()) {
+            for (File currentFilePath : Objects.requireNonNull(filePath.listFiles(), "The directory is empty")) {
                 countDeletedElements += removeWithFile(currentFilePath.getPath());
             }
+
         }
         return filePath.delete() ? ++countDeletedElements : countDeletedElements;
     }
@@ -43,7 +45,7 @@ public class Directories {
             throw new IllegalArgumentException("The path is incorrect");
         }
         Path pathFile = Paths.get(path);
-        if (!Files.exists(pathFile)) {
+        if (Files.notExists(pathFile)) {
             return 0;
         }
         int countDeletedElements = 0;

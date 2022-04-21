@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.io;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +19,7 @@ public class CopyFile {
      * В тесте для создания нужных файлов для первого запуска надо раскомментировать код в setUp()
      * 3 тугрика
      */
-    public static void copyFiles(String pathFrom, String pathTo) throws IOException {
+    public static void copyFiles(String pathFrom, String pathTo) {
         if (pathFrom == null || pathFrom.isEmpty()) {
             throw new IllegalArgumentException("The copy source is incorrect");
         }
@@ -30,15 +31,20 @@ public class CopyFile {
             return;
         }
         Path recipient = Paths.get(pathTo);
-        if (Files.notExists(recipient)) {
-            if (Files.isRegularFile(source)) {
-                Files.createDirectories(recipient.getParent());
-            } else {
-                Files.createDirectories(recipient);
-            }
+        try {
+            if (Files.notExists(recipient)) {
+                if (Files.isRegularFile(source)) {
+                    Files.createDirectories(recipient.getParent());
+                } else {
+                    Files.createDirectories(recipient);
+                }
 
+            }
+            copyPaths(source, recipient);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        copyPaths(source, recipient);
+
     }
 
     private static void copyPaths(Path source, Path recipient) throws IOException {
@@ -60,14 +66,16 @@ public class CopyFile {
     }
 
     private static void copyFiles(Path source, Path recipient) {
-        try (InputStream in = new FileInputStream(String.valueOf(source));
-             OutputStream out = new FileOutputStream(String.valueOf(recipient))) {
-            byte[] buf = new byte[1024];
-            int length;
-            while ((length = in.read(buf)) > 0) {
-                out.write(buf, 0, length);
+        try (InputStream in = new FileInputStream(String.valueOf(source))) {
+            try (OutputStream out = new FileOutputStream(String.valueOf(recipient))) {
+                byte[] buf = new byte[1024];
+                int length;
+                while ((length = in.read(buf)) > 0) {
+                    out.write(buf, 0, length);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
