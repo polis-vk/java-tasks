@@ -5,8 +5,6 @@ import java.util.Objects;
 /**
  * Нельзя изменять/удалять/добавлять поля.
  * Можно изменять/удалять СУЩЕСТВУЮЩИЕ методы.
- *
- * Все остальное можно
  */
 public class SubStructure {
     private final int id;
