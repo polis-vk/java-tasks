@@ -41,7 +41,6 @@ public class Directories {
      */
     public static int removeWithPath(String path) throws IOException {
         Path dir = Paths.get(path);
-
         if (Files.notExists(dir)) {
             return 0;
         }
