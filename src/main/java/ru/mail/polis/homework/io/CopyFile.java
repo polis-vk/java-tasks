@@ -17,8 +17,12 @@ public class CopyFile {
      * 3 тугрика
      */
 
-    public static void copyFiles(String pathFrom, String pathTo) throws IOException {
-        detourAllFoldersAndCopyFiles(Paths.get(pathFrom), Paths.get(pathTo));
+    public static void copyFiles(String pathFrom, String pathTo){
+        try {
+            detourAllFoldersAndCopyFiles(Paths.get(pathFrom), Paths.get(pathTo));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void detourAllFoldersAndCopyFiles(Path source, Path destination) throws IOException {
