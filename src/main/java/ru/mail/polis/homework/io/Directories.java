@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Directories {
@@ -25,10 +24,12 @@ public class Directories {
         }
 
         int result = 0;
-        if (!file.isFile()) {
-            for (File temp : Objects.requireNonNull(file.listFiles())) {
-                result += removeWithFile(temp.getPath());
-            }
+        if (file.isFile()) {
+            file.delete();
+            return ++result;
+        }
+        for (File temp : file.listFiles()) {
+            result += removeWithFile(temp.getPath());
         }
         file.delete();
         return ++result;
@@ -41,7 +42,7 @@ public class Directories {
     public static int removeWithPath(String path) throws IOException {
         Path dir = Paths.get(path);
 
-        if (!Files.exists(dir)) {
+        if (Files.notExists(dir)) {
             return 0;
         }
 
