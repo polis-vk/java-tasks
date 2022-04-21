@@ -26,18 +26,15 @@ public class Directories {
         if (!forDelete.exists()) {
             return 0;
         }
-        if (forDelete.isFile() && forDelete.delete()) {
-            return 1;
+        if (forDelete.isFile()) {
+            return forDelete.delete() ? 1 : 0;
         }
 
         int count = 1;
         for (File file : forDelete.listFiles()) {
             count += removeWithFile(String.valueOf(file));
         }
-        if (forDelete.delete()) {
-            return count;
-        }
-        return 0;
+        return forDelete.delete() ? count : --count;
     }
 
     /**
@@ -50,8 +47,8 @@ public class Directories {
         if (!Files.exists(source)) {
             return 0;
         }
-        AtomicInteger atomicCount = new AtomicInteger();
 
+        AtomicInteger atomicCount = new AtomicInteger();
         Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
@@ -67,6 +64,7 @@ public class Directories {
                 return FileVisitResult.CONTINUE;
             }
         });
+
         return atomicCount.get();
     }
 }

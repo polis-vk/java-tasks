@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.io.blocking;
 
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,14 +42,10 @@ public class StructureSerializer {
      * @param fileName   файл в который "пишем" структуры
      */
     public void defaultSerialize(List<Structure> structures, String fileName) {
-        try {
-            FileOutputStream outputStream = new FileOutputStream(fileName);
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(fileName)))) {
             for (Structure structure : structures) {
                 objectOutputStream.writeObject(structure);
             }
-            objectOutputStream.close();
-            outputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -61,22 +59,17 @@ public class StructureSerializer {
      * @return список структур
      */
     public List<Structure> defaultDeserialize(String fileName) {
-        try {
-            FileInputStream fileInputStream = new FileInputStream(fileName);
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            List<Structure> structures = new ArrayList<>();
-
-            try {
-                while (objectInputStream.available() == 0) {
-                    structures.add((Structure) objectInputStream.readObject());
-                }
-            } catch (EOFException ignore) {
+        List<Structure> structures = new ArrayList<>();
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fileName)))) {
+            while (true) {
+                structures.add((Structure) objectInputStream.readObject());
             }
-            objectInputStream.close();
+        } catch (EOFException ignore) {
             return structures;
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return Collections.emptyList();
     }
 
@@ -89,11 +82,8 @@ public class StructureSerializer {
      * @param fileName   файл в который "пишем" структуры
      */
     public void serialize(List<Structure> structures, String fileName) {
-        try {
-            File file = new File(fileName);
-            StructureOutputStream structureOutputStream = new StructureOutputStream(file);
+        try (StructureOutputStream structureOutputStream = new StructureOutputStream(new File(fileName))) {
             structureOutputStream.write(structures.toArray(new Structure[0]));
-            structureOutputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -107,12 +97,8 @@ public class StructureSerializer {
      * @return список структур
      */
     public List<Structure> deserialize(String fileName) {
-        try {
-            File file = new File(fileName);
-            StructureInputStream structureInputStream = new StructureInputStream(file);
-            List<Structure> structures = Arrays.asList(structureInputStream.readStructures());
-            structureInputStream.close();
-            return structures;
+        try (StructureInputStream structureInputStream = new StructureInputStream(new File(fileName))) {
+            return Arrays.asList(structureInputStream.readStructures());
         } catch (Exception e) {
             e.printStackTrace();
         }
