@@ -121,8 +121,7 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private boolean readBoolean() throws IOException {
-        int value = read();
-        return (value == 1);
+        return read() == 1;
     }
 
     private SubStructure readSubStructure() throws IOException {

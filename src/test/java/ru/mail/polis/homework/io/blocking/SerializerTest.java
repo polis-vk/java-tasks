@@ -29,7 +29,7 @@ public class SerializerTest {
 
         Random random = new Random();
         structures = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 500; i++) {
             Structure structure = new Structure();
             structure.setId(random.nextLong());
             structure.setName("Object" + i);
@@ -58,20 +58,15 @@ public class SerializerTest {
 
         System.out.println("Default serializer");
         StructureSerializer structureSerializer = new StructureSerializer();
-        long startTime;
-        long writeTime = 0;
-        for (int i = 0; i < 500; i++) {
-            ArrayList<Structure> copy = new ArrayList<>(structures);
-            startTime = System.currentTimeMillis();
-            structureSerializer.defaultSerialize(copy, file.toString());
-            writeTime = writeTime+ (System.currentTimeMillis() - startTime);
-        }
-        System.out.println("Write speed: " + writeTime);
+        long startTime = System.currentTimeMillis();
+        structureSerializer.defaultSerialize(structures, file.toString());
+        long writeTime = System.currentTimeMillis() - startTime;
+        System.out.println("Write time: " + writeTime);
 
         startTime = System.currentTimeMillis();
         List<Structure> structuresList = structureSerializer.defaultDeserialize(file.toString());
         long readTime = (System.currentTimeMillis() - startTime);
-        System.out.println("Read speed: " + readTime);
+        System.out.println("Read time: " + readTime);
         assertEquals(structures, structuresList);
     }
 
@@ -82,20 +77,16 @@ public class SerializerTest {
         StructureSerializer structureSerializer = new StructureSerializer();
 
         System.out.println("Custom serializer");
-        long startTime;
-        long writeTime = 0;
-        for (int i = 0; i < 500; i++) {
-            ArrayList<Structure> copy = new ArrayList<>(structures);
-            startTime = System.currentTimeMillis();
-            structureSerializer.serialize(copy, file.toString());
-            writeTime = writeTime+ (System.currentTimeMillis() - startTime);
-        }
-        System.out.println("Write speed: " + writeTime);
+        long startTime = System.currentTimeMillis();
+        structureSerializer.serialize(structures, file.toString());
+        long writeTime = System.currentTimeMillis() - startTime;
+        System.out.println("Write time: " + writeTime);
 
         startTime = System.currentTimeMillis();
         List<Structure> structuresList = structureSerializer.deserialize(file.toString());
         long readTime = (System.currentTimeMillis() - startTime);
-        System.out.println("Read speed: " + readTime);
+        System.out.println("Read time: " + readTime);
         assertEquals(structures, structuresList);
+        assertEquals(structures.size(), structuresList.size());
     }
 }
