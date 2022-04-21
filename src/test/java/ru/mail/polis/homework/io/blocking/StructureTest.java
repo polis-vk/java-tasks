@@ -133,7 +133,7 @@ public class StructureTest {
 
         StructureSerializer serializer = new StructureSerializer();
         long startWriteTime = System.currentTimeMillis();
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 1500; i++) {
             serializer.defaultSerialize(Arrays.asList(structures), file.toString());
         }
         long endWriteTime = System.currentTimeMillis();
@@ -158,7 +158,7 @@ public class StructureTest {
 
         StructureSerializer serializer = new StructureSerializer();
         long startWriteTime = System.currentTimeMillis();
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 1500; i++) {
             serializer.serialize(Arrays.asList(structures), file.toString());
         }
         long endWriteTime = System.currentTimeMillis();
