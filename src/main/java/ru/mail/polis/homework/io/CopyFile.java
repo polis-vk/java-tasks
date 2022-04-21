@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.io;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
