@@ -38,7 +38,7 @@ public class StructureSerializerTest {
         }
         StructureSerializer serializer = new StructureSerializer();
         long serializeStart = System.currentTimeMillis();
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 100000; i++) {
             serializer.defaultSerialize(structures, file.toString());
         }
         long serializeEnd = System.currentTimeMillis();
@@ -62,7 +62,7 @@ public class StructureSerializerTest {
         }
         StructureSerializer serializer = new StructureSerializer();
         long serializeStart = System.currentTimeMillis();
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 100000; i++) {
             serializer.serialize(structures, file.toString());
         }
         long serializeEnd = System.currentTimeMillis();

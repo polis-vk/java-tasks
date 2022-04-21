@@ -17,6 +17,7 @@ public class StructureInputStream extends FileInputStream {
 
     private Structure[] structures = new Structure[0];
     private int structuresCount = 0;
+    private static final int FLAGS_COUNT = 4;
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
         super(fileName);
@@ -64,26 +65,23 @@ public class StructureInputStream extends FileInputStream {
         return Arrays.copyOf(structures, structuresCount);
     }
 
-    private long readLong() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-        byte[] bytes = new byte[Long.BYTES];
+    private ByteBuffer readBytes(int size) throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(size);
+        byte[] bytes = new byte[size];
         if (read(bytes) != bytes.length) {
             throw new EOFException();
         }
         buffer.put(bytes);
         buffer.flip();
-        return buffer.getLong();
+        return buffer;
+    }
+
+    private long readLong() throws IOException {
+        return readBytes(Long.BYTES).getLong();
     }
 
     private int readInt() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
-        byte[] bytes = new byte[Integer.BYTES];
-        if (read(bytes) != bytes.length) {
-            throw new EOFException();
-        }
-        buffer.put(bytes);
-        buffer.flip();
-        return buffer.getInt();
+        return readBytes(Integer.BYTES).getInt();
     }
 
     private boolean readBoolean() throws IOException {
@@ -91,14 +89,7 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private double readDouble() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(Double.BYTES);
-        byte[] bytes = new byte[Double.BYTES];
-        if (read(bytes) != bytes.length) {
-            throw new EOFException();
-        }
-        buffer.put(bytes);
-        buffer.flip();
-        return buffer.getDouble();
+        return readBytes(Double.BYTES).getDouble();
     }
 
     private String readString() throws IOException {
@@ -116,6 +107,9 @@ public class StructureInputStream extends FileInputStream {
     private SubStructure readSubStructure() throws IOException {
         int id = readInt();
         String name = readString();
+        if (name == null) {
+            throw new IOException();
+        }
         boolean flag = readBoolean();
         double score = readDouble();
         return new SubStructure(id, name, flag, score);
@@ -134,20 +128,13 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private float readFloat() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(Float.BYTES);
-        byte[] bytes = new byte[Float.BYTES];
-        if (read(bytes) != bytes.length) {
-            throw new EOFException();
-        }
-        buffer.put(bytes);
-        buffer.flip();
-        return buffer.getFloat();
+        return readBytes(Float.BYTES).getFloat();
     }
 
     private boolean[] readFlags() throws IOException {
-        boolean[] flags = new boolean[4];
+        boolean[] flags = new boolean[FLAGS_COUNT];
         byte flagsByte = (byte) read();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < FLAGS_COUNT; i++) {
             flags[i] = ((flagsByte >> i) & 1) == 1;
         }
         return flags;

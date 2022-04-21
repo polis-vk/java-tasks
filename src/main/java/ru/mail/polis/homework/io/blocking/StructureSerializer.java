@@ -42,8 +42,7 @@ public class StructureSerializer {
         if (Files.notExists(file)) {
             return;
         }
-        try (ObjectOutputStream outputStream =
-                     new ObjectOutputStream(Files.newOutputStream(file))) {
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(file))) {
             for (Structure structure : structures) {
                 outputStream.writeObject(structure);
             }
@@ -65,10 +64,8 @@ public class StructureSerializer {
             return null;
         }
         List<Structure> structures = new ArrayList<>();
-        try (InputStream fileInputStream =
-                     Files.newInputStream(file)) {
-            try (ObjectInputStream inputStream =
-                         new ObjectInputStream(fileInputStream)) {
+        try (InputStream fileInputStream = Files.newInputStream(file)) {
+            try (ObjectInputStream inputStream = new ObjectInputStream(fileInputStream)) {
                 while (fileInputStream.available() > 0) {
                     structures.add((Structure) inputStream.readObject());
                 }
@@ -92,8 +89,7 @@ public class StructureSerializer {
         if (!file.exists()) {
             return;
         }
-        try (StructureOutputStream outputStream =
-                     new StructureOutputStream(file)) {
+        try (StructureOutputStream outputStream = new StructureOutputStream(file)) {
             for (Structure structure : structures) {
                 outputStream.write(structure);
             }
@@ -115,8 +111,7 @@ public class StructureSerializer {
             return null;
         }
         List<Structure> structures = new ArrayList<>();
-        try (StructureInputStream inputStream =
-                     new StructureInputStream(file)) {
+        try (StructureInputStream inputStream = new StructureInputStream(file)) {
             structures = Arrays.asList(inputStream.readStructures());
         } catch (IOException e) {
             e.printStackTrace();
