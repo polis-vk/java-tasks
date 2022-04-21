@@ -21,14 +21,12 @@ public class StructureOutputStream extends FileOutputStream {
         if (structure == null) {
             return;
         }
-        writeForLong(structure.getId());
-        writeForString(structure.getName());
-        writeForSubStructures(structure.getSubStructures());
-        writeForDouble(structure.getCoeff());
-        writeForBoolean(structure.isFlag1());
-        writeForBoolean(structure.isFlag2());
-        writeForBoolean(structure.isFlag3());
-        writeForBoolean(structure.isFlag4());
+        writeLong(structure.getId());
+        writeString(structure.getName());
+        writeSubStructures(structure.getSubStructures());
+        writeDouble(structure.getCoeff());
+        boolean[] flags = {structure.isFlag1(), structure.isFlag2(), structure.isFlag3(), structure.isFlag4()};
+        writeSeveralBoolean(flags);
         write(structure.getParam());
         flush();
     }
@@ -45,46 +43,60 @@ public class StructureOutputStream extends FileOutputStream {
         }
     }
 
-    private void writeForBoolean(boolean b) throws IOException {
+    private void writeBoolean(boolean b) throws IOException {
         write(b ? 1 : 0);
     }
 
-    private void writeForLong(long l) throws IOException {
+    private void writeSeveralBoolean(boolean[] b) throws IOException {
+        byte buf = 0;
+        for (int i = 0; i < b.length; i++) {
+            buf = (byte) (b[i] ? 1 << i : 0);
+        }
+        write(buf);
+    }
+
+    private void writeInt(int i) throws IOException {
+        ByteArrayOutputStream buf = new ByteArrayOutputStream(Integer.BYTES);
+        buf.write(i);
+        write(buf.toByteArray());
+    }
+
+    private void writeLong(long l) throws IOException {
         ByteBuffer buf = ByteBuffer.allocate(Long.BYTES);
         buf.putLong(l);
         write(buf.array());
     }
 
-    private void writeForDouble(double d) throws IOException {
+    private void writeDouble(double d) throws IOException {
         ByteBuffer buf = ByteBuffer.allocate(Double.BYTES);
         buf.putDouble(d);
         write(buf.array());
     }
 
-    private void writeForString(String str) throws IOException {
+    private void writeString(String str) throws IOException {
         if (str == null) {
-            writeForLong(-1);
+            writeInt(-1);
             return;
         }
-        writeForLong(str.length());
+        writeInt(str.length());
         write(str.getBytes());
     }
 
-    private void writeForSubStructure(SubStructure subStructure) throws IOException {
-        writeForLong(subStructure.getId());
-        writeForString(subStructure.getName());
-        writeForBoolean(subStructure.isFlag());
-        writeForDouble(subStructure.getScore());
+    private void writeSubStructure(SubStructure subStructure) throws IOException {
+        writeLong(subStructure.getId());
+        writeString(subStructure.getName());
+        writeBoolean(subStructure.isFlag());
+        writeDouble(subStructure.getScore());
     }
 
-    private void writeForSubStructures(SubStructure[] subStructures) throws IOException {
+    private void writeSubStructures(SubStructure[] subStructures) throws IOException {
         if (subStructures == null) {
-            writeForLong(-1);
+            writeInt(-1);
             return;
         }
-        writeForLong(subStructures.length);
+        writeInt(subStructures.length);
         for (SubStructure subStructure : subStructures) {
-            writeForSubStructure(subStructure);
+            writeSubStructure(subStructure);
         }
     }
 }

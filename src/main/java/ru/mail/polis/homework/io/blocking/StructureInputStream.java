@@ -1,8 +1,13 @@
 package ru.mail.polis.homework.io.blocking;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+
 
 /**
  * Вам нужно реализовать StructureInputStream, который умеет читать данные из файла.
@@ -30,14 +35,14 @@ public class StructureInputStream extends FileInputStream {
             return null;
         }
         Structure structure = new Structure();
-        structure.setId(readForLong());
-        structure.setName(readForString());
+        structure.setId(readLong());
+        structure.setName(readString());
         structure.setSubStructures(readSubStructures());
-        structure.setCoeff((float) readForDouble());
-        structure.setFlag1(readForBoolean());
-        structure.setFlag2(readForBoolean());
-        structure.setFlag3(readForBoolean());
-        structure.setFlag4(readForBoolean());
+        structure.setCoeff((float) readDouble());
+        structure.setFlag1(readBoolean());
+        structure.setFlag2(readBoolean());
+        structure.setFlag3(readBoolean());
+        structure.setFlag4(readBoolean());
         structure.setParam((byte) read());
         addStructure(structure);
         return structure;
@@ -71,25 +76,31 @@ public class StructureInputStream extends FileInputStream {
         }
     }
 
-    private boolean readForBoolean() throws IOException {
+    private boolean readBoolean() throws IOException {
         return read() == 1;
     }
 
-    private long readForLong() throws IOException {
+    private int readInt() throws IOException {
+        byte[] readBuffer = new byte[Integer.BYTES];
+        read(readBuffer, Integer.BYTES);
+        return ByteBuffer.wrap(readBuffer).getInt();
+    }
+
+    private long readLong() throws IOException {
         byte[] readBuffer = new byte[Long.BYTES];
         read(readBuffer, Long.BYTES);
         return ByteBuffer.wrap(readBuffer).getLong();
     }
 
-    private double readForDouble() throws IOException {
+    private double readDouble() throws IOException {
         byte[] readBuffer = new byte[Double.BYTES];
         read(readBuffer, Double.BYTES);
         return ByteBuffer.wrap(readBuffer).getDouble();
     }
 
-    private String readForString() throws IOException {
-        int length = (int) readForLong();
-        if (length == -1) {
+    private String readString() throws IOException {
+        int length = readInt();
+        if (length <= 0) {
             return null;
         }
         byte[] readBuffer = new byte[length];
@@ -98,19 +109,19 @@ public class StructureInputStream extends FileInputStream {
     }
 
     private SubStructure readSubStructure() throws IOException {
-        int id = (int) readForLong();
-        String name = readForString();
+        int id = readInt();
+        String name = readString();
         if (name == null) {
             throw new IllegalArgumentException();
         }
-        boolean flag = readForBoolean();
-        double score = readForDouble();
+        boolean flag = readBoolean();
+        double score = readDouble();
         return new SubStructure(id, name, flag, score);
     }
 
     private SubStructure[] readSubStructures() throws IOException {
-        int length = (int) readForLong();
-        if (length == -1) {
+        int length = readInt();
+        if (length < 0) {
             return null;
         }
 
