@@ -1,5 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Comparator;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -43,7 +49,72 @@ package ru.mail.polis.homework.reflection;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+
+        StringBuilder objectToString = new StringBuilder();
+        objectToString.append("{");
+
+        Class<?> objectClass = object.getClass();
+        while (objectClass != null) {
+            Arrays.stream(objectClass.getDeclaredFields())
+                    .sorted(Comparator.comparing(Field::getName))
+                    .forEach(field -> {
+                        String currentField = parseField(object, field);
+
+                        if (currentField != null) {
+                            objectToString.append(currentField).append(", ");
+                        }
+                    });
+
+            objectClass = objectClass.getSuperclass();
+        }
+
+        if (objectToString.length() == 1) {
+            return objectToString.append("}").toString();
+        }
+
+        return objectToString.delete(objectToString.length() - 2, objectToString.length()).append("}").toString();
     }
+
+    private static String parseField(Object object, Field field) {
+        if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
+            return null;
+        }
+
+        StringBuilder currentField = new StringBuilder();
+        currentField.append(field.getName()).append(": ");
+
+        if (!field.canAccess(object)) {
+            field.setAccessible(true);
+        }
+
+        Object value = null;
+        try {
+            value = field.get(object);
+        } catch (IllegalAccessException ignored) {
+        }
+
+        return (value == null || !value.getClass().isArray()) ? currentField.append(value).toString()
+                : currentField.append(parseArray(value)).toString();
+    }
+
+    private static String parseArray(Object value) {
+        if (Array.getLength(value) == 0) {
+            return "[]";
+        }
+
+        StringBuilder arrayToString = new StringBuilder();
+        arrayToString.append("[");
+        for (int i = 0; i < Array.getLength(value); i++) {
+            arrayToString.append(Array.get(value, i));
+            arrayToString.append(", ");
+        }
+        arrayToString.delete(arrayToString.length() - 2, arrayToString.length());
+        arrayToString.append("]");
+
+        return arrayToString.toString();
+    }
+
 }
