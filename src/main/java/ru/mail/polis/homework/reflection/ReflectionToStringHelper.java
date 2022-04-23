@@ -97,10 +97,10 @@ public class ReflectionToStringHelper {
         }
 
         return (value == null || !value.getClass().isArray()) ? currentField.append(value).toString()
-                : currentField.append(parseArray(value)).toString();
+                : currentField.append(parseValueArray(value)).toString();
     }
 
-    private static String parseArray(Object value) {
+    private static String parseValueArray(Object value) {
         if (Array.getLength(value) == 0) {
             return "[]";
         }
