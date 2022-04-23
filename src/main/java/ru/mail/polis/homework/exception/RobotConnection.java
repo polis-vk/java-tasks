@@ -1,19 +1,24 @@
 package ru.mail.polis.homework.exception;
 
-/**
- * Подключение к роботу, которое позволяет его перемещать в заданную точку. Подключение в любой момент может
- * потерять связь с роботом и тогда любой из методов кидает исключение.
- * Подключение временное и оно тратит ресурсы.
- *
- * 2 тугрика
- */
-public interface RobotConnection extends AutoCloseable {
+public class RobotConnection implements Connection{
+    private final Robot robot;
+    private boolean isConnected;
 
-    /**
-     * Перемещает робота в заданную точку.
-     */
-    void moveRobotTo(int x, int y);
+    public RobotConnection(Robot robot) {
+        this.robot = robot;
+        isConnected = true;
+    }
 
     @Override
-    void close();
+    public void moveRobotTo(int x, int y) throws RobotConnectionException {
+        if (!isConnected){
+            throw new RobotConnectionException("Failed move robot because of no connection");
+        }
+        robot.move(x,y);
+    }
+
+    @Override
+    public void close() {
+        isConnected = false;
+    }
 }
