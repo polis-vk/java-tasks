@@ -8,7 +8,6 @@ package ru.mail.polis.homework.exception;
  * 2 тугрика
  */
 public interface RobotConnection extends AutoCloseable {
-
     /**
      * Перемещает робота в заданную точку.
      */
