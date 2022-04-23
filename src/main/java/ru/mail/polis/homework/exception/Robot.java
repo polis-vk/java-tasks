@@ -9,7 +9,7 @@ package ru.mail.polis.homework.exception;
 public class Robot {
     private int xCoord;
     private int yCoord;
-    private int id;
+    private final int id;
 
     public Robot(int xCoord, int yCoord, int id) {
         this.xCoord = xCoord;
@@ -40,9 +40,4 @@ public class Robot {
     public int getId() {
         return id;
     }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
 }

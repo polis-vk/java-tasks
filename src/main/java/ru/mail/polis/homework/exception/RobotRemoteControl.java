@@ -17,17 +17,19 @@ public class RobotRemoteControl {
      * Если это не удалось, то прокинуть эту ошибку на уровень выше.
      * Попытка считается успешной, если соединение открылось и вызвался метод moveRobotTo без исключений.
      */
-    public void moveTo(int robotId, int toX, int toY) throws Exception {
-        try {
-            connectionManager.getConnection(robotId).moveRobotTo(toX, toY);
-        } catch (Exception e) {
-            for (int i = 0; i < 2; i++) {
+    public void moveTo(int robotId, int toX, int toY) throws RobotConnectionException {
+        for (int i = 0; i < 2; i++) {
+            try {
+                connectionManager.getConnection(robotId).moveRobotTo(toX, toY);
+                break;
+            } catch (RobotConnectionException e) {
                 try {
                     connectionManager.getConnection(robotId).moveRobotTo(toX, toY);
-                } catch (Exception e1) {
-                    e1.printStackTrace();
+                } catch (RobotConnectionException e1) {
+                    throw e1;
                 }
             }
         }
+
     }
 }
