@@ -2,33 +2,31 @@ package ru.mail.polis.homework.exception;
 
 public class Connection implements RobotConnection {
     private final Robot robot;
-    private boolean connection;
+    private int robotId;
 
-    public Connection(Robot robot, boolean connectionStatus) {
-        this.robot = robot;
-        this.connection = connectionStatus;
+    public Connection(int robotId) {
+        this.robotId = robotId;
+        robot = RobotsInTheField.realRobots.get(robotId);
     }
 
-    public boolean getConnectionStatus() {
-        return connection;
-    }
-
-    public int getID() {
-        return robot.getId();
+    public boolean connectionStatus() throws NoEnergyException {
+        if (robot != null && robotId == RobotsInTheField.realRobots.get(robotId).getID() && robot.connection()) {
+            robot.changeStatus(true);
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void moveRobotTo(double x, double y) throws ConnectionException, NoEnergyException {
-        if (getConnectionStatus() && robot != null) {
-            robot.setX(x);
-            robot.setY(y);
-        } else {
-            throw new ConnectionException("Это не ваш робот!");
-        }
+    public void moveRobotTo(double x, double y) {
+        robot.setX(x);
+        robot.setY(y);
     }
 
     @Override
     public void close() {
-        connection = false;
+
     }
+
 }
+

@@ -19,14 +19,13 @@ package ru.mail.polis.homework.exception;
 public class Robot {
     private double x;
     private double y;
-    private int id;
-    private boolean connection = true;
+    private final int id;
+    private boolean connection = false;
 
     private double electricalCapacity = 100;
     private double mineralFuel;
 
-    private final double G = 9.81;
-    private double EFFICIENCY;
+    private final double EFFICIENCY;
 
     public Robot(double mineralFuel, double efficiency, int id) {
         this.id = id;
@@ -50,7 +49,11 @@ public class Robot {
         y = point;
     }
 
-    public boolean connectionStatus() throws NoEnergyException {
+    public int getID() {
+        return id;
+    }
+
+    public boolean connection() throws NoEnergyException {
         electricalCapacity -= 5 + 5 * (1 - EFFICIENCY);
         if (electricalCapacity < 1) {
             generateElectricity();
@@ -64,10 +67,6 @@ public class Robot {
             generateElectricity();
         }
         connection = status;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public double distance(Robot robot) throws NoEnergyException {
@@ -99,7 +98,7 @@ public class Robot {
         if (electricalCapacity < 1) {
             generateElectricity();
         }
-        return G * time * time / 8;
+        return 9.81 * time * time / 8;
     }
 
     public void movement(Robot robot) throws NoEnergyException {
