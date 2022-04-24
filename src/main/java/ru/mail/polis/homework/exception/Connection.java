@@ -5,24 +5,19 @@ public class Connection implements RobotConnection {
     private Robot robot;
     private boolean isConnected;
 
+    public Connection(Robot robot) {
+        this.robot = robot;
+        isConnected = true;
+    }
+
     @Override
-    public void moveRobotTo(int x, int y) throws ConnectionException {
-        if (!isConnected || robot == null) {
-            throw new ConnectionException("Сначала установите соединение с роботом, возможно ваше старое соединение было разорвано");
+    public void moveRobotTo(int x, int y) throws RobotConnectionException {
+        if (!isConnected) {
+            throw new RobotConnectionException("Нет соединения, возможно оно было разорвано");
         }
 
         robot.setX(x);
         robot.setY(y);
-    }
-
-    @Override
-    public void connectionToRobot(Robot robot) throws ConnectionException {
-        if (isConnected || this.robot != null) {
-            throw new ConnectionException("Это соединение уже работает с другим роботом, создайте новое");
-        }
-
-        isConnected = true;
-        this.robot = robot;
     }
 
     @Override
