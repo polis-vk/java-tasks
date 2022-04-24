@@ -10,17 +10,9 @@ public class Robot {
     private int x;
     private int y;
     private final int robotId;
-    private boolean isConnected;
 
     public Robot(int robotId) {
         this.robotId = robotId;
-        isConnected = false;
-    }
-
-    public Robot(int robotId, int toX, int toY) {
-        this(robotId);
-        x = toX;
-        y = toY;
     }
 
     public void setX(int x) {
@@ -41,13 +33,5 @@ public class Robot {
 
     public int getRobotId() {
         return robotId;
-    }
-
-    public boolean isConnected() {
-        return isConnected;
-    }
-
-    public void setConnected(boolean connected) {
-        isConnected = connected;
     }
 }

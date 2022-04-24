@@ -2,16 +2,17 @@ package ru.mail.polis.homework.exception;
 
 
 public class Connection implements RobotConnection {
-    private final Robot robot;
+    private Robot robot;
+    private boolean isConnected;
 
     public Connection(Robot robot) {
         this.robot = robot;
-        robot.setConnected(true);
+        isConnected = true;
     }
 
     @Override
     public void moveRobotTo(int x, int y) throws RobotConnectionException {
-        if (!robot.isConnected()) {
+        if (!isConnected || robot == null) {
             throw new RobotConnectionException("Нет соединения с роботом.");
         }
         robot.setX(x);
@@ -20,6 +21,7 @@ public class Connection implements RobotConnection {
 
     @Override
     public void close() {
-        robot.setConnected(false);
+        isConnected = false;
+        robot = null;
     }
 }
