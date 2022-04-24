@@ -8,10 +8,14 @@ package ru.mail.polis.homework.exception;
  */
 public class Robot {
 
-    int x = 0;
-    int y = 0;
     private final int robotId;
+    private int x;
+    private int y;
     Direction direction = Direction.UP;
+
+    public Robot(int robotId) {
+        this.robotId = robotId;
+    }
 
     public int getX() {
         return x;
@@ -21,51 +25,16 @@ public class Robot {
         return y;
     }
 
-    public Robot(int robotId) {
-        this.robotId = robotId;
-    }
-
-    public Direction getDirection() {
-        return direction;
-    }
-
     public void turnLeft() {
-        switch (getDirection()) {
-            default:
-            case UP:
-                direction = Direction.LEFT;
-                break;
-            case DOWN:
-                direction = Direction.RIGHT;
-                break;
-            case LEFT:
-                direction = Direction.DOWN;
-                break;
-            case RIGHT:
-                direction = Direction.UP;
-        }
+        direction = Direction.getLeftDirection(direction);
     }
 
     public void turnRight() {
-        switch (getDirection()) {
-            default:
-            case UP:
-                direction = Direction.RIGHT;
-                break;
-            case DOWN:
-                direction = Direction.LEFT;
-                break;
-            case LEFT:
-                direction = Direction.UP;
-                break;
-            case RIGHT:
-                direction = Direction.DOWN;
-        }
+        direction = Direction.getRightDirection(direction);
     }
 
     public void stepForward() {
-        switch (getDirection()) {
-            default:
+        switch (direction) {
             case RIGHT:
                 x++;
                 break;
@@ -78,6 +47,7 @@ public class Robot {
             case DOWN:
                 y--;
                 break;
+            default:
         }
     }
 
