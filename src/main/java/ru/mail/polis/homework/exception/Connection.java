@@ -8,9 +8,8 @@ public class Connection implements RobotConnection {
         return connectionStatus;
     }
 
-    public Connection(Robot robot, boolean connectionStatus) {
+    public Connection(Robot robot) {
         this.r2d2 = robot;
-        this.connectionStatus = connectionStatus;
     }
 
     @Override
