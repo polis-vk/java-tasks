@@ -1,13 +1,14 @@
 package ru.mail.polis.homework.exception;
 
-public class RobotConnectionClass implements RobotConnection{
-    Robot robot;
-    Boolean isConnect;
+public class RobotConnect implements RobotConnection {
+    private Robot robot;
+    private boolean connected;
 
-    RobotConnectionClass(Robot robot){
+    public RobotConnect(Robot robot) {
         this.robot = robot;
-        isConnect = true;
+        connected = true;
     }
+
     @Override
     public void moveRobotTo(int x, int y) {
         robot.setX(x);
@@ -16,6 +17,6 @@ public class RobotConnectionClass implements RobotConnection{
 
     @Override
     public void close() {
-        isConnect = false;
+        connected = false;
     }
 }
