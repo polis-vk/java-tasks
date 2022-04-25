@@ -10,19 +10,18 @@ public class Connection implements RobotConnection {
     }
 
     public void moveRobotTo(int x, int y) throws RobotConnectionException {
-        if (isConnected) {
-            int[] coordinates = robot.getCoordinates();
-            robot.setCoordinates(coordinates[0] + x, coordinates[1] + y);
-        } else {
+        if (!isConnected) {
             throw new RobotConnectionException();
         }
+        int[] coordinates = robot.getCoordinates();
+        robot.setCoordinates(coordinates[0] + x, coordinates[1] + y);
     }
 
-    public boolean isOpen() {
+    public boolean isConnected() {
         return isConnected;
     }
 
     public void close() {
-        this.isConnected = false;
+        isConnected = false;
     }
 }

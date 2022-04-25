@@ -5,10 +5,10 @@ import java.util.Map;
 
 public class ConnectionManager implements RobotConnectionManager {
 
-    private Map<Integer, Connection> connections;
+    private final Map<Integer, RobotConnection> connections;
 
     public ConnectionManager() {
-        Map<Integer, Connection> connections = new HashMap<>();
+        connections = new HashMap<>();
     }
 
     public void setConnection(int robotId) throws RobotConnectionException {
@@ -21,10 +21,7 @@ public class ConnectionManager implements RobotConnectionManager {
 
     public RobotConnection getConnection(int robotId) throws RobotConnectionException {
         if (connections.containsKey(robotId)) {
-            Connection connection = connections.get(robotId);
-            if (connection.isOpen()) {
-                return connection;
-            }
+            return connections.get(robotId);
         }
         setConnection(robotId);
         return connections.get(robotId);
