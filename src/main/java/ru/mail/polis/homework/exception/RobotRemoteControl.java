@@ -23,7 +23,7 @@ public class RobotRemoteControl {
             try {
                 connectionManager.getConnection(robotId).moveRobotTo(toX, toY);
                 break;
-            } catch (ConnectionException | NoEnergyException e) {
+            } catch (ConnectionException | NoEnergyException | NullPointerException e) {
                 if (count > 2) {
                     e.printStackTrace();
                     throw e;

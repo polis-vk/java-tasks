@@ -1,16 +1,16 @@
 package ru.mail.polis.homework.exception;
 
 public class Connection implements RobotConnection {
-    private final Robot robot;
-    private int robotId;
+    private Robot robot;
+    private final int robotId;
 
-    public Connection(int robotId) {
-        this.robotId = robotId;
-        robot = RobotsInTheField.realRobots.get(robotId);
+    public Connection(Robot robot) {
+        this.robot = robot;
+        robotId = robot.getID();
     }
 
     public boolean connectionStatus() throws NoEnergyException {
-        if (robot != null && robotId == RobotsInTheField.realRobots.get(robotId).getID() && robot.connection()) {
+        if (robotId == RobotsInTheField.realRobots.get(robotId).getID() && robot.connection()) {
             robot.changeStatus(true);
             return true;
         }
@@ -25,7 +25,8 @@ public class Connection implements RobotConnection {
 
     @Override
     public void close() {
-
+        robot.changeStatus(false);
+        robot = null;
     }
 
 }

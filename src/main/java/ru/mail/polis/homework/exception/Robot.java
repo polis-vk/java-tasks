@@ -61,11 +61,7 @@ public class Robot {
         return connection;
     }
 
-    public void changeStatus(boolean status) throws NoEnergyException {
-        electricalCapacity -= 5 + 5 * (1 - EFFICIENCY);
-        if (electricalCapacity < 1) {
-            generateElectricity();
-        }
+    public void changeStatus(boolean status) {
         connection = status;
     }
 
