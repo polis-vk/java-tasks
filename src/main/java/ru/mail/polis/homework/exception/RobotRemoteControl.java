@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.exception;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * Задание: Нужно создать свою мини библиотеку, с удаленным роботом и пультом управления.
@@ -13,8 +12,7 @@ import java.util.Map;
  */
 public class RobotRemoteControl {
 
-    private static final Map<Integer, Robot> robots = new HashMap<>();
-    private final RobotConnectionManager connectionManager = new ConnectionManager();
+    private final RobotConnectionManager connectionManager = new ConnectionManager(new ArrayList<>());
 
     /**
      * Метод должен открыть соединение и отправить робота в указанную точку. При неудаче - повторить действие еще 2 раза,
@@ -22,21 +20,17 @@ public class RobotRemoteControl {
      * Попытка считается успешной, если соединение открылось и вызвался метод moveRobotTo без исключений.
      */
     public void moveTo(int robotId, int toX, int toY) throws ConnectionFailedException {
-        int attempts = 3;
-        for (int i = 0; i < attempts; i++) {
+        int maxAttempts = 3;
+        for (int i = 1; i <= maxAttempts; i++) {
             try (RobotConnection connection = connectionManager.getConnection(robotId)) {
                 connection.moveRobotTo(toX, toY);
-                i = attempts;
+                return;
             } catch (ConnectionFailedException e) {
-                if (i == attempts - 1) {
+                if (i == maxAttempts) {
                     throw e;
                 }
             }
         }
-    }
-
-    public static Robot getRobotById(int Id) {
-        return robots.get(Id);
     }
 
 }
