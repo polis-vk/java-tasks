@@ -1,5 +1,13 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -44,6 +52,71 @@ public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
         // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        Class<?> c = object.getClass();
+        Class<?> superClass = c.getSuperclass();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        sb.append(fieldsToString(c, object));
+        while (superClass != Object.class) {
+            sb.append(", ");
+            sb.append(fieldsToString(superClass, object));
+            superClass = superClass.getSuperclass();
+        }
+        sb.append("}");
+
+        return sb.toString();
+    }
+
+    private static String fieldsToString(Class<?> c, Object object) {
+        List<Field> fields = Arrays.stream(c.getDeclaredFields())
+                .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                .filter(field -> !field.isAnnotationPresent(SkipField.class))
+                .sorted(Comparator.comparing(Field::getName))
+                .collect(Collectors.toList());
+
+        if (fields.size() == 0) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        try {
+            for (int i = 0; i < fields.size(); i++) {
+                if (i != 0) {
+                    sb.append(", ");
+                }
+                Field current = fields.get(i);
+                sb.append(current.getName()).append(": ");
+                current.setAccessible(true); // после этого нужно возвращать значение на false?
+                if (current.getType().isArray()) {
+                    sb.append(arrayToString(current.get(object)));
+                } else {
+                    sb.append(current.get(object));
+                }
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return sb.toString();
+    }
+
+    private static String arrayToString(Object array) {
+        if (array == null) {
+            return "null";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for (int i = 0; i < Array.getLength(array); i++) {
+            if (i != 0) {
+                sb.append(", ");
+            }
+            sb.append(Array.get(array, i));
+        }
+        sb.append("]");
+        return sb.toString();
     }
 }
