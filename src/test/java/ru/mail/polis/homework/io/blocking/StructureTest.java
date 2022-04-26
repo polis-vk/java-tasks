@@ -93,6 +93,33 @@ public class StructureTest {
         }
     }
 
+    @Test
+    public void oneObjectWithEmptyArrays() throws IOException {
+        Path file = Paths.get("src", "test", "resources", "blocking", "structure.bin");
+        Files.createFile(file);
+        Structure structure = new Structure();
+        structure.setId(1233554344533L);
+        structure.setName("null");
+        structure.setSubStructures(new SubStructure[] {});
+        structure.setCoeff((float) Math.E);
+        structure.setFlag1(true);
+        structure.setFlag2(true);
+        structure.setFlag3(false);
+        structure.setFlag4(true);
+        structure.setParam((byte) 125);
+
+        try (StructureOutputStream outputStream = new StructureOutputStream(file.toFile())) {
+            outputStream.write(structure);
+            assertTrue(Files.size(file) > 10);
+        }
+        try (StructureInputStream structureInputStream = new StructureInputStream(file.toFile())) {
+            assertEquals(structure, structureInputStream.readStructure());
+            assertNull(structureInputStream.readStructure());
+            assertArrayEquals(new Structure[] {structure}, structureInputStream.readStructures());
+        }
+    }
+
+
 
     @Test
     public void manyObject() throws IOException {
