@@ -10,13 +10,17 @@ public class RobotConnect implements RobotConnection {
     }
 
     @Override
-    public void moveRobotTo(int x, int y) {
+    public void moveRobotTo(int x, int y) throws RobotConnectException {
+        if (!connected) {
+            throw new RobotConnectException("There is no connection with robot");
+        }
         robot.setX(x);
         robot.setY(y);
     }
 
     @Override
     public void close() {
+        robot = null;
         connected = false;
     }
 }

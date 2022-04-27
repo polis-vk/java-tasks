@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.exception;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -12,13 +10,13 @@ import java.util.List;
  * <p>
  * 4 тугрика
  */
+
 public class RobotRemoteControl {
-    public final List<Robot> robotList;
+    static final int countAttempts = 3;
     private final RobotConnectionManager connectionManager;
 
     public RobotRemoteControl(List<Robot> robots) {
-        robotList = robots;
-        connectionManager = new RobotConnectManager();
+        connectionManager = new RobotConnectManager(robots);
     }
 
     /**
@@ -27,9 +25,8 @@ public class RobotRemoteControl {
      * Попытка считается успешной, если соединение открылось и вызвался метод moveRobotTo без исключений.
      */
     public void moveTo(int robotId, int toX, int toY) throws RobotConnectException {
-        int countAttempts = 3;
         for (int i = 1; i <= countAttempts; i++) {
-            try (RobotConnection robotConnection = connectionManager.getConnection(robotId, robotList.get(0))) {
+            try (RobotConnection robotConnection = connectionManager.getConnection(robotId)) {
                 robotConnection.moveRobotTo(toX, toY);
                 break;
             } catch (RobotConnectException e) {
