@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -55,15 +56,19 @@ public class ReflectionToStringHelper {
         try {
             StringBuilder output = new StringBuilder();
             Class<?> currentClass = object.getClass();
-            Field[] currentFields = currentClass.getDeclaredFields();
-            currentFields = Arrays.stream(currentFields).sorted(Comparator.comparing(Field::getName)).toArray(Field[]::new);
             output.append("{");
-            for (Field field : currentFields) {
-                if (Modifier.isStatic(field.getModifiers()) || field.getAnnotation(SkipField.class) != null) {
-                    continue;
+            do {
+                Field[] currentFields = currentClass.getDeclaredFields();
+                currentFields = Arrays.stream(currentFields).sorted(Comparator.comparing(Field::getName)).toArray(Field[]::new);
+                for (Field field : currentFields) {
+                    if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
+                        continue;
+                    }
+                    output.append(field.getName()).append(": ").append(getFieldValue(field, object)).append(", ");
                 }
-                output.append(field.getName()).append(": ").append(getFieldValue(field, object)).append(", ");
+                currentClass = currentClass.getSuperclass();
             }
+            while (currentClass != null);
             output.delete(output.length() - 2, output.length());
             output.append("}");
             return output.toString();
@@ -80,7 +85,26 @@ public class ReflectionToStringHelper {
         if (!field.canAccess(object)) {
             field.setAccessible(true);
         }
-        return String.valueOf(field.get(object));
+
+        Object value = field.get(object);
+        Class<?> currentClass = field.getType();
+        if (currentClass.isArray()) {
+            if (value == null) {
+                return "null";
+            }
+
+            StringBuilder stringArray = new StringBuilder();
+            stringArray.append("[");
+            for (int i = 0; i < Array.getLength(value); i++) {
+                stringArray.append(Array.get(value, i)).append(", ");
+            }
+            if (stringArray.length() > 1) {
+                stringArray.delete(stringArray.length() - 2, stringArray.length());
+            }
+            stringArray.append("]");
+            return String.valueOf(stringArray);
+        }
+        return String.valueOf(value);
     }
 
 }
