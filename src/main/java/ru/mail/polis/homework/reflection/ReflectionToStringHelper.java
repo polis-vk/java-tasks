@@ -1,5 +1,12 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Objects;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -43,7 +50,72 @@ package ru.mail.polis.homework.reflection;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        Class<?> clazz = object.getClass();
+        StringBuilder stringBuilder = new StringBuilder("{");
+
+        while (!Objects.equals(clazz, Object.class)) {
+            fieldToString(clazz, object, stringBuilder);
+            clazz = clazz.getSuperclass();
+        }
+
+        int lastCommaIndex = stringBuilder.lastIndexOf(", ");
+        if (lastCommaIndex > 0) {
+            stringBuilder.setLength(lastCommaIndex);
+        }
+
+        stringBuilder.append("}");
+
+        return stringBuilder.toString();
     }
+
+    private static void fieldToString(Class<?> clazz, Object object, StringBuilder stringBuilder) {
+        Field[] fields = getSortedFields(clazz);
+
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (isSkippedField(field)) {
+                continue;
+            }
+            stringBuilder.append(field.getName()).append(": ");
+            Object value = null;
+            try {
+                value = field.get(object);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+            if (value == null) {
+                stringBuilder.append("null");
+            } else if (field.getType().isArray()) {
+                arrayToString(value, stringBuilder);
+            } else {
+                stringBuilder.append(value);
+            }
+            stringBuilder.append(", ");
+        }
+    }
+
+    private static void arrayToString(Object object, StringBuilder stringBuilder) {
+        stringBuilder.append("[");
+        String comma = "";
+        for (int i = 0; i < Array.getLength(object); i++) {
+            stringBuilder.append(comma).append(Array.get(object, i));
+            comma = ", ";
+        }
+        stringBuilder.append("]");
+    }
+
+    private static Field[] getSortedFields(Class<?> clazz) {
+        Field[] fields = clazz.getDeclaredFields();
+        Arrays.sort(fields, Comparator.comparing(Field::getName));
+        return fields;
+    }
+
+    private static boolean isSkippedField(Field field) {
+        return field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers());
+    }
+
 }
