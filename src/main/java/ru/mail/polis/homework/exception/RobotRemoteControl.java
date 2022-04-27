@@ -1,8 +1,5 @@
 package ru.mail.polis.homework.exception;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Задание: Нужно создать свою мини библиотеку, с удаленным роботом и пультом управления.
  * Каждый класс оценивается отдельно
@@ -13,12 +10,11 @@ import java.util.List;
  */
 public class RobotRemoteControl {
 
-    private final RobotConnectionManager robotConnectionManager;
-    private final static List<Robot> robots = new ArrayList<>();
+    private final RobotConnectionManagerImpl robotConnectionManager;
 
-    public RobotRemoteControl(Robot robot) {
-        robotConnectionManager = new RobotConnectionManager();
-        robots.add(robot);
+    public RobotRemoteControl(int robotId, Robot robot) {
+        robotConnectionManager = new RobotConnectionManagerImpl();
+        RobotConnectionManagerImpl.addRobot(robotId, robot);
     }
 
     /**
@@ -27,12 +23,11 @@ public class RobotRemoteControl {
      * Попытка считается успешной, если соединение открылось и вызвался метод moveRobotTo без исключений.
      */
     public void moveTo(int robotId, int toX, int toY) {
-        boolean isConnection = false;
-        for (int i = 0; !isConnection; i++) {
+        for (int i = 0; ; i++) {
             try {
-                RobotConnection robotConnection = robotConnectionManager.getConnection(robotId);
+                RobotConnectionImpl robotConnection = robotConnectionManager.getConnection(robotId);
                 robotConnection.moveRobotTo(toX, toY);
-                isConnection = true;
+                break;
             } catch (RobotConnectionException e) {
                 if (i == 2) {
                     throw e;
@@ -40,9 +35,46 @@ public class RobotRemoteControl {
             }
         }
     }
-    public static Robot getRobot(int id){
-        return robots.get(id);
+
+    public void makeRoar(int robotId) {
+        for (int i = 0; ; i++) {
+            try {
+                RobotConnectionImpl robotConnection = robotConnectionManager.getConnection(robotId);
+                robotConnection.makeRoar();
+                break;
+            } catch (RobotConnectionException e) {
+                if (i == 2) {
+                    throw e;
+                }
+            }
+        }
     }
 
+    public void pickMushroom(int robotId) {
+        for (int i = 0; ; i++) {
+            try {
+                RobotConnectionImpl robotConnection = robotConnectionManager.getConnection(robotId);
+                robotConnection.pickMushroom();
+                break;
+            } catch (RobotConnectionException e) {
+                if (i == 2) {
+                    throw e;
+                }
+            }
+        }
+    }
 
+    public void throwMushroom(int robotId) {
+        for (int i = 0; ; i++) {
+            try {
+                RobotConnectionImpl robotConnection = robotConnectionManager.getConnection(robotId);
+                robotConnection.throwMushroom();
+                break;
+            } catch (RobotConnectionException e) {
+                if (i == 2) {
+                    throw e;
+                }
+            }
+        }
+    }
 }

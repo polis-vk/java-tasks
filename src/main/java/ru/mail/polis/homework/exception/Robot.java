@@ -3,14 +3,14 @@ package ru.mail.polis.homework.exception;
 /**
  * Реализовать простого робота.
  * У него должны быть координаты, работа с ними и все остальное на ваше усмотрение
- *
+ * <p>
  * 2 тугрика
  */
 public class Robot {
     private final int robotId;
     private int x;
     private int y;
-    private boolean hasMushroom = false;
+    private boolean hasMushroom;
 
     public Robot(int robotId, int x, int y) {
         this.robotId = robotId;
@@ -18,39 +18,32 @@ public class Robot {
         this.y = y;
     }
 
-    public int getRobotId(){
+    public int getRobotId() {
         return robotId;
     }
-    public int getX(){
+
+    public int getX() {
         return x;
     }
 
-    public int getY(){
-        return  y;
+    public int getY() {
+        return y;
     }
 
-    public void setX(int x){
-        this.x = x;
-    }
-
-    public void setY(int y){
-        this.y = y;
-    }
-
-    public void move(int x, int y){
+    public void move(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public void makeRoar(){
+    public void makeRoar() {
         System.out.println("ROOOAAAARRR!!!");
     }
 
-    public void pickMushroom(){
+    public void pickMushroom() {
         this.hasMushroom = true;
     }
 
-    public void throwMushroom(){
+    public void throwMushroom() {
         this.hasMushroom = false;
     }
 }
