@@ -117,5 +117,4 @@ public class ReflectionToStringHelper {
     private static boolean isSkippedField(Field field) {
         return field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers());
     }
-
 }
