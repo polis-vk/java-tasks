@@ -2,7 +2,7 @@ package ru.mail.polis.homework.exception;
 
 public class Connection implements RobotConnection {
 
-    private final Robot robot;
+    private Robot robot;
     private boolean opened;
 
     public Connection(Robot robot) {
@@ -15,15 +15,23 @@ public class Connection implements RobotConnection {
         if (!opened) {
             throw new RobotConnectionException("Connection failed");
         }
-        changeXDirection(x);
+        Direction targetDirection;
+        targetDirection = robot.getX() < x ? Direction.RIGHT : Direction.LEFT;
+        while (robot.direction != targetDirection) {
+            robot.turnRight();
+        }
         changeXCoordinate(x);
-        changeYDirection(y);
+        targetDirection = robot.getY() < y ? Direction.UP : Direction.DOWN;
+        while (robot.direction != targetDirection) {
+            robot.turnLeft();
+        }
         changeYCoordinate(y);
     }
 
     @Override
     public void close() {
         opened = false;
+        robot = null;
     }
 
     private void changeXCoordinate(int x) {
@@ -35,30 +43,6 @@ public class Connection implements RobotConnection {
     private void changeYCoordinate(int y) {
         while (robot.getY() - y != 0) {
             robot.stepForward();
-        }
-    }
-
-    private void changeXDirection(int x) {
-        Direction targetDirection;
-        if (robot.getX() < x) {
-            targetDirection = Direction.RIGHT;
-        } else {
-            targetDirection = Direction.LEFT;
-        }
-        while (robot.direction != targetDirection) {
-            robot.turnRight();
-        }
-    }
-
-    private void changeYDirection(int y) {
-        Direction targetDirection;
-        if (robot.getY() < y) {
-            targetDirection = Direction.UP;
-        } else {
-            targetDirection = Direction.DOWN;
-        }
-        while (robot.direction != targetDirection) {
-            robot.turnLeft();
         }
     }
 }

@@ -9,36 +9,30 @@ public enum Direction {
     public static Direction getLeftDirection(Direction direction) {
         switch (direction) {
             case UP:
-                direction = Direction.LEFT;
-                break;
+                return Direction.LEFT;
             case DOWN:
-                direction = Direction.RIGHT;
-                break;
+                return Direction.RIGHT;
             case LEFT:
-                direction = Direction.DOWN;
-                break;
+                return Direction.DOWN;
             case RIGHT:
-                direction = Direction.UP;
+                return Direction.UP;
             default:
+                return direction;
         }
-        return direction;
     }
 
     public static Direction getRightDirection(Direction direction) {
         switch (direction) {
             case UP:
-                direction = Direction.RIGHT;
-                break;
+                return Direction.RIGHT;
             case DOWN:
-                direction = Direction.LEFT;
-                break;
+                return Direction.LEFT;
             case LEFT:
-                direction = Direction.UP;
-                break;
+                return Direction.UP;
             case RIGHT:
-                direction = Direction.DOWN;
+                return Direction.DOWN;
             default:
+                return direction;
         }
-        return direction;
     }
 }

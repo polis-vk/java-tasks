@@ -11,10 +11,11 @@ public class Robot {
     private final int robotId;
     private int x;
     private int y;
-    Direction direction = Direction.UP;
+    Direction direction;
 
-    public Robot(int robotId) {
+    public Robot(int robotId, Direction direction) {
         this.robotId = robotId;
+        this.direction = Direction.UP;
     }
 
     public int getX() {
@@ -23,6 +24,10 @@ public class Robot {
 
     public int getY() {
         return y;
+    }
+
+    public int getRobotId() {
+        return robotId;
     }
 
     public void turnLeft() {
@@ -50,5 +55,4 @@ public class Robot {
             default:
         }
     }
-
 }
