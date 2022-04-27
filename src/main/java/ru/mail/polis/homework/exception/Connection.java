@@ -14,12 +14,11 @@ public class Connection implements RobotConnection {
 
     @Override
     public void moveRobotTo(int x, int y) throws RobotConnectionException {
-        if (connectionStatus) {
-            r2d2.setxCoord(x);
-            r2d2.setyCoord(y);
-        } else {
+        if (!connectionStatus) {
             throw new RobotConnectionException("Connection error!");
         }
+        r2d2.setxCoord(x);
+        r2d2.setyCoord(y);
     }
 
     @Override

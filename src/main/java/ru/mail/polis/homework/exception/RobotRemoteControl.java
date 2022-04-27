@@ -22,9 +22,11 @@ public class RobotRemoteControl {
         while (cnt != 2) {
             try {
                 connectionManager.getConnection(robotId).moveRobotTo(toX, toY);
+                connectionManager.getConnection(robotId).close();
                 break;
             } catch (RobotConnectionException | NullPointerException e) {
                 if (cnt == 2) {
+                    connectionManager.getConnection(robotId).close();
                     throw e;
                 }
             }

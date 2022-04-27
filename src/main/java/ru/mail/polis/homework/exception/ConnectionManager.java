@@ -3,24 +3,33 @@ package ru.mail.polis.homework.exception;
 import java.util.HashMap;
 
 public class ConnectionManager implements RobotConnectionManager {
-    public HashMap<Integer, Robot> getRobots() {
-        HashMap<Integer, Robot> robotsMap = new HashMap<>();
-        Robot robot1 = new Robot(1);
-        Robot robot2 = new Robot(2);
-        Robot robot3 = new Robot(3);
-        robotsMap.put(robot1.getId(), robot1);
-        robotsMap.put(robot2.getId(), robot2);
-        robotsMap.put(robot3.getId(), robot3);
-        return robotsMap;
+
+    private HashMap<Integer, Robot> robotsMap;
+    private Robot robot1;
+    private Robot robot2;
+    private Robot robot3;
+    private int count = 0;
+
+
+    public void setRobots() {
+        robotsMap.put(1, robot1);
+        robotsMap.put(2, robot2);
+        robotsMap.put(3, robot3);
     }
 
     @Override
     public RobotConnection getConnection(int robotId) throws RobotConnectionException {
-        Connection robotConnection = new Connection(getRobots().get(robotId));
-        if (robotConnection.getConnectionStatus()) {
-            return robotConnection;
-        } else {
+        if (count == 0) {
+            setRobots();
+        }
+        if (robotsMap.get(robotId) == null) {
             throw new RobotConnectionException("Connection error!");
         }
+        Connection robotConnection = new Connection(robotsMap.get(robotId));
+        if (!robotConnection.getConnectionStatus()) {
+            throw new RobotConnectionException("Connection error!");
+        }
+        count++;
+        return robotConnection;
     }
 }
