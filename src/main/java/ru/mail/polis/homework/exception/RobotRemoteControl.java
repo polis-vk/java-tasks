@@ -22,9 +22,6 @@ public class RobotRemoteControl {
     public void moveTo(int robotId, int toX, int toY) throws RobotConnectionException {
         for (int i = 0; i < 3; i++) {
             try (RobotConnection robotConnection = connectionManager.getConnection(robotId)) {
-                if (robotConnection==null){
-                    throw new IllegalArgumentException();
-                }
                 robotConnection.moveRobotTo(toX, toY);
                 robotConnection.close();
                 break;
