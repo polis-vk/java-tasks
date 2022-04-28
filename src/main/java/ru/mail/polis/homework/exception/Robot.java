@@ -9,6 +9,7 @@ package ru.mail.polis.homework.exception;
 public class Robot {
     private final PairPoint point;
     private final int id;
+    private boolean isConnected;
     private int powerValue;
 
     public Robot(int x, int y, int id) {
@@ -17,19 +18,21 @@ public class Robot {
         point.y = y;
         this.id = id;
         powerValue = 100;
+        isConnected = false;
+    }
+
+    public void setPoint(int x, int y) throws RobotPowerException {
+        int estimatedBatteryConsumption = Math.abs(point.x - x) + Math.abs(point.y - y);
+        if (estimatedBatteryConsumption <= powerValue) {
+            throw new RobotPowerException("Moving is not possible. The robot's battery charge is not enough for this");
+        }
+        powerValue -= estimatedBatteryConsumption;
+        point.x = x;
+        point.y = y;
     }
 
     public int getX() {
         return point.x;
-    }
-
-    public void setPoint(int x, int y) throws RobotPowerException {
-        if (!checkBatteryCapabilities(x, y)) {
-            throw new RobotPowerException("Moving is not possible. The robot's battery charge is not enough for this");
-        }
-        powerValue -= Math.abs(point.x - x) + Math.abs(point.y - y);
-        point.x = x;
-        point.y = y;
     }
 
     public int getY() {
@@ -44,8 +47,16 @@ public class Robot {
         return powerValue;
     }
 
-    private boolean checkBatteryCapabilities(int x, int y) {
-        return (Math.abs(point.x - x) + Math.abs(point.y - y)) <= powerValue;
+    public boolean getRobotStatusConnection() {
+        return isConnected;
+    }
+
+    public void connect() {
+        isConnected = true;
+    }
+
+    public void disconnect() {
+        isConnected = false;
     }
 
     private static class PairPoint {

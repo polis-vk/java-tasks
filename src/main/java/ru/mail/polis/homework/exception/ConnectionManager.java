@@ -20,11 +20,6 @@ public class ConnectionManager implements RobotConnectionManager {
     }
 
     private boolean searchRobotById(int robotId) {
-        for (Robot robot : robotsPool) {
-            if (robot.getId() == robotId) {
-                return true;
-            }
-        }
-        return false;
+        return (robotId >= 0) && (robotId < robotsPool.length);
     }
 }
