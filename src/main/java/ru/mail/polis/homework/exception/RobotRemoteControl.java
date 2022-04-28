@@ -23,7 +23,7 @@ public class RobotRemoteControl {
         for (int i = 0; i <= 3; i++) {
             try (RobotConnection connection = connectionManager.getConnection(robotId)) {
                 connection.moveRobotTo(toX, toY);
-                break;
+                return;
             } catch (RobotException e) {
                 if (i == 3) {
                     throw e;
