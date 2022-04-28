@@ -25,12 +25,12 @@ public class Robot {
     private double electricalCapacity = 100;
     private double mineralFuel;
 
-    private final double EFFICIENCY;
+    private final double efficiency;
 
     public Robot(double mineralFuel, double efficiency, int id) {
         this.id = id;
         this.mineralFuel = mineralFuel;
-        EFFICIENCY = efficiency;
+        this.efficiency = efficiency;
     }
 
     public double getX() {
@@ -54,7 +54,7 @@ public class Robot {
     }
 
     public boolean connection() throws NoEnergyException {
-        electricalCapacity -= 5 + 5 * (1 - EFFICIENCY);
+        electricalCapacity -= 5 + 5 * (1 - efficiency);
         if (electricalCapacity < 1) {
             generateElectricity();
         }
@@ -66,7 +66,7 @@ public class Robot {
     }
 
     public double distance(Robot robot) throws NoEnergyException {
-        electricalCapacity -= 5 + 5 * (1 - EFFICIENCY);
+        electricalCapacity -= 5 + 5 * (1 - efficiency);
         if (electricalCapacity < 1) {
             generateElectricity();
         }
@@ -74,7 +74,7 @@ public class Robot {
     }
 
     public double time(Robot robot, double speed) throws NoEnergyException {
-        electricalCapacity -= 5 + 5 * (1 - EFFICIENCY);
+        electricalCapacity -= 5 + 5 * (1 - efficiency);
         if (electricalCapacity < 1) {
             generateElectricity();
         }
@@ -82,7 +82,7 @@ public class Robot {
     }
 
     public double speed(Robot robot, int time) throws NoEnergyException {
-        electricalCapacity -= 5 + 5 * (1 - EFFICIENCY);
+        electricalCapacity -= 5 + 5 * (1 - efficiency);
         if (electricalCapacity < 1) {
             generateElectricity();
         }
@@ -90,7 +90,7 @@ public class Robot {
     }
 
     public double height(double time) throws NoEnergyException {
-        electricalCapacity -= 20 + 20 * (1 - EFFICIENCY);
+        electricalCapacity -= 20 + 20 * (1 - efficiency);
         if (electricalCapacity < 1) {
             generateElectricity();
         }
@@ -105,7 +105,7 @@ public class Robot {
                 if (electricalCapacity < 1) {
                     generateElectricity();
                 }
-                electricalCapacity -= 1 + 1 * (1 - EFFICIENCY);
+                electricalCapacity -= 1 + 1 * (1 - efficiency);
                 range -= 0.1;
             }
             setX(robot.x);
