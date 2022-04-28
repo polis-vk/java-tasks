@@ -19,7 +19,7 @@ public class ConnectionManager implements RobotConnectionManager {
             throw new RobotException("This Robot does not exist");
         }
         Robot robot = robotHashMap.get(robotId);
-        if (robot == null){
+        if (robot == null) {
             throw new RobotException("Null Pointer Exception");
         }
         return new Connection(robot);

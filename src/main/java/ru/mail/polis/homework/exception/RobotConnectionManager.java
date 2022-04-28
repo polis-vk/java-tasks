@@ -3,7 +3,7 @@ package ru.mail.polis.homework.exception;
 /**
  * Класс отвечает за установку соединения с роботом.
  * Робот может управляться только через RobotConnection
- *
+ * <p>
  * 2 тугрика
  */
 public interface RobotConnectionManager {

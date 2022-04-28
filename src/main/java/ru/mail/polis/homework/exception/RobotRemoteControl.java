@@ -24,8 +24,8 @@ public class RobotRemoteControl {
             try (RobotConnection connection = connectionManager.getConnection(robotId)) {
                 connection.moveRobotTo(toX, toY);
                 break;
-            }catch (RobotException e){
-                if (i == 3){
+            } catch (RobotException e) {
+                if (i == 3) {
                     throw e;
                 }
             }
