@@ -31,5 +31,6 @@ public class RobotRemoteControl {
                 }
             }
         }
+        connectionManager.closeConnection(robotId);
     }
 }

@@ -13,4 +13,6 @@ public interface RobotConnectionManager {
      * Если соединение не установилось - то метод кидает исключение
      */
     RobotConnection getConnection(int robotId) throws RobotConnectionException;
+
+    void closeConnection(int robotId) throws RobotConnectionException;
 }

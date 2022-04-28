@@ -2,15 +2,15 @@ package ru.mail.polis.homework.exception;
 
 public class Connection implements RobotConnection {
     private Robot robot;
-    private boolean isConnected;
+    private boolean connected;
 
     public Connection(int id) {
         robot = new Robot(id);
-        isConnected = true;
+        connected = true;
     }
 
     public void moveRobotTo(int x, int y) throws RobotConnectionException {
-        if (!isConnected) {
+        if (!connected) {
             throw new RobotConnectionException();
         }
         int[] coordinates = robot.getCoordinates();
@@ -19,10 +19,10 @@ public class Connection implements RobotConnection {
 
     public boolean isConnected() {
         robot = null;
-        return isConnected;
+        return connected;
     }
 
     public void close() {
-        isConnected = false;
+        connected = false;
     }
 }

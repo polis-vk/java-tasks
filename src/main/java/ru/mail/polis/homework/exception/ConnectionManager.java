@@ -27,4 +27,13 @@ public class ConnectionManager implements RobotConnectionManager {
         setConnection(robotId);
         return connections.get(robotId);
     }
+
+    public void closeConnection(int robotId) throws RobotConnectionException {
+        RobotConnection connection = connections.get(robotId);
+        if (connection == null) {
+            throw new RobotConnectionException("The connection is already closed!");
+        }
+        connection.close();
+        connections.remove(robotId);
+    }
 }
