@@ -56,22 +56,22 @@ public class ReflectionToStringHelper {
             return "null";
         }
         Class<?> c = object.getClass();
-        Class<?> superClass = c.getSuperclass();
-
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         sb.append(fieldsToString(c, object));
-        while (superClass != Object.class) {
+
+        c = c.getSuperclass();
+        while (c != Object.class) {
             sb.append(", ");
-            sb.append(fieldsToString(superClass, object));
-            superClass = superClass.getSuperclass();
+            sb.append(fieldsToString(c, object));
+            c = c.getSuperclass();
         }
         sb.append("}");
 
         return sb.toString();
     }
 
-    private static String fieldsToString(Class<?> c, Object object) {
+    private static StringBuilder fieldsToString(Class<?> c, Object object) {
         List<Field> fields = Arrays.stream(c.getDeclaredFields())
                 .filter(field -> !Modifier.isStatic(field.getModifiers()))
                 .filter(field -> !field.isAnnotationPresent(SkipField.class))
@@ -79,7 +79,7 @@ public class ReflectionToStringHelper {
                 .collect(Collectors.toList());
 
         if (fields.size() == 0) {
-            return "";
+            return new StringBuilder();
         }
 
         StringBuilder sb = new StringBuilder();
@@ -90,7 +90,7 @@ public class ReflectionToStringHelper {
                 }
                 Field current = fields.get(i);
                 sb.append(current.getName()).append(": ");
-                current.setAccessible(true); // после этого нужно возвращать значение на false?
+                current.setAccessible(true);
                 if (current.getType().isArray()) {
                     sb.append(arrayToString(current.get(object)));
                 } else {
@@ -101,12 +101,12 @@ public class ReflectionToStringHelper {
             e.printStackTrace();
         }
 
-        return sb.toString();
+        return sb;
     }
 
-    private static String arrayToString(Object array) {
+    private static StringBuilder arrayToString(Object array) {
         if (array == null) {
-            return "null";
+            return new StringBuilder("null");
         }
         StringBuilder sb = new StringBuilder();
         sb.append("[");
@@ -117,6 +117,6 @@ public class ReflectionToStringHelper {
             sb.append(Array.get(array, i));
         }
         sb.append("]");
-        return sb.toString();
+        return sb;
     }
 }
