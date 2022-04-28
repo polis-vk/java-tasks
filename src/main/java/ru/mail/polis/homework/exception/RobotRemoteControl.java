@@ -10,7 +10,7 @@ package ru.mail.polis.homework.exception;
  */
 public class RobotRemoteControl {
 
-    private final RobotConnectionManager connectionManager = new ConnectionManager();
+    public final RobotConnectionManager connectionManager = new ConnectionManager();
 
     /**
      * Метод должен открыть соединение и отправить робота в указанную точку. При неудаче - повторить действие еще 2 раза,
@@ -18,13 +18,15 @@ public class RobotRemoteControl {
      * Попытка считается успешной, если соединение открылось и вызвался метод moveRobotTo без исключений.
      */
     public void moveTo(int robotId, int toX, int toY) throws RobotConnectionException {
+        int tries = 0;
         for (int i = 1; i <= 3; i++) {
             try {
                 RobotConnection connection = connectionManager.getConnection(robotId);
                 connection.moveRobotTo(toX, toY);
                 break;
             } catch (RobotConnectionException e) {
-                if (i == 2) {
+                tries++;
+                if (tries == 3) {
                     throw e;
                 }
             }

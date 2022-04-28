@@ -12,16 +12,17 @@ public class ConnectionManager implements RobotConnectionManager {
     }
 
     public void setConnection(int robotId) throws RobotConnectionException {
-        Connection connection = new Connection(robotId);
+        RobotConnection connection = new Connection(robotId);
         if (connections.containsKey(robotId)) {
             throw new RobotConnectionException("The connection has already been established!");
         }
-        connections.putIfAbsent(robotId, connection);
+        connections.put(robotId, connection);
     }
 
     public RobotConnection getConnection(int robotId) throws RobotConnectionException {
-        if (connections.containsKey(robotId)) {
-            return connections.get(robotId);
+        RobotConnection connection = connections.get(robotId);
+        if (connection != null) {
+            return connection;
         }
         setConnection(robotId);
         return connections.get(robotId);

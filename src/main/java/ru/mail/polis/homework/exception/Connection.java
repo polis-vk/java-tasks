@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.exception;
 
 public class Connection implements RobotConnection {
-    private final Robot robot;
+    private Robot robot;
     private boolean isConnected;
 
     public Connection(int id) {
@@ -18,6 +18,7 @@ public class Connection implements RobotConnection {
     }
 
     public boolean isConnected() {
+        robot = null;
         return isConnected;
     }
 
