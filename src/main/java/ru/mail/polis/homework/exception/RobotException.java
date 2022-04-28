@@ -6,6 +6,6 @@ public class RobotException extends Exception {
     }
 
     public RobotException() {
-        super("Connection Lost");
+        super("Connection Lost!");
     }
 }
