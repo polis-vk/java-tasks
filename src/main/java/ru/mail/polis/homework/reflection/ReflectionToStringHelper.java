@@ -56,33 +56,33 @@ public class ReflectionToStringHelper {
         Class<?> inputClass = object.getClass();
         StringBuilder resultString = new StringBuilder();
         resultString.append("{");
-        while (Object.class != inputClass) {
-            printFields(inputClass, object, resultString);
+        while (!Object.class.equals(inputClass)) {
+            FieldsToString(inputClass, object, resultString);
             inputClass = inputClass.getSuperclass();
         }
-        if (resultString.length() > 1) {
-            resultString.setLength(resultString.length() - 2);
+        int index = resultString.lastIndexOf(",");
+        if (index >= 0) {
+            resultString.setLength(index);
         }
         resultString.append("}");
         return resultString.toString();
     }
 
-    private static void printFields(Class<?> inputClass, Object object, StringBuilder builder) {
+    private static void FieldsToString(Class<?> inputClass, Object object, StringBuilder builder) {
         Field[] fields = inputClass.getDeclaredFields();
         Arrays.sort(fields, Comparator.comparing(Field::getName));
-        for (Field field : fields) {
-            field.setAccessible(true);
-            if (!(field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers()))) {
+        try {
+            for (Field field : fields) {
+                if ((field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers()))) {
+                    continue;
+                }
                 builder.append(field.getName()).append(": ");
                 Object content = null;
-                try {
-                    content = field.get(object);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
+                field.setAccessible(true);
+                content = field.get(object);
                 if (content != null) {
                     if (field.getType().isArray()) {
-                        printArray(builder, content);
+                        ArrayToString(builder, content);
                     } else {
                         builder.append(content);
                     }
@@ -91,10 +91,12 @@ public class ReflectionToStringHelper {
                 }
                 builder.append(", ");
             }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
     }
 
-    private static void printArray(StringBuilder builder, Object value) {
+    private static void ArrayToString(StringBuilder builder, Object value) {
         builder.append("[");
         int length = Array.getLength(value);
         for (int i = 0; i < length; i++) {
