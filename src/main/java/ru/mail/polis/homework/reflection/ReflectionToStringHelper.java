@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -58,33 +60,32 @@ public class ReflectionToStringHelper {
 
         Class<?> objectClass = object.getClass();
         while (objectClass != null) {
-            Arrays.stream(objectClass.getDeclaredFields())
+            List<Field> fields = Arrays.stream(objectClass.getDeclaredFields())
+                    .filter(field -> !Modifier.isStatic(field.getModifiers())
+                            && !field.isAnnotationPresent(SkipField.class))
                     .sorted(Comparator.comparing(Field::getName))
-                    .forEach(field -> {
-                        String currentField = parseField(object, field);
+                    .collect(Collectors.toList());
 
-                        if (currentField != null) {
-                            objectToString.append(currentField).append(", ");
-                        }
-                    });
+            if (fields.size() != 0 && !objectClass.equals(object.getClass())) {
+                objectToString.append(", ");
+            }
+
+            for (Field field : fields) {
+                objectToString.append(parseField(object, field));
+
+                if (fields.indexOf(field) != fields.size() - 1) {
+                    objectToString.append(", ");
+                }
+            }
 
             objectClass = objectClass.getSuperclass();
         }
 
-        if (objectToString.length() == 1) {
-            return objectToString.append("}").toString();
-        }
-
-        return objectToString.delete(objectToString.length() - 2, objectToString.length()).append("}").toString();
+        return objectToString.append("}").toString();
     }
 
-    private static String parseField(Object object, Field field) {
-        if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
-            return null;
-        }
-
-        StringBuilder currentField = new StringBuilder();
-        currentField.append(field.getName()).append(": ");
+    private static StringBuilder parseField(Object object, Field field) {
+        StringBuilder currentField = new StringBuilder().append(field.getName()).append(": ");
 
         if (!field.canAccess(object)) {
             field.setAccessible(true);
@@ -96,25 +97,23 @@ public class ReflectionToStringHelper {
         } catch (IllegalAccessException ignored) {
         }
 
-        return (value == null || !value.getClass().isArray()) ? currentField.append(value).toString()
-                : currentField.append(parseValueArray(value)).toString();
+        return (value == null || !value.getClass().isArray()) ? currentField.append(value)
+                : currentField.append(parseValueArrays(value));
     }
 
-    private static String parseValueArray(Object value) {
-        if (Array.getLength(value) == 0) {
-            return "[]";
-        }
+    private static StringBuilder parseValueArrays(Object value) {
+        StringBuilder arraysToString = new StringBuilder();
 
-        StringBuilder arrayToString = new StringBuilder();
-        arrayToString.append("[");
+        arraysToString.append("[");
         for (int i = 0; i < Array.getLength(value); i++) {
-            arrayToString.append(Array.get(value, i));
-            arrayToString.append(", ");
+            if (i != 0) {
+                arraysToString.append(", ");
+            }
+            arraysToString.append(Array.get(value, i));
         }
-        arrayToString.delete(arrayToString.length() - 2, arrayToString.length());
-        arrayToString.append("]");
+        arraysToString.append("]");
 
-        return arrayToString.toString();
+        return arraysToString;
     }
 
 }
