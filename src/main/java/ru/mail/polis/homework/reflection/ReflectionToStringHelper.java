@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.reflection;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -53,33 +52,35 @@ public class ReflectionToStringHelper {
             return "null";
         }
 
+        StringBuilder output = new StringBuilder();
+        output.append("{");
         try {
-            StringBuilder output = new StringBuilder();
             Class<?> currentClass = object.getClass();
-            output.append("{");
             do {
                 Field[] currentFields = currentClass.getDeclaredFields();
-                currentFields = Arrays.stream(currentFields).sorted(Comparator.comparing(Field::getName)).toArray(Field[]::new);
+                currentFields = Arrays.stream(currentFields)
+                        .filter(field -> !Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class))
+                        .sorted(Comparator.comparing(Field::getName))
+                        .toArray(Field[]::new);
                 for (Field field : currentFields) {
-                    if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
-                        continue;
-                    }
-                    output.append(field.getName()).append(": ").append(getFieldValue(field, object)).append(", ");
+                    output.append(field.getName()).append(": ");
+                    getFieldValue(output, field, object);
+                    output.append(", ");
                 }
                 currentClass = currentClass.getSuperclass();
             }
             while (currentClass != null);
             output.delete(output.length() - 2, output.length());
-            output.append("}");
-            return output.toString();
         } catch (Exception ignored) {
         }
-        return "{}";
+        output.append("}");
+        return output.toString();
     }
 
-    private static String getFieldValue(Field field, Object object) throws IllegalAccessException {
+    private static void getFieldValue(StringBuilder builder, Field field, Object object) throws IllegalAccessException {
         if (field == null) {
-            return "null";
+            builder.append("null");
+            return;
         }
 
         if (!field.canAccess(object)) {
@@ -88,23 +89,13 @@ public class ReflectionToStringHelper {
 
         Object value = field.get(object);
         Class<?> currentClass = field.getType();
-        if (currentClass.isArray()) {
-            if (value == null) {
-                return "null";
-            }
-
-            StringBuilder stringArray = new StringBuilder();
-            stringArray.append("[");
-            for (int i = 0; i < Array.getLength(value); i++) {
-                stringArray.append(Array.get(value, i)).append(", ");
-            }
-            if (stringArray.length() > 1) {
-                stringArray.delete(stringArray.length() - 2, stringArray.length());
-            }
-            stringArray.append("]");
-            return String.valueOf(stringArray);
+        if (currentClass == int[].class) {
+            builder.append(Arrays.toString((int[]) value));
+        } else if (currentClass.isArray()) {
+            builder.append(Arrays.toString((Object[]) value));
+        } else {
+            builder.append(value);
         }
-        return String.valueOf(value);
     }
 
 }
