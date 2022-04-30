@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.reflection;
 
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -55,44 +56,44 @@ public class ReflectionToStringHelper {
             return "null";
         }
         StringBuilder result = new StringBuilder("{");
-        Class<?> objFromClass = object.getClass();
+        Class<?> objClass = object.getClass();
         do {
-            result.append(recordFields(objFromClass, object));
-            objFromClass = objFromClass.getSuperclass();
-        } while (!objFromClass.equals(Object.class));
+            recordFields(objClass, object, result);
+            objClass = objClass.getSuperclass();
+        } while (!objClass.equals(Object.class));
         if (result.length() > 1) {
             result.setLength(result.length() - 2);
         }
-        return result.append('}').toString();
+        return result.append("}").toString();
     }
 
-    public static String recordFields(Class<?> objClass, Object object) {
-        StringBuilder fieldsData = new StringBuilder();
-        List<Field> fields = Arrays.asList(objClass.getDeclaredFields());
-        fields.sort(Comparator.comparing(Field::getName));
-        for (Field field : fields) {
-            try {
-                if (!field.isAnnotationPresent(SkipField.class) && !Modifier.isStatic(field.getModifiers())) {
-                    fieldsData.append(field.getName()).append(": ");
-                    field.setAccessible(true);
-                    if (field.get(object) == null) {
-                        fieldsData.append("null");
-                    } else if (field.getType().isArray()) {
-                        fieldsData.append(printArray(field.get(object)));
-                    } else {
-                        fieldsData.append(field.get(object));
-                    }
-                    fieldsData.append(", ");
+    public static void recordFields(Class<?> objClass, Object object, StringBuilder result) {
+        List<Field> fieldsData = Arrays.asList(objClass.getDeclaredFields());
+        fieldsData.sort(Comparator.comparing(Field::getName));
+        try {
+            for (Field field : fieldsData) {
+                if (field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers())) {
+                    continue;
                 }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                result.append(field.getName());
+                result.append(": ");
+                field.setAccessible(true);
+                if (field.get(object) == null) {
+                    result.append("null");
+                } else if (field.getType().isArray()) {
+                    arraysToStringBuilder(field.get(object), result);
+                } else {
+                    result.append(field.get(object));
+                }
+                result.append(", ");
             }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
-        return fieldsData.toString();
     }
 
-    public static String printArray(Object object) {
-        StringBuilder result = new StringBuilder("[");
+    public static void arraysToStringBuilder(Object object, StringBuilder result) {
+        result.append("[");
         Object buff;
         for (int i = 0; i < Array.getLength(object); i++) {
             buff = Array.get(object, i);
@@ -103,9 +104,9 @@ public class ReflectionToStringHelper {
             }
             result.append(", ");
         }
-        if (result.length() > 1) {
+        if (Array.getLength(object) > 0) {
             result.setLength(result.length() - 2);
         }
-        return result.append("]").toString();
+        result.append("]");
     }
 }
