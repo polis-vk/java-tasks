@@ -90,7 +90,7 @@ public class ReflectionToStringHelper {
             if (value == null) {
                 stringBuilder.append("null");
             } else if (field.getType().isArray()) {
-                arrayToString(value, stringBuilder);
+                arraysToString(value, stringBuilder);
             } else {
                 stringBuilder.append(value);
             }
@@ -98,7 +98,7 @@ public class ReflectionToStringHelper {
         }
     }
 
-    private static void arrayToString(Object object, StringBuilder stringBuilder) {
+    private static void arraysToString(Object object, StringBuilder stringBuilder) {
         stringBuilder.append("[");
         String comma = "";
         for (int i = 0; i < Array.getLength(object); i++) {
