@@ -57,7 +57,13 @@ public class ReflectionToStringHelper {
         StringBuilder stringBuilder = new StringBuilder("{");
 
         while (!Objects.equals(clazz, Object.class)) {
-            fieldToString(clazz, object, stringBuilder);
+            for (Field field : getSortedFields(clazz)) {
+                if (isSkippedField(field)) {
+                    continue;
+                }
+                appendFieldToStringBuilder(field, object, stringBuilder);
+                stringBuilder.append(", ");
+            }
             clazz = clazz.getSuperclass();
         }
 
@@ -71,39 +77,31 @@ public class ReflectionToStringHelper {
         return stringBuilder.toString();
     }
 
-    private static void fieldToString(Class<?> clazz, Object object, StringBuilder stringBuilder) {
-        Field[] fields = getSortedFields(clazz);
+    private static void appendFieldToStringBuilder(Field field, Object object, StringBuilder stringBuilder) {
+        field.setAccessible(true);
+        stringBuilder.append(field.getName()).append(": ");
+        Object value = null;
+        try {
+            value = field.get(object);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
 
-        for (Field field : fields) {
-            field.setAccessible(true);
-            if (isSkippedField(field)) {
-                continue;
-            }
-            stringBuilder.append(field.getName()).append(": ");
-            Object value = null;
-            try {
-                value = field.get(object);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-
-            if (value == null) {
-                stringBuilder.append("null");
-            } else if (field.getType().isArray()) {
-                arraysToString(value, stringBuilder);
-            } else {
-                stringBuilder.append(value);
-            }
-            stringBuilder.append(", ");
+        if (value != null && field.getType().isArray()) {
+            appendArraysToStringBuilder(value, stringBuilder);
+        } else {
+            stringBuilder.append(value);
         }
     }
 
-    private static void arraysToString(Object object, StringBuilder stringBuilder) {
+    private static void appendArraysToStringBuilder(Object object, StringBuilder stringBuilder) {
+        int length = Array.getLength(object);
         stringBuilder.append("[");
-        String comma = "";
-        for (int i = 0; i < Array.getLength(object); i++) {
-            stringBuilder.append(comma).append(Array.get(object, i));
-            comma = ", ";
+        if (length > 0) {
+            stringBuilder.append(Array.get(object, 0));
+        }
+        for (int i = 1; i < length; i++) {
+            stringBuilder.append(", ").append(Array.get(object, i));
         }
         stringBuilder.append("]");
     }
