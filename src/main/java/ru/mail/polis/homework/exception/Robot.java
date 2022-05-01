@@ -10,21 +10,12 @@ public class Robot {
     private final int id;
     private int x;
     private int y;
-    private boolean isConnected;
+    private boolean connected;
 
     public Robot(int id, int x, int y) {
         this.id = id;
         this.x = x;
         this.y = y;
-        this.isConnected = false;
-    }
-
-    public void setConnected(boolean connected) {
-        isConnected = connected;
-    }
-
-    public boolean isConnected() {
-        return isConnected;
     }
 
     public void setX(int x) {
