@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -57,19 +58,17 @@ public class ReflectionToStringHelper {
         try {
             Class<?> currentClass = object.getClass();
             do {
-                Field[] currentFields = currentClass.getDeclaredFields();
-                currentFields = Arrays.stream(currentFields)
+                Field[] currentFields = Arrays.stream(currentClass.getDeclaredFields())
                         .filter(field -> !Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class))
                         .sorted(Comparator.comparing(Field::getName))
                         .toArray(Field[]::new);
                 for (Field field : currentFields) {
                     output.append(field.getName()).append(": ");
-                    getFieldValue(output, field, object);
+                    appendInString(output, field, object);
                     output.append(", ");
                 }
                 currentClass = currentClass.getSuperclass();
-            }
-            while (currentClass != null);
+            } while (currentClass != null);
             output.delete(output.length() - 2, output.length());
         } catch (Exception ignored) {
         }
@@ -77,22 +76,27 @@ public class ReflectionToStringHelper {
         return output.toString();
     }
 
-    private static void getFieldValue(StringBuilder builder, Field field, Object object) throws IllegalAccessException {
-        if (field == null) {
-            builder.append("null");
-            return;
-        }
-
+    private static void appendInString(StringBuilder builder, Field field, Object object) throws IllegalAccessException {
         if (!field.canAccess(object)) {
             field.setAccessible(true);
         }
 
         Object value = field.get(object);
         Class<?> currentClass = field.getType();
-        if (currentClass == int[].class) {
-            builder.append(Arrays.toString((int[]) value));
-        } else if (currentClass.isArray()) {
-            builder.append(Arrays.toString((Object[]) value));
+        if (currentClass.isArray()) {
+            if (value == null) {
+                builder.append("null");
+                return;
+            }
+
+            builder.append("[");
+            for (int i = 0; i < Array.getLength(value); i++) {
+                if (i != 0) {
+                    builder.append(", ");
+                }
+                builder.append(Array.get(value, i));
+            }
+            builder.append("]");
         } else {
             builder.append(value);
         }
