@@ -58,7 +58,7 @@ public class ReflectionToStringHelper {
 
         while (!Objects.equals(clazz, Object.class)) {
             for (Field field : getSortedFields(clazz)) {
-                if (isSkippedField(field)) {
+                if (shouldSkipField(field)) {
                     continue;
                 }
                 appendFieldToStringBuilder(field, object, stringBuilder);
@@ -112,7 +112,7 @@ public class ReflectionToStringHelper {
         return fields;
     }
 
-    private static boolean isSkippedField(Field field) {
+    private static boolean shouldSkipField(Field field) {
         return field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers());
     }
 }
