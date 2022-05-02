@@ -3,9 +3,10 @@ package ru.mail.polis.homework.reflection;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,39 +54,37 @@ public class ReflectionToStringHelper {
         if (object == null) {
             return "null";
         }
-        Field[] fields = object.getClass().getDeclaredFields();
-        Map<String, String> fieldsMap = new HashMap<>();
-        Object value;
+        StringBuilder result = new StringBuilder("{");
+        Class<?> curClass = object.getClass();
+        List<Field> fields = new ArrayList<>(Arrays.asList(curClass.getDeclaredFields()));
+        Field field;
         try {
-            for (Field field :
-                    fields) {
-                if (Modifier.isStatic(field.getModifiers())) {
+            do {
+                for (int i = 0; i < fields.size(); i++) {
+                    field = fields.get(i);
+                    if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
+                        fields.remove(i);
+                        i--;
+                    }
+                }
+                result.append(electedFieldsToString(fields, object));
+                curClass = curClass.getSuperclass();
+                fields = new ArrayList<>(Arrays.asList(curClass.getDeclaredFields()));
+                if(fields.size() == 0){
                     continue;
                 }
-                if (field.isAnnotationPresent(SkipField.class)) {
-                    continue;
-                }
-                if (!field.isAccessible()) {
-                    field.setAccessible(true);
-                }
-                value = field.get(object);
-                if (value == null) {
-                    fieldsMap.put(field.getName(), "null");
-                    continue;
-                }
-                if (field.getType().isArray()) {
-                    fieldsMap.put(field.getName(), arrayToString(value));
-                    continue;
-                }
-                fieldsMap.put(field.getName(), value.toString());
-            }
+                result.append(", ");
+            }while(curClass != Object.class);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        return createString(fieldsMap);
+        return result.append("}").toString();
     }
 
     private static String arrayToString(Object value) {
+        if(value == null){
+            return "null";
+        }
         StringBuilder result = new StringBuilder("[");
         for (int i = 0; i < Array.getLength(value); i++) {
             result.append(Array.get(value, i));
@@ -97,19 +96,30 @@ public class ReflectionToStringHelper {
         return result.append("]").toString();
     }
 
-    private static String createString(Map<String, String> fieldsMap) {
-        StringBuilder result = new StringBuilder("{");
-        Map<String, String> sortedFieldsMap = new TreeMap<>(fieldsMap);
-        Map.Entry<String, String>[] entrySet = sortedFieldsMap.entrySet().toArray(new Map.Entry[0]);
-        for (int i = 0; i < entrySet.length; i++) {
-            result.append(entrySet[i].getKey());
+    private static String electedFieldsToString(List<Field> fields, Object object) throws IllegalAccessException {
+        StringBuilder result = new StringBuilder();
+        fields.sort(Comparator.comparing(Field::getName));
+        int countFields = fields.size();
+        Object value;
+        Field field;
+        for (int i = 0; i < countFields; i++) {
+            field = fields.get(i);
+            result.append(field.getName());
             result.append(": ");
-            result.append(entrySet[i].getValue());
-            if (i == entrySet.length - 1) {
+            if (!field.isAccessible()) {
+                field.setAccessible(true);
+            }
+            value = field.get(object);
+            if (field.getType().isArray()) {
+                result.append(arrayToString(value));
+            } else {
+                result.append(value);
+            }
+            if (i == countFields - 1) {
                 break;
             }
             result.append(", ");
         }
-        return result.append("}").toString();
+        return result.toString();
     }
 }
