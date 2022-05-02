@@ -67,9 +67,8 @@ public class ReflectionToStringHelper {
             clazz = clazz.getSuperclass();
         }
 
-        int lastCommaIndex = stringBuilder.lastIndexOf(", ");
-        if (lastCommaIndex > 0) {
-            stringBuilder.setLength(lastCommaIndex);
+        if (stringBuilder.length() > 1) {
+            stringBuilder.setLength(stringBuilder.length() - 2);
         }
 
         stringBuilder.append("}");
@@ -88,13 +87,13 @@ public class ReflectionToStringHelper {
         }
 
         if (value != null && field.getType().isArray()) {
-            appendArraysToStringBuilder(value, stringBuilder);
+            appendArrayToStringBuilder(value, stringBuilder);
         } else {
             stringBuilder.append(value);
         }
     }
 
-    private static void appendArraysToStringBuilder(Object object, StringBuilder stringBuilder) {
+    private static void appendArrayToStringBuilder(Object object, StringBuilder stringBuilder) {
         int length = Array.getLength(object);
         stringBuilder.append("[");
         if (length > 0) {
