@@ -57,7 +57,7 @@ public class ReflectionToStringHelper {
         StringBuilder resultString = new StringBuilder();
         resultString.append("{");
         while (!Object.class.equals(inputClass)) {
-            FieldsToString(inputClass, object, resultString);
+            convertFieldsToString(inputClass, object, resultString);
             inputClass = inputClass.getSuperclass();
         }
         int index = resultString.lastIndexOf(",");
@@ -68,7 +68,7 @@ public class ReflectionToStringHelper {
         return resultString.toString();
     }
 
-    private static void FieldsToString(Class<?> inputClass, Object object, StringBuilder builder) {
+    private static void convertFieldsToString(Class<?> inputClass, Object object, StringBuilder builder) {
         Field[] fields = inputClass.getDeclaredFields();
         Arrays.sort(fields, Comparator.comparing(Field::getName));
         try {
@@ -82,7 +82,7 @@ public class ReflectionToStringHelper {
                 content = field.get(object);
                 if (content != null) {
                     if (field.getType().isArray()) {
-                        ArrayToString(builder, content);
+                        convertArrayToString(builder, content);
                     } else {
                         builder.append(content);
                     }
@@ -96,7 +96,7 @@ public class ReflectionToStringHelper {
         }
     }
 
-    private static void ArrayToString(StringBuilder builder, Object value) {
+    private static void convertArrayToString(StringBuilder builder, Object value) {
         builder.append("[");
         int length = Array.getLength(value);
         for (int i = 0; i < length; i++) {
