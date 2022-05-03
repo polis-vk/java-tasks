@@ -48,43 +48,38 @@ import java.util.Comparator;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
         if (object == null) {
             return "null";
         }
 
         Class<?> cl = object.getClass();
         Field[] fields = cl.getDeclaredFields();
-        Arrays.sort(fields, Comparator.comparing(Field::toString));
-        int modifiers;
+        Arrays.sort(fields, Comparator.comparing(Field::getName));
         StringBuilder result = new StringBuilder("{");
-        String value;
 
         for (Field field : fields) {
             try {
-                modifiers = field.getModifiers();
-                if (Modifier.isStatic(modifiers)) {
-                    continue;
-                }
-                if (field.getAnnotation(SkipField.class) != null) {
+                if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
                     continue;
                 }
                 field.setAccessible(true);
+                result.append(field.getName()).append(": ");
                 if (field.get(object) == null) {
-                    value = "null";
+                    result.append("null");
                 } else {
-                    value = field.get(object).toString();
+                    result.append(field.get(object).toString());
                 }
-                if (result.length() > 1) {
-                    result.append(", ");
-                }
-                result.append(field.getName()).append(": ").append(value);
+                result.append(", ");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        return result.append("}").toString();
+        int length = result.length();
+        if (length < 3) {
+            return "{}";
+        }
+        return result.delete(length - 2, length).append("}").toString();
     }
 }
 
