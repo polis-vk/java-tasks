@@ -1,9 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Objects;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,33 +55,67 @@ public class ReflectionToStringHelper {
             return "null";
         }
 
-        Class<?> clazz = object.getClass();
-        Field[] fields = clazz.getDeclaredFields();
-        if (fields.length == 0) {
+        if (object.getClass().getDeclaredFields().length == 0) {
             return "{}";
         }
+
+        return "{" + reflect(object.getClass(), object) + "}";
+    }
+
+    private static String reflect(Class<?> clazz, Object object) {
+        Field[] fields = clazz.getDeclaredFields();
+        if (fields.length == 0) {
+            return "";
+        }
         Arrays.sort(fields, Comparator.comparingInt(o -> o.getName().charAt(0)));
-        StringBuilder result = new StringBuilder("{");
+        StringBuilder result = new StringBuilder();
 
         for (Field field : fields) {
             if (field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
-
-            result.append(field.getName());
-            result.append(": ");
-
             field.setAccessible(true);
+            Object value = null;
             try {
-                result.append(field.get(object));
+                value = field.get(object);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
 
+            result.append(field.getName()).append(": ");
+            if (value != null && field.getType().isArray()) {
+                result.append(arrayToString(value));
+            } else {
+                result.append(value);
+            }
             result.append(", ");
         }
         result = new StringBuilder(result.substring(0, result.length() - 2));
-        result.append("}");
+
+        Class<?> superClazz = clazz.getSuperclass();
+        if (!Objects.equals(superClazz, Object.class)) {
+            result.append(", ");
+            result.append(reflect(superClazz, object));
+        }
+
         return result.toString();
+    }
+
+    private static String arrayToString(Object array) {
+        int length = Array.getLength(array);
+        if (length == 0) {
+            return "[]";
+        }
+        StringBuilder result = new StringBuilder("[");
+
+        for (int i = 0; i < length; i++) {
+            if (Array.get(array, i) == null) {
+                result.append("null").append(", ");
+            } else {
+                result.append(Array.get(array, i)).append(", ");
+            }
+        }
+
+        return result.substring(0, result.length() - 2) + "]";
     }
 }
