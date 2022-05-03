@@ -68,8 +68,8 @@ public class ReflectionToStringHelper {
     }
 
     public static void recordFields(Class<?> objClass, Object object, StringBuilder result) {
-        List<Field> fieldsData = Arrays.asList(objClass.getDeclaredFields());
-        fieldsData.sort(Comparator.comparing(Field::getName));
+        Field[] fieldsData = objClass.getDeclaredFields();
+        Arrays.sort(fieldsData, Comparator.comparing(Field::getName));
         try {
             for (Field field : fieldsData) {
                 if (field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers())) {
@@ -78,9 +78,7 @@ public class ReflectionToStringHelper {
                 result.append(field.getName());
                 result.append(": ");
                 field.setAccessible(true);
-                if (field.get(object) == null) {
-                    result.append("null");
-                } else if (field.getType().isArray()) {
+                if (field.get(object) != null && field.getType().isArray()) {
                     arraysToStringBuilder(field.get(object), result);
                 } else {
                     result.append(field.get(object));
@@ -97,10 +95,10 @@ public class ReflectionToStringHelper {
         Object buff;
         for (int i = 0; i < Array.getLength(object); i++) {
             buff = Array.get(object, i);
-            if (buff == null) {
-                result.append("null");
-            } else {
+            if (buff != null) {
                 result.append(Array.get(object, i));
+            } else {
+                result.append(buff);
             }
             result.append(", ");
         }
