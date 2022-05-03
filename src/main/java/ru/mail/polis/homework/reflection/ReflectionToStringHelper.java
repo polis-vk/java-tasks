@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -53,21 +54,32 @@ public class ReflectionToStringHelper {
         }
 
         Class<?> cl = object.getClass();
-        Field[] fields = cl.getDeclaredFields();
-        Arrays.sort(fields, Comparator.comparing(Field::getName));
         StringBuilder result = new StringBuilder("{");
+        result.append(getFields(cl, object));
+
+        int length = result.length();
+        if (length < 3) {
+            return "{}";
+        }
+        return result.delete(length - 2, length).append("}").toString();
+    }
+
+    private static <T> StringBuilder getFields(Class<T> tClass, Object object) {
+        Field[] fields = tClass.getDeclaredFields();
+        Arrays.sort(fields, Comparator.comparing(Field::getName));
+        StringBuilder result = new StringBuilder();
 
         for (Field field : fields) {
             try {
                 if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
                     continue;
                 }
-                field.setAccessible(true);
                 result.append(field.getName()).append(": ");
-                if (field.get(object) == null) {
-                    result.append("null");
+                field.setAccessible(true);
+                if (field.getType().isArray()) {
+                    result.append(arrayToStringBuilder(field.get(object)));
                 } else {
-                    result.append(field.get(object).toString());
+                    result.append(field.get(object));
                 }
                 result.append(", ");
             } catch (Exception e) {
@@ -75,11 +87,27 @@ public class ReflectionToStringHelper {
             }
         }
 
+        if (tClass.getSuperclass() != null) {
+            result.append(getFields(tClass.getSuperclass(), object));
+        }
+        return result;
+    }
+
+    private static StringBuilder arrayToStringBuilder(Object object) {
+        if (object == null) {
+            return new StringBuilder("null");
+        }
+
+        StringBuilder result = new StringBuilder("[");
+        for (int i = 0; i < Array.getLength(object); i++) {
+            result.append(Array.get(object, i)).append(", ");
+        }
+
         int length = result.length();
         if (length < 3) {
-            return "{}";
+            return new StringBuilder("[]");
         }
-        return result.delete(length - 2, length).append("}").toString();
+        return result.delete(length - 2, length).append("]");
     }
 }
 
