@@ -59,7 +59,8 @@ public class ReflectionToStringHelper {
             Class<?> currentClass = object.getClass();
             do {
                 Field[] currentFields = Arrays.stream(currentClass.getDeclaredFields())
-                        .filter(field -> !Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class))
+                        .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                        .filter(field -> !field.isAnnotationPresent(SkipField.class))
                         .sorted(Comparator.comparing(Field::getName))
                         .toArray(Field[]::new);
                 for (Field field : currentFields) {
@@ -83,12 +84,7 @@ public class ReflectionToStringHelper {
 
         Object value = field.get(object);
         Class<?> currentClass = field.getType();
-        if (currentClass.isArray()) {
-            if (value == null) {
-                builder.append("null");
-                return;
-            }
-
+        if (value != null && currentClass.isArray()) {
             builder.append("[");
             for (int i = 0; i < Array.getLength(value); i++) {
                 if (i != 0) {
