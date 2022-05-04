@@ -54,10 +54,10 @@ public class ReflectionToStringHelper {
         }
         StringBuilder result = new StringBuilder("{");
         Class<?> clazz = object.getClass();
-        while (clazz != null) {
-            Field[] fields = clazz.getDeclaredFields();
-            Arrays.sort(fields, Comparator.comparing(Field::getName));
-            try {
+        try {
+            while (clazz != null) {
+                Field[] fields = clazz.getDeclaredFields();
+                Arrays.sort(fields, Comparator.comparing(Field::getName));
                 for (Field field : fields) {
                     if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
                         continue;
@@ -72,10 +72,10 @@ public class ReflectionToStringHelper {
                     }
                     result.append(", ");
                 }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                clazz = clazz.getSuperclass();
             }
-            clazz = clazz.getSuperclass();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
         if (result.length() > 1) {
             result.delete(result.length() - 2, result.length());
