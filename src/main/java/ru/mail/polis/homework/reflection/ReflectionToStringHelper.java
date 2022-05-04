@@ -69,8 +69,8 @@ public class ReflectionToStringHelper {
         Arrays.sort(fields, Comparator.comparing(Field::getName));
         StringBuilder result = new StringBuilder();
 
-        for (Field field : fields) {
-            try {
+        try {
+            for (Field field : fields) {
                 if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
                     continue;
                 }
@@ -82,10 +82,11 @@ public class ReflectionToStringHelper {
                     result.append(field.get(object));
                 }
                 result.append(", ");
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
 
         if (tClass.getSuperclass() != null) {
             result.append(getFields(tClass.getSuperclass(), object));
@@ -97,6 +98,9 @@ public class ReflectionToStringHelper {
         if (object == null) {
             return new StringBuilder("null");
         }
+        if (Array.getLength(object) == 0) {
+            return new StringBuilder("[]");
+        }
 
         StringBuilder result = new StringBuilder("[");
         for (int i = 0; i < Array.getLength(object); i++) {
@@ -104,9 +108,6 @@ public class ReflectionToStringHelper {
         }
 
         int length = result.length();
-        if (length < 3) {
-            return new StringBuilder("[]");
-        }
         return result.delete(length - 2, length).append("]");
     }
 }
