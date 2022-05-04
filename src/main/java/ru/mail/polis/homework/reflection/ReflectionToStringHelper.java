@@ -55,11 +55,7 @@ public class ReflectionToStringHelper {
             return "null";
         }
 
-        if (object.getClass().getDeclaredFields().length == 0) {
-            return "{}";
-        }
-
-        return "{" + reflect(object.getClass(), object) + "}";
+        return new StringBuilder("{").append(reflect(object.getClass(), object)).append("}").toString();
     }
 
     private static String reflect(Class<?> clazz, Object object) {
@@ -67,7 +63,7 @@ public class ReflectionToStringHelper {
         if (fields.length == 0) {
             return "";
         }
-        Arrays.sort(fields, Comparator.comparingInt(o -> o.getName().charAt(0)));
+        sortFieldsByLetters(fields);
         StringBuilder result = new StringBuilder();
 
         for (Field field : fields) {
@@ -90,7 +86,8 @@ public class ReflectionToStringHelper {
             }
             result.append(", ");
         }
-        result = new StringBuilder(result.substring(0, result.length() - 2));
+        int resultLength = result.length();
+        result.delete(resultLength - 2, resultLength);
 
         Class<?> superClazz = clazz.getSuperclass();
         if (!Objects.equals(superClazz, Object.class)) {
@@ -109,13 +106,26 @@ public class ReflectionToStringHelper {
         StringBuilder result = new StringBuilder("[");
 
         for (int i = 0; i < length; i++) {
-            if (Array.get(array, i) == null) {
-                result.append("null").append(", ");
-            } else {
-                result.append(Array.get(array, i)).append(", ");
-            }
+            result.append(Array.get(array, i)).append(", ");
         }
 
-        return result.substring(0, result.length() - 2) + "]";
+        int resultLength = result.length();
+        result.delete(resultLength - 2, resultLength);
+        result.append("]");
+        return result.toString();
+    }
+
+    private static void sortFieldsByLetters(Field[] fields) {
+        Comparator<Field> comparator = (f1, f2) -> {
+            int f1Length = f1.getName().length();
+            int f2Length = f2.getName().length();
+            for (int i = 0; i < Math.min(f1Length, f2Length); i++) {
+                if (f1.getName().charAt(i) != f2.getName().charAt(i)) {
+                    return f1.getName().charAt(i) - f2.getName().charAt(i);
+                }
+            }
+            return f2Length - f1Length;
+        };
+        Arrays.sort(fields, comparator);
     }
 }
