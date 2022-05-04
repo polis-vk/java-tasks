@@ -70,11 +70,11 @@ public class ReflectionToStringHelper {
                 result.append(electedFieldsToString(fields, object));
                 curClass = curClass.getSuperclass();
                 fields = new ArrayList<>(Arrays.asList(curClass.getDeclaredFields()));
-                if(fields.size() == 0){
+                if (fields.size() == 0) {
                     continue;
                 }
                 result.append(", ");
-            }while(curClass != Object.class);
+            } while (curClass != Object.class);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -82,7 +82,7 @@ public class ReflectionToStringHelper {
     }
 
     private static String arrayToString(Object value) {
-        if(value == null){
+        if (value == null) {
             return "null";
         }
         StringBuilder result = new StringBuilder("[");
