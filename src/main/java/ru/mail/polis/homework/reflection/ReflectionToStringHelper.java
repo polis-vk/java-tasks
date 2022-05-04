@@ -4,7 +4,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -56,24 +55,24 @@ public class ReflectionToStringHelper {
         }
         StringBuilder result = new StringBuilder("{");
         Class<?> curClass = object.getClass();
-        List<Field> fields = new ArrayList<>(Arrays.asList(curClass.getDeclaredFields()));
-        Field field;
+        Field[] fields = curClass.getDeclaredFields();
+        List<Field> electedFields = new ArrayList<>();
         try {
             do {
-                for (int i = 0; i < fields.size(); i++) {
-                    field = fields.get(i);
+                for (Field field : fields) {
                     if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
-                        fields.remove(i);
-                        i--;
+                        continue;
                     }
+                    electedFields.add(field);
                 }
-                result.append(electedFieldsToString(fields, object));
+                result.append(electedFieldsToString(electedFields, object));
                 curClass = curClass.getSuperclass();
-                fields = new ArrayList<>(Arrays.asList(curClass.getDeclaredFields()));
-                if (fields.size() == 0) {
+                fields = curClass.getDeclaredFields();
+                if (fields.length == 0) {
                     continue;
                 }
                 result.append(", ");
+                electedFields.clear();
             } while (curClass != Object.class);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -85,8 +84,11 @@ public class ReflectionToStringHelper {
         if (value == null) {
             return "null";
         }
-        StringBuilder result = new StringBuilder("[");
         int arrLength = Array.getLength(value);
+        if (arrLength == 0) {
+            return "[]";
+        }
+        StringBuilder result = new StringBuilder("[");
         for (int i = 0; i < arrLength; i++) {
             result.append(Array.get(value, i));
             if (i == arrLength - 1) {
@@ -98,19 +100,20 @@ public class ReflectionToStringHelper {
     }
 
     private static String electedFieldsToString(List<Field> fields, Object object) throws IllegalAccessException {
+        int countFields = fields.size();
+        if (countFields == 0) {
+            return "";
+        }
         StringBuilder result = new StringBuilder();
         fields.sort(Comparator.comparing(Field::getName));
-        int countFields = fields.size();
-        Object value;
-        Field field;
         for (int i = 0; i < countFields; i++) {
-            field = fields.get(i);
+            Field field = fields.get(i);
             result.append(field.getName());
             result.append(": ");
             if (!field.isAccessible()) {
                 field.setAccessible(true);
             }
-            value = field.get(object);
+            Object value = field.get(object);
             if (field.getType().isArray()) {
                 result.append(arrayToString(value));
             } else {
