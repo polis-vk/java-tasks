@@ -57,7 +57,7 @@ public class ReflectionToStringHelper {
         StringBuilder resultString = new StringBuilder();
         resultString.append("{");
         while (!Object.class.equals(inputClass)) {
-            convertFieldsToString(inputClass, object, resultString);
+            addFieldsToStringBuilder(inputClass, object, resultString);
             inputClass = inputClass.getSuperclass();
         }
         int index = resultString.lastIndexOf(",");
@@ -68,7 +68,7 @@ public class ReflectionToStringHelper {
         return resultString.toString();
     }
 
-    private static void convertFieldsToString(Class<?> inputClass, Object object, StringBuilder builder) {
+    private static void addFieldsToStringBuilder(Class<?> inputClass, Object object, StringBuilder builder) {
         Field[] fields = inputClass.getDeclaredFields();
         Arrays.sort(fields, Comparator.comparing(Field::getName));
         try {
@@ -80,14 +80,10 @@ public class ReflectionToStringHelper {
                 Object content = null;
                 field.setAccessible(true);
                 content = field.get(object);
-                if (content != null) {
-                    if (field.getType().isArray()) {
-                        convertArrayToString(builder, content);
-                    } else {
-                        builder.append(content);
-                    }
+                if (content != null && field.getType().isArray()) {
+                    addArrayToStringBuilder(builder, content);
                 } else {
-                    builder.append("null");
+                    builder.append(content);
                 }
                 builder.append(", ");
             }
@@ -96,7 +92,7 @@ public class ReflectionToStringHelper {
         }
     }
 
-    private static void convertArrayToString(StringBuilder builder, Object value) {
+    private static void addArrayToStringBuilder(StringBuilder builder, Object value) {
         builder.append("[");
         int length = Array.getLength(value);
         for (int i = 0; i < length; i++) {
