@@ -86,9 +86,10 @@ public class ReflectionToStringHelper {
             return "null";
         }
         StringBuilder result = new StringBuilder("[");
-        for (int i = 0; i < Array.getLength(value); i++) {
+        int arrLength = Array.getLength(value);
+        for (int i = 0; i < arrLength; i++) {
             result.append(Array.get(value, i));
-            if (i == Array.getLength(value) - 1) {
+            if (i == arrLength - 1) {
                 break;
             }
             result.append(", ");
