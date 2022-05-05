@@ -61,8 +61,9 @@ public class ReflectionToStringHelper {
             recordFields(objClass, object, result);
             objClass = objClass.getSuperclass();
         } while (!objClass.equals(Object.class));
-        if (result.length() > 1) {
-            result.setLength(result.length() - 2);
+        int commaIndex = result.lastIndexOf(", ");
+        if (commaIndex > 0) {
+            result.setLength(commaIndex);
         }
         return result.append("}").toString();
     }
@@ -92,18 +93,12 @@ public class ReflectionToStringHelper {
 
     public static void arraysToStringBuilder(Object object, StringBuilder result) {
         result.append("[");
-        Object buff;
-        for (int i = 0; i < Array.getLength(object); i++) {
-            buff = Array.get(object, i);
-            if (buff != null) {
-                result.append(Array.get(object, i));
-            } else {
-                result.append(buff);
+        int length = Array.getLength(object);
+        for (int i = 0; i < length; i++) {
+            result.append(Array.get(object, i));
+            if (i != length - 1) {
+                result.append(", ");
             }
-            result.append(", ");
-        }
-        if (Array.getLength(object) > 0) {
-            result.setLength(result.length() - 2);
         }
         result.append("]");
     }
