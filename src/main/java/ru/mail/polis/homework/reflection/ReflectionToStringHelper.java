@@ -1,5 +1,13 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -43,7 +51,91 @@ package ru.mail.polis.homework.reflection;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        List<Field> fields = getFields(object);
+        StringBuilder stringBuilder = new StringBuilder("{");
+        for (Field field : fields){
+            field.setAccessible(true);
+            stringBuilder.append(field.getName()).append(": ");
+            Object value = null;
+            try {
+                value = field.get(object);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            if (value != null && field.getType().isArray()) {
+                appendArray(value, stringBuilder);
+            } else if (value != null){
+                stringBuilder.append(value);
+            } else {
+                stringBuilder.append("null");
+            }
+
+            stringBuilder.append(", ");
+        }
+        if (stringBuilder.length() > 1) {
+            stringBuilder.setLength(stringBuilder.length() - 2);
+        }
+        stringBuilder.append("}");
+//        System.out.println(stringBuilder);
+        return stringBuilder.toString();
+    }
+
+
+    private static  <T> List<Field> getFields(T t) {
+        List<Field> fields = new ArrayList<>();
+        Class clazz = t.getClass();
+        while (clazz != Object.class) {
+            Field[] arrayField = clazz.getDeclaredFields();
+            Arrays.sort(arrayField, Comparator.comparing(Field::getName));
+            List<Field> allFields = Arrays.asList(arrayField);
+            for(Field field : allFields){
+                if (!(field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers()))){
+                    fields.add(field);
+                }
+            }
+            clazz = clazz.getSuperclass();
+        }
+
+        return fields;
+    }
+
+    private static void appendArray(Object object, StringBuilder stringBuilder) {
+        int length = Array.getLength(object);
+        stringBuilder.append("[");
+        if (length > 0) {
+            stringBuilder.append(Array.get(object, 0));
+        }
+        for (int i = 1; i < length; i++) {
+            stringBuilder.append(", ").append(Array.get(object, i));
+        }
+        stringBuilder.append("]");
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
