@@ -1,5 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Comparator;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -43,7 +49,64 @@ package ru.mail.polis.homework.reflection;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        StringBuilder stringBuilder = new StringBuilder("{");
+        Class<?> clazz = object.getClass();
+        try {
+            while (clazz != Object.class) {
+                Field[] fields = clazz.getDeclaredFields();
+                Arrays.sort(fields, Comparator.comparing(Field::getName));
+                for (Field field : fields) {
+                    if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
+                        continue;
+                    }
+                    stringBuilder.append(field.getName()).append(": ");
+                    field.setAccessible(true);
+                    if (field.getType().isArray()) {
+                        appendArrToStringBuilder(field.get(object), stringBuilder);
+                    } else {
+                        appendFieldToStringBuilder(stringBuilder, field, object);
+                    }
+                    stringBuilder.append(", ");
+                }
+                clazz = clazz.getSuperclass();
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        if (stringBuilder.length() > 1) {
+            stringBuilder.setLength(stringBuilder.length() - 2);
+        }
+        stringBuilder.append("}");
+        return stringBuilder.toString();
+    }
+
+    private static void appendFieldToStringBuilder(StringBuilder stringBuilder, Field field, Object object) {
+        try {
+            if (field.get(object) == null) {
+                stringBuilder.append("null");
+            } else {
+                stringBuilder.append(field.get(object));
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void appendArrToStringBuilder(Object object, StringBuilder stringBuilder) {
+        if (object == null) {
+            stringBuilder.append("null");
+            return;
+        }
+        stringBuilder.append("[");
+        if (Array.getLength(object) > 0) {
+            stringBuilder.append(Array.get(object, 0));
+        }
+        for (int i = 1; i < Array.getLength(object); i++) {
+            stringBuilder.append(", ").append(Array.get(object, i));
+        }
+        stringBuilder.append("]");
     }
 }
