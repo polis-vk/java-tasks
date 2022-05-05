@@ -87,7 +87,6 @@ public class ReflectionToStringHelper {
             e.printStackTrace();
         }
 
-
         if (tClass.getSuperclass() != null) {
             result.append(getFields(tClass.getSuperclass(), object));
         }
