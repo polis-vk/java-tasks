@@ -56,7 +56,7 @@ public class ReflectionToStringHelper {
         StringBuilder sb = new StringBuilder("{");
         Class<?> clazz = object.getClass();
         while (clazz != null) {
-            Field[] FieldsArray = Arrays.stream(clazz.getDeclaredFields()) //изменить!!
+            Field[] FieldsArray = Arrays.stream(clazz.getDeclaredFields())
                     .filter(field -> !Modifier.isStatic(field.getModifiers())
                             && !field.isAnnotationPresent(SkipField.class))
                     .sorted(Comparator.comparing(Field::getName))
