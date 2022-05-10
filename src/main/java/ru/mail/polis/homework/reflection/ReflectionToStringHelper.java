@@ -53,10 +53,10 @@ public class ReflectionToStringHelper {
         if (object == null) {
             return "null";
         }
-        Class<?> thisClass = object.getClass();
         StringBuilder fieldInfo = new StringBuilder();
         fieldInfo.append("{");
         try {
+            Class<?> thisClass = object.getClass();
             while (thisClass != Object.class) {
                 Field[] fields = thisClass.getDeclaredFields();
                 if (fields.length == 0) {
@@ -83,18 +83,17 @@ public class ReflectionToStringHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        fieldInfo.delete(fieldInfo.length() - 2, fieldInfo.length());
-        fieldInfo.append("}");
+        fieldInfo.delete(fieldInfo.length() - 2, fieldInfo.length()).append("}");
         return fieldInfo.toString();
     }
 
-    private static String reflectiveToStringForArrays(Object array) {
+    private static StringBuilder reflectiveToStringForArrays(Object array) {
         if (array == null) {
-            return "null";
+            return new StringBuilder("null");
         }
         int lengthArray = Array.getLength(array);
         if (lengthArray == 0) {
-            return "[]";
+            return new StringBuilder("[]");
         }
 
         StringBuilder fieldInfoForArray = new StringBuilder();
@@ -103,6 +102,6 @@ public class ReflectionToStringHelper {
             fieldInfoForArray.append(Array.get(array, i)).append(", ");
         }
         fieldInfoForArray.append(Array.get(array, lengthArray - 1)).append("]");
-        return fieldInfoForArray.toString();
+        return fieldInfoForArray;
     }
 }
