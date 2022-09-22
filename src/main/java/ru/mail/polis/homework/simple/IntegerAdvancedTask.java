@@ -11,6 +11,20 @@ public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
 
+    // Function-helpers
+    public static char getDigitInHex(int n) {
+        char digitInHex = Character.forDigit(n, 16);
+        if (n >= 10) {
+            return Character.toUpperCase(digitInHex);
+        } else {
+            return digitInHex;
+        }
+    }
+
+    public static boolean isOnTheGrass(int x, int y, int grassX, int grassY) {
+        return x >= grassX && y >= grassY;
+    }
+
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
@@ -18,7 +32,11 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        double result = 0;
+        for (int i = 0; i < n; i++) {
+            result += a * Math.pow(q, i);
+        }
+        return (long) result;
     }
 
     /**
@@ -39,8 +57,15 @@ public class IntegerAdvancedTask {
      * Нельзя пользоваться String-ами
      * Пример: (454355, 2) -> D
      */
+
     public static char kDecimal(int n, int order) {
-        return 0;
+        int currentOrder = 1;
+        while (currentOrder < order) {
+            n /= 16;
+            currentOrder++;
+        }
+        int nthOrder = n % 16;
+        return getDigitInHex(nthOrder);
     }
 
     /**
@@ -51,7 +76,25 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        int minDigit = (int) (a % 16);
+        int currentDigit;
+
+        a /= 16;
+
+        byte minDigitOrder = 1;
+        byte currentOrder = 2;
+
+        while (a > 0) {
+            currentDigit = (int) (a % 16);
+            if (currentDigit < minDigit) {
+                minDigit = currentDigit;
+                minDigitOrder = currentOrder;
+            }
+            a /= 16;
+            currentOrder++;
+        }
+
+        return minDigitOrder;
     }
 
 }
