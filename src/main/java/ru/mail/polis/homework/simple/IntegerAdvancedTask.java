@@ -19,7 +19,7 @@ public class IntegerAdvancedTask {
      */
     public static long progression(int a, double q, int n) {
         if (q == 1) {
-            return a * n;
+            return (long) a * n;
         }
         // Формула суммы n первых членов геометрической прогрессии.
         return (long) ((a * ((Math.pow(q, n)) - 1)) / (q - 1));
