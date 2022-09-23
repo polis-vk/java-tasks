@@ -78,7 +78,20 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte min = 16;
+        byte minPlace = 0;
+        byte count = 0;
+        byte current;
+        while (a > 0 && min > 0) {
+            count++;
+            current = (byte) (a % 16);
+            if (current < min) {
+                min = current;
+                minPlace = count;
+            }
+            a /= 16;
+        }
+        return minPlace;
     }
 
 }
