@@ -62,7 +62,12 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        n /= (int) Math.pow(16, order - 1);
+        int mod = n % 16;
+        if (mod >= 10) {
+            return (char) (mod + 'A' - 10);
+        }
+        return String.valueOf(mod).charAt(0);
     }
 
     /**
