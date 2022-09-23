@@ -34,7 +34,25 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (up >= grassY || right >= grassX) {
+            return 1;
+        }
+        int dx = right - left;
+        int dy = up - down;
+        if (dx <= 0 && dy <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        // Если достигнем одной из этих точек - на следующий день попадем на поле.
+        int criticalX = grassX - right;
+        int criticalY = grassY - up;
+        int resultX = (criticalX % dx == 0 ? criticalX / dx : criticalX / dx + 1) + 1;
+        int resultY = (criticalY % dy == 0 ? criticalY / dy : criticalY / dy + 1) + 1;
+        if (dx > 0 && dy > 0) {
+            return Math.min(resultX, resultY);
+        } else if (dx > 0) {
+            return resultX;
+        }
+        return resultY;
     }
 
     /**
