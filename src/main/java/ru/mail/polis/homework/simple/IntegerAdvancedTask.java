@@ -18,7 +18,12 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (q == 1) {
+            return a * n;
+        } else {
+            // Формула суммы n первых членов геометрической прогрессии.
+            return (long) ((a * ((Math.pow(q, n)) - 1)) / (q - 1));
+        }
     }
 
     /**
