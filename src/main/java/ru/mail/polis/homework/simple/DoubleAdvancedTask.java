@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.Arrays;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -17,10 +19,31 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
-        return x1 + ", " + x2 + ", " + x3;
+        // Используется тригонометрическая формула Виета.
+
+        // Приводим кубическое уравнение.
+        double A = (double) b / a;
+        double B = (double) c / a;
+        double C = (double) d / a;
+
+        double Q = (A * A - 3.0 * B) / (9.0);
+        double R = (2 * A * A * A - 9 * A * B + 27 * C) / (54.0);
+        double S = Q * Q * Q - R * R;
+        double[] x = new double[3];
+
+        if (S == 0.0) {
+            x[0] = -2 * Math.signum(R) * Math.sqrt(Q) - (A / 3.0);
+            x[1] = Math.signum(R) * Math.sqrt(Q) - (A / 3.0);
+            x[2] = x[1];
+        } else {
+            double f = (1.0 / 3.0) * Math.acos(R / Math.sqrt(Q * Q * Q));
+            x[0] = -2 * Math.sqrt(Q) * Math.cos(f) - (A / 3.0);
+            x[1] = -2 * Math.sqrt(Q) * Math.cos(f + (2.0 / 3.0) * Math.PI) - (A / 3.0);
+            x[2] = -2 * Math.sqrt(Q) * Math.cos(f - (2.0 / 3.0) * Math.PI) - (A / 3.0);
+        }
+
+        Arrays.sort(x);
+        return x[2] + ", " + x[1] + ", " + x[0];
     }
 
     /**
