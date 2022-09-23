@@ -52,7 +52,12 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        if (a1 != a2) {
+            return 0;
+        }
+        // Формула - расстояние между двумя параллельными прямыми.
+        // Взята из вывода в Википедии, статья "Расстояние между прямыми".
+        return (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1));
     }
 
     /**
