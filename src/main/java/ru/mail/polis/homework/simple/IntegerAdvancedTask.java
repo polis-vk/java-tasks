@@ -22,7 +22,7 @@ public class IntegerAdvancedTask {
     }
 
     public static boolean isOnTheGrass(int x, int y, int grassX, int grassY) {
-        return x >= grassX && y >= grassY;
+        return x >= grassX || y >= grassY;
     }
 
     /**
@@ -33,8 +33,10 @@ public class IntegerAdvancedTask {
      */
     public static long progression(int a, double q, int n) {
         double result = 0;
+        double currentMultiplier = 1;
         for (int i = 0; i < n; i++) {
-            result += a * Math.pow(q, i);
+            result += a * currentMultiplier;
+            currentMultiplier *= q;
         }
         return (long) result;
     }
@@ -48,7 +50,77 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        // Текущий день
+        int currentDay = 1;
+
+        // Начальные координаты гусеницы
+        int x = 0;
+        int y = 0;
+
+        // Пусть гусеница пройдёт один день
+
+        // Если трава сверху, то пусть гусеница пройдёт вверх, и тогда проверим, добралась ли она до травы
+        if (grassY > 0) {
+            // Шаг вверх
+            y += up;
+
+            // Проверка, добралась ли гусеница до травы
+            if (isOnTheGrass(x, y, grassX, grassY)) {
+                return currentDay;
+            }
+        }
+
+        // Если трава справа, то пусть гусеница пройдёт вправо, и тогда проверим, добралась ли она до травы
+        if (grassX > 0) {
+            // Шаг вправо
+            x += right;
+
+            // Опять проверка
+            if (isOnTheGrass(x, y, grassX, grassY)) {
+                return currentDay;
+            }
+        }
+
+        // Дальше идти вниз и влево смысла нет
+        // Если координаты гусеницы уходят вниз или влево после полного дня (в направлении травы), то когда-то она доберётся до травы
+
+        // Таким образом, нам надо проверить, двигается ли по итогу дня гусеница в направлении травы
+        if (up - down <= 0 && right - left <= 0) {
+            // Если нет, то она никогда до травы не доберётся
+            return Integer.MAX_VALUE;
+        }
+        // Иначе, гусенице нужно двигаться дальше пока она не доберётся
+
+        while (!isOnTheGrass(x, y, grassX, grassY)) {
+            // Продолжаем начатый день движения (прошло только полдня)
+            // Шаг вниз
+            y -= down;
+
+            if (isOnTheGrass(x, y, grassX, grassY)) {
+                return currentDay;
+            }
+
+            // Шаг влево
+            x -= left;
+
+            if (isOnTheGrass(x, y, grassX, grassY)) {
+                return currentDay;
+            }
+
+            // День прошёл
+            currentDay++;
+
+            // Шаг вверх
+            y += up;
+
+            if (isOnTheGrass(x, y, grassX, grassY)) {
+                return currentDay;
+            }
+
+            // Шаг вправо
+            x += right;
+        }
+        return currentDay;
     }
 
     /**
@@ -59,12 +131,12 @@ public class IntegerAdvancedTask {
      */
 
     public static char kDecimal(int n, int order) {
-        int currentOrder = 1;
+        byte currentOrder = 1;
         while (currentOrder < order) {
             n /= 16;
             currentOrder++;
         }
-        int nthOrder = n % 16;
+        byte nthOrder = (byte) (n % 16);
         return getDigitInHex(nthOrder);
     }
 

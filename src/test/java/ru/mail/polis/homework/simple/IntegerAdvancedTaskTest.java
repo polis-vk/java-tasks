@@ -29,6 +29,10 @@ public class IntegerAdvancedTaskTest {
         assertEquals(46, IntegerAdvancedTask.snake(100, 10, 200, 8, 100, 23333));
         assertEquals(13, IntegerAdvancedTask.snake(10, 3,2, 4, 32, 100));
         assertEquals(1, IntegerAdvancedTask.snake(5, 2, 39, 4, 2, 23));
+        // Краевой вариант, когда гусеница не двигается за день в сторону травы, но может достичь травы за первые полдня
+        assertEquals(1, IntegerAdvancedTask.snake(3, 1, 10, 2, 20, 3));
+        // Так она уже никогда до травы не доберётся
+        assertEquals(Integer.MAX_VALUE, IntegerAdvancedTask.snake(3, 1, 10, 2, 20, 4));
 
     }
 
