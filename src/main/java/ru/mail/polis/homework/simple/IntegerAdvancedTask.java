@@ -1,10 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-
-import javax.swing.plaf.IconUIResource;
-
-import com.sun.org.apache.bcel.internal.generic.PUSH;
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -64,9 +59,6 @@ public class IntegerAdvancedTask {
      * Нельзя пользоваться String-ами
      * Пример: (454355, 2) -> D
      */
-    private static boolean isValueOfLetter(int value){
-        return value >= 10;
-    }
 
     public static char kDecimal(int n, int order) {
         final int VALUE_TO_GET_LETTERS = 55;
@@ -75,7 +67,7 @@ public class IntegerAdvancedTask {
 
         int numberAfterDivision = n / (int) Math.pow(16, order - 1);
         int result = numberAfterDivision % DIVIDER;
-        result += (isValueOfLetter(result)) ? VALUE_TO_GET_LETTERS : VALUE_TO_GET_NUMBERS;
+        result += (result >= 10) ? VALUE_TO_GET_LETTERS : VALUE_TO_GET_NUMBERS;
         return (char) result;
     }
 

@@ -8,6 +8,7 @@ public class IntegerAdvancedTaskTest {
     @Test
     public void progression() {
         assertEquals(0, IntegerAdvancedTask.progression(0, 0, 100));
+        assertEquals(2454110, IntegerAdvancedTask.progression(10, 22, 5));
         assertEquals(5, IntegerAdvancedTask.progression(5, 0, 12));
         assertEquals(0, IntegerAdvancedTask.progression(0, 4, 52));
         assertEquals(7, IntegerAdvancedTask.progression(1, 2, 3));
@@ -27,7 +28,7 @@ public class IntegerAdvancedTaskTest {
         assertEquals(Integer.MAX_VALUE, IntegerAdvancedTask.snake(1, 2, 3, 4, 3, 2));
         assertEquals(1, IntegerAdvancedTask.snake(5, 2, 39, 4, 4, 3));
         assertEquals(46, IntegerAdvancedTask.snake(100, 10, 200, 8, 100, 23333));
-        assertEquals(13, IntegerAdvancedTask.snake(10, 3,2, 4, 32, 100));
+        assertEquals(13, IntegerAdvancedTask.snake(10, 3, 2, 4, 32, 100));
         assertEquals(1, IntegerAdvancedTask.snake(5, 2, 39, 4, 2, 23));
 
     }

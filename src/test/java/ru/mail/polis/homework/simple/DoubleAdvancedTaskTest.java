@@ -7,8 +7,12 @@ import static org.junit.Assert.*;
 public class DoubleAdvancedTaskTest {
     @Test
     public void equation() {
+        assertX(parse(DoubleAdvancedTask.equation(1, 6, 3, -10)), 1, -2, -5);
         assertX(parse(DoubleAdvancedTask.equation(1, -4, -7, 10)), 5, 1, -2);
         assertX(parse(DoubleAdvancedTask.equation(1, 0, 0, 0)), 0, 0, 0);
+        assertX(parse(DoubleAdvancedTask.equation(1, 12, 36, 32)), -2, -2, -8);
+        assertX(parse(DoubleAdvancedTask.equation(1, -12, 0, 256)), 8, 8, -4);
+        assertX(parse(DoubleAdvancedTask.equation(1, -19, 118, -240)), 8, 6, 5);
         assertX(parse(DoubleAdvancedTask.equation(1, -4, 0, 0)), 4, 0, 0);
         assertX(parse(DoubleAdvancedTask.equation(3, 0, -27, 0)), 3, 0, -3);
         assertX(parse(DoubleAdvancedTask.equation(-3, -5, 2, 0)), 0.333333333333, 0, -2);

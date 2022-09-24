@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.Arrays;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -17,11 +19,50 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
+        /**
+         * В данном решении применяется
+         * Формула Кардано для решения кубических уравнений
+         * https://ru.intemodino.com/math/algebra/equations/cardano's-formula-for-solving-cubic-equations.html
+         */
+        double[] results = new double[3];
+        final double REVERSE_REPLACEMENT_FROM_Y_TO_X = (b / (double) (3 * a));
+        //после приведения к уравнению:
+        //y ^ 3 + P * y + Q = 0
+        //коэффициенты равны
+        final double P = (3 * a * c - Math.pow(b, 2)) / (3 * Math.pow(a, 2));
+        final double Q = ((2 * Math.pow(b, 3) - 9 * a * b * c + 27 * Math.pow(a, 2) * d)) / (27 * Math.pow(a, 3));
+        final double DISCRIMINANT = Math.pow((Q / 2), 2) + Math.pow((P / 3), 3);
 
-        return x1 + ", " + x2 + ", " + x3;
+        if (DISCRIMINANT < 0) {
+            double angle = 0;
+            if (Q == 0) {
+                angle = Math.PI / 2;
+            } else {
+                final double GENERAL_ARCTANGENT = Math.atan(Math.sqrt(-DISCRIMINANT) / (-Q / 2));
+                if (Q < 0) {
+                    angle = GENERAL_ARCTANGENT;
+                } else {
+                    angle = GENERAL_ARCTANGENT + Math.PI;
+                }
+            }
+            double y1 = 2 * Math.sqrt(-P / 3) * Math.cos(angle / 3);
+            double y2 = 2 * Math.sqrt(-P / 3) * Math.cos(angle / 3 + 2 * Math.PI / 3);
+            double y3 = 2 * Math.sqrt(-P / 3) * Math.cos(angle / 3 + 4 * Math.PI / 3);
+
+            //обратная замена
+            results[0] = y1 - REVERSE_REPLACEMENT_FROM_Y_TO_X;
+            results[1] = y2 - REVERSE_REPLACEMENT_FROM_Y_TO_X;
+            results[2] = y3 - REVERSE_REPLACEMENT_FROM_Y_TO_X;
+        } else if (Math.abs(DISCRIMINANT) <= 1e-10) {
+            double y1 = 2 * Math.cbrt(-Q / 2);
+            double y2 = -Math.cbrt(-Q / 2);
+            //обратная замена
+            results[0] = y1 - REVERSE_REPLACEMENT_FROM_Y_TO_X;
+            results[1] = y2 - REVERSE_REPLACEMENT_FROM_Y_TO_X;
+            results[2] = results[1];
+        }
+        Arrays.sort(results);
+        return results[2] + ", " + results[1] + ", " + results[0];
     }
 
     /**
@@ -30,12 +71,12 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        final double COEFFICIENT_AT_Y = 1D;
+        final double COEFFICIENT_AT_Y = 1D;//1*y = a*x+b
         if (a1 == a2) {//если прямые параллельны, то считаем расстояние
             double result = Math.abs(b1 - b2) / Math.sqrt(COEFFICIENT_AT_Y + Math.pow(a1, 2));
             return (float) result;
         }
-        return 0;
+        return 0F;
     }
 
     /**
@@ -71,7 +112,7 @@ public class DoubleAdvancedTask {
          * |A_X  A_Y  A_Z|
          * |B_X  B_Y  B_Z|
          * |C_X  C_Y  z4 - z1|
-         * Расскрыв определитель получим:
+         * Расскрыв определитель получим(все расчёты произведены на бумажке):
          * z4 = z1 + (((A_X * C_Y - A_Y * C_X) * B_Z - A_Z * (B_X * C_Y - C_X * B_Y)) / (A_X * B_Y - A_Y * B_X))
          */
         return z1 + (((A_X * C_Y - A_Y * C_X) * B_Z - A_Z * (B_X * C_Y - C_X * B_Y)) / (double) (A_X * B_Y - A_Y * B_X));
