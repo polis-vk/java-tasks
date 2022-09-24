@@ -148,8 +148,8 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        int minDigit = (int) (a % 16);
-        int currentDigit;
+        byte minDigit = (byte) (a % 16);
+        byte currentDigit;
 
         a /= 16;
 
@@ -157,7 +157,7 @@ public class IntegerAdvancedTask {
         byte currentOrder = 2;
 
         while (a > 0) {
-            currentDigit = (int) (a % 16);
+            currentDigit = (byte) (a % 16);
             if (currentDigit < minDigit) {
                 minDigit = currentDigit;
                 minDigitOrder = currentOrder;
