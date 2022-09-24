@@ -64,7 +64,6 @@ public class IntegerAdvancedTask {
         final int VALUE_TO_GET_LETTERS = 55;
         final int VALUE_TO_GET_NUMBERS = 48;
         final int DIVIDER = 16;
-
         int numberAfterDivision = n / (int) Math.pow(16, order - 1);
         int result = numberAfterDivision % DIVIDER;
         result += (result >= 10) ? VALUE_TO_GET_LETTERS : VALUE_TO_GET_NUMBERS;

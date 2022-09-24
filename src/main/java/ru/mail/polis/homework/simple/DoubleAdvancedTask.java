@@ -71,7 +71,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        final double COEFFICIENT_AT_Y = 1D;//1*y = a*x+b
+        final double COEFFICIENT_AT_Y = 1D;//1 * y = a * x + b
         if (a1 == a2) {//если прямые параллельны, то считаем расстояние
             double result = Math.abs(b1 - b2) / Math.sqrt(COEFFICIENT_AT_Y + Math.pow(a1, 2));
             return (float) result;
@@ -92,11 +92,11 @@ public class DoubleAdvancedTask {
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
         /**
-         * Составим уравнение плоскости по векторам A{x2-x1, y2-y1, z2-z1}, B{x3-x1, y3-y1, z3-z1} и C{x4-x1, y4-y1, z4-z1}
+         * Составим уравнение плоскости по векторам A{x2 - x1, y2 - y1, z2 - z1}, B{x3 - x1, y3 - y1, z3 - z1} и C{x4 - x1, y4 - y1, z4 - z1}
          * формат имени переменных: <Название вектора><Координата>
          * Пример:
          * Ax, Ay, Az, Bx, By, Bz ...
-         * Соответсвенно переменная Ax равна значению вектора A по координате X.(x2-x1)
+         * Соответсвенно переменная Ax равна значению вектора A по координате X.(x2 - x1)
          */
         final int A_X = x2 - x1;
         final int A_Y = y2 - y1;
