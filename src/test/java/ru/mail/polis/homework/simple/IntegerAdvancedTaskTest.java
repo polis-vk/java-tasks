@@ -6,6 +6,24 @@ import static org.junit.Assert.*;
 
 public class IntegerAdvancedTaskTest {
     @Test
+    public void getDigitInHex() {
+        assertEquals('F', IntegerAdvancedTask.getDigitInHex(15));
+        assertEquals('A', IntegerAdvancedTask.getDigitInHex(10));
+        assertEquals('0', IntegerAdvancedTask.getDigitInHex(0));
+    }
+
+    @Test
+    public void isOnTheGrass() {
+        assertTrue(IntegerAdvancedTask.isOnTheGrass(5, 1, 5, 2));
+        assertTrue(IntegerAdvancedTask.isOnTheGrass(5, 1, 6, 1));
+        assertTrue(IntegerAdvancedTask.isOnTheGrass(5, 5, 5, 6));
+
+        assertFalse(IntegerAdvancedTask.isOnTheGrass(4, 4, 5, 5));
+        assertFalse(IntegerAdvancedTask.isOnTheGrass(16, 4, 100, 5));
+        assertFalse(IntegerAdvancedTask.isOnTheGrass(4, 0, 5, 1));
+    }
+
+    @Test
     public void progression() {
         assertEquals(0, IntegerAdvancedTask.progression(0, 0, 100));
         assertEquals(5, IntegerAdvancedTask.progression(5, 0, 12));
