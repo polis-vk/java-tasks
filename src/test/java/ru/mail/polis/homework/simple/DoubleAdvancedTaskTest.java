@@ -6,14 +6,50 @@ import static org.junit.Assert.*;
 
 public class DoubleAdvancedTaskTest {
     @Test
+    public void acos() {
+        assertEquals(0, DoubleAdvancedTask.acos(1), 1e-10);
+        assertEquals(Math.PI / 2, DoubleAdvancedTask.acos(0), 1e-10);
+    }
+
+    @Test
+    public void sqrt() {
+        assertEquals(1, DoubleAdvancedTask.sqrt(1), 1e-10);
+        assertEquals(2, DoubleAdvancedTask.sqrt(4), 1e-10);
+    }
+
+    @Test
+    public void pow() {
+        assertEquals(1, DoubleAdvancedTask.pow(10000, 0), 1e-10);
+        assertEquals(256, DoubleAdvancedTask.pow(4, 4), 1e-10);
+    }
+
+    @Test
+    public void cos() {
+        assertEquals(1, DoubleAdvancedTask.cos(0), 1e-10);
+        assertEquals(0.5, DoubleAdvancedTask.cos(Math.PI / 3), 1e-10);
+    }
+
+    @Test
+    public void abs() {
+        assertEquals(0, DoubleAdvancedTask.abs(0), 1e-10);
+        assertEquals(123, DoubleAdvancedTask.abs(-123), 1e-10);
+        assertEquals(123, DoubleAdvancedTask.abs(123), 1e-10);
+    }
+
+    @Test
     public void equation() {
         assertX(parse(DoubleAdvancedTask.equation(1, -4, -7, 10)), 5, 1, -2);
         assertX(parse(DoubleAdvancedTask.equation(1, 0, 0, 0)), 0, 0, 0);
+        assertX(parse(DoubleAdvancedTask.equation(2, 0, 0, 0)), 0, 0, 0);
         assertX(parse(DoubleAdvancedTask.equation(1, -4, 0, 0)), 4, 0, 0);
+        assertX(parse(DoubleAdvancedTask.equation(1, -16, 0, 0)), 16, 0, 0);
         assertX(parse(DoubleAdvancedTask.equation(3, 0, -27, 0)), 3, 0, -3);
+        assertX(parse(DoubleAdvancedTask.equation(1, 0, -16, 0)), 4, 0, -4);
         assertX(parse(DoubleAdvancedTask.equation(-3, -5, 2, 0)), 0.333333333333, 0, -2);
         assertX(parse(DoubleAdvancedTask.equation(2, 3, -4, -1)), 1, -0.21922359359559, -2.28077640640442);
         assertX(parse(DoubleAdvancedTask.equation(2, 3, -4, 1)), 0.5, 0.41421356237310, -2.41421356237309);
+        assertX(parse(DoubleAdvancedTask.equation(1, -2, 0, 1)), 1.618033988749895, 1, -0.6180339887498948);
+        assertX(parse(DoubleAdvancedTask.equation(1, 0, -2, 1)), 1, 0.6180339887498952, -1.618033988749895);
     }
 
     private double[] parse(String str) {
