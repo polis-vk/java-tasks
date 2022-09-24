@@ -16,6 +16,29 @@ public class DoubleAdvancedTaskTest {
         assertX(parse(DoubleAdvancedTask.equation(2, 3, -4, 1)), 0.5, 0.41421356237310, -2.41421356237309);
     }
 
+    @Test
+    public void findRootFromExclusive() {
+        assertEquals(3, DoubleAdvancedTask.findRootFromExclusive(3, 0, -27, 0, 0, 1e-5), 1e-10);
+        assertEquals(0.41421356237310, DoubleAdvancedTask.findRootFromExclusive(2, 3, -4, 1, 0.4, 1e-5), 1e-10);
+        assertEquals(0.5, DoubleAdvancedTask.findRootFromExclusive(2, 3, -4, 1, 0.4, 0.1), 1e-10);
+    }
+
+    @Test
+    public void intervalContainsRoot() {
+        assertTrue(DoubleAdvancedTask.intervalContainsRoot(2, 3, -4, 1, 0.49, 0.51));
+        assertTrue(DoubleAdvancedTask.intervalContainsRoot(2, 3, -4, 1, 0.51, 0.49));
+        assertTrue(DoubleAdvancedTask.intervalContainsRoot(2, 3, -4, 1, 0.49, 0.5));
+        assertFalse(DoubleAdvancedTask.intervalContainsRoot(2, 3, -4, 1, 0.49, 0.499999999999999));
+    }
+
+    @Test
+    public void findNearestRoot() {
+        assertEquals(0.41421356237310, DoubleAdvancedTask.findNearestRoot(2, 3, -4, 1, 0.4, 0.01), 1e-10);
+        assertEquals(0.5, DoubleAdvancedTask.findNearestRoot(2, 3, -4, 1, 0.46, 0.01), 1e-10);
+        assertEquals(0.41421356237310, DoubleAdvancedTask.findNearestRoot(2, 3, -4, 1, 0, 0.01), 1e-10);
+        assertEquals(-2.41421356237309, DoubleAdvancedTask.findNearestRoot(2, 3, -4, 1, -2.5, 1), 1e-10);
+    }
+
     private double[] parse(String str) {
         String[] arr = str.split(", ");
         return new double[]{Double.parseDouble(arr[0]), Double.parseDouble(arr[1]), Double.parseDouble(arr[2])};

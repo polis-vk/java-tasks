@@ -16,71 +16,40 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int a, int b, int c, int d) {
-        final double step = 0.00001;
+        // Используется метод Ньютона-Рафсона
 
-        double prevX = step;
-        double x = prevX + step;
-
+        /*
+         * Шаг будет определять ширину интервала,
+         * в пределе которого осуществляется поиск корня.
+         */
+        final double step = 1e-7;
         double x1 = 0;
         double x2 = 0;
         double x3 = 0;
         // Поиск первого корня
-        if (d != 0)
-            while (true) {
-                if (
-                    cubicFunctionValue(a, b, c, d, prevX) * cubicFunctionValue(a, b, c, d, x) <= 0
-                    || cubicFunctionValue(a, b, c, d, -prevX) * cubicFunctionValue(a, b, c, d, -x) <= 0
-                ) {
-                    if (cubicFunctionValue(a, b, c, d, prevX) * cubicFunctionValue(a, b, c, d, x) <= 0) {
-                        x1 = findRootForInterval(a, b, c, d, prevX, x);
-                        if (cubicFunctionValue(a, b, c, d, -prevX) * cubicFunctionValue(a, b, c, d, -x) <= 0) {
-                            x2 = findRootForInterval(a, b, c, d, -x, -prevX);
-                        }
-                    } else {
-                        x1 = findRootForInterval(a, b, c, d, -x, -prevX);
-                    }
-                    break;
-                }
-                prevX = x;
-                x += step;
-            }
-        if (x2 == 0 && (d != 0 || c != 0))
-            while (true) {
-                prevX = x;
-                x += step;
-                if (
-                    cubicFunctionValue(a, b, c, d, prevX) * cubicFunctionValue(a, b, c, d, x) <= 0
-                    || cubicFunctionValue(a, b, c, d, -prevX) * cubicFunctionValue(a, b, c, d, -x) <= 0
-                ) {
-                    if (cubicFunctionValue(a, b, c, d, prevX) * cubicFunctionValue(a, b, c, d, x) <= 0) {
-                        x2 = findRootForInterval(a, b, c, d, prevX, x);
-                        if (cubicFunctionValue(a, b, c, d, -prevX) * cubicFunctionValue(a, b, c, d, -x) <= 0) {
-                            x3 = findRootForInterval(a, b, c, d, -x, -prevX);
-                        }
-                    } else {
-                        x2 = findRootForInterval(a, b, c, d, -x, -prevX);
-                    }
-                    break;
-                }
-            }
-        // Поиск третьего корня
-        if (x3 == 0 && (b != 0 || c != 0 || d != 0))
-            while (true) {
-                prevX = x;
-                x += step;
-                if (
-                    cubicFunctionValue(a, b, c, d, prevX) * cubicFunctionValue(a, b, c, d, x) <= 0
-                    || cubicFunctionValue(a, b, c, d, -prevX) * cubicFunctionValue(a, b, c, d, -x) <= 0
-                ) {
-                    if (cubicFunctionValue(a, b, c, d, prevX) * cubicFunctionValue(a, b, c, d, x) <= 0) {
-                        x3 = findRootForInterval(a, b, c, d, prevX, x);
-                    }
-                    else {
-                        x3 = findRootForInterval(a, b, c, d, -x, -prevX);
-                    }
-                    break;
-                }
-            }
+        if (d != 0) {
+            x1 = findRootFromExclusive(a, b, c, d, 0, step);
+            /*
+             * Если есть корень на противоположном интервале,
+             * находим его, а затем присваиваем x2
+             */
+            if (intervalContainsRoot(a, b, c, d, -x1 - step, -x1))
+                x2 = findNearestRoot(a, b, c, d, -x1, step);
+        }
+        // Поиск второго корня, если это необходимо
+        if (x2 == 0 && (d != 0 || c != 0)) {
+            x2 = findRootFromExclusive(a, b, c, d, Math.abs(x1), step);
+            /*
+             * Если есть корень на противоположном интервале,
+             * находим его, а затем присваиваем x3
+             */
+            if (intervalContainsRoot(a, b, c, d, -x2 - step, -x2))
+                x3 = findNearestRoot(a, b, c, d, -x2, step);
+        }
+        // Поиск третьего корня, если это необходимо
+        if (x3 == 0 && (b != 0 || c != 0 || d != 0)) {
+            x3 = findRootFromExclusive(a, b, c, d, Math.abs(x2), step);
+        }
         // Сортировка найденных корней
         if (x3 > x2) {
             double temporary = x2;
@@ -100,23 +69,66 @@ public class DoubleAdvancedTask {
         return x1 + ", " + x2 + ", " + x3;
     }
 
-    public static double cubicFunctionDerivativeValue(int a, int b, int c, double x) {
+    // Значение производной кубического полинома в точке x
+    public static double cubicPolynomialDerivativeValue(int a, int b, int c, double x) {
         return 3 * a * x * x + 2 * b * x + c;
     }
 
-    public static double cubicFunctionValue(int a, int b, int c, int d, double x) {
+    // Значение кубического полинома в точке x
+    public static double cubicPolynomialValue(int a, int b, int c, int d, double x) {
         return a * x * x * x + b * x * x + c * x + d;
     }
 
-    public static double findRootForInterval(int a, int b, int c, int d, double begin, double end) {
-        final double epsilon = 1e-10;
-        double prevX = begin;
-        double currentX = end;
+    /**
+     * Ищет первый положительный или отрицательный корень кубического полинома,
+     * начиная с from не включительно с шагом step.
+     * (Положительные корни приоритетнее)
+     */
+    public static double findRootFromExclusive(int a, int b, int c, int d, double from, double step) {
+        double intervalBegin = from + step;
+        double intervalEnd = from + step * 2;
+        double root;
+        while (!intervalContainsRoot(a, b, c, d, intervalBegin, intervalEnd) && !intervalContainsRoot(a, b, c, d, -intervalEnd, -intervalBegin)) {
+            intervalBegin = intervalEnd;
+            intervalEnd += step;
+        }
+        if (intervalContainsRoot(a, b, c, d, intervalBegin, intervalEnd)) {
+            root = findNearestRoot(a, b, c, d, intervalEnd, step);
+        } else {
+            root = findNearestRoot(a, b, c, d, -intervalEnd, step);
+        }
+        return root;
+    }
+
+    // Проверяет, содержит ли указанный интервал корень
+    public static boolean intervalContainsRoot(int a, int b, int c, int d, double begin, double end) {
+        return cubicPolynomialValue(a, b, c, d, begin) * cubicPolynomialValue(a, b, c, d, end) <= 0;
+    }
+
+    /**
+     * Перегрузка "основной" функции для нахождения корня без указания эпсилон
+     * (т. е. по дефолту корень находится для эпсилон = 1e-10)
+     */
+    public static double findNearestRoot(int a, int b, int c,
+                                         int d, double nearTo,
+                                         double spread) {
+        return findNearestRoot(a, b, c, d, nearTo, spread, 1e-10);
+    }
+
+    /**
+     * Ищет ближайший корень к значению nearTo кубического полинома c изначальным разбросом spread,
+     * принадлежащий указанному интервалу, по методу Ньютона-Рафсона
+     */
+    public static double findNearestRoot(int a, int b, int c,
+                                         int d, double nearTo,
+                                         double spread, double epsilon) {
+        double prevX = nearTo - spread;
+        double currentX = nearTo;
         while (Math.abs(prevX - currentX) >= epsilon) {
             prevX = currentX;
             currentX = currentX
-                    - cubicFunctionValue(a, b, c, d, currentX)
-                    / cubicFunctionDerivativeValue(a, b, c, currentX);
+                    - cubicPolynomialValue(a, b, c, d, currentX)
+                    / cubicPolynomialDerivativeValue(a, b, c, currentX);
         }
         return currentX;
     }
@@ -142,7 +154,10 @@ public class DoubleAdvancedTask {
      * 10, 100, 1,
      * 235, -5) -> 1
      */
-    public static double surfaceFunction(int x1, int y1, int z1, int x2, int y2, int z2, int x3, int y3, int z3, int x4, int y4) {
+    public static double surfaceFunction(int x1, int y1, int z1,
+                                         int x2, int y2, int z2,
+                                         int x3, int y3, int z3,
+                                         int x4, int y4) {
 
         // Создадим и найдём координаты векторов u и v
 

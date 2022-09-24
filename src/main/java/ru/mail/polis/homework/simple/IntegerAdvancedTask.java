@@ -36,20 +36,16 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        int minDaysCountToGrassY;
+        int minDaysCountToGrassY = Integer.MAX_VALUE;
         if (grassY - up <= 0) {
             minDaysCountToGrassY = 1;
-        } else if (up - down <= 0) {
-            minDaysCountToGrassY = Integer.MAX_VALUE;
-        } else {
+        } else if (up - down > 0) {
             minDaysCountToGrassY = 1 + (int) Math.ceil((double) (grassY - up) / (up - down));
         }
-        int minDaysCountToGrassX;
+        int minDaysCountToGrassX = Integer.MAX_VALUE;
         if (grassX - right <= 0) {
             minDaysCountToGrassX = 1;
-        } else if (right - left <= 0) {
-            minDaysCountToGrassX = Integer.MAX_VALUE;
-        } else {
+        } else if (right - left > 0) {
             minDaysCountToGrassX = 1 + (int) Math.ceil((double) (grassX - right) / (right - left));
         }
         return Math.min(minDaysCountToGrassX, minDaysCountToGrassY);
