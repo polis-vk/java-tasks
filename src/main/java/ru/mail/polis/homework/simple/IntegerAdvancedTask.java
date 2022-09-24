@@ -1,10 +1,6 @@
 package ru.mail.polis.homework.simple;
 
 
-import javax.swing.plaf.IconUIResource;
-
-import com.sun.org.apache.bcel.internal.generic.PUSH;
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -22,10 +18,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q == 1) {//тогда прогрессия арифметическая
-            return (long) a * n;
-        }
-        return (long) ((a * (1 - Math.pow(q, n))) / (1 - q));
+        return 0;
     }
 
     /**
@@ -37,25 +30,7 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        if (right >= grassX || up >= grassY) {
-            return 1;
-        } else if (right - left <= 0 && up - down <= 0) {
-            return Integer.MAX_VALUE;
-        }
-        int currentX = 0;
-        int currentY = 0;
-        int counterOfDays = 0;
-        while (currentX < grassX && currentY < grassY) {
-            counterOfDays++;
-            currentY += up;
-            currentX += right;
-            if (currentX >= grassX || currentY >= grassY) {
-                break;
-            }
-            currentY -= down;
-            currentX -= left;
-        }
-        return counterOfDays;
+        return 0;
     }
 
     /**
@@ -64,19 +39,8 @@ public class IntegerAdvancedTask {
      * Нельзя пользоваться String-ами
      * Пример: (454355, 2) -> D
      */
-    private static boolean isValueOfLetter(int value){
-        return value >= 10;
-    }
-
     public static char kDecimal(int n, int order) {
-        final int VALUE_TO_GET_LETTERS = 55;
-        final int VALUE_TO_GET_NUMBERS = 48;
-        final int DIVIDER = 16;
-
-        int numberAfterDivision = n / (int) Math.pow(16, order - 1);
-        int result = numberAfterDivision % DIVIDER;
-        result += (isValueOfLetter(result)) ? VALUE_TO_GET_LETTERS : VALUE_TO_GET_NUMBERS;
-        return (char) result;
+        return 0;
     }
 
     /**
@@ -87,19 +51,7 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        byte minIndex = 0;
-        long minValue = Long.MAX_VALUE;
-        byte index = 0;
-        while (a > 0) {
-            index++;
-            byte currentValue = (byte) (a % 16);
-            if (minValue > currentValue) {
-                minIndex = index;
-                minValue = currentValue;
-            }
-            a /= 16;
-        }
-        return minIndex;
+        return 0;
     }
 
 }
