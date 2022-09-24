@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -16,15 +19,46 @@ public class DoubleAdvancedTask {
    * Если используете какой-то конкретный способ, напишите какой.
    * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
    */
+
+  public static double getArch(double x) {
+    return Math.log(x + Math.pow(x * x - 1, 0.5));
+  }
+
+  public static double getCh(double x) {
+    return (Math.pow(Math.E, x) + Math.pow(Math.E, -x)) / 2;
+  }
+
   public static String equation(int a, int b, int c, int d) {
+    //Тригонометрическая формула Виета
     double x1 = 0;
     double x2 = 0;
     double x3 = 0;
-    double b1 = (double) b / a;
-    double b2 = (double) c / a;
-    double b3 = (double) d / a;
 
-    return x1 + ", " + x2 + ", " + x3;
+    double A = (double) b / a;
+    double B = (double) c / a;
+    double C = (double) d / a;
+
+    double q =  (A * A - 3 * B) / 9;
+    double r = (2 * Math.pow(A, 3) - 9 * A * B + 27 * C) / 54;
+    double s = Math.pow(q, 3) - Math.pow(r, 2);
+
+    if (s > 0) {
+      double f = Math.acos(r / Math.pow(q, 1.5)) / 3;
+      x1 = -2 * Math.pow(q, 0.5) * Math.cos(f) - (A) / 3;
+      x2 = -2 *Math.pow(q, 0.5) * Math.cos(f - 2 * Math.PI / 3) - (A) / 3;
+      x3 = -2 * Math.pow(q, 0.5) * Math.cos(f + 2 * Math.PI / 3) - (A) / 3;
+    } else if (s == 0.0) {
+      x1 = -2 * Math.signum(r) * Math.pow(r, (double) 1 / 3) - (A) / 3;
+      x2 = Math.signum(r) * Math.pow(r, (double) 1 / 3) - (A) / 3;
+      x3 = x2;
+    } else {
+      double f = getArch(Math.abs(r) / Math.pow(Math.abs(q), 1.5)) / 3;
+      x1 = -2 * Math.signum(r) * Math.pow(Math.abs(q), 0.5) * getCh(f) - (A) / 3;
+    }
+
+    Double [] answers = {x1, x2, x3};
+    Arrays.sort(answers, Collections.reverseOrder());
+    return answers[0] + ", " + answers[1] + ", " + answers[2];
   }
 
   /**
