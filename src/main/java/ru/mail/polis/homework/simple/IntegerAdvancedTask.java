@@ -9,49 +9,72 @@ package ru.mail.polis.homework.simple;
  */
 public class IntegerAdvancedTask {
 
-    private static final double EPS = 1e-10;
+  private static final double EPS = 1e-10;
 
-    /**
-     * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
-     * a + aq + aq^2 + ... + aq^(n-1)
-     * <p>
-     * Пример: (1, 2, 3) -> 7
-     */
-    public static long progression(int a, double q, int n) {
-        return 0;
-    }
+  /**
+   * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
+   * a + aq + aq^2 + ... + aq^(n-1)
+   * <p>
+   * Пример: (1, 2, 3) -> 7
+   */
+  public static long progression(int a, double q, int n) {
+    return (q == 1) ? (long) a * n : (long) (a * (Math.pow(q, n) - 1) / (q - 1));
+  }
 
-    /**
-     * Гусеница ползает по столу квадратами по часовой стрелке. За день она двигается следующим образом:
-     * сначала наверх на up, потом направо на right. Ночью она двигается вниз на down и налево на left.
-     * Сколько суток понадобится гусенице, чтобы доползти до поля с травой?
-     * Считаем, что на каждой клетке с координатами >= grassX или >= grassY находится трава
-     * Если она этого никогда не сможет сделать, Верните число Integer.MAX_VALUE;
-     * Пример: (10, 3, 5, 5, 20, 11) -> 2
-     */
-    public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+  /**
+   * Гусеница ползает по столу квадратами по часовой стрелке. За день она двигается следующим образом:
+   * сначала наверх на up, потом направо на right. Ночью она двигается вниз на down и налево на left.
+   * Сколько суток понадобится гусенице, чтобы доползти до поля с травой?
+   * Считаем, что на каждой клетке с координатами >= grassX или >= grassY находится трава
+   * Если она этого никогда не сможет сделать, Верните число Integer.MAX_VALUE;
+   * Пример: (10, 3, 5, 5, 20, 11) -> 2
+   */
+  public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
+    int stepY = (up - down);
+    int stepX = (right - left);
+    int res = (up >= grassY) ? 1 : (right >= grassX ? 1 : Integer.MAX_VALUE);
+    if (stepX * grassX > 0) {
+      res = Math.min(res, ((grassX - right) + stepX - 1) / stepX + 1);
     }
+    if (stepY * grassY > 0) {
+      res = Math.min(res, ((grassY - up) + stepY - 1) / stepY + 1);
+    }
+    return res;
+  }
 
-    /**
-     * Дано число n в 10-ном формате и номер разряда order.
-     * Выведите цифру стоящую на нужном разряде для числа n в 16-ом формате
-     * Нельзя пользоваться String-ами
-     * Пример: (454355, 2) -> D
-     */
-    public static char kDecimal(int n, int order) {
-        return 0;
-    }
+  /**
+   * Дано число n в 10-ном формате и номер разряда order.
+   * Выведите цифру стоящую на нужном разряде для числа n в 16-ом формате
+   * Нельзя пользоваться String-ами
+   * Пример: (454355, 2) -> D
+   */
+  public static char kDecimal(int n, int order) {
+    n /= (int) Math.pow(16, order - 1);
+    int tmp = n - (n / 16) * 16;
+    return (tmp < 10) ? (char) (tmp + 48) : (char) (tmp + 55);
+  }
 
-    /**
-     * Дано число в 10-ном формате.
-     * Нужно вывести номер минимальной цифры для числа в 16-ном формате. Счет начинается справа налево,
-     * выводим номер первой минимальной цифры (если их несколько)
-     * Нельзя пользоваться String-ами
-     * (6726455) -> 2
-     */
-    public static byte minNumber(long a) {
-        return 0;
+  /**
+   * Дано число в 10-ном формате.
+   * Нужно вывести номер минимальной цифры для числа в 16-ном формате. Счет начинается справа налево,
+   * выводим номер первой минимальной цифры (если их несколько)
+   * Нельзя пользоваться String-ами
+   * (6726455) -> 2
+   */
+  public static byte minNumber(long a) {
+    int dig = (int) (a % 16);
+    a /= 16;
+    byte index = 1, step = 2;
+    while (a > 0) {
+      int tmp = (int) (a - (a / 16) * 16);
+      if (tmp < dig) {
+        dig = tmp;
+        index = step;
+      }
+      step++;
+      a /= 16;
     }
+    return index;
+  }
 
 }
