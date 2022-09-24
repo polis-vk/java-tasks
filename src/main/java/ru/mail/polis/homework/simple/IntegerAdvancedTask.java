@@ -18,7 +18,13 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        double progressionSum = 0;
+        double currentPowedQ = 1;
+        for (int i = 0; i < n; i++) {
+            progressionSum += a * currentPowedQ;
+            currentPowedQ *= q;
+        }
+        return (long) progressionSum;
     }
 
     /**
@@ -30,7 +36,23 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int minDaysCountToGrassY;
+        if (grassY - up <= 0) {
+            minDaysCountToGrassY = 1;
+        } else if (up - down <= 0) {
+            minDaysCountToGrassY = Integer.MAX_VALUE;
+        } else {
+            minDaysCountToGrassY = 1 + (int) Math.ceil((double) (grassY - up) / (up - down));
+        }
+        int minDaysCountToGrassX;
+        if (grassX - right <= 0) {
+            minDaysCountToGrassX = 1;
+        } else if (right - left <= 0) {
+            minDaysCountToGrassX = Integer.MAX_VALUE;
+        } else {
+            minDaysCountToGrassX = 1 + (int) Math.ceil((double) (grassX - right) / (right - left));
+        }
+        return Math.min(minDaysCountToGrassX, minDaysCountToGrassY);
     }
 
     /**
@@ -40,7 +62,14 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        for (int i = 0; i < order - 1; i++) {
+            n /= 16;
+        }
+        byte orderValue = (byte) (n % 16);
+        if (orderValue < 10) {
+            return (char) ('0' + orderValue);
+        }
+        return (char) ('A' - 10 + orderValue);
     }
 
     /**
@@ -51,7 +80,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte minValue = (byte) (a % 16);
+        a /= 16;
+        byte minValueNumber = 1;
+        byte valueNumber = 2;
+        while (a != 0) {
+            if (a % 16 < minValue) {
+                minValue = (byte) (a % 16);
+                minValueNumber = valueNumber;
+            }
+            a /= 16;
+            valueNumber++;
+        }
+        return minValueNumber;
     }
 
 }
