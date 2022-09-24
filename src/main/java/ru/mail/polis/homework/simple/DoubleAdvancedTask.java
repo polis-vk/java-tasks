@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.Arrays;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -7,6 +9,27 @@ package ru.mail.polis.homework.simple;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class DoubleAdvancedTask {
+
+    // Mathematical functions-helpers
+    public static double acos(double x) {
+        return Math.acos(x);
+    }
+
+    public static double sqrt(double x) {
+        return Math.sqrt(x);
+    }
+
+    public static double pow(double x, double n) {
+        return Math.pow(x, n);
+    }
+
+    public static double cos(double x) {
+        return Math.cos(x);
+    }
+
+    public static double abs(double x) {
+        return Math.abs(x);
+    }
 
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
@@ -17,9 +40,66 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
+        // Решение кубического уравнения через тригонометрическую формулу Виета
+        // Подробнее: https://ru.wikipedia.org/wiki/Тригонометрическая_формула_Виета
+        double x1;
+        double x2;
+        double x3;
+
+        // Из условия известно, что у данного уравнения есть три вещественных корня
+        // Следовательно, все расчёты ниже подходят только для этого случая
+
+        // Рассмотрим несколько краевых моментов, которые не решаются вышеуказанной формулой
+        if (b == 0 && c == 0 && d == 0) {
+            // Случай a * x^3 = 0
+            x1 = x2 = x3 = 0;
+        } else if (b != 0 && c == 0 && d == 0) {
+            // Случай a * x^3 + b * x^2 = 0
+            x1 = (double) -b / a;
+            x2 = x3 = 0;
+        } else if (b == 0 && c != 0 && d == 0) {
+            // Случай a * x^3 + c * x = 0
+            x1 = sqrt((double) -c / a);
+            x2 = 0;
+            x3 = -x1;
+        } else {
+            // Решение по формуле
+            // Пусть наше уравнение: a * x^3 + b * x^2 + c * x + d = 0
+            // Будет преобразовано делением на коэффициент a.
+            // Тогда, его вид: x^3 + n * x^2 + m * x + p = 0
+            // (только такой вид уравнения может быть решён c помощью формулы)
+            double n = (double) b / a; // a
+            double m = (double) c / a; // b
+            double p = (double) d / a; // c
+
+            // Следующие вычисления объяснены на сайте по ссылке выше
+            double q = (3 * m - pow(n, 2)) / 9;
+            double r = (9 * n * m - 2 * pow(n, 3) - 27 * p) / 54;
+            double s = q * q * q + r * r;
+
+            // Вариант с s > 0 не рассматривается потому, что он ведёт к появлению комплексных корней
+            // А по условию такого быть не может
+            if (s < 0) {
+                double f = acos(r / sqrt(-pow(q, 3))) / 3;
+
+                x1 = 2 * sqrt(-q) * cos(f) - n / 3;
+                x2 = 2 * sqrt(-q) * cos(f + (2 * Math.PI) / 3) - n / 3;
+                x3 = 2 * sqrt(-q) * cos(f - (2 * Math.PI) / 3) - n / 3;
+            } else {
+                x1 = -2 * pow(3, 1f / 3) - n / 3;
+                x2 = x3 = pow(3, 1f / 3) - n / 3; // Данный корень имеет вторую степень кратности
+            }
+        }
+
+        // Сортировка полученных значений для будущего вывода
+        double[] array = new double[]{x1, x2, x3};
+
+        Arrays.sort(array);
+
+        x1 = array[2];
+        x2 = array[1];
+        x3 = array[0];
+
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -64,6 +144,30 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        // Выведем уравнение плоскости по трём точкам, выраженным через определитель матрицы
+        // | x2 - x1  y2 - y1  z2 - z1 |
+        // | x3 - x1  y3 - y1  z3 - z1 | = 0
+        // |  x - x1   y - y1   z - z1 |
+        // Разложим определитель матрицы по последней строке:
+        // Получим уравнение, где X - минор матрицы по первому элементу третьей строки, Y - минор второго элемента,
+        // а Z - минор третьего элемента
+        // X - Y + Z = 0
+        // Вместо x и y подставим в уравнение значения x4 и y4, соответственно.
+        // Тогда получим: X(x4) - Y(y4) + Z = 0.
+        // Z = (z - z1) * | x2 - x1  y2 - y1 | (пусть определитель этой матрицы 2х2 равен D)
+        //                | x3 - x1  y3 - y1 |
+        // Выразим z из этого уравнения: z = ((Y - Z) / D) + z1
+
+        // Минор X
+        int x = (x4 - x1) * ((y2 - y1) * (z3 - z1) - (y3 - y1) * (z2 - z1));
+
+        // Минор Y
+        int y = (y4 - y1) * ((x2 - x1) * (z3 - z1) - (x3 - x1) * (z2 - z1));
+
+        // Определитель D
+        int d = (x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1);
+
+        // Итоговое значение координаты z
+        return ((double) (y - x)) / ((double) d) + z1;
     }
 }
