@@ -18,7 +18,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (q == 1) {
+            return (long) a * n;
+        }
+        return (long) ((a * (Math.pow(q, n) - 1)) / (q - 1));
     }
 
     /**
@@ -30,7 +33,22 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (up > grassX || right > grassY) {
+            return 1;
+        }
+        if (down >= up && left >= right) {
+            return Integer.MAX_VALUE;
+        }
+        int vertical = linearMoveTime(grassY, up, down);
+        int horizontal = linearMoveTime(grassX, right, left);
+        if (vertical * horizontal < 0) {
+            return Math.max(vertical, horizontal);
+        }
+        return Math.min(vertical, horizontal);
+    }
+
+    public static int linearMoveTime(int length, int forward, int back) {
+        return (int) Math.ceil((double) (length - forward) / (forward - back)) + 1;
     }
 
     /**
@@ -40,7 +58,11 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int number = ((n / (int) Math.pow(16, order - 1)) % 16);
+        if (number >= 10) {
+            return (char) (number + 'A' - 10);
+        }
+        return (char) (number + '0');
     }
 
     /**
@@ -51,7 +73,22 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte minDigit = Byte.MAX_VALUE;
+        byte digitPlace = 0;
+        byte minDigitPlace = -1;
+        byte currentDigit;
+        long number = a;
+
+        while (number > 0 && minDigit > 0) {
+            currentDigit = (byte) (number % 16);
+            digitPlace++;
+            number /= 16;
+            if (currentDigit < minDigit) {
+                minDigit = currentDigit;
+                minDigitPlace = digitPlace;
+            }
+        }
+        return minDigitPlace;
     }
 
 }
