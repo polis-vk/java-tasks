@@ -18,7 +18,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (q == 1) {
+            return (long) a * n;
+        }
+        return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
@@ -30,7 +33,27 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (up >= grassY || right >= grassX) {
+            return 1;
+        }
+        if (up <= down && right <= left) {
+            return Integer.MAX_VALUE;
+        }
+
+        int currX = 0;
+        int currY = 0;
+        int days = 0;
+        while (true) {
+            days++;
+            currY += up;
+            currX += right;
+            if (currY >= grassY || currX >= grassX) {
+                break;
+            }
+            currY -= down;
+            currX -= left;
+        }
+        return days;
     }
 
     /**
@@ -40,7 +63,15 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int nCopy = n;
+        for (int currOrder = 1; currOrder < order; currOrder++) {
+            nCopy /= 16;
+        }
+        int digit = nCopy % 16;
+        if (digit < 10) {
+            return (char) (digit + '0');
+        }
+        return (char) (digit + 'A' - 10);
     }
 
     /**
@@ -51,7 +82,21 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long aCopy = a;
+        int number = 1;
+        int currNumber = number;
+        int minDigit = 16;
+        int currDigit;
+        while (aCopy > 0) {
+            currDigit = (int) (aCopy % 16);
+            if (currDigit < minDigit) {
+                minDigit = currDigit;
+                number = currNumber;
+            }
+            aCopy /= 16;
+            currNumber++;
+        }
+        return (byte) (number);
     }
 
 }
