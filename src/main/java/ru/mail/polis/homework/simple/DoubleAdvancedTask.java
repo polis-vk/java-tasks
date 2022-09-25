@@ -17,9 +17,28 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
+        double root1;
+        double root2;
+        double root3;
+        double at = (double) b / a;
+        double bt = (double) c / a;
+        double ct = (double) d / a;
+        double Q = (at * at - 3 * bt) / 9;
+        double R = (2 * at * at * at - 9 * at * bt + 27 * ct) / 54;
+        double S = Q * Q * Q - R * R;
+        if (S > 0) {
+            double phi = Math.acos(R / Math.pow(Q, 3d / 2)) / 3;
+            root1 = -2 * Math.sqrt(Q) * Math.cos(phi) - at / 3;
+            root2 = -2 * Math.sqrt(Q) * Math.cos(phi + 2 * Math.PI / 3) - at / 3;
+            root3 = -2 * Math.sqrt(Q) * Math.cos(phi - 2 * Math.PI / 3) - at / 3;
+        } else {
+            root1 = -2 * Math.cbrt(R) - at / 3;
+            root2 = Math.cbrt(R) - at / 3;
+            root3 = root2;
+        }
+        double x1 = Math.max(root1, Math.max(root2, root3));
+        double x3 = Math.min(root1, Math.min(root2, root3));
+        double x2 = root1 + root2 + root3 - x1 - x3;
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -29,7 +48,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        return a1 == a2 ? (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1)) : 0;
     }
 
     /**
@@ -44,6 +63,15 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        int vectorX1 = x2 - x1;
+        int vectorX2 = x3 - x1;
+        int vectorY1 = y2 - y1;
+        int vectorY2 = y3 - y1;
+        int vectorZ1 = z2 - z1;
+        int vectorZ2 = z3 - z1;
+        int i = vectorY1 * vectorZ2 - vectorY2 * vectorZ1;
+        int j = vectorX2 * vectorZ1 - vectorX1 * vectorZ2;
+        int k = vectorX1 * vectorY2 - vectorX2 * vectorY1;
+        return (k * z1 - (i * (x4 - x1) + j * (y4 - y1))) / (double) k;
     }
 }
