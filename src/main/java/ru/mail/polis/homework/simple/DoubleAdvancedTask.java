@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.Arrays;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -17,10 +19,34 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
-        return x1 + ", " + x2 + ", " + x3;
+        //Тригонометрическая формула Виета https://math.fandom.com/ru/wiki/%D0%A2%D1%80%D0%B8%D0%B3%D0%BE%D0%BD%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F_%D1%84%D0%BE%D1%80%D0%BC%D1%83%D0%BB%D0%B0_%D0%92%D0%B8%D0%B5%D1%82%D0%B0
+        double x1 = b * 1. / a;
+        double x2 = c * 1. / a;
+        double x3 = d * 1. / a;
+        //Вычисляем Q, R, S и F
+        double q = (Math.pow(x1, 2) - 3 * x2) / 9;
+        double r = (2 * Math.pow(x1, 3) - 9 * x1 * x2 + 27 * x3) / 54;
+        double s = Math.pow(q, 3) - Math.pow(r, 2);
+        //Находим корни
+        return calcVietaFormula(q, r, s, x1);
+    }
+
+    private static String calcVietaFormula(double q, double r, double s, double x1) {
+        double[] results = new double[3];
+
+        if (s > 0) {
+            double f = Math.acos(r / Math.pow(q, 1.5)) / 3;
+            results[0] = -2 * Math.sqrt(q) * Math.cos(f);
+            results[1] = -2 * Math.sqrt(q) * Math.cos(f + 2 * Math.PI / 3);
+            results[2] = -2 * Math.sqrt(q) * Math.cos(f - 2 * Math.PI / 3);
+        } else {
+            results[0] = Math.cbrt(r);
+            results[1] = results[0];
+            results[2] = -2 * results[0];
+        }
+
+        Arrays.sort(results);
+        return (results[2] - x1 / 3) + ", " + (results[1] - x1 / 3) + ", " + (results[0] - x1 / 3);
     }
 
     /**
@@ -29,7 +55,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        return (float) ((a1 != a2) ? 0 : Math.abs(b1 - b2) / Math.sqrt(a1 * a1 + 1));
     }
 
     /**
@@ -44,6 +70,11 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        double a = z1 * (x2 - x3) + z2 * (x3 - x1) + z3 * (x1 - x2);
+        double b = y1 * (z2 - z3) + y2 * (z3 - z1) + y3 * (z1 - z2);
+        double c = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2);
+        double d = x1 * (y2 * z3 - y3 * z2) + x2 * (y3 * z1 - y1 * z3) + x3 * (y1 * z2 - y2 * z1);
+
+        return (d - b * x4 - a * y4) / c;
     }
 }
