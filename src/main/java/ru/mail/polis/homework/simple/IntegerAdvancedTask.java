@@ -18,8 +18,12 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (q == 1) {
+            return a * n;
+        }
+        return (long) ((a * (Math.pow(q, n) - 1)) / (q - 1));
     }
+
 
     /**
      * Гусеница ползает по столу квадратами по часовой стрелке. За день она двигается следующим образом:
@@ -29,8 +33,22 @@ public class IntegerAdvancedTask {
      * Если она этого никогда не сможет сделать, Верните число Integer.MAX_VALUE;
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
+
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+
+        return Math.min(oneDimSnake(grassX, right, left), oneDimSnake(grassY, up, down));
+    }
+
+    private static int oneDimSnake(int height, int top, int bottom) {
+        if (height <= top) {
+            return 1;
+        }
+        if (top <= bottom) {
+            return Integer.MAX_VALUE;
+        }
+        return (height - top - 1) / (top - bottom) + 2;
+        // по идее, формула имеет вид (height - top) / (top - bottom) + 1,
+        // но нам нужно округление вверх, поэтому так
     }
 
     /**
@@ -40,7 +58,18 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        for (int cnt = 0; cnt < order - 1; cnt++) {
+            n /= 16;
+        }
+        char ans = (char) (n % 16);
+
+        if (ans >= 10) {
+            ans += 'A' - 10;
+        } else {
+            ans += '0';
+        }
+
+        return ans;
     }
 
     /**
@@ -51,7 +80,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte ans = -1;
+        byte minNum = 16;
+        byte cnt = 0;
+        while (a != 0) {
+            byte num = (byte) (a % 16);
+            if (num < minNum) {
+                minNum = num;
+                ans = cnt;
+            }
+            a /= 16;
+            cnt++;
+        }
+        return (byte) (ans + 1);
     }
 
 }
