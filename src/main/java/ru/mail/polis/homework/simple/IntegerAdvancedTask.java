@@ -18,10 +18,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q == 1){
-            return (long) a * n;
-        }
-        return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
+        return  q == 1 ? (long) a * n : (long)(a * (Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
@@ -42,7 +39,7 @@ public class IntegerAdvancedTask {
             return Integer.MAX_VALUE;
         }
         int dayY = (grassY - down) / stepY + 1;
-        int dayX =  (grassX - right) / stepX + 1;
+        int dayX = (grassX - right) / stepX + 1;
         if(stepX < 0) {
             return dayY;
         }

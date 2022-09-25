@@ -28,19 +28,10 @@ public class DoubleAdvancedTask {
         double x2 = 0;
         double x3 = 0;
         if (delta > 0) {
-            double m1, m2;
             double t1 = -q / 2.0 + Math.sqrt(delta);
             double t2 = -q / 2.0 - Math.sqrt(delta);
-            if (t1 < 0) {
-                m1 = (-1) * (Math.pow(-t1, 1.0 / 3.0));
-            } else {
-                m1 = (Math.pow(t1, 1.0 / 3.0));
-            }
-            if (t2 < 0) {
-                m2 = (-1) * (Math.pow(-t2, 1.0 / 3.0));
-            } else {
-                m2 = (Math.pow(t2, 1.0 / 3.0));
-            }
+            double m1 = t1 < 0 ? -Math.pow(-t1, 1.0 / 3.0) : Math.pow(t1, 1.0 / 3.0);
+            double m2 = t2 < 0 ? -Math.pow(-t2, 1.0 / 3.0) : Math.pow(-t2, 1.0 / 3.0);
             x1 = m1 + m2 - A / 3.0;
         }
         else if (delta == 0){
@@ -59,7 +50,8 @@ public class DoubleAdvancedTask {
             x2 = (-2.0 / Math.sqrt(3)) * (Math.sqrt(-p) * Math.sin(t + (Math.PI / 3.0))) - A / 3.0;
             x3 = (2.0 / Math.sqrt(3)) * (Math.sqrt(-p) * Math.cos(t + (Math.PI / 6.0))) - A / 3.0;
         }
-        return Math.max(x1, Math.max(x2, x3)) + ", " + (x1 + x2 + x3 - Math.max(x1, Math.max(x2, x3)) - Math.min(x1, Math.min(x2, x3))) + ", " + Math.min(x1, Math.min(x2, x3));
+        return Math.max(x1, Math.max(x2, x3)) + ", " + (x1 + x2 + x3 - Math.max(x1, Math.max(x2, x3))
+                - Math.min(x1, Math.min(x2, x3))) + ", " + Math.min(x1, Math.min(x2, x3));
 
     }
 
@@ -69,10 +61,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        if(a1 != a2){
-            return 0;
-        }
-        return (float) (Math.abs(b2 - b1) / Math.sqrt(1 + a1 * a2));
+        return a1 != a2 ? 0 : (float) (Math.abs(b2 - b1) / Math.sqrt(1 + a1 * a2));
     }
 
     /**
@@ -98,7 +87,7 @@ public class DoubleAdvancedTask {
         double a = b1 * c2 - b2 * c1;
         double b = a2 * c1 - a1 * c2;
         double c = a1 * b2 - b1 * a2;
-        double d = (-a * x1 - b * y1 - c * z1);
+        double d = -a * x1 - b * y1 - c * z1;
         // Теперь подставим x4 и y4 и выразим искомое z
         return (-a * x4 - b * y4 - d) / c;
 
