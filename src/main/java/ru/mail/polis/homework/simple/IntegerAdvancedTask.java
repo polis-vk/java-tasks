@@ -50,7 +50,8 @@ public class IntegerAdvancedTask {
         int resultY = (criticalY % dy == 0 ? criticalY / dy : criticalY / dy + 1) + 1;
         if (dx > 0 && dy > 0) {
             return Math.min(resultX, resultY);
-        } else if (dx > 0) {
+        }
+        if (dx > 0) {
             return resultX;
         }
         return resultY;
