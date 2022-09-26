@@ -9,7 +9,7 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
-    public static final char[] HEX_VALUES = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G'};
+    private static final char[] HEX_VALUES = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G'};
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -18,7 +18,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return (long) (q != 1 ? (a * (Math.pow(q, n) - 1) / (q - 1)) : a * n);
+        return (long) (Math.abs(q - 1) > EPS ? (a * (Math.pow(q, n) - 1) / (q - 1)) : a * n);
     }
 
     /**
@@ -32,12 +32,12 @@ public class IntegerAdvancedTask {
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
         int onGrassX = grassX - right;
         int onGrassY = grassY - up;
-        int dX = right - left;
-        int dY = up - down;
-
         if (onGrassX <= 0 || onGrassY <= 0) {
             return 1;
         }
+
+        int dX = right - left;
+        int dY = up - down;
         if (dX <= 0 && dY <= 0) {
             return Integer.MAX_VALUE;
         }
@@ -55,11 +55,13 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        for (int i = 1; n > 16 && i < order; i++) {
-            n /= 16;
+        int num = n;
+
+        for (int i = 1; num > 16 && i < order; i++) {
+            num /= 16;
         }
 
-        return HEX_VALUES[(n % 16)];
+        return HEX_VALUES[(num % 16)];
     }
 
     /**
@@ -70,20 +72,21 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
+        long num = a;
         byte minValue = Byte.MAX_VALUE;
         byte counter = 1;
         byte tempCounter = counter;
 
-        while (a > 16) {
-            if ((a % 16) < minValue) {
-                minValue = (byte) (a % 16);
+        while (num > 16) {
+            if ((num % 16) < minValue) {
+                minValue = (byte) (num % 16);
                 tempCounter = counter;
             }
-            a /= 16;
+            num /= 16;
             counter++;
         }
 
-        return a < minValue ? counter : tempCounter;
+        return num < minValue ? counter : tempCounter;
     }
 
 }
