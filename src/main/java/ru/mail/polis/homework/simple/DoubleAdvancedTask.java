@@ -8,6 +8,8 @@ package ru.mail.polis.homework.simple;
  */
 public class DoubleAdvancedTask {
 
+    private static final double EPS = 1e-10;
+
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
      * Вывод менять не нужно, надо только посчитать x1, x2 и x3, где x1 >= x2 >= x3
@@ -27,25 +29,23 @@ public class DoubleAdvancedTask {
         double x1 = 0;
         double x2 = 0;
         double x3 = 0;
-        if (delta > 0) {
+        if (delta > EPS) {
             double t1 = -q / 2.0 + Math.sqrt(delta);
             double t2 = -q / 2.0 - Math.sqrt(delta);
             double m1 = t1 < 0 ? -Math.pow(-t1, 1.0 / 3.0) : Math.pow(t1, 1.0 / 3.0);
             double m2 = t2 < 0 ? -Math.pow(-t2, 1.0 / 3.0) : Math.pow(-t2, 1.0 / 3.0);
             x1 = m1 + m2 - A / 3.0;
-        }
-        else if (delta == 0){
+        } else if (Math.abs(delta) < EPS) {
             if (q < 0) {
                 x1 = 2 * Math.pow(-q / 2.0, 1.0 / 3.0) - A / 3.0;
                 x2 = -Math.pow(-q / 2.0,  1.0 / 3.0) - A / 3.0;
-
             } else {
                 x1 = -2 * Math.pow(q / 2.0, 1.0 / 3.0) - A / 3.0;
                 x2 = Math.pow(q / 2.0, 1.0 / 3.0) - A / 3.0;
             }
-        }
-        else {
-            double t = (1.0 / 3.0) * Math.asin(((3 * Math.sqrt(3) * q) / (2 * Math.pow(Math.pow(-p, 1.0 / 2.0), 3.0))));
+        } else {
+            double t = (1.0 / 3.0) * Math.asin(((3 * Math.sqrt(3) * q)
+                    / (2 * Math.pow(Math.pow(-p, 1.0 / 2.0), 3.0))));
             x1 = (2.0 / Math.sqrt(3)) * (Math.sqrt(-p) * Math.sin(t)) - A / 3.0;
             x2 = (-2.0 / Math.sqrt(3)) * (Math.sqrt(-p) * Math.sin(t + (Math.PI / 3.0))) - A / 3.0;
             x3 = (2.0 / Math.sqrt(3)) * (Math.sqrt(-p) * Math.cos(t + (Math.PI / 6.0))) - A / 3.0;
@@ -61,7 +61,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return a1 != a2 ? 0 : (float) (Math.abs(b2 - b1) / Math.sqrt(1 + a1 * a2));
+        return Math.abs(a2 - a1) < EPS ? (float) (Math.abs(b2 - b1) / Math.sqrt(1 + a1 * a2)) : 0;
     }
 
     /**

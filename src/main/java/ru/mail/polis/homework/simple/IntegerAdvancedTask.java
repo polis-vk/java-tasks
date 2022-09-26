@@ -18,7 +18,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return  q == 1 ? (long) a * n : (long)(a * (Math.pow(q, n) - 1) / (q - 1));
+        return Math.abs(q - 1) < EPS ? (long) a * n : (long) (a * (Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
@@ -30,20 +30,19 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        if(up >= grassY || right >= grassX){
+        if (up >= grassY || right >= grassX) {
             return 1;
         }
         int stepX = right - left;
         int stepY = up - down;
-        if(stepX <= 0 && stepY <= 0) {
+        if (stepX <= 0 && stepY <= 0) {
             return Integer.MAX_VALUE;
         }
         int dayY = (grassY - down) / stepY + 1;
         int dayX = (grassX - right) / stepX + 1;
-        if(stepX < 0) {
+        if (stepX < 0) {
             return dayY;
-        }
-        else if(stepY < 0) {
+        } else if (stepY < 0) {
             return dayX;
         }
         return Math.min(dayX, dayY);
@@ -56,9 +55,9 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        n /= Math.pow(16, order - 1);
-        int res = n % 16;
-        return res < 10 ? (char)(res + '0') : (char)(res - 10 + 'A');
+        int num = (int) (n / Math.pow(16, order - 1));
+        int res = num % 16;
+        return res < 10 ? (char) (res + '0') : (char) (res - 10 + 'A');
     }
 
     /**
@@ -69,19 +68,20 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
+        long curNum = a;
         int min = 16;
         int minPos = 0;
         int curPos = 1;
-        while(a > 0) {
-            int num = (int)(a % 16);
-            if(num < min) {
+        while (curNum > 0) {
+            int num = (int) (curNum % 16);
+            if (num < min) {
                 min = num;
                 minPos = curPos;
             }
-            a /= 16;
+            curNum /= 16;
             curPos++;
         }
-        return (byte)minPos;
+        return (byte) minPos;
     }
 
 }
