@@ -62,8 +62,9 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        n /= (int) Math.pow(16, order - 1);
-        int mod = n % 16;
+        int number = n;
+        number /= (int) Math.pow(16, order - 1);
+        int mod = number % 16;
         if (mod >= 10) {
             return (char) (mod + 'A' - 10);
         }
@@ -78,18 +79,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
+        long number = a;
         byte min = 16;
         byte minPlace = 0;
         byte count = 0;
         byte current;
-        while (a > 0 && min > 0) {
+        while (number > 0 && min > 0) {
             count++;
-            current = (byte) (a % 16);
+            current = (byte) (number % 16);
             if (current < min) {
                 min = current;
                 minPlace = count;
             }
-            a /= 16;
+            number /= 16;
         }
         return minPlace;
     }
