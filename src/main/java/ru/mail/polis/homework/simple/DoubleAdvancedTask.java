@@ -7,6 +7,7 @@ package ru.mail.polis.homework.simple;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class DoubleAdvancedTask {
+    private static final double EPS = 1e-10;
 
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
@@ -24,7 +25,7 @@ public class DoubleAdvancedTask {
         double Q = (Math.pow(A, 2) - 3 * B) / 9;
         double R = (2 * Math.pow(A, 3) - 9 * A * B + 27 * C) / 54;
         double phi = 0;
-        if (Q != 0) {
+        if (Q > EPS) {
             phi = Math.acos(R / Math.sqrt(Math.pow(Q, 3))) / 3;
         }
         double x1 = -2 * Math.sqrt(Q) * Math.cos(phi) - A / 3;
@@ -42,7 +43,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        if (a1 != a2) {
+        if (Math.abs(a1 - a2) > EPS) {
             return 0;
         }
         return (float) (Math.abs(b1 - b2) / Math.sqrt(a1 * a2 + 1));
