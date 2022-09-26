@@ -10,6 +10,8 @@ import java.util.Arrays;
  */
 public class DoubleAdvancedTask {
 
+    private static final double EPS = 1e-10;
+
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
      * Вывод менять не нужно, надо только посчитать x1, x2 и x3, где x1 >= x2 >= x3
@@ -31,7 +33,7 @@ public class DoubleAdvancedTask {
         double S = Q * Q * Q - R * R;
         double[] x = new double[3];
 
-        if (S == 0) {
+        if (S < EPS) {
             x[0] = -2 * Math.signum(R) * Math.sqrt(Q) - (A / 3);
             x[1] = Math.signum(R) * Math.sqrt(Q) - (A / 3);
             x[2] = x[1];
@@ -52,7 +54,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        if (a1 != a2) {
+        if (Math.abs(a1 - a2) > EPS) {
             return 0.0f;
         }
         // Формула - расстояние между двумя параллельными прямыми.
