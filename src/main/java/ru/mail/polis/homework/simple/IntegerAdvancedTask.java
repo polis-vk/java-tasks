@@ -22,7 +22,7 @@ public class IntegerAdvancedTask {
             return (long) a * n;
         }
         // Формула суммы n первых членов геометрической прогрессии.
-        return (long) ((a * ((Math.pow(q, n)) - 1)) / (q - 1));
+        return (long) (a * ((Math.pow(q, n)) - 1) / (q - 1));
     }
 
     /**

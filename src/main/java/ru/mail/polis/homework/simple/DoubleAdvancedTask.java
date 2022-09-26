@@ -26,8 +26,8 @@ public class DoubleAdvancedTask {
         double B = (double) c / a;
         double C = (double) d / a;
 
-        double Q = (A * A - 3 * B) / (9);
-        double R = (2 * A * A * A - 9 * A * B + 27 * C) / (54);
+        double Q = (A * A - 3 * B) / 9;
+        double R = (2 * A * A * A - 9 * A * B + 27 * C) / 54;
         double S = Q * Q * Q - R * R;
         double[] x = new double[3];
 
