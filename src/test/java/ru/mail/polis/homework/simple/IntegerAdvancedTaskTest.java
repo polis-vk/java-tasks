@@ -18,6 +18,7 @@ public class IntegerAdvancedTaskTest {
         assertEquals(12, IntegerAdvancedTask.progression(3, 1, 4));
         assertEquals(3, IntegerAdvancedTask.progression(3, 1, 1));
         assertEquals(340, IntegerAdvancedTask.progression(34, 1, 10));
+        assertEquals(100, IntegerAdvancedTask.progression(1, 1, 100));
     }
 
     @Test
@@ -29,12 +30,13 @@ public class IntegerAdvancedTaskTest {
         assertEquals(46, IntegerAdvancedTask.snake(100, 10, 200, 8, 100, 23333));
         assertEquals(13, IntegerAdvancedTask.snake(10, 3,2, 4, 32, 100));
         assertEquals(1, IntegerAdvancedTask.snake(5, 2, 39, 4, 2, 23));
-
+        assertEquals(2, IntegerAdvancedTask.snake(5, 5, 10, 3, -20, -11));
+        assertEquals(1, IntegerAdvancedTask.snake(5, 5, 20, 3, -20, -11));
+        assertEquals(Integer.MAX_VALUE, IntegerAdvancedTask.snake(5, 5, 5, 5, -20, -11));
     }
 
     @Test
     public void kDecimal() {
-        System.out.println(Integer.MAX_VALUE);
         assertEquals('D', IntegerAdvancedTask.kDecimal(454355, 2));
         assertEquals('9', IntegerAdvancedTask.kDecimal(345644523, 6));
         assertEquals('9', IntegerAdvancedTask.kDecimal(547545, 1));
@@ -44,11 +46,11 @@ public class IntegerAdvancedTaskTest {
         assertEquals('1', IntegerAdvancedTask.kDecimal(1, 1));
         assertEquals('1', IntegerAdvancedTask.kDecimal(17, 1));
         assertEquals('2', IntegerAdvancedTask.kDecimal(32, 2));
+        assertEquals('0', IntegerAdvancedTask.kDecimal(0, 1));
     }
 
     @Test
     public void minNumber() {
-        System.out.println(Integer.MAX_VALUE);
         assertEquals(1, IntegerAdvancedTask.minNumber(4543552));
         assertEquals(6, IntegerAdvancedTask.minNumber(3456445236L));
         assertEquals(5, IntegerAdvancedTask.minNumber(5475451));
@@ -58,5 +60,7 @@ public class IntegerAdvancedTaskTest {
         assertEquals(1, IntegerAdvancedTask.minNumber(11));
         assertEquals(2, IntegerAdvancedTask.minNumber(171));
         assertEquals(3, IntegerAdvancedTask.minNumber(322));
+        assertEquals(1, IntegerAdvancedTask.minNumber(0));
+        assertEquals(1, IntegerAdvancedTask.minNumber(255));
     }
 }

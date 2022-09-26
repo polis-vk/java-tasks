@@ -34,6 +34,7 @@ public class DoubleAdvancedTaskTest {
         assertEquals(0, DoubleAdvancedTask.length(1, 1, 4, 10), 0.000001);
         assertEquals(0, DoubleAdvancedTask.length(-13, 0.000000001, 30, 10), 0.000001);
         assertEquals(0.89442719, DoubleAdvancedTask.length(-2, 4, -2, 2), 0.000001);
+        assertEquals(0, DoubleAdvancedTask.length(2, 0, 2, 0), 0.000001);
     }
 
     @Test
