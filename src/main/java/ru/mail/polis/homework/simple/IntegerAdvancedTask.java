@@ -10,11 +10,12 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
+    private static final int HEX = 16;
 
     // Function-helper's
     private static char getDigitInHex(int n) {
         if (n >= 10) {
-            return Character.toUpperCase(Character.forDigit(n, 16));
+            return Character.toUpperCase(Character.forDigit(n, HEX));
         }
         return (char) ('0' + n);
     }
@@ -97,10 +98,10 @@ public class IntegerAdvancedTask {
         int number = n;
         byte currentOrder = 1;
         while (currentOrder < order) {
-            number /= 16;
+            number /= HEX;
             currentOrder++;
         }
-        return getDigitInHex((byte) (number % 16));
+        return getDigitInHex((byte) (number % HEX));
     }
 
     /**
@@ -113,7 +114,7 @@ public class IntegerAdvancedTask {
     public static byte minNumber(long a) {
         long number = a;
 
-        byte currentDigit = (byte) (number % 16);
+        byte currentDigit = (byte) (number % HEX);
         byte minDigit = currentDigit;
 
         byte minDigitOrder = 1;
@@ -124,8 +125,8 @@ public class IntegerAdvancedTask {
                 minDigit = currentDigit;
                 minDigitOrder = currentOrder;
             }
-            number /= 16;
-            currentDigit = (byte) (number % 16);
+            number /= HEX;
+            currentDigit = (byte) (number % HEX);
             currentOrder++;
         }
 
