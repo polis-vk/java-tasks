@@ -5,23 +5,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class IntegerAdvancedTaskTest {
-    @Test
-    public void getDigitInHex() {
-        assertEquals('F', IntegerAdvancedTask.getDigitInHex(15));
-        assertEquals('A', IntegerAdvancedTask.getDigitInHex(10));
-        assertEquals('0', IntegerAdvancedTask.getDigitInHex(0));
-    }
-
-    @Test
-    public void isOnTheGrass() {
-        assertTrue(IntegerAdvancedTask.isOnTheGrass(5, 1, 5, 2));
-        assertTrue(IntegerAdvancedTask.isOnTheGrass(5, 1, 6, 1));
-        assertTrue(IntegerAdvancedTask.isOnTheGrass(5, 5, 5, 6));
-
-        assertFalse(IntegerAdvancedTask.isOnTheGrass(4, 4, 5, 5));
-        assertFalse(IntegerAdvancedTask.isOnTheGrass(16, 4, 100, 5));
-        assertFalse(IntegerAdvancedTask.isOnTheGrass(4, 0, 5, 1));
-    }
 
     @Test
     public void progression() {
@@ -41,17 +24,17 @@ public class IntegerAdvancedTaskTest {
     @Test
     public void snake() {
         assertEquals(2, IntegerAdvancedTask.snake(10, 3, 5, 5, 20, 11));
+        assertEquals(0, IntegerAdvancedTask.snake(5, 5, 10, 3, 0, 11));
         assertEquals(Integer.MAX_VALUE, IntegerAdvancedTask.snake(10, 3, 10, 5, 11, 20));
         assertEquals(Integer.MAX_VALUE, IntegerAdvancedTask.snake(1, 2, 3, 4, 3, 2));
         assertEquals(1, IntegerAdvancedTask.snake(5, 2, 39, 4, 4, 3));
         assertEquals(46, IntegerAdvancedTask.snake(100, 10, 200, 8, 100, 23333));
-        assertEquals(13, IntegerAdvancedTask.snake(10, 3,2, 4, 32, 100));
+        assertEquals(13, IntegerAdvancedTask.snake(10, 3, 2, 4, 32, 100));
         assertEquals(1, IntegerAdvancedTask.snake(5, 2, 39, 4, 2, 23));
         // Краевой вариант, когда гусеница не двигается за день в сторону травы, но может достичь травы за первые полдня
         assertEquals(1, IntegerAdvancedTask.snake(3, 1, 10, 2, 20, 3));
         // Так она уже никогда до травы не доберётся
         assertEquals(Integer.MAX_VALUE, IntegerAdvancedTask.snake(3, 1, 10, 2, 20, 4));
-
     }
 
     @Test

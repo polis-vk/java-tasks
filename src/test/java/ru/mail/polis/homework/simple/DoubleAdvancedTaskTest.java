@@ -6,37 +6,6 @@ import static org.junit.Assert.*;
 
 public class DoubleAdvancedTaskTest {
     @Test
-    public void acos() {
-        assertEquals(0, DoubleAdvancedTask.acos(1), 1e-10);
-        assertEquals(Math.PI / 2, DoubleAdvancedTask.acos(0), 1e-10);
-    }
-
-    @Test
-    public void sqrt() {
-        assertEquals(1, DoubleAdvancedTask.sqrt(1), 1e-10);
-        assertEquals(2, DoubleAdvancedTask.sqrt(4), 1e-10);
-    }
-
-    @Test
-    public void pow() {
-        assertEquals(1, DoubleAdvancedTask.pow(10000, 0), 1e-10);
-        assertEquals(256, DoubleAdvancedTask.pow(4, 4), 1e-10);
-    }
-
-    @Test
-    public void cos() {
-        assertEquals(1, DoubleAdvancedTask.cos(0), 1e-10);
-        assertEquals(0.5, DoubleAdvancedTask.cos(Math.PI / 3), 1e-10);
-    }
-
-    @Test
-    public void abs() {
-        assertEquals(0, DoubleAdvancedTask.abs(0), 1e-10);
-        assertEquals(123, DoubleAdvancedTask.abs(-123), 1e-10);
-        assertEquals(123, DoubleAdvancedTask.abs(123), 1e-10);
-    }
-
-    @Test
     public void equation() {
         assertX(parse(DoubleAdvancedTask.equation(1, -4, -7, 10)), 5, 1, -2);
         assertX(parse(DoubleAdvancedTask.equation(1, 0, 0, 0)), 0, 0, 0);

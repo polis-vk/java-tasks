@@ -10,27 +10,6 @@ import java.util.Arrays;
  */
 public class DoubleAdvancedTask {
 
-    // Mathematical functions-helpers
-    public static double acos(double x) {
-        return Math.acos(x);
-    }
-
-    public static double sqrt(double x) {
-        return Math.sqrt(x);
-    }
-
-    public static double pow(double x, double n) {
-        return Math.pow(x, n);
-    }
-
-    public static double cos(double x) {
-        return Math.cos(x);
-    }
-
-    public static double abs(double x) {
-        return Math.abs(x);
-    }
-
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
      * Вывод менять не нужно, надо только посчитать x1, x2 и x3, где x1 >= x2 >= x3
@@ -45,6 +24,7 @@ public class DoubleAdvancedTask {
         double x1;
         double x2;
         double x3;
+        double[] roots = new double[3];
 
         // Из условия известно, что у данного уравнения есть три вещественных корня
         // Следовательно, все расчёты ниже подходят только для этого случая
@@ -52,14 +32,17 @@ public class DoubleAdvancedTask {
         // Рассмотрим несколько краевых моментов, которые не решаются вышеуказанной формулой
         if (b == 0 && c == 0 && d == 0) {
             // Случай a * x^3 = 0
-            x1 = x2 = x3 = 0;
+            x1 = 0;
+            x2 = 0;
+            x3 = 0;
         } else if (b != 0 && c == 0 && d == 0) {
             // Случай a * x^3 + b * x^2 = 0
             x1 = (double) -b / a;
-            x2 = x3 = 0;
+            x2 = 0;
+            x3 = 0;
         } else if (b == 0 && c != 0 && d == 0) {
             // Случай a * x^3 + c * x = 0
-            x1 = sqrt((double) -c / a);
+            x1 = Math.sqrt((double) -c / a);
             x2 = 0;
             x3 = -x1;
         } else {
@@ -73,32 +56,35 @@ public class DoubleAdvancedTask {
             double p = (double) d / a; // c
 
             // Следующие вычисления объяснены на сайте по ссылке выше
-            double q = (3 * m - pow(n, 2)) / 9;
-            double r = (9 * n * m - 2 * pow(n, 3) - 27 * p) / 54;
+            double q = (3 * m - n * n) / 9;
+            double r = (9 * n * m - 2 * n * n * n - 27 * p) / 54;
             double s = q * q * q + r * r;
 
             // Вариант с s > 0 не рассматривается потому, что он ведёт к появлению комплексных корней
             // А по условию такого быть не может
             if (s < 0) {
-                double f = acos(r / sqrt(-pow(q, 3))) / 3;
+                double f = Math.acos(r / Math.sqrt(-(q * q * q))) / 3;
 
-                x1 = 2 * sqrt(-q) * cos(f) - n / 3;
-                x2 = 2 * sqrt(-q) * cos(f + (2 * Math.PI) / 3) - n / 3;
-                x3 = 2 * sqrt(-q) * cos(f - (2 * Math.PI) / 3) - n / 3;
+                x1 = 2 * Math.sqrt(-q) * Math.cos(f) - n / 3;
+                x2 = 2 * Math.sqrt(-q) * Math.cos(f + (2 * Math.PI) / 3) - n / 3;
+                x3 = 2 * Math.sqrt(-q) * Math.cos(f - (2 * Math.PI) / 3) - n / 3;
             } else {
-                x1 = -2 * pow(3, 1f / 3) - n / 3;
-                x2 = x3 = pow(3, 1f / 3) - n / 3; // Данный корень имеет вторую степень кратности
+                x1 = -2 * Math.pow(3, 1f / 3) - n / 3;
+                x2 = Math.pow(3, 1f / 3) - n / 3; // Данный корень имеет вторую степень кратности
+                x3 = x2;
             }
         }
 
         // Сортировка полученных значений для будущего вывода
-        double[] array = new double[]{x1, x2, x3};
+        roots[0] = x1;
+        roots[1] = x2;
+        roots[2] = x3;
 
-        Arrays.sort(array);
+        Arrays.sort(roots);
 
-        x1 = array[2];
-        x2 = array[1];
-        x3 = array[0];
+        x1 = roots[2];
+        x2 = roots[1];
+        x3 = roots[0];
 
         return x1 + ", " + x2 + ", " + x3;
     }
@@ -110,12 +96,12 @@ public class DoubleAdvancedTask {
      */
     public static float length(double a1, double b1, double a2, double b2) {
         // Если коэффициенты нули при x, то прямые - горизонтали, расстояние между которыми равно разнице значений b.
-        if (a1 == 0 && a2 == 0) {
+        if (Double.compare(a1, 0) == 0 && Double.compare(a2, 0) == 0) {
             return (float) Math.abs(b1 - b2);
         }
 
         // Если коэффициенты при x не равны, то прямые не параллельны, а значит когда-то пересекутся => расстояние = 0.
-        if (a1 != a2) {
+        if (Double.compare(a1, a2) != 0) {
             return 0;
         }
 
@@ -125,11 +111,11 @@ public class DoubleAdvancedTask {
         // Тогда мы можем рассчитать катеты и гипотенузу, а затем найти высоту, опущенную на гипотенузу этого треугольника
         // Эта высота будет являться расстоянием между этими прямыми
         // Высоту найдём с помощью среднего геометрического (подробнее: https://www-formula.ru/heightrectangulartriangle)
-        float side1 = (float) Math.abs(b1 - b2);
-        float side2 = (float) Math.abs((-b1 / a1) + (b2 / a2));
-        float hypotenuse = (float) Math.sqrt(side1 * side1 + side2 * side2);
+        double side1 = Math.abs(b1 - b2);
+        double side2 = Math.abs((-b1 / a1) + (b2 / a2));
+        double hypotenuse = Math.sqrt(side1 * side1 + side2 * side2);
 
-        return (side1 * side2) / hypotenuse;
+        return (float) ((side1 * side2) / hypotenuse);
     }
 
     /**
@@ -168,6 +154,6 @@ public class DoubleAdvancedTask {
         int d = (x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1);
 
         // Итоговое значение координаты z
-        return ((double) (y - x)) / ((double) d) + z1;
+        return (double) (y - x) / d + z1;
     }
 }

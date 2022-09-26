@@ -11,17 +11,15 @@ public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
 
-    // Function-helpers
-    public static char getDigitInHex(int n) {
-        char digitInHex = Character.forDigit(n, 16);
+    // Function-helper's
+    private static char getDigitInHex(int n) {
         if (n >= 10) {
-            return Character.toUpperCase(digitInHex);
-        } else {
-            return digitInHex;
+            return Character.toUpperCase(Character.forDigit(n, 16));
         }
+        return (char) ('0' + n);
     }
 
-    public static boolean isOnTheGrass(int x, int y, int grassX, int grassY) {
+    private static boolean isOnTheGrass(int x, int y, int grassX, int grassY) {
         return x >= grassX || y >= grassY;
     }
 
@@ -50,77 +48,42 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        // Текущий день
-        int currentDay = 1;
+        // Сразу делаем проверку краевых вариантов
 
-        // Начальные координаты гусеницы
-        int x = 0;
-        int y = 0;
-
-        // Пусть гусеница пройдёт один день
-
-        // Если трава сверху, то пусть гусеница пройдёт вверх, и тогда проверим, добралась ли она до травы
-        if (grassY > 0) {
-            // Шаг вверх
-            y += up;
-
-            // Проверка, добралась ли гусеница до травы
-            if (isOnTheGrass(x, y, grassX, grassY)) {
-                return currentDay;
-            }
+        // Проверяем, находится ли в данный момент гусеница в траве
+        if (isOnTheGrass(0, 0, grassX, grassY)) {
+            return 0;
         }
 
-        // Если трава справа, то пусть гусеница пройдёт вправо, и тогда проверим, добралась ли она до травы
-        if (grassX > 0) {
-            // Шаг вправо
-            x += right;
-
-            // Опять проверка
-            if (isOnTheGrass(x, y, grassX, grassY)) {
-                return currentDay;
-            }
+        // Проверяем, может ли гусеница достичь травы в первые полдня
+        if (isOnTheGrass(right, up, grassX, grassY)) {
+            return 1;
         }
 
-        // Дальше идти вниз и влево смысла нет
-        // Если координаты гусеницы уходят вниз или влево после полного дня (в направлении травы), то когда-то она доберётся до травы
+        // Изменение позиции гусеницы по вертикали и горизонтали за сутки
+        int deltaY = up - down;
+        int deltaX = right - left;
 
-        // Таким образом, нам надо проверить, двигается ли по итогу дня гусеница в направлении травы
-        if (up - down <= 0 && right - left <= 0) {
-            // Если нет, то она никогда до травы не доберётся
-            return Integer.MAX_VALUE;
+        // Количество дней, необходимое, чтобы добраться до верхней и правой границ
+        int yDays;
+        int xDays;
+
+        // Проверяем движется ли гусеница вверх или вправо в сторону травы
+        // Если движется, то рассчитываем количество дней, необходимое для того, чтобы сделать последний шаг.
+        // Сразу же идёт проверка на то, может ли добраться до травы гусеница вообще
+        if (deltaY > 0) {
+            yDays = (int) Math.ceil((float) (grassY - up) / deltaY) + 1;
+        } else {
+            yDays = Integer.MAX_VALUE;
         }
-        // Иначе, гусенице нужно двигаться дальше пока она не доберётся
 
-        while (!isOnTheGrass(x, y, grassX, grassY)) {
-            // Продолжаем начатый день движения (прошло только полдня)
-            // Шаг вниз
-            y -= down;
-
-            if (isOnTheGrass(x, y, grassX, grassY)) {
-                return currentDay;
-            }
-
-            // Шаг влево
-            x -= left;
-
-            if (isOnTheGrass(x, y, grassX, grassY)) {
-                return currentDay;
-            }
-
-            // День прошёл
-            currentDay++;
-
-            // Шаг вверх
-            y += up;
-
-            if (isOnTheGrass(x, y, grassX, grassY)) {
-                return currentDay;
-            }
-
-            // Шаг вправо
-            x += right;
+        if (deltaX > 0) {
+            xDays = (int) Math.ceil((float) (grassX - right) / deltaX) + 1;
+        } else {
+            xDays = Integer.MAX_VALUE;
         }
-        return currentDay;
+
+        return Math.min(xDays, yDays);
     }
 
     /**
@@ -131,13 +94,13 @@ public class IntegerAdvancedTask {
      */
 
     public static char kDecimal(int n, int order) {
+        int number = n;
         byte currentOrder = 1;
         while (currentOrder < order) {
-            n /= 16;
+            number /= 16;
             currentOrder++;
         }
-        byte nthOrder = (byte) (n % 16);
-        return getDigitInHex(nthOrder);
+        return getDigitInHex((byte) (number % 16));
     }
 
     /**
@@ -148,21 +111,21 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        byte minDigit = (byte) (a % 16);
-        byte currentDigit;
+        long number = a;
 
-        a /= 16;
+        byte currentDigit = (byte) (number % 16);
+        byte minDigit = currentDigit;
 
         byte minDigitOrder = 1;
-        byte currentOrder = 2;
+        byte currentOrder = 1;
 
-        while (a > 0) {
-            currentDigit = (byte) (a % 16);
+        while (number > 0) {
             if (currentDigit < minDigit) {
                 minDigit = currentDigit;
                 minDigitOrder = currentOrder;
             }
-            a /= 16;
+            number /= 16;
+            currentDigit = (byte) (number % 16);
             currentOrder++;
         }
 
