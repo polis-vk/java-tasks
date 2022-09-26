@@ -10,6 +10,8 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
+    private static final int HEX = 16;
+    private static final int DECIMAL = 10;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -18,13 +20,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        double progressionSum = 0;
-        double currentPowedQ = 1;
-        for (int i = 0; i < n; i++) {
-            progressionSum += a * currentPowedQ;
-            currentPowedQ *= q;
+        if (q == 1) {
+            return (long) a * n;
         }
-        return (long) progressionSum;
+        return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
@@ -38,13 +37,13 @@ public class IntegerAdvancedTask {
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
         int minDaysCountToGrassY = Integer.MAX_VALUE;
         if (grassY - up <= 0) {
-            minDaysCountToGrassY = 1;
+            return 1;
         } else if (up - down > 0) {
             minDaysCountToGrassY = 1 + (int) Math.ceil((double) (grassY - up) / (up - down));
         }
         int minDaysCountToGrassX = Integer.MAX_VALUE;
         if (grassX - right <= 0) {
-            minDaysCountToGrassX = 1;
+            return 1;
         } else if (right - left > 0) {
             minDaysCountToGrassX = 1 + (int) Math.ceil((double) (grassX - right) / (right - left));
         }
@@ -58,14 +57,15 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
+        int number = n;
         for (int i = 0; i < order - 1; i++) {
-            n /= 16;
+            number /= HEX;
         }
-        byte orderValue = (byte) (n % 16);
-        if (orderValue < 10) {
+        byte orderValue = (byte) (number % HEX);
+        if (orderValue < DECIMAL) {
             return (char) ('0' + orderValue);
         }
-        return (char) ('A' - 10 + orderValue);
+        return (char) ('A' - DECIMAL + orderValue);
     }
 
     /**
@@ -76,19 +76,23 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        byte minValue = (byte) (a % 16);
-        a /= 16;
-        byte minValueNumber = 1;
-        byte valueNumber = 2;
-        while (a != 0) {
-            if (a % 16 < minValue) {
-                minValue = (byte) (a % 16);
-                minValueNumber = valueNumber;
+        long number = a;
+        byte minDigit = (byte) (number % HEX);
+        number /= HEX;
+        byte minDigitIndex = 1;
+        byte currentDigitIndex = 2;
+        while (number != 0) {
+            if (minDigit == 0) {
+                return minDigitIndex;
             }
-            a /= 16;
-            valueNumber++;
+            if (number % HEX < minDigit) {
+                minDigit = (byte) (number % HEX);
+                minDigitIndex = currentDigitIndex;
+            }
+            number /= HEX;
+            currentDigitIndex++;
         }
-        return minValueNumber;
+        return minDigitIndex;
     }
 
 }

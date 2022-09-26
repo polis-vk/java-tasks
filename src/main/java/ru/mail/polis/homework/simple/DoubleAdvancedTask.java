@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.Arrays;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -7,6 +9,12 @@ package ru.mail.polis.homework.simple;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class DoubleAdvancedTask {
+    /*
+     * Шаг будет определять ширину интервала,
+     * в пределе которого осуществляется поиск корня.
+     */
+    private static final double STEP = 1e-7;
+    private static final double EPSILON = 1e-10;
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
      * Вывод менять не нужно, надо только посчитать x1, x2 и x3, где x1 >= x2 >= x3
@@ -17,66 +25,46 @@ public class DoubleAdvancedTask {
      */
     public static String equation(int a, int b, int c, int d) {
         // Используется метод Ньютона-Рафсона
-
-        /*
-         * Шаг будет определять ширину интервала,
-         * в пределе которого осуществляется поиск корня.
-         */
-        final double step = 1e-7;
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
+        double[] roots = new double[3];
         // Поиск первого корня
         if (d != 0) {
-            x1 = findRootFromExclusive(a, b, c, d, 0, step);
+            roots[0] = findRootFromExclusive(a, b, c, d, 0, STEP);
             /*
              * Если есть корень на противоположном интервале,
              * находим его, а затем присваиваем x2
              */
-            if (intervalContainsRoot(a, b, c, d, -x1 - step, -x1))
-                x2 = findNearestRoot(a, b, c, d, -x1, step);
+            if (intervalContainsRoot(a, b, c, d, -roots[0] - STEP, -roots[0])) {
+                roots[1] = findNearestRoot(a, b, c, d, -roots[0], STEP);
+            }
         }
         // Поиск второго корня, если это необходимо
-        if (x2 == 0 && (d != 0 || c != 0)) {
-            x2 = findRootFromExclusive(a, b, c, d, Math.abs(x1), step);
+        if (Double.compare(roots[1], 0) == 0 && (d != 0 || c != 0)) {
+            roots[1] = findRootFromExclusive(a, b, c, d, Math.abs(roots[0]), STEP);
             /*
              * Если есть корень на противоположном интервале,
              * находим его, а затем присваиваем x3
              */
-            if (intervalContainsRoot(a, b, c, d, -x2 - step, -x2))
-                x3 = findNearestRoot(a, b, c, d, -x2, step);
+            if (intervalContainsRoot(a, b, c, d, -roots[1] - STEP, -roots[1])) {
+                roots[2] = findNearestRoot(a, b, c, d, -roots[1], STEP);
+            }
         }
         // Поиск третьего корня, если это необходимо
-        if (x3 == 0 && (b != 0 || c != 0 || d != 0)) {
-            x3 = findRootFromExclusive(a, b, c, d, Math.abs(x2), step);
+        if (Double.compare(roots[2], 0) == 0 && (b != 0 || c != 0 || d != 0)) {
+            roots[2] = findRootFromExclusive(a, b, c, d, Math.abs(roots[1]), STEP);
         }
         // Сортировка найденных корней
-        if (x3 > x2) {
-            double temporary = x2;
-            x2 = x3;
-            x3 = temporary;
-        }
-        if (x2 > x1) {
-            double temporary = x1;
-            x1 = x2;
-            x2 = temporary;
-        }
-        if (x3 > x2) {
-            double temporary = x2;
-            x2 = x3;
-            x3 = temporary;
-        }
-        return x1 + ", " + x2 + ", " + x3;
+        Arrays.sort(roots);
+        return roots[2] + ", " + roots[1] + ", " + roots[0];
     }
 
     // Значение производной кубического полинома в точке x
-    public static double cubicPolynomialDerivativeValue(int a, int b, int c, double x) {
-        return 3 * a * x * x + 2 * b * x + c;
+    private static double cubicPolynomialDerivativeValue(int a, int b, int c, double x) {
+        return 3 * a * Math.pow(x, 2) + 2 * b * x + c;
     }
 
     // Значение кубического полинома в точке x
-    public static double cubicPolynomialValue(int a, int b, int c, int d, double x) {
-        return a * x * x * x + b * x * x + c * x + d;
+    private static double cubicPolynomialValue(int a, int b, int c, int d, double x) {
+        return a * Math.pow(x, 3) + b * Math.pow(x, 2) + c * x + d;
     }
 
     /**
@@ -106,25 +94,15 @@ public class DoubleAdvancedTask {
     }
 
     /**
-     * Перегрузка "основной" функции для нахождения корня без указания эпсилон
-     * (т. е. по дефолту корень находится для эпсилон = 1e-10)
-     */
-    public static double findNearestRoot(int a, int b, int c,
-                                         int d, double nearTo,
-                                         double spread) {
-        return findNearestRoot(a, b, c, d, nearTo, spread, 1e-10);
-    }
-
-    /**
      * Ищет ближайший корень к значению nearTo кубического полинома c изначальным разбросом spread,
      * принадлежащий указанному интервалу, по методу Ньютона-Рафсона
      */
     public static double findNearestRoot(int a, int b, int c,
                                          int d, double nearTo,
-                                         double spread, double epsilon) {
+                                         double spread) {
         double prevX = nearTo - spread;
         double currentX = nearTo;
-        while (Math.abs(prevX - currentX) >= epsilon) {
+        while (Math.abs(prevX - currentX) >= EPSILON) {
             prevX = currentX;
             currentX = currentX
                     - cubicPolynomialValue(a, b, c, d, currentX)
