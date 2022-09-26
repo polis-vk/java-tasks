@@ -82,7 +82,7 @@ public class IntegerAdvancedTask {
     public static byte minNumber(long a) {
         long number = a;
         byte min = HEX_BASE;
-        byte minPlace = 0;
+        byte minIndex = 0;
         byte count = 0;
         byte current;
         while (number > 0 && min > 0) {
@@ -90,11 +90,11 @@ public class IntegerAdvancedTask {
             current = (byte) (number % HEX_BASE);
             if (current < min) {
                 min = current;
-                minPlace = count;
+                minIndex = count;
             }
             number /= HEX_BASE;
         }
-        return minPlace;
+        return minIndex;
     }
 
 }
