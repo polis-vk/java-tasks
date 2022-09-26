@@ -26,20 +26,20 @@ public class DoubleAdvancedTask {
         double B = (double) c / a;
         double C = (double) d / a;
 
-        double Q = (A * A - 3.0 * B) / (9.0);
-        double R = (2.0 * A * A * A - 9.0 * A * B + 27.0 * C) / (54.0);
+        double Q = (A * A - 3 * B) / (9);
+        double R = (2 * A * A * A - 9 * A * B + 27 * C) / (54);
         double S = Q * Q * Q - R * R;
         double[] x = new double[3];
 
-        if (S == 0.0) {
-            x[0] = -2.0 * Math.signum(R) * Math.sqrt(Q) - (A / 3.0);
-            x[1] = Math.signum(R) * Math.sqrt(Q) - (A / 3.0);
+        if (S == 0) {
+            x[0] = -2 * Math.signum(R) * Math.sqrt(Q) - (A / 3);
+            x[1] = Math.signum(R) * Math.sqrt(Q) - (A / 3);
             x[2] = x[1];
         } else {
             double f = (1.0 / 3.0) * Math.acos(R / Math.sqrt(Q * Q * Q));
-            x[0] = -2.0 * Math.sqrt(Q) * Math.cos(f) - (A / 3.0);
-            x[1] = -2.0 * Math.sqrt(Q) * Math.cos(f + (2.0 / 3.0) * Math.PI) - (A / 3.0);
-            x[2] = -2.0 * Math.sqrt(Q) * Math.cos(f - (2.0 / 3.0) * Math.PI) - (A / 3.0);
+            x[0] = -2 * Math.sqrt(Q) * Math.cos(f) - (A / 3);
+            x[1] = -2 * Math.sqrt(Q) * Math.cos(f + (2.0 / 3.0) * Math.PI) - (A / 3);
+            x[2] = -2 * Math.sqrt(Q) * Math.cos(f - (2.0 / 3.0) * Math.PI) - (A / 3);
         }
 
         Arrays.sort(x);
