@@ -10,6 +10,7 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
+    private static final byte HEX_BASE = 16;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -80,18 +81,18 @@ public class IntegerAdvancedTask {
      */
     public static byte minNumber(long a) {
         long number = a;
-        byte min = 16;
+        byte min = HEX_BASE;
         byte minPlace = 0;
         byte count = 0;
         byte current;
         while (number > 0 && min > 0) {
             count++;
-            current = (byte) (number % 16);
+            current = (byte) (number % HEX_BASE);
             if (current < min) {
                 min = current;
                 minPlace = count;
             }
-            number /= 16;
+            number /= HEX_BASE;
         }
         return minPlace;
     }
