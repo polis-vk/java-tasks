@@ -31,7 +31,7 @@ public class DoubleAdvancedTask {
             derfx = getDerValueOfCubuc(a, b, c, x1);
         } while (Math.abs(derfx) < eps); // метод Ньютона не будет работать, если производная равна нулю
 
-        while (Math.abs(fx) > eps) {
+        while (Math.abs(fx) > Math.pow(eps, 4)) { // теоретически, могло хватить и погрешности в кубе, но для большей надежности возьмем в 4й
             x1 = x1 - fx / derfx;
             fx = getValueOfCubic(a, b, c, d, x1);
             derfx = getDerValueOfCubuc(a, b, c, x1);
