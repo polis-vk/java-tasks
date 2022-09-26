@@ -18,7 +18,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q == 1) {
+        if (Math.abs(q - 1) < EPS) {
             return a * n;
         }
         return (long) ((a * (Math.pow(q, n) - 1)) / (q - 1));
@@ -58,10 +58,11 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
+        int inpNumber = n;
         for (int cnt = 0; cnt < order - 1; cnt++) {
-            n /= 16;
+            inpNumber /= 16;
         }
-        char ans = (char) (n % 16);
+        char ans = (char) (inpNumber % 16);
 
         if (ans >= 10) {
             ans += 'A' - 10;
@@ -80,16 +81,17 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
+        long inpNumber = a;
         byte ans = -1;
         byte minNum = 16;
         byte cnt = 0;
-        while (a != 0) {
-            byte num = (byte) (a % 16);
+        while (inpNumber != 0) {
+            byte num = (byte) (inpNumber % 16);
             if (num < minNum) {
                 minNum = num;
                 ans = cnt;
             }
-            a /= 16;
+            inpNumber /= 16;
             cnt++;
         }
         return (byte) (ans + 1);

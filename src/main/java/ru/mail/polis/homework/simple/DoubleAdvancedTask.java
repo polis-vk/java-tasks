@@ -8,6 +8,8 @@ package ru.mail.polis.homework.simple;
  */
 public class DoubleAdvancedTask {
 
+    private static final double eps = 1e-12;
+
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
      * Вывод менять не нужно, надо только посчитать x1, x2 и x3, где x1 >= x2 >= x3
@@ -17,7 +19,9 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int a, int b, int c, int d) {
-        double fx, x1, derfx;
+        double fx;
+        double x1;
+        double derfx;
 
         // первый корень находим методом Ньютона
 
@@ -25,15 +29,15 @@ public class DoubleAdvancedTask {
             x1 = (Math.random() - 0.5);
             fx = getValueOfCubic(a, b, c, d, x1);
             derfx = getDerValueOfCubuc(a, b, c, x1);
-        } while (derfx == 0); // метод Ньютона не будет работать, если производная равна нулю
+        } while (Math.abs(derfx) < eps); // метод Ньютона не будет работать, если производная равна нулю
 
-        while (fx != 0) {
+        while (Math.abs(fx) > eps) {
             x1 = x1 - fx / derfx;
             fx = getValueOfCubic(a, b, c, d, x1);
             derfx = getDerValueOfCubuc(a, b, c, x1);
         }
 
-        x1 = Math.round(x1 * 1e12) / 1e12; // округление до 12 знаков после запятой - необходимо из-за погрешности,
+        x1 = Math.round(x1 / eps) * eps; // округление до 12 знаков после запятой - необходимо из-за погрешности,
         // из-за которой иногда дискриминант < 0 на следующем шаге
 
         double quadraticA = a;
@@ -73,12 +77,12 @@ public class DoubleAdvancedTask {
 
 
     // значение производной полинома в точке x
-    public static double getDerValueOfCubuc(int a, int b, int c, double x) {
+    private static double getDerValueOfCubuc(int a, int b, int c, double x) {
         return 3 * a * Math.pow(x, 2) + 2 * b * x + c;
     }
 
     // значение полинома в точке x
-    public static double getValueOfCubic(int a, int b, int c, int d, double x) {
+    private static double getValueOfCubic(int a, int b, int c, int d, double x) {
         return a * Math.pow(x, 3) + b * Math.pow(x, 2) + c * x + d;
     }
 
@@ -88,11 +92,10 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        if (a1 == a2) {
+        if (Math.abs(a1 - a2) < eps) {
             return (float) (Math.abs(b1 - b2) / Math.sqrt(1 + a1 * a1));
-        } else {
-            return 0;
         }
+        return 0;
     }
 
     /**
