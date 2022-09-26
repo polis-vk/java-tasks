@@ -68,7 +68,7 @@ public class IntegerAdvancedTask {
         if (mod >= 10) {
             return (char) (mod + 'A' - 10);
         }
-        return String.valueOf(mod).charAt(0);
+        return (char) (mod + '0');
     }
 
     /**
