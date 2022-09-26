@@ -18,7 +18,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (Math.abs(q - 1.0) < EPS) {
+            return (long) a * n;
+        }
+        return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
     /**
@@ -30,7 +33,25 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (grassY <= up || grassX <= right) {
+            return 1;
+        } else if (up <= down && right <= left) {
+            return Integer.MAX_VALUE;
+        }
+        int x = 0;
+        int y = 0;
+        int result = 0;
+        while (true) {
+            y = y + up;
+            x = x + right;
+            result++;
+            if (y >= grassY || x >= grassX) {
+                return result;
+            } else {
+                y = y - down;
+                x = x - left;
+            }
+        }
     }
 
     /**
@@ -40,7 +61,12 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int number = n;
+        for (int i = 1; i < order; i++) {
+            number = number / 16;
+        }
+        number = number % 16;
+        return number < 10 ? (char) (number + '0') : (char) (number - 10 + 'A');
     }
 
     /**
@@ -51,7 +77,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long number = a;
+        long min = Long.MAX_VALUE;
+        byte index = 1;
+        byte digit;
+        for (int i = 1; number != 0; i++) {
+            digit = (byte) (number % 16);
+            if (digit < min) {
+                min = digit;
+                index = (byte) i;
+            }
+            number = number / 16;
+        }
+        return index;
     }
 
 }
