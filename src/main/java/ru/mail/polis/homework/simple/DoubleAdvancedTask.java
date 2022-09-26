@@ -10,6 +10,8 @@ import java.util.Arrays;
  */
 public class DoubleAdvancedTask {
 
+    private static final double EPS = 1e-10;
+
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
      * Вывод менять не нужно, надо только посчитать x1, x2 и x3, где x1 >= x2 >= x3
@@ -35,7 +37,7 @@ public class DoubleAdvancedTask {
 
         if (DISCRIMINANT < 0) {
             double angle = 0;
-            if (Q == 0) {
+            if (Q <= EPS && Q >= -EPS) {
                 angle = Math.PI / 2;
             } else {
                 final double GENERAL_ARCTANGENT = Math.atan(Math.sqrt(-DISCRIMINANT) / (-Q / 2));
@@ -45,17 +47,17 @@ public class DoubleAdvancedTask {
                     angle = GENERAL_ARCTANGENT + Math.PI;
                 }
             }
-            double y1 = 2 * Math.sqrt(-P / 3) * Math.cos(angle / 3);
-            double y2 = 2 * Math.sqrt(-P / 3) * Math.cos(angle / 3 + 2 * Math.PI / 3);
-            double y3 = 2 * Math.sqrt(-P / 3) * Math.cos(angle / 3 + 4 * Math.PI / 3);
+            final double y1 = 2 * Math.sqrt(-P / 3) * Math.cos(angle / 3);
+            final double y2 = 2 * Math.sqrt(-P / 3) * Math.cos(angle / 3 + 2 * Math.PI / 3);
+            final double y3 = 2 * Math.sqrt(-P / 3) * Math.cos(angle / 3 + 4 * Math.PI / 3);
 
             //обратная замена
             results[0] = y1 - REVERSE_REPLACEMENT_FROM_Y_TO_X;
             results[1] = y2 - REVERSE_REPLACEMENT_FROM_Y_TO_X;
             results[2] = y3 - REVERSE_REPLACEMENT_FROM_Y_TO_X;
         } else if (Math.abs(DISCRIMINANT) <= 1e-10) {
-            double y1 = 2 * Math.cbrt(-Q / 2);
-            double y2 = -Math.cbrt(-Q / 2);
+            final double y1 = 2 * Math.cbrt(-Q / 2);
+            final double y2 = -Math.cbrt(-Q / 2);
             //обратная замена
             results[0] = y1 - REVERSE_REPLACEMENT_FROM_Y_TO_X;
             results[1] = y2 - REVERSE_REPLACEMENT_FROM_Y_TO_X;

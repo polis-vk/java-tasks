@@ -9,6 +9,9 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
+    private final static int VALUE_TO_GET_LETTERS = 55;
+    private final static int VALUE_TO_GET_NUMBERS = 48;
+    private final static int RADIX = 16;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -17,7 +20,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q == 1) {//тогда прогрессия арифметическая
+        if (q - 1 <= EPS && q - 1 >= -EPS) {//тогда прогрессия арифметическая
             return (long) a * n;
         }
         return (long) ((a * (1 - Math.pow(q, n))) / (1 - q));
@@ -61,11 +64,8 @@ public class IntegerAdvancedTask {
      */
 
     public static char kDecimal(int n, int order) {
-        final int VALUE_TO_GET_LETTERS = 55;
-        final int VALUE_TO_GET_NUMBERS = 48;
-        final int DIVIDER = 16;
-        int numberAfterDivision = n / (int) Math.pow(16, order - 1);
-        int result = numberAfterDivision % DIVIDER;
+        int numberAfterDivision = n / (int) Math.pow(RADIX, order - 1);
+        int result = numberAfterDivision % RADIX;
         result += (result >= 10) ? VALUE_TO_GET_LETTERS : VALUE_TO_GET_NUMBERS;
         return (char) result;
     }
@@ -78,17 +78,18 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
+        long input = a;
         byte minIndex = 0;
         long minValue = Long.MAX_VALUE;
         byte index = 0;
-        while (a > 0) {
+        while (input > 0) {
             index++;
-            byte currentValue = (byte) (a % 16);
+            byte currentValue = (byte) (input % 16);
             if (minValue > currentValue) {
                 minIndex = index;
                 minValue = currentValue;
             }
-            a /= 16;
+            input /= RADIX;
         }
         return minIndex;
     }
