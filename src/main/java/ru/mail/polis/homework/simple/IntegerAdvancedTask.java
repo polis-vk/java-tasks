@@ -52,8 +52,9 @@ public class IntegerAdvancedTask {
    * Пример: (454355, 2) -> D
    */
   private static final int radix = 16;
+
   public static char kDecimal(int n, int order) {
-    int numberPosition = n /((int) Math.pow(radix, order - 1));
+    int numberPosition = n / ((int) Math.pow(radix, order - 1));
     int answer = numberPosition % radix;
     return (answer < 10) ? (char) (answer + 48) : (char) (answer + 55);
   }
@@ -70,7 +71,7 @@ public class IntegerAdvancedTask {
     long b = a / radix;
     byte minIndex = 1, step = 2;
     while (b > 0) {
-      int tmp = (int)(b % radix);
+      int tmp = (int) (b % radix);
       if (tmp < minNumber) {
         minNumber = tmp;
         minIndex = step;
