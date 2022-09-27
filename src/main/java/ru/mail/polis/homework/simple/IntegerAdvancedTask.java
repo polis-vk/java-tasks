@@ -33,6 +33,9 @@ public class IntegerAdvancedTask {
     int stepY = (up - down);
     int stepX = (right - left);
     int res = (up >= grassY) ? 1 : (right >= grassX ? 1 : Integer.MAX_VALUE);
+    if (res == 1) {
+      return res;
+    }
     if (stepX * grassX > 0) {
       res = Math.min(res, ((grassX - right) + stepX - 1) / stepX + 1);
     }
@@ -48,10 +51,11 @@ public class IntegerAdvancedTask {
    * Нельзя пользоваться String-ами
    * Пример: (454355, 2) -> D
    */
+  private static final int radix = 16;
   public static char kDecimal(int n, int order) {
-    n /= (int) Math.pow(16, order - 1);
-    int tmp = n - (n / 16) * 16;
-    return (tmp < 10) ? (char) (tmp + 48) : (char) (tmp + 55);
+    int numberPosition = n /((int) Math.pow(radix, order - 1));
+    int answer = numberPosition % radix;
+    return (answer < 10) ? (char) (answer + 48) : (char) (answer + 55);
   }
 
   /**
@@ -62,19 +66,19 @@ public class IntegerAdvancedTask {
    * (6726455) -> 2
    */
   public static byte minNumber(long a) {
-    int dig = (int) (a % 16);
-    a /= 16;
-    byte index = 1, step = 2;
-    while (a > 0) {
-      int tmp = (int) (a - (a / 16) * 16);
-      if (tmp < dig) {
-        dig = tmp;
-        index = step;
+    int minNumber = (int) (a % radix);
+    long b = a / radix;
+    byte minIndex = 1, step = 2;
+    while (b > 0) {
+      int tmp = (int)(b % radix);
+      if (tmp < minNumber) {
+        minNumber = tmp;
+        minIndex = step;
       }
       step++;
-      a /= 16;
+      b /= radix;
     }
-    return index;
+    return minIndex;
   }
 
 }
