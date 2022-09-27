@@ -42,7 +42,24 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (right >= grassX || up >= grassY) {
+            return 1;
+        }
+        int speedX = right - left;
+        int speedY = up - down;
+
+        int timeX = (speedX > 0 ? (int) Math.ceil((double) (grassX - right) / speedX) + 1 : -1);
+        int timeY = (speedY > 0 ? (int) Math.ceil((double) (grassY - up) / speedY) + 1 : -1);
+
+        if (timeY == -1 && timeX == -1) {
+            return Integer.MAX_VALUE;
+        } else if (timeX == -1) {
+            return timeY;
+        } else if (timeY == -1) {
+            return timeX;
+        } else {
+            return Math.min(timeX, timeY);
+        }
     }
 
     /**
@@ -52,7 +69,24 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int digitNumber = 0;
+
+        do {
+            digitNumber++;
+
+            byte digit = (byte) (n % 16);
+            if (order == digitNumber) {
+                if (digit >= 10) {
+                    return (char) ('A' + (digit - 10));
+                } else {
+                    return (char) ('0' + digit);
+                }
+            }
+
+            n /= 16;
+        } while (n > 0);
+
+        return ' ';
     }
 
     /**
@@ -77,7 +111,7 @@ public class IntegerAdvancedTask {
             }
 
             a /= 16;
-        } while(a > 0);
+        } while (a > 0);
 
         return minDigitNumber;
     }
