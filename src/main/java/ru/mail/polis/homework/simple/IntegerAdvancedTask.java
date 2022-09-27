@@ -57,11 +57,7 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        int number = n;
-        for (int i = 0; i < order - 1; i++) {
-            number /= HEX;
-        }
-        byte orderValue = (byte) (number % HEX);
+        byte orderValue = (byte) (n / Math.pow(HEX, order - 1) % HEX);
         if (orderValue < DECIMAL) {
             return (char) ('0' + orderValue);
         }

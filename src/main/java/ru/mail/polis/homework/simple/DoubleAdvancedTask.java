@@ -28,29 +28,29 @@ public class DoubleAdvancedTask {
         double[] roots = new double[3];
         // Поиск первого корня
         if (d != 0) {
-            roots[0] = findRootFromExclusive(a, b, c, d, 0, STEP);
+            roots[0] = findRootFromExclusive(a, b, c, d, 0);
             /*
              * Если есть корень на противоположном интервале,
              * находим его, а затем присваиваем x2
              */
             if (intervalContainsRoot(a, b, c, d, -roots[0] - STEP, -roots[0])) {
-                roots[1] = findNearestRoot(a, b, c, d, -roots[0], STEP);
+                roots[1] = findNearestRoot(a, b, c, d, -roots[0]);
             }
         }
         // Поиск второго корня, если это необходимо
         if (Double.compare(roots[1], 0) == 0 && (d != 0 || c != 0)) {
-            roots[1] = findRootFromExclusive(a, b, c, d, Math.abs(roots[0]), STEP);
+            roots[1] = findRootFromExclusive(a, b, c, d, Math.abs(roots[0]));
             /*
              * Если есть корень на противоположном интервале,
              * находим его, а затем присваиваем x3
              */
             if (intervalContainsRoot(a, b, c, d, -roots[1] - STEP, -roots[1])) {
-                roots[2] = findNearestRoot(a, b, c, d, -roots[1], STEP);
+                roots[2] = findNearestRoot(a, b, c, d, -roots[1]);
             }
         }
         // Поиск третьего корня, если это необходимо
         if (Double.compare(roots[2], 0) == 0 && (b != 0 || c != 0 || d != 0)) {
-            roots[2] = findRootFromExclusive(a, b, c, d, Math.abs(roots[1]), STEP);
+            roots[2] = findRootFromExclusive(a, b, c, d, Math.abs(roots[1]));
         }
         // Сортировка найденных корней
         Arrays.sort(roots);
@@ -72,24 +72,26 @@ public class DoubleAdvancedTask {
      * начиная с from не включительно с шагом step.
      * (Положительные корни приоритетнее)
      */
-    public static double findRootFromExclusive(int a, int b, int c, int d, double from, double step) {
-        double intervalBegin = from + step;
-        double intervalEnd = from + step * 2;
+    public static double findRootFromExclusive(int a, int b, int c, int d, double from) {
+        double intervalBegin = from + STEP;
+        double intervalEnd = from + STEP * 2;
         double root;
         while (!intervalContainsRoot(a, b, c, d, intervalBegin, intervalEnd) && !intervalContainsRoot(a, b, c, d, -intervalEnd, -intervalBegin)) {
             intervalBegin = intervalEnd;
-            intervalEnd += step;
+            intervalEnd += STEP;
         }
         if (intervalContainsRoot(a, b, c, d, intervalBegin, intervalEnd)) {
-            root = findNearestRoot(a, b, c, d, intervalEnd, step);
+            root = findNearestRoot(a, b, c, d, intervalEnd);
         } else {
-            root = findNearestRoot(a, b, c, d, -intervalEnd, step);
+            root = findNearestRoot(a, b, c, d, -intervalEnd);
         }
         return root;
     }
 
     // Проверяет, содержит ли указанный интервал корень
-    public static boolean intervalContainsRoot(int a, int b, int c, int d, double begin, double end) {
+    public static boolean intervalContainsRoot(int a, int b, int c,
+                                               int d, double begin,
+                                               double end) {
         return cubicPolynomialValue(a, b, c, d, begin) * cubicPolynomialValue(a, b, c, d, end) <= 0;
     }
 
@@ -98,9 +100,8 @@ public class DoubleAdvancedTask {
      * принадлежащий указанному интервалу, по методу Ньютона-Рафсона
      */
     public static double findNearestRoot(int a, int b, int c,
-                                         int d, double nearTo,
-                                         double spread) {
-        double prevX = nearTo - spread;
+                                         int d, double nearTo) {
+        double prevX = nearTo - STEP;
         double currentX = nearTo;
         while (Math.abs(prevX - currentX) >= EPSILON) {
             prevX = currentX;
