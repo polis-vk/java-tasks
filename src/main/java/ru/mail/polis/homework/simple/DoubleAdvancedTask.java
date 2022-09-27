@@ -20,6 +20,12 @@ public class DoubleAdvancedTask {
         double x1 = 0;
         double x2 = 0;
         double x3 = 0;
+
+        double p = b / a;
+        double q = c / a;
+        double r = d / a;
+
+
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -44,6 +50,23 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        double ax = x2 - x1;
+        double bx = x3 - x1;
+
+        double ay = y2 - y1;
+        double by = y3 - y1;
+
+        double az = z2 - z1;
+        double bz = z3 - z1;
+
+        double A = ay * bz - az * by;
+        double B = -(ax * bz - az * bx);
+        double C = ax * by - ay * bx;
+
+        double D = -A * x1 + -B * y1 + -C * z1;
+
+        double z4 = (-D - A * x4 - B * y4) / C;
+
+        return z4;
     }
 }
