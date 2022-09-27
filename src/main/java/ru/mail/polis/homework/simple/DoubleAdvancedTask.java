@@ -21,17 +21,20 @@ public class DoubleAdvancedTask {
     // использую формулу Кардано-Виета http://algolist.ru/maths/findroot/cubic.php
     public static String equation(int a, int b, int c, int d) {
         double[] roots = new double[3];
+
         double A = (double) b / a;
         double B = (double) c / a;
         double C = (double) d / a;
+
         double Q = (A * A - 3 * B) / 9;
         double R = (2 * Math.pow(A, 3) - 9 * A * B + 27 * C) / 54;
         double S = Math.pow(Q, 3) - R * R;
+
         if (S > 0) {
             double PHI = Math.acos(R / Math.pow(Q, 3d / 2)) / 3;
-            roots[0] = Math.sqrt(Q) * Math.cos(PHI) * (-2) - (A / 3);
-            roots[1] = Math.sqrt(Q) * Math.cos(PHI + 2 * Math.PI / 3) * (-2) - A / 3;
-            roots[2] = Math.sqrt(Q) * Math.cos(PHI - 2 * Math.PI / 3) * (-2) - A / 3;
+            roots[0] = -2 * Math.sqrt(Q) * Math.cos(PHI) - (A / 3);
+            roots[1] = -2 * Math.sqrt(Q) * Math.cos(PHI + 2 * Math.PI / 3) - A / 3;
+            roots[2] = -2 * Math.sqrt(Q) * Math.cos(PHI - 2 * Math.PI / 3) - A / 3;
         } else {
             roots[0] = Math.cbrt(R) * (-2) - A / 3;
             roots[1] = Math.cbrt(R) - A / 3;
@@ -50,7 +53,7 @@ public class DoubleAdvancedTask {
         if (Double.compare(a1, a2) == 0) {
             return (float) (Math.abs(b2 - b1) / Math.sqrt(1 + a1 * a1));
         } else {
-            return 0.f;
+            return 0;
         }
     }
 

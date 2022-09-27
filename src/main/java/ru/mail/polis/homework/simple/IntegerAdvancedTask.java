@@ -35,23 +35,21 @@ public class IntegerAdvancedTask {
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
         if (grassY <= up || grassX <= right) {
             return 1;
-        } else if (up <= down && right <= left) {
+        }
+        if (up <= down && right <= left) {
             return Integer.MAX_VALUE;
         }
-        int x = 0;
-        int y = 0;
-        int result = 0;
-        while (true) {
-            y = y + up;
-            x = x + right;
-            result++;
-            if (y >= grassY || x >= grassX) {
-                return result;
-            } else {
-                y = y - down;
-                x = x - left;
-            }
+        double deltaY = up - down;
+        double deltaX = right - left;
+        int resultY = (int) Math.ceil(grassY / deltaY - up / deltaY) + 1;
+        int resultX = (int) Math.ceil(grassX / deltaX - right / deltaX) + 1;
+        if (resultX > 0 && resultY > 0) {
+            return Math.min(resultX, resultY);
         }
+        if (resultX > 0) {
+            return resultX;
+        }
+        return resultY;
     }
 
     /**
@@ -62,11 +60,11 @@ public class IntegerAdvancedTask {
      */
     public static char kDecimal(int n, int order) {
         int number = n;
-        for (int i = 1; i < order; i++) {
-            number = number / 16;
+        number = (int) (number / Math.pow(16, order - 1)) % 16;
+        if (number < 10) {
+            return (char) ('0' + number);
         }
-        number = number % 16;
-        return number < 10 ? (char) (number + '0') : (char) (number - 10 + 'A');
+        return (char) ('A' + number - 10);
     }
 
     /**
@@ -78,7 +76,7 @@ public class IntegerAdvancedTask {
      */
     public static byte minNumber(long a) {
         long number = a;
-        long min = Long.MAX_VALUE;
+        byte min = 16;
         byte index = 1;
         byte digit;
         for (int i = 1; number != 0; i++) {
