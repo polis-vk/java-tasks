@@ -78,13 +78,15 @@ public class IntegerAdvancedTask {
         long number = a;
         byte min = 16;
         byte index = 1;
+        byte iteration = 1;
         byte digit;
-        for (int i = 1; number != 0; i++) {
+        while (number != 0) {
             digit = (byte) (number % 16);
             if (digit < min) {
                 min = digit;
-                index = (byte) i;
+                index = iteration;
             }
+            iteration++;
             number = number / 16;
         }
         return index;
