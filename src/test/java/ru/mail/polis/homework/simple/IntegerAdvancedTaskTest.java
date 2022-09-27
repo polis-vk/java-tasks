@@ -18,6 +18,9 @@ public class IntegerAdvancedTaskTest {
         assertEquals(12, IntegerAdvancedTask.progression(3, 1, 4));
         assertEquals(3, IntegerAdvancedTask.progression(3, 1, 1));
         assertEquals(340, IntegerAdvancedTask.progression(34, 1, 10));
+        assertEquals(3257436, IntegerAdvancedTask.progression(12, 12, 6));
+        assertEquals(15836381, IntegerAdvancedTask.progression(11, -6, 9));
+        assertEquals(-89518231, IntegerAdvancedTask.progression(-11, -5, 11));
     }
 
     @Test
@@ -29,6 +32,9 @@ public class IntegerAdvancedTaskTest {
         assertEquals(46, IntegerAdvancedTask.snake(100, 10, 200, 8, 100, 23333));
         assertEquals(13, IntegerAdvancedTask.snake(10, 3,2, 4, 32, 100));
         assertEquals(1, IntegerAdvancedTask.snake(5, 2, 39, 4, 2, 23));
+        assertEquals(1, IntegerAdvancedTask.snake(4, 2, 2, 4, 9, 3));
+        assertEquals(Integer.MAX_VALUE, IntegerAdvancedTask.snake(1, 1, 1, 1, 3, 3));
+        assertEquals(Integer.MAX_VALUE, IntegerAdvancedTask.snake(0, 0, 1, 0, 6, 4));
 
     }
 
@@ -44,6 +50,9 @@ public class IntegerAdvancedTaskTest {
         assertEquals('1', IntegerAdvancedTask.kDecimal(1, 1));
         assertEquals('1', IntegerAdvancedTask.kDecimal(17, 1));
         assertEquals('2', IntegerAdvancedTask.kDecimal(32, 2));
+        assertEquals('9', IntegerAdvancedTask.kDecimal(152, 2));
+        assertEquals('3', IntegerAdvancedTask.kDecimal(15961564, 5));
+        assertEquals('F', IntegerAdvancedTask.kDecimal(15961564, 6));
     }
 
     @Test
@@ -58,5 +67,7 @@ public class IntegerAdvancedTaskTest {
         assertEquals(1, IntegerAdvancedTask.minNumber(11));
         assertEquals(2, IntegerAdvancedTask.minNumber(171));
         assertEquals(3, IntegerAdvancedTask.minNumber(322));
+        assertEquals(2, IntegerAdvancedTask.minNumber(456456));
+        assertEquals(1, IntegerAdvancedTask.minNumber(123123123));
     }
 }

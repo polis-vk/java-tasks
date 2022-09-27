@@ -14,6 +14,10 @@ public class DoubleAdvancedTaskTest {
         assertX(parse(DoubleAdvancedTask.equation(-3, -5, 2, 0)), 0.333333333333, 0, -2);
         assertX(parse(DoubleAdvancedTask.equation(2, 3, -4, -1)), 1, -0.21922359359559, -2.28077640640442);
         assertX(parse(DoubleAdvancedTask.equation(2, 3, -4, 1)), 0.5, 0.41421356237310, -2.41421356237309);
+        assertX(parse(DoubleAdvancedTask.equation(5, -8, -8, 5)), 2.130662386291808, 0.4693376137081922, -1);
+        assertX(parse(DoubleAdvancedTask.equation(1, 2, -1, -2)), 1, -1, -2);
+        assertX(parse(DoubleAdvancedTask.equation(1, 2, 2, 25)), 2.5735077330270077, 0.74238447805013, -3.4847689561002597);
+        assertX(parse(DoubleAdvancedTask.equation(2, -11, 12, 9)), 3, 3, -0.5);
     }
 
     private double[] parse(String str) {
@@ -34,6 +38,8 @@ public class DoubleAdvancedTaskTest {
         assertEquals(0, DoubleAdvancedTask.length(1, 1, 4, 10), 0.000001);
         assertEquals(0, DoubleAdvancedTask.length(-13, 0.000000001, 30, 10), 0.000001);
         assertEquals(0.89442719, DoubleAdvancedTask.length(-2, 4, -2, 2), 0.000001);
+        assertEquals(2.12132, DoubleAdvancedTask.length(7, 6, 7, 21), 0.000001);
+        assertEquals(22.79835, DoubleAdvancedTask.length(4, 91, 4, -3), 0.000001);
     }
 
     @Test
@@ -54,6 +60,14 @@ public class DoubleAdvancedTaskTest {
                 -2, 6, -5,
                 5, -5, 7,
                 4, -2), 1e-2);
+        assertEquals(15.7923076, DoubleAdvancedTask.surfaceFunction(12, 12, 1,
+                12, -1, 12,
+                2, 2, 22,
+                11, -4), 1e-2);
+        assertEquals(-628.71875, DoubleAdvancedTask.surfaceFunction(132, 5, 11,
+                38, -1, -11,
+                8, -7, 36,
+                17, 44), 1e-2);
     }
 
 }

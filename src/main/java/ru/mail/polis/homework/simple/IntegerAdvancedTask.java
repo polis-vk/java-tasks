@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.simple;
 
 
+import static java.lang.Math.pow;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -10,6 +12,7 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
+    private static final int HEX = 16;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -18,7 +21,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 123;
+        return (q == 1) ? (long) a * n : (long) (a * (1 - pow(q, n)) / (1 - q));
     }
 
     /**
@@ -30,7 +33,21 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int x = 0;
+        int y = 0;
+        int days = 0;
+        while (true) {
+            days += 1;
+            if (y + up >= grassY || x + right >= grassX) {
+                break;
+            }
+            x += (right - left);
+            y += (up - down);
+            if (x <= 0 && y <= 0) {
+                return Integer.MAX_VALUE;
+            }
+        }
+        return days;
     }
 
     /**
@@ -40,7 +57,14 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int counter = 0;
+        int hexDigit = 0;
+        while (counter != order) {
+            hexDigit = n % HEX;
+            n /= HEX;
+            counter++;
+        }
+        return (char) ((hexDigit > 9) ? 'A' + hexDigit % 9 - 1 : '0' + hexDigit);
     }
 
     /**
@@ -51,7 +75,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte result = 0;
+        byte counter = 0;
+        long hexDigit = Long.MAX_VALUE;
+        while (a > 0) {
+            counter++;
+            long currHexDigit= a % HEX;
+            if (currHexDigit < hexDigit) {
+                hexDigit = currHexDigit;
+                result = counter;
+            }
+            a /= HEX;
+        }
+        return result;
     }
 
 }
