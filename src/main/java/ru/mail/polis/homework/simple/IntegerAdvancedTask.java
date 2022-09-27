@@ -70,7 +70,7 @@ public class IntegerAdvancedTask {
     int minNumber = (int) (a % radix);
     long b = a / radix;
     byte minIndex = 1, step = 2;
-    while (b > 0) {
+    while (b >  0) {
       int tmp = (int) (b % radix);
       if (tmp < minNumber) {
         minNumber = tmp;
