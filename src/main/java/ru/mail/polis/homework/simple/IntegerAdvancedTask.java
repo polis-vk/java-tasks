@@ -18,7 +18,19 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        long sum = 0;
+
+        if (q == 0.0) {
+            sum = a;
+        } else if (Math.abs(q) > 1.0) {
+            sum = (long) (a * (Math.pow(q, n) - 1) / (q - 1));
+        } else if (q == 1.0) {
+            sum = (long) a * n;
+        } else if (Math.abs(q) < 1.0) {
+            sum = (long) (a / (q - 1));
+        }
+
+        return sum;
     }
 
     /**
@@ -51,7 +63,23 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte minDigit = 16;
+        byte minDigitNumber = 0;
+        byte digitNumber = 0;
+
+        do {
+            digitNumber++;
+
+            byte digit = (byte) (a % 16);
+            if (digit < minDigit) {
+                minDigit = digit;
+                minDigitNumber = digitNumber;
+            }
+
+            a /= 16;
+        } while(a > 0);
+
+        return minDigitNumber;
     }
 
 }
