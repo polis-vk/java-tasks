@@ -18,7 +18,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (q == 1) {
+            return (long) n * a;
+        }
+        return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
@@ -30,7 +33,22 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int distanceX = grassX - right;
+        int distanceY = grassY - up;
+        if (distanceX <= 0 || distanceY <= 0) {
+            return 1;
+        }
+        int xDistPerDay = right - left;
+        int yDistPerDay = up - down;
+        if (xDistPerDay <= 0 && yDistPerDay <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        int xDays = (int) Math.ceil((double) distanceX / xDistPerDay) + 1;
+        int yDays = (int) Math.ceil((double) distanceY / yDistPerDay) + 1;
+        if (xDays > 0 && yDays > 0) {
+            return Math.min(xDays, yDays);
+        }
+        return Math.max(xDays, yDays);
     }
 
     /**
@@ -40,7 +58,12 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int number = n;
+        for (int i = 1; i < order; i++) {
+            number /= 16;
+        }
+        number %= 16;
+        return (char) (number < 10 ? '0' + number : 'A' + number - 10);
     }
 
     /**
@@ -51,7 +74,24 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long number = a;
+        byte minDigit = 17;
+        byte minNumber = 1;
+        byte curDigit;
+        byte i = 1;
+        while (number > 0) {
+            curDigit = (byte) (number % 16);
+            if (curDigit == 0) {
+                return i;
+            }
+            if (curDigit < minDigit) {
+                minDigit = curDigit;
+                minNumber = i;
+            }
+            i++;
+            number /= 16;
+        }
+        return minNumber;
     }
 
 }

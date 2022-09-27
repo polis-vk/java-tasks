@@ -16,10 +16,48 @@ public class DoubleAdvancedTask {
      * Если используете какой-то конкретный способ, напишите какой.
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
+
+    /**
+     * Тригонометрическая формула Виета
+     */
+
     public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
+        double newa = b == 0 ? 0 : (double) b / a;
+        double newb = c == 0 ? 0 : (double) c / a;
+        double newc = d == 0 ? 0 : (double) d / a;
+        double Q = (newa * newa - 3 * newb) / 9;
+        double R = (2 * newa * newa * newa - 9 * newa * newb + 27 * newc) / 54;
+        double S = Q * Q * Q - R * R;
+        double fi;
+        double x1;
+        double x2;
+        double x3;
+        if (S > 0) {
+            fi = Math.acos(R / Math.sqrt(Q * Q * Q)) / 3;
+            x1 = -2 * Math.sqrt(Q) * Math.cos(fi) - newa / 3;
+            x2 = -2 * Math.sqrt(Q) * Math.cos(fi + 2 * Math.PI / 3) - newa / 3;
+            x3 = -2 * Math.sqrt(Q) * Math.cos(fi - 2 * Math.PI / 3) - newa / 3;
+        } else {
+            x1 = -2 * Math.cbrt(R) - newa / 3;
+            x2 = Math.cbrt(R) - newa / 3;
+            x3 = x2;
+        }
+        double buf;
+        if (x1 < x2) {
+            buf = x1;
+            x1 = x2;
+            x2 = buf;
+        }
+        if (x2 < x3) {
+            buf = x2;
+            x2 = x3;
+            x3 = buf;
+        }
+        if (x1 < x2) {
+            buf = x1;
+            x1 = x2;
+            x2 = buf;
+        }
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -44,6 +82,9 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        double ni = (y2 - y1) * (z3 - z1) - (y3 - y1) * (z2 - z1);
+        double nj = (x2 - x1) * (z3 - z1) - (x3 - x1) * (z2 - z1);
+        double nk = (x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1);
+        return (ni * (x4 - x1) + -nj * (y4 - y1)) / -nk + z1;
     }
 }
