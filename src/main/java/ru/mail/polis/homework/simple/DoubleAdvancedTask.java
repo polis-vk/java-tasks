@@ -27,40 +27,40 @@ public class DoubleAdvancedTask {
          * https://ru.intemodino.com/math/algebra/equations/cardano's-formula-for-solving-cubic-equations.html
          */
         double[] results = new double[3];
-        final double REVERSE_REPLACEMENT_FROM_Y_TO_X = (b / (double) (3 * a));
+        final double reverseReplacementFromYToX = (b / (double) (3 * a));
         //после приведения к уравнению:
         //y ^ 3 + P * y + Q = 0
         //коэффициенты равны
-        final double P = (3 * a * c - Math.pow(b, 2)) / (3 * Math.pow(a, 2));
-        final double Q = ((2 * Math.pow(b, 3) - 9 * a * b * c + 27 * Math.pow(a, 2) * d)) / (27 * Math.pow(a, 3));
-        final double DISCRIMINANT = Math.pow((Q / 2), 2) + Math.pow((P / 3), 3);
+        final double p = (3 * a * c - Math.pow(b, 2)) / (3 * Math.pow(a, 2));
+        final double q = ((2 * Math.pow(b, 3) - 9 * a * b * c + 27 * Math.pow(a, 2) * d)) / (27 * Math.pow(a, 3));
+        final double discriminant = Math.pow((q / 2), 2) + Math.pow((p / 3), 3);
 
-        if (DISCRIMINANT < 0) {
+        if (discriminant < 0) {
             double angle = 0;
-            if (Q <= EPS && Q >= -EPS) {
+            if (Math.abs(q) <= EPS) {
                 angle = Math.PI / 2;
             } else {
-                final double GENERAL_ARCTANGENT = Math.atan(Math.sqrt(-DISCRIMINANT) / (-Q / 2));
-                if (Q < 0) {
-                    angle = GENERAL_ARCTANGENT;
+                final double generalArctangent = Math.atan(Math.sqrt(-discriminant) / (-q / 2));
+                if (q < 0) {
+                    angle = generalArctangent;
                 } else {
-                    angle = GENERAL_ARCTANGENT + Math.PI;
+                    angle = generalArctangent + Math.PI;
                 }
             }
-            final double y1 = 2 * Math.sqrt(-P / 3) * Math.cos(angle / 3);
-            final double y2 = 2 * Math.sqrt(-P / 3) * Math.cos(angle / 3 + 2 * Math.PI / 3);
-            final double y3 = 2 * Math.sqrt(-P / 3) * Math.cos(angle / 3 + 4 * Math.PI / 3);
+            final double y1 = 2 * Math.sqrt(-p / 3) * Math.cos(angle / 3);
+            final double y2 = 2 * Math.sqrt(-p / 3) * Math.cos(angle / 3 + 2 * Math.PI / 3);
+            final double y3 = 2 * Math.sqrt(-p / 3) * Math.cos(angle / 3 + 4 * Math.PI / 3);
 
             //обратная замена
-            results[0] = y1 - REVERSE_REPLACEMENT_FROM_Y_TO_X;
-            results[1] = y2 - REVERSE_REPLACEMENT_FROM_Y_TO_X;
-            results[2] = y3 - REVERSE_REPLACEMENT_FROM_Y_TO_X;
-        } else if (Math.abs(DISCRIMINANT) <= 1e-10) {
-            final double y1 = 2 * Math.cbrt(-Q / 2);
-            final double y2 = -Math.cbrt(-Q / 2);
+            results[0] = y1 - reverseReplacementFromYToX;
+            results[1] = y2 - reverseReplacementFromYToX;
+            results[2] = y3 - reverseReplacementFromYToX;
+        } else if (Math.abs(discriminant) <= EPS) {
+            final double y1 = 2 * Math.cbrt(-q / 2);
+            final double y2 = -Math.cbrt(-q / 2);
             //обратная замена
-            results[0] = y1 - REVERSE_REPLACEMENT_FROM_Y_TO_X;
-            results[1] = y2 - REVERSE_REPLACEMENT_FROM_Y_TO_X;
+            results[0] = y1 - reverseReplacementFromYToX;
+            results[1] = y2 - reverseReplacementFromYToX;
             results[2] = results[1];
         }
         Arrays.sort(results);
@@ -73,9 +73,9 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        final double COEFFICIENT_AT_Y = 1D;//1 * y = a * x + b
-        if (a1 == a2) {//если прямые параллельны, то считаем расстояние
-            double result = Math.abs(b1 - b2) / Math.sqrt(COEFFICIENT_AT_Y + Math.pow(a1, 2));
+        //1 * y = a * x + b
+        if (Math.abs(a1 - a2) <= EPS) {//если прямые параллельны, то считаем расстояние
+            double result = Math.abs(b1 - b2) / Math.sqrt(1 + Math.pow(a1, 2));
             return (float) result;
         }
         return 0F;
@@ -100,23 +100,23 @@ public class DoubleAdvancedTask {
          * Ax, Ay, Az, Bx, By, Bz ...
          * Соответсвенно переменная Ax равна значению вектора A по координате X.(x2 - x1)
          */
-        final int A_X = x2 - x1;
-        final int A_Y = y2 - y1;
-        final int A_Z = z2 - z1;
-        final int B_X = x3 - x1;
-        final int B_Y = y3 - y1;
-        final int B_Z = z3 - z1;
-        final int C_X = x4 - x1;
-        final int C_Y = y4 - y1;
+        final int aX = x2 - x1;
+        final int aY = y2 - y1;
+        final int aZ = z2 - z1;
+        final int bX = x3 - x1;
+        final int bY = y3 - y1;
+        final int bZ = z3 - z1;
+        final int cX = x4 - x1;
+        final int cY = y4 - y1;
         /**
          * Определитель матрицы по этим переменным должен быть равен нулю.
          * Сам определитель:
-         * |A_X  A_Y  A_Z|
-         * |B_X  B_Y  B_Z|
-         * |C_X  C_Y  z4 - z1|
+         * |aX  aY  aZ|
+         * |bX  bY  bZ|
+         * |cX  cY  z4 - z1|
          * Расскрыв определитель получим(все расчёты произведены на бумажке):
-         * z4 = z1 + (((A_X * C_Y - A_Y * C_X) * B_Z - A_Z * (B_X * C_Y - C_X * B_Y)) / (A_X * B_Y - A_Y * B_X))
+         * z4 = z1 + (((aX * cY - aY * cX) * bZ - aZ * (bX * cY - cX * bY)) / (aX * bY - aY * bX))
          */
-        return z1 + (((A_X * C_Y - A_Y * C_X) * B_Z - A_Z * (B_X * C_Y - C_X * B_Y)) / (double) (A_X * B_Y - A_Y * B_X));
+        return z1 + (((aX * cY - aY * cX) * bZ - aZ * (bX * cY - cX * bY)) / (double) (aX * bY - aY * bX));
     }
 }

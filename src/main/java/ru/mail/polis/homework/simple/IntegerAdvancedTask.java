@@ -9,8 +9,8 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
-    private final static int VALUE_TO_GET_LETTERS = 55;
-    private final static int VALUE_TO_GET_NUMBERS = 48;
+    private final static int ASCII_CAPITAL_LETTERS_START_DECIMAL_VALUE = 55;
+    private final static int ASCII_NUMBERS_START_DECIMAL_VALUE = 48;
     private final static int RADIX = 16;
 
     /**
@@ -20,7 +20,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q - 1 <= EPS && q - 1 >= -EPS) {//тогда прогрессия арифметическая
+        if (Math.abs(q - 1) <= EPS) {//тогда прогрессия арифметическая
             return (long) a * n;
         }
         return (long) ((a * (1 - Math.pow(q, n))) / (1 - q));
@@ -37,23 +37,15 @@ public class IntegerAdvancedTask {
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
         if (right >= grassX || up >= grassY) {
             return 1;
-        } else if (right - left <= 0 && up - down <= 0) {
+        }
+        int dY = up - down;
+        int dX = right - left;
+        if (dX <= 0 && dY <= 0) {
             return Integer.MAX_VALUE;
         }
-        int currentX = 0;
-        int currentY = 0;
-        int counterOfDays = 0;
-        while (currentX < grassX && currentY < grassY) {
-            counterOfDays++;
-            currentY += up;
-            currentX += right;
-            if (currentX >= grassX || currentY >= grassY) {
-                break;
-            }
-            currentY -= down;
-            currentX -= left;
-        }
-        return counterOfDays;
+        int daysAreNeededToReachGrassAtX = (dX > 0) ? (int) Math.ceil((grassX - right) / (double) dX) + 1 : Integer.MAX_VALUE;
+        int daysAreNeededToReachGrassAtY = (dY > 0) ? (int) Math.ceil((grassY - up) / (double) dY) + 1 : Integer.MAX_VALUE;
+        return Math.min(daysAreNeededToReachGrassAtX, daysAreNeededToReachGrassAtY);
     }
 
     /**
@@ -66,7 +58,7 @@ public class IntegerAdvancedTask {
     public static char kDecimal(int n, int order) {
         int numberAfterDivision = n / (int) Math.pow(RADIX, order - 1);
         int result = numberAfterDivision % RADIX;
-        result += (result >= 10) ? VALUE_TO_GET_LETTERS : VALUE_TO_GET_NUMBERS;
+        result += (result >= 10) ? ASCII_CAPITAL_LETTERS_START_DECIMAL_VALUE : ASCII_NUMBERS_START_DECIMAL_VALUE;
         return (char) result;
     }
 
@@ -78,18 +70,18 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        long input = a;
+        long currentValue = a;
         byte minIndex = 0;
-        long minValue = Long.MAX_VALUE;
+        byte minValue = RADIX;
         byte index = 0;
-        while (input > 0) {
+        while (currentValue > 0) {
             index++;
-            byte currentValue = (byte) (input % 16);
-            if (minValue > currentValue) {
+            byte hexDigitAtCurrentIndex = (byte) (currentValue % RADIX);
+            if (minValue > hexDigitAtCurrentIndex) {
                 minIndex = index;
-                minValue = currentValue;
+                minValue = hexDigitAtCurrentIndex;
             }
-            input /= RADIX;
+            currentValue /= RADIX;
         }
         return minIndex;
     }
