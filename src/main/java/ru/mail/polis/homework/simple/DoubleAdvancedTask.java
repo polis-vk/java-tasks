@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -7,6 +9,8 @@ package ru.mail.polis.homework.simple;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class DoubleAdvancedTask {
+
+    private static final double EPS = 1e-10;
 
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
@@ -24,68 +28,93 @@ public class DoubleAdvancedTask {
             double root = Math.pow(((double) d) / ((double) a), 1.0 / 3.0);
             return root + ", " + root + ", " + root;
         }
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
         if (d == 0) {
-            int discriminant = b ^ 2 - 4 * a * c;
+            double[] roots = new double[3];
+            int discriminant = b * b - 4 * a * c;
             if (discriminant > 0) {
-                x2 = (-b + Math.sqrt(discriminant)) / (2 * a);
-                x3 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                roots[0] = (-b + Math.sqrt(discriminant)) / (2 * a);
+                roots[1] = (-b - Math.sqrt(discriminant)) / (2 * a);
             }
             if (discriminant == 0) {
-                x1 = ((double) -b) / (2 * a);
+                roots[0] = ((double) -b) / (2 * a);
             }
-        } else {
-            double[] result = cardano(a, b, c, d);
-            x1 = result[0];
-            x2 = result[1];
-            x3 = result[2];
+            sortForThree(roots);
+            return roots[0] + ", " + roots[1] + ", " + roots[2];
         }
-        if (x3 < x1) {
-            double temp = x1;
-            x1 = x3;
-            x3 = temp;
-        }
-        if (x2 < x1) {
-            double temp = x1;
-            x1 = x2;
-            x2 = temp;
-        }
-        if (x3 < x2) {
-            double temp = x2;
-            x2 = x3;
-            x3 = temp;
-        }
-        return x1 + ", " + x2 + ", " + x3;
+        return cardano(a, b, c, d);
     }
 
-    private static double[] cardano(double a, double b, double c, double d) {
-        double[] result = new double[3];
-        if (d != 1.0) {
-            a = a / d;
-            b = b / d;
-            c = c / d;
+    // Формула Кардано
+    // https://ru.intemodino.com/math/algebra/equations/cardano's-formula-for-solving-cubic-equations.html
+    private static String cardano(double a, double b, double c, double d) {
+        double[] roots = new double[3];
+        double p = (3 * a * c - b * b) / (3 * a * a);
+        double q = (2 * b * b * b - 9 * a * b * c + 27 * a * a * d) / (27 * a * a * a);
+        double discriminant = q * q / 4 + p * p * p / 27;
+        double toY = b / (3 * a);
+        boolean complex = false;
+        if (Math.abs(discriminant) < EPS) {
+            discriminant = 0;
         }
-        double p = b / 3 - a * a / 9;
-        double q = a * a * a / 27 - a * b / 6 + c / 2;
-        double discriminant = p * p * p + q * q;
+        // discriminant > 0 => один действительный и два комплексных сопряженных, т. е.
+        // x2 == a + bi; x3 == a - bi;
         if (discriminant > 0) {
-            double r = Math.pow(-q + Math.sqrt(discriminant), 1.0 / 3.0);
-            double s = Math.pow(-q - Math.sqrt(discriminant), 1.0 / 3.0);
-            result[0] = r + s - a / 3;
-        } else if (discriminant == 0) {
-            result[0] = 2 * Math.pow(-q, 1.0 / 3.0) - a / 3;
-            result[1] = -Math.pow(-q, 1.0 / 3.0) - a / 3;
-        } else {
-            double ang = Math.acos(-q / Math.sqrt(-p * p * p));
-            double t = 2 * Math.sqrt(-p);
-            for (int k = -1; k <= 1; k++) {
-                double theta = (ang - 2 * Math.PI * k) / 3;
-                result[k + 1] = t * Math.cos(theta) - a / 3;
+            complex = true;
+            double q1 = Math.pow(-q / 2 + Math.sqrt(discriminant), 1. / 3);
+            double q2 = Math.pow(-q / 2 - Math.sqrt(discriminant), 1. / 3);
+            roots[0] = q1 + q2 - toY;
+            roots[1] = q1 + q2; // вещественная часть
+            roots[2] = (q1 - q2) * Math.sqrt(3) / 2; // мнимая часть
+        } else if (discriminant == 0) { // discriminant == 0
+            if (Math.abs(q) < EPS) { // один действительный корень при q == 0
+                roots[0] = -toY;
+                roots[1] = roots[0];
+                roots[2] = roots[0];
+            } else { // два действительных корня при q != 0
+                double dq = Math.pow(-q / 2, 1. / 3);
+                roots[0] = 2 * dq - toY;
+                roots[1] = -dq - toY;
+                roots[2] = roots[1];
             }
+        } else { // discriminant > 0 => 3 действительных корня
+            double fi;
+            if (Math.abs(q) < EPS) {
+                fi = Math.PI / 2;
+            } else {
+                fi = Math.atan(Math.sqrt(-discriminant) / (-q / 2));
+                if (q > 0) {
+                    fi += Math.PI;
+                }
+            }
+            double first = 2 * Math.sqrt(-p / 3);
+            roots[0] = first * Math.cos(fi / 3) - toY;
+            roots[1] = first * Math.cos((fi + 2 * Math.PI) / 3) - toY;
+            roots[2] = first * Math.cos((fi + 4 * Math.PI) / 3) - toY;
         }
-        return result;
+        if (!complex) {
+            sortForThree(roots);
+            return roots[0] + ", " + roots[1] + ", " + roots[2];
+        } else {
+            return roots[0] + ", " + roots[1] + "+" + roots[2] + "i, " + roots[1] + "-" + roots[2] + "i";
+        }
+    }
+
+    private static void sortForThree(double[] a) {
+        if (a[1] > a[0]) {
+            double temp = a[0];
+            a[0] = a[1];
+            a[1] = temp;
+        }
+        if (a[1] > a[0]) {
+            double temp = a[0];
+            a[0] = a[1];
+            a[1] = temp;
+        }
+        if (a[2] > a[1]) {
+            double temp = a[1];
+            a[1] = a[2];
+            a[2] = temp;
+        }
     }
 
     /**
@@ -94,7 +123,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return (a2 - a1 != 0) ? 0 : (float) (Math.abs(b2 - b1) / Math.sqrt(1 + Math.pow(a1, 2)));
+        return (a2 - a1 > EPS) ? 0 : (float) (Math.abs(b2 - b1) / Math.sqrt(1 + Math.pow(a1, 2)));
     }
 
     /**
@@ -109,17 +138,17 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        int a1 = x2 - x1;
-        int b1 = y2 - y1;
-        int c1 = z2 - z1;
-        int a2 = x3 - x1;
-        int b2 = y3 - y1;
-        int c2 = z3 - z1;
+        int dx1 = x2 - x1;
+        int dy1 = y2 - y1;
+        int dz1 = z2 - z1;
+        int dx2 = x3 - x1;
+        int dy2 = y3 - y1;
+        int dz2 = z3 - z1;
         // Коэффициенты для уравнения плоскости
-        int a = b1 * c2 - b2 * c1;
-        int b = a2 * c1 - a1 * c2;
-        int c = a1 * b2 - b1 * a2;
-        int d = (-a * x1 - b * y1 - c * z1);
+        int a = dy1 * dz2 - dy2 * dz1;
+        int b = dx2 * dz1 - dx1 * dz2;
+        int c = dx1 * dy2 - dy1 * dx2;
+        int d = -a * x1 - b * y1 - c * z1;
         return (double) -(a * x4 + b * y4 + d) / c;
     }
 }

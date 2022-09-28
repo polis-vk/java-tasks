@@ -8,6 +8,9 @@ package ru.mail.polis.homework.simple;
  */
 public class IntegerAdvancedTask {
 
+    private static final double EPS = 1e-10;
+    private static final byte hex = 16;
+
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
@@ -15,11 +18,11 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        long result = a;
-        for (int i = 1; i < n; i++) {
-            result += a * Math.pow(q, i);
+        if (q != 1) {
+            return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
+        } else {
+            return a * n;
         }
-        return result;
     }
 
     /**
@@ -31,25 +34,18 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        if ((up >= grassY && grassY > 0) || (right >= grassX && grassX > 0)
-                || (-down <= grassY && grassY < 0) || (-left <= grassX && grassX < 0)) {
+        if ((up >= grassY) || (right >= grassX)) {
             return 1;
         }
         int dailyX = right - left;
         int dailyY = up - down;
         int daysX = 0;
         int daysY = 0;
-        if (dailyX > 0 && grassX > 0) {
+        if (dailyX > 0) {
             daysX = (grassX - right - 1) / dailyX + 2;
         }
-        if (dailyX < 0 && grassX < 0) {
-            daysX = grassX / dailyX;
-        }
-        if (dailyY > 0 && grassY > 0) {
+        if (dailyY > 0) {
             daysY = (grassY - up - 1) / dailyY + 2;
-        }
-        if (dailyY < 0 && grassY < 0) {
-            daysY = grassY / dailyY;
         }
         if (daysX == 0 && daysY == 0) {
             return Integer.MAX_VALUE;
@@ -67,7 +63,7 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        byte result = (byte) (n / (int) Math.pow(16, order - 1) % 16);
+        int result = (n / (int) Math.pow(hex, order - 1) % hex);
         if (result < 10) {
             return (char) (result + 48); // 0..9
         } else {
@@ -84,15 +80,17 @@ public class IntegerAdvancedTask {
      */
     public static byte minNumber(long a) {
         byte minOrder = 1;
-        byte minDigit = 16;
+        byte minDigit = hex;
         long num = a;
-        for (byte i = 1; num > 0; i++) {
-            byte currentDigit = (byte) (num % 16);
+        byte order = 1;
+        while (num > 0) {
+            byte currentDigit = (byte) (num % hex);
             if (currentDigit < minDigit) {
                 minDigit = currentDigit;
-                minOrder = i;
+                minOrder = order;
             }
-            num /= 16;
+            order++;
+            num /= hex;
         }
         return minOrder;
     }
