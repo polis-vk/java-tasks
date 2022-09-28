@@ -105,8 +105,4 @@ public class DoubleAdvancedTask {
 
         return z4;
     }
-
-    public static void main(String[] args) {
-        System.out.println(equation(1, -4, -7, 10));
-    }
 }
