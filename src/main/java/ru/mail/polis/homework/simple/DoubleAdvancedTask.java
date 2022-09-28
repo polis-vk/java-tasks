@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.Arrays;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -16,11 +18,34 @@ public class DoubleAdvancedTask {
      * Если используете какой-то конкретный способ, напишите какой.
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
-    public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
-        return x1 + ", " + x2 + ", " + x3;
+
+    public static String equation(int a, int b, int c, int d) { // метод Кардана
+        double[] answersX = new double[3];
+
+        double convertEquationToX = -b / (double) (3 * a); // преобразование уравнение в обратный вид
+
+        double p = ((3 * a * c) - Math.pow(b, 2)) / (3 * Math.pow(a, 2));
+        double q = ((2 * Math.pow(b, 3)) - (9 * a * b * c) + (27 * Math.pow(a, 2) * d)) / (27 * Math.pow(a, 3));
+        double D = Math.pow((q / 2), 2) + Math.pow((p / 3), 3); // дискриминант
+
+        if (D < 0) {
+            double angle = Math.PI / 2; // при условии что q = 0
+            if (q < 0) {
+                angle = Math.atan((Math.sqrt(-D)) / (-q / 2));
+            } else if (q > 0) {
+                angle = Math.atan((Math.sqrt(-D)) / (-q / 2)) + Math.PI;
+            }
+            // возравращаемся от y к x
+            answersX[0] = 2 * Math.sqrt((-p / 3)) * Math.cos(angle / 3) + convertEquationToX;
+            answersX[1] = 2 * Math.sqrt((-p / 3)) * Math.cos((angle + (2 * Math.PI)) / 3) + convertEquationToX;
+            answersX[2] = 2 * Math.sqrt((-p / 3)) * Math.cos((angle + (4 * Math.PI)) / 3) + convertEquationToX;
+        } else {
+            answersX[0] = 2 * Math.cbrt((-q / 2)) + convertEquationToX;
+            answersX[1] = -Math.cbrt((-q / 2)) + convertEquationToX;
+        }
+
+        Arrays.sort(answersX); // для вывода
+        return answersX[2] + ", " + answersX[1] + ", " + answersX[0];
     }
 
     /**
@@ -28,8 +53,9 @@ public class DoubleAdvancedTask {
      * Примеры: (1, 1, 2, -1) -> 0
      * (0, 1, 0, 5) -> 4
      */
-    public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+
+    public static float length(double a1, double b1, double a2, double b2) { // если прямые непараллельны  - 0
+        return (Double.compare(a1, a2) == 0) ? (float) (Math.abs(b1 - b2) / Math.sqrt(1 + Math.pow(a1, 2))) : 0;
     }
 
     /**
@@ -44,6 +70,18 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        double answer = 0;
+        // выразить определитель
+        int vecX1 = x2 - x1;
+        int vecY1 = y2 - y1;
+        int vecZ1 = z2 - z1;
+        int vecX2 = x3 - x1;
+        int vecY2 = y3 - y1;
+        int vecZ2 = z3 - z1;
+        int vecX3 = x4 - x1;
+        int vecY3 = y4 - y1;
+
+        answer = (((vecX1 * vecY3 - vecY1 * vecX3) * vecZ2 - vecZ1 * (vecX2 * vecY3 - vecX3 * vecY2)) / (double) (vecX1 * vecY2 - vecY1 * vecX2)) + z1;
+        return answer;
     }
 }

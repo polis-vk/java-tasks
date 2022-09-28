@@ -20,7 +20,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return (q == 1)? a * n: (long) (a * (Math.pow(q,n) - 1) / (q - 1)); // формула геометрической прогрессии
+        return (q == 1) ? a * n : (long) (a * (Math.pow(q, n) - 1) / (q - 1)); // формула геометрической прогрессии
     }
 
     /**
@@ -33,22 +33,26 @@ public class IntegerAdvancedTask {
      */
 
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        if (up >= grassY || right >= grassX) { return 1; }
-        if (up <= down && right <= left) { return Integer.MAX_VALUE; }
+        if (up >= grassY || right >= grassX) {
+            return 1;
+        }
+        if (up <= down && right <= left) {
+            return Integer.MAX_VALUE;
+        }
 
         int stepX = 0;
         int stepY = 0;
         boolean flagDayOrNight = true;
         int answerCntDays = 1;
 
-        while(stepX < grassX && stepY < grassY) {
-            if(flagDayOrNight){
-                stepY+= up;
-                stepX+= right;
+        while (stepX < grassX && stepY < grassY) {
+            if (flagDayOrNight) {
+                stepY += up;
+                stepX += right;
                 flagDayOrNight = false;
             } else {
-                stepY-= down;
-                stepX-= left;
+                stepY -= down;
+                stepX -= left;
                 answerCntDays++;
                 flagDayOrNight = true;
             }
@@ -73,9 +77,9 @@ public class IntegerAdvancedTask {
         int answerDigit = translatedDigitValue % radix;
 
         if (translatedDigitValue % radix >= 10) {
-            answerDigit+=valueConvertToLetter; // для перевода в буквенное значение
+            answerDigit += valueConvertToLetter; // для перевода в буквенное значение
         } else {
-            answerDigit+=valueConvertToDigit; // для перевода в цифру
+            answerDigit += valueConvertToDigit; // для перевода в цифру
         }
 
         return (char) answerDigit;
@@ -96,13 +100,13 @@ public class IntegerAdvancedTask {
         byte iterator = 1;
         long minimalDigit = radix;
 
-        while(translatedDigitValue > 0) {
+        while (translatedDigitValue > 0) {
             byte lastDigit = (byte) (translatedDigitValue % radix);
-            if (lastDigit < minimalDigit){
+            if (lastDigit < minimalDigit) {
                 minimalDigit = lastDigit;
                 positionMinimalDigit = iterator;
             }
-            translatedDigitValue/=radix;
+            translatedDigitValue /= radix;
             iterator++;
         }
 
