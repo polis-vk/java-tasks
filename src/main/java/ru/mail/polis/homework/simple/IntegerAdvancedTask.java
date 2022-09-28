@@ -18,7 +18,11 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        long sum = 0;
+        for (int i = 0; i < n; i++) {
+            sum += a * Math.pow(q, i);
+        }
+        return sum;
     }
 
     /**
@@ -30,7 +34,15 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        final int startDay = 1;
+        if (right >= grassX || up >= grassY) {
+            return startDay;
+        }
+        double daysX = right - left <= 0 ? Integer.MAX_VALUE :
+                Math.ceil(((double) grassX - (double) right) / ((double) right - (double) left)) + startDay;
+        double daysY = up - down <= 0 ? Integer.MAX_VALUE :
+                Math.ceil(((double) grassY - (double) up) / ((double) up - (double) down)) + startDay;
+        return (int) Math.min(daysX, daysY);
     }
 
     /**
@@ -40,7 +52,13 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        final int numeralSystem = 16;
+        int out = n;
+        for (int i = 1; i < order; i++) {
+            out /= numeralSystem;
+        }
+        out %= numeralSystem;
+        return (char) (out < 10 ? ('0' + out) : ('A' + out - 10));
     }
 
     /**
@@ -51,7 +69,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        final int numeralSystem = 16;
+        long out = a;
+        long minNumber = out % numeralSystem;
+        int orderOfMinNumber = 1, currentOrder = 1;
+        while (out > 0) {
+            if (out % numeralSystem < minNumber) {
+                minNumber = out % numeralSystem;
+                orderOfMinNumber = currentOrder;
+            }
+            out /= numeralSystem;
+            currentOrder++;
+        }
+        return (byte) orderOfMinNumber;
     }
 
 }
