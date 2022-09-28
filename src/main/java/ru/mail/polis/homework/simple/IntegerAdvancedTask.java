@@ -7,6 +7,8 @@ package ru.mail.polis.homework.simple;
  * Чтобы увидеть все методы класса Math, достаточно написать Math. и среда вам сама покажет возможные методы.
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
+
+
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
@@ -18,8 +20,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-
-        return 0;
+        return (q == 1)? a * n: (long) (a * (Math.pow(q,n) - 1) / (q - 1)); // формула геометрической прогрессии
     }
 
     /**
@@ -30,8 +31,30 @@ public class IntegerAdvancedTask {
      * Если она этого никогда не сможет сделать, Верните число Integer.MAX_VALUE;
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
+
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (up >= grassY || right >= grassX) { return 1; }
+        if (up <= down && right <= left) { return Integer.MAX_VALUE; }
+
+        int stepX = 0;
+        int stepY = 0;
+        boolean flagDayOrNight = true;
+        int answerCntDays = 1;
+
+        while(stepX < grassX && stepY < grassY) {
+            if(flagDayOrNight){
+                stepY+= up;
+                stepX+= right;
+                flagDayOrNight = false;
+            } else {
+                stepY-= down;
+                stepX-= left;
+                answerCntDays++;
+                flagDayOrNight = true;
+            }
+        }
+
+        return answerCntDays;
     }
 
     /**
@@ -40,8 +63,22 @@ public class IntegerAdvancedTask {
      * Нельзя пользоваться String-ами
      * Пример: (454355, 2) -> D
      */
+
     public static char kDecimal(int n, int order) {
-        return 0;
+        final int valueConvertToLetter = 55;
+        final int valueConvertToDigit = 48;
+        final int radix = 16;
+
+        int translatedDigitValue = (int) (n / Math.pow(radix, order - 1)); // перевод до нужного разряда
+        int answerDigit = translatedDigitValue % radix;
+
+        if (translatedDigitValue % radix >= 10) {
+            answerDigit+=valueConvertToLetter; // для перевода в буквенное значение
+        } else {
+            answerDigit+=valueConvertToDigit; // для перевода в цифру
+        }
+
+        return (char) answerDigit;
     }
 
     /**
@@ -52,7 +89,24 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long translatedDigitValue = a;
+        final int radix = 16;
+
+        byte positionMinimalDigit = 0;
+        byte iterator = 1;
+        long minimalDigit = radix;
+
+        while(translatedDigitValue > 0) {
+            byte lastDigit = (byte) (translatedDigitValue % radix);
+            if (lastDigit < minimalDigit){
+                minimalDigit = lastDigit;
+                positionMinimalDigit = iterator;
+            }
+            translatedDigitValue/=radix;
+            iterator++;
+        }
+
+        return positionMinimalDigit;
     }
 
 }
