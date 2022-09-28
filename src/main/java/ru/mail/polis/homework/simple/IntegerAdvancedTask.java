@@ -10,15 +10,16 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
+    private static final int DIVIDER = 16;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        return (q == 1) ? (long) n * a : (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
     /**
@@ -30,6 +31,16 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
+        if (up == grassX && right == grassY) {
+            return 1;
+
+        }
+        if (up <= down || right <= left) {
+            return Integer.MAX_VALUE;
+        }
+        int posX = 0;
+        int posY = 0;
+        while(posX != grassX && posY != grassY);
         return 0;
     }
 
@@ -40,7 +51,16 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int quotient = 0;
+        int nextN = n;
+        for (int i = 1; i <= order; i++) {
+            quotient = nextN % DIVIDER;
+            nextN = nextN / DIVIDER;
+        }
+        if (quotient >= 10) {
+            return (char) ('A' + quotient - 10);
+        }
+        return (char) ('0' + quotient);
     }
 
     /**
@@ -51,7 +71,18 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long min = Long.MAX_VALUE;
+        long nextA = a;
+        byte indexMin = 0;
+        long currentDigit;
+        for (byte index = 1; nextA > 0; index++) {
+            currentDigit = nextA % DIVIDER;
+            if (min > currentDigit) {
+                min = currentDigit;
+                indexMin = index;
+            }
+            nextA = nextA / DIVIDER;
+        }
+        return indexMin;
     }
-
 }

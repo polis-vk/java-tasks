@@ -29,7 +29,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        return (a1 != a2) ? 0 : (float) (Math.abs(b2 - b1) / Math.sqrt(1 + Math.pow(a1, 2)));
     }
 
     /**
@@ -44,6 +44,14 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        int y21 = y2 - y1;
+        int z21 = z2 - z1;
+        int y41 = y4 - y1;
+        int x21 = x2 - x1;
+        int x31 = x3 - x1;
+        int y31 = y3 - y1;
+        int z31 = z3 - z1;
+        int x41 = x4 - x1;
+        return ((double) (-x41 * (y21 * z31 - z21 * y31) + y41 * (x21 * z31 - z21 * x31)) / (x21 * y31 - y21 * x31)) + z1;
     }
 }
