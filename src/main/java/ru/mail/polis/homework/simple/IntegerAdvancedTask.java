@@ -31,17 +31,21 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        if (up == grassX && right == grassY) {
+        if (up >= grassY || right >= grassX) {
             return 1;
-
         }
-        if (up <= down || right <= left) {
+        if (up <= down && right <= left) {
             return Integer.MAX_VALUE;
         }
         int posX = 0;
         int posY = 0;
-        while(posX != grassX && posY != grassY);
-        return 0;
+        int days = 0;
+        while (posX < (grassX - left) && posY < (grassY - down)) {
+            days++;
+            posY += up - down;
+            posX += right - left;
+        }
+        return days;
     }
 
     /**
