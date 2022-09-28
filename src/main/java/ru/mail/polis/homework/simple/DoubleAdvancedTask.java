@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.*;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -20,6 +22,34 @@ public class DoubleAdvancedTask {
         double x1 = 0;
         double x2 = 0;
         double x3 = 0;
+        List<Double> roots = new ArrayList<>();
+        final double coEfficientA = (double) b / a;
+        final double cEAo3 = coEfficientA / 3;
+        final double coEfficientB = (double) c / a;
+        final double coEfficientC = (double) d / a;
+        final double q = (3 * coEfficientB - coEfficientA * coEfficientA) / 9;
+        final double r = (9 * coEfficientA * coEfficientB - 27 * coEfficientC - 2 * Math.pow(coEfficientA, 3)) / 54;
+        final double discriminant = Math.pow(q, 3) + r * r;
+        if (discriminant > 0) {
+            roots.add((Math.cbrt(r + Math.sqrt(discriminant)) + Math.cbrt(r - Math.sqrt(discriminant))) - cEAo3);
+            roots.add(0.0);
+            roots.add(0.0);
+        } else if (discriminant == 0) {
+            roots.add(2 * Math.cbrt(r) - cEAo3);
+            roots.add(Math.cbrt(r) - cEAo3);
+            roots.add(Math.cbrt(r) - cEAo3);
+        } else {
+            final double factor = 2 * Math.sqrt(-q);
+            final double theta = Math.acos(r / Math.sqrt(-Math.pow(q, 3))) / 3;
+            roots.add(factor * Math.cos(theta) - cEAo3);
+            roots.add(factor * Math.cos(theta + Math.PI * 2 / 3) - cEAo3);
+            roots.add(factor * Math.cos(theta + Math.PI * 4 / 3) - cEAo3);
+        }
+        Collections.sort(roots);
+        Collections.reverse(roots);
+        x1 = roots.get(0);
+        x2 = roots.get(1);
+        x3 = roots.get(2);
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -29,7 +59,8 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        final double delta = 0.000001;
+        return Math.abs(a2 - a1) < delta ? (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1)) : 0;
     }
 
     /**
@@ -44,6 +75,6 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        return (double) ((y4 - y1) * ((x2 - x1) * (z3 - z1) - (z2 - z1) * (x3 - x1)) - (x4 - x1) * ((y2 - y1) * (z3 - z1) - (z2 - z1) * (y3 - y1))) / ((x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)) + z1;
     }
 }
