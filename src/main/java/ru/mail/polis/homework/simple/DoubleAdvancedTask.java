@@ -17,16 +17,48 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
+        /*
+          Trigonometric solution for 3 real roots
+          https://en.wikipedia.org/wiki/Cubic_equation#Trigonometric_solution_for_three_real_roots
 
-        double p = b / a;
-        double q = c / a;
-        double r = d / a;
+          1) Приводим к виду x^3 + bs * x^2 + cs * x + ds
+          2) Приводим к виду t^3 + p * t + q = 0 (x = t - bs / 3)
+          3) Находим корни t_k по тригонометрической формуле
+          4) Возвращаемся к корням x_k
 
+         */
 
-        return x1 + ", " + x2 + ", " + x3;
+        double bs = (double) b / a;
+        double cs = (double) c / a;
+        double ds = (double) d / a;
+
+        double p = -bs * bs / 3 + cs;
+        double q = 2 * bs * bs * bs / 27 - cs * bs / 3 + ds;
+
+        double m = 2 * Math.sqrt(-p / 3);
+        double n = Math.acos(3 * q / 2 / p * Math.sqrt(-3 / p)) / 3;
+
+        double t1 = (m == 0 ? 0 : m * Math.cos(n));
+        double t2 = (m == 0 ? 0 : m * Math.cos(n - 2 * Math.PI / 3));
+        double t3 = (m == 0 ? 0 : m * Math.cos(n - 4 * Math.PI / 3));
+
+        double x1 = t1 - bs / 3;
+        double x2 = t2 - bs / 3;
+        double x3 = t3 - bs / 3;
+
+        double x1Sorted = Math.max(Math.max(x1, x2), x3);
+        double x3Sorted = Math.min(Math.min(x1, x2), x3);
+        double x2Sorted;
+
+        if (x1Sorted == x1 && x3Sorted == x3) {
+            x2Sorted = x2;
+        } else if (x1Sorted == x1 && x3Sorted == x2) {
+            x2Sorted = x3;
+        } else {
+            x2Sorted = x1;
+        }
+
+        return x1Sorted + ", " + x2Sorted + ", " + x3Sorted;
     }
 
     /**
@@ -35,7 +67,11 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        if (a1 != a2) {
+            return 0;
+        } else {
+            return (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1));
+        }
     }
 
     /**
@@ -68,5 +104,9 @@ public class DoubleAdvancedTask {
         double z4 = (-D - A * x4 - B * y4) / C;
 
         return z4;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(equation(1, -4, -7, 10));
     }
 }
