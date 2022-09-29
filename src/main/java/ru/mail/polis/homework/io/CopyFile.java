@@ -4,12 +4,11 @@ public class CopyFile {
 
     /**
      * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
-     * Файлы копировать ручками через стримы. Исползуем новый API
-     * В тесте для создания нужных файлов для первого запуска надо расскоментировать код в setUp()
-     * 3 балла
+     * Файлы копировать ручками через стримы. Используем новый API
+     * В тесте для создания нужных файлов для первого запуска надо раскомментировать код в setUp()
+     * 3 тугрика
      */
-    public static String copyFiles(String pathFrom, String pathTo) {
-        return null;
+    public static void copyFiles(String pathFrom, String pathTo) {
     }
 
 }
