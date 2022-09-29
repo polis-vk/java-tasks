@@ -24,13 +24,27 @@ public class DoubleAdvancedTask {
         double root2;
         double root3;
 
-        double Q = (Math.pow(b * 1.0 / a, 2) - 3 * c * 1.0 / a) / 9;
-        double R = (2 * Math.pow(b * 1.0 / a, 3) - 9 * c * 1.0 / a * b / a + 27 * d * 1.0 / a) / 54;
-        double t = Math.acos(R / Math.sqrt(Math.pow(Q, 3))) / 3;
+        // делим исходное уравнение на a и получем уравнение вида x ^ 3 + a * x ^ 2 + b * x + c = 0
+        double coef1 = b * 1. / a;
+        double coef2 = c * 1. / a;
+        double coef3 = d * 1. / a;
 
-        root1 = -2 * Math.sqrt(Q) * Math.cos(t) - b * 1.0 / 3;
-        root2 = -2 * Math.sqrt(Q) * Math.cos(t + (2 * Math.PI / 3)) - b * 1.0 / a / 3;
-        root3 = -2 * Math.sqrt(Q) * Math.cos(t - (2 * Math.PI / 3)) - b * 1.0 / a / 3;
+        double Q = (Math.pow(coef1, 2) - 3 * coef2) / 9;
+        double R = (2 * Math.pow(coef1, 3) - 9 * coef1 * coef2 + 27 * coef3) / 54;
+        double S = Math.pow(Q, 3) - Math.pow(R, 2);
+        double t;
+
+        if (Double.compare(S, 0.0) != 0) {
+            t = Math.acos(R / Math.sqrt(Math.pow(Q, 3))) / 3;
+            root1 = -2 * Math.sqrt(Q) * Math.cos(t) - coef1 / 3;
+            root2 = -2 * Math.sqrt(Q) * Math.cos(t + (2 * Math.PI / 3)) - coef1 / 3;
+            root3 = -2 * Math.sqrt(Q) * Math.cos(t - (2 * Math.PI / 3)) - coef1 / 3;
+        } else {
+//            t = Math.signum(R) * Math.sqrt(Math.abs(Q));
+            root1 = Math.cbrt(R) - coef1 / 3;
+            root2 = root1;
+            root3 = -2 * Math.cbrt(R) - coef1 / 3;
+        }
 
         x1 = (root1 > root2) && (root1 > root3) ? root1 : (root2 > root1) && (root2 > root3) ? root2 : root3;
         x3 = (root1 < root2) && (root1 < root3) ? root1 : (root2 < root1) && (root2 < root3) ? root2 : root3;
