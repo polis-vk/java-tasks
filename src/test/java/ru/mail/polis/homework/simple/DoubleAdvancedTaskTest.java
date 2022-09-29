@@ -8,7 +8,7 @@ public class DoubleAdvancedTaskTest {
     @Test
     public void equation() {
         assertX(parse(DoubleAdvancedTask.equation(1, -4, -7, 10)), 5, 1, -2);
-//        assertX(parse(DoubleAdvancedTask.equation(1, 0, 0, 0)), 0, 0, 0);
+        assertX(parse(DoubleAdvancedTask.equation(1, 0, 0, 0)), 0, 0, 0);
         assertX(parse(DoubleAdvancedTask.equation(1, -4, 0, 0)), 4, 0, 0);
         assertX(parse(DoubleAdvancedTask.equation(3, 0, -27, 0)), 3, 0, -3);
         assertX(parse(DoubleAdvancedTask.equation(-3, -5, 2, 0)), 0.333333333333, 0, -2);
