@@ -17,26 +17,28 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int a, int b, int c, int d) {
-        double p = (double) (3 * a * c - b * b) / (3 * a * a);
-        double q = (double) (2 * b * b * b - 9 * a * b * c + 27 * a * a * d) / (27 * a * a * a);
-        double kardanoD = q * q / 4 + p * p * p / 27;
-        double sqrt = Math.sqrt(kardanoD);
-        double yKardano1 = Math.pow(-q / 2 + sqrt, (double)1 / 3);
-        double yKardano2 = Math.pow(-q / 2 - sqrt, (double)1 / 3);
-        double angle;
-        double atan = Math.atan(Math.sqrt(-kardanoD) / (-q / 2));
-        if (q < 0) {
-            angle = atan + Math.PI;
-        } else if (q > 0) {
-            angle = atan;
-        } else angle = Math.PI / 2;
-        double y1 = 2 * Math.sqrt(yKardano1 * yKardano2) * Math.cos(angle / 3);
-        double y2 = 2 * Math.sqrt(yKardano1 * yKardano2) * Math.cos(2 * Math.PI / 3 + angle / 3);
-        double y3 = 2 * Math.sqrt(yKardano1 * yKardano2) * Math.cos(4 * Math.PI / 3 + angle / 3);
-        double x1 = y1 - (double) b / (3 * a);
-        double x2 = y2 - (double) b / (3 * a);
-        double x3 = y3 - (double) b / (3 * a);
+        double root1;
+        double root2;
+        double root3;
+        double Q = (Math.pow((b * 1. / a), 2) - 3 * (c * 1. / a)) / 9;
+        double R = (2 * Math.pow((b * 1. / a), 3) - 9 * (b * 1. / a) * (c * 1. / a) + 27 * (d * 1. / a)) / 54;
+        double S = Math.pow(Q, 3) - Math.pow(R, 2);
+        if (Double.compare(S, 0.0) != 0) {
+            double temp = Math.acos(R / Math.sqrt(Math.pow(Q, 3))) / 3;
+            root1 = -2 * Math.sqrt(Q) * Math.cos(temp) - (b * 1. / a) / 3;
+            root2 = -2 * Math.sqrt(Q) * Math.cos(temp + (2 * Math.PI / 3)) - (b * 1. / a) / 3;
+            root3 = -2 * Math.sqrt(Q) * Math.cos(temp - (2 * Math.PI / 3)) - (b * 1. / a) / 3;
+        } else {
+            root1 = Math.cbrt(R) - (b * 1. / a) / 3;
+            root2 = root1;
+            root3 = -2 * Math.cbrt(R) - (b * 1. / a) / 3;
+        }
+        double x1 = (root1 > root2) && (root1 > root3) ? root1 : (root2 > root1) && (root2 > root3) ? root2 : root3;
+        double x3 = (root1 < root2) && (root1 < root3) ? root1 : (root2 < root1) && (root2 < root3) ? root2 : root3;
+        double x2 = root1 != x1 && root1 != x3 ? root1 : root2 != x1 && root2 != x3 ? root2 : root3;
         return x1 + ", " + x2 + ", " + x3;
+        // Решение взято отсюда: https://math.fandom.com/ru/wiki/Тригонометрическая_формула_Виета
+        // По сути это Теорема виета для формул Кардано
     }
 
     public static void main(String[] args) {
@@ -49,7 +51,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return (a1 == a2) ? (float) (Math.abs(b2 - b1) / Math.sqrt(1 + Math.pow(a1, 2))) : 0;
+        return (Double.compare(a1, a2) == 0) ? (float) (Math.abs(b2 - b1) / Math.sqrt(1 + Math.pow(a1, 2))) : 0;
     }
 
     /**
