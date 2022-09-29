@@ -47,8 +47,8 @@ public class IntegerAdvancedTask {
             currentX += right;
             currentY += up;
 
-            if (grassX < currentX || grassY < currentY) {
-                return dayCounter;
+            if (grassX <= currentX || grassY <= currentY) {
+                break;
             }
 
             currentX -= left;
