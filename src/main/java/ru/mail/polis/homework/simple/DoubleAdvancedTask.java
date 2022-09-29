@@ -20,6 +20,23 @@ public class DoubleAdvancedTask {
         double x1 = 0;
         double x2 = 0;
         double x3 = 0;
+        double root1;
+        double root2;
+        double root3;
+
+        double Q = (Math.pow(b * 1.0 / a, 2) - 3 * c * 1.0 / a) / 9;
+        double R = (2 * Math.pow(b * 1.0 / a, 3) - 9 * c * 1.0 / a * b / a + 27 * d * 1.0 / a) / 54;
+        double t = Math.acos(R / Math.sqrt(Math.pow(Q, 3))) / 3;
+
+        root1 = -2 * Math.sqrt(Q) * Math.cos(t) - b * 1.0 / 3;
+        root2 = -2 * Math.sqrt(Q) * Math.cos(t + (2 * Math.PI / 3)) - b * 1.0 / a / 3;
+        root3 = -2 * Math.sqrt(Q) * Math.cos(t - (2 * Math.PI / 3)) - b * 1.0 / a / 3;
+
+        x1 = (root1 > root2) && (root1 > root3) ? root1 : (root2 > root1) && (root2 > root3) ? root2 : root3;
+        x3 = (root1 < root2) && (root1 < root3) ? root1 : (root2 < root1) && (root2 < root3) ? root2 : root3;
+        x2 = root1 != x1 && root1 != x3 ? root1 : root2 != x1 && root2 != x3 ? root2 : root3;
+
+
         return x1 + ", " + x2 + ", " + x3;
     }
 

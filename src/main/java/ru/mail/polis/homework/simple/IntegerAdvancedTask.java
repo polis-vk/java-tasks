@@ -18,7 +18,11 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (Double.compare(q, 1.0) == 0) {
+            return (long) a * n;
+        }
+
+        return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
@@ -26,11 +30,32 @@ public class IntegerAdvancedTask {
      * сначала наверх на up, потом направо на right. Ночью она двигается вниз на down и налево на left.
      * Сколько суток понадобится гусенице, чтобы доползти до поля с травой?
      * Считаем, что на каждой клетке с координатами >= grassX или >= grassY находится трава
-     * Если она этого никогда не сможет сделать, Верните число Integer.MAX_VALUE;
+     * Если она этого никогда не сможет сделать, верните число Integer.MAX_VALUE;
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if ((up <= down && grassY > up) && (right <= left && grassX > right)) {
+            return Integer.MAX_VALUE;
+        }
+
+        int dayCounter = 0;
+        int currentX = 0;
+        int currentY = 0;
+
+        while(grassX > currentX || grassY > currentY) {
+            dayCounter++;
+            currentX += right;
+            currentY += up;
+
+            if (grassX < currentX || grassY < currentY) {
+                return dayCounter;
+            }
+
+            currentX -= left;
+            currentY -= down;
+        }
+
+        return dayCounter;
     }
 
     /**
@@ -40,7 +65,21 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int mod;
+        char digit = 0;
+
+        for (int i = 1; i <= order; i++) {
+            mod = n % 16;
+            n = n / 16;
+
+            if (mod > 9) {
+                digit = (char) (Character.forDigit(mod, 16) - 32);
+                continue;
+            }
+            digit = Character.forDigit(mod, 16);
+        }
+
+        return digit;
     }
 
     /**
@@ -51,7 +90,32 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        if (a < 16) {
+            return 1;
+        }
+
+        long mod;
+        byte counter = 1;
+        byte minCounter = 1;
+        long minInHexNumber = a % 16;
+        a = a / 16;
+
+        while (a >= 16) {
+            counter++;
+            mod = a % 16;
+            a = a / 16;
+
+            if (mod < minInHexNumber) {
+                minCounter = counter;
+                minInHexNumber = mod;
+            }
+        }
+
+        if (a < minInHexNumber) {
+            minCounter = ++counter;
+        }
+
+        return minCounter;
     }
 
 }
