@@ -67,10 +67,11 @@ public class IntegerAdvancedTask {
     public static char kDecimal(int n, int order) {
         int mod;
         char digit = 0;
+        int secondN = n;
 
         for (int i = 1; i <= order; i++) {
-            mod = n % 16;
-            n = n / 16;
+            mod = secondN % 16;
+            secondN = secondN / 16;
 
             if (mod > 9) {
                 digit = (char) (Character.forDigit(mod, 16) - 32);
@@ -90,7 +91,8 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        if (a < 16) {
+        long secondA = a;
+        if (secondA < 16) {
             return 1;
         }
 
@@ -98,12 +100,12 @@ public class IntegerAdvancedTask {
         byte counter = 1;
         byte minCounter = 1;
         long minInHexNumber = a % 16;
-        a = a / 16;
+        secondA = secondA / 16;
 
-        while (a >= 16) {
+        while (secondA >= 16) {
             counter++;
-            mod = a % 16;
-            a = a / 16;
+            mod = secondA % 16;
+            secondA = secondA / 16;
 
             if (mod < minInHexNumber) {
                 minCounter = counter;
@@ -111,7 +113,7 @@ public class IntegerAdvancedTask {
             }
         }
 
-        if (a < minInHexNumber) {
+        if (secondA < minInHexNumber) {
             minCounter = ++counter;
         }
 
