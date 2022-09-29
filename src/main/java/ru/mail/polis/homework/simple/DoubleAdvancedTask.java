@@ -10,6 +10,8 @@ import static java.lang.Math.*;
  */
 public class DoubleAdvancedTask {
 
+    private static final double EPS = 1e-10;
+
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
      * Вывод менять не нужно, надо только посчитать x1, x2 и x3, где x1 >= x2 >= x3
@@ -25,7 +27,7 @@ public class DoubleAdvancedTask {
         double p = b1 - pow(a1, 2) / 3;
         double q = 2 * pow(a1, 3) / 27 - a1 * b1 / 3 + c1;
         double D = pow(q, 2) / 4 + pow(p, 3) / 27;
-        if (abs(D) < 0.0000001) {
+        if (abs(D) < EPS) {
             D = 0;
         }
         double x1;
@@ -67,7 +69,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return (a1 != a2) ? 0 : (float) (abs(b2 - b1) / sqrt(1 + pow(a1, 2)));
+        return (abs(a1 - a2) > EPS) ? 0 : (float) (abs(b2 - b1) / sqrt(1 + pow(a1, 2)));
     }
 
     /**

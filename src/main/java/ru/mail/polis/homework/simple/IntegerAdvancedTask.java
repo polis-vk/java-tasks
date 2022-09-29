@@ -33,21 +33,23 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        int x = 0;
-        int y = 0;
-        int days = 0;
-        while (true) {
-            days += 1;
-            if (y + up >= grassY || x + right >= grassX) {
-                break;
-            }
-            x += (right - left);
-            y += (up - down);
-            if (x <= 0 && y <= 0) {
-                return Integer.MAX_VALUE;
-            }
+        if ((right - left) <= 0 && (up - down) <= 0 && right < grassX && up < grassY) {
+            return Integer.MAX_VALUE;
         }
-        return days;
+
+        int xTemp = (grassX - right) / (right - left);
+        int yTemp = (grassY - up) / (up - down);
+
+        int xDays = xTemp + (((grassX - right) % (right - left) <= 0) ? 1 : 2);
+        int yDays = yTemp + (((grassY - up) % (up - down) <= 0) ? 1 : 2);
+
+        if (xTemp < 0) {
+            return yDays;
+        } else if (yTemp < 0) {
+            return xDays;
+        } else {
+            return Math.min(xDays, yDays);
+        }
     }
 
     /**
@@ -57,11 +59,12 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
+        int nCopy = n;
         int counter = 0;
         int hexDigit = 0;
         while (counter != order) {
-            hexDigit = n % HEX;
-            n /= HEX;
+            hexDigit = nCopy % HEX;
+            nCopy /= HEX;
             counter++;
         }
         return (char) ((hexDigit > 9) ? 'A' + hexDigit % 9 - 1 : '0' + hexDigit);
@@ -75,17 +78,18 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
+        long aCopy = a;
         byte result = 0;
         byte counter = 0;
-        long hexDigit = Long.MAX_VALUE;
-        while (a > 0) {
+        long minHexDigit = Long.MAX_VALUE;
+        while (aCopy > 0) {
             counter++;
-            long currHexDigit= a % HEX;
-            if (currHexDigit < hexDigit) {
-                hexDigit = currHexDigit;
+            long currHexDigit = aCopy % HEX;
+            if (currHexDigit < minHexDigit) {
+                minHexDigit = currHexDigit;
                 result = counter;
             }
-            a /= HEX;
+            aCopy /= HEX;
         }
         return result;
     }
