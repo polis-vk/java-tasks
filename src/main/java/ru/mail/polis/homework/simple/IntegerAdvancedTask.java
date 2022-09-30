@@ -18,7 +18,11 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        long sum = 0;
+        for (int i = 0; i < n; i++) {
+            sum = (long) (sum + a * Math.pow(q, i));
+        }
+        return sum;
     }
 
     /**
@@ -30,7 +34,31 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        return Math.min(oneDay(up, down, grassY), oneDay(right, left, grassX));
+    }
+
+    public static int oneDay(int stepForward, int stepBack, int end) {
+        int result = 0;
+        int counter = 1;
+        if (stepForward >= end) {
+            return counter;
+        } else if (stepBack >= stepForward) {
+            return Integer.MAX_VALUE;
+        } else {
+            while (result < end) {
+                result = result + stepForward;
+                if (crossEnd(result, end)) {
+                    break;
+                }
+                result = result - stepBack;
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    public static boolean crossEnd(int resultXorY, int point) {
+        return (resultXorY >= point);
     }
 
     /**
@@ -40,7 +68,20 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int counter = 1;
+        int numberInOrder;
+        char numberInOrderHex;
+        while (counter < order) {
+            n = n / 16;
+            counter++;
+        }
+        numberInOrder = n % 16;
+        if (numberInOrder <= 9) {
+            numberInOrderHex = (char) ('0' + numberInOrder);
+        } else {
+            numberInOrderHex = (char) ('A' + numberInOrder - 10);
+        }
+        return numberInOrderHex;
     }
 
     /**
@@ -51,7 +92,33 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long numberInHex;
+        char digitNumber = 'G';
+        int counterMinDigitNumber = 0;
+        int counterGeneral = 0;
+        while (a > 0) {
+            numberInHex = a % 16;
+            counterGeneral++;
+            if (numberInHex <= 9) {
+                if ((char) ('0' + numberInHex) < digitNumber) {
+                    digitNumber = (char) ('0' + numberInHex);
+                    counterMinDigitNumber++;
+                    if (counterMinDigitNumber < counterGeneral) {
+                        counterMinDigitNumber = counterMinDigitNumber + (counterGeneral - counterMinDigitNumber);
+                    }
+                }
+            } else {
+                if ((char) ('0' + numberInHex) < digitNumber) {
+                    digitNumber = (char) ('A' + numberInHex - 10);
+                    counterMinDigitNumber++;
+                    if (counterMinDigitNumber < counterGeneral) {
+                        counterMinDigitNumber = counterMinDigitNumber + (counterGeneral - counterMinDigitNumber);
+                    }
+                }
+            }
+            a = a / 16;
+        }
+        return (byte) counterMinDigitNumber;
     }
 
 }
