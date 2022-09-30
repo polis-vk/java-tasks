@@ -22,18 +22,18 @@ public class DoubleAdvancedTask {
      */
 
     public static String equation(int a, int b, int c, int d) {
-        double newa = b == 0 ? 0 : (double) b / a;
-        double newb = c == 0 ? 0 : (double) c / a;
-        double newc = d == 0 ? 0 : (double) d / a;
+        double newa = (double) b / a;
+        double newb = (double) c / a;
+        double newc = (double) d / a;
         double Q = (newa * newa - 3 * newb) / 9;
-        double R = (2 * newa * newa * newa - 9 * newa * newb + 27 * newc) / 54;
-        double S = Q * Q * Q - R * R;
+        double R = (2 * Math.pow(newa, 3) - 9 * newa * newb + 27 * newc) / 54;
+        double S = Math.pow(Q, 3) - R * R;
         double fi;
         double x1;
         double x2;
         double x3;
         if (S > 0) {
-            fi = Math.acos(R / Math.sqrt(Q * Q * Q)) / 3;
+            fi = Math.acos(R / Math.sqrt(Math.pow(Q, 3))) / 3;
             x1 = -2 * Math.sqrt(Q) * Math.cos(fi) - newa / 3;
             x2 = -2 * Math.sqrt(Q) * Math.cos(fi + 2 * Math.PI / 3) - newa / 3;
             x3 = -2 * Math.sqrt(Q) * Math.cos(fi - 2 * Math.PI / 3) - newa / 3;
@@ -67,7 +67,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        return a1 != a2 ? 0 : (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1));
     }
 
     /**
