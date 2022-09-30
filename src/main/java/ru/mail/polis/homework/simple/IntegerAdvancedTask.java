@@ -31,12 +31,14 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        double result = 0;
-        double currentMultiplier = 1;
-        for (int i = 0; i < n; i++) {
-            result += a * currentMultiplier;
-            currentMultiplier *= q;
+        double result;
+
+        if (q == 1) {
+            result = a * n;
+        } else {
+            result = a * (Math.pow(q, n) - 1) / (q - 1);
         }
+
         return (long) result;
     }
 

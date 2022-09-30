@@ -82,11 +82,7 @@ public class DoubleAdvancedTask {
 
         Arrays.sort(roots);
 
-        x1 = roots[2];
-        x2 = roots[1];
-        x3 = roots[0];
-
-        return x1 + ", " + x2 + ", " + x3;
+        return roots[2] + ", " + roots[1] + ", " + roots[0];
     }
 
     /**
