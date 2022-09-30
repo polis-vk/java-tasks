@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.simple;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -18,7 +21,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (q == 1) {
+            return (long) n * a;
+        }
+        return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
     /**
@@ -30,7 +36,22 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int day = 1;
+        int x = 0;
+        int y = 0;
+        if (up <= down && right <= left && up < grassY && right < grassX) {
+            return Integer.MAX_VALUE;
+        }
+        while (true) {
+            x += right;
+            y += up;
+            if (x >= grassX || y >= grassY) {
+                return day;
+            }
+            x -= left;
+            y -= down;
+            day++;
+        }
     }
 
     /**
@@ -40,7 +61,16 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                'A', 'B', 'C', 'D', 'E', 'F'};
+        List<Character> number = new ArrayList<>();
+        int r;
+        while (n != 0) {
+            r = n % 16;
+            number.add(hexDigits[r]);
+            n = n / 16;
+        }
+        return number.get(order - 1);
     }
 
     /**
@@ -51,7 +81,20 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long r;
+        long min = a % 16;
+        byte i = 0;
+        byte minI = 0;
+        while (a != 0) {
+            r = a % 16;
+            if (r < min) {
+                min = r;
+                minI = i;
+            }
+            a = a / 16;
+            i++;
+        }
+        return (byte) (minI + 1);
     }
 
 }
