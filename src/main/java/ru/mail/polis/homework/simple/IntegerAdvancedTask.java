@@ -20,14 +20,12 @@ public class IntegerAdvancedTask {
     public static long progression(int a, double q, int n) {
         long sum = 0;
 
-        if (q == 0.0) {
-            sum = a;
-        } else if (Math.abs(q) > 1.0) {
+        if (Math.abs(q) > 1.0) {
             sum = (long) (a * (Math.pow(q, n) - 1) / (q - 1));
-        } else if (q == 1.0) {
+        } else if (Math.abs(q - 1.0) < EPS) {
             sum = (long) a * n;
         } else if (Math.abs(q) < 1.0) {
-            sum = (long) (a / (q - 1));
+            sum = (long) (a / (1 - q));
         }
 
         return sum;
@@ -45,21 +43,23 @@ public class IntegerAdvancedTask {
         if (right >= grassX || up >= grassY) {
             return 1;
         }
+
         int speedX = right - left;
         int speedY = up - down;
-
-        int timeX = (speedX > 0 ? (int) Math.ceil((double) (grassX - right) / speedX) + 1 : -1);
-        int timeY = (speedY > 0 ? (int) Math.ceil((double) (grassY - up) / speedY) + 1 : -1);
-
-        if (timeY == -1 && timeX == -1) {
+        if (speedX <= 0 && speedY <= 0) {
             return Integer.MAX_VALUE;
-        } else if (timeX == -1) {
-            return timeY;
-        } else if (timeY == -1) {
-            return timeX;
-        } else {
-            return Math.min(timeX, timeY);
         }
+
+        if (speedX <= 0) {
+            return (int) Math.ceil((double) (grassY - up) / speedY) + 1;
+        } else if (speedY <= 0) {
+            return (int) Math.ceil((double) (grassX - right) / speedX) +1 ;
+        }
+
+        return (int) Math.min(
+                Math.ceil((double) (grassY - up) / speedY) + 1,
+                Math.ceil((double) (grassX - right) / speedX) + 1
+        );
     }
 
     /**
@@ -69,12 +69,13 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
+        int inputNum = n;
         int digitNumber = 0;
 
         do {
             digitNumber++;
 
-            byte digit = (byte) (n % 16);
+            byte digit = (byte) (inputNum % 16);
             if (order == digitNumber) {
                 if (digit >= 10) {
                     return (char) ('A' + (digit - 10));
@@ -83,8 +84,8 @@ public class IntegerAdvancedTask {
                 }
             }
 
-            n /= 16;
-        } while (n > 0);
+            inputNum /= 16;
+        } while (inputNum > 0);
 
         return ' ';
     }
@@ -97,6 +98,7 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
+        long inputNum = a;
         byte minDigit = 16;
         byte minDigitNumber = 0;
         byte digitNumber = 0;
@@ -104,14 +106,14 @@ public class IntegerAdvancedTask {
         do {
             digitNumber++;
 
-            byte digit = (byte) (a % 16);
+            byte digit = (byte) (inputNum % 16);
             if (digit < minDigit) {
                 minDigit = digit;
                 minDigitNumber = digitNumber;
             }
 
-            a /= 16;
-        } while (a > 0);
+            inputNum /= 16;
+        } while (inputNum > 0);
 
         return minDigitNumber;
     }
