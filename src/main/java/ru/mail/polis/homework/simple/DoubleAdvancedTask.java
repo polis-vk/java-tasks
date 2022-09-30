@@ -119,7 +119,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        if (a1 != a2) {
+        if (Double.compare(a1, a2) != 0) {
             return 0;
         }
         return (float) (Math.abs(b2 - b1) * Math.cos(Math.atan(a1)));
