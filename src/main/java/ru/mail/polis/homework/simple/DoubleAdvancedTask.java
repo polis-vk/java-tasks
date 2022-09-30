@@ -75,8 +75,7 @@ public class DoubleAdvancedTask {
     public static float length(double a1, double b1, double a2, double b2) {
         //1 * y = a * x + b
         if (Math.abs(a1 - a2) <= EPS) {//если прямые параллельны, то считаем расстояние
-            double result = Math.abs(b1 - b2) / Math.sqrt(1 + Math.pow(a1, 2));
-            return (float) result;
+            return (float) (Math.abs(b1 - b2) / Math.sqrt(1 + Math.pow(a1, 2)));
         }
         return 0F;
     }

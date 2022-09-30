@@ -43,8 +43,8 @@ public class IntegerAdvancedTask {
         if (dX <= 0 && dY <= 0) {
             return Integer.MAX_VALUE;
         }
-        int daysAreNeededToReachGrassAtX = (dX > 0) ? (int) Math.ceil((grassX - right) / (double) dX) + 1 : Integer.MAX_VALUE;
-        int daysAreNeededToReachGrassAtY = (dY > 0) ? (int) Math.ceil((grassY - up) / (double) dY) + 1 : Integer.MAX_VALUE;
+        int daysAreNeededToReachGrassAtX = dX > 0 ? (int) Math.ceil((grassX - right) / (double) dX) + 1 : Integer.MAX_VALUE;
+        int daysAreNeededToReachGrassAtY = dY > 0 ? (int) Math.ceil((grassY - up) / (double) dY) + 1 : Integer.MAX_VALUE;
         return Math.min(daysAreNeededToReachGrassAtX, daysAreNeededToReachGrassAtY);
     }
 
@@ -58,7 +58,7 @@ public class IntegerAdvancedTask {
     public static char kDecimal(int n, int order) {
         int numberAfterDivision = n / (int) Math.pow(RADIX, order - 1);
         int result = numberAfterDivision % RADIX;
-        result += (result >= 10) ? ASCII_CAPITAL_LETTERS_START_DECIMAL_VALUE : ASCII_NUMBERS_START_DECIMAL_VALUE;
+        result += result >= 10 ? ASCII_CAPITAL_LETTERS_START_DECIMAL_VALUE : ASCII_NUMBERS_START_DECIMAL_VALUE;
         return (char) result;
     }
 
