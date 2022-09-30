@@ -11,6 +11,8 @@ public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
 
+    private static final byte HEXADECIMAL = 16;
+
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
@@ -60,7 +62,7 @@ public class IntegerAdvancedTask {
      */
     public static char kDecimal(int n, int order) {
         int number = n;
-        number = (int) (number / Math.pow(16, order - 1)) % 16;
+        number = (int) (number / Math.pow(HEXADECIMAL, order - 1)) % HEXADECIMAL;
         if (number < 10) {
             return (char) ('0' + number);
         }
@@ -76,18 +78,18 @@ public class IntegerAdvancedTask {
      */
     public static byte minNumber(long a) {
         long number = a;
-        byte min = 16;
+        byte min = HEXADECIMAL;
         byte index = 1;
         byte iteration = 1;
         byte digit;
         while (number != 0) {
-            digit = (byte) (number % 16);
+            digit = (byte) (number % HEXADECIMAL);
             if (digit < min) {
                 min = digit;
                 index = iteration;
             }
             iteration++;
-            number = number / 16;
+            number = number / HEXADECIMAL;
         }
         return index;
     }
