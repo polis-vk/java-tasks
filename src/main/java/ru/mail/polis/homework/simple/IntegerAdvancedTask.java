@@ -38,16 +38,20 @@ public class IntegerAdvancedTask {
         if (up >= grassY || right >= grassX) {
             return 1;
         }
+
         int dx = right - left;
         int dy = up - down;
+
         if (dx <= 0 && dy <= 0) {
             return Integer.MAX_VALUE;
         }
+
         // Если достигнем одной из этих точек - на следующий день попадем на поле.
         int criticalX = grassX - right;
         int criticalY = grassY - up;
         int resultX = (criticalX % dx == 0 ? criticalX / dx : criticalX / dx + 1) + 1;
         int resultY = (criticalY % dy == 0 ? criticalY / dy : criticalY / dy + 1) + 1;
+
         if (dx > 0 && dy > 0) {
             return Math.min(resultX, resultY);
         }
@@ -67,6 +71,7 @@ public class IntegerAdvancedTask {
         int number = n;
         number /= (int) Math.pow(16, order - 1);
         int mod = number % 16;
+
         if (mod >= 10) {
             return (char) (mod + 'A' - 10);
         }
@@ -86,6 +91,7 @@ public class IntegerAdvancedTask {
         byte minIndex = 0;
         byte count = 0;
         byte current;
+
         while (number > 0 && min > 0) {
             count++;
             current = (byte) (number % HEX_BASE);
@@ -95,6 +101,7 @@ public class IntegerAdvancedTask {
             }
             number /= HEX_BASE;
         }
+
         return minIndex;
     }
 
