@@ -68,14 +68,15 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
+        int number = n;
         int counter = 1;
         int numberInOrder;
         char numberInOrderHex;
         while (counter < order) {
-            n = n / 16;
+            number = number / 16;
             counter++;
         }
-        numberInOrder = n % 16;
+        numberInOrder = number % 16;
         if (numberInOrder <= 9) {
             numberInOrderHex = (char) ('0' + numberInOrder);
         } else {
@@ -92,12 +93,13 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
+        long number = a;
         long numberInHex;
         char digitNumber = 'G';
         int counterMinDigitNumber = 0;
         int counterGeneral = 0;
-        while (a > 0) {
-            numberInHex = a % 16;
+        while (number > 0) {
+            numberInHex = number % 16;
             counterGeneral++;
             if (numberInHex <= 9) {
                 if ((char) ('0' + numberInHex) < digitNumber) {
@@ -116,7 +118,7 @@ public class IntegerAdvancedTask {
                     }
                 }
             }
-            a = a / 16;
+            number = number / 16;
         }
         return (byte) counterMinDigitNumber;
     }
