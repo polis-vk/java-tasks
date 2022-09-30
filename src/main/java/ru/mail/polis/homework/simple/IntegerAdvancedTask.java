@@ -12,6 +12,9 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
+    private static final byte VALUE_CONVERT_TO_LETTER = 55; // для перевода в букву в 16 системе
+    private static final byte VALUE_CONVERT_TO_DIGIT = 48;  // для перевода в цифру в 16 системе
+    private static final byte RADIX = 16;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -20,7 +23,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return (q == 1) ? a * n : (long) (a * (Math.pow(q, n) - 1) / (q - 1)); // формула геометрической прогрессии
+        return (Math.abs(q - 1) <= EPS) ? a * n : (long) (a * (Math.pow(q, n) - 1) / (q - 1)); // формула геометрической прогрессии
     }
 
     /**
@@ -69,17 +72,13 @@ public class IntegerAdvancedTask {
      */
 
     public static char kDecimal(int n, int order) {
-        final int valueConvertToLetter = 55;
-        final int valueConvertToDigit = 48;
-        final int radix = 16;
+        int translatedDigitValue = (int) (n / Math.pow(RADIX, order - 1)); // перевод до нужного разряда
+        int answerDigit = translatedDigitValue % RADIX;
 
-        int translatedDigitValue = (int) (n / Math.pow(radix, order - 1)); // перевод до нужного разряда
-        int answerDigit = translatedDigitValue % radix;
-
-        if (translatedDigitValue % radix >= 10) {
-            answerDigit += valueConvertToLetter; // для перевода в буквенное значение
+        if (translatedDigitValue % RADIX >= 10) {
+            answerDigit += VALUE_CONVERT_TO_LETTER; // для перевода в буквенное значение
         } else {
-            answerDigit += valueConvertToDigit; // для перевода в цифру
+            answerDigit += VALUE_CONVERT_TO_DIGIT; // для перевода в цифру
         }
 
         return (char) answerDigit;
@@ -94,23 +93,21 @@ public class IntegerAdvancedTask {
      */
     public static byte minNumber(long a) {
         long translatedDigitValue = a;
-        final int radix = 16;
 
         byte positionMinimalDigit = 0;
         byte iterator = 1;
-        long minimalDigit = radix;
+        long minimalDigit = RADIX;
 
         while (translatedDigitValue > 0) {
-            byte lastDigit = (byte) (translatedDigitValue % radix);
+            byte lastDigit = (byte) (translatedDigitValue % RADIX);
             if (lastDigit < minimalDigit) {
                 minimalDigit = lastDigit;
                 positionMinimalDigit = iterator;
             }
-            translatedDigitValue /= radix;
+            translatedDigitValue /= RADIX;
             iterator++;
         }
 
         return positionMinimalDigit;
     }
-
 }
