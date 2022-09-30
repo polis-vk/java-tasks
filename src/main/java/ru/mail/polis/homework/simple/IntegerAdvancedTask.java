@@ -1,6 +1,11 @@
 package ru.mail.polis.homework.simple;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -10,6 +15,7 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
+    private static final int numberSystem = 16;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -18,7 +24,14 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        long progressionSum = 0;
+        long multiplicationResult = 1;
+
+        for (int power = 0; power < n; power++) {
+            progressionSum += a * multiplicationResult;
+            multiplicationResult *= q;
+        }
+        return progressionSum;
     }
 
     /**
@@ -30,7 +43,29 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int halfDay = 0;
+        int x = 0;
+        int y = 0;
+        int dx;
+        int dy;
+
+        while (true) {
+            dy = (halfDay % 2 == 0) ? up : -down;
+            dx = (halfDay % 2 == 0) ? right : -left;
+            halfDay++;
+            x += dx;
+            if (x >= grassX) {
+                break;
+            }
+            y += dy;
+            if (y >= grassY) {
+                break;
+            }
+            if (halfDay == 2) {
+                if (x <= 0 && y <= 0) return Integer.MAX_VALUE;
+            }
+        }
+        return halfDay / 2 + 1;
     }
 
     /**
@@ -39,8 +74,12 @@ public class IntegerAdvancedTask {
      * Нельзя пользоваться String-ами
      * Пример: (454355, 2) -> D
      */
+
+
     public static char kDecimal(int n, int order) {
-        return 0;
+        int digitOrder = (n / (int) Math.pow(numberSystem, order - 1)) % numberSystem;
+
+        return (digitOrder > 9) ? (char) (digitOrder + 55) : (char) (digitOrder + 48);
     }
 
     /**
@@ -51,7 +90,25 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long number = a;
+        long hexNumber = number % 16;
+        long minHexNumber = hexNumber;
+        byte minIndex = 1;
+        byte counter = 1;
+
+        while (number > 0) {
+
+            if (minHexNumber > hexNumber) {
+                minIndex = counter;
+                minHexNumber = hexNumber;
+            }
+
+            number /= numberSystem;
+            hexNumber = number % 16;
+            counter++;
+        }
+
+        return minIndex;
     }
 
 }
