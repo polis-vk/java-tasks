@@ -9,7 +9,9 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
-    private static final byte hex = 16;
+    private static final byte HEX = 16;
+    private static final byte INT_TO_CHAR_NUM = 48;
+    private static final byte INT_TO_CHAR_LETTER = 55;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -18,7 +20,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q != 1) {
+        if (q > 1 + EPS || q < 1 - EPS) {
             return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
         } else {
             return a * n;
@@ -63,11 +65,11 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        int result = (n / (int) Math.pow(hex, order - 1) % hex);
+        int result = (n / (int) Math.pow(HEX, order - 1) % HEX);
         if (result < 10) {
-            return (char) (result + 48); // 0..9
+            return (char) (result + INT_TO_CHAR_NUM); // 0..9
         } else {
-            return (char) (result + 55); // A..F
+            return (char) (result + INT_TO_CHAR_LETTER); // A..F
         }
     }
 
@@ -80,17 +82,17 @@ public class IntegerAdvancedTask {
      */
     public static byte minNumber(long a) {
         byte minOrder = 1;
-        byte minDigit = hex;
+        byte minDigit = HEX;
         long num = a;
         byte order = 1;
         while (num > 0) {
-            byte currentDigit = (byte) (num % hex);
+            byte currentDigit = (byte) (num % HEX);
             if (currentDigit < minDigit) {
                 minDigit = currentDigit;
                 minOrder = order;
             }
             order++;
-            num /= hex;
+            num /= HEX;
         }
         return minOrder;
     }
