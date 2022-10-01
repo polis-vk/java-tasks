@@ -7,6 +7,7 @@ package ru.mail.polis.homework.simple;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class DoubleAdvancedTask {
+    private static final double EPS = 1e-10;
 
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
@@ -16,10 +17,50 @@ public class DoubleAdvancedTask {
      * Если используете какой-то конкретный способ, напишите какой.
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
+
+    // Функция кубического полинома
+    private static double f(double x, int a, int b, int c, int d) {
+        return a * x * x * x + b * x * x + c * x + d;
+    }
+
+    // Производная от кубического полинома
+    private static double df(double x, int a, int b, int c) {
+        return a * 3 * x * x + b * 2 * x + c;
+    }
+
+    // Метод Ньютона
+    static double methodNewton(double aX, int a, int b, int c, int d) {
+        // Первая итерация
+        double x0 = aX;
+        double x1 = x0 - f(x0, a, b, c, d) / df(x0, a, b, c);
+
+        // Пока |x_n - x_n-1| > Eps - продолжаем вычислять по схеме:
+        // x_n = x_n-1 - f(x_n-1) / df(x_n-1)
+        while (Math.abs(x1 - x0) > EPS) {
+            x0 = x1;
+            x1 = x0 - f(x0, a, b, c, d) / df(x0, a, b, c);
+        }
+
+
+        // Предполагаем, что если число достигает некоторой малости,
+        // то оно равно нулю. Если x = NaN, то x = 0
+        if (Math.abs(x1) < 1e-8 || Double.isNaN(x1)) {
+            x1 = 0;
+        }
+
+        return x1;
+    }
+
     public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
+        // Задаем три произвольные начальные точки
+        double a1 = 10;
+        double a2 = 0;
+        double a3 = -10;
+
+
+        double x1 = methodNewton(a1, a, b, c, d);
+        double x2 = methodNewton(a2, a, b, c, d);
+        double x3 = methodNewton(a3, a, b, c, d);
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -29,7 +70,11 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        if (Math.abs(a1 - a2) > EPS) {
+            return 0;
+        }
+
+        return (float) (Math.abs(b1 - b2) / Math.sqrt(a1 * a2 + 1));
     }
 
     /**
@@ -44,6 +89,18 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        // Пусть A = {x1, y1, z1}, B = {x2, y2, z2}, C = {x3, y3, z3}, D = {x4, y4, z4}
+
+        // |x4 - x1  y4 - y1  z4 - z1|
+        // |x2 - x1  y2 - y1  z2 - z1| == 0  => A, B, C, D - лежат в одной плоскости
+        // |x3 - x1  y3 - y1  z3 - z1|
+
+        // Находим определители миноров
+        int mx41 = (y2 - y1) * (z3 - z1) - (z2 - z1) * (y3 - y1);
+        int my41 = (x2 - x1) * (z3 - z1) - (z2 - z1) * (x3 - x1);
+        int mz41 = (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1);
+
+        // Находим z4
+        return ((double) (-(x4 - x1) * mx41 + (y4 - y1) * my41) / mz41) + z1;
     }
 }

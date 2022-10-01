@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.simple;
 
 
+import com.sun.security.jgss.InquireSecContextPermission;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -10,6 +12,7 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
+    private static final int HEX = 16;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -18,7 +21,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (Math.abs(q - 1) < EPS) {
+            return (long) a * n;
+        }
+        return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
@@ -30,7 +36,26 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+
+        int snakeX = 0;
+        int snakeY = 0;
+        int day = 1;
+
+        while (true) {
+            snakeY += up;
+            snakeX += right;
+            if (snakeX >= grassX || snakeY >= grassY) {
+                return day;
+            }
+
+            if (up <= down && right <= left) {
+                return Integer.MAX_VALUE;
+            }
+
+            snakeY -= down;
+            snakeX -= left;
+            day++;
+        }
     }
 
     /**
@@ -40,7 +65,23 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+
+        int number = n;
+        int digit = 0;
+
+        for (int ctr = 0; ctr < order; ctr++) {
+            digit = number % HEX;
+            number = number / HEX;
+        }
+
+        char hexResult;
+
+        if (digit > 9) {
+            hexResult = (char) (digit % 9 - 1 + 'A');
+        } else {
+            hexResult = (char) (digit + '0');
+        }
+        return hexResult;
     }
 
     /**
@@ -51,7 +92,22 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long number = a;
+        long min = Long.MAX_VALUE;
+        long tmp = 0;
+        byte position = 0;
+        byte result = 0;
+
+        while (number != 0) {
+            position++;
+            tmp = number % HEX;
+            if (tmp < min) {
+                min = tmp;
+                result = position;
+            }
+            number /= HEX;
+        }
+        return result;
     }
 
 }
