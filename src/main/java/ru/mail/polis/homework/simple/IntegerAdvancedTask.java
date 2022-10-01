@@ -35,16 +35,17 @@ public class IntegerAdvancedTask {
      */
 
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
+        if (grassY <= up || grassX <= right) {
+            return 1;
+        }
 
         return Math.min(oneDimSnake(grassX, right, left), oneDimSnake(grassY, up, down));
+
     }
 
     private static int oneDimSnake(int height, int top, int bottom) {
-        if (height <= top) {
-            return 1;
-        }
         if (top <= bottom) {
-            return Integer.MAX_VALUE;
+            return Integer.MAX_VALUE; // это условие необходимо проверять для каждой оси, поэтому оставляем тут
         }
         return (height - top - 1) / (top - bottom) + 2;
         // по идее, формула имеет вид (height - top) / (top - bottom) + 1,
