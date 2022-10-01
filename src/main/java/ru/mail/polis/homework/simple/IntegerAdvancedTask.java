@@ -9,7 +9,7 @@ package ru.mail.polis.homework.simple;
  */
 public class IntegerAdvancedTask {
 
-    private static final double EPS = 1e-10;
+    private static final int NUMERAL_SYSTEM = 16;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -18,11 +18,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        long sum = 0;
-        for (int i = 0; i < n; i++) {
-            sum += a * Math.pow(q, i);
-        }
-        return sum;
+        return q == 1 ? n * a : (long) ((a * Math.pow(q, n) - a) / (q - 1));
     }
 
     /**
@@ -34,14 +30,15 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        final int startDay = 1;
         if (right >= grassX || up >= grassY) {
-            return startDay;
+            return 1;
         }
-        double daysX = right - left <= 0 ? Integer.MAX_VALUE :
-                Math.ceil(((double) grassX - (double) right) / ((double) right - (double) left)) + startDay;
-        double daysY = up - down <= 0 ? Integer.MAX_VALUE :
-                Math.ceil(((double) grassY - (double) up) / ((double) up - (double) down)) + startDay;
+        double daysX = right - left <= 0
+                ? Integer.MAX_VALUE
+                : Math.ceil((double) (grassX - right) / (right - left)) + 1;
+        double daysY = up - down <= 0
+                ? Integer.MAX_VALUE
+                : Math.ceil((double) (grassY - up) / (up - down)) + 1;
         return (int) Math.min(daysX, daysY);
     }
 
@@ -52,13 +49,12 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        final int numeralSystem = 16;
         int out = n;
         for (int i = 1; i < order; i++) {
-            out /= numeralSystem;
+            out /= NUMERAL_SYSTEM;
         }
-        out %= numeralSystem;
-        return (char) (out < 10 ? ('0' + out) : ('A' + out - 10));
+        out %= NUMERAL_SYSTEM;
+        return (char) (out < 10 ? '0' + out : 'A' + out - 10);
     }
 
     /**
@@ -69,18 +65,21 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        final int numeralSystem = 16;
-        long out = a;
-        long minNumber = out % numeralSystem;
-        int orderOfMinNumber = 1, currentOrder = 1;
-        while (out > 0) {
-            if (out % numeralSystem < minNumber) {
-                minNumber = out % numeralSystem;
+        long currentValue = a;
+        int minNumber = NUMERAL_SYSTEM;
+        int currentOrder = 1;
+        int orderOfMinNumber = currentOrder;
+        do {
+            if (currentValue % NUMERAL_SYSTEM < minNumber) {
+                minNumber = (int) (currentValue % NUMERAL_SYSTEM);
                 orderOfMinNumber = currentOrder;
+                if (minNumber == 0) {
+                    return (byte) orderOfMinNumber;
+                }
             }
-            out /= numeralSystem;
+            currentValue /= NUMERAL_SYSTEM;
             currentOrder++;
-        }
+        } while (currentValue > 0);
         return (byte) orderOfMinNumber;
     }
 
