@@ -11,6 +11,7 @@ public class IntegerAdvancedTask {
 
   private static final double EPS = 1e-10;
 
+  private static final int radix = 16;
   /**
    * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
    * a + aq + aq^2 + ... + aq^(n-1)
@@ -51,7 +52,6 @@ public class IntegerAdvancedTask {
    * Нельзя пользоваться String-ами
    * Пример: (454355, 2) -> D
    */
-  private static final int radix = 16;
 
   public static char kDecimal(int n, int order) {
     int numberPosition = n / ((int) Math.pow(radix, order - 1));
