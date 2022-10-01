@@ -16,6 +16,8 @@ public class DoubleAdvancedTask {
      * Если используете какой-то конкретный способ, напишите какой.
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
+    //
+    private static final double EPS = 0.0000000000001;
     public static String equation(int a, int b, int c, int d) {
         double x1 = 0;
         double x2 = 0;
@@ -23,29 +25,44 @@ public class DoubleAdvancedTask {
         if (b == 0 && c == 0 && d == 0) {
             return x1 + ", " + x2 + ", " + x3;
             // все три корня равны 0
-        } else if (Math.abs(functionValue(a, b, c, d, -b / a)) < 0.0001 && Double.compare(b, 0) != 0 && Math.abs(functionValue(a, b, c, d, 0)) < 0.0001) {
+        } else if (Math.abs(getFunctionValue(a, b, c, d, ((double)(-b) / a))) < EPS && b != 0 && Math.abs(getFunctionValue(a, b, c, d, 0)) < EPS) {
             // если два корня нули, то другой корень равен -b/a
-            x1 = -b / a;
+            x1 = ((double)(-b) / a);
             x2 = 0;
             x3 = 0;
-        } else if (Math.abs(functionValue(a, b, c, d, 0)) < 0.001) {
+        } else if (Math.abs(getFunctionValue(a, b, c, d, 0)) < EPS) {
             // если нашелся корень 0, то остальные 2 корня находятся по дискриминанту
             x1 = 0;
             x2 = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a);
             x3 = c / (a * x2);
         } else {
-            x1 = findingSolution(a, b, c, d);
+            x1 = findSolution(a, b, c, d);
             // находим 1 корень по методу секущих
-            if ((a * x1 * x1 + b * x1) * (a * x1 * x1 + b * x1) + 4 * a * x1 * d < 0) {
+
+            /*
+            Из теоремы Виета для кубических уравнений, берем 2 уравнения:
+            x1 + x2 + x3 = -b / a
+            x1 * x2 * x3 = -d / a
+            из второго уравнения получаем x3 = -d / (a * x1 * x2).
+            Вставляем это уравнение в первое, преобразуем и получаем уравнение вида:
+            (a * x1) * x2 * x2 + (a * x1 * x1 + b * x1) * x2 - d = 0
+            мы получили квадратное уравнение у которого А = (a * x1), B = (a * x1 * x1 + b * x1) и C = -d
+            B будет выражением взаимодействующим с дискриминантом (прибавляющее его или вычитающее)
+            */
+
+            double ExpressionOfInteractionWithDiscriminant = (a * x1 * x1 + b * x1);
+            double discriminant = ExpressionOfInteractionWithDiscriminant * ExpressionOfInteractionWithDiscriminant + 4 * a * x1 * d;
+
+            if (discriminant < 0) {
                 // Меньше нуля дискриминант может оказаться только из-за неточности метода секущих, так как в условии 3 корня
-                x2 = (-(a * x1 * x1 + b * x1) + 0) / (2 * a * x1);
-                // находим второй корень находим по формуле выведенной из теоремы Виетта
+                x2 = (-ExpressionOfInteractionWithDiscriminant + 0) / (2 * a * x1);
+                // находим второй корень находим по формуле выведенной из теоремы Виета
             } else {
-                x2 = (-(a * x1 * x1 + b * x1) + Math.sqrt((a * x1 * x1 + b * x1) * (a * x1 * x1 + b * x1) + 4 * a * x1 * d)) / (2 * a * x1);
+                x2 = (-ExpressionOfInteractionWithDiscriminant + Math.sqrt(discriminant)) / (2 * a * x1);
                 // вставляем в формулу Виетта дискриминант
             }
             x3 = -d / (a * x1 * x2);
-            // третий корень тоже находим по формуле выведенной из теоремы Виетта
+            // третий корень тоже находим по формуле выведенной из теоремы Виета
         }
         double max1;
         double max2;
@@ -60,22 +77,22 @@ public class DoubleAdvancedTask {
         // источник интернет, википедия
     }
 
-    public static double functionValue(double a, double b, double c, double d, double x) {
+    public static double getFunctionValue(double a, double b, double c, double d, double x) {
         //расчет значения функции в данной точке
         return a * x * x * x + b * x * x + c * x + d;
     }
 
-    public static double findingSolution(double a, double b, double c, double d) {
+    public static double findSolution(double a, double b, double c, double d) {
         //Метод секущих
         double x = 0;
         double xLast = Math.random() * 10, xGrandLast = Math.random() * 10;
 
-        while (Math.abs(functionValue(a, b, c, d, xLast) - functionValue(a, b, c, d, xGrandLast)) < 0.01) {
+        while (Math.abs(getFunctionValue(a, b, c, d, xLast) - getFunctionValue(a, b, c, d, xGrandLast)) < EPS) {
             xLast = Math.random() * 10;
             xGrandLast = Math.random() * 10;
         }
-        while (Math.abs(functionValue(a, b, c, d, x)) > 0.0000000000001) {
-            x = xLast - functionValue(a, b, c, d, xLast) * (xLast - xGrandLast) / (functionValue(a, b, c, d, xLast) - functionValue(a, b, c, d, xGrandLast));
+        while (Math.abs(getFunctionValue(a, b, c, d, x)) > EPS) {
+            x = xLast - getFunctionValue(a, b, c, d, xLast) * (xLast - xGrandLast) / (getFunctionValue(a, b, c, d, xLast) - getFunctionValue(a, b, c, d, xGrandLast));
             xGrandLast = xLast;
             xLast = x;
         }
@@ -88,19 +105,13 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        double result = 0;
         // записываем уравнения прямых в декартовой системе координат, как
         // ax + by + c1 = 0
         // ax + by + c2 = 0
         // в нашем случае b = 1, a1 и a2 это коэфициенты перед x, означающие наклон прямой,
         // с1 и с2 отвечают за точку пересечения с осью Y, по входящим параметрам b1 = c1, b2 = c2
-        if (Double.compare(a1, a2) == 0) {
-            // если a1 и a2 неравны, значит угол наклона разный, и прямые пересекутся, расстояние будет 0,
-            // если же a1 и a2 равны, значит расстояние можно вычислить по формуле
-            result = (Math.abs(b2 - b1)) / (Math.sqrt(a1 * a1 + 1));
-        }
         // источник википедия
-        return (float) result;
+        return (Math.abs(a1 - a2) < EPS) ? (float) ((Math.abs(b2 - b1)) / (Math.sqrt(a1 * a1 + 1))) : 0;
     }
 
     /**
@@ -127,7 +138,6 @@ public class DoubleAdvancedTask {
         };
         double z4 = (matrix[0][0] * matrix[1][1] * matrix[2][2] + matrix[2][1] * matrix[1][0] * matrix[0][2] + matrix[0][1] * matrix[1][2] * matrix[2][0]
                 - matrix[2][0] * matrix[1][1] * matrix[0][2] - matrix[2][1] * matrix[1][2] * matrix[0][0] - matrix[1][0] * matrix[0][1] * matrix[2][2]);
-
         z4 = (-1) * z4 / (matrix[2][1] * matrix[1][0] - matrix[2][0] * matrix[1][1]);
         return z4;
     }

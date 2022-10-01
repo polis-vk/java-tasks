@@ -10,6 +10,7 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
+    private static final int HEXDECIMAL = 16;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -18,11 +19,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        long sum = 0;
-        for (int i = 0; i < n; i++) {
-            sum = (long) (sum + a * Math.pow(q, i));
+        if (Math.abs(q - 1) < EPS) {
+            return (long) a * n;
         }
-        return sum;
+        return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
@@ -38,27 +38,13 @@ public class IntegerAdvancedTask {
     }
 
     public static int oneDay(int stepForward, int stepBack, int end) {
-        int result = 0;
-        int counter = 1;
         if (stepForward >= end) {
-            return counter;
+            return 1;
         } else if (stepBack >= stepForward) {
             return Integer.MAX_VALUE;
         } else {
-            while (result < end) {
-                result = result + stepForward;
-                if (crossEnd(result, end)) {
-                    break;
-                }
-                result = result - stepBack;
-                counter++;
-            }
+            return (int) (Math.ceil((double) (end - stepForward) / (stepForward - stepBack)) + 1);
         }
-        return counter;
-    }
-
-    public static boolean crossEnd(int resultXorY, int point) {
-        return (resultXorY >= point);
     }
 
     /**
@@ -69,20 +55,14 @@ public class IntegerAdvancedTask {
      */
     public static char kDecimal(int n, int order) {
         int number = n;
-        int counter = 1;
         int numberInOrder;
-        char numberInOrderHex;
-        while (counter < order) {
-            number = number / 16;
-            counter++;
-        }
-        numberInOrder = number % 16;
+        number = (int) (number / Math.pow(HEXDECIMAL, order - 1));
+        numberInOrder = number % HEXDECIMAL;
         if (numberInOrder <= 9) {
-            numberInOrderHex = (char) ('0' + numberInOrder);
+            return (char) ('0' + numberInOrder);
         } else {
-            numberInOrderHex = (char) ('A' + numberInOrder - 10);
+            return (char) ('A' + numberInOrder - 10);
         }
-        return numberInOrderHex;
     }
 
     /**
@@ -94,33 +74,18 @@ public class IntegerAdvancedTask {
      */
     public static byte minNumber(long a) {
         long number = a;
-        long numberInHex;
-        char digitNumber = 'G';
-        int counterMinDigitNumber = 0;
-        int counterGeneral = 0;
+        int counter = 1;
+        int minDigitNumber = 1;
+        long minNumber = (int) ('F');
         while (number > 0) {
-            numberInHex = number % 16;
-            counterGeneral++;
-            if (numberInHex <= 9) {
-                if ((char) ('0' + numberInHex) < digitNumber) {
-                    digitNumber = (char) ('0' + numberInHex);
-                    counterMinDigitNumber++;
-                    if (counterMinDigitNumber < counterGeneral) {
-                        counterMinDigitNumber = counterMinDigitNumber + (counterGeneral - counterMinDigitNumber);
-                    }
-                }
-            } else {
-                if ((char) ('0' + numberInHex) < digitNumber) {
-                    digitNumber = (char) ('A' + numberInHex - 10);
-                    counterMinDigitNumber++;
-                    if (counterMinDigitNumber < counterGeneral) {
-                        counterMinDigitNumber = counterMinDigitNumber + (counterGeneral - counterMinDigitNumber);
-                    }
-                }
+            if (number % HEXDECIMAL < minNumber) {
+                minNumber = number % HEXDECIMAL;
+                minDigitNumber = counter;
             }
-            number = number / 16;
+            counter++;
+            number = number / HEXDECIMAL;
         }
-        return (byte) counterMinDigitNumber;
+        return (byte) minDigitNumber;
     }
 
 }
