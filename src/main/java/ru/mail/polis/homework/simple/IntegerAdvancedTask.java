@@ -36,7 +36,27 @@ public class IntegerAdvancedTask {
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
 
-        return 0;
+        if (grassX <= right || grassY <= up) {
+            return 1;
+        }
+
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+
+        int dx = right - left;
+        int dy = up - down;
+
+        int divX = grassX - right;
+        int divY = grassY - up;
+
+        if (right > left) {
+            minX = (int) Math.ceil((double) divX / dx) + 1;
+        }
+
+        if (up > down) {
+            minY = (int) Math.ceil((double) divY / dy) + 1;
+        }
+        return minX < minY ? minX : minY;
     }
 
     /**
