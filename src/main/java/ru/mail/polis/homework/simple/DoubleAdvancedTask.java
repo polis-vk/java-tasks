@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.Arrays;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -33,16 +35,13 @@ public class DoubleAdvancedTask {
             root2 = root1;
             root3 = -2 * Math.cbrt(R) - (b * 1. / a) / 3;
         }
-        double x1 = (root1 > root2) && (root1 > root3) ? root1 : (root2 > root1) && (root2 > root3) ? root2 : root3;
-        double x3 = (root1 < root2) && (root1 < root3) ? root1 : (root2 < root1) && (root2 < root3) ? root2 : root3;
-        double x2 = root1 != x1 && root1 != x3 ? root1 : root2 != x1 && root2 != x3 ? root2 : root3;
+        double[] roots = {root1, root2, root3};
+        Arrays.sort(roots);
+        double x1 = roots[2];
+        double x2 = roots[1];
+        double x3 = roots[0];
         return x1 + ", " + x2 + ", " + x3;
         // Решение взято отсюда: https://math.fandom.com/ru/wiki/Тригонометрическая_формула_Виета
-        // По сути это Теорема виета для формул Кардано
-    }
-
-    public static void main(String[] args) {
-        System.out.println(equation(1, -4, -7, 10));
     }
 
     /**
@@ -51,7 +50,10 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return (Double.compare(a1, a2) == 0) ? (float) (Math.abs(b2 - b1) / Math.sqrt(1 + Math.pow(a1, 2))) : 0;
+        if (Double.compare(a1, a2) == 0) {
+            return (float) (Math.abs(b2 - b1) / Math.sqrt(1 + Math.pow(a1, 2)));
+        }
+        return 0;
     }
 
     /**
