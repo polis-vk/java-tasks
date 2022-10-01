@@ -1,11 +1,6 @@
 package ru.mail.polis.homework.simple;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -15,7 +10,9 @@ import java.util.List;
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
-    private static final int numberSystem = 16;
+    private static final int HEX_NUMBER_SYSTEM = 16;
+    private static final int START_NUMBERS_CODE = 55;
+    private static final int START_UPPER_LETTER_CODE = 48;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -24,12 +21,12 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        long progressionSum = 0;
-        long multiplicationResult = 1;
+        long progressionSum;
 
-        for (int power = 0; power < n; power++) {
-            progressionSum += a * multiplicationResult;
-            multiplicationResult *= q;
+        if (Double.compare(q,1.d)==0) {
+            progressionSum = n * a;
+        } else {
+            progressionSum = (long) (a * (Math.pow(q, n) - 1) / (q - 1));
         }
         return progressionSum;
     }
@@ -43,29 +40,24 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        int halfDay = 0;
-        int x = 0;
-        int y = 0;
+        if (up >= grassY || right >= grassX) {
+            return 1;
+        }
         int dx;
         int dy;
 
-        while (true) {
-            dy = (halfDay % 2 == 0) ? up : -down;
-            dx = (halfDay % 2 == 0) ? right : -left;
-            halfDay++;
-            x += dx;
-            if (x >= grassX) {
-                break;
-            }
-            y += dy;
-            if (y >= grassY) {
-                break;
-            }
-            if (halfDay == 2) {
-                if (x <= 0 && y <= 0) return Integer.MAX_VALUE;
-            }
+        dx = right - left;
+        dy = up - down;
+
+        Integer days;
+        if (dx > 0) {
+            days = (grassX - right) / dx + (((grassX - right) % dx == 0) ? 1 : 2);
+        } else if (dy > 0) {
+            days = (grassY - up) / dy + (((grassY - up) % dy == 0) ? 1 : 2);
+        } else {
+            days = Integer.MAX_VALUE;
         }
-        return halfDay / 2 + 1;
+        return days;
     }
 
     /**
@@ -77,9 +69,9 @@ public class IntegerAdvancedTask {
 
 
     public static char kDecimal(int n, int order) {
-        int digitOrder = (n / (int) Math.pow(numberSystem, order - 1)) % numberSystem;
+        int digitAtOrder = (n / (int) Math.pow(HEX_NUMBER_SYSTEM, order - 1)) % HEX_NUMBER_SYSTEM;
 
-        return (digitOrder > 9) ? (char) (digitOrder + 55) : (char) (digitOrder + 48);
+        return (digitAtOrder > 9) ? (char) (digitAtOrder + START_NUMBERS_CODE) : (char) (digitAtOrder + START_UPPER_LETTER_CODE);
     }
 
     /**
@@ -91,23 +83,20 @@ public class IntegerAdvancedTask {
      */
     public static byte minNumber(long a) {
         long number = a;
-        long hexNumber = number % 16;
+        long hexNumber = number % HEX_NUMBER_SYSTEM;
         long minHexNumber = hexNumber;
         byte minIndex = 1;
-        byte counter = 1;
+        //byte counter = 1;
 
         while (number > 0) {
-
             if (minHexNumber > hexNumber) {
-                minIndex = counter;
+                minIndex = (byte) (Math.log((double) (a / number)) / Math.log(HEX_NUMBER_SYSTEM) + 1);
                 minHexNumber = hexNumber;
             }
-
-            number /= numberSystem;
-            hexNumber = number % 16;
-            counter++;
+            number /= HEX_NUMBER_SYSTEM;
+            hexNumber = number % HEX_NUMBER_SYSTEM;
+            //counter++;
         }
-
         return minIndex;
     }
 

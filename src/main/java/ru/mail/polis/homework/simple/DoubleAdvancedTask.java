@@ -20,25 +20,25 @@ public class DoubleAdvancedTask {
         /*
          * Решал с помощью тригонометрического уравнения Виета
          */
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
-        double A = (double) b / a;
-        double B = (double) c / a;
-        double C = (double) d / a;
-        double Q = (Math.pow(A, 2.) - 3 * B) / 9;
-        double R = (2 * Math.pow(A, 3.) - 9 * A * B + 27 * C) / 54;
-        double S = Math.pow(Q, 3.) - Math.pow(R, 2.);
+        double aCoef = (double) b / a;
+        double bCoef = (double) c / a;
+        double cCoef = (double) d / a;
+        double q = (Math.pow(aCoef, 2.) - 3 * bCoef) / 9;
+        double r = (2 * Math.pow(aCoef, 3.) - 9 * aCoef * bCoef + 27 * cCoef) / 54;
+        double s = Math.pow(q, 3.) - Math.pow(r, 2.);
         double angle;
+        double x1;
+        double x2;
+        double x3;
 
-        if (S > 0) {
-            angle = Math.acos(R / Math.pow(Q, 3. / 2.)) / 3;
-            x1 = -2 * Math.sqrt(Q) * Math.cos(angle) - A / 3;
-            x2 = -2 * Math.sqrt(Q) * Math.cos(angle + 2 * Math.PI / 3) - A / 3;
-            x3 = -2 * Math.sqrt(Q) * Math.cos(angle - 2 * Math.PI / 3) - A / 3;
+        if (s > 0) {
+            angle = Math.acos(r / Math.pow(q, 3. / 2.)) / 3;
+            x1 = -2 * Math.sqrt(q) * Math.cos(angle) - aCoef / 3;
+            x2 = -2 * Math.sqrt(q) * Math.cos(angle + 2 * Math.PI / 3) - aCoef / 3;
+            x3 = -2 * Math.sqrt(q) * Math.cos(angle - 2 * Math.PI / 3) - aCoef / 3;
         } else {
-            x1 = -2 * Math.cbrt(R) - A / 3;
-            x2 = Math.cbrt(R) - A / 3;
+            x1 = -2 * Math.cbrt(r) - aCoef / 3;
+            x2 = Math.cbrt(r) - aCoef / 3;
             x3 = x2;
         }
 
