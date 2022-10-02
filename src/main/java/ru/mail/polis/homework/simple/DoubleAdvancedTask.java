@@ -21,6 +21,8 @@ public class DoubleAdvancedTask {
         double x2 = 0;
         double x3 = 0;
 
+// Использовалась тригонометрическая формула Виета
+
         double a1 = b / (double) a;
         double b1 = c / (double) a;
         double c1 = d / (double) a;
