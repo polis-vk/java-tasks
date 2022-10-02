@@ -88,6 +88,7 @@ public class IntegerAdvancedTask {
         return (byte)(minIndex + 1);
     }
 
+    //Преобразует 10-ное число в 16-ное
     public static char[] getHex(long a){
         byte numbersCount = 0;
         long number = a;
