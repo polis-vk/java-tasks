@@ -55,7 +55,8 @@ public class IntegerAdvancedTask {
         if (up > down) {
             minY = (int) Math.ceil((double) divY / dy) + 1;
         }
-        return minX < minY ? minX : minY;
+
+        return Math.min(minX, minY);
     }
 
     /**
@@ -80,8 +81,23 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
+        long min = a % 16;
+        byte count = 0;
+        byte ret = 1;
 
-        return 0;
+        while (a > 0) {
+            long rem = a % 16;
+            count++;
+
+            if (rem < min) {
+                min = rem;
+                ret = count;
+            }
+
+            a /= 16;
+        }
+
+        return ret;
     }
 
 }
