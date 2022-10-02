@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -66,7 +65,11 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+
+        int div = (int) (n / Math.pow(16, order - 1));
+        int res = div % 16;
+
+        return res < 10 ? (char) ('0' + res) : (char) ('A' + res - 10);
     }
 
     /**
@@ -77,6 +80,7 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
+
         return 0;
     }
 
