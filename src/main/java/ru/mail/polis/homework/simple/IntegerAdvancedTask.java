@@ -17,8 +17,9 @@ public class IntegerAdvancedTask {
      * <p>
      * Пример: (1, 2, 3) -> 7
      */
+    // Вычисляется сумма геометрической прогрессии по формуле при q != 1, иначе - сумма одинаковых чисел
     public static long progression(int a, double q, int n) {
-        return 0;
+        return (long) (q != 1 ? a * (Math.pow(q, n) - 1) / (q - 1) : a * n);
     }
 
     /**
@@ -29,8 +30,27 @@ public class IntegerAdvancedTask {
      * Если она этого никогда не сможет сделать, Верните число Integer.MAX_VALUE;
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
+    /*
+     * Сначала вычисляется расстояние до поля с травой без одного up или right, так как после
+     * последнего шага алгоритом завершится. Если гусеница не может доползти до поля за 1 день,
+     * то для ее перемещения вычисляется условный шаг, с которым она приближается к полю за сутки
+     * по каждому напрявлению. Если шаг положительный - то гусеница доползет до границы поля за
+     * количество шагов, равное оставшемуся растоянию (расстояние до границы - up или right),
+     * поделенному на длину шага с округлением вверх + 1 шаг. В итоге выбирается наименьшее
+     * число дней, за которое гусеница доползет до одной из границ поля.
+     */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int grassYMinusLastStep = Math.max(0, grassY - up);
+        int grassXMinusLastStep = Math.max(0, grassX - right);
+        if (grassYMinusLastStep == 0 || grassXMinusLastStep == 0) {
+            return 1;
+        }
+
+        int stepUp = up - down;
+        int stepRight = right - left;
+        int daysToReachGrassY = stepUp > 0 ? (int) Math.ceil((double) grassYMinusLastStep / stepUp) + 1 : Integer.MAX_VALUE;
+        int daysToReachGrassX = stepRight > 0 ? (int) Math.ceil((double) grassXMinusLastStep / stepRight) + 1 : Integer.MAX_VALUE;
+        return Math.min(daysToReachGrassY, daysToReachGrassX);
     }
 
     /**
@@ -39,8 +59,18 @@ public class IntegerAdvancedTask {
      * Нельзя пользоваться String-ами
      * Пример: (454355, 2) -> D
      */
+    /*
+     * Число переводится в 16-ый формат до нужного разряда, после чего цифра переводися в char
+     * как номер символа в ASCII таблице.
+     */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int quotient = n;
+        byte radix = 16;
+        for (int i = 0; i < order - 1; i++) {
+            quotient /= radix;
+        }
+        quotient %= radix;
+        return (char) (quotient < 10 ? quotient + '0' : quotient - 10 + 'A');
     }
 
     /**
@@ -51,7 +81,22 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long quotient = a;
+        byte radix = 16;
+        byte minimum = 16;
+        byte minimumIndex = 0;
+        byte i = 1;
+        byte hexDigit;
+        while (quotient != 0) {
+            hexDigit = (byte) (quotient % radix);
+            if (hexDigit < minimum) {
+                minimum = hexDigit;
+                minimumIndex = i;
+            }
+            quotient /= radix;
+            i++;
+        }
+        return minimumIndex;
     }
 
 }
