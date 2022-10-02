@@ -1,10 +1,10 @@
 package ru.mail.polis.homework.concurrency.nio;
 
 /**
- * Р’РѕР·РјРѕР¶РЅС‹Рµ СЃРѕСЃС‚РѕСЏРЅРёСЏ РґР»СЏ РєР»РёРµРЅС‚СЃРєРѕРіРѕ Result
- * Р’РѕР·РјРѕР¶РЅС‹Рµ РїРµСЂРµС…РѕРґС‹:
+ * Возможные состояния для клиентского Result
+ * Возможные переходы:
  * 1) START -> SENDING -> SENT -> RECEIVING -> DONE;
- * 2) РР· Р»СЋР±РѕРіРѕ СЃРѕСЃС‚РѕСЏРЅРёСЏ РІ CLOSE
+ * 2) Из любого состояния в CLOSE
  * 3) START -> CANCEL
  * 4) SENDING -> CANCELLING -> CANCEL
  * 5a) (SENT, RECEIVING) -> CANCELLING -> CANCEL
