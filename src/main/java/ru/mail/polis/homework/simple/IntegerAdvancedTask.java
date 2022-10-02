@@ -11,6 +11,8 @@ public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
 
+    private static final int HEX = 16;
+
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
@@ -18,7 +20,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (q == 1) {
+            return (long) n * a;
+        }
+        return (long)(a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
     /**
@@ -30,7 +35,26 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (up <= down && right <= left && up < grassY && right < grassX) {
+            return Integer.MAX_VALUE;
+        }
+
+        int y = 0;
+        int x = 0;
+        int days = 0;
+
+        while (grassY > y || grassX > x) {
+            days++;
+            y += up;
+            x += right;
+            if (grassY <= y || grassX <= x) {
+                break;
+            }
+            y -= down;
+            x -= left;
+        }
+
+        return days;
     }
 
     /**
@@ -40,7 +64,8 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        char[] hex = getHex(n);
+        return hex[order - 1];
     }
 
     /**
@@ -51,7 +76,36 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        char[] hex = getHex(a);
+
+        byte minIndex = 0;
+        for(byte i = 0; i < hex.length; i++) {
+            if (hex[minIndex] > hex[i]) {
+                minIndex = i;
+            }
+        }
+
+        return (byte)(minIndex + 1);
     }
 
+    public static char[] getHex(long a){
+        byte numbersCount = 0;
+        long number = a;
+        while(number != 0) {
+            number /= HEX;
+            numbersCount++;
+        }
+
+        char[] result = new char[numbersCount];
+        int currentIndex = 0;
+        char hexChars[] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+        while(a > 0) {
+            int remainder = (int)(a % HEX);
+            result[currentIndex] = hexChars[remainder];
+            currentIndex++;
+            a /= HEX;
+        }
+
+        return result;
+    }
 }
