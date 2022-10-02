@@ -1,5 +1,11 @@
 package ru.mail.polis.homework.simple;
 
+import java.rmi.MarshalException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -16,11 +22,34 @@ public class DoubleAdvancedTask {
      * Если используете какой-то конкретный способ, напишите какой.
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
+
     public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
-        return x1 + ", " + x2 + ", " + x3;
+
+        // Vieta’s Formula for the Cubic Equation
+
+        double A = (double) b / a;
+        double B = (double) c / a;
+        double C = (double) d / a;
+
+        double Q = (Math.pow(A, 2) - 3 * B) / 9;
+        double R = (2 * Math.pow(A, 3) - 9 * A * B + 27 * C) / 54;
+        double S = Math.pow(Q, 3) - Math.pow(R, 2);
+
+        double roots[] = new double[3];
+
+        if (S > 0) {
+            double phi = (Math.acos(R / Math.pow(Q, (double) 3 / 2))) / 3;
+
+            roots[0] = -2 * Math.sqrt(Q) * Math.cos(phi) - A / 3;
+            roots[1] = -2 * Math.sqrt(Q) * Math.cos(phi + (2 * Math.PI / 3)) - A / 3;
+            roots[2] = -2 * Math.sqrt(Q) * Math.cos(phi - (2 * Math.PI / 3)) - A / 3;
+        } else {
+            roots[0] = -2 * Math.cbrt(R) - A / 3;
+            roots[1] = roots[2] = Math.cbrt(R) - A / 3;
+        }
+
+        Arrays.sort(roots);
+        return roots[2] + ", " + roots[1] + ", " + roots[0];
     }
 
     /**
@@ -44,6 +73,17 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
+
+        int ux = x2 - x1;
+        int uy = y2 - y1;
+        int uz = z2 - z1;
+
+        int vx = x3 - x1;
+        int vy = y3 - y1;
+        int vz = z3 - z1;
+
+
+
         return 0;
     }
 }
