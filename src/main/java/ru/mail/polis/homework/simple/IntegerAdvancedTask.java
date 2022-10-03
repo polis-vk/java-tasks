@@ -18,7 +18,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (q == 1) {
+            return (long) (n * (a * Math.pow(q, n - 1)));
+        }
+        return (long) ((a * (1 - Math.pow(q, n))) / (1 - q));
     }
 
     /**
@@ -30,7 +33,23 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int moveX = 0;
+        int moveY = 0;
+        int countOfDays = 1;
+        while ((moveX < grassX) && (moveY < grassY)) {
+            moveY += up;
+            moveX += right;
+            if ((moveX >= grassX) || (moveY >= grassY)) {
+                return countOfDays;
+            }
+            moveY -= down;
+            moveX -= left;
+            if ((moveX <= 0) && (moveY <= 0)) {
+                return Integer.MAX_VALUE;
+            }
+            countOfDays++;
+        }
+        return countOfDays;
     }
 
     /**
@@ -40,6 +59,17 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
+        char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                'A', 'B', 'C', 'D', 'E', 'F'};
+        for (int i = 0; i < order - 1; i++) {
+            n /= 16;
+        }
+        n %= 16;
+        for (int i = 0; i < hexDigits.length; i++) {
+            if (i == n) {
+                return hexDigits[i];
+            }
+        }
         return 0;
     }
 
@@ -51,7 +81,20 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long remainsNum;
+        long min = 16L;
+        byte resultOrder = 0;
+        byte countOrder = 1;
+        while (a != 0) {
+            remainsNum = a % 16;
+            if (remainsNum < min) {
+                min = remainsNum;
+                resultOrder = countOrder;
+            }
+            a /= 16;
+            countOrder++;
+        }
+        return resultOrder;
     }
 
 }
