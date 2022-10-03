@@ -18,7 +18,7 @@ public class IntegerAdvancedTask {
      */
     public static long progression(int a, double q, int n) {
 
-        if (q == 1) {
+        if (Double.compare(q, 1.0) == 0) {
             return (long) a * n;
         }
 
@@ -81,23 +81,24 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        long min = a % 16;
-        byte count = 0;
-        byte ret = 1;
+        long number = a;
+        long minDigit = number % 16;
+        byte countDigits = 0;
+        byte idxMinDigit = 1;
 
-        while (a > 0) {
-            long rem = a % 16;
-            count++;
+        while (number > 0) {
+            long curDigit = number % 16;
+            countDigits++;
 
-            if (rem < min) {
-                min = rem;
-                ret = count;
+            if (curDigit < minDigit) {
+                minDigit = curDigit;
+                idxMinDigit = countDigits;
             }
 
-            a /= 16;
+            number /= 16;
         }
 
-        return ret;
+        return idxMinDigit;
     }
 
 }
