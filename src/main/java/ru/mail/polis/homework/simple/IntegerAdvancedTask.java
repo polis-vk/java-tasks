@@ -22,11 +22,12 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        int answer = 0;
-        for (int i = 0; i < n; i++) {
-            answer += a * Math.pow(q, i);
+        if (q == 1) {
+            return (long) n * a;
         }
-        return answer;
+        else {
+            return (long) ((a * (1 - Math.pow(q, n))) / (1 - q));
+        }
     }
 
     /**

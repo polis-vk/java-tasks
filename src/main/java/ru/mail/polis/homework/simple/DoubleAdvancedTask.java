@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.simple;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
@@ -10,6 +9,8 @@ import java.util.Collections;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class DoubleAdvancedTask {
+
+    static final double EPS = 0.000001;
 
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
@@ -24,20 +25,18 @@ public class DoubleAdvancedTask {
         double x2 = 0;
         double x3 = 0;
 
-        ArrayList<Double> answersList = new ArrayList<>();
+        double[] answersArr = new double[3];
         if (d == 0) { //вынос x за скобки + решение квадратного уравнения
-            answersList.add(0d);
+            answersArr[0] = 0d;
             double discriminant = Math.pow(b, 2) - 4 * a * c;
             if (discriminant >= 0) {
-                answersList.add((-b + Math.sqrt(discriminant)) / (2 * a));
-                answersList.add((-b - Math.sqrt(discriminant)) / (2 * a));
+                answersArr[1] = (-b + Math.sqrt(discriminant)) / (2 * a);
+                answersArr[2] = (-b - Math.sqrt(discriminant)) / (2 * a);
+            } else {
+                answersArr[1] = 0d;
+                answersArr[2] = 0d;
             }
-            else {
-                answersList.add(0d);
-                answersList.add(0d);
-            }
-        }
-        else { // решение методом Виета - Кардано
+        } else { // решение методом Виета - Кардано
 
             // приводим уравнение к виду x^3+ax^2+bx+c = 0
             double newA = (double) b / a;
@@ -48,21 +47,20 @@ public class DoubleAdvancedTask {
             double R = (2 * Math.pow(newA, 3) - 9 * newA * newB + 27 * newC) / 54d;
             double S = Math.pow(Q, 3) - Math.pow(R, 2);
             if (S > 0) {
-                double t = Math.acos(R/Math.sqrt(Math.pow(Q, 3))) / 3d;
+                double t = Math.acos(R / Math.sqrt(Math.pow(Q, 3))) / 3d;
                 x1 = -2 * Math.sqrt(Q) * Math.cos(t) - newA / 3d;
                 x2 = -2 * Math.sqrt(Q) * Math.cos(t + (2 * Math.PI / 3d)) - newA / 3d;
                 x3 = -2 * Math.sqrt(Q) * Math.cos(t - (2 * Math.PI / 3d)) - newA / 3d;
             }
-            answersList.add(x1);
-            answersList.add(x2);
-            answersList.add(x3);
+            answersArr[0] = x1;
+            answersArr[1] = x2;
+            answersArr[2] = x3;
         }
 
-        Collections.sort(answersList);
-        Collections.reverse(answersList);
-        x1 = answersList.get(0);
-        x2 = answersList.get(1);
-        x3 = answersList.get(2);
+        Arrays.sort(answersArr);
+        x1 = answersArr[2];
+        x2 = answersArr[1];
+        x3 = answersArr[0];
 
         return x1 + ", " + x2 + ", " + x3;
     }
@@ -74,8 +72,7 @@ public class DoubleAdvancedTask {
      */
     public static float length(double a1, double b1, double a2, double b2) {
         //используем уравнение прямой y = kx + b
-        double eps = 0.000001;
-        if (equalsDoubles(a1, a2, eps)) { // если k1 = k2, то прямые параллельны
+        if (equalsDoubles(a1, a2, EPS)) { // если k1 = k2, то прямые параллельны
             return (float) (Math.abs(b2 - b1) / Math.sqrt(Math.pow(a1, 2) + 1));
         }
         return 0;
@@ -84,6 +81,7 @@ public class DoubleAdvancedTask {
     private static boolean equalsDoubles(double a, double b, double eps) {
         return Math.abs(a - b) <= eps;
     }
+
     /**
      * Даны три точки в пространстве (x1, y1, z1) , (x2, y2, z2) и (x3, y3, z3). Вам нужно найти Z координату
      * четвертой точки (x4, y4, z4), которая находится на той же плоскости что и первые три.
