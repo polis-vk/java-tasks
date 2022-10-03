@@ -48,6 +48,7 @@ public class IntegerAdvancedTask {
         if (dayX < 0 || dayY < 0) {
             return Math.max(dayX, dayY);
         }
+
         return Math.min(dayX, dayY);
     }
 
@@ -58,12 +59,12 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        int decimal = (int) Math.abs(n / Math.pow(HEX, order - 1)) % HEX;
-        if (decimal <= 9) {
-            return (char) ('0' + decimal);
+        int number = (int) Math.abs(n / Math.pow(HEX, order - 1)) % HEX;
+        if (number <= 9) {
+            return (char) ('0' + number);
         }
 
-        return (char) ('A' + decimal - 10);
+        return (char) ('A' + number - 10);
     }
 
     /**

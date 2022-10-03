@@ -39,8 +39,9 @@ public class DoubleAdvancedTask {
             roots[1] = Math.cbrt(r) - a1 / 3;
             roots[2] = roots[1];
         }
-        // Сортировка
+
         Arrays.sort(roots);
+
         return roots[2] + ", " + roots[1] + ", " + roots[0];
     }
 
@@ -77,11 +78,13 @@ public class DoubleAdvancedTask {
         int a2 = x3 - x1;
         int b2 = y3 - y1;
         int c2 = z3 - z1;
+
         // Найдём коэффициенты для уравнения плоскости
         int a = b1 * c2 - b2 * c1;
         int b = a2 * c1 - a1 * c2;
         int c = a1 * b2 - b1 * a2;
         int d = (-a * x1 - b * y1 - c * z1);
+
         // Найдём z-координату 4 точки, подставив x и y в уравнение плоскости
         return (double) -(a * x4 + b * y4 + d) / c;
     }
