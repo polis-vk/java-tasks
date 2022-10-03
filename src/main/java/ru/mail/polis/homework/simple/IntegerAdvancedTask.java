@@ -18,7 +18,11 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (Math.abs(q - 1) < EPS) {
+            return (long) a * n;
+        } else {
+            return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
+        }
     }
 
     /**
@@ -30,7 +34,20 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (up >= grassY || right >= grassX) {
+            return 1;
+        }
+        if (up <= down && right <= left) {
+            return Integer.MAX_VALUE;
+        }
+
+        int dayX = (int) Math.ceil((double) (grassX - right) / (right - left)) + 1;
+        int dayY = (int) Math.ceil((double) (grassY - up) / (up - down)) + 1;
+
+        if (dayX < 0 || dayY < 0) {
+            return Math.max(dayX, dayY);
+        }
+        return Math.min(dayX, dayY);
     }
 
     /**
@@ -40,7 +57,8 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int decimal = (int) Math.abs(n / Math.pow(16, order - 1)) % 16;
+        return (char) (decimal <= 9 ? '0' + decimal : 'A' + decimal - 10);
     }
 
     /**
@@ -51,7 +69,16 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte minDigit = 0;
+        long currentNumber = a;
+        long min = 16;
+        for (byte i = 1; currentNumber != 0; i++) {
+            if (currentNumber % 16 < min) {
+                min = currentNumber % 16;
+                minDigit = i;
+            }
+            currentNumber /= 16;
+        }
+        return minDigit;
     }
-
 }

@@ -8,7 +8,7 @@ package ru.mail.polis.homework.simple;
  */
 public class DoubleAdvancedTask {
 
-    static final double EPS = 1.0E-5;
+    private static final double EPS = 1e-10;
 
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
