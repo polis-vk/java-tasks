@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -12,9 +14,15 @@ import java.util.Iterator;
  * тогда все элементы со значением 100 имеют нечетную позицию, а элементы = 0 - четную.
  */
 public class CustomArrayWrapper implements Iterable<Integer> {
+    private static final int DEFAULT_STEP_OF_ITERATOR = 1;
+    private static final int EVEN_AND_ODD_STEP = 2;
+    private static final int DEFAULT_STARTING_POSITION = 0;
+    private static final int STARTING_POSITION_FOR_ODD_NUMBERS = 0;
+    private static final int STARTING_POSITION_FOR_EVEN_NUMBERS = 1;
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
+    private int counterOfModifications = 0;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -24,11 +32,13 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
+        counterOfModifications++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
+        counterOfModifications++;
     }
 
     public int get(int index) {
@@ -48,7 +58,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new CustomArrayWrapperIterator();
     }
 
     /**
@@ -58,7 +68,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new CustomArrayWrapperIterator(STARTING_POSITION_FOR_EVEN_NUMBERS, EVEN_AND_ODD_STEP);
     }
 
     /**
@@ -68,7 +78,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new CustomArrayWrapperIterator(STARTING_POSITION_FOR_ODD_NUMBERS, EVEN_AND_ODD_STEP);
     }
 
     private void checkIndex(int index) {
@@ -77,4 +87,38 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
+    private class CustomArrayWrapperIterator implements Iterator<Integer> {
+
+        private int currentPosition;
+        private final int step;
+        private final int numberOfModifications;
+
+        public CustomArrayWrapperIterator() {
+            this(DEFAULT_STARTING_POSITION, DEFAULT_STEP_OF_ITERATOR);
+        }
+
+        public CustomArrayWrapperIterator(int startPosition, int step) {
+            currentPosition = startPosition;
+            this.step = step;
+            numberOfModifications = counterOfModifications;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return currentPosition < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            if (numberOfModifications != counterOfModifications) {
+                throw new ConcurrentModificationException();
+            }
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            Integer value = array[currentPosition];
+            currentPosition += step;
+            return value;
+        }
+    }
 }
