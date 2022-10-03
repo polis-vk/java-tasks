@@ -72,6 +72,17 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+
+        int A = (y2 - y1) * (z3 - z1) - (z2 - z1) * (y3 - y1);
+        int B = (x3 - x1) * (z2 - z1) - (z3 - z1) * (x2 - x1);
+        int C = (x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1);
+
+        // A * x + B * y + C * z + D = 0
+
+        int D = -A * x1 - B * y1 - C * z1;
+
+        double z4 = (double) (-D - y4 * B - x4 * A) / C;
+
+        return z4;
     }
 }
