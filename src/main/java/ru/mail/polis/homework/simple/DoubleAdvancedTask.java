@@ -1,10 +1,6 @@
 package ru.mail.polis.homework.simple;
 
-import java.rmi.MarshalException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
@@ -58,7 +54,10 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        if (Math.abs(a1 - a2) > 0) {
+            return 0;
+        }
+        return (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1));
     }
 
     /**
@@ -73,17 +72,6 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-
-        int ux = x2 - x1;
-        int uy = y2 - y1;
-        int uz = z2 - z1;
-
-        int vx = x3 - x1;
-        int vy = y3 - y1;
-        int vz = z3 - z1;
-
-
-
         return 0;
     }
 }
