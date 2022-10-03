@@ -9,9 +9,9 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
-    private final static int ASCII_CAPITAL_LETTERS_START_DECIMAL_VALUE = 55;
-    private final static int ASCII_NUMBERS_START_DECIMAL_VALUE = 48;
-    private final static int RADIX = 16;
+    private static final int ASCII_CAPITAL_LETTERS_START_DECIMAL_VALUE = 55;
+    private static final int ASCII_NUMBERS_START_DECIMAL_VALUE = 48;
+    private static final int RADIX = 16;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
