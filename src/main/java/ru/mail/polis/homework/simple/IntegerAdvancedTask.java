@@ -13,6 +13,8 @@ public class IntegerAdvancedTask {
 
     private static final int HEX = 16;
 
+    private static final char[] HEXCHARS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
@@ -20,10 +22,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q == 1) {
+        if (Math.abs(q - 1) < 0.0000001) {
             return (long) n * a;
         }
-        return (long)(a * (1 - Math.pow(q, n)) / (1 - q));
+        return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
     /**
@@ -39,22 +41,17 @@ public class IntegerAdvancedTask {
             return Integer.MAX_VALUE;
         }
 
-        int y = 0;
-        int x = 0;
-        int days = 0;
-
-        while (grassY > y || grassX > x) {
-            days++;
-            y += up;
-            x += right;
-            if (grassY <= y || grassX <= x) {
-                break;
-            }
-            y -= down;
-            x -= left;
+        if (up >= grassY || right >= grassX) {
+            return 1;
         }
 
-        return days;
+        int deltaY = up - down;
+        int deltaX = right - left;
+
+        int daysX = (int) Math.ceil((double) (grassX - right) / deltaX) + 1;
+        int daysY = (int) Math.ceil((double) (grassY - up) / deltaY) + 1;
+
+        return Math.min(Math.abs(daysX), Math.abs(daysY));
     }
 
     /**
@@ -64,8 +61,14 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        char[] hex = getHex(n);
-        return hex[order - 1];
+        int result = 15;
+        for (int i = 0; i < order; i++) {
+            int remainder = n % HEX;
+            result = remainder;
+            n /= HEX;
+        }
+
+        return HEXCHARS[result];
     }
 
     /**
@@ -76,37 +79,22 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        char[] hex = getHex(a);
 
         byte minIndex = 0;
-        for(byte i = 0; i < hex.length; i++) {
-            if (hex[minIndex] > hex[i]) {
-                minIndex = i;
+        byte currentIndex = 0;
+        int minValue = 15;
+
+        while (a > 0) {
+            int remainder = (int) (a % HEX);
+            if (minValue > remainder) {
+                minIndex = currentIndex;
+                minValue = remainder;
             }
-        }
 
-        return (byte)(minIndex + 1);
-    }
-
-    //Преобразует 10-ное число в 16-ное
-    public static char[] getHex(long a){
-        byte numbersCount = 0;
-        long number = a;
-        while(number != 0) {
-            number /= HEX;
-            numbersCount++;
-        }
-
-        char[] result = new char[numbersCount];
-        int currentIndex = 0;
-        char hexChars[] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
-        while(a > 0) {
-            int remainder = (int)(a % HEX);
-            result[currentIndex] = hexChars[remainder];
-            currentIndex++;
+            currentIndex++;;
             a /= HEX;
         }
 
-        return result;
+        return (byte) (minIndex + 1);
     }
 }
