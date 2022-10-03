@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
@@ -48,7 +49,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new CustomIterator();
     }
 
     /**
@@ -58,7 +59,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new CustomIterator(1, 2);
     }
 
     /**
@@ -68,7 +69,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new CustomIterator(0, 2);
     }
 
     private void checkIndex(int index) {
@@ -77,4 +78,55 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
+    private class CustomIterator implements Iterator<Integer> {
+        static final int DEFAULT_STEP = 1;
+        static final int DEFAULT_START = 0;
+
+        private final int constLen;
+        private final int step;
+        private int pointer;
+
+
+        public CustomIterator(int start, int step) {
+            this.step = step;
+            this.pointer = start;
+            this.constLen = CustomArrayWrapper.this.position;
+        }
+
+        public CustomIterator(int start) {
+            this(start, DEFAULT_STEP);
+        }
+
+        public CustomIterator() {
+            this(DEFAULT_START);
+        }
+
+        @Override
+        public boolean hasNext() {
+            try {
+                CustomArrayWrapper.this.checkIndex(pointer);
+            } catch (IndexOutOfBoundsException e) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public Integer next() {
+            this.checkConcurrency();
+            CustomArrayWrapper.this.checkIndex(pointer);
+            int ans = CustomArrayWrapper.this.get(pointer);
+            pointer += step;
+            return ans;
+        }
+
+        private void checkConcurrency() {
+            if (this.constLen != CustomArrayWrapper.this.position) {
+                throw new ConcurrentModificationException();
+            }
+        }
+    }
+
 }
+
+
