@@ -37,17 +37,21 @@ public class IntegerAdvancedTask {
         if (up >= grassY || right >= grassX) {
             return 1;
         }
+
         if (up <= down && right <= left) {
             return Integer.MAX_VALUE;
         }
+
         int posX = 0;
         int posY = 0;
         int days = 0;
+
         while (posX < (grassX - left) && posY < (grassY - down)) {
             days++;
             posY += up - down;
             posX += right - left;
         }
+
         return days;
     }
 
@@ -64,9 +68,11 @@ public class IntegerAdvancedTask {
             quotient = nextN % DIVIDER;
             nextN = nextN / DIVIDER;
         }
+
         if (quotient >= 10) {
             return (char) ('A' + quotient - 10);
         }
+
         return (char) ('0' + quotient);
     }
 
@@ -82,6 +88,7 @@ public class IntegerAdvancedTask {
         long nextA = a;
         byte indexMin = 0;
         long currentDigit;
+
         for (byte index = 1; nextA > 0; index++) {
             currentDigit = nextA % DIVIDER;
             if (min > currentDigit) {
@@ -90,6 +97,7 @@ public class IntegerAdvancedTask {
             }
             nextA = nextA / DIVIDER;
         }
+
         return indexMin;
     }
 }

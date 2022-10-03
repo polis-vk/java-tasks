@@ -22,9 +22,11 @@ public class DoubleAdvancedTask {
         double root1;
         double root2;
         double root3;
+
         double Q = (Math.pow((b * 1. / a), 2) - 3 * (c * 1. / a)) / 9;
         double R = (2 * Math.pow((b * 1. / a), 3) - 9 * (b * 1. / a) * (c * 1. / a) + 27 * (d * 1. / a)) / 54;
         double S = Math.pow(Q, 3) - Math.pow(R, 2);
+
         if (Double.compare(S, 0.0) != 0) {
             double temp = Math.acos(R / Math.sqrt(Math.pow(Q, 3))) / 3;
             root1 = -2 * Math.sqrt(Q) * Math.cos(temp) - (b * 1. / a) / 3;
@@ -37,10 +39,7 @@ public class DoubleAdvancedTask {
         }
         double[] roots = {root1, root2, root3};
         Arrays.sort(roots);
-        double x1 = roots[2];
-        double x2 = roots[1];
-        double x3 = roots[0];
-        return x1 + ", " + x2 + ", " + x3;
+        return roots[2] + ", " + roots[1] + ", " + roots[0];
         // Решение взято отсюда: https://math.fandom.com/ru/wiki/Тригонометрическая_формула_Виета
     }
 
@@ -70,12 +69,14 @@ public class DoubleAdvancedTask {
                                          int x4, int y4) {
         int y21 = y2 - y1;
         int z21 = z2 - z1;
-        int y41 = y4 - y1;
         int x21 = x2 - x1;
+
         int x31 = x3 - x1;
         int y31 = y3 - y1;
         int z31 = z3 - z1;
+
         int x41 = x4 - x1;
+        int y41 = y4 - y1;
         return ((double) (-x41 * (y21 * z31 - z21 * y31) + y41 * (x21 * z31 - z21 * x31)) / (x21 * y31 - y21 * x31)) + z1;
     }
 }
