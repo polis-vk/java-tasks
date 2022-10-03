@@ -24,8 +24,7 @@ public class IntegerAdvancedTask {
     public static long progression(int a, double q, int n) {
         if (q == 1) {
             return (long) n * a;
-        }
-        else {
+        } else {
             return (long) ((a * (1 - Math.pow(q, n))) / (1 - q));
         }
     }
@@ -39,42 +38,27 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        int currentGrassX = 0;
-        int currentGrassY = 0;
-        int days = 0;
-        while (currentGrassX < grassX && currentGrassY < grassY && days != Integer.MAX_VALUE) {
-            currentGrassY += up;
-            if (isGrassReached(currentGrassX, currentGrassY, grassX, grassY)) {
-                days++;
-                break;
+        if (up >= grassY || right >= grassX) { //краевой случай - гусеница доберется до травы за 1 день
+            return 1;
+        } else if (down >= up && left >= right) { //краевой случай - гусеница никогда не доберется до травы
+            return Integer.MAX_VALUE;
+        } else {
+            double deltaX = Math.abs(left - right);
+            double deltaY = Math.abs(up - down);
+
+            double answerX = (grassX - right) / deltaX;
+            double answerY = (grassY - up) / deltaY;
+
+            //в последний день может так случится, что гусенице не придется возвращаться
+            if (answerX * deltaX + right >= grassX) {
+                answerX++;
             }
-            currentGrassX += right;
-            if (isGrassReached(currentGrassX, currentGrassY, grassX, grassY)) {
-                days++;
-                break;
-            }
-            currentGrassY -= down;
-            if (isGrassReached(currentGrassX, currentGrassY, grassX, grassY)) {
-                days++;
-                break;
-            }
-            currentGrassX -= left;
-            if (isGrassReached(currentGrassX, currentGrassY, grassX, grassY)) {
-                days++;
-                break;
+            if (answerY * deltaY + up >= grassY) {
+                answerY++;
             }
 
-            if (Math.abs(currentGrassX) >= Integer.MAX_VALUE - 1 || Math.abs(currentGrassY) >= Integer.MAX_VALUE - 1) {
-                days = Integer.MAX_VALUE;
-                break;
-            }
-            days++;
+            return answerX < answerY ? (int) Math.ceil(answerX) : (int) Math.ceil(answerY);
         }
-        return days;
-    }
-
-    private static boolean isGrassReached(int currentGrassX, int currentGrassY, int grassX, int grassY) {
-        return currentGrassX >= grassX || currentGrassY >= grassY;
     }
 
     /**
