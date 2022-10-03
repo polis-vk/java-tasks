@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.simple;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -18,7 +22,11 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        int answer = 0;
+        for (int i = 0; i < n; i++) {
+            answer += a * Math.pow(q, i);
+        }
+        return answer;
     }
 
     /**
@@ -30,7 +38,42 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int currentGrassX = 0;
+        int currentGrassY = 0;
+        int days = 0;
+        while (currentGrassX < grassX && currentGrassY < grassY && days != Integer.MAX_VALUE) {
+            currentGrassY += up;
+            if (isGrassReached(currentGrassX, currentGrassY, grassX, grassY)) {
+                days++;
+                break;
+            }
+            currentGrassX += right;
+            if (isGrassReached(currentGrassX, currentGrassY, grassX, grassY)) {
+                days++;
+                break;
+            }
+            currentGrassY -= down;
+            if (isGrassReached(currentGrassX, currentGrassY, grassX, grassY)) {
+                days++;
+                break;
+            }
+            currentGrassX -= left;
+            if (isGrassReached(currentGrassX, currentGrassY, grassX, grassY)) {
+                days++;
+                break;
+            }
+
+            if (Math.abs(currentGrassX) >= Integer.MAX_VALUE - 1 || Math.abs(currentGrassY) >= Integer.MAX_VALUE - 1) {
+                days = Integer.MAX_VALUE;
+                break;
+            }
+            days++;
+        }
+        return days;
+    }
+
+    private static boolean isGrassReached(int currentGrassX, int currentGrassY, int grassX, int grassY) {
+        return currentGrassX >= grassX || currentGrassY >= grassY;
     }
 
     /**
@@ -40,7 +83,8 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        char[] hexDigits = Integer.toHexString(n).toCharArray();
+        return Character.toUpperCase(hexDigits[hexDigits.length - order]);
     }
 
     /**
@@ -51,7 +95,16 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        char[] hexDigits = Long.toHexString(a).toCharArray();
+        char minDigit = hexDigits[hexDigits.length - 1];
+        int number = 1;
+        for (int i = hexDigits.length - 1; i >= 0; i--) {
+            if (Character.toUpperCase(hexDigits[i]) < Character.toUpperCase(minDigit)) {
+                minDigit = hexDigits[i];
+                number = hexDigits.length - i;
+            }
+        }
+        return (byte) number;
     }
 
 }
