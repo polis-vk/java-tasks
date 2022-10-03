@@ -10,6 +10,7 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
+    private static final int HEX = 16;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -20,9 +21,9 @@ public class IntegerAdvancedTask {
     public static long progression(int a, double q, int n) {
         if (Math.abs(q - 1) < EPS) {
             return (long) a * n;
-        } else {
-            return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
         }
+
+        return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
@@ -57,8 +58,12 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        int decimal = (int) Math.abs(n / Math.pow(16, order - 1)) % 16;
-        return (char) (decimal <= 9 ? '0' + decimal : 'A' + decimal - 10);
+        int decimal = (int) Math.abs(n / Math.pow(HEX, order - 1)) % HEX;
+        if (decimal <= 9) {
+            return (char) ('0' + decimal);
+        }
+
+        return (char) ('A' + decimal - 10);
     }
 
     /**
@@ -69,16 +74,17 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        byte minDigit = 0;
+        byte minIndex = 0;
         long currentNumber = a;
-        long min = 16;
+        long min = HEX;
         for (byte i = 1; currentNumber != 0; i++) {
-            if (currentNumber % 16 < min) {
-                min = currentNumber % 16;
-                minDigit = i;
+            if (currentNumber % HEX < min) {
+                min = currentNumber % HEX;
+                minIndex = i;
             }
-            currentNumber /= 16;
+            currentNumber /= HEX;
         }
-        return minDigit;
+
+        return minIndex;
     }
 }
