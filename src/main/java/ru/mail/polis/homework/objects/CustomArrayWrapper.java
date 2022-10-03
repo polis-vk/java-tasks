@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
@@ -48,7 +49,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new CustomArrayWrapperIterator();
     }
 
     /**
@@ -58,7 +59,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new CustomArrayWrapperIterator(true);
     }
 
     /**
@@ -68,7 +69,48 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new CustomArrayWrapperIterator(false);
+    }
+
+
+    private class CustomArrayWrapperIterator implements Iterator<Integer> {
+
+        private boolean isDefault = true;
+        private int currentIndex = 0;
+        private boolean isCallHasNext = false;
+
+        public CustomArrayWrapperIterator(boolean isEven) {
+            this.isDefault = false;
+            if (isEven) {
+                this.currentIndex++;
+            }
+        }
+
+        public CustomArrayWrapperIterator() {
+        }
+
+        @Override
+        public boolean hasNext() {
+            isCallHasNext = true;
+            return currentIndex <= array.length - 1;
+        }
+
+        @Override
+        public Integer next() {
+            if (!isCallHasNext || !hasNext()) {
+                throw new ConcurrentModificationException();
+            }
+
+            Integer value = array[currentIndex];
+            if (isDefault) {
+                currentIndex++;
+            } else {
+                currentIndex += 2;
+            }
+
+            isCallHasNext = false;
+            return value;
+        }
     }
 
     private void checkIndex(int index) {
