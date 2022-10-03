@@ -26,18 +26,18 @@ public class DoubleAdvancedTask {
         double Q = (Math.pow((b * 1. / a), 2) - 3 * (c * 1. / a)) / 9;
         double R = (2 * Math.pow((b * 1. / a), 3) - 9 * (b * 1. / a) * (c * 1. / a) + 27 * (d * 1. / a)) / 54;
         double S = Math.pow(Q, 3) - Math.pow(R, 2);
+        double[] roots = new double[3];
 
         if (Double.compare(S, 0.0) != 0) {
             double temp = Math.acos(R / Math.sqrt(Math.pow(Q, 3))) / 3;
-            root1 = -2 * Math.sqrt(Q) * Math.cos(temp) - (b * 1. / a) / 3;
-            root2 = -2 * Math.sqrt(Q) * Math.cos(temp + (2 * Math.PI / 3)) - (b * 1. / a) / 3;
-            root3 = -2 * Math.sqrt(Q) * Math.cos(temp - (2 * Math.PI / 3)) - (b * 1. / a) / 3;
+            roots[0] = -2 * Math.sqrt(Q) * Math.cos(temp) - (b * 1. / a) / 3;
+            roots[1] = -2 * Math.sqrt(Q) * Math.cos(temp + (2 * Math.PI / 3)) - (b * 1. / a) / 3;
+            roots[2] = -2 * Math.sqrt(Q) * Math.cos(temp - (2 * Math.PI / 3)) - (b * 1. / a) / 3;
         } else {
-            root1 = Math.cbrt(R) - (b * 1. / a) / 3;
-            root2 = root1;
-            root3 = -2 * Math.cbrt(R) - (b * 1. / a) / 3;
+            roots[0] = Math.cbrt(R) - (b * 1. / a) / 3;
+            roots[1] = roots[0];
+            roots[2] = -2 * Math.cbrt(R) - (b * 1. / a) / 3;
         }
-        double[] roots = {root1, root2, root3};
         Arrays.sort(roots);
         return roots[2] + ", " + roots[1] + ", " + roots[0];
         // Решение взято отсюда: https://math.fandom.com/ru/wiki/Тригонометрическая_формула_Виета
