@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.simple;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
@@ -27,27 +25,27 @@ public class DoubleAdvancedTask {
         double A = (double) b / a;
         double B = (double) c / a;
         double C = (double) d / a;
-        List<Double> result = new ArrayList<>();
-        double q = (Math.pow(A, 2) - 3.0 * B) / 9.0;
-        double r = (2.0 * Math.pow(A, 3) - 9 * A * B + 27.0 * C) / 54.0;
+        double[] result = new double[3];
+        double q = (Math.pow(A, 2) - 3 * B) / 9;
+        double r = (2.0 * Math.pow(A, 3) - 9 * A * B + 27 * C) / 54;
         double s = Math.pow(q, 3) - Math.pow(r, 2);
         double t;
         if (s > 0) {
-            t = (Math.acos(r / Math.sqrt(Math.pow(q, 3)))) / 3.0;
-            result.add(-2 * Math.sqrt(q) * Math.cos(t) - (A / 3.0));
-            result.add(-2 * Math.sqrt(q) * Math.cos(t + (2.0 * Math.PI / 3.0)) - (A / 3.0));
-            result.add(-2 * Math.sqrt(q) * Math.cos(t - (2.0 * Math.PI / 3.0)) - (A / 3.0));
-        } else if (s == 0) {
-            result.add(-2 * Math.pow(r, 1.0 / 3.0) - (A / 3.0));
-            result.add(Math.pow(r, 1.0 / 3.0) - (A / 3.0));
-            result.add(Math.pow(r, 1.0 / 3.0) - (A / 3.0));
+            t = (Math.acos(r / Math.sqrt(Math.pow(q, 3)))) / 3;
+            result[0] = -2 * Math.sqrt(q) * Math.cos(t) - A / 3;
+            result[1] = -2 * Math.sqrt(q) * Math.cos(t + (2 * Math.PI / 3)) - A / 3;
+            result[2] = -2 * Math.sqrt(q) * Math.cos(t - (2 * Math.PI / 3)) - A / 3;
+        } else if (Math.abs(s - 1) < EPS) {
+            result[0] = -2 * Math.pow(r, 1f / 3f) - A / 3;
+            result[1] = Math.pow(r, 1f / 3f) - A / 3;
+            result[2] = result[1];
         } else {
-            result.add(-2 * Math.signum(r) * Math.sqrt(Math.abs(q)) - (A / 3.0));
-            result.add(Math.signum(r) * Math.sqrt(Math.abs(q)) - (A / 3.0));
-            result.add(Math.signum(r) * Math.sqrt(Math.abs(q)) - (A / 3.0));
+            result[0] = -2 * Math.signum(r) * Math.sqrt(Math.abs(q)) - A / 3;
+            result[1] = Math.signum(r) * Math.sqrt(Math.abs(q)) - A / 3;
+            result[2] = result[1];
         }
-        result.sort(Comparator.naturalOrder());
-        return result.get(2) + ", " + result.get(1) + ", " + result.get(0);
+        Arrays.sort(result);
+        return result[2] + ", " + result[1] + ", " + result[0];
     }
 
     /**
@@ -57,9 +55,9 @@ public class DoubleAdvancedTask {
      */
     public static float length(double a1, double b1, double a2, double b2) {
         if (Math.abs(a1 - a2) > EPS) {
-            return 0.0f;
+            return 0;
         }
-        return (float) (Math.abs(b2 - b1) / Math.sqrt((a2 * a1) + 1));
+        return (float) (Math.abs(b2 - b1) / Math.sqrt(a2 * a1 + 1));
     }
 
     /**
