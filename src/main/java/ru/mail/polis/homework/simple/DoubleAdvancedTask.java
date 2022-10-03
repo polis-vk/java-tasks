@@ -13,7 +13,7 @@ public class DoubleAdvancedTask {
      * Шаг будет определять ширину интервала,
      * в пределе которого осуществляется поиск корня.
      */
-    private static final double STEP = 1e-7;
+    private static final double STEP = 1e-5;
     private static final double EPSILON = 1e-10;
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
