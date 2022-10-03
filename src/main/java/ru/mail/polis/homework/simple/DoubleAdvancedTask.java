@@ -21,9 +21,6 @@ public class DoubleAdvancedTask {
     public static String equation(int a, int b, int c, int d) {
         // Решение кубического уравнения через тригонометрическую формулу Виета
         // Подробнее: https://ru.wikipedia.org/wiki/Тригонометрическая_формула_Виета
-        double x1;
-        double x2;
-        double x3;
         double[] roots = new double[3];
 
         // Из условия известно, что у данного уравнения есть три вещественных корня
@@ -32,19 +29,19 @@ public class DoubleAdvancedTask {
         // Рассмотрим несколько краевых моментов, которые не решаются вышеуказанной формулой
         if (b == 0 && c == 0 && d == 0) {
             // Случай a * x^3 = 0
-            x1 = 0;
-            x2 = 0;
-            x3 = 0;
+            roots[0] = 0;
+            roots[1] = 0;
+            roots[2] = 0;
         } else if (b != 0 && c == 0 && d == 0) {
             // Случай a * x^3 + b * x^2 = 0
-            x1 = (double) -b / a;
-            x2 = 0;
-            x3 = 0;
+            roots[0] = (double) -b / a;
+            roots[1] = 0;
+            roots[2] = 0;
         } else if (b == 0 && c != 0 && d == 0) {
             // Случай a * x^3 + c * x = 0
-            x1 = Math.sqrt((double) -c / a);
-            x2 = 0;
-            x3 = -x1;
+            roots[0] = Math.sqrt((double) -c / a);
+            roots[1] = 0;
+            roots[2] = -roots[0];
         } else {
             // Решение по формуле
             // Пусть наше уравнение: a * x^3 + b * x^2 + c * x + d = 0
@@ -65,21 +62,17 @@ public class DoubleAdvancedTask {
             if (s < 0) {
                 double f = Math.acos(r / Math.sqrt(-(q * q * q))) / 3;
 
-                x1 = 2 * Math.sqrt(-q) * Math.cos(f) - n / 3;
-                x2 = 2 * Math.sqrt(-q) * Math.cos(f + (2 * Math.PI) / 3) - n / 3;
-                x3 = 2 * Math.sqrt(-q) * Math.cos(f - (2 * Math.PI) / 3) - n / 3;
+                roots[0] = 2 * Math.sqrt(-q) * Math.cos(f) - n / 3;
+                roots[1] = 2 * Math.sqrt(-q) * Math.cos(f + (2 * Math.PI) / 3) - n / 3;
+                roots[2] = 2 * Math.sqrt(-q) * Math.cos(f - (2 * Math.PI) / 3) - n / 3;
             } else {
-                x1 = -2 * Math.pow(3, 1f / 3) - n / 3;
-                x2 = Math.pow(3, 1f / 3) - n / 3; // Данный корень имеет вторую степень кратности
-                x3 = x2;
+                roots[0] = -2 * Math.pow(3, 1f / 3) - n / 3;
+                roots[1] = Math.pow(3, 1f / 3) - n / 3; // Данный корень имеет вторую степень кратности
+                roots[2] = roots[1];
             }
         }
 
         // Сортировка полученных значений для будущего вывода
-        roots[0] = x1;
-        roots[1] = x2;
-        roots[2] = x3;
-
         Arrays.sort(roots);
 
         return roots[2] + ", " + roots[1] + ", " + roots[0];
