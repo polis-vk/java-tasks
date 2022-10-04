@@ -19,7 +19,7 @@ public class IntegerAdvancedTask {
      */
     // Вычисляется сумма геометрической прогрессии по формуле при q != 1, иначе - сумма одинаковых чисел
     public static long progression(int a, double q, int n) {
-        return (long) (q != 1 ? a * (Math.pow(q, n) - 1) / (q - 1) : a * n);
+        return (long) (Double.compare(q, 1) != 0 ? a * (Math.pow(q, n) - 1) / (q - 1) : a * n);
     }
 
     /**
@@ -40,17 +40,17 @@ public class IntegerAdvancedTask {
      * число дней, за которое гусеница доползет до одной из границ поля.
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        int grassYMinusLastStep = Math.max(0, grassY - up);
-        int grassXMinusLastStep = Math.max(0, grassX - right);
-        if (grassYMinusLastStep == 0 || grassXMinusLastStep == 0) {
+        int previousY = Math.max(0, grassY - up);
+        int previousX = Math.max(0, grassX - right);
+        if (previousY == 0 || previousX == 0) {
             return 1;
         }
 
         int stepUp = up - down;
         int stepRight = right - left;
-        int daysToReachGrassY = stepUp > 0 ? (int) Math.ceil((double) grassYMinusLastStep / stepUp) + 1 : Integer.MAX_VALUE;
-        int daysToReachGrassX = stepRight > 0 ? (int) Math.ceil((double) grassXMinusLastStep / stepRight) + 1 : Integer.MAX_VALUE;
-        return Math.min(daysToReachGrassY, daysToReachGrassX);
+        int daysY = stepUp > 0 ? (int) Math.ceil((double) previousY / stepUp) + 1 : Integer.MAX_VALUE;
+        int daysX = stepRight > 0 ? (int) Math.ceil((double) previousX / stepRight) + 1 : Integer.MAX_VALUE;
+        return Math.min(daysY, daysX);
     }
 
     /**
@@ -98,5 +98,4 @@ public class IntegerAdvancedTask {
         }
         return minimumIndex;
     }
-
 }
