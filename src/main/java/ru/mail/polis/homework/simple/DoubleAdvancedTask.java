@@ -17,35 +17,34 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
         double root1;
         double root2;
         double root3;
 
         // Решение взято с сайта: https://math.fandom.com/ru/wiki/%D0%A2%D1%80%D0%B8%D0%B3%D0%BE%D0%BD%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F_%D1%84%D0%BE%D1%80%D0%BC%D1%83%D0%BB%D0%B0_%D0%92%D0%B8%D0%B5%D1%82%D0%B0
         // делим исходное уравнение на a и получем уравнение вида x ^ 3 + a * x ^ 2 + b * x + c = 0
-        double coef1 = b * 1. / a;
-        double coef2 = c * 1. / a;
-        double coef3 = d * 1. / a;
+        double coefA = b * 1. / a;
+        double coefB = c * 1. / a;
+        double coefC = d * 1. / a;
 
-        double Q = (Math.pow(coef1, 2) - 3 * coef2) / 9;
-        double R = (2 * Math.pow(coef1, 3) - 9 * coef1 * coef2 + 27 * coef3) / 54;
-        double S = Math.pow(Q, 3) - Math.pow(R, 2);
-        double t;
+        double q = (Math.pow(coefA, 2) - 3 * coefB) / 9;
+        double r = (2 * Math.pow(coefA, 3) - 9 * coefA * coefB + 27 * coefC) / 54;
+        double s = Math.pow(q, 3) - Math.pow(r, 2);
 
-        if (Double.compare(S, 0.0) != 0) {
-            t = Math.acos(R / Math.sqrt(Math.pow(Q, 3))) / 3;
-            root1 = -2 * Math.sqrt(Q) * Math.cos(t) - coef1 / 3;
-            root2 = -2 * Math.sqrt(Q) * Math.cos(t + (2 * Math.PI / 3)) - coef1 / 3;
-            root3 = -2 * Math.sqrt(Q) * Math.cos(t - (2 * Math.PI / 3)) - coef1 / 3;
+        if (Double.compare(s, 0.0) != 0) {
+            double t = Math.acos(r / Math.sqrt(Math.pow(q, 3))) / 3;
+            root1 = -2 * Math.sqrt(q) * Math.cos(t) - coefA / 3;
+            root2 = -2 * Math.sqrt(q) * Math.cos(t + (2 * Math.PI / 3)) - coefA / 3;
+            root3 = -2 * Math.sqrt(q) * Math.cos(t - (2 * Math.PI / 3)) - coefA / 3;
         } else {
-//            t = Math.signum(R) * Math.sqrt(Math.abs(Q));
-            root1 = Math.cbrt(R) - coef1 / 3;
+            root1 = Math.cbrt(r) - coefA / 3;
             root2 = root1;
-            root3 = -2 * Math.cbrt(R) - coef1 / 3;
+            root3 = -2 * Math.cbrt(r) - coefA / 3;
         }
+
+        double x1;
+        double x2;
+        double x3;
 
         x1 = (root1 > root2) && (root1 > root3) ? root1 : (root2 > root1) && (root2 > root3) ? root2 : root3;
         x3 = (root1 < root2) && (root1 < root3) ? root1 : (root2 < root1) && (root2 < root3) ? root2 : root3;

@@ -34,7 +34,7 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        if ((up <= down && grassY > up) && (right <= left && grassX > right)) {
+        if (up <= down && grassY > up && right <= left && grassX > right) {
             return Integer.MAX_VALUE;
         }
 
@@ -67,17 +67,19 @@ public class IntegerAdvancedTask {
     public static char kDecimal(int n, int order) {
         int mod;
         char digit = 0;
-        int secondN = n;
+        int number = n;
+        int orderHex = 16;
+        int shiftForAscii = 32;
 
         for (int i = 1; i <= order; i++) {
-            mod = secondN % 16;
-            secondN = secondN / 16;
+            mod = number % orderHex;
+            number = number / orderHex;
 
-            if (mod > 9) {
-                digit = (char) (Character.forDigit(mod, 16) - 32);
+            if (mod > 9 && i == order) {
+                digit = (char) (Character.forDigit(mod, orderHex) - shiftForAscii);
                 continue;
             }
-            digit = Character.forDigit(mod, 16);
+            digit = Character.forDigit(mod, orderHex);
         }
 
         return digit;
@@ -91,30 +93,27 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        long secondA = a;
-        if (secondA < 16) {
+        long number = a;
+        int order = 16;
+        if (number < order) {
             return 1;
         }
 
-        long mod;
+        int mod;
         byte counter = 1;
         byte minCounter = 1;
-        long minInHexNumber = a % 16;
-        secondA = secondA / 16;
+        int minInHexNumber = (int) (number % order);
+        number = number / order;
 
-        while (secondA >= 16) {
+        while (number != 0) {
             counter++;
-            mod = secondA % 16;
-            secondA = secondA / 16;
+            mod = (int) (number % order);
+            number = number / order;
 
             if (mod < minInHexNumber) {
                 minCounter = counter;
                 minInHexNumber = mod;
             }
-        }
-
-        if (secondA < minInHexNumber) {
-            minCounter = ++counter;
         }
 
         return minCounter;
