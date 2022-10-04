@@ -21,14 +21,11 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        long progressionSum;
-
-        if (Double.compare(q,1.d)==0) {
-            progressionSum = n * a;
+        if (Math.abs(q - 1.d) < EPS) {
+            return (long) n * a;
         } else {
-            progressionSum = (long) (a * (Math.pow(q, n) - 1) / (q - 1));
+            return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
         }
-        return progressionSum;
     }
 
     /**
@@ -43,13 +40,9 @@ public class IntegerAdvancedTask {
         if (up >= grassY || right >= grassX) {
             return 1;
         }
-        int dx;
-        int dy;
-
-        dx = right - left;
-        dy = up - down;
-
-        Integer days;
+        int dx = right - left;
+        int dy = up - down;
+        int days;
         if (dx > 0) {
             days = (grassX - right) / dx + (((grassX - right) % dx == 0) ? 1 : 2);
         } else if (dy > 0) {
@@ -70,7 +63,6 @@ public class IntegerAdvancedTask {
 
     public static char kDecimal(int n, int order) {
         int digitAtOrder = (n / (int) Math.pow(HEX_NUMBER_SYSTEM, order - 1)) % HEX_NUMBER_SYSTEM;
-
         return (digitAtOrder > 9) ? (char) (digitAtOrder + START_NUMBERS_CODE) : (char) (digitAtOrder + START_UPPER_LETTER_CODE);
     }
 
@@ -86,8 +78,6 @@ public class IntegerAdvancedTask {
         long hexNumber = number % HEX_NUMBER_SYSTEM;
         long minHexNumber = hexNumber;
         byte minIndex = 1;
-        //byte counter = 1;
-
         while (number > 0) {
             if (minHexNumber > hexNumber) {
                 minIndex = (byte) (Math.log((double) (a / number)) / Math.log(HEX_NUMBER_SYSTEM) + 1);
@@ -95,7 +85,6 @@ public class IntegerAdvancedTask {
             }
             number /= HEX_NUMBER_SYSTEM;
             hexNumber = number % HEX_NUMBER_SYSTEM;
-            //counter++;
         }
         return minIndex;
     }
