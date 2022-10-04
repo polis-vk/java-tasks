@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -14,6 +15,7 @@ public class CustomLinkedList implements Iterable<Integer> {
     private Node head;
     private Node tail;
     private int size;
+    private int counterOfModifications = 0;
 
     public CustomLinkedList() {
         head = null;
@@ -47,6 +49,7 @@ public class CustomLinkedList implements Iterable<Integer> {
         }
         tail = newNode;
         size++;
+        counterOfModifications++;
     }
 
     /**
@@ -56,9 +59,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index
      */
     public int get(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException(index);
-        }
+        checkIndex(index);
         return getNode(index).value;
     }
 
@@ -69,12 +70,12 @@ public class CustomLinkedList implements Iterable<Integer> {
      * Если был передан невалидный index - надо выкинуть исключение IndexOutOfBoundsException.
      * throw new IndexOutOfBoundsException(i);
      *
-     * @param i - index
+     * @param i     - index
      * @param value - data for create Node.
      */
     public void add(int i, int value) {
         if (i < 0 || i > size) {
-            throw new IndexOutOfBoundsException(i);
+            throw new IndexOutOfBoundsException();
         }
         Node newNode = new Node(value);
         if (i == 0) {
@@ -88,6 +89,7 @@ public class CustomLinkedList implements Iterable<Integer> {
             newNode.setNext(previousNode.next);
             previousNode.setNext(newNode);
         }
+        counterOfModifications++;
         size++;
     }
 
@@ -101,9 +103,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException(index);
-        }
+        checkIndex(index);
         if (index == 0) {
             head = head.next;
         } else {
@@ -113,6 +113,7 @@ public class CustomLinkedList implements Iterable<Integer> {
                 tail = previousNode;
             }
         }
+        counterOfModifications++;
         size--;
     }
 
@@ -136,15 +137,16 @@ public class CustomLinkedList implements Iterable<Integer> {
             currentNode = nextNode;
         }
         head = previousNode;
+        counterOfModifications++;
     }
 
     /**
      * 1 тугрик
      * Метод выводит всю последовательность хранящуюся в списке начиная с head.
      * Формат вывода:
-     *  - значение каждой Node должно разделяться " -> "
-     *  - последовательность всегда заканчивается на null
-     *  - если в списке нет элементов - верните строку "null"
+     * - значение каждой Node должно разделяться " -> "
+     * - последовательность всегда заканчивается на null
+     * - если в списке нет элементов - верните строку "null"
      *
      * @return - String with description all list
      */
@@ -177,9 +179,7 @@ public class CustomLinkedList implements Iterable<Integer> {
     }
 
     private Node getNode(int index) {
-        if (index < 0 || index >= size) {
-            throw new NullPointerException();
-        }
+        checkIndex(index);
         Node nextNode = head;
         int counter = 0;
         while (counter != index) {
@@ -189,8 +189,20 @@ public class CustomLinkedList implements Iterable<Integer> {
         return nextNode;
     }
 
+    private void checkIndex(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+
     private class CustomLinkedListIterator implements Iterator<Integer> {
-        private Node currentNode = head;
+        private Node currentNode;
+        private final int numberOfModifications;
+
+        public CustomLinkedListIterator() {
+            currentNode = head;
+            numberOfModifications = counterOfModifications;
+        }
 
         @Override
         public boolean hasNext() {
@@ -199,6 +211,9 @@ public class CustomLinkedList implements Iterable<Integer> {
 
         @Override
         public Integer next() {
+            if (numberOfModifications != counterOfModifications) {
+                throw new ConcurrentModificationException();
+            }
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
