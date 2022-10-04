@@ -11,9 +11,9 @@ package ru.mail.polis.homework.simple;
 
 public class IntegerAdvancedTask {
 
-    private static final double EPS = 1e-10;
-    private static final byte VALUE_CONVERT_TO_LETTER = 55; // для перевода в букву в 16 системе
-    private static final byte VALUE_CONVERT_TO_DIGIT = 48;  // для перевода в цифру в 16 системе
+    private static final double EPS = 1e-10; // для сравнение double'в
+    private static final byte ASCII_VALUE_START_TO_LETTERS = 55; // для перевода в букву в 16 системе
+    private static final byte ASCII_VALUE_START_TO_DIGIT = 48;  // для перевода в цифру в 16 системе
     private static final byte RADIX = 16;
 
     /**
@@ -76,9 +76,9 @@ public class IntegerAdvancedTask {
         int answerDigit = translatedDigitValue % RADIX;
 
         if (translatedDigitValue % RADIX >= 10) {
-            answerDigit += VALUE_CONVERT_TO_LETTER; // для перевода в буквенное значение
+            answerDigit += ASCII_VALUE_START_TO_LETTERS; // для перевода в буквенное значение
         } else {
-            answerDigit += VALUE_CONVERT_TO_DIGIT; // для перевода в цифру
+            answerDigit += ASCII_VALUE_START_TO_DIGIT; // для перевода в цифру
         }
 
         return (char) answerDigit;

@@ -72,7 +72,7 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        double answer = 0;
+
         // выразить определитель
         int vecX1 = x2 - x1;
         int vecY1 = y2 - y1;
@@ -83,7 +83,7 @@ public class DoubleAdvancedTask {
         int vecX3 = x4 - x1;
         int vecY3 = y4 - y1;
 
-        answer = (((vecX1 * vecY3 - vecY1 * vecX3) * vecZ2 - vecZ1 * (vecX2 * vecY3 - vecX3 * vecY2)) / (double) (vecX1 * vecY2 - vecY1 * vecX2)) + z1;
-        return answer;
+
+        return  (((vecX1 * vecY3 - vecY1 * vecX3) * vecZ2 - vecZ1 * (vecX2 * vecY3 - vecX3 * vecY2)) / (double) (vecX1 * vecY2 - vecY1 * vecX2)) + z1;
     }
 }
