@@ -18,33 +18,57 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
 
-    // Функция кубического полинома
-    private static double f(double x, int a, int b, int c, int d) {
-        return a * x * x * x + b * x * x + c * x + d;
+    // Интерфейс математической функции
+    public interface FuncInterface{
+
+        // Значение функции в точке x
+        double f(double x);
+
+        // Значение производной от функции в точке х
+        double df(double x);
     }
 
-    // Производная от кубического полинома
-    private static double df(double x, int a, int b, int c) {
-        return a * 3 * x * x + b * 2 * x + c;
+    // Класс математической функции кубического полинома
+    public static class CubePolynomial implements FuncInterface{
+
+        // Коэффициенты кубического полинома
+        double a, b, c, d;
+
+        // Кубический полином определяют коэффициенты
+        CubePolynomial(double a, double b, double c, double d){
+            this.a = a;
+            this.b = b;
+            this.c = c;
+            this.d = d;
+        }
+
+        // Значение полинома в точке х
+        public double f(double x){
+            return a * Math.pow(x, 3) + b * Math.pow(x, 2) + c * x + d;
+        }
+
+        // Значение производной от полинома в точке х
+        public double df(double x){
+            return a * 3 * Math.pow(x, 2) + b * 2 * x + c;
+        }
     }
 
     // Метод Ньютона
-    static double methodNewton(double aX, int a, int b, int c, int d) {
+    static double methodNewton(FuncInterface Func, double X0) {
         // Первая итерация
-        double x0 = aX;
-        double x1 = x0 - f(x0, a, b, c, d) / df(x0, a, b, c);
+        double x0 = X0;
+        double x1 = x0 - Func.f(x0) / Func.df(x0);
 
         // Пока |x_n - x_n-1| > Eps - продолжаем вычислять по схеме:
         // x_n = x_n-1 - f(x_n-1) / df(x_n-1)
-        while (Math.abs(x1 - x0) > EPS) {
+        while (Math.abs(x1 - x0) > EPS / 2) {
             x0 = x1;
-            x1 = x0 - f(x0, a, b, c, d) / df(x0, a, b, c);
+            x1 = x0 - Func.f(x0) / Func.df(x0);
         }
 
 
-        // Предполагаем, что если число достигает некоторой малости,
-        // то оно равно нулю. Если x = NaN, то x = 0
-        if (Math.abs(x1) < 1e-8 || Double.isNaN(x1)) {
+        // Если x = NaN, то x = 0
+        if (Double.isNaN(x1)) {
             x1 = 0;
         }
 
@@ -52,15 +76,19 @@ public class DoubleAdvancedTask {
     }
 
     public static String equation(int a, int b, int c, int d) {
+
+        // Создаем экземпляр кубического полинома
+        CubePolynomial polynomCubic = new CubePolynomial(a,b,c,d);
+
         // Задаем три произвольные начальные точки
         double a1 = 10;
         double a2 = 0;
         double a3 = -10;
 
 
-        double x1 = methodNewton(a1, a, b, c, d);
-        double x2 = methodNewton(a2, a, b, c, d);
-        double x3 = methodNewton(a3, a, b, c, d);
+        double x1 = methodNewton(polynomCubic, a1);
+        double x2 = methodNewton(polynomCubic, a2);
+        double x3 = methodNewton(polynomCubic, a3);
         return x1 + ", " + x2 + ", " + x3;
     }
 

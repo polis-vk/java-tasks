@@ -1,8 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-
-import com.sun.security.jgss.InquireSecContextPermission;
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -74,14 +71,10 @@ public class IntegerAdvancedTask {
             number = number / HEX;
         }
 
-        char hexResult;
-
         if (digit > 9) {
-            hexResult = (char) (digit % 9 - 1 + 'A');
-        } else {
-            hexResult = (char) (digit + '0');
+            return (char) (digit % 9 - 1 + 'A');
         }
-        return hexResult;
+        return (char) (digit + '0');
     }
 
     /**
@@ -95,6 +88,7 @@ public class IntegerAdvancedTask {
         long number = a;
         long min = Long.MAX_VALUE;
         long tmp = 0;
+
         byte position = 0;
         byte result = 0;
 
