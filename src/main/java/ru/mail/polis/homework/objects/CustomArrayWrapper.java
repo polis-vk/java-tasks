@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.objects;
 
-import java.util.Iterator;
+import java.util.ConcurrentModificationException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -13,6 +13,7 @@ import java.util.Iterator;
  */
 public class CustomArrayWrapper implements Iterable<Integer> {
 
+    private int modCount = 0;
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
 
@@ -24,6 +25,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
+        modCount++;
     }
 
     public void edit(int index, int value) {
@@ -47,8 +49,8 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return default Iterator
      */
     @Override
-    public Iterator<Integer> iterator() {
-        return null;
+    public Iterator iterator() {
+        return new Iterator(1, 0);
     }
 
     /**
@@ -57,8 +59,8 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      *
      * @return Iterator for EVEN elements
      */
-    public Iterator<Integer> evenIterator() {
-        return null;
+    public Iterator evenIterator() {
+        return new Iterator(2, 1);
     }
 
     /**
@@ -67,13 +69,43 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      *
      * @return Iterator for ODD elements
      */
-    public Iterator<Integer> oddIterator() {
-        return null;
+    public Iterator oddIterator() {
+        return new Iterator(2, 0);
     }
 
     private void checkIndex(int index) {
         if (index < 0 || index >= array.length) {
             throw new IndexOutOfBoundsException();
+        }
+    }
+
+    class Iterator implements java.util.Iterator<Integer> {
+        int fixedModCount = modCount;
+        private final int numAdd;
+        private int currIndex;
+
+        public Iterator(int numAdd, int currIndex) {
+            this.numAdd = numAdd;
+            this.currIndex = currIndex;
+        }
+
+
+        @Override
+        public boolean hasNext() {
+            return currIndex < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            if (fixedModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+            if (currIndex >= array.length) {
+                throw new IndexOutOfBoundsException();
+            }
+            int temp = currIndex;
+            currIndex += numAdd;
+            return array[temp];
         }
     }
 
