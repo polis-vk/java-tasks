@@ -16,7 +16,6 @@ public class DoubleAdvancedTask {
      * Если используете какой-то конкретный способ, напишите какой.
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
-    //
     private static final double EPS = 0.0000000000001;
     public static String equation(int a, int b, int c, int d) {
         double x1 = 0;
@@ -25,12 +24,12 @@ public class DoubleAdvancedTask {
         if (b == 0 && c == 0 && d == 0) {
             return x1 + ", " + x2 + ", " + x3;
             // все три корня равны 0
-        } else if (Math.abs(getFunctionValue(a, b, c, d, ((double)(-b) / a))) < EPS && b != 0 && Math.abs(getFunctionValue(a, b, c, d, 0)) < EPS) {
+        } else if (Math.abs(getFunctionValue(a, b, c, d, ((double) -b / a))) < EPS && b != 0 && Math.abs(d) < EPS) {
             // если два корня нули, то другой корень равен -b/a
-            x1 = ((double)(-b) / a);
+            x1 = ((double)-b / a);
             x2 = 0;
             x3 = 0;
-        } else if (Math.abs(getFunctionValue(a, b, c, d, 0)) < EPS) {
+        } else if (Math.abs(d) < EPS) {
             // если нашелся корень 0, то остальные 2 корня находятся по дискриминанту
             x1 = 0;
             x2 = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a);
@@ -49,27 +48,22 @@ public class DoubleAdvancedTask {
             мы получили квадратное уравнение у которого А = (a * x1), B = (a * x1 * x1 + b * x1) и C = -d
             B будет выражением взаимодействующим с дискриминантом (прибавляющее его или вычитающее)
             */
-
-            double ExpressionOfInteractionWithDiscriminant = (a * x1 * x1 + b * x1);
-            double discriminant = ExpressionOfInteractionWithDiscriminant * ExpressionOfInteractionWithDiscriminant + 4 * a * x1 * d;
-
+            double expressionOfInteractionWithDiscriminant = (a * x1 * x1 + b * x1);
+            double discriminant = expressionOfInteractionWithDiscriminant * expressionOfInteractionWithDiscriminant + 4 * a * x1 * d;
             if (discriminant < 0) {
                 // Меньше нуля дискриминант может оказаться только из-за неточности метода секущих, так как в условии 3 корня
-                x2 = (-ExpressionOfInteractionWithDiscriminant + 0) / (2 * a * x1);
+                x2 = (-expressionOfInteractionWithDiscriminant + 0) / (2 * a * x1);
                 // находим второй корень находим по формуле выведенной из теоремы Виета
             } else {
-                x2 = (-ExpressionOfInteractionWithDiscriminant + Math.sqrt(discriminant)) / (2 * a * x1);
-                // вставляем в формулу Виетта дискриминант
+                x2 = (-expressionOfInteractionWithDiscriminant + Math.sqrt(discriminant)) / (2 * a * x1);
+                // вставляем в формулу Виета дискриминант
             }
             x3 = -d / (a * x1 * x2);
             // третий корень тоже находим по формуле выведенной из теоремы Виета
         }
-        double max1;
-        double max2;
-        double max3;
-        max1 = Math.max(x1, Math.max(x2, x3));
-        max3 = Math.min(x1, Math.min(x2, x3));
-        max2 = x1 + x2 + x3 - max1 - max3;
+        double max1 = Math.max(x1, Math.max(x2, x3));
+        double max3 = Math.min(x1, Math.min(x2, x3));
+        double max2 = x1 + x2 + x3 - max1 - max3;
         x1 = max1;
         x2 = max2;
         x3 = max3;
@@ -84,13 +78,12 @@ public class DoubleAdvancedTask {
 
     public static double findSolution(double a, double b, double c, double d) {
         //Метод секущих
-        double x = 0;
         double xLast = Math.random() * 10, xGrandLast = Math.random() * 10;
-
         while (Math.abs(getFunctionValue(a, b, c, d, xLast) - getFunctionValue(a, b, c, d, xGrandLast)) < EPS) {
             xLast = Math.random() * 10;
             xGrandLast = Math.random() * 10;
         }
+        double x = 0;
         while (Math.abs(getFunctionValue(a, b, c, d, x)) > EPS) {
             x = xLast - getFunctionValue(a, b, c, d, xLast) * (xLast - xGrandLast) / (getFunctionValue(a, b, c, d, xLast) - getFunctionValue(a, b, c, d, xGrandLast));
             xGrandLast = xLast;
@@ -111,7 +104,7 @@ public class DoubleAdvancedTask {
         // в нашем случае b = 1, a1 и a2 это коэфициенты перед x, означающие наклон прямой,
         // с1 и с2 отвечают за точку пересечения с осью Y, по входящим параметрам b1 = c1, b2 = c2
         // источник википедия
-        return (Math.abs(a1 - a2) < EPS) ? (float) ((Math.abs(b2 - b1)) / (Math.sqrt(a1 * a1 + 1))) : 0;
+        return Math.abs(a1 - a2) < EPS ? (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1)) : 0;
     }
 
     /**

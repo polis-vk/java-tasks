@@ -54,10 +54,8 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        int number = n;
-        int numberInOrder;
-        number = (int) (number / Math.pow(HEXDECIMAL, order - 1));
-        numberInOrder = number % HEXDECIMAL;
+        int number = (int) (n / Math.pow(HEXDECIMAL, order - 1));
+        int numberInOrder = number % HEXDECIMAL;
         if (numberInOrder <= 9) {
             return (char) ('0' + numberInOrder);
         } else {
@@ -76,7 +74,8 @@ public class IntegerAdvancedTask {
         long number = a;
         int counter = 1;
         int minDigitNumber = 1;
-        long minNumber = (int) ('F');
+        // F самая большая цифра в 16 сс, и по таблице кодировок имеет самый большой код, если не нашлось цифр меньше, то ответом и будет F
+        long minNumber = 'F';
         while (number > 0) {
             if (number % HEXDECIMAL < minNumber) {
                 minNumber = number % HEXDECIMAL;
