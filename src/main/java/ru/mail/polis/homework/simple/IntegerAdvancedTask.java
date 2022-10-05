@@ -10,6 +10,7 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
+    private static final byte BASE = 16;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -54,11 +55,11 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        int hexDigit = (int) ((n / Math.pow(16, order - 1)) % 16);
-        if (hexDigit < 10) {
-            return (char) (hexDigit + '0');
+        int digit = (int) (n / Math.pow(BASE, order - 1) % BASE);
+        if (digit < 10) {
+            return (char) (digit + '0');
         }
-        return (char) (hexDigit - 10 + 'A');
+        return (char) (digit - 10 + 'A');
     }
 
     /**
@@ -69,19 +70,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        byte hexDigit = (byte) (a % 16);
-        byte min = hexDigit;
+        byte digit = (byte) (a % BASE);
+        byte min = digit;
         byte pos = 1;
         byte minPos = 1;
-        long num = a / 16;
+        long num = a / BASE;
         while (num > 0 && min != 0) {
-            hexDigit = (byte) (num % 16);
+            digit = (byte) (num % BASE);
             pos++;
-            if (hexDigit < min) {
-                min = hexDigit;
+            if (digit < min) {
+                min = digit;
                 minPos = pos;
             }
-            num /= 16;
+            num /= BASE;
         }
         return minPos;
     }
