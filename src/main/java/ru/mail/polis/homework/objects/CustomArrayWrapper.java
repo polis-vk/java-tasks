@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
@@ -48,7 +49,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new ArrayIterator(0, 1);
     }
 
     /**
@@ -58,7 +59,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new ArrayIterator(1, 2);
     }
 
     /**
@@ -68,7 +69,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new ArrayIterator(0, 2);
     }
 
     private void checkIndex(int index) {
@@ -77,4 +78,36 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
+    private class ArrayIterator implements Iterator<Integer> {
+        private final int step;
+        private final int expectedPosition;
+        private int current;
+
+        public ArrayIterator(int startIndex, int step) {
+            this.current = startIndex;
+            this.step = step;
+            this.expectedPosition = position;
+        }
+
+        @Override
+        public boolean hasNext() {
+            checkForConcurrentModification();
+            return current >= 0 && current < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            checkForConcurrentModification();
+            checkIndex(current);
+            int value = array[current];
+            current += step;
+            return value;
+        }
+
+        private void checkForConcurrentModification() {
+            if (position != expectedPosition) {
+                throw new ConcurrentModificationException();
+            }
+        }
+    }
 }
