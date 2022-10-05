@@ -18,17 +18,11 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        long sum = 0;
-
-        if (Math.abs(q) > 1.0) {
-            sum = (long) (a * (Math.pow(q, n) - 1) / (q - 1));
-        } else if (Math.abs(q - 1.0) < EPS) {
-            sum = (long) a * n;
-        } else if (Math.abs(q) < 1.0) {
-            sum = (long) (a / (1 - q));
+        if (Math.abs(q - 1.0) < EPS) {
+            return (long) a * n;
         }
 
-        return sum;
+        return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
