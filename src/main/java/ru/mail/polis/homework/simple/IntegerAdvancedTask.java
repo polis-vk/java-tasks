@@ -11,6 +11,8 @@ public class IntegerAdvancedTask {
 
     private static final double EPS = 1e-10;
 
+    private static final int HEX_RADIX = 16;
+
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
@@ -18,7 +20,12 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        long result = 0;
+        for (int i = 0; i < n; i++) {
+            result += a;
+            a *= q;
+        }
+        return result;
     }
 
     /**
@@ -30,7 +37,24 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (up - down <= 0 && right - left <= 0
+                && up < grassY && right < grassX) {
+            return Integer.MAX_VALUE;
+        }
+        int days = 0;
+        int snakeX = 0;
+        int snakeY = 0;
+        while (true) {
+            snakeY += up;
+            snakeX += right;
+            days++;
+            if (snakeX >= grassX || snakeY >= grassY) {
+                break;
+            }
+            snakeY -= down;
+            snakeX -= left;
+        }
+        return days;
     }
 
     /**
@@ -40,7 +64,15 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        for (int i = 1; i < order; i++) {
+            n /= 16;
+        }
+        char hexValue = Character.forDigit(n % 16, HEX_RADIX);
+        if (Character.isDigit(hexValue)) {
+            return hexValue;
+        } else {
+            return Character.toUpperCase(hexValue);
+        }
     }
 
     /**
@@ -51,7 +83,18 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte order = 0;
+        byte minOrder = 0;
+        int min = Integer.MAX_VALUE;
+        while (a != 0) {
+            order++;
+            byte temp = (byte) (a % 16);
+            if (temp < min) {
+                min = temp;
+                minOrder = order;
+            }
+            a /= 16;
+        }
+        return minOrder;
     }
-
 }
