@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.simple;
 
 
+import java.util.ArrayList;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -18,7 +20,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        return (long)(a * (( Math.pow(q, n) - 1) / ( q - 1 )));
     }
 
     /**
@@ -30,7 +32,20 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int x = 0, y = 0;
+        int day = 0;
+        while(true) {
+            if(y + up >= grassY || x + right >= grassX) {
+                return ++day;
+            }
+            if(up < down && right < left) {
+                return Integer.MAX_VALUE;
+            }
+            x += (right - left);
+            y += (up - down);
+            day++;
+        }
+
     }
 
     /**
@@ -40,7 +55,23 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        ArrayList<Integer> digits16 = new ArrayList<>();
+
+        while(n / 16 != 0 && n > 15) {
+            digits16.add(n % 16);
+            n /= 16;
+
+        }
+        switch (digits16.get(order - 1)) {
+            case 10: return 'A';
+            case 11: return 'B';
+            case 12: return 'C';
+            case 13: return 'D';
+            case 14: return 'E';
+            case 15: return 'F';
+            default: return (char)(digits16.get(order - 1).intValue());
+        }
+
     }
 
     /**
@@ -51,7 +82,20 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+
+        ArrayList<Long> digits16 = new ArrayList<>();
+        byte min = Byte.MAX_VALUE;
+        byte iMin = -1;
+        byte i = 0;
+        while(a / 16 != 0 && a > 15) {
+            i++;
+            if(a % 16 < min) {
+                min = (byte)(a % 16);
+                iMin = i;
+            }
+            a /= 16;
+        }
+        return iMin;
     }
 
 }
