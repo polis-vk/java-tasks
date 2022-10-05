@@ -18,7 +18,11 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (n == 1) {
+            return a;
+        } else {
+            return a * (long) Math.pow(q, n - 1) + progression(a, q, n - 1);
+        }
     }
 
     /**
@@ -30,7 +34,26 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (right >= grassX || up >= grassY) {
+            return 1;
+        }
+        int speedX = right - left;
+        int speedY = up - down;
+        if (speedX <= 0) {
+            if (speedY <= 0) {
+                return Integer.MAX_VALUE;
+            } else {
+                return numOfDays(grassY, down, speedY);
+            }
+        } else if (speedY <= 0) {
+            return numOfDays(grassX, left, speedX);
+        } else {
+            return Math.min(numOfDays(grassY, down, speedY), numOfDays(grassX, left, speedX));
+        }
+    }
+
+    private static int numOfDays(int grass, int nightStep, int speed) {
+        return (int) Math.ceil((double) (grass - nightStep) / speed);
     }
 
     /**
@@ -40,7 +63,23 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int number = n / (int) Math.pow(16, order - 1) % 16;
+        switch (number) {
+            case 10:
+                return 'A';
+            case 11:
+                return 'B';
+            case 12:
+                return 'C';
+            case 13:
+                return 'D';
+            case 14:
+                return 'E';
+            case 15:
+                return 'F';
+            default:
+                return (char) (number + '0');
+        }
     }
 
     /**
@@ -51,7 +90,18 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long min = 16;
+        byte count = 1;
+        byte res = 0;
+        while (a > 0) {
+            if (a % 16 < min) {
+                min = a % 16;
+                res = count;
+            }
+            count++;
+            a /= 16;
+        }
+        return res;
     }
 
 }
