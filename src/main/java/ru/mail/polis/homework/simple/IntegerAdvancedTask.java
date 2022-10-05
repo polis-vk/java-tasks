@@ -18,7 +18,12 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (q != 1) {
+            return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
+        }
+        else {
+            return (long) a * n;
+        }
     }
 
     /**
@@ -30,7 +35,25 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int grassShiftedX = grassX - right; // Корректировка координат - если гусеница достигнет цели,
+        int grassShiftedY = grassY - up; // то ночное сползание не учитывается.
+        if ((0 >= grassShiftedY) || (0 >= grassShiftedX)) {
+            return 1;
+        }
+        if ((down >= up) && (left >= right)) {
+            return Integer.MAX_VALUE;
+        }
+        int deltaUp = up - down;
+        int deltaRight = right - left;
+        if (deltaUp <= 0) {
+            return (grassShiftedX + deltaRight - 1) / // Здесь и далее применяется деление с округлением вверх
+                    deltaRight + 1; // "+ 1" является компенсацией за финальные "неполные" сутки
+        } else if (deltaRight <= 0) {
+            return (grassShiftedY + deltaUp - 1) / deltaUp + 1; // Аналогично
+        } else {
+            return Math.min((grassShiftedX + deltaRight - 1) / deltaRight + 1,
+                    (grassShiftedY + deltaUp - 1) / deltaUp + 1);
+        }
     }
 
     /**
@@ -40,7 +63,8 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        return Integer.toHexString((int) (Math.floor(n) /
+                Math.pow(16, order - 1)) % 16).toUpperCase().charAt(0);
     }
 
     /**
@@ -51,7 +75,20 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long inp = a;
+        long minDigit = Integer.MAX_VALUE;
+        byte position = 1;
+        byte i = 1;
+        while (inp != 0) {
+            long digit = inp % 16;
+            inp = inp / 16;
+            if (minDigit > digit) {
+                minDigit = digit;
+                position = i;
+            }
+            i++;
+        }
+        return position;
     }
 
 }
