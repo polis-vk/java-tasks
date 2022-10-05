@@ -48,9 +48,11 @@ public class IntegerAdvancedTask {
         if (deltaUp <= 0) {
             return (grassShiftedX + deltaRight - 1) / // Здесь и далее применяется деление с округлением вверх
                     deltaRight + 1; // "+ 1" является компенсацией за финальные "неполные" сутки
-        } else if (deltaRight <= 0) {
+        }
+        else if (deltaRight <= 0) {
             return (grassShiftedY + deltaUp - 1) / deltaUp + 1; // Аналогично
-        } else {
+        }
+        else {
             return Math.min((grassShiftedX + deltaRight - 1) / deltaRight + 1,
                     (grassShiftedY + deltaUp - 1) / deltaUp + 1);
         }

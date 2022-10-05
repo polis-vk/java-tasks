@@ -20,7 +20,32 @@ public class DoubleAdvancedTask {
         double x1 = 0;
         double x2 = 0;
         double x3 = 0;
-        return x1 + ", " + x2 + ", " + x3;
+        double a1 = (double) b / a;
+        double b1 = (double) c / a;
+        double c1 = (double) d / a;
+        if (d == 0) { // Попытка свести задачу к квадратному уравнению
+            double D = b * b - 4 * a * c;
+            if (D >= 0) {
+                x1 = (-b + Math.sqrt(D)) / (2 * a);
+                x2 = (-b - Math.sqrt(D)) / (2 * a);
+            }
+        } else { // Решение c помощью тригонометрической формулы Виета
+            double Q = (a1 * a1 - 3 * b1) / 9d;
+            double R = (2 * a1 * a1 * a1 - 9 * a1 * b1 + 27 * c1) / 54d;
+            double S = Q * Q * Q - R * R;
+            if (S > 0) {
+                double f = Math.acos(R / Math.pow(Q, 1.5d)) / 3d;
+                x1 = (-2 * Math.sqrt(Q) * Math.cos(f)) - (a1 / 3d);
+                x2 = (-2 * Math.sqrt(Q) * Math.cos(f + (2 * Math.PI / 3d))) - (a1 / 3d);
+                x3 = (-2 * Math.sqrt(Q) * Math.cos(f - (2 * Math.PI / 3d))) - (a1 / 3d);
+            } else if (S == 0) {
+                x1 = -2 * Math.pow(R, 1.5d) - a1 / 3;
+                x2 = Math.pow(R, 1.5d) - a1 / 3;
+            } // При прочих S имеем мнимые корни
+        }
+        double maxX = Math.max(x1, Math.max(x2, x3));
+        double minX = Math.min(x1, Math.min(x2, x3));
+        return maxX + ", " + (x1 + x2 + x3 - minX - maxX) + ", " + minX;
     }
 
     /**
@@ -29,6 +54,10 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
+        // y1 = a1*x1 + b1; y2 = a2*x2 + b2
+        if (Math.abs(a1 - a2) <= 0.000001) { // Проверка на параллельность
+            return (float) (Math.abs(b1 - b2) / Math.sqrt(a1 * a1 + 1));
+        }
         return 0;
     }
 
@@ -44,6 +73,11 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        // Получаем уравнение плоскости
+        double a = (y2 - y1) * (z3 - z1) - (y3 - y1) * (z2 - z1);
+        double b = (z2 - z1) * (x3 - x1) - (z3 - z1) * (x2 - x1);
+        double c = (x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1);
+        double d = - x1 * a - y1 * b - z1 * c;
+        return - (a * x4 + b * y4 + d) / c;
     }
 }
