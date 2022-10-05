@@ -106,12 +106,12 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             if (fixedModCount != modCount) {
                 throw new ConcurrentModificationException();
             }
-            if (!hasNext()) {
-                throw new NoSuchElementException();
+            if (hasNext()) {
+                int value = array[index];
+                index += step;
+                return value;
             }
-            int value = array[index];
-            index += step;
-            return value;
+            return null;
         }
     }
 }
