@@ -36,24 +36,24 @@ public class IntegerAdvancedTask {
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
         if (right >= grassX || up >= grassY) {
             return 1;
-        }
-
-        int speedX = right - left;
-        int speedY = up - down;
-        if (speedX <= 0 && speedY <= 0) {
+        } else if (left >= right && down >= up) {
             return Integer.MAX_VALUE;
+        } else if (left >= right) {
+            return calcSnakeTime(down, up, grassY);
+        } else if (down >= up) {
+            return calcSnakeTime(left, right, grassX);
         }
 
-        if (speedX <= 0) {
-            return (int) Math.ceil((double) (grassY - up) / speedY) + 1;
-        } else if (speedY <= 0) {
-            return (int) Math.ceil((double) (grassX - right) / speedX) +1 ;
+        return Math.min(calcSnakeTime(down, up, grassY), calcSnakeTime(left, right, grassX));
+    }
+
+    private static int calcSnakeTime(int deltaNight, int deltaDay, int grassCoord) {
+        if (deltaNight >= deltaDay) {
+            return -1;
         }
 
-        return (int) Math.min(
-                Math.ceil((double) (grassY - up) / speedY) + 1,
-                Math.ceil((double) (grassX - right) / speedX) + 1
-        );
+        int speed = deltaDay - deltaNight;
+        return (int) Math.ceil((double) (grassCoord - deltaDay) / speed) + 1;
     }
 
     /**
