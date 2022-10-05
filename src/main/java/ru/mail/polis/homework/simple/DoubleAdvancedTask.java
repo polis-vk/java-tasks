@@ -10,6 +10,8 @@ import java.util.Arrays;
  */
 public class DoubleAdvancedTask {
 
+    private static final double EPS = 1e-10; //Добавил EPS для сравнения double
+
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
      * Вывод менять не нужно, надо только посчитать x1, x2 и x3, где x1 >= x2 >= x3
@@ -27,28 +29,27 @@ public class DoubleAdvancedTask {
         double a1 = (double) b / a;
         double b1 = (double) c / a;
         double c1 = (double) d / a;
-        double[] X = {0.0, 0.0, 0.0};
+        double[] X = {0, 0, 0}; // Исправил .0 здесь и далее.
 
         // Вычисление вспомогательных переменных
-        double Q = (Math.pow(a1, 2) - 3.0 * b1) / 9.0;
-        double R = (2.0 * Math.pow(a1, 3) - 9.0 * a1 * b1 + 27.0 * c1) / 54.0;
-        double phi = (Math.acos(R / Math.sqrt(Math.pow(Q, 3)))) / 3.0;
+        double Q = (Math.pow(a1, 2) - 3 * b1) / 9;
+        double R = (2 * Math.pow(a1, 3) - 9 * a1 * b1 + 27 * c1) / 54;
+        double phi = (Math.acos(R / Math.sqrt(Math.pow(Q, 3)))) / 3;
         double S = Math.pow(Q, 3) + Math.pow(R, 2);
 
         // Сам алгоритм для различных случаев. Примечание: предполагаем, что корни только вещественные.
         // Случай трех вещественных корней.
+        // Исправил .0 и убрал повторяющийся код.
         if (S > 0) {
-            X[0] = -2.0 * Math.sqrt(Q) * Math.cos(phi) - a1 / 3.0;
-            X[1] = -2.0 * Math.sqrt(Q) * Math.cos(phi + (2.0 * Math.PI / 3.0)) - a1 / 3.0;
-            X[2] = -2.0 * Math.sqrt(Q) * Math.cos(phi - (2.0 * Math.PI / 3.0)) - a1 / 3.0;
-            Arrays.sort(X);
-            return X[2] + ", " + X[1] + ", " + X[0];
+            X[0] = -2 * Math.sqrt(Q) * Math.cos(phi) - a1 / 3;
+            X[1] = -2 * Math.sqrt(Q) * Math.cos(phi + (2 * Math.PI / 3)) - a1 / 3;
+            X[2] = -2 * Math.sqrt(Q) * Math.cos(phi - (2 * Math.PI / 3)) - a1 / 3;
+        } else {
+            // Случай совпадающих корней.
+            X[0] = -2 * Math.pow(R, 1. / 3) - a1 / 3;
+            X[1] = Math.pow(R, 1. / 3) - a1 / 3;
+            X[2] = X[1];
         }
-
-        // Случай совпадающих корней.
-        X[0] = -2.0 * Math.pow(R, 1.0 / 3.0) - a1 / 3.0;
-        X[1] = Math.pow(R, 1.0 / 3.0) - a1 / 3.0;
-        X[2] = X[1];
         Arrays.sort(X);
         return X[2] + ", " + X[1] + ", " + X[0];
     }
@@ -63,8 +64,8 @@ public class DoubleAdvancedTask {
          * Проверим, параллельны ли прямые. Если нет, то выведем 0.
          * Далее используем формулу для нахождения расстояния между параллельными прямыми.
          */
-        if ((long) a1 != (long) a2) {
-            return 0.0f;
+        if (Math.abs(a1 - a2) > EPS) { //Исправил сравнение double.
+            return 0;
         }
         return (float) (Math.abs(b2 - b1) / Math.sqrt(Math.pow(a1, 2) + 1));
     }
@@ -90,10 +91,11 @@ public class DoubleAdvancedTask {
          */
 
         //Реализуем метод Крамера:
-        int discriminator = x1 * (y2 * z3 - z2 * y3) + y1 * (z2 * x3 - x2 * z3) + z1 * (x2 * y3 - y2 * x3);
-        double A = ((z2 * y3 - y2 * z3) + y1 * (z3 - z2) + z1 * (y2 - y3)) / (double) (discriminator);
-        double B = (x1 * (z2 - z3) + (x2 * z3 - z2 * x3) + z1 * (x3 - x2)) / (double) discriminator;
-        double C = (x1 * (y3 - y2) + y1 * (x2 - x3) + (y2 * x3 - x2 * y3)) / (double) discriminator;
+        //Исправил скобки и преведение в double в одном месте.
+        double discriminator = (double) x1 * (y2 * z3 - z2 * y3) + y1 * (z2 * x3 - x2 * z3) + z1 * (x2 * y3 - y2 * x3);
+        double A = ((z2 * y3 - y2 * z3) + y1 * (z3 - z2) + z1 * (y2 - y3)) / discriminator;
+        double B = (x1 * (z2 - z3) + (x2 * z3 - z2 * x3) + z1 * (x3 - x2)) / discriminator;
+        double C = (x1 * (y3 - y2) + y1 * (x2 - x3) + (y2 * x3 - x2 * y3)) / discriminator;
 
         //Реализуем нахождение координаты Z четвертой точки.
         return (-1 - A * x4 - B * y4) / C;
