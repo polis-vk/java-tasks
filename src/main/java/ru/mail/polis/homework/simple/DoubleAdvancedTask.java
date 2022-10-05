@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -16,12 +19,41 @@ public class DoubleAdvancedTask {
      * Если используете какой-то конкретный способ, напишите какой.
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
+
+    //Используем Тригонометрическую формулу Виета
     public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
-        return x1 + ", " + x2 + ", " + x3;
+        double[] roots = new double[3];
+
+        double first = b * 1. / a;
+        double second = c * 1. / a;
+        double third = d * 1. / a;
+
+
+
+        double q = (Math.pow(first, 2) - 3 * second) / 9;
+        double r = (2 * Math.pow(first, 3) - 9 * first * second + 27 * third) / 54;
+        double s = Math.pow(q, 3) - Math.pow(r, 2);
+
+        if (s > 0) {
+            double f = Math.acos(r / Math.sqrt(Math.pow(q, 3))) / 3 ;
+
+            roots[0] = -2 * Math.sqrt(q) * Math.cos(f) - first / 3;
+            roots[1] = -2 * Math.sqrt(q) * Math.cos(f + 2 * Math.PI / 3 ) - first / 3 ;
+            roots[2] = -2 * Math.sqrt(q) * Math.cos(f - 2 * Math.PI / 3 ) - first / 3 ;
+
+
+        }else {
+            double t = Math.signum(r) * Math.sqrt(Math.abs(q));
+            roots[0] = -2 * t - first / 3;
+            roots[1] = t - first / 3;
+            roots[2] = t - first / 3;
+        }
+
+        Arrays.sort(roots);
+
+        return roots[2] + ", " + roots[1] + ", " + roots[0];
     }
+
 
     /**
      * Нужно посчитать расстояние, между двумя прямыми
@@ -29,6 +61,9 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
+        if ( a2 - a1 == 0) {
+            return  (float) ((Math.abs(b2 - b1)) / Math.sqrt(Math.pow(a1, 2) + 1));
+        }
         return 0;
     }
 
@@ -44,6 +79,13 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+
+
+        int first = (y2 - y1) * (z3 - z1) - (z2 - z1) * (y3 - y1);
+        int second = (x2 - x1) * (z3 - z1) - (z2 - z1) * (x3 - x1);
+        int third = (x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1);
+
+
+        return ((double) (-(x4 - x1) * first + (y4 - y1) * second) / third) + z1 ;
     }
 }
