@@ -47,19 +47,19 @@ public class DoubleAdvancedTask {
         double x2 = t2 - bs / 3;
         double x3 = t3 - bs / 3;
 
-        double x1Sorted = Math.max(Math.max(x1, x2), x3);
-        double x3Sorted = Math.min(Math.min(x1, x2), x3);
-        double x2Sorted;
+        double xMax= Math.max(Math.max(x1, x2), x3);
+        double xMin = Math.min(Math.min(x1, x2), x3);
+        double xMid;
 
-        if (x1Sorted == x1 && x3Sorted == x3) {
-            x2Sorted = x2;
-        } else if (x1Sorted == x1 && x3Sorted == x2) {
-            x2Sorted = x3;
+        if (xMax == x1 && xMin == x3) {
+            xMid = x2;
+        } else if (xMax == x1 && xMin == x2) {
+            xMid = x3;
         } else {
-            x2Sorted = x1;
+            xMid = x1;
         }
 
-        return x1Sorted + ", " + x2Sorted + ", " + x3Sorted;
+        return xMax + ", " + xMid + ", " + xMin;
     }
 
     /**
@@ -102,8 +102,6 @@ public class DoubleAdvancedTask {
 
         double D = -A * x1 + -B * y1 + -C * z1;
 
-        double z4 = (-D - A * x4 - B * y4) / C;
-
-        return z4;
+        return (-D - A * x4 - B * y4) / C;
     }
 }
