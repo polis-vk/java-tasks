@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.simple;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -12,7 +9,7 @@ import java.util.List;
  */
 public class IntegerAdvancedTask {
 
-    private static final double EPS = 1e-10;
+    final static double EPS = 0.000000001d;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -21,7 +18,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q == 1) {
+        if (Math.abs(q - 1) < IntegerAdvancedTask.EPS) {
             return (long) n * a;
         }
         return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
@@ -36,22 +33,24 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        int day = 1;
-        int x = 0;
-        int y = 0;
         if (up <= down && right <= left && up < grassY && right < grassX) {
             return Integer.MAX_VALUE;
         }
-        while (true) {
-            x += right;
-            y += up;
-            if (x >= grassX || y >= grassY) {
-                return day;
-            }
-            x -= left;
-            y -= down;
-            day++;
+
+        if (up > grassY || right > grassX) {
+            return 1;
         }
+
+        int daysUp = (int) (Math.ceil((double) (grassY - up) / (up - down)) + 1);
+        if (daysUp < 0) {
+            daysUp = Integer.MAX_VALUE;
+        }
+        int daysRight = (int) (Math.ceil((double) (grassX - right) / (right - left)) + 1);
+        if (daysRight < 0) {
+            daysRight = Integer.MAX_VALUE;
+        }
+        return Math.min(daysUp, daysRight);
+
     }
 
     /**
@@ -61,16 +60,9 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        final char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                 'A', 'B', 'C', 'D', 'E', 'F'};
-        List<Character> number = new ArrayList<>();
-        int r;
-        while (n != 0) {
-            r = n % 16;
-            number.add(hexDigits[r]);
-            n = n / 16;
-        }
-        return number.get(order - 1);
+        return hexDigits[(n / (int) Math.pow(16, order - 1) % 16)];
     }
 
     /**
@@ -81,20 +73,21 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        long r;
+        long rest;
         long min = a % 16;
-        byte i = 0;
-        byte minI = 0;
-        while (a != 0) {
-            r = a % 16;
-            if (r < min) {
-                min = r;
-                minI = i;
+        byte pos = 0;
+        byte minPos = 0;
+        long num = a;
+        while (num != 0) {
+            rest = num % 16;
+            if (rest < min) {
+                min = rest;
+                minPos = pos;
             }
-            a = a / 16;
-            i++;
+            num = num / 16;
+            pos++;
         }
-        return (byte) (minI + 1);
+        return (byte) (minPos + 1);
     }
 
 }

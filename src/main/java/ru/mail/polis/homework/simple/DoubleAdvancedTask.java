@@ -10,6 +10,8 @@ import java.util.Arrays;
  */
 public class DoubleAdvancedTask {
 
+    final static double EPS = 0.000000001d;
+
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
      * Вывод менять не нужно, надо только посчитать x1, x2 и x3, где x1 >= x2 >= x3
@@ -21,6 +23,7 @@ public class DoubleAdvancedTask {
 
 
     public static String equation(int a, int b, int c, int d) {
+        // Vieta's theorem for cubic equations
         double[] x = new double[3];
         double A = (double) b / a;
         double B = (double) c / a;
@@ -52,7 +55,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        if (a1 == a2) {
+        if (Math.abs(a1 - a2) < DoubleAdvancedTask.EPS) {
             return (float) (Math.abs(b2 - b1) / Math.sqrt(a1 * a1 + 1));
         }
         return 0;
