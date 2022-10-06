@@ -11,16 +11,18 @@ import java.util.NoSuchElementException;
 public class CustomLinkedList implements Iterable<Integer> {
     private static final String DELIMITER = " -> ";
     private static final String NULL_ELEMENT = "null";
+    private static final int DEFAULT_VALUE_FOR_COUNTER_OF_MODIFICATIONS = 0;
 
     private Node head;
     private Node tail;
     private int size;
-    private int counterOfModifications = 0;
+    private int counterOfModifications;
 
     public CustomLinkedList() {
         head = null;
         tail = null;
         size = 0;
+        counterOfModifications = DEFAULT_VALUE_FOR_COUNTER_OF_MODIFICATIONS;
     }
 
     /**

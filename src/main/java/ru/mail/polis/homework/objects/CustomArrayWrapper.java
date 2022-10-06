@@ -19,13 +19,15 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     private static final int DEFAULT_STARTING_POSITION = 0;
     private static final int STARTING_POSITION_FOR_ODD_NUMBERS = 0;
     private static final int STARTING_POSITION_FOR_EVEN_NUMBERS = 1;
+    private static final int DEFAULT_VALUE_FOR_COUNTER_OF_MODIFICATIONS = 0;
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
-    private int counterOfModifications = 0;
+    private int counterOfModifications;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
+        counterOfModifications = DEFAULT_VALUE_FOR_COUNTER_OF_MODIFICATIONS;
     }
 
     public void add(int value) {
