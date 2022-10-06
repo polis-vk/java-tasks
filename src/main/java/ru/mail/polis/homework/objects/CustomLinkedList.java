@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * 15 тугриков
@@ -9,6 +11,8 @@ import java.util.Iterator;
 public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
+    private int size = 0;
+    private int modCount = 0;
 
     /**
      * 1 тугрик
@@ -17,7 +21,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @return size
      */
     public int size() {
-        return 0;
+        return size;
     }
 
     /**
@@ -28,7 +32,19 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int value) {
+        size++;
+        modCount++;
+        if (head == null) {
+            head = new Node(value);
+            return;
+        }
 
+        Node currentNode = head;
+        while (currentNode.next != null) {
+            currentNode = currentNode.next;
+        }
+
+        currentNode.setNext(new Node(value));
     }
 
     /**
@@ -38,7 +54,15 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index
      */
     public int get(int index) {
-       return 0;
+        checkIndex(index);
+
+        int currentIndex = 0;
+        Node currentNode = head;
+        while (currentIndex++ != index) {
+            currentNode = currentNode.next;
+        }
+
+        return currentNode.value;
     }
 
     /**
@@ -48,11 +72,31 @@ public class CustomLinkedList implements Iterable<Integer> {
      * Если был передан невалидный index - надо выкинуть исключение IndexOutOfBoundsException.
      * throw new IndexOutOfBoundsException(i);
      *
-     * @param i - index
+     * @param i     - index
      * @param value - data for create Node.
      */
     public void add(int i, int value) {
+        if (i < 0 || i > this.size()) {
+            throw new IndexOutOfBoundsException(Integer.toString(i));
+        }
 
+        Node newNode = new Node(value);
+        size++;
+        modCount++;
+        if (i == 0) {
+            newNode.setNext(head);
+            head = newNode;
+            return;
+        }
+
+        int beforeInsertIndex = 0;
+        Node currentNode = head;
+        while (beforeInsertIndex++ != i - 1) {
+            currentNode = currentNode.next;
+        }
+
+        newNode.setNext(currentNode.next);
+        currentNode.setNext(newNode);
     }
 
     /**
@@ -65,7 +109,22 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
+        checkIndex(index);
 
+        size--;
+        modCount++;
+        if (index == 0) {
+            head = head.next;
+            return;
+        }
+
+        int beforeRemoveIndex = 0;
+        Node currentNode = head;
+        while (beforeRemoveIndex++ != index - 1) {
+            currentNode = currentNode.next;
+        }
+
+        currentNode.setNext(currentNode.next.next);
     }
 
     /**
@@ -73,26 +132,44 @@ public class CustomLinkedList implements Iterable<Integer> {
      * Реализовать метод:
      * Переворачивает все элементы списка.
      * Пример:
-     *  Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
-     *  После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
+     * Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
+     * После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
+        modCount++;
+        Node newHead = null;
 
+        while (head != null) {
+            Node newNode = head;
+            head = head.next;
+            newNode.setNext(newHead);
+            newHead = newNode;
+        }
+
+        head = newHead;
     }
 
     /**
      * 1 тугрик
      * Метод выводит всю последовательность хранящуюся в списке начиная с head.
      * Формат вывода:
-     *  - значение каждой Node должно разделяться " -> "
-     *  - последовательность всегда заканчивается на null
-     *  - если в списке нет элементов - верните строку "null"
+     * - значение каждой Node должно разделяться " -> "
+     * - последовательность всегда заканчивается на null
+     * - если в списке нет элементов - верните строку "null"
      *
      * @return - String with description all list
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        StringBuilder result = new StringBuilder();
+
+        Node currentNode = head;
+        while (currentNode != null) {
+            result.append(currentNode.value).append(" -> ");
+            currentNode = currentNode.next;
+        }
+
+        return result.append("null").toString();
     }
 
     /**
@@ -103,7 +180,34 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new Iterator<Integer>() {
+            private final int fixedModCount = CustomLinkedList.this.modCount;
+            private Node iteratorHead = CustomLinkedList.this.head;
+
+            @Override
+            public boolean hasNext() {
+                return iteratorHead != null;
+            }
+
+            @Override
+            public Integer next() {
+                if (modCount != fixedModCount) {
+                    throw new ConcurrentModificationException();
+                } else if (!this.hasNext()) {
+                    throw new NoSuchElementException();
+                }
+
+                int value = iteratorHead.value;
+                iteratorHead = iteratorHead.next;
+                return value;
+            }
+        };
+    }
+
+    private void checkIndex(int index) {
+        if (index < 0 || index >= this.size()) {
+            throw new IndexOutOfBoundsException(Integer.toString(index));
+        }
     }
 
     private static class Node {
