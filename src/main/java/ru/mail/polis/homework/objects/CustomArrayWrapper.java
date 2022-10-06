@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -15,6 +17,35 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
+
+    private class CustomArrayIterator implements Iterator<Integer> {
+
+        private final int fixedPos = position;
+        private int current = 0;
+        private int step = 1;
+
+        CustomArrayIterator(int pos, int step) {
+            this.current = pos;
+            this.step = step;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return current < size();
+        }
+
+        @Override
+        public Integer next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            } else if (fixedPos != position) {
+                throw new ConcurrentModificationException();
+            }
+            Integer elem = array[current];
+            current += step;
+            return elem;
+        }
+    }
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -48,7 +79,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new CustomArrayIterator(0, 1);
     }
 
     /**
@@ -58,7 +89,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new CustomArrayIterator(1, 2);
     }
 
     /**
@@ -68,7 +99,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new CustomArrayIterator(0, 2);
     }
 
     private void checkIndex(int index) {
