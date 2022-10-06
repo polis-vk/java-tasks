@@ -29,7 +29,9 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        if (Double.compare(a1, a2) == 0) {
+            return (float) (Math.abs(b1 - b2) / Math.sqrt(a1 * a1 + 1));
+        } else return 0;
     }
 
     /**
@@ -44,6 +46,11 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+        double a = y1 * (z2 - z3) + y2 * (z3 - z1) + y3 * (z1 - z2);
+        double b = z1 * (x2 - x3) + z2 * (x3 - x1) + z3 * (x1 - x2);
+        double c = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2);
+        double d = -(x1 * (y2 * z3 - y3 * z2) + x2 * (y3 * z1 - y1 * z3) + x3 * (y1 * z2 - y2 * z1));
+        double result = -(a * x4 + b * y4 + d) / c;
+        return result;
     }
 }

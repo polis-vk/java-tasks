@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.simple;
 
 
+import java.util.InputMismatchException;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -14,11 +16,17 @@ public class IntegerAdvancedTask {
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
-     *
+     * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        long result = 0;
+        double tempQ = 1;
+        for (int i = 0; i < n; i++) {
+            result += a * tempQ;
+            tempQ = tempQ * q;
+        }
+        return result;
     }
 
     /**
@@ -30,7 +38,25 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        if (grassX <= right || grassY <= up) {
+            return 1;
+        }
+        if (right - left <= 0 && up - down <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        int daysHorrisonyally = 0;
+        int daysVertically = 0;
+        if (right - left > 0) {
+            daysHorrisonyally = (int) Math.ceil((double) (grassX - right) / (right - left)) + 1;
+        } else {
+            daysHorrisonyally = Integer.MAX_VALUE;
+        }
+        if (up - down > 0) {
+            daysVertically = (int) Math.ceil((double) (grassY - up) / (up - down)) + 1;
+        } else {
+            daysVertically = Integer.MAX_VALUE;
+        }
+        return Math.min(daysHorrisonyally, daysVertically);
     }
 
     /**
@@ -40,7 +66,19 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        final int discharge = 16;
+        final char[] hexadecimal = {
+                '0', '1', '2', '3',
+                '4', '5', '6', '7',
+                '8', '9', 'A', 'B',
+                'C', 'D', 'E', 'F'};
+        int result = 0;
+        int tempN = n;
+        for (int i = 0; i < order; i++) {
+            result = tempN % discharge;
+            tempN = tempN / discharge;
+        }
+        return hexadecimal[result];
     }
 
     /**
@@ -51,7 +89,18 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long tempA = a;
+        byte min = Byte.MAX_VALUE;
+        byte index = 0;
+        final int discharge = 16;
+        for (int i = 1; tempA > 0; i++) {
+            if (tempA % discharge < min) {
+                min = (byte) (tempA % discharge);
+                index = (byte) i;
+            }
+            tempA = tempA / discharge;
+        }
+        return index;
     }
 
 }
