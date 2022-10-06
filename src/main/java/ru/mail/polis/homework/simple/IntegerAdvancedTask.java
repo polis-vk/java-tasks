@@ -52,7 +52,7 @@ public class IntegerAdvancedTask {
         if (value % 16 > 9) {
             return  (char) ('A' + (value % 16 - 10));
         }
-        return (char) (value % 16);
+        return (char) ('0' +value % 16);
     }
 
     /**
