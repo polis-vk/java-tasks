@@ -63,7 +63,23 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        long value = a;
+        int index = 0 ;
+        long minValue = Long.MAX_VALUE;
+        int resultIndex= 0;
+
+        while ( value > 0) {
+            long currentValue = value % 16;
+            index++;
+
+            if (currentValue < minValue) {
+                minValue = currentValue;
+                resultIndex = index;
+            }
+            value /= 16;
+        }
+        return (byte) resultIndex;
+
     }
 
 }
