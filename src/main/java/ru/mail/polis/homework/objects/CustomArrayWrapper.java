@@ -82,19 +82,24 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     }
 
     class ArrayWrapperIterator implements Iterator<Integer> {
+        private static final int START_INDEX_FOR_EVEN = 1;
+        private static final int DEFAULT_STEP = 1;
+        private static final int SPECIAL_STEP = 2;
         private final int expectedModCount;
         private int currentIndex;
         private int step;
 
         public ArrayWrapperIterator() {
             expectedModCount = modCount;
-            step = 1;
+            step = DEFAULT_STEP;
         }
 
         public ArrayWrapperIterator(boolean isEven) {
             this();
-            currentIndex = isEven ? 1 : 0;
-            step = 2;
+            if (isEven) {
+                currentIndex = START_INDEX_FOR_EVEN;
+            }
+            step = SPECIAL_STEP;
         }
 
         @Override
