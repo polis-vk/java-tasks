@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -15,6 +17,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
+    private int modCount = 0;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -24,11 +27,13 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
+        modCount++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
+        modCount++;
     }
 
     public int get(int index) {
@@ -48,7 +53,27 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new Iterator<Integer>() {
+            private final CustomArrayWrapper customArrayWrapper = CustomArrayWrapper.this;
+            private final int fixedModCount = customArrayWrapper.modCount;
+            private int index = 0;
+
+            @Override
+            public boolean hasNext() {
+                return index < customArrayWrapper.size();
+            }
+
+            @Override
+            public Integer next() {
+                if (fixedModCount != customArrayWrapper.modCount) {
+                    throw new ConcurrentModificationException();
+                } else if (!this.hasNext()) {
+                    throw new NoSuchElementException();
+                }
+
+                return customArrayWrapper.get(index++);
+            }
+        };
     }
 
     /**
@@ -58,7 +83,43 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new Iterator<Integer>() {
+            private final CustomArrayWrapper customArrayWrapper = CustomArrayWrapper.this;
+            private final int fixedModCount = customArrayWrapper.modCount;
+            private int nextEven = 0;
+
+            {
+                if (customArrayWrapper.get(nextEven) % 2 == 1) {
+                    findNextEven();
+                }
+            }
+
+            private void findNextEven() {
+                for (nextEven++; nextEven < customArrayWrapper.size(); nextEven++) {
+                    if (customArrayWrapper.get(nextEven) % 2 == 0) {
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public boolean hasNext() {
+               return nextEven < customArrayWrapper.size();
+            }
+
+            @Override
+            public Integer next() {
+                if (fixedModCount != customArrayWrapper.modCount) {
+                    throw new ConcurrentModificationException();
+                } else if (!this.hasNext()) {
+                    throw new NoSuchElementException();
+                }
+
+                int value = customArrayWrapper.get(nextEven);
+                findNextEven();
+                return value;
+            }
+        };
     }
 
     /**
@@ -68,7 +129,43 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new Iterator<Integer>() {
+            private final CustomArrayWrapper customArrayWrapper = CustomArrayWrapper.this;
+            private final int fixedModCount = customArrayWrapper.modCount;
+            private int nextOdd = 0;
+
+            {
+                if (customArrayWrapper.get(nextOdd) % 2 == 0) {
+                    findNextOdd();
+                }
+            }
+
+            private void findNextOdd() {
+                for (nextOdd++; nextOdd < customArrayWrapper.size(); nextOdd++) {
+                    if (customArrayWrapper.get(nextOdd) % 2 == 1) {
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public boolean hasNext() {
+                return nextOdd < customArrayWrapper.size();
+            }
+
+            @Override
+            public Integer next() {
+                if (fixedModCount != customArrayWrapper.modCount) {
+                    throw new ConcurrentModificationException();
+                } else if (!this.hasNext()) {
+                    throw new NoSuchElementException();
+                }
+
+                int value = customArrayWrapper.get(nextOdd);
+                findNextOdd();
+                return value;
+            }
+        };
     }
 
     private void checkIndex(int index) {
