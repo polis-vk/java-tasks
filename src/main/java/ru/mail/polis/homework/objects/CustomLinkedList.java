@@ -72,7 +72,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * Если был передан невалидный index - надо выкинуть исключение IndexOutOfBoundsException.
      * throw new IndexOutOfBoundsException(i);
      *
-     * @param i     - index
+     * @param i - index
      * @param value - data for create Node.
      */
     public void add(int i, int value) {
@@ -132,8 +132,8 @@ public class CustomLinkedList implements Iterable<Integer> {
      * Реализовать метод:
      * Переворачивает все элементы списка.
      * Пример:
-     * Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
-     * После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
+     *  Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
+     *  После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
         modCount++;
@@ -153,9 +153,9 @@ public class CustomLinkedList implements Iterable<Integer> {
      * 1 тугрик
      * Метод выводит всю последовательность хранящуюся в списке начиная с head.
      * Формат вывода:
-     * - значение каждой Node должно разделяться " -> "
-     * - последовательность всегда заканчивается на null
-     * - если в списке нет элементов - верните строку "null"
+     *  - значение каждой Node должно разделяться " -> "
+     *  - последовательность всегда заканчивается на null
+     *  - если в списке нет элементов - верните строку "null"
      *
      * @return - String with description all list
      */
