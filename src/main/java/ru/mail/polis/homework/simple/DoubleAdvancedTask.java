@@ -46,10 +46,29 @@ public class DoubleAdvancedTask {
         double x2;
         double x3;
 
-        x1 = (root1 > root2) && (root1 > root3) ? root1 : (root2 > root1) && (root2 > root3) ? root2 : root3;
-        x3 = (root1 < root2) && (root1 < root3) ? root1 : (root2 < root1) && (root2 < root3) ? root2 : root3;
-        x2 = root1 != x1 && root1 != x3 ? root1 : root2 != x1 && root2 != x3 ? root2 : root3;
+        if (Double.compare(root1, root2) > 0 && Double.compare(root1, root3) > 0) {
+            x1 = root1;
+        } else if (Double.compare(root1, root2) < 0 && Double.compare(root2, root3) > 0) {
+            x1 = root2;
+        } else {
+            x1 = root3;
+        }
 
+        if (Double.compare(root1, root2) < 0 && Double.compare(root1, root3) < 0) {
+            x3 = root1;
+        } else if (Double.compare(root1, root2) > 0 && Double.compare(root2, root3) < 0) {
+            x3 = root2;
+        } else {
+            x3 = root3;
+        }
+
+        if (Double.compare(root1, x1) != 0 && Double.compare(root1, x3) != 0) {
+            x2 = root1;
+        } else if (Double.compare(root2, x1) != 0 && Double.compare(root2, x3) != 0) {
+            x2 = root2;
+        } else {
+            x2 = root3;
+        }
 
         return x1 + ", " + x2 + ", " + x3;
     }
@@ -60,7 +79,7 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return (a1 != a2) ? 0 : (float) (Math.abs(b2 - b1) / Math.sqrt(1 + Math.pow(a1, 2)));
+        return (Double.compare(a1, a2) != 0) ? 0 : (float) (Math.abs(b2 - b1) / Math.sqrt(1 + Math.pow(a1, 2)));
     }
 
     /**
