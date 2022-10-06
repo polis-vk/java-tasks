@@ -86,25 +86,11 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         return new Iterator<Integer>() {
             private final CustomArrayWrapper customArrayWrapper = CustomArrayWrapper.this;
             private final int fixedModCount = customArrayWrapper.modCount;
-            private int nextEven = 0;
-
-            {
-                if (customArrayWrapper.get(nextEven) % 2 == 1) {
-                    findNextEven();
-                }
-            }
-
-            private void findNextEven() {
-                for (nextEven++; nextEven < customArrayWrapper.size(); nextEven++) {
-                    if (customArrayWrapper.get(nextEven) % 2 == 0) {
-                        break;
-                    }
-                }
-            }
+            private int index = 1;
 
             @Override
             public boolean hasNext() {
-               return nextEven < customArrayWrapper.size();
+                return index < customArrayWrapper.size();
             }
 
             @Override
@@ -115,8 +101,8 @@ public class CustomArrayWrapper implements Iterable<Integer> {
                     throw new NoSuchElementException();
                 }
 
-                int value = customArrayWrapper.get(nextEven);
-                findNextEven();
+                int value = customArrayWrapper.get(index);
+                index += 2;
                 return value;
             }
         };
@@ -132,25 +118,11 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         return new Iterator<Integer>() {
             private final CustomArrayWrapper customArrayWrapper = CustomArrayWrapper.this;
             private final int fixedModCount = customArrayWrapper.modCount;
-            private int nextOdd = 0;
-
-            {
-                if (customArrayWrapper.get(nextOdd) % 2 == 0) {
-                    findNextOdd();
-                }
-            }
-
-            private void findNextOdd() {
-                for (nextOdd++; nextOdd < customArrayWrapper.size(); nextOdd++) {
-                    if (customArrayWrapper.get(nextOdd) % 2 == 1) {
-                        break;
-                    }
-                }
-            }
+            private int index = 0;
 
             @Override
             public boolean hasNext() {
-                return nextOdd < customArrayWrapper.size();
+                return index < customArrayWrapper.size();
             }
 
             @Override
@@ -161,8 +133,8 @@ public class CustomArrayWrapper implements Iterable<Integer> {
                     throw new NoSuchElementException();
                 }
 
-                int value = customArrayWrapper.get(nextOdd);
-                findNextOdd();
+                int value = customArrayWrapper.get(index);
+                index += 2;
                 return value;
             }
         };
