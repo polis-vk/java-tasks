@@ -45,14 +45,13 @@ public class IntegerAdvancedTask {
     public static char kDecimal(int n, int order) {
         int value = n;
         for (int i = 0; i < order - 1; i++) {
-
             value /= 16;
         }
 
         if (value % 16 > 9) {
-            return  (char) ('A' + (value % 16 - 10));
+            return (char) ('A' + (value % 16 - 10));
         }
-        return (char) ('0' +value % 16);
+        return (char) ('0' + value % 16);
     }
 
     /**
@@ -64,14 +63,13 @@ public class IntegerAdvancedTask {
      */
     public static byte minNumber(long a) {
         long value = a;
-        int index = 0 ;
+        int index = 0;
         long minValue = Long.MAX_VALUE;
-        int resultIndex= 0;
+        int resultIndex = 0;
 
-        while ( value > 0) {
+        while (value > 0) {
             long currentValue = value % 16;
             index++;
-
             if (currentValue < minValue) {
                 minValue = currentValue;
                 resultIndex = index;
