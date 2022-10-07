@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.Arrays;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -7,6 +9,8 @@ package ru.mail.polis.homework.simple;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class DoubleAdvancedTask {
+
+    private static final double EPS = 1e-10;
 
     /**
      * Вывести три корня кубического уравнения через запятую: a * x ^ 3 + b * x ^ 2 + c * x + d = 0;
@@ -18,9 +22,7 @@ public class DoubleAdvancedTask {
      */
     //При решении использовалась тригонометрическая формула Виета
     public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
+        double[] roots = new double[3];
 
         double an = (double) b / a;
         double bn = (double) c / a;
@@ -29,26 +31,17 @@ public class DoubleAdvancedTask {
         double q = (an * an - 3 * bn) / 9;
         double r = (2 * Math.pow(an, 3) - 9 * an * bn + 27 * cn) / 54;
         double s = Math.pow(q, 3) - Math.pow(r, 2);
-        s = round(s);
         if (s > 0) {
             double f = (Math.acos(r / Math.sqrt(q * q * q))) / 3;
-            x1 = -2 * Math.sqrt(q) * Math.cos(f) - an / 3;
-            x2 = -2 * Math.sqrt(q) * Math.cos(f + 2 * Math.PI / 3) - an / 3;
-            x3 = -2 * Math.sqrt(q) * Math.cos(f - 2 * Math.PI / 3) - an / 3;
+            roots[0] = -2 * Math.sqrt(q) * Math.cos(f) - an / 3;
+            roots[1] = -2 * Math.sqrt(q) * Math.cos(f + 2 * Math.PI / 3) - an / 3;
+            roots[2] = -2 * Math.sqrt(q) * Math.cos(f - 2 * Math.PI / 3) - an / 3;
         } else {
-            x1 = -2 * Math.signum(r) * Math.sqrt(q) - an / 3;
-            x2 = Math.signum(r) * Math.sqrt(q) - an / 3;
+            roots[1] = -2 * Math.signum(r) * Math.sqrt(q) - an / 3;
+            roots[2] = Math.signum(r) * Math.sqrt(q) - an / 3;
         }
-        x1 = round(x1);
-        x2 = round(x2);
-        x3 = round(x3);
-        return Math.max(Math.max(x1, x2), Math.max(x2, x3)) + ", "
-                + Math.max(Math.min(x1, x2), Math.min(Math.max(x1, x2), x3)) + ", "
-                + Math.min(Math.min(x1, x2), Math.min(x2, x3));
-    }
-
-    private static double round(double x) {
-        return Math.round(x * 1e+14) / 1e+14;
+        Arrays.sort(roots);
+        return roots[2] + ", " + roots[1] + ", " + roots[0];
     }
 
     /**
@@ -57,11 +50,10 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        if (a1 == a2) {
+        if (Math.abs(a1 - a2) <= EPS) {
             return (float) (Math.abs(b1 - b2) / Math.sqrt(a1 * a2 + 1));
-        } else {
-            return 0;
         }
+        return 0;
     }
 
     /**
@@ -94,6 +86,6 @@ public class DoubleAdvancedTask {
         int c = x12 * y13 - x13 * y12;
         int d = -(x1 * a + y1 * b + z1 * c);
 
-        return -(double) (a * x4 + b * y4 + d) / c;
+        return (double) -(a * x4 + b * y4 + d) / c;
     }
 }
