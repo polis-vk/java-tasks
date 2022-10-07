@@ -1,8 +1,7 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.NavigableMap;
 import java.util.NoSuchElementException;
 
 /**
@@ -13,12 +12,15 @@ public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
     private Node tail;
-    int size;
+    private int size;
+
+    private int modCounter;
 
     public CustomLinkedList() {
         head = null;
         tail = null;
         size = 0;
+        modCounter = 0;
     }
 
     /**
@@ -48,6 +50,7 @@ public class CustomLinkedList implements Iterable<Integer> {
             tmp.next = tail;
         }
         size++;
+        modCounter++;
     }
 
     /**
@@ -87,22 +90,16 @@ public class CustomLinkedList implements Iterable<Integer> {
             }
             Node beforeHead = new Node(0);
             beforeHead.next = head;
-            Node it = beforeHead;
-            int i = index;
-            while (i-- > 0) {
-                it = it.next;
-            }
+            Node it = findNode(beforeHead, index);
             Node elem = new Node(value);
             elem.next = it.next;
             it.next = elem;
             if (index == 0) {
                 head = elem;
             }
-            if (index == size - 1) {
-                tail = elem;
-            }
             size++;
         }
+        modCounter++;
     }
 
     /**
@@ -123,17 +120,14 @@ public class CustomLinkedList implements Iterable<Integer> {
         } else {
             Node beforeHead = new Node(0);
             beforeHead.next = head;
-            Node it = beforeHead;
-            int i = index;
-            while (i-- > 0) {
-                it = it.next;
-            }
+            Node it = findNode(beforeHead, index);
             it.next = it.next.next;
             if (index == size - 1) {
                 tail = it;
             }
         }
         size--;
+        modCounter++;
     }
 
     /**
@@ -159,6 +153,7 @@ public class CustomLinkedList implements Iterable<Integer> {
             head = it1;
             tail.next = null;
         }
+        modCounter++;
     }
 
     /**
@@ -197,6 +192,7 @@ public class CustomLinkedList implements Iterable<Integer> {
     private class LinkedListIterator implements Iterator<Integer> {
 
         private Node cur;
+        private final int fixedModCounter = modCounter;
 
         public LinkedListIterator() {
             cur = head;
@@ -209,6 +205,10 @@ public class CustomLinkedList implements Iterable<Integer> {
 
         @Override
         public Integer next() {
+            if (fixedModCounter != modCounter) {
+                throw new ConcurrentModificationException();
+            }
+
             if (cur == null) {
                 throw new NoSuchElementException();
             }
@@ -216,6 +216,15 @@ public class CustomLinkedList implements Iterable<Integer> {
             cur = cur.next;
             return val;
         }
+    }
+
+    private Node findNode(Node start, int index) {
+        Node it = start;
+        int i = index;
+        while (i-- > 0) {
+            it = it.next;
+        }
+        return it;
     }
 
     private boolean checkIndexValidity(int index) {
