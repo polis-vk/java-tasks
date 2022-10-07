@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.objects;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.NavigableMap;
+import java.util.NoSuchElementException;
 
 /**
  * 15 тугриков
@@ -9,6 +12,14 @@ import java.util.Iterator;
 public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
+    private Node tail;
+    int size;
+
+    public CustomLinkedList() {
+        head = null;
+        tail = null;
+        size = 0;
+    }
 
     /**
      * 1 тугрик
@@ -17,7 +28,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @return size
      */
     public int size() {
-        return 0;
+        return size;
     }
 
     /**
@@ -28,7 +39,15 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int value) {
-
+        if (size == 0) {
+            head = new Node(value);
+            tail = head;
+        } else {
+            Node tmp = tail;
+            tail = new Node(value);
+            tmp.next = tail;
+        }
+        size++;
     }
 
     /**
@@ -38,7 +57,15 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index
      */
     public int get(int index) {
-       return 0;
+        if (!checkIndexValidity(index)) {
+            throw new IndexOutOfBoundsException();
+        }
+        Node it = head;
+        int i = index;
+        while (i-- > 0) {
+            it = it.next;
+        }
+        return it.value;
     }
 
     /**
@@ -46,13 +73,36 @@ public class CustomLinkedList implements Iterable<Integer> {
      * Реализовать метод:
      * Добавляет элемент в односвязный список на заданную позицию.
      * Если был передан невалидный index - надо выкинуть исключение IndexOutOfBoundsException.
-     * throw new IndexOutOfBoundsException(i);
+     * throw new IndexOutOfBoundsException(index);
      *
-     * @param i - index
+     * @param index - index
      * @param value - data for create Node.
      */
-    public void add(int i, int value) {
-
+    public void add(int index, int value) {
+        if (index == size) {
+            add(value);
+        } else {
+            if (!checkIndexValidity(index)) {
+                throw new IndexOutOfBoundsException(index);
+            }
+            Node beforeHead = new Node(0);
+            beforeHead.next = head;
+            Node it = beforeHead;
+            int i = index;
+            while (i-- > 0) {
+                it = it.next;
+            }
+            Node elem = new Node(value);
+            elem.next = it.next;
+            it.next = elem;
+            if (index == 0) {
+                head = elem;
+            }
+            if (index == size - 1) {
+                tail = elem;
+            }
+            size++;
+        }
     }
 
     /**
@@ -65,7 +115,25 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-
+        if (!checkIndexValidity(index)) {
+            throw new IndexOutOfBoundsException(index);
+        }
+        if (index == 0) {
+            head = head.next;
+        } else {
+            Node beforeHead = new Node(0);
+            beforeHead.next = head;
+            Node it = beforeHead;
+            int i = index;
+            while (i-- > 0) {
+                it = it.next;
+            }
+            it.next = it.next.next;
+            if (index == size - 1) {
+                tail = it;
+            }
+        }
+        size--;
     }
 
     /**
@@ -73,26 +141,46 @@ public class CustomLinkedList implements Iterable<Integer> {
      * Реализовать метод:
      * Переворачивает все элементы списка.
      * Пример:
-     *  Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
-     *  После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
+     * Исходная последовательность списка "1 -> 2 -> 3 -> 4 -> null"
+     * После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-
+        if (size > 1) {
+            tail = head;
+            Node it1 = head.next;
+            Node it2 = it1.next;
+            while (it2 != null) {
+                it1.next = head;
+                head = it1;
+                it1 = it2;
+                it2 = it2.next;
+            }
+            it1.next = head;
+            head = it1;
+            tail.next = null;
+        }
     }
 
     /**
      * 1 тугрик
      * Метод выводит всю последовательность хранящуюся в списке начиная с head.
      * Формат вывода:
-     *  - значение каждой Node должно разделяться " -> "
-     *  - последовательность всегда заканчивается на null
-     *  - если в списке нет элементов - верните строку "null"
+     * - значение каждой Node должно разделяться " -> "
+     * - последовательность всегда заканчивается на null
+     * - если в списке нет элементов - верните строку "null"
      *
      * @return - String with description all list
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        Node it = head;
+        StringBuilder builder = new StringBuilder();
+        while (it != null) {
+            builder.append(it.value).append(" -> ");
+            it = it.next;
+        }
+        builder.append("null");
+        return builder.toString();
     }
 
     /**
@@ -103,7 +191,35 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new LinkedListIterator();
+    }
+
+    private class LinkedListIterator implements Iterator<Integer> {
+
+        private Node cur;
+
+        public LinkedListIterator() {
+            cur = head;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return cur != null;
+        }
+
+        @Override
+        public Integer next() {
+            if (cur == null) {
+                throw new NoSuchElementException();
+            }
+            int val = cur.value;
+            cur = cur.next;
+            return val;
+        }
+    }
+
+    private boolean checkIndexValidity(int index) {
+        return index >= 0 && index < size;
     }
 
     private static class Node {
