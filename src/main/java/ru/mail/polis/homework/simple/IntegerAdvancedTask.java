@@ -10,7 +10,8 @@ package ru.mail.polis.homework.simple;
 public class IntegerAdvancedTask {
 
     final static double EPS = 0.000000001d;
-
+    final static char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+            'A', 'B', 'C', 'D', 'E', 'F'};
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
@@ -60,9 +61,7 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        final char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                'A', 'B', 'C', 'D', 'E', 'F'};
-        return hexDigits[(n / (int) Math.pow(16, order - 1) % 16)];
+        return IntegerAdvancedTask.hexDigits[(n / (int) Math.pow(16, order - 1) % 16)];
     }
 
     /**
