@@ -25,24 +25,24 @@ public class DoubleAdvancedTask {
      */
     public static String equation(int a, int b, int c, int d) {
         /*
-        * Метод Виета-Кардано.
-        * Уравнение имеет вид: x^3 + a * x^2 + b * x + c = 0
-        * При S > 0 уравнение имеет 3 действительных корня.
-        * При S < 0 уравнение имеет 1 действительный и пару комплексных корней.
-        * При S = 0 уравнение вырождено и имеет меньше 3 различных решений.
-        */
-        double[] results = {0.0, 0.0, 0.0};
+         * Метод Виета-Кардано.
+         * Уравнение имеет вид: x^3 + a * x^2 + b * x + c = 0
+         * При S > 0 уравнение имеет 3 действительных корня.
+         * При S < 0 уравнение имеет 1 действительный и пару комплексных корней.
+         * При S = 0 уравнение вырождено и имеет меньше 3 различных решений.
+         */
+        double[] results = {0, 0, 0};
 
         double aV = (double) b / a;
         double bV = (double) c / a;
         double cV = (double) d / a;
 
-        final double Q = (Math.pow(aV, 2) - 3 * bV) / 9;
-        final double R = ((2 * Math.pow(aV, 3)) - (9 * aV * bV) + (27 * cV)) / 54;
-        final double S = Math.pow(Q, 3) - Math.pow(R, 2);
+        double Q = (Math.pow(aV, 2) - 3 * bV) / 9;
+        double R = ((2 * Math.pow(aV, 3)) - (9 * aV * bV) + (27 * cV)) / 54;
+        double S = Math.pow(Q, 3) - Math.pow(R, 2);
 
         if (S > 0) {
-            final double PHI = Math.acos(R / Math.sqrt(Math.pow(Q, 3))) / 3;
+            double PHI = Math.acos(R / Math.sqrt(Math.pow(Q, 3))) / 3;
             results[0] = (-2 * Math.sqrt(Q) * Math.cos(PHI)) - aV / 3;
             results[1] = (-2 * Math.sqrt(Q) * Math.cos(PHI - 2 * Math.PI / 3)) - aV / 3;
             results[2] = (-2 * Math.sqrt(Q) * Math.cos(PHI + 2 * Math.PI / 3)) - aV / 3;
@@ -69,8 +69,7 @@ public class DoubleAdvancedTask {
         }
         double numerator = Math.abs(b2 - b1);
         double denominator = Math.sqrt(Math.pow(a1, 2) + 1);
-        double result = numerator / denominator;
-        return (float) result;
+        return (float) (numerator / denominator);
     }
 
     /**
@@ -86,9 +85,9 @@ public class DoubleAdvancedTask {
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
         /*
-        * Находим точку z4 с помощью уравнения плоскости.
-        * Уравнение имеет вид: a * x + b * y + c * z + d = 0
-        */
+         * Находим точку z4 с помощью уравнения плоскости.
+         * Уравнение имеет вид: a * x + b * y + c * z + d = 0
+         */
         double[][] coefs = {{x2 - x1, y2 - y1, z2 - z1}, {x3 - x1, y3 - y1, z3 - z1}};
         double a = coefs[0][1] * coefs[1][2] - coefs[1][1] * coefs[0][2];
         double b = coefs[1][0] * coefs[0][2] - coefs[0][0] * coefs[1][2];
@@ -96,4 +95,5 @@ public class DoubleAdvancedTask {
         double d = -(a * x1 + b * y1 + c * z1);
         return (-a * x4 - b * y4 - d) / c;
     }
+
 }

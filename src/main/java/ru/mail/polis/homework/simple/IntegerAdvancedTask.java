@@ -20,12 +20,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        long result = 0;
-        for (int i = 0; i < n; i++) {
-            result += a;
-            a *= q;
+        if (q == 1) {
+            return (long) a * n;
         }
-        return result;
+        return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
     }
 
     /**
@@ -37,24 +35,20 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        if (up - down <= 0 && right - left <= 0
-                && up < grassY && right < grassX) {
+        /*
+         * Решение при помощи формулы суммы n-ого члена арифмитической прогрессии.
+         * Формула: xn = x1 + d * (n - 1), где d = x2 - x1
+         * Выражаем n из формулы выше
+         */
+        if (up >= grassY || right >= grassX) {
+            return 1;
+        }
+        if (up - down <= 0 && right - left <= 0) {
             return Integer.MAX_VALUE;
         }
-        int days = 0;
-        int snakeX = 0;
-        int snakeY = 0;
-        while (true) {
-            snakeY += up;
-            snakeX += right;
-            days++;
-            if (snakeX >= grassX || snakeY >= grassY) {
-                break;
-            }
-            snakeY -= down;
-            snakeX -= left;
-        }
-        return days;
+        double daysX = (double) (grassX - right + (right - left)) / (right - left);
+        double daysY = (double) (grassY - up + (up - down)) / (up - down);
+        return (int) Math.min(Math.ceil(Math.abs(daysX)), Math.ceil(Math.abs(daysY)));
     }
 
     /**
@@ -64,15 +58,15 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
+        int nCopy = n;
         for (int i = 1; i < order; i++) {
-            n /= 16;
+            nCopy /= HEX_RADIX;
         }
-        char hexValue = Character.forDigit(n % 16, HEX_RADIX);
+        char hexValue = Character.forDigit(nCopy % HEX_RADIX, HEX_RADIX);
         if (Character.isDigit(hexValue)) {
             return hexValue;
-        } else {
-            return Character.toUpperCase(hexValue);
         }
+        return Character.toUpperCase(hexValue);
     }
 
     /**
@@ -83,18 +77,20 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
+        long aCopy = a;
         byte order = 0;
         byte minOrder = 0;
-        int min = Integer.MAX_VALUE;
-        while (a != 0) {
+        int min = HEX_RADIX;
+        while (aCopy != 0) {
             order++;
-            byte temp = (byte) (a % 16);
+            byte temp = (byte) (aCopy % HEX_RADIX);
             if (temp < min) {
                 min = temp;
                 minOrder = order;
             }
-            a /= 16;
+            aCopy /= HEX_RADIX;
         }
         return minOrder;
     }
+
 }
