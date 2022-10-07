@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -13,8 +16,9 @@ import java.util.Iterator;
  */
 public class CustomArrayWrapper implements Iterable<Integer> {
 
-    private final int[] array;          // массив
-    private int position;               // следующая позиция куда будет вставлен элемент
+    private final int[] array;
+    private int position = 0;
+    private int modCount = 0;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -24,11 +28,13 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
+        modCount++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
+        modCount++;
     }
 
     public int get(int index) {
@@ -48,7 +54,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new DefaultIterator();
     }
 
     /**
@@ -58,7 +64,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new EvenIterator();
     }
 
     /**
@@ -68,7 +74,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new OddIterator();
     }
 
     private void checkIndex(int index) {
@@ -77,4 +83,59 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
+
+    private class DefaultIterator implements Iterator<Integer> {
+        /*
+         * Дефолтный класс наследует два класса - итератор по четным и нечетным элементам. Введена iterationStep -
+         * значение шага при инкременте индекса в next(). Алгоритм построен так, что все три класса вызывают через свои
+         * конструкторы по умолчанию конструктор с параметрами класса DefaultIterator с параметрами - iterationStep -
+         * шаг итерации по индексам, startPosition - стартовый индекс (для дефолтного и по нечетным - 0, по четным  - 1)
+         */
+        final int fixedModCount = modCount;
+        int position;
+        int iterationStep;
+
+
+        public DefaultIterator() {
+            this(1, 0);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return position < array.length;
+        }
+
+        @Override
+        public Integer next() {
+
+            if (fixedModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+
+            if (position >= array.length) {
+                throw new NoSuchElementException();
+            }
+
+            int arrValue = array[position];
+            position += iterationStep;
+            return arrValue;
+        }
+
+        protected DefaultIterator(int iterationStep, int startPosition) {
+            this.iterationStep = iterationStep;
+            position = startPosition;
+        }
+    }
+
+    private class EvenIterator extends DefaultIterator {
+        public EvenIterator() {
+            super(2, 1);
+        }
+    }
+
+    private class OddIterator extends DefaultIterator {
+        public OddIterator() {
+            super(2, 0);
+        }
+    }
 }
