@@ -22,11 +22,15 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q == 1) {
+        if (equalsDoubles(q, 1, EPS)) {
             return (long) n * a;
         } else {
             return (long) ((a * (1 - Math.pow(q, n))) / (1 - q));
         }
+    }
+
+    private static boolean equalsDoubles(double a, double b, double eps) {
+        return Math.abs(a - b) <= eps;
     }
 
     /**
