@@ -18,7 +18,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (q == 0) {
+        if (q == 1.0) {
             return (long) a * n;
         }
 
