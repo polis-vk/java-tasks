@@ -100,8 +100,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
                     int next = array[position];
                     position += step;
                     return next;
-                }
-                else {
+                } else {
                     throw new NoSuchElementException();
                 }
             }
