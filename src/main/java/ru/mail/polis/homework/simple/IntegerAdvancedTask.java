@@ -19,7 +19,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (Math.abs(q - 1) < EPS) {
+        if (Math.abs(q - 1) <= EPS) {
             return (long) a * n;
         }
         return (long) (a * (Math.pow(q, n) - 1) / (q - 1));
@@ -37,10 +37,11 @@ public class IntegerAdvancedTask {
         if (right >= grassX || up >= grassY) {
             return 1;
         }
-        return Math.min(numOfDays(grassY, down, up - down), numOfDays(grassX, left, right - left));
+        return Math.min(numOfDays(grassY, up, down), numOfDays(grassX, right, left));
     }
 
-    private static int numOfDays(int grass, int nightStep, int speed) {
+    private static int numOfDays(int grass, int daytimeStep, int nightStep) {
+        int speed = daytimeStep - nightStep;
         if (speed <= 0) {
             return Integer.MAX_VALUE;
         }
