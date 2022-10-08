@@ -11,6 +11,7 @@ import java.util.NoSuchElementException;
 public class CustomLinkedList implements Iterable<Integer> {
 
     private int modCount = 0;
+
     private Node head;
 
     /**
