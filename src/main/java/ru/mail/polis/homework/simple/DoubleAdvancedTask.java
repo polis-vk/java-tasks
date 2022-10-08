@@ -51,12 +51,12 @@ public class DoubleAdvancedTask {
     }
 
     //Рассчитывает ареакосинус
-    public static double getArch(double z) {
+    private static double getArch(double z) {
         return Math.log(z + Math.sqrt(Math.pow(z, 2) - 1));
     }
 
     //Рассчитывает гиперболический косинус
-    public static double getCh(double z) {
+    private static double getCh(double z) {
         return (Math.pow(Math.E, z) + Math.pow(Math.E, -z)) / 2;
     }
 

@@ -8,13 +8,9 @@ package ru.mail.polis.homework.simple;
  * Для просмотра подробной документации по выбранному методу нажмите Ctrl + q
  */
 public class IntegerAdvancedTask {
-
     private static final double EPS = 1e-10;
-
     private static final int HEX = 16;
-
-    private static final char[] HEXCHARS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-
+    private static final char[] HEX_CHARS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
      * a + aq + aq^2 + ... + aq^(n-1)
@@ -22,7 +18,7 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        if (Math.abs(q - 1) < 0.0000001) {
+        if (Math.abs(q - 1) < EPS) {
             return (long) n * a;
         }
         return (long) (a * (1 - Math.pow(q, n)) / (1 - q));
@@ -61,14 +57,14 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        int result = 15;
+        int result = HEX - 1;
         for (int i = 0; i < order; i++) {
             int remainder = n % HEX;
             result = remainder;
             n /= HEX;
         }
 
-        return HEXCHARS[result];
+        return HEX_CHARS[result];
     }
 
     /**
@@ -82,8 +78,7 @@ public class IntegerAdvancedTask {
 
         byte minIndex = 0;
         byte currentIndex = 0;
-        int minValue = 15;
-
+        int minValue = HEX - 1;
         while (a > 0) {
             int remainder = (int) (a % HEX);
             if (minValue > remainder) {
@@ -91,7 +86,7 @@ public class IntegerAdvancedTask {
                 minValue = remainder;
             }
 
-            currentIndex++;;
+            currentIndex++;
             a /= HEX;
         }
 
