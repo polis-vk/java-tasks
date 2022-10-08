@@ -70,19 +70,7 @@ public class IntegerAdvancedTask {
         final byte lettersInAscii = 55;
         final byte zeroNumeral = 0;
         final byte nineNumeral = 9;
-        int counterNumbers = 1;
-        int buff = n;
-        while (buff / hexBasis != 0) {
-            buff = buff / hexBasis;
-            counterNumbers++;
-        }
-        buff = n;
-        int[] arrayOfNumbers = new int[counterNumbers];
-        for (int i = 0; i < counterNumbers; i++) {
-            int remainder = buff % hexBasis;
-            buff = buff / hexBasis;
-            arrayOfNumbers[i] = remainder;
-        }
+        byte[] arrayOfNumbers = returnHexMassive(n);
         char result = ' ';
         int number = arrayOfNumbers[order - 1];
         if (number >= zeroNumeral && number <= nineNumeral) {
@@ -101,22 +89,10 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        int counterNumbers = 1;
-        long buff = a;
-        while (buff / hexBasis != 0) {
-            buff = buff / hexBasis;
-            counterNumbers++;
-        }
-        buff = a;
-        byte[] arrayOfNumbers = new byte[counterNumbers];
-        for (byte i = 0; i < counterNumbers; i++) {
-            byte remainder = (byte) (buff % hexBasis);
-            buff = buff / hexBasis;
-            arrayOfNumbers[i] = remainder;
-        }
+        byte[] arrayOfNumbers = returnHexMassive(a);
         byte max = hexBasis;
         byte resultIndex = 0;
-        for (byte i = 0; i < counterNumbers; i++) {
+        for (byte i = 0; i < arrayOfNumbers.length; i++) {
             if (arrayOfNumbers[i] < max) {
                 max = arrayOfNumbers[i];
                 resultIndex = (byte) (i + 1);
@@ -125,4 +101,20 @@ public class IntegerAdvancedTask {
         return resultIndex;
     }
 
+    public static byte[] returnHexMassive(long DecimalNumber) {
+        int counterNumbers = 1;
+        long buff = DecimalNumber;
+        while (buff / hexBasis != 0) {
+            buff = buff / hexBasis;
+            counterNumbers++;
+        }
+        buff = DecimalNumber;
+        byte[] arrayOfNumbers = new byte[counterNumbers];
+        for (byte i = 0; i < counterNumbers; i++) {
+            byte remainder = (byte) (buff % hexBasis);
+            buff = buff / hexBasis;
+            arrayOfNumbers[i] = remainder;
+        }
+        return arrayOfNumbers;
+    }
 }

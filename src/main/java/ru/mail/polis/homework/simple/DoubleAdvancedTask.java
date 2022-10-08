@@ -25,25 +25,25 @@ public class DoubleAdvancedTask {
         double x2 = 0;
         double x3 = 0;
         // Тут используется тригонометрическая формула Виета решения кубических уравнений
-        double a_new = b * Math.pow(a, -1);
-        double b_new = c * Math.pow(a, -1);
-        double c_new = d * Math.pow(a, -1);
-        double Q = (Math.pow(a_new, 2) - 3 * b_new) * Math.pow(9, -1);
-        double R = (2 * Math.pow(a_new, 3) - 9 * a_new * b_new + 27 * c_new) * Math.pow(54, -1);
+        double aNew = b * Math.pow(a, -1);
+        double bNew = c * Math.pow(a, -1);
+        double cNew = d * Math.pow(a, -1);
+        double Q = (Math.pow(aNew, 2) - 3 * bNew) * Math.pow(9, -1);
+        double R = (2 * Math.pow(aNew, 3) - 9 * aNew * bNew + 27 * cNew) * Math.pow(54, -1);
         double S = Math.pow(Q, 3) - Math.pow(R, 2);
         if (S > 0) {
             double phi = (Math.acos(R * Math.pow(Q, -1.5))) * Math.pow(3, -1);
-            x3 = -2 * Math.sqrt(Q) * Math.cos(phi) - a_new * Math.pow(3, -1);
-            x1 = -2 * Math.sqrt(Q) * Math.cos(phi + 2 * Math.PI * Math.pow(3, -1)) - a_new * Math.pow(3, -1);
-            x2 = -2 * Math.sqrt(Q) * Math.cos(phi - 2 * Math.PI * Math.pow(3, -1)) - a_new * Math.pow(3, -1);
+            x3 = -2 * Math.sqrt(Q) * Math.cos(phi) - aNew * Math.pow(3, -1);
+            x1 = -2 * Math.sqrt(Q) * Math.cos(phi + 2 * Math.PI * Math.pow(3, -1)) - aNew * Math.pow(3, -1);
+            x2 = -2 * Math.sqrt(Q) * Math.cos(phi - 2 * Math.PI * Math.pow(3, -1)) - aNew * Math.pow(3, -1);
         } else if (S == 0) {
-            x1 = -2 * Math.cbrt(R) - a_new * Math.pow(3, -1);
-            x2 = Math.cbrt(R) - a_new * Math.pow(3, -1);
+            x1 = -2 * Math.cbrt(R) - aNew * Math.pow(3, -1);
+            x2 = Math.cbrt(R) - aNew * Math.pow(3, -1);
             x3 = x2;
         } else {
             double x = (Math.abs(R) * Math.pow(Math.abs(Q), -3 * Math.pow(2, -1)));
             double phi = (Math.log(x + Math.sqrt(Math.pow(x, 2) - 1))) * Math.pow(3, -1);
-            x1 = -2 * Math.signum(R) * Math.sqrt(Math.abs(Q)) * Math.cosh(phi) - a_new * Math.pow(3, -1);
+            x1 = -2 * Math.signum(R) * Math.sqrt(Math.abs(Q)) * Math.cosh(phi) - aNew * Math.pow(3, -1);
         }
         double[] array = new double[]{x1, x2, x3};
         Arrays.sort(array);
