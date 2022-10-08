@@ -63,7 +63,6 @@ public class IntegerAdvancedTask {
             result = remainder;
             n /= HEX;
         }
-
         return HEX_CHARS[result];
     }
 
@@ -89,7 +88,6 @@ public class IntegerAdvancedTask {
             currentIndex++;
             a /= HEX;
         }
-
         return (byte) (minIndex + 1);
     }
 }
