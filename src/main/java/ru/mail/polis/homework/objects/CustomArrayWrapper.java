@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -16,11 +18,16 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
 
+    private Iterator<Integer> iterator;
+
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
     }
 
     public void add(int value) {
+        if (iterator != null) {
+            throw new ConcurrentModificationException();
+        }
         checkIndex(position);
         array[position] = value;
         position++;
@@ -48,7 +55,8 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        position = 0;
+        return iteratorWithStep(1);
     }
 
     /**
@@ -58,7 +66,8 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        position = 1;
+        return iteratorWithStep(2);
     }
 
     /**
@@ -68,13 +77,36 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        position = 0;
+        return iteratorWithStep(2);
     }
 
     private void checkIndex(int index) {
         if (index < 0 || index >= array.length) {
             throw new IndexOutOfBoundsException();
         }
+    }
+
+    private Iterator<Integer> iteratorWithStep(int step) {
+        iterator = new Iterator<Integer>() {
+            @Override
+            public boolean hasNext() {
+                return position < array.length;
+            }
+
+            @Override
+            public Integer next() {
+                if (hasNext()) {
+                    int next = array[position];
+                    position += step;
+                    return next;
+                }
+                else {
+                    throw new NoSuchElementException();
+                }
+            }
+        };
+        return iterator;
     }
 
 }
