@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * 15 тугриков
@@ -9,6 +11,7 @@ import java.util.Iterator;
 public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
+    private int modCount = 0;
 
     /**
      * 1 тугрик
@@ -17,7 +20,13 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @return size
      */
     public int size() {
-        return 0;
+        int size = 0;
+        Node temp = head;
+        while (temp != null) {
+            size++;
+            temp = temp.next;
+        }
+        return size;
     }
 
     /**
@@ -28,7 +37,17 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int value) {
-
+        Node node = new Node(value);
+        if (head == null) {
+            head = node;
+        } else {
+            Node tail = head;
+            while (tail.next != null) {
+                tail = tail.next;
+            }
+            tail.setNext(node);
+        }
+        modCount++;
     }
 
     /**
@@ -38,7 +57,19 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index
      */
     public int get(int index) {
-       return 0;
+        if (index < 0 || index >= size()) {
+            throw new IndexOutOfBoundsException(String.valueOf(index));
+        }
+        int value = 0;
+        Node temp = head;
+        for (int i = 0; i < size(); i++) {
+            if (i == index) {
+                value = temp.value;
+				break;
+            }
+            temp = temp.next;
+        }
+        return value;
     }
 
     /**
@@ -52,7 +83,23 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int i, int value) {
-
+        if (i < 0 || i > size()) {
+            throw new IndexOutOfBoundsException(String.valueOf(i));
+        }
+        Node node = new Node(value);
+        if (i == 0) {
+            node.next = head;
+            head = node;
+        } else {
+            Node previous = head;
+            for (int j = 0; j < i - 1; j++) {
+                previous = previous.next;
+            }
+            Node after = previous.next;
+            node.setNext(after);
+            previous.setNext(node);
+        }
+        modCount++;
     }
 
     /**
@@ -65,7 +112,22 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-
+        if (size() == 0 || index < 0 || index >= size()) {
+            throw new IndexOutOfBoundsException(String.valueOf(index));
+        }
+        if (index == 0) {
+            head = head.next;
+        } else {
+            Node previous = head;
+            for (int j = 0; j < index - 1; j++) {
+                previous = previous.next;
+            }
+            Node delete = previous.next;
+            Node after = delete.next;
+            previous.setNext(after);
+            delete.setNext(null);
+        }
+        modCount++;
     }
 
     /**
@@ -77,7 +139,17 @@ public class CustomLinkedList implements Iterable<Integer> {
      *  После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-
+        Node current = head;
+        Node previous = null;
+        Node after;
+        while (current != null) {
+            after = current.next;
+            current.next = previous;
+            previous = current;
+            current = after;
+        }
+        head = previous;
+        modCount++;
     }
 
     /**
@@ -92,7 +164,14 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        StringBuilder result = new StringBuilder();
+        Node temp = head;
+        while (temp != null) {
+            result.append(temp.value).append(" -> ");
+            temp = temp.next;
+        }
+        result.append("null");
+        return result.toString();
     }
 
     /**
@@ -103,7 +182,33 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new Itr();
+    }
+
+    private class Itr implements Iterator<Integer> {
+
+        private Node head = CustomLinkedList.this.head;
+        private final int fixedModCount = modCount;
+
+        Itr() {}
+
+        @Override
+        public boolean hasNext() {
+            return head != null;
+        }
+
+        @Override
+        public Integer next() {
+            if (fixedModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+            if (head == null) {
+                throw new NoSuchElementException();
+            }
+            Integer currentElement = head.value;
+            head = head.next;
+            return currentElement;
+        }
     }
 
     private static class Node {
@@ -118,4 +223,5 @@ public class CustomLinkedList implements Iterable<Integer> {
             this.next = next;
         }
     }
+
 }

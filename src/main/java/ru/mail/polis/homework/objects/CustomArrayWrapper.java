@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -14,7 +16,8 @@ import java.util.Iterator;
 public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
-    private int position;               // следующая позиция куда будет вставлен элемент
+    private int position = 0;           // следующая позиция куда будет вставлен элемент
+    private int modCount = 0;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -24,11 +27,13 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
+        modCount++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
+        modCount++;
     }
 
     public int get(int index) {
@@ -48,7 +53,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new Itr();
     }
 
     /**
@@ -58,7 +63,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new Itr(1, 2);
     }
 
     /**
@@ -68,7 +73,41 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new Itr(0, 2);
+    }
+
+    private class Itr implements Iterator<Integer> {
+        int position;
+        int skip;
+        int fixedModCount = modCount;
+
+        Itr() {
+            this.position = 0;
+            this.skip = 1;
+        }
+
+        Itr(int position, int skip) {
+            this.position = position;
+            this.skip = skip;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return position < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            if (fixedModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+            if (position >= array.length) {
+                throw new NoSuchElementException();
+            }
+            Integer currentElement = array[position];
+            position += skip;
+            return currentElement;
+        }
     }
 
     private void checkIndex(int index) {
