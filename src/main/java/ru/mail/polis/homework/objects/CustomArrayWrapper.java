@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
@@ -48,7 +49,23 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+
+        Iterator<Integer> it = new Iterator<Integer>() {
+
+            private int currentIndex = 0;
+
+            @Override
+            public boolean hasNext() {
+                return currentIndex < size();
+            }
+
+            @Override
+            public Integer next() {
+                return get(currentIndex++);
+            }
+        };
+
+        return it;
     }
 
     /**
@@ -58,7 +75,29 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        Iterator<Integer> it = new Iterator<Integer>() {
+
+            private int currentIndex = 0;
+
+            private final int fixedPosition = position;
+
+            @Override
+            public boolean hasNext() {
+                return currentIndex + 1 < size();
+            }
+
+            @Override
+            public Integer next() {
+                if (position != fixedPosition) {
+                    throw new ConcurrentModificationException();
+                }
+
+                currentIndex += 1;
+                return get(currentIndex++);
+            }
+        };
+
+        return it;
     }
 
     /**
@@ -68,7 +107,29 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+
+        Iterator<Integer> it = new Iterator<Integer>() {
+
+            private int currentIndex = 0;
+            private final int fixedPosition = position;
+
+            @Override
+            public boolean hasNext() {
+                return currentIndex < size();
+            }
+
+            @Override
+            public Integer next() {
+                if (position != fixedPosition) {
+                    throw new ConcurrentModificationException();
+                }
+                currentIndex += 2;
+                return get(currentIndex - 2);
+            }
+
+        };
+
+        return it;
     }
 
     private void checkIndex(int index) {
