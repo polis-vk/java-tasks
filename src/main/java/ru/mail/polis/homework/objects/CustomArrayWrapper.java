@@ -18,24 +18,23 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
 
-    private Iterator<Integer> iterator;
+    private int modCount = 0;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
     }
 
     public void add(int value) {
-        if (iterator != null) {
-            throw new ConcurrentModificationException();
-        }
         checkIndex(position);
         array[position] = value;
         position++;
+        modCount++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
+        modCount++;
     }
 
     public int get(int index) {
@@ -88,7 +87,9 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     }
 
     private Iterator<Integer> iteratorWithStep(int step) {
-        iterator = new Iterator<Integer>() {
+        return new Iterator<Integer>() {
+            private final int fixedModCount = modCount;
+
             @Override
             public boolean hasNext() {
                 return position < array.length;
@@ -96,6 +97,9 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
             @Override
             public Integer next() {
+                if (fixedModCount != modCount) {
+                    throw new ConcurrentModificationException();
+                }
                 if (hasNext()) {
                     int next = array[position];
                     position += step;
@@ -105,7 +109,6 @@ public class CustomArrayWrapper implements Iterable<Integer> {
                 }
             }
         };
-        return iterator;
     }
 
 }
