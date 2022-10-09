@@ -75,7 +75,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private class CustomArrayWrapperIterator implements Iterator<Integer> {
 
-        private boolean isDefault = true;
+        private final boolean isDefault;
         private int currentIndex = 0;
         private boolean isCallHasNext = false;
 
@@ -87,6 +87,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
 
         public CustomArrayWrapperIterator() {
+            this.isDefault = true;
         }
 
         @Override
