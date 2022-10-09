@@ -11,6 +11,7 @@ import java.util.NoSuchElementException;
 public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
+    private Node tail;
 
     private int modCount = 0;
     private int size = 0;
@@ -35,14 +36,11 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public void add(int value) {
         Node newNode = new Node(value);
-        if (head == null) {
-            head = newNode;
+        if (size == 0) {
+            tail = head = newNode;
         } else {
-            Node currentNode = head;
-            while (currentNode.next != null) {
-                currentNode = currentNode.next;
-            }
-            currentNode.next = newNode;
+            tail.setNext(newNode);
+            tail = newNode;
         }
         size++;
         modCount++;
@@ -57,6 +55,9 @@ public class CustomLinkedList implements Iterable<Integer> {
     public int get(int index) {
         if (size <= index || index < 0) {
             throw new IndexOutOfBoundsException();
+        }
+        if (index == size - 1) {
+            return tail.value;
         }
         int currentIndex = 0;
         Node currentNode = head;
@@ -85,6 +86,9 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (i == 0) {
             newNode.setNext(head);
             head = newNode;
+        } else if (i == size) {
+            tail.setNext(newNode);
+            tail = newNode;
         } else {
             int currentIndex = 0;
             Node currentNode = head;
@@ -114,6 +118,9 @@ public class CustomLinkedList implements Iterable<Integer> {
         }
         if (index == 0) {
             head = head.next;
+            if (head == null) {
+                tail = null;
+            }
         } else {
             int currentIndex = 0;
             Node currentNode = head;
@@ -122,6 +129,9 @@ public class CustomLinkedList implements Iterable<Integer> {
                 currentIndex++;
             }
             currentNode.setNext(currentNode.next.next);
+            if (index == size - 1) {
+                tail = currentNode;
+            }
         }
         size--;
         modCount++;
@@ -142,6 +152,9 @@ public class CustomLinkedList implements Iterable<Integer> {
             Node temporaryNode = new Node(currentNode.value);
             temporaryNode.setNext(newHead);
             newHead = temporaryNode;
+            if (newHead.next == null) {
+                tail = newHead;
+            }
             currentNode = currentNode.next;
         }
         head = newHead;
