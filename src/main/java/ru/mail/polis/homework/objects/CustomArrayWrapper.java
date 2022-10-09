@@ -92,6 +92,9 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
 
         public CustomArrayIterable(int delay, int step) {
+            if (delay < 0 || delay >= size() || step <= 0) {
+                throw new IllegalArgumentException();
+            }
             this.step = step;
             currentIndex = delay;
         }
@@ -99,7 +102,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         @Override
         public boolean hasNext() {
             checkPosition();
-            return 0 <= currentIndex && currentIndex < size();
+            return currentIndex < size();
         }
 
         @Override
