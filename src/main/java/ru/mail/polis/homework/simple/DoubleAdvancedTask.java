@@ -17,10 +17,18 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int a, int b, int c, int d) {
-        double x1 = 0;
-        double x2 = 0;
-        double x3 = 0;
-        return x1 + ", " + x2 + ", " + x3;
+
+        double q = (a * a - 3.0 * b ) / 9.0;
+        double r = (2.0 * Math.pow(a, 3.0) - 9.0 * a * b + 27.0 * c) / 54.0;
+        double s = Math.pow(q, 3) - Math.pow(r, 2);
+
+        double f = (1.0 / 3.0) *  Math.acos(r / Math.sqrt(Math.pow(q, 3)));
+
+        double x1 = -2 * Math.sqrt(q) * Math.cos(f) - a / 3.0;
+        double x2 = -2 * Math.sqrt(q) * Math.cos(f + 2.0/3.0 * Math.PI) - a / 3.0;
+        double x3 = -2 * Math.sqrt(q) * Math.cos(f - 2.0/3.0 * Math.PI) - a / 3.0;
+
+        return x1 + ", " + x2  + ", " + x3;
     }
 
     /**
@@ -29,7 +37,8 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+    return 0;
+
     }
 
     /**

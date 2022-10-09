@@ -18,7 +18,11 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        long res = a;
+        for(int i = 1; i < n; i++){
+            res += a * Math.pow(q, i);
+        }
+        return res;
     }
 
     /**
@@ -30,7 +34,22 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        long x = 0;
+        long y = 0;
+
+        for (int i = 1; i < Integer.MAX_VALUE; i++){
+            y += up;
+            x += right;
+            if (grassX <= x || grassY <= y){
+                return i;
+            }
+            y -= down;
+            x -= left;
+            if (grassX <= x || grassY <= y){
+                return i;
+            }
+        }
+        return Integer.MAX_VALUE;
     }
 
     /**
