@@ -10,7 +10,13 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double iterations = (b-a) / delta;
+        double res = 0;
+        for (int i = 0; i < iterations; i++){
+           res += function.applyAsDouble(a) * delta;
+           a += delta;
+        }
+        return res;
     }
 
     /**
@@ -36,7 +42,9 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        double d1 = Math.sqrt(Math.pow(Math.abs(x1 - x3), 2) + Math.pow(Math.abs(y1 - y3), 2));
+        double d2 = Math.sqrt(Math.pow(Math.abs(x2 - x4), 2) + Math.pow(Math.abs(y2 - y4), 2));
+        return d1 * d2/2;
     }
 
 }
