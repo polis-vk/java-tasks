@@ -14,11 +14,8 @@ import java.util.NoSuchElementException;
  * тогда все элементы со значением 100 имеют нечетную позицию, а элементы = 0 - четную.
  */
 public class CustomArrayWrapper implements Iterable<Integer> {
-    private static final int DEFAULT_STEP_OF_ITERATOR = 1;
-    private static final int EVEN_AND_ODD_STEP = 2;
-    private static final int DEFAULT_STARTING_POSITION = 0;
-    private static final int STARTING_POSITION_FOR_ODD_NUMBERS = 0;
     private static final int STARTING_POSITION_FOR_EVEN_NUMBERS = 1;
+    private static final int EVEN_AND_ODD_STEP = 2;
     private static final int DEFAULT_VALUE_FOR_COUNTER_OF_MODIFICATIONS = 0;
 
     private final int[] array;          // массив
@@ -80,7 +77,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new CustomArrayWrapperIterator(STARTING_POSITION_FOR_ODD_NUMBERS, EVEN_AND_ODD_STEP);
+        return new CustomArrayWrapperIterator(EVEN_AND_ODD_STEP);
     }
 
     private void checkIndex(int index) {
@@ -90,6 +87,8 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     }
 
     private class CustomArrayWrapperIterator implements Iterator<Integer> {
+        private static final int DEFAULT_STEP_OF_ITERATOR = 1;
+        private static final int DEFAULT_STARTING_POSITION = 0;
 
         private int currentPosition;
         private final int step;
@@ -97,6 +96,10 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
         public CustomArrayWrapperIterator() {
             this(DEFAULT_STARTING_POSITION, DEFAULT_STEP_OF_ITERATOR);
+        }
+
+        public CustomArrayWrapperIterator(int step) {
+            this(DEFAULT_STARTING_POSITION, step);
         }
 
         public CustomArrayWrapperIterator(int startPosition, int step) {
