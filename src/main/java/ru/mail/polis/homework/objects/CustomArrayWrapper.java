@@ -52,28 +52,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new myIterator();
-    }
-
-    public class myIterator implements Iterator<Integer> {
-
-        private int pos;
-        private final int fixedModCount = modCount;
-
-        @Override
-        public boolean hasNext() {
-            return pos < size();
-        }
-
-        @Override
-        public Integer next() {
-            if (fixedModCount != modCount) {
-                throw new ConcurrentModificationException();
-            } else if (position > size()) {
-                throw new NoSuchElementException();
-            }
-            return get(pos++);
-        }
+        return new MyIterator(0);
     }
 
     /**
@@ -83,30 +62,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new myEvenIterator();
-    }
-
-    public class myEvenIterator implements Iterator {
-
-        private int pos = -1;
-        private final int fixedModCount = modCount;
-
-        @Override
-        public boolean hasNext() {
-            return pos + 2 < size();
-        }
-
-        @Override
-        public Object next() {
-            if (fixedModCount != modCount) {
-                throw new ConcurrentModificationException();
-            } else if (pos + 2 >= size()) {
-                throw new NoSuchElementException();
-            }
-            pos += 2;
-            return get(pos);
-        }
-
+        return new MyIterator(2);
     }
 
     /**
@@ -116,13 +72,19 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new myOddIterator();
+        return new MyIterator(1);
     }
 
-    public class myOddIterator implements Iterator {
+    public class MyIterator implements Iterator {
 
         private int pos;
+        private final int state; // 0 -> ordinary iterator, 1 -> odd iterator, 2 -> even iterator
         private final int fixedModCount = modCount;
+
+        public MyIterator(int state) {
+            this.state = state;
+            pos = (state < 2) ? 0 : 1;
+        }
 
         @Override
         public boolean hasNext() {
@@ -137,7 +99,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
                 throw new NoSuchElementException();
             }
             int element = get(pos);
-            pos += 2;
+            pos += (state > 0) ? 2 : 1;
             return element;
         }
     }

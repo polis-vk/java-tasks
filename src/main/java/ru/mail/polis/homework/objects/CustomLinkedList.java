@@ -53,6 +53,8 @@ public class CustomLinkedList implements Iterable<Integer> {
     public int get(int index) {
         if (index >= size()) {
             throw new IndexOutOfBoundsException(String.valueOf(index));
+        } else if (index == size() - 1) {
+            return last.value;
         }
         Node currNode = head;
         for (int i = 1; i <= index; i++) {
@@ -179,7 +181,7 @@ public class CustomLinkedList implements Iterable<Integer> {
     private class ListIterator implements Iterator {
 
         private int pos;
-        private final int fixedModCount = modCount;
+        private int fixedModCount;
 
         @Override
         public boolean hasNext() {
@@ -188,7 +190,9 @@ public class CustomLinkedList implements Iterable<Integer> {
 
         @Override
         public Integer next() {
-            if (fixedModCount != modCount) {
+            if (pos == 0) {
+                fixedModCount = modCount;
+            } else if (fixedModCount != modCount) {
                 throw new ConcurrentModificationException();
             } else if (pos >= size()) {
                 throw new NoSuchElementException();

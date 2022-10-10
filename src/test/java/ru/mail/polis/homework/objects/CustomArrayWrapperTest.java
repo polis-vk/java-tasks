@@ -24,6 +24,7 @@ public class CustomArrayWrapperTest {
 
         assertEquals(5, result.size());
         assertValues(DEFAULT_ARRAY, result, false);
+
     }
 
     @Test
