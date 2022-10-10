@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * 15 тугриков
@@ -9,6 +11,9 @@ import java.util.Iterator;
 public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
+    private Node last;
+    private int size = 0;
+    private int modCount = 0;
 
     /**
      * 1 тугрик
@@ -17,7 +22,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @return size
      */
     public int size() {
-        return 0;
+        return size;
     }
 
     /**
@@ -28,7 +33,16 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int value) {
+        if (head == null) {
+            head = new Node(value);
+            last = head;
+        } else {
+            last.setNext(new Node(value));
+            last = last.next;
+        }
 
+        size++;
+        modCount++;
     }
 
     /**
@@ -38,7 +52,9 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index
      */
     public int get(int index) {
-       return 0;
+        checkElementIndex(index);
+
+        return getNode(index).value;
     }
 
     /**
@@ -52,7 +68,28 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int i, int value) {
+        if (i < 0 || i > size) {    // Можно добавить в конец массива, поэтому checkElementIndex() не подходит
+            throw new IndexOutOfBoundsException(String.valueOf(i));
+        }
 
+        if (i == size) {
+            add(value);
+            return;
+        }
+
+        if (i == 0) {
+            Node newNode = new Node(value);
+            newNode.setNext(head);
+            head = newNode;
+        } else {
+            Node node = getNode(i - 1);
+            Node nextNode = node.next;
+            node.setNext(new Node(value));
+            node.next.setNext(nextNode);
+        }
+
+        size++;
+        modCount++;
     }
 
     /**
@@ -65,7 +102,21 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
+        checkElementIndex(index);
 
+        if (index == 0) {
+            head = head.next;
+        } else {
+            Node previousNode = getNode(index - 1);
+            previousNode.setNext(previousNode.next.next);
+
+            if (index == size - 1) {
+                last = previousNode;
+            }
+        }
+
+        size--;
+        modCount++;
     }
 
     /**
@@ -77,7 +128,19 @@ public class CustomLinkedList implements Iterable<Integer> {
      *  После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
+        Node previousNode = null;
+        Node currentNode = head;
+        Node nextNode;
 
+        while (currentNode != null) {
+            nextNode = currentNode.next;
+            currentNode.setNext(previousNode);
+            previousNode = currentNode;
+            currentNode = nextNode;
+        }
+
+        last = head;
+        head = previousNode;
     }
 
     /**
@@ -92,7 +155,16 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     @Override
     public String toString() {
-        return "1 -> 2 -> 3 -> null";
+        StringBuilder resultString = new StringBuilder();
+        Node currentNode = head;
+
+        while (currentNode != null) {
+            resultString.append(currentNode.value).append(" -> ");
+            currentNode = currentNode.next;
+        }
+
+        resultString.append("null");
+        return resultString.toString();
     }
 
     /**
@@ -103,11 +175,27 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new CustomLinkedListIterator();
+    }
+
+    private void checkElementIndex(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException(String.valueOf(index));
+        }
+    }
+
+    private Node getNode(int index) {
+        Node currentNode = head;
+        for (int i = 0; i != index; i++) {
+            currentNode = currentNode.next;
+        }
+
+        return currentNode;
     }
 
     private static class Node {
-        private int value;
+
+        private final int value;
         private Node next;
 
         public Node(int value) {
@@ -116,6 +204,35 @@ public class CustomLinkedList implements Iterable<Integer> {
 
         public void setNext(Node next) {
             this.next = next;
+        }
+    }
+
+    private class CustomLinkedListIterator implements Iterator<Integer> {
+
+        private int position;
+        private Node currentNode = head;
+        private final int fixedModCount = modCount;
+
+        @Override
+        public boolean hasNext() {
+            return position < size;
+        }
+
+        @Override
+        public Integer next() {
+            if (fixedModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+
+            if (position >= size) {
+                throw new NoSuchElementException();
+            }
+
+            int value = currentNode.value;
+            currentNode = currentNode.next;
+            position++;
+
+            return value;
         }
     }
 }
