@@ -56,7 +56,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public int get(int index) {
         checkIndexInclusive(index);
-        return getNode(head, index).value;
+        return getNode(index).value;
     }
 
     /**
@@ -224,15 +224,11 @@ public class CustomLinkedList implements Iterable<Integer> {
     }
 
     private static class Node {
-        private int value;
+        private final int value;
         private Node next;
 
         public Node(int value) {
             this.value = value;
-        }
-
-        public void setNext(Node next) {
-            this.next = next;
         }
 
         @Override
@@ -256,9 +252,9 @@ public class CustomLinkedList implements Iterable<Integer> {
         }
     }
 
-    private Node getNode(Node node, int index) {
+    private Node getNode(int index) {
         int i = 0;
-        Node current = node;
+        Node current = head;
 
         while (i < index) {
             current = current.next;
