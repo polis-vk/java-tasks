@@ -174,11 +174,11 @@ public class CustomLinkedList implements Iterable<Integer> {
 
     private Node getNode(int index) {
         checkIndex(index);
-        Node nextNode = head;
-        int counter = 0;
         if (size > 0 && index == size - 1) {
             return tail;
         }
+        Node nextNode = head;
+        int counter = 0;
         while (counter != index) {
             nextNode = nextNode.next;
             counter++;
