@@ -53,27 +53,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new Iterator<Integer>() {
-            private final CustomArrayWrapper customArrayWrapper = CustomArrayWrapper.this;
-            private final int fixedModCount = customArrayWrapper.modCount;
-            private int index = 0;
-
-            @Override
-            public boolean hasNext() {
-                return index < customArrayWrapper.size();
-            }
-
-            @Override
-            public Integer next() {
-                if (fixedModCount != customArrayWrapper.modCount) {
-                    throw new ConcurrentModificationException();
-                } else if (!this.hasNext()) {
-                    throw new NoSuchElementException();
-                }
-
-                return customArrayWrapper.get(index++);
-            }
-        };
+        return new CustomArrayWrapperIterator(0, 1);
     }
 
     /**
@@ -83,29 +63,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new Iterator<Integer>() {
-            private final CustomArrayWrapper customArrayWrapper = CustomArrayWrapper.this;
-            private final int fixedModCount = customArrayWrapper.modCount;
-            private int index = 1;
-
-            @Override
-            public boolean hasNext() {
-                return index < customArrayWrapper.size();
-            }
-
-            @Override
-            public Integer next() {
-                if (fixedModCount != customArrayWrapper.modCount) {
-                    throw new ConcurrentModificationException();
-                } else if (!this.hasNext()) {
-                    throw new NoSuchElementException();
-                }
-
-                int value = customArrayWrapper.get(index);
-                index += 2;
-                return value;
-            }
-        };
+        return new CustomArrayWrapperIterator(1, 2);
     }
 
     /**
@@ -115,29 +73,38 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new Iterator<Integer>() {
-            private final CustomArrayWrapper customArrayWrapper = CustomArrayWrapper.this;
-            private final int fixedModCount = customArrayWrapper.modCount;
-            private int index = 0;
+        return new CustomArrayWrapperIterator(0, 2);
+    }
 
-            @Override
-            public boolean hasNext() {
-                return index < customArrayWrapper.size();
+    private class CustomArrayWrapperIterator implements Iterator<Integer> {
+        private final CustomArrayWrapper customArrayWrapper = CustomArrayWrapper.this;
+        private final int fixedModCount = customArrayWrapper.modCount;
+        private int index;
+        private final int delta;
+
+        public CustomArrayWrapperIterator(int startIndex, int delta) {
+            super();
+            this.index = startIndex;
+            this.delta = delta;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return index < customArrayWrapper.size();
+        }
+
+        @Override
+        public Integer next() {
+            if (fixedModCount != customArrayWrapper.modCount) {
+                throw new ConcurrentModificationException();
+            } else if (!this.hasNext()) {
+                throw new NoSuchElementException();
             }
 
-            @Override
-            public Integer next() {
-                if (fixedModCount != customArrayWrapper.modCount) {
-                    throw new ConcurrentModificationException();
-                } else if (!this.hasNext()) {
-                    throw new NoSuchElementException();
-                }
-
-                int value = customArrayWrapper.get(index);
-                index += 2;
-                return value;
-            }
-        };
+            int value = customArrayWrapper.get(index);
+            index += delta;
+            return value;
+        }
     }
 
     private void checkIndex(int index) {
