@@ -8,6 +8,8 @@ import java.util.Stack;
  * 15 тугриков
  * Реализовать все методы односвязного списка.
  */
+
+
 public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
@@ -51,6 +53,9 @@ public class CustomLinkedList implements Iterable<Integer> {
 
     private Node getNode(int index) {
         checkIndex(index);
+        if (index == size - 1) {
+            return tail;
+        }
         Node currentNode = head;
         for (int currentIndex = 0; currentIndex < index; currentIndex++) {
             currentNode = currentNode.next;
@@ -172,7 +177,7 @@ public class CustomLinkedList implements Iterable<Integer> {
     @Override
     public Iterator<Integer> iterator() {
         return new Iterator<Integer>() {
-            Node currentNode = head;
+            private Node currentNode = head;
 
             @Override
             public boolean hasNext() {
