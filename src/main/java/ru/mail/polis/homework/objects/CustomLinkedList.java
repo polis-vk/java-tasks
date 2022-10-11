@@ -9,8 +9,8 @@ import java.util.NoSuchElementException;
  * Реализовать все методы односвязного списка.
  */
 public class CustomLinkedList implements Iterable<Integer> {
-
     private Node head;
+    private Node tail;
     private int size = 0;
     private int modCount = 0;
 
@@ -32,19 +32,16 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int value) {
-        size++;
-        modCount++;
         if (head == null) {
             head = new Node(value);
-            return;
+            tail = head;
+        } else {
+            Node newNode = new Node(value);
+            tail.setNext(newNode);
+            tail = newNode;
         }
-
-        Node currentNode = head;
-        while (currentNode.next != null) {
-            currentNode = currentNode.next;
-        }
-
-        currentNode.setNext(new Node(value));
+        size++;
+        modCount++;
     }
 
     /**
@@ -55,6 +52,9 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public int get(int index) {
         checkIndex(index);
+        if (index + 1 == this.size()) {
+            return tail.value;
+        }
 
         int currentIndex = 0;
         Node currentNode = head;
@@ -81,22 +81,28 @@ public class CustomLinkedList implements Iterable<Integer> {
         }
 
         Node newNode = new Node(value);
-        size++;
-        modCount++;
         if (i == 0) {
             newNode.setNext(head);
             head = newNode;
-            return;
-        }
 
-        int beforeInsertIndex = 0;
-        Node currentNode = head;
-        while (beforeInsertIndex++ != i - 1) {
-            currentNode = currentNode.next;
-        }
+            if (this.size() == 0) {
+                tail = head;
+            }
+        } else if (i == this.size()) {
+            tail.setNext(newNode);
+            tail = newNode;
+        } else {
+            int beforeInsertIndex = 0;
+            Node currentNode = head;
+            while (beforeInsertIndex++ != i - 1) {
+                currentNode = currentNode.next;
+            }
 
-        newNode.setNext(currentNode.next);
-        currentNode.setNext(newNode);
+            newNode.setNext(currentNode.next);
+            currentNode.setNext(newNode);
+        }
+        size++;
+        modCount++;
     }
 
     /**
@@ -111,20 +117,22 @@ public class CustomLinkedList implements Iterable<Integer> {
     public void removeElement(int index) {
         checkIndex(index);
 
-        size--;
-        modCount++;
         if (index == 0) {
             head = head.next;
-            return;
-        }
+        } else {
+            int beforeRemoveIndex = 0;
+            Node currentNode = head;
+            while (beforeRemoveIndex++ != index - 1) {
+                currentNode = currentNode.next;
+            }
 
-        int beforeRemoveIndex = 0;
-        Node currentNode = head;
-        while (beforeRemoveIndex++ != index - 1) {
-            currentNode = currentNode.next;
+            currentNode.setNext(currentNode.next.next);
+            if (beforeRemoveIndex + 1 == this.size()) {
+                tail = currentNode;
+            }
         }
-
-        currentNode.setNext(currentNode.next.next);
+        size--;
+        modCount++;
     }
 
     /**
@@ -136,8 +144,8 @@ public class CustomLinkedList implements Iterable<Integer> {
      *  После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-        modCount++;
         Node newHead = null;
+        tail = head;
 
         while (head != null) {
             Node newNode = head;
@@ -147,6 +155,7 @@ public class CustomLinkedList implements Iterable<Integer> {
         }
 
         head = newHead;
+        modCount++;
     }
 
     /**
