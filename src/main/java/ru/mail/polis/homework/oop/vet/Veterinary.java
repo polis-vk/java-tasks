@@ -3,12 +3,12 @@ package ru.mail.polis.homework.oop.vet;
 import java.util.List;
 
 /**
- * Класс описывающий ветеренара.
- * принимает поля:
+ * Класс описывающий ветеринара.
+ * Принимает поля:
  * costForPet - ценник на лечение домашних животных
  * costForWild - ценник на лечение диких животных
  * organizationWithGrant - список организаций с которыми сотрудничает и может
- * при помощи грантов организции делать скидку на лечение
+ * при помощи грантов организации делать скидку на лечение
  */
 public class Veterinary {
 
@@ -34,7 +34,7 @@ public class Veterinary {
                 cost += costForPet;
             } else if (animal instanceof WildAnimal) {
                 cost += costForWild;
-                saleByOrganizationGrant((WildAnimal) animal, cost);
+                cost = saleByOrganizationGrant((WildAnimal) animal, cost);
             }
         }
         return cost;
@@ -42,7 +42,8 @@ public class Veterinary {
 
     private int saleByOrganizationGrant(WildAnimal animal, int cost) {
         if (organizationWithGrant.contains(animal.getOrganizationName())) {
-            return --cost;
+            cost--;
+            return cost;
         }
         return cost;
     }
