@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -15,6 +17,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
+    private int modCount = 0;           // счетчик изменений внутри массива
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -24,11 +27,13 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
+        modCount++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
+        modCount++;
     }
 
     public int get(int index) {
@@ -48,7 +53,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new Iter();
     }
 
     /**
@@ -58,7 +63,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new EvenIter();
     }
 
     /**
@@ -68,7 +73,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new OddIter();
     }
 
     private void checkIndex(int index) {
@@ -77,4 +82,106 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
+    private class Iter implements Iterator<Integer> {
+
+        int modCount = CustomArrayWrapper.this.modCount;
+        int position;
+
+        @Override
+        public boolean hasNext() {
+            return position < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            if (modCount != CustomArrayWrapper.this.modCount) {
+                throw new ConcurrentModificationException();
+            }
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return array[position++];
+        }
+    }
+
+    private class EvenIter implements Iterator<Integer> {
+
+        int modCount = CustomArrayWrapper.this.modCount;
+        int position;
+
+        @Override
+        public boolean hasNext() {
+            return position < array.length / 2;
+        }
+
+        @Override
+        public Integer next() {
+            if (modCount != CustomArrayWrapper.this.modCount) {
+                throw new ConcurrentModificationException();
+            }
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return array[2 * position++ + 1];
+        }
+    }
+
+    private class OddIter implements Iterator<Integer> {
+
+        int modCount = CustomArrayWrapper.this.modCount;
+        int position;
+
+        @Override
+        public boolean hasNext() {
+            return position < Math.round((double) array.length / 2);
+        }
+
+        @Override
+        public Integer next() {
+            if (modCount != CustomArrayWrapper.this.modCount) {
+                throw new ConcurrentModificationException();
+            }
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return array[2 * position++];
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
