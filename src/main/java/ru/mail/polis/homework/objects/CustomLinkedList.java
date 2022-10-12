@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.objects;
 
-import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -11,7 +10,7 @@ import java.util.NoSuchElementException;
 public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
-    private Node mod;
+    private Node tail;
     private int size = 0;
 
     /**
@@ -32,26 +31,18 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int value) {
-        checkMod();
         if (head == null) {
             head = new Node(value);
+            tail = head;
         } else {
             Node node = new Node(value);
-            Node lastNode = getLastNode(head);
-            lastNode.setNext(node);
+            tail.setNext(node);
+            tail = node;
+            if (head.next == null) {
+                head.next = tail;
+            }
         }
-        resetMod();
         size++;
-    }
-
-    public void checkMod() {
-        if (mod != head) {
-            throw new ConcurrentModificationException();
-        }
-    }
-
-    private void resetMod() {
-        mod = head;
     }
 
     /**
@@ -72,7 +63,7 @@ public class CustomLinkedList implements Iterable<Integer> {
             return head;
         }
         if (index == size - 1) {
-            return getLastNode(head);
+            return tail;
         }
         int i = 0;
         Node node = head;
@@ -81,14 +72,6 @@ public class CustomLinkedList implements Iterable<Integer> {
             i++;
         }
         return node;
-    }
-
-    private Node getLastNode(Node node) {
-        if (node.next != null) {
-            return getLastNode(node.next);
-        } else {
-            return node;
-        }
     }
 
     /**
@@ -102,7 +85,6 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int i, int value) {
-        checkMod();
         if (i == size) {
             add(value);
             return;
@@ -121,7 +103,6 @@ public class CustomLinkedList implements Iterable<Integer> {
         } else {
             throw new IndexOutOfBoundsException();
         }
-        resetMod();
         size++;
     }
 
@@ -135,26 +116,24 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        checkMod();
         if (head == null || index < 0 || index > size - 1) {
             throw new IndexOutOfBoundsException();
         }
         if (index == size - 1) {
-            getNode(index - 1).setNext(null);
-            resetMod();
+            Node node = getNode(index - 1);
+            node.setNext(null);
+            tail = node;
             size--;
             return;
         }
         if (index == 0) {
             head = getNode(index + 1);
-            resetMod();
             size--;
             return;
         }
         Node leftNode = getNode(index - 1);
         Node rightNode = getNode(index + 1);
         leftNode.setNext(rightNode);
-        resetMod();
         size--;
     }
 
@@ -167,18 +146,17 @@ public class CustomLinkedList implements Iterable<Integer> {
      * После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-        checkMod();
         Node previous = null;
         Node current = head;
-        Node next;
         while (current != null) {
-            next = current.next;
+            Node next = current.next;
             current.setNext(previous);
             previous = current;
             current = next;
         }
+        tail = head;
+        tail.setNext(null);
         head = previous;
-        resetMod();
     }
 
     /**
@@ -239,7 +217,7 @@ public class CustomLinkedList implements Iterable<Integer> {
     }
 
     private static class Node {
-        private int value;
+        private final int value;
         private Node next;
 
         public Node(int value) {

@@ -63,7 +63,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new EvenIter();
+        return new Iter(true);
     }
 
     /**
@@ -73,7 +73,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new OddIter();
+        return new Iter(false);
     }
 
     private void checkIndex(int index) {
@@ -85,6 +85,15 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     class Iter implements Iterator<Integer> {
         int position;
         int fixedModCount = modCount;
+        boolean evenOrOdd = false;
+
+        public Iter() {
+        }
+
+        public Iter(boolean isEven) {
+            position = isEven ? 1 : 0;
+            evenOrOdd = true;
+        }
 
         @Override
         public boolean hasNext() {
@@ -113,46 +122,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
 
         public void fixPosition() {
-            position++;
-        }
-    }
-
-    private class EvenIter extends Iter {
-        int evenPosition = 1;
-
-        @Override
-        public Integer next() {
-            return next(evenPosition);
-        }
-
-        @Override
-        public boolean hasNext() {
-            return hasNext(evenPosition);
-        }
-
-        @Override
-        public void fixPosition() {
-            evenPosition += 2;
-        }
-
-    }
-
-    private class OddIter extends Iter {
-        int oddPosition = 0;
-
-        @Override
-        public Integer next() {
-            return next(oddPosition);
-        }
-
-        @Override
-        public boolean hasNext() {
-            return hasNext(oddPosition);
-        }
-
-        @Override
-        public void fixPosition() {
-            oddPosition += 2;
+            position += evenOrOdd ? 2 : 1;
         }
     }
 }
