@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.oop.vet;
 
-public class Snake extends Animal implements WildAnimal {
+public class Snake extends Animal implements Pet, WildAnimal {
 
     private String organizationName;
 

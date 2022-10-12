@@ -10,4 +10,9 @@ public class Dog extends Animal implements Pet {
     public String say() {
         return "Wow-wow";
     }
+
+    @Override
+    public MoveType moveType() {
+        return MoveType.RUN;
+    }
 }

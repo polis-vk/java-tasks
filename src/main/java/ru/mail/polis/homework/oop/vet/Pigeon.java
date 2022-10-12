@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.oop.vet;
 
-public class Pigeon extends Animal implements WildAnimal {
+public class Pigeon extends Animal implements Pet, WildAnimal {
 
     private String organizationName;
 

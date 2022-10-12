@@ -10,4 +10,9 @@ public class Cat extends Animal implements Pet {
     public String say() {
         return "Mow-Mow";
     }
+
+    @Override
+    public MoveType moveType() {
+        return MoveType.RUN;
+    }
 }
