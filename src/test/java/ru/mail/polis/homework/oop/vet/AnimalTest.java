@@ -81,7 +81,7 @@ public class AnimalTest {
         list.add(rareShark);
 
         Animal rareSnake = GeneratorAnimal.generateAnimal("snake");
-        ((WildAnimal) rareShark).setOrganizationName("WWF");
+        ((WildAnimal) rareSnake).setOrganizationName("WWF");
         list.add(rareSnake);
 
         Veterinary veterinary1 = new Veterinary(5, 10, Collections.singletonList("GreenPeace"));
