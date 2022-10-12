@@ -10,7 +10,7 @@ public class Shark extends Animal implements WildAnimal {
 
     @Override
     public String say() {
-        return "Сlack Сlack";
+        return "Clack Clack";
     }
 
     @Override

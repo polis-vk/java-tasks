@@ -42,8 +42,7 @@ public class Veterinary {
 
     private int saleByOrganizationGrant(WildAnimal animal, int cost) {
         if (organizationWithGrant.contains(animal.getOrganizationName())) {
-            cost--;
-            return cost;
+            return --cost;
         }
         return cost;
     }
