@@ -55,7 +55,6 @@ public class AnimalTest {
     public void testGenerateShark() {
         Animal shark = GeneratorAnimal.generateAnimal("shark");
         assertEquals("Clack Clack", shark.say());
-        assertEquals("Сlack Сlack", shark.say());
         assertEquals(0, shark.getLegs());
         assertEquals(MoveType.SWIM, shark.moveType());
     }
@@ -82,16 +81,14 @@ public class AnimalTest {
         list.add(rareShark);
 
         Animal rareSnake = GeneratorAnimal.generateAnimal("snake");
-        ((WildAnimal) rareSnake).setOrganizationName("WWF");
         ((WildAnimal) rareShark).setOrganizationName("WWF");
-
         list.add(rareSnake);
+
         Veterinary veterinary1 = new Veterinary(5, 10, Collections.singletonList("GreenPeace"));
         assertEquals(54, veterinary1.calculateCostTherapy(list.toArray(new Animal[0])));
 
 
         Veterinary veterinary2 = new Veterinary(10, 5, Arrays.asList("GreenPeace", "WWF"));
-        assertEquals(58, veterinary2.calculateCostTherapy(list.toArray(new Animal[0])));
         assertEquals(58, veterinary1.calculateCostTherapy(list.toArray(new Animal[0])));
 
     }
