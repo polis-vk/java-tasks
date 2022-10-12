@@ -245,13 +245,4 @@ public class CustomLinkedList implements Iterable<Integer> {
             this.next = next;
         }
     }
-
-    public static void main(String[] args) {
-        CustomLinkedList customLinkedList = new CustomLinkedList();
-        for (int i = 0; i < 9; i++) {
-            customLinkedList.add(i);
-        }
-        customLinkedList.revertList();
-        customLinkedList.toString();
-    }
 }
