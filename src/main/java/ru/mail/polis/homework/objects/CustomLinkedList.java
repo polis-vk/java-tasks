@@ -17,6 +17,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @return size
      */
     public int size() {
+
         return 0;
     }
 
