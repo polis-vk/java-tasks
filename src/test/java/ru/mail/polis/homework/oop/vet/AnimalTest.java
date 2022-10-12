@@ -54,7 +54,7 @@ public class AnimalTest {
     @Test
     public void testGenerateShark() {
         Animal shark = GeneratorAnimal.generateAnimal("shark");
-        assertEquals("Сlack Сlack", shark.say());
+        assertEquals("Clack Clack", shark.say());
         assertEquals(0, shark.getLegs());
         assertEquals(MoveType.SWIM, shark.moveType());
     }
