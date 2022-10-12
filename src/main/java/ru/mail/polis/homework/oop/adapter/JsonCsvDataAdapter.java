@@ -1,8 +1,26 @@
 package ru.mail.polis.homework.oop.adapter;
 
 /**
- * После имплементации раскоментировать тест в ru.mail.polis.homework.oop.adapter.ProductPriceParsServiceTest
+ * После имплементации раскомментировать тест в ru.mail.polis.homework.oop.adapter.ProductPriceParsServiceTest
  * для проверки правильной имплементации
  */
-public class JsonCsvDataAdapter {
+public class JsonCsvDataAdapter extends CsvData {
+
+    private final String text;
+
+    public JsonCsvDataAdapter(String text) {
+        super(text);
+        this.text = text;
+    }
+
+    private String jsonToScv(String text) {
+        return text.replaceAll(",", "")
+                .replaceAll(":", ",")
+                .replaceAll("\"", "")
+                .replaceAll("[{}]", "");
+    }
+
+    public String getText() {
+        return jsonToScv(text);
+    }
 }
