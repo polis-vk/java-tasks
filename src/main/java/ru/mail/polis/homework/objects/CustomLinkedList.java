@@ -12,7 +12,7 @@ public class CustomLinkedList implements Iterable<Integer> {
     private Node head;
     private Node tail;
     private int size;
-    private int modCount = 0;
+    private int modCount;
 
     /**
      * 1 тугрик

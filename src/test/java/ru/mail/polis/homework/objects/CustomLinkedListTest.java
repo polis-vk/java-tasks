@@ -129,7 +129,7 @@ public class CustomLinkedListTest {
         list.removeElement(DEFAULT_ARRAY.length);
     }
 
-    @Test
+    @Test // '
     public void revertList() {
         CustomLinkedList list = generateCustomLinkedList(DEFAULT_ARRAY);
         list.revertList();
