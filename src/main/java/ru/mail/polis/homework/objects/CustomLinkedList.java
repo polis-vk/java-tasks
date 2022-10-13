@@ -12,6 +12,7 @@ public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
     private Node last;
+    private int size;
 
     /**
      * 1 тугрик
@@ -20,10 +21,6 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @return size
      */
     public int size() {
-        int size = 0;
-        for (Integer integer : this) {
-            size++;
-        }
         return size;
     }
 
@@ -43,6 +40,7 @@ public class CustomLinkedList implements Iterable<Integer> {
             last.setNext(newNode);
             last = newNode;
         }
+        size++;
     }
 
     /**
@@ -55,12 +53,17 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (index < 0 || index >= size()) {
             throw new IndexOutOfBoundsException(String.valueOf(index));
         }
-        int counter = 0;
-        for (Integer integer : this) {
-            if (counter == index) {
-                return integer;
+
+        if (index == size() - 1) {
+            return last.value;
+        } else {
+            int counter = 0;
+            for (Integer integer : this) {
+                if (counter == index) {
+                    return integer;
+                }
+                counter++;
             }
-            counter++;
         }
         return 0;
     }
@@ -98,6 +101,7 @@ public class CustomLinkedList implements Iterable<Integer> {
                 currentNode = currentNode.next;
             }
         }
+        size++;
     }
 
     /**
@@ -120,10 +124,12 @@ public class CustomLinkedList implements Iterable<Integer> {
             throw new IndexOutOfBoundsException(String.valueOf(index));
         } else if (index == 0) {
             head = currentNode.next;
+            size--;
         } else {
             while (currentNode != null) {
                 if (counter == index) {
                     previousNode.next = currentNode.next;
+                    size--;
                     if (index == size()) {
                         last = previousNode;
                     }

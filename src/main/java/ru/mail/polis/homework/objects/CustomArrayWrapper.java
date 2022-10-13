@@ -54,8 +54,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        position = 0;
-        return iteratorWithStep(1);
+        return iteratorWithStep(1, false);
     }
 
     /**
@@ -65,8 +64,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        position = 1;
-        return iteratorWithStep(2);
+        return iteratorWithStep(2, true);
     }
 
     /**
@@ -76,8 +74,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        position = 0;
-        return iteratorWithStep(2);
+        return iteratorWithStep(2, false);
     }
 
     private void checkIndex(int index) {
@@ -86,9 +83,10 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
-    private Iterator<Integer> iteratorWithStep(int step) {
+    private Iterator<Integer> iteratorWithStep(int step, boolean isEven) {
         return new Iterator<Integer>() {
             private final int fixedModCount = modCount;
+            private int position = isEven ? 1 : 0;
 
             @Override
             public boolean hasNext() {
