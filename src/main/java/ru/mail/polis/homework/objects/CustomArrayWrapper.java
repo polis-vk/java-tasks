@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -16,6 +18,8 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
 
+    private int countOfIter;
+
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
     }
@@ -24,11 +28,13 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
+        countOfIter++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
+        countOfIter++;
     }
 
     public int get(int index) {
@@ -36,8 +42,67 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         return array[index];
     }
 
+    public int getCountOfIter() {
+        return countOfIter;
+    }
+
     public int size() {
         return array.length;
+    }
+
+    enum Types {
+        DEFAULT,
+        EVEN,
+        ODD
+    }
+
+    public class ArrayIterator implements Iterator<Integer> {
+        private final int[] elementsArr;
+        private int currentIndex;
+        private final int indexSteps;
+
+        private final Types type;
+
+        private final int countOfIter = getCountOfIter();
+
+
+        public ArrayIterator(int[] elementsArr, int currentIndex, int indexSteps, Types type) {
+            this.elementsArr = elementsArr;
+            this.currentIndex = currentIndex;
+            this.indexSteps = indexSteps;
+            this.type = type;
+        }
+
+        public boolean hasNext() {
+            return currentIndex < array.length;
+        }
+
+        public Integer next() {
+            if (countOfIter != getCountOfIter()) {
+                throw new ConcurrentModificationException();
+            } else {
+                if (type == Types.DEFAULT) {
+                    if (hasNext()) {
+                        return elementsArr[currentIndex++];
+                    }
+                }
+                if (type == Types.EVEN) {
+                    if (hasNext()) {
+                        int element = elementsArr[currentIndex];
+                        currentIndex = currentIndex + indexSteps;
+                        return element;
+                    }
+                }
+                if (type == Types.ODD) {
+                    if (hasNext()) {
+                        int element = elementsArr[currentIndex];
+                        currentIndex = currentIndex + indexSteps;
+                        return element;
+                    }
+                }
+            }
+            throw new NoSuchElementException();
+        }
     }
 
     /**
@@ -48,7 +113,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new ArrayIterator(array, 0, 1, Types.DEFAULT);
     }
 
     /**
@@ -58,7 +123,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new ArrayIterator(array, 1, 2, Types.EVEN);
     }
 
     /**
@@ -68,7 +133,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new ArrayIterator(array, 0, 2, Types.ODD);
     }
 
     private void checkIndex(int index) {
@@ -76,5 +141,4 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             throw new IndexOutOfBoundsException();
         }
     }
-
 }
