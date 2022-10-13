@@ -16,8 +16,8 @@ import java.util.NoSuchElementException;
 public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
-    private int position ;
-    private int modCount ;
+    private int position;
+    private int modCount;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
