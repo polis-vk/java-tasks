@@ -18,35 +18,6 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
 
-    private class CustomArrayIterator implements Iterator<Integer> {
-
-        private final int fixedPos = position;
-        private int current = 0;
-        private int step = 1;
-
-        CustomArrayIterator(int pos, int step) {
-            this.current = pos;
-            this.step = step;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return current < size();
-        }
-
-        @Override
-        public Integer next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            } else if (fixedPos != position) {
-                throw new ConcurrentModificationException();
-            }
-            Integer elem = array[current];
-            current += step;
-            return elem;
-        }
-    }
-
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
     }
@@ -105,6 +76,35 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     private void checkIndex(int index) {
         if (index < 0 || index >= array.length) {
             throw new IndexOutOfBoundsException();
+        }
+    }
+
+    private class CustomArrayIterator implements Iterator<Integer> {
+
+        private final int fixedPos = position;
+        private int current = 0;
+        private int step = 1;
+
+        CustomArrayIterator(int pos, int step) {
+            this.current = pos;
+            this.step = step;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return current < size();
+        }
+
+        @Override
+        public Integer next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            } else if (fixedPos != position) {
+                throw new ConcurrentModificationException();
+            }
+            Integer elem = array[current];
+            current += step;
+            return elem;
         }
     }
 
