@@ -95,9 +95,14 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         int position;
         int iterationStep;
 
-
+        // Поместил конструкторы рядом - исправлено.
         public DefaultIterator() {
             this(1, 0);
+        }
+
+        protected DefaultIterator(int iterationStep, int startPosition) {
+            this.iterationStep = iterationStep;
+            position = startPosition;
         }
 
         @Override
@@ -121,10 +126,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             return arrValue;
         }
 
-        protected DefaultIterator(int iterationStep, int startPosition) {
-            this.iterationStep = iterationStep;
-            position = startPosition;
-        }
+
     }
 
     private class EvenIterator extends DefaultIterator {

@@ -72,6 +72,11 @@ public class CustomLinkedList implements Iterable<Integer> {
             throw new IndexOutOfBoundsException();
         }
 
+        // Если запрашивают последний - исправлено.
+        if (index == listSize - 1) {
+            return listLastNode.value;
+        }
+
         //Последовательно проходимся до необходимого звена с головы и возвращаем значение.
         Node currentNode = listHead;
         for (int i = 0; i < index; i++) {
@@ -97,27 +102,34 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (i > listSize || i < 0) {
             throw new IndexOutOfBoundsException("i");
         }
-        /*
-         * Создаем текущее звено, которое изначально является головным. Далее, если нужно добавить элемент на место
-         * головного звена (i == 0), то создаем новое звено в "голове" и делаем следующим для него прошлую "голову".
-         * Если нужно вставить элемент не в голову то ищем звено, стоящее перед необходимым и производим перетасовку
-         * ссылок.
-         */
-        Node currentNode = listHead;
-        if (i == 0) {
-            listHead = new Node(value);
-            listHead.next = currentNode;
+
+        // Если добавляется в конец - исправлено.
+        if (i == listSize) {
+            listLastNode.setNext(new Node(value));
+            listLastNode = listLastNode.next;
         } else {
+            /*
+             * Создаем текущее звено, которое изначально является головным. Далее, если нужно добавить элемент на место
+             * головного звена (i == 0), то создаем новое звено в "голове" и делаем следующим для него прошлую "голову".
+             * Если нужно вставить элемент не в голову то ищем звено, стоящее перед необходимым и производим перетасовку
+             * ссылок.
+             */
+            Node currentNode = listHead;
+            if (i == 0) {
+                listHead = new Node(value);
+                listHead.next = currentNode;
+            } else {
 
-            // Поиск звена перед звеном с необходимым индексом.
-            for (int j = 0; j < i - 1; j++) {
-                currentNode = currentNode.next;
+                // Поиск звена перед звеном с необходимым индексом.
+                for (int j = 0; j < i - 1; j++) {
+                    currentNode = currentNode.next;
+                }
+
+                // Создаем новое звено, и внедряем его в нужное место, заменяя ссылки на звенья.
+                Node newNode = new Node(value);
+                newNode.next = currentNode.next;
+                currentNode.next = newNode;
             }
-
-            // Создаем новое звено, и внедряем его в нужное место, заменяя ссылки на звенья.
-            Node newNode = new Node(value);
-            newNode.next = currentNode.next;
-            currentNode.next = newNode;
         }
 
         // Отслеживание размера и изменений списка.
@@ -184,7 +196,7 @@ public class CustomLinkedList implements Iterable<Integer> {
         Node tempNode = listLastNode;
         listLastNode = listHead;
 
-        // Пок не дойдет до конца списка заменяем ссылки, инвертируем список.
+        // Пока не дойдет до конца списка заменяем ссылки, инвертируем список.
         while (currentNode != null) {
             Node nextNode = currentNode.next;
             currentNode.setNext(previousNode);
@@ -194,6 +206,9 @@ public class CustomLinkedList implements Iterable<Integer> {
 
         // Переопределяем голову.
         listHead = tempNode;
+
+        // Отслеживаем изменения - исправлено.
+        modCount++;
     }
 
     /**
@@ -212,14 +227,15 @@ public class CustomLinkedList implements Iterable<Integer> {
          * Начинаем преобразование с головы, далее проходя по всему списку конкатенируем предыдущую строчку.
          */
         Node currentNode = listHead;
-        String totalMessage = "";
+        StringBuilder totalMessage = new StringBuilder();
         while (currentNode != null) {
-            totalMessage = totalMessage.concat(currentNode.value + " -> ");
+            totalMessage.append(currentNode.value).append(" -> ");
             currentNode = currentNode.next;
         }
 
         // В случае для пустого массива выведется только null.
-        return totalMessage.concat("null");
+        totalMessage.append("null");
+        return totalMessage.toString();
     }
 
     /**
