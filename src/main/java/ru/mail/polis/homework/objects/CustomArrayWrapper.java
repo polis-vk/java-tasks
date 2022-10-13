@@ -65,36 +65,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        int fixModCount = modCount;
-        Iterator<Integer> iterator = Arrays.stream(array).iterator();
-        Iterator<Integer> evenIterator = new Iterator<Integer>() {
-            boolean isEvenIndex = true;
-
-            @Override
-            public boolean hasNext() {
-                if (iterator.hasNext()) {
-                    iterator.next();
-                    if (isEvenIndex) {
-                        isEvenIndex = false;
-                        return true;
-                    }
-                    return iterator.hasNext();
-                }
-                return false;
-            }
-
-            @Override
-            public Integer next() {
-                if (fixModCount != modCount) {
-                    throw new ConcurrentModificationException();
-                }
-                if (position > size()) {
-                    throw new NoSuchElementException();
-                }
-                return iterator.next();
-            }
-        };
-        return evenIterator;
+        return new ItrTypes("even");
     }
 
     /**
@@ -104,35 +75,46 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        int fixModCount = modCount;
+        return new ItrTypes("odd");
+    }
+
+    private class ItrTypes implements Iterator<Integer> {
+        final int fixModCount = modCount;
+        String typeIterator;
+        public ItrTypes(String typeIterator) {
+            this.typeIterator = typeIterator;
+        }
         Iterator<Integer> iterator = Arrays.stream(array).iterator();
-        Iterator<Integer> oddIterator = new Iterator<Integer>() {
-            boolean isOddIndex = true;
+        boolean isOddIndex = true;
 
-            @Override
-            public boolean hasNext() {
-                if (iterator.hasNext()) {
-                    if (isOddIndex) {
-                        isOddIndex = false;
-                        return true;
-                    }
+        @Override
+        public boolean hasNext() {
+            if (iterator.hasNext()) {
+                if (typeIterator.equals("even")) {
                     iterator.next();
-                    return iterator.hasNext();
                 }
-                return false;
+                if (isOddIndex) {
+                    isOddIndex = false;
+                    return true;
+                }
+                if (typeIterator.equals("odd")) {
+                    iterator.next();
+                }
+                return iterator.hasNext();
             }
+            return false;
+        }
 
-            public Integer next() {
-                if (fixModCount != modCount) {
-                    throw new ConcurrentModificationException();
-                }
-                if (position > size()) {
-                    throw new NoSuchElementException();
-                }
-                return iterator.next();
+        @Override
+        public Integer next() {
+            if (fixModCount != modCount) {
+                throw new ConcurrentModificationException();
             }
-        };
-        return oddIterator;
+            if (position > size()) {
+                throw new NoSuchElementException();
+            }
+            return iterator.next();
+        }
     }
 
     private void checkIndex(int index) {

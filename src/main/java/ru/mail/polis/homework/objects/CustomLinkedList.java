@@ -11,7 +11,9 @@ import java.util.NoSuchElementException;
 public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
+    private Node tail;
     private int modCount = 0;
+    private int size = 0;
 
     /**
      * 1 тугрик
@@ -20,16 +22,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @return size
      */
     public int size() {
-        int size = 0;
-        Node bufferNode = head;
-        if (bufferNode != null) {
-            size++;
-            while (bufferNode.next != null) {
-                bufferNode = bufferNode.next;
-                size++;
-            }
-        }
-        return size;
+        return this.size;
     }
 
     /**
@@ -41,17 +34,15 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public void add(int value) {
         Node newNode = new Node(value);
-        newNode.next = null;
         if (head == null) {
             head = newNode;
+            tail = head;
         } else {
-            Node last = head;
-            while (last.next != null) {
-                last = last.next;
-            }
-            last.next = newNode;
+            tail.next = newNode;
+            tail = tail.next;
         }
         modCount++;
+        size++;
     }
 
     /**
@@ -64,13 +55,14 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (index >= size()) {
             throw new IndexOutOfBoundsException(index);
         }
+        if (index == size - 1) {
+            return tail.value;
+        }
         Node last = head;
-        int result = last.value;
         for (int i = 0; i < index; i++) {
             last = last.next;
-            result = last.value;
         }
-        return result;
+        return last.value;
     }
 
     /**
@@ -94,21 +86,21 @@ public class CustomLinkedList implements Iterable<Integer> {
             buffer = head;
             head = newNode;
             head.next = buffer;
-        } else if (i == 1) {
-            buffer = last.next;
-            last.next = newNode;
-            newNode.next = buffer;
         } else {
-            for (int j = 0; j < i; j++) {
-                last = last.next;
-                if (j == i - 2) {
+            for (int j = 1; j <= i; j++) {
+                if (j == i) {
                     buffer = last.next;
                     last.next = newNode;
                     newNode.next = buffer;
+                    if (size == i) {
+                        tail = tail.next;
+                    }
                 }
+                last = last.next;
             }
-            modCount++;
         }
+        modCount++;
+        size++;
     }
 
     /**
@@ -127,19 +119,21 @@ public class CustomLinkedList implements Iterable<Integer> {
         Node last = head;
         if (index == 0) {
             head = head.next;
-        } else if (index == 1) {
-            head.next = head.next.next;
+            tail = head;
         } else {
-            int counter = 0;
-            last = last.next;
-            while (last != null) {
-                if (counter == index - 2) {
+            for (int j = 1; j <= index; j++) {
+                if (j == index && size() - 1 > index) {
                     last.next = last.next.next;
                 }
-                counter++;
                 last = last.next;
+                if (index - 1 == j && size() - 1 == index) {
+                    last.next = null;
+                    tail = last;
+                }
             }
         }
+        modCount++;
+        size--;
     }
 
     /**
@@ -153,6 +147,7 @@ public class CustomLinkedList implements Iterable<Integer> {
     public void revertList() {
         Node last = null;
         Node buffer = head;
+        Node newHead = head;
         while (buffer != null) {
             Node nextElement = buffer.next;
             buffer.next = last;
@@ -160,6 +155,9 @@ public class CustomLinkedList implements Iterable<Integer> {
             buffer = nextElement;
             head = last;
         }
+        tail = newHead;
+        tail.next = null;
+        modCount++;
     }
 
     /**
@@ -175,13 +173,13 @@ public class CustomLinkedList implements Iterable<Integer> {
     @Override
     public String toString() {
         Node last = head;
-        String fullList = "";
+        StringBuilder fullList = new StringBuilder();
         while (last != null) {
-            fullList = fullList.concat(last.value + " -> ");
+            fullList = fullList.append(last.value + " -> ");
             last = last.next;
         }
-        fullList = fullList.concat("null");
-        return fullList;
+        fullList = fullList.append("null");
+        return fullList.toString();
     }
 
     /**
