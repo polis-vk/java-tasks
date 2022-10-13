@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import ru.mail.polis.homework.oop.vet.animals.WildAnimal;
+import ru.mail.polis.homework.oop.vet.types.MoveType;
+
 import static org.junit.Assert.assertEquals;
 
 public class AnimalTest {
@@ -81,7 +84,7 @@ public class AnimalTest {
         list.add(rareShark);
 
         Animal rareSnake = GeneratorAnimal.generateAnimal("snake");
-        ((WildAnimal) rareShark).setOrganizationName("WWF");
+        ((WildAnimal) rareSnake).setOrganizationName("WWF");
         list.add(rareSnake);
 
         Veterinary veterinary1 = new Veterinary(5, 10, Collections.singletonList("GreenPeace"));
@@ -89,7 +92,7 @@ public class AnimalTest {
 
 
         Veterinary veterinary2 = new Veterinary(10, 5, Arrays.asList("GreenPeace", "WWF"));
-        assertEquals(58, veterinary1.calculateCostTherapy(list.toArray(new Animal[0])));
+        assertEquals(58, veterinary2.calculateCostTherapy(list.toArray(new Animal[0])));
 
     }
 

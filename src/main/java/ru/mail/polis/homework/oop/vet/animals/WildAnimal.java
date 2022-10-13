@@ -1,4 +1,4 @@
-package ru.mail.polis.homework.oop.vet;
+package ru.mail.polis.homework.oop.vet.animals;
 
 /**
  * Интерфейс обозначающий что данное живаотное является диким.

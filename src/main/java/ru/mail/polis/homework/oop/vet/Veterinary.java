@@ -2,6 +2,9 @@ package ru.mail.polis.homework.oop.vet;
 
 import java.util.List;
 
+import ru.mail.polis.homework.oop.vet.animals.Pet;
+import ru.mail.polis.homework.oop.vet.animals.WildAnimal;
+
 /**
  * Класс описывающий ветеренара.
  * принимает поля:
@@ -34,7 +37,7 @@ public class Veterinary {
                 cost += costForPet;
             } else if (animal instanceof WildAnimal) {
                 cost += costForWild;
-                saleByOrganizationGrant((WildAnimal) animal, cost);
+                cost = saleByOrganizationGrant((WildAnimal) animal, cost);
             }
         }
         return cost;
