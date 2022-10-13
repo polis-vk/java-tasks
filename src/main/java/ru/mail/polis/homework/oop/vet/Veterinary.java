@@ -34,7 +34,7 @@ public class Veterinary {
                 cost += costForPet;
             } else if (animal instanceof WildAnimal) {
                 cost += costForWild;
-                saleByOrganizationGrant((WildAnimal) animal, cost);
+                cost = saleByOrganizationGrant((WildAnimal) animal, cost);
             }
         }
         return cost;
