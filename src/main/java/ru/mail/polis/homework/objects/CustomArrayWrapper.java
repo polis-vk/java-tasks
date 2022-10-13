@@ -14,17 +14,12 @@ import java.util.NoSuchElementException;
  * тогда все элементы со значением 100 имеют нечетную позицию, а элементы = 0 - четную.
  */
 public class CustomArrayWrapper implements Iterable<Integer> {
-    private static final int STARTING_POSITION_FOR_EVEN_NUMBERS = 1;
-    private static final int EVEN_AND_ODD_STEP = 2;
-    private static final int DEFAULT_VALUE_FOR_COUNTER_OF_MODIFICATIONS = 0;
-
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
     private int counterOfModifications;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
-        counterOfModifications = DEFAULT_VALUE_FOR_COUNTER_OF_MODIFICATIONS;
     }
 
     public void add(int value) {
@@ -67,7 +62,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new CustomArrayWrapperIterator(STARTING_POSITION_FOR_EVEN_NUMBERS, EVEN_AND_ODD_STEP);
+        return new CustomArrayWrapperIterator(1, 2);
     }
 
     /**
@@ -77,7 +72,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new CustomArrayWrapperIterator(EVEN_AND_ODD_STEP);
+        return new CustomArrayWrapperIterator(0,2);
     }
 
     private void checkIndex(int index) {
@@ -92,20 +87,15 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
         private int currentPosition;
         private final int step;
-        private final int numberOfModifications;
+        private final int numberOfModifications = counterOfModifications;
 
         public CustomArrayWrapperIterator() {
             this(DEFAULT_STARTING_POSITION, DEFAULT_STEP_OF_ITERATOR);
         }
 
-        public CustomArrayWrapperIterator(int step) {
-            this(DEFAULT_STARTING_POSITION, step);
-        }
-
         public CustomArrayWrapperIterator(int startPosition, int step) {
             currentPosition = startPosition;
             this.step = step;
-            numberOfModifications = counterOfModifications;
         }
 
         @Override
