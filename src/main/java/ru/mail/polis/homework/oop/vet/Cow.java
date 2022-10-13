@@ -9,4 +9,9 @@ public class Cow extends Animal implements Pet {
     public String say() {
         return "Moo-Moo";
     }
+
+    @Override
+    public MoveType moveType() {
+        return MoveType.RUN;
+    }
 }

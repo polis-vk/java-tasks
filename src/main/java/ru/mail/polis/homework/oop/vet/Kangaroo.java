@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.oop.vet;
 
-public class Kangaroo extends WildAnimalImpl {
+public class Kangaroo extends AbstractWildAnimal {
     public Kangaroo() {
         super(2);
     }

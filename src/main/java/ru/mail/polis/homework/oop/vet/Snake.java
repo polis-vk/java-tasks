@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.oop.vet;
 
-import org.graalvm.compiler.lir.sparc.SPARCMove;
-
-public class Snake extends WildAnimalImpl implements Pet {
+public class Snake extends AbstractWildAnimal implements Pet {
     public Snake() {
         super(0);
     }

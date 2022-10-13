@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.oop.vet;
 
-public class WildAnimalImpl extends Animal implements WildAnimal {
+public abstract class AbstractWildAnimal extends Animal implements WildAnimal {
     protected String organizationName;
-    protected WildAnimalImpl(int legs) {
+    protected AbstractWildAnimal(int legs) {
         super(legs);
     }
     @Override

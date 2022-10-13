@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.oop.vet;
 
-public class Shark extends WildAnimalImpl {
+public class Shark extends AbstractWildAnimal {
     public Shark() {
         super(0);
     }
