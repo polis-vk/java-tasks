@@ -72,7 +72,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new CustomArrayWrapperIterator(0,2);
+        return new CustomArrayWrapperIterator(0, 2);
     }
 
     private void checkIndex(int index) {
