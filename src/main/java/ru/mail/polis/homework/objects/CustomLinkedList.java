@@ -10,8 +10,9 @@ import java.util.NoSuchElementException;
 public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
+    private Node tail;
 
-    private Integer size = 0;
+    private int size;
 
     /**
      * 1 тугрик
@@ -31,7 +32,16 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int value) {
-        add(size, value);
+        if (size == 0) {
+            head = new Node(value);
+            tail = head;
+        }
+        else {
+            Node newNode = new Node(value);
+            tail.setNext(newNode);
+            tail = newNode;
+        }
+        size++;
     }
 
     /**
@@ -41,6 +51,9 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index
      */
     public int get(int index) {
+        if (index == size - 1) {
+            return tail.value;
+        }
         int i = 0;
         for (Integer integer : this) {
             if (i == index) {
@@ -64,6 +77,10 @@ public class CustomLinkedList implements Iterable<Integer> {
     public void add(int i, int value) {
         if (i < 0 || i > size) { // Проверка корректности индекса
             throw new IndexOutOfBoundsException(String.valueOf(i));
+        }
+        if (i == size) {
+            add(value);
+            return;
         }
         size++;
         if (i == 0) { // При нулевом индексе задаётся новая голова списка
@@ -111,6 +128,9 @@ public class CustomLinkedList implements Iterable<Integer> {
             counter++;
         }
         previous.setNext(current.next);
+        if (counter == size) {
+            tail = previous;
+        }
     }
 
     /**
@@ -122,15 +142,16 @@ public class CustomLinkedList implements Iterable<Integer> {
      *  После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-        if (size == 0) { // При пустом списке делать нечего
-            return;
-        }
+        tail = head;
         Node current = head;
-        int i = 0;
-        while (current.next != null) {
-            add(0, current.next.value);
-            removeElement(i + 2);
-            i++;
+        Node previous = null;
+
+        while (current != null) {
+            Node next = current.next;
+            current.setNext(previous);
+            previous = current;
+            head = current;
+            current = next;
         }
     }
 

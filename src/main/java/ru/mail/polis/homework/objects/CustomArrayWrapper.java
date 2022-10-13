@@ -17,7 +17,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
-    private boolean isChanged = false;  // флаг для вызова ConcurrentModificationException
+    private int timesChanged;           // флаг для вызова ConcurrentModificationException
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -27,13 +27,13 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
-        isChanged = true;
+        timesChanged++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
-        isChanged = true;
+        timesChanged++;
     }
 
     public int get(int index) {
@@ -53,31 +53,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        isChanged = false;
-        return new Iterator<Integer>() {
-
-            int next = 0;
-
-            @Override
-            public boolean hasNext() {
-                return (next < size());
-            }
-
-            @Override
-            public Integer next() {
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                else if (isChanged) {
-                    throw new ConcurrentModificationException();
-                }
-                else {
-                    Integer ans = array[next];
-                    next++;
-                    return ans;
-                }
-            }
-        };
+        return customIterator(0, 1);
     }
 
     /**
@@ -87,31 +63,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        isChanged = false;
-        return new Iterator<Integer>() {
-
-            int next = 1;
-
-            @Override
-            public boolean hasNext() {
-                return (next < size());
-            }
-
-            @Override
-            public Integer next() {
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                else if (isChanged) {
-                    throw new ConcurrentModificationException();
-                }
-                else {
-                    Integer ans = array[next];
-                    next = next + 2;
-                    return ans;
-                }
-            }
-        };
+        return customIterator(1, 2);
     }
 
     /**
@@ -121,10 +73,16 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        isChanged = false;
+        return customIterator(0, 2);
+    }
+
+    private Iterator<Integer> customIterator(int startingElement, int step) {
+
         return new Iterator<Integer>() {
 
-            int next = 0;
+            private final int timesChangedAtStart = timesChanged;
+
+            private int next = startingElement;
 
             @Override
             public boolean hasNext() {
@@ -136,12 +94,12 @@ public class CustomArrayWrapper implements Iterable<Integer> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                else if (isChanged) {
+                else if (timesChangedAtStart != timesChanged) {
                     throw new ConcurrentModificationException();
                 }
                 else {
                     Integer ans = array[next];
-                    next = next + 2;
+                    next = next + step;
                     return ans;
                 }
             }
