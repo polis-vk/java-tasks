@@ -50,23 +50,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index
      */
     public int get(int index) {
-        checkIndex(index);
-
-        if (index == size - 1) {
-            return tail.value;
-        }
-
-        int currentPosition = 0;
-        Node currentNode = head;
-        while (currentNode != null) {
-            if (currentPosition == index) {
-                break;
-            }
-            currentNode = currentNode.next;
-            currentPosition++;
-        }
-
-        return currentNode.value;
+        return getNode(index).value;
     }
 
     /**
@@ -81,7 +65,6 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public void add(int i, int value) {
         Node currentNode = head;
-        int currentPosition = 0;
 
         if (i == 0) {
             head = new Node(value);
@@ -90,19 +73,13 @@ public class CustomLinkedList implements Iterable<Integer> {
             tail.setNext(new Node(value));
             tail = tail.next;
         } else if (i < size && i > 0) {
-            while (currentNode != null) {
-                if (currentPosition == i - 1) {
-                    Node temp = currentNode.next;
-                    currentNode.setNext(new Node(value));
-                    currentNode.next.next = temp;
-                    break;
-                }
-                currentNode = currentNode.next;
-                currentPosition++;
-            }
+            Node temp = getNode(i - 1).next;
+            currentNode.setNext(new Node(value));
+            currentNode.next.setNext(temp);
         } else {
             throw new IndexOutOfBoundsException(i);
         }
+
         size++;
         modCount++;
     }
@@ -127,6 +104,7 @@ public class CustomLinkedList implements Iterable<Integer> {
         } else {
             Node currentNode = head;
             int counter = 0;
+
             while (currentNode != null) {
                 if (counter == index - 1) {
                     currentNode.next = currentNode.next.next;
@@ -135,6 +113,7 @@ public class CustomLinkedList implements Iterable<Integer> {
                 currentNode = currentNode.next;
                 counter++;
             }
+
             if (index == size - 1) {
                 tail = currentNode;
             }
@@ -183,15 +162,19 @@ public class CustomLinkedList implements Iterable<Integer> {
     public String toString() {
         if (size == 0) {
             return "null";
-        } else {
-            StringBuilder stringBuilder = new StringBuilder();
-            Node currentNode = head;
-            while (currentNode != null) {
-                stringBuilder.append(currentNode.value + " -> ");
-                currentNode = currentNode.next;
-            }
-            return stringBuilder.append("null").toString();
         }
+
+        StringBuilder stringBuilder = new StringBuilder();
+        Node currentNode = head;
+
+        while (currentNode != null) {
+            stringBuilder.append(currentNode.value);
+            stringBuilder.append(" -> ");
+            currentNode = currentNode.next;
+        }
+
+        stringBuilder.append("null");
+        return stringBuilder.toString();
     }
 
     /**
@@ -220,11 +203,33 @@ public class CustomLinkedList implements Iterable<Integer> {
                 if (position == null) {
                     throw new NoSuchElementException();
                 }
+
                 int digitValue = position.value;
                 position = position.next;
                 return digitValue;
             }
         };
+    }
+
+    private Node getNode(int index) {
+        checkIndex(index);
+
+        if (index == size - 1) {
+            return tail;
+        }
+
+        int currentPosition = 0;
+        Node currentNode = head;
+
+        while (currentNode != null) {
+            if (currentPosition == index) {
+                break;
+            }
+            currentNode = currentNode.next;
+            currentPosition++;
+        }
+
+        return currentNode;
     }
 
     private void checkIndex(int index) {

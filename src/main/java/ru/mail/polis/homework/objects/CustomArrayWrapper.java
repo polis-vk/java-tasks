@@ -14,7 +14,6 @@ import java.util.NoSuchElementException;
  * тогда все элементы со значением 100 имеют нечетную позицию, а элементы = 0 - четную.
  */
 public class CustomArrayWrapper implements Iterable<Integer> {
-
     private final int[] array;          // массив
     private int position;
     private int modCount;
@@ -53,26 +52,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new Iterator<Integer>() {
-            private int position;
-            private int fixedModCount = modCount;
-
-            @Override
-            public boolean hasNext() {
-                return position < array.length;
-            }
-
-            @Override
-            public Integer next() {
-                if (fixedModCount != modCount) {
-                    throw new ConcurrentModificationException();
-                }
-                if (position >= array.length) {
-                    throw new NoSuchElementException();
-                }
-                return array[position++];
-            }
-        };
+        return new CustomArrayWrapperIterators(0, modCount, 1);
     }
 
     /**
@@ -82,27 +62,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new Iterator<Integer>() {
-            private int position = -1;
-            private int fixedModCount = modCount;
-
-            @Override
-            public boolean hasNext() {
-                return position + 2 < array.length;
-            }
-
-            @Override
-            public Integer next() {
-                if (fixedModCount != modCount) {
-                    throw new ConcurrentModificationException();
-                }
-                if (position >= array.length) {
-                    throw new NoSuchElementException();
-                }
-                position += 2;
-                return array[position];
-            }
-        };
+        return new CustomArrayWrapperIterators(1, modCount, 2);
     }
 
     /**
@@ -112,32 +72,45 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new Iterator<Integer>() {
-            private int position = -2;
-            private int fixedModCount = modCount;
-
-            @Override
-            public boolean hasNext() {
-                return position + 2 < array.length;
-            }
-
-            @Override
-            public Integer next() {
-                if (fixedModCount != modCount) {
-                    throw new ConcurrentModificationException();
-                }
-                if (position >= array.length) {
-                    throw new NoSuchElementException();
-                }
-                position += 2;
-                return array[position];
-            }
-        };
+        return new CustomArrayWrapperIterators(0, modCount, 2);
     }
 
     private void checkIndex(int index) {
         if (index < 0 || index >= array.length) {
             throw new IndexOutOfBoundsException();
+        }
+    }
+
+    private class CustomArrayWrapperIterators implements Iterator<Integer> {
+        private int position;
+        private int fixedModCount;
+        private int step;
+
+        private CustomArrayWrapperIterators(int position, int modCount, int step) {
+            this.position = position;
+            this.fixedModCount = modCount;
+            this.step = step;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return position < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            if (fixedModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+
+            if (position >= array.length) {
+                throw new NoSuchElementException();
+            }
+
+            int value = array[position];
+            position += step;
+
+            return value;
         }
     }
 }
