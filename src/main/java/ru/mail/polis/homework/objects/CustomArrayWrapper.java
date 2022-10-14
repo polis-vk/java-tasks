@@ -82,12 +82,11 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     public class ArrayWrapperIterator implements Iterator<Integer> {
 
-        private final int currentModificationCount;
+        private final int currentModificationCount = modCounter;
         private int position;
-        private int step;
+        private final int step;
 
         public ArrayWrapperIterator(int position, int step) {
-            currentModificationCount = modCounter;
             this.position = position;
             this.step = step;
         }

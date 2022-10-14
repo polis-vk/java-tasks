@@ -13,15 +13,7 @@ public class CustomLinkedList implements Iterable<Integer> {
     private Node head;
     private Node tail;
     private int size;
-
     private int modCounter;
-
-    public CustomLinkedList() {
-        head = null;
-        tail = null;
-        size = 0;
-        modCounter = 0;
-    }
 
     /**
      * 1 тугрик
@@ -63,6 +55,9 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (!checkIndexValidity(index)) {
             throw new IndexOutOfBoundsException();
         }
+        if (index == size - 1) {
+            return tail.value;
+        }
         Node it = head;
         int i = index;
         while (i-- > 0) {
@@ -84,22 +79,22 @@ public class CustomLinkedList implements Iterable<Integer> {
     public void add(int index, int value) {
         if (index == size) {
             add(value);
+            size--;
+        } else if (index == 0) {
+            Node tmp = head;
+            head = new Node(value);
+            head.next = tmp;
         } else {
             if (!checkIndexValidity(index)) {
                 throw new IndexOutOfBoundsException(index);
             }
-            Node beforeHead = new Node(0);
-            beforeHead.next = head;
-            Node it = findNode(beforeHead, index);
+            Node it = findNode(index - 1);
             Node elem = new Node(value);
             elem.next = it.next;
             it.next = elem;
-            if (index == 0) {
-                head = elem;
-            }
-            size++;
         }
         modCounter++;
+        size++;
     }
 
     /**
@@ -118,9 +113,7 @@ public class CustomLinkedList implements Iterable<Integer> {
         if (index == 0) {
             head = head.next;
         } else {
-            Node beforeHead = new Node(0);
-            beforeHead.next = head;
-            Node it = findNode(beforeHead, index);
+            Node it = findNode(index - 1);
             it.next = it.next.next;
             if (index == size - 1) {
                 tail = it;
@@ -218,8 +211,8 @@ public class CustomLinkedList implements Iterable<Integer> {
         }
     }
 
-    private Node findNode(Node start, int index) {
-        Node it = start;
+    private Node findNode(int index) {
+        Node it = head;
         int i = index;
         while (i-- > 0) {
             it = it.next;
