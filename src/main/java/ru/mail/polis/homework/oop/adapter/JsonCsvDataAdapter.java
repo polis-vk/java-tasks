@@ -10,6 +10,6 @@ public class JsonCsvDataAdapter extends CsvData {
     }
 
     private static String parseJsonToCsvDataFormat(String jsonData) {
-        return jsonData.replace("{", "").replace("}", "").replaceAll("\"", "").replaceAll(",", "").replaceAll(":", ",");
+        return jsonData.replace("{", "").replace("}", "").replace("\"", "").replace(",", "").replace(":", ",");
     }
 }
