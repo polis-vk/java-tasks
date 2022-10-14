@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.oop.vet;
 
+import ru.mail.polis.homework.oop.vet.types.MoveType;
+
 /**
  * Дефолтный класс животного от которого необходимо наследоваться
  */

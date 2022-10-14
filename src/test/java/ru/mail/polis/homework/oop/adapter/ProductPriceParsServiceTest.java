@@ -30,7 +30,7 @@ public class ProductPriceParsServiceTest {
         assertEquals(Integer.valueOf(180), parsedData.get("Blueberries"));
         assertEquals(Integer.valueOf(20), parsedData.get("Lemons"));
     }
-/*
+
     @Test
     public void testParsWithJsonAdapter() {
         String jsonText = "{" +
@@ -54,6 +54,31 @@ public class ProductPriceParsServiceTest {
         assertEquals(Integer.valueOf(150), parsedData.get("Oranges"));
         assertEquals(Integer.valueOf(180), parsedData.get("Blueberries"));
         assertEquals(Integer.valueOf(20), parsedData.get("Lemons"));
-    }*/
+    }
+
+    @Test
+    public void testParsWithJsonAdapterInOneLine() {
+        String jsonText = "{" +
+                "\"Bananas\" : 100," +
+                "\"Strawberries\" : 220," +
+                "\"Grapes\" : 130," +
+                "\"Apples\" : 60," +
+                "\"Watermelon\" : 30," +
+                "\"Oranges\" : 150," +
+                "\"Blueberries\" : 180," +
+                "\"Lemons\" : 20" +
+                "}";
+        JsonCsvDataAdapter adapter = new JsonCsvDataAdapter(jsonText);
+        ProductPriceParsService service = new ProductPriceParsService();
+        Map<String, Integer> parsedData = service.pars(adapter);
+        assertEquals(Integer.valueOf(100), parsedData.get("Bananas"));
+        assertEquals(Integer.valueOf(220), parsedData.get("Strawberries"));
+        assertEquals(Integer.valueOf(130), parsedData.get("Grapes"));
+        assertEquals(Integer.valueOf(60), parsedData.get("Apples"));
+        assertEquals(Integer.valueOf(30), parsedData.get("Watermelon"));
+        assertEquals(Integer.valueOf(150), parsedData.get("Oranges"));
+        assertEquals(Integer.valueOf(180), parsedData.get("Blueberries"));
+        assertEquals(Integer.valueOf(20), parsedData.get("Lemons"));
+    }
 
 }

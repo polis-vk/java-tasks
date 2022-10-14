@@ -3,12 +3,12 @@ package ru.mail.polis.homework.oop.vet;
 import java.util.List;
 
 /**
- * Класс описывающий ветеренара.
+ * Класс описывающий ветеринара.
  * принимает поля:
  * costForPet - ценник на лечение домашних животных
  * costForWild - ценник на лечение диких животных
  * organizationWithGrant - список организаций с которыми сотрудничает и может
- * при помощи грантов организции делать скидку на лечение
+ * при помощи грантов организации делать скидку на лечение
  */
 public class Veterinary {
 
@@ -23,7 +23,7 @@ public class Veterinary {
         this.organizationWithGrant = organizationWithGrant;
     }
 
-    // подсчет стоймости лечения всех переданных животных
+    // подсчет стоимости лечения всех переданных животных
     public int calculateCostTherapy(Animal[] animals) {
         int cost = 0;
         for (Animal animal : animals) {

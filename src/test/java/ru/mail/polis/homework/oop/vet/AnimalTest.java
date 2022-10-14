@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.oop.vet;
 
 import org.junit.Test;
+import ru.mail.polis.homework.oop.vet.types.MoveType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class AnimalTest {
 
@@ -65,6 +67,12 @@ public class AnimalTest {
         assertEquals("Shhhh", snake.say());
         assertEquals(0, snake.getLegs());
         assertEquals(MoveType.CRAWL, snake.moveType());
+    }
+
+    @Test
+    public void testGenerateInvalidAnimal() {
+        Animal invalidAnimal = GeneratorAnimal.generateAnimal("nemo");
+        assertNull(invalidAnimal);
     }
 
     @Test
