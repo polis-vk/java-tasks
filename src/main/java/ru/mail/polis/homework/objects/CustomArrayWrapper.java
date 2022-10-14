@@ -18,7 +18,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
 
-    private int modCount = 0;
+    private int modCount;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
