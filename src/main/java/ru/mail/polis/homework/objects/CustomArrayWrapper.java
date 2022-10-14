@@ -16,8 +16,8 @@ import java.util.NoSuchElementException;
 public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
-    private int position = 0;           // следующая позиция куда будет вставлен элемент
-    private int modCount = 0;           // счётчик изменений
+    private int position;               // следующая позиция куда будет вставлен элемент
+    private int modCount;               // счётчик изменений
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -53,7 +53,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new CustomArrayWrapperIterator();
+        return new CustomArrayWrapperIterator(modCount, 0, 1);
     }
 
     /**
@@ -63,7 +63,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new CustomArrayWrapperIterator(true);
+        return new CustomArrayWrapperIterator(modCount, 1, 2);
     }
 
     /**
@@ -73,7 +73,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new CustomArrayWrapperIterator(false);
+        return new CustomArrayWrapperIterator(modCount, 0, 2);
     }
 
     private void checkIndex(int index) {
@@ -83,24 +83,14 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     }
 
     private class CustomArrayWrapperIterator implements Iterator<Integer> {
-
         private int position;
-        private final int fixedModCount = modCount;
+        private final int fixedModCount;
         private final int step;
 
-        private CustomArrayWrapperIterator() {
-            position = 0;
-            step = 1;
-        }
-
-        private CustomArrayWrapperIterator(boolean isEven) {
-            if (isEven) {
-                position = 1;
-            } else {
-                position = 0;
-            }
-
-            step = 2;
+        private CustomArrayWrapperIterator(int modCount, int position, int step) {
+            fixedModCount = modCount;
+            this.position = position;
+            this.step = step;
         }
 
         @Override
