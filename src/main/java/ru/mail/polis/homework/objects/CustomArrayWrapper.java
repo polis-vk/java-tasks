@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -42,13 +44,16 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     /**
      * Реализовать метод:
-     * Возврящает обычный итератор.
+     * Возвращает обычный итератор.
      *
      * @return default Iterator
      */
+
+
+
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new CustomIterator( 0);
     }
 
     /**
@@ -58,7 +63,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new CustomIterator( 2);
     }
 
     /**
@@ -68,12 +73,41 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new CustomIterator( 1);
     }
 
     private void checkIndex(int index) {
         if (index < 0 || index >= array.length) {
             throw new IndexOutOfBoundsException();
+        }
+    }
+
+    public class CustomIterator implements Iterator<Integer> {
+
+        private final int mode;
+        private final int initialPosition = position;
+        int currentIndex;
+
+        CustomIterator(int mode) {
+            this.mode = mode;
+            currentIndex = (mode == 2) ? 1 : 0;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return currentIndex < size();
+        }
+
+        @Override
+        public Integer next() {
+            if (initialPosition != position) {
+                throw new ConcurrentModificationException();
+            }
+            if (hasNext()) {
+                int temp = get(currentIndex);
+                currentIndex += (mode > 0) ? 2 : 1;
+                return temp;
+            } else throw new NoSuchElementException();
         }
     }
 
