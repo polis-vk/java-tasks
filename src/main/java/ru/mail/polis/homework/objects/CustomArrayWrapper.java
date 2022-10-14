@@ -17,8 +17,8 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;       // следующая позиция куда будет вставлен элемент
-
     private int modCount = 0;
+
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
     }
@@ -53,7 +53,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new CustomArrayWrapperIterator(0, 1);
+        return new CustomArrayWrapperIterator(0, 1, modCount);
     }
 
     /**
@@ -63,7 +63,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new CustomArrayWrapperIterator(1, 2);
+        return new CustomArrayWrapperIterator(1, 2, modCount);
     }
 
     /**
@@ -73,7 +73,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new CustomArrayWrapperIterator(0, 2);
+        return new CustomArrayWrapperIterator(0, 2, modCount);
     }
 
     private void checkIndex(int index) {
@@ -82,15 +82,17 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         }
     }
 
-    private class CustomArrayWrapperIterator implements Iterator<Integer>{
+    private class CustomArrayWrapperIterator implements Iterator<Integer> {
         private int currentPos;
         private final int step;
-        private final int fixedModCount = modCount;
+        private final int fixedModCount;
 
-        CustomArrayWrapperIterator(int currentPos, int step){
+        CustomArrayWrapperIterator(int currentPos, int step, int modCount) {
             this.currentPos = currentPos;
             this.step = step;
+            fixedModCount = modCount;
         }
+
         @Override
         public boolean hasNext() {
             return currentPos < position;
@@ -98,13 +100,15 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
         @Override
         public Integer next() {
-            if(fixedModCount != modCount){
+            if (fixedModCount != modCount) {
                 throw new ConcurrentModificationException();
             }
+
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            int res = get(currentPos);
+
+            int res = array[currentPos];
             currentPos += step;
             return res;
         }
