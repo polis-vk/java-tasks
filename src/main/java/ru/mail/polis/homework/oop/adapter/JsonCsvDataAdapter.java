@@ -19,7 +19,7 @@ public class JsonCsvDataAdapter extends CsvData {
         jsonText = jsonText.replace("{", "").replace("}", "");
         Arrays.stream(jsonText.split("\\r?\\n|,\\n?")).forEach(line -> {
             String[] items = line.replace(",", "").replace("\"", "").split(":");
-            productPriceMap.put(items[0], Integer.parseInt(items[1]));
+            productPriceMap.put(items[0].trim(), Integer.parseInt(items[1].trim()));
         });
         StringBuilder sb = new StringBuilder();
         productPriceMap.forEach((product, price) -> sb.append(product).append(',').append(price).append("\n"));
