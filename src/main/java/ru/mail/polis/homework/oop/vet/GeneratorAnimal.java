@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.oop.vet;
 
+import java.util.NoSuchElementException;
+
 public class GeneratorAnimal {
     private GeneratorAnimal() {
     }
@@ -21,6 +23,32 @@ public class GeneratorAnimal {
      * @return - соответствующего потомка
      */
     public static Animal generateAnimal(String animalType) {
-        return null;
+        Animal generatedAnimal;
+        switch (animalType) {
+            case "cat":
+                generatedAnimal = new Cat();
+                break;
+            case "dog":
+                generatedAnimal = new Dog();
+                break;
+            case "kangaroo":
+                generatedAnimal = new Kangaroo();
+                break;
+            case "pigeon":
+                generatedAnimal = new Pigeon();
+                break;
+            case "cow":
+                generatedAnimal = new Cow();
+                break;
+            case "shark":
+                generatedAnimal = new Shark();
+                break;
+            case "snake":
+                generatedAnimal = new Snake();
+                break;
+            default:
+                throw new NoSuchElementException();
+        }
+        return generatedAnimal;
     }
 }
