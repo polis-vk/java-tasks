@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.oop.vet;
 
+import ru.mail.polis.homework.oop.vet.animals.*;
+
 public class GeneratorAnimal {
     private GeneratorAnimal() {
     }
@@ -20,7 +22,24 @@ public class GeneratorAnimal {
      * @param animalType - тип животного которое надо создать
      * @return - соответствующего потомка
      */
-    public static Animal generateAnimal(String animalType) {
-        return null;
+    public static AbstractAnimal generateAnimal(String animalType) {
+        switch (animalType) {
+            case "cat":
+                return new Cat();
+            case "dog":
+                return new Dog();
+            case "kangaroo":
+                return new Kangaroo();
+            case "pigeon":
+                return new Pigeon();
+            case "cow":
+                return new Cow();
+            case "shark":
+                return new Shark();
+            case "snake":
+                return new Snake();
+            default:
+                return null;
+        }
     }
 }

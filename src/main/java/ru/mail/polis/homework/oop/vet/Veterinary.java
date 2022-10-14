@@ -24,9 +24,9 @@ public class Veterinary {
     }
 
     // подсчет стоймости лечения всех переданных животных
-    public int calculateCostTherapy(Animal[] animals) {
+    public int calculateCostTherapy(AbstractAnimal[] animals) {
         int cost = 0;
-        for (Animal animal : animals) {
+        for (AbstractAnimal animal : animals) {
             if (animal instanceof Pet && animal instanceof WildAnimal) {
                 cost += Math.max(costForPet, costForWild);
                 cost = saleByOrganizationGrant((WildAnimal) animal, cost);
