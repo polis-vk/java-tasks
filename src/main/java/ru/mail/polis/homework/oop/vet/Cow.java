@@ -11,4 +11,9 @@ public class Cow extends Animal implements Pet {
         return "Moo-Moo";
     }
 
+    @Override
+    public MoveType moveType() {
+        return MoveType.RUN;
+    }
+
 }
