@@ -6,9 +6,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class CustomLinkedListTest {
 
@@ -135,7 +133,7 @@ public class CustomLinkedListTest {
         list.revertList();
 
         int[] revertArray = IntStream.rangeClosed(1, DEFAULT_ARRAY.length)
-            .map(i -> DEFAULT_ARRAY[DEFAULT_ARRAY.length - i]).toArray();
+                .map(i -> DEFAULT_ARRAY[DEFAULT_ARRAY.length - i]).toArray();
 
         assertEquals(generateString(revertArray), list.toString());
         assertEquals(DEFAULT_ARRAY.length, list.size());
@@ -178,7 +176,7 @@ public class CustomLinkedListTest {
     public void testEmptyIteratorException() {
         CustomLinkedList list = new CustomLinkedList();
         Iterator<Integer> iterator = list.iterator();
-        iteratorCheck(iterator, new int[] {});
+        iteratorCheck(iterator, new int[]{});
         iterator.next();
     }
 
