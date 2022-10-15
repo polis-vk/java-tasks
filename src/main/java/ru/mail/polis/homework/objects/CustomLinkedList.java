@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -10,11 +11,14 @@ import java.util.NoSuchElementException;
 public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
+    private Node tail;
     private int size;
+    private int operations;
 
     public CustomLinkedList() {
         this.head = null;
-        size = 0;
+        this.size = 0;
+        this.operations = 0;
     }
 
     /**
@@ -35,17 +39,15 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int value) {
+        operations++;
+        size++;
         Node newNode = new Node(value);
         if (head == null) {
             head = newNode;
-        } else {
-            Node currentNode = head;
-            while (currentNode.next != null) {
-                currentNode = currentNode.next;
-            }
-            currentNode.next = newNode;
+            tail = newNode;
         }
-        size++;
+        tail.next = newNode;
+        tail = newNode;
     }
 
     /**
@@ -54,16 +56,24 @@ public class CustomLinkedList implements Iterable<Integer> {
      *
      * @param index
      */
-    public int get(int index) {
-        if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException(index);
-        }
+
+    private static Node searchNode(Node currentNode, int index) {
         int counter = 0;
-        Node currentNode = head;
         while (counter < index) {
             currentNode = currentNode.next;
             counter++;
         }
+        return currentNode;
+    }
+
+    public int get(int index) {
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException(Integer.toString(index));
+        }
+        if (index == size - 1) {
+            return tail.value;
+        }
+        Node currentNode = searchNode(head, index);
         return currentNode.value;
     }
 
@@ -79,23 +89,24 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public void add(int i, int value) {
         if (i > size || i < 0) {
-            throw new IndexOutOfBoundsException(i);
+            throw new IndexOutOfBoundsException(Integer.toString(i));
         }
-        Node currentNode = head;
+        operations++;
+        size++;
         Node newNode = new Node(value);
-        int counter = 0;
         if (i == 0) {
             newNode.next = head;
             head = newNode;
-        } else {
-            while (counter < i - 1) {
-                currentNode = currentNode.next;
-                counter++;
-            }
-            newNode.next = currentNode.next;
-            currentNode.next = newNode;
+            return;
         }
-        size++;
+        if (i == size) {
+            tail.next = newNode;
+            tail = newNode;
+            return;
+        }
+        Node currentNode = searchNode(head, i - 1);
+        newNode.next = currentNode.next;
+        currentNode.next = newNode;
     }
 
     /**
@@ -109,19 +120,20 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public void removeElement(int index) {
         if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException(index);
+            throw new IndexOutOfBoundsException(Integer.toString(index));
         }
         if (index == 0) {
             head = head.next;
-        } else {
-            int counter = 0;
-            Node currentNode = head;
-            while (counter < index - 1) {
-                currentNode = currentNode.next;
-                counter++;
-            }
-            currentNode.next = currentNode.next.next;
+            operations++;
+            size--;
+            return;
         }
+        Node currentNode = searchNode(head, index - 1);
+        currentNode.next = currentNode.next.next;
+        if (index == size - 1) {
+            tail = currentNode;
+        }
+        operations++;
         size--;
     }
 
@@ -134,19 +146,21 @@ public class CustomLinkedList implements Iterable<Integer> {
      * После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-        head = reverse(head);
-    }
-
-    Node reverse(Node head) {
         Node prevNode = null;
         Node currentNode = head;
+        Node nextNode;
         while (currentNode != null) {
-            Node nextNode = currentNode.next;
+            nextNode = currentNode.next;
             currentNode.next = prevNode;
             prevNode = currentNode;
             currentNode = nextNode;
         }
-        return prevNode;
+        head = prevNode;
+        currentNode = head;
+        while (currentNode != null) {
+            tail = currentNode;
+            currentNode = currentNode.next;
+        }
     }
 
     /**
@@ -180,9 +194,9 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new Iterator<>() {
-
+        return new Iterator<Integer>() {
             Node currentNode = head;
+            final int operationsInIteration = operations;
 
             @Override
             public boolean hasNext() {
@@ -191,13 +205,15 @@ public class CustomLinkedList implements Iterable<Integer> {
 
             @Override
             public Integer next() {
-                if (hasNext()) {
-                    int value = currentNode.value;
-                    currentNode = currentNode.next;
-                    return value;
-                } else {
+                if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
+                if (operationsInIteration != operations) {
+                    throw new ConcurrentModificationException();
+                }
+                int value = currentNode.value;
+                currentNode = currentNode.next;
+                return value;
             }
         };
     }

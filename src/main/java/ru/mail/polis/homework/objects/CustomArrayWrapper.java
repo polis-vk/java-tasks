@@ -17,10 +17,11 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
-    private int operations = 0;
+    private int operations;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
+        operations = 0;
     }
 
     public void add(int value) {
@@ -53,28 +54,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new Iterator<Integer>() {
-            int position = 0;
-            final int operationsInIteration = operations;
-
-            @Override
-            public boolean hasNext() {
-                return position < array.length;
-            }
-
-            @Override
-            public Integer next() {
-                if (operationsInIteration != operations) {
-                    throw new ConcurrentModificationException();
-                } else if (hasNext()) {
-                    int value = array[position];
-                    position++;
-                    return value;
-                } else {
-                    throw new NoSuchElementException();
-                }
-            }
-        };
+        return new Iteration();
     }
 
     /**
@@ -84,28 +64,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new Iterator<Integer>() {
-            int position = 1;
-            final int operationsInIteration = operations;
-
-            @Override
-            public boolean hasNext() {
-                return position < array.length;
-            }
-
-            @Override
-            public Integer next() {
-                if (operationsInIteration != operations) {
-                    throw new ConcurrentModificationException();
-                } else if (hasNext()) {
-                    int value = array[position];
-                    position += 2;
-                    return value;
-                } else {
-                    throw new NoSuchElementException();
-                }
-            }
-        };
+        return new Iteration(1, 2);
     }
 
     /**
@@ -115,28 +74,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new Iterator<Integer>() {
-            int position = 0;
-            final int operationsInIteration = operations;
-
-            @Override
-            public boolean hasNext() {
-                return position < array.length;
-            }
-
-            @Override
-            public Integer next() {
-                if (operationsInIteration != operations) {
-                    throw new ConcurrentModificationException();
-                } else if (hasNext()) {
-                    int value = array[position];
-                    position += 2;
-                    return value;
-                } else {
-                    throw new NoSuchElementException();
-                }
-            }
-        };
+        return new Iteration(0, 2);
     }
 
     private void checkIndex(int index) {
@@ -144,4 +82,39 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             throw new IndexOutOfBoundsException();
         }
     }
+
+    private class Iteration implements Iterator<Integer> {
+        private int position;
+        private final int pace;
+        private final int operationsInIteration = operations;
+
+        public Iteration() {
+            position = 0;
+            pace = 1;
+        }
+
+        public Iteration(int position, int pace) {
+            this.position = position;
+            this.pace = pace;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return position < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            if (operationsInIteration != operations) {
+                throw new ConcurrentModificationException();
+            }
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            int value = array[position];
+            position += pace;
+            return value;
+        }
+    }
+
 }
