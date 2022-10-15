@@ -110,7 +110,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
-        if (size == 0 || index < 0 || index >= size) {
+        if (size == 0 || index < 0 || index >= size()) {
             throw new IndexOutOfBoundsException(String.valueOf(index));
         }
         if (index == 0) {
