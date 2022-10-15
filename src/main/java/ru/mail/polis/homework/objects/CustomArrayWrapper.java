@@ -17,11 +17,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
-    private int modCount = 0;
-    private static final int STANDART_STEP = 1;
-    private static final int STEP_THROUGH_ELEMENT = 2;
-    private static final int POSITION_EVEN_ELEMENT = 1;
-    private static final int POSITION_ODD_ELEMENT = 0;
+    private int modCount;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -57,7 +53,9 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new ArrayWrapperIterator(POSITION_ODD_ELEMENT, STANDART_STEP);
+        final int positionOddElement = 0;
+        final int standartStep = 1;
+        return new ArrayWrapperIterator(positionOddElement, standartStep);
     }
 
     /**
@@ -67,7 +65,9 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new ArrayWrapperIterator(POSITION_EVEN_ELEMENT, STEP_THROUGH_ELEMENT);
+        final int positionEvenElement = 1;
+        final int stepThroughElement = 2;
+        return new ArrayWrapperIterator(positionEvenElement, stepThroughElement);
     }
 
     /**
@@ -77,14 +77,16 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new ArrayWrapperIterator(POSITION_ODD_ELEMENT, STEP_THROUGH_ELEMENT);
+        final int positionOddElement = 0;
+        final int stepThroughElement = 2;
+        return new ArrayWrapperIterator(positionOddElement, stepThroughElement);
     }
 
     private class ArrayWrapperIterator implements Iterator<Integer> {
 
-        int fixedModCount = modCount;
-        int position;
-        int step;
+        private final int fixedModCount = modCount;
+        private int position;
+        private int step;
 
         public ArrayWrapperIterator(int position, int step) {
             this.position = position;

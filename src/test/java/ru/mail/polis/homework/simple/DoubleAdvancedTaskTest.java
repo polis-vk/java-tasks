@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.simple;
 
 import org.junit.Test;
+import ru.mail.polis.homework.analyzer.DoubleAdvancedTask;
 
 import static org.junit.Assert.*;
 
