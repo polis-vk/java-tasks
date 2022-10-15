@@ -84,9 +84,9 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private class CustomArrayWrapperIterator implements Iterator<Integer> {
 
-        int position;
-        int fixedModCount = modCount;
-        int step = 1;
+        private final int fixedModCount = modCount;
+        private int position;
+        private int step = 1;
 
         public CustomArrayWrapperIterator() {
         }
