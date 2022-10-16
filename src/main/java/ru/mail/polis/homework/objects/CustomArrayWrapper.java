@@ -18,7 +18,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
 
-    private int countOfIter;
+    private int modCount;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -28,22 +28,18 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
-        countOfIter++;
+        modCount++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
-        countOfIter++;
+        modCount++;
     }
 
     public int get(int index) {
         checkIndex(index);
         return array[index];
-    }
-
-    public int getCountOfIter() {
-        return countOfIter;
     }
 
     public int size() {
@@ -63,45 +59,34 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
         private final Types type;
 
-        private final int countOfIter = getCountOfIter();
+        private final int countOfIter = modCount;
 
 
-        public ArrayIterator(int[] elementsArr, int currentIndex, int indexSteps, Types type) {
-            this.elementsArr = elementsArr;
+        public ArrayIterator(int currentIndex, int indexSteps, Types type) {
+            this.elementsArr = array;
             this.currentIndex = currentIndex;
             this.indexSteps = indexSteps;
             this.type = type;
         }
 
         public boolean hasNext() {
-            return currentIndex < array.length;
+            return currentIndex < position;
         }
 
         public Integer next() {
-            if (countOfIter != getCountOfIter()) {
+            if (countOfIter != modCount) {
                 throw new ConcurrentModificationException();
-            } else {
-                if (type == Types.DEFAULT) {
-                    if (hasNext()) {
-                        return elementsArr[currentIndex++];
-                    }
-                }
-                if (type == Types.EVEN) {
-                    if (hasNext()) {
-                        int element = elementsArr[currentIndex];
-                        currentIndex = currentIndex + indexSteps;
-                        return element;
-                    }
-                }
-                if (type == Types.ODD) {
-                    if (hasNext()) {
-                        int element = elementsArr[currentIndex];
-                        currentIndex = currentIndex + indexSteps;
-                        return element;
-                    }
-                }
             }
-            throw new NoSuchElementException();
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            int element = elementsArr[currentIndex];
+            currentIndex += indexSteps;
+            return element;
+        }
+
+        public Types getType() {
+            return type;
         }
     }
 
@@ -113,7 +98,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new ArrayIterator(array, 0, 1, Types.DEFAULT);
+        return new ArrayIterator(0, 1, Types.DEFAULT);
     }
 
     /**
@@ -123,7 +108,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new ArrayIterator(array, 1, 2, Types.EVEN);
+        return new ArrayIterator(1, 2, Types.EVEN);
     }
 
     /**
@@ -133,7 +118,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new ArrayIterator(array, 0, 2, Types.ODD);
+        return new ArrayIterator(0, 2, Types.ODD);
     }
 
     private void checkIndex(int index) {
