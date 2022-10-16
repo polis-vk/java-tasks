@@ -17,7 +17,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
-    private int modCount = 0;
+    private int modCount;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -77,31 +77,29 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     }
 
     private class CustomArrayWrapperIterator implements Iterator<Integer> {
-        private final CustomArrayWrapper customArrayWrapper = CustomArrayWrapper.this;
-        private final int fixedModCount = customArrayWrapper.modCount;
+        private final int fixedModCount = CustomArrayWrapper.this.modCount;
         private int index;
         private final int delta;
 
         public CustomArrayWrapperIterator(int startIndex, int delta) {
-            super();
             this.index = startIndex;
             this.delta = delta;
         }
 
         @Override
         public boolean hasNext() {
-            return index < customArrayWrapper.size();
+            return index < CustomArrayWrapper.this.size();
         }
 
         @Override
         public Integer next() {
-            if (fixedModCount != customArrayWrapper.modCount) {
+            if (fixedModCount != CustomArrayWrapper.this.modCount) {
                 throw new ConcurrentModificationException();
             } else if (!this.hasNext()) {
                 throw new NoSuchElementException();
             }
 
-            int value = customArrayWrapper.get(index);
+            int value = CustomArrayWrapper.this.get(index);
             index += delta;
             return value;
         }
