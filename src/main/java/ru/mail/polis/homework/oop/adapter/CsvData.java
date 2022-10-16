@@ -7,6 +7,7 @@ public class CsvData {
         this.text = text;
     }
 
+
     public String getText() {
         return text;
     }
