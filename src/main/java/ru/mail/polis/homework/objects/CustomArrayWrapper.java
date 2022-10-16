@@ -92,7 +92,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         @Override
         public boolean hasNext() {
             checkForConcurrentModification();
-            return current >= 0 && current < array.length;
+            return current >= 0 && current < expectedPosition;
         }
 
         @Override
