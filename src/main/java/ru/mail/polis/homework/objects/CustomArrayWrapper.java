@@ -17,11 +17,6 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
-    private int modCount = 0;
-    private static final int STANDART_STEP = 1;
-    private static final int STEP_THROUGH_ELEMENT = 2;
-    private static final int POSITION_EVEN_ELEMENT = 1;
-    private static final int POSITION_ODD_ELEMENT = 0;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -31,13 +26,11 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
-        modCount++;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
-        modCount++;
     }
 
     public int get(int index) {
@@ -57,7 +50,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new ArrayWrapperIterator(POSITION_ODD_ELEMENT, STANDART_STEP);
+        return null;
     }
 
     /**
@@ -67,7 +60,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new ArrayWrapperIterator(POSITION_EVEN_ELEMENT, STEP_THROUGH_ELEMENT);
+        return null;
     }
 
     /**
@@ -77,40 +70,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new ArrayWrapperIterator(POSITION_ODD_ELEMENT, STEP_THROUGH_ELEMENT);
-    }
-
-    private class ArrayWrapperIterator implements Iterator<Integer> {
-
-        int fixedModCount = modCount;
-        int position;
-        int step;
-
-        public ArrayWrapperIterator(int position, int step) {
-            this.position = position;
-            this.step = step;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return position < array.length;
-        }
-
-        @Override
-        public Integer next() {
-            if (fixedModCount != modCount) {
-                throw new ConcurrentModificationException();
-            }
-
-            if (position >= array.length) {
-                throw new NoSuchElementException();
-            }
-
-            Integer currentElement = array[position];
-            position += step;
-            return currentElement;
-        }
-
+        return null;
     }
 
     private void checkIndex(int index) {
