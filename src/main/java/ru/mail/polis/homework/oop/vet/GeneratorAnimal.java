@@ -21,6 +21,15 @@ public class GeneratorAnimal {
      * @return - соответствующего потомка
      */
     public static Animal generateAnimal(String animalType) {
+        switch (animalType){
+            case "cat": return new Cat();
+            case "dog": return new Dog();
+            case "cow": return new Cow();
+            case "kangaroo": return new Kangaroo();
+            case "pigeon": return new Pigeon();
+            case "shark": return new Shark();
+            case "snake": return new Snake();
+        }
         return null;
     }
 }
