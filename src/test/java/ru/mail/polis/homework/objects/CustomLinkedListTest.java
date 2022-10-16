@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.objects;
 
 import org.junit.Test;
+import ru.mail.polis.homework.exception.objects.CustomLinkedList;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

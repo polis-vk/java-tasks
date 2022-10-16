@@ -1,4 +1,4 @@
-package ru.mail.polis.homework.objects;
+package ru.mail.polis.homework.exception.objects;
 
 public class StringTasks {
 

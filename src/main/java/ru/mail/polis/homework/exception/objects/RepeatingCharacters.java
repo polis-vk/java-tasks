@@ -1,4 +1,4 @@
-package ru.mail.polis.homework.objects;
+package ru.mail.polis.homework.exception.objects;
 
 
 import java.util.Objects;
