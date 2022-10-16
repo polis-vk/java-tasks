@@ -52,6 +52,10 @@ public class CustomLinkedList implements Iterable<Integer> {
             throw new IndexOutOfBoundsException();
         }
 
+        if (index == size() - 1) {
+            return tail.value;
+        }
+
         Node node = head;
         for (int pos = 0; pos < index; pos++) {
             node = node.next;
@@ -206,7 +210,7 @@ public class CustomLinkedList implements Iterable<Integer> {
     }
 
     private static class Node {
-        private int value;
+        private final int value;
         private Node next;
 
         public Node(int value) {
