@@ -2,7 +2,6 @@ package ru.mail.polis.homework.objects;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 /**
  * 15 тугриков
@@ -12,11 +11,9 @@ public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
 
-    private int currentSize;
+    private Node tail;
 
-    public CustomLinkedList() {
-        head = null;
-    }
+    private int size;
 
     /**
      * 1 тугрик
@@ -25,7 +22,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @return size
      */
     public int size() {
-        return currentSize;
+        return size;
     }
 
     /**
@@ -37,17 +34,14 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public void add(int value) {
         if (head == null) {
-            head = new Node(value, null);
-            currentSize++;
-        } else {
-            Node tempNode = head;
-            Node newNode = new Node(value, null);
-            while (tempNode.getNext() != null) {
-                tempNode = tempNode.getNext();
-            }
-            tempNode.setNext(newNode);
-            currentSize++;
+            head = new Node(value);
+            tail = head;
+            size++;
+            return;
         }
+        tail.setNext(new Node(value));
+        tail = tail.getNext();
+        size++;
     }
 
     /**
@@ -57,12 +51,15 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index
      */
     public int get(int index) {
+        if (index == size() - 1) {
+            return tail.value;
+        }
         if (size() == 0) {
-            throw new NoSuchElementException();
+            throw new IndexOutOfBoundsException();
         } else if (index < 0 || index >= size()) {
             throw new IndexOutOfBoundsException();
         } else {
-            return Objects.requireNonNull(getNode(index)).getValue();
+            return getNode(index).getValue();
         }
     }
 
@@ -77,50 +74,47 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int i, int value) {
+        if (i > size() || i < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        Node currentNode = head;
         if (i == 0) {
-            Node newNode = new Node(value);
-            if (head != null) {
-                newNode.setNext(head);
-                head = newNode;
-            } else {
-                head = newNode;
-            }
-            currentSize++;
+            head = new Node(value);
+            head.setNext(currentNode);
+            size++;
             return;
         }
         if (i == size()) {
             add(value);
         } else if (i < size()) {
-            Node newNode = new Node(value);
-            Node rightNode = getNode(i);
-            Node leftNode = getNode(i - 1);
-            newNode.setNext(rightNode);
-            assert leftNode != null;
-            leftNode.setNext(newNode);
-            currentSize++;
-        } else {
-            throw new IndexOutOfBoundsException();
+            currentNode = getNode(i - 1);
+            Node tempNode = currentNode.getNext();
+            currentNode.setNext(new Node(value));
+            currentNode.getNext().setNext(tempNode);
+            size++;
         }
     }
 
     private Node getNode(int index) {
+        if (index > size() || index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
         if (index == 0) {
             return head;
         }
-        if (index < 0 || index >= size()) {
-            throw new IndexOutOfBoundsException();
+        if (index == size() - 1) {
+            return tail;
         }
         int pointer = 0;
         Node pointerNode = head;
-        while (pointer <= index) {
+        while (pointerNode != null) {
             if (pointer == index) {
-                return pointerNode;
-            } else {
-                pointerNode = pointerNode.getNext();
-                pointer++;
+                break;
             }
+            pointerNode = pointerNode.getNext();
+            pointer++;
         }
-        return null;
+        return pointerNode;
     }
 
     /**
@@ -133,20 +127,25 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
+        if (index >= size() || index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (size == 0) {
+            return;
+        }
         if (index == 0) {
-            head = getNode(index + 1);
-            currentSize--;
+            head = head.getNext();
+            size--;
             return;
         }
+        Node currentNode = getNode(index - 1);
+        currentNode.setNext(currentNode.getNext().getNext());
+        tail = currentNode;
+        size--;
         if (index == size() - 1) {
-            getNode(index - 1).setNext(null);
-            currentSize--;
-            return;
+            tail = currentNode;
+            size--;
         }
-        Node leftNode = getNode(index - 1);
-        Node rightNode = getNode(index + 1);
-        leftNode.setNext(rightNode);
-        currentSize--;
     }
 
     /**
@@ -158,14 +157,14 @@ public class CustomLinkedList implements Iterable<Integer> {
      * После исполнения метода последовательность должна быть такой "4 -> 3 -> 2 -> 1 -> null"
      */
     public void revertList() {
-        Node current = head;
+        Node current;
         Node previous = null;
-        Node next;
-        while (current != null) {
-            next = current.getNext();
+        tail = head;
+        while (head != null) {
+            current = head;
+            head = head.getNext();
             current.setNext(previous);
             previous = current;
-            current = next;
         }
         head = previous;
     }
@@ -233,11 +232,6 @@ public class CustomLinkedList implements Iterable<Integer> {
 
         public Node(int value) {
             this.value = value;
-        }
-
-        public Node(int value, Node next) {
-            this.value = value;
-            this.next = next;
         }
 
         public Node getNext() {
