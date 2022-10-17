@@ -17,7 +17,7 @@ public class JsonCsvDataAdapter extends CsvData {
             } else if (charInText == ',') {
                 newText.append('\n');
             } else if (charInText != '\"' && charInText != '{' && charInText != '}' && charInText != '\n') {
-                newText.append(text.charAt(i));
+                newText.append(charInText);
             }
         }
         this.csvText = newText.toString();
