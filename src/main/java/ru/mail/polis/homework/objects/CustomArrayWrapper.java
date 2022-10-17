@@ -53,28 +53,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new Iterator<Integer>() {
-            int index = 0;
-            int fixModCount = modCount;
-            int current;
-            @Override
-            public boolean hasNext() {
-               return index < size();
-            }
-            @Override
-            public Integer next() {
-                if (!hasNext()){
-                    throw new NoSuchElementException();
-                }
-
-                if (fixModCount != modCount) {
-                    throw new ConcurrentModificationException();
-                }
-
-                current = array[index++];
-                return current;
-            }
-        };
+        return new CustomArrayIterator(0, modCount, 1);
     }
 
     /**
@@ -84,30 +63,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new Iterator<Integer>() {
-            int step  = 2;
-            int pos = 1;
-            int fixModCount = modCount;
-
-            @Override
-            public boolean hasNext() {
-                return pos < size();
-            }
-            @Override
-            public Integer next() {
-                if (!hasNext()){
-                    throw new NoSuchElementException();
-                }
-
-                if (fixModCount != modCount) {
-                    throw new ConcurrentModificationException();
-                }
-
-               int value = array[pos];
-               pos += step;
-                return value;
-            }
-        };
+        return new CustomArrayIterator(1, modCount, 2);
     }
 
     /**
@@ -117,36 +73,44 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new Iterator<Integer>() {
-            int step  = 2;
-            int pos = 0;
-             int fixModCount = modCount;
-
-            @Override
-            public boolean hasNext() {
-               return pos < size();
-            }
-
-            @Override
-            public Integer next() {
-                if (!hasNext()){
-                    throw new NoSuchElementException();
-                }
-
-                if (fixModCount != modCount) {
-                    throw new ConcurrentModificationException();
-                }
-
-                int value = array[pos];
-                pos += step;
-                return value;
-            }
-        };
+        return new CustomArrayIterator(0, modCount, 2);
     }
 
     private void checkIndex(int index) {
         if (index < 0 || index >= array.length) {
             throw new IndexOutOfBoundsException();
+        }
+    }
+
+    private class CustomArrayIterator implements Iterator<Integer> {
+        private int index;
+        private int fixModCount;
+        private int step;
+
+        CustomArrayIterator(int index, int fixModCount, int step) {
+            this.index = index;
+            this.fixModCount = fixModCount;
+            this.step = step;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return index < array.length;
+        }
+
+        @Override
+        public Integer next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
+            if (fixModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+            int value = array[index];
+            index += step;
+
+            return value;
         }
     }
 }
