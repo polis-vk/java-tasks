@@ -36,7 +36,6 @@ public class CustomArrayList<E> implements List<E> {
     }
 
     private void boostIfNecessary(int elementsCount) {
-        // Need to fix
         while (size + elementsCount > list.length) {
             list = Arrays.copyOf(list, list.length * EXPANSION_COEFFICIENT);
         }
@@ -85,9 +84,6 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean add(E e) {
-        if (size == Integer.MAX_VALUE) {
-            return false;
-        }
         boostIfNecessary();
         list[size++] = e;
         return true;
@@ -124,9 +120,6 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        if (Integer.MAX_VALUE - c.size() < size) {
-            return false;
-        }
         checkIndex(index, size);
         boostIfNecessary(c.size());
         for (int i = index + c.size(); i < size + c.size(); i++) {
