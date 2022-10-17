@@ -75,7 +75,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public <T> T[] toArray(T[] a) {
         if (a.length < size) {
-            return (T[]) Arrays.copyOf(a, size, a.getClass());
+            return (T[]) Arrays.copyOf(list, size, a.getClass());
         }
         for (int i = 0; i < size; i++) {
             a[i] = (T)list[i];
@@ -115,11 +115,11 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        boolean allAdded = true;
+        boolean changed = false;
         for (E element : c) {
-            allAdded &= add(element);
+            changed |= add(element);
         }
-        return allAdded;
+        return changed;
     }
 
     @Override
@@ -127,7 +127,7 @@ public class CustomArrayList<E> implements List<E> {
         if (Integer.MAX_VALUE - c.size() < size) {
             return false;
         }
-        checkIndex(index, size - 1);
+        checkIndex(index, size);
         boostIfNecessary(c.size());
         for (int i = index + c.size(); i < size + c.size(); i++) {
             list[i] = list[i - c.size()];
@@ -142,11 +142,11 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        boolean allRemoved = true;
+        boolean changed = false;
         for (Object element : c) {
-            allRemoved &= remove(element);
+            changed |= remove(element);
         }
-        return allRemoved;
+        return changed;
     }
 
     @Override
