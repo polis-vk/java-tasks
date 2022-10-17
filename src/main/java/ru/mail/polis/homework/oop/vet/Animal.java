@@ -3,7 +3,7 @@ package ru.mail.polis.homework.oop.vet;
 /**
  * Дефолтный класс животного от которого необходимо наследоваться
  */
-public class Animal {
+public abstract class Animal {
     private final int legs;
 
     public Animal(int legs) {
