@@ -3,22 +3,11 @@ package ru.mail.polis.homework.oop.vet;
 /**
  * Дефолтный класс животного от которого необходимо наследоваться
  */
-public class Animal {
-    private final int legs;
+public abstract class Animal {
 
-    public Animal(int legs) {
-        this.legs = legs;
-    }
+    public abstract String say();
 
-    public String say() {
-        return "Default say animal";
-    }
+    public abstract MoveType moveType();
 
-    public MoveType moveType() {
-        return MoveType.RUN;
-    }
-
-    public int getLegs() {
-        return legs;
-    }
+    public abstract int getLegs();
 }
