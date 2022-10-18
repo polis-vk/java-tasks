@@ -1,7 +1,9 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Collections;
-import java.util.List;
+import jdk.internal.joptsimple.internal.Strings;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -11,15 +13,42 @@ import java.util.List;
  */
 public class CustomDictionary {
 
+    private Map<HashMap<Character, Integer>, LinkedHashSet<String>> dictionary
+            = new HashMap<HashMap<Character, Integer>, LinkedHashSet<String>>();
+
+    private static HashMap<Character, Integer> getCounter(String str) {
+        HashMap<Character, Integer> counter = new HashMap<>();
+        String strLowered = str.toLowerCase();
+        for (int i = 0; i < strLowered.length(); i++) {
+            if (counter.containsKey(strLowered.charAt(i))) {
+                counter.compute(strLowered.charAt(i), (key, value) -> value + 1);
+            } else {
+                counter.put(strLowered.charAt(i), 1);
+            }
+        }
+        return counter;
+    }
+
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - []
+     * Сложность - [В лучшем случае O(k), где k - длина строки]
      */
+
     public boolean add(String value) {
-        return false;
+        if (value == null || value.equals("")) {
+            throw new IllegalArgumentException();
+        }
+        HashMap<Character, Integer> valueCounter = getCounter(value);
+        if (dictionary.containsKey(valueCounter)) {
+            return dictionary.get(valueCounter).add(value);
+        }
+        LinkedHashSet<String> strings = new LinkedHashSet<>();
+        strings.add(value);
+        dictionary.put(valueCounter, strings);
+        return true;
     }
 
     /**
@@ -27,10 +56,12 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - []
+     * Сложность - [В лучшем случае O(k), где k - длина строки]
      */
     public boolean contains(String value) {
-        return false;
+        HashMap<Character, Integer> valueCounter = getCounter(value);
+        return dictionary.containsKey(valueCounter)
+                && dictionary.get(valueCounter).contains(value);
     }
 
     /**
@@ -38,9 +69,13 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - []
+     * Сложность - [В лучшем случае O(k), где k - длина строки]
      */
     public boolean remove(String value) {
+        HashMap<Character, Integer> valueCounter = getCounter(value);
+        if (dictionary.containsKey(valueCounter)) {
+            return dictionary.get(valueCounter).remove(value);
+        }
         return false;
     }
 
@@ -61,21 +96,27 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - []
+     * Сложность - [В лучшем случае O(k), где k - длина строки]
      */
     public List<String> getSimilarWords(String value) {
-        return Collections.emptyList();
+        HashMap<Character, Integer> valueCounter = getCounter(value);
+        if (!dictionary.containsKey(valueCounter)) {
+            return Collections.emptyList();
+        }
+        return dictionary.get(valueCounter).stream().collect(Collectors.toList());
     }
 
     /**
      * Колл-во хранимых строк.
      * @return - Колл-во хранимых строк.
      *
-     * Сложность - []
+     * Сложность - [В лучшем случае O(n), где n - размер мапы]
      */
     public int size() {
-        return 0;
+        int resultSize = 0;
+        for (Map.Entry<HashMap<Character, Integer>, LinkedHashSet<String>> entry : dictionary.entrySet()) {
+            resultSize += entry.getValue().size();
+        }
+        return resultSize;
     }
-
-
 }
