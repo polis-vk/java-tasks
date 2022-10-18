@@ -90,6 +90,7 @@ public class AnimalTest {
 
         Veterinary veterinary2 = new Veterinary(10, 5, Arrays.asList("GreenPeace", "WWF"));
         assertEquals(58, veterinary2.calculateCostTherapy(list.toArray(new Animal[0])));
+
     }
 
 }
