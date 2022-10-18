@@ -47,7 +47,7 @@ public class CustomLinkedList implements Iterable<Integer> {
 
     private void checkIndex(int index) {
         if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException(index);
+            throw new IndexOutOfBoundsException(Integer.toString(index));
         }
     }
 
@@ -85,7 +85,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     public void add(int i, int value) {
         if (i < 0 || i > size) {
-            throw new IndexOutOfBoundsException(i);
+            throw new IndexOutOfBoundsException(Integer.toString(i));
         }
         Node newNode = new Node(value);
         if (i == 0) {
