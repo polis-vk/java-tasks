@@ -19,6 +19,10 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     private int position;               // следующая позиция куда будет вставлен элемент
     private int modCount;
 
+    private enum State {
+        ORDINARY, EVEN, ODD
+    }
+
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
     }
@@ -52,7 +56,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new MyIterator(0);
+        return new MyIterator(State.ORDINARY);
     }
 
     /**
@@ -62,7 +66,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new MyIterator(2);
+        return new MyIterator(State.EVEN);
     }
 
     /**
@@ -72,18 +76,18 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new MyIterator(1);
+        return new MyIterator(State.ODD);
     }
 
     public class MyIterator implements Iterator {
 
         private int pos;
-        private final int state; // 0 -> ordinary iterator, 1 -> odd iterator, 2 -> even iterator
+        private final State state;
         private final int fixedModCount = modCount;
 
-        public MyIterator(int state) {
+        public MyIterator(State state) {
             this.state = state;
-            pos = (state < 2) ? 0 : 1;
+            pos = (state == State.EVEN) ? 1 : 0;
         }
 
         @Override
@@ -95,11 +99,11 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         public Object next() {
             if (fixedModCount != modCount) {
                 throw new ConcurrentModificationException();
-            } else if (pos >= size()) {
+            } else if (!hasNext()) {
                 throw new NoSuchElementException();
             }
             int element = get(pos);
-            pos += (state > 0) ? 2 : 1;
+            pos += (state != State.ORDINARY) ? 2 : 1;
             return element;
         }
     }

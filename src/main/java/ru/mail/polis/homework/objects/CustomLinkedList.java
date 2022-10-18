@@ -12,7 +12,7 @@ public class CustomLinkedList implements Iterable<Integer> {
 
     private Node head;
     private Node last;
-    private int size = 0;
+    private int size;
     private int modCount;
 
     /**
@@ -192,9 +192,10 @@ public class CustomLinkedList implements Iterable<Integer> {
         public Integer next() {
             if (pos == 0) {
                 fixedModCount = modCount;
-            } else if (fixedModCount != modCount) {
+            }
+            if (fixedModCount != modCount) {
                 throw new ConcurrentModificationException();
-            } else if (pos >= size()) {
+            } else if (!hasNext()) {
                 throw new NoSuchElementException();
             }
             int element = get(pos);
@@ -215,4 +216,5 @@ public class CustomLinkedList implements Iterable<Integer> {
             this.next = next;
         }
     }
+
 }
