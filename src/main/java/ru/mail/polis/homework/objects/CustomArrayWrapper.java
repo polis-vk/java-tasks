@@ -16,8 +16,8 @@ import java.util.NoSuchElementException;
 public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
-    private int position = 0;           // следующая позиция куда будет вставлен элемент
-    protected int modCount = 0;
+    private int position;           // следующая позиция куда будет вставлен элемент
+    protected int modCount;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -53,7 +53,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return new IntegerIterator(-1, 1);
+        return new IntegerIterator(0, 1);
     }
 
     /**
@@ -63,7 +63,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return new IntegerIterator(-1, 2);
+        return new IntegerIterator(1, 2);
     }
 
     /**
@@ -73,7 +73,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return new IntegerIterator(-2, 2);
+        return new IntegerIterator(0, 2);
     }
 
     private void checkIndex(int index) {
@@ -83,18 +83,18 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     }
 
     private class IntegerIterator implements Iterator<Integer> {
-        int position;
-        int shift;
+        private int position;
+        private final int shift;
         final int fixedModCount = modCount;
 
         public IntegerIterator (int position, int shift) {
             this.shift = shift;
-            this. position = position;
+            this.position = position;
         }
 
         @Override
         public boolean hasNext() {
-            return position + shift < array.length;
+            return position < array.length;
         }
 
         @Override
@@ -102,14 +102,14 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             if (fixedModCount != modCount) {
                 throw new ConcurrentModificationException();
             }
-            if (position >= array.length) {
+            if (!hasNext()) {
                 throw new NoSuchElementException();
             }
 
+            int resultIndex = position;
             position += shift;
 
-            return array[position];
+            return array[resultIndex];
         }
     }
-
 }
