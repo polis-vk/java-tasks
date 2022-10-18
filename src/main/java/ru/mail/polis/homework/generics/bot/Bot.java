@@ -7,14 +7,16 @@ import java.util.List;
 
 public class Bot {
 
+    private final List<StateHandler<? extends State>> handlers;
+
     /**
      * Конструктор бота, которому на вход подаются хэндлеры состояний.
      * Необходимо как-то сохранить эти хэндлеры так, чтобы потом можно было вызвать нужный хэндлер из метода handleState
      *
      * 1 тугрик
      */
-    public Bot(List<StateHandler> handlers) {
-
+    public Bot(List<StateHandler<? extends State>> handlers) {
+        this.handlers = handlers;
     }
 
     /**
@@ -23,5 +25,10 @@ public class Bot {
      * 1 тугрик
      */
     public void handleState(State state) {
+        for (StateHandler<? extends State> handler : handlers) {
+            if (handler.getHandlingStateClass() == state.getClass()) {
+                handler.handle();
+            }
+        }
     }
 }

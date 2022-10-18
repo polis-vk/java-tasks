@@ -1,7 +1,14 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -11,15 +18,51 @@ import java.util.List;
  */
 public class CustomDictionary {
 
+    private static final String ILLEGAL_ARGUMENT = "String can't be empty!";
+
+    private final Map<HashMap<Character, Integer>, LinkedHashSet<String>> map;
+    private int size;
+
+    public CustomDictionary() {
+        this.map = new HashMap<>();
+    }
+
+    private static HashMap<Character, Integer> constructKey(String value) {
+        HashMap<Character, Integer> key = new HashMap<>();
+
+        for (char c : value.toLowerCase().toCharArray()) {
+            key.putIfAbsent(c, 0);
+            key.put(c, key.get(c) + 1);
+        }
+
+        return key;
+    }
+
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - []
+     * Сложность - [O(m), где m - длина слова]
      */
     public boolean add(String value) {
-        return false;
+        checkString(value);
+
+        HashMap<Character, Integer> key = constructKey(value);
+
+        map.putIfAbsent(key, new LinkedHashSet<>());
+
+        Set<String> valueSet = map.get(key);
+
+        if (valueSet.contains(value)) {
+            return false;
+        }
+
+        map.get(key).add(value);
+
+        size++;
+
+        return true;
     }
 
     /**
@@ -27,10 +70,20 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - []
+     * Сложность - [O(m), где m - длина слова]
      */
     public boolean contains(String value) {
-        return false;
+        checkString(value);
+
+        HashMap<Character, Integer> key = constructKey(value);
+
+        Set<String> set = map.get(key);
+
+        if (set == null) {
+            return false;
+        }
+
+        return set.contains(value);
     }
 
     /**
@@ -38,10 +91,23 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - []
+     * Сложность - [O(m), где m - длина слова]
      */
     public boolean remove(String value) {
-        return false;
+        checkString(value);
+
+        HashMap<Character, Integer> key = constructKey(value);
+
+        Set<String> set = map.get(key);
+
+        if (set == null || !set.contains(value)) {
+            return false;
+        }
+
+        set.remove(value);
+        size--;
+
+        return true;
     }
 
     /**
@@ -61,21 +127,32 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - []
+     * По сути, здесь опять идёт создание ключа за O(m), где m - длина слова
+     * Но в то же время, идёт помещение всех элементов из множества (значения) в лист
+     * Это имеет сложность O(n), где n - количество элементов в множестве
+     * Сложность - [O(n + m)]
      */
     public List<String> getSimilarWords(String value) {
-        return Collections.emptyList();
+        checkString(value);
+
+        HashMap<Character, Integer> key = constructKey(value);
+
+        return new ArrayList<>(map.getOrDefault(key, new LinkedHashSet<>()));
     }
 
     /**
      * Колл-во хранимых строк.
      * @return - Колл-во хранимых строк.
      *
-     * Сложность - []
+     * Сложность - [O(1)]
      */
     public int size() {
-        return 0;
+        return size;
     }
 
-
+    private void checkString(String value) {
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException(ILLEGAL_ARGUMENT);
+        }
+    }
 }
