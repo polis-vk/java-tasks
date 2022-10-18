@@ -1,5 +1,10 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Задание оценивается в 2 тугрика.
  * Одна из самых популярных задач.
@@ -14,7 +19,44 @@ package ru.mail.polis.homework.collections.structure;
  */
 public class ValidatorForParentheses {
 
+    private static final Map<Character, Character> bracketMatcher;
+
+    static {
+        bracketMatcher = new HashMap<>();
+
+        bracketMatcher.put(']', '[');
+        bracketMatcher.put('}', '{');
+        bracketMatcher.put('>', '<');
+        bracketMatcher.put(')', '(');
+    }
+
+    private static boolean isOpenBracket(char bracket) {
+        return bracketMatcher.containsValue(bracket);
+    }
+
+    private static boolean isCloseBracket(char bracket) {
+        return bracketMatcher.containsKey(bracket);
+    }
+
     public static boolean validate(String value) {
-        return false;
+        if (value == null || value.isEmpty()) {
+            return false;
+        }
+
+        boolean isBracketsExist = false;
+        Deque<Character> stack = new ArrayDeque<>();
+
+        for (char ch : value.toCharArray()) {
+            if (isOpenBracket(ch)) {
+                isBracketsExist = true;
+                stack.add(ch);
+            } else if (isCloseBracket(ch)) {
+                if (stack.isEmpty() || !stack.removeLast().equals(bracketMatcher.get(ch))) {
+                    return false;
+                }
+            }
+        }
+
+        return isBracketsExist && stack.isEmpty();
     }
 }
