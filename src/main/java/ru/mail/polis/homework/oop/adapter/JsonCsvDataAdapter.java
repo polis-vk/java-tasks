@@ -21,5 +21,6 @@ public class JsonCsvDataAdapter extends CsvData{
                 .replaceAll("\"", "")
                 .replaceAll(",", "")
                 .replaceAll(":", ",");
+
     }
 }
