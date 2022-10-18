@@ -9,6 +9,9 @@ import java.util.NoSuchElementException;
  * Реализовать все методы односвязного списка.
  */
 public class CustomLinkedList implements Iterable<Integer> {
+    private static final String DELIMITER = " -> ";
+    private static final String NULL_ELEMENT = "null";
+
     private Node head;
     private Node tail;
     private int size;
@@ -143,21 +146,17 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     @Override
     public String toString() {
-        final String delimiter = " -> ";
-        final String nullElement = "null";
         if (size == 0) {
-            return nullElement;
+            return NULL_ELEMENT;
         }
-        int counter = 0;
         Node currentNode = head;
         StringBuilder result = new StringBuilder();
-        while (counter != size) {
+        while (currentNode != null) {
             result.append(currentNode.value);
-            result.append(delimiter);
-            counter++;
+            result.append(DELIMITER);;
             currentNode = currentNode.next;
         }
-        return result.append(nullElement).toString();
+        return result.append(NULL_ELEMENT).toString();
     }
 
     /**
