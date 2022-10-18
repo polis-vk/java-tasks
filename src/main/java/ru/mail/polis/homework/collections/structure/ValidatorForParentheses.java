@@ -30,14 +30,6 @@ public class ValidatorForParentheses {
         bracketMatcher.put(')', '(');
     }
 
-    private static boolean isOpenBracket(char bracket) {
-        return bracketMatcher.containsValue(bracket);
-    }
-
-    private static boolean isCloseBracket(char bracket) {
-        return bracketMatcher.containsKey(bracket);
-    }
-
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
@@ -58,5 +50,13 @@ public class ValidatorForParentheses {
         }
 
         return isBracketsExist && stack.isEmpty();
+    }
+
+    private static boolean isOpenBracket(char bracket) {
+        return bracketMatcher.containsValue(bracket);
+    }
+
+    private static boolean isCloseBracket(char bracket) {
+        return bracketMatcher.containsKey(bracket);
     }
 }
