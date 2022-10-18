@@ -2,6 +2,7 @@ package ru.mail.polis.homework.objects;
 
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -16,6 +17,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
+    private boolean isChanged;
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -25,11 +27,13 @@ public class CustomArrayWrapper implements Iterable<Integer> {
         checkIndex(position);
         array[position] = value;
         position++;
+        isChanged = true;
     }
 
     public void edit(int index, int value) {
         checkIndex(index);
         array[index] = value;
+        isChanged = true;
     }
 
     public int get(int index) {
@@ -81,12 +85,14 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
         public CustomArrayWrapperIterator(boolean isEven) {
             this.isDefault = false;
+            isChanged = false;
             if (isEven) {
                 this.currentIndex++;
             }
         }
 
         public CustomArrayWrapperIterator() {
+            isChanged = false;
             this.isDefault = true;
         }
 
@@ -98,8 +104,11 @@ public class CustomArrayWrapper implements Iterable<Integer> {
 
         @Override
         public Integer next() {
-            if (!isCallHasNext || !hasNext()) {
+            if (isChanged) {
                 throw new ConcurrentModificationException();
+            }
+            if (!isCallHasNext || !hasNext()) {
+                throw new NoSuchElementException();
             }
 
             Integer value = array[currentIndex];
