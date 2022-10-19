@@ -2,6 +2,7 @@ package ru.mail.polis.homework.objects;
 
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Вам придется реализовать Iterable класс CustomArrayWrapper вместе с методами которые
@@ -12,10 +13,13 @@ import java.util.Iterator;
  * дан массив [100, 0 ,100, 0, 100]
  * тогда все элементы со значением 100 имеют нечетную позицию, а элементы = 0 - четную.
  */
+
+
 public class CustomArrayWrapper implements Iterable<Integer> {
 
     private final int[] array;          // массив
     private int position;               // следующая позиция куда будет вставлен элемент
+    private int modCount;               // количество структурных изменений массива
 
     public CustomArrayWrapper(int size) {
         this.array = new int[size];
@@ -24,6 +28,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     public void add(int value) {
         checkIndex(position);
         array[position] = value;
+        modCount++;
         position++;
     }
 
@@ -81,31 +86,34 @@ public class CustomArrayWrapper implements Iterable<Integer> {
     private class ArrayIterator implements Iterator<Integer> {
         private final int step;
         private final int expectedPosition;
-        private int current;
+        private final int expectedModCount;
+        private int currentIndex;
 
         public ArrayIterator(int startIndex, int step) {
-            this.current = startIndex;
+            this.currentIndex = startIndex;
             this.step = step;
             this.expectedPosition = position;
+            this.expectedModCount = modCount;
         }
 
         @Override
         public boolean hasNext() {
-            checkForConcurrentModification();
-            return current >= 0 && current < expectedPosition;
+            return currentIndex >= 0 && currentIndex < expectedPosition;
         }
 
         @Override
         public Integer next() {
             checkForConcurrentModification();
-            checkIndex(current);
-            int value = array[current];
-            current += step;
+            if (currentIndex >= expectedPosition) {
+                throw new NoSuchElementException();
+            }
+            int value = array[currentIndex];
+            currentIndex += step;
             return value;
         }
 
         private void checkForConcurrentModification() {
-            if (position != expectedPosition) {
+            if (modCount != expectedModCount) {
                 throw new ConcurrentModificationException();
             }
         }

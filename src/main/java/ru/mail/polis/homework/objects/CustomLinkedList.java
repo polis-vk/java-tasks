@@ -10,8 +10,11 @@ import java.util.NoSuchElementException;
  */
 public class CustomLinkedList implements Iterable<Integer> {
 
+    private static final String separator = " -> ";
+    private static final String nullWord = "null";
     private Node head;
     private int size;
+    private int modCount;
 
     /**
      * 1 тугрик
@@ -41,6 +44,7 @@ public class CustomLinkedList implements Iterable<Integer> {
             }
             current.setNext(nodeToAdd);
         }
+        modCount++;
         size++;
     }
 
@@ -71,10 +75,10 @@ public class CustomLinkedList implements Iterable<Integer> {
             head = nodeToAdd;
         } else {
             Node previous = getNode(index - 1);
-            Node current = previous.next;
+            nodeToAdd.next = previous.next;
             previous.next = nodeToAdd;
-            nodeToAdd.next = current;
         }
+        modCount++;
         size++;
     }
 
@@ -88,15 +92,15 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index - position what element need remove.
      */
     public void removeElement(int index) {
+        checkIndex(index);
         if (index == 0) {
-            checkNodeAndIndex(head, index);
             head = head.next;
         } else {
             Node previous = getNode(index - 1);
             Node nodeToRemove = previous.next;
-            checkNodeAndIndex(nodeToRemove, index);
             previous.setNext(nodeToRemove.next);
         }
+        modCount++;
         size--;
     }
 
@@ -118,6 +122,7 @@ public class CustomLinkedList implements Iterable<Integer> {
             current = next;
         }
         head = previous;
+        modCount++;
     }
 
     /**
@@ -132,8 +137,6 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     @Override
     public String toString() {
-        String separator = " -> ";
-        String nullWord = "null";
         Node current = head;
         StringBuilder result = new StringBuilder();
         while (current != null) {
@@ -154,12 +157,11 @@ public class CustomLinkedList implements Iterable<Integer> {
     @Override
     public Iterator<Integer> iterator() {
         return new Iterator() {
-            private final int expectedSize = size;
+            private final int expectedModCount = modCount;
             private Node current = head;
 
             @Override
             public boolean hasNext() {
-                checkForConcurrentModification();
                 return current != null;
             }
 
@@ -175,7 +177,7 @@ public class CustomLinkedList implements Iterable<Integer> {
             }
 
             private void checkForConcurrentModification() {
-                if (size != expectedSize) {
+                if (modCount != expectedModCount) {
                     throw new ConcurrentModificationException();
                 }
             }
@@ -183,17 +185,16 @@ public class CustomLinkedList implements Iterable<Integer> {
     }
 
     private Node getNode(int index) {
-        checkNodeAndIndex(head, index);
+        checkIndex(index);
         Node current = head;
         for (int i = 0; i < index; i++) {
             current = current.next;
-            checkNodeAndIndex(current, index);
         }
         return current;
     }
 
-    private void checkNodeAndIndex(Node nodeToCheck, int index) {
-        if (nodeToCheck == null || index < 0 || index >= size) {
+    private void checkIndex(int index) {
+        if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException(String.valueOf(index));
         }
     }
