@@ -15,6 +15,47 @@ package ru.mail.polis.homework.collections.structure;
 public class ValidatorForParentheses {
 
     public static boolean validate(String value) {
-        return false;
+        if (value == null) {
+            return false;
+        }
+        String stack = "";
+        boolean parenthesesFound = false;
+        for (int i = 0; i < value.length(); i++) {
+            if (value.charAt(i) == '[' || value.charAt(i) == '{' ||
+                    value.charAt(i) == '<' || value.charAt(i) == '(') {
+                stack = stack + value.charAt(i);
+                parenthesesFound = true;
+            }
+            else try {
+                if (value.charAt(i) == ']') {
+                    if (stack.charAt(stack.length() - 1) == '[') {
+                        stack = stack.substring(0, stack.length() - 1);
+                    } else {
+                        return false;
+                    }
+                } else if (value.charAt(i) == '}') {
+                    if (stack.charAt(stack.length() - 1) == '{') {
+                        stack = stack.substring(0, stack.length() - 1);
+                    } else {
+                        return false;
+                    }
+                } else if (value.charAt(i) == '>') {
+                    if (stack.charAt(stack.length() - 1) == '<') {
+                        stack = stack.substring(0, stack.length() - 1);
+                    } else {
+                        return false;
+                    }
+                } else if (value.charAt(i) == ')') {
+                    if (stack.charAt(stack.length() - 1) == '(') {
+                        stack = stack.substring(0, stack.length() - 1);
+                    } else {
+                        return false;
+                    }
+                }
+            } catch (StringIndexOutOfBoundsException exception) {
+                return false;
+            }
+        }
+        return stack.isEmpty() && parenthesesFound;
     }
 }
