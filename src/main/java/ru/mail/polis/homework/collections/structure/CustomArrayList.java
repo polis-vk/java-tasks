@@ -93,14 +93,21 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        // TODO.
-        return false;
+        return addAll(size, c);
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        // TODO.
-        return false;
+        boolean isChanged = false;
+
+        int curIndex = index;
+        for (E elem : c) {
+            isChanged = true;
+            add(curIndex, elem);
+            curIndex++;
+        }
+
+        return isChanged;
     }
 
     @Override

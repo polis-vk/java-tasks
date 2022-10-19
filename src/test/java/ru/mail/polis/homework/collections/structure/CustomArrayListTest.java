@@ -91,13 +91,40 @@ public class CustomArrayListTest {
     }
 
     @Test
-    public void addAll() {
-        // TODO.
+    public void testAddAllWithoutIndex() {
+        fillArray(array);
+        assertEquals(DEFAULT_SIZE, array.size());
+
+        List<Integer> testList = List.of(-1, -2, -3);
+        assertTrue(array.addAll(testList));
+
+        assertEquals(DEFAULT_SIZE + 3, array.size());
+        for (int i = 0; i < DEFAULT_SIZE; i++) {
+            assertEquals(array.get(i), Integer.valueOf(i));
+        }
+        for (int i = DEFAULT_SIZE; i < DEFAULT_SIZE + 3; i++) {
+            assertEquals(array.get(i), testList.get(i - DEFAULT_SIZE));
+        }
     }
 
     @Test
-    public void testAddAll() {
-        // TODO.
+    public void testAddAllWithIndex() {
+        fillArray(array);
+        assertEquals(DEFAULT_SIZE, array.size());
+
+        List<Integer> testList = List.of(-1, -2, -3);
+        assertTrue(array.addAll(3, testList));
+
+        assertEquals(DEFAULT_SIZE + 3, array.size());
+        for (int i = 0; i < 2; i++) {
+            assertEquals(array.get(i), Integer.valueOf(i));
+        }
+        for (int i = 3; i < 6; i++) {
+            assertEquals(array.get(i), testList.get(i - 3));
+        }
+        for (int i = 6; i < DEFAULT_SIZE + 3; i++) {
+            assertEquals(array.get(i), Integer.valueOf(i - 3));
+        }
     }
 
     @Test
