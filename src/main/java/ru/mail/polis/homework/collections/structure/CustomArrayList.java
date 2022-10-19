@@ -41,8 +41,8 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean contains(Object o) {
-        // TODO.
-        return false;
+        int index = indexOf(o);
+        return index != -1;
     }
 
     @Override
@@ -82,8 +82,13 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        // TODO.
-        return false;
+        for (Object elem : c) {
+            if (!contains(elem)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override

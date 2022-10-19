@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,7 +15,7 @@ public class CustomArrayListTest {
     private CustomArrayList<Integer> array;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         array = new CustomArrayList<>();
     }
 
@@ -32,7 +35,12 @@ public class CustomArrayListTest {
 
     @Test
     public void contains() {
-        // TODO.
+        fillArray(array);
+        for (int i = 0; i < DEFAULT_SIZE; i++) {
+            assertTrue(array.contains(i));
+        }
+        assertFalse(array.contains(-1));
+        assertFalse(array.contains(16));
     }
 
     @Test
@@ -73,7 +81,13 @@ public class CustomArrayListTest {
 
     @Test
     public void containsAll() {
-        // TODO.
+        fillArray(array);
+        List<Integer> another = new ArrayList<>();
+        for (int i = 0; i < DEFAULT_SIZE; i++) {
+            another.add(i);
+        }
+        assertTrue(array.containsAll(another));
+        assertFalse(array.containsAll(List.of(-1,4,2)));
     }
 
     @Test
