@@ -129,7 +129,17 @@ public class CustomArrayListTest {
 
     @Test
     public void removeAll() {
-        // TODO.
+        List<Integer> testList = new ArrayList<>(List.of(1,2,3,4,4,3,2,1,1,2,3,4,3,2,1,4,2,3,4,1,2,3,4));
+        array.addAll(testList);
+        assertEquals(array.size(), testList.size());
+
+        assertTrue(array.removeAll(List.of(1, 2)));
+        testList.removeAll(List.of(1, 2));
+
+        assertEquals(array.size(), testList.size());
+        for (int i = 0; i < array.size(); i++) {
+            assertEquals(array.get(i), testList.get(i));
+        }
     }
 
     @Test

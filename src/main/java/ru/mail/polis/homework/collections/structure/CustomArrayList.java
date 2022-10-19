@@ -112,8 +112,15 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        // TODO.
-        return false;
+        boolean isChanged = false;
+
+        for (Object elem : c) {
+            while (remove(elem)) {
+                isChanged = true;
+            }
+        }
+
+        return isChanged;
     }
 
     @Override
