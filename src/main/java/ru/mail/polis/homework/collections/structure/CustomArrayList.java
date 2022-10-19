@@ -12,16 +12,31 @@ import java.util.ListIterator;
  * Задание оценивается в 10 тугриков
  */
 public class CustomArrayList<E> implements List<E> {
+
+    private static final int INITIAL_CAPACITY = 10;
+    private static final int GROW_FACTOR = 2;
+
+    private E[] data;
+    private int size = 0;
+    private int modCount = 0;
+
+    @SuppressWarnings("unchecked")
+    public CustomArrayList(int initialCapacity) {
+        data = (E[]) new Object[initialCapacity];
+    }
+
+    public CustomArrayList() {
+        this(INITIAL_CAPACITY);
+    }
+
     @Override
     public int size() {
-        // TODO.
-        return 0;
+        return size;
     }
 
     @Override
     public boolean isEmpty() {
-        // TODO.
-        return false;
+        return size == 0;
     }
 
     @Override
@@ -50,8 +65,8 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean add(E e) {
-        // TODO.
-        return false;
+        add(size, e);
+        return true;
     }
 
     @Override
@@ -97,19 +112,36 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E get(int index) {
-        // TODO.
-        return null;
+        checkIndexBounds(index);
+        return data[index];
     }
 
     @Override
     public E set(int index, E element) {
-        // TODO.
-        return null;
+        checkIndexBounds(index);
+        modCount++;
+        E result = get(index);
+
+        data[index] = element;
+        return result;
     }
 
     @Override
     public void add(int index, E element) {
-        // TODO.
+        if (index != size) {
+            checkIndexBounds(index);
+        }
+        modCount++;
+
+        // Увеличиваем емкость, если больше нет места.
+        if (size == data.length) {
+            data = grow(data.length * GROW_FACTOR);
+        }
+
+        // Сдвигаем существующие элементы.
+        System.arraycopy(data, index, data, index + 1, size - index);
+        data[index] = element;
+        size++;
     }
 
     @Override
@@ -146,5 +178,29 @@ public class CustomArrayList<E> implements List<E> {
     public List<E> subList(int fromIndex, int toIndex) {
         // TODO.
         return null;
+    }
+
+    /**
+     * Увеличить емкость содержащего элементы массива. Причем, если новое значение ёмкости будет меньше или равно
+     * исходной - ничего не произойдет. Если же оно будет больше исходной - выделится новая память, куда переместятся
+     * все элементы.
+     * @param newCapacity - новое значение ёмкости коллекции.
+     * @return Массив новой (или старой ёмкости), содержащий предыдущие элементы.
+     */
+    @SuppressWarnings("unchecked")
+    private E[] grow(int newCapacity) {
+        if (newCapacity <= data.length) {
+            return data;
+        }
+
+        E[] newArray = (E[]) new Object[newCapacity];
+        System.arraycopy(data, 0, newArray, 0, size);
+        return newArray;
+    }
+
+    private void checkIndexBounds(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Индекс " + index + " за пределами массива.");
+        }
     }
 }

@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.collections.structure;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -8,24 +7,27 @@ import static org.junit.Assert.*;
 
 public class CustomArrayListTest {
 
+    private static final int DEFAULT_SIZE = 16;
+
+    private CustomArrayList<Integer> array;
+
     @Before
     public void setUp() throws Exception {
-        // TODO.
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        // TODO.
+        array = new CustomArrayList<>();
     }
 
     @Test
     public void size() {
-        // TODO.
+        assertEquals(array.size(), 0);
+        fillArray(array);
+        assertEquals(array.size(), DEFAULT_SIZE);
     }
 
     @Test
     public void isEmpty() {
-        // TODO.
+        assertTrue(array.isEmpty());
+        fillArray(array);
+        assertFalse(array.isEmpty());
     }
 
     @Test
@@ -49,8 +51,11 @@ public class CustomArrayListTest {
     }
 
     @Test
-    public void add() {
-        // TODO.
+    public void addWithoutIndex() {
+        fillArray(array);
+        for (int i = 0; i < DEFAULT_SIZE; i++) {
+            assertEquals(array.get(i), Integer.valueOf(i));
+        }
     }
 
     @Test
@@ -95,12 +100,31 @@ public class CustomArrayListTest {
 
     @Test
     public void set() {
-        // TODO.
+        fillArray(array);
+        for (int i = 0; i < DEFAULT_SIZE; i += 2) {
+            array.set(i, i * i);
+        }
+        for (int i = 0; i < DEFAULT_SIZE; i++) {
+            assertEquals(array.get(i), Integer.valueOf(i % 2 == 0 ? i * i : i));
+        }
     }
 
     @Test
-    public void testAdd() {
-        // TODO.
+    public void addWithIndex() {
+        fillArray(array);
+        array.add(2, 123);
+        assertEquals(array.get(0), Integer.valueOf(0));
+        assertEquals(array.get(1), Integer.valueOf(1));
+        assertEquals(array.get(2), Integer.valueOf(123));
+        for (int i = 3; i < DEFAULT_SIZE + 1; i++) {
+            assertEquals(array.get(i), Integer.valueOf(i - 1));
+        }
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void addWithIndexThrowsWhenOutOfBounds() {
+        fillArray(array);
+        array.add(DEFAULT_SIZE + 1, 123);
     }
 
     @Test
@@ -131,5 +155,11 @@ public class CustomArrayListTest {
     @Test
     public void subList() {
         // TODO.
+    }
+
+    private void fillArray(CustomArrayList<Integer> array) {
+        for (int i = 0; i < DEFAULT_SIZE; i++) {
+            array.add(i);
+        }
     }
 }
