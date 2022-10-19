@@ -87,7 +87,7 @@ public class CustomArrayListTest {
             another.add(i);
         }
         assertTrue(array.containsAll(another));
-        assertFalse(array.containsAll(List.of(-1,4,2)));
+        assertFalse(array.containsAll(List.of(-1, 4, 2)));
     }
 
     @Test
