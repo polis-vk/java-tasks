@@ -237,8 +237,16 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-        // TODO.
-        return null;
+        if (fromIndex < 0 || fromIndex > size || toIndex < 0 || toIndex > size || fromIndex > toIndex) {
+            throw new IndexOutOfBoundsException("Некорректные индексы");
+        }
+
+        CustomArrayList<E> result = new CustomArrayList<>();
+        for (int i = fromIndex; i < toIndex; i++) {
+            result.add(data[i]);
+        }
+
+        return result;
     }
 
     /**

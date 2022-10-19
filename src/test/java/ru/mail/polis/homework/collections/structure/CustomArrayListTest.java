@@ -273,7 +273,15 @@ public class CustomArrayListTest {
 
     @Test
     public void subList() {
-        // TODO.
+        fillArray(myArrayList);
+        assertEquals(myArrayList.size(), DEFAULT_SIZE);
+
+        List<Integer> subList = myArrayList.subList(3, 9);
+        assertEquals(subList.size(), 9 - 3);
+
+        for (int i = 3; i < 9; i++) {
+            assertEquals(myArrayList.get(i), subList.get(i - 3));
+        }
     }
 
     private void fillArray(List<Integer> array) {
