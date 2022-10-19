@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.oop.vet;
 
+import ru.mail.polis.homework.oop.vet.type.*;
+
 public class GeneratorAnimal {
     private GeneratorAnimal() {
     }
@@ -21,6 +23,22 @@ public class GeneratorAnimal {
      * @return - соответствующего потомка
      */
     public static Animal generateAnimal(String animalType) {
-        return null;
+        switch (animalType) {
+            case "cat":
+                return new Cat();
+            case "dog":
+                return new Dog();
+            case "kangaroo":
+                return new Kangaroo();
+            case "pigeon":
+                return new Pigeon();
+            case "cow":
+                return new Cow();
+            case "shark":
+                return new Shark();
+            case "snake":
+                return new Snake();
+        }
+        throw new IllegalArgumentException("Cannot find animal type");
     }
 }
