@@ -125,8 +125,19 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        // TODO.
-        return false;
+        boolean isChanged = false;
+
+        int curIndex = 0;
+        while (curIndex < size) {
+            if (!c.contains(data[curIndex])) {
+                remove(curIndex);
+                isChanged = true;
+            } else {
+                curIndex++;
+            }
+        }
+
+        return isChanged;
     }
 
     @Override
