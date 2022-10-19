@@ -161,7 +161,11 @@ public class CustomArrayListTest {
 
     @Test
     public void clear() {
-        // TODO.
+        fillArray(myArrayList);
+        assertEquals(myArrayList.size(), DEFAULT_SIZE);
+
+        myArrayList.clear();
+        assertEquals(myArrayList.size(), 0);
     }
 
     @Test

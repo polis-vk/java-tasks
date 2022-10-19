@@ -142,7 +142,11 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public void clear() {
-        // TODO.
+        modCount++;
+        for (int i = 0; i < size; i++) {
+            data[i] = null;
+        }
+        size = 0;
     }
 
     @Override
