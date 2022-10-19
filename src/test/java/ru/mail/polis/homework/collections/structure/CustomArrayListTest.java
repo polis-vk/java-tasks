@@ -3,6 +3,7 @@ package ru.mail.polis.homework.collections.structure;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -269,12 +270,45 @@ public class CustomArrayListTest {
 
     @Test
     public void listIterator() {
-        // TODO.
+        fillArray(myArrayList);
+        ListIterator<Integer> iter = myArrayList.listIterator();
+        iter.next();
+        iter.next();
+        iter.next();
+        assertEquals(iter.nextIndex(), 3);
+        assertEquals(iter.previousIndex(), 2);
+        assertEquals(iter.next(), Integer.valueOf(3));
+        iter.previous();
+        iter.previous();
+        iter.previous();
+        assertEquals(iter.previous(), Integer.valueOf(0));
+        iter.add(123);
+        assertEquals(myArrayList.size(), DEFAULT_SIZE + 1);
+        assertEquals(iter.next(), Integer.valueOf(123));
+        iter.remove();
+        assertEquals(iter.next(), Integer.valueOf(1));
+        iter.set(322);
+        assertEquals(iter.next(), Integer.valueOf(322));
     }
 
     @Test
-    public void testListIterator() {
-        // TODO.
+    public void listIteratorWithIndex() {
+        fillArray(myArrayList);
+        ListIterator<Integer> iter = myArrayList.listIterator(3);
+        assertEquals(iter.nextIndex(), 3);
+        assertEquals(iter.previousIndex(), 2);
+        assertEquals(iter.next(), Integer.valueOf(3));
+        iter.previous();
+        iter.previous();
+        iter.previous();
+        assertEquals(iter.previous(), Integer.valueOf(0));
+        iter.add(123);
+        assertEquals(myArrayList.size(), DEFAULT_SIZE + 1);
+        assertEquals(iter.next(), Integer.valueOf(123));
+        iter.remove();
+        assertEquals(iter.next(), Integer.valueOf(1));
+        iter.set(322);
+        assertEquals(iter.next(), Integer.valueOf(322));
     }
 
     @Test

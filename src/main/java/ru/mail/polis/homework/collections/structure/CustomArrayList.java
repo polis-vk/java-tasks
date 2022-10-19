@@ -6,7 +6,6 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.NoSuchElementException;
 
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
@@ -52,7 +51,7 @@ public class CustomArrayList<E> implements List<E> {
     public Iterator<E> iterator() {
         return new Iterator<E>() {
 
-            int fixedModCount = modCount;
+            final int fixedModCount = modCount;
             int index = 0;
 
             @Override
@@ -66,7 +65,7 @@ public class CustomArrayList<E> implements List<E> {
                     throw new ConcurrentModificationException();
                 }
                 if (index >= size) {
-                    throw new NoSuchElementException();
+                    throw new IndexOutOfBoundsException();
                 }
                 return data[index++];
             }
@@ -246,14 +245,83 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public ListIterator<E> listIterator() {
-        // TODO.
-        return null;
+        return listIterator(0);
     }
 
     @Override
     public ListIterator<E> listIterator(int index) {
-        // TODO.
-        return null;
+        checkIndexBounds(index);
+
+        return new ListIterator<E>() {
+
+            int fixedModCount = modCount;
+            int curIndex = index;
+
+            @Override
+            public boolean hasNext() {
+                return curIndex < size;
+            }
+
+            @Override
+            public E next() {
+                checkForMod();
+                if (curIndex >= size) {
+                    throw new IndexOutOfBoundsException();
+                }
+                return data[curIndex++];
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return curIndex > 0;
+            }
+
+            @Override
+            public E previous() {
+                checkForMod();
+                if (curIndex <= 0) {
+                    throw new IndexOutOfBoundsException();
+                }
+                return data[--curIndex];
+            }
+
+            @Override
+            public int nextIndex() {
+                return curIndex;
+            }
+
+            @Override
+            public int previousIndex() {
+                return curIndex - 1;
+            }
+
+            @Override
+            public void remove() {
+                checkForMod();
+                CustomArrayList.this.remove(curIndex);
+                fixedModCount = modCount;
+            }
+
+            @Override
+            public void set(E e) {
+                checkForMod();
+                CustomArrayList.this.set(curIndex, e);
+                fixedModCount = modCount;
+            }
+
+            @Override
+            public void add(E e) {
+                checkForMod();
+                CustomArrayList.this.add(curIndex, e);
+                fixedModCount = modCount;
+            }
+
+            private void checkForMod() {
+                if (fixedModCount != modCount) {
+                    throw new ConcurrentModificationException();
+                }
+            }
+        };
     }
 
     @Override
