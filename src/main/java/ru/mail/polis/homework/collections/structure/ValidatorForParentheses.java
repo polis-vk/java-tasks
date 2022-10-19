@@ -1,5 +1,9 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.Queue;
+
 /**
  * Задание оценивается в 2 тугрика.
  * Одна из самых популярных задач.
@@ -14,7 +18,30 @@ package ru.mail.polis.homework.collections.structure;
  */
 public class ValidatorForParentheses {
 
+    private static final String accessibleSymbols = "[]{}<>()";
+
+    private static boolean isOpposite(char a, char b) {
+        return (a == '[' && b == ']') || (a == '{' && b == '}') || (a == '<' && b == '>') || (a == '(' && b == ')');
+    }
     public static boolean validate(String value) {
-        return false;
+        if (value == null || value.isEmpty()) {
+            return false;
+        }
+        Queue< Character > stack = Collections.asLifoQueue(new ArrayDeque<>());
+        for (int i = 0; i < value.length(); ++i) {
+            int inx = accessibleSymbols.indexOf(value.charAt(i));
+            if (inx != -1) {
+                if (inx % 2 == 0) {
+                    stack.add(value.charAt(i));
+                } else {
+                    if (!stack.isEmpty() && isOpposite(stack.peek(), value.charAt(i))) {
+                        stack.remove();
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+        return stack.size() == 0;
     }
 }
