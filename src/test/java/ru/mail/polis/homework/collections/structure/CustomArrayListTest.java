@@ -95,7 +95,10 @@ public class CustomArrayListTest {
 
     @Test
     public void get() {
-        // TODO.
+        fillArray(array);
+        for (int i = 0; i < DEFAULT_SIZE; i++) {
+            assertEquals(array.get(i), Integer.valueOf(i));
+        }
     }
 
     @Test
