@@ -59,8 +59,16 @@ public class CustomArrayListTest {
     }
 
     @Test
-    public void remove() {
-        // TODO.
+    public void removeWithoutIndex() {
+        fillArray(array);
+        assertFalse(array.remove(Integer.valueOf(123)));
+        assertTrue(array.remove(Integer.valueOf(7)));
+        for (int i = 0; i < 7; i++) {
+            assertEquals(array.get(i), Integer.valueOf(i));
+        }
+        for (int i = 7; i < DEFAULT_SIZE - 1; i++) {
+            assertEquals(array.get(i), Integer.valueOf(i + 1));
+        }
     }
 
     @Test

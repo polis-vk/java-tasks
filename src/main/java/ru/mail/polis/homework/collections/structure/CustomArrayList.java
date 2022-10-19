@@ -71,8 +71,13 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean remove(Object o) {
-        // TODO.
-        return false;
+        int index = indexOf(o);
+
+        if (index == -1) {
+            return false;
+        }
+        remove(index);
+        return true;
     }
 
     @Override
