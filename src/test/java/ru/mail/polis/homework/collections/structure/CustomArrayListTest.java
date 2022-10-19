@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Before;
@@ -47,7 +48,12 @@ public class CustomArrayListTest {
 
     @Test
     public void iterator() {
-        // TODO.
+        fillArray(myArrayList);
+        Iterator<Integer> iter = myArrayList.iterator();
+        int i = 0;
+        while (iter.hasNext()) {
+            assertEquals(iter.next(), myArrayList.get(i++));
+        }
     }
 
     @Test

@@ -2,9 +2,11 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
@@ -48,8 +50,27 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public Iterator<E> iterator() {
-        // TODO.
-        return null;
+        return new Iterator<E>() {
+
+            int fixedModCount = modCount;
+            int index = 0;
+
+            @Override
+            public boolean hasNext() {
+                return index < size;
+            }
+
+            @Override
+            public E next() {
+                if (fixedModCount != modCount) {
+                    throw new ConcurrentModificationException();
+                }
+                if (index >= size) {
+                    throw new NoSuchElementException();
+                }
+                return data[index++];
+            }
+        };
     }
 
     @Override
