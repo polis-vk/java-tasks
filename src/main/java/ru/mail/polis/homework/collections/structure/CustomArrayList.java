@@ -158,14 +158,24 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        // TODO.
-        return 0;
+        for (int i = 0; i < size; i++) {
+            if (data[i].equals(o)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        // TODO.
-        return 0;
+        for (int i = size - 1; i >= 0; i--) {
+            if (data[i].equals(o)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     @Override

@@ -146,12 +146,20 @@ public class CustomArrayListTest {
 
     @Test
     public void indexOf() {
-        // TODO.
+        fillArray(array);
+        assertEquals(array.indexOf(7), 7);
+        array.set(3, 7);
+        assertEquals(array.indexOf(7), 3);
+        assertEquals(array.indexOf(123), -1);
     }
 
     @Test
     public void lastIndexOf() {
-        // TODO.
+        fillArray(array);
+        assertEquals(array.lastIndexOf(7), 7);
+        array.set(10, 7);
+        assertEquals(array.lastIndexOf(7), 10);
+        assertEquals(array.lastIndexOf(123), -1);
     }
 
     @Test
