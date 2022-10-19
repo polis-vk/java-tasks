@@ -52,12 +52,36 @@ public class CustomArrayListTest {
 
     @Test
     public void toArray() {
-        // TODO.
+        Object[] emptyArray = myArrayList.toArray();
+        assertEquals(0, emptyArray.length);
+
+        fillArray(myArrayList);
+        Object[] array = myArrayList.toArray();
+        assertEquals(myArrayList.size(), array.length);
+        for (int i = 0; i < array.length; i++) {
+            assertEquals(myArrayList.get(i), array[i]);
+        }
     }
 
     @Test
-    public void testToArray() {
-        // TODO.
+    public void toArrayWithParam() {
+        Integer[] intArr = new Integer[0];
+        intArr = myArrayList.toArray(intArr);
+        assertEquals(myArrayList.size(), intArr.length);
+
+        fillArray(myArrayList);
+        intArr = myArrayList.toArray(intArr);
+        assertEquals(myArrayList.size(), intArr.length);
+
+        for (int i = 0; i < myArrayList.size(); i++) {
+            assertEquals(myArrayList.get(i), intArr[i]);
+        }
+
+        Integer[] anotherIntArr = new Integer[20];
+        anotherIntArr = myArrayList.toArray(anotherIntArr);
+        for (int i = 0; i < myArrayList.size(); i++) {
+            assertEquals(myArrayList.get(i), anotherIntArr[i]);
+        }
     }
 
     @Test

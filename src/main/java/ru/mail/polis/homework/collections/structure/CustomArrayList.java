@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -53,14 +54,19 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public Object[] toArray() {
-        // TODO.
-        return new Object[0];
+        return Arrays.copyOf(data, size);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
-        // TODO.
-        return null;
+        if (a.length < size) {
+            return (T[]) Arrays.copyOf(data, size, a.getClass());
+        }
+
+        // В переданном массиве достаточно места.
+        System.arraycopy(data, 0, a, 0, size);
+        return a;
     }
 
     @Override
