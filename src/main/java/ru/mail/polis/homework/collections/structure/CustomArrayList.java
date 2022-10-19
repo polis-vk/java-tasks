@@ -146,8 +146,14 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E remove(int index) {
-        // TODO.
-        return null;
+        checkIndexBounds(index);
+        modCount++;
+        E result = data[index];
+
+        data[index] = null;
+        size--;
+        System.arraycopy(data, index + 1, data, index, size - index);
+        return result;
     }
 
     @Override

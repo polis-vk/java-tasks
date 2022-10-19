@@ -131,8 +131,17 @@ public class CustomArrayListTest {
     }
 
     @Test
-    public void testRemove() {
-        // TODO.
+    public void removeWithIndex() {
+        fillArray(array);
+        assertEquals(array.size(), DEFAULT_SIZE);
+        array.remove(4);
+        assertEquals(array.size(), DEFAULT_SIZE - 1);
+        for (int i = 0; i < 4; i++) {
+            assertEquals(array.get(i), Integer.valueOf(i));
+        }
+        for (int i = 4; i < DEFAULT_SIZE - 1; i++) {
+            assertEquals(array.get(i), Integer.valueOf(i + 1));
+        }
     }
 
     @Test
