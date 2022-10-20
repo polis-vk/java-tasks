@@ -1,7 +1,13 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.Map;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -10,15 +16,26 @@ import java.util.List;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
+    Map<String, Set<String>> dictionary = new HashMap<>();
+    private int size;
 
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - []
+     * n = value.length
+     * Сложность - [O(n)]
      */
     public boolean add(String value) {
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        String key = getKey(value);
+        if (dictionary.computeIfAbsent(key, k -> new HashSet<>()).add(value)) {
+            size++;
+            return true;
+        }
         return false;
     }
 
@@ -27,9 +44,17 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - []
+     * n = value.length
+     * Сложность - [O(n)]
      */
     public boolean contains(String value) {
+        if (value == null || value.isEmpty()) {
+            return false;
+        }
+        String key = getKey(value);
+        if (dictionary.containsKey(key)) {
+            return dictionary.get(key).contains(value);
+        }
         return false;
     }
 
@@ -38,10 +63,22 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - []
+     * n = value.length
+     * Сложность - [O(n)]
      */
     public boolean remove(String value) {
-        return false;
+        if (value == null || !contains(value)) {
+            return false;
+        }
+        String key = getKey(value);
+        if (!dictionary.get(key).remove(value)) {
+            return false;
+        }
+        if (dictionary.get(key).isEmpty()) {
+            dictionary.remove(key);
+        }
+        size--;
+        return true;
     }
 
     /**
@@ -61,9 +98,15 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - []
+     * n = value.length
+     * m -
+     * Сложность - [m + O(n * log(n))]
      */
     public List<String> getSimilarWords(String value) {
+        String key = getKey(value);
+        if (dictionary.containsKey(key)) {
+            return new ArrayList<>(dictionary.get(key));
+        }
         return Collections.emptyList();
     }
 
@@ -71,11 +114,22 @@ public class CustomDictionary {
      * Колл-во хранимых строк.
      * @return - Колл-во хранимых строк.
      *
-     * Сложность - []
+     * Сложность - [O(1)]
      */
     public int size() {
-        return 0;
+        return size;
     }
 
-
+    /**
+     * Получение ключа по значению.
+     * @return - отсортированная строка символов value в нижнем регистре
+     *
+     * n = value.length
+     * Сложность - [O(n * log(n))]
+     */
+    private String getKey(String value) {
+        char[] charArray = value.toLowerCase().toCharArray();
+        Arrays.sort(charArray);
+        return Arrays.toString(charArray);
+    }
 }
