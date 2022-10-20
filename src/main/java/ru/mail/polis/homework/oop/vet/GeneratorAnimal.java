@@ -5,7 +5,7 @@ public class GeneratorAnimal {
     }
 
     /**
-     * В зависимости от передоваемой строки, должен геенрировать разные виды дочерних объектов
+     * В зависимости от передаваемой строки, должен генерировать разные виды дочерних объектов
      * класса Animal. Дочерние классы должны создаваться на следующие наборы строк:
      * - cat
      * - dog
@@ -21,6 +21,12 @@ public class GeneratorAnimal {
      * @return - соответствующего потомка
      */
     public static Animal generateAnimal(String animalType) {
-        return null;
+        if (animalType.equals("cat") || animalType.equals("dog") || animalType.equals("cow")) {
+            return new MyPetAnimal(animalType);
+        } else if (animalType.equals("kangaroo") || animalType.equals("shark")) {
+            return new MyWildAnimal(animalType);
+        } else {
+            return new MyPetWildAnimal(animalType);
+        }
     }
 }
