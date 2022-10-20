@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.oop.vet;
 
 import org.junit.Test;
+import ru.mail.polis.homework.oop.types.MoveType;
 
 import java.util.ArrayList;
 import java.util.Arrays;

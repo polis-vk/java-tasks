@@ -1,22 +1,20 @@
 package ru.mail.polis.homework.oop.vet;
 
+import ru.mail.polis.homework.oop.types.MoveType;
+
 /**
  * Дефолтный класс животного от которого необходимо наследоваться
  */
-public class Animal {
+public abstract class Animal {
     private final int legs;
 
     public Animal(int legs) {
         this.legs = legs;
     }
 
-    public String say() {
-        return "Default say animal";
-    }
+    public abstract String say();
 
-    public MoveType moveType() {
-        return MoveType.RUN;
-    }
+    public abstract MoveType moveType();
 
     public int getLegs() {
         return legs;

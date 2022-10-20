@@ -1,4 +1,4 @@
-package ru.mail.polis.homework.oop.vet;
+package ru.mail.polis.homework.oop.types;
 
 /**
  * Возможные виды передвижения животных
