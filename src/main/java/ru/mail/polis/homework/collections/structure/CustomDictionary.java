@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.List;
 import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 /**
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private final Map<Set<Character>, List<String>> dictionary = new HashMap<>();
+    private final Map<Set<Character>, Set<String>> dictionary = new HashMap<>();
     private int size;
 
     /**
@@ -23,25 +23,14 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - [O(1) амортизированная]
+     * Сложность - [O(n), где n - длина передаваемой строки]
      */
     public boolean add(String value) {
         Set<Character> characters = validate(value);
-        List<String> words = dictionary.getOrDefault(characters, new ArrayList<>());
-        final int fixedSize = words.size();
-        boolean isAdded = false;
-        if (words.isEmpty()) {
-            words.add(value);
-            isAdded = true;
-        }
-        for (int i = 0; i < fixedSize; i++) {
-            if (!words.get(i).equals(value)) {
-                words.add(value);
-                isAdded = true;
-            }
-        }
-        dictionary.put(characters, words);
+        Set<String> words = dictionary.getOrDefault(characters, new HashSet<>());
+        final boolean isAdded = words.add(value);
         if (isAdded) {
+            dictionary.put(characters, words);
             size++;
         }
         return isAdded;
@@ -53,11 +42,11 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - [O(n), где n - кол-во элементов в мапе]
+     * Сложность - [O(n), где n - длина передаваемой строки]
      */
     public boolean contains(String value) {
         Set<Character> characters = validate(value);
-        List<String> words = dictionary.getOrDefault(characters, new ArrayList<>());
+        Set<String> words = dictionary.getOrDefault(characters, new HashSet<>());
         return words.contains(value);
     }
 
@@ -67,16 +56,16 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - [O(n), где n - кол-во элементов в мапе]
+     * Сложность - [O(n), где n - длина передаваемой строки]
      */
     public boolean remove(String value) {
         Set<Character> characters = validate(value);
-        List<String> words = dictionary.getOrDefault(characters, new ArrayList<>());
+        Set<String> words = dictionary.getOrDefault(characters, new HashSet<>());
         final boolean isRemoved = words.remove(value);
         if (isRemoved) {
+            dictionary.put(characters, words);
             size--;
         }
-        dictionary.put(characters, words);
         return isRemoved;
     }
 
@@ -97,11 +86,11 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - [O(n), где n - кол-во элементов в мапе]
+     * Сложность - [O(n+m), где n - длина передаваемой строки, m - кол-во элементов в мапе]
      */
     public List<String> getSimilarWords(String value) {
         Set<Character> characters = validate(value);
-        List<String> words = dictionary.getOrDefault(characters, new ArrayList<>());
+        Set<String> words = dictionary.getOrDefault(characters, new HashSet<>());
         return words.stream()
                 .filter(word -> word.length() == value.length())
                 .collect(Collectors.toList());
