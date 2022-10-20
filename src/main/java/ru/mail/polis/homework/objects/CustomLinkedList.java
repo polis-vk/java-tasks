@@ -10,8 +10,8 @@ import java.util.NoSuchElementException;
  */
 public class CustomLinkedList implements Iterable<Integer> {
 
-    private static final String separator = " -> ";
-    private static final String nullWord = "null";
+    private static final String SEPARATOR = " -> ";
+    private static final String NULL_WORD = "null";
     private Node head;
     private int size;
     private int modCount;
@@ -141,10 +141,10 @@ public class CustomLinkedList implements Iterable<Integer> {
         StringBuilder result = new StringBuilder();
         while (current != null) {
             result.append(current.value);
-            result.append(separator);
+            result.append(SEPARATOR);
             current = current.next;
         }
-        result.append(nullWord);
+        result.append(NULL_WORD);
         return result.toString();
     }
 
