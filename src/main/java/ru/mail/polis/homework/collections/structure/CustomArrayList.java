@@ -11,11 +11,12 @@ import java.util.NoSuchElementException;
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
  * При изменении размера массива помните про метод System.arraycopy()
- *
+ * <p>
  * Задание оценивается в 10 тугриков
  */
 public class CustomArrayList<E> implements List<E> {
     private static final int DEFAULT_CAPACITY = 10;
+    private static final double GROW_FACTOR = 1.5;
     private Object[] data;
     private int size;
     private int modCount;
@@ -100,7 +101,7 @@ public class CustomArrayList<E> implements List<E> {
     public boolean add(E e) {
         modCount++;
         if (size == data.length) {
-            data = Arrays.copyOf(data, (int) (3 / 2.0 * size));
+            data = Arrays.copyOf(data, (int) (GROW_FACTOR * size));
         }
         data[size++] = e;
         return true;
@@ -185,7 +186,7 @@ public class CustomArrayList<E> implements List<E> {
     public void add(int index, E element) {
         modCount++;
         if (size == data.length) {
-            data = Arrays.copyOf(data, (int) (3 / 2.0 * size));
+            data = Arrays.copyOf(data, (int) (GROW_FACTOR * size));
         }
         System.arraycopy(data, index, data, index + 1, size - index);
         data[index] = element;
