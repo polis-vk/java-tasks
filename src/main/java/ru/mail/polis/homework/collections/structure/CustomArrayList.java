@@ -36,8 +36,8 @@ public class CustomArrayList<E> implements List<E> {
     }
 
     public CustomArrayList(CustomArrayList<E> list, int fromIndex, int toIndex) {
-        array = new Object[toIndex - fromIndex + 1];
-        System.arraycopy(list.array, fromIndex, array, 0, toIndex - fromIndex + 1);
+        array = new Object[toIndex - fromIndex];
+        System.arraycopy(list.array, fromIndex, array, 0, toIndex - fromIndex);
         size = array.length;
     }
 
@@ -207,11 +207,12 @@ public class CustomArrayList<E> implements List<E> {
         if (index > size || index < 0) {
             throw new IndexOutOfBoundsException();
         }
-        if (size == array.length)
+        if (size == array.length) {
             array = grow();
+        }
         System.arraycopy(array, index,
                 array, index + 1,
-                size - index - 1);
+                size - index);
         array[index] = element;
         size++;
         modCount++;
@@ -227,6 +228,7 @@ public class CustomArrayList<E> implements List<E> {
                 array, index,
                 size - index);
         modCount++;
+        size--;
         return res;
     }
 
@@ -372,5 +374,4 @@ public class CustomArrayList<E> implements List<E> {
                     ") > toIndex(" + toIndex + ")");
         return new CustomArrayList<E>(this, fromIndex, toIndex);
     }
-
 }
