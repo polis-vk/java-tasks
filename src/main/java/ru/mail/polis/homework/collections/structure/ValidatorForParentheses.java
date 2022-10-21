@@ -2,6 +2,7 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Задание оценивается в 2 тугрика.
@@ -16,7 +17,8 @@ import java.util.LinkedList;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
-    private static final String brackets = "{}[]()<>";
+    private static final Map<Character, Character> matchingBrackets =
+            Map.of('}', '{', ']', '[', ')', '(', '>', '<');
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
@@ -26,26 +28,21 @@ public class ValidatorForParentheses {
         boolean isContainingBracket = false;
         Deque<Character> deque = new LinkedList<>();
         for (char ch : value.toCharArray()) {
-            if (brackets.indexOf(ch) != -1) {
-                if (isOpeningBracket(ch)) {
-                    deque.push(ch);
-                    isContainingBracket = true;
-                } else if (deque.isEmpty() || !isMatchingBrackets(deque.pop(), ch)) {
-                    return false;
-                }
+            if (isOpeningBracket(ch)) {
+                deque.push(ch);
+                isContainingBracket = true;
+            } else if (isClosingBracket(ch) && (deque.isEmpty() || !deque.pop().equals(matchingBrackets.get(ch)))) {
+                return false;
             }
         }
         return isContainingBracket && deque.isEmpty();
     }
 
-    public static boolean isOpeningBracket(char ch) {
-        return "{[(<".indexOf(ch) != -1;
+    private static boolean isOpeningBracket(char bracket) {
+        return matchingBrackets.containsValue(bracket);
     }
 
-    public static boolean isMatchingBrackets(char openingBracket, char closingBracket) {
-        return '(' == openingBracket && ')' == closingBracket
-                || '[' == openingBracket && ']' == closingBracket
-                || '{' == openingBracket && '}' == closingBracket
-                || '<' == openingBracket && '>' == closingBracket;
+    private static boolean isClosingBracket(char bracket) {
+        return matchingBrackets.containsKey(bracket);
     }
 }
