@@ -1,9 +1,12 @@
 package ru.mail.polis.homework.collections.structure;
 
-import jdk.internal.joptsimple.internal.Strings;
-
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.List;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -13,11 +16,11 @@ import java.util.stream.Collectors;
  */
 public class CustomDictionary {
 
-    private Map<HashMap<Character, Integer>, LinkedHashSet<String>> dictionary
-            = new HashMap<HashMap<Character, Integer>, LinkedHashSet<String>>();
+    private Map<Map<Character, Integer>, Set<String>> dictionary
+            = new HashMap<>();
 
-    private static HashMap<Character, Integer> getCounter(String str) {
-        HashMap<Character, Integer> counter = new HashMap<>();
+    private static Map<Character, Integer> getCounter(String str) {
+        Map<Character, Integer> counter = new HashMap<>();
         String strLowered = str.toLowerCase();
         for (int i = 0; i < strLowered.length(); i++) {
             if (counter.containsKey(strLowered.charAt(i))) {
@@ -41,13 +44,14 @@ public class CustomDictionary {
         if (value == null || value.equals("")) {
             throw new IllegalArgumentException();
         }
-        HashMap<Character, Integer> valueCounter = getCounter(value);
-        if (dictionary.containsKey(valueCounter)) {
-            return dictionary.get(valueCounter).add(value);
+        Map<Character, Integer> valueCounter = getCounter(value);
+        Set<String> similarValues = dictionary.get(valueCounter);
+        if (similarValues != null) {
+            return similarValues.add(value);
         }
-        LinkedHashSet<String> strings = new LinkedHashSet<>();
-        strings.add(value);
-        dictionary.put(valueCounter, strings);
+        similarValues = new LinkedHashSet<>();
+        similarValues.add(value);
+        dictionary.put(valueCounter, similarValues);
         return true;
     }
 
@@ -59,9 +63,12 @@ public class CustomDictionary {
      * Сложность - [В лучшем случае O(k), где k - длина строки]
      */
     public boolean contains(String value) {
-        HashMap<Character, Integer> valueCounter = getCounter(value);
-        return dictionary.containsKey(valueCounter)
-                && dictionary.get(valueCounter).contains(value);
+        Map<Character, Integer> valueCounter = getCounter(value);
+        Set<String> similarValues = dictionary.get(valueCounter);
+        if (similarValues == null) {
+            return false;
+        }
+        return similarValues.contains(value);
     }
 
     /**
@@ -72,11 +79,12 @@ public class CustomDictionary {
      * Сложность - [В лучшем случае O(k), где k - длина строки]
      */
     public boolean remove(String value) {
-        HashMap<Character, Integer> valueCounter = getCounter(value);
-        if (dictionary.containsKey(valueCounter)) {
-            return dictionary.get(valueCounter).remove(value);
+        Map<Character, Integer> valueCounter = getCounter(value);
+        Set<String> similarValues = dictionary.get(valueCounter);
+        if (similarValues == null) {
+            return false;
         }
-        return false;
+        return similarValues.remove(value);
     }
 
     /**
@@ -99,11 +107,12 @@ public class CustomDictionary {
      * Сложность - [В лучшем случае O(k), где k - длина строки]
      */
     public List<String> getSimilarWords(String value) {
-        HashMap<Character, Integer> valueCounter = getCounter(value);
-        if (!dictionary.containsKey(valueCounter)) {
+        Map<Character, Integer> valueCounter = getCounter(value);
+        Set<String> similarValues = dictionary.get(valueCounter);
+        if (similarValues == null) {
             return Collections.emptyList();
         }
-        return dictionary.get(valueCounter).stream().collect(Collectors.toList());
+        return similarValues.stream().collect(Collectors.toList());
     }
 
     /**
@@ -114,7 +123,7 @@ public class CustomDictionary {
      */
     public int size() {
         int resultSize = 0;
-        for (Map.Entry<HashMap<Character, Integer>, LinkedHashSet<String>> entry : dictionary.entrySet()) {
+        for (Map.Entry<Map<Character, Integer>, Set<String>> entry : dictionary.entrySet()) {
             resultSize += entry.getValue().size();
         }
         return resultSize;
