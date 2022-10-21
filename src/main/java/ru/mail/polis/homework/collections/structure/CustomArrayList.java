@@ -213,7 +213,6 @@ public class CustomArrayList<E> implements List<E> {
         modCount++;
         E result = data[index];
 
-        data[index] = null;
         size--;
         System.arraycopy(data, index + 1, data, index, size - index);
         return result;
