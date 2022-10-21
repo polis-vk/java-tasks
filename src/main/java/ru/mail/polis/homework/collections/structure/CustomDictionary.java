@@ -143,8 +143,7 @@ public class CustomDictionary {
         }
 
         Map<Character, Integer> result = new HashMap<>();
-        for (char ch : value.toCharArray()) {
-            ch = Character.toLowerCase(ch);
+        for (char ch : value.toLowerCase().toCharArray()) {
             result.merge(ch, 1, Integer::sum);
         }
 
