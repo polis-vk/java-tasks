@@ -23,11 +23,7 @@ public class CustomDictionary {
         Map<Character, Integer> counter = new HashMap<>();
         String strLowered = str.toLowerCase();
         for (int i = 0; i < strLowered.length(); i++) {
-            if (counter.containsKey(strLowered.charAt(i))) {
-                counter.compute(strLowered.charAt(i), (key, value) -> value + 1);
-            } else {
-                counter.put(strLowered.charAt(i), 1);
-            }
+            counter.merge(strLowered.charAt(i), 1, (value, mergeValue) -> value + mergeValue);
         }
         return counter;
     }
