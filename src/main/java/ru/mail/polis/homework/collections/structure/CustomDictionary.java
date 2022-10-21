@@ -25,7 +25,7 @@ public class CustomDictionary {
      * @return - успешно сохранили строку или нет.
      *
      * n = value.length
-     * Сложность - [O(n)]
+     * Сложность - [O(n * log(n))]
      */
     public boolean add(String value) {
         if (value == null || value.isEmpty()) {
@@ -45,7 +45,7 @@ public class CustomDictionary {
      * @return - есть такая строка или нет в нашей структуре
      *
      * n = value.length
-     * Сложность - [O(n)]
+     * Сложность - [O(n * log(n))]
      */
     public boolean contains(String value) {
         if (value == null || value.isEmpty()) {
@@ -64,7 +64,7 @@ public class CustomDictionary {
      * @return - true если удалили, false - если такой строки нет
      *
      * n = value.length
-     * Сложность - [O(n)]
+     * Сложность - [O(n * log(n))]
      */
     public boolean remove(String value) {
         if (value == null || !contains(value)) {
@@ -99,7 +99,7 @@ public class CustomDictionary {
      * строка.
      *
      * n = value.length
-     * m -
+     * m - количество подходящих слов
      * Сложность - [m + O(n * log(n))]
      */
     public List<String> getSimilarWords(String value) {
