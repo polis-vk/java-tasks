@@ -387,7 +387,7 @@ public class CustomArrayList<E> implements List<E> {
 
     private void checkIndexBounds(int index) {
         if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Индекс " + index + " за пределами массива.");
+            throw new IndexOutOfBoundsException("Index " + index + " out of bounds.");
         }
     }
 }
