@@ -4,10 +4,11 @@ import ru.mail.polis.homework.generics.bot.handler.StateHandler;
 import ru.mail.polis.homework.generics.bot.state.State;
 
 import java.util.List;
+import java.util.Map;
 
 public class Bot {
 
-    private final List<StateHandler<? extends State>> handlers;
+    private final Map<Class<? extends State>, StateHandler<? extends State>> handlers;
 
     /**
      * Конструктор бота, которому на вход подаются хэндлеры состояний.
@@ -15,7 +16,7 @@ public class Bot {
      *
      * 1 тугрик
      */
-    public Bot(List<StateHandler<? extends State>> handlers) {
+    public Bot(Map<Class<? extends State>, StateHandler<? extends State>> handlers) {
         this.handlers = handlers;
     }
 
@@ -25,10 +26,9 @@ public class Bot {
      * 1 тугрик
      */
     public void handleState(State state) {
-        for (StateHandler<? extends State> handler : handlers) {
-            if (handler.getHandlingStateClass() == state.getClass()) {
-                handler.handle();
-            }
+        StateHandler<? extends State> handler = handlers.get(state.getClass());
+        if (handler != null) {
+            handler.handle();
         }
     }
 }

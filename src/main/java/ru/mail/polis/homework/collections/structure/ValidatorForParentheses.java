@@ -19,12 +19,15 @@ import java.util.Map;
  */
 public class ValidatorForParentheses {
 
+    private static final Map<Character, Character> map = new HashMap<>();
+
     public static Map<Character, Character> getMap() {
-        Map<Character, Character> map = new HashMap<>();
-        map.put(']', '[');
-        map.put(')', '(');
-        map.put('}', '{');
-        map.put('>', '<');
+        if (map.isEmpty()) {
+            map.put(']', '[');
+            map.put(')', '(');
+            map.put('}', '{');
+            map.put('>', '<');
+        }
         return map;
     }
 
@@ -51,11 +54,13 @@ public class ValidatorForParentheses {
                 case '}':
                 case ']':
                 case '>':
-                    if (deque.isEmpty() || deque.getLast() != map.get(c)) {
-                        return false;
+                    if (!deque.isEmpty()) {
+                        Character last = deque.removeLast();
+                        if (last == map.get(c)) {
+                            break;
+                        }
                     }
-                    deque.removeLast();
-                    break;
+                    return false;
             }
         }
 

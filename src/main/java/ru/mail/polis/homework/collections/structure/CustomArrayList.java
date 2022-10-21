@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
@@ -15,6 +14,7 @@ import java.util.NoSuchElementException;
  * <p>
  * Задание оценивается в 10 тугриков
  */
+@SuppressWarnings("unchecked")
 public class CustomArrayList<E> implements List<E> {
 
     private static final String CONCURRENT_MODIFICATION = "It's prohibited to modify list while iterating!";
@@ -27,6 +27,11 @@ public class CustomArrayList<E> implements List<E> {
 
     public CustomArrayList() {
         data = (E[]) new Object[16];
+    }
+
+    public CustomArrayList(E[] data) {
+        this.data = data;
+        this.size = data.length;
     }
 
     @Override
@@ -82,6 +87,9 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean remove(Object o) {
+        if (o == null) {
+            return false;
+        }
         for (int i = 0; i < size; i++) {
             if (o.equals(data[i])) {
                 remove(i);
@@ -123,20 +131,10 @@ public class CustomArrayList<E> implements List<E> {
         int fullSize = size + c.size();
         int startIndex = index + c.size();
 
-        while (fullSize > data.length) {
-            expandArray();
-        }
+        expandArray(fullSize);
 
-        for (int i = index, j = startIndex; j < fullSize; i++, j++) {
-            data[j] = data[i];
-        }
-
-        int i = index;
-
-        for (E e : c) {
-            data[i] = e;
-            i++;
-        }
+        System.arraycopy(data, index, data, startIndex, fullSize - startIndex);
+        System.arraycopy(c.toArray(), 0, (Object[]) data, index, c.size());
 
         size = fullSize;
         modCount++;
@@ -152,7 +150,6 @@ public class CustomArrayList<E> implements List<E> {
             if (c.contains(data[i])) {
                 hasChanged = true;
                 remove(i);
-                modCount++;
             } else {
                 i++;
             }
@@ -169,7 +166,6 @@ public class CustomArrayList<E> implements List<E> {
             if (!c.contains(data[i])) {
                 hasChanged = true;
                 remove(i);
-                modCount++;
             } else {
                 i++;
             }
@@ -180,6 +176,9 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public void clear() {
+        for (int i = 0; i < size; i++) {
+            data[i] = null;
+        }
         size = 0;
         modCount++;
     }
@@ -192,9 +191,8 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E set(int index, E element) {
-        E prev = defaultSet(index, element);
         modCount++;
-        return prev;
+        return defaultSet(index, element);
     }
 
     // This is concurrent modification free set method
@@ -219,9 +217,7 @@ public class CustomArrayList<E> implements List<E> {
             expandArray();
         }
 
-        for (int i = size; i > index; i--) {
-            swap(i, i - 1);
-        }
+        System.arraycopy(data, index, data, index + 1, size - index);
 
         data[index] = element;
         size++;
@@ -251,6 +247,10 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
+        if (o == null) {
+            return -1;
+        }
+
         for (int i = 0; i < size; i++) {
             if (data[i].equals(o)) {
                 return i;
@@ -262,6 +262,10 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int lastIndexOf(Object o) {
+        if (o == null) {
+            return -1;
+        }
+
         for (int i = size - 1; i >= 0; i--) {
             if (data[i].equals(o)) {
                 return i;
@@ -292,13 +296,11 @@ public class CustomArrayList<E> implements List<E> {
             throw new IllegalArgumentException("Start bound can't be greater than end bound!");
         }
 
-        List<E> list = new ArrayList<>();
+        E[] copiedData = (E[]) new Object[toIndex - fromIndex];
 
-        for (int i = fromIndex; i < toIndex; i++) {
-            list.add(data[i]);
-        }
+        System.arraycopy(data, fromIndex, copiedData, 0, copiedData.length);
 
-        return list;
+        return new CustomArrayList<>(copiedData);
     }
 
     private class IteratorImpl implements Iterator<E> {
@@ -329,13 +331,9 @@ public class CustomArrayList<E> implements List<E> {
     }
 
     private class ListIteratorImpl extends IteratorImpl implements ListIterator<E> {
-
         private final static int MODIFICATION_INDICATOR = -1;
-
         private final int startBound;
-
         private final int fixedModCount = modCount;
-
         private int lastReturnedElementIndex;
 
         public ListIteratorImpl(int startBound) {
@@ -383,9 +381,10 @@ public class CustomArrayList<E> implements List<E> {
                 throw new IllegalStateException(ILLEGAL_STATE);
             }
 
-            defaultRemove(lastReturnedElementIndex);
             cursor = lastReturnedElementIndex;
             lastReturnedElementIndex = MODIFICATION_INDICATOR;
+
+            defaultRemove(cursor);
         }
 
         @Override
@@ -407,7 +406,11 @@ public class CustomArrayList<E> implements List<E> {
     }
 
     private void expandArray() {
-        System.arraycopy(data, 0, data, 0, size * 2);
+        expandArray(size * 2);
+    }
+
+    private void expandArray(int newSize) {
+        System.arraycopy(data, 0, data, 0, newSize);
     }
 
     private void swap(int i, int j) {

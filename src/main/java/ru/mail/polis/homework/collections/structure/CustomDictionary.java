@@ -20,19 +20,18 @@ public class CustomDictionary {
 
     private static final String ILLEGAL_ARGUMENT = "String can't be empty!";
 
-    private final Map<HashMap<Character, Integer>, LinkedHashSet<String>> map;
+    private final Map<Map<Character, Integer>, Set<String>> map;
     private int size;
 
     public CustomDictionary() {
         this.map = new HashMap<>();
     }
 
-    private static HashMap<Character, Integer> constructKey(String value) {
-        HashMap<Character, Integer> key = new HashMap<>();
+    private static Map<Character, Integer> constructKey(String value) {
+        Map<Character, Integer> key = new HashMap<>();
 
         for (char c : value.toLowerCase().toCharArray()) {
-            key.putIfAbsent(c, 0);
-            key.put(c, key.get(c) + 1);
+            key.merge(c, 1, (oldVal, val) -> oldVal + 1);
         }
 
         return key;
@@ -48,7 +47,7 @@ public class CustomDictionary {
     public boolean add(String value) {
         checkString(value);
 
-        HashMap<Character, Integer> key = constructKey(value);
+        Map<Character, Integer> key = constructKey(value);
 
         map.putIfAbsent(key, new LinkedHashSet<>());
 
@@ -58,7 +57,7 @@ public class CustomDictionary {
             return false;
         }
 
-        map.get(key).add(value);
+        valueSet.add(value);
 
         size++;
 
@@ -75,7 +74,7 @@ public class CustomDictionary {
     public boolean contains(String value) {
         checkString(value);
 
-        HashMap<Character, Integer> key = constructKey(value);
+        Map<Character, Integer> key = constructKey(value);
 
         Set<String> set = map.get(key);
 
@@ -96,7 +95,7 @@ public class CustomDictionary {
     public boolean remove(String value) {
         checkString(value);
 
-        HashMap<Character, Integer> key = constructKey(value);
+        Map<Character, Integer> key = constructKey(value);
 
         Set<String> set = map.get(key);
 
@@ -135,9 +134,15 @@ public class CustomDictionary {
     public List<String> getSimilarWords(String value) {
         checkString(value);
 
-        HashMap<Character, Integer> key = constructKey(value);
+        Map<Character, Integer> key = constructKey(value);
 
-        return new ArrayList<>(map.getOrDefault(key, new LinkedHashSet<>()));
+        Set<String> setByValue = map.get(key);
+
+        if (setByValue == null) {
+            return Collections.emptyList();
+        }
+
+        return new ArrayList<>(setByValue);
     }
 
     /**
