@@ -58,8 +58,9 @@ public class CustomDictionary {
     public boolean contains(String value) {
         Map<Character, Integer> letterCountMap = getLetterCountMap(value);
 
-        if (values.containsKey(letterCountMap)) {
-            return values.get(letterCountMap).contains(value);
+        Set<String> set = values.get(letterCountMap);
+        if (set != null) {
+            return set.contains(value);
         }
         return false;
     }
