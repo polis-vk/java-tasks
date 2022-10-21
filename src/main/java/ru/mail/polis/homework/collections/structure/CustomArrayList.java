@@ -23,12 +23,18 @@ public class CustomArrayList<E> implements List<E> {
         }
     }
 
-    private E[] list;
+    private E[] array;
     private int size;
+
+    private CustomArrayList(CustomArrayList list, int fromInclusive, int toExclusive) {
+        size = toExclusive - fromInclusive;
+        array = (E[]) new Object[size];
+        System.arraycopy(list.array, fromInclusive, array, 0, size);
+    }
 
     public CustomArrayList() {
         size = 0;
-        list = (E[]) new Object[INITIAL_SIZE];
+        array = (E[]) new Object[INITIAL_SIZE];
     }
 
     private void checkIndex(int index) {
@@ -40,15 +46,15 @@ public class CustomArrayList<E> implements List<E> {
     }
 
     private void growLazy(int count) {
-        if (size + count > list.length) {
-            grow(size + count - list.length);
+        if (size + count > array.length) {
+            grow(size + count - array.length);
         }
     }
 
     private void grow(int minCount) {
-        list = Arrays.copyOf(
-                list,
-                list.length + Math.max(list.length >> 1, minCount)
+        array = Arrays.copyOf(
+                array,
+                array.length + Math.max(array.length >> 1, minCount)
         );
     }
 
@@ -74,24 +80,22 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public Object[] toArray() {
-        return Arrays.copyOf(list, size);
+        return Arrays.copyOf(array, size);
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
         if (a.length < size) {
-            return (T[]) Arrays.copyOf(list, size, a.getClass());
+            return (T[]) Arrays.copyOf(array, size, a.getClass());
         }
-        for (int i = 0; i < size; i++) {
-            a[i] = (T)list[i];
-        }
+        System.arraycopy(array, 0, a, 0, size);
         return a;
     }
 
     @Override
     public boolean add(E e) {
         growLazy();
-        list[size++] = e;
+        array[size++] = e;
         return true;
     }
 
@@ -122,7 +126,7 @@ public class CustomArrayList<E> implements List<E> {
         }
         growLazy(c.size());
         for (E element : c) {
-            list[size++] = element;
+            array[size++] = element;
         }
         return true;
     }
@@ -134,11 +138,11 @@ public class CustomArrayList<E> implements List<E> {
             return false;
         }
         growLazy(c.size());
-        System.arraycopy(list, index, list, index + c.size(), size - index);
+        System.arraycopy(array, index, array, index + c.size(), size - index);
         size += c.size();
         int i = index;
         for (E element : c) {
-            list[i++] = element;
+            array[i++] = element;
         }
         return true;
     }
@@ -156,7 +160,7 @@ public class CustomArrayList<E> implements List<E> {
     public boolean retainAll(Collection<?> c) {
         boolean changed = false;
         for (int i = 0; i < size; i++) {
-            if (!c.contains(list[i])) {
+            if (!c.contains(array[i])) {
                 remove(i--);
                 changed = true;
             }
@@ -166,21 +170,21 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public void clear() {
-        Arrays.fill(list, null);
+        Arrays.fill(array, null);
         size = 0;
     }
 
     @Override
     public E get(int index) {
         checkIndex(index);
-        return list[index];
+        return array[index];
     }
 
     @Override
     public E set(int index, E element) {
         checkIndex(index);
-        E oldValue = list[index];
-        list[index] = element;
+        E oldValue = array[index];
+        array[index] = element;
         return oldValue;
     }
 
@@ -188,16 +192,16 @@ public class CustomArrayList<E> implements List<E> {
     public void add(int index, E element) {
         checkIndex(index, size);
         growLazy();
-        System.arraycopy(list, index, list, index + 1, size - index);
-        list[index] = element;
+        System.arraycopy(array, index, array, index + 1, size - index);
+        array[index] = element;
         size++;
     }
 
     @Override
     public E remove(int index) {
         checkIndex(index);
-        E oldValue = list[index];
-        System.arraycopy(list, index + 1, list, index, size - index - 1);
+        E oldValue = array[index];
+        System.arraycopy(array, index + 1, array, index, size - index - 1);
         size--;
         return oldValue;
     }
@@ -205,7 +209,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public int indexOf(Object o) {
         for (int i = 0; i < size; i++) {
-            if ((list[i] == null && o == null) || (list[i] != null && list[i].equals(o))) {
+            if ((array[i] == null && o == null) || (array[i] != null && array[i].equals(o))) {
                 return i;
             }
         }
@@ -215,7 +219,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public int lastIndexOf(Object o) {
         for (int i = size - 1; i >= 0; i--) {
-            if ((list[i] == null && o == null) || (list[i] != null && list[i].equals(o))) {
+            if ((array[i] == null && o == null) || (array[i] != null && array[i].equals(o))) {
                 return i;
             }
         }
@@ -234,11 +238,12 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-        List<E> resultList = new CustomArrayList<>();
-        for (int i = fromIndex; i < toIndex; i++) {
-            resultList.add(get(i));
+        checkIndex(fromIndex);
+        checkIndex(toIndex - 1);
+        if (fromIndex > toIndex) {
+            throw new IllegalArgumentException();
         }
-        return resultList;
+        return new CustomArrayList<>(this, fromIndex, toIndex);
     }
 
     private class CustomListIterator implements ListIterator<E> {
@@ -265,7 +270,7 @@ public class CustomArrayList<E> implements List<E> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            return list[++currentIndex];
+            return array[++currentIndex];
         }
 
         @Override
@@ -279,7 +284,7 @@ public class CustomArrayList<E> implements List<E> {
             if (!hasPrevious()) {
                 throw new NoSuchElementException();
             }
-            return list[--currentIndex];
+            return array[--currentIndex];
         }
 
         @Override
