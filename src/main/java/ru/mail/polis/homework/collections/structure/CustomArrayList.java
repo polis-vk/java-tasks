@@ -122,16 +122,28 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        boolean isChanged = false;
-
-        int curIndex = index;
-        for (E elem : c) {
-            isChanged = true;
-            add(curIndex, elem);
-            curIndex++;
+        if (index != size) {
+            checkIndexBounds(index);
         }
 
-        return isChanged;
+        if (c.size() == 0) {
+            return false;
+        }
+
+        if (data.length - size < c.size()) {
+            data = grow(size + c.size());
+        }
+
+        // Нужно сдвинуть уже имеющиеся элементы.
+        if (index != size) {
+            System.arraycopy(data, index, data, index + c.size(), size - index);
+        }
+
+        System.arraycopy(c.toArray(), 0, data, index, c.size());
+        modCount++;
+        size += c.size();
+
+        return true;
     }
 
     @Override
