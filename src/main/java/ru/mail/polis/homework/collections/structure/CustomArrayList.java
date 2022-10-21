@@ -24,11 +24,16 @@ public class CustomArrayList<E> implements List<E> {
 
     @SuppressWarnings("unchecked")
     public CustomArrayList(int initialCapacity) {
-        data = (E[]) new Object[initialCapacity];
+        this.data = (E[]) new Object[initialCapacity];
     }
 
     public CustomArrayList() {
         this(INITIAL_CAPACITY);
+    }
+
+    public CustomArrayList(E[] data) {
+        this.data = data;
+        this.size = data.length;
     }
 
     @Override
@@ -350,17 +355,16 @@ public class CustomArrayList<E> implements List<E> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<E> subList(int fromIndex, int toIndex) {
         if (fromIndex < 0 || fromIndex > size || toIndex < 0 || toIndex > size || fromIndex > toIndex) {
-            throw new IndexOutOfBoundsException("Некорректные индексы");
+            throw new IndexOutOfBoundsException("Incorrect indexes");
         }
 
-        CustomArrayList<E> result = new CustomArrayList<>();
-        for (int i = fromIndex; i < toIndex; i++) {
-            result.add(data[i]);
-        }
+        E[] newData = (E[]) new Object[toIndex - fromIndex];
+        System.arraycopy(data, fromIndex, newData, 0, toIndex - fromIndex);
 
-        return result;
+        return new CustomArrayList<E>(newData);
     }
 
     /**
