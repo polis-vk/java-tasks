@@ -320,6 +320,7 @@ public class CustomArrayList<E> implements List<E> {
             checkSize();
             CustomArrayList.this.add(currentIndex, e);
         }
+
         private void checkSize() {
             if (fixedSize != size) {
                 throw new UnsupportedOperationException();
