@@ -75,10 +75,11 @@ public class CustomDictionary {
     public boolean remove(String value) {
         Map<Character, Integer> letterCountMap = getLetterCountMap(value);
 
-        if (!values.containsKey(letterCountMap)) {
+        Set<String> set = values.get(letterCountMap);
+        if (set == null) {
             return false;
         }
-        if (values.get(letterCountMap).remove(value)) {
+        if (set.remove(value)) {
             size--;
             return true;
         }
