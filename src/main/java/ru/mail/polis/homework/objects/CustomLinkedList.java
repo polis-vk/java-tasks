@@ -1,4 +1,4 @@
-package ru.mail.polis.homework.exception.objects;
+package ru.mail.polis.homework.objects;
 
 import java.util.Iterator;
 
@@ -38,7 +38,7 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index
      */
     public int get(int index) {
-        return 0;
+       return 0;
     }
 
     /**
@@ -118,5 +118,4 @@ public class CustomLinkedList implements Iterable<Integer> {
             this.next = next;
         }
     }
-
 }
