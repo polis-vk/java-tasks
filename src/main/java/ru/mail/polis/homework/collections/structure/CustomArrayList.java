@@ -43,8 +43,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean contains(Object o) {
-        int index = indexOf(o);
-        return index != -1;
+        return indexOf(o) != -1;
     }
 
     @Override
