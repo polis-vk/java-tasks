@@ -1,5 +1,11 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
+
 /**
  * Задание оценивается в 2 тугрика.
  * Одна из самых популярных задач.
@@ -15,6 +21,28 @@ package ru.mail.polis.homework.collections.structure;
 public class ValidatorForParentheses {
 
     public static boolean validate(String value) {
-        return false;
+        if (value == null || value.isEmpty()) {
+            return false;
+        }
+        boolean withBrackets = false;
+        char[] bracketsArr = value.toCharArray();
+        Deque<Character> deque = new LinkedList<>();
+
+        Map<Character, Character> map = Map.of(')', '(', ']', '[', '}', '{', '>', '<');
+        HashSet<Character> openBracketsSet = new HashSet<>(Arrays.asList('(', '[', '{', '<'));
+        HashSet<Character> closeBracketsSet = new HashSet<>(Arrays.asList(')', ']', '}', '>'));
+
+        for (char c : bracketsArr) {
+            if (!(openBracketsSet.contains(c) || closeBracketsSet.contains(c))) {
+                continue;
+            }
+            withBrackets = true;
+            if (openBracketsSet.contains(c)) {
+                deque.addLast(c);
+            } else if (deque.isEmpty() || map.get(c) != deque.pollLast()) {
+                return false;
+            }
+        }
+        return deque.isEmpty() && withBrackets;
     }
 }
