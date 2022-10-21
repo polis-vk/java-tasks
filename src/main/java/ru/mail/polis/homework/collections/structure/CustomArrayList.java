@@ -16,6 +16,13 @@ import java.util.NoSuchElementException;
 public class CustomArrayList<E> implements List<E> {
 
     private static final int INITIAL_SIZE = 16;
+
+    private static void checkIndex(int index, int upperBound) {
+        if (index < 0 || index > upperBound) {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+
     private E[] list;
     private int size;
 
@@ -26,12 +33,6 @@ public class CustomArrayList<E> implements List<E> {
 
     private void checkIndex(int index) {
         checkIndex(index, size - 1);
-    }
-
-    private static void checkIndex(int index, int upperBound) {
-        if (index < 0 || index > upperBound) {
-            throw new IndexOutOfBoundsException();
-        }
     }
 
     private void growLazy() {
