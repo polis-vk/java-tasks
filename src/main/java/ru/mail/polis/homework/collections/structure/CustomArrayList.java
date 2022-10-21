@@ -252,17 +252,17 @@ public class CustomArrayList<E> implements List<E> {
         private final int fixedSize = size;
 
         public CustomListIterator() {
-            this(-1);
+            this(0);
         }
 
-        public CustomListIterator(int fromInclusive) {
-            currentIndex = fromInclusive;
+        public CustomListIterator(int initialIndex) {
+            currentIndex = initialIndex;
         }
 
         @Override
         public boolean hasNext() {
             checkSize();
-            return currentIndex < size - 1;
+            return currentIndex < size;
         }
 
         @Override
@@ -270,7 +270,7 @@ public class CustomArrayList<E> implements List<E> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            return array[++currentIndex];
+            return array[currentIndex++];
         }
 
         @Override
@@ -292,7 +292,7 @@ public class CustomArrayList<E> implements List<E> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            return currentIndex + 1;
+            return currentIndex;
         }
 
         @Override
