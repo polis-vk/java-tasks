@@ -49,7 +49,6 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public Iterator<E> iterator() {
         return new Iterator<E>() {
-
             final int fixedModCount = modCount;
             int index = 0;
 
