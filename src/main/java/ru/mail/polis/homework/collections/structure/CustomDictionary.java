@@ -111,8 +111,9 @@ public class CustomDictionary {
     public List<String> getSimilarWords(String value) {
         Map<Character, Integer> letterCountMap = getLetterCountMap(value);
 
-        if (values.containsKey(letterCountMap)) {
-            return new LinkedList<>(values.get(letterCountMap));
+        Set<String> set = values.get(letterCountMap);
+        if (set != null) {
+            return new LinkedList<>(set);
         }
         return Collections.emptyList();
     }
