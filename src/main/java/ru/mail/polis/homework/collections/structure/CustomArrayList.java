@@ -1,7 +1,11 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
@@ -12,33 +16,39 @@ import java.util.*;
 public class CustomArrayList<E> implements List<E> {
 
     private static final int INITIAL_SIZE = 16;
-    private static final int EXPANSION_COEFFICIENT = 2;
-    private Object[] list;
+    private E[] list;
     private int size;
 
     public CustomArrayList() {
         size = 0;
-        list = new Object[INITIAL_SIZE];
+        list = (E[]) new Object[INITIAL_SIZE];
     }
 
     private void checkIndex(int index) {
         checkIndex(index, size - 1);
     }
 
-    private void checkIndex(int index, int upperBound) {
+    private static void checkIndex(int index, int upperBound) {
         if (index < 0 || index > upperBound) {
             throw new IndexOutOfBoundsException();
         }
     }
 
-    private void boostIfNecessary() {
-        boostIfNecessary(1);
+    private void growLazy() {
+        growLazy(1);
     }
 
-    private void boostIfNecessary(int elementsCount) {
-        while (size + elementsCount > list.length) {
-            list = Arrays.copyOf(list, list.length * EXPANSION_COEFFICIENT);
+    private void growLazy(int count) {
+        if (size + count > list.length) {
+            grow(size + count - list.length);
         }
+    }
+
+    private void grow(int minCount) {
+        list = Arrays.copyOf(
+                list,
+                list.length + Math.max(list.length >> 1, minCount)
+        );
     }
 
     @Override
@@ -53,12 +63,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean contains(Object o) {
-        for (int i = 0; i < size; i++) {
-            if (list[i].equals(o)) {
-                return true;
-            }
-        }
-        return false;
+        return indexOf(o) >= 0;
     }
 
     @Override
@@ -84,7 +89,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean add(E e) {
-        boostIfNecessary();
+        growLazy();
         list[size++] = e;
         return true;
     }
@@ -111,24 +116,28 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        boolean changed = false;
-        for (E element : c) {
-            changed |= add(element);
+        if (c.isEmpty()) {
+            return false;
         }
-        return changed;
+        growLazy(c.size());
+        for (E element : c) {
+            list[size++] = element;
+        }
+        return true;
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
         checkIndex(index, size);
-        boostIfNecessary(c.size());
-        for (int i = index + c.size(); i < size + c.size(); i++) {
-            list[i] = list[i - c.size()];
+        if (c.isEmpty()) {
+            return false;
         }
+        growLazy(c.size());
+        System.arraycopy(list, index, list, index + c.size(), size - index);
+        size += c.size();
         int i = index;
         for (E element : c) {
-            list[i] = element;
-            i++;
+            list[i++] = element;
         }
         return true;
     }
@@ -163,24 +172,22 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public E get(int index) {
         checkIndex(index);
-        return (E)list[index];
+        return list[index];
     }
 
     @Override
     public E set(int index, E element) {
         checkIndex(index);
-        Object oldValue = list[index];
+        E oldValue = list[index];
         list[index] = element;
-        return (E)oldValue;
+        return oldValue;
     }
 
     @Override
     public void add(int index, E element) {
         checkIndex(index, size);
-        boostIfNecessary();
-        for (int i = size; i >= index + 1; i--) {
-            list[i] = list[i - 1];
-        }
+        growLazy();
+        System.arraycopy(list, index, list, index + 1, size - index);
         list[index] = element;
         size++;
     }
@@ -188,10 +195,8 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public E remove(int index) {
         checkIndex(index);
-        E oldValue = (E)list[index];
-        for (int i = index; i < size - 1; i++) {
-            list[i] = list[i + 1];
-        }
+        E oldValue = list[index];
+        System.arraycopy(list, index + 1, list, index, size - index - 1);
         size--;
         return oldValue;
     }
@@ -259,7 +264,7 @@ public class CustomArrayList<E> implements List<E> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            return (E)list[++currentIndex];
+            return list[++currentIndex];
         }
 
         @Override
@@ -273,7 +278,7 @@ public class CustomArrayList<E> implements List<E> {
             if (!hasPrevious()) {
                 throw new NoSuchElementException();
             }
-            return (E)list[--currentIndex];
+            return list[--currentIndex];
         }
 
         @Override
