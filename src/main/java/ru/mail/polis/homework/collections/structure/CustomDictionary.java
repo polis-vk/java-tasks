@@ -32,8 +32,9 @@ public class CustomDictionary {
         }
 
         Map<Character, Integer> letterCountMap = getLetterCountMap(value);
-        if (values.containsKey(letterCountMap)) {
-            if (values.get(letterCountMap).add(value)) {
+        Set<String> set = values.get(letterCountMap);
+        if (set != null) {
+            if (set.add(value)) {
                 size++;
                 return true;
             }
