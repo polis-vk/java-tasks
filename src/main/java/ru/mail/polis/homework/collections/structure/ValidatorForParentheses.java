@@ -42,10 +42,8 @@ public class ValidatorForParentheses {
             if (isOpenBracket(ch)) {
                 isBracketsExist = true;
                 stack.add(ch);
-            } else if (isCloseBracket(ch)) {
-                if (stack.isEmpty() || !stack.removeLast().equals(bracketMatcher.get(ch))) {
-                    return false;
-                }
+            } else if (isCloseBracket(ch) && (stack.isEmpty() || !stack.removeLast().equals(bracketMatcher.get(ch)))) {
+                return false;
             }
         }
 
