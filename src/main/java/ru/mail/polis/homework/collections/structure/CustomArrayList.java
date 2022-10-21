@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
@@ -12,39 +9,74 @@ import java.util.ListIterator;
  * Задание оценивается в 10 тугриков
  */
 public class CustomArrayList<E> implements List<E> {
+    private int size;
+    private int modCount;
+    private Object[] array = {};
+
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return size > 0;
     }
 
     @Override
     public boolean contains(Object o) {
-        return false;
+        return indexOf(0) > 0;
     }
 
     @Override
     public Iterator<E> iterator() {
-        return null;
+        return new MyIterator();
+    }
+
+    private class MyIterator<E> implements Iterator<E> {
+        private int pos;
+        private int fixedModCount;
+
+        @Override
+        public boolean hasNext() {
+            return pos < size();
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public E next() {
+            if (pos == 0) {
+                fixedModCount = modCount;
+            }
+            if (fixedModCount != modCount) {
+                throw new ConcurrentModificationException();
+            } else if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return (E) array[pos++];
+        }
     }
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        return Arrays.copyOf(array, size());
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
+//        Object newArray = new Object[]{};
+//        System.arraycopy(newArray, 0, a, 0, size);
+//        return newArray;
         return null;
     }
 
     @Override
     public boolean add(E e) {
-        return false;
+        if (array.length >= size()) {
+            array = Arrays.copyOf(array, (array.length + 1) * 2);
+        }
+        array[size + 1] = e;
+        return true;
     }
 
     @Override
@@ -54,7 +86,16 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return false;
+        int index = 0;
+        for (Object elem: c) {
+            if (index >= size()) {
+                return false;
+            }
+            while (index <= size() && !elem.equals(array[index])) {
+                index++;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -79,12 +120,19 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public void clear() {
-
+        array = new Object[]{};
+        size = 0;
+        modCount = 0;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public E get(int index) {
-        return null;
+        if (index <= size()) {
+            return (E) array[index];
+        } else {
+            throw new IndexOutOfBoundsException();
+        }
     }
 
     @Override
@@ -94,7 +142,8 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public void add(int index, E element) {
-
+        System.arraycopy(array, 0, array, index + 1, size());
+        array[index] = element;
     }
 
     @Override
@@ -104,12 +153,23 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        return 0;
+        for (int i = 0; i < size(); i++) {
+            if (array[i].equals(0)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return 0;
+        int index = -1;
+        for (int i = 0; i < size(); i++) {
+            if (array[i].equals(0)) {
+                index = i;
+            }
+        }
+        return index;
     }
 
     @Override
