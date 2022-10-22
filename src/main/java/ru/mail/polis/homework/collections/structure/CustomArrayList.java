@@ -12,6 +12,8 @@ import java.util.ListIterator;
  * Задание оценивается в 10 тугриков
  */
 public class CustomArrayList<E> implements List<E> {
+    private int size;
+
     @Override
     public int size() {
         return 0;
