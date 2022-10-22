@@ -29,15 +29,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean contains(Object o) {
-        for (int i = 0; i < size; i++) {
-            if (o == null && array[i] == null) {
-                return true;
-            }
-            if (array[i].equals(o)) {
-                return true;
-            }
-        }
-        return false;
+        return indexOf(o) >= 0;
     }
 
     @Override
@@ -119,10 +111,6 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        if (c.contains(null)) {
-            throw new NullPointerException();
-        }
-
         for (E e : c) {
             add(e);
         }
@@ -131,13 +119,9 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        if (c.contains(null)) {
-            throw new NullPointerException();
-        }
         if (index >= size || index < 0) {
             throw new IndexOutOfBoundsException();
         }
-
         int cursor = index;
         for (E e : c) {
             add(cursor, e);
@@ -148,10 +132,6 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        if (c.contains(null)) {
-            throw new NullPointerException();
-        }
-
         final int capacityBefore = size;
         for (Object element : c) {
             if (contains(element)) {
@@ -164,10 +144,6 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        if (c.contains(null)) {
-            throw new NullPointerException();
-        }
-
         int index = 0;
         E[] temp = (E[]) new Object[size];
         final int capacityBefore = array.length;
@@ -237,17 +213,19 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public int indexOf(Object o) {
         int index = -1;
-        if (!contains(o)) {
-            return index;
-        }
-
-        for (int i = 0; i < size; i++) {
-            if (o == null) {
-                index = i;
-                break;
-            } else if (o.equals(array[i])) {
-                index = i;
-                break;
+        if (o == null) {
+            for (int i = 0; i < size; i++) {
+                if (null == array[i]) {
+                    index = i;
+                    return index;
+                }
+            }
+        } else {
+            for (int i = 0; i < size; i++) {
+                if (o.equals(array[i])) {
+                    index = i;
+                    return index;
+                }
             }
         }
         return index;
