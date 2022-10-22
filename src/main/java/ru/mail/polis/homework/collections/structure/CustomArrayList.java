@@ -1,12 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.List;
-import java.util.Collection;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.ConcurrentModificationException;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
@@ -15,21 +9,24 @@ import java.util.NoSuchElementException;
  * Задание оценивается в 10 тугриков
  */
 public class CustomArrayList<E> implements List<E> {
+    private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
     private static final int DEFAULT_CAPACITY = 10;
     private static final double GROW_FACTOR = 1.5;
-    private Object[] data;
+    private E[] data;
     private int size;
     private int modCount;
 
+    private CustomArrayList(E[] subList, int toIndex, int fromIndex) {
+        size = fromIndex - toIndex;
+        data = subList;
+    }
+
     public CustomArrayList(int initCapacity) {
-        modCount = 0;
-        if (initCapacity > 0) {
-            this.data = new Object[initCapacity];
-        } else if (initCapacity == 0) {
-            this.data = new Object[]{};
-        } else {
+        if (initCapacity < 0) {
             throw new IllegalArgumentException("Capacity should be non-negative");
         }
+        this.data = (E[]) new Object[initCapacity];
+        modCount = 0;
     }
 
     public CustomArrayList() {
@@ -48,12 +45,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean contains(Object o) {
-        for (Object e : this) {
-            if (e.equals(o)) {
-                return true;
-            }
-        }
-        return false;
+        return indexOf(o) != -1;
     }
 
     @Override
@@ -75,7 +67,7 @@ public class CustomArrayList<E> implements List<E> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                return (E) data[currentIndex++];
+                return data[currentIndex++];
             }
         };
     }
@@ -91,9 +83,6 @@ public class CustomArrayList<E> implements List<E> {
             return (T[]) Arrays.copyOf(data, size, a.getClass());
         }
         System.arraycopy(data, 0, a, 0, size);
-        if (a.length > size) {
-            a[size] = null;
-        }
         return a;
     }
 
@@ -101,7 +90,7 @@ public class CustomArrayList<E> implements List<E> {
     public boolean add(E e) {
         modCount++;
         if (size == data.length) {
-            data = Arrays.copyOf(data, (int) (GROW_FACTOR * size));
+            data = grow();
         }
         data[size++] = e;
         return true;
@@ -109,14 +98,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean remove(Object o) {
-        modCount++;
-        int firstCurrIndex = -1;
-        for (int i = 0; i < size; i++) {
-            if (data[i].equals(o)) {
-                firstCurrIndex = i;
-                break;
-            }
-        }
+        int firstCurrIndex = indexOf(o);
         if (firstCurrIndex != -1) {
             remove(firstCurrIndex);
             return true;
@@ -142,12 +124,21 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        modCount++;
-        int currIndex = index;
-        for (E elem : c) {
-            this.add(currIndex++, elem);
+        if (c.isEmpty()) {
+            return false;
         }
-        return currIndex != index;
+
+        modCount++;
+        int cSize = c.size();
+        if (data.length - size < cSize) {
+            data = grow(size + cSize);
+        }
+        if (index != size) {
+            System.arraycopy(data, index, data, index + cSize, size - index);
+        }
+        System.arraycopy(c.toArray(), 0, data, index, cSize);
+        size += cSize;
+        return true;
     }
 
     @Override
@@ -171,13 +162,13 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E get(int index) {
-        return (E) data[index];
+        return data[index];
     }
 
     @Override
     public E set(int index, E element) {
         modCount++;
-        E oldValue = (E) data[index];
+        E oldValue = data[index];
         data[index] = element;
         return oldValue;
     }
@@ -186,7 +177,7 @@ public class CustomArrayList<E> implements List<E> {
     public void add(int index, E element) {
         modCount++;
         if (size == data.length) {
-            data = Arrays.copyOf(data, (int) (GROW_FACTOR * size));
+            data = grow();
         }
         System.arraycopy(data, index, data, index + 1, size - index);
         data[index] = element;
@@ -195,7 +186,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E remove(int index) {
-        E oldValue = (E) data[index];
+        E oldValue = data[index];
         modCount++;
         int newSize;
         if ((newSize = size - 1) > index) {
@@ -208,9 +199,17 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        for (int i = 0; i < size; i++) {
-            if (data[i].equals(o)) {
-                return i;
+        if (o == null) {
+            for (int i = 0; i < size; i++) {
+                if (data[i] == null) {
+                    return i;
+                }
+            }
+        } else {
+            for (int i = 0; i < size; i++) {
+                if (o.equals(data[i])) {
+                    return i;
+                }
             }
         }
         return -1;
@@ -218,9 +217,17 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int lastIndexOf(Object o) {
-        for (int i = size - 1; i >= 0; i--) {
-            if (data[i].equals(o)) {
-                return i;
+        if (o == null) {
+            for (int i = size - 1; i >= 0; i--) {
+                if (data[i] == null) {
+                    return i;
+                }
+            }
+        } else {
+            for (int i = size - 1; i >= 0; i--) {
+                if (o.equals(data[i])) {
+                    return i;
+                }
             }
         }
         return -1;
@@ -250,7 +257,7 @@ public class CustomArrayList<E> implements List<E> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                return (E) data[currentIndex++];
+                return data[++currentIndex];
             }
 
             @Override
@@ -266,7 +273,7 @@ public class CustomArrayList<E> implements List<E> {
                 if (!hasPrevious()) {
                     throw new NoSuchElementException();
                 }
-                return (E) data[--currentIndex];
+                return data[--currentIndex];
             }
 
             @Override
@@ -313,12 +320,22 @@ public class CustomArrayList<E> implements List<E> {
         if (fromIndex < 0 || toIndex > size || fromIndex > toIndex) {
             throw new IndexOutOfBoundsException();
         }
-        List<E> subList = new CustomArrayList<>();
-        for (int i = fromIndex; i < toIndex; i++) {
-            subList.add(this.get(i));
-        }
-        return subList;
+        E[] subList = (E[]) new Object[toIndex - fromIndex];
+        System.arraycopy(data, fromIndex, subList, 0, toIndex - fromIndex);
+        return new CustomArrayList<>(subList, toIndex, fromIndex);
     }
+
+    private E[] grow() {
+        return grow((int) (GROW_FACTOR * size));
+    }
+
+    private E[] grow(int newCapacity) {
+        if (newCapacity > MAX_ARRAY_SIZE) {
+            throw new OutOfMemoryError();
+        }
+        return Arrays.copyOf(data, newCapacity);
+    }
+
 
     private boolean removeOrRetainAll(Collection<?> c, boolean isRemoved) {
         boolean isModified = false;
@@ -333,3 +350,4 @@ public class CustomArrayList<E> implements List<E> {
         return isModified;
     }
 }
+
