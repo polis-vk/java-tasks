@@ -3,9 +3,12 @@ package ru.mail.polis.homework.generics.bot;
 import ru.mail.polis.homework.generics.bot.handler.StateHandler;
 import ru.mail.polis.homework.generics.bot.state.State;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class Bot {
+
+    private HashMap<Class<? extends State>, StateHandler<? extends State>> handlersMap = new HashMap<>();
 
     /**
      * Конструктор бота, которому на вход подаются хэндлеры состояний.
@@ -13,8 +16,10 @@ public class Bot {
      *
      * 1 тугрик
      */
-    public Bot(List<StateHandler> handlers) {
-
+    public Bot(List<StateHandler<? extends State>> handlers) {
+        for (StateHandler<? extends State> a : handlers) {
+            handlersMap.put(a.getHandlingStateClass(), a);
+        }
     }
 
     /**
@@ -23,5 +28,6 @@ public class Bot {
      * 1 тугрик
      */
     public void handleState(State state) {
+        handlersMap.get(state.getClass()).handle();
     }
 }
