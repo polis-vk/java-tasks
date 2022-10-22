@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -7,6 +8,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
@@ -57,8 +59,8 @@ public class CustomArrayList<E> implements List<E> {
 
             @Override
             public E next() {
-                if (i >= size) {
-                    throw new IndexOutOfBoundsException();
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
                 }
                 if (fixedModCount != modCount) {
                     throw new ConcurrentModificationException();
@@ -196,9 +198,17 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        for (int i = 0; i < size; i++) {
-            if (o.equals(array[i])) {
-                return i;
+        if (o == null) {
+            for (int i = 0; i < size; i++) {
+                if (array[i] == null) {
+                    return i;
+                }
+            }
+        } else {
+            for (int i = 0; i < size; i++) {
+                if (o.equals(array[i])) {
+                    return i;
+                }
             }
         }
         return -1;
@@ -280,7 +290,9 @@ public class CustomArrayList<E> implements List<E> {
             @Override
             public void add(E e) {
                 checkModificationCount();
-                CustomArrayList.this.add(e);
+                currentIndex += expectedModCount - modCount;
+                CustomArrayList.this.add(currentIndex, e);
+                currentIndex++;
                 expectedModCount = modCount;
             }
 
