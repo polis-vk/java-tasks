@@ -394,7 +394,7 @@ public class CustomArrayList<E> implements List<E> {
             checkModification();
 
             try {
-                CustomArrayList.this.add(lastReturnedIndex, e);
+                CustomArrayList.this.add(cursor, e);
                 cursor++;
                 lastReturnedIndex = -1;
                 fixedModCount = modCount;

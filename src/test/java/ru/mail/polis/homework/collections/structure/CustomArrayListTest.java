@@ -308,6 +308,7 @@ public class CustomArrayListTest {
         assertTrue(list.contains(null));
     }
 
+    @Test
     public void iteratorTest() {
         List<Integer> list = new CustomArrayList<>();
         Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
