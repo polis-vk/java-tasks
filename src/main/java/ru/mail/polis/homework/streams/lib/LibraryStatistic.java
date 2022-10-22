@@ -2,12 +2,16 @@ package ru.mail.polis.homework.streams.lib;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Класс для работы со статистикой по библиотеке.
  * Оценка 5-ть баллов
  */
 public class LibraryStatistic {
+    private static final int SPECIALIST_MIN_BOOKS_COUNT = 5;
+    private static final int SPECIALIST_READING_DAYS = 14;
+    private static final int UNRELIABLE_USER_READING_DAYS = 30;
 
     /**
      * Вернуть "специалистов" в литературном жанре с кол-вом прочитанных страниц.
@@ -18,7 +22,16 @@ public class LibraryStatistic {
      * @return - map пользователь / кол-во прочитанных страниц
      */
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
-        return null;
+        return library.getArchive().stream()
+                .filter(archive -> genre.equals(archive.getBook().getGenre()))
+                .collect(Collectors.groupingBy(ArchivedData::getUser))
+                .entrySet().stream()
+                .filter(lib -> lib.getValue().stream()
+                        .allMatch(e -> countDays(e) >= SPECIALIST_READING_DAYS))
+                .filter(lib -> lib.getValue().size() >= SPECIALIST_MIN_BOOKS_COUNT)
+                .collect(Collectors.toMap(Map.Entry::getKey, lib -> lib.getValue().stream()
+                        .map(ArchivedData::getBook)
+                        .mapToInt(Book::getPage).sum()));
     }
 
     /**
@@ -29,7 +42,18 @@ public class LibraryStatistic {
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
-        return null;
+        return library.getArchive().stream()
+                .filter(archive -> user.equals(archive.getUser()))
+                .collect(Collectors.groupingBy(archive -> archive.getBook().getGenre()))
+                .entrySet().stream()
+                .max(((arch1, arch2) -> {
+                    if (arch1.getValue().size() == arch2.getValue().size()) {
+                        return arch1.getValue().stream().anyMatch(a -> a.getReturned() == null) ? 1 : 0;
+                    }
+                    return arch1.getValue().size() - arch2.getValue().size();
+                }))
+                .map(Map.Entry::getKey)
+                .orElse(null);
     }
 
     /**
@@ -39,7 +63,13 @@ public class LibraryStatistic {
      * @return - список ненадежных пользователей
      */
     public List<User> unreliableUsers(Library library) {
-        return null;
+        return library.getArchive().stream()
+                .collect(Collectors.groupingBy(ArchivedData::getUser))
+                .entrySet().stream()
+                .filter(archive -> archive.getValue().size() / 2 <=
+                        archive.getValue().stream().filter(e -> countDays(e) >= UNRELIABLE_USER_READING_DAYS).count())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -49,7 +79,9 @@ public class LibraryStatistic {
      * @return - список книг
      */
     public List<Book> booksWithMoreCountPages(Library library, int countPage) {
-        return null;
+        return library.getBooks().stream()
+                .filter(book -> book.getPage() >= countPage)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -58,6 +90,22 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return null;
+        return library.getBooks().stream()
+                .collect(Collectors.groupingBy(Book::getGenre,
+                        Collectors.groupingBy(Book::getAuthor, Collectors.counting())))
+                .entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, author -> author.getValue().entrySet().stream()
+                        .max(Map.Entry.<String, Long>comparingByValue()
+                                .thenComparing(Map.Entry.comparingByKey()))
+                        .map(Map.Entry::getKey)
+                        .orElse("")));
+    }
+
+    private static int countDays(ArchivedData archive) {
+        if (archive.getReturned() == null) {
+            return (int) (System.currentTimeMillis() - archive.getTake().getTime()) / (1000 * 60 * 60 * 24);
+        }
+        return (int) (archive.getReturned().getTime() - archive.getTake().getTime()) / (1000 * 60 * 60 * 24);
     }
 }
+
