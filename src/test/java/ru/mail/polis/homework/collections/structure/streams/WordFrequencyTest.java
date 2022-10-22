@@ -1,6 +1,7 @@
-package ru.mail.polis.homework.collections.streams;
+package ru.mail.polis.homework.collections.structure.streams;
 
 import org.junit.Test;
+import ru.mail.polis.homework.collections.streams.WordFrequency;
 
 import java.util.Arrays;
 import java.util.List;

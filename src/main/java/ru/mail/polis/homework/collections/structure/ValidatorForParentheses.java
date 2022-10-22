@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.Deque;
+import java.util.LinkedList;
+
 /**
  * Задание оценивается в 2 тугрика.
  * Одна из самых популярных задач.
@@ -15,6 +18,27 @@ package ru.mail.polis.homework.collections.structure;
 public class ValidatorForParentheses {
 
     public static boolean validate(String value) {
-        return false;
+        if (value == null || value.isEmpty()) {
+            return false;
+        }
+
+        Deque<Character> deque = null;
+        for (char ch: value.toCharArray()) {
+            if (ch == '{' || ch == '[' || ch == '(' || ch == '<') {
+                if (deque == null) {
+                    deque = new LinkedList<>();
+                }
+                deque.addFirst(ch);
+            } else {
+                if ((deque != null && !deque.isEmpty())
+                    && ((deque.peekFirst() == '{' && ch == '}')
+                    || (deque.peekFirst() == '[' && ch == ']')
+                    || (deque.peekFirst() == '(' && ch == ')')
+                    || (deque.peekFirst() == '<' && ch == '>'))) {
+                    deque.removeFirst();
+                }
+            }
+        }
+        return deque != null && deque.isEmpty();
     }
 }
