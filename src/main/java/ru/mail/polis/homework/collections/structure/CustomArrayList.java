@@ -16,6 +16,7 @@ import java.util.NoSuchElementException;
 public class CustomArrayList<E> implements List<E> {
 
     private static final int INITIAL_SIZE = 16;
+    private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
     private static void checkIndex(int index, int upperBound) {
         if (index < 0 || index > upperBound) {
@@ -52,9 +53,17 @@ public class CustomArrayList<E> implements List<E> {
     }
 
     private void grow(int minCount) {
+        if (MAX_ARRAY_SIZE - minCount < array.length) {
+            throw new OutOfMemoryError();
+        }
+        int growth = minCount;
+        int strongGrowth = array.length >> 1;
+        if (MAX_ARRAY_SIZE - strongGrowth >= array.length && strongGrowth > growth) {
+            growth = strongGrowth;
+        }
         array = Arrays.copyOf(
                 array,
-                array.length + Math.max(array.length >> 1, minCount)
+                array.length + growth
         );
     }
 
