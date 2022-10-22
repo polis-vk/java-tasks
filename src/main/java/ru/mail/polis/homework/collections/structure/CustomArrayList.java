@@ -2,6 +2,7 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -45,12 +46,20 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        Object[] tmp = arr;
+        return tmp;
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
-        return null;
+        if (a.length != size) {
+            a = Arrays.copyOf(a, size);
+        }
+        Object[] tmp = a;
+        for (int i = 0; i < size; ++i) {
+            tmp[i] = get(i);
+        }
+        return a;
     }
 
     @Override
