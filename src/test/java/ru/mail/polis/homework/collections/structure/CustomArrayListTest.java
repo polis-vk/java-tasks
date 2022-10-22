@@ -1,204 +1,301 @@
 package ru.mail.polis.homework.collections.structure;
 
+import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
-
 
 public class CustomArrayListTest {
-    CustomArrayList<Integer> myList = new CustomArrayList<>();
-    List<Integer> realList = new ArrayList<>();
+    private static final int[] DEFAULT_ARRAY = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
 
     @Test
-    public void testAllAdding() {
-        myList.add(1);
-        myList.add(2);
-        myList.add(2, 3);
-        myList.addAll(3, Arrays.asList(4));
+    public void sizeTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+        assertEquals(DEFAULT_ARRAY.length, list.size());
     }
 
     @Test
-    public void testSize() {
-        fillArray(myList);
-        fillArray(realList);
-        assertEquals(realList.size(), myList.size());
+    public void isEmptyTest() {
+        List<Integer> list = new CustomArrayList<>();
+        assertTrue(list.isEmpty());
 
-        myList.remove(0);
-        realList.remove(0);
-        assertEquals(realList.size(), myList.size());
-
-        myList.add(1);
-        realList.add(1);
-        assertEquals(realList.size(), myList.size());
-
-        myList.add(0, 3);
-        realList.add(0, 3);
-        assertEquals(realList.size(), myList.size());
-
-        myList.addAll(Arrays.asList(5, 7));
-        realList.addAll(Arrays.asList(5, 7));
-        assertEquals(realList.size(), myList.size());
-
-        myList.addAll(myList.size(), Arrays.asList(9, 11));
-        realList.addAll(realList.size(), Arrays.asList(9, 11));
-        assertEquals(realList.size(), myList.size());
-
-        assertTrue(same(myList, realList));
+        list.add(1);
+        assertFalse(list.isEmpty());
     }
 
     @Test
-    public void testIsEmpty() {
-        assertTrue(myList.isEmpty());
-        fillArray(myList);
-        assertFalse(myList.isEmpty());
-    }
+    public void containsTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+        assertTrue(list.contains(1));
+        assertFalse(list.contains(null));
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testIndexOutOfBounceException() {
-        fillArray(myList);
-        myList.addAll(myList.size() + 1, Collections.singleton(1));
-    }
-
-    @Test
-    public void testContains() {
-        fillArray(myList);
-        assertTrue(myList.contains(2));
-        assertFalse(myList.contains(1));
+        list.add(null);
+        assertTrue(list.contains(null));
     }
 
     @Test
-    public void testIterator() {
-        fillArray(myList);
-        Iterator<Integer> iterator = myList.iterator();
-        while (iterator.hasNext()) {
-            assertFalse(Integer.toString(iterator.next()).isEmpty());
+    public void iteratorTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+        Iterator<Integer> iterator = list.iterator();
+
+        for (int e : DEFAULT_ARRAY) {
+            assertEquals(e, (int) iterator.next());
         }
     }
 
-    @Test(expected = ConcurrentModificationException.class)
-    public void testConcurrentModificationException() {
-        myList.add(1);
-        myList.add(2);
-
-        Iterator<Integer> iterator = myList.iterator();
-        iterator.next();
-        myList.add(3);
-        iterator.next();
+    @Test(expected = NoSuchElementException.class)
+    public void iteratorTest2() {
+        List<Integer> list = new CustomArrayList<>();
+        list.iterator().next();
     }
 
     @Test
-    public void testToArray() {
-        fillArray(myList);
-        fillArray(realList);
-        assertTrue(same(myList, realList));
-    }
+    public void toArrayTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+        Object[] objects = list.toArray();
 
-    @Test
-    public void testToArrayWithParameters() {
-        fillArray(myList);
-        fillArray(realList);
-        Object[] objects = myList.toArray(new Object[0]);
-        for (Object obj : objects) {
-            assertFalse(((Integer) obj).toString().isEmpty());
+        for (int i = 0; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], objects[i]);
         }
     }
 
-    @Test(expected = ArrayStoreException.class)
-    public void testArrayStoreException() {
-        fillArray(myList);
-        String[] strings = myList.toArray(new String[0]);
-    }
-
     @Test
-    public void testRemoveAndRetain() {
-        fillArray(myList);
-        fillArray(realList);
+    public void toArrayTest2() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+        Integer[] array = new Integer[DEFAULT_ARRAY.length];
 
-        List<Integer> temp = new ArrayList<>();
-        temp.add(2);
-        temp.add(8);
+        Integer[] result = list.toArray(array);
+        assertTrue(array == result);
 
-        assertTrue(myList.retainAll(temp) == realList.retainAll(temp) && same(myList, realList));
-        assertTrue(myList.removeAll(temp) == realList.removeAll(temp) && same(myList, realList));
-
-        fillArray(myList);
-        fillArray(realList);
-        assertTrue(myList.remove(2).equals(realList.remove(2)) && same(myList, realList));
-
-        Integer num = 7;
-        myList.add(num);
-        realList.add(num);
-        assertTrue(myList.remove(num) == (realList.remove(num)) && same(myList, realList));
-    }
-
-    @Test
-    public void testClear() {
-        fillArray(myList);
-        fillArray(realList);
-        myList.clear();
-        realList.clear();
-        assertTrue(same(myList, realList));
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void testSubList() {
-        fillArray(myList);
-        fillArray(realList);
-        List<Integer> mySubList = myList.subList(1, myList.size() - 1);
-        List<Integer> realSubList = realList.subList(1, realList.size() - 1);
-        assertTrue(same(mySubList, realSubList));
-    }
-
-    @Test
-    public void testGetAndSet() {
-        fillArray(myList);
-        fillArray(realList);
-
-        assertEquals(realList.get(realList.size() - 1), myList.get(myList.size() - 1));
-        assertEquals(realList.set(0, 3), myList.set(0, 3));
-        assertTrue(same(myList, realList));
-    }
-
-    @Test
-    public void testIndexOf() {
-        fillArray(myList);
-        fillArray(realList);
-        Integer num = 0;
-        myList.add(num);
-        realList.add(num);
-
-        assertEquals(realList.indexOf(num), myList.indexOf(num));
-        assertEquals(realList.lastIndexOf(num), myList.lastIndexOf(num));
-        assertEquals(realList.indexOf(6), myList.indexOf(6));
-        assertEquals(realList.lastIndexOf(6), myList.lastIndexOf(6));
-    }
-
-
-    private void fillArray(List<Integer> list) {
-        for (int i = 0; i < 15; i = i + 2) {
-            list.add(i);
+        for (int i = 0; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) result[i]);
         }
     }
 
-    public static <T, R extends T> boolean same(Collection<T> c, Collection<R> c1) {
-        Object[] objects = c.toArray();
-        Object[] objects1 = c1.toArray();
-        if (objects1.length != objects.length) {
-            return false;
+    @Test
+    public void toArrayTest3() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        Integer[] result = list.toArray(new Integer[0]);
+        for (int i = 0; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) result[i]);
         }
-        for (int i = 0; i < objects.length; i++) {
-            if (!objects1[i].equals(objects[i])) return false;
+    }
+
+    @Test
+    public void removeTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        list.remove(0);
+        list.remove(list.size() - 1);
+        for (int i = 1; i < DEFAULT_ARRAY.length - 1; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) list.get(i - 1));
         }
-        return true;
+    }
+
+    @Test
+    public void containsAllTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        assertTrue(list.containsAll(Collections.singletonList(1)));
+
+        List<Integer> list2 = new CustomArrayList<>();
+        list2.add(1);
+        list2.add(5);
+        list2.add(9);
+        assertTrue(list.containsAll(list2));
+    }
+
+    @Test
+    public void addAllTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        List<Integer> list2 = new CustomArrayList<>();
+        list2.add(1);
+        list2.add(5);
+        list2.add(9);
+        assertTrue(list.addAll(list2));
+
+        for (int i = 0; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) list.get(i));
+        }
+
+        for (int i = 0; i < list2.size(); i++) {
+            assertEquals(list2.get(i), list.get(DEFAULT_ARRAY.length + i));
+        }
+    }
+
+    @Test
+    public void addAllTest2() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        List<Integer> list2 = new CustomArrayList<>();
+        list2.add(1);
+        list2.add(5);
+        list2.add(9);
+        assertTrue(list.addAll(0, list2));
+
+        for (int i = 0; i < list2.size(); i++) {
+            assertEquals(list2.get(i), list.get(i));
+        }
+
+        for (int i = 0; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) list.get(list2.size() + i));
+        }
+    }
+
+    @Test
+    public void removeAllTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        List<Integer> list2 = new CustomArrayList<>();
+        for (int i = 0; i < DEFAULT_ARRAY.length - 1; i++) {
+            list2.add(DEFAULT_ARRAY[i]);
+        }
+        assertTrue(list.removeAll(list2));
+
+        assertEquals(1, list.size());
+        assertEquals(9, (int) list.get(0));
+    }
+
+    @Test
+    public void retainAllTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        list.retainAll(list);
+        assertEquals(DEFAULT_ARRAY.length, list.size());
+        for (int i = 0; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) list.get(i));
+        }
+
+        list.retainAll(Collections.singletonList(1));
+        assertEquals(1, list.size());
+        assertEquals(1, (int) list.get(0));
+    }
+
+    @Test
+    public void clearTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        list.clear();
+        assertEquals(0, list.size());
+        assertTrue(list.isEmpty());
+
+        list.add(10);
+        assertEquals(10, (int) list.get(0));
+    }
+
+    @Test
+    public void setTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        list.set(DEFAULT_ARRAY.length - 1, 2);
+
+        for (int i = 0; i < DEFAULT_ARRAY.length - 1; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) list.get(i));
+        }
+        assertEquals(2, (int) list.get(DEFAULT_ARRAY.length - 1));
+
+        list.set(0, 0);
+        assertEquals(0, (int) list.get(0));
+    }
+
+    @Test
+    public void addToIndexTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        list.add(0, 0);
+        assertEquals(0, (int) list.get(0));
+
+        for (int i = 0; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) list.get(i + 1));
+        }
+    }
+
+    @Test
+    public void removeByIndexTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        list.remove(0);
+        assertEquals(DEFAULT_ARRAY.length - 1, list.size());
+
+        for (int i = 1; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) list.get(i - 1));
+        }
+    }
+
+    @Test
+    public void indexOfTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+        list.add(5);
+
+        assertEquals(4, list.indexOf(5));
+    }
+
+    @Test
+    public void lastIndexOfTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+        list.add(5);
+
+        assertEquals(DEFAULT_ARRAY.length, list.lastIndexOf(5));
+    }
+
+    @Test
+    public void listIteratorTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        ListIterator<Integer> iterator = list.listIterator();
+        iterator.add(10);
+        assertEquals(DEFAULT_ARRAY.length + 1, list.size());
+
+        assertEquals(10, (int) list.get(0));
+
+        for (int e : DEFAULT_ARRAY) {
+            assertEquals(e, (int) iterator.next());
+        }
+    }
+
+    @Test
+    public void listIteratorTest2() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        ListIterator<Integer> iterator = list.listIterator(4);
+        iterator.add(10);
+        assertEquals(DEFAULT_ARRAY.length + 1, list.size());
+
+        assertEquals(10, (int) list.get(4));
+
+        assertEquals(5, (int) iterator.next());
+        for (int i = 5; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) iterator.next());
+        }
     }
 }
