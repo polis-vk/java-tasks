@@ -1,15 +1,17 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Задание оценивается в 4 тугрика.
- * Необходимо реализовать класс которы умеет хранить строки и возвращать
- * список строк состоящий из того же набора буков, что ему передали строку.
+ * Необходимо реализовать класс, который умеет хранить строки и возвращать
+ * список строк состоящий из того же набора букв, что хранится в переданной строке.
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
+    private Map<Set<Character>, Set<String>> dictionary = new HashMap<>();
+    private int size = 0;
 
     /**
      * Сохранить строку в структуру данных
@@ -19,6 +21,21 @@ public class CustomDictionary {
      * Сложность - []
      */
     public boolean add(String value) {
+        Set<Character> letters = getCharKey(value);
+
+        if(dictionary.get(letters) == null){
+            Set<String> strings = new HashSet<>();
+            strings.add(value);
+            dictionary.put(letters, strings);
+            size++;
+            return true;
+        } else {
+            if(dictionary.get(letters).add(value)) {
+                size++;
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -30,7 +47,13 @@ public class CustomDictionary {
      * Сложность - []
      */
     public boolean contains(String value) {
-        return false;
+        Set<Character> letters = getCharKey(value);
+
+        if (dictionary.get(letters) == null) {
+            return false;
+        } else {
+            return dictionary.get(letters).contains(value);
+        }
     }
 
     /**
@@ -41,6 +64,16 @@ public class CustomDictionary {
      * Сложность - []
      */
     public boolean remove(String value) {
+        Set<Character> letters = getCharKey(value);
+
+        if (dictionary.get(letters) == null) {
+            return false;
+        } else {
+            if (dictionary.get(letters).remove(value)) {
+                size--;
+                return true;
+            }
+        }
         return false;
     }
 
@@ -64,7 +97,12 @@ public class CustomDictionary {
      * Сложность - []
      */
     public List<String> getSimilarWords(String value) {
-        return Collections.emptyList();
+        Set<Character> letters = getCharKey(value);
+
+        Set<String> words = dictionary.getOrDefault(letters, new HashSet());
+        return words.stream()
+                .filter(word -> word.length() == value.length())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -74,8 +112,20 @@ public class CustomDictionary {
      * Сложность - []
      */
     public int size() {
-        return 0;
+        return size;
     }
 
+    private Set<Character> getCharKey(String value){
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+
+        Set<Character> letters = new HashSet();
+        for (Character c : value.toCharArray()) {
+            letters.add(Character.toLowerCase(c));
+        }
+
+        return letters;
+    }
 
 }
