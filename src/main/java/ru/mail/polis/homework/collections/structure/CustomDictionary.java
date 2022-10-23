@@ -1,7 +1,9 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -10,16 +12,20 @@ import java.util.List;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
+    private final Set<String> set = new HashSet<>();
 
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - []
+     * Сложность - [O(1)]
      */
     public boolean add(String value) {
-        return false;
+        if (value == null || value.equals("")) {
+            throw new IllegalArgumentException();
+        }
+        return set.add(value);
     }
 
     /**
@@ -27,10 +33,10 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - []
+     * Сложность - [O(1)]
      */
     public boolean contains(String value) {
-        return false;
+        return set.contains(value);
     }
 
     /**
@@ -38,10 +44,10 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - []
+     * Сложность - [O(1)]
      */
     public boolean remove(String value) {
-        return false;
+        return set.remove(value);
     }
 
     /**
@@ -61,21 +67,50 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - []
+     * Сложность - [O(n * Max(Character.MAX_VALUE, value.length)) ~ O(n * value.length), где n - размер словаря ]
      */
     public List<String> getSimilarWords(String value) {
-        return Collections.emptyList();
+        int[] valueChars = getCharsCountArray(value);
+        List<String> similarWords = new ArrayList<>();
+
+        for (String str : set) {
+            int[] strChars = getCharsCountArray(str);
+
+            boolean charsCountsMatch = true;
+            for (int i = 0; i < strChars.length; i++) {
+                if (strChars[i] != valueChars[i]) {
+                    charsCountsMatch = false;
+                    break;
+                }
+            }
+
+            if (charsCountsMatch) {
+                similarWords.add(str);
+            }
+        }
+
+        return similarWords;
+    }
+
+    private int[] getCharsCountArray(String s) {
+        int[] charsCount = new int[Character.MAX_VALUE + 1];
+        for (char c : s.toCharArray()) {
+            if (c >= 'A' && c <= 'Z') {
+                charsCount[c - 'A' + 'a']++;
+            } else {
+                charsCount[c]++;
+            }
+        }
+        return charsCount;
     }
 
     /**
      * Колл-во хранимых строк.
      * @return - Колл-во хранимых строк.
      *
-     * Сложность - []
+     * Сложность - [O(1)]
      */
     public int size() {
-        return 0;
+        return set.size();
     }
-
-
 }
