@@ -30,7 +30,6 @@ public class ProductPriceParsServiceTest {
         assertEquals(Integer.valueOf(180), parsedData.get("Blueberries"));
         assertEquals(Integer.valueOf(20), parsedData.get("Lemons"));
     }
-/*
     @Test
     public void testParsWithJsonAdapter() {
         String jsonText = "{" +
@@ -54,6 +53,6 @@ public class ProductPriceParsServiceTest {
         assertEquals(Integer.valueOf(150), parsedData.get("Oranges"));
         assertEquals(Integer.valueOf(180), parsedData.get("Blueberries"));
         assertEquals(Integer.valueOf(20), parsedData.get("Lemons"));
-    }*/
+    }
 
 }
