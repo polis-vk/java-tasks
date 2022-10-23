@@ -3,18 +3,24 @@ package ru.mail.polis.homework.generics.bot;
 import ru.mail.polis.homework.generics.bot.handler.StateHandler;
 import ru.mail.polis.homework.generics.bot.state.State;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Bot {
-
+    Map<Class<? extends State>, StateHandler<? extends State>> dictionaryForHandlers;
     /**
      * Конструктор бота, которому на вход подаются хэндлеры состояний.
      * Необходимо как-то сохранить эти хэндлеры так, чтобы потом можно было вызвать нужный хэндлер из метода handleState
      *
      * 1 тугрик
      */
-    public Bot(List<StateHandler> handlers) {
-
+    public Bot(List<StateHandler<State>> handlers) {
+        dictionaryForHandlers = new HashMap<>();
+        for (StateHandler<? extends State> handler: handlers){
+            dictionaryForHandlers.put(handler.getHandlingStateClass(), handler);
+        }
     }
 
     /**
@@ -23,5 +29,6 @@ public class Bot {
      * 1 тугрик
      */
     public void handleState(State state) {
+        dictionaryForHandlers.get(state.getClass()).handle();
     }
 }
