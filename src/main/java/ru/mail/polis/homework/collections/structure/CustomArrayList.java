@@ -1,11 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
@@ -26,15 +21,18 @@ public class CustomArrayList<E> implements List<E> {
 
     private E[] array;
     private int size;
+    private int modCount;
 
     private CustomArrayList(CustomArrayList list, int fromInclusive, int toExclusive) {
         size = toExclusive - fromInclusive;
         array = (E[]) new Object[size];
         System.arraycopy(list.array, fromInclusive, array, 0, size);
+        modCount = list.modCount;
     }
 
     public CustomArrayList() {
         size = 0;
+        modCount = 0;
         array = (E[]) new Object[INITIAL_SIZE];
     }
 
@@ -105,6 +103,7 @@ public class CustomArrayList<E> implements List<E> {
     public boolean add(E e) {
         growLazy();
         array[size++] = e;
+        modCount++;
         return true;
     }
 
@@ -137,6 +136,7 @@ public class CustomArrayList<E> implements List<E> {
         for (E element : c) {
             array[size++] = element;
         }
+        modCount++;
         return true;
     }
 
@@ -149,6 +149,7 @@ public class CustomArrayList<E> implements List<E> {
         growLazy(c.size());
         System.arraycopy(array, index, array, index + c.size(), size - index);
         size += c.size();
+        modCount++;
         int i = index;
         for (E element : c) {
             array[i++] = element;
@@ -180,6 +181,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public void clear() {
         Arrays.fill(array, null);
+        modCount++;
         size = 0;
     }
 
@@ -194,6 +196,7 @@ public class CustomArrayList<E> implements List<E> {
         checkIndex(index);
         E oldValue = array[index];
         array[index] = element;
+        modCount++;
         return oldValue;
     }
 
@@ -203,6 +206,7 @@ public class CustomArrayList<E> implements List<E> {
         growLazy();
         System.arraycopy(array, index, array, index + 1, size - index);
         array[index] = element;
+        modCount++;
         size++;
     }
 
@@ -212,6 +216,7 @@ public class CustomArrayList<E> implements List<E> {
         E oldValue = array[index];
         System.arraycopy(array, index + 1, array, index, size - index - 1);
         size--;
+        modCount++;
         return oldValue;
     }
 
@@ -257,8 +262,9 @@ public class CustomArrayList<E> implements List<E> {
 
     private class CustomListIterator implements ListIterator<E> {
 
+        private int lastTaken;
         private int currentIndex;
-        private final int fixedSize = size;
+        private int fixedModCount;
 
         public CustomListIterator() {
             this(0);
@@ -266,11 +272,13 @@ public class CustomArrayList<E> implements List<E> {
 
         public CustomListIterator(int initialIndex) {
             currentIndex = initialIndex;
+            fixedModCount = modCount;
+            lastTaken = -1;
         }
 
         @Override
         public boolean hasNext() {
-            checkSize();
+            checkModCount();
             return currentIndex < size;
         }
 
@@ -279,12 +287,13 @@ public class CustomArrayList<E> implements List<E> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
+            lastTaken = currentIndex;
             return array[currentIndex++];
         }
 
         @Override
         public boolean hasPrevious() {
-            checkSize();
+            checkModCount();
             return currentIndex > 0;
         }
 
@@ -314,25 +323,38 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public void remove() {
-            checkSize();
-            CustomArrayList.this.remove(currentIndex);
+            checkModCount();
+            checkLastTaken();
+            CustomArrayList.this.remove(lastTaken);
+            lastTaken = -1;
+            fixedModCount = modCount;
         }
 
         @Override
         public void set(E e) {
-            checkSize();
+            checkModCount();
+            checkLastTaken();
             CustomArrayList.this.set(currentIndex, e);
+            fixedModCount = modCount;
         }
 
         @Override
         public void add(E e) {
-            checkSize();
-            CustomArrayList.this.add(currentIndex, e);
+            checkModCount();
+            CustomArrayList.this.add(currentIndex++, e);
+            lastTaken = -1;
+            fixedModCount = modCount;
         }
 
-        private void checkSize() {
-            if (fixedSize != size) {
-                throw new UnsupportedOperationException();
+        private void checkLastTaken() {
+            if (lastTaken < 0) {
+                throw new IllegalStateException();
+            }
+        }
+
+        private void checkModCount() {
+            if (fixedModCount != modCount) {
+                throw new ConcurrentModificationException();
             }
         }
     }
