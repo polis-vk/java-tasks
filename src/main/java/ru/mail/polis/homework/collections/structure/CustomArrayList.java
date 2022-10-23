@@ -17,20 +17,16 @@ import java.util.NoSuchElementException;
  */
 public class CustomArrayList<E> implements List<E> {
     private static final int DEFAULT_CAPACITY = 10;
-    private static final float INCREASE_FACTOR = 1.5F;
-    private static final Object[] EMPTY_ELEMENTDATA = {};
-    private Object[] elementData;
+    private E[] elementData;
     private int size;
     private int modCount;
 
+    @SuppressWarnings("unchecked")
     public CustomArrayList(int initialCapacity) {
-        if (initialCapacity > 0) {
-            this.elementData = new Object[initialCapacity];
-        } else if (initialCapacity == 0) {
-            this.elementData = EMPTY_ELEMENTDATA;
+        if (initialCapacity < 0) {
+            throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity);
         } else {
-            throw new IllegalArgumentException("Illegal Capacity: " +
-                    initialCapacity);
+            this.elementData = (E[]) new Object[initialCapacity];
         }
     }
 
@@ -73,7 +69,7 @@ public class CustomArrayList<E> implements List<E> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                return (E) elementData[curIndex++];
+                return elementData[curIndex++];
             }
         };
     }
@@ -84,14 +80,12 @@ public class CustomArrayList<E> implements List<E> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
         if (a.length < size) {
             return (T[]) Arrays.copyOf(elementData, size, a.getClass());
         }
         System.arraycopy(elementData, 0, a, 0, size);
-        if (a.length > size) {
-            a[size] = null;
-        }
         return a;
     }
 
@@ -106,12 +100,6 @@ public class CustomArrayList<E> implements List<E> {
     public boolean remove(Object o) {
         modCount++;
         int index = indexOf(o);
-        for (int i = 0; i < size; i++) {
-            if (elementData[i].equals(o)) {
-                index = i;
-                break;
-            }
-        }
         if (index != -1) {
             remove(index);
             return true;
@@ -138,13 +126,11 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
         modCount++;
-        boolean changeFlag = false;
-        int curIndex = index;
-        for (E elem : c) {
-            changeFlag = true;
-            add(curIndex++, elem);
-        }
-        return changeFlag;
+        elementData = Arrays.copyOf(elementData, size + c.size());
+        System.arraycopy(elementData, index, elementData, index + c.size(), size - index);
+        System.arraycopy(c.toArray(), 0, elementData, index, c.size());
+        size += c.size();
+        return true;
     }
 
     @Override
@@ -180,25 +166,22 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public E get(int index) {
         checkIndex(index);
-        return (E) elementData[index];
+        return elementData[index];
     }
 
     @Override
     public E set(int index, E element) {
         checkIndex(index);
         modCount++;
-        Object prevValue = elementData[index];
+        E prevValue = elementData[index];
         elementData[index] = element;
-        return (E) prevValue;
+        return prevValue;
     }
 
     @Override
     public void add(int index, E element) {
         checkIndex(index);
         modCount++;
-        if (size == elementData.length) {
-            elementData = Arrays.copyOf(elementData, (int) (size * INCREASE_FACTOR));
-        }
         System.arraycopy(elementData, index, elementData, index + 1, size - index);
         elementData[index] = element;
         size++;
@@ -208,7 +191,7 @@ public class CustomArrayList<E> implements List<E> {
     public E remove(int index) {
         checkIndex(index);
         modCount++;
-        E prevValue = (E) elementData[index];
+        E prevValue = elementData[index];
         System.arraycopy(elementData, index + 1, elementData, index, size - index - 1);
         size--;
         return prevValue;
@@ -217,7 +200,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public int indexOf(Object o) {
         for (int i = 0; i < size; i++) {
-            if (elementData[i].equals(o)) {
+            if (o == null && elementData[i] == null || elementData[i].equals(o)) {
                 return i;
             }
         }
@@ -227,7 +210,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public int lastIndexOf(Object o) {
         for (int i = size - 1; i >= 0; i--) {
-            if (elementData[i].equals(o)) {
+            if (o == null && elementData[i] == null || elementData[i].equals(o)) {
                 return i;
             }
         }
@@ -260,7 +243,7 @@ public class CustomArrayList<E> implements List<E> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                return (E) elementData[curIndex++];
+                return elementData[++curIndex];
             }
 
             @Override
@@ -276,7 +259,7 @@ public class CustomArrayList<E> implements List<E> {
                 if (!hasPrevious()) {
                     throw new NoSuchElementException();
                 }
-                return (E) elementData[--curIndex];
+                return elementData[--curIndex];
             }
 
             @Override
@@ -304,7 +287,6 @@ public class CustomArrayList<E> implements List<E> {
                     throw new ConcurrentModificationException();
                 }
                 CustomArrayList.this.set(curIndex, e);
-
             }
 
             @Override
@@ -326,11 +308,7 @@ public class CustomArrayList<E> implements List<E> {
         if (fromIndex > toIndex) {
             throw new IndexOutOfBoundsException();
         }
-        List<E> list = new ArrayList<>();
-        for (int i = fromIndex; i < toIndex; i++) {
-            list.add((E) elementData[i]);
-        }
-        return list;
+        return new ArrayList<>(Arrays.asList(elementData).subList(fromIndex, toIndex));
     }
 
     private void checkIndex(int index) {
