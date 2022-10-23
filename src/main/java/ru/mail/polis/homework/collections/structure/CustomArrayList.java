@@ -344,6 +344,7 @@ public class CustomArrayList<E> implements List<E> {
             public void add(E e) {
                 checkForMod();
                 CustomArrayList.this.add(curIndex, e);
+                curIndex++;
                 fixedModCount = modCount;
             }
 
