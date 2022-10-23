@@ -150,8 +150,9 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
+        int curIndex = index;
         for (E elem : c) {
-            add(index, elem);
+            add(curIndex++, elem);
         }
         return true;
     }
@@ -168,10 +169,13 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        for (Object o : array) {
-            if (!c.contains(o)) {
-                remove(o);
+        int i = 0;
+        while (i < size) {
+            if (!c.contains(array[i])) {
+                remove(array[i]);
+                continue;
             }
+            i++;
         }
         return true;
     }

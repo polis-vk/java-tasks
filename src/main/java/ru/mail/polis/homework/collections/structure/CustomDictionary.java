@@ -1,7 +1,10 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -10,37 +13,70 @@ import java.util.List;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
+    private Map<String, Integer> strings = new HashMap<>();
+    private int size = 0;
+
+    private int getLetterSet(char[] letters) {
+        //zyxwvutsrqponmlkjihgfedcba
+        //00000000000000000000000000
+        int set = 0;
+        char buf;
+        for (char c : letters) {
+            buf = c;
+            if (buf >= 97) {
+                buf -= 32;
+            }
+            buf -= 65;
+            set = set | (1 << buf);
+        }
+        return set;
+    }
 
     /**
      * Сохранить строку в структуру данных
+     *
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
-     *
-     * Сложность - []
+     * <p>
+     * Сложность - [O(l)], где l длина строки
      */
     public boolean add(String value) {
-        return false;
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        if (contains(value)) {
+            return false;
+        }
+        strings.put(value, getLetterSet(value.toCharArray()));
+        size++;
+        return true;
     }
 
     /**
      * Проверяем, хранится ли такая строка уже у нас
+     *
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
-     *
-     * Сложность - []
+     * <p>
+     * Сложность - [O(1)]
      */
     public boolean contains(String value) {
-        return false;
+        return strings.containsKey(value);
     }
 
     /**
      * Удаляем сохраненную строку если она есть
+     *
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
-     *
-     * Сложность - []
+     * <p>
+     * Сложность - [O(1)]
      */
     public boolean remove(String value) {
+        if (strings.remove(value) != null) {
+            size--;
+            return true;
+        }
         return false;
     }
 
@@ -51,7 +87,7 @@ public class CustomDictionary {
      * сохраняем строки ["aaa", "aBa", "baa", "aaB"]
      * При поиске по строке "AAb" нам должен вернуться следующий
      * список: ["aBa","baa","aaB"]
-     *
+     * <p>
      * сохраняем строки ["aaa", "aAa", "a"]
      * поиск "aaaa"
      * результат: []
@@ -60,22 +96,28 @@ public class CustomDictionary {
      *
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
-     *
-     * Сложность - []
+     * <p>
+     * Сложность - [O(n)]
      */
     public List<String> getSimilarWords(String value) {
-        return Collections.emptyList();
+        int set = getLetterSet(value.toCharArray());
+        List<String> res = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : strings.entrySet()) {
+            if (entry.getValue() == set && value.length() == entry.getKey().length()) {
+                res.add(entry.getKey());
+            }
+        }
+        return res;
     }
 
     /**
      * Колл-во хранимых строк.
-     * @return - Колл-во хранимых строк.
      *
-     * Сложность - []
+     * @return - Колл-во хранимых строк.
+     * <p>
+     * Сложность - [O(1)]
      */
     public int size() {
-        return 0;
+        return size;
     }
-
-
 }
