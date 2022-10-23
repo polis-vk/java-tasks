@@ -1,7 +1,11 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -10,16 +14,33 @@ import java.util.List;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
+    private final Map<List<Integer>, List<String>> map = new HashMap<>();
+    int size;
 
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - []
+     * n - число литер в value; m - кол-во строк с таким же набором букв, как и value
+     * Сложность - [O(n) - лучшее; O(n * m) - худшее]
      */
     public boolean add(String value) {
-        return false;
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        List<Integer> valueList = getIntegersFromString(value);
+        if (map.containsKey(valueList)) {
+            if (map.get(valueList).contains(value)) {
+                return false;
+            }
+            map.get(valueList).add(value);
+        } else {
+            ArrayList<String> list = new ArrayList<>(Collections.singletonList(value));
+            map.put(valueList, list);
+        }
+        size++;
+        return true;
     }
 
     /**
@@ -27,9 +48,14 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - []
+     * n - число литер в value; m - кол-во строк с таким же набором букв, как и value
+     * Сложность - [O(n) - лучшее; O(n * m) - худшее]
      */
     public boolean contains(String value) {
+        List<Integer> valueList = getIntegersFromString(value);
+        if (map.containsKey(valueList)) {
+            return map.get(valueList).contains(value);
+        }
         return false;
     }
 
@@ -38,9 +64,15 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - []
+     * n - число литер в value; m - кол-во строк с таким же набором букв, как и value
+     * Сложность - [O(n) - лучшее; O(n * m) - худшее]
      */
     public boolean remove(String value) {
+        List<Integer> valueList = getIntegersFromString(value);
+        if (map.containsKey(valueList) && map.get(valueList).remove(value)) {
+            size--;
+            return true;
+        }
         return false;
     }
 
@@ -61,21 +93,30 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - []
+     * n - число литер в value;
+     * Сложность - [O(n)]
      */
     public List<String> getSimilarWords(String value) {
-        return Collections.emptyList();
+        return map.getOrDefault(
+                getIntegersFromString(value),
+                Collections.emptyList());
     }
 
     /**
      * Колл-во хранимых строк.
      * @return - Колл-во хранимых строк.
      *
-     * Сложность - []
+     * Сложность - [O(1)]
      */
     public int size() {
-        return 0;
+        return size;
     }
 
-
+    private List<Integer> getIntegersFromString(String value) {
+        return value.toLowerCase()
+                .chars()
+                .boxed()
+                .sorted()
+                .collect(Collectors.toList());
+    }
 }
