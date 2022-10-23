@@ -14,6 +14,8 @@ import java.util.NoSuchElementException;
  * <p>
  * Задание оценивается в 10 тугриков
  */
+
+@SuppressWarnings("unchecked")
 public class CustomArrayList<E> implements List<E> {
     private static final int INIT_SIZE = 16;
     private int size;
@@ -100,7 +102,7 @@ public class CustomArrayList<E> implements List<E> {
             return false;
         }
         System.arraycopy(array, index + colSize - colSize, array, index + colSize, size - (index + colSize));
-        for (E element: c) {
+        for (E element : c) {
             array[index++] = element;
         }
         modCount++;
@@ -175,6 +177,14 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
+        if (o == null) {
+            for (int i = 0; i < size; i++) {
+                if (array[i] == null) {
+                    return i;
+                }
+            }
+            return -1;
+        }
         for (int i = 0; i < size; i++) {
             if (array[i].equals(o)) {
                 return i;
@@ -208,7 +218,7 @@ public class CustomArrayList<E> implements List<E> {
         if (fromIndex >= toIndex) {
             throw new IllegalArgumentException();
         }
-        checkIndex(fromIndex,false);
+        checkIndex(fromIndex, false);
         checkIndex(toIndex, true);
         List<E> list = new CustomArrayList<>();
         for (int i = fromIndex; i < toIndex; i++) {
@@ -218,7 +228,7 @@ public class CustomArrayList<E> implements List<E> {
     }
 
     private class CustomIterator implements Iterator<E> {
-        protected final int prevModCount = modCount;
+        protected int prevModCount = modCount;
         protected int currentIndex;
 
         public CustomIterator() {
@@ -251,7 +261,6 @@ public class CustomArrayList<E> implements List<E> {
     }
 
     private class CustomListIterator extends CustomIterator implements ListIterator<E> {
-        protected int prevModCount = modCount;
         private final int startIndex;
 
         public CustomListIterator() {
@@ -291,30 +300,25 @@ public class CustomArrayList<E> implements List<E> {
         @Override
         public void remove() {
             checkModCount();
-            prevModCount = modCount;
             CustomArrayList.this.remove(currentIndex);
+            prevModCount = modCount;
         }
 
         @Override
         public void set(E e) {
             checkModCount();
-            prevModCount = modCount;
             CustomArrayList.this.set(currentIndex, e);
+            prevModCount = modCount;
         }
 
         @Override
         public void add(E e) {
             checkModCount();
+            CustomArrayList.this.add(currentIndex++, e);
             prevModCount = modCount;
-            CustomArrayList.this.add(currentIndex, e);
         }
     }
 
-    //[0,1,2,3,4,_,_,_]   5,6,8]
-    // length = 8   size = 5     8-5 = 3
-    // <= 0 нет свободных слотов
-    //<= 1 1 1 свободный слот
-    //<=index, index свободных слотов
     private void ensureCapacity(int index) {
         while (array.length - size <= index) {
             array = Arrays.copyOf(array, (array.length * 3 / 2) + 1);
