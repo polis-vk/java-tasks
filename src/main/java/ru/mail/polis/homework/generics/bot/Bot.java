@@ -29,7 +29,7 @@ public class Bot {
      * 1 тугрик
      */
     public void handleState(State state) {
-        if (stateHandlers.containsKey(state.getClass())){
+        if (stateHandlers.containsKey(state.getClass())) {
             stateHandlers.get(state.getClass()).handle();
         }
     }

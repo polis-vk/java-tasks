@@ -23,7 +23,7 @@ public class ValidatorForParentheses {
         }
 
         Deque<Character> deque = null;
-        for (char ch: value.toCharArray()) {
+        for (char ch : value.toCharArray()) {
             if (ch == '{' || ch == '[' || ch == '(' || ch == '<') {
                 if (deque == null) {
                     deque = new LinkedList<>();
@@ -31,10 +31,10 @@ public class ValidatorForParentheses {
                 deque.addFirst(ch);
             } else {
                 if ((deque != null && !deque.isEmpty())
-                    && ((deque.peekFirst() == '{' && ch == '}')
-                    || (deque.peekFirst() == '[' && ch == ']')
-                    || (deque.peekFirst() == '(' && ch == ')')
-                    || (deque.peekFirst() == '<' && ch == '>'))) {
+                        && ((deque.peekFirst() == '{' && ch == '}')
+                        || (deque.peekFirst() == '[' && ch == ']')
+                        || (deque.peekFirst() == '(' && ch == ')')
+                        || (deque.peekFirst() == '<' && ch == '>'))) {
                     deque.removeFirst();
                 }
             }

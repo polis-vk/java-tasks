@@ -107,7 +107,7 @@ public class CustomDictionary {
      */
     public int size() {
         int size = 0;
-        for (Set<String> value: dictionary.values()) {
+        for (Set<String> value : dictionary.values()) {
             size += value.size();
         }
         return size;
