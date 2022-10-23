@@ -33,7 +33,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      *
-     * Сложность - [В лучшем случае O(k), где k - длина строки]
+     * Сложность - [O(n), где n - длина строки]
      */
 
     public boolean add(String value) {
@@ -56,7 +56,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      *
-     * Сложность - [В лучшем случае O(k), где k - длина строки]
+     * Сложность - [O(n), где n - длина строки]
      */
     public boolean contains(String value) {
         Map<Character, Integer> valueCounter = getCounter(value);
@@ -72,7 +72,7 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      *
-     * Сложность - [В лучшем случае O(k), где k - длина строки]
+     * Сложность - [O(n), где n - длина строки]
      */
     public boolean remove(String value) {
         Map<Character, Integer> valueCounter = getCounter(value);
@@ -100,7 +100,7 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - [В лучшем случае O(k), где k - длина строки]
+     * Сложность - [O(n), где n - длина строки]
      */
     public List<String> getSimilarWords(String value) {
         Map<Character, Integer> valueCounter = getCounter(value);
@@ -115,7 +115,7 @@ public class CustomDictionary {
      * Колл-во хранимых строк.
      * @return - Колл-во хранимых строк.
      *
-     * Сложность - [В лучшем случае O(n), где n - размер мапы]
+     * Сложность - [O(n), где n - длина строки]
      */
     public int size() {
         int resultSize = 0;
