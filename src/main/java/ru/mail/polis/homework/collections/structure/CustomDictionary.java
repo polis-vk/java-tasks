@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -11,37 +13,54 @@ import java.util.List;
  */
 public class CustomDictionary {
 
+    HashMap<String, char[]> pairs = new HashMap<>();
+
     /**
      * Сохранить строку в структуру данных
+     *
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
-     *
-     * Сложность - []
+     * <p>
+     * Сложность - [O(nlog(n)]
      */
     public boolean add(String value) {
-        return false;
+        if (value == null || value.length() == 0) {
+            throw new IllegalArgumentException();
+        }
+        if (pairs.containsKey(value)) {
+            return false;
+        }
+        char[] ch = value.toLowerCase().toCharArray();
+        Arrays.sort(ch);
+        pairs.put(value, ch);
+        return true;
     }
 
     /**
      * Проверяем, хранится ли такая строка уже у нас
+     *
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
-     *
-     * Сложность - []
+     * <p>
+     * Сложность - [O(1), O(n) worst case]
      */
     public boolean contains(String value) {
-        return false;
+        return pairs.containsKey(value);
     }
 
     /**
      * Удаляем сохраненную строку если она есть
+     *
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
-     *
-     * Сложность - []
+     * <p>
+     * Сложность - [O(n) worst case]
      */
     public boolean remove(String value) {
-        return false;
+        if (pairs.isEmpty()) {
+            return false;
+        }
+        return pairs.remove(value) != null;
     }
 
     /**
@@ -51,7 +70,7 @@ public class CustomDictionary {
      * сохраняем строки ["aaa", "aBa", "baa", "aaB"]
      * При поиске по строке "AAb" нам должен вернуться следующий
      * список: ["aBa","baa","aaB"]
-     *
+     * <p>
      * сохраняем строки ["aaa", "aAa", "a"]
      * поиск "aaaa"
      * результат: []
@@ -60,21 +79,32 @@ public class CustomDictionary {
      *
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
-     *
-     * Сложность - []
+     * <p>
+     * Сложность - [O(nlog(n)]
      */
     public List<String> getSimilarWords(String value) {
-        return Collections.emptyList();
+        char[] ch = value.toLowerCase().toCharArray();
+        Arrays.sort(ch);
+
+        List<String> result = new LinkedList<>();
+
+        for (String n : pairs.keySet()) {
+            if (Arrays.equals(pairs.get(n), ch)) {
+                result.add(n);
+            }
+        }
+        return result;
     }
 
     /**
      * Колл-во хранимых строк.
-     * @return - Колл-во хранимых строк.
      *
-     * Сложность - []
+     * @return - Колл-во хранимых строк.
+     * <p>
+     * Сложность - [Θ(1)]
      */
     public int size() {
-        return 0;
+        return pairs.size();
     }
 
 
