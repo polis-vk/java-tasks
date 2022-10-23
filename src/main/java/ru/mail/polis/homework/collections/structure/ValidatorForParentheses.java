@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.Map;
+
 /**
  * Задание оценивается в 2 тугрика.
  * Одна из самых популярных задач.
@@ -14,7 +16,68 @@ package ru.mail.polis.homework.collections.structure;
  */
 public class ValidatorForParentheses {
 
+    private static final Map<Character, Character> PARENTHESES = Map.of(']', '[', '}', '{', '>', '<', ')', '(');
+
     public static boolean validate(String value) {
-        return false;
+        if (value == null || value.isEmpty()) {
+            return false;
+        }
+        boolean flag = false;
+        Stack stack = new Stack();
+        for (int i = 0; i < value.length(); i++) {
+            char brace = value.charAt(i);
+            if (PARENTHESES.containsValue(brace)) {
+                flag = true;
+                stack.push(brace);
+            } else if (PARENTHESES.containsKey(brace)) {
+                if (stack.size() == 0 || stack.pop() != PARENTHESES.get(brace)) {
+                    return false;
+                }
+            }
+        }
+        return (flag && stack.size() == 0);
+    }
+
+    private static class Node {
+        private final char value;
+        private Node prev;
+
+        public Node(char value) {
+            this.value = value;
+        }
+
+        public void setPrev(Node prev) {
+            this.prev = prev;
+        }
+    }
+
+    private static class Stack {
+        private int size;
+        private Node last;
+
+        public void push(char n) {
+            if (last == null) {
+                last = new Node(n);
+                size++;
+                return;
+            }
+            Node node = new Node(n);
+            node.setPrev(last);
+            last = node;
+            size++;
+        }
+
+        public char pop() {
+            char value = last.value;
+            last = last.prev;
+            size--;
+            return value;
+        }
+
+        public int size() {
+            return size;
+        }
     }
 }
+
+
