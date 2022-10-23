@@ -2,275 +2,300 @@ package ru.mail.polis.homework.collections.structure;
 
 import org.junit.Test;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
-import static org.junit.Assert.*;
-
-class Product {
-    private int id;
-    private String name;
-    public Product(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Product)) {
-            return false;
-        }
-        Product objAsProduct = (Product) obj;
-        return getId() == objAsProduct.getId() && getName().equals(objAsProduct.getName());
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = id;
-        for (int i = 0; i < name.length(); i++) {
-            hash += name.charAt(i);
-        }
-        return hash;
-    }
-}
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class CustomArrayListTest {
-    private static final List<Product> DEFAULT_PRODUCTS;
-    static {
-        DEFAULT_PRODUCTS = new ArrayList<>();
-        DEFAULT_PRODUCTS.add(new Product(1, "first"));
-        DEFAULT_PRODUCTS.add(new Product(2, "second"));
-        DEFAULT_PRODUCTS.add(new Product(234, "wow"));
-        DEFAULT_PRODUCTS.add(new Product(74, "lol"));
+    private static final int[] DEFAULT_ARRAY = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    @Test
+    public void sizeTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+        assertEquals(DEFAULT_ARRAY.length, list.size());
     }
 
-    private static final Random RANDOM = new Random();
+    @Test
+    public void isEmptyTest() {
+        List<Integer> list = new CustomArrayList<>();
+        assertTrue(list.isEmpty());
 
-    private <T> List<T> createCustomArrayList(Collection<T> products) {
-        List<T> list = new CustomArrayList<>();
-        for (T product : products) {
-            list.add(product);
+        list.add(1);
+        assertFalse(list.isEmpty());
+    }
+
+    @Test
+    public void containsTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+        assertTrue(list.contains(1));
+        assertFalse(list.contains(null));
+
+        list.add(null);
+        assertTrue(list.contains(null));
+    }
+
+    @Test
+    public void iteratorTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+        Iterator<Integer> iterator = list.iterator();
+
+        for (int e : DEFAULT_ARRAY) {
+            assertEquals(e, (int) iterator.next());
         }
-        return list;
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void iteratorTest2() {
+        List<Integer> list = new CustomArrayList<>();
+        list.iterator().next();
     }
 
     @Test
-    public void constructor() {
-        List<Integer> list = new CustomArrayList<Integer>();
-    }
-    @Test
-    public void contains() {
-        Product p1 = new Product(1, "ficko");
-        Product p2 = new Product(2, "kranz");
-        Product p3 = new Product(3, "bread");
-        List<Product> products = new CustomArrayList<>();
-        products.add(p1);
-        products.add(p2);
-        products.add(p3);
-        assertTrue(products.contains(p1));
-        assertTrue(products.contains(p2));
-        assertTrue(products.contains(new Product(3, "bread")));
-        assertFalse(products.contains(new Product(4, "ficko")));
-        assertFalse(products.contains(Integer.valueOf(3)));
-    }
-    @Test
-    public void add() {
-        List<Product> list = new CustomArrayList<>();
-        for (int i = 0; i < DEFAULT_PRODUCTS.size(); i++) {
-            assertTrue(list.add(DEFAULT_PRODUCTS.get(i)));
-        }
-        assertEquals(DEFAULT_PRODUCTS.size(), list.size());
-    }
+    public void toArrayTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+        Object[] objects = list.toArray();
 
-    @Test
-    public void addByIndex() {
-
-        Product pr1 = new Product(1, "first");
-        Product pr2 = new Product(2, "second");
-        Product pr3 = new Product(3, "third");
-        Product pr4 = new Product(4, "fourth");
-        Product pr5 = new Product(5, "fifth");
-
-        List<Product> list1 = new CustomArrayList<>();
-        list1.add(pr1);
-        list1.add(pr2);
-        list1.add(pr3);
-        list1.add(pr4);
-        list1.add(pr5);
-
-        List<Product> list2 = new CustomArrayList<>();
-        list2.add(pr1);
-        list2.add(pr2);
-        list2.add(pr4);
-        list2.add(pr5);
-
-        list2.add(2, pr3);
-
-        for (int i = 0; i < list1.size(); i++) {
-            assertEquals(list1.get(i), list2.get(i));
+        for (int i = 0; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], objects[i]);
         }
     }
 
     @Test
-    public void addByIndexToEnd() {
-        List<Product> list1 = createCustomArrayList(DEFAULT_PRODUCTS);
-        List<Product> list2 = createCustomArrayList(DEFAULT_PRODUCTS);
-        Product pr = new Product(13, "test_name");
-        list1.add(list1.size(), pr);
-        list2.add(pr);
-        for (int i = 0; i < list1.size(); i++) {
-            assertEquals(list1.get(i), list2.get(i));
+    public void toArrayTest2() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+        Integer[] array = new Integer[DEFAULT_ARRAY.length];
+
+        Integer[] result = list.toArray(array);
+        assertTrue(array == result);
+
+        for (int i = 0; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) result[i]);
         }
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void addByNotExistingIndex() {
-        List<Product> list = new CustomArrayList<>();
-        list.add(1, new Product(1, "test_name"));
-    }
-
     @Test
-    public void get() {
-        List<Product> products = new CustomArrayList<>();
-        for (int i = 0; i < DEFAULT_PRODUCTS.size(); i++) {
-            products.add(DEFAULT_PRODUCTS.get(i));
-            assertEquals(DEFAULT_PRODUCTS.get(i), products.get(i));
+    public void toArrayTest3() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        Integer[] result = list.toArray(new Integer[0]);
+        for (int i = 0; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) result[i]);
         }
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void getOutOfSize() {
-        CustomArrayList<Product> products = new CustomArrayList<>();
-        products.get(0);
+    @Test
+    public void removeTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        list.remove(0);
+        list.remove(list.size() - 1);
+        for (int i = 1; i < DEFAULT_ARRAY.length - 1; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) list.get(i - 1));
+        }
     }
 
     @Test
-    public void set() {
-        List<Product> products = createCustomArrayList(DEFAULT_PRODUCTS);
-        final int indexToSet = 3;
-        assertEquals(
-                DEFAULT_PRODUCTS.get(indexToSet),
-                products.set(indexToSet, new Product(4, "test"))
-        );
-        assertEquals(new Product(4, "test"), products.get(indexToSet));
-    }
+    public void containsAllTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void setOutOfSize() {
-        List<Product> products = new CustomArrayList<>();
-        products.set(0, new Product(4, "test"));
+        assertTrue(list.containsAll(Collections.singletonList(1)));
+
+        List<Integer> list2 = new CustomArrayList<>();
+        list2.add(1);
+        list2.add(5);
+        list2.add(9);
+        assertTrue(list.containsAll(list2));
     }
 
     @Test
-    public void remove() {
-        Product pr1 = new Product(1, "first");
-        Product pr2 = new Product(2, "second");
-        Product pr3 = new Product(3, "third");
-        List<Product> list1 = new CustomArrayList<>();
+    public void addAllTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
 
-        list1.add(pr1);
-        list1.add(pr3);
+        List<Integer> list2 = new CustomArrayList<>();
+        list2.add(1);
+        list2.add(5);
+        list2.add(9);
+        assertTrue(list.addAll(list2));
 
-        List<Product> list2 = new CustomArrayList<>();
-        list2.add(pr1);
-        list2.add(pr2);
-        list2.add(pr3);
-
-        assertEquals(list2.remove(1), pr2);
-        assertEquals(list2.size(), 2);
+        for (int i = 0; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) list.get(i));
+        }
 
         for (int i = 0; i < list2.size(); i++) {
-            assertEquals(list1.get(i), list2.get(i));
-        }
-    }
-
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void removeFromEmptyList() {
-        List<Product> products = new CustomArrayList<>();
-        products.remove(0);
-    }
-
-    @Test
-    public void containsAll() {
-        List<Product> list1 = createCustomArrayList(DEFAULT_PRODUCTS);
-        List<Product> list2 = new ArrayList<>(DEFAULT_PRODUCTS);
-        list1.add(new Product(219, "random"));
-        assertTrue(list1.containsAll(list2));
-        list2.add(new Product(9124, "random 2"));
-        assertFalse(list1.containsAll(list2));
-    }
-
-    @Test
-    public void indexOf() {
-        List<Product> products = createCustomArrayList(DEFAULT_PRODUCTS);
-        int index = RANDOM.nextInt(DEFAULT_PRODUCTS.size());
-        assertEquals(index, products.indexOf(DEFAULT_PRODUCTS.get(index)));
-    }
-
-    @Test
-    public void addAll() {
-        List<Product> products = new CustomArrayList<>();
-        for (int i = 0; i < 2; i++) {
-            products.add(DEFAULT_PRODUCTS.get(i));
-        }
-        products.add(DEFAULT_PRODUCTS.get(DEFAULT_PRODUCTS.size() - 1));
-        assertTrue(products.addAll(2, DEFAULT_PRODUCTS.subList(2, DEFAULT_PRODUCTS.size() - 1)));
-        for (int i = 0; i < products.size(); i++) {
-            assertEquals(products.get(i), DEFAULT_PRODUCTS.get(i));
+            assertEquals(list2.get(i), list.get(DEFAULT_ARRAY.length + i));
         }
     }
 
     @Test
-    public void removeObject() {
-        List<Product> products = createCustomArrayList(DEFAULT_PRODUCTS);
-        assertTrue(products.remove(DEFAULT_PRODUCTS.get(0)));
-        for (int i = 1; i < DEFAULT_PRODUCTS.size(); i++) {
-            assertEquals(products.get(i - 1), DEFAULT_PRODUCTS.get(i));
+    public void addAllTest2() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        List<Integer> list2 = new CustomArrayList<>();
+        list2.add(1);
+        list2.add(5);
+        list2.add(9);
+        assertTrue(list.addAll(0, list2));
+
+        for (int i = 0; i < list2.size(); i++) {
+            assertEquals(list2.get(i), list.get(i));
+        }
+
+        for (int i = 0; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) list.get(list2.size() + i));
         }
     }
 
     @Test
-    public void removeAll() {
-        List<Product> products = createCustomArrayList(DEFAULT_PRODUCTS);
-        assertTrue(products.removeAll(DEFAULT_PRODUCTS));
-        assertTrue(products.isEmpty());
+    public void removeAllTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        List<Integer> list2 = new CustomArrayList<>();
+        for (int i = 0; i < DEFAULT_ARRAY.length - 1; i++) {
+            list2.add(DEFAULT_ARRAY[i]);
+        }
+        assertTrue(list.removeAll(list2));
+
+        assertEquals(1, list.size());
+        assertEquals(9, (int) list.get(0));
     }
 
     @Test
-    public void iterator() {
-        List<Product> products = createCustomArrayList(DEFAULT_PRODUCTS);
-        int i = 0;
-        for (Product product : products) {
-            assertEquals(product, DEFAULT_PRODUCTS.get(i));
-            i++;
+    public void retainAllTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        list.retainAll(list);
+        assertEquals(DEFAULT_ARRAY.length, list.size());
+        for (int i = 0; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) list.get(i));
+        }
+
+        list.retainAll(Collections.singletonList(1));
+        assertEquals(1, list.size());
+        assertEquals(1, (int) list.get(0));
+    }
+
+    @Test
+    public void clearTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        list.clear();
+        assertEquals(0, list.size());
+        assertTrue(list.isEmpty());
+
+        list.add(10);
+        assertEquals(10, (int) list.get(0));
+    }
+
+    @Test
+    public void setTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        list.set(DEFAULT_ARRAY.length - 1, 2);
+
+        for (int i = 0; i < DEFAULT_ARRAY.length - 1; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) list.get(i));
+        }
+        assertEquals(2, (int) list.get(DEFAULT_ARRAY.length - 1));
+
+        list.set(0, 0);
+        assertEquals(0, (int) list.get(0));
+    }
+
+    @Test
+    public void addToIndexTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        list.add(0, 0);
+        assertEquals(0, (int) list.get(0));
+
+        for (int i = 0; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) list.get(i + 1));
         }
     }
 
     @Test
-    public void subList() {
-        List<Product> list1 = createCustomArrayList(DEFAULT_PRODUCTS);
-        List<Product> list1Sublist = list1.subList(0, 3);
-        List<Product> defaultProductsSublist = DEFAULT_PRODUCTS.subList(0, 3);
-        for (int i = 0; i < list1Sublist.size(); i++) {
-            assertEquals(list1Sublist.get(i), defaultProductsSublist.get(i));
+    public void removeByIndexTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        list.remove(0);
+        assertEquals(DEFAULT_ARRAY.length - 1, list.size());
+
+        for (int i = 1; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) list.get(i - 1));
         }
     }
 
     @Test
-    public void retainAll() {
-        List<Product> products = createCustomArrayList(DEFAULT_PRODUCTS);
-        List<Product> productsToSave = DEFAULT_PRODUCTS.subList(0, 3);
-        assertTrue(products.retainAll(productsToSave));
-        assertTrue(DEFAULT_PRODUCTS.retainAll(productsToSave));
-        for (int i = 0; i < DEFAULT_PRODUCTS.size(); i++) {
-            assertEquals(products.get(i), DEFAULT_PRODUCTS.get(i));
+    public void indexOfTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+        list.add(5);
+
+        assertEquals(4, list.indexOf(5));
+    }
+
+    @Test
+    public void lastIndexOfTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+        list.add(5);
+
+        assertEquals(DEFAULT_ARRAY.length, list.lastIndexOf(5));
+    }
+
+    @Test
+    public void listIteratorTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        ListIterator<Integer> iterator = list.listIterator();
+        iterator.add(10);
+        assertEquals(DEFAULT_ARRAY.length + 1, list.size());
+
+        assertEquals(10, (int) list.get(0));
+
+        for (int e : DEFAULT_ARRAY) {
+            assertEquals(e, (int) iterator.next());
+        }
+    }
+
+    @Test
+    public void listIteratorTest2() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+
+        ListIterator<Integer> iterator = list.listIterator(4);
+        iterator.add(10);
+        assertEquals(DEFAULT_ARRAY.length + 1, list.size());
+
+        assertEquals(10, (int) list.get(4));
+
+        assertEquals(5, (int) iterator.next());
+        for (int i = 5; i < DEFAULT_ARRAY.length; i++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) iterator.next());
         }
     }
 }
