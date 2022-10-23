@@ -6,6 +6,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
@@ -68,7 +69,7 @@ public class CustomArrayList<E> implements List<E> {
                     throw new ConcurrentModificationException();
                 }
                 if (index >= size) {
-                    throw new IndexOutOfBoundsException();
+                    throw new NoSuchElementException();
                 }
                 return data[index++];
             }
@@ -310,7 +311,7 @@ public class CustomArrayList<E> implements List<E> {
             public E previous() {
                 checkForMod();
                 if (curIndex <= 0) {
-                    throw new IndexOutOfBoundsException();
+                    throw new NoSuchElementException();
                 }
                 return data[--curIndex];
             }
