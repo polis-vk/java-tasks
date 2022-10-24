@@ -66,6 +66,21 @@ public class StoreStatistic {
      * @return map - заказ / общая сумма заказа
      */
     public Map<Order, Long> sum5biggerOrders(List<Order> orders) {
-        return null;
+        return orders.stream()
+                .collect(Collectors.toMap(
+                        order -> order,
+                        order -> order.getItemCount().values().stream()
+                                .mapToLong(Integer::longValue)
+                                .sum()
+                )).entrySet().stream()
+                .sorted((o1, o2) -> o2.getValue().compareTo(o1.getValue()))
+                .limit(5)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toMap(
+                        order -> order,
+                        order -> order.getItemCount().entrySet().stream()
+                                .mapToLong(entry -> entry.getKey().getPrice() * entry.getValue())
+                                .sum()
+                ));
     }
 }
