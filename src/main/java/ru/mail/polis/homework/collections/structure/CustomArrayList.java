@@ -24,7 +24,7 @@ public class CustomArrayList<E> implements List<E> {
     }
 
     public CustomArrayList(E[] inp){
-        size = 0;
+        size = inp.length;
         array = inp.clone();
     }
     @Override
@@ -39,8 +39,9 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean contains(Object o) {
-        for (E e : array) {
-            if (e.equals(0)) {
+        for (int i = 0; i < size; i++) {
+            E e = array[i];
+            if (o == null ? e == null : e.equals(o)) {
                 return true;
             }
         }
@@ -63,7 +64,11 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
-        return (T[]) toArray();
+        if (a.length < size) {
+            a = Arrays.copyOf(a, size);
+        }
+        System.arraycopy(array, 0, a, 0, size);
+        return a;
     }
 
 
@@ -120,10 +125,10 @@ public class CustomArrayList<E> implements List<E> {
     public boolean addAll(int index, Collection<? extends E> c) {
         E[] newArr = (E[]) new Object[array.length + c.size()];
         Iterator<? extends E> iterator = c.iterator();
-        for (int i = 0; i < size + index; i++) {
+        for (int i = 0; i < size + c.size(); i++) {
             if (i < index) {
                 newArr[i] = array[i];
-            } else if (i > index + c.size()) {
+            } else if (i < index + c.size()) {
                 newArr[i] = iterator.next();
             } else {
                 newArr[i] = array[i - c.size()];
@@ -221,7 +226,7 @@ public class CustomArrayList<E> implements List<E> {
         }
         int i;
         E ans = null;
-        E[] newArr = (E[]) new Object[size - 1];
+        E[] newArr = (E[]) new Object[size];
         int offset = 0;
         for (i = 0; i < size; i++) {
             newArr[i - offset] = array[i];
@@ -291,23 +296,25 @@ public class CustomArrayList<E> implements List<E> {
 
     public class CustomListIterator implements ListIterator<E> {
         int pointer;
-
+        List<E> clone;
         public CustomListIterator() {
-            pointer = -1;
+            this(0);
         }
 
         public CustomListIterator(int index) {
+
+            clone = CustomArrayList.this.subList(0, CustomArrayList.this.size);
             pointer = index - 1;
         }
 
         @Override
         public boolean hasNext() {
-            return pointer < CustomArrayList.this.size;
+            return pointer < clone.size();
         }
 
         @Override
         public E next() {
-            return CustomArrayList.this.get(++pointer);
+            return clone.get(++pointer);
         }
 
         @Override
@@ -317,7 +324,7 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public E previous() {
-            return CustomArrayList.this.get(--pointer);
+            return clone.get(--pointer);
         }
 
         @Override
@@ -343,6 +350,7 @@ public class CustomArrayList<E> implements List<E> {
         @Override
         public void add(E e) {
             CustomArrayList.this.add(pointer + 1, e);
+
         }
     }
 
