@@ -94,12 +94,9 @@ public class CustomDictionary {
 
     private int[] getCharsCountArray(String s) {
         int[] charsCount = new int[Character.MAX_VALUE + 1];
-        for (char c : s.toCharArray()) {
-            if (c >= 'A' && c <= 'Z') {
-                charsCount[c - 'A' + 'a']++;
-            } else {
-                charsCount[c]++;
-            }
+        String lower = s.toLowerCase();
+        for (char c : lower.toCharArray()) {
+            charsCount[c]++;
         }
         return charsCount;
     }
