@@ -298,4 +298,13 @@ public class CustomArrayListTest {
             assertEquals(DEFAULT_ARRAY[i], (int) iterator.next());
         }
     }
+    @Test
+    public void subListTest() {
+        List<Integer> list = new CustomArrayList<>();
+        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
+        List<Integer> list2 = list.subList(3, 7);
+        for (int i = 3, j = 0; i < 7; i++, j++) {
+            assertEquals(DEFAULT_ARRAY[i], (int) list2.get(j));
+        }
+    }
 }
