@@ -18,12 +18,13 @@ public class CustomDictionary {
 
     private Map<Map<Character, Integer>, Set<String>> dictionary
             = new HashMap<>();
+    private int size = 0;
 
     private static Map<Character, Integer> getCounter(String str) {
         Map<Character, Integer> counter = new HashMap<>();
         String strLowered = str.toLowerCase();
         for (int i = 0; i < strLowered.length(); i++) {
-            counter.merge(strLowered.charAt(i), 1, (value, mergeValue) -> value + mergeValue);
+            counter.merge(strLowered.charAt(i), 1, Integer::sum);
         }
         return counter;
     }
@@ -41,13 +42,13 @@ public class CustomDictionary {
             throw new IllegalArgumentException();
         }
         Map<Character, Integer> valueCounter = getCounter(value);
+        dictionary.putIfAbsent(valueCounter, new LinkedHashSet<>());
         Set<String> similarValues = dictionary.get(valueCounter);
-        if (similarValues != null) {
-            return similarValues.add(value);
+        if (similarValues.contains(value)) {
+            return false;
         }
-        similarValues = new LinkedHashSet<>();
         similarValues.add(value);
-        dictionary.put(valueCounter, similarValues);
+        size++;
         return true;
     }
 
@@ -77,10 +78,15 @@ public class CustomDictionary {
     public boolean remove(String value) {
         Map<Character, Integer> valueCounter = getCounter(value);
         Set<String> similarValues = dictionary.get(valueCounter);
-        if (similarValues == null) {
+        if (similarValues == null || !similarValues.contains(value)) {
             return false;
         }
-        return similarValues.remove(value);
+        similarValues.remove(value);
+        if (similarValues.isEmpty()) {
+            dictionary.remove(similarValues);
+        }
+        size--;
+        return true;
     }
 
     /**
@@ -115,13 +121,9 @@ public class CustomDictionary {
      * Колл-во хранимых строк.
      * @return - Колл-во хранимых строк.
      *
-     * Сложность - [O(n), где n - длина строки]
+     * Сложность - [O(1)]
      */
     public int size() {
-        int resultSize = 0;
-        for (Map.Entry<Map<Character, Integer>, Set<String>> entry : dictionary.entrySet()) {
-            resultSize += entry.getValue().size();
-        }
-        return resultSize;
+        return size;
     }
 }
