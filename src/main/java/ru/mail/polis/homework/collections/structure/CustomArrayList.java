@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
@@ -229,7 +230,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public int indexOf(Object o) {
         for (int i = 0; i < size; i++) {
-            if ((array[i] == null && o == null) || (array[i] != null && array[i].equals(o))) {
+            if (Objects.equals(array[i], o)) {
                 return i;
             }
         }
@@ -239,7 +240,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public int lastIndexOf(Object o) {
         for (int i = size - 1; i >= 0; i--) {
-            if ((array[i] == null && o == null) || (array[i] != null && array[i].equals(o))) {
+            if (Objects.equals(array[i], o)) {
                 return i;
             }
         }
