@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.HashMap;
 import java.util.Map;
 /**
  * Задание оценивается в 2 тугрика.
@@ -15,7 +16,16 @@ import java.util.Map;
  */
 public class ValidatorForParentheses {
 
-    private static final Map<Character, Character> brackets = Map.of('[', ']', '{', '}', '<', '>', '(', ')');
+    private static final Map<Character, Character> brackets;
+
+    static {
+        brackets = new HashMap<>();
+        brackets.put('[', ']');
+        brackets.put('{', '}');
+        brackets.put('<', '>');
+        brackets.put('(', ')');
+    }
+
 
     public static boolean validate(String value) {
         boolean bracketFlag = false;
