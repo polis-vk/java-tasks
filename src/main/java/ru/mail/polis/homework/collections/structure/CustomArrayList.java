@@ -17,7 +17,7 @@ public class CustomArrayList<E> implements List<E> {
     private int modCount;
 
     private CustomArrayList(E[] subList, int toIndex, int fromIndex) {
-        size = fromIndex - toIndex;
+        size = toIndex - fromIndex;
         data = subList;
     }
 
