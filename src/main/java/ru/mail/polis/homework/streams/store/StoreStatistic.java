@@ -1,11 +1,13 @@
 package ru.mail.polis.homework.streams.store;
 
 import java.sql.Timestamp;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Класс для работы со статистикой по заказам магазина.
@@ -38,7 +40,16 @@ public class StoreStatistic {
      * значение - map товар/кол-во
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
-        return null;
+        return orders.stream()
+                .collect(Collectors.toMap(
+                        order -> Timestamp.from(order.getTime().toInstant().truncatedTo(ChronoUnit.DAYS)),
+                        Order::getItemCount,
+                        (itemIntegerMap1, itemIntegerMap2) -> {
+                            itemIntegerMap2.entrySet().forEach(itemIntegerEntry ->
+                                    itemIntegerMap1.merge(itemIntegerEntry.getKey(), itemIntegerEntry.getValue(), Integer::sum));
+                            return itemIntegerMap1;
+                        }
+                ));
     }
 
     /**
