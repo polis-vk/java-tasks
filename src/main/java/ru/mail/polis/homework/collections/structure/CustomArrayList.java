@@ -29,7 +29,7 @@ public class CustomArrayList<E> implements List<E> {
     private int size;
     private int modCount;
 
-    private CustomArrayList(CustomArrayList list, int fromInclusive, int toExclusive) {
+    private CustomArrayList(CustomArrayList<E> list, int fromInclusive, int toExclusive) {
         size = toExclusive - fromInclusive;
         array = (E[]) new Object[size];
         System.arraycopy(list.array, fromInclusive, array, 0, size);
