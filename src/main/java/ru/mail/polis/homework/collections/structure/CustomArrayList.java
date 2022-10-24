@@ -1,14 +1,13 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
@@ -20,14 +19,14 @@ public class CustomArrayList<E> implements List<E> {
     private int size;
     private Object[] array;
     private int modCount;
-    static private final int DEFAULT_CAPACITY = 16;
+    private static final int DEFAULT_CAPACITY = 16;
 
     public CustomArrayList() {
         this(DEFAULT_CAPACITY);
     }
 
-    public CustomArrayList(int Capacity) {
-        array = new Object[Capacity];
+    public CustomArrayList(int capacity) {
+        array = new Object[capacity];
     }
 
     @Override
@@ -86,17 +85,26 @@ public class CustomArrayList<E> implements List<E> {
             Arrays.fill(a, size, a.length, null);
         }
         return a;
-
     }
 
     @Override
     public boolean add(E e) {
-        return addAll(Collections.singleton(e));
+        add(size, e);
+        return true;
     }
 
     @Override
     public void add(int index, E element) {
-        addAll(index, Collections.singletonList(element));
+        checkIndex(index);
+        if (array.length < size + 1) {
+            array = grow((size + 1) - array.length);
+        }
+        if (index != size) {
+            System.arraycopy(array, index, array, index + 1, size - index);
+        }
+        modCount++;
+        size++;
+        array[index] = element;
     }
 
     @Override
@@ -105,15 +113,16 @@ public class CustomArrayList<E> implements List<E> {
         if (index == -1) {
             return false;
         }
-        System.arraycopy(array, index + 1, array, index, size - 1 - index);
-        array[--size] = null;
+        remove(index);
         return true;
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
         for (Object obj : c) {
-            if (!contains(obj)) return false;
+            if (!contains(obj)) {
+                return false;
+            }
         }
         return true;
     }
@@ -142,7 +151,7 @@ public class CustomArrayList<E> implements List<E> {
     public boolean removeAll(Collection<?> c) {
         boolean changed = false;
         for (Object obj : c) {
-            if (remove(obj)) {
+            while (remove(obj)) {
                 changed = true;
             }
         }
@@ -154,7 +163,7 @@ public class CustomArrayList<E> implements List<E> {
         boolean changed = false;
         for (int i = 0; i < size; i++) {
             if (!c.contains(array[i])) {
-                remove(array[i]);
+                remove(i);
                 changed = true;
                 i--;
             }
@@ -200,7 +209,7 @@ public class CustomArrayList<E> implements List<E> {
     public int indexOf(Object o) {
         if (o == null) {
             for (int i = 0; i < size; i++) {
-                if (array[i] == null) {
+                if (Objects.equals(array[i], null)) {
                     return i;
                 }
             }
@@ -216,9 +225,17 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int lastIndexOf(Object o) {
-        for (int i = size - 1; i >= 0; i--) {
-            if (o.equals(array[i])) {
-                return i;
+        if (o == null) {
+            for (int i = size - 1; i >= 0; i--) {
+                if (Objects.equals(array[i], null)) {
+                    return i;
+                }
+            }
+        } else {
+            for (int i = size - 1; i >= 0; i--) {
+                if (o.equals(array[i])) {
+                    return i;
+                }
             }
         }
         return -1;
@@ -235,6 +252,7 @@ public class CustomArrayList<E> implements List<E> {
         return new ListIterator<E>() {
             public int currentIndex = index;
             private int expectedModCount = modCount;
+            private boolean currentNotNull = false;
 
             @Override
             public boolean hasNext() {
@@ -243,10 +261,11 @@ public class CustomArrayList<E> implements List<E> {
 
             @Override
             public E next() {
-                if (currentIndex >= size) {
-                    throw new IndexOutOfBoundsException(Integer.toString(currentIndex));
-                }
                 checkModificationCount();
+                if (!hasPrevious()) {
+                    throw new NoSuchElementException();
+                }
+                currentNotNull = true;
                 return (E) array[currentIndex++];
             }
 
@@ -258,9 +277,10 @@ public class CustomArrayList<E> implements List<E> {
             @Override
             public E previous() {
                 checkModificationCount();
-                if (currentIndex < 0) {
-                    throw new IndexOutOfBoundsException(Integer.toString(currentIndex));
+                if (!hasPrevious()) {
+                    throw new NoSuchElementException();
                 }
+                currentNotNull = true;
                 return (E) array[--currentIndex];
             }
 
@@ -276,13 +296,20 @@ public class CustomArrayList<E> implements List<E> {
 
             @Override
             public void remove() {
+                if (!currentNotNull) {
+                    throw new IllegalStateException();
+                }
                 checkModificationCount();
                 CustomArrayList.this.remove(currentIndex);
+                currentNotNull = false;
                 expectedModCount = modCount;
             }
 
             @Override
             public void set(E e) {
+                if (!currentNotNull) {
+                    throw new IllegalStateException();
+                }
                 checkModificationCount();
                 CustomArrayList.this.set(currentIndex, e);
             }
