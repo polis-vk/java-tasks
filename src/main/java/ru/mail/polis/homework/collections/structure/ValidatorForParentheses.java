@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -17,8 +18,15 @@ import java.util.Map;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
-    private static final Map<Character, Character> matchingBrackets =
-            Map.of('}', '{', ']', '[', ')', '(', '>', '<');
+    private static final Map<Character, Character> matchingBrackets;
+
+    static {
+        matchingBrackets = new HashMap<>();
+        matchingBrackets.put(']', '[');
+        matchingBrackets.put('}', '{');
+        matchingBrackets.put('>', '<');
+        matchingBrackets.put(')', '(');
+    }
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
