@@ -20,12 +20,6 @@ public class CustomArrayList<E> implements List<E> {
     private static final int INITIAL_SIZE = 16;
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
-    private static void checkIndex(int index, int upperBound) {
-        if (index < 0 || index > upperBound) {
-            throw new IndexOutOfBoundsException();
-        }
-    }
-
     private E[] array;
     private int size;
     private int modCount;
@@ -43,12 +37,14 @@ public class CustomArrayList<E> implements List<E> {
         array = (E[]) new Object[INITIAL_SIZE];
     }
 
-    private void checkIndex(int index) {
-        checkIndex(index, size - 1);
+    private static void checkIndex(int index, int upperBound) {
+        if (index < 0 || index > upperBound) {
+            throw new IndexOutOfBoundsException();
+        }
     }
 
-    private void growLazy() {
-        growLazy(1);
+    private void checkIndex(int index) {
+        checkIndex(index, size - 1);
     }
 
     private void growLazy(int count) {
@@ -108,7 +104,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean add(E e) {
-        growLazy();
+        growLazy(1);
         array[size++] = e;
         modCount++;
         return true;
@@ -140,9 +136,8 @@ public class CustomArrayList<E> implements List<E> {
             return false;
         }
         growLazy(c.size());
-        for (E element : c) {
-            array[size++] = element;
-        }
+        System.arraycopy(c.toArray(), 0, array, size, c.size());
+        size += c.size();
         modCount++;
         return true;
     }
@@ -155,20 +150,20 @@ public class CustomArrayList<E> implements List<E> {
         }
         growLazy(c.size());
         System.arraycopy(array, index, array, index + c.size(), size - index);
+        System.arraycopy(c.toArray(), 0, array, index, c.size());
         size += c.size();
         modCount++;
-        int i = index;
-        for (E element : c) {
-            array[i++] = element;
-        }
         return true;
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
         boolean changed = false;
-        for (Object element : c) {
-            changed |= remove(element);
+        for (int i = 0; i < size; i++) {
+            if (c.contains(array[i])) {
+                remove(i--);
+                changed = true;
+            }
         }
         return changed;
     }
@@ -210,7 +205,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public void add(int index, E element) {
         checkIndex(index, size);
-        growLazy();
+        growLazy(1);
         System.arraycopy(array, index, array, index + 1, size - index);
         array[index] = element;
         modCount++;
@@ -259,10 +254,8 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-        checkIndex(fromIndex);
-        checkIndex(toIndex - 1);
-        if (fromIndex > toIndex) {
-            throw new IllegalArgumentException();
+        if (fromIndex < 0 || fromIndex > toIndex || toIndex > size) {
+            throw new IllegalStateException();
         }
         return new CustomArrayList<>(this, fromIndex, toIndex);
     }
