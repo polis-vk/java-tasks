@@ -21,7 +21,6 @@ import java.util.Map;
 public class ValidatorForParentheses {
 
     private static final Map<Character, Character> INITIAL_TO_CLOSING_PARENTHESES;
-    private static final Map<Character, Character> CLOSING_TO_INITIAL_PARENTHESES;
 
     static {
         INITIAL_TO_CLOSING_PARENTHESES = new HashMap<>();
@@ -30,34 +29,28 @@ public class ValidatorForParentheses {
         INITIAL_TO_CLOSING_PARENTHESES.put('[', ']');
         INITIAL_TO_CLOSING_PARENTHESES.put('<', '>');
         INITIAL_TO_CLOSING_PARENTHESES.put('(', ')');
-
-        CLOSING_TO_INITIAL_PARENTHESES = new HashMap<>();
-
-        INITIAL_TO_CLOSING_PARENTHESES.entrySet()
-                .stream()
-                .forEach(entry -> CLOSING_TO_INITIAL_PARENTHESES.put(entry.getValue(), entry.getKey()));
     }
 
     public static boolean validate(String value) {
-        if (value == null) {
+        if (value == null || value.isEmpty()) {
             return false;
         }
-        Deque<Character> initialParentheses = new LinkedList<>();
+        Deque<Character> closingParenthesesDeque = new LinkedList<>();
         boolean hasAdded = false;
         for (int i = 0; i < value.length(); i++) {
             char symbol = value.charAt(i);
-            if (INITIAL_TO_CLOSING_PARENTHESES.containsKey(symbol)) {
-                initialParentheses.add(symbol);
+
+            Character closingParenthesis = INITIAL_TO_CLOSING_PARENTHESES.get(symbol);
+            if (closingParenthesis != null) {
+                closingParenthesesDeque.add(closingParenthesis);
                 hasAdded = true;
                 continue;
             }
-            Character initialParenthesisForSymbol = CLOSING_TO_INITIAL_PARENTHESES.get(symbol);
-            if (initialParenthesisForSymbol != null &&
-                (initialParentheses.isEmpty() ||
-                initialParentheses.pollLast() != initialParenthesisForSymbol)) {
-                return false;
+
+            if (!closingParenthesesDeque.isEmpty() && closingParenthesesDeque.getLast() == symbol) {
+                closingParenthesesDeque.removeLast();
             }
         }
-        return hasAdded && initialParentheses.isEmpty();
+        return hasAdded && closingParenthesesDeque.isEmpty();
     }
 }
