@@ -1,9 +1,11 @@
 package ru.mail.polis.homework.streams.store;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Класс для работы со статистикой по заказам магазина.
@@ -45,7 +47,17 @@ public class StoreStatistic {
      * @return - товар
      */
     public Item mostPopularItem(List<Order> orders) {
-        return null;
+        return orders.stream()
+                .map(order -> order.getItemCount().entrySet())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        Integer::sum
+                ))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .get().getKey();
     }
 
     /**
