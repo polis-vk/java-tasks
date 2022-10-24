@@ -3,6 +3,7 @@ package ru.mail.polis.homework.streams.store;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Класс для работы со статистикой по заказам магазина.
@@ -20,7 +21,12 @@ public class StoreStatistic {
      * @return - кол-во проданного товара
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
-        return 0L;
+        return orders.stream()
+                .filter(order -> order.getTime().after(from) && order.getTime().before(to))
+                .map(order -> order.getItemCount().get(typeItem))
+                .filter(Objects::nonNull)
+                .mapToLong(Integer::longValue)
+                .sum();
     }
 
     /**
