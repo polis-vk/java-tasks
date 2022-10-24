@@ -39,6 +39,7 @@ public class JsonCsvDataAdapter extends CsvData {
 
         boolean isObjectOpen = true;
         boolean isReadingValue = false;
+        boolean isValueString = false;
         for (int i = 0; i < text.length(); i++) {
             char curC = text.charAt(i);
             char nxtC = text.charAt(Math.min(i + 1, text.length() - 1));
@@ -76,28 +77,38 @@ public class JsonCsvDataAdapter extends CsvData {
                     if (curC == ':') {
                         context = Context.VALUE;
                         isReadingValue = false;
+                        isValueString = false;
                     } else if (!checkWhiteSpace(curC)) {
                         throw new IllegalArgumentException(getErrorMsg(new char[]{':'}, curC));
                     }
                     break;
                 case VALUE:
-                    if (isReadingValue) {
-                        if (curC >= '0' && curC <= '9') {
-                            curToken.append(curC);
-                        } else if (!checkWhiteSpace(curC) && curC != ',' && curC != '}') {
-                            throw new IllegalArgumentException(getErrorMsg(new char[]{',', '}'}, curC));
+                    if (!isReadingValue && !checkWhiteSpace(curC)) {
+                        isReadingValue = true;
+                        if (curC == '"') {
+                            isValueString = true;
                         } else {
+                            curToken.append(curC);
+                        }
+                    } else if (isValueString) {
+                        if (curC == '\\' && nxtC == '"') {
+                            curToken.append('"');
+                            i++;
+                        } else if (curC == '"') {
+                            jsonTokens.add(curToken.toString());
+                            curToken = new StringBuilder();
+                            context = Context.COMMA;
+                        } else {
+                            curToken.append(curC);
+                        }
+                    } else if (isReadingValue) {
+                        if (checkWhiteSpace(curC) || curC == ',' || curC == '}') {
                             jsonTokens.add(curToken.toString());
                             curToken = new StringBuilder();
                             context = Context.COMMA;
                             i--;
-                        }
-                    } else {
-                        if ((curC >= '0' && curC <= '9') || curC == '-') {
-                            isReadingValue = true;
+                        } else {
                             curToken.append(curC);
-                        } else if (!checkWhiteSpace(curC)) {
-                            throw new IllegalArgumentException(getErrorMsg(new char[]{' '}, curC));
                         }
                     }
                     break;
