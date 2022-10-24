@@ -46,6 +46,14 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean contains(Object o) {
+        if (o == null) {
+            for (int i = 0; i < size; i++) {
+                if (data[i] == null) {
+                    return true;
+                }
+            }
+            return false;
+        }
         return indexOf(o) != -1;
     }
 
@@ -61,17 +69,17 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public <T> T[] toArray(T[] a) {
-        Object[] array;
+        T[] array;
 
         if (a.length < size) {
-            array = new Object[size];
+            array = (T[]) Arrays.copyOf(data, size, a.getClass());
         } else {
             array = a;
         }
 
-        System.arraycopy(data, 0, array, 0, size);
+        System.arraycopy((T[]) data, 0, array, 0, size);
 
-        return (T[]) array;
+        return array;
     }
 
     @Override
@@ -248,7 +256,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public int indexOf(Object o) {
         if (o == null) {
-            return -1;
+            throw new NullPointerException("Given argument is null!");
         }
 
         for (int i = 0; i < size; i++) {
@@ -263,7 +271,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public int lastIndexOf(Object o) {
         if (o == null) {
-            return -1;
+            throw new NullPointerException("Given argument is null!");
         }
 
         for (int i = size - 1; i >= 0; i--) {
