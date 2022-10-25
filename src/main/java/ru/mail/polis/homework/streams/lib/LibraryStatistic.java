@@ -54,7 +54,16 @@ public class LibraryStatistic {
      * @return - список ненадежных пользователей
      */
     public List<User> unreliableUsers(Library library) {
-        return null;
+        return library.getArchive().stream()
+                .collect(Collectors.groupingBy(
+                        ArchivedData::getUser,
+                        Collectors.toList()
+                )).entrySet().stream()
+                .filter(userListEntry -> userListEntry.getValue().stream()
+                        .filter(archivedData -> isHoldNDays(archivedData, 31))
+                        .count() > (userListEntry.getValue().size() / 2))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
     /**
