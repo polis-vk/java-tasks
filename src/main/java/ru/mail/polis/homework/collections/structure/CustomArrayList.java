@@ -134,7 +134,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
         if (index != size) {
-            checkIndexBounds(index);
+            checkIndexBounds(index, size);
         }
 
         if (c.size() == 0) {
@@ -198,13 +198,13 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E get(int index) {
-        checkIndexBounds(index);
+        checkIndexBounds(index, size);
         return data[index];
     }
 
     @Override
     public E set(int index, E element) {
-        checkIndexBounds(index);
+        checkIndexBounds(index, size);
         modCount++;
         E result = get(index);
 
@@ -215,7 +215,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public void add(int index, E element) {
         if (index != size) {
-            checkIndexBounds(index);
+            checkIndexBounds(index, size);
         }
         modCount++;
 
@@ -232,7 +232,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E remove(int index) {
-        checkIndexBounds(index);
+        checkIndexBounds(index, size);
         modCount++;
         E result = data[index];
 
@@ -286,7 +286,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public ListIterator<E> listIterator(int index) {
-        checkIndexBounds(index);
+        checkIndexBounds(index, size);
 
         return new ListIterator<E>() {
             int fixedModCount = modCount;
@@ -384,12 +384,14 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public int size() {
-            return 0;
+            checkForMod();
+            return size;
         }
 
         @Override
         public boolean isEmpty() {
-            return false;
+            checkForMod();
+            return size == 0;
         }
 
         @Override
@@ -454,12 +456,20 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public E get(int index) {
-            return null;
+            checkIndexBounds(index, size);
+            checkForMod();
+            return root.get(offset + index);
         }
 
         @Override
         public E set(int index, E element) {
-            return null;
+            checkIndexBounds(index, size);
+            checkForMod();
+            modCount++;
+            E result = root.get(offset + index);
+
+            root.set(offset + index, element);
+            return result;
         }
 
         @Override
@@ -505,6 +515,12 @@ public class CustomArrayList<E> implements List<E> {
             this.size = toIndex - fromIndex;
             this.modCount = parent.modCount;
         }
+
+        private void checkForMod() {
+            if (root.modCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+        }
     }
 
     /**
@@ -525,7 +541,7 @@ public class CustomArrayList<E> implements List<E> {
         return newArray;
     }
 
-    private void checkIndexBounds(int index) {
+    private static void checkIndexBounds(int index, int size) {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index " + index + " out of bounds.");
         }
