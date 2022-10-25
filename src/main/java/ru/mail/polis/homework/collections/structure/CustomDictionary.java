@@ -59,10 +59,7 @@ public class CustomDictionary {
         Map<Character, Integer> letterCountMap = getLetterCountMap(value);
 
         Set<String> set = values.get(letterCountMap);
-        if (set != null) {
-            return set.contains(value);
-        }
-        return false;
+        return set != null && set.contains(value);
     }
 
     /**
