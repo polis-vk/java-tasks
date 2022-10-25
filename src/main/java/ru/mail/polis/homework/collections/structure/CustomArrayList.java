@@ -363,14 +363,148 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     @SuppressWarnings("unchecked")
     public List<E> subList(int fromIndex, int toIndex) {
-        if (fromIndex < 0 || fromIndex > size || toIndex < 0 || toIndex > size || fromIndex > toIndex) {
-            throw new IndexOutOfBoundsException("Incorrect indexes");
+        checkSubListIndexes(fromIndex, toIndex, size);
+        return new SubList<>(this, fromIndex, toIndex);
+    }
+
+    private static class SubList<E> implements List<E> {
+        private final CustomArrayList<E> root;
+        private final SubList<E> parent;
+        private final int offset;
+        private int size;
+        private int modCount;
+
+        public SubList(CustomArrayList<E> root, int fromIndex, int toIndex) {
+            this.root = root;
+            this.parent = null;
+            this.offset = fromIndex;
+            this.size = toIndex - fromIndex;
+            this.modCount = root.modCount;
         }
 
-        E[] newData = (E[]) new Object[toIndex - fromIndex];
-        System.arraycopy(data, fromIndex, newData, 0, toIndex - fromIndex);
+        @Override
+        public int size() {
+            return 0;
+        }
 
-        return new CustomArrayList<E>(newData);
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return false;
+        }
+
+        @Override
+        public Iterator<E> iterator() {
+            return null;
+        }
+
+        @Override
+        public Object[] toArray() {
+            return new Object[0];
+        }
+
+        @Override
+        public <T> T[] toArray(T[] a) {
+            return null;
+        }
+
+        @Override
+        public boolean add(E e) {
+            return false;
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            return false;
+        }
+
+        @Override
+        public boolean containsAll(Collection<?> c) {
+            return false;
+        }
+
+        @Override
+        public boolean addAll(Collection<? extends E> c) {
+            return false;
+        }
+
+        @Override
+        public boolean addAll(int index, Collection<? extends E> c) {
+            return false;
+        }
+
+        @Override
+        public boolean removeAll(Collection<?> c) {
+            return false;
+        }
+
+        @Override
+        public boolean retainAll(Collection<?> c) {
+            return false;
+        }
+
+        @Override
+        public void clear() {
+
+        }
+
+        @Override
+        public E get(int index) {
+            return null;
+        }
+
+        @Override
+        public E set(int index, E element) {
+            return null;
+        }
+
+        @Override
+        public void add(int index, E element) {
+
+        }
+
+        @Override
+        public E remove(int index) {
+            return null;
+        }
+
+        @Override
+        public int indexOf(Object o) {
+            return 0;
+        }
+
+        @Override
+        public int lastIndexOf(Object o) {
+            return 0;
+        }
+
+        @Override
+        public ListIterator<E> listIterator() {
+            return null;
+        }
+
+        @Override
+        public ListIterator<E> listIterator(int index) {
+            return null;
+        }
+
+        @Override
+        public List<E> subList(int fromIndex, int toIndex) {
+            checkSubListIndexes(fromIndex, toIndex, size);
+            return new SubList<>(this, fromIndex, toIndex);
+        }
+
+        private SubList(SubList<E> parent, int fromIndex, int toIndex) {
+            this.root = parent.root;
+            this.parent = parent;
+            this.offset = parent.offset + fromIndex;
+            this.size = toIndex - fromIndex;
+            this.modCount = parent.modCount;
+        }
     }
 
     /**
@@ -394,6 +528,12 @@ public class CustomArrayList<E> implements List<E> {
     private void checkIndexBounds(int index) {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index " + index + " out of bounds.");
+        }
+    }
+
+    private static void checkSubListIndexes(int fromIndex, int toIndex, int size) {
+        if (fromIndex < 0 || toIndex < 0 || toIndex > size || fromIndex > toIndex) {
+            throw new IndexOutOfBoundsException("Incorrect indexes");
         }
     }
 }
