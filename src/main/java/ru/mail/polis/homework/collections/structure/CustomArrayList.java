@@ -251,7 +251,7 @@ public class CustomArrayList<E> implements List<E> {
             }
         } else {
             for (int i = 0; i < size; i++) {
-                if (data[i] != null && data[i].equals(o)) {
+                if (o.equals(data[i])) {
                     return i;
                 }
             }
@@ -270,7 +270,7 @@ public class CustomArrayList<E> implements List<E> {
             }
         } else {
             for (int i = size - 1; i >= 0; i--) {
-                if (data[i] != null && data[i].equals(o)) {
+                if (o.equals(data[i])) {
                     return i;
                 }
             }
