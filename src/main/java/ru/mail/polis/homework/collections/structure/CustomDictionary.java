@@ -3,7 +3,6 @@ package ru.mail.polis.homework.collections.structure;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -14,7 +13,7 @@ import java.util.List;
  */
 public class CustomDictionary {
 
-    HashMap<HashMap<Character, Integer>, HashSet<String>> map = new HashMap<>();
+    private final HashMap<HashMap<Character, Integer>, HashSet<String>> map = new HashMap<>();
 
     /**
      * Сохранить строку в структуру данных
@@ -25,15 +24,14 @@ public class CustomDictionary {
      * Сложность - []
      */
     public boolean add(String value) {
-        if (value == null || value.equals("")) {
+        if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException();
         }
         HashMap<Character, Integer> key = countChars(value);
 
-        if (!map.containsKey(key)) {
-            map.put(key, new HashSet<>());
-        }
-        return map.get(key).add(value);
+        HashSet<String> set = map.computeIfAbsent(key, k -> new HashSet<>());
+
+        return set.add(value);
     }
 
 
@@ -47,10 +45,11 @@ public class CustomDictionary {
      */
     public boolean contains(String value) {
         HashMap<Character, Integer> key = countChars(value);
-        if (!map.containsKey(key)) {
+        HashSet<String> set = map.get(key);
+        if (set == null) {
             return false;
         }
-        return map.get(key).contains(value);
+        return set.contains(value);
     }
 
     /**
@@ -63,11 +62,11 @@ public class CustomDictionary {
      */
     public boolean remove(String value) {
         HashMap<Character, Integer> key = countChars(value);
-        if (!map.containsKey(key)) {
+        HashSet<String> set = map.get(key);
+        if (set == null) {
             return false;
         }
-        HashSet<String> listOfSimilar = map.get(key);
-        return listOfSimilar.remove(value);
+        return set.remove(value);
     }
 
     /**
@@ -91,10 +90,11 @@ public class CustomDictionary {
      */
     public List<String> getSimilarWords(String value) {
         HashMap<Character, Integer> key = countChars(value);
-        if (!map.containsKey(key)) {
-            return new LinkedList<>();
+        HashSet<String> set = map.get(key);
+        if (set == null){
+            return new ArrayList<>();
         }
-        return new ArrayList<>(map.get(key));
+        return new ArrayList<>(set);
     }
 
     /**

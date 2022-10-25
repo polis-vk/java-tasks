@@ -15,7 +15,7 @@ public class ExampleStateHandler implements StateHandler<ExampleState> {
      * 1 тугрик
      */
     @Override
-    public ExampleState getHandlingStateClass() {
-        return null;
+    public Class getHandlingStateClass() {
+        return ExampleState.class;
     }
 }
