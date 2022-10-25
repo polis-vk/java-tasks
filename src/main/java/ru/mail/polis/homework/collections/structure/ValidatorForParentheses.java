@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -16,21 +17,25 @@ import java.util.Map;
  */
 public class ValidatorForParentheses {
 
-    private static final Map<Character, Character> PARENTHESES = Map.of(']', '[', '}', '{', '>', '<', ')', '(');
+    private static final Map<Character, Character> parentheses = new HashMap<>();
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
         }
+        parentheses.put(']', '[');
+        parentheses.put('}', '{');
+        parentheses.put('>', '<');
+        parentheses.put(')', '(');
         boolean flag = false;
         Stack stack = new Stack();
         for (int i = 0; i < value.length(); i++) {
             char brace = value.charAt(i);
-            if (PARENTHESES.containsValue(brace)) {
+            if (parentheses.containsValue(brace)) {
                 flag = true;
                 stack.push(brace);
-            } else if (PARENTHESES.containsKey(brace)) {
-                if (stack.size() == 0 || stack.pop() != PARENTHESES.get(brace)) {
+            } else if (parentheses.containsKey(brace)) {
+                if (stack.size() == 0 || stack.pop() != parentheses.get(brace)) {
                     return false;
                 }
             }

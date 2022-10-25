@@ -15,13 +15,13 @@ import java.util.NoSuchElementException;
  * Задание оценивается в 10 тугриков
  */
 public class CustomArrayList<E> implements List<E> {
+    private static final int DEFAULT_CAPACITY = 10;
     private E[] array;
     private int size;
-    private int capacity = 10;
     private int modCount;
 
     public CustomArrayList() {
-        array = (E[]) new Object[capacity];
+        array = (E[]) new Object[DEFAULT_CAPACITY];
     }
 
     public CustomArrayList(E[] array) {
@@ -83,7 +83,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean add(E e) {
-        if (size == capacity) {
+        if (size == array.length) {
             increaseCapacity(size * 3 / 2);
         }
         add(size, e);
@@ -190,7 +190,7 @@ public class CustomArrayList<E> implements List<E> {
         if (index > size) {
             throw new IndexOutOfBoundsException();
         }
-        if (size == capacity) {
+        if (size == array.length) {
             increaseCapacity(size * 3 / 2);
         }
         System.arraycopy(array, index, array, index + 1, size - index);
@@ -322,7 +322,6 @@ public class CustomArrayList<E> implements List<E> {
     }
 
     public void increaseCapacity(int newCapacity) {
-        capacity = newCapacity;
         E[] newArray = (E[]) new Object[newCapacity];
         System.arraycopy(array, 0, newArray, 0, size);
         array = newArray;
