@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.*;
+
 /**
  * Задание оценивается в 2 тугрика.
  * Одна из самых популярных задач.
@@ -15,6 +17,30 @@ package ru.mail.polis.homework.collections.structure;
 public class ValidatorForParentheses {
 
     public static boolean validate(String value) {
-        return false;
+        if (value == null) {
+            return false;
+        }
+
+        Stack<Character> stackOfParentheses = new Stack<>();
+
+        Character[] opening = {'(', '[', '<', '{'};
+        Character[] closing = {')', ']', '>', '}'};
+        int modStackCount = 0;
+
+        for (int i = 0; i < value.length(); i++) {
+            char currentSymbol = value.charAt(i);
+            if (Arrays.asList(opening).contains(currentSymbol)) {
+                stackOfParentheses.add(currentSymbol);
+                modStackCount++;
+            } else if (Arrays.asList(closing).contains(currentSymbol) && !stackOfParentheses.isEmpty() &&
+                    (stackOfParentheses.peek() == '(' && currentSymbol == ')' ||
+                            stackOfParentheses.peek() == '{' && currentSymbol == '}' ||
+                            stackOfParentheses.peek() == '[' && currentSymbol == ']' ||
+                            stackOfParentheses.peek() == '<' && currentSymbol == '>')) {
+                stackOfParentheses.pop();
+            }
+        }
+
+        return modStackCount != 0 && stackOfParentheses.isEmpty();
     }
 }
