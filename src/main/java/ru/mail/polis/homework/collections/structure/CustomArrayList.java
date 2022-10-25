@@ -36,6 +36,12 @@ public class CustomArrayList<E> implements List<E> {
         this.size = data.length;
     }
 
+    @SuppressWarnings("unchecked")
+    public CustomArrayList(Collection<? extends E> c) {
+        this.data = (E[]) new Object[c.size()];
+        addAll(c);
+    }
+
     @Override
     public int size() {
         return size;
