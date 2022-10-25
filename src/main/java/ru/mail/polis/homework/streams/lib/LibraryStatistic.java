@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.streams.lib;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,7 +22,18 @@ public class LibraryStatistic {
      * @return - map пользователь / кол-во прочитанных страниц
      */
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
-        return null;
+        return library.getArchive().stream()
+                .filter(archivedData -> archivedData.getBook().getGenre().equals(genre))
+                .filter(archivedData -> isHoldNDays(archivedData, 14))
+                .collect(Collectors.groupingBy(
+                        ArchivedData::getUser,
+                        Collectors.toList()
+                )).entrySet().stream()
+                .filter(userListEntry -> userListEntry.getValue().size() >= 5)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        userListEntry -> userListEntry.getKey().getReadedPages()
+                ));
     }
 
     /**
@@ -62,5 +76,18 @@ public class LibraryStatistic {
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
         return null;
+    }
+
+    /**
+     * Держат ли данную книгу не менее n дней.
+     * @param archivedData запись о книге, которую держат.
+     * @param n количество дней.
+     * @return Держат ли данную книгу не менее n дней.
+     */
+    private boolean isHoldNDays(ArchivedData archivedData, long n) {
+        Temporal from = archivedData.getTake().toInstant();
+        return archivedData.getReturned() != null
+                ? ChronoUnit.DAYS.between(from, archivedData.getReturned().toInstant()) >= n
+                : ChronoUnit.DAYS.between(from, Instant.now()) >= n;
     }
 }
