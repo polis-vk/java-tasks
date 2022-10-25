@@ -84,7 +84,25 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return null;
+        return library.getBooks().stream()
+                .collect(Collectors.groupingBy(
+                        Book::getGenre,
+                        Collectors.groupingBy(
+                                Book::getAuthor,
+                                Collectors.counting()
+                        )
+                )).entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        genreMapEntry -> genreMapEntry.getValue().entrySet().stream()
+                                .max((o1, o2) -> {
+                                    long cmp = o2.getValue() - o1.getValue();
+                                    if (cmp == 0) {
+                                        return o1.getKey().compareTo(o2.getKey());
+                                    }
+                                    return (int) cmp;
+                                }).get().getKey()
+                ));
     }
 
     /**
