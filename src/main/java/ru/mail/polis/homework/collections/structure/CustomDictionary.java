@@ -4,8 +4,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.List;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.stream.Collectors;
+import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -14,7 +15,8 @@ import java.util.stream.Collectors;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private final Map<Set<Character>, Set<String>> dictionary = new HashMap<>();
+    private final Map<Map<Character, Integer>, Set<String>> dictionary
+            = new HashMap<>();
     private int size;
 
     /**
@@ -26,14 +28,15 @@ public class CustomDictionary {
      * Сложность - [O(n), где n - длина передаваемой строки]
      */
     public boolean add(String value) {
-        Set<Character> characters = validate(value);
-        Set<String> words = dictionary.getOrDefault(characters, new HashSet<>());
-        final boolean isAdded = words.add(value);
-        if (isAdded) {
-            dictionary.put(characters, words);
-            size++;
+        Map<Character, Integer> letterCounter = getLetterCountMap(value);
+        dictionary.putIfAbsent(letterCounter, new LinkedHashSet<>());
+        Set<String> similarWords = dictionary.getOrDefault(letterCounter, Collections.emptySet());
+        if (similarWords.contains(value)) {
+            return false;
         }
-        return isAdded;
+        similarWords.add(value);
+        size++;
+        return true;
     }
 
     /**
@@ -45,9 +48,9 @@ public class CustomDictionary {
      * Сложность - [O(n), где n - длина передаваемой строки]
      */
     public boolean contains(String value) {
-        Set<Character> characters = validate(value);
-        Set<String> words = dictionary.getOrDefault(characters, new HashSet<>());
-        return words.contains(value);
+        Map<Character, Integer> letterCounter = getLetterCountMap(value);
+        Set<String> similarWords = dictionary.getOrDefault(letterCounter, Collections.emptySet());
+        return similarWords.contains(value);
     }
 
     /**
@@ -59,14 +62,13 @@ public class CustomDictionary {
      * Сложность - [O(n), где n - длина передаваемой строки]
      */
     public boolean remove(String value) {
-        Set<Character> characters = validate(value);
-        Set<String> words = dictionary.getOrDefault(characters, new HashSet<>());
-        final boolean isRemoved = words.remove(value);
-        if (isRemoved) {
-            dictionary.put(characters, words);
+        Map<Character, Integer> letterCounter = getLetterCountMap(value);
+        Set<String> similarWords = dictionary.getOrDefault(letterCounter, Collections.emptySet());
+        if (similarWords.remove(value)) {
             size--;
+            return true;
         }
-        return isRemoved;
+        return false;
     }
 
     /**
@@ -89,11 +91,13 @@ public class CustomDictionary {
      * Сложность - [O(n+m), где n - длина передаваемой строки, m - кол-во элементов в мапе]
      */
     public List<String> getSimilarWords(String value) {
-        Set<Character> characters = validate(value);
-        Set<String> words = dictionary.getOrDefault(characters, new HashSet<>());
-        return words.stream()
-                .filter(word -> word.length() == value.length())
-                .collect(Collectors.toList());
+        Map<Character, Integer> letterCounter = getLetterCountMap(value);
+        Set<String> similarWords = dictionary.getOrDefault(letterCounter, Collections.emptySet());
+
+        if (!similarWords.isEmpty()) {
+            return new ArrayList<>(similarWords);
+        }
+        return Collections.emptyList();
     }
 
     /**
@@ -107,15 +111,16 @@ public class CustomDictionary {
         return size;
     }
 
-    private Set<Character> validate(String value) {
+    private Map<Character, Integer> getLetterCountMap(String value) {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
-        return value.toLowerCase()
-                .chars()
-                .mapToObj(e -> (char) e)
-                .collect(Collectors.toSet());
+        Map<Character, Integer> letterCountMap = new HashMap<>();
+        for (char c : value.toLowerCase().toCharArray()) {
+            letterCountMap.merge(c, 1, Integer::sum);
+        }
+        return letterCountMap;
     }
 }
 
