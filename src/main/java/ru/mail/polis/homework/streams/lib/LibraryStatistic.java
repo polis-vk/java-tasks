@@ -44,7 +44,29 @@ public class LibraryStatistic {
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
-        return null;
+        return library.getArchive().stream()
+                .filter(archivedData -> archivedData.getUser().equals(user) && archivedData.getReturned() != null)
+                .collect(Collectors.groupingBy(
+                        archivedData -> archivedData.getBook().getGenre(),
+                        Collectors.counting()
+                )).entrySet().stream()
+                .max((o1, o2) -> {
+                    long cmp = o2.getValue() - o1.getValue();
+                    if (cmp == 0) {
+                        int secondNotReturnedCount = (int) library.getArchive().stream()
+                                .filter(archivedData -> archivedData.getUser().equals(user) &&
+                                        archivedData.getBook().getGenre().equals(o2.getKey()) &&
+                                        archivedData.getReturned() == null)
+                                .count();
+                        int firstNotReturnedCount = (int) library.getArchive().stream()
+                                .filter(archivedData -> archivedData.getUser().equals(user) &&
+                                        archivedData.getBook().getGenre().equals(o1.getKey()) &&
+                                        archivedData.getReturned() == null)
+                                .count();
+                        return secondNotReturnedCount - firstNotReturnedCount;
+                    }
+                    return (int) cmp;
+                }).get().getKey();
     }
 
     /**
