@@ -1,9 +1,9 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -110,7 +110,7 @@ public class CustomDictionary {
 
         Set<String> set = values.get(letterCountMap);
         if (set != null) {
-            return new LinkedList<>(set);
+            return new ArrayList<>(set);
         }
         return Collections.emptyList();
     }
