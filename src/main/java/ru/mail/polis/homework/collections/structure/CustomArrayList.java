@@ -15,7 +15,6 @@ import java.util.NoSuchElementException;
  * Задание оценивается в 10 тугриков
  */
 public class CustomArrayList<E> implements List<E> {
-
     private static final int INITIAL_CAPACITY = 10;
     private static final int GROW_FACTOR = 2;
 
