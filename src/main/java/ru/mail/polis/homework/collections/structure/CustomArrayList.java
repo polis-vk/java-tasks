@@ -76,6 +76,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean add(E e) {
+        modCount++;
         if (size == array.length) {
             array = Arrays.copyOf(array, array.length * 2);
         }
@@ -126,6 +127,7 @@ public class CustomArrayList<E> implements List<E> {
         }
         System.arraycopy(array, index, newArr, index + c.size(), array.length - index);
         size += c.size();
+        modCount += c.size();
         array = newArr;
         return true;
     }
@@ -138,6 +140,7 @@ public class CustomArrayList<E> implements List<E> {
             if (!c.contains(e)) {
                 array[cnt++] = e;
             }
+            modCount++;
         }
 
         boolean ans = cnt != size;
@@ -153,6 +156,7 @@ public class CustomArrayList<E> implements List<E> {
                 array[cnt++] = element;
 
             }
+            modCount++;
         }
         size = cnt;
         return cnt != 0;
@@ -161,6 +165,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public void clear() {
         size = 0;
+        modCount++;
     }
 
     @Override
@@ -196,6 +201,7 @@ public class CustomArrayList<E> implements List<E> {
         newArr[index] = element;
         System.arraycopy(array, index, newArr, index+1, size - index);
         size++;
+        modCount++;
         array = newArr;
     }
 
@@ -207,6 +213,7 @@ public class CustomArrayList<E> implements List<E> {
         E ans = array[index];
         System.arraycopy(array, index + 1, array, index, size - index - 1);
         size--;
+        modCount++;
         return ans;
     }
 
