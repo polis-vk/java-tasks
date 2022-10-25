@@ -289,7 +289,6 @@ public class CustomArrayList<E> implements List<E> {
         checkIndexBounds(index);
 
         return new ListIterator<E>() {
-
             int fixedModCount = modCount;
             int curIndex = index;
 
