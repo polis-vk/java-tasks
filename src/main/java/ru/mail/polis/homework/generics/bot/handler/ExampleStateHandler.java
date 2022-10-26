@@ -16,6 +16,6 @@ public class ExampleStateHandler implements StateHandler<ExampleState> {
      */
     @Override
     public Class<ExampleState> getHandlingStateClass() {
-        return null;
+        return ExampleState.class;
     }
 }

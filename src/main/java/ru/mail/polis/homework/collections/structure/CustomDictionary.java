@@ -1,6 +1,12 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -12,7 +18,7 @@ public class CustomDictionary {
 
     private int size;
     // Набор букв -> набор слов из этого набора букв
-    private final HashMap<HashMap<Character, Integer>, Set<String>> dictionary = new HashMap<>();
+    private final Map<Map<Character, Integer>, Set<String>> dictionary = new HashMap<>();
     // Набор слов
     private final Set<String> strings = new HashSet<>();
 
@@ -36,16 +42,15 @@ public class CustomDictionary {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        if (contains(value)) {
-            return false;
+        if (strings.add(value)) {
+            HashMap <Character, Integer> letters = reduceToLetters(value.toLowerCase(Locale.ROOT));
+            HashSet<String> requiredEntry = (HashSet<String>) dictionary.getOrDefault(letters, new HashSet<>());
+            requiredEntry.add(value);
+            dictionary.put(letters, requiredEntry);
+            size++;
+            return true;
         }
-        HashMap <Character, Integer> letters = reduceToLetters(value.toLowerCase(Locale.ROOT));
-        HashSet<String> requiredEntry = (HashSet<String>) dictionary.getOrDefault(letters, new HashSet<>());
-        requiredEntry.add(value);
-        dictionary.put(letters, requiredEntry);
-        strings.add(value);
-        size++;
-        return true;
+        return false;
     }
 
     /**
@@ -73,14 +78,13 @@ public class CustomDictionary {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        if (!contains(value)) {
-            return false;
+        if (strings.remove(value)) {
+            HashMap <Character, Integer> letters = reduceToLetters(value.toLowerCase(Locale.ROOT));
+            dictionary.get(letters).remove(value);
+            size--;
+            return true;
         }
-        strings.remove(value);
-        HashMap <Character, Integer> letters = reduceToLetters(value.toLowerCase(Locale.ROOT));
-        dictionary.get(letters).remove(value);
-        size--;
-        return true;
+        return false;
     }
 
     /**

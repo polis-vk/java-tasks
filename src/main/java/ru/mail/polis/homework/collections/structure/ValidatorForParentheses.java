@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Задание оценивается в 2 тугрика.
  * Одна из самых популярных задач.
@@ -18,35 +21,20 @@ public class ValidatorForParentheses {
         if (value == null) {
             return false;
         }
+        Map<Character, Character> CORRECT_PARENTHESES = new HashMap<>();
+        CORRECT_PARENTHESES.put('{', '}');
+        CORRECT_PARENTHESES.put('<', '>');
+        CORRECT_PARENTHESES.put('(', ')');
+        CORRECT_PARENTHESES.put('[', ']');
         String stack = "";
         boolean parenthesesFound = false;
         for (int i = 0; i < value.length(); i++) {
-            if (value.charAt(i) == '[' || value.charAt(i) == '{' ||
-                    value.charAt(i) == '<' || value.charAt(i) == '(') {
+            if (CORRECT_PARENTHESES.containsKey(value.charAt(i))) {
                 stack = stack + value.charAt(i);
                 parenthesesFound = true;
-            }
-            else try {
-                if (value.charAt(i) == ']') {
-                    if (stack.charAt(stack.length() - 1) == '[') {
-                        stack = stack.substring(0, stack.length() - 1);
-                    } else {
-                        return false;
-                    }
-                } else if (value.charAt(i) == '}') {
-                    if (stack.charAt(stack.length() - 1) == '{') {
-                        stack = stack.substring(0, stack.length() - 1);
-                    } else {
-                        return false;
-                    }
-                } else if (value.charAt(i) == '>') {
-                    if (stack.charAt(stack.length() - 1) == '<') {
-                        stack = stack.substring(0, stack.length() - 1);
-                    } else {
-                        return false;
-                    }
-                } else if (value.charAt(i) == ')') {
-                    if (stack.charAt(stack.length() - 1) == '(') {
+            } else try {
+                if (CORRECT_PARENTHESES.containsValue(value.charAt(i))) {
+                    if (CORRECT_PARENTHESES.get(stack.charAt(stack.length() - 1)) == value.charAt(i)) {
                         stack = stack.substring(0, stack.length() - 1);
                     } else {
                         return false;

@@ -1,6 +1,13 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.*;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.ListIterator;
 
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
@@ -11,12 +18,23 @@ import java.util.*;
 public class CustomArrayList<E> implements List<E> {
 
     private static final int BASE_SIZE_MULTIPLIER = 2;
+    private static final int BASE_SIZE = 1000;
     private int size;
     private int timesChanged;
     private E[] array;
 
     public CustomArrayList() {
-        array = (E[]) new Object[1];
+        array = (E[]) new Object[BASE_SIZE];
+    }
+
+    public CustomArrayList(E[] array) {
+        this.array = array;
+        this.size = array.length;
+    }
+
+    public CustomArrayList(Collection<E> collection) {
+        array = (E[]) collection.toArray();
+        size = array.length;
     }
 
     private void enlarge(int times) {
@@ -56,11 +74,9 @@ public class CustomArrayList<E> implements List<E> {
             public E next() {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
-                }
-                else if (timesChangedAtStart != timesChanged) {
+                } else if (timesChangedAtStart != timesChanged) {
                     throw new ConcurrentModificationException();
-                }
-                else {
+                } else {
                     E ans = array[next];
                     next++;
                     return ans;
@@ -71,7 +87,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public Object[] toArray() {
-        return array;
+        return Arrays.copyOf(array, size);
     }
 
     @Override
@@ -79,8 +95,7 @@ public class CustomArrayList<E> implements List<E> {
         if (a.length >= size) {
             System.arraycopy(array, 0, a, 0, size);
             return a;
-        }
-        else {
+        } else {
             return (T[]) Arrays.copyOf(array, size, a.getClass());
         }
     }
@@ -118,10 +133,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        for (E e : c) {
-            add(e);
-        }
-        return true;
+        return addAll(size, c);
     }
 
     @Override
@@ -160,13 +172,16 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public void clear() {
-        array = (E[]) new Object[4];
+        array = (E[]) new Object[BASE_SIZE];
         size = 0;
         timesChanged++;
     }
 
     @Override
     public E get(int index) {
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
         return array[index];
     }
 
@@ -183,7 +198,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public void add(int index, E element) {
-        if (index >= size || index < 0) {
+        if (index > size || index < 0) {
             throw new IndexOutOfBoundsException();
         }
         if (size == array.length) {
@@ -209,12 +224,10 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        int c = 0;
-        for (E e : this) {
-            if (Objects.equals(o, e)) {
-                return c;
+        for (int i = 0; i < size; i++) {
+            if (Objects.equals(o, get(i))) {
+                return i;
             }
-            c++;
         }
         return -1;
     }
@@ -239,56 +252,52 @@ public class CustomArrayList<E> implements List<E> {
         return new ListIterator<E>() {
 
             private int timesChangedAtStart = timesChanged;
-            private int next = index;
+            private int current = index;
 
             @Override
             public boolean hasNext() {
-                return (next < size());
+                return (current < size());
             }
 
             @Override
             public E next() {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
-                }
-                else if (timesChangedAtStart != timesChanged) {
+                } else if (timesChangedAtStart != timesChanged) {
                     throw new ConcurrentModificationException();
-                }
-                else {
-                    E ans = array[next];
-                    next++;
+                } else {
+                    E ans = array[current];
+                    current++;
                     return ans;
                 }
             }
 
             @Override
             public boolean hasPrevious() {
-                return !(next == 0);
+                return !(current == 0);
             }
 
             @Override
             public E previous() {
                 if (!hasPrevious()) {
                     throw new NoSuchElementException();
-                }
-                else if (timesChangedAtStart != timesChanged) {
+                } else if (timesChangedAtStart != timesChanged) {
                     throw new ConcurrentModificationException();
-                }
-                else {
-                    E ans = array[next - 1];
-                    next--;
+                } else {
+                    E ans = array[current - 1];
+                    current--;
                     return ans;
                 }
             }
 
             @Override
             public int nextIndex() {
-                return next;
+                return current;
             }
 
             @Override
             public int previousIndex() {
-                return next - 1;
+                return current - 1;
             }
 
             @Override
@@ -296,8 +305,8 @@ public class CustomArrayList<E> implements List<E> {
                 if (timesChangedAtStart != timesChanged) {
                     throw new ConcurrentModificationException();
                 }
-                CustomArrayList.this.remove(next);
-                next--;
+                CustomArrayList.this.remove(current);
+                current--;
                 timesChangedAtStart++;
             }
 
@@ -306,7 +315,7 @@ public class CustomArrayList<E> implements List<E> {
                 if (timesChangedAtStart != timesChanged) {
                     throw new ConcurrentModificationException();
                 }
-                CustomArrayList.this.set(next, e);
+                CustomArrayList.this.set(current, e);
                 timesChangedAtStart++;
             }
 
@@ -315,8 +324,8 @@ public class CustomArrayList<E> implements List<E> {
                 if (timesChangedAtStart != timesChanged) {
                     throw new ConcurrentModificationException();
                 }
-                CustomArrayList.this.add(next, e);
-                next++;
+                CustomArrayList.this.add(current, e);
+                current++;
                 timesChangedAtStart++;
             }
         };
@@ -324,7 +333,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-        if (fromIndex >= size || fromIndex < 0 || toIndex >= size || toIndex < 0) {
+        if (fromIndex > size || fromIndex < 0 || toIndex > size || toIndex < 0) {
             throw new IndexOutOfBoundsException();
         }
         if (toIndex < fromIndex) {
