@@ -12,7 +12,7 @@ public class ExampleStateHandler<T extends State> implements StateHandler<Exampl
 
     /**
      * Поправить в соответствии с изменениями в StateHandler
-     *
+     * <p>
      * 1 тугрик
      */
     @Override

@@ -200,7 +200,7 @@ public class CustomArrayList<E> implements List<E> {
         if (size == data.length) {
             ensureCapacity();
         }
-        System.arraycopy(data, index, data, index + 1, size - index);
+        System.arraycopy(data, index, data, index + 1, size - index - 1);
         data[index] = element;
         modifications++;
         size++;
@@ -338,9 +338,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-        checkOutOfBoundException(fromIndex);
-        checkOutOfBoundException(toIndex);
-        if (fromIndex > toIndex) {
+        if (fromIndex < 0 || fromIndex >= data.length || toIndex < 0 || toIndex >= data.length || fromIndex > toIndex) {
             throw new IndexOutOfBoundsException();
         }
         if (fromIndex == toIndex) {

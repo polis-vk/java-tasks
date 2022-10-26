@@ -17,9 +17,12 @@ import java.util.Set;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private final Map<Map<Character, Integer>, List<String>> data = new HashMap<>();
+    private final Map<Map<Character, Integer>, List<String>> data;
     private int size;
 
+    CustomDictionary(){
+        data = new HashMap<>();
+    }
     /**
      * Сохранить строку в структуру данных
      *

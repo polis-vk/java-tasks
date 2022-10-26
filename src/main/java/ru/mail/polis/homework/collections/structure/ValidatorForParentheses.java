@@ -10,22 +10,21 @@ import java.util.Deque;
  * В строке помимо скобок могут содержаться и другие символы.
  * Скобки могут быть: [],{},<>,()
  * Примеры:
- *      "(-b + (x)^2)/(2+4)" - true
- *      "Понедельники меня угнетают ((" - false
- *
+ * "(-b + (x)^2)/(2+4)" - true
+ * "Понедельники меня угнетают ((" - false
+ * <p>
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
-
-    private static boolean isLeftParenthesis(char symbol){
+    private static boolean isLeftParenthesis(char symbol) {
         return symbol == '{' || symbol == '[' || symbol == '(' || symbol == '<';
     }
 
-    private static boolean isRightParenthesis(char symbol){
+    private static boolean isRightParenthesis(char symbol) {
         return symbol == '}' || symbol == ']' || symbol == ')' || symbol == '>';
     }
 
-    private static boolean areEqual(char leftParenthesis, char rightParenthesis){
+    private static boolean areEqual(char leftParenthesis, char rightParenthesis) {
         return (leftParenthesis == '{' && rightParenthesis == '}') || (leftParenthesis == '[' && rightParenthesis == ']') || (leftParenthesis == '(' && rightParenthesis == ')') || (leftParenthesis == '<' && rightParenthesis == '>');
     }
 
