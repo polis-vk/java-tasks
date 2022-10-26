@@ -157,7 +157,6 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public boolean retainAll(Collection<?> c) {
         final int capacityBefore = size;
-
         for (int i = 0; i < size; i++) {
             if (!c.contains(array[i])) {
                 remove(i);
