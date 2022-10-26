@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Bot {
-    Map<Class<? extends State>, StateHandler<? extends State>> mapOfHandlers;
+    private Map<Class<? extends State>, StateHandler<? extends State>> mapOfHandlers;
 
     /**
      * Конструктор бота, которому на вход подаются хэндлеры состояний.

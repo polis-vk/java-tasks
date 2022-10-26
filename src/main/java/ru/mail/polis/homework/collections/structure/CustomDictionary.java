@@ -9,7 +9,7 @@ import java.util.*;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-   final private Map<String, Map<Character, Integer>> dictionary;
+    private Map<String, Map<Character, Integer>> dictionary;
     private int size = 0;
 
     public CustomDictionary() {

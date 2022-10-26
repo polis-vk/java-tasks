@@ -9,25 +9,27 @@ import java.util.*;
  * Задание оценивается в 10 тугриков
  */
 public class CustomArrayList<E> implements List<E> {
-    final private int defaultSize = 2;
+    final private int defaultCapacity = 10;
     private int size;
-    private Object[] array;
-    private int currentPosition;
+    private int capacity;
+    private E[] array;
     private int modCount;
 
     public CustomArrayList() {
-        array = new Object[defaultSize];
+        array = (E[]) new Object[defaultCapacity];
+        capacity = defaultCapacity;
     }
 
     public CustomArrayList(E[] newArray) {
-        array = newArray;
-        size = newArray.length;
+        this();
+        addAll(Arrays.asList(newArray));
     }
 
-    public void increaseDimension() {
-        Object[] newArray = new Object[size + 1];
+    public void increaseDimension(int increaseValue) {
+        E[] newArray = (E[]) new Object[size + increaseValue];
         System.arraycopy(array, 0, newArray, 0, size);
         array = newArray;
+        capacity += increaseValue;
     }
 
     @Override
@@ -47,9 +49,9 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public Iterator<E> iterator() {
-        currentPosition = 0;
-        return new Iterator<>() {
-            final int fixedModCount = modCount;
+        return new Iterator<E>() {
+            private final int fixedModCount = modCount;
+            private int currentPosition = 0;
 
             @Override
             public boolean hasNext() {
@@ -58,16 +60,13 @@ public class CustomArrayList<E> implements List<E> {
 
             @Override
             public E next() {
-                if (size == 0) {
-                    throw new NoSuchElementException();
-                }
                 if (fixedModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
                 if (currentPosition >= size) {
-                    throw new IndexOutOfBoundsException();
+                    throw new NoSuchElementException();
                 }
-                return (E) array[currentPosition++];
+                return array[currentPosition++];
             }
         };
     }
@@ -93,8 +92,8 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean add(E e) {
-        if (size >= defaultSize) {
-            increaseDimension();
+        if (size >= capacity) {
+            increaseDimension(defaultCapacity);
         }
         array[size++] = e;
         modCount++;
@@ -103,14 +102,14 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean remove(Object o) {
-        for (int i = 0; i < size; i++) {
-            if (array[i] == o) {
-                array[i] = null;
-            }
+        int indexOfObject = indexOf(o);
+        if (indexOfObject != -1) {
+            System.arraycopy(array, indexOfObject + 1, array, indexOfObject, size - indexOfObject - 1);
+            size--;
+            modCount++;
+            return true;
         }
-        size--;
-        modCount++;
-        return true;
+        return false;
     }
 
     @Override
@@ -131,26 +130,32 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
+        if (c.size() == 0) {
+            return false;
+        }
         if (index > size || index < 0) {
             throw new IndexOutOfBoundsException();
         }
-        for (int i = 0; i <= c.size() - 1; i++){
-            increaseDimension();
-            size ++;
+        if (capacity < size + c.size()) {
+            increaseDimension(c.size());
         }
-        System.arraycopy(array, index, array, index + c.size() ,size - index - c.size());
+        System.arraycopy(array, index, array, index + c.size(), size - index);
         System.arraycopy(c.toArray(), 0, array, index, c.size());
         modCount++;
+        size += c.size();
         return true;
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
+        boolean isRemoved = false;
         for (Object number : c) {
-            remove(indexOf(number));
+            isRemoved = remove(number);
         }
-        modCount++;
-        return true;
+        if (isRemoved) {
+            modCount++;
+        }
+        return isRemoved;
     }
 
     @Override
@@ -179,54 +184,61 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public void clear() {
-        array = new Object[defaultSize];
+        array = (E[]) new Object[defaultCapacity];
         size = 0;
-        currentPosition = 0;
         modCount++;
     }
 
     @Override
     public E get(int index) {
-        return (E) array[index];
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        return array[index];
     }
 
     @Override
     public E set(int index, E element) {
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        E replacedElement = array[index];
         array[index] = element;
         modCount++;
-        return null;
+        return replacedElement;
     }
 
     @Override
     public void add(int index, E element) {
-        increaseDimension();
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (capacity == size) {
+            increaseDimension(defaultCapacity);
+        }
         if (index == size - 1 || (size == 0 && index == 0)) {
             add(element);
             return;
         }
-        if (index > size || index < 0) {
-            throw new IndexOutOfBoundsException();
-        }
-        size++;
-        for (int i = size - 1; i > index; i--) {
-            array[i] = array[i - 1];
-        }
+        System.arraycopy(array, index, array, index + 1, size - index);
         array[index] = element;
+        size++;
         modCount++;
     }
 
     @Override
     public E remove(int index) {
-        if (index > size || index < 0) {
+        if (index >= size || index < 0) {
             throw new IndexOutOfBoundsException();
         }
-        E result = (E) array[index];
-        for (int i = index; i < size - 1; i++) {
-            array[i] = array[i + 1];
+        E result = array[index];
+        if (index == size - 1) {
+            remove(array[index]);
+        } else {
+            System.arraycopy(array, index + 1, array, index, size - index - 1);
+            size--;
+            modCount++;
         }
-        array[size - 1] = null;
-        size--;
-        modCount++;
         return result;
     }
 
@@ -274,10 +286,10 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public ListIterator<E> listIterator(int index) {
-        currentPosition = index;
 
-        return new ListIterator<>() {
-            int fixedModCount = modCount;
+        return new ListIterator<E>() {
+            private int fixedModCount = modCount;
+            private int currentPosition = index;
 
             @Override
             public boolean hasNext() {
@@ -286,16 +298,13 @@ public class CustomArrayList<E> implements List<E> {
 
             @Override
             public E next() {
-                if (size == 0) {
+                if (currentPosition >= size) {
                     throw new NoSuchElementException();
                 }
                 if (fixedModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
-                if (currentPosition >= size) {
-                    throw new IndexOutOfBoundsException();
-                }
-                return (E) array[++currentPosition];
+                return array[++currentPosition];
             }
 
             @Override
@@ -305,16 +314,13 @@ public class CustomArrayList<E> implements List<E> {
 
             @Override
             public E previous() {
-                if (size == 0) {
+                if (currentPosition <= 0) {
                     throw new NoSuchElementException();
                 }
                 if (fixedModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
-                if (currentPosition <= 0) {
-                    throw new IndexOutOfBoundsException();
-                }
-                return (E) array[--currentPosition];
+                return array[--currentPosition];
             }
 
             @Override
@@ -322,7 +328,7 @@ public class CustomArrayList<E> implements List<E> {
                 if (hasNext()) {
                     return currentPosition + 1;
                 }
-                return currentPosition;
+                return -1;
             }
 
             @Override
@@ -369,6 +375,6 @@ public class CustomArrayList<E> implements List<E> {
         }
         E[] subList = (E[]) new Object[toIndex - fromIndex];
         System.arraycopy(array, fromIndex, subList, 0, toIndex - fromIndex);
-        return new CustomArrayList<>(subList);
+        return new CustomArrayList<E>(subList);
     }
 }
