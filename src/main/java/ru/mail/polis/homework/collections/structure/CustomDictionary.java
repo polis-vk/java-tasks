@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -22,7 +19,7 @@ public class CustomDictionary {
      * Сложность - [O(1)]
      */
     public boolean add(String value) {
-        if (value == null || value.equals("")) {
+        if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException();
         }
         return set.add(value);
@@ -67,38 +64,30 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - [O(n * Max(Character.MAX_VALUE, value.length)) ~ O(n * value.length), где n - размер словаря ]
+     * Сложность - [O(n * m * log(m)) : где n - размер словаря, m - value.length()]
      */
     public List<String> getSimilarWords(String value) {
-        int[] valueChars = getCharsCountArray(value);
         List<String> similarWords = new ArrayList<>();
-
         for (String str : set) {
-            int[] strChars = getCharsCountArray(str);
-
-            boolean charsCountsMatch = true;
-            for (int i = 0; i < strChars.length; i++) {
-                if (strChars[i] != valueChars[i]) {
-                    charsCountsMatch = false;
-                    break;
-                }
+            PriorityQueue<Integer> valueChars = new PriorityQueue<>();
+            for (char c : value.toLowerCase().toCharArray()) {
+                valueChars.add((int) c);
             }
 
-            if (charsCountsMatch) {
-                similarWords.add(str);
+            if (value.length() == str.length()) {
+                for (char c : str.toLowerCase().toCharArray()) {
+                    if (!valueChars.remove((int) c)) {
+                        break;
+                    }
+                }
+
+                if (valueChars.isEmpty()) {
+                    similarWords.add(str);
+                }
             }
         }
 
         return similarWords;
-    }
-
-    private int[] getCharsCountArray(String s) {
-        int[] charsCount = new int[Character.MAX_VALUE + 1];
-        String lower = s.toLowerCase();
-        for (char c : lower.toCharArray()) {
-            charsCount[c]++;
-        }
-        return charsCount;
     }
 
     /**
