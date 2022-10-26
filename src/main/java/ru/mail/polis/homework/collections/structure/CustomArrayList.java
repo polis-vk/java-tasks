@@ -10,22 +10,19 @@ import java.util.*;
  */
 public class CustomArrayList<E> implements List<E> {
     private static final int INITIAL_CAPACITY = 10;
-    private E[] array;
+    private E[] array = (E[]) new Object[INITIAL_CAPACITY];
     private int size;
     private int modCount = 0;
 
     public CustomArrayList() {
-        this.array = (E[]) new Object[INITIAL_CAPACITY];
     }
 
     public CustomArrayList(E[] array) {
-        this.array = array;
+        Collections.addAll(this, array);
     }
 
     public CustomArrayList(Collection<E> collection) {
-        for (E el : collection) {
-            this.add(el);
-        }
+        this.addAll(collection);
     }
 
     @Override
@@ -159,20 +156,16 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        int index = 0;
-        E[] temp = (E[]) new Object[size];
-        final int capacityBefore = array.length;
+        final int capacityBefore = size;
+
         for (int i = 0; i < size; i++) {
-            if (c.contains(array[i])) {
-                temp[index] = array[i];
-                index++;
+            if (!c.contains(array[i])) {
+                remove(i);
+                i--;
             }
         }
 
-        size = index++;
-        System.arraycopy(temp, 0, array, 0, size);
-
-        return capacityBefore != array.length;
+        return capacityBefore != size;
 
     }
 
