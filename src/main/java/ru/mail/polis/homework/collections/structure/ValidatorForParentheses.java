@@ -16,10 +16,14 @@ import java.util.Deque;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
-
     public static boolean validate(String value) {
+        if (value == null) {
+            return false;
+        }
+
         Deque<Character> deq = new ArrayDeque<>();
 
+        boolean wasAtLeastOnePair = false;
         for (char c : value.toCharArray()) {
             if (isOpeningBracket(c)) {
                 deq.addLast(c);
@@ -28,11 +32,12 @@ public class ValidatorForParentheses {
                     return false;
                 } else if (checkBracketsMatch(deq.peekLast(), c)) {
                     deq.pollLast();
+                    wasAtLeastOnePair = true;
                 }
             }
         }
 
-        return deq.size() == 0;
+        return deq.size() == 0 && wasAtLeastOnePair;
     }
 
     private static boolean isOpeningBracket(char c) {
