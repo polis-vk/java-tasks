@@ -87,7 +87,7 @@ public class CustomArrayList<E> implements List<E> {
         }
         System.arraycopy(arr, index, arr, index + c.size(), size - index);
         System.arraycopy(c.toArray(), 0, arr, index, c.size());
-        updateSize(c.size());
+        updateSizeAndModCount(c.size());
         return true;
     }
 
@@ -129,7 +129,7 @@ public class CustomArrayList<E> implements List<E> {
         }
         System.arraycopy(arr, index, arr, index + 1, size - index);
         arr[index] = element;
-        updateSize(1);
+        updateSizeAndModCount(1);
     }
 
     @Override
@@ -137,7 +137,7 @@ public class CustomArrayList<E> implements List<E> {
         checkIndex(0, size, index);
         E oldEl = arr[index];
         System.arraycopy(arr, index + 1, arr, index, size - index - 1);
-        updateSize(-1);
+        updateSizeAndModCount(-1);
         return oldEl;
     }
 
@@ -467,10 +467,10 @@ public class CustomArrayList<E> implements List<E> {
         int removeSize = to - from + 1;
         System.arraycopy(arr, to + 1, arr, from, size - removeSize);
         resize(size - removeSize + 10);
-        updateSize(-removeSize);
+        updateSizeAndModCount(-removeSize);
     }
 
-    private void updateSize(int delta) {
+    private void updateSizeAndModCount(int delta) {
         size += delta;
         modCount++;
     }
