@@ -12,6 +12,7 @@ public class CustomArrayList<E> implements List<E> {
     private static final int INITIAL_CAPACITY = 10;
     private E[] array;
     private int size;
+    private int modCount = 0;
 
     public CustomArrayList() {
         this.array = (E[]) new Object[INITIAL_CAPACITY];
@@ -46,6 +47,7 @@ public class CustomArrayList<E> implements List<E> {
     public Iterator<E> iterator() {
         return new Iterator<E>() {
             private int curIndex;
+            private int expectedModCount = modCount;
 
             @Override
             public boolean hasNext() {
@@ -54,6 +56,9 @@ public class CustomArrayList<E> implements List<E> {
 
             @Override
             public E next() {
+                if (modCount != expectedModCount) {
+                    throw new ConcurrentModificationException();
+                }
                 if (curIndex >= size) {
                     throw new NoSuchElementException();
                 }
@@ -92,6 +97,7 @@ public class CustomArrayList<E> implements List<E> {
         }
         array[size] = e;
         size++;
+        modCount++;
         return true;
     }
 
@@ -106,6 +112,7 @@ public class CustomArrayList<E> implements List<E> {
             System.arraycopy(array, position + 1, array, position, size - position - 1);
         }
         size--;
+        modCount++;
         return true;
     }
 
@@ -195,6 +202,7 @@ public class CustomArrayList<E> implements List<E> {
         }
 
         size++;
+        modCount++;
         System.arraycopy(array, index, array, index + 1, size - index - 1);
         array[index] = element;
 
@@ -209,6 +217,7 @@ public class CustomArrayList<E> implements List<E> {
             System.arraycopy(array, index + 1, array, index, size - index - 1);
         }
         size--;
+        modCount++;
 
         return res;
     }
@@ -286,6 +295,7 @@ public class CustomArrayList<E> implements List<E> {
     private class ListItr implements ListIterator<E> {
         private int curIndex;
         private int lastReturned = -1;
+        private int expectedModCount = modCount;
 
         ListItr(int index) {
             curIndex = index;
@@ -308,11 +318,13 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public E previous() {
+            checkForComodification();
+
             int i = curIndex - 1;
             if (i < 0) {
                 throw new NoSuchElementException();
             }
-            if (i >= size) // в листе другое
+            if (i >= size)
                 throw new ConcurrentModificationException();
             curIndex = i;
             lastReturned = i;
@@ -324,6 +336,9 @@ public class CustomArrayList<E> implements List<E> {
             if (lastReturned < 0) {
                 throw new IllegalStateException();
             }
+
+            checkForComodification();
+
             if (curIndex >= size) {
                 throw new IndexOutOfBoundsException();
             }
@@ -338,14 +353,20 @@ public class CustomArrayList<E> implements List<E> {
             if (lastReturned < 0) {
                 throw new IllegalStateException();
             }
+
+            checkForComodification();
+
             CustomArrayList.this.set(lastReturned, e);
         }
 
         @Override
         public void add(E e) {
+            checkForComodification();
+
             if (curIndex >= size) {
                 throw new IndexOutOfBoundsException();
             }
+
             int i = curIndex;
             CustomArrayList.this.add(i, e);
             curIndex = i + 1;
@@ -359,12 +380,20 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public E next() {
+            checkForComodification();
+
             if (curIndex >= size) {
                 throw new NoSuchElementException();
             }
             lastReturned = curIndex;
             curIndex++;
             return array[lastReturned];
+        }
+
+        private void checkForComodification() {
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
         }
     }
 
