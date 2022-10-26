@@ -17,6 +17,16 @@ public class CustomArrayList<E> implements List<E> {
         this.array = (E[]) new Object[INITIAL_CAPACITY];
     }
 
+    public CustomArrayList(E[] array) {
+        this.array = array;
+    }
+
+    public CustomArrayList(Collection<E> collection) {
+        for (E el : collection) {
+            this.add(el);
+        }
+    }
+
     @Override
     public int size() {
         return size;
@@ -278,9 +288,6 @@ public class CustomArrayList<E> implements List<E> {
         E[] temp = (E[]) new Object[array.length * 3 / 2];
         System.arraycopy(array, 0, temp, 0, size);
         array = temp;
-        if (size >= array.length) {
-            increaseCapacity();
-        }
     }
 
     private class ListItr implements ListIterator<E> {
