@@ -20,9 +20,10 @@ public class CustomDictionary {
     private final Map<Map<Character, Integer>, List<String>> data;
     private int size;
 
-    CustomDictionary(){
+    CustomDictionary() {
         data = new HashMap<>();
     }
+
     /**
      * Сохранить строку в структуру данных
      *
@@ -38,11 +39,10 @@ public class CustomDictionary {
         List<String> currentList = data.get(dictionaryForChars);
         if (currentList.isEmpty() || !currentList.contains(value)) {
             currentList.add(value);
-        } else {
-            return false;
+            size++;
+            return true;
         }
-        size++;
-        return true;
+        return false;
     }
 
     /**
