@@ -15,14 +15,15 @@ import java.util.NoSuchElementException;
  * Задание оценивается в 10 тугриков
  */
 public class CustomArrayList<E> implements List<E> {
-    int size;
-    int modCount;
-    int capacity;
-    E[] arr;
+    private static final int DEFAULT_ARRAY_CAPACITY = 10;
+    private int size;
+    private int modCount;
+    private int capacity;
+    private E[] arr;
 
     @SuppressWarnings("unchecked")
     public CustomArrayList() {
-        capacity = 10;
+        capacity = DEFAULT_ARRAY_CAPACITY;
         arr = (E[]) new Object[capacity];
     }
 
@@ -466,7 +467,7 @@ public class CustomArrayList<E> implements List<E> {
     private void clearRange(int from, int to) {
         int removeSize = to - from + 1;
         System.arraycopy(arr, to + 1, arr, from, size - removeSize);
-        resize(size - removeSize + 10);
+        resize(size - removeSize + DEFAULT_ARRAY_CAPACITY);
         updateSizeAndModCount(-removeSize);
     }
 
