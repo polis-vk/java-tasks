@@ -1,9 +1,13 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -12,11 +16,8 @@ import java.util.Map;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-
-    // Создаем словарь, ключем которого является словарь, где ключами являются буквы, а значением - сколько раз эта
-    // буква содержится в слове(словари без дубликатирования). И размер.
-    private Map<String, Map<Character, Integer>> dictionary = new HashMap<>();
-    private int size = 0;
+    private final Map<String, Set<String>> dictionary = new HashMap<>();
+    private int size;
 
     /**
      * Сохранить строку в структуру данных
@@ -26,16 +27,22 @@ public class CustomDictionary {
      * <p>
      * Сложность - []
      */
-
-    // Солжность O(n). Где n - количество элементов в строке. put ~ O(n).
+    // Сложность О(m), где m - кол-во букв в передаваемом слове.
     public boolean add(String value) {
-
         if (contains(value)) {
             return false;
         }
-        Map<Character, Integer> characterMap = createCharacterMap(value);
-        dictionary.put(value, characterMap);
-        size = dictionary.size();
+
+        String alphabetWord = CreateAlphabetWord(value);
+
+        if (dictionary.containsKey(alphabetWord)) {
+            dictionary.get(alphabetWord).add(value);
+        } else {
+            Set<String> words = new HashSet<>();
+            words.add(value);
+            dictionary.put(alphabetWord, words);
+        }
+        size++;
         return true;
     }
 
@@ -47,9 +54,19 @@ public class CustomDictionary {
      * <p>
      * Сложность - []
      */
-    // Сложность (O(1)~O(m)), где m - кол-во элементов в словаре. n - кол-во элементов в строке.
+    // Сложность в среднем О(m), где m - кол-во букв в передаваемом слове.
     public boolean contains(String value) {
-        return dictionary.containsKey(value);
+        if (dictionary.isEmpty()) {
+            return false;
+        }
+
+        String alphabetWord = CreateAlphabetWord(value);
+
+        Set<String> words = dictionary.get(alphabetWord);
+        if (words == null) {
+            return false;
+        }
+        return words.contains(value);
     }
 
     /**
@@ -60,11 +77,25 @@ public class CustomDictionary {
      * <p>
      * Сложность - []
      */
-
-    // Сложность O(n). Есть get - O(n).
+    // Сложность в среднем О(m), где m - кол-во букв в передаваемом слове.
     public boolean remove(String value) {
-        if (dictionary.remove(value, dictionary.get(value))) {
-            size = dictionary.size();
+        if (dictionary.isEmpty()) {
+            return false;
+        }
+
+        String alphabetWord = CreateAlphabetWord(value);
+        Set<String> stringSet = dictionary.get(alphabetWord);
+
+        if (stringSet.isEmpty()) {
+            return false;
+        }
+
+        if (stringSet.contains(value)) {
+            stringSet.remove(value);
+            if (stringSet.isEmpty()) {
+                dictionary.remove(alphabetWord);
+            }
+            size--;
             return true;
         }
         return false;
@@ -89,17 +120,19 @@ public class CustomDictionary {
      * <p>
      * Сложность - []
      */
-    // Сложность в лучшем случае O(m). Худший O(nm), где n - количество элементов в словаре. m - количество элементов
-    // строки.
+    // Сложность О(m), где m - кол-во букв в передаваемом слове.
     public List<String> getSimilarWords(String value) {
-        LinkedList<String> stringLinkedList = new LinkedList<>();
-        Map<Character, Integer> characterMap = createCharacterMap(value);
-        for (String obj : dictionary.keySet()) {
-            if (dictionary.get(obj).equals(characterMap)) {
-                stringLinkedList.add(obj);
-            }
+        if (dictionary.isEmpty()) {
+            return Collections.emptyList();
         }
-        return stringLinkedList;
+
+        String word = CreateAlphabetWord(value);
+        Set<String> stringSet = dictionary.get(word);
+
+        if (stringSet == null) {
+            return Collections.emptyList();
+        }
+        return new ArrayList<>(stringSet);
     }
 
     /**
@@ -114,24 +147,13 @@ public class CustomDictionary {
         return size;
     }
 
-    // Сложность O(n).
-    private Map<Character, Integer> createCharacterMap(String value) {
-
-        // Создаем представление каждого слова в словаре.
-        // Если строка пустая или null, то выкинем исключение.
+    // Сложность О(m), где m - кол-во букв в передаваемом слове.
+    private String CreateAlphabetWord(String value) {
         if (value == null || value.length() == 0) {
             throw new IllegalArgumentException();
         }
-
-        // Создаем словарь.
-        Map<Character, Integer> characterMap = new HashMap<>();
-
-        // Приводим слово в нижний регистр (от регистра не зависит задача). Создаем представление слова в словаре и
-        // записываем кол-во таких букв в слове.
-        String lowerCase = value.toLowerCase();
-        for (char obj : lowerCase.toCharArray()) {
-            characterMap.merge(obj, 1, Integer::sum);
-        }
-        return characterMap;
+        char[] alphabetWord = value.toLowerCase().toCharArray();
+        Arrays.sort(alphabetWord);
+        return new String(alphabetWord);
     }
 }

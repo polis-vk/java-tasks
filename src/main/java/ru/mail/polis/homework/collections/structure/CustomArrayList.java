@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
  */
 public class CustomArrayList<E> implements List<E> {
     private static final int DEFAULT_CAPACITY = 10;
-    private static final int GROW_COUNT = 10;
+    private static final int GROW_COUNT = 2;
     private int capacity;
     private E[] data;
     private int size = 0;
@@ -55,7 +55,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public Iterator<E> iterator() {
         return new Iterator<E>() {
-            private final int   fixedModCount = modCount;
+            private final int fixedModCount = modCount;
             private int index = 0;
 
             @Override
@@ -78,8 +78,6 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public Object[] toArray() {
-
-        // Создаем массив той же размерности, чтобы не ссылаться на данные из класса.
         Object[] newArr = new Object[size];
         System.arraycopy(data, 0, newArr, 0, size);
         return newArr;
@@ -87,13 +85,6 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public <T> T[] toArray(T[] a) {
-
-        // Проверяем на null.
-        if (a == null) {
-            throw new NullPointerException();
-        }
-
-        // Если размеры совпадают, перекопируем все в массив. Иначе - создадим массив с переопределением типов.
         if (a.length == size) {
             System.arraycopy(data, 0, a, 0, size);
             return a;
@@ -106,7 +97,7 @@ public class CustomArrayList<E> implements List<E> {
         if (size < capacity) {
             data[size] = e;
         } else {
-            capacity += GROW_COUNT;
+            capacity *= GROW_COUNT;
             E[] newArray = (E[]) new Object[capacity];
             System.arraycopy(data, 0, newArray, 0, size);
             newArray[size] = e;
@@ -119,7 +110,6 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean remove(Object o) {
-
         int index = indexOf(o);
         if (index != -1) {
             System.arraycopy(data, index + 1, data, index, size - index - 1);
@@ -142,41 +132,27 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-
-        // Используем здесь вариант с индексом, как добавление в конец массива.
         return addAll(size, c);
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-
-        // Проверка на неизменяемость.
         if (c.size() == 0) {
             return false;
         }
-        // Проверяем на выход за границы.
-        if (index > size | index < 0) {
-            throw new IndexOutOfBoundsException();
-        }
+        IndexOutOfBoundsCheck(index, false);
 
-        // Новый размер массива.
         int allSize = size + c.size();
-        /*
-         * Проверяем, выходит ли новый размер за значение емкости. Если да, то создаем новый массив. Далее по частям
-         * копируем старый массив и добавляем кусок из переданной коллекции.
-         */
-
+        E[] newArr;
         if (allSize >= capacity) {
-            E[] newArr = (E[]) new Object[allSize];
-            System.arraycopy(data, 0, newArr, 0, index);
-            System.arraycopy(c.toArray(), 0, newArr, index, c.size());
-            System.arraycopy(data, index, newArr, index + c.size(), size - index);
-            data = newArr;
+            newArr = (E[]) new Object[allSize];
         } else {
-            System.arraycopy(data, 0, data, 0, index);
-            System.arraycopy(c.toArray(), 0, data, index, c.size());
-            System.arraycopy(data, index, data, index + c.size(), size - index);
+            newArr = data;
         }
+        System.arraycopy(data, 0, newArr, 0, index);
+        System.arraycopy(c.toArray(), 0, newArr, index, c.size());
+        System.arraycopy(data, index, newArr, index + c.size(), size - index);
+        data = newArr;
         size = allSize;
         modCount++;
         return true;
@@ -184,10 +160,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean removeAll(Collection<?> c) {
-
         boolean isChanged = false;
-
-        // Каждый элемент переданной коллекции удаляем в массиве, если он найден.
         for (Object obj : c) {
             isChanged = remove(obj);
         }
@@ -196,52 +169,34 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean retainAll(Collection<?> c) {
-
-        // Счетчик изменений.
-        boolean Changed = false;
-
-        // Ищем несовпадающий элемент. После удаления начинаем искать с той же позиции.
+        boolean isChanged = false;
         int i = 0;
         while (i < size) {
             if (!c.contains(data[i])) {
-                Changed = remove(data[i]);
+                isChanged = remove(data[i]);
             } else {
                 i++;
             }
         }
-        return Changed;
+        return isChanged;
     }
 
     @Override
     public void clear() {
-
-        // Проходимся по всему массиву и присваиваем null. Изменяем размер и фиксируем изменения.
-        for (int i = 0; i < size; i++) {
-            data[i] = null;
-        }
+        data = (E[]) new Object[DEFAULT_CAPACITY];
         size = 0;
         modCount++;
     }
 
     @Override
     public E get(int index) {
-
-        // Если вышли за границы - выкидываем исключаение.
-        if (index >= size | index < 0) {
-            throw new IndexOutOfBoundsException();
-        }
+        IndexOutOfBoundsCheck(index, true);
         return data[index];
     }
 
     @Override
     public E set(int index, E element) {
-
-        // Проверка на выход за границы.
-        if (index >= size | index < 0) {
-            throw new IndexOutOfBoundsException();
-        }
-
-        // Запоминаем элемент, котроый заменили. Заменяем.
+        IndexOutOfBoundsCheck(index, true);
         E returnElement = data[index];
         data[index] = element;
         modCount++;
@@ -250,65 +205,35 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public void add(int index, E element) {
-
-        // Првоеряем на выход за границы.
-        if (index > size | index < 0) {
-            throw new IndexOutOfBoundsException();
-        }
-        /*
-         * Если  размер равен емкости, то необходимо сначала создать новый массив и скопировать туда необходимые значе-
-         * ния.
-         */
+        IndexOutOfBoundsCheck(index, false);
         if (size == capacity) {
-
-            // Увеличиваем емкость. Создаем новый массив, котроый потом будем использовать.
             capacity += GROW_COUNT;
             E[] newArray = (E[]) new Object[capacity];
-            /*
-             * Случай, когда элемент добавляется не в конец. Вставляем значение. Далее копируем старые данные со смеще-
-             * нием.
-             */
+
             if (index < size) {
                 newArray[index] = element;
                 System.arraycopy(data, 0, newArray, 0, index);
                 System.arraycopy(data, index, newArray, index + 1, size - index);
-
-                //Случай, когда элемент добавляется в конец. Копируем старые данные и вставляем элемент в конец.
             } else {
                 System.arraycopy(data, 0, newArray, 0, size);
                 newArray[index] = element;
             }
-
-            // Перессылаемся.
             data = newArray;
-
-            // Случай, когда емкость увеличивать не надо.
         } else {
-
-            // Если добавляем не в конец - смещаем в тот же массив. Добавляем элемент. Если в конец - просто добавляем.
             if (index < size) {
                 System.arraycopy(data, index, data, index + 1, size - index);
             }
             data[index] = element;
         }
-
-        // Изменение размера и фиксация изменений.
         size++;
         modCount++;
     }
 
     @Override
     public E remove(int index) {
-
-        // Првоеряем на выход за границы.
-        if (index >= size | index < 0) {
-            throw new IndexOutOfBoundsException();
-        }
-        // Запоминаем элемент. Сдвигаем все последующие.
+        IndexOutOfBoundsCheck(index, true);
         E removeElement = data[index];
         System.arraycopy(data, index + 1, data, index, size - index - 1);
-
-        // Изменяем размер, отслеживаем изменения.
         size--;
         modCount++;
         return removeElement;
@@ -316,17 +241,10 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        // Если объект null, то ищем в массиве элемент с null и возвращаем его индекс.
-        if (o == null) {
-            for (int i = 0; i < size; i++) {
-                if (data[i] == null) {
-                    return i;
-                }
-            }
-        }
-
         for (int i = 0; i < size; i++) {
-            if (data[i].equals(o)) {
+            if (o == null && data[i] == null) {
+                return i;
+            } else if (o != null && o.equals(data[i])) {
                 return i;
             }
         }
@@ -335,17 +253,10 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int lastIndexOf(Object o) {
-        // Если объект null, то ищем в массиве элемент с null и возвращаем его индекс.
-        if (o == null) {
-            for (int i = size - 1; i >= 0; i--) {
-                if (data[i] == null) {
-                    return i;
-                }
-            }
-        }
-
         for (int i = size - 1; i >= 0; i--) {
-            if (data[i].equals(o)) {
+            if (o == null && data[i] == null) {
+                return i;
+            } else if (o != null && o.equals(data[i])) {
                 return i;
             }
         }
@@ -354,8 +265,6 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public ListIterator<E> listIterator() {
-
-        // Определеним итератор через итератор с индексом - началом.
         return listIterator(0);
     }
 
@@ -445,17 +354,24 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-
-        // Проверим индексы на валидность.
         if (fromIndex < 0 || toIndex > size || fromIndex > toIndex) {
             throw new IndexOutOfBoundsException();
         }
-
-        // Создадим массив, куда дальше сложим часть массива.
         E[] newArr = (E[]) new Object[toIndex - fromIndex];
         System.arraycopy(data, fromIndex, newArr, 0, toIndex - fromIndex);
-
-        // Возвращаем конструктор, принимающий массив элементов.
         return new CustomArrayList(newArr);
     }
+
+    private void IndexOutOfBoundsCheck(int index, boolean greaterOrEquals) {
+        if (greaterOrEquals) {
+            if (index >= size | index < 0) {
+                throw new IndexOutOfBoundsException();
+            }
+        }
+        if (index > size | index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+    }
 }
+
+
