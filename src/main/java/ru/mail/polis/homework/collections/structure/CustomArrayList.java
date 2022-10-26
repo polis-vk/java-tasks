@@ -346,6 +346,7 @@ public class CustomArrayList<E> implements List<E> {
             CustomArrayList.this.remove(lastReturned);
             curIndex = lastReturned;
             lastReturned = -1;
+            expectedModCount = modCount;
         }
 
         @Override
@@ -357,6 +358,7 @@ public class CustomArrayList<E> implements List<E> {
             checkForComodification();
 
             CustomArrayList.this.set(lastReturned, e);
+            expectedModCount = modCount;
         }
 
         @Override
@@ -371,6 +373,7 @@ public class CustomArrayList<E> implements List<E> {
             CustomArrayList.this.add(i, e);
             curIndex = i + 1;
             lastReturned = -1;
+            expectedModCount = modCount;
         }
 
         @Override
