@@ -17,66 +17,61 @@ import java.util.Stack;
 public class ValidatorForParentheses {
 
     public static boolean validate(String value) {
-        Stack<Integer> stack = new Stack<>();
-        char a;
-        int i, k;
-        boolean flag = true;
-        if (value == null || value.equals("")) {
+        if (value == null || value.isEmpty()) {
             return false;
         } else if (!(value.contains("{") || value.contains("}") || value.contains("[") || value.contains("]")
                 || value.contains("<") || value.contains(">") || value.contains("(") || value.contains(")"))) {
             return false;
         }
-        for (i = 0; i < value.length(); i++) {
-            a = value.charAt(i);
-            switch (a) {
+        Stack<Character> stack = new Stack<>();
+        int indexOfCharacter, popElement;
+        boolean flag = true;
+        for (indexOfCharacter = 0; indexOfCharacter < value.length(); indexOfCharacter++) {
+            char characterString = value.charAt(indexOfCharacter);
+            switch (characterString) {
                 case '(':
-                    stack.push(1);
+                    stack.push('(');
                     break;
                 case '[':
-                    stack.push(2);
+                    stack.push('[');
                     break;
                 case '{':
-                    stack.push(3);
+                    stack.push('{');
                     break;
                 case '<':
-                    stack.push(4);
+                    stack.push('<');
                     break;
                 case ')':
                     if (stack.isEmpty()) {
                         flag = false;
                         break;
                     }
-                    k = stack.peek();
-                    stack.pop();
-                    if (k != 1) flag = false;
+                    popElement = stack.pop();
+                    if (popElement != '(') flag = false;
                     break;
                 case ']':
                     if (stack.isEmpty()) {
                         flag = false;
                         break;
                     }
-                    k = stack.peek();
-                    stack.pop();
-                    if (k != 2) flag = false;
+                    popElement = stack.pop();
+                    if (popElement != '[') flag = false;
                     break;
                 case '}':
                     if (stack.isEmpty()) {
                         flag = false;
                         break;
                     }
-                    k = stack.peek();
-                    stack.pop();
-                    if (k != 3) flag = false;
+                    popElement = stack.pop();
+                    if (popElement != '{') flag = false;
                     break;
                 case '>':
                     if (stack.isEmpty()) {
                         flag = false;
                         break;
                     }
-                    k = stack.peek();
-                    stack.pop();
-                    if (k != 4) flag = false;
+                    popElement = stack.pop();
+                    if (popElement != '<') flag = false;
                     break;
                 default:
                     break;

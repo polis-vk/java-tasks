@@ -19,41 +19,6 @@ public class CustomArrayList<E> implements List<E> {
 
     private int modCount;
 
-    public void ensureCapacity(int minCapacity) {
-        int minExpand = (array != EMPTY_ARRAY) ? 0 : INITIAL_CAPACITY;
-        if (minCapacity > minExpand) {
-            ensureExplicitCapacity(minCapacity);
-        }
-    }
-
-    private void ensureExplicitCapacity(int minCapacity) {
-        modCount++;
-        if (minCapacity - array.length > 0)
-            grow(minCapacity);
-    }
-
-    private void grow(int minCapacity) {
-        int oldCapacity = array.length;
-        int newCapacity = oldCapacity + (oldCapacity >> 1);
-        if (newCapacity - minCapacity < 0)
-            newCapacity = minCapacity;
-        if (newCapacity - MAX_ARRAY_SIZE > 0)
-            newCapacity = hugeCapacity(minCapacity);
-        array = Arrays.copyOf(array, newCapacity);
-    }
-
-    private static int hugeCapacity(int minCapacity) {
-        if (minCapacity < 0)
-            throw new OutOfMemoryError();
-        return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
-    }
-
-    private void checkRange(int index) {
-        if (index < 0 || index >= size + 1) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     public CustomArrayList() {
         this(INITIAL_CAPACITY);
     }
@@ -82,22 +47,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return new Iterator<E>() {
-            int nextElement;
-
-            @Override
-            public boolean hasNext() {
-                return nextElement != size();
-            }
-
-            @Override
-            public E next() {
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                return array[nextElement++];
-            }
-        };
+        return listIterator();
     }
 
     @Override
@@ -182,8 +132,8 @@ public class CustomArrayList<E> implements List<E> {
     public boolean retainAll(Collection<?> c) {
         Objects.requireNonNull(c);
         boolean flag = false;
-        for (int i = size - 1; i >= 0; i--) {
-            if (!c.contains(array[i])) {
+        for (int i = size() - 1; i >= 0; i--) {
+            if (!c.contains(get(i))) {
                 remove(i);
                 flag = true;
             }
@@ -209,7 +159,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public E set(int index, E element) {
         checkRange(index);
-        ensureCapacity(size() + 1);
+        modCount++;
         array[index] = element;
         return array[index];
     }
@@ -283,9 +233,17 @@ public class CustomArrayList<E> implements List<E> {
         return subList;
     }
 
+    public void ensureCapacity(int minCapacity) {
+        int minExpand = (array != EMPTY_ARRAY) ? 0 : INITIAL_CAPACITY;
+        if (minCapacity > minExpand) {
+            ensureExplicitCapacity(minCapacity);
+        }
+    }
+
     private class CustomListIterator implements ListIterator<E> {
         private int index;
         private int lastIndex = -1;
+        int expectedModCount = modCount;
 
         CustomListIterator(int index) {
             this.index = index;
@@ -303,8 +261,9 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public E next() {
+            checkForComodification();
             if (!hasNext()) {
-                throw new IndexOutOfBoundsException();
+                throw new NoSuchElementException();
             }
             lastIndex = index;
             index++;
@@ -313,8 +272,9 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public E previous() {
+            checkForComodification();
             if (!hasPrevious()) {
-                throw new IndexOutOfBoundsException();
+                throw new NoSuchElementException();
             }
             int i = index - 1;
             index = i;
@@ -334,22 +294,61 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public void remove() {
+            checkForComodification();
             CustomArrayList.this.remove(lastIndex);
             index = lastIndex;
             lastIndex = -1;
+            expectedModCount = modCount;
         }
 
         @Override
         public void set(E e) {
+            checkForComodification();
             CustomArrayList.this.set(lastIndex, e);
+            expectedModCount = modCount;
         }
 
         @Override
         public void add(E e) {
+            checkForComodification();
             int i = index;
             CustomArrayList.this.add(i, e);
             index = i + 1;
             lastIndex = -1;
+            expectedModCount = modCount;
+        }
+
+        private void checkForComodification() {
+            if (expectedModCount != modCount)
+                throw new ConcurrentModificationException();
+        }
+    }
+
+    private void ensureExplicitCapacity(int minCapacity) {
+        modCount++;
+        if (minCapacity - array.length > 0)
+            grow(minCapacity);
+    }
+
+    private void grow(int minCapacity) {
+        int oldCapacity = array.length;
+        int newCapacity = oldCapacity + (oldCapacity >> 1);
+        if (newCapacity - minCapacity < 0)
+            newCapacity = minCapacity;
+        if (newCapacity - MAX_ARRAY_SIZE > 0)
+            newCapacity = hugeCapacity(minCapacity);
+        array = Arrays.copyOf(array, newCapacity);
+    }
+
+    private static int hugeCapacity(int minCapacity) {
+        if (minCapacity < 0)
+            throw new OutOfMemoryError();
+        return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
+    }
+
+    private void checkRange(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
         }
     }
 }
