@@ -266,7 +266,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-        if (fromIndex < 0 || toIndex > size || fromIndex > toIndex) {
+        if (fromIndex < 0 || toIndex >= size || fromIndex > toIndex) {
             throw new IndexOutOfBoundsException();
         }
 
