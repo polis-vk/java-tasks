@@ -24,7 +24,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - [O(n*Log[n]), где n - длина массива]
+     * Сложность - [O(n), где n - длина строки]
      */
     public boolean add(String value) {
         if (value == null || value.isEmpty()) {
@@ -51,7 +51,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - [O(n*Log[n]), где n - длина массива]
+     * Сложность - [O(n), где n - длина строки]
      */
     public boolean contains(String value) {
         String sortedLowerCaseValue = getSortedLowerCaseString(value);
@@ -64,7 +64,7 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - [O(n*Log[n]), где n - длина массива]
+     * Сложность - [O(n), где n - длина строки]
      */
     public boolean remove(String value) {
         if (!contains(value)) {
@@ -98,7 +98,7 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - [O(n*Log[n]), где n - длина массива]
+     * Сложность - [O(n), где n - длина строки]
      */
     public List<String> getSimilarWords(String value) {
         String sortedLowerCaseValue = getSortedLowerCaseString(value);
@@ -119,8 +119,37 @@ public class CustomDictionary {
 
     private String getSortedLowerCaseString(String value) {
         char[] chars = value.toLowerCase().toCharArray();
-        Arrays.sort(chars);
+        countingSort(chars, 0, chars.length);
         return new String(chars);
     }
 
+    /**
+     * Сортировка подсчётом.
+     * <p>
+     * Сложность - [O(n), где n - длина массива]
+     */
+    private static void countingSort(char[] array, int fromInclusive, int toExclusive) {
+        int maxValue = array[fromInclusive];
+        int minValue = array[fromInclusive];
+        for (int i = fromInclusive; i < toExclusive; i++) {
+            if (array[i] > maxValue) {
+                maxValue = array[i];
+            }
+            if (array[i] < minValue) {
+                minValue = array[i];
+            }
+        }
+        char[][] sortedArray = new char[2][maxValue - minValue + 1];
+        int counter;
+        for (int i = fromInclusive; i < toExclusive; i++) {
+            sortedArray[0][array[i] - minValue] = array[i];
+            sortedArray[1][array[i] - minValue]++;
+        }
+        counter = 0;
+        for (int i = 0; counter < array.length; i++) {
+            for (int j = 0; j < (int) sortedArray[1][i]; j++) {
+                array[counter++] = sortedArray[0][i];
+            }
+        }
+    }
 }
