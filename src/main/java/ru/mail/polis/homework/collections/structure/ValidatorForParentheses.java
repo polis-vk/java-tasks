@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 /**
@@ -22,30 +26,25 @@ public class ValidatorForParentheses {
             return false;
         }
         Stack<Character> stack = new Stack<>();
-        char currentBracket;
+        char currentChar;
         boolean thereWasBracket = false;
+        Set<Character> openedBraces = new HashSet<>(Arrays.asList('(', '[', '{', '<'));
+        Map<Character, Character> mapBraces = new HashMap<>();
+        mapBraces.put(')', '(');
+        mapBraces.put(']', '[');
+        mapBraces.put('}', '{');
+        mapBraces.put('>', '<');
         for (int index = 0; index < value.length(); index++) {
-            currentBracket = value.charAt(index);
-            if (!Arrays.asList('(', '[', '{', '<').contains(currentBracket)) {
-                if (Arrays.asList(')', ']', '}', '>').contains(currentBracket)) {
-                    thereWasBracket = true;
-                    if (!stack.isEmpty() && check(stack.peek(), currentBracket)) {
-                        stack.pop();
-                    } else {
-                        stack.push(currentBracket);
-                        break;
-                    }
-                }
-            } else {
+            currentChar = value.charAt(index);
+            if (openedBraces.contains(currentChar)) {
                 thereWasBracket = true;
-                stack.push(currentBracket);
+                stack.push(currentChar);
+            } else {
+                if (!stack.isEmpty() && stack.peek() == mapBraces.get(currentChar)) {
+                    stack.pop();
+                }
             }
         }
         return stack.isEmpty() && thereWasBracket;
-    }
-
-    public static boolean check(Character openingBracket, Character closingBracket) {
-        return (openingBracket == '(' && closingBracket == ')') || (openingBracket == '[' && closingBracket == ']') ||
-                (openingBracket == '{' && closingBracket == '}') || (openingBracket == '<' && closingBracket == '>');
     }
 }
