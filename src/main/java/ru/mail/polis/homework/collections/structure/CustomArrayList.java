@@ -333,8 +333,9 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-        checkIndex(fromIndex);
-        checkIndex(toIndex);
+        if (fromIndex < 0 || fromIndex > size || toIndex < 0 || toIndex > size) {
+            throw new IndexOutOfBoundsException();
+        }
         if (fromIndex > toIndex) {
             throw new IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
         }
