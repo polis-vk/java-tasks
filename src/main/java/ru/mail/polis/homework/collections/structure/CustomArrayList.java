@@ -43,7 +43,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return new CustomIterator(0, size,this);
+        return new CustomIterator(0, size);
     }
 
     @Override
@@ -158,13 +158,13 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public ListIterator<E> listIterator(int index) {
-        return new CustomListIterator(0, size, index, this);
+        return new CustomListIterator(0, size, index);
     }
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
         checkSubListRange(0, size, fromIndex, toIndex);
-        return new SubList(this, fromIndex, toIndex);
+        return new SubList(fromIndex, toIndex);
     }
 
     private class CustomListIterator implements ListIterator<E> {
@@ -176,15 +176,13 @@ public class CustomArrayList<E> implements List<E> {
         int nextI;
         final int from;
         int to;
-        final CustomArrayList<E> list;
 
-        public CustomListIterator(int fromIndex, int toIndex, int index, CustomArrayList<E> iterableList) {
+        public CustomListIterator(int fromIndex, int toIndex, int index) {
             CustomArrayList.checkIndex(fromIndex, toIndex, index);
             from = fromIndex;
             to = toIndex;
             nextI = index;
-            list = iterableList;
-            iteratorModCount = list.modCount;
+            iteratorModCount = CustomArrayList.this.modCount;
         }
 
         @Override
@@ -286,11 +284,9 @@ public class CustomArrayList<E> implements List<E> {
         private final int fixedModCount = modCount;
         private final int to;
         private int nextI;
-        private final List<E> list;
 
-        public CustomIterator(int fromIndex, int toIndex, List<E> iterableList) {
+        public CustomIterator(int fromIndex, int toIndex) {
             to = toIndex;
-            list = iterableList;
             nextI = fromIndex;
         }
 
@@ -306,17 +302,15 @@ public class CustomArrayList<E> implements List<E> {
             } else if (fixedModCount != modCount) {
                 throw new ConcurrentModificationException();
             }
-            return list.get(nextI++);
+            return CustomArrayList.this.get(nextI++);
         }
     }
 
     private class SubList implements List<E> {
-        final CustomArrayList<E> list;
         final int from;
         int to;
 
-        public SubList(CustomArrayList<E> iterableList, int fromIndex, int toIndex) {
-            list = iterableList;
+        public SubList(int fromIndex, int toIndex) {
             from = fromIndex;
             to = toIndex;
         }
@@ -338,28 +332,27 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public Iterator<E> iterator() {
-            return new CustomIterator(from, to,this);
+            return new CustomIterator(from, to);
         }
 
         @Override
         public Object[] toArray() {
-            return list.toArrayRange(from, to);
+            return CustomArrayList.this.toArrayRange(from, to);
         }
 
         @Override
         public <T> T[] toArray(T[] ts) {
-            return list.toArrayRange(ts, from, to);
+            return CustomArrayList.this.toArrayRange(ts, from, to);
         }
 
         @Override
-        public boolean add(E e) {
-            list.add(to++, e);
+        public boolean add(E e) { CustomArrayList.this.add(to++, e);
             return true;
         }
 
         @Override
         public boolean remove(Object o) {
-            return list.removeRange(from, to, o);
+            return CustomArrayList.this.removeRange(from, to, o);
         }
 
         @Override
@@ -375,41 +368,39 @@ public class CustomArrayList<E> implements List<E> {
         @Override
         public boolean addAll(int i, Collection<? extends E> collection) {
             checkIndex(from, to + 1, i);
-            return list.addAll(from + i, collection);
+            return CustomArrayList.this.addAll(from + i, collection);
         }
 
         @Override
         public boolean removeAll(Collection<?> collection) {
-            return list.removeAllRange(from, to, collection);
+            return CustomArrayList.this.removeAllRange(from, to, collection);
         }
 
         @Override
         public boolean retainAll(Collection<?> collection) {
-            return list.retainAllRange(from, to, collection);
+            return CustomArrayList.this.retainAllRange(from, to, collection);
         }
 
         @Override
-        public void clear() {
-            list.clearRange(from, to);
+        public void clear() { CustomArrayList.this.clearRange(from, to);
             to = from;
         }
 
         @Override
         public E get(int i) {
             checkIndex(from, to, i);
-            return list.get(from + i);
+            return CustomArrayList.this.get(from + i);
         }
 
         @Override
         public E set(int i, E e) {
             checkIndex(from, to, i);
-            return list.set(from + i, e);
+            return CustomArrayList.this.set(from + i, e);
         }
 
         @Override
         public void add(int i, E e) {
-            checkIndex(from, to + 1, i);
-            list.add(from + i, e);
+            checkIndex(from, to + 1, i); CustomArrayList.this.add(from + i, e);
             to++;
         }
 
@@ -417,17 +408,17 @@ public class CustomArrayList<E> implements List<E> {
         public E remove(int i) {
             checkIndex(from, to, i);
             to--;
-            return list.remove(from + i);
+            return CustomArrayList.this.remove(from + i);
         }
 
         @Override
         public int indexOf(Object o) {
-            return list.indexOfRange(from, to, o);
+            return CustomArrayList.this.indexOfRange(from, to, o);
         }
 
         @Override
         public int lastIndexOf(Object o) {
-            return list.lastIndexOfRange(from, to, o);
+            return CustomArrayList.this.lastIndexOfRange(from, to, o);
         }
 
         @Override
@@ -438,13 +429,13 @@ public class CustomArrayList<E> implements List<E> {
         @Override
         public ListIterator<E> listIterator(int i) {
             checkIndex(from, to, i);
-            return new CustomListIterator(from, to, i, list);
+            return new CustomListIterator(from, to, i);
         }
 
         @Override
         public List<E> subList(int fromIndex, int toIndex) {
             checkSubListRange(from, to, fromIndex, toIndex);
-            return new SubList(list, fromIndex, toIndex);
+            return new SubList(fromIndex, toIndex);
         }
     }
 
