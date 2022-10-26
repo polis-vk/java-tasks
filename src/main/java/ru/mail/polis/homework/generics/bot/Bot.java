@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Bot {
-    private Map<State, StateHandler<? extends State>> stateHandlerMap = new HashMap<>();
+    private Map<Class<? extends State>, StateHandler<? extends State>> stateHandlerMap;
 
     /**
      * Конструктор бота, которому на вход подаются хэндлеры состояний.
@@ -17,6 +17,7 @@ public class Bot {
      * 1 тугрик
      */
     public Bot(List<StateHandler> handlers) {
+        stateHandlerMap = new HashMap<>();
         for (StateHandler<?> handler : handlers) {
             stateHandlerMap.put(handler.getHandlingStateClass(), handler);
         }
@@ -28,6 +29,6 @@ public class Bot {
      * 1 тугрик
      */
     public void handleState(State state) {
-        stateHandlerMap.get(state).handle();
+        stateHandlerMap.get(state.getClass()).handle();
     }
 }

@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,16 +16,17 @@ public class CustomDictionary {
     private int size = 0;
 
     private int getLetterSet(char[] letters) {
-        //zyxwvutsrqponmlkjihgfedcba
-        //00000000000000000000000000
         int set = 0;
         char buf;
         for (char c : letters) {
             buf = c;
+            //Переводим букву верхнего регистра в нижний
             if (buf >= 97) {
                 buf -= 32;
             }
+            //Переводим номер буквы по ASCII к номеру по порядку в алфавите
             buf -= 65;
+            //Заполняем соответсвующий номеру по порядку в алфавите бит в числе
             set = set | (1 << buf);
         }
         return set;
@@ -44,10 +44,9 @@ public class CustomDictionary {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        if (contains(value)) {
+        if (strings.put(value, getLetterSet(value.toCharArray())) != null) {
             return false;
         }
-        strings.put(value, getLetterSet(value.toCharArray()));
         size++;
         return true;
     }

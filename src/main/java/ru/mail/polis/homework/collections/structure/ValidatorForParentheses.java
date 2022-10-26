@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Задание оценивается в 2 тугрика.
  * Одна из самых популярных задач.
@@ -16,6 +19,12 @@ public class ValidatorForParentheses {
 
     static Node head;
     static int size = 0;
+    static final Map<Character, Character> bracketsPairs = new HashMap<Character, Character>() {{
+        put(')', '(');
+        put('}', '{');
+        put(']', '[');
+        put('>', '<');
+    }};
 
     private static class Node {
         private Node next;
@@ -32,12 +41,10 @@ public class ValidatorForParentheses {
 
     private static void push(char value) {
         Node node = new Node(value);
-        if (head == null) {
-            head = node;
-        } else {
+        if (head != null) {
             node.next = head;
-            head = node;
         }
+        head = node;
         size++;
     }
 
@@ -51,58 +58,40 @@ public class ValidatorForParentheses {
         return res;
     }
 
+    private static void clear() {
+        head = null;
+        size = 0;
+    }
+
+    private static boolean isMatchWithLast(char c) {
+        return pop() == bracketsPairs.get(c);
+    }
+
     private static boolean solve(String sequence) {
         if (sequence == null || sequence.isEmpty()) {
             return false;
         }
+        boolean wasBracket = false;
+        char c;
         for (int i = 0; i < sequence.length(); i++) {
-            switch (sequence.charAt(i)) {
-                case '(': {
-                    push('(');
-                    break;
-                }
-                case '{': {
-                    push('{');
-                    break;
-                }
-                case '[': {
-                    push('[');
-                    break;
-                }
-                case '<': {
-                    push('<');
-                    break;
-                }
-                case ')': {
-                    if (pop() != '(') {
-                        return false;
-                    }
-                    break;
-                }
-                case '}': {
-                    if (pop() != '{') {
-                        return false;
-                    }
-                    break;
-                }
-                case ']': {
-                    if (pop() != '[') {
-                        return false;
-                    }
-                    break;
-                }
-                case '>': {
-                    if (pop() != '<') {
-                        return false;
-                    }
-                    break;
+            c = sequence.charAt(i);
+            if (c == '(' || c == '{' || c == '[' || c == '<') {
+                wasBracket = true;
+                push(c);
+                continue;
+            }
+            if (c == ')' || c == '}' || c == ']' || c == '>') {
+                wasBracket = true;
+                if (!isMatchWithLast(c)) {
+                    return false;
                 }
             }
         }
-        return size == 0;
+        return wasBracket && size == 0;
     }
 
     public static boolean validate(String value) {
+        clear();
         return solve(value);
     }
 }

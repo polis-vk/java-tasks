@@ -23,11 +23,7 @@ public class CustomArrayList<E> implements List<E> {
     private int modCount = 0;
 
     public CustomArrayList(int capacity) {
-        if (capacity > 0) {
-            array = new Object[capacity];
-            return;
-        }
-        array = new Object[]{};
+        array = capacity > 0 ? new Object[capacity] : new Object[]{};
     }
 
     public CustomArrayList(Object[] array) {
@@ -88,8 +84,9 @@ public class CustomArrayList<E> implements List<E> {
         }
 
         final void checkForComodification() {
-            if (modCount != expectedModCount)
+            if (modCount != expectedModCount) {
                 throw new ConcurrentModificationException();
+            }
         }
     }
 
@@ -100,11 +97,13 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public <T> T[] toArray(T[] a) {
-        if (a.length < size)
+        if (a.length < size) {
             return (T[]) Arrays.copyOf(array, size, a.getClass());
+        }
         System.arraycopy(array, 0, a, 0, size);
-        if (a.length > size)
+        if (a.length > size) {
             a[size] = null;
+        }
         return a;
     }
 
@@ -239,17 +238,13 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public int indexOf(Object o) {
         Object[] es = array;
-        if (o == null) {
-            for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
+            if (o == null) {
                 if (es[i] == null) {
                     return i;
                 }
-            }
-        } else {
-            for (int i = 0; i < size; i++) {
-                if (o.equals(es[i])) {
-                    return i;
-                }
+            } else if (o.equals(es[i])) {
+                return i;
             }
         }
         return -1;
@@ -258,17 +253,13 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public int lastIndexOf(Object o) {
         Object[] es = array;
-        if (o == null) {
-            for (int i = size - 1; i >= 0; i--) {
+        for (int i = size - 1; i >= 0; i--) {
+            if (o == null) {
                 if (es[i] == null) {
                     return i;
                 }
-            }
-        } else {
-            for (int i = size - 1; i >= 0; i--) {
-                if (o.equals(es[i])) {
-                    return i;
-                }
+            } else if (o.equals(es[i])) {
+                return i;
             }
         }
         return -1;
@@ -369,13 +360,14 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-        if (fromIndex < 0)
+        if (fromIndex < 0) {
             throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
-        if (toIndex > size)
+        } else if (toIndex > size) {
             throw new IndexOutOfBoundsException("toIndex = " + toIndex);
-        if (fromIndex > toIndex)
+        } else if (fromIndex > toIndex) {
             throw new IllegalArgumentException("fromIndex(" + fromIndex +
                     ") > toIndex(" + toIndex + ")");
+        }
         return new CustomArrayList<E>(this, fromIndex, toIndex);
     }
 }
