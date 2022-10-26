@@ -129,9 +129,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkIndex(index);
         int cursor = index;
         for (E e : c) {
             add(cursor, e);
@@ -178,22 +176,19 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E get(int index) {
-        if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkIndex(index);
         return array[index];
     }
 
     @Override
     public E set(int index, E element) {
+        checkIndex(index);
         return array[index] = element;
     }
 
     @Override
     public void add(int index, E element) {
-        if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkIndex(index);
 
         if (size >= array.length) {
             increaseCapacity();
@@ -207,9 +202,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E remove(int index) {
-        if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkIndex(index);
 
         E res = array[index];
         if (index != size - 1) {
@@ -372,6 +365,12 @@ public class CustomArrayList<E> implements List<E> {
             lastReturned = curIndex;
             curIndex++;
             return array[lastReturned];
+        }
+    }
+
+    private void checkIndex(int index) {
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException();
         }
     }
 }
