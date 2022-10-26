@@ -5,13 +5,8 @@ package ru.mail.polis.homework.oop.adapter;
  * для проверки правильной имплементации
  */
 public class JsonCsvDataAdapter extends CsvData {
-    public JsonCsvDataAdapter(String text) {
-        super(adjustJsonToCsv(text));
-    }
-
-    private static String adjustJsonToCsv(String text) {
-        return text.replaceAll("[{},\"]", "")
-                .replace(":", ",");
+    public JsonCsvDataAdapter(String adjustedText) {
+        super(adjustedText.replaceAll("[{},\"]", "")
+                .replace(":", ","));
     }
 }
-
