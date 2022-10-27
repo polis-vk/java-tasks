@@ -10,66 +10,70 @@ import java.util.stream.Collectors;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private Map<Set<Character>, Set<String>> dictionary = new HashMap<>();
+    private final Map<Set<Character>, Set<String>> dictionary = new HashMap<>();
     private int size = 0;
 
     /**
      * Сохранить строку в структуру данных
+     *
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
-     *
-     * Сложность - []
+     * <p>
+     * Сложность - [О(n)] - n длина value
      */
     public boolean add(String value) {
         Set<Character> letters = getCharKey(value);
+        Set<String> strings = new HashSet<>();
+        strings.add(value);
 
-        if(dictionary.get(letters) == null){
-            Set<String> strings = new HashSet<>();
-            strings.add(value);
-            dictionary.put(letters, strings);
+        Set<String> words = dictionary.putIfAbsent(letters, strings);
+
+        if (words == null) {
             size++;
             return true;
         } else {
-            if(dictionary.get(letters).add(value)) {
+            if (words.add(value)) {
                 size++;
                 return true;
             }
         }
-
         return false;
     }
 
     /**
      * Проверяем, хранится ли такая строка уже у нас
+     *
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
-     *
-     * Сложность - []
+     * <p>
+     * Сложность - [О(n)] - n длина value
      */
     public boolean contains(String value) {
         Set<Character> letters = getCharKey(value);
-
-        if (dictionary.get(letters) == null) {
+        Set<String> strings = dictionary.get(letters);
+        if (strings == null) {
             return false;
         } else {
-            return dictionary.get(letters).contains(value);
+            return strings.contains(value);
         }
     }
 
     /**
      * Удаляем сохраненную строку если она есть
+     *
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
-     *
-     * Сложность - []
+     * <p>
+     * Сложность - [О(n)] - n длина value
      */
     public boolean remove(String value) {
         Set<Character> letters = getCharKey(value);
+        Set<String> strings = dictionary.get(letters);
 
-        if (dictionary.get(letters) == null) {
+        if (strings == null) {
             return false;
         } else {
-            if (dictionary.get(letters).remove(value)) {
+            if (strings.remove(value)) {
                 size--;
                 return true;
             }
@@ -84,7 +88,7 @@ public class CustomDictionary {
      * сохраняем строки ["aaa", "aBa", "baa", "aaB"]
      * При поиске по строке "AAb" нам должен вернуться следующий
      * список: ["aBa","baa","aaB"]
-     *
+     * <p>
      * сохраняем строки ["aaa", "aAa", "a"]
      * поиск "aaaa"
      * результат: []
@@ -93,34 +97,35 @@ public class CustomDictionary {
      *
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
-     *
-     * Сложность - []
+     * <p>
+     * Сложность - [О(n)] - n длина value
      */
     public List<String> getSimilarWords(String value) {
         Set<Character> letters = getCharKey(value);
 
-        Set<String> words = dictionary.getOrDefault(letters, new HashSet());
-        return words.stream()
-                .filter(word -> word.length() == value.length())
+        Set<String> strings = dictionary.getOrDefault(letters, new HashSet<>());
+        return strings.stream().
+                filter(word -> word.length() == value.length())
                 .collect(Collectors.toList());
     }
 
     /**
      * Колл-во хранимых строк.
-     * @return - Колл-во хранимых строк.
      *
-     * Сложность - []
+     * @return - Колл-во хранимых строк.
+     * <p>
+     * Сложность - [O(1)] - значение хранится в поле класса - доступ за константу
      */
     public int size() {
         return size;
     }
 
-    private Set<Character> getCharKey(String value){
+    private Set<Character> getCharKey(String value) {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
-        Set<Character> letters = new HashSet();
+        Set<Character> letters = new HashSet<>();
         for (Character c : value.toCharArray()) {
             letters.add(Character.toLowerCase(c));
         }
