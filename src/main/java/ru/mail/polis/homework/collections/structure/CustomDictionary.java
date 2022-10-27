@@ -9,9 +9,6 @@ import java.util.*;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-
-    private static final String ILLEGAL_ARGUMENT = "String cannot be empty or null.";
-
     private final Map<Map<Character, Integer>, Set<String>> dictionary;
     private int size;
 
@@ -106,7 +103,7 @@ public class CustomDictionary {
         Map<Character, Integer> key = convertStringToMap(value);
         Set<String> set = dictionary.get(key);
         if (set == null) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
         return new ArrayList<>(set);
@@ -144,7 +141,7 @@ public class CustomDictionary {
 
     private void checkString(String value) {
         if (value == null || value.isEmpty()) {
-            throw new IllegalArgumentException(ILLEGAL_ARGUMENT);
+            throw new IllegalArgumentException("String cannot be empty or null.");
         }
     }
 }

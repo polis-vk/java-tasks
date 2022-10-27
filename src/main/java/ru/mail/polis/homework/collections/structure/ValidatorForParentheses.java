@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Stack;
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * Задание оценивается в 2 тугрика.
@@ -15,6 +16,8 @@ import java.util.Stack;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
+    private static final Set<Character> OPEN_PARENTHESES = new HashSet<>(Arrays.asList('[', '{', '<', '('));
+    private static final Set<Character> CLOSE_PARENTHESES = new HashSet<>(Arrays.asList(']', '}', '>', ')'));
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
@@ -22,27 +25,22 @@ public class ValidatorForParentheses {
         }
 
         Stack<Character> parenthesesStack = new Stack<>();
-        String openParentheses = "[{<(";
-        String closeParentheses = "]}>)";
         boolean hasParentheses = false;
 
         for (int i = 0; i < value.length(); i++) {
             char symbol = value.charAt(i);
 
-            if (openParentheses.indexOf(symbol) >= 0) {
+            if (OPEN_PARENTHESES.contains(symbol)) {
                 parenthesesStack.push(symbol);
                 hasParentheses = true;
-            } else {
-                int symbolIndex = closeParentheses.indexOf(symbol);
-                if (symbolIndex >= 0) {
-                    if (parenthesesStack.isEmpty()) {
-                        return false;
-                    }
+            } else if (CLOSE_PARENTHESES.contains(symbol)) {
+                if (parenthesesStack.isEmpty()) {
+                    return false;
+                }
 
-                    int bracketIndex = openParentheses.indexOf(parenthesesStack.pop());
-                    if (symbolIndex != bracketIndex) {
-                        return false;
-                    }
+                int asciiDifference = symbol - parenthesesStack.pop();
+                if (!(asciiDifference > 0 && asciiDifference < 3)) {
+                    return false;
                 }
             }
         }

@@ -9,16 +9,6 @@ import java.util.*;
  * Задание оценивается в 10 тугриков
  */
 public class CustomArrayList<E> implements List<E> {
-
-    private static final String ILLEGAL_CAPACITY = "Illegal capacity: ";
-    private static final String NO_SUCH_ELEMENT = "There is no such element.";
-    private static final String ILLEGAL_STATE = "The corresponding method was not called that would return the value.";
-    private static final String CONCURRENT_MODIFICATION = "During iteration, " +
-            "only the iterator can modify the collection.";
-    private static final String INVALID_INDEX = "Invalid index: ";
-    private static final String INVALID_SUBLIST_INDEXES = "Invalid fromIndex or toIndex: ";
-    private static final String SIZE = ", List size: ";
-
     private static final int DEFAULT_CAPACITY = 16;
     private static final Object[] EMPTY_LIST = {};
 
@@ -27,16 +17,16 @@ public class CustomArrayList<E> implements List<E> {
     private int modCount;
 
     public CustomArrayList() {
-        dataArray = EMPTY_LIST;
+        dataArray = new Object[DEFAULT_CAPACITY];
     }
 
     public CustomArrayList(int initialCapacity) {
-        if (initialCapacity > 0) {
+        if (initialCapacity < 0) {
+            throw new IllegalArgumentException("Illegal capacity: " + initialCapacity);
+        } else if (initialCapacity > 0) {
             dataArray = new Object[initialCapacity];
-        } else if (initialCapacity == 0) {
-            dataArray = EMPTY_LIST;
         } else {
-            throw new IllegalArgumentException(ILLEGAL_CAPACITY + initialCapacity);
+            dataArray = EMPTY_LIST;
         }
     }
 
@@ -90,19 +80,10 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean remove(Object o) {
-        if (o != null) {
-            for (int i = 0; i < size; i++) {
-                if (o.equals(dataArray[i])) {
-                    removeWithoutCheck(i);
-                    return true;
-                }
-            }
-        } else {
-            for (int i = 0; i < size; i++) {
-                if (dataArray[i] == null) {
-                    removeWithoutCheck(i);
-                    return true;
-                }
+        for (int i = 0; i < size; i++) {
+            if (Objects.equals(o, dataArray[i])) {
+                removeWithoutCheck(i);
+                return true;
             }
         }
 
@@ -127,22 +108,21 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        checkIndexForAdd(index);
-
-        Object[] array = c.toArray();
-        int arraySize = array.length;
-        if (arraySize == 0) {
+        checkIndexForAdd(index, size);
+        if (c.size() == 0) {
             return false;
         }
-        checkCapacity(size + arraySize);
+
+        checkCapacity(size + c.size());
+        Object[] array = c.toArray();
 
         int numbersShift = size - index;
         if (numbersShift > 0) {
-            System.arraycopy(dataArray, index, dataArray, index + arraySize, numbersShift);
+            System.arraycopy(dataArray, index, dataArray, index + c.size(), numbersShift);
         }
 
-        System.arraycopy(array, 0, dataArray, index, arraySize);
-        size += arraySize;
+        System.arraycopy(array, 0, dataArray, index, c.size());
+        size += c.size();
         modCount++;
         return true;
     }
@@ -152,9 +132,8 @@ public class CustomArrayList<E> implements List<E> {
         Objects.requireNonNull(c);
 
         boolean isChanged = false;
-        for (int i = size - 1; i >= 0 ; i--) {
-            if (c.contains(dataArray[i])) {
-                remove(i);
+        for (Object element : c) {
+            while (remove(element)) {
                 isChanged = true;
             }
         }
@@ -179,25 +158,25 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public void clear() {
-        for (int i = 0; i < size; i++) {
-            dataArray[i] = null;
+        while (size != 0) {
+            size--;
+            dataArray[size] = null;
         }
 
         modCount++;
-        size = 0;
     }
 
     @Override
     public E get(int index) {
-        checkIndex(index);
-        return getWithCast(index);
+        checkIndex(index, size);
+        return (E) dataArray[index];
     }
 
     @Override
     public E set(int index, E element) {
-        checkIndex(index);
+        checkIndex(index, size);
 
-        E value = getWithCast(index);
+        E value = (E) dataArray[index];
         dataArray[index] = element;
         modCount++;
         return value;
@@ -205,7 +184,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public void add(int index, E element) {
-        checkIndexForAdd(index);
+        checkIndexForAdd(index, size);
         checkCapacity(size + 1);
 
         System.arraycopy(dataArray, index, dataArray, index + 1, size - index);
@@ -216,26 +195,18 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E remove(int index) {
-        checkIndex(index);
+        checkIndex(index, size);
 
-        E value = getWithCast(index);
+        E value = (E) dataArray[index];
         removeWithoutCheck(index);
         return value;
     }
 
     @Override
     public int indexOf(Object o) {
-        if (o != null) {
-            for (int i = 0; i < size; i++) {
-                if (o.equals(dataArray[i])) {
-                    return i;
-                }
-            }
-        } else {
-            for (int i = 0; i < size; i++) {
-                if (dataArray[i] == null) {
-                    return i;
-                }
+        for (int i = 0; i < size; i++) {
+            if (Objects.equals(o, dataArray[i])) {
+                return i;
             }
         }
 
@@ -244,17 +215,9 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int lastIndexOf(Object o) {
-        if (o != null) {
-            for (int i = size - 1; i >= 0; i--) {
-                if (o.equals(dataArray[i])) {
-                    return i;
-                }
-            }
-        } else {
-            for (int i = size - 1; i >= 0; i--) {
-                if (dataArray[i] == null) {
-                    return i;
-                }
+        for (int i = size - 1; i >= 0; i--) {
+            if (Objects.equals(o, dataArray[i])) {
+                return i;
             }
         }
 
@@ -268,140 +231,14 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public ListIterator<E> listIterator(int index) {
+        checkIndexForAdd(index, size);
         return new CustomArrayListIterator(index);
     }
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-        if (fromIndex < 0 || toIndex > size || fromIndex > toIndex) {
-            throw new IndexOutOfBoundsException(INVALID_SUBLIST_INDEXES + fromIndex + ", " + toIndex + SIZE);
-        }
-
-        CustomArrayList<E> list = new CustomArrayList<>(toIndex - fromIndex);
-        for (int i = fromIndex; i < toIndex; i++) {
-            list.add(getWithCast(i));
-        }
-
-        return list;
-    }
-
-    private class Iter implements Iterator<E> {
-        int cursor;
-        int lastReturnedIndex = -1;
-        int fixedModCount = modCount;
-
-        private Iter(int index) {
-            cursor = index;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return cursor != size;
-        }
-
-        @Override
-        public E next() {
-            checkModification();
-
-            if (cursor >= size) {
-                throw new NoSuchElementException(NO_SUCH_ELEMENT);
-            }
-
-            E value = getWithCast(cursor);
-            lastReturnedIndex = cursor;
-            cursor++;
-            return value;
-        }
-
-        @Override
-        public void remove() {
-            checkLastReturnedIndex();
-            checkModification();
-
-            try {
-                CustomArrayList.this.remove(lastReturnedIndex);
-                cursor = lastReturnedIndex;
-                lastReturnedIndex = -1;
-                fixedModCount = modCount;
-            } catch (IndexOutOfBoundsException exception) {
-                throw new ConcurrentModificationException(CONCURRENT_MODIFICATION);
-            }
-        }
-
-        void checkModification() {
-            if (fixedModCount != modCount) {
-                throw new ConcurrentModificationException(CONCURRENT_MODIFICATION);
-            }
-        }
-
-        void checkLastReturnedIndex() {
-            if (lastReturnedIndex < 0) {
-                throw new IllegalStateException(ILLEGAL_STATE);
-            }
-        }
-    }
-
-    private class CustomArrayListIterator extends Iter implements ListIterator<E> {
-        private CustomArrayListIterator(int index) {
-            super(index);
-        }
-
-        @Override
-        public boolean hasPrevious() {
-            return cursor != 0;
-        }
-
-        @Override
-        public E previous() {
-            checkModification();
-
-            int index = cursor - 1;
-            if (index < 0) {
-                throw new NoSuchElementException(NO_SUCH_ELEMENT);
-            }
-
-            E value = getWithCast(index);
-            lastReturnedIndex = index;
-            cursor--;
-            return value;
-        }
-
-        @Override
-        public int nextIndex() {
-            return cursor;
-        }
-
-        @Override
-        public int previousIndex() {
-            return cursor - 1;
-        }
-
-        @Override
-        public void set(E e) {
-            checkLastReturnedIndex();
-            checkModification();
-
-            try {
-                CustomArrayList.this.set(lastReturnedIndex, e);
-                fixedModCount = modCount;
-            } catch (IndexOutOfBoundsException exception) {
-                throw new ConcurrentModificationException(CONCURRENT_MODIFICATION);
-            }
-        }
-
-        @Override
-        public void add(E e) {
-            checkModification();
-
-            try {
-                CustomArrayList.this.add(cursor, e);
-                cursor++;
-                lastReturnedIndex = -1;
-                fixedModCount = modCount;
-            } catch (IndexOutOfBoundsException exception) {
-                throw new ConcurrentModificationException(CONCURRENT_MODIFICATION);
-            }
-        }
+        checkSubListIndexes(fromIndex, toIndex, size);
+        return new SubList(this, fromIndex, toIndex);
     }
 
     private void checkCapacity(int capacity) {
@@ -426,20 +263,20 @@ public class CustomArrayList<E> implements List<E> {
         }
     }
 
-    private void checkIndex(int index) {
+    private void checkIndex(int index, int listSize) {
         if  (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException(indexOutOfBoundMessage(index));
+            throw new IndexOutOfBoundsException(indexOutOfBoundMessage(index, listSize));
         }
     }
 
-    private void checkIndexForAdd(int index) {
+    private void checkIndexForAdd(int index, int listSize) {
         if  (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException(indexOutOfBoundMessage(index));
+            throw new IndexOutOfBoundsException(indexOutOfBoundMessage(index, listSize));
         }
     }
 
-    private String indexOutOfBoundMessage(int index) {
-        return INVALID_INDEX + index + SIZE + size;
+    private String indexOutOfBoundMessage(int index, int listSize) {
+        return "Invalid index: " + index + ", List size: " + listSize;
     }
 
     private void removeWithoutCheck(int index) {
@@ -453,8 +290,490 @@ public class CustomArrayList<E> implements List<E> {
         modCount++;
     }
 
-    @SuppressWarnings("unchecked")
-    private E getWithCast(int index) {
-        return (E) dataArray[index];
+    private void checkSubListIndexes(int fromIndex, int toIndex, int listSize) {
+        if (fromIndex < 0 || toIndex > listSize || fromIndex > toIndex) {
+            throw new IndexOutOfBoundsException("Invalid fromIndex or toIndex: " + fromIndex + ", " +
+                    toIndex + ", List size: " + listSize);
+        }
+    }
+
+    private class Iter implements Iterator<E> {
+        int cursor;
+        int lastReturnedIndex = -1;
+        int fixedModCount = modCount;
+
+        private Iter(int index) {
+            cursor = index;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return cursor != size;
+        }
+
+        @Override
+        public E next() {
+            checkModification();
+
+            if (cursor >= size) {
+                throw new NoSuchElementException("There is no such element.");
+            }
+
+            E value = (E) dataArray[cursor];
+            lastReturnedIndex = cursor;
+            cursor++;
+            return value;
+        }
+
+        @Override
+        public void remove() {
+            checkLastReturnedIndex();
+            checkModification();
+
+            try {
+                CustomArrayList.this.remove(lastReturnedIndex);
+                cursor = lastReturnedIndex;
+                lastReturnedIndex = -1;
+                fixedModCount = modCount;
+            } catch (IndexOutOfBoundsException exception) {
+                throw new ConcurrentModificationException("During iteration, " +
+                        "only the iterator can modify the collection.");
+            }
+        }
+
+        protected void checkModification() {
+            if (fixedModCount != modCount) {
+                throw new ConcurrentModificationException("During iteration, " +
+                        "only the iterator can modify the collection.");
+            }
+        }
+
+        protected void checkLastReturnedIndex() {
+            if (lastReturnedIndex < 0) {
+                throw new IllegalStateException("The corresponding method was not called that would return the value.");
+            }
+        }
+    }
+
+    private class CustomArrayListIterator extends Iter implements ListIterator<E> {
+        private CustomArrayListIterator(int index) {
+            super(index);
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return cursor != 0;
+        }
+
+        @Override
+        public E previous() {
+            checkModification();
+
+            int index = cursor - 1;
+            if (index < 0) {
+                throw new NoSuchElementException("There is no such element.");
+            }
+
+            E value = (E) dataArray[index];
+            lastReturnedIndex = index;
+            cursor--;
+            return value;
+        }
+
+        @Override
+        public int nextIndex() {
+            return cursor;
+        }
+
+        @Override
+        public int previousIndex() {
+            return cursor - 1;
+        }
+
+        @Override
+        public void set(E e) {
+            checkLastReturnedIndex();
+            checkModification();
+
+            try {
+                CustomArrayList.this.set(lastReturnedIndex, e);
+                fixedModCount = modCount;
+            } catch (IndexOutOfBoundsException exception) {
+                throw new ConcurrentModificationException("During iteration, " +
+                        "only the iterator can modify the collection.");
+            }
+        }
+
+        @Override
+        public void add(E e) {
+            checkModification();
+
+            try {
+                CustomArrayList.this.add(cursor, e);
+                cursor++;
+                lastReturnedIndex = -1;
+                fixedModCount = modCount;
+            } catch (IndexOutOfBoundsException exception) {
+                throw new ConcurrentModificationException("During iteration, " +
+                        "only the iterator can modify the collection.");
+            }
+        }
+    }
+
+    private class SubList implements List<E> {
+        private final List<E> parent;
+        private final int offset;
+        private int size;
+        private int modCount;
+
+        protected SubList(List<E> parent, int fromIndex, int toIndex) {
+            this.parent = parent;
+            this.offset = fromIndex;
+            this.size = toIndex - fromIndex;
+            this.modCount = CustomArrayList.this.modCount;
+        }
+
+        @Override
+        public int size() {
+            checkModification();
+            return size;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            checkModification();
+            return size != 0;
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            checkModification();
+            return indexOf(o) >= 0;
+        }
+
+        @Override
+        public Iterator<E> iterator() {
+            return listIterator();
+        }
+
+        @Override
+        public Object[] toArray() {
+            checkModification();
+            return Arrays.copyOfRange(CustomArrayList.this.dataArray, offset, offset + size);
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <T> T[] toArray(T[] a) {
+            checkModification();
+            if (a.length < this.size) {
+                return (T[]) Arrays.copyOfRange(CustomArrayList.this.dataArray, offset, offset + size, a.getClass());
+            }
+
+            System.arraycopy(CustomArrayList.this.dataArray, offset, a, 0, size);
+            if (a.length > size) {
+                a[size] = null;
+            }
+            return a;
+        }
+
+        @Override
+        public boolean add(E e) {
+            checkModification();
+            parent.add(e);
+            size++;
+            modCount = CustomArrayList.this.modCount;
+            return true;
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            checkModification();
+
+            for (int i = offset; i < offset + size; i++) {
+                if (Objects.equals(o, CustomArrayList.this.dataArray[i])) {
+                    CustomArrayList.this.removeWithoutCheck(i);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        @Override
+        public boolean containsAll(Collection<?> c) {
+            checkModification();
+
+            for (Object element : c) {
+                if (!contains(element)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        @Override
+        public boolean addAll(Collection<? extends E> c) {
+            return addAll(size, c);
+        }
+
+        @Override
+        public boolean addAll(int index, Collection<? extends E> c) {
+            checkModification();
+            checkIndexForAdd(index, size);
+            if (c.size() == 0) {
+                return false;
+            }
+
+            parent.addAll(offset + index, c);
+            size += c.size();
+            modCount = CustomArrayList.this.modCount;
+            return true;
+        }
+
+        @Override
+        public boolean removeAll(Collection<?> c) {
+            checkModification();
+            Objects.requireNonNull(c);
+
+            boolean isChanged = false;
+            for (Object element : c) {
+                while (remove(element)) {
+                    isChanged = true;
+                }
+            }
+
+            return isChanged;
+        }
+
+        @Override
+        public boolean retainAll(Collection<?> c) {
+            checkModification();
+            Objects.requireNonNull(c);
+
+            boolean isChanged = false;
+            for (int i = offset + size - 1; i >= offset ; i--) {
+                if (!c.contains(CustomArrayList.this.dataArray[i])) {
+                    remove(i);
+                    isChanged = true;
+                }
+            }
+
+            return isChanged;
+        }
+
+        @Override
+        public void clear() {
+            checkModification();
+            System.arraycopy(CustomArrayList.this.dataArray, offset + size,
+                    CustomArrayList.this.dataArray, offset, CustomArrayList.this.size - offset + size);
+
+            CustomArrayList.this.size -= size;
+            size = 0;
+            CustomArrayList.this.modCount++;
+            modCount = CustomArrayList.this.modCount;
+        }
+
+        @Override
+        public E get(int index) {
+            checkModification();
+            checkIndex(index, size);
+            return (E) CustomArrayList.this.dataArray[offset + index];
+        }
+
+        @Override
+        public E set(int index, E element) {
+            checkModification();
+            checkIndex(index, size);
+
+            E value = (E) CustomArrayList.this.dataArray[offset + index];
+            CustomArrayList.this.dataArray[offset + index] = element;
+            CustomArrayList.this.modCount++;
+            modCount = CustomArrayList.this.modCount;
+            return value;
+        }
+
+        @Override
+        public void add(int index, E element) {
+            checkIndexForAdd(index, size);
+            checkModification();
+
+            parent.add(offset + index, element);
+            size++;
+            modCount = CustomArrayList.this.modCount;
+        }
+
+        @Override
+        public E remove(int index) {
+            checkIndex(index, size);
+            checkModification();
+
+            E value = parent.remove(offset + index);
+            size--;
+            modCount = CustomArrayList.this.modCount;
+            return value;
+        }
+
+        @Override
+        public int indexOf(Object o) {
+            checkModification();
+            for (int i = offset; i < offset + size; i++) {
+                if (Objects.equals(o, dataArray[i])) {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        @Override
+        public int lastIndexOf(Object o) {
+            checkModification();
+            for (int i = offset + size - 1; i >= offset; i--) {
+                if (Objects.equals(o, dataArray[i])) {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        @Override
+        public ListIterator<E> listIterator() {
+            return listIterator(0);
+        }
+
+        @Override
+        public ListIterator<E> listIterator(int index) {
+            checkModification();
+            checkIndexForAdd(index, size);
+
+            return new ListIterator<E>() {
+                int cursor = index;
+                int lastReturnedIndex = -1;
+                int fixedModCount = CustomArrayList.this.modCount;
+
+                @Override
+                public boolean hasNext() {
+                    return cursor != size;
+                }
+
+                @Override
+                public E next() {
+                    checkModification();
+
+                    if (cursor >= size) {
+                        throw new NoSuchElementException("There is no such element.");
+                    }
+
+                    E value = (E) CustomArrayList.this.dataArray[offset + cursor];
+                    lastReturnedIndex = cursor;
+                    cursor++;
+                    return value;
+                }
+
+                @Override
+                public boolean hasPrevious() {
+                    return cursor != 0;
+                }
+
+                @Override
+                public E previous() {
+                    checkModification();
+
+                    int index = cursor - 1;
+                    if (index < 0) {
+                        throw new NoSuchElementException("There is no such element.");
+                    }
+
+                    E value = (E) CustomArrayList.this.dataArray[offset + index];
+                    lastReturnedIndex = index;
+                    cursor--;
+                    return value;
+                }
+
+                @Override
+                public int nextIndex() {
+                    return cursor;
+                }
+
+                @Override
+                public int previousIndex() {
+                    return cursor - 1;
+                }
+
+                @Override
+                public void remove() {
+                    checkLastReturnedIndex();
+                    checkModification();
+
+                    try {
+                        SubList.this.remove(lastReturnedIndex);
+                        cursor = lastReturnedIndex;
+                        lastReturnedIndex = -1;
+                        fixedModCount = CustomArrayList.this.modCount;
+                    } catch (IndexOutOfBoundsException exception) {
+                        throw new ConcurrentModificationException("During iteration, " +
+                                "only the iterator can modify the collection.");
+                    }
+                }
+
+                @Override
+                public void set(E e) {
+                    checkLastReturnedIndex();
+                    checkModification();
+
+                    try {
+                        CustomArrayList.this.set(offset + lastReturnedIndex, e);
+                        fixedModCount = CustomArrayList.this.modCount;
+                    } catch (IndexOutOfBoundsException exception) {
+                        throw new ConcurrentModificationException("During iteration, " +
+                                "only the iterator can modify the collection.");
+                    }
+                }
+
+                @Override
+                public void add(E e) {
+                    checkModification();
+
+                    try {
+                        CustomArrayList.this.add(cursor, e);
+                        cursor++;
+                        lastReturnedIndex = -1;
+                        fixedModCount = CustomArrayList.this.modCount;
+                    } catch (IndexOutOfBoundsException exception) {
+                        throw new ConcurrentModificationException("During iteration, " +
+                                "only the iterator can modify the collection.");
+                    }
+                }
+
+                private void checkModification() {
+                    if (fixedModCount != CustomArrayList.this.modCount) {
+                        throw new ConcurrentModificationException("During iteration, " +
+                                "only the iterator can modify the collection.");
+                    }
+                }
+
+                private void checkLastReturnedIndex() {
+                    if (lastReturnedIndex < 0) {
+                        throw new IllegalStateException("The corresponding method was not called " +
+                                "that would return the value.");
+                    }
+                }
+            };
+        }
+
+        @Override
+        public List<E> subList(int fromIndex, int toIndex) {
+            CustomArrayList.this.checkSubListIndexes(fromIndex, toIndex, size);
+            return new SubList(this, fromIndex, toIndex);
+        }
+
+        private void checkModification() {
+            if (this.modCount != CustomArrayList.this.modCount) {
+                throw new ConcurrentModificationException("The parent list has been changed.");
+            }
+        }
     }
 }

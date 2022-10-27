@@ -275,10 +275,23 @@ public class CustomArrayListTest {
     }
 
     @Test
-    public void subList() {
+    public void testSubList() {
         CustomArrayList<String> list = generateList();
         List<String> sublist = list.subList(5, 10);
         assertArrayEquals(new String[]{"String5", "String6", "String7", "String8", "String9"}, sublist.toArray());
+
+        sublist.add("String10");
+        assertEquals(17, list.size());
+        assertEquals(6, sublist.size());
+
+        sublist.remove(0);
+        assertEquals(16, list.size());
+        assertEquals(5, sublist.size());
+        assertFalse(sublist.contains("String5"));
+
+        sublist.clear();
+        assertEquals(11, list.size());
+        assertEquals(0, sublist.size());
     }
 
     @Test
