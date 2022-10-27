@@ -14,9 +14,9 @@ import java.util.Map;
  */
 public class CustomDictionary {
 
-    Map<String, char[]> dictionary;
+    private final Map<String, char[]> dictionary;
 
-    int size;
+    private int size;
 
     public CustomDictionary() {
         dictionary = new HashMap<>();

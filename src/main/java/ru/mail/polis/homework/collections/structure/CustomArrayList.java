@@ -21,9 +21,20 @@ public class CustomArrayList<E> implements List<E> {
 
     private int size = 0;
 
-    private Object[] array = new Object[DEFAULT_CAPACITY];
-
+    private Object[] array;
     private int modCount = 0;
+
+    public CustomArrayList() {
+        array = new Object[DEFAULT_CAPACITY];
+    }
+
+    public CustomArrayList(Collection<E> collection) {
+        array = collection.toArray();
+    }
+
+    public CustomArrayList(Object[] arr) {
+        array = arr;
+    }
 
     @Override
     public int size() {
@@ -62,17 +73,23 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean add(E e) {
-        Object[] oldArray = array;
-        add(size, e);
-        return !Arrays.equals(oldArray, array);
+        try {
+            add(size, e);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     @Override
     public boolean remove(Object o) {
-        int removingObjectIndex = indexOf(o);
-        Object[] oldArray = array;
-        remove(removingObjectIndex);
-        return !Arrays.equals(oldArray, array);
+        try {
+            int removingObjectIndex = indexOf(o);
+            remove(removingObjectIndex);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     @Override
@@ -92,14 +109,21 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        Object[] oldArray = array;
-        Object[] newArray = new Object[size + c.size()];
-        System.arraycopy(array, 0, newArray, 0, index);
-        System.arraycopy(c.toArray(), 0, newArray, index, c.size());
-        System.arraycopy(array, index, newArray, index + c.size(), size - index);
-        size += c.size();
-        array = newArray;
-        return !Arrays.equals(oldArray, array);
+        try {
+            checkIndexForValid(index);
+            if (c.size() == 0) {
+                return false;
+            }
+            if (array.length + c.size() >= array.length) {
+                array = Arrays.copyOf(array, array.length + (array.length >> 1));
+            }
+            System.arraycopy(array, index, array, index + c.size(), size - index);
+            System.arraycopy(c.toArray(), 0, array, index, c.size());
+            size += c.size();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
@@ -131,7 +155,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public void clear() {
         size = 0;
-        array = new Object[DEFAULT_CAPACITY];
+        Arrays.fill(array, null);
     }
 
     @Override
@@ -141,6 +165,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E set(int index, E element) {
+        checkIndexForValid(index);
         Object previousElement = array[index];
         array[index] = element;
         return (E) previousElement;
@@ -148,7 +173,8 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public void add(int index, E element) {
-        Object[] newArray = new Object[size + 1];
+        checkIndexForValid(index);
+        Object[] newArray = new Object[array.length + (array.length >> 1)];
         System.arraycopy(array, 0, newArray, 0, index);
         newArray[index] = element;
         System.arraycopy(array, index, newArray, index + 1, size - index);
@@ -158,6 +184,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E remove(int index) {
+        checkIndexForValid(index);
         Object removingObject = array[index];
         Object[] newArray = new Object[size - 1];
         System.arraycopy(array, 0, newArray, 0, index);
@@ -215,6 +242,8 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
+        checkIndexForValid(fromIndex);
+        checkIndexForValid(toIndex);
         CustomArrayList<E> newList = new CustomArrayList<>();
         System.arraycopy(array, fromIndex, newList.array, 0, toIndex - fromIndex);
         return newList;
@@ -241,6 +270,12 @@ public class CustomArrayList<E> implements List<E> {
             } else {
                 throw new NoSuchElementException();
             }
+        }
+    }
+
+    private void checkIndexForValid(int index) {
+        if (index < 0 || index > array.length) {
+            throw new IndexOutOfBoundsException();
         }
     }
 

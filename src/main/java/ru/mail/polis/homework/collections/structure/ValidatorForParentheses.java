@@ -19,17 +19,18 @@ import java.util.Map;
  */
 public class ValidatorForParentheses {
 
+    private static final Map<Character, Character> bracketsMap = new HashMap<Character, Character>() {{
+        put(']', '[');
+        put('}', '{');
+        put('>', '<');
+        put(')', '(');
+    }};
+
     public static boolean validate(String value) {
         boolean hasBrackets = false;
         if (!checkStringForValid(value)) {
             return false;
         }
-        Map<Character, Character> bracketsMap = new HashMap<Character, Character>() {{
-            put(']', '[');
-            put('}', '{');
-            put('>', '<');
-            put(')', '(');
-        }};
 
         Deque<Character> bracketsStack = new LinkedList<>();
         for (char c : value.toCharArray()) {
