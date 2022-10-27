@@ -26,9 +26,7 @@ public class CustomDictionary {
      * Сложность - [O(n) - лучшее; O(n * m) - худшее]
      */
     public boolean add(String value) {
-        if (value == null || value.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        checkValue(value);
         List<Integer> valueList = getIntegersFromString(value);
         if (map.containsKey(valueList)) {
             if (map.get(valueList).contains(value)) {
@@ -52,9 +50,7 @@ public class CustomDictionary {
      * Сложность - [O(n) - лучшее; O(n * m) - худшее]
      */
     public boolean contains(String value) {
-        if (value == null) {
-            throw new IllegalArgumentException();
-        }
+        checkValue(value);
         List<Integer> valueList = getIntegersFromString(value);
         if (map.containsKey(valueList)) {
             return map.get(valueList).contains(value);
@@ -71,9 +67,7 @@ public class CustomDictionary {
      * Сложность - [O(n) - лучшее; O(n * m) - худшее]
      */
     public boolean remove(String value) {
-        if (value == null) {
-            throw new IllegalArgumentException();
-        }
+        checkValue(value);
         List<Integer> valueList = getIntegersFromString(value);
         if (map.containsKey(valueList) && map.get(valueList).remove(value)) {
             size--;
@@ -103,9 +97,7 @@ public class CustomDictionary {
      * Сложность - [O(n)]
      */
     public List<String> getSimilarWords(String value) {
-        if (value == null) {
-            throw new IllegalArgumentException();
-        }
+        checkValue(value);
         return map.getOrDefault(
                 getIntegersFromString(value),
                 Collections.emptyList());
@@ -119,6 +111,12 @@ public class CustomDictionary {
      */
     public int size() {
         return size;
+    }
+
+    private void checkValue(String value) {
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private List<Integer> getIntegersFromString(String value) {
