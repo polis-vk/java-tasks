@@ -1,6 +1,12 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.*;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
@@ -206,38 +212,12 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        if (o == null) {
-            for (int i = 0; i < size; i++) {
-                if (data[i] == null) {
-                    return i;
-                }
-            }
-        } else {
-            for (int i = 0; i < size; i++) {
-                if (o.equals(data[i])) {
-                    return i;
-                }
-            }
-        }
-        return -1;
+        return indexOfRange(o, 0, size);
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        if (o == null) {
-            for (int i = size - 1; i >= 0; i--) {
-                if (data[i] == null) {
-                    return i;
-                }
-            }
-        } else {
-            for (int i = size - 1; i >= 0; i--) {
-                if (o.equals(data[i])) {
-                    return i;
-                }
-            }
-        }
-        return -1;
+        return lastIndexOfRange(o, 0, size);
     }
 
     @Override
@@ -331,6 +311,40 @@ public class CustomArrayList<E> implements List<E> {
         return new SubList<>(this, fromIndex, toIndex);
     }
 
+    private int indexOfRange(Object o, int index, int size) {
+        if (o == null) {
+            for (int i = index; i < size; i++) {
+                if (data[i] == null) {
+                    return i;
+                }
+            }
+        } else {
+            for (int i = index; i < size; i++) {
+                if (o.equals(data[i])) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private int lastIndexOfRange(Object o, int index, int size) {
+        if (o == null) {
+            for (int i = size - 1; i >= index; i--) {
+                if (data[i] == null) {
+                    return i;
+                }
+            }
+        } else {
+            for (int i = size - 1; i >= index; i--) {
+                if (o.equals(data[i])) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
     private E[] grow() {
         return grow((int) (GROW_FACTOR * size));
     }
@@ -391,26 +405,18 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public int indexOf(Object o) {
-            int currIndex = parentList.indexOf(o);
-            if (startPosition <= currIndex && currIndex < endPosition) {
-                return currIndex;
-            }
-            return -1;
+            return parentList.indexOfRange(o, startPosition, size()) - startPosition;
         }
 
         @Override
         public int lastIndexOf(Object o) {
-            int currIndex = parentList.lastIndexOf(o);
-            if (startPosition <= currIndex && currIndex < endPosition) {
-                return currIndex;
-            }
-            return -1;
+            return parentList.lastIndexOfRange(o, startPosition, size()) - startPosition;
         }
 
         //TODO listIterator
         @Override
         public ListIterator<E> listIterator() {
-            return parentList.listIterator();
+            return parentList.listIterator(startPosition);
         }
 
         //TODO listIterator#2
@@ -427,8 +433,7 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean contains(Object object) {
-            int currIndex = this.indexOf(object);
-            return startPosition <= currIndex && currIndex < endPosition;
+            return this.indexOf(object) != -1;
         }
 
         //TODO iterator
@@ -471,10 +476,14 @@ public class CustomArrayList<E> implements List<E> {
             return false;
         }
 
-        //TODO containsAll
         @Override
         public boolean containsAll(Collection<?> c) {
-            return parentList.containsAll(c);
+            for (Object elem : c) {
+                if (!this.contains(elem)) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         @Override
@@ -488,20 +497,14 @@ public class CustomArrayList<E> implements List<E> {
             return parentList.addAll(startPosition + index, c);
         }
 
-        //TODO removeAll
         @Override
         public boolean removeAll(Collection<?> c) {
-            endPosition -= c.size();
-            return parentList.removeAll(c);
+            return removeOrRetainAll(c, true);
         }
 
-        //TODO retainAll
         @Override
         public boolean retainAll(Collection<?> c) {
-            final int fixedSize = parentList.size;
-            final boolean result = parentList.retainAll(c);
-//            endPosition -= ();
-            return result;
+            return removeOrRetainAll(c, false);
         }
 
         @Override
@@ -521,6 +524,23 @@ public class CustomArrayList<E> implements List<E> {
         @Override
         public E set(int index, E element) {
             return parentList.set(startPosition + index, element);
+        }
+
+        private boolean removeOrRetainAll(Collection<?> c, boolean isRemoved) {
+            boolean isModified = false;
+            int index = startPosition;
+            final int fixedEndPosition = endPosition;
+            for (ListIterator<E> iterator = this.listIterator(); iterator.hasNext() && index < fixedEndPosition; ) {
+                E currElem = iterator.next();
+                if (isRemoved ^ !c.contains(currElem)) {
+                    iterator.previous();
+                    iterator.remove();
+                    isModified = true;
+                    endPosition--;
+                }
+                index++;
+            }
+            return isModified;
         }
     }
 }
