@@ -2,6 +2,8 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Задание оценивается в 2 тугрика.
@@ -17,6 +19,13 @@ import java.util.LinkedList;
  */
 public class ValidatorForParentheses {
 
+    private static final Map<Character, Character> brackets = new HashMap<Character, Character>() {{
+        put('[', ']');
+        put('{', '}');
+        put('<', '>');
+        put('(', ')');
+    }};
+
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
@@ -24,17 +33,13 @@ public class ValidatorForParentheses {
 
         Deque<Character> deque = null;
         for (char ch : value.toCharArray()) {
-            if (ch == '{' || ch == '[' || ch == '(' || ch == '<') {
+            if (brackets.containsKey(ch)) {
                 if (deque == null) {
                     deque = new LinkedList<>();
                 }
                 deque.addFirst(ch);
             } else {
-                if ((deque != null && !deque.isEmpty())
-                        && ((deque.peekFirst() == '{' && ch == '}')
-                        || (deque.peekFirst() == '[' && ch == ']')
-                        || (deque.peekFirst() == '(' && ch == ')')
-                        || (deque.peekFirst() == '<' && ch == '>'))) {
+                if (deque != null && !deque.isEmpty() && ch == brackets.get(deque.peekFirst())) {
                     deque.removeFirst();
                 }
             }

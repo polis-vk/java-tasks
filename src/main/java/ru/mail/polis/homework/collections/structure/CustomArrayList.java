@@ -32,6 +32,10 @@ public class CustomArrayList<E> implements List<E> {
         this.size = array.length;
     }
 
+    public CustomArrayList(Collection<E> collections) {
+        array = (E[]) collections.toArray();
+    }
+
     @Override
     public int size() {
         return size;
@@ -106,7 +110,10 @@ public class CustomArrayList<E> implements List<E> {
             return false;
         }
         checkIndex(index);
-        resizeSpecificCount(c.size());
+
+        if (size - array.length <= c.size()) {
+            resizeSpecificCount(c.size());
+        }
         System.arraycopy(array, index, array, index + c.size(), size - index);
         System.arraycopy(c.toArray(), 0, array, index, c.size());
         size += c.size();
@@ -165,7 +172,9 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public void add(int index, E element) {
         checkIndex(index);
-        resize();
+        if (array.length == size) {
+            resize();
+        }
         System.arraycopy(array, index, array, index + 1, size - index);
         array[index] = element;
         size++;
