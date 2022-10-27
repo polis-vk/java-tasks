@@ -362,26 +362,7 @@ public class CustomArrayList<E> implements List<E> {
         @Override
         public Iterator<E> iterator() {
             checkForModification();
-            return new Iterator<E>() {
-                final int expectedModCount = modCount;
-                int curIndex;
-
-                @Override
-                public boolean hasNext() {
-                    return curIndex < size;
-                }
-
-                @Override
-                public E next() {
-                    if (expectedModCount != modCount) {
-                        throw new ConcurrentModificationException();
-                    }
-                    if (!hasNext()) {
-                        throw new NoSuchElementException();
-                    }
-                    return elementData[curIndex++];
-                }
-            };
+            return root.iterator();
         }
 
         @Override
@@ -398,16 +379,12 @@ public class CustomArrayList<E> implements List<E> {
                 return (T[]) Arrays.copyOfRange(root.elementData, offset, offset + size, a.getClass());
             }
             System.arraycopy(root.elementData, offset, a, 0, size);
-            if (a.length > size) {
-                a[size] = null;
-            }
             return a;
         }
 
         @Override
         public boolean add(E e) {
-            expectedModCount++;
-            add(offset + size, e);
+            root.add(offset + size, e);
             return true;
         }
 
@@ -415,7 +392,7 @@ public class CustomArrayList<E> implements List<E> {
         public boolean remove(Object o) {
             int index = indexOf(o);
             if (index != -1) {
-                remove(index);
+                root.remove(index);
                 return true;
             }
             return false;
@@ -423,13 +400,7 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean containsAll(Collection<?> c) {
-            checkForModification();
-            for (Object elem : c) {
-                if (!contains(elem)) {
-                    return false;
-                }
-            }
-            return true;
+            return root.containsAll(c);
         }
 
         @Override
@@ -454,31 +425,18 @@ public class CustomArrayList<E> implements List<E> {
         @Override
         public boolean removeAll(Collection<?> c) {
             checkForModification();
-            boolean changeFlag = false;
-            for (Object elem : c) {
-                while (remove(elem)) {
-                    changeFlag = true;
-                }
-            }
-            return changeFlag;
+            return root.removeAll(c);
         }
 
         @Override
         public boolean retainAll(Collection<?> c) {
             checkForModification();
-            boolean changeFlag = false;
-            for (int i = 0; i < size; i++) {
-                if (!c.contains(root.elementData[i])) {
-                    remove(i--);
-                    changeFlag = true;
-                }
-            }
-            return changeFlag;
+            return root.retainAll(c);
         }
 
         @Override
         public void clear() {
-            modCount++;
+            root.modCount++;
             Arrays.fill(root.elementData, null);
             size = 0;
         }
@@ -535,86 +493,15 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public ListIterator<E> listIterator() {
-            return listIterator(0);
+            return root.listIterator(0);
         }
 
         @Override
         public ListIterator<E> listIterator(int index) {
             checkIndex(index);
             checkForModification();
-            return new ListIterator<E>() {
+            return root.listIterator(offset+index);
 
-                int expectedModCount = modCount;
-                int curIndex = index;
-
-                @Override
-                public boolean hasNext() {
-                    return curIndex < size;
-                }
-
-                @Override
-                public E next() {
-                    if (expectedModCount != modCount) {
-                        throw new ConcurrentModificationException();
-                    }
-                    if (!hasNext()) {
-                        throw new NoSuchElementException();
-                    }
-                    return elementData[++curIndex];
-                }
-
-                @Override
-                public boolean hasPrevious() {
-                    return curIndex > 0;
-                }
-
-                @Override
-                public E previous() {
-                    if (expectedModCount != modCount) {
-                        throw new ConcurrentModificationException();
-                    }
-                    if (!hasPrevious()) {
-                        throw new NoSuchElementException();
-                    }
-                    return elementData[--curIndex];
-                }
-
-                @Override
-                public int nextIndex() {
-                    return curIndex;
-                }
-
-                @Override
-                public int previousIndex() {
-                    return curIndex - 1;
-                }
-
-                @Override
-                public void remove() {
-                    if (expectedModCount != modCount) {
-                        throw new ConcurrentModificationException();
-                    }
-                    CustomArrayList.this.remove(curIndex);
-                    expectedModCount = modCount;
-                }
-
-                @Override
-                public void set(E e) {
-                    if (expectedModCount != modCount) {
-                        throw new ConcurrentModificationException();
-                    }
-                    CustomArrayList.this.set(curIndex, e);
-                }
-
-                @Override
-                public void add(E e) {
-                    if (expectedModCount != modCount) {
-                        throw new ConcurrentModificationException();
-                    }
-                    CustomArrayList.this.add(curIndex, e);
-                    expectedModCount = modCount;
-                }
-            };
         }
 
         @Override
