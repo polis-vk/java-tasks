@@ -11,9 +11,9 @@ import java.util.Queue;
  * В строке помимо скобок могут содержаться и другие символы.
  * Скобки могут быть: [],{},<>,()
  * Примеры:
- *      "(-b + (x)^2)/(2+4)" - true
- *      "Понедельники меня угнетают ((" - false
- *
+ * "(-b + (x)^2)/(2+4)" - true
+ * "Понедельники меня угнетают ((" - false
+ * <p>
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
@@ -23,11 +23,12 @@ public class ValidatorForParentheses {
     private static boolean isOpposite(char a, char b) {
         return (a == '[' && b == ']') || (a == '{' && b == '}') || (a == '<' && b == '>') || (a == '(' && b == ')');
     }
+
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
         }
-        Queue< Character > stack = Collections.asLifoQueue(new ArrayDeque<>());
+        Queue<Character> stack = Collections.asLifoQueue(new ArrayDeque<>());
         for (int i = 0; i < value.length(); ++i) {
             int inx = accessibleSymbols.indexOf(value.charAt(i));
             if (inx != -1) {

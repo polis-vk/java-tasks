@@ -4,7 +4,7 @@ import ru.mail.polis.homework.generics.bot.state.State;
 
 /**
  * Интерфейс должен быть типизирован, в качестве типа должен быть обрабатываемый тип State
- *
+ * <p>
  * 1 тугрик за типизацию интерфейса и 1 тугрик за типизацию метода
  */
 public interface StateHandler<E extends State> {
