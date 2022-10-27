@@ -66,6 +66,9 @@ public class CustomDictionary {
         Set<String> similarWords = dictionary.getOrDefault(letterCounter, Collections.emptySet());
         if (similarWords.remove(value)) {
             size--;
+            if (similarWords.isEmpty()){
+                dictionary.remove(letterCounter);
+            }
             return true;
         }
         return false;
