@@ -16,7 +16,7 @@ import java.util.Map;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    Map<String, Set<String>> dictionary = new HashMap<>();
+    private final Map<String, Set<String>> dictionary = new HashMap<>();
     private int size;
 
     /**
@@ -52,10 +52,7 @@ public class CustomDictionary {
             return false;
         }
         String key = getKey(value);
-        if (dictionary.containsKey(key)) {
-            return dictionary.get(key).contains(value);
-        }
-        return false;
+        return dictionary.getOrDefault(key, new HashSet<>()).contains(value);
     }
 
     /**
@@ -71,12 +68,7 @@ public class CustomDictionary {
             return false;
         }
         String key = getKey(value);
-        if (!dictionary.get(key).remove(value)) {
-            return false;
-        }
-        if (dictionary.get(key).isEmpty()) {
-            dictionary.remove(key);
-        }
+        dictionary.getOrDefault(key, new HashSet<>()).remove(key);
         size--;
         return true;
     }
