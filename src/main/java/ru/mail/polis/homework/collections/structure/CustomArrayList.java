@@ -16,16 +16,27 @@ import java.util.Objects;
  * Задание оценивается в 10 тугриков
  */
 public class CustomArrayList<E> implements List<E> {
+    private static final int DEFAULT_SIZE = 16;
     private Object[] array;
     private int modCount;
     private int size;
 
     public CustomArrayList() {
-        array = new Object[0];
+        array = new Object[DEFAULT_SIZE];
     }
 
-    private CustomArrayList(Object[] array) {
-        this.array = array;
+    public CustomArrayList(Collection<E> c) {
+        array = new Object[c.size()];
+        Iterator<E> iterator = c.iterator();
+        int index = 0;
+        while (iterator.hasNext()) {
+            array[index++] = iterator.next();
+        }
+        size = array.length;
+    }
+
+    public CustomArrayList(Object[] array) {
+        this.array = array.clone();
         size = array.length;
     }
 
@@ -41,15 +52,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean contains(Object o) {
-        if (isEmpty()) {
-            return false;
-        }
-        for (Object element : array) {
-            if (Objects.equals(element, o)) {
-                return true;
-            }
-        }
-        return false;
+        return indexOf(o) != -1;
     }
 
     @Override
@@ -96,18 +99,15 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public boolean add(E e) {
         modCount++;
-        Object[] arrayPlus = new Object[size + 1];
-        System.arraycopy(array, 0, arrayPlus, 0, size);
-        arrayPlus[size] = e;
-        array = arrayPlus;
-        size++;
+        grow();
+        array[size++] = e;
         return true;
     }
 
     @Override
     public boolean remove(Object o) {
         for (int i = 0; i < size; i++) {
-            if (o.equals(array[i])) {
+            if (Objects.equals(o, array[i])) {
                 modCount++;
                 System.arraycopy(array, i + 1, array, i, size - i - 1);
                 size--;
@@ -129,13 +129,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        modCount++;
-        Object[] newArray = new Object[size + c.size()];
-        System.arraycopy(array, 0, newArray, 0, size);
-        System.arraycopy(c.toArray(), 0, newArray, size, c.size());
-        array = newArray;
-        size += c.size();
-        return true;
+        return addAll(size, c);
     }
 
     @Override
@@ -144,11 +138,9 @@ public class CustomArrayList<E> implements List<E> {
             throw new IndexOutOfBoundsException();
         }
         modCount++;
-        Object[] newArray = new Object[size + c.size()];
-        System.arraycopy(array, 0, newArray, 0, index);
-        System.arraycopy(c.toArray(), 0, newArray, index, c.size());
-        System.arraycopy(array, index, newArray, index + c.size(), size - index);
-        array = newArray;
+        grow(c.size());
+        System.arraycopy(array, index, array, index + c.size(), size - index);
+        System.arraycopy(c.toArray(), 0, array, index, c.size());
         size += c.size();
         return true;
     }
@@ -177,7 +169,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public void clear() {
         modCount++;
-        array = new Object[0];
+        array = new Object[DEFAULT_SIZE];
         size = 0;
     }
 
@@ -206,11 +198,9 @@ public class CustomArrayList<E> implements List<E> {
             throw new IndexOutOfBoundsException();
         }
         modCount++;
-        Object[] arrayPlus = new Object[size + 1];
-        System.arraycopy(array, 0, arrayPlus, 0, index);
-        System.arraycopy(array, index, arrayPlus, index + 1, size - index);
-        arrayPlus[index] = element;
-        array = arrayPlus;
+        grow();
+        System.arraycopy(array, index, array, index + 1, size - index);
+        array[index] = element;
         size++;
     }
 
@@ -229,7 +219,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public int indexOf(Object o) {
         for (int i = 0; i < size; i++) {
-            if (o.equals(array[i])) {
+            if (Objects.equals(o, array[i])) {
                 return i;
             }
         }
@@ -239,7 +229,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public int lastIndexOf(Object o) {
         for (int i = size - 1; i >= 0; i--) {
-            if (o.equals(array[i])) {
+            if (Objects.equals(o, array[i])) {
                 return i;
             }
         }
@@ -264,6 +254,20 @@ public class CustomArrayList<E> implements List<E> {
         Object[] newArray = new Object[toIndex - fromIndex + 1];
         System.arraycopy(array, fromIndex, newArray, 0, toIndex - fromIndex + 1);
         return new CustomArrayList<>(newArray);
+    }
+
+    private void grow() {
+        grow(1);
+    }
+
+    private void grow(int capacity) {
+        if (array.length >= size + capacity) {
+            return;
+        }
+        Object[] newArray = new Object[(array.length << 1) + capacity];
+        System.out.println(newArray.length);
+        System.arraycopy(array, 0, newArray, 0, size);
+        array = newArray;
     }
 
     private class listIter implements ListIterator<E> {

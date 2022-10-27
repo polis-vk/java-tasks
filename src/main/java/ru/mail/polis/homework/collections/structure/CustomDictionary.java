@@ -52,6 +52,9 @@ public class CustomDictionary {
      * Сложность - [O(n) - лучшее; O(n * m) - худшее]
      */
     public boolean contains(String value) {
+        if (value == null) {
+            throw new IllegalArgumentException();
+        }
         List<Integer> valueList = getIntegersFromString(value);
         if (map.containsKey(valueList)) {
             return map.get(valueList).contains(value);
@@ -68,6 +71,9 @@ public class CustomDictionary {
      * Сложность - [O(n) - лучшее; O(n * m) - худшее]
      */
     public boolean remove(String value) {
+        if (value == null) {
+            throw new IllegalArgumentException();
+        }
         List<Integer> valueList = getIntegersFromString(value);
         if (map.containsKey(valueList) && map.get(valueList).remove(value)) {
             size--;
@@ -97,6 +103,9 @@ public class CustomDictionary {
      * Сложность - [O(n)]
      */
     public List<String> getSimilarWords(String value) {
+        if (value == null) {
+            throw new IllegalArgumentException();
+        }
         return map.getOrDefault(
                 getIntegersFromString(value),
                 Collections.emptyList());
