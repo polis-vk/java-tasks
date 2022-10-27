@@ -390,12 +390,7 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean remove(Object o) {
-            int index = indexOf(o);
-            if (index != -1) {
-                root.remove(index);
-                return true;
-            }
-            return false;
+            return root.remove(o);
         }
 
         @Override
@@ -405,11 +400,12 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean addAll(Collection<? extends E> c) {
-            return addAll(offset + size, c);
+            return root.addAll(offset + size, c);
         }
 
         @Override
         public boolean addAll(int index, Collection<? extends E> c) {
+            checkIndex(index);
             checkForModification();
             if (c.size() == 0) {
                 return false;
@@ -437,27 +433,31 @@ public class CustomArrayList<E> implements List<E> {
         @Override
         public void clear() {
             root.modCount++;
-            Arrays.fill(root.elementData, null);
-            size = 0;
+            System.arraycopy(root.elementData, offset + size, root.elementData, offset, root.size - offset - size);
+            root.size -= size;
+            updateSizeAndModCount(-size);
         }
 
         @Override
         public E get(int index) {
             checkForModification();
+            checkIndex(index);
             return root.elementData[offset + index];
         }
 
         @Override
         public E set(int index, E element) {
             checkForModification();
-            E prevValue = root.elementData[offset + index];
-            root.elementData[offset + index] = element;
+            checkIndex(index);
+            E prevValue = root.set(offset + index, element);
+            updateSizeAndModCount(0);
             return prevValue;
         }
 
         @Override
         public void add(int index, E element) {
             checkForModification();
+            checkIndex(index);
             root.add(offset + index, element);
             updateSizeAndModCount(1);
         }
@@ -500,8 +500,7 @@ public class CustomArrayList<E> implements List<E> {
         public ListIterator<E> listIterator(int index) {
             checkIndex(index);
             checkForModification();
-            return root.listIterator(offset+index);
-
+            return root.listIterator(offset + index);
         }
 
         @Override
