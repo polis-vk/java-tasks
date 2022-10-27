@@ -17,7 +17,7 @@ import java.util.Map;
 public class ValidatorForParentheses {
     static class MyStack {
 
-        // node of queue
+        // node of stack
         private class Node {
             char data;
             Node next;
@@ -41,7 +41,7 @@ public class ValidatorForParentheses {
             this.size = 0;
         }
 
-        // push elem into queue
+        // push elem into stack
         public void push(char element) {
             Node newNode = new Node(element);
 
@@ -55,7 +55,7 @@ public class ValidatorForParentheses {
             this.size++;
         }
 
-        // delete head node from queue
+        // delete head node from stack
         public char pop() {
             if (this.size == 0) {
                 throw new RuntimeException();
@@ -70,7 +70,7 @@ public class ValidatorForParentheses {
 
         }
 
-        // get elem from head of queue
+        // get elem from head of stack
         public char back() {
             if (this.size == 0) {
                 throw new RuntimeException();
@@ -79,7 +79,7 @@ public class ValidatorForParentheses {
             return this.head.data;
         }
 
-        // get number of elements of queue
+        // get number of elements of stack
         public int size() {
             return this.size;
         }
@@ -88,7 +88,7 @@ public class ValidatorForParentheses {
             return this.modCount;
         }
 
-        // delete elements from queue
+        // delete elements from stack
         public void clear() {
             this.head = null;
             this.size = 0;
