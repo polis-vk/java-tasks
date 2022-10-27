@@ -14,7 +14,14 @@ public class CustomArrayList<E> implements List<E> {
     private static final double GROW_FACTOR = 1.5;
     private E[] data;
     private int size;
-    private int modCount;
+    int modCount;
+
+    public CustomArrayList(CustomArrayList<E> list, int fromInclusive, int toExclusive) {
+        size = toExclusive - fromInclusive;
+        data = (E[]) new Object[size];
+        System.arraycopy(list.data, fromInclusive, data, 0, size);
+        modCount = list.modCount;
+    }
 
     private CustomArrayList(E[] subList, int toIndex, int fromIndex) {
         size = toIndex - fromIndex;
@@ -257,7 +264,7 @@ public class CustomArrayList<E> implements List<E> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                return data[++currentIndex];
+                return data[currentIndex++];
             }
 
             @Override
@@ -310,6 +317,7 @@ public class CustomArrayList<E> implements List<E> {
                     throw new ConcurrentModificationException();
                 }
                 CustomArrayList.this.add(currentIndex, e);
+                currentIndex++;
                 expectedModCount = modCount;
             }
         };
@@ -320,9 +328,7 @@ public class CustomArrayList<E> implements List<E> {
         if (fromIndex < 0 || toIndex > size || fromIndex > toIndex) {
             throw new IndexOutOfBoundsException();
         }
-        E[] subList = (E[]) new Object[toIndex - fromIndex];
-        System.arraycopy(data, fromIndex, subList, 0, toIndex - fromIndex);
-        return new CustomArrayList<>(subList, toIndex, fromIndex);
+        return new SubList<>(this, fromIndex, toIndex);
     }
 
     private E[] grow() {
@@ -348,6 +354,174 @@ public class CustomArrayList<E> implements List<E> {
             }
         }
         return isModified;
+    }
+
+    private static class SubList<E> implements List<E> {
+        private final CustomArrayList<E> parentList;
+        private final int startPosition;
+        private int endPosition;
+
+        public SubList(CustomArrayList<E> parentList, int startPosition, int endPosition) {
+            this.parentList = parentList;
+            this.startPosition = startPosition;
+            this.endPosition = endPosition;
+        }
+
+        @Override
+        public int size() {
+            return endPosition - startPosition;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return size() == 0;
+        }
+
+        @Override
+        public void add(int index, E element) {
+            endPosition++;
+            parentList.add(startPosition + index, element);
+        }
+
+        @Override
+        public E remove(int index) {
+            endPosition--;
+            return parentList.remove(startPosition + index);
+        }
+
+        @Override
+        public int indexOf(Object o) {
+            int currIndex = parentList.indexOf(o);
+            if (startPosition <= currIndex && currIndex < endPosition) {
+                return currIndex;
+            }
+            return -1;
+        }
+
+        @Override
+        public int lastIndexOf(Object o) {
+            int currIndex = parentList.lastIndexOf(o);
+            if (startPosition <= currIndex && currIndex < endPosition) {
+                return currIndex;
+            }
+            return -1;
+        }
+
+        //TODO listIterator
+        @Override
+        public ListIterator<E> listIterator() {
+            return parentList.listIterator();
+        }
+
+        //TODO listIterator#2
+        @Override
+        public ListIterator<E> listIterator(int index) {
+            return parentList.listIterator(startPosition + index);
+        }
+
+        //TODO sbuList
+        @Override
+        public List<E> subList(int fromIndex, int toIndex) {
+            return null;
+        }
+
+        @Override
+        public boolean contains(Object object) {
+            int currIndex = this.indexOf(object);
+            return startPosition <= currIndex && currIndex < endPosition;
+        }
+
+        //TODO iterator
+        @Override
+        public Iterator<E> iterator() {
+            return parentList.iterator();
+        }
+
+        @Override
+        public Object[] toArray() {
+            Object[] temp = new Object[endPosition - startPosition];
+            System.arraycopy(parentList.data, startPosition, temp, 0, endPosition - startPosition);
+            return Arrays.copyOf(temp, endPosition - startPosition);
+        }
+
+        @Override
+        public <T> T[] toArray(T[] a) {
+            if (a.length < size()) {
+                return (T[]) Arrays.copyOf(parentList.data, size(), a.getClass());
+            }
+            System.arraycopy(parentList.data, 0, a, 0, size());
+            return a;
+        }
+
+        @Override
+        public boolean add(E e) {
+            endPosition++;
+            parentList.add(startPosition + size(), e);
+            return true;
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            int currIndex = this.indexOf(o);
+            if (startPosition <= currIndex && currIndex <= endPosition) {
+                parentList.remove(currIndex);
+                endPosition--;
+                return true;
+            }
+            return false;
+        }
+
+        //TODO containsAll
+        @Override
+        public boolean containsAll(Collection<?> c) {
+            return parentList.containsAll(c);
+        }
+
+        @Override
+        public boolean addAll(Collection<? extends E> c) {
+            return this.addAll(startPosition, c);
+        }
+
+        @Override
+        public boolean addAll(int index, Collection<? extends E> c) {
+            endPosition += c.size();
+            return parentList.addAll(startPosition + index, c);
+        }
+
+        //TODO removeAll
+        @Override
+        public boolean removeAll(Collection<?> c) {
+            endPosition -= c.size();
+            return parentList.removeAll(c);
+        }
+
+        //TODO retainAll
+        @Override
+        public boolean retainAll(Collection<?> c) {
+            final int fixedSize = parentList.size;
+            final boolean result = parentList.retainAll(c);
+//            endPosition -= ();
+            return result;
+        }
+
+        @Override
+        public void clear() {
+            parentList.modCount++;
+            for (int i = endPosition - 1; i >= startPosition; i--) {
+                parentList.remove(i);
+            }
+            endPosition = startPosition;
+        }
+
+        @Override
+        public E get(int index) {
+            return parentList.get(startPosition + index);
+        }
+
+        @Override
+        public E set(int index, E element) {
+            return parentList.set(startPosition + index, element);
+        }
     }
 }
 
