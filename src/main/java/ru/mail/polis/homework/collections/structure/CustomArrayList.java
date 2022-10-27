@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
@@ -24,27 +25,20 @@ public class CustomArrayList<E> implements List<E> {
     private int size;
     private int modCount;
 
-    private CustomArrayList(CustomArrayList<E> list, int fromInclusive, int toExclusive) {
-        size = toExclusive - fromInclusive;
-        array = (E[]) new Object[size];
-        System.arraycopy(list.array, fromInclusive, array, 0, size);
-        modCount = list.modCount;
-    }
-
     public CustomArrayList() {
         size = 0;
         modCount = 0;
         array = (E[]) new Object[INITIAL_SIZE];
     }
 
-    private static void checkIndex(int index, int upperBound) {
-        if (index < 0 || index > upperBound) {
+    private static void checkIndex(int lowerBound, int index, int upperBound) {
+        if (index < lowerBound || index > upperBound) {
             throw new IndexOutOfBoundsException();
         }
     }
 
     private void checkIndex(int index) {
-        checkIndex(index, size - 1);
+        checkIndex(0, index, size - 1);
     }
 
     private void growLazy(int count) {
@@ -144,7 +138,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        checkIndex(index, size);
+        checkIndex(0, index, size);
         if (c.isEmpty()) {
             return false;
         }
@@ -204,7 +198,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public void add(int index, E element) {
-        checkIndex(index, size);
+        checkIndex(0, index, size);
         growLazy(1);
         System.arraycopy(array, index, array, index + 1, size - index);
         array[index] = element;
@@ -224,22 +218,12 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        for (int i = 0; i < size; i++) {
-            if (Objects.equals(array[i], o)) {
-                return i;
-            }
-        }
-        return -1;
+        return indexOfRange(o, 0, size);
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        for (int i = size - 1; i >= 0; i--) {
-            if (Objects.equals(array[i], o)) {
-                return i;
-            }
-        }
-        return -1;
+        return lastIndexOfRange(o, 0, size);
     }
 
     @Override
@@ -257,7 +241,243 @@ public class CustomArrayList<E> implements List<E> {
         if (fromIndex < 0 || fromIndex > toIndex || toIndex > size) {
             throw new IllegalStateException();
         }
-        return new CustomArrayList<>(this, fromIndex, toIndex);
+        return new CustomSubList(fromIndex, toIndex);
+    }
+
+    private int indexOfRange(Object o, int fromInclusive, int toExclusive) {
+        for (int i = fromInclusive; i < toExclusive; i++) {
+            if (Objects.equals(array[i], o)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int lastIndexOfRange(Object o, int fromInclusive, int toExclusive) {
+        for (int i = toExclusive - 1; i >= fromInclusive; i--) {
+            if (Objects.equals(array[i], o)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private class CustomSubList implements List<E> {
+
+        private final int offset;
+        private final CustomSubList parent;
+        private int fixedModCount = modCount;
+        private int size;
+
+        public CustomSubList(int fromInclusive, int toExclusive) {
+            this(null, fromInclusive, toExclusive);
+        }
+
+        public CustomSubList(CustomSubList parent, int fromInclusive, int toExclusive) {
+            this.parent = parent;
+            this.offset = fromInclusive;
+            this.size = toExclusive - fromInclusive;
+        }
+
+        @Override
+        public int size() {
+            checkModCount();
+            return size;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return size() == 0;
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return indexOf(o) >= 0;
+        }
+
+        // TODO: fix custom list iterator
+        @Override
+        public Iterator<E> iterator() {
+            return null;
+        }
+
+        @Override
+        public Object[] toArray() {
+            checkModCount();
+            return Arrays.copyOfRange(array, offset, offset + size);
+        }
+
+        @Override
+        public <T> T[] toArray(T[] a) {
+            checkModCount();
+            if (a.length < size) {
+                return (T[]) Arrays.copyOfRange(a, offset, offset + size, a.getClass());
+            }
+            System.arraycopy(array, offset, a, 0, size);
+            return a;
+        }
+
+        @Override
+        public boolean add(E e) {
+            add(offset + size, e);
+            return true;
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            int oIndex = indexOf(o);
+            if (oIndex >= 0) {
+                remove(oIndex);
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean containsAll(Collection<?> c) {
+            checkModCount();
+            for (Object element : c) {
+                if (!contains(element)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public boolean addAll(Collection<? extends E> c) {
+            return addAll(offset + size, c);
+        }
+
+        @Override
+        public boolean addAll(int index, Collection<? extends E> c) {
+            checkModCount();
+            checkIndex(0, index, size);
+            if (c.isEmpty()) {
+                return false;
+            }
+            CustomArrayList.this.addAll(offset + index, c);
+            updateSizeAndModCount(c.size());
+            return true;
+        }
+
+        @Override
+        public boolean removeAll(Collection<?> c) {
+            checkModCount();
+            boolean changed = false;
+            for (int i = 0; i < size; i++) {
+                if (c.contains(get(i))) {
+                    remove(i--);
+                    changed = true;
+                }
+            }
+            return changed;
+        }
+
+        @Override
+        public boolean retainAll(Collection<?> c) {
+            checkModCount();
+            boolean changed = false;
+            for (int i = 0; i < size; i++) {
+                if (!c.contains(get(i))) {
+                    remove(i--);
+                    changed = true;
+                }
+            }
+            return changed;
+        }
+
+        // TODO: fix clear
+        @Override
+        public void clear() {
+        }
+
+        @Override
+        public E get(int index) {
+            checkModCount();
+            checkIndex(0, index, size - 1);
+            return CustomArrayList.this.get(offset + index);
+        }
+
+        @Override
+        public E set(int index, E element) {
+            checkModCount();
+            checkIndex(0, index, size - 1);
+            E oldValue = CustomArrayList.this.set(offset + index, element);
+            updateSizeAndModCount(0);
+            return oldValue;
+        }
+
+        @Override
+        public void add(int index, E element) {
+            checkModCount();
+            checkIndex(0, index, size);
+            CustomArrayList.this.add(offset + index, element);
+            updateSizeAndModCount(1);
+        }
+
+        @Override
+        public E remove(int index) {
+            checkModCount();
+            checkIndex(0, index, size - 1);
+            E oldValue = CustomArrayList.this.remove(offset + index);
+            updateSizeAndModCount(-1);
+            return oldValue;
+        }
+
+        @Override
+        public int indexOf(Object o) {
+            checkModCount();
+            int index = indexOfRange(o, offset, offset + size);
+            if (index >= 0) {
+                return index - offset;
+            }
+            return -1;
+        }
+
+        @Override
+        public int lastIndexOf(Object o) {
+            checkModCount();
+            int lastIndex = indexOfRange(o, offset, offset + size);
+            if (lastIndex >= 0) {
+                return lastIndex - offset;
+            }
+            return -1;
+        }
+
+        // TODO: fix list iterator
+        @Override
+        public ListIterator<E> listIterator() {
+            return null;
+        }
+
+        // TODO: fix list iterator
+        @Override
+        public ListIterator<E> listIterator(int index) {
+            return null;
+        }
+
+        @Override
+        public List<E> subList(int fromIndex, int toIndex) {
+            if (fromIndex < 0 || fromIndex > toIndex || toIndex > size) {
+                throw new IllegalStateException();
+            }
+            return new CustomSubList(this, fromIndex, toIndex);
+        }
+
+        private void updateSizeAndModCount(int sizeDelta) {
+            fixedModCount = modCount;
+            size += sizeDelta;
+            if (parent != null) {
+                parent.updateSizeAndModCount(sizeDelta);
+            }
+        }
+
+        private void checkModCount() {
+            if (fixedModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+        }
     }
 
     private class CustomListIterator implements ListIterator<E> {
