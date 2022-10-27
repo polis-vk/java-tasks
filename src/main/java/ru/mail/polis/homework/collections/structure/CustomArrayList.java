@@ -294,10 +294,9 @@ public class CustomArrayList<E> implements List<E> {
             return indexOf(o) >= 0;
         }
 
-        // TODO: fix custom list iterator
         @Override
         public Iterator<E> iterator() {
-            return null;
+            return new CustomSubListIterator();
         }
 
         @Override
@@ -444,16 +443,14 @@ public class CustomArrayList<E> implements List<E> {
             return -1;
         }
 
-        // TODO: fix list iterator
         @Override
         public ListIterator<E> listIterator() {
-            return null;
+            return new CustomSubListIterator();
         }
 
-        // TODO: fix list iterator
         @Override
         public ListIterator<E> listIterator(int index) {
-            return null;
+            return new CustomSubListIterator(index);
         }
 
         @Override
@@ -475,6 +472,105 @@ public class CustomArrayList<E> implements List<E> {
         private void checkModCount() {
             if (fixedModCount != modCount) {
                 throw new ConcurrentModificationException();
+            }
+        }
+
+        private class CustomSubListIterator implements ListIterator<E> {
+
+            private int lastTaken;
+            private int currentIndex;
+            private int fixedModCount;
+
+            public CustomSubListIterator() {
+                this(offset);
+            }
+
+            public CustomSubListIterator(int initialIndex) {
+                currentIndex = initialIndex;
+                fixedModCount = CustomSubList.this.fixedModCount;
+                lastTaken = offset - 1;
+            }
+
+            @Override
+            public boolean hasNext() {
+                checkModCount();
+                return currentIndex < offset + size;
+            }
+
+            @Override
+            public E next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                lastTaken = currentIndex;
+                return array[currentIndex++];
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                checkModCount();
+                return currentIndex > offset;
+            }
+
+            @Override
+            public E previous() {
+                if (!hasPrevious()) {
+                    throw new NoSuchElementException();
+                }
+                return array[--currentIndex];
+            }
+
+            @Override
+            public int nextIndex() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                return currentIndex;
+            }
+
+            @Override
+            public int previousIndex() {
+                if (!hasPrevious()) {
+                    throw new NoSuchElementException();
+                }
+                return currentIndex - 1;
+            }
+
+            @Override
+            public void remove() {
+                checkModCount();
+                checkLastTaken();
+                CustomSubList.this.remove(lastTaken);
+                lastTaken = offset - 1;
+                fixedModCount = CustomSubList.this.fixedModCount;
+            }
+
+            @Override
+            public void set(E e) {
+                checkModCount();
+                checkLastTaken();
+                CustomSubList.this.set(currentIndex, e);
+                fixedModCount = CustomSubList.this.fixedModCount;
+            }
+
+            @Override
+            public void add(E e) {
+                checkModCount();
+                CustomSubList.this.add(currentIndex++, e);
+                lastTaken = offset - 1;
+                fixedModCount = CustomSubList.this.fixedModCount;
+            }
+
+            private void checkLastTaken() {
+                if (lastTaken < offset) {
+                    throw new IllegalStateException();
+                }
+            }
+
+            private void checkModCount() {
+                if (fixedModCount != CustomSubList.this.fixedModCount) {
+                    throw new ConcurrentModificationException();
+                }
             }
         }
     }
