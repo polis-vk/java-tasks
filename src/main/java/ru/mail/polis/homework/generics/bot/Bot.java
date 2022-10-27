@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Bot<T extends State> {
+public class Bot {
 
     /**
      * Конструктор бота, которому на вход подаются хэндлеры состояний.
@@ -15,16 +15,16 @@ public class Bot<T extends State> {
      *
      * 1 тугрик
      */
-    private final Map<Class<T>, StateHandler<T>> stateHandlerMap = new HashMap<>();
+    private final Map<Class<? extends State>, StateHandler<?>> stateHandlerMap = new HashMap<>();
 
-    public Bot(List<StateHandler<T>> handlers) {
-        for (StateHandler<T> handler: handlers) {
+    public Bot(List<StateHandler<?>> handlers) {
+        for (StateHandler<?> handler: handlers) {
             stateHandlerMap.put(handler.getHandlingStateClass(), handler);
         }
     }
 
     /**
-     * Вызывает хэндлер, предназначенный для переданного State
+     * Вызывает хэндлер, предназначенный для переданного Stat   e
      *
      * 1 тугрик
      */
