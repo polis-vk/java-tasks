@@ -384,10 +384,14 @@ public class CustomArrayList<E> implements List<E> {
             }
             return changed;
         }
-
-        // TODO: fix clear
+        
         @Override
         public void clear() {
+            int transferFrom = offset + size;
+            System.arraycopy(array, transferFrom, array, offset, CustomArrayList.this.size - transferFrom);
+            CustomArrayList.this.size -= size;
+            modCount++;
+            updateSizeAndModCount(-size);
         }
 
         @Override
