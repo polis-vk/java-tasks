@@ -15,9 +15,7 @@ import java.util.List;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-
-    private Map<Map<Character, Integer>, Set<String>> dictionary
-            = new HashMap<>();
+    private Map<Map<Character, Integer>, Set<String>> dictionary = new HashMap<>();
     private int size = 0;
 
     private static Map<Character, Integer> getCounter(String str) {

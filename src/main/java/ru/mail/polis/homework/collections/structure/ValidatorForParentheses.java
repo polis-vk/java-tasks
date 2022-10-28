@@ -17,9 +17,7 @@ import java.util.Map;
  *
  * Отрабатывать метод должен за О(n)
  */
-
 public class ValidatorForParentheses {
-
     private static final Map<Character, Character> INITIAL_TO_CLOSING_PARENTHESES;
 
     static {

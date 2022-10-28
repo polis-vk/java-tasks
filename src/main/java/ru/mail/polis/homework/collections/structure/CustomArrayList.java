@@ -16,7 +16,6 @@ import java.util.Objects;
  * Задание оценивается в 10 тугриков
  */
 public class CustomArrayList<E> implements List<E> {
-
     private static final int INITIAL_SIZE = 16;
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
@@ -210,6 +209,7 @@ public class CustomArrayList<E> implements List<E> {
         checkIndex(index);
         E oldValue = array[index];
         System.arraycopy(array, index + 1, array, index, size - index - 1);
+        array[size] = null;
         size--;
         modCount++;
         return oldValue;
@@ -262,7 +262,6 @@ public class CustomArrayList<E> implements List<E> {
     }
 
     private class CustomSubList implements List<E> {
-
         private final int offset;
         private final CustomSubList parent;
         private int fixedModCount = modCount;
@@ -389,6 +388,7 @@ public class CustomArrayList<E> implements List<E> {
         public void clear() {
             int transferFrom = offset + size;
             System.arraycopy(array, transferFrom, array, offset, CustomArrayList.this.size - transferFrom);
+            Arrays.fill(array, CustomArrayList.this.size - size, CustomArrayList.this.size, null);
             CustomArrayList.this.size -= size;
             modCount++;
             updateSizeAndModCount(-size);
@@ -440,7 +440,7 @@ public class CustomArrayList<E> implements List<E> {
         @Override
         public int lastIndexOf(Object o) {
             checkModCount();
-            int lastIndex = indexOfRange(o, offset, offset + size);
+            int lastIndex = lastIndexOfRange(o, offset, offset + size);
             if (lastIndex >= 0) {
                 return lastIndex - offset;
             }
@@ -480,7 +480,6 @@ public class CustomArrayList<E> implements List<E> {
         }
 
         private class CustomSubListIterator implements ListIterator<E> {
-
             private int lastTaken;
             private int currentIndex;
             private int fixedModCount;
@@ -580,7 +579,6 @@ public class CustomArrayList<E> implements List<E> {
     }
 
     private class CustomListIterator implements ListIterator<E> {
-
         private int lastTaken;
         private int currentIndex;
         private int fixedModCount;

@@ -2,12 +2,10 @@ package ru.mail.polis.homework.generics.bot;
 
 import ru.mail.polis.homework.generics.bot.handler.StateHandler;
 import ru.mail.polis.homework.generics.bot.state.State;
-
 import java.util.List;
 import java.util.Map;
 
 public class Bot {
-
     private Map<Class<? extends State>, StateHandler> handlersStorage;
 
     /**
