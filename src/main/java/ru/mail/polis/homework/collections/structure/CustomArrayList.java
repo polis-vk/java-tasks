@@ -27,9 +27,8 @@ public class CustomArrayList<E> implements List<E> {
     public CustomArrayList(int initialCapacity) {
         if (initialCapacity < 0) {
             throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity);
-        } else {
-            this.elementData = (E[]) new Object[initialCapacity];
         }
+        this.elementData = (E[]) new Object[initialCapacity];
     }
 
     public CustomArrayList() {
