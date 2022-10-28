@@ -16,10 +16,24 @@ import java.util.NoSuchElementException;
 public class CustomArrayList<E> implements List<E> {
 
     private final static int DEFAULT_SIZE = 16;
-    private static int modCount;
+    private int modCount;
     private int maxCapacity = DEFAULT_SIZE;
     private int size;
-    private E[] array = (E[]) new Object[DEFAULT_SIZE];
+    private E[] array;
+
+    public CustomArrayList() {
+        array = (E[]) new Object[DEFAULT_SIZE];
+    }
+
+    public CustomArrayList(E[] array) {
+        this.array = array;
+        size = array.length;
+    }
+
+    public CustomArrayList(Collection<E> collection) {
+        array = (E[]) collection.toArray();
+        size = collection.size();
+    }
 
     @Override
     public int size() {
@@ -49,11 +63,11 @@ public class CustomArrayList<E> implements List<E> {
 
             @Override
             public E next() {
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
                 if (iteratorModCount != modCount) {
                     throw new ConcurrentModificationException();
+                }
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
                 }
                 return array[index++];
             }
@@ -162,17 +176,13 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E get(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkIndex(index);
         return array[index];
     }
 
     @Override
     public E set(int index, E element) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkIndex(index);
         E oldElement = array[index];
         array[index] = element;
         modCount++;
@@ -181,9 +191,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public void add(int index, E element) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkIndex(index);
         resize(1);
         System.arraycopy(array, index, array, index + 1, size - index);
         array[index] = element;
@@ -193,9 +201,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E remove(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkIndex(index);
         E element = array[index];
         System.arraycopy(array, index + 1, array, index, size - index - 1);
         array[--size] = null;
@@ -251,8 +257,10 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-        if (fromIndex < 0 || fromIndex > toIndex || toIndex >= size) {
-            throw new IllegalStateException();
+        checkIndex(fromIndex);
+        checkIndex(toIndex);
+        if (fromIndex > toIndex) {
+            throw new IndexOutOfBoundsException();
         }
         E[] subList = (E[]) new Object[toIndex - fromIndex];
         System.arraycopy(array, fromIndex, subList, 0, toIndex - fromIndex);
@@ -275,11 +283,9 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public E next() {
+            checkModCount();
             if (!hasNext()) {
                 throw new NoSuchElementException();
-            }
-            if (iteratorModCount != modCount) {
-                throw new ConcurrentModificationException();
             }
             return array[index++];
         }
@@ -291,11 +297,9 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public E previous() {
+            checkModCount();
             if (!hasPrevious()) {
                 throw new NoSuchElementException();
-            }
-            if (iteratorModCount != modCount) {
-                throw new ConcurrentModificationException();
             }
             return array[--index];
         }
@@ -312,29 +316,35 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public void remove() {
-            if (iteratorModCount != modCount) {
-                throw new ConcurrentModificationException();
-            }
+            checkModCount();
             CustomArrayList.this.remove(index);
             iteratorModCount = modCount;
         }
 
         @Override
         public void set(E e) {
-            if (iteratorModCount != modCount) {
-                throw new ConcurrentModificationException();
-            }
+            checkModCount();
             CustomArrayList.this.set(index, e);
             iteratorModCount = modCount;
         }
 
         @Override
         public void add(E e) {
+            checkModCount();
+            CustomArrayList.this.add(index++, e);
+            iteratorModCount = modCount;
+        }
+
+        private void checkModCount() {
             if (iteratorModCount != modCount) {
                 throw new ConcurrentModificationException();
             }
-            CustomArrayList.this.add(index++, e);
-            iteratorModCount = modCount;
+        }
+    }
+
+    private void checkIndex(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
         }
     }
 

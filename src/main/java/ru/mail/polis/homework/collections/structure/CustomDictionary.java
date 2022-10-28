@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class CustomDictionary {
 
-    private final HashMap<String, HashMap<Character, Integer>> dictionary = new HashMap<>();
+    private final Map<String, HashMap<Character, Integer>> dictionary = new HashMap<>();
 
     /**
      * Сохранить строку в структуру данных

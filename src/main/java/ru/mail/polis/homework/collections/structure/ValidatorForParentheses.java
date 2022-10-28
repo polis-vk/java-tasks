@@ -2,6 +2,7 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Задание оценивается в 2 тугрика.
@@ -17,7 +18,7 @@ import java.util.HashMap;
  */
 public class ValidatorForParentheses {
 
-    private static final HashMap<Character, Character> bracketsMap = new HashMap<>();
+    private static final Map<Character, Character> bracketsMap = new HashMap<>();
 
     static {
         bracketsMap.put(']', '[');
@@ -30,34 +31,24 @@ public class ValidatorForParentheses {
         if (value == null || value.isEmpty()) {
             return false;
         }
-        ArrayList<Character> stack = new ArrayList<>();
-        boolean meetBracket = false;
+        ArrayList<Character> stack = null;
         for (int i = 0; i < value.length(); i++) {
             char ch = value.charAt(i);
-            switch (ch) {
-                case '[':
-                case '{':
-                case '<':
-                case '(':
-                    meetBracket = true;
-                    stack.add(ch);
-                    break;
-                case ']':
-                case '}':
-                case '>':
-                case ')':
-                    if (stack.isEmpty()) {
-                        return false;
-                    }
-                    char bracket = stack.remove(stack.size() - 1);
-                    if (bracket != bracketsMap.get(ch)) {
-                        return false;
-                    }
-                    break;
-                default:
-                    break;
+            if (bracketsMap.containsValue(ch)) {
+                if (stack == null) {
+                    stack = new ArrayList<>();
+                }
+                stack.add(ch);
+            } else if (bracketsMap.containsKey(ch)) {
+                if (stack == null || stack.isEmpty()) {
+                    return false;
+                }
+                char bracket = stack.remove(stack.size() - 1);
+                if (bracket != bracketsMap.get(ch)) {
+                    return false;
+                }
             }
         }
-        return stack.isEmpty() && meetBracket;
+        return stack != null && stack.isEmpty();
     }
 }
