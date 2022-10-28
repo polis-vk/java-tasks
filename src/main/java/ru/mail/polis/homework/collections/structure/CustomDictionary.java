@@ -1,9 +1,13 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -12,24 +16,32 @@ import java.util.Map;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private Map<String, Integer> strings = new HashMap<>();
+    private Map<List<Integer>, Set<String>> strings = new HashMap<>();
     private int size = 0;
 
-    private int getLetterSet(char[] letters) {
-        int set = 0;
-        char buf;
+    private List<Integer> getLetterSet(char[] letters) {
+        int[] letterSet = new int[26];
+        char index;
         for (char c : letters) {
-            buf = c;
+            index = c;
+            //Проверяем, то что является буквой
+            if (c <= 65 || c >= 90) {
+                if (c <= 97 || c >= 122) {
+                    continue;
+                }
+            }
             //Переводим букву верхнего регистра в нижний
-            if (buf >= 97) {
-                buf -= 32;
+            if (index >= 97) {
+                index -= 32;
             }
             //Переводим номер буквы по ASCII к номеру по порядку в алфавите
-            buf -= 65;
-            //Заполняем соответсвующий номеру по порядку в алфавите бит в числе
-            set = set | (1 << buf);
+            index -= 65;
+            //Увеличиваем на единицу кол-во текущей буквы
+            letterSet[index]++;
         }
-        return set;
+        return Arrays.stream(letterSet)
+                .boxed()
+                .collect(Collectors.toList());
     }
 
     /**
@@ -38,15 +50,22 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - [O(l)], где l длина строки
+     * Сложность - [O(l)], где l - длина строки
      */
     public boolean add(String value) {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        if (strings.put(value, getLetterSet(value.toCharArray())) != null) {
+        if (contains(value)) {
             return false;
         }
+        List<Integer> letterSet = getLetterSet(value.toCharArray());
+        Set<String> stringsSet = strings.get(letterSet);
+        if (stringsSet == null) {
+            stringsSet = new HashSet<>();
+        }
+        stringsSet.add(value);
+        strings.put(letterSet, stringsSet);
         size++;
         return true;
     }
@@ -57,10 +76,12 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - [O(1)]
+     * Сложность - [O(l)], где l - длина строки
      */
     public boolean contains(String value) {
-        return strings.containsKey(value);
+        List<Integer> letterSet = getLetterSet(value.toCharArray());
+        Set<String> stringsSet = strings.get(letterSet);
+        return stringsSet != null && stringsSet.contains(value);
     }
 
     /**
@@ -69,10 +90,12 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - [O(1)]
+     * Сложность - [O(l)], где l - длина строки
      */
     public boolean remove(String value) {
-        if (strings.remove(value) != null) {
+        List<Integer> letterSet = getLetterSet(value.toCharArray());
+        Set<String> stringsSet = strings.get(letterSet);
+        if (stringsSet != null && stringsSet.remove(value)) {
             size--;
             return true;
         }
@@ -96,17 +119,16 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - [O(n)]
+     * Сложность - [O(l + n)], где l - длина строки, n - кол-во слов с таким же множеством букв
      */
     public List<String> getSimilarWords(String value) {
-        int set = getLetterSet(value.toCharArray());
-        List<String> res = new ArrayList<>();
-        for (Map.Entry<String, Integer> entry : strings.entrySet()) {
-            if (entry.getValue() == set && value.length() == entry.getKey().length()) {
-                res.add(entry.getKey());
-            }
+        Set<String> similarStrings = strings.get(getLetterSet(value.toCharArray()));
+        if (similarStrings == null) {
+            return new ArrayList<>();
         }
-        return res;
+        return new ArrayList<String>() {{
+            addAll(similarStrings);
+        }};
     }
 
     /**
