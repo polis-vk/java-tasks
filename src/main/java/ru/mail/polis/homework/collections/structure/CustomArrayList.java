@@ -238,6 +238,7 @@ public class CustomArrayList<E> implements List<E> {
 
         size--;
         System.arraycopy(data, index + 1, data, index, size - index);
+        data[size] = null;
         return result;
     }
 
