@@ -50,15 +50,11 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public <T> T[] toArray(T[] a) {
-        if (a == null) {
-            throw new NullPointerException();
-        }
         if (a.length >= size) {
             System.arraycopy(array, 0, a, 0, size);
             return a;
-        } else {
-            return  (T[]) Arrays.copyOf(array, size, a.getClass());
         }
+        return (T[]) Arrays.copyOf(array, size, a.getClass());
     }
 
     @Override
@@ -69,24 +65,12 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean remove(Object o) {
-        if (o == null) {
-            throw new NullPointerException();
+        int index = indexOf(o);
+        if (index == -1) {
+            return false;
         }
-        if (size == 1 && array[0].equals(o)) {
-            array[0] = null;
-            size--;
-            return true;
-        }
-        for (int i = 0; i < size; i++) {
-            if (array[i].equals(o)) {
-                for (int j = i; j < size - 1; j++) {
-                    array[j] = array[j + 1];
-                }
-                size--;
-                return true;
-            }
-        }
-        return false;
+        remove(index);
+        return true;
     }
 
     @Override
@@ -156,7 +140,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E get(int index) {
-        if (index < 0 || index >= size) {
+        if (checkIndex(index)) {
             throw new IndexOutOfBoundsException();
         }
         return array[index];
@@ -164,7 +148,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E set(int index, E element) {
-        if (index < 0 || index >= size) {
+        if (checkIndex(index)) {
             throw new IndexOutOfBoundsException();
         }
         E prevValue = array[index];
@@ -175,7 +159,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public void add(int index, E element) {
-        if (index > size || index < 0) {
+        if (index > size || index < 0) { // checkIndex is not used (index may be equal to size)
             throw new IndexOutOfBoundsException();
         }
         if (size == array.length - 1) {
@@ -195,24 +179,33 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        for (int i = 0; i < size; i++) {
-            if (array[i].equals(o)) {
+        int i = 0;
+        for (E e : this) {
+            if (Objects.equals(o, e)) {
                 return i;
             }
+            i++;
         }
         return -1;
+
     }
 
     @Override
     public int lastIndexOf(Object o) {
         int index = -1;
 
-        for (int i = 0; i < size; i++) {
-            if (array[i].equals(o)) {
+        int i = 0;
+        for (E e : this) {
+            if (Objects.equals(o, e)) {
                 index = i;
             }
+            i++;
         }
         return index;
+    }
+
+    public boolean checkIndex(int i) {
+        return i >= size || i < 0;
     }
 
     @Override
@@ -294,5 +287,13 @@ public class CustomArrayList<E> implements List<E> {
         CustomArrayList<E> list = new CustomArrayList<>();
         list.addAll(Arrays.asList(array).subList(fromIndex, toIndex));
         return list;
+    }
+
+    public static void main(String[] args) {
+        CustomArrayList<Integer> list = new CustomArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            list.add(null);
+        }
+        list.remove(0);
     }
 }

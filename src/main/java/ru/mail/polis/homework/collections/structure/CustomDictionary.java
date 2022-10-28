@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -13,7 +10,7 @@ import java.util.List;
  */
 public class CustomDictionary {
 
-    HashMap<String, char[]> pairs = new HashMap<>();
+    private final HashMap<String, char[]> pairs = new HashMap<>();
 
     /**
      * Сохранить строку в структуру данных
@@ -21,13 +18,13 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - [O(nlog(n)]
+     * Сложность - [O(k*log(k)], где k - value.length
      */
     public boolean add(String value) {
-        if (value == null || value.length() == 0) {
+        if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        if (pairs.containsKey(value)) {
+        if (pairs.containsKey(value)) { // O(1)
             return false;
         }
         char[] ch = value.toLowerCase().toCharArray();
@@ -42,7 +39,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - [O(1), O(n) worst case]
+     * Сложность - [O(1)]
      */
     public boolean contains(String value) {
         return pairs.containsKey(value);
@@ -54,12 +51,9 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - [O(n) worst case]
+     * Сложность - [O(1)]
      */
     public boolean remove(String value) {
-        if (pairs.isEmpty()) {
-            return false;
-        }
         return pairs.remove(value) != null;
     }
 
@@ -80,17 +74,17 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - [O(nlog(n)]
+     * Сложность - [O(n * k)], k - value.length, n - pairs.keySet().size()
      */
     public List<String> getSimilarWords(String value) {
         char[] ch = value.toLowerCase().toCharArray();
         Arrays.sort(ch);
 
-        List<String> result = new LinkedList<>();
+        List<String> result = new ArrayList<>();
 
-        for (String n : pairs.keySet()) {
-            if (Arrays.equals(pairs.get(n), ch)) {
-                result.add(n);
+        for (String val : pairs.keySet()) { // n итераций
+            if (Arrays.equals(pairs.get(val), ch)) { // k итераций при сравнении массивов
+                result.add(val);
             }
         }
         return result;
