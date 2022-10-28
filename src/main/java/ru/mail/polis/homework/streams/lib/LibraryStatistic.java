@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.streams.lib;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
  * Оценка 5-ть баллов
  */
 public class LibraryStatistic {
+    private static final int DAYS_DIVIDER = 1000 * 60 * 60 * 24;
 
     /**
      * Вернуть "специалистов" в литературном жанре с кол-вом прочитанных страниц.
@@ -23,13 +24,10 @@ public class LibraryStatistic {
         return library.getArchive()
                 .stream()
                 .filter(archivedData -> {
-                    LocalDateTime takePlus14Days = archivedData.getTake()
-                            .toLocalDateTime()
-                            .plusDays(14);
-                    LocalDateTime returned = archivedData.getReturned().toLocalDateTime();
-                    return returned.isEqual(takePlus14Days) ||
-                            returned.isAfter(takePlus14Days) ||
-                            archivedData.getBook().getGenre() == genre;
+                    long take = archivedData.getTake().getTime();
+                    Timestamp returnedTimestamp = archivedData.getReturned();
+                    return returnedTimestamp != null
+                            && (returnedTimestamp.getTime() - take) / DAYS_DIVIDER >= 14;
                 })
                 .collect(Collectors.groupingBy(ArchivedData::getUser))
                 .entrySet()
@@ -84,13 +82,10 @@ public class LibraryStatistic {
                     Long expiredBooksCount = entry.getValue()
                             .stream()
                             .filter(archivedData -> {
-                                LocalDateTime takePlus30Days = archivedData.getTake()
-                                        .toLocalDateTime()
-                                        .plusDays(30);
-                                // TODO: null considered
-                                LocalDateTime returned = archivedData.getReturned()
-                                        .toLocalDateTime();
-                                return returned.isAfter(takePlus30Days);
+                                long take = archivedData.getTake().getTime();
+                                Timestamp returnedTimestamp = archivedData.getReturned();
+                                return returnedTimestamp != null
+                                        && (returnedTimestamp.getTime() - take) / DAYS_DIVIDER > 30;
                             })
                             .count();
                     return expiredBooksCount > (booksCount >> 1);
