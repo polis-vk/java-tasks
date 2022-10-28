@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
  * Оценка 5-ть баллов
  */
 public class StoreStatistic {
+    private static final int DAYS_DIVIDER = 1000 * 60 * 60 * 24;
 
     /**
      * Вернуть сколько было продано определенного товара за переданный промежуток времени
@@ -38,7 +39,25 @@ public class StoreStatistic {
      * значение - map товар/кол-во
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
-        return null;
+        return orders.stream()
+                .collect(Collectors.groupingBy(
+                        order -> {
+                            long orderTime = order.getTime().getTime();
+                            return new Timestamp(orderTime - orderTime % DAYS_DIVIDER);
+                        }
+                ))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue()
+                                .stream()
+                                .flatMap(order -> order.getItemCount().entrySet().stream())
+                                .collect(Collectors.groupingBy(
+                                        Map.Entry::getKey,
+                                        Collectors.summingInt(Map.Entry::getValue)
+                                ))
+                ));
     }
 
     /**
