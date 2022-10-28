@@ -1,10 +1,12 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.List;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -14,7 +16,7 @@ import java.util.Map;
  */
 public class CustomDictionary {
 
-    private Map<Map<Character, Integer>, List< String > > storage;
+    private Map<Map<Character, Integer>, Set<String>> storage;
 
     private int size;
 
@@ -29,7 +31,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - [O(len(value) + containsKey]
+     * Сложность - [O(len(value)]
      * Учитывая то, что в hashMap операция добавления за константу
      */
     public boolean add(String value) {
@@ -37,19 +39,10 @@ public class CustomDictionary {
             throw new IllegalArgumentException();
         }
 
-        if (contains(value)) {
-            return false;
-        }
-
         Map<Character, Integer> lets = getLetsMap(value);
-
-        if (!storage.containsKey(lets)) {
-            storage.put(lets, new LinkedList<>());
-        }
-
-        storage.get(lets).add(value);
-        size++;
-        return true;
+        boolean isElementAdded = storage.computeIfAbsent(lets, k -> new HashSet<>()).add(value);
+        size = (isElementAdded) ? size + 1 : size;
+        return isElementAdded;
     }
 
     /**
@@ -58,11 +51,18 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - [O(len(value) + m]
-     * m - количество слов в нашей мапе, которая соотвествует слову
+     * Сложность - [O(len(value))]
+     * len(value) - нам все равно нужно построить наш ключ, по которому ищем value
      */
     public boolean contains(String value) {
-        return removeOrCheck(value, false);
+        if (!isValid(value)) {
+            throw new IllegalArgumentException();
+        }
+
+        Map<Character, Integer> lets = getLetsMap(value);
+
+        Set<String> set = storage.get(lets);
+        return set != null && set.contains(value);
     }
 
     /**
@@ -71,12 +71,21 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - [O(len(value) + m]
-     * m - количество слов в нашей мапе, которая соотвествует слову
-     * (надеюсь, что так, потому что не уверен как под капотом работает.Но если через итераторы, то должно быть так)
+     * Сложность - [O(len(value)]
      */
     public boolean remove(String value) {
-        return removeOrCheck(value, true);
+        if (!isValid(value)) {
+            throw new IllegalArgumentException();
+        }
+
+        Map<Character, Integer> lets = getLetsMap(value);
+        Set<String> set = storage.get(lets);
+        if (set != null) {
+            boolean isElementRemoved = set.remove(value);
+            size = (isElementRemoved) ? size - 1 : size;
+            return isElementRemoved;
+        }
+        return false;
     }
 
     /**
@@ -97,15 +106,16 @@ public class CustomDictionary {
      * строка.
      * <p>
      * Сложность - [O(len(value))]
+     * тут конечно спорно, но используется System.arrayCopy, который грубо считается за O(1)
      */
     public List<String> getSimilarWords(String value) {
-        if(!isValid(value)) {
+        if (!isValid(value)) {
             return Collections.emptyList();
         }
 
-        List< String > list = storage.get(getLetsMap(value));
-        if (list != null) {
-            return list;
+        Set<String> set = storage.get(getLetsMap(value));
+        if (set != null) {
+            return new ArrayList<>(set);
         }
         return Collections.emptyList();
     }
@@ -121,9 +131,9 @@ public class CustomDictionary {
         return size;
     }
 
-    private Map< Character, Integer> getLetsMap(String value) {
+    private Map<Character, Integer> getLetsMap(String value) {
         Map<Character, Integer> lets = new HashMap<>();
-        for(int i = 0; i < value.length(); ++i) {
+        for (int i = 0; i < value.length(); ++i) {
             lets.merge(Character.toLowerCase(value.charAt(i)), 1, Integer::sum);
         }
         return lets;
@@ -132,30 +142,4 @@ public class CustomDictionary {
     private boolean isValid(String value) {
         return value != null && !value.isEmpty();
     }
-
-    private boolean removeOrCheck(String value, boolean remove) {
-        if (!isValid(value)) {
-            return false;
-        }
-
-        List< String > list = storage.get(getLetsMap(value));
-        if (list != null) {
-            if (remove) {
-                if (list.removeIf(value::equals)) {
-                    size--;
-                    return true;
-                }
-                return false;
-            } else {
-                for (String s : list) {
-                    if (s.equals(value)) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
 }
