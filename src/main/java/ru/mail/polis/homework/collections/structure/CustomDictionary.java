@@ -33,15 +33,14 @@ public class CustomDictionary {
             return false;
         }
 
-        String alphabetWord = CreateAlphabetWord(value);
-
-        if (dictionary.containsKey(alphabetWord)) {
-            dictionary.get(alphabetWord).add(value);
-        } else {
-            Set<String> words = new HashSet<>();
-            words.add(value);
-            dictionary.put(alphabetWord, words);
+        String alphabetWord = createAlphabetWord(value);
+        Set<String> wordSet = dictionary.get(alphabetWord);
+        if(wordSet == null){
+            wordSet = new HashSet<>();
         }
+        wordSet.add(value);
+        dictionary.put(alphabetWord, wordSet);
+
         size++;
         return true;
     }
@@ -60,7 +59,7 @@ public class CustomDictionary {
             return false;
         }
 
-        String alphabetWord = CreateAlphabetWord(value);
+        String alphabetWord = createAlphabetWord(value);
 
         Set<String> words = dictionary.get(alphabetWord);
         if (words == null) {
@@ -83,7 +82,7 @@ public class CustomDictionary {
             return false;
         }
 
-        String alphabetWord = CreateAlphabetWord(value);
+        String alphabetWord = createAlphabetWord(value);
         Set<String> stringSet = dictionary.get(alphabetWord);
 
         if (stringSet.isEmpty()) {
@@ -126,7 +125,7 @@ public class CustomDictionary {
             return Collections.emptyList();
         }
 
-        String word = CreateAlphabetWord(value);
+        String word = createAlphabetWord(value);
         Set<String> stringSet = dictionary.get(word);
 
         if (stringSet == null) {
@@ -148,7 +147,7 @@ public class CustomDictionary {
     }
 
     // Сложность О(m), где m - кол-во букв в передаваемом слове.
-    private String CreateAlphabetWord(String value) {
+    private String createAlphabetWord(String value) {
         if (value == null || value.length() == 0) {
             throw new IllegalArgumentException();
         }

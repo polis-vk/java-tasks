@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 
 /**
@@ -140,7 +141,7 @@ public class CustomArrayList<E> implements List<E> {
         if (c.size() == 0) {
             return false;
         }
-        IndexOutOfBoundsCheck(index, false);
+        indexOutOfBoundsCheck(index, false);
 
         int allSize = size + c.size();
         E[] newArr;
@@ -190,13 +191,13 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E get(int index) {
-        IndexOutOfBoundsCheck(index, true);
+        indexOutOfBoundsCheck(index, true);
         return data[index];
     }
 
     @Override
     public E set(int index, E element) {
-        IndexOutOfBoundsCheck(index, true);
+        indexOutOfBoundsCheck(index, true);
         E returnElement = data[index];
         data[index] = element;
         modCount++;
@@ -205,7 +206,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public void add(int index, E element) {
-        IndexOutOfBoundsCheck(index, false);
+        indexOutOfBoundsCheck(index, false);
         if (size == capacity) {
             capacity += GROW_COUNT;
             E[] newArray = (E[]) new Object[capacity];
@@ -231,7 +232,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E remove(int index) {
-        IndexOutOfBoundsCheck(index, true);
+        indexOutOfBoundsCheck(index, true);
         E removeElement = data[index];
         System.arraycopy(data, index + 1, data, index, size - index - 1);
         size--;
@@ -242,9 +243,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public int indexOf(Object o) {
         for (int i = 0; i < size; i++) {
-            if (o == null && data[i] == null) {
-                return i;
-            } else if (o != null && o.equals(data[i])) {
+            if (o == null && data[i] == null || Objects.equals(data[i], o)) {
                 return i;
             }
         }
@@ -254,9 +253,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public int lastIndexOf(Object o) {
         for (int i = size - 1; i >= 0; i--) {
-            if (o == null && data[i] == null) {
-                return i;
-            } else if (o != null && o.equals(data[i])) {
+            if (o == null && data[i] == null || Objects.equals(data[i], o)) {
                 return i;
             }
         }
@@ -362,7 +359,7 @@ public class CustomArrayList<E> implements List<E> {
         return new CustomArrayList(newArr);
     }
 
-    private void IndexOutOfBoundsCheck(int index, boolean greaterOrEquals) {
+    private void indexOutOfBoundsCheck(int index, boolean greaterOrEquals) {
         if (greaterOrEquals) {
             if (index >= size | index < 0) {
                 throw new IndexOutOfBoundsException();
