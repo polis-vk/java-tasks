@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,11 +19,13 @@ public class SerializerTest {
             "src", "test", "resources", "directories", "objects");
     private static final Path DEFAULT_FILE_PATH = Paths.get(
             "src", "test", "resources", "directories", "objects", "default.txt");
+    private static final Path EXTERNALIZABLE_FILE_PATH = Paths.get(
+            "src", "test", "resources", "directories", "objects", "externalizable.txt");
     private static final int MIN_STR_LEN = 5;
     private static final int MAX_STR_LEN = 20;
     private static final int FIRST_ASCII_CODE = 97;
     private static final int LAST_ASCII_CODE = 122;
-    private static final int ANIMALS_COUNT = 500000;
+    private static final int ANIMALS_COUNT = 500;
     private static final Serializer SERIALIZER = new Serializer();
 
     @Before
@@ -33,14 +33,11 @@ public class SerializerTest {
         Files.createDirectories(DIR_PATH);
     }
 
-    @After
-    public void tearDown() throws Exception {
-        FileUtils.deleteDirectory(DIR_PATH.toFile());
-    }
-
     @Test
     public void defaultSerializationTest() throws Exception {
-        List<Animal> generatedAnimals = generateAnimals(ANIMALS_COUNT);
+        Files.deleteIfExists(DEFAULT_FILE_PATH);
+
+        List<Animal> generatedAnimals = generateAnimals();
 
         long millisBeforeSerialization = System.currentTimeMillis();
         SERIALIZER.defaultSerialize(generatedAnimals, DEFAULT_FILE_PATH.toString());
@@ -58,6 +55,34 @@ public class SerializerTest {
 
         System.out.println("-------------------------------------------------------------------------");
         System.out.println("Дефолтная сериализация прошла успешно.");
+        System.out.println("Размер получившегося файла: " + fileLength + " байт.");
+        System.out.println("Время сериализации: " + (millisAfterSerialization - millisBeforeSerialization) + " миллисекунд.");
+        System.out.println("Время десериализации: " + (millisAfterDeserialization - millisBeforeDeserialization) + " миллисекунд.");
+        System.out.println("-------------------------------------------------------------------------");
+    }
+
+    @Test
+    public void ExternalizableSerializationTest() throws Exception {
+        Files.deleteIfExists(EXTERNALIZABLE_FILE_PATH);
+
+        List<AnimalExternalizable> generatedAnimals = generateAnimalsExternalizable();
+
+        long millisBeforeSerialization = System.currentTimeMillis();
+        SERIALIZER.serializeWithExternalizable(generatedAnimals, EXTERNALIZABLE_FILE_PATH.toString());
+        long millisAfterSerialization = System.currentTimeMillis();
+
+        long millisBeforeDeserialization = System.currentTimeMillis();
+        List<AnimalExternalizable> deserializedAnimals = SERIALIZER.deserializeWithExternalizable(EXTERNALIZABLE_FILE_PATH.toString());
+        long millisAfterDeserialization = System.currentTimeMillis();
+        long fileLength = getFileLength(EXTERNALIZABLE_FILE_PATH);
+
+        assertEquals(generatedAnimals, deserializedAnimals);
+        for (int i = 0; i < generatedAnimals.size(); i++) {
+            assertEquals(generatedAnimals.get(i), deserializedAnimals.get(i));
+        }
+
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("Сериализация с Externalizable прошла успешно.");
         System.out.println("Размер получившегося файла: " + fileLength + " байт.");
         System.out.println("Время сериализации: " + (millisAfterSerialization - millisBeforeSerialization) + " миллисекунд.");
         System.out.println("Время десериализации: " + (millisAfterDeserialization - millisBeforeDeserialization) + " миллисекунд.");
@@ -113,10 +138,44 @@ public class SerializerTest {
         );
     }
 
-    private List<Animal> generateAnimals(int count) {
+    private AnimalTypeExternalizable generateAnimalTypeExternalizable() {
+        AnimalTypeExternalizable[] values = AnimalTypeExternalizable.values();
+        return values[generateInt(0, values.length - 1)];
+    }
+
+    private OrganizationExternalizable generateOrganizationExternalizable() {
+        return new OrganizationExternalizable(
+                generateString(),
+                generateBoolean(),
+                generateInt()
+        );
+    }
+
+    private AnimalExternalizable generateAnimalExternalizable() {
+        return new AnimalExternalizable(
+                generateString(),
+                generateBoolean(),
+                generateBoolean(),
+                generateInt(),
+                generateAnimalTypeExternalizable(),
+                generateOrganizationExternalizable()
+        );
+    }
+
+    private List<AnimalExternalizable> generateAnimalsExternalizable() {
+        List<AnimalExternalizable> result = new ArrayList<>();
+
+        for (int i = 0; i < ANIMALS_COUNT; i++) {
+            result.add(generateAnimalExternalizable());
+        }
+
+        return result;
+    }
+
+    private List<Animal> generateAnimals() {
         List<Animal> result = new ArrayList<>();
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < ANIMALS_COUNT; i++) {
             result.add(generateAnimal());
         }
 
