@@ -379,12 +379,21 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public Object[] toArray() {
-            return new Object[0];
+            checkForMod();
+            return Arrays.copyOfRange(root.data, offset, offset + size);
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public <T> T[] toArray(T[] a) {
-            return null;
+            checkForMod();
+            if (a.length < size) {
+                return (T[]) Arrays.copyOfRange(root.data, offset, offset + size, a.getClass());
+            }
+
+            // В переданном массиве достаточно места.
+            System.arraycopy(root.data, offset, a, 0, size);
+            return a;
         }
 
         @Override
