@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,20 +21,23 @@ import java.util.Stack;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
+    private static final Set<Character> openedBraces = new HashSet<>(Arrays.asList('(', '[', '{', '<'));
+    private static final Map<Character, Character> mapBraces = new HashMap<>();
+
+    static {
+        mapBraces.put(')', '(');
+        mapBraces.put(']', '[');
+        mapBraces.put('}', '{');
+        mapBraces.put('>', '<');
+    }
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
         }
         Stack<Character> stack = new Stack<>();
-        char currentChar;
         boolean thereWasBracket = false;
-        Set<Character> openedBraces = new HashSet<>(Arrays.asList('(', '[', '{', '<'));
-        Map<Character, Character> mapBraces = new HashMap<>();
-        mapBraces.put(')', '(');
-        mapBraces.put(']', '[');
-        mapBraces.put('}', '{');
-        mapBraces.put('>', '<');
+        char currentChar;
         for (int index = 0; index < value.length(); index++) {
             currentChar = value.charAt(index);
             if (openedBraces.contains(currentChar)) {
