@@ -1,6 +1,13 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
@@ -23,11 +30,9 @@ public class CustomArrayList<E> implements List<E> {
     public CustomArrayList(int initialCapacity) {
         if (initialCapacity < 0) {
             throw new IllegalArgumentException("Illegal capacity: " + initialCapacity);
-        } else if (initialCapacity > 0) {
-            dataArray = new Object[initialCapacity];
-        } else {
-            dataArray = EMPTY_LIST;
         }
+
+        dataArray = new Object[initialCapacity];
     }
 
     @Override
@@ -275,7 +280,7 @@ public class CustomArrayList<E> implements List<E> {
         }
     }
 
-    private String indexOutOfBoundMessage(int index, int listSize) {
+    private static String indexOutOfBoundMessage(int index, int listSize) {
         return "Invalid index: " + index + ", List size: " + listSize;
     }
 

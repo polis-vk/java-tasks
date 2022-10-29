@@ -1,6 +1,12 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Задание оценивается в 4 тугрика.
