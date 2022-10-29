@@ -404,7 +404,14 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean remove(Object o) {
-            return false;
+            checkForMod();
+            int index = indexOf(o);
+
+            if (index == -1) {
+                return false;
+            }
+            remove(index);
+            return true;
         }
 
         @Override
@@ -485,7 +492,12 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public E remove(int index) {
-            return null;
+            checkForMod();
+            checkIndexBounds(index, size);
+
+            E result = root.remove(index + offset);
+            updateSizeAndModCount(-1);
+            return result;
         }
 
         @Override
