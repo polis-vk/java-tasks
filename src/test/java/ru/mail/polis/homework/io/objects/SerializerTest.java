@@ -21,6 +21,8 @@ public class SerializerTest {
             "src", "test", "resources", "directories", "objects", "default.txt");
     private static final Path EXTERNALIZABLE_FILE_PATH = Paths.get(
             "src", "test", "resources", "directories", "objects", "externalizable.txt");
+    private static final Path WITH_METHODS_FILE_PATH = Paths.get(
+            "src", "test", "resources", "directories", "objects", "with-methods.txt");
     private static final int MIN_STR_LEN = 5;
     private static final int MAX_STR_LEN = 20;
     private static final int FIRST_ASCII_CODE = 97;
@@ -89,6 +91,34 @@ public class SerializerTest {
         System.out.println("-------------------------------------------------------------------------");
     }
 
+    @Test
+    public void WithMethodsSerializationTest() throws Exception {
+        Files.deleteIfExists(WITH_METHODS_FILE_PATH);
+
+        List<AnimalWithMethods> generatedAnimals = generateAnimalsWithMethods();
+
+        long millisBeforeSerialization = System.currentTimeMillis();
+        SERIALIZER.serializeWithMethods(generatedAnimals, WITH_METHODS_FILE_PATH.toString());
+        long millisAfterSerialization = System.currentTimeMillis();
+
+        long millisBeforeDeserialization = System.currentTimeMillis();
+        List<AnimalWithMethods> deserializedAnimals = SERIALIZER.deserializeWithMethods(WITH_METHODS_FILE_PATH.toString());
+        long millisAfterDeserialization = System.currentTimeMillis();
+        long fileLength = getFileLength(WITH_METHODS_FILE_PATH);
+
+        assertEquals(generatedAnimals, deserializedAnimals);
+        for (int i = 0; i < generatedAnimals.size(); i++) {
+            assertEquals(generatedAnimals.get(i), deserializedAnimals.get(i));
+        }
+
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("Сериализация с методами прошла успешно.");
+        System.out.println("Размер получившегося файла: " + fileLength + " байт.");
+        System.out.println("Время сериализации: " + (millisAfterSerialization - millisBeforeSerialization) + " миллисекунд.");
+        System.out.println("Время десериализации: " + (millisAfterDeserialization - millisBeforeDeserialization) + " миллисекунд.");
+        System.out.println("-------------------------------------------------------------------------");
+    }
+
     private int generateInt() {
         Random random = new Random();
         return Math.abs(random.nextInt());
@@ -138,6 +168,30 @@ public class SerializerTest {
         );
     }
 
+    private AnimalTypeWithMethods generateAnimalTypeWithMethods() {
+        AnimalTypeWithMethods[] values = AnimalTypeWithMethods.values();
+        return values[generateInt(0, values.length - 1)];
+    }
+
+    private OrganizationWithMethods generateOrganizationWithMethods() {
+        return new OrganizationWithMethods(
+                generateString(),
+                generateBoolean(),
+                generateInt()
+        );
+    }
+
+    private AnimalWithMethods generateAnimalWithMethods() {
+        return new AnimalWithMethods(
+                generateString(),
+                generateBoolean(),
+                generateBoolean(),
+                generateInt(),
+                generateAnimalTypeWithMethods(),
+                generateOrganizationWithMethods()
+        );
+    }
+
     private AnimalTypeExternalizable generateAnimalTypeExternalizable() {
         AnimalTypeExternalizable[] values = AnimalTypeExternalizable.values();
         return values[generateInt(0, values.length - 1)];
@@ -162,21 +216,32 @@ public class SerializerTest {
         );
     }
 
-    private List<AnimalExternalizable> generateAnimalsExternalizable() {
-        List<AnimalExternalizable> result = new ArrayList<>();
-
-        for (int i = 0; i < ANIMALS_COUNT; i++) {
-            result.add(generateAnimalExternalizable());
-        }
-
-        return result;
-    }
 
     private List<Animal> generateAnimals() {
         List<Animal> result = new ArrayList<>();
 
         for (int i = 0; i < ANIMALS_COUNT; i++) {
             result.add(generateAnimal());
+        }
+
+        return result;
+    }
+
+    private List<AnimalWithMethods> generateAnimalsWithMethods() {
+        List<AnimalWithMethods> result = new ArrayList<>();
+
+        for (int i = 0; i < ANIMALS_COUNT; i++) {
+            result.add(generateAnimalWithMethods());
+        }
+
+        return result;
+    }
+
+    private List<AnimalExternalizable> generateAnimalsExternalizable() {
+        List<AnimalExternalizable> result = new ArrayList<>();
+
+        for (int i = 0; i < ANIMALS_COUNT; i++) {
+            result.add(generateAnimalExternalizable());
         }
 
         return result;
