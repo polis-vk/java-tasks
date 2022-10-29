@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
  */
 public class LibraryStatistic {
 
+    private static int DAYS_TO_MILLISECONDS = 86400000;
+
     /**
      * Вернуть "специалистов" в литературном жанре с кол-вом прочитанных страниц.
      * Специалист жанра считается пользователь который прочел как минимум 5 книг в этом жанре,
@@ -25,8 +27,8 @@ public class LibraryStatistic {
                 .collect(Collectors.groupingBy(ArchivedData::getUser)).entrySet().stream()
                 .filter(it -> it.getValue().size() >= 5 && it.getValue().stream().allMatch(data ->
                         (data.getReturned() != null ?
-                                data.getReturned().getDate() : new Timestamp(System.currentTimeMillis()).getDate() -
-                                data.getTake().getDate()) >= 14))
+                                data.getReturned().getTime() : new Timestamp(System.currentTimeMillis()).getTime() -
+                                data.getTake().getTime()) >= 14L * DAYS_TO_MILLISECONDS))
                 .collect(Collectors.toMap(Map.Entry::getKey,
                         it -> it.getValue().stream().mapToInt(value -> value.getBook().getPage()).sum()));
     }
@@ -60,8 +62,8 @@ public class LibraryStatistic {
     public List<User> unreliableUsers(Library library) {
         return library.getUsers().stream().filter(user -> (double) library.getArchive().stream().filter(it ->
                 (it.getReturned() != null ?
-                        it.getReturned().getDate() : new Timestamp(System.currentTimeMillis()).getDate() -
-                        it.getTake().getDate()) > 30 && it.getUser() == user).count() /
+                        it.getReturned().getTime() : new Timestamp(System.currentTimeMillis()).getTime() -
+                        it.getTake().getTime()) > 30L * DAYS_TO_MILLISECONDS && it.getUser() == user).count() /
                         (double) library.getArchive().stream().filter(it -> it.getUser() == user).count() > 0.5
                 )
                 .collect(Collectors.toList());
