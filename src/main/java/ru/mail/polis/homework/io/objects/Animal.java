@@ -1,13 +1,16 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.Serializable;
+import java.util.Objects;
+
 /**
  * Класс должен содержать несколько полей с примитивами (минимум 2 булеана и еще что-то), строками, энамами и
  * некоторыми сапомисными объектами (не энам).
  * Всего должно быть минимум 6 полей с разными типами.
  * 1 тугрик
  */
-public class Animal {
+public class Animal implements Serializable {
 
     private String name;
     private boolean isDomestic;
@@ -29,66 +32,56 @@ public class Animal {
         this.organization = organization;
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Animal animal = (Animal) o;
+        return isDomestic == animal.isDomestic && haveClaws == animal.haveClaws && legsCount == animal.legsCount && Objects.equals(name, animal.name) && animalType == animal.animalType && Objects.equals(organization, animal.organization);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, isDomestic, haveClaws, legsCount, animalType, organization);
     }
 
-    public boolean isDomestic() {
-        return isDomestic;
-    }
-
-    public void setDomestic(boolean domestic) {
-        isDomestic = domestic;
-    }
-
-    public boolean isHaveClaws() {
-        return haveClaws;
-    }
-
-    public void setHaveClaws(boolean haveClaws) {
-        this.haveClaws = haveClaws;
-    }
-
-    public int getLegsCount() {
-        return legsCount;
-    }
-
-    public void setLegsCount(int legsCount) {
-        this.legsCount = legsCount;
-    }
-
-    public AnimalType getAnimalType() {
-        return animalType;
-    }
-
-    public void setAnimalType(AnimalType animalType) {
-        this.animalType = animalType;
-    }
-
-    public Organization getOrganization() {
-        return organization;
-    }
-
-    public void setOrganization(Organization organization) {
-        this.organization = organization;
+    @Override
+    public String toString() {
+        return "Animal{" +
+                "name='" + name + '\'' +
+                ", isDomestic=" + isDomestic +
+                ", haveClaws=" + haveClaws +
+                ", legsCount=" + legsCount +
+                ", animalType=" + animalType +
+                ", organization=" + organization +
+                '}';
     }
 }
 
 enum AnimalType {
 
-    FISH,
-    BIRD,
-    MAMMAL,
-    REPTILE,
-    AMPHIBIAN,
-    INVERTEBRATE
+    FISH("Fish"),
+    BIRD("Bird"),
+    MAMMAL("Mammal"),
+    REPTILE("Reptile"),
+    AMPHIBIAN("Amphibian"),
+    INVERTEBRATE("Invertebrate");
+
+    private final String title;
+
+    AnimalType(String title) {
+        this.title = title;
+    }
+
+    @Override
+    public String toString() {
+        return "AnimalType{" +
+                "title='" + title + '\'' +
+                '}';
+    }
 }
 
-class Organization {
+class Organization implements Serializable{
 
     private String title;
     private boolean isCommercial;
@@ -103,27 +96,26 @@ class Organization {
         this.animalsCount = animalsCount;
     }
 
-    public String getTitle() {
-        return title;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Organization that = (Organization) o;
+        return isCommercial == that.isCommercial && animalsCount == that.animalsCount && Objects.equals(title,
+                that.title);
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, isCommercial, animalsCount);
     }
 
-    public boolean isCommercial() {
-        return isCommercial;
-    }
-
-    public void setCommercial(boolean commercial) {
-        isCommercial = commercial;
-    }
-
-    public int getAnimalsCount() {
-        return animalsCount;
-    }
-
-    public void setAnimalsCount(int animalsCount) {
-        this.animalsCount = animalsCount;
+    @Override
+    public String toString() {
+        return "Organization{" +
+                "title='" + title + '\'' +
+                ", isCommercial=" + isCommercial +
+                ", animalsCount=" + animalsCount +
+                '}';
     }
 }
