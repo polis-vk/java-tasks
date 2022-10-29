@@ -29,7 +29,7 @@ public class SerializerTest {
     private static final int MAX_STR_LEN = 20;
     private static final int FIRST_ASCII_CODE = 97;
     private static final int LAST_ASCII_CODE = 122;
-    private static final int ANIMALS_COUNT = 500;
+    private static final int ANIMALS_COUNT = 1_000;
     private static final Serializer SERIALIZER = new Serializer();
 
     @Before
@@ -57,12 +57,8 @@ public class SerializerTest {
             assertEquals(generatedAnimals.get(i), deserializedAnimals.get(i));
         }
 
-        System.out.println("-------------------------------------------------------------------------");
-        System.out.println("Дефолтная сериализация прошла успешно.");
-        System.out.println("Размер получившегося файла: " + fileLength + " байт.");
-        System.out.println("Время сериализации: " + (millisAfterSerialization - millisBeforeSerialization) + " миллисекунд.");
-        System.out.println("Время десериализации: " + (millisAfterDeserialization - millisBeforeDeserialization) + " миллисекунд.");
-        System.out.println("-------------------------------------------------------------------------");
+        printInfoMessage("Дефолтная сериализация", fileLength, millisBeforeSerialization,
+                millisAfterSerialization, millisBeforeDeserialization, millisAfterDeserialization);
     }
 
     @Test
@@ -85,12 +81,8 @@ public class SerializerTest {
             assertEquals(generatedAnimals.get(i), deserializedAnimals.get(i));
         }
 
-        System.out.println("-------------------------------------------------------------------------");
-        System.out.println("Сериализация с методами прошла успешно.");
-        System.out.println("Размер получившегося файла: " + fileLength + " байт.");
-        System.out.println("Время сериализации: " + (millisAfterSerialization - millisBeforeSerialization) + " миллисекунд.");
-        System.out.println("Время десериализации: " + (millisAfterDeserialization - millisBeforeDeserialization) + " миллисекунд.");
-        System.out.println("-------------------------------------------------------------------------");
+        printInfoMessage("Сериализация с методами", fileLength, millisBeforeSerialization,
+                millisAfterSerialization, millisBeforeDeserialization, millisAfterDeserialization);
     }
 
     @Test
@@ -113,12 +105,8 @@ public class SerializerTest {
             assertEquals(generatedAnimals.get(i), deserializedAnimals.get(i));
         }
 
-        System.out.println("-------------------------------------------------------------------------");
-        System.out.println("Сериализация с Externalizable прошла успешно.");
-        System.out.println("Размер получившегося файла: " + fileLength + " байт.");
-        System.out.println("Время сериализации: " + (millisAfterSerialization - millisBeforeSerialization) + " миллисекунд.");
-        System.out.println("Время десериализации: " + (millisAfterDeserialization - millisBeforeDeserialization) + " миллисекунд.");
-        System.out.println("-------------------------------------------------------------------------");
+        printInfoMessage("Сериализация с Externalizable", fileLength, millisBeforeSerialization,
+                millisAfterSerialization, millisBeforeDeserialization, millisAfterDeserialization);
     }
 
     @Test
@@ -141,12 +129,8 @@ public class SerializerTest {
             assertEquals(generatedAnimals.get(i), deserializedAnimals.get(i));
         }
 
-        System.out.println("-------------------------------------------------------------------------");
-        System.out.println("Кастомная сериализация прошла успешно.");
-        System.out.println("Размер получившегося файла: " + fileLength + " байт.");
-        System.out.println("Время сериализации: " + (millisAfterSerialization - millisBeforeSerialization) + " миллисекунд.");
-        System.out.println("Время десериализации: " + (millisAfterDeserialization - millisBeforeDeserialization) + " миллисекунд.");
-        System.out.println("-------------------------------------------------------------------------");
+        printInfoMessage("Кастомная сериализация", fileLength, millisBeforeSerialization,
+                millisAfterSerialization, millisBeforeDeserialization, millisAfterDeserialization);
     }
 
     private int generateInt() {
@@ -279,5 +263,21 @@ public class SerializerTest {
 
     private long getFileLength(Path filePath) throws IOException {
         return Files.size(filePath);
+    }
+
+    private void printInfoMessage(
+            String serializationType,
+            long fileLength,
+            long millisBeforeSerialization,
+            long millisAfterSerialization,
+            long millisBeforeDeserialization,
+            long millisAfterDeserialization
+    ) {
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println(serializationType + " прошла успешно.");
+        System.out.println("Размер получившегося файла: " + fileLength + " байт.");
+        System.out.println("Время сериализации: " + (millisAfterSerialization - millisBeforeSerialization) + " миллисекунд.");
+        System.out.println("Время десериализации: " + (millisAfterDeserialization - millisBeforeDeserialization) + " миллисекунд.");
+        System.out.println("-------------------------------------------------------------------------");
     }
 }
