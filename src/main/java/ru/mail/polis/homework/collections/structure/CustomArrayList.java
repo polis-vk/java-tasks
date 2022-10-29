@@ -27,12 +27,7 @@ public class CustomArrayList<E> implements List<E> {
 
     public CustomArrayList(Collection<E> c) {
         array = new Object[c.size()];
-        Iterator<E> iterator = c.iterator();
-        int index = 0;
-        while (iterator.hasNext()) {
-            array[index++] = iterator.next();
-        }
-        size = array.length;
+        this.addAll(c);
     }
 
     public CustomArrayList(Object[] array) {

@@ -2,6 +2,8 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Задание оценивается в 2 тугрика.
@@ -16,6 +18,12 @@ import java.util.Deque;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
+    private final static Map<Character, Character> BRACKETS_TABLE = new HashMap<Character, Character>() {{
+        put(']', '[');
+        put(')', '(');
+        put('>', '<');
+        put('}', '{');
+    }};
 
     public static boolean validate(String value) {
         if (value == null || value.length() == 0) {
@@ -24,27 +32,15 @@ public class ValidatorForParentheses {
         Deque<Character> brackets = new ArrayDeque<>();
         int bracketCount = 0;
         for (char literal : value.toCharArray()) {
-            switch (literal) {
-                case '[':
-                case '(':
-                case '<':
-                case '{':
-                    brackets.add(literal);
-                    break;
-                case ')':
-                    if (brackets.isEmpty() || brackets.pollLast() != literal - 1) {
-                        return false;
-                    }
-                    bracketCount++;
-                    break;
-                case ']':
-                case '>':
-                case '}':
-                    if (brackets.isEmpty() || brackets.pollLast() != literal - 2) {
-                        return false;
-                    }
-                    bracketCount++;
-                    break;
+            if (BRACKETS_TABLE.containsValue(literal)) {
+                brackets.add(literal);
+                continue;
+            }
+            if (BRACKETS_TABLE.containsKey(literal)) {
+                if (brackets.isEmpty() || brackets.pollLast() != BRACKETS_TABLE.get(literal)) {
+                    return false;
+                }
+                bracketCount++;
             }
         }
         return brackets.isEmpty() && bracketCount != 0;
