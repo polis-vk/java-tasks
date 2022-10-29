@@ -249,21 +249,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int lastIndexOf(Object o) {
-        if (o == null) {
-            for (int i = size - 1; i >= 0; i--) {
-                if (data[i] == null) {
-                    return i;
-                }
-            }
-        } else {
-            for (int i = size - 1; i >= 0; i--) {
-                if (o.equals(data[i])) {
-                    return i;
-                }
-            }
-        }
-
-        return -1;
+        return lastIndexOfRange(o, 0, size);
     }
 
     @Override
@@ -478,7 +464,9 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public int lastIndexOf(Object o) {
-            return 0;
+            checkForMod();
+            int result = root.lastIndexOfRange(o, offset, offset + size);
+            return result != -1 ? result - offset : -1;
         }
 
         @Override
@@ -551,6 +539,24 @@ public class CustomArrayList<E> implements List<E> {
             }
         } else {
             for (int i = from; i < to; i++) {
+                if (o.equals(data[i])) {
+                    return i;
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    public int lastIndexOfRange(Object o, int from, int to) {
+        if (o == null) {
+            for (int i = to - 1; i >= from; i--) {
+                if (data[i] == null) {
+                    return i;
+                }
+            }
+        } else {
+            for (int i = to - 1; i >= from; i--) {
                 if (o.equals(data[i])) {
                     return i;
                 }
