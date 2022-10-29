@@ -374,7 +374,26 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public Iterator<E> iterator() {
-            return null;
+            return new Iterator<E>() {
+                final int fixedModCount = modCount;
+                int index = 0;
+
+                @Override
+                public boolean hasNext() {
+                    return index < size;
+                }
+
+                @Override
+                public E next() {
+                    if (fixedModCount != modCount) {
+                        throw new ConcurrentModificationException();
+                    }
+                    if (index >= size) {
+                        throw new NoSuchElementException();
+                    }
+                    return root.data[index++ + offset];
+                }
+            };
         }
 
         @Override
@@ -540,12 +559,83 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public ListIterator<E> listIterator() {
-            return null;
+            return listIterator(0);
         }
 
         @Override
         public ListIterator<E> listIterator(int index) {
-            return null;
+            checkIndexBounds(index, size);
+
+            return new ListIterator<E>() {
+                int fixedModCount = modCount;
+                int curIndex = index;
+
+                @Override
+                public boolean hasNext() {
+                    return curIndex < size;
+                }
+
+                @Override
+                public E next() {
+                    checkForModIterator();
+                    if (curIndex >= size) {
+                        throw new IndexOutOfBoundsException();
+                    }
+                    return root.data[curIndex++ + offset];
+                }
+
+                @Override
+                public boolean hasPrevious() {
+                    return curIndex > 0;
+                }
+
+                @Override
+                public E previous() {
+                    checkForModIterator();
+                    if (curIndex <= 0) {
+                        throw new NoSuchElementException();
+                    }
+                    return root.data[--curIndex + offset];
+                }
+
+                @Override
+                public int nextIndex() {
+                    return curIndex;
+                }
+
+                @Override
+                public int previousIndex() {
+                    return curIndex - 1;
+                }
+
+                @Override
+                public void remove() {
+                    checkForModIterator();
+                    CustomArrayList.SubList.this.remove(curIndex);
+                    fixedModCount = modCount;
+                }
+
+                @Override
+                public void set(E e) {
+                    checkForModIterator();
+                    CustomArrayList.SubList.this.set(curIndex, e);
+                    fixedModCount = modCount;
+                }
+
+                @Override
+                public void add(E e) {
+                    checkForModIterator();
+                    CustomArrayList.SubList.this.add(curIndex, e);
+                    curIndex++;
+                    fixedModCount = modCount;
+                }
+
+                private void checkForModIterator() {
+                    if (fixedModCount != modCount) {
+                        throw new ConcurrentModificationException();
+                    }
+                }
+            };
         }
 
         @Override
