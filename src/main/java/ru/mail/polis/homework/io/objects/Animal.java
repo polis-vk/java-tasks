@@ -81,7 +81,7 @@ enum AnimalType {
     }
 }
 
-class Organization implements Serializable{
+class Organization implements Serializable {
 
     private String title;
     private boolean isCommercial;
