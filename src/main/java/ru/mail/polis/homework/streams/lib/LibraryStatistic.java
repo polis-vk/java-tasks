@@ -2,6 +2,8 @@ package ru.mail.polis.homework.streams.lib;
 
 import java.util.List;
 import java.util.Map;
+import java.sql.Timestamp;
+import java.util.stream.Collectors;
 
 /**
  * Класс для работы со статистикой по библиотеке.
@@ -18,7 +20,15 @@ public class LibraryStatistic {
      * @return - map пользователь / кол-во прочитанных страниц
      */
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
-        return null;
+        return library.getArchive()
+                .stream().filter(it -> it.getBook().getGenre()==genre)
+                .collect(Collectors.groupingBy(ArchivedData::getUser)).entrySet().stream()
+                .filter(it -> it.getValue().size() >= 5 && it.getValue().stream().allMatch(data ->
+                        (data.getReturned() != null ?
+                                data.getReturned().getDate() : new Timestamp(System.currentTimeMillis()).getDate() -
+                                data.getTake().getDate()) >= 14))
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        it -> it.getValue().stream().mapToInt(value -> value.getBook().getPage()).sum()));
     }
 
     /**
@@ -29,7 +39,16 @@ public class LibraryStatistic {
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
-        return null;
+        return library.getArchive().stream().filter(it -> it.getUser() == user).collect(Collectors.groupingBy(it ->
+                it.getBook().getGenre())).entrySet().stream().max((first, second) -> {
+                    if (first.getValue().stream().filter(data -> data.getReturned() != null).count()
+                            == second.getValue().stream().filter(data -> data.getReturned() != null).count()) {
+                        return first.getValue().size() - second.getValue().size();
+                    }
+                    return (int) (first.getValue().stream().filter(data ->
+                            data.getReturned() != null).count() - second.getValue().stream().filter(data ->
+                            data.getReturned() != null).count());
+        }).get().getKey();
     }
 
     /**
@@ -39,7 +58,13 @@ public class LibraryStatistic {
      * @return - список ненадежных пользователей
      */
     public List<User> unreliableUsers(Library library) {
-        return null;
+        return library.getUsers().stream().filter(user -> (double) library.getArchive().stream().filter(it ->
+                (it.getReturned() != null ?
+                        it.getReturned().getDate() : new Timestamp(System.currentTimeMillis()).getDate() -
+                        it.getTake().getDate()) > 30 && it.getUser() == user).count() /
+                        (double) library.getArchive().stream().filter(it -> it.getUser() == user).count() > 0.5
+                )
+                .collect(Collectors.toList());
     }
 
     /**
@@ -49,7 +74,7 @@ public class LibraryStatistic {
      * @return - список книг
      */
     public List<Book> booksWithMoreCountPages(Library library, int countPage) {
-        return null;
+        return library.getBooks().stream().filter(it -> it.getPage() >= countPage).collect(Collectors.toList());
     }
 
     /**
@@ -58,6 +83,16 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return null;
+        // Под "самым популярным автором в каждом жанре" я понимаю автора, книги которого брали чаще всего
+        return library.getArchive().stream().collect(Collectors.groupingBy(it -> it.getBook().getGenre()))
+                .entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
+                        it -> it.getValue().stream().collect(Collectors.groupingBy(data ->
+                                data.getBook().getAuthor())).entrySet().stream()
+                                .max((first, second) -> {
+                                    if (first.getValue().size() == second.getValue().size()) {
+                                        return first.getKey().compareTo(second.getKey());
+                                    }
+                                    return first.getValue().size() - second.getValue().size();
+                                }).get().getKey()));
     }
 }
