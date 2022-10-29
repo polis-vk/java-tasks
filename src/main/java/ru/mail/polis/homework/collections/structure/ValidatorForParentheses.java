@@ -22,7 +22,6 @@ public class ValidatorForParentheses {
         }
         Deque<Character> stack = new ArrayDeque<>();
         boolean gotBrackets = false; // for strings without any brackets
-        Set<Character> openBrackets = new HashSet<>(Arrays.asList('(', '[', '{', '<'));
         Map<Character, Character> pair = new HashMap<>();
         pair.put('(', ')');
         pair.put('[', ']');
@@ -32,7 +31,7 @@ public class ValidatorForParentheses {
         for (int i = 0; i < value.length(); i++) {
             char c = value.charAt(i);
 
-            if (openBrackets.contains(c)) {
+            if (pair.containsKey(c)) {
                 stack.push(c);
                 gotBrackets = true;
             } else if (!stack.isEmpty() && c == pair.get(stack.peek())) {

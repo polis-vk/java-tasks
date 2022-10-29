@@ -140,21 +140,16 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E get(int index) {
-        if (checkIndex(index)) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkIndex(index);
         return array[index];
     }
 
     @Override
     public E set(int index, E element) {
-        if (checkIndex(index)) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkIndex(index);
         E prevValue = array[index];
         array[index] = element;
         return prevValue;
-
     }
 
     @Override
@@ -179,33 +174,30 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        int i = 0;
-        for (E e : this) {
-            if (Objects.equals(o, e)) {
+        for (int i = 0; i < size; i++) {
+            if (Objects.equals(array[i], o)) {
                 return i;
             }
-            i++;
         }
         return -1;
-
     }
 
     @Override
     public int lastIndexOf(Object o) {
         int index = -1;
 
-        int i = 0;
-        for (E e : this) {
-            if (Objects.equals(o, e)) {
+        for (int i = 0; i < size; i++) {
+            if (Objects.equals(array[i], o)) {
                 index = i;
             }
-            i++;
         }
         return index;
     }
 
-    public boolean checkIndex(int i) {
-        return i >= size || i < 0;
+    public void checkIndex(int i) {
+        if (i >= size || i < 0) {
+            throw new IndexOutOfBoundsException();
+        }
     }
 
     @Override
@@ -287,13 +279,5 @@ public class CustomArrayList<E> implements List<E> {
         CustomArrayList<E> list = new CustomArrayList<>();
         list.addAll(Arrays.asList(array).subList(fromIndex, toIndex));
         return list;
-    }
-
-    public static void main(String[] args) {
-        CustomArrayList<Integer> list = new CustomArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            list.add(null);
-        }
-        list.remove(0);
     }
 }

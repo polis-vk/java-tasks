@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class CustomDictionary {
 
-    private final HashMap<String, char[]> pairs = new HashMap<>();
+    private final HashMap<String, Set<String>> pairs = new HashMap<>();
 
     /**
      * Сохранить строку в структуру данных
@@ -18,19 +18,31 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - [O(k*log(k)], где k - value.length
+     * Сложность - [O(k*log(k), где k - длина строки value]
      */
     public boolean add(String value) {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        if (pairs.containsKey(value)) { // O(1)
+        if (contains(value)) {
             return false;
         }
+
+        String alteredValue = alterString(value);
+        Set<String> values = pairs.get(alteredValue);
+        if (values == null) {
+            values = new HashSet<>();
+        }
+        values.add(value);
+        pairs.put(alteredValue, values);
+        return true;
+    }
+
+    // Сложность - [O(k*log(k), где k - длина строки value]
+    private String alterString(String value) {
         char[] ch = value.toLowerCase().toCharArray();
         Arrays.sort(ch);
-        pairs.put(value, ch);
-        return true;
+        return new String(ch);
     }
 
     /**
@@ -39,10 +51,19 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - [O(1)]
+     * Сложность - [O(k*log(k), где k - длина строки value]
      */
     public boolean contains(String value) {
-        return pairs.containsKey(value);
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+
+        String alteredValue = alterString(value);
+        if (!pairs.containsKey(alteredValue)) {
+            return false;
+        }
+
+        return pairs.get(alteredValue).contains(value);
     }
 
     /**
@@ -51,10 +72,19 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - [O(1)]
+     * Сложность - [O(k*log(k), где k - длина строки value]
      */
     public boolean remove(String value) {
-        return pairs.remove(value) != null;
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+
+        String alteredString = alterString(value);
+        if (!pairs.containsKey(alteredString)) {
+            return false;
+        }
+
+        return pairs.get(alteredString).remove(value);
     }
 
     /**
@@ -74,20 +104,19 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - [O(n * k)], k - value.length, n - pairs.keySet().size()
+     * Сложность - [O(k*log(k), где k - длина строки value]
      */
     public List<String> getSimilarWords(String value) {
-        char[] ch = value.toLowerCase().toCharArray();
-        Arrays.sort(ch);
-
-        List<String> result = new ArrayList<>();
-
-        for (String val : pairs.keySet()) { // n итераций
-            if (Arrays.equals(pairs.get(val), ch)) { // k итераций при сравнении массивов
-                result.add(val);
-            }
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException();
         }
-        return result;
+
+        String alteredValue = alterString(value);
+        if (!pairs.containsKey(alteredValue)) {
+            return Collections.emptyList();
+        }
+
+        return new ArrayList<>(pairs.get(alteredValue));
     }
 
     /**
@@ -95,11 +124,9 @@ public class CustomDictionary {
      *
      * @return - Колл-во хранимых строк.
      * <p>
-     * Сложность - [Θ(1)]
+     * Сложность - [Θ(n), где n - количество ключей в словаре]
      */
     public int size() {
-        return pairs.size();
+        return pairs.values().stream().mapToInt(Set::size).sum();
     }
-
-
 }
