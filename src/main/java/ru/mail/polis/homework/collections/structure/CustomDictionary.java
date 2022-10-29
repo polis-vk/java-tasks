@@ -1,9 +1,11 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.List;
@@ -16,7 +18,7 @@ import java.util.List;
  */
 public class CustomDictionary {
 
-    private Map<Map<Character, Integer>, Set<String>> storage;
+    private Map<String, Set<String>> storage;
 
     private int size;
 
@@ -31,16 +33,16 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - [O(len(value)]
+     * Сложность - [O(n log n)]
      * Учитывая то, что в hashMap операция добавления за константу
+     * n - длина строки
      */
     public boolean add(String value) {
         if (!isValid(value)) {
             throw new IllegalArgumentException();
         }
 
-        Map<Character, Integer> lets = getLetsMap(value);
-        boolean isElementAdded = storage.computeIfAbsent(lets, k -> new HashSet<>()).add(value);
+        boolean isElementAdded = storage.computeIfAbsent(getLetsKey(value), k -> new HashSet<>()).add(value);
         size = (isElementAdded) ? size + 1 : size;
         return isElementAdded;
     }
@@ -51,17 +53,15 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - [O(len(value))]
-     * len(value) - нам все равно нужно построить наш ключ, по которому ищем value
+     * Сложность - [O(n log n)]
+     * n - длина строки
      */
     public boolean contains(String value) {
         if (!isValid(value)) {
             throw new IllegalArgumentException();
         }
 
-        Map<Character, Integer> lets = getLetsMap(value);
-
-        Set<String> set = storage.get(lets);
+        Set<String> set = storage.get(getLetsKey(value));
         return set != null && set.contains(value);
     }
 
@@ -71,15 +71,15 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - [O(len(value)]
+     * Сложность - [O(n log n)]
+     * n - длина строки
      */
     public boolean remove(String value) {
         if (!isValid(value)) {
             throw new IllegalArgumentException();
         }
 
-        Map<Character, Integer> lets = getLetsMap(value);
-        Set<String> set = storage.get(lets);
+        Set<String> set = storage.get(getLetsKey(value));
         if (set != null) {
             boolean isElementRemoved = set.remove(value);
             size = (isElementRemoved) ? size - 1 : size;
@@ -105,7 +105,8 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - [O(len(value))]
+     * Сложность - [O(n*logn)]
+     * n - длина строки
      * тут конечно спорно, но используется System.arrayCopy, который грубо считается за O(1)
      */
     public List<String> getSimilarWords(String value) {
@@ -113,7 +114,7 @@ public class CustomDictionary {
             return Collections.emptyList();
         }
 
-        Set<String> set = storage.get(getLetsMap(value));
+        Set<String> set = storage.get(getLetsKey(value));
         if (set != null) {
             return new ArrayList<>(set);
         }
@@ -131,12 +132,10 @@ public class CustomDictionary {
         return size;
     }
 
-    private Map<Character, Integer> getLetsMap(String value) {
-        Map<Character, Integer> lets = new HashMap<>();
-        for (int i = 0; i < value.length(); ++i) {
-            lets.merge(Character.toLowerCase(value.charAt(i)), 1, Integer::sum);
-        }
-        return lets;
+    private String getLetsKey(String value) {
+        char[] lets = value.toLowerCase(Locale.ROOT).toCharArray();
+        Arrays.sort(lets);
+        return Arrays.toString(lets);
     }
 
     private boolean isValid(String value) {
