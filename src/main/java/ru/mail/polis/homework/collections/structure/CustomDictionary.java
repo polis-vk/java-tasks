@@ -84,7 +84,7 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - [O(n)]
+     * Сложность - [O((nlogn + n) * m)]
      */
     public List<String> getSimilarWords(String value) {
         validateString(value);

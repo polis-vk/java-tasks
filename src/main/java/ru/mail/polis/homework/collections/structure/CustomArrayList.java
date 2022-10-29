@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
  * При изменении размера массива помните про метод System.arraycopy()
- *
+ * <p>
  * Задание оценивается в 10 тугриков
  */
 public class CustomArrayList<E> implements List<E> {
@@ -103,7 +103,9 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        checkRange(index);
+        if (index == size()) {
+            throw new IndexOutOfBoundsException();
+        }
         Object[] a = c.toArray();
         int newSize = a.length;
         ensureCapacity(size + newSize);
@@ -119,26 +121,13 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public boolean removeAll(Collection<?> c) {
         Objects.requireNonNull(c);
-        boolean flag = false;
-        for (Object elem : c) {
-            while (remove(elem)) {
-                flag = true;
-            }
-        }
-        return flag;
+        return batchRemove(c, false);
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
         Objects.requireNonNull(c);
-        boolean flag = false;
-        for (int i = size() - 1; i >= 0; i--) {
-            if (!c.contains(get(i))) {
-                remove(i);
-                flag = true;
-            }
-        }
-        return flag;
+        return batchRemove(c, true);
     }
 
     @Override
@@ -185,10 +174,14 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        for (int i = 0; i < size(); i++) {
-            if (o == null && array[i] == null || array[i].equals(o)) {
-                return i;
-            }
+        if (o == null) {
+            for (int i = 0; i < size; i++)
+                if (array[i] == null)
+                    return i;
+        } else {
+            for (int i = 0; i < size; i++)
+                if (o.equals(array[i]))
+                    return i;
         }
         return -1;
     }
@@ -226,11 +219,7 @@ public class CustomArrayList<E> implements List<E> {
     public List<E> subList(int fromIndex, int toIndex) {
         checkRange(fromIndex);
         checkRange(toIndex);
-        List<E> subList = new CustomArrayList<>();
-        for (int i = fromIndex; i <= toIndex; i++) {
-            subList.add(get(i));
-        }
-        return subList;
+        return (List<E>) new SubList(array, fromIndex, toIndex);
     }
 
     public void ensureCapacity(int minCapacity) {
@@ -324,6 +313,51 @@ public class CustomArrayList<E> implements List<E> {
         }
     }
 
+    private class SubList {
+        List<E> parentList;
+        int startPosition;
+        int endPosition;
+
+        int expectedModCount = modCount;
+
+        public SubList(E[] parentList, int startPosition, int endPosition) {
+            this.parentList = (List<E>) Arrays.stream(parentList);
+            this.startPosition = startPosition;
+            this.endPosition = endPosition;
+        }
+
+        public int size() {
+            checkForComodification();
+            return endPosition - startPosition;
+        }
+
+        public void add(int index, Object object) {
+            checkRange(index);
+            checkForComodification();
+            parentList.add(index + startPosition, (E) object);
+        }
+
+        public boolean contains(Object object) {
+            for (int i = startPosition; i < endPosition; i++) {
+                if (parentList.get(i).equals(object)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public E get(int index) {
+            checkRange(index);
+            checkForComodification();
+            return parentList.get(index);
+        }
+
+        private void checkForComodification() {
+            if (expectedModCount != modCount)
+                throw new ConcurrentModificationException();
+        }
+    }
+
     private void ensureExplicitCapacity(int minCapacity) {
         modCount++;
         if (minCapacity - array.length > 0)
@@ -344,6 +378,32 @@ public class CustomArrayList<E> implements List<E> {
         if (minCapacity < 0)
             throw new OutOfMemoryError();
         return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
+    }
+
+    private boolean batchRemove(Collection<?> c, boolean complement) {
+        final Object[] elementData = array;
+        int r = 0, w = 0;
+        boolean modified = false;
+        try {
+            for (; r < size; r++)
+                if (c.contains(elementData[r]) == complement)
+                    elementData[w++] = elementData[r];
+        } finally {
+            if (r != size) {
+                System.arraycopy(elementData, r,
+                        elementData, w,
+                        size - r);
+                w += size - r;
+            }
+            if (w != size) {
+                for (int i = w; i < size; i++)
+                    elementData[i] = null;
+                modCount += size - w;
+                size = w;
+                modified = true;
+            }
+        }
+        return modified;
     }
 
     private void checkRange(int index) {

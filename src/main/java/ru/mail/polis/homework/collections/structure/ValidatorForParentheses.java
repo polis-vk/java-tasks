@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.collections.structure;
 
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Задание оценивается в 2 тугрика.
@@ -9,8 +11,8 @@ import java.util.Stack;
  * В строке помимо скобок могут содержаться и другие символы.
  * Скобки могут быть: [],{},<>,()
  * Примеры:
- *      "(-b + (x)^2)/(2+4)" - true
- *      "Понедельники меня угнетают ((" - false
+ * "(-b + (x)^2)/(2+4)" - true
+ * "Понедельники меня угнетают ((" - false
  *
  * Отрабатывать метод должен за О(n)
  */
@@ -19,8 +21,10 @@ public class ValidatorForParentheses {
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
-        } else if (!(value.contains("{") || value.contains("}") || value.contains("[") || value.contains("]")
-                || value.contains("<") || value.contains(">") || value.contains("(") || value.contains(")"))) {
+        }
+        Pattern special = Pattern.compile("[()<>{}\\[\\]]");
+        Matcher hasSpecial = special.matcher(value);
+        if (!hasSpecial.find()) {
             return false;
         }
         Stack<Character> stack = new Stack<>();
@@ -43,32 +47,28 @@ public class ValidatorForParentheses {
                     break;
                 case ')':
                     if (stack.isEmpty()) {
-                        flag = false;
-                        break;
+                        return false;
                     }
                     popElement = stack.pop();
                     if (popElement != '(') flag = false;
                     break;
                 case ']':
                     if (stack.isEmpty()) {
-                        flag = false;
-                        break;
+                        return false;
                     }
                     popElement = stack.pop();
                     if (popElement != '[') flag = false;
                     break;
                 case '}':
                     if (stack.isEmpty()) {
-                        flag = false;
-                        break;
+                        return false;
                     }
                     popElement = stack.pop();
                     if (popElement != '{') flag = false;
                     break;
                 case '>':
                     if (stack.isEmpty()) {
-                        flag = false;
-                        break;
+                        return false;
                     }
                     popElement = stack.pop();
                     if (popElement != '<') flag = false;
