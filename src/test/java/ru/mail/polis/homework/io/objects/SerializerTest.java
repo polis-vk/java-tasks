@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.io.objects;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,7 +25,7 @@ public class SerializerTest {
     private static final int MAX_STR_LEN = 20;
     private static final int FIRST_ASCII_CODE = 97;
     private static final int LAST_ASCII_CODE = 122;
-    private static final int ANIMALS_COUNT = 200000;
+    private static final int ANIMALS_COUNT = 500000;
     private static final Serializer SERIALIZER = new Serializer();
 
     @Before
@@ -41,14 +42,26 @@ public class SerializerTest {
     public void defaultSerializationTest() throws Exception {
         List<Animal> generatedAnimals = generateAnimals(ANIMALS_COUNT);
 
+        long millisBeforeSerialization = System.currentTimeMillis();
         SERIALIZER.defaultSerialize(generatedAnimals, DEFAULT_FILE_PATH.toString());
+        long millisAfterSerialization = System.currentTimeMillis();
 
+        long millisBeforeDeserialization = System.currentTimeMillis();
         List<Animal> deserializedAnimals = SERIALIZER.defaultDeserialize(DEFAULT_FILE_PATH.toString());
+        long millisAfterDeserialization = System.currentTimeMillis();
+        long fileLength = getFileLength(DEFAULT_FILE_PATH);
 
         assertEquals(generatedAnimals, deserializedAnimals);
         for (int i = 0; i < generatedAnimals.size(); i++) {
             assertEquals(generatedAnimals.get(i), deserializedAnimals.get(i));
         }
+
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("Дефолтная сериализация прошла успешно.");
+        System.out.println("Размер получившегося файла: " + fileLength + " байт.");
+        System.out.println("Время сериализации: " + (millisAfterSerialization - millisBeforeSerialization) + " миллисекунд.");
+        System.out.println("Время десериализации: " + (millisAfterDeserialization - millisBeforeDeserialization) + " миллисекунд.");
+        System.out.println("-------------------------------------------------------------------------");
     }
 
     private int generateInt() {
@@ -108,5 +121,9 @@ public class SerializerTest {
         }
 
         return result;
+    }
+
+    private long getFileLength(Path filePath) throws IOException {
+        return Files.size(filePath);
     }
 }
