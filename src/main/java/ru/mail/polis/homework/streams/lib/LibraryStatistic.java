@@ -3,7 +3,6 @@ package ru.mail.polis.homework.streams.lib;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -23,6 +22,11 @@ public class LibraryStatistic {
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
         return library.getArchive().stream()
                 .filter(archivedData -> archivedData.getBook().getGenre().equals(genre)
+                        && getReadingDays(archivedData) >= 14)
+                .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.summingInt(x -> 1)))
+                .entrySet().stream()
+                .filter(entry -> entry.getValue() >= 5)
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getKey().getReadedPages()));
     }
 
     /**
@@ -33,7 +37,21 @@ public class LibraryStatistic {
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
-        return null;
+        return library.getArchive().stream()
+                .filter(archivedData -> archivedData.getUser().equals(user) && archivedData.getReturned() != null)
+                .collect(Collectors.groupingBy(archivedData -> archivedData.getBook().getGenre(),
+                        Collectors.counting()))
+                .entrySet().stream()
+                .max((a, b) -> {
+                    int delta = (int) (a.getValue() - b.getValue());
+
+                    if (delta != 0) {
+                        return delta;
+                    }
+
+                    return countAllUserBookForGenre(library, user, a.getKey())
+                            - countAllUserBookForGenre(library, user, b.getKey());
+                }).get().getKey();
     }
 
     /**
@@ -47,9 +65,9 @@ public class LibraryStatistic {
                 .collect(Collectors.groupingBy(ArchivedData::getUser))
                 .entrySet().stream()
                 .filter(entry -> entry.getValue().stream()
-                        .filter(archivedData -> getReadingDays(archivedData) > 30)
-                        .count() > entry.getValue().size() / 2)
-                .map(entry -> entry.getKey())
+                        .filter(archivedData -> getReadingDays(archivedData) > 30).count()
+                        > entry.getValue().size() / 2)
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
 
@@ -71,7 +89,20 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return null;
+        return library.getBooks().stream()
+                .collect(Collectors.groupingBy(Book::getGenre,
+                        Collectors.groupingBy(Book::getAuthor, Collectors.counting())))
+                .entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().entrySet().stream()
+                        .max((a, b) -> {
+                            int delta = (int) (a.getValue() - b.getValue());
+
+                            if (delta != 0) {
+                                return delta;
+                            }
+
+                            return a.getKey().compareTo(b.getKey());
+                        }).get().getKey()));
     }
 
     private int getReadingDays(ArchivedData aData) {
@@ -84,5 +115,11 @@ public class LibraryStatistic {
         }
 
         return (int) (timeStampDelta / (1000 * 60 * 60 * 24));
+    }
+
+    private int countAllUserBookForGenre(Library library, User user, Genre genre) {
+        return (int) library.getArchive().stream()
+                .filter(archivedData -> archivedData.getUser().equals(user)
+                        && archivedData.getBook().getGenre().equals(genre)).count();
     }
 }
