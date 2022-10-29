@@ -398,7 +398,8 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean add(E e) {
-            return false;
+            add(size, e);
+            return true;
         }
 
         @Override
@@ -453,7 +454,7 @@ public class CustomArrayList<E> implements List<E> {
         public E set(int index, E element) {
             checkIndexBounds(index, size);
             checkForMod();
-            modCount++;
+            updateSizeAndModCount(0);
             E result = root.get(offset + index);
 
             root.set(offset + index, element);
@@ -462,7 +463,13 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public void add(int index, E element) {
+            checkForMod();
+            if (index != size) {
+                checkIndexBounds(index, size);
+            }
 
+            root.add(index + offset, element);
+            updateSizeAndModCount(1);
         }
 
         @Override
@@ -512,6 +519,15 @@ public class CustomArrayList<E> implements List<E> {
             if (root.modCount != modCount) {
                 throw new ConcurrentModificationException();
             }
+        }
+
+        private void updateSizeAndModCount(int sizeChange) {
+            SubList<E> slist = this;
+            do {
+                slist.size += sizeChange;
+                slist.modCount = root.modCount;
+                slist = slist.parent;
+            } while (slist != null);
         }
     }
 
