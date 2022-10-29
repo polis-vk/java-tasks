@@ -369,7 +369,7 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean contains(Object o) {
-            return false;
+            return indexOf(o) != -1;
         }
 
         @Override
@@ -399,7 +399,13 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean containsAll(Collection<?> c) {
-            return false;
+            for (Object elem : c) {
+                if (!contains(elem)) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         @Override
