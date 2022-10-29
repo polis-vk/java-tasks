@@ -19,9 +19,6 @@ public class Animal implements Serializable {
     private AnimalType animalType;
     private Organization organization;
 
-    public Animal() {
-    }
-
     public Animal(String name, boolean isDomestic, boolean haveClaws, int legsCount, AnimalType animalType,
                   Organization organization) {
         this.name = name;
@@ -86,9 +83,6 @@ class Organization implements Serializable {
     private String title;
     private boolean isCommercial;
     private int animalsCount;
-
-    public Organization() {
-    }
 
     public Organization(String title, boolean isCommercial, int animalsCount) {
         this.title = title;
