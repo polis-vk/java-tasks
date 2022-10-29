@@ -420,12 +420,23 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean addAll(Collection<? extends E> c) {
-            return false;
+            return addAll(size, c);
         }
 
         @Override
         public boolean addAll(int index, Collection<? extends E> c) {
-            return false;
+            checkForMod();
+            if (index != size) {
+                checkIndexBounds(index, size);
+            }
+
+            if (c.size() == 0) {
+                return false;
+            }
+
+            root.addAll(index + offset, c);
+            updateSizeAndModCount(c.size());
+            return true;
         }
 
         @Override
