@@ -244,21 +244,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        if (o == null) {
-            for (int i = 0; i < size; i++) {
-                if (data[i] == null) {
-                    return i;
-                }
-            }
-        } else {
-            for (int i = 0; i < size; i++) {
-                if (o.equals(data[i])) {
-                    return i;
-                }
-            }
-        }
-
-        return -1;
+        return indexOfRange(o, 0, size);
     }
 
     @Override
@@ -485,7 +471,9 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public int indexOf(Object o) {
-            return 0;
+            checkForMod();
+            int result = root.indexOfRange(o, offset, offset + size);
+            return result != -1 ? result - offset : -1;
         }
 
         @Override
@@ -552,5 +540,23 @@ public class CustomArrayList<E> implements List<E> {
         if (fromIndex < 0 || toIndex < 0 || toIndex > size || fromIndex > toIndex) {
             throw new IndexOutOfBoundsException("Incorrect indexes");
         }
+    }
+
+    public int indexOfRange(Object o, int from, int to) {
+        if (o == null) {
+            for (int i = from; i < to; i++) {
+                if (data[i] == null) {
+                    return i;
+                }
+            }
+        } else {
+            for (int i = from; i < to; i++) {
+                if (o.equals(data[i])) {
+                    return i;
+                }
+            }
+        }
+
+        return -1;
     }
 }
