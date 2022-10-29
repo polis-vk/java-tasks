@@ -18,7 +18,7 @@ import java.util.ListIterator;
 public class CustomArrayList<E> implements List<E> {
 
     private static final int BASE_SIZE_MULTIPLIER = 2;
-    private static final int BASE_SIZE = 1000;
+    private static final int BASE_SIZE = 10;
     private int size;
     private int timesChanged;
     private E[] array;
