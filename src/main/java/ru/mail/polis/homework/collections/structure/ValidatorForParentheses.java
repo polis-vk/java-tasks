@@ -17,21 +17,17 @@ import java.util.Map;
 public class ValidatorForParentheses {
     static class MyStack {
 
-        // node of stack
         private class Node {
             char data;
             Node next;
 
-            // c-tor
             Node(char data) {
                 this.data = data;
             }
         }
 
-        // number of el-s in stack
         private int size;
         private int modCount;
-        // head of stack
         private Node head;
 
         //ctor
@@ -41,7 +37,6 @@ public class ValidatorForParentheses {
             this.size = 0;
         }
 
-        // push elem into stack
         public void push(char element) {
             Node newNode = new Node(element);
 
@@ -55,7 +50,6 @@ public class ValidatorForParentheses {
             this.size++;
         }
 
-        // delete head node from stack
         public char pop() {
             if (this.size == 0) {
                 throw new RuntimeException();
@@ -67,10 +61,8 @@ public class ValidatorForParentheses {
             this.modCount++;
             this.size--;
             return value;
-
         }
 
-        // get elem from head of stack
         public char back() {
             if (this.size == 0) {
                 throw new RuntimeException();
@@ -79,20 +71,12 @@ public class ValidatorForParentheses {
             return this.head.data;
         }
 
-        // get number of elements of stack
         public int size() {
             return this.size;
         }
 
         public int getModCount() {
             return this.modCount;
-        }
-
-        // delete elements from stack
-        public void clear() {
-            this.head = null;
-            this.size = 0;
-            this.modCount++;
         }
     }
 
@@ -104,21 +88,20 @@ public class ValidatorForParentheses {
         if (value.length() < 2) {
             return false;
         }
+
         Map<Character, Character> bracketMap = Map.of('(', ')', '[', ']', '{', '}', '<', '>');
 
         MyStack bracketStack = new MyStack();
 
         for (char sym : value.toCharArray()) {
-            if (sym == '(' || sym == '{' || sym == '[' || sym == '<') {
+            if (bracketMap.containsKey(sym)) {
                 bracketStack.push(sym);
             } else if (bracketStack.size() != 0 && sym == bracketMap.get(bracketStack.back())) {
                 bracketStack.pop();
-            } else if (sym == ')' || sym == '}' || sym == ']' || sym == '>') {
+            } else if (bracketMap.containsValue(sym)) {
                 return false;
             }
-
         }
-
         return bracketStack.size() == 0 && bracketStack.getModCount() != 0;
     }
 }

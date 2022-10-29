@@ -235,8 +235,13 @@ public class CustomArrayList<E> implements List<E> {
     public int indexOf(Object o) {
         int index = 0;
 
+        Object key = null;
+        if(o != null){
+            key = o;
+        }
+
         for (; index < size; index++) {
-            if (data[index] == o) {
+            if (data[index] == key) {
                 return index;
             }
         }
@@ -248,9 +253,13 @@ public class CustomArrayList<E> implements List<E> {
     public int lastIndexOf(Object o) {
         int index = size - 1;
 
+        Object key = null;
+        if(o != null){
+            key = o;
+        }
 
         for (; index >= 0; index--) {
-            if (data[index] == o) {
+            if (data[index] == key) {
                 return index;
             }
         }

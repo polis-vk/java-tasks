@@ -19,7 +19,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - [О(n)] - n длина value
+     * Сложность - [О(k)] - k длина value
      */
     public boolean add(String value) {
         Set<Character> letters = getCharKey(value);
@@ -31,12 +31,13 @@ public class CustomDictionary {
         if (words == null) {
             size++;
             return true;
-        } else {
-            if (words.add(value)) {
-                size++;
-                return true;
-            }
         }
+
+        if (words.add(value)) {
+            size++;
+            return true;
+        }
+
         return false;
     }
 
@@ -46,16 +47,15 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - [О(n)] - n длина value
+     * Сложность - [О(k)] - k длина value
      */
     public boolean contains(String value) {
         Set<Character> letters = getCharKey(value);
         Set<String> strings = dictionary.get(letters);
         if (strings == null) {
             return false;
-        } else {
-            return strings.contains(value);
         }
+        return strings.contains(value);
     }
 
     /**
@@ -64,7 +64,7 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - [О(n)] - n длина value
+     * Сложность - [О(k)] - k длина value
      */
     public boolean remove(String value) {
         Set<Character> letters = getCharKey(value);
@@ -72,11 +72,10 @@ public class CustomDictionary {
 
         if (strings == null) {
             return false;
-        } else {
-            if (strings.remove(value)) {
-                size--;
-                return true;
-            }
+        }
+        if (strings.remove(value)) {
+            size--;
+            return true;
         }
         return false;
     }
@@ -98,7 +97,7 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - [О(n)] - n длина value
+     * Сложность - [О(k)] - k длина value
      */
     public List<String> getSimilarWords(String value) {
         Set<Character> letters = getCharKey(value);

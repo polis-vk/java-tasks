@@ -4,29 +4,30 @@ import ru.mail.polis.homework.generics.bot.handler.StateHandler;
 import ru.mail.polis.homework.generics.bot.state.State;
 
 import java.util.List;
+import java.util.Map;
 
 public class Bot {
-    private final List<StateHandler<? extends State>> handlers;
+    private Map<Class<? extends State>, StateHandler<? extends State>> handlers;
+
     /**
      * Конструктор бота, которому на вход подаются хэндлеры состояний.
      * Необходимо как-то сохранить эти хэндлеры так, чтобы потом можно было вызвать нужный хэндлер из метода handleState
-     *
+     * <p>
      * 1 тугрик
      */
     public Bot(List<StateHandler<? extends State>> handlers) {
-        this.handlers = handlers;
+        for (StateHandler handler : handlers) {
+            this.handlers.put(handler);
+        }
     }
 
     /**
      * Вызывает хэндлер, предназначенный для переданного State
-     *
+     * <p>
      * 1 тугрик
      */
     public void handleState(State state) {
-        for(StateHandler<?> handler : handlers){
-            if(handler.getHandlingStateClass().equals(state)){
-                handler.handle();
-            }
-        }
+        this.handlers.get(state);
     }
 }
+
