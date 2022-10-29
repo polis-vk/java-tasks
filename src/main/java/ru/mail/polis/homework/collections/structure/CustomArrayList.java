@@ -30,10 +30,12 @@ public class CustomArrayList<E> implements List<E> {
 
     public CustomArrayList(Collection<E> collection) {
         array = collection.toArray();
+        size = collection.size();
     }
 
     public CustomArrayList(Object[] arr) {
         array = arr;
+        size = arr.length;
     }
 
     @Override
@@ -85,6 +87,9 @@ public class CustomArrayList<E> implements List<E> {
     public boolean remove(Object o) {
         try {
             int removingObjectIndex = indexOf(o);
+            if (removingObjectIndex == -1) {
+                return false;
+            }
             remove(removingObjectIndex);
             return true;
         } catch (Exception ex) {
@@ -242,6 +247,9 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
+        if (fromIndex > toIndex) {
+            throw new IllegalArgumentException("Index " + fromIndex + " is greater than " + toIndex);
+        }
         checkIndexForValid(fromIndex);
         checkIndexForValid(toIndex);
         CustomArrayList<E> newList = new CustomArrayList<>();
