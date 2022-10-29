@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -15,7 +16,7 @@ import java.util.Set;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private final HashMap<String, Set<String>> map = new HashMap<>();
+    private final Map<String, Set<String>> map = new HashMap<>();
     private int size;
 
     /**
@@ -34,12 +35,13 @@ public class CustomDictionary {
             return false;
         }
         String sortedLowerCaseValue = getSortedLowerCaseString(value);
-        if (map.get(sortedLowerCaseValue) != null) {
-            map.get(sortedLowerCaseValue).add(value);
-        } else {
-            Set<String> set = new HashSet<>();
+        Set<String> set = map.get(sortedLowerCaseValue);
+        if (set != null) {
             set.add(value);
-            map.put(sortedLowerCaseValue, set);
+        } else {
+            Set<String> newSet = new HashSet<>();
+            newSet.add(value);
+            map.put(sortedLowerCaseValue, newSet);
         }
         size++;
         return true;
@@ -55,7 +57,8 @@ public class CustomDictionary {
      */
     public boolean contains(String value) {
         String sortedLowerCaseValue = getSortedLowerCaseString(value);
-        return map.containsKey(sortedLowerCaseValue) && map.get(sortedLowerCaseValue).contains(value);
+        Set<String> set = map.get(sortedLowerCaseValue);
+        return set != null && set.contains(value);
     }
 
     /**
@@ -71,13 +74,14 @@ public class CustomDictionary {
             return false;
         }
         String sortedLowerCaseValue = getSortedLowerCaseString(value);
-        if (map.get(sortedLowerCaseValue).size() == 1) {
+        Set<String> set = map.get(sortedLowerCaseValue);
+        if (set.size() == 1) {
             map.remove(sortedLowerCaseValue);
             size--;
             return true;
         } else {
             size--;
-            return map.get(sortedLowerCaseValue).remove(value);
+            return set.remove(value);
         }
     }
 
@@ -103,7 +107,7 @@ public class CustomDictionary {
     public List<String> getSimilarWords(String value) {
         String sortedLowerCaseValue = getSortedLowerCaseString(value);
         Set<String> set = map.get(sortedLowerCaseValue);
-        return new ArrayList<>(set != null ? set : Collections.emptyList());
+        return set != null ? new ArrayList<>(set) : Collections.emptyList();
     }
 
     /**
@@ -117,7 +121,7 @@ public class CustomDictionary {
         return size;
     }
 
-    private String getSortedLowerCaseString(String value) {
+    private static String getSortedLowerCaseString(String value) {
         char[] chars = value.toLowerCase().toCharArray();
         countingSort(chars, 0, chars.length);
         return new String(chars);
@@ -140,12 +144,11 @@ public class CustomDictionary {
             }
         }
         char[][] sortedArray = new char[2][maxValue - minValue + 1];
-        int counter;
         for (int i = fromInclusive; i < toExclusive; i++) {
             sortedArray[0][array[i] - minValue] = array[i];
             sortedArray[1][array[i] - minValue]++;
         }
-        counter = 0;
+        int counter = 0;
         for (int i = 0; counter < array.length; i++) {
             for (int j = 0; j < (int) sortedArray[1][i]; j++) {
                 array[counter++] = sortedArray[0][i];
