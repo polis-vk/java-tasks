@@ -336,7 +336,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     @SuppressWarnings("unchecked")
     public List<E> subList(int fromIndex, int toIndex) {
-        checkSubListIndexes(fromIndex, toIndex, size);
+        checkFromToIndexes(fromIndex, toIndex, size);
         return new SubList<>(this, fromIndex, toIndex);
     }
 
@@ -480,7 +480,9 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public void clear() {
-
+            checkForMod();
+            root.removeRange(offset, offset + size);
+            updateSizeAndModCount(-size);
         }
 
         @Override
@@ -548,7 +550,7 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public List<E> subList(int fromIndex, int toIndex) {
-            checkSubListIndexes(fromIndex, toIndex, size);
+            checkFromToIndexes(fromIndex, toIndex, size);
             return new SubList<>(this, fromIndex, toIndex);
         }
 
@@ -600,7 +602,7 @@ public class CustomArrayList<E> implements List<E> {
         }
     }
 
-    private static void checkSubListIndexes(int fromIndex, int toIndex, int size) {
+    private static void checkFromToIndexes(int fromIndex, int toIndex, int size) {
         if (fromIndex < 0 || toIndex < 0 || toIndex > size || fromIndex > toIndex) {
             throw new IndexOutOfBoundsException("Incorrect indexes");
         }
@@ -640,5 +642,18 @@ public class CustomArrayList<E> implements List<E> {
         }
 
         return -1;
+    }
+
+    public void removeRange(int from, int to) {
+        checkFromToIndexes(from, to, size);
+        if (from == to) {
+            return;
+        }
+        modCount++;
+        System.arraycopy(data, to, data, from, size - to);
+        for (int i = size - (to - from); i < size; i++) {
+            data[i] = null;
+        }
+        size -= to - from;
     }
 }
