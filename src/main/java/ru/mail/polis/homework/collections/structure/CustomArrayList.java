@@ -17,11 +17,6 @@ import java.util.function.Consumer;
  */
 @SuppressWarnings("unchecked")
 public class CustomArrayList<E> implements List<E> {
-
-    private static final String CONCURRENT_MODIFICATION = "It's prohibited to modify list while iterating!";
-    private static final String NO_ELEMENT = "There is no such element left!";
-    private static final String ILLEGAL_STATE = "It's not permitted to do this!";
-
     private static final int MODIFICATION_INDICATOR = -1;
 
     private final E[] data;
@@ -98,14 +93,21 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean remove(Object o) {
+        // Make two if conditions whether o is null or not
+        // As we can't use equals of a null object
         if (o == null) {
-            return false;
-        }
-        for (int i = 0; i < size; i++) {
-            if (o.equals(data[i])) {
-                remove(i);
-                modCount++;
-                return true;
+            for (int i = 0; i < size; i++) {
+                if (data[i] == null) {
+                    remove(i);
+                    return true;
+                }
+            }
+        } else {
+            for (int i = 0; i < size; i++) {
+                if (o.equals(data[i])) {
+                    remove(i);
+                    return true;
+                }
             }
         }
         return false;
@@ -231,9 +233,7 @@ public class CustomArrayList<E> implements List<E> {
 
         E element = data[index];
 
-        for (int j = index + 1; j < size; j++) {
-            swap(j, j - 1);
-        }
+        System.arraycopy(data, index + 1, data, index, size - index - 1);
 
         size--;
         modCount++;
@@ -243,13 +243,18 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
+        // Two cases: o is nullable and it's not
         if (o == null) {
-            throw new NullPointerException("Given argument is null!");
-        }
-
-        for (int i = 0; i < size; i++) {
-            if (data[i].equals(o)) {
-                return i;
+            for (int i = 0; i < size; i++) {
+                if (data[i] == null) {
+                    return i;
+                }
+            }
+        } else {
+            for (int i = 0; i < size; i++) {
+                if (data[i].equals(o)) {
+                    return i;
+                }
             }
         }
 
@@ -258,13 +263,18 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int lastIndexOf(Object o) {
+        // Two cases: o is nullable and it's not
         if (o == null) {
-            throw new NullPointerException("Given argument is null!");
-        }
-
-        for (int i = size - 1; i >= 0; i--) {
-            if (data[i].equals(o)) {
-                return i;
+            for (int i = size - 1; i >= 0; i--) {
+                if (data[i] == null) {
+                    return i;
+                }
+            }
+        } else {
+            for (int i = size - 1; i >= 0; i--) {
+                if (data[i].equals(o)) {
+                    return i;
+                }
             }
         }
 
@@ -415,7 +425,7 @@ public class CustomArrayList<E> implements List<E> {
                         cursor++;
                         return element;
                     }
-                    throw new NoSuchElementException(NO_ELEMENT);
+                    throw new NoSuchElementException();
                 }
 
                 @Override
@@ -433,7 +443,7 @@ public class CustomArrayList<E> implements List<E> {
                         cursor--;
                         return element;
                     }
-                    throw new NoSuchElementException(NO_ELEMENT);
+                    throw new NoSuchElementException();
                 }
 
                 @Override
@@ -462,7 +472,7 @@ public class CustomArrayList<E> implements List<E> {
                 @Override
                 public void remove() {
                     if (lastReturnedElementIndex == MODIFICATION_INDICATOR) {
-                        throw new IllegalStateException(ILLEGAL_STATE);
+                        throw new IllegalStateException();
                     }
 
                     this.concurrentModificationCheck();
@@ -476,7 +486,7 @@ public class CustomArrayList<E> implements List<E> {
                 @Override
                 public void set(E e) {
                     if (lastReturnedElementIndex == MODIFICATION_INDICATOR) {
-                        throw new IllegalStateException(ILLEGAL_STATE);
+                        throw new IllegalStateException();
                     }
 
                     this.concurrentModificationCheck();
@@ -487,7 +497,7 @@ public class CustomArrayList<E> implements List<E> {
                 @Override
                 public void add(E e) {
                     if (lastReturnedElementIndex == MODIFICATION_INDICATOR) {
-                        throw new IllegalStateException(ILLEGAL_STATE);
+                        throw new IllegalStateException();
                     }
 
                     this.concurrentModificationCheck();
@@ -500,7 +510,7 @@ public class CustomArrayList<E> implements List<E> {
 
                 private void concurrentModificationCheck() {
                     if (fixedModCount != SubList.this.modCount) {
-                        throw new ConcurrentModificationException(CONCURRENT_MODIFICATION);
+                        throw new ConcurrentModificationException();
                     }
                 }
             };
@@ -528,7 +538,7 @@ public class CustomArrayList<E> implements List<E> {
 
         private void concurrentModificationCheck() {
             if (fixedModCount != modCount) {
-                throw new ConcurrentModificationException(CONCURRENT_MODIFICATION);
+                throw new ConcurrentModificationException();
             }
         }
     }
@@ -547,7 +557,7 @@ public class CustomArrayList<E> implements List<E> {
         @Override
         public boolean hasNext() {
             if (fixedModCount != modCount) {
-                throw new ConcurrentModificationException(CONCURRENT_MODIFICATION);
+                throw new ConcurrentModificationException();
             }
             return cursor < size;
         }
@@ -560,13 +570,13 @@ public class CustomArrayList<E> implements List<E> {
                 lastReturnedElementIndex = cursor;
                 return element;
             }
-            throw new NoSuchElementException(NO_ELEMENT);
+            throw new NoSuchElementException();
         }
 
         @Override
         public boolean hasPrevious() {
             if (fixedModCount != modCount) {
-                throw new ConcurrentModificationException(CONCURRENT_MODIFICATION);
+                throw new ConcurrentModificationException();
             }
             return cursor > startBound;
         }
@@ -578,7 +588,7 @@ public class CustomArrayList<E> implements List<E> {
                 lastReturnedElementIndex = cursor;
                 return data[cursor];
             }
-            throw new NoSuchElementException(NO_ELEMENT);
+            throw new NoSuchElementException();
         }
 
         @Override
@@ -594,7 +604,7 @@ public class CustomArrayList<E> implements List<E> {
         @Override
         public void remove() {
             if (lastReturnedElementIndex == MODIFICATION_INDICATOR) {
-                throw new IllegalStateException(ILLEGAL_STATE);
+                throw new IllegalStateException();
             }
 
             cursor = lastReturnedElementIndex;
@@ -607,7 +617,7 @@ public class CustomArrayList<E> implements List<E> {
         @Override
         public void set(E e) {
             if (lastReturnedElementIndex == MODIFICATION_INDICATOR) {
-                throw new IllegalStateException(ILLEGAL_STATE);
+                throw new IllegalStateException();
             }
 
             CustomArrayList.this.set(lastReturnedElementIndex, e);
@@ -630,12 +640,6 @@ public class CustomArrayList<E> implements List<E> {
 
     private void expandArray(int newSize) {
         System.arraycopy(data, 0, data, 0, newSize);
-    }
-
-    private void swap(int i, int j) {
-        E temp = data[i];
-        data[i] = data[j];
-        data[j] = temp;
     }
 
     private void checkIndexExclusive(int index) {

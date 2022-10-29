@@ -19,24 +19,20 @@ import java.util.Map;
  */
 public class ValidatorForParentheses {
 
-    private static final Map<Character, Character> map = new HashMap<>();
+    private static final Map<Character, Character> map;
 
-    public static Map<Character, Character> getMap() {
-        if (map.isEmpty()) {
-            map.put(']', '[');
-            map.put(')', '(');
-            map.put('}', '{');
-            map.put('>', '<');
-        }
-        return map;
+    static {
+        map = new HashMap<>();
+        map.put(']', '[');
+        map.put(')', '(');
+        map.put('}', '{');
+        map.put('>', '<');
     }
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
         }
-
-        final Map<Character, Character> map = getMap();
 
         Deque<Character> deque = new LinkedList<>();
         boolean hasParentheses = false;
@@ -57,7 +53,7 @@ public class ValidatorForParentheses {
                     if (!deque.isEmpty()) {
                         Character last = deque.removeLast();
                         if (last == map.get(c)) {
-                            break;
+                            continue;
                         }
                     }
                     return false;
