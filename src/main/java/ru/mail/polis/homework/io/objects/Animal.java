@@ -29,6 +29,30 @@ public class Animal implements Serializable {
         this.organization = organization;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public boolean isDomestic() {
+        return isDomestic;
+    }
+
+    public boolean isHaveClaws() {
+        return haveClaws;
+    }
+
+    public int getLegsCount() {
+        return legsCount;
+    }
+
+    public AnimalType getAnimalType() {
+        return animalType;
+    }
+
+    public Organization getOrganization() {
+        return organization;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -88,6 +112,18 @@ class Organization implements Serializable {
         this.title = title;
         this.isCommercial = isCommercial;
         this.animalsCount = animalsCount;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public boolean isCommercial() {
+        return isCommercial;
+    }
+
+    public int getAnimalsCount() {
+        return animalsCount;
     }
 
     @Override

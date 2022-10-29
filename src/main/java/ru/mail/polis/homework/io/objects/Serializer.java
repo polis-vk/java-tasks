@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -9,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -188,8 +189,27 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
-    public void customSerialize(List<Animal> animals, String fileName) {
+    public void customSerialize(List<Animal> animals, String fileName) throws IOException {
+        if (fileName == null || animals == null) {
+            return;
+        }
 
+        Path filePath = Paths.get(fileName);
+
+        try (DataOutputStream output = new DataOutputStream(Files.newOutputStream(filePath))) {
+            for (Animal animal : animals) {
+                output.writeUTF(animal.getName());
+                output.writeBoolean(animal.isDomestic());
+                output.writeBoolean(animal.isHaveClaws());
+                output.writeInt(animal.getLegsCount());
+                output.writeByte(animal.getAnimalType().ordinal());
+
+                Organization organization = animal.getOrganization();
+                output.writeUTF(organization.getTitle());
+                output.writeBoolean(organization.isCommercial());
+                output.writeInt(organization.getAnimalsCount());
+            }
+        }
     }
 
     /**
@@ -200,7 +220,35 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+    public List<Animal> customDeserialize(String fileName) throws IOException {
+        if (fileName == null) {
+            return null;
+        }
+
+        Path filePath = Paths.get(fileName);
+        if (Files.notExists(filePath)) {
+            return null;
+        }
+
+        List<Animal> result = new ArrayList<>();
+        try (DataInputStream input = new DataInputStream(Files.newInputStream(filePath))) {
+            while (true) {
+                Animal deserializedAnimal = new Animal(
+                        input.readUTF(),
+                        input.readBoolean(),
+                        input.readBoolean(),
+                        input.readInt(),
+                        AnimalType.values()[input.readByte()],
+                        new Organization(
+                                input.readUTF(),
+                                input.readBoolean(),
+                                input.readInt()
+                        )
+                );
+                result.add(deserializedAnimal);
+            }
+        } catch (EOFException e) {
+            return result;
+        }
     }
 }
