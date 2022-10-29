@@ -369,11 +369,13 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean contains(Object o) {
+            checkForMod();
             return indexOf(o) != -1;
         }
 
         @Override
         public Iterator<E> iterator() {
+            checkForMod();
             return new Iterator<E>() {
                 final int fixedModCount = modCount;
                 int index = 0;
@@ -417,6 +419,7 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean add(E e) {
+            checkForMod();
             add(size, e);
             return true;
         }
@@ -435,6 +438,7 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean containsAll(Collection<?> c) {
+            checkForMod();
             for (Object elem : c) {
                 if (!contains(elem)) {
                     return false;
@@ -446,6 +450,7 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean addAll(Collection<? extends E> c) {
+            checkForMod();
             return addAll(size, c);
         }
 
@@ -506,15 +511,15 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public E get(int index) {
-            checkIndexBounds(index, size);
             checkForMod();
+            checkIndexBounds(index, size);
             return root.get(offset + index);
         }
 
         @Override
         public E set(int index, E element) {
-            checkIndexBounds(index, size);
             checkForMod();
+            checkIndexBounds(index, size);
             updateSizeAndModCount(0);
             E result = root.get(offset + index);
 
@@ -559,11 +564,13 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public ListIterator<E> listIterator() {
+            checkForMod();
             return listIterator(0);
         }
 
         @Override
         public ListIterator<E> listIterator(int index) {
+            checkForMod();
             checkIndexBounds(index, size);
 
             return new ListIterator<E>() {
@@ -640,6 +647,7 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public List<E> subList(int fromIndex, int toIndex) {
+            checkForMod();
             checkFromToIndexes(fromIndex, toIndex, size);
             return new SubList<>(this, fromIndex, toIndex);
         }
