@@ -448,12 +448,34 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean removeAll(Collection<?> c) {
-            return false;
+            checkForMod();
+            boolean isChanged = false;
+
+            for (Object elem : c) {
+                while (remove(elem)) {
+                    isChanged = true;
+                }
+            }
+
+            return isChanged;
         }
 
         @Override
         public boolean retainAll(Collection<?> c) {
-            return false;
+            checkForMod();
+            boolean isChanged = false;
+
+            int curIndex = 0;
+            while (curIndex < size) {
+                if (!c.contains(root.data[curIndex + offset])) {
+                    remove(curIndex);
+                    isChanged = true;
+                } else {
+                    curIndex++;
+                }
+            }
+
+            return isChanged;
         }
 
         @Override
