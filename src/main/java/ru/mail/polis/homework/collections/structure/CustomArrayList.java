@@ -103,9 +103,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        if (index == size()) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkRange(index);
         Object[] a = c.toArray();
         int newSize = a.length;
         ensureCapacity(size + newSize);
