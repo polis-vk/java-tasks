@@ -64,24 +64,32 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      *
-     * Сложность - [O(n * m * log(m)) : где n - размер словаря, m - value.length()]
+     * Сложность - [O(n * m) : где n - размер словаря, m - value.length()]
      */
     public List<String> getSimilarWords(String value) {
         List<String> similarWords = new ArrayList<>();
-        for (String str : set) {
-            PriorityQueue<Integer> valueChars = new PriorityQueue<>();
-            for (char c : value.toLowerCase().toCharArray()) {
-                valueChars.add((int) c);
-            }
+        Map<Character, Integer> charOccurrences = new HashMap<>();
+        String valueLower = value.toLowerCase();
 
+        for (String str : set) {
             if (value.length() == str.length()) {
-                for (char c : str.toLowerCase().toCharArray()) {
-                    if (!valueChars.remove((int) c)) {
+                charOccurrences.clear();
+                String strLower = str.toLowerCase();
+
+                for (int i = 0; i < value.length(); i++) {
+                    charOccurrences.merge(valueLower.charAt(i), 1, Integer::sum);
+                    charOccurrences.merge(strLower.charAt(i), -1, Integer::sum);
+                }
+
+                boolean isPermutation = true;
+                for (Map.Entry<Character, Integer> entry : charOccurrences.entrySet()) {
+                    if (entry.getValue() != 0) {
+                        isPermutation = false;
                         break;
                     }
                 }
 
-                if (valueChars.isEmpty()) {
+                if (isPermutation) {
                     similarWords.add(str);
                 }
             }
