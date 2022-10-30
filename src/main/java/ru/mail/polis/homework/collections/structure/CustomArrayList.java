@@ -1,11 +1,11 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Arrays;
+import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
 
 /**
@@ -14,10 +14,10 @@ import java.util.NoSuchElementException;
  * <p>
  * Задание оценивается в 10 тугриков
  */
-
 @SuppressWarnings("unchecked")
 public class CustomArrayList<E> implements List<E> {
     private static final int INIT_SIZE = 16;
+
     private int size;
     private int modCount;
     private E[] array;
@@ -95,8 +95,6 @@ public class CustomArrayList<E> implements List<E> {
         int colSize = c.size();
         ensureCapacity(colSize - 1);
         checkIndex(index, true);
-        //[0,1,2,3,4,5,6,_,_,_,] -> [0,1,2,3,-1,-1,-1,4,5,6]
-        //index=4, colSize = 3;
         size += colSize;
         if (size - (index + colSize) < 0) {
             return false;

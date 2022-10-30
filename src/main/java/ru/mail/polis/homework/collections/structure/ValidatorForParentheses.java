@@ -2,6 +2,7 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -28,7 +29,11 @@ public class ValidatorForParentheses {
         char[] bracketsArr = value.toCharArray();
         Deque<Character> deque = new LinkedList<>();
 
-        Map<Character, Character> map = Map.of(')', '(', ']', '[', '}', '{', '>', '<');
+        Map<Character, Character> map = new HashMap<>();
+        map.put(')', '(');
+        map.put(']', '[');
+        map.put('}', '{');
+        map.put('>', '<');
         HashSet<Character> openBracketsSet = new HashSet<>(Arrays.asList('(', '[', '{', '<'));
         HashSet<Character> closeBracketsSet = new HashSet<>(Arrays.asList(')', ']', '}', '>'));
 

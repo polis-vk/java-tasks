@@ -24,7 +24,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - [O(n)]
+     * Сложность - []
      */
     public boolean add(String value) {
         checkString(value);
@@ -39,7 +39,7 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - [O(n)]
+     * Сложность - []
      */
     public boolean contains(String value) {
         Map<Character, Integer> key = getKey(value);
@@ -56,7 +56,7 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - [O(n)]
+     * Сложность - []
      */
     public boolean remove(String value) {
         Map<Character, Integer> key = getKey(value);
@@ -84,7 +84,7 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - [O(n)]
+     * Сложность - []
      */
     public List<String> getSimilarWords(String value) {
         Map<Character, Integer> key = getKey(value);
@@ -100,7 +100,7 @@ public class CustomDictionary {
      *
      * @return - Колл-во хранимых строк.
      * <p>
-     * Сложность - [O(k), k - количество ключей]
+     * Сложность - []
      */
     public int size() {
         AtomicInteger count = new AtomicInteger();
@@ -121,4 +121,5 @@ public class CustomDictionary {
         }
         return letters;
     }
+
 }
