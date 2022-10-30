@@ -24,7 +24,14 @@ public class CustomArrayList<E> implements List<E> {
     private int modifications;
 
     public CustomArrayList() {
-        data = (E[]) new Object[DEFAULT_CAPACITY];
+        this(DEFAULT_CAPACITY);
+    }
+
+    public CustomArrayList(int capacity) {
+        if (capacity <= 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        data = (E[]) new Object[capacity];
     }
 
     public CustomArrayList(Collection<? extends E> collection) {
