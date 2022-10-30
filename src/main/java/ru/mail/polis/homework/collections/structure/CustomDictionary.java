@@ -7,7 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -16,7 +15,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private final Map<Map<Character, Integer>, LinkedHashSet<String>> map = new HashMap<>();
+    private final Map<Map<Character, Integer>, Set<String>> map = new HashMap<>();
+
+    private int size = 0;
 
     /**
      * Сохранить строку в структуру данных
@@ -24,12 +25,14 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - []
+     * Сложность - [O(n)]
      */
+
     public boolean add(String value) {
         checkString(value);
         Map<Character, Integer> key = getKey(value);
         map.putIfAbsent(key, new LinkedHashSet<>());
+        size++;
         return map.get(key).add(value);
     }
 
@@ -39,14 +42,15 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - []
+     * Сложность - [O(n)]
      */
+
     public boolean contains(String value) {
         Map<Character, Integer> key = getKey(value);
         if (map.get(key) == null) {
             return false;
         }
-        LinkedHashSet<String> set = map.get(key);
+        Set<String> set = map.get(key);
         return set.contains(value);
     }
 
@@ -56,15 +60,20 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - []
+     * Сложность - [O(n)]
      */
+
     public boolean remove(String value) {
         Map<Character, Integer> key = getKey(value);
         if (map.get(key) == null) {
             return false;
         }
-        LinkedHashSet<String> set = map.get(key);
-        return set.removeIf(value::equals);
+        Set<String> set = map.get(key);
+        if (set.removeIf(value::equals)) {
+            size--;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -84,8 +93,9 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - []
+     * Сложность - [O(n)]
      */
+
     public List<String> getSimilarWords(String value) {
         Map<Character, Integer> key = getKey(value);
         if (map.get(key) == null) {
@@ -100,12 +110,11 @@ public class CustomDictionary {
      *
      * @return - Колл-во хранимых строк.
      * <p>
-     * Сложность - []
+     * Сложность - [O(1)]
      */
+
     public int size() {
-        AtomicInteger count = new AtomicInteger();
-        map.forEach((k, v) -> count.addAndGet(v.size()));
-        return count.get();
+        return size;
     }
 
     private void checkString(String str) {
@@ -121,5 +130,4 @@ public class CustomDictionary {
         }
         return letters;
     }
-
 }

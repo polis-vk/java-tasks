@@ -11,7 +11,7 @@ public class ExampleStateHandler implements StateHandler<ExampleState> {
 
     /**
      * Поправить в соответствии с изменениями в StateHandler
-     *
+     * <p>
      * 1 тугрик
      */
     @Override

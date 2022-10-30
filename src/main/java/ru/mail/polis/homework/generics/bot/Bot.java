@@ -12,20 +12,20 @@ public class Bot {
     /**
      * Конструктор бота, которому на вход подаются хэндлеры состояний.
      * Необходимо как-то сохранить эти хэндлеры так, чтобы потом можно было вызвать нужный хэндлер из метода handleState
-     *
+     * <p>
      * 1 тугрик
      */
-    private final Map<Class<? extends State>, StateHandler<?>> stateHandlerMap = new HashMap<>();
+    private final Map<Class<? extends State>, StateHandler<? extends State>> stateHandlerMap = new HashMap<>();
 
-    public Bot(List<StateHandler<?>> handlers) {
-        for (StateHandler<?> handler: handlers) {
+    public Bot(List<StateHandler<? extends State>> handlers) {
+        for (StateHandler<? extends State> handler : handlers) {
             stateHandlerMap.put(handler.getHandlingStateClass(), handler);
         }
     }
 
     /**
      * Вызывает хэндлер, предназначенный для переданного State
-     *
+     * <p>
      * 1 тугрик
      */
     public void handleState(State state) {
