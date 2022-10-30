@@ -9,19 +9,26 @@ import java.util.*;
  * Задание оценивается в 10 тугриков
  */
 public class CustomArrayList<E> implements List<E> {
-    private static final int INITIAL_CAPACITY = 10;
-    private E[] array = (E[]) new Object[INITIAL_CAPACITY];
+    private E[] array;
     private int size;
     private int modCount = 0;
 
     public CustomArrayList() {
+        this.array = (E[]) new Object[2];
+    }
+
+    public CustomArrayList(int capacity) {
+        this.array = (E[]) new Object[capacity];
     }
 
     public CustomArrayList(E[] array) {
+        this.array = (E[]) new Object[array.length];
         Collections.addAll(this, array);
+
     }
 
     public CustomArrayList(Collection<E> collection) {
+        this.array = (E[]) new Object[collection.size()];
         this.addAll(collection);
     }
 
@@ -271,7 +278,7 @@ public class CustomArrayList<E> implements List<E> {
             throw new IndexOutOfBoundsException();
         }
 
-        List<E> subList = new CustomArrayList<>();
+        List<E> subList = new CustomArrayList<>(10);
         for (int i = fromIndex; i <= toIndex; i++) {
             subList.add(get(i));
         }
@@ -316,8 +323,9 @@ public class CustomArrayList<E> implements List<E> {
             if (i < 0) {
                 throw new NoSuchElementException();
             }
-            if (i >= size)
+            if (i >= size) {
                 throw new ConcurrentModificationException();
+            }
             curIndex = i;
             lastReturned = i;
             return array[i];
