@@ -75,12 +75,12 @@ public class ValidatorForParentheses {
         char c;
         for (int i = 0; i < sequence.length(); i++) {
             c = sequence.charAt(i);
-            if (c == '(' || c == '{' || c == '[' || c == '<') {
+            if(bracketsPairs.containsValue(c)){
                 wasBracket = true;
                 push(c);
                 continue;
             }
-            if (c == ')' || c == '}' || c == ']' || c == '>') {
+            if (bracketsPairs.containsKey(c)) {
                 wasBracket = true;
                 if (!isMatchWithLast(c)) {
                     return false;

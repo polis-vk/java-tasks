@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 
@@ -239,11 +240,7 @@ public class CustomArrayList<E> implements List<E> {
     public int indexOf(Object o) {
         Object[] es = array;
         for (int i = 0; i < size; i++) {
-            if (o == null) {
-                if (es[i] == null) {
-                    return i;
-                }
-            } else if (o.equals(es[i])) {
+            if (o == null && es[i] == null || Objects.equals(o, es[i])) {
                 return i;
             }
         }
@@ -254,11 +251,7 @@ public class CustomArrayList<E> implements List<E> {
     public int lastIndexOf(Object o) {
         Object[] es = array;
         for (int i = size - 1; i >= 0; i--) {
-            if (o == null) {
-                if (es[i] == null) {
-                    return i;
-                }
-            } else if (o.equals(es[i])) {
+            if (o == null && es[i] == null || Objects.equals(o, es[i])) {
                 return i;
             }
         }
