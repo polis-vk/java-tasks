@@ -66,11 +66,14 @@ public class LibraryStatistic {
      */
     public List<User> unreliableUsers(Library library) {
         return library.getArchive().stream()
-                .collect(Collectors.toMap(ArchivedData::getUser,
-                        s -> getDays(s.getTake(), s.getReturned())))
+                .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.toList()))
                 .entrySet().stream()
-                .map(s -> ((s.getValue() > 30) ? s.setValue((long) 1) : s.setValue((long) -1)))
-                .collect(Collectors.toMap(ArchivedData::getUser, s -> Collectors.summarizingLong(s.ge)))
+                .filter(entrySet -> (entrySet.getValue().stream()
+                        .filter(archivedData ->
+                                (getDays(archivedData.getTake(), archivedData.getReturned()) > 30))
+                        .count() > entrySet.getValue().size() / 2))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -81,7 +84,9 @@ public class LibraryStatistic {
      * @return - список книг
      */
     public List<Book> booksWithMoreCountPages(Library library, int countPage) {
-        return null;
+        return library.getBooks().stream()
+                .filter(s -> (s.getPage() >= countPage))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -91,7 +96,15 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return null;
+        return library.getArchive().stream()
+                .collect(Collectors.groupingBy(s -> (s.getBook().getGenre()),
+                        Collectors.groupingBy(s -> s.getBook().getAuthor(), Collectors.counting())))
+                .entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, genreMapEntrySet -> genreMapEntrySet.getValue().entrySet().stream()
+                                .max((o1, o2) -> o2.getValue().compareTo(o1.getValue()))
+                                .get()
+                                .getKey()));
     }
 
     private long getDays(Timestamp timestamp1, Timestamp timestamp2) {
