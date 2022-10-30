@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,38 +11,51 @@ import java.util.List;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
+    ArrayList<String> stringContainer = new ArrayList<>();
 
     /**
      * Сохранить строку в структуру данных
+     *
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
-     *
-     * Сложность - []
+     * <p>
+     * Сложность - [O(1) - average, but if list.size is full it will cost O(1), because we need to increase capacity]
      */
     public boolean add(String value) {
-        return false;
+        if (value == null || value.equals("")) {
+            throw new IllegalArgumentException();
+        }
+
+        if (stringContainer.contains(value)) {
+            return false;
+        }
+
+        stringContainer.add(value);
+        return true;
     }
 
     /**
      * Проверяем, хранится ли такая строка уже у нас
+     *
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
-     *
-     * Сложность - []
+     * <p>
+     * Сложность - [O(n) - average]
      */
     public boolean contains(String value) {
-        return false;
+        return stringContainer.contains(value);
     }
 
     /**
      * Удаляем сохраненную строку если она есть
+     *
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
-     *
-     * Сложность - []
+     * <p>
+     * Сложность - [O(n) - average]
      */
     public boolean remove(String value) {
-        return false;
+        return stringContainer.remove(value);
     }
 
     /**
@@ -51,7 +65,7 @@ public class CustomDictionary {
      * сохраняем строки ["aaa", "aBa", "baa", "aaB"]
      * При поиске по строке "AAb" нам должен вернуться следующий
      * список: ["aBa","baa","aaB"]
-     *
+     * <p>
      * сохраняем строки ["aaa", "aAa", "a"]
      * поиск "aaaa"
      * результат: []
@@ -60,21 +74,54 @@ public class CustomDictionary {
      *
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
-     *
+     * <p>
      * Сложность - []
      */
     public List<String> getSimilarWords(String value) {
-        return Collections.emptyList();
+        List<String> listOfSimilarWords = new ArrayList<>();
+        for (String string : stringContainer) {
+            if (!isSimilarWords(string, value)) {
+                continue;
+            }
+            listOfSimilarWords.add(string);
+        }
+        if (listOfSimilarWords.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return listOfSimilarWords;
+    }
+
+    private boolean isSimilarWords(String string1, String string2) {
+        if (string1.length() != string2.length()) {
+            return false;
+        }
+
+        if (string1.equalsIgnoreCase(string2)) {
+            return true;
+        }
+
+        String temp1 = string1.toLowerCase();
+        String temp2 = string2.toLowerCase(); // возможно надо создать новые строки
+
+        int sumCharCodesStr1 = 0;
+        int sumCharCodesStr2 = 0;
+        for (int i = 0; i < string1.length(); i++) {
+            sumCharCodesStr1 += temp1.charAt(i);
+            sumCharCodesStr2 += temp2.charAt(i);
+        }
+
+        return sumCharCodesStr1 == sumCharCodesStr2;
     }
 
     /**
      * Колл-во хранимых строк.
-     * @return - Колл-во хранимых строк.
      *
-     * Сложность - []
+     * @return - Колл-во хранимых строк.
+     * <p>
+     * Сложность - [O(1)]
      */
     public int size() {
-        return 0;
+        return stringContainer.size();
     }
 
 
