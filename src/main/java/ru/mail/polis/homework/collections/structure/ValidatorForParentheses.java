@@ -2,6 +2,7 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 /**
  * Задание оценивается в 2 тугрика.
  * Одна из самых популярных задач.
@@ -29,10 +30,10 @@ public class ValidatorForParentheses {
 
     public static boolean validate(String value) {
         boolean bracketFlag = false;
-        Stack stack = new Stack();
         if (value == null || value.isEmpty()) {
             return false;
         }
+        Stack<Character> stack = new Stack<>();
         for (char ch : value.toCharArray()) {
             if (!isBracket(ch)) {
                 continue;
@@ -41,7 +42,7 @@ public class ValidatorForParentheses {
             if (brackets.containsKey(ch)) {
                 stack.push(ch);
             } else {
-                if (stack.isEmpty() || ch != brackets.get(stack.last.value)) {
+                if (stack.isEmpty() || ch != brackets.get(stack.lastElement())) {
                     return false;
                 } else {
                     stack.pop();
@@ -55,39 +56,4 @@ public class ValidatorForParentheses {
         return brackets.containsKey(c) || brackets.containsValue(c);
     }
 
-    private static class Stack {
-        private Node last;
-        private int size;
-
-        public void push(char value) {
-            size++;
-            Node node = new Node(value);
-            if (last != null) {
-                node.prev = last;
-            }
-            last = node;
-        }
-
-        public void pop() {
-            size--;
-            last = last.prev;
-        }
-
-        public int size() {
-            return size;
-        }
-
-        public boolean isEmpty() {
-            return size == 0;
-        }
-
-        private class Node {
-            private char value;
-            private Node prev;
-
-            public Node(char value) {
-                this.value = value;
-            }
-        }
-    }
 }
