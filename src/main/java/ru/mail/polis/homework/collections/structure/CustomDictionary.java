@@ -18,7 +18,8 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
      * <p>
-     * Сложность - []
+     * Сложность - [O(n log(n)]
+     * n - длинна стринга value
      */
     public boolean add(String value) {
         if (contains(value)) {
@@ -41,7 +42,8 @@ public class CustomDictionary {
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
      * <p>
-     * Сложность - []
+     * Сложность - [O(n log(n)]
+     * n - длинна стринга value
      */
     public boolean contains(String value) {
         String adjustedValue = adjustString(value);
@@ -58,7 +60,8 @@ public class CustomDictionary {
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
      * <p>
-     * Сложность - []
+     * Сложность - [O(n log(n)]
+     * n - длинна стринга value
      */
     public boolean remove(String value) {
         String adjustedValue = adjustString(value);
@@ -89,7 +92,8 @@ public class CustomDictionary {
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
      * <p>
-     * Сложность - []
+     * Сложность - [O(n log(n)]
+     * n - длинна стринга value
      */
     public List<String> getSimilarWords(String value) {
         String adjustedValue = adjustString(value);
@@ -104,7 +108,7 @@ public class CustomDictionary {
      *
      * @return - Колл-во хранимых строк.
      * <p>
-     * Сложность - []
+     * Сложность - [O(1)]
      */
     public int size() {
         return length;
