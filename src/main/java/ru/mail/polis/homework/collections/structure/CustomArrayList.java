@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
@@ -466,9 +467,7 @@ public class CustomArrayList<E> implements List<E> {
 
     private int indexOfInRange(int from, int to, Object o) {
         for (int i = from; i < to; i++) {
-            if (arr[i] == o) {
-                return i;
-            } else if (arr[i].equals(o)) {
+            if (Objects.equals(arr[i], o)) {
                 return i;
             }
         }
@@ -478,9 +477,7 @@ public class CustomArrayList<E> implements List<E> {
     private int lastIndexOfInRange(int from, int to, Object o) {
         int lastInd = -1;
         for (int i = from; i < to; i++) {
-            if (arr[i] == o) {
-                lastInd = i;
-            } else if (arr[i].equals(o)) {
+            if (Objects.equals(arr[i], o)) {
                 lastInd = i;
             }
         }
