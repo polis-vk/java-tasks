@@ -37,7 +37,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean contains(Object o) {
-        return containsRange(0, size, o);
+        return containsInRange(0, size, o);
     }
 
     @Override
@@ -47,12 +47,12 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public Object[] toArray() {
-        return toArrayRange(0, size);
+        return toArrayInRange(0, size);
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
-        return toArrayRange(a, 0, size);
+        return toArrayInRange(a, 0, size);
     }
 
     @Override
@@ -63,12 +63,12 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean remove(Object o) {
-        return removeRange(0, size, o);
+        return removeInRange(0, size, o);
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return containsAllRange(0, size, c);
+        return containsAllInRange(0, size, c);
     }
 
     @Override
@@ -92,12 +92,12 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        return removeAllRange(0, size, c);
+        return removeAllInRange(0, size, c);
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        return retainAllRange(0, size, c);
+        return retainAllInRange(0, size, c);
     }
 
     @Override
@@ -142,12 +142,12 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        return indexOfRange(0, size, o);
+        return indexOfInRange(0, size, o);
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return lastIndexOfRange(0, size, o);
+        return lastIndexOfInRange(0, size, o);
     }
 
     @Override
@@ -299,7 +299,7 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean contains(Object o) {
-            return containsRange(from, to, 0);
+            return containsInRange(from, to, 0);
         }
 
         @Override
@@ -309,12 +309,12 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public Object[] toArray() {
-            return CustomArrayList.this.toArrayRange(from, to);
+            return CustomArrayList.this.toArrayInRange(from, to);
         }
 
         @Override
         public <T> T[] toArray(T[] ts) {
-            return CustomArrayList.this.toArrayRange(ts, from, to);
+            return CustomArrayList.this.toArrayInRange(ts, from, to);
         }
 
         @Override
@@ -324,12 +324,12 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean remove(Object o) {
-            return CustomArrayList.this.removeRange(from, to, o);
+            return CustomArrayList.this.removeInRange(from, to, o);
         }
 
         @Override
         public boolean containsAll(Collection<?> collection) {
-            return containsAllRange(from, to, collection);
+            return containsAllInRange(from, to, collection);
         }
 
         @Override
@@ -345,12 +345,12 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean removeAll(Collection<?> collection) {
-            return CustomArrayList.this.removeAllRange(from, to, collection);
+            return CustomArrayList.this.removeAllInRange(from, to, collection);
         }
 
         @Override
         public boolean retainAll(Collection<?> collection) {
-            return CustomArrayList.this.retainAllRange(from, to, collection);
+            return CustomArrayList.this.retainAllInRange(from, to, collection);
         }
 
         @Override
@@ -385,12 +385,12 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public int indexOf(Object o) {
-            return CustomArrayList.this.indexOfRange(from, to, o);
+            return CustomArrayList.this.indexOfInRange(from, to, o);
         }
 
         @Override
         public int lastIndexOf(Object o) {
-            return CustomArrayList.this.lastIndexOfRange(from, to, o);
+            return CustomArrayList.this.lastIndexOfInRange(from, to, o);
         }
 
         @Override
@@ -446,14 +446,14 @@ public class CustomArrayList<E> implements List<E> {
         modCount++;
     }
 
-    private Object[] toArrayRange(int from, int to) {
+    private Object[] toArrayInRange(int from, int to) {
         Object[] copyArr = new Object[to - from];
         System.arraycopy(arr, from, copyArr, 0, copyArr.length);
         return copyArr;
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T[] toArrayRange(T[] a, int from, int to) {
+    private <T> T[] toArrayInRange(T[] a, int from, int to) {
         int rangeSize = to - from;
         if (a.length < rangeSize) {
             a = (T[]) Array.newInstance(a.getClass().getComponentType(), rangeSize);
@@ -464,7 +464,7 @@ public class CustomArrayList<E> implements List<E> {
         return a;
     }
 
-    private int indexOfRange(int from, int to, Object o) {
+    private int indexOfInRange(int from, int to, Object o) {
         for (int i = from; i < to; i++) {
             if (arr[i] == o) {
                 return i;
@@ -475,7 +475,7 @@ public class CustomArrayList<E> implements List<E> {
         return -1;
     }
 
-    private int lastIndexOfRange(int from, int to, Object o) {
+    private int lastIndexOfInRange(int from, int to, Object o) {
         int lastInd = -1;
         for (int i = from; i < to; i++) {
             if (arr[i] == o) {
@@ -487,8 +487,8 @@ public class CustomArrayList<E> implements List<E> {
         return lastInd;
     }
 
-    private boolean removeRange(int from, int to, Object o) {
-        int index = indexOfRange(from, to, o);
+    private boolean removeInRange(int from, int to, Object o) {
+        int index = indexOfInRange(from, to, o);
         if (index == -1) {
             return false;
         }
@@ -496,28 +496,28 @@ public class CustomArrayList<E> implements List<E> {
         return true;
     }
 
-    private boolean containsRange(int from, int to, Object o) {
-        return indexOfRange(from, to, o) != -1;
+    private boolean containsInRange(int from, int to, Object o) {
+        return indexOfInRange(from, to, o) != -1;
     }
 
-    private boolean containsAllRange(int from, int to, Collection<?> c) {
+    private boolean containsAllInRange(int from, int to, Collection<?> c) {
         for (Object el : c) {
-            if (!containsRange(from, to, el)) {
+            if (!containsInRange(from, to, el)) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean removeAllRange(int from, int to, Collection<?> c) {
+    private boolean removeAllInRange(int from, int to, Collection<?> c) {
         boolean wasChanged = true;
         for (Object el : c) {
-            wasChanged &= removeRange(from, to, el);
+            wasChanged &= removeInRange(from, to, el);
         }
         return wasChanged;
     }
 
-    private boolean retainAllRange(int from, int to, Collection<?> c) {
+    private boolean retainAllInRange(int from, int to, Collection<?> c) {
         boolean wasChanged = false;
         for (int i = from; i < to; ) {
             if (!c.contains(get(i))) {
