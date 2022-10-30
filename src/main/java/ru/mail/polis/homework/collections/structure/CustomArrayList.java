@@ -18,13 +18,11 @@ public class CustomArrayList<E> implements List<E> {
     private static final int DEFAULT_ARRAY_CAPACITY = 10;
     private int size;
     private int modCount;
-    private int capacity;
     private E[] arr;
 
     @SuppressWarnings("unchecked")
     public CustomArrayList() {
-        capacity = DEFAULT_ARRAY_CAPACITY;
-        arr = (E[]) new Object[capacity];
+        arr = (E[]) new Object[DEFAULT_ARRAY_CAPACITY];
     }
 
     @Override
@@ -83,7 +81,7 @@ public class CustomArrayList<E> implements List<E> {
         checkIndex(0, size + 1, index);
         if (c.size() == 0) {
             return false;
-        } else if (capacity < size + c.size()) {
+        } else if (arr.length < size + c.size()) {
             resize(size + c.size());
         }
         System.arraycopy(arr, index, arr, index + c.size(), size - index);
@@ -125,7 +123,7 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public void add(int index, E element) {
         checkIndex(0, size + 1, index);
-        if (size == capacity) {
+        if (size == arr.length) {
             resize();
         }
         System.arraycopy(arr, index, arr, index + 1, size - index);
@@ -443,13 +441,12 @@ public class CustomArrayList<E> implements List<E> {
     @SuppressWarnings("unchecked")
     private void resize(int newSize) {
         E[] oldArray = arr;
-        capacity = newSize;
-        arr = (E[]) new Object[capacity];
+        arr = (E[]) new Object[newSize];
         System.arraycopy(oldArray, 0, arr, 0, size);
     }
 
     private void resize() {
-        resize((int) Math.ceil(1.5 * capacity));
+        resize((int) Math.ceil(1.5 * arr.length));
     }
 
     private static void checkIndex(int fromIndex, int toIndex, int i) {
