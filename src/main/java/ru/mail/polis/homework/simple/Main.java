@@ -1,4 +1,5 @@
 package ru.mail.polis.homework.simple;
+
 public class Main {
 
     public static void main(String[] args) {
