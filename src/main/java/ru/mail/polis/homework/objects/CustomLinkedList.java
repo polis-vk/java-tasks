@@ -17,7 +17,11 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @return size
      */
     public int size() {
-        return 0;
+        int counter = 0;
+        while (iterator().hasNext()){
+            counter++;
+        }
+        return counter;
     }
 
     /**
@@ -28,6 +32,13 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int value) {
+        Iterator<Integer> iterator = iterator();
+        while(iterator.hasNext()) {
+            iterator().next();
+        }
+        if (iterator.next() == null) {
+            this.head.next.setNext(new Node(value));
+        }
 
     }
 
@@ -38,7 +49,12 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param index
      */
     public int get(int index) {
-       return 0;
+        int value = 0;
+        for (int i = 0; i < index; i++){
+            if (!iterator().hasNext()) throw new UnsupportedOperationException();
+          value = iterator().next();
+        }
+       return value;
     }
 
     /**
@@ -52,7 +68,10 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int i, int value) {
-
+        for (int j = 0; j < i; j++){
+            iterator().next();
+        }
+        add(value);
     }
 
     /**
@@ -103,7 +122,23 @@ public class CustomLinkedList implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new Iterator<Integer>() {
+            int c = 0;
+            @Override
+            public boolean hasNext() {
+                return true;
+            }
+
+            @Override
+            public Integer next() {
+                if (c == 0)
+                {
+                    c++;
+                    return head.value;
+                }
+                else return head.next.value;
+            }
+        };
     }
 
     private static class Node {

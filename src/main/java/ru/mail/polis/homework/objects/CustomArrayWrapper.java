@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
@@ -48,7 +49,25 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new Iterator<Integer>() {
+
+            private int currentIndex = 0;
+            private int cursor = 0;
+
+            @Override
+            public boolean hasNext() {
+                return array.length > currentIndex;
+            }
+
+            @Override
+            public Integer next() {
+                if (cursor != currentIndex) {
+                    throw new ConcurrentModificationException();
+                }
+                cursor++;
+                return hasNext() ? array[currentIndex++] : null;
+            }
+        };
     }
 
     /**
@@ -58,7 +77,33 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new Iterator<>() {
+            private int currentIndex = 1;
+            private boolean flag = true;
+            private int cursor = 1;
+
+            @Override
+            public boolean hasNext() {
+                return array.length > currentIndex + 2;
+            }
+
+            @Override
+            public Integer next() {
+                if (cursor != currentIndex) {
+                    throw new ConcurrentModificationException();
+                }
+                if (flag) {
+                    flag = false;
+                    cursor+=2;
+                    return hasNext() ? array[currentIndex] : null;
+                }
+                else {
+                    cursor += 2;
+                    currentIndex += 2;
+                    return hasNext() ? array[currentIndex] : null;
+                }
+            }
+        };
     }
 
     /**
@@ -68,7 +113,30 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new Iterator<>() {
+            private int currentIndex = 0;
+            private boolean flag = true;
+            private int cursor = 0;
+
+            @Override
+            public boolean hasNext() {
+                return array.length > currentIndex + 2;
+            }
+
+            @Override
+            public Integer next() {
+                if (cursor != currentIndex) {
+                    throw new ConcurrentModificationException();
+                }
+                if (flag) {
+                    flag = false;
+                    cursor++;
+                    return hasNext() ? array[currentIndex] : null;
+                }
+                cursor++;
+                return hasNext() ? array[currentIndex += 2] : null;
+            }
+        };
     }
 
     private void checkIndex(int index) {
@@ -76,5 +144,6 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             throw new IndexOutOfBoundsException();
         }
     }
+
 
 }

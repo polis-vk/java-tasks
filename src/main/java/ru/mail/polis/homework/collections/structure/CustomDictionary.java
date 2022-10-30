@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -11,6 +11,8 @@ import java.util.List;
  */
 public class CustomDictionary {
 
+    private final Map<String, String> map = new HashMap<>();
+
     /**
      * Сохранить строку в структуру данных
      * @param value - передаваемая строка
@@ -19,7 +21,10 @@ public class CustomDictionary {
      * Сложность - []
      */
     public boolean add(String value) {
-        return false;
+        if (value == null || value.isBlank()){
+            throw new IllegalArgumentException();
+        }
+        return map.put(value, value) == null;
     }
 
     /**
@@ -30,7 +35,7 @@ public class CustomDictionary {
      * Сложность - []
      */
     public boolean contains(String value) {
-        return false;
+        return map.get(value) != null;
     }
 
     /**
@@ -41,7 +46,11 @@ public class CustomDictionary {
      * Сложность - []
      */
     public boolean remove(String value) {
-        return false;
+        if (map.get(value) == null) {
+            return false;
+        }
+        map.remove(value);
+        return true;
     }
 
     /**
@@ -64,7 +73,25 @@ public class CustomDictionary {
      * Сложность - []
      */
     public List<String> getSimilarWords(String value) {
-        return Collections.emptyList();
+        List<String> list = new ArrayList<>();
+        String val = value.toLowerCase(Locale.ROOT);
+        int sum = sumeer(val);
+        for (Map.Entry k : map.entrySet()){
+            int s = sumeer((String) k.getValue());
+            if (s == sum) {
+                list.add((String) k.getValue());
+            }
+        }
+        return list;
+    }
+
+    public int sumeer(String value){
+        String val = value.toLowerCase(Locale.ROOT);
+        int sum = 0;
+        for(int i = 0; i < value.length(); i++) {
+            sum += val.charAt(i);
+        }
+        return sum;
     }
 
     /**
@@ -74,7 +101,7 @@ public class CustomDictionary {
      * Сложность - []
      */
     public int size() {
-        return 0;
+        return map.size();
     }
 
 
