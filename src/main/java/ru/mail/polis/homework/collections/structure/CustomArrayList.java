@@ -18,15 +18,15 @@ public class CustomArrayList<E> implements List<E> {
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
     private static final int DEFAULT_CAPACITY = 10;
     private static final double GROW_FACTOR = 1.5;
+
     private E[] data;
     private int size;
     int modCount;
 
-    public CustomArrayList(CustomArrayList<E> list, int fromInclusive, int toExclusive) {
-        size = toExclusive - fromInclusive;
+    public CustomArrayList(Collection<E> list) {
+        size = list.size();
         data = (E[]) new Object[size];
-        System.arraycopy(list.data, fromInclusive, data, 0, size);
-        modCount = list.modCount;
+        System.arraycopy(list.toArray(), 0, data, 0, size);
     }
 
     private CustomArrayList(E[] subList, int toIndex, int fromIndex) {
@@ -182,8 +182,8 @@ public class CustomArrayList<E> implements List<E> {
     public E remove(int index) {
         E oldValue = data[index];
         modCount++;
-        int newSize;
-        if ((newSize = size - 1) > index) {
+        int newSize = size - 1;
+        if (newSize > index) {
             System.arraycopy(data, index + 1, data, index, newSize - index);
         }
         size = newSize;
@@ -212,6 +212,8 @@ public class CustomArrayList<E> implements List<E> {
             private int currentIndex = index;
             private int expectedModCount = modCount;
 
+            private int lastRet = -1;
+
             @Override
             public boolean hasNext() {
                 return currentIndex < size;
@@ -225,6 +227,7 @@ public class CustomArrayList<E> implements List<E> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
+                lastRet = currentIndex;
                 return data[currentIndex++];
             }
 
@@ -256,18 +259,26 @@ public class CustomArrayList<E> implements List<E> {
 
             @Override
             public void remove() {
+                if (lastRet < 0) {
+                    throw new IllegalStateException();
+                }
                 if (expectedModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
+                lastRet = -1;
                 CustomArrayList.this.remove(currentIndex);
                 expectedModCount = modCount;
             }
 
             @Override
             public void set(E e) {
+                if (lastRet < 0) {
+                    throw new IllegalStateException();
+                }
                 if (expectedModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
+                lastRet = -1;
                 CustomArrayList.this.set(currentIndex, e);
                 expectedModCount = modCount;
             }
@@ -439,6 +450,8 @@ public class CustomArrayList<E> implements List<E> {
                 private int currentIndex = startPosition + index;
                 private int expectedModCount = parentList.modCount;
 
+                private int lastRet = -1;
+
                 @Override
                 public boolean hasNext() {
                     return currentIndex < endPosition;
@@ -452,6 +465,7 @@ public class CustomArrayList<E> implements List<E> {
                     if (!hasNext()) {
                         throw new NoSuchElementException();
                     }
+                    lastRet = currentIndex;
                     return parentList.data[currentIndex++];
                 }
 
@@ -483,18 +497,26 @@ public class CustomArrayList<E> implements List<E> {
 
                 @Override
                 public void remove() {
+                    if (lastRet < 0) {
+                        throw new IllegalStateException();
+                    }
                     if (expectedModCount != parentList.modCount) {
                         throw new ConcurrentModificationException();
                     }
+                    lastRet = -1;
                     SubList.this.remove(currentIndex);
                     expectedModCount = parentList.modCount;
                 }
 
                 @Override
                 public void set(E e) {
+                    if (lastRet < 0) {
+                        throw new IllegalStateException();
+                    }
                     if (expectedModCount != parentList.modCount) {
                         throw new ConcurrentModificationException();
                     }
+                    lastRet = -1;
                     SubList.this.set(currentIndex, e);
                     expectedModCount = parentList.modCount;
                 }
