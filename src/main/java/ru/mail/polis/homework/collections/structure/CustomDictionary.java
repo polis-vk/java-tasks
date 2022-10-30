@@ -1,8 +1,10 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,9 +34,9 @@ public class CustomDictionary {
         checkArgument(value);
         Map<Character, Integer> dictionaryForChars = convertToMapOfLetters(value);
         data.putIfAbsent(dictionaryForChars, new HashSet<>());
-        Set<String> currentList = data.get(dictionaryForChars);
-        if (currentList.isEmpty() || !currentList.contains(value)) {
-            currentList.add(value);
+        Set<String> currentSet = data.get(dictionaryForChars);
+        if (currentSet.isEmpty() || !currentSet.contains(value)) {
+            currentSet.add(value);
             size++;
             return true;
         }
@@ -51,8 +53,8 @@ public class CustomDictionary {
      */
     public boolean contains(String value) {
         checkArgument(value);
-        Set<String> listWithThisValue = data.get(convertToMapOfLetters(value));
-        return hasElements(listWithThisValue) && listWithThisValue.contains(value);
+        Set<String> setWithThisValue = data.get(convertToMapOfLetters(value));
+        return hasElements(setWithThisValue) && setWithThisValue.contains(value);
     }
 
     /**
@@ -65,8 +67,8 @@ public class CustomDictionary {
      */
     public boolean remove(String value) {
         checkArgument(value);
-        Set<String> listWithThisValue = data.get(convertToMapOfLetters(value));
-        if (hasElements(listWithThisValue) && listWithThisValue.removeIf(str -> (str.equals(value)))) {
+        Set<String> setWithThisValue = data.get(convertToMapOfLetters(value));
+        if (hasElements(setWithThisValue) && setWithThisValue.removeIf(str -> (str.equals(value)))) {
             size--;
             return true;
         }
@@ -92,13 +94,13 @@ public class CustomDictionary {
      * <p>
      * Сложность - [O(n), n - длина параметра value]
      */
-    public Set<String> getSimilarWords(String value) {
+    public List<String> getSimilarWords(String value) {
         checkArgument(value);
-        Set<String> listWithThisValue = data.get(convertToMapOfLetters(value));
-        if (hasElements(listWithThisValue)) {
-            return listWithThisValue;
+        Set<String> setWithThisValue = data.get(convertToMapOfLetters(value));
+        if (hasElements(setWithThisValue)) {
+            return new ArrayList<>(setWithThisValue);
         }
-        return Collections.emptySet();
+        return Collections.emptyList();
     }
 
     /**
@@ -121,8 +123,8 @@ public class CustomDictionary {
         return letterCountMap;
     }
 
-    private static boolean hasElements(Set<String> list) {
-        return list != null && !list.isEmpty();
+    private static boolean hasElements(Set<String> setWithStrings) {
+        return setWithStrings != null && !setWithStrings.isEmpty();
     }
 
     private static void checkArgument(String value) {
