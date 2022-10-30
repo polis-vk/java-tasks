@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
@@ -17,15 +18,14 @@ import java.util.Stack;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
-    private static final Character[] PARENTHESES = {'{', '}', '[', ']', '<', '>', '(', ')'};
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
         }
 
-        final List<Character> listOfParentheses = Arrays.asList(PARENTHESES);
-        Stack<Character> stack = new Stack<>();
+        final List<Character> listOfParentheses = Arrays.asList('{', '}', '[', ']', '<', '>', '(', ')');
+        ArrayDeque<Character> stack = new ArrayDeque<>();
         boolean bracketExists = false;
         for (int i = 0; i < value.length(); i++) {
             if (!listOfParentheses.contains(value.charAt(i))) {
@@ -38,7 +38,7 @@ public class ValidatorForParentheses {
             }
             stack.push(value.charAt(i));
         }
-        return bracketExists && stack.empty();
+        return bracketExists && stack.isEmpty();
     }
 
     private static boolean isClosedBracket(char current, char opening) {
