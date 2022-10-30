@@ -3,7 +3,6 @@ package ru.mail.polis.homework.collections.structure;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Stack;
 
 /**
  * Задание оценивается в 2 тугрика.
