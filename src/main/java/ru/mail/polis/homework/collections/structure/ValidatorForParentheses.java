@@ -30,10 +30,14 @@ public class ValidatorForParentheses {
             } else if (isClosingBracket(c)) {
                 if (deq.peekLast() == null) {
                     return false;
-                } else if (checkBracketsMatch(deq.peekLast(), c)) {
-                    deq.pollLast();
-                    wasAtLeastOnePair = true;
                 }
+
+                if (!checkBracketsMatch(deq.peekLast(), c)) {
+                    return false;
+                }
+
+                deq.pollLast();
+                wasAtLeastOnePair = true;
             }
         }
 
