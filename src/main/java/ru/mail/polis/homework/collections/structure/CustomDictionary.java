@@ -15,8 +15,7 @@ import java.util.Collections;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private final Map<Map<Character, Integer>, Set<String>> dictionary
-            = new HashMap<>();
+    private final Map<Map<Character, Integer>, Set<String>> dictionary = new HashMap<>();
     private int size;
 
     /**
