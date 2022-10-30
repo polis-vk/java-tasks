@@ -1,10 +1,10 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -13,7 +13,7 @@ import java.util.Map;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    private final Map<Map<Character, Integer>, List<String>> data;
+    private final Map<Map<Character, Integer>, Set<String>> data;
     private int size;
 
     CustomDictionary() {
@@ -31,8 +31,8 @@ public class CustomDictionary {
     public boolean add(String value) {
         checkArgument(value);
         Map<Character, Integer> dictionaryForChars = convertToMapOfLetters(value);
-        data.putIfAbsent(dictionaryForChars, new ArrayList<>());
-        List<String> currentList = data.get(dictionaryForChars);
+        data.putIfAbsent(dictionaryForChars, new HashSet<>());
+        Set<String> currentList = data.get(dictionaryForChars);
         if (currentList.isEmpty() || !currentList.contains(value)) {
             currentList.add(value);
             size++;
@@ -51,7 +51,7 @@ public class CustomDictionary {
      */
     public boolean contains(String value) {
         checkArgument(value);
-        List<String> listWithThisValue = data.get(convertToMapOfLetters(value));
+        Set<String> listWithThisValue = data.get(convertToMapOfLetters(value));
         return hasElements(listWithThisValue) && listWithThisValue.contains(value);
     }
 
@@ -65,7 +65,7 @@ public class CustomDictionary {
      */
     public boolean remove(String value) {
         checkArgument(value);
-        List<String> listWithThisValue = data.get(convertToMapOfLetters(value));
+        Set<String> listWithThisValue = data.get(convertToMapOfLetters(value));
         if (hasElements(listWithThisValue) && listWithThisValue.removeIf(str -> (str.equals(value)))) {
             size--;
             return true;
@@ -92,13 +92,13 @@ public class CustomDictionary {
      * <p>
      * Сложность - [O(n), n - длина параметра value]
      */
-    public List<String> getSimilarWords(String value) {
+    public Set<String> getSimilarWords(String value) {
         checkArgument(value);
-        List<String> listWithThisValue = data.get(convertToMapOfLetters(value));
+        Set<String> listWithThisValue = data.get(convertToMapOfLetters(value));
         if (hasElements(listWithThisValue)) {
             return listWithThisValue;
         }
-        return Collections.emptyList();
+        return Collections.emptySet();
     }
 
     /**
@@ -106,7 +106,7 @@ public class CustomDictionary {
      *
      * @return - Колл-во хранимых строк.
      * <p>
-     * Сложность - [1]
+     * Сложность - [O(1)]
      */
     public int size() {
         return size;
@@ -121,7 +121,7 @@ public class CustomDictionary {
         return letterCountMap;
     }
 
-    private static boolean hasElements(List<String> list) {
+    private static boolean hasElements(Set<String> list) {
         return list != null && !list.isEmpty();
     }
 
