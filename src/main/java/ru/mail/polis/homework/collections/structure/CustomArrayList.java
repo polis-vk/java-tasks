@@ -167,14 +167,14 @@ public class CustomArrayList<E> implements List<E> {
     }
 
     private class CustomListIterator implements ListIterator<E> {
-        boolean nextWasCalled;
-        boolean previousWasCalled;
-        boolean removeWasCalled;
-        boolean addWasCalled;
-        int iteratorModCount;
-        int nextI;
-        final int from;
-        int to;
+        private boolean nextWasCalled;
+        private boolean previousWasCalled;
+        private boolean removeWasCalled;
+        private boolean addWasCalled;
+        private int iteratorModCount;
+        private int nextI;
+        private final int from;
+        private int to;
 
         public CustomListIterator(int fromIndex, int toIndex, int index) {
             from = fromIndex;
@@ -279,8 +279,8 @@ public class CustomArrayList<E> implements List<E> {
     }
 
     private class SubList implements List<E> {
-        final int from;
-        int to;
+        private final int from;
+        private int to;
 
         public SubList(int fromIndex, int toIndex) {
             from = fromIndex;
