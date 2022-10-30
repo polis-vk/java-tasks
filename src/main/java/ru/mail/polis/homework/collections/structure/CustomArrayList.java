@@ -42,7 +42,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return new CustomIterator(0, size);
+        return new CustomListIterator(0, size, 0);
     }
 
     @Override
@@ -177,7 +177,6 @@ public class CustomArrayList<E> implements List<E> {
         int to;
 
         public CustomListIterator(int fromIndex, int toIndex, int index) {
-            CustomArrayList.checkIndex(fromIndex, toIndex, index);
             from = fromIndex;
             to = toIndex;
             nextI = index;
@@ -279,32 +278,6 @@ public class CustomArrayList<E> implements List<E> {
         }
     }
 
-    private class CustomIterator implements Iterator<E> {
-        private final int fixedModCount = modCount;
-        private final int to;
-        private int nextI;
-
-        public CustomIterator(int fromIndex, int toIndex) {
-            to = toIndex;
-            nextI = fromIndex;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return nextI < to;
-        }
-
-        @Override
-        public E next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            } else if (fixedModCount != modCount) {
-                throw new ConcurrentModificationException();
-            }
-            return CustomArrayList.this.get(nextI++);
-        }
-    }
-
     private class SubList implements List<E> {
         final int from;
         int to;
@@ -331,7 +304,7 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public Iterator<E> iterator() {
-            return new CustomIterator(from, to);
+            return new CustomListIterator(from, to, from);
         }
 
         @Override
