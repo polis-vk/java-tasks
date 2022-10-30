@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  */
 public class LibraryStatistic {
 
-    private static int DAYS_TO_MILLISECONDS = 86400000;
+    private static final int DAYS_TO_MILLISECONDS = 86400000;
 
     /**
      * Вернуть "специалистов" в литературном жанре с кол-вом прочитанных страниц.
