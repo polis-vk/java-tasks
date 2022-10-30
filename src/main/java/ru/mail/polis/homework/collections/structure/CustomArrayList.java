@@ -44,7 +44,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean contains(Object o) {
-        return indexOf(o) != 0;
+        return indexOf(o) != -1;
     }
 
     @Override
@@ -81,11 +81,10 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public <T> T[] toArray(T[] a) {
         if (a.length < size) {
-            Object[] newArray = new Object[size];
-            System.arraycopy(data, 0, newArray, 0, size);
-            return (T[]) newArray;
+            return (T[]) Arrays.copyOf(data, size, a.getClass());
         }
-        return (T[]) Arrays.copyOf(data, size, a.getClass());
+        System.arraycopy(data, 0, a, 0, size);
+        return a;
     }
 
     @Override
@@ -101,8 +100,7 @@ public class CustomArrayList<E> implements List<E> {
         if (position == -1) {
             return false;
         }
-        modifications++;
-        System.arraycopy(data, position + 1, data, position, size - 1 - position);
+        remove(position);
         return true;
     }
 
@@ -139,16 +137,16 @@ public class CustomArrayList<E> implements List<E> {
         for (Object item : c) {
             checkNullPointerException(item);
         }
-        int deletionCounter = 0;
+        boolean oneOrMoreElementsHaveBeenDeleted = false;
         for (int i = 0; i < size; i++) {
             if (c.contains(data[i])) {
-                deletionCounter++;
+                oneOrMoreElementsHaveBeenDeleted = true;
                 remove(i);
-                i -= 1;
+                i--;
             }
         }
-        modifications++;
-        return deletionCounter > 0;
+        modifications += oneOrMoreElementsHaveBeenDeleted ? 1 : 0;
+        return oneOrMoreElementsHaveBeenDeleted;
     }
 
     @Override
@@ -156,23 +154,21 @@ public class CustomArrayList<E> implements List<E> {
         for (Object item : c) {
             checkNullPointerException(item);
         }
-        int deletionCounter = 0;
+        boolean oneOrMoreElementsHaveBeenRetained = false;
         for (int i = 0; i < size; i++) {
             if (!c.contains(data[i])) {
-                deletionCounter++;
+                oneOrMoreElementsHaveBeenRetained = true;
                 remove(i);
-                i -= 1;
+                i--;
             }
         }
-        modifications++;
-        return deletionCounter > 0;
+        modifications += oneOrMoreElementsHaveBeenRetained ? 1 : 0;
+        return oneOrMoreElementsHaveBeenRetained;
     }
 
     @Override
     public void clear() {
-        for (E item : data) {
-            item = null;
-        }
+        Arrays.fill(data, null);
         size = 0;
         modifications++;
     }
@@ -197,9 +193,7 @@ public class CustomArrayList<E> implements List<E> {
     public void add(int index, E element) {
         checkOutOfBoundException(index);
         checkNullPointerException(element);
-        if (size == data.length) {
-            ensureCapacity();
-        }
+        ensureCapacity(size + 1);
         System.arraycopy(data, index, data, index + 1, size - index - 1);
         data[index] = element;
         modifications++;
@@ -211,6 +205,7 @@ public class CustomArrayList<E> implements List<E> {
         checkOutOfBoundException(index);
         E previousElement = data[index];
         System.arraycopy(data, index + 1, data, index, size - index - 1);
+        data[size--] = null;
         modifications++;
         return previousElement;
     }
@@ -338,7 +333,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-        if (fromIndex < 0 || fromIndex >= data.length || toIndex < 0 || toIndex >= data.length || fromIndex > toIndex) {
+        if (fromIndex < 0 || toIndex < 0 || fromIndex > toIndex || fromIndex >= data.length || toIndex >= data.length) {
             throw new IndexOutOfBoundsException();
         }
         if (fromIndex == toIndex) {
@@ -348,13 +343,6 @@ public class CustomArrayList<E> implements List<E> {
         E[] newList = (E[]) new Object[newCapacity];
         System.arraycopy(data, fromIndex, newList, 0, newCapacity);
         return new CustomArrayList<E>(Arrays.asList(newList));
-    }
-
-    private void ensureCapacity() {
-        int newCapacity = (int) (data.length * GOLD_RATIO);
-        E[] newArray = (E[]) new Object[newCapacity];
-        System.arraycopy(data, 0, newArray, 0, size);
-        data = newArray;
     }
 
     private void ensureCapacity(int minCapacity) {
