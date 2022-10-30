@@ -45,26 +45,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return new Iterator<E>() {
-            private final int expectedModCount = modCount;
-            private int index;
-
-            @Override
-            public boolean hasNext() {
-                return index < size;
-            }
-
-            @Override
-            public E next() {
-                if (expectedModCount != modCount) {
-                    throw new ConcurrentModificationException();
-                }
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                return array[index++];
-            }
-        };
+        return listIterator();
     }
 
     @Override
@@ -83,9 +64,6 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean add(E e) {
-        if (size == array.length) {
-            increaseCapacity(size * 3 / 2);
-        }
         add(size, e);
         return true;
     }
@@ -112,23 +90,28 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        boolean hasChanged = false;
+        if (c == null || c.isEmpty()) {
+            return false;
+        }
         for (E element : c) {
             add(element);
-            hasChanged = true;
         }
-        return hasChanged;
+        return true;
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        boolean hasChanged = false;
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (c == null || c.isEmpty()) {
+            return false;
+        }
         for (E element : c) {
             add(index, element);
             index++;
-            hasChanged = true;
         }
-        return hasChanged;
+        return true;
     }
 
     @Override
@@ -168,7 +151,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E get(int index) {
-        if (index >= size) {
+        if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException();
         }
         return array[index];
@@ -176,10 +159,10 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E set(int index, E element) {
-        if (index >= size) {
+        if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException();
         }
-        E value = get(index);
+        E value = array[index];
         array[index] = element;
         modCount++;
         return value;
@@ -187,7 +170,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public void add(int index, E element) {
-        if (index > size) {
+        if (index < 0 || index > size) {
             throw new IndexOutOfBoundsException();
         }
         if (size == array.length) {
@@ -201,7 +184,7 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public E remove(int index) {
-        if (index >= size) {
+        if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException();
         }
         E value = array[index];
@@ -256,12 +239,12 @@ public class CustomArrayList<E> implements List<E> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                return array[++position];
+                return array[position++];
             }
 
             @Override
             public boolean hasPrevious() {
-                return position > 0;
+                return position > -1;
             }
 
             @Override
@@ -272,12 +255,12 @@ public class CustomArrayList<E> implements List<E> {
                 if (!hasPrevious()) {
                     throw new NoSuchElementException();
                 }
-                return array[--position];
+                return array[position--];
             }
 
             @Override
             public int nextIndex() {
-                return position;
+                return position + 1;
             }
 
             @Override
@@ -300,7 +283,6 @@ public class CustomArrayList<E> implements List<E> {
                     throw new ConcurrentModificationException();
                 }
                 CustomArrayList.this.set(position, e);
-                expectedModCount = modCount;
             }
 
             @Override
@@ -308,7 +290,7 @@ public class CustomArrayList<E> implements List<E> {
                 if (expectedModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
-                CustomArrayList.this.add(position, e);
+                CustomArrayList.this.add(position++, e);
                 expectedModCount = modCount;
             }
         };
@@ -318,7 +300,7 @@ public class CustomArrayList<E> implements List<E> {
     public List<E> subList(int fromIndex, int toIndex) {
         E[] subArray = (E[]) new Object[toIndex - fromIndex];
         System.arraycopy(array, fromIndex, subArray, 0, toIndex - fromIndex);
-        return new CustomArrayList<>(array);
+        return new CustomArrayList<>(subArray);
     }
 
     public void increaseCapacity(int newCapacity) {

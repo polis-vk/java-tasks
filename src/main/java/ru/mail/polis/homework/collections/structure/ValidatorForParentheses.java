@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Stack;
 
 /**
  * Задание оценивается в 2 тугрика.
@@ -17,71 +16,46 @@ import java.util.Map;
  */
 public class ValidatorForParentheses {
 
-    private static final Map<Character, Character> parentheses = new HashMap<>();
-
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
         }
-        parentheses.put(']', '[');
-        parentheses.put('}', '{');
-        parentheses.put('>', '<');
-        parentheses.put(')', '(');
         boolean flag = false;
-        Stack stack = new Stack();
+        Stack<Character> stack = new Stack<>();
         for (int i = 0; i < value.length(); i++) {
-            char brace = value.charAt(i);
-            if (parentheses.containsValue(brace)) {
+            char character = value.charAt(i);
+            if (isOpeningBracket(character)) {
                 flag = true;
-                stack.push(brace);
-            } else if (parentheses.containsKey(brace)) {
-                if (stack.size() == 0 || stack.pop() != parentheses.get(brace)) {
+                stack.push(character);
+            } else if (isClosingBracket(character)) {
+                if (stack.size() == 0 || stack.pop() != getOpeningBracket(character)) {
                     return false;
                 }
             }
         }
-        return (flag && stack.size() == 0);
+        return flag && stack.size() == 0;
     }
 
-    private static class Node {
-        private final char value;
-        private Node prev;
-
-        public Node(char value) {
-            this.value = value;
-        }
-
-        public void setPrev(Node prev) {
-            this.prev = prev;
-        }
+    public static boolean isOpeningBracket(char character) {
+        return character == '[' || character == '{' || character == '<' || character == '(';
     }
 
-    private static class Stack {
-        private int size;
-        private Node last;
+    public static boolean isClosingBracket(char character) {
+        return character == ']' || character == '}' || character == '>' || character == ')';
+    }
 
-        public void push(char n) {
-            if (last == null) {
-                last = new Node(n);
-                size++;
-                return;
-            }
-            Node node = new Node(n);
-            node.setPrev(last);
-            last = node;
-            size++;
+    public static char getOpeningBracket(char closingBracket) {
+        switch (closingBracket) {
+            case ']':
+                return '[';
+            case '}':
+                return '{';
+            case '>':
+                return '<';
+            case ')':
+                return '(';
         }
-
-        public char pop() {
-            char value = last.value;
-            last = last.prev;
-            size--;
-            return value;
-        }
-
-        public int size() {
-            return size;
-        }
+        return '0';
     }
 }
 
