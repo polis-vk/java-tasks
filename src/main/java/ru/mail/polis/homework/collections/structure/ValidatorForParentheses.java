@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.collections.structure;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 /**
  * Задание оценивается в 2 тугрика.
  * Одна из самых популярных задач.
@@ -15,6 +18,51 @@ package ru.mail.polis.homework.collections.structure;
 public class ValidatorForParentheses {
 
     public static boolean validate(String value) {
-        return false;
+        if (value == null || value.length() == 0) {
+            return false;
+        }
+        String bracketSequence = value.replaceAll("[\\w\\s-+*/^]", "");
+        Deque<Character> openingBrackets = new ArrayDeque<>();
+        for (int i = 0; i < bracketSequence.length(); i++) {
+            char bracket = bracketSequence.charAt(i);
+            if (bracket == '[' || bracket == '{'
+                    || bracket == '<' || bracket == '(') {
+                openingBrackets.push(bracket);
+                continue;
+            }
+            if (openingBrackets.isEmpty()) {
+                return false;
+            }
+            if (!isSimilarBrackets(openingBrackets.pop(), bracket)) {
+                return false;
+            }
+        }
+        return openingBrackets.isEmpty();
+    }
+
+    private static boolean isSimilarBrackets(char openBracket, char closingBracket) {
+        switch (closingBracket) {
+            case ']':
+                if (openBracket != '[') {
+                    return false;
+                }
+                break;
+            case '}':
+                if (openBracket != '{') {
+                    return false;
+                }
+                break;
+            case '>':
+                if (openBracket != '<') {
+                    return false;
+                }
+                break;
+            case ')':
+                if (openBracket != '(') {
+                    return false;
+                }
+                break;
+        }
+        return true;
     }
 }
