@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
@@ -12,118 +9,383 @@ import java.util.ListIterator;
  * Задание оценивается в 10 тугриков
  */
 public class CustomArrayList<E> implements List<E> {
+    private static final int DEFAULT_CAPACITY = 10;
+    private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
+
+    private E[] array;
+    private int size;
+    private int modCount;
+
+    public CustomArrayList() {
+        this.array = (E[]) new Object[DEFAULT_CAPACITY];
+    }
+
+    public CustomArrayList(int capacity) {
+        if (capacity < 0) {
+            throw new IllegalArgumentException("Illegal capacity: "+ capacity);
+        }
+        this.array = (E[]) new Object[capacity];
+    }
+
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return size == 0;
     }
 
     @Override
     public boolean contains(Object o) {
-        return false;
+        return indexOf(o) >= 0;
     }
 
     @Override
     public Iterator<E> iterator() {
-        return null;
+        return new CustomListIterator(0);
     }
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        return Arrays.copyOf(array, size);
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
-        return null;
+        if (a.length < size) {
+            return (T[]) Arrays.copyOf(array, size, a.getClass());
+        }
+        System.arraycopy(array, 0, a, 0, size);
+        if (a.length > size) {
+            a[size] = null;
+        }
+        return a;
     }
 
     @Override
     public boolean add(E e) {
-        return false;
+        add(size, e);
+        return true;
     }
 
     @Override
     public boolean remove(Object o) {
-        return false;
+        int index = indexOf(o);
+        remove(index);
+        return index >= 0;
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return false;
+        for (Object e : c) {
+            if (!contains(e)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        return false;
+        return addAll(size, c);
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        return false;
+        checkIndexForAdd(index);
+        int sizeToAdd = c.size();
+        ensureCapacity(size + sizeToAdd);
+        if (size - index > 0) {
+            System.arraycopy(array, index, array, index +sizeToAdd, size - index);
+        }
+        System.arraycopy(c.toArray(), 0, array, index, sizeToAdd);
+        size += sizeToAdd;
+        modCount += sizeToAdd;
+        return sizeToAdd != 0;
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        return false;
+        return removeMultiple(c, false, 0, size);
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        return false;
+        return removeMultiple(c, true, 0, size);
     }
 
     @Override
     public void clear() {
-
+        modCount++;
+        for (int i = 0; i < size; i++) {
+            array[i] = null;
+        }
+        size = 0;
     }
 
     @Override
     public E get(int index) {
-        return null;
+        checkIndex(index);
+        return array[index];
     }
 
     @Override
     public E set(int index, E element) {
-        return null;
+        checkIndex(index);
+        E oldValue = array[index];
+        array[index] = element;
+        return oldValue;
     }
 
     @Override
     public void add(int index, E element) {
-
+        checkIndexForAdd(index);
+        modCount++;
+        if (size >= array.length) {
+            ensureCapacity(size + 1);
+        }
+        System.arraycopy(array, index, array, index + 1, size - index);
+        array[index] = element;
+        size++;
     }
 
     @Override
     public E remove(int index) {
-        return null;
+        checkIndex(index);
+        modCount++;
+        E value = array[index];
+        if (--size > index) {
+            System.arraycopy(array, index + 1, array, index, size - index);
+        }
+        array[size] = null;
+        return value;
     }
 
     @Override
     public int indexOf(Object o) {
-        return 0;
+        if (o == null) {
+            for (int i = 0; i < size; i++) {
+                if (array[i] == null) {
+                    return i;
+                }
+            }
+        } else {
+            for (int i = 0; i < size; i++) {
+                if (array[i].equals(o)) {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return 0;
+        if (o == null) {
+            for (int i = size - 1; i >= 0; i--) {
+                if (array[i] == null) {
+                    return i;
+                }
+            }
+        } else {
+            for (int i = size - 1; i >= 0; i--) {
+                if (array[i].equals(o)) {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 
     @Override
     public ListIterator<E> listIterator() {
-        return null;
+        return new CustomListIterator(0);
     }
 
     @Override
     public ListIterator<E> listIterator(int index) {
-        return null;
+        return new CustomListIterator(index);
+    }
+
+    private class CustomListIterator implements ListIterator<E> {
+        private int expectedModCount = modCount;
+        private int index;
+        private int lastIndex = -1;
+
+        CustomListIterator(int index) {
+            this.index = index;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return index != size;
+        }
+
+        @Override
+        public E next() {
+            checkForComodification();
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            lastIndex = index;
+            index++;
+            return array[lastIndex];
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return index > 0;
+        }
+
+        @Override
+        public E previous() {
+            checkForComodification();
+            if (!hasPrevious()) {
+                throw new NoSuchElementException();
+            }
+            index--;
+            lastIndex = index;
+            return array[index];
+        }
+
+        @Override
+        public int nextIndex() {
+            return index;
+        }
+
+        @Override
+        public int previousIndex() {
+            return index - 1;
+        }
+
+        @Override
+        public void remove() {
+            checkForComodification();
+            CustomArrayList.this.remove(lastIndex);
+            index = lastIndex;
+            lastIndex = -1;
+            expectedModCount = modCount;
+        }
+
+        @Override
+        public void set(E e) {
+            checkForComodification();
+            CustomArrayList.this.set(lastIndex, e);
+            expectedModCount = modCount;
+        }
+
+        @Override
+        public void add(E e) {
+            checkForComodification();
+            CustomArrayList.this.add(index, e);
+            index++;
+            lastIndex = -1;
+            expectedModCount = modCount;
+        }
+
+        private void checkForComodification() {
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
+        }
     }
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-        return null;
+        checkIndex(fromIndex);
+        checkIndex(toIndex);
+        return (List<E>) new SubList(this, fromIndex, toIndex);
+    }
+
+    private class SubList {
+        private final CustomArrayList<E> root;
+        private final int startIndex;
+        private final int endIndex;
+        private final int expectedModCount = modCount;
+
+        public SubList(CustomArrayList<E> root, int startIndex, int endIndex) {
+            this.root = root;
+            this.startIndex = startIndex;
+            this.endIndex = endIndex;
+        }
+
+        public void add(int index, E element) {
+            checkIndex(index);
+            checkForComodification();
+            root.add(startIndex + index, element);
+        }
+
+        public E get(int index) {
+            checkIndex(index);
+            checkForComodification();
+            return root.get(index);
+        }
+
+        public int size() {
+            checkForComodification();
+            return endIndex - startIndex;
+        }
+
+        private void checkForComodification() {
+            if (expectedModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+        }
+    }
+
+    private boolean removeMultiple(Collection<?> c, boolean complement, int start, int end) {
+        int read;
+        for (read = start;; read++) {
+            if (read == end) {
+                return false;
+            }
+            if (c.contains(array[read]) != complement) {
+                break;
+            }
+        }
+        int write = read++;
+        for (; read < end; read++) {
+            E element = array[read];
+            if (c.contains(element) == complement) {
+                array[write++] = element;
+            }
+        }
+        modCount += end - write;
+        System.arraycopy(array, end, array, write, size - end);
+        for (int to = size, i = (size -= end - write); i < to; i++) {
+            array[i] = null;
+        }
+        return true;
+    }
+
+    private void ensureCapacity(int minCapacity) {
+        modCount++;
+        if (minCapacity - array.length > 0) {
+            int oldCapacity = array.length;
+            int newCapacity = oldCapacity + (oldCapacity >> 1);
+            if (newCapacity - minCapacity < 0) {
+                newCapacity = minCapacity;
+            }
+            if (newCapacity - MAX_ARRAY_SIZE > 0) {
+                if (minCapacity < 0) {
+                    throw new OutOfMemoryError();
+                }
+                newCapacity = (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
+            }
+            array = Arrays.copyOf(array, newCapacity);
+        }
+    }
+
+    private void checkIndex(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException(String.valueOf(index));
+        }
+    }
+
+    private void checkIndexForAdd(int index) {
+        if (index < 0 || index > size)
+            throw new IndexOutOfBoundsException(String.valueOf(index));
     }
 }
