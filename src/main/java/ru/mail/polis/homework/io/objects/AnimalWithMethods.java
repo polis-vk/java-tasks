@@ -126,14 +126,14 @@ class OwnerOfAnimalWithMethods implements Serializable {
         return Objects.hash(name, phoneNumber, gender, homeAddress);
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void writeObject(ObjectOutput out) throws IOException {
         out.writeUTF(name);
         out.writeUTF(phoneNumber);
         out.writeByte(gender.ordinal());
         out.writeObject(homeAddress);
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readObject(ObjectInput in) throws IOException, ClassNotFoundException {
         this.name = in.readUTF();
         this.phoneNumber = in.readUTF();
         this.gender = Gender.values()[in.readByte()];
@@ -204,7 +204,7 @@ class AddressWithMethods implements Serializable {
     }
 
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void writeObject(ObjectOutput out) throws IOException {
         out.writeUTF(country);
         out.writeUTF(city);
         out.writeUTF(street);
@@ -214,7 +214,7 @@ class AddressWithMethods implements Serializable {
         out.writeInt(room);
     }
 
-    public void readExternal(ObjectInput in) throws IOException {
+    public void readObject(ObjectInput in) throws IOException {
         this.country = in.readUTF();
         this.city = in.readUTF();
         this.street = in.readUTF();
