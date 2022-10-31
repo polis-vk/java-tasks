@@ -3,8 +3,7 @@ package ru.mail.polis.homework.oop.vet;
 import ru.mail.polis.homework.oop.vet.animals.PetImpl;
 import ru.mail.polis.homework.oop.vet.animals.SemiWildAnimal;
 import ru.mail.polis.homework.oop.vet.animals.WildAnimalImpl;
-import ru.mail.polis.homework.oop.vet.types.AnimalType;
-import ru.mail.polis.homework.oop.vet.types.FreedomType;
+import ru.mail.polis.homework.oop.vet.types.AnimalParamsType;
 
 public class GeneratorAnimal {
     private GeneratorAnimal() {
@@ -28,25 +27,26 @@ public class GeneratorAnimal {
      */
     public static Animal generateAnimal(String animalType) {
         try {
-            AnimalType animal = AnimalType.valueOf(animalType.toUpperCase());
-            if (animal.getFreedomType() == FreedomType.WILD) {
-                return new WildAnimalImpl(
-                        animal.getLegs(),
-                        animal.getVoice(),
-                        animal.getMoveType()
-                );
-            } else if (animal.getFreedomType() == FreedomType.PET) {
-                return new PetImpl(
-                        animal.getLegs(),
-                        animal.getVoice(),
-                        animal.getMoveType()
-                );
-            } else if (animal.getFreedomType() == FreedomType.ALL) {
-                return new SemiWildAnimal(
-                        animal.getLegs(),
-                        animal.getVoice(),
-                        animal.getMoveType()
-                );
+            AnimalParamsType animal = AnimalParamsType.valueOf(animalType.toUpperCase());
+            switch (animal.getFreedomType()) {
+                case WILD:
+                    return new WildAnimalImpl(
+                            animal.getLegs(),
+                            animal.getVoice(),
+                            animal.getMoveType()
+                    );
+                case PET:
+                    return new PetImpl(
+                            animal.getLegs(),
+                            animal.getVoice(),
+                            animal.getMoveType()
+                    );
+                case ALL:
+                    return new SemiWildAnimal(
+                            animal.getLegs(),
+                            animal.getVoice(),
+                            animal.getMoveType()
+                    );
             }
             return null;
         } catch (IllegalArgumentException e) {

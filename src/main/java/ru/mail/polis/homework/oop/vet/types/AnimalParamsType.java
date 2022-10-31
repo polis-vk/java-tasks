@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.oop.vet.types;
 
-public enum AnimalType {
+public enum AnimalParamsType {
     CAT(4, MoveType.RUN, "Mow-Mow", FreedomType.PET),
     DOG(4, MoveType.RUN, "Wow-wow", FreedomType.PET),
     KANGAROO(2, MoveType.JUMP, "Shha", FreedomType.WILD),
@@ -14,7 +14,7 @@ public enum AnimalType {
     private final String voice;
     private final FreedomType freedomType;
 
-    AnimalType(int legs, MoveType moveType, String voice, FreedomType freedomType) {
+    AnimalParamsType(int legs, MoveType moveType, String voice, FreedomType freedomType) {
         this.legs = legs;
         this.moveType = moveType;
         this.voice = voice;
