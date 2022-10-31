@@ -34,6 +34,7 @@ public class CustomArrayList<E> implements List<E> {
 
     public CustomArrayList(Collection<E> collections) {
         array = (E[]) collections.toArray();
+        size = array.length;
     }
 
     @Override
