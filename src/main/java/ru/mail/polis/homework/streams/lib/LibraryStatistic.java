@@ -1,11 +1,13 @@
 package ru.mail.polis.homework.streams.lib;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Класс для работы со статистикой по библиотеке.
@@ -23,34 +25,26 @@ public class LibraryStatistic {
      * @return - map пользователь / кол-во прочитанных страниц
      */
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
-        Stream<ArchivedData> stream = library.getArchive().stream()
-                .filter(o -> o.getBook().getGenre() == genre);
-        return stream
-                .filter(archivedData -> {
-                    User user = archivedData.getUser();
-                    long count = stream
-                            .filter(data -> data.getUser().equals(user))
-                            .filter(data -> {
-                                Timestamp timestamp = data.getReturned();
-                                if (timestamp == null) {
-                                    return data.getTake()
-                                            .toInstant()
-                                            .plus(14, ChronoUnit.DAYS)
-                                            .getNano() <= System.nanoTime();
+        return library.getArchive().stream()
+                .filter(o -> o.getBook().getGenre() == genre)
+                .collect(Collectors.groupingBy(ArchivedData::getUser))
+                .entrySet().stream()
+                .filter(userListEntry -> {
+                    long count = userListEntry.getValue().stream()
+                            .filter(archivedData -> {
+                                Timestamp returned = archivedData.getReturned();
+                                if (returned == null) {
+                                    Instant now = new Timestamp(System.currentTimeMillis()).toInstant();
+                                    return archivedData.getTake().toInstant().isBefore(now.minus(14, ChronoUnit.DAYS));
                                 }
-                                return data.getTake().toInstant().plus(14, ChronoUnit.DAYS).isBefore(timestamp.toInstant());
+                                return archivedData.getTake().toInstant().isBefore(
+                                        archivedData.getReturned().toInstant().minus(14, ChronoUnit.DAYS)
+                                );
                             })
                             .count();
                     return count >= 5;
                 })
-                .collect(
-                        HashMap::new,
-                        (map, archivedData) -> {
-                            User user = archivedData.getUser();
-                            map.put(user, user.getReadedPages());
-                        },
-                        HashMap::putAll
-                );
+                .collect(Collectors.toMap(Map.Entry::getKey, userListEntry -> userListEntry.getKey().getReadedPages()));
     }
 
     /**
@@ -62,7 +56,24 @@ public class LibraryStatistic {
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
-        return null;
+        Optional<AbstractMap.SimpleEntry<Genre, Integer>> optional = library.getArchive().stream()
+                .filter(archivedData -> archivedData.getUser().equals(user))
+                .collect(Collectors.groupingBy(archivedData -> archivedData.getBook().getGenre()))
+                .entrySet().stream()
+                .map(genreListEntry -> new AbstractMap.SimpleEntry<>(genreListEntry.getKey(), genreListEntry.getValue().size()))
+                .max((o1, o2) -> {
+                    int compareResult = o1.getValue().compareTo(o2.getValue());
+                    if (compareResult == 0) {
+                        if (user.getBook().getGenre().equals(o1.getKey())) {
+                            return 1;
+                        } else if (user.getBook().getGenre().equals(o2.getKey())) {
+                            return -1;
+                        }
+                        return 0;
+                    }
+                    return compareResult;
+                });
+        return optional.map(Map.Entry::getKey).orElse(null);
     }
 
     /**
@@ -73,7 +84,26 @@ public class LibraryStatistic {
      * @return - список ненадежных пользователей
      */
     public List<User> unreliableUsers(Library library) {
-        return null;
+        return library.getArchive().stream()
+                .collect(Collectors.groupingBy(ArchivedData::getUser))
+                .entrySet().stream()
+                .filter(entry -> {
+                    long count = entry.getValue().stream()
+                            .filter(archivedData -> {
+                                Timestamp returned = archivedData.getReturned();
+                                if (returned == null) {
+                                    Instant now = new Timestamp(System.currentTimeMillis()).toInstant();
+                                    return archivedData.getTake().toInstant().isBefore(now.minus(30, ChronoUnit.DAYS));
+                                }
+                                return archivedData.getTake().toInstant().isBefore(
+                                        archivedData.getReturned().toInstant().minus(30, ChronoUnit.DAYS)
+                                );
+                            })
+                            .count();
+                    return count * 2 > entry.getValue().size();
+                })
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -84,7 +114,9 @@ public class LibraryStatistic {
      * @return - список книг
      */
     public List<Book> booksWithMoreCountPages(Library library, int countPage) {
-        return null;
+        return library.getBooks().stream()
+                .filter(book -> book.getPage() >= countPage)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -94,6 +126,24 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return null;
+        return library.getBooks().stream()
+                .collect(Collectors.groupingBy(Book::getGenre))
+                .entrySet().stream()
+                .map(entry -> {
+                    String mostFamous = entry.getValue().stream()
+                            .collect(Collectors.groupingBy(Book::getAuthor))
+                            .entrySet().stream()
+                            .max((o1, o2) -> {
+                                int compareResult = Integer.compare(o1.getValue().size(), o2.getValue().size());
+                                if (compareResult == 0) {
+                                    return o1.getKey().compareTo(o2.getKey());
+                                }
+                                return compareResult;
+                            })
+                            .map(Map.Entry::getKey)
+                            .orElse(null);
+                    return new AbstractMap.SimpleEntry<>(entry.getKey(), mostFamous);
+                })
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }
