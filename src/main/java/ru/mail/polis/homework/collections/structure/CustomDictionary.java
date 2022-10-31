@@ -11,7 +11,7 @@ import java.util.List;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
-    ArrayList<String> stringContainer = new ArrayList<>();
+    List<String> stringContainer = new ArrayList<>();
 
     /**
      * Сохранить строку в структуру данных
