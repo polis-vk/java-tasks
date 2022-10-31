@@ -17,13 +17,12 @@ import java.util.List;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
+    private static final List<Character> listOfParentheses = Arrays.asList('{', '}', '[', ']', '<', '>', '(', ')');
 
     public static boolean validate(String value) {
         if (value == null || value.isEmpty()) {
             return false;
         }
-
-        final List<Character> listOfParentheses = Arrays.asList('{', '}', '[', ']', '<', '>', '(', ')');
         ArrayDeque<Character> stack = new ArrayDeque<>();
         boolean bracketExists = false;
         for (int i = 0; i < value.length(); i++) {
