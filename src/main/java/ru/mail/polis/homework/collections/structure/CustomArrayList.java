@@ -14,7 +14,7 @@ public class CustomArrayList<E> implements List<E> {
     private int modCount = 0;
 
     public CustomArrayList() {
-        this.array = (E[]) new Object[2];
+        this.array = (E[]) new Object[10];
     }
 
     public CustomArrayList(int capacity) {
