@@ -65,11 +65,11 @@ public class Serializer {
     }
 
 
+
     /**
      * 1 тугрик
      * Реализовать простую ручную сериализацию, с помощью специального потока для сериализации объектов и специальных методов
-     *
-     * @param animals  Список животных для сериализации
+     * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) throws IOException {
@@ -101,11 +101,11 @@ public class Serializer {
         }
     }
 
+
     /**
      * 1 тугрик
      * Реализовать простую ручную сериализацию, с помощью специального потока для сериализации объектов и интерфейса Externalizable
-     *
-     * @param animals  Список животных для сериализации
+     * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) throws IOException {
