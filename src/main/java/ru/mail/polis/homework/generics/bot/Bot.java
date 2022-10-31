@@ -29,9 +29,6 @@ public class Bot {
      * 1 тугрик
      */
     public void handleState(State state) {
-        if (state == null) {
-            throw new NullPointerException();
-        }
         mapOfHandlers.get(state.getClass()).handle();
     }
 }

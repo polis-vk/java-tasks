@@ -16,52 +16,51 @@ import java.util.*;
  */
 public class ValidatorForParentheses {
     public static boolean validate(String value) {
-        Deque<Character> stack = new ArrayDeque<>();
         if (value == null || value.length() == 0) {
             return false;
         }
+        Deque<Character> stack = new ArrayDeque<>();
+        boolean isAddedInStack = false;
         for (int i = 0; i < value.length(); i++) {
             char checkValueChar = value.charAt(i);
             if (checkValueChar == '(' || checkValueChar == '[' || checkValueChar == '{' || checkValueChar == '<') {
                 stack.push(checkValueChar);
+                isAddedInStack = true;
                 continue;
-            }
-            if (stack.isEmpty() && i == value.length() - 1) {
-                return false;
             }
             if (!stack.isEmpty()) {
                 char bracket;
                 switch (checkValueChar) {
                     case ')':
                         bracket = stack.pop();
-                        if (bracket == '{' || bracket == '[' || bracket == '<') {
+                        if (bracket != '(') {
                             return false;
                         }
                         break;
 
                     case '}':
                         bracket = stack.pop();
-                        if (bracket == '(' || bracket == '[' || bracket == '<') {
+                        if (bracket != '{') {
                             return false;
                         }
                         break;
 
                     case ']':
                         bracket = stack.pop();
-                        if (bracket == '(' || bracket == '{' || bracket == '<') {
+                        if (bracket != '[') {
                             return false;
                         }
                         break;
                     case '>':
                         bracket = stack.pop();
-                        if (bracket == '(' || bracket == '{' || bracket == '[') {
+                        if (bracket != '<') {
                             return false;
                         }
                         break;
                 }
             }
         }
-        return (stack.isEmpty());
+        return stack.isEmpty() && isAddedInStack;
     }
 }
 

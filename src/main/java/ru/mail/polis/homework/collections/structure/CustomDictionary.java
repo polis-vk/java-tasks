@@ -15,7 +15,8 @@ public class CustomDictionary {
     public CustomDictionary() {
         this.dictionary = new HashMap<>();
     }
- //Сложность - [O(2 * value.length())]
+
+    //Сложность - [O(2 * value.length())]
     public Map<Character, Integer> getMapValueInChars(String value) {
         Map<Character, Integer> valueToChars = new HashMap<>();
         char[] arrayValue = value.toLowerCase().toCharArray();
@@ -74,7 +75,7 @@ public class CustomDictionary {
     public boolean remove(String value) {
         checkValue(value);
         if (contains(value)) {
-            dictionary.remove(value, dictionary.get(value));
+            dictionary.remove(value);
             size--;
             return true;
         }
@@ -104,9 +105,9 @@ public class CustomDictionary {
         checkValue(value);
         ArrayList<String> similarWordsList = new ArrayList<>();
         Map<Character, Integer> mapValueInChars = getMapValueInChars(value);
-        for (String valueInDictionary : dictionary.keySet()) {
-            if (dictionary.get(valueInDictionary).equals(mapValueInChars)) {
-                similarWordsList.add(valueInDictionary);
+        for (Map.Entry valueInDictionary : dictionary.entrySet()) {
+            if (valueInDictionary.getValue().equals(mapValueInChars)) {
+                similarWordsList.add((String) valueInDictionary.getKey());
             }
         }
         return similarWordsList;
@@ -122,6 +123,4 @@ public class CustomDictionary {
     public int size() {
         return size;
     }
-
-
 }
