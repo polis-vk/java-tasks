@@ -9,12 +9,13 @@ import java.util.*;
  * Задание оценивается в 10 тугриков
  */
 public class CustomArrayList<E> implements List<E> {
+    private final static int INITIAL_CAPACITY = 10;
     private E[] array;
     private int size;
     private int modCount = 0;
 
     public CustomArrayList() {
-        this.array = (E[]) new Object[10];
+        this.array = (E[]) new Object[INITIAL_CAPACITY];
     }
 
     public CustomArrayList(int capacity) {
