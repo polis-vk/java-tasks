@@ -1,9 +1,9 @@
 package ru.mail.polis.homework.oop.vet;
 
-public class MyAnimal extends Animal {
+public class CustomAnimal extends Animal {
     private final String type;
 
-    public MyAnimal(String type) {
+    public CustomAnimal(String type) {
         super(countLegs(type));
         this.type = type;
     }

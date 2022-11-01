@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.oop.vet;
 
-public class MyPetWildAnimal extends MyAnimal implements Pet, WildAnimal {
-    public MyPetWildAnimal(String type) {
+public class CustomPetWildAnimal extends CustomAnimal implements Pet, WildAnimal {
+    public CustomPetWildAnimal(String type) {
         super(type);
     }
 

@@ -21,12 +21,22 @@ public class GeneratorAnimal {
      * @return - соответствующего потомка
      */
     public static Animal generateAnimal(String animalType) {
-        if (animalType.equals("cat") || animalType.equals("dog") || animalType.equals("cow")) {
-            return new MyPetAnimal(animalType);
-        } else if (animalType.equals("kangaroo") || animalType.equals("shark")) {
-            return new MyWildAnimal(animalType);
-        } else {
-            return new MyPetWildAnimal(animalType);
+        switch (animalType) {
+            case ("cat"):
+                return new CatAnimal(animalType);
+            case ("dog"):
+                return new DogAnimal(animalType);
+            case ("cow"):
+                return new CowAnimal(animalType);
+            case ("kangaroo"):
+                return new KangarooAnimal(animalType);
+            case ("shark"):
+                return new SharkAnimal(animalType);
+            case ("pigeon"):
+                return new PigeonAnimal(animalType);
+            case ("snake"):
+                return new SnakeAnimal(animalType);
         }
+        throw new IllegalArgumentException(animalType);
     }
 }
