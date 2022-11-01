@@ -31,10 +31,12 @@ public class SerializerTest {
     private static final int LAST_ASCII_CODE = 122;
     private static final int ANIMALS_COUNT = 10;
     private static final Serializer SERIALIZER = new Serializer();
+    private static Random random;
 
     @Before
     public void setUp() throws Exception {
         Files.createDirectories(DIR_PATH);
+        random = new Random();
     }
 
 /*
@@ -145,12 +147,10 @@ public class SerializerTest {
     }
 
     private int generateInt() {
-        Random random = new Random();
         return Math.abs(random.nextInt());
     }
 
     private int generateInt(int min, int max) {
-        Random random = new Random();
         return min + Math.abs(random.nextInt()) % (max - min + 1);
     }
 
@@ -165,7 +165,6 @@ public class SerializerTest {
     }
 
     private boolean generateBoolean() {
-        Random random = new Random();
         return random.nextBoolean();
     }
 
