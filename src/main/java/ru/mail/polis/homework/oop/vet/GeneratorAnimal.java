@@ -29,30 +29,23 @@ public class GeneratorAnimal {
      * @return - соответствующего потомка
      */
     public static Animal generateAnimal(String animalType) {
-        Animal animal = null;
         switch (animalType) {
             case "cat":
-                animal = new Cat(4);
-                break;
+                return new Cat(4);
             case "dog":
-                animal = new Dog(4);
-                break;
+                return new Dog(4);
             case "cow":
-                animal = new Cow(4);
-                break;
+                return new Cow(4);
             case "kangaroo":
-                animal = new Kangaroo(2);
-                break;
+                return new Kangaroo(2);
             case "pigeon":
-                animal = new Pigeon(2);
-                break;
+                return new Pigeon(2);
             case "snake":
-                animal = new Snake(0);
-                break;
+                return new Snake(0);
             case "shark":
-                animal = new Shark(0);
-                break;
+                return new Shark(0);
+            default:
+                return new Animal(0);
         }
-        return animal;
     }
 }
