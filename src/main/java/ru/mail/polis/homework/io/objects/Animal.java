@@ -82,25 +82,12 @@ public class Animal implements Serializable {
 
 enum AnimalType {
 
-    FISH("Fish"),
-    BIRD("Bird"),
-    MAMMAL("Mammal"),
-    REPTILE("Reptile"),
-    AMPHIBIAN("Amphibian"),
-    INVERTEBRATE("Invertebrate");
-
-    private final String title;
-
-    AnimalType(String title) {
-        this.title = title;
-    }
-
-    @Override
-    public String toString() {
-        return "AnimalType{" +
-                "title='" + title + '\'' +
-                '}';
-    }
+    FISH,
+    BIRD,
+    MAMMAL,
+    REPTILE,
+    AMPHIBIAN,
+    INVERTEBRATE
 }
 
 class Organization implements Serializable {

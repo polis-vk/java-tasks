@@ -85,25 +85,12 @@ public class AnimalExternalizable implements Externalizable {
 
 enum AnimalTypeExternalizable {
 
-    FISH("Fish"),
-    BIRD("Bird"),
-    MAMMAL("Mammal"),
-    REPTILE("Reptile"),
-    AMPHIBIAN("Amphibian"),
-    INVERTEBRATE("Invertebrate");
-
-    private final String title;
-
-    AnimalTypeExternalizable(String title) {
-        this.title = title;
-    }
-
-    @Override
-    public String toString() {
-        return "AnimalTypeExternalizable{" +
-                "title='" + title + '\'' +
-                '}';
-    }
+    FISH,
+    BIRD,
+    MAMMAL,
+    REPTILE,
+    AMPHIBIAN,
+    INVERTEBRATE
 }
 
 class OrganizationExternalizable implements Externalizable {

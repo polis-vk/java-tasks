@@ -80,25 +80,12 @@ public class AnimalWithMethods implements Serializable {
 
 enum AnimalTypeWithMethods {
 
-    FISH("Fish"),
-    BIRD("Bird"),
-    MAMMAL("Mammal"),
-    REPTILE("Reptile"),
-    AMPHIBIAN("Amphibian"),
-    INVERTEBRATE("Invertebrate");
-
-    private final String title;
-
-    AnimalTypeWithMethods(String title) {
-        this.title = title;
-    }
-
-    @Override
-    public String toString() {
-        return "AnimalTypeWithMethods{" +
-                "title='" + title + '\'' +
-                '}';
-    }
+    FISH,
+    BIRD,
+    MAMMAL,
+    REPTILE,
+    AMPHIBIAN,
+    INVERTEBRATE
 }
 
 class OrganizationWithMethods implements Serializable {
