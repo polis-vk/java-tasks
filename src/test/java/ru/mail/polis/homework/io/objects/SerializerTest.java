@@ -74,10 +74,8 @@ public class SerializerTest {
         long millisAfterDeserialization = System.currentTimeMillis();
         long fileLength = getFileLength(DEFAULT_FILE_PATH);
 
+        assertEquals(generatedAnimals.size(), deserializedAnimals.size());
         assertEquals(generatedAnimals, deserializedAnimals);
-        for (int i = 0; i < generatedAnimals.size(); i++) {
-            assertEquals(generatedAnimals.get(i), deserializedAnimals.get(i));
-        }
 
         printInfoMessage("Дефолтная сериализация", fileLength, millisBeforeSerialization,
                 millisAfterSerialization, millisAfterDeserialization);
@@ -97,10 +95,8 @@ public class SerializerTest {
         long millisAfterDeserialization = System.currentTimeMillis();
         long fileLength = getFileLength(WITH_METHODS_FILE_PATH);
 
+        assertEquals(generatedAnimals.size(), deserializedAnimals.size());
         assertEquals(generatedAnimals, deserializedAnimals);
-        for (int i = 0; i < generatedAnimals.size(); i++) {
-            assertEquals(generatedAnimals.get(i), deserializedAnimals.get(i));
-        }
 
         printInfoMessage("Сериализация с методами", fileLength, millisBeforeSerialization,
                 millisAfterSerialization, millisAfterDeserialization);
@@ -120,10 +116,8 @@ public class SerializerTest {
         long millisAfterDeserialization = System.currentTimeMillis();
         long fileLength = getFileLength(EXTERNALIZABLE_FILE_PATH);
 
+        assertEquals(generatedAnimals.size(), deserializedAnimals.size());
         assertEquals(generatedAnimals, deserializedAnimals);
-        for (int i = 0; i < generatedAnimals.size(); i++) {
-            assertEquals(generatedAnimals.get(i), deserializedAnimals.get(i));
-        }
 
         printInfoMessage("Сериализация с Externalizable", fileLength, millisBeforeSerialization,
                 millisAfterSerialization, millisAfterDeserialization);
@@ -143,10 +137,8 @@ public class SerializerTest {
         long millisAfterDeserialization = System.currentTimeMillis();
         long fileLength = getFileLength(CUSTOM_FILE_PATH);
 
+        assertEquals(generatedAnimals.size(), deserializedAnimals.size());
         assertEquals(generatedAnimals, deserializedAnimals);
-        for (int i = 0; i < generatedAnimals.size(); i++) {
-            assertEquals(generatedAnimals.get(i), deserializedAnimals.get(i));
-        }
 
         printInfoMessage("Кастомная сериализация", fileLength, millisBeforeSerialization,
                 millisAfterSerialization, millisAfterDeserialization);
