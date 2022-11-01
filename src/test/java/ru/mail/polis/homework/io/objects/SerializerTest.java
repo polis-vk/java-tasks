@@ -70,7 +70,6 @@ public class SerializerTest {
         SERIALIZER.defaultSerialize(generatedAnimals, DEFAULT_FILE_PATH.toString());
         long millisAfterSerialization = System.currentTimeMillis();
 
-        long millisBeforeDeserialization = System.currentTimeMillis();
         List<Animal> deserializedAnimals = SERIALIZER.defaultDeserialize(DEFAULT_FILE_PATH.toString());
         long millisAfterDeserialization = System.currentTimeMillis();
         long fileLength = getFileLength(DEFAULT_FILE_PATH);
@@ -81,7 +80,7 @@ public class SerializerTest {
         }
 
         printInfoMessage("Дефолтная сериализация", fileLength, millisBeforeSerialization,
-                millisAfterSerialization, millisBeforeDeserialization, millisAfterDeserialization);
+                millisAfterSerialization, millisAfterDeserialization);
     }
 
     @Test
@@ -94,7 +93,6 @@ public class SerializerTest {
         SERIALIZER.serializeWithMethods(generatedAnimals, WITH_METHODS_FILE_PATH.toString());
         long millisAfterSerialization = System.currentTimeMillis();
 
-        long millisBeforeDeserialization = System.currentTimeMillis();
         List<AnimalWithMethods> deserializedAnimals = SERIALIZER.deserializeWithMethods(WITH_METHODS_FILE_PATH.toString());
         long millisAfterDeserialization = System.currentTimeMillis();
         long fileLength = getFileLength(WITH_METHODS_FILE_PATH);
@@ -105,7 +103,7 @@ public class SerializerTest {
         }
 
         printInfoMessage("Сериализация с методами", fileLength, millisBeforeSerialization,
-                millisAfterSerialization, millisBeforeDeserialization, millisAfterDeserialization);
+                millisAfterSerialization, millisAfterDeserialization);
     }
 
     @Test
@@ -118,7 +116,6 @@ public class SerializerTest {
         SERIALIZER.serializeWithExternalizable(generatedAnimals, EXTERNALIZABLE_FILE_PATH.toString());
         long millisAfterSerialization = System.currentTimeMillis();
 
-        long millisBeforeDeserialization = System.currentTimeMillis();
         List<AnimalExternalizable> deserializedAnimals = SERIALIZER.deserializeWithExternalizable(EXTERNALIZABLE_FILE_PATH.toString());
         long millisAfterDeserialization = System.currentTimeMillis();
         long fileLength = getFileLength(EXTERNALIZABLE_FILE_PATH);
@@ -129,7 +126,7 @@ public class SerializerTest {
         }
 
         printInfoMessage("Сериализация с Externalizable", fileLength, millisBeforeSerialization,
-                millisAfterSerialization, millisBeforeDeserialization, millisAfterDeserialization);
+                millisAfterSerialization, millisAfterDeserialization);
     }
 
     @Test
@@ -142,7 +139,6 @@ public class SerializerTest {
         SERIALIZER.customSerialize(generatedAnimals, CUSTOM_FILE_PATH.toString());
         long millisAfterSerialization = System.currentTimeMillis();
 
-        long millisBeforeDeserialization = System.currentTimeMillis();
         List<Animal> deserializedAnimals = SERIALIZER.customDeserialize(CUSTOM_FILE_PATH.toString());
         long millisAfterDeserialization = System.currentTimeMillis();
         long fileLength = getFileLength(CUSTOM_FILE_PATH);
@@ -153,7 +149,7 @@ public class SerializerTest {
         }
 
         printInfoMessage("Кастомная сериализация", fileLength, millisBeforeSerialization,
-                millisAfterSerialization, millisBeforeDeserialization, millisAfterDeserialization);
+                millisAfterSerialization, millisAfterDeserialization);
     }
 
     private int generateInt() {
@@ -293,14 +289,13 @@ public class SerializerTest {
             long fileLength,
             long millisBeforeSerialization,
             long millisAfterSerialization,
-            long millisBeforeDeserialization,
             long millisAfterDeserialization
     ) {
         System.out.println("-------------------------------------------------------------------------");
         System.out.println(serializationType + " прошла успешно.");
         System.out.println("Размер получившегося файла: " + fileLength + " байт.");
         System.out.println("Время сериализации: " + (millisAfterSerialization - millisBeforeSerialization) + " миллисекунд.");
-        System.out.println("Время десериализации: " + (millisAfterDeserialization - millisBeforeDeserialization) + " миллисекунд.");
+        System.out.println("Время десериализации: " + (millisAfterDeserialization - millisAfterSerialization) + " миллисекунд.");
         System.out.println("-------------------------------------------------------------------------");
     }
 }
