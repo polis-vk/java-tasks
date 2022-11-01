@@ -17,10 +17,6 @@ public class Animal implements Serializable {
     private Organization organization;
     private MoveType moveType;
 
-    public Animal() {
-
-    }
-
     public String getAlias() {
         return alias;
     }
@@ -99,7 +95,6 @@ class Organization implements Serializable {
     private String name;
     private String owner;
     private boolean foreign;
-
 
     public String getName() {
         return name;

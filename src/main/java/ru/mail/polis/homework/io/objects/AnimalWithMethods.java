@@ -19,10 +19,6 @@ public class AnimalWithMethods implements Serializable {
     private OrganizationWithMethods organization;
     private MoveType moveType;
 
-    public AnimalWithMethods() {
-
-    }
-
     public String getAlias() {
         return alias;
     }
