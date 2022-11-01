@@ -22,7 +22,7 @@ public class SerializerTest {
     private static final Path WITH_METHODS_PATH = Paths.get("src", "test", "resources", "objects", "methods.txt");
     private static final Path CUSTOM_PATH = Paths.get("src", "test", "resources", "objects", "custom.txt");
     private static final Serializer SERIALIZER = new Serializer();
-    private static final int ANIMALS_COUNT = 130000;
+    private static final int ANIMALS_COUNT = 500000;
 
 
     @Before
@@ -53,20 +53,16 @@ public class SerializerTest {
         SERIALIZER.defaultSerialize(generatedAnimals, DEFAULT_PATH.toString());
         long millisAfterSerialization = System.currentTimeMillis();
 
-        long millisBeforeDeserialization = System.currentTimeMillis();
         List<Animal> deserializedAnimals = SERIALIZER.defaultDeserialize(DEFAULT_PATH.toString());
         long millisAfterDeserialization = System.currentTimeMillis();
 
         long fileSize = Files.size(DEFAULT_PATH);
-        assertEquals(generatedAnimals.size(), deserializedAnimals.size());
-        for (int i = 0; i < generatedAnimals.size(); i++) {
-            assertEquals(generatedAnimals.get(i), deserializedAnimals.get(i));
-        }
+        assertEquals(generatedAnimals, deserializedAnimals);
 
         System.out.println("Простая (default) сериализация:");
         System.out.println("Размер файла: " + fileSize + " байт");
         System.out.println("Время записи: " + (millisAfterSerialization - millisBeforeSerialization) + " мс");
-        System.out.println("Время чтения: " + (millisAfterDeserialization - millisBeforeDeserialization) + " мс\n");
+        System.out.println("Время чтения: " + (millisAfterDeserialization - millisAfterSerialization) + " мс\n");
     }
 
     @Test
@@ -80,20 +76,16 @@ public class SerializerTest {
         SERIALIZER.serializeWithMethods(generatedAnimals, DEFAULT_PATH.toString());
         long millisAfterSerialization = System.currentTimeMillis();
 
-        long millisBeforeDeserialization = System.currentTimeMillis();
         List<AnimalWithMethods> deserializedAnimals = SERIALIZER.deserializeWithMethods(DEFAULT_PATH.toString());
         long millisAfterDeserialization = System.currentTimeMillis();
 
         long fileSize = Files.size(DEFAULT_PATH);
-        assertEquals(generatedAnimals.size(), deserializedAnimals.size());
-        for (int i = 0; i < generatedAnimals.size(); i++) {
-            assertEquals(generatedAnimals.get(i), deserializedAnimals.get(i));
-        }
+        assertEquals(generatedAnimals, deserializedAnimals);
 
         System.out.println("Простая ручная (with methods) сериализация:");
         System.out.println("Размер файла: " + fileSize + " байт");
         System.out.println("Время записи: " + (millisAfterSerialization - millisBeforeSerialization) + " мс");
-        System.out.println("Время чтения: " + (millisAfterDeserialization - millisBeforeDeserialization) + " мс\n");
+        System.out.println("Время чтения: " + (millisAfterDeserialization - millisAfterSerialization) + " мс\n");
     }
 
     @Test
@@ -107,20 +99,16 @@ public class SerializerTest {
         SERIALIZER.serializeWithExternalizable(generatedAnimals, DEFAULT_PATH.toString());
         long millisAfterSerialization = System.currentTimeMillis();
 
-        long millisBeforeDeserialization = System.currentTimeMillis();
         List<AnimalExternalizable> deserializedAnimals = SERIALIZER.deserializeWithExternalizable(DEFAULT_PATH.toString());
         long millisAfterDeserialization = System.currentTimeMillis();
 
         long fileSize = Files.size(DEFAULT_PATH);
-        assertEquals(generatedAnimals.size(), deserializedAnimals.size());
-        for (int i = 0; i < generatedAnimals.size(); i++) {
-            assertEquals(generatedAnimals.get(i), deserializedAnimals.get(i));
-        }
+        assertEquals(generatedAnimals, deserializedAnimals);
 
         System.out.println("Простая ручная (externalizable) сериализация:");
         System.out.println("Размер файла: " + fileSize + " байт");
         System.out.println("Время записи: " + (millisAfterSerialization - millisBeforeSerialization) + " мс");
-        System.out.println("Время чтения: " + (millisAfterDeserialization - millisBeforeDeserialization) + " мс\n");
+        System.out.println("Время чтения: " + (millisAfterDeserialization - millisAfterSerialization) + " мс\n");
     }
 
     @Test
@@ -134,89 +122,103 @@ public class SerializerTest {
         SERIALIZER.customSerialize(generatedAnimals, DEFAULT_PATH.toString());
         long millisAfterSerialization = System.currentTimeMillis();
 
-        long millisBeforeDeserialization = System.currentTimeMillis();
         List<Animal> deserializedAnimals = SERIALIZER.customDeserialize(DEFAULT_PATH.toString());
         long millisAfterDeserialization = System.currentTimeMillis();
 
         long fileSize = Files.size(DEFAULT_PATH);
-        assertEquals(generatedAnimals.size(), deserializedAnimals.size());
-        for (int i = 0; i < generatedAnimals.size(); i++) {
-            assertEquals(generatedAnimals.get(i), deserializedAnimals.get(i));
-        }
+        assertEquals(generatedAnimals, deserializedAnimals);
 
         System.out.println("Ручная (custom) сериализация:");
         System.out.println("Размер файла: " + fileSize + " байт");
         System.out.println("Время записи: " + (millisAfterSerialization - millisBeforeSerialization) + " мс");
-        System.out.println("Время чтения: " + (millisAfterDeserialization - millisBeforeDeserialization) + " мс\n");
+        System.out.println("Время чтения: " + (millisAfterDeserialization - millisAfterSerialization) + " мс\n");
     }
 
-    private static final Random rnd = new Random();
+    private static final Random RND = new Random();
 
     private static Animal generateAnimal() {
         Animal animal = new Animal();
-        animal.setAlias(generateString());
-        animal.setLegs(rnd.nextInt());
-        animal.setWild(rnd.nextBoolean());
-        animal.setFurry(rnd.nextBoolean());
-        animal.setOrganization(generateOrganization());
+        if (RND.nextBoolean()) {
+            animal.setAlias(generateString());
+        }
+        animal.setLegs(RND.nextInt());
+        animal.setWild(RND.nextBoolean());
+        animal.setFurry(RND.nextBoolean());
+        if (RND.nextBoolean()) {
+            animal.setOrganization(generateOrganization());
+        }
         MoveType[] values = MoveType.values();
-        animal.setMoveType(MoveType.values()[rnd.nextInt(values.length)]);
+        animal.setMoveType(MoveType.values()[RND.nextInt(values.length)]);
         return animal;
     }
 
     private static AnimalExternalizable generateAnimalExternalizable() {
         AnimalExternalizable animal = new AnimalExternalizable();
-        animal.setAlias(generateString());
-        animal.setLegs(rnd.nextInt());
-        animal.setWild(rnd.nextBoolean());
-        animal.setFurry(rnd.nextBoolean());
-        animal.setOrganization(generateOrganizationExternalizable());
+        if (RND.nextBoolean()) {
+            animal.setAlias(generateString());
+        }
+        animal.setLegs(RND.nextInt());
+        animal.setWild(RND.nextBoolean());
+        animal.setFurry(RND.nextBoolean());
+        if (RND.nextBoolean()) {
+            animal.setOrganization(generateOrganizationExternalizable());
+        }
         MoveType[] values = MoveType.values();
-        animal.setMoveType(MoveType.values()[rnd.nextInt(values.length)]);
+        animal.setMoveType(MoveType.values()[RND.nextInt(values.length)]);
         return animal;
     }
 
     private static AnimalWithMethods generateAnimalWithMethods() {
         AnimalWithMethods animal = new AnimalWithMethods();
-        animal.setAlias(generateString());
-        animal.setLegs(rnd.nextInt());
-        animal.setWild(rnd.nextBoolean());
-        animal.setFurry(rnd.nextBoolean());
-        animal.setOrganization(generateOrganizationWithMethods());
+        if (RND.nextBoolean()) {
+            animal.setAlias(generateString());
+        }
+        animal.setLegs(RND.nextInt());
+        animal.setWild(RND.nextBoolean());
+        animal.setFurry(RND.nextBoolean());
+        if (RND.nextBoolean()) {
+            animal.setOrganization(generateOrganizationWithMethods());
+        }
         MoveType[] values = MoveType.values();
-        animal.setMoveType(MoveType.values()[rnd.nextInt(values.length)]);
+        animal.setMoveType(MoveType.values()[RND.nextInt(values.length)]);
         return animal;
     }
 
     private static Organization generateOrganization() {
         Organization organization = new Organization();
         organization.setName(generateString());
-        organization.setOwner(generateString());
-        organization.setForeign(rnd.nextBoolean());
+        if (RND.nextBoolean()) {
+            organization.setOwner(generateString());
+        }
+        organization.setForeign(RND.nextBoolean());
         return organization;
     }
 
     private static OrganizationExternalizable generateOrganizationExternalizable() {
         OrganizationExternalizable organization = new OrganizationExternalizable();
         organization.setName(generateString());
-        organization.setOwner(generateString());
-        organization.setForeign(rnd.nextBoolean());
+        if (RND.nextBoolean()) {
+            organization.setOwner(generateString());
+        }
+        organization.setForeign(RND.nextBoolean());
         return organization;
     }
 
     private static OrganizationWithMethods generateOrganizationWithMethods() {
         OrganizationWithMethods organization = new OrganizationWithMethods();
         organization.setName(generateString());
-        organization.setOwner(generateString());
-        organization.setForeign(rnd.nextBoolean());
+        if (RND.nextBoolean()) {
+            organization.setOwner(generateString());
+        }
+        organization.setForeign(RND.nextBoolean());
         return organization;
     }
 
 
     private static String generateString() {
-        char[] chars = new char[rnd.nextInt(18) + 2];
+        char[] chars = new char[RND.nextInt(18) + 2];
         for (int i = 0; i < chars.length; i++) {
-            chars[i] = (char) (rnd.nextInt('z' - '0') + '0');
+            chars[i] = (char) (RND.nextInt('z' - '0') + '0');
         }
         return new String(chars);
     }
