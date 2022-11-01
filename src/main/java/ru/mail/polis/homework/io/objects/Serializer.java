@@ -3,8 +3,8 @@ package ru.mail.polis.homework.io.objects;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
@@ -70,14 +70,15 @@ public class Serializer {
         }
 
         List<Animal> result = new ArrayList<>();
-        try (ObjectInputStream input = new ObjectInputStream(Files.newInputStream(filePath))) {
-            while (true) {
+        try (InputStream fileInput = Files.newInputStream(filePath);
+             ObjectInputStream input = new ObjectInputStream(fileInput)) {
+            while (fileInput.available() > 0) {
                 Animal deserializedAnimal = (Animal) input.readObject();
                 result.add(deserializedAnimal);
             }
-        } catch (EOFException e) {
-            return result;
         }
+
+        return result;
     }
 
 
@@ -120,14 +121,15 @@ public class Serializer {
         }
 
         List<AnimalWithMethods> result = new ArrayList<>();
-        try (ObjectInputStream input = new ObjectInputStream(Files.newInputStream(filePath))) {
-            while (true) {
+        try (InputStream fileInput = Files.newInputStream(filePath);
+             ObjectInputStream input = new ObjectInputStream(fileInput)) {
+            while (fileInput.available() > 0) {
                 AnimalWithMethods deserializedAnimal = (AnimalWithMethods) input.readObject();
                 result.add(deserializedAnimal);
             }
-        } catch (EOFException e) {
-            return result;
         }
+
+        return result;
     }
 
     /**
@@ -170,15 +172,15 @@ public class Serializer {
         }
 
         List<AnimalExternalizable> result = new ArrayList<>();
-        try (ObjectInputStream input = new ObjectInputStream(Files.newInputStream(filePath))) {
-            while (true) {
+        try (InputStream fileInput = Files.newInputStream(filePath);
+             ObjectInputStream input = new ObjectInputStream(fileInput)) {
+            while (fileInput.available() > 0) {
                 AnimalExternalizable deserializedAnimal = (AnimalExternalizable) input.readObject();
                 result.add(deserializedAnimal);
             }
-        } catch (EOFException e) {
-            return result;
         }
 
+        return result;
     }
 
     /**
@@ -231,8 +233,9 @@ public class Serializer {
         }
 
         List<Animal> result = new ArrayList<>();
-        try (DataInputStream input = new DataInputStream(Files.newInputStream(filePath))) {
-            while (true) {
+        try (InputStream fileInput = Files.newInputStream(filePath);
+             DataInputStream input = new DataInputStream(fileInput)) {
+            while (fileInput.available() > 0) {
                 Animal deserializedAnimal = new Animal(
                         input.readUTF(),
                         input.readBoolean(),
@@ -247,8 +250,8 @@ public class Serializer {
                 );
                 result.add(deserializedAnimal);
             }
-        } catch (EOFException e) {
-            return result;
         }
+
+        return result;
     }
 }
