@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.DataOutputStream;
-import java.io.DataInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -69,11 +67,10 @@ public class Serializer {
         }
 
         List<Animal> animals = new ArrayList<>();
-        try (InputStream fileInputStream = Files.newInputStream(fileFrom)) {
-            try (ObjectInputStream inputStream = new ObjectInputStream(fileInputStream)) {
-                while (fileInputStream.available() != 0) {
-                    animals.add((Animal) inputStream.readObject());
-                }
+        try (InputStream fileInputStream = Files.newInputStream(fileFrom);
+             ObjectInputStream inputStream = new ObjectInputStream(fileInputStream)) {
+            while (fileInputStream.available() != 0) {
+                animals.add((Animal) inputStream.readObject());
             }
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
@@ -119,11 +116,10 @@ public class Serializer {
         }
 
         List<AnimalWithMethods> animals = new ArrayList<>();
-        try (InputStream fileInputStream = Files.newInputStream(fileFrom)) {
-            try (ObjectInputStream inputStream = new ObjectInputStream(fileInputStream)) {
-                while (fileInputStream.available() != 0) {
-                    animals.add((AnimalWithMethods) inputStream.readObject());
-                }
+        try (InputStream fileInputStream = Files.newInputStream(fileFrom);
+             ObjectInputStream inputStream = new ObjectInputStream(fileInputStream)) {
+            while (fileInputStream.available() != 0) {
+                animals.add((AnimalWithMethods) inputStream.readObject());
             }
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
@@ -168,11 +164,10 @@ public class Serializer {
         }
 
         List<AnimalExternalizable> animals = new ArrayList<>();
-        try (InputStream fileInputStream = Files.newInputStream(fileFrom)) {
-            try (ObjectInputStream inputStream = new ObjectInputStream(fileInputStream)) {
-                while (fileInputStream.available() != 0) {
-                    animals.add((AnimalExternalizable) inputStream.readObject());
-                }
+        try (InputStream fileInputStream = Files.newInputStream(fileFrom);
+             ObjectInputStream inputStream = new ObjectInputStream(fileInputStream)) {
+            while (fileInputStream.available() != 0) {
+                animals.add((AnimalExternalizable) inputStream.readObject());
             }
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
@@ -194,23 +189,14 @@ public class Serializer {
             return;
         }
 
-        try (DataOutputStream outputStream = new DataOutputStream(Files.newOutputStream(fileTo))) {
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(fileTo))) {
             for (Animal animal : animals) {
-                if (animal == null) {
-                    continue;
-                }
-
-                outputStream.writeUTF(animal.getAlias());
+                outputStream.writeObject(animal.getAlias());
                 outputStream.writeInt(animal.getLegs());
                 outputStream.writeBoolean(animal.isWild());
                 outputStream.writeBoolean(animal.isFurry());
-
-                Organization organization = animal.getOrganization();
-                outputStream.writeUTF(organization.getName());
-                outputStream.writeUTF(organization.getOwner());
-                outputStream.writeBoolean(organization.isForeign());
-
-                outputStream.writeByte(animal.getMoveType().ordinal());
+                outputStream.writeObject(animal.getOrganization());
+                outputStream.writeObject(animal.getMoveType());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -232,26 +218,19 @@ public class Serializer {
         }
 
         List<Animal> animals = new ArrayList<>();
-        try (InputStream fileInputStream = Files.newInputStream(fileFrom)) {
-            try (DataInputStream inputStream = new DataInputStream(fileInputStream)) {
-                while (fileInputStream.available() != 0) {
-                    Animal animal = new Animal();
-                    animal.setAlias(inputStream.readUTF());
-                    animal.setLegs(inputStream.readInt());
-                    animal.setWild(inputStream.readBoolean());
-                    animal.setFurry(inputStream.readBoolean());
-
-                    Organization organization = new Organization();
-                    organization.setName(inputStream.readUTF());
-                    organization.setOwner(inputStream.readUTF());
-                    organization.setForeign(inputStream.readBoolean());
-
-                    animal.setOrganization(organization);
-                    animal.setMoveType(MoveType.values()[inputStream.readByte()]);
-                    animals.add(animal);
-                }
+        try (InputStream fileInputStream = Files.newInputStream(fileFrom);
+             ObjectInputStream inputStream = new ObjectInputStream(fileInputStream)) {
+            while (fileInputStream.available() != 0) {
+                Animal animal = new Animal();
+                animal.setAlias((String) inputStream.readObject());
+                animal.setLegs(inputStream.readInt());
+                animal.setWild(inputStream.readBoolean());
+                animal.setFurry(inputStream.readBoolean());
+                animal.setOrganization((Organization) inputStream.readObject());
+                animal.setMoveType((MoveType) inputStream.readObject());
+                animals.add(animal);
             }
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return animals;

@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.io.objects;
 
-import java.io.*;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Objects;
 
 /**
@@ -93,22 +96,22 @@ public class AnimalExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeUTF(alias);
+        out.writeObject(alias);
         out.writeInt(legs);
         out.writeBoolean(wild);
         out.writeBoolean(furry);
         out.writeObject(organization);
-        out.writeByte(moveType.ordinal());
+        out.writeObject(moveType);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        alias = in.readUTF();
+        alias = (String) in.readObject();
         legs = in.readInt();
         wild = in.readBoolean();
         furry = in.readBoolean();
         organization = (OrganizationExternalizable) in.readObject();
-        moveType = MoveType.values()[in.readByte()];
+        moveType = (MoveType) in.readObject();
     }
 }
 
@@ -168,15 +171,15 @@ class OrganizationExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeUTF(name);
-        out.writeUTF(owner);
+        out.writeObject(name);
+        out.writeObject(owner);
         out.writeBoolean(foreign);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        name = in.readUTF();
-        owner = in.readUTF();
+        name = (String) in.readObject();
+        owner = (String) in.readObject();
         foreign = in.readBoolean();
     }
 }

@@ -92,22 +92,22 @@ public class AnimalWithMethods implements Serializable {
                 '}';
     }
 
-    public void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeUTF(alias);
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeObject(alias);
         out.writeInt(legs);
         out.writeBoolean(wild);
         out.writeBoolean(furry);
         out.writeObject(organization);
-        out.writeByte(moveType.ordinal());
+        out.writeObject(moveType);
     }
 
-    public void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        alias = in.readUTF();
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        alias = (String) in.readObject();
         legs = in.readInt();
         wild = in.readBoolean();
         furry = in.readBoolean();
         organization = (OrganizationWithMethods) in.readObject();
-        moveType = MoveType.values()[in.readByte()];
+        moveType = (MoveType) in.readObject();
     }
 }
 
@@ -162,15 +162,15 @@ class OrganizationWithMethods implements Serializable {
                 '}';
     }
 
-    public void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeUTF(name);
-        out.writeUTF(owner);
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeObject(name);
+        out.writeObject(owner);
         out.writeBoolean(foreign);
     }
 
-    public void readObject(ObjectInputStream in) throws IOException {
-        name = in.readUTF();
-        owner = in.readUTF();
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        name = (String) in.readObject();
+        owner = (String) in.readObject();
         foreign = in.readBoolean();
     }
 }
