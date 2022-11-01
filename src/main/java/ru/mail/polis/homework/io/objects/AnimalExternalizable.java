@@ -88,22 +88,43 @@ public class AnimalExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeUTF(name);
-        out.writeBoolean(isDomestic);
-        out.writeBoolean(haveClaws);
-        out.writeInt(legsCount);
-        out.writeUTF(animalTypeExternalizable.name());
-        out.writeObject(organizationExternalizable);
+        DataByte dataByte = new DataByte(this);
+        out.writeByte(dataByte.getByte());
+
+        if (dataByte.isAnimalNotNull()) {
+            if (dataByte.isNameNotNull()) {
+                out.writeUTF(name);
+            }
+            out.writeInt(legsCount);
+            if (dataByte.isTypeNotNull()) {
+                out.writeUTF(animalTypeExternalizable.name());
+            }
+            if (dataByte.isOrgNotNull()) {
+                OrganizationExternalizable org = organizationExternalizable;
+                if (dataByte.isTitleNotNull()) {
+                    out.writeUTF(org.getTitle());
+                }
+                out.writeInt(org.getAnimalsCount());
+            }
+        }
     }
 
     @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        name = in.readUTF();
-        isDomestic = in.readBoolean();
-        haveClaws = in.readBoolean();
+    public void readExternal(ObjectInput in) throws IOException {
+        DataByte dataByte = new DataByte(in.readByte());
+
+        name = dataByte.isNameNotNull() ? in.readUTF() : null;
+        isDomestic = dataByte.isDomestic();
+        haveClaws = dataByte.isHaveClaws();
         legsCount = in.readInt();
-        animalTypeExternalizable = AnimalTypeExternalizable.valueOf(in.readUTF());
-        organizationExternalizable = (OrganizationExternalizable) in.readObject();
+        animalTypeExternalizable = dataByte.isTypeNotNull() ? AnimalTypeExternalizable.valueOf(in.readUTF()) : null;
+        organizationExternalizable =
+                dataByte.isOrgNotNull()
+                        ? new OrganizationExternalizable(
+                        dataByte.isTitleNotNull() ? in.readUTF() : null,
+                        dataByte.isCommercial(),
+                        in.readInt())
+                        : null;
     }
 }
 
@@ -117,14 +138,11 @@ enum AnimalTypeExternalizable {
     INVERTEBRATE
 }
 
-class OrganizationExternalizable implements Externalizable {
+class OrganizationExternalizable {
 
-    private String title;
-    private boolean isCommercial;
-    private int animalsCount;
-
-    public OrganizationExternalizable() {
-    }
+    private final String title;
+    private final boolean isCommercial;
+    private final int animalsCount;
 
     public OrganizationExternalizable(String title, boolean isCommercial, int animalsCount) {
         this.title = title;
@@ -165,20 +183,6 @@ class OrganizationExternalizable implements Externalizable {
                 ", isCommercial=" + isCommercial +
                 ", animalsCount=" + animalsCount +
                 '}';
-    }
-
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeUTF(title);
-        out.writeBoolean(isCommercial);
-        out.writeInt(animalsCount);
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException {
-        title = in.readUTF();
-        isCommercial = in.readBoolean();
-        animalsCount = in.readInt();
     }
 }
 

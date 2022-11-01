@@ -200,16 +200,25 @@ public class Serializer {
 
         try (DataOutputStream output = new DataOutputStream(Files.newOutputStream(filePath))) {
             for (Animal animal : animals) {
-                output.writeUTF(animal.getName());
-                output.writeBoolean(animal.isDomestic());
-                output.writeBoolean(animal.isHaveClaws());
-                output.writeInt(animal.getLegsCount());
-                output.writeUTF(animal.getAnimalType().name());
+                DataByte dataByte = new DataByte(animal);
+                output.writeByte(dataByte.getByte());
 
-                Organization organization = animal.getOrganization();
-                output.writeUTF(organization.getTitle());
-                output.writeBoolean(organization.isCommercial());
-                output.writeInt(organization.getAnimalsCount());
+                if (dataByte.isAnimalNotNull()) {
+                    if (dataByte.isNameNotNull()) {
+                        output.writeUTF(animal.getName());
+                    }
+                    output.writeInt(animal.getLegsCount());
+                    if (dataByte.isTypeNotNull()) {
+                        output.writeUTF(animal.getAnimalType().name());
+                    }
+                    if (dataByte.isOrgNotNull()) {
+                        Organization org = animal.getOrganization();
+                        if (dataByte.isTitleNotNull()) {
+                            output.writeUTF(org.getTitle());
+                        }
+                        output.writeInt(org.getAnimalsCount());
+                    }
+                }
             }
         }
     }
@@ -236,18 +245,24 @@ public class Serializer {
         try (InputStream fileInput = Files.newInputStream(filePath);
              DataInputStream input = new DataInputStream(fileInput)) {
             while (fileInput.available() > 0) {
-                Animal deserializedAnimal = new Animal(
-                        input.readUTF(),
-                        input.readBoolean(),
-                        input.readBoolean(),
+                DataByte dataByte = new DataByte(input.readByte());
+
+                Animal deserializedAnimal = dataByte.isAnimalNotNull()
+                        ? new Animal(
+                        dataByte.isNameNotNull() ? input.readUTF() : null,
+                        dataByte.isDomestic(),
+                        dataByte.isHaveClaws(),
                         input.readInt(),
-                        AnimalType.valueOf(input.readUTF()),
-                        new Organization(
-                                input.readUTF(),
-                                input.readBoolean(),
-                                input.readInt()
-                        )
-                );
+                        dataByte.isTypeNotNull() ? AnimalType.valueOf(input.readUTF()) : null,
+                        dataByte.isOrgNotNull()
+                                ? new Organization(
+                                dataByte.isTitleNotNull() ? input.readUTF() : null,
+                                dataByte.isCommercial(),
+                                input.readInt())
+                                : null
+                )
+                        : null;
+
                 result.add(deserializedAnimal);
             }
         }

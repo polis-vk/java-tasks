@@ -29,9 +29,10 @@ public class SerializerTest {
     private static final int MAX_STR_LEN = 20;
     private static final int FIRST_ASCII_CODE = 97;
     private static final int LAST_ASCII_CODE = 122;
-    private static final int ANIMALS_COUNT = 10;
+    private static final int ANIMALS_COUNT = 100000;
     private static final Serializer SERIALIZER = new Serializer();
     private static Random random;
+    private static final double NULL_PERCENT = 20.0;
 
     @Before
     public void setUp() throws Exception {
@@ -155,6 +156,10 @@ public class SerializerTest {
     }
 
     private String generateString() {
+        if (isNullWithProbability(NULL_PERCENT)) {
+            return null;
+        }
+
         char[] result = new char[generateInt(MIN_STR_LEN, MAX_STR_LEN)];
 
         for (int i = 0; i < result.length; i++) {
@@ -169,11 +174,19 @@ public class SerializerTest {
     }
 
     private AnimalType generateAnimalType() {
+        if (isNullWithProbability(NULL_PERCENT)) {
+            return null;
+        }
+
         AnimalType[] values = AnimalType.values();
         return values[generateInt(0, values.length - 1)];
     }
 
     private Organization generateOrganization() {
+        if (isNullWithProbability(NULL_PERCENT)) {
+            return null;
+        }
+
         return new Organization(
                 generateString(),
                 generateBoolean(),
@@ -182,6 +195,10 @@ public class SerializerTest {
     }
 
     private Animal generateAnimal() {
+        if (isNullWithProbability(NULL_PERCENT)) {
+            return null;
+        }
+
         return new Animal(
                 generateString(),
                 generateBoolean(),
@@ -193,11 +210,19 @@ public class SerializerTest {
     }
 
     private AnimalTypeWithMethods generateAnimalTypeWithMethods() {
+        if (isNullWithProbability(NULL_PERCENT)) {
+            return null;
+        }
+
         AnimalTypeWithMethods[] values = AnimalTypeWithMethods.values();
         return values[generateInt(0, values.length - 1)];
     }
 
     private OrganizationWithMethods generateOrganizationWithMethods() {
+        if (isNullWithProbability(NULL_PERCENT)) {
+            return null;
+        }
+
         return new OrganizationWithMethods(
                 generateString(),
                 generateBoolean(),
@@ -206,6 +231,10 @@ public class SerializerTest {
     }
 
     private AnimalWithMethods generateAnimalWithMethods() {
+        if (isNullWithProbability(NULL_PERCENT)) {
+            return null;
+        }
+
         return new AnimalWithMethods(
                 generateString(),
                 generateBoolean(),
@@ -217,11 +246,19 @@ public class SerializerTest {
     }
 
     private AnimalTypeExternalizable generateAnimalTypeExternalizable() {
+        if (isNullWithProbability(NULL_PERCENT)) {
+            return null;
+        }
+
         AnimalTypeExternalizable[] values = AnimalTypeExternalizable.values();
         return values[generateInt(0, values.length - 1)];
     }
 
     private OrganizationExternalizable generateOrganizationExternalizable() {
+        if (isNullWithProbability(NULL_PERCENT)) {
+            return null;
+        }
+
         return new OrganizationExternalizable(
                 generateString(),
                 generateBoolean(),
@@ -230,6 +267,10 @@ public class SerializerTest {
     }
 
     private AnimalExternalizable generateAnimalExternalizable() {
+        if (isNullWithProbability(NULL_PERCENT)) {
+            return null;
+        }
+
         return new AnimalExternalizable(
                 generateString(),
                 generateBoolean(),
@@ -288,5 +329,13 @@ public class SerializerTest {
         System.out.println("Время сериализации: " + (millisAfterSerialization - millisBeforeSerialization) + " миллисекунд.");
         System.out.println("Время десериализации: " + (millisAfterDeserialization - millisAfterSerialization) + " миллисекунд.");
         System.out.println("-------------------------------------------------------------------------");
+    }
+
+    private boolean isNullWithProbability(double percent) {
+        if (percent < 0 || percent > 100) {
+            throw new IllegalArgumentException();
+        }
+
+        return Math.abs(random.nextInt()) < Integer.MAX_VALUE * (percent / 100);
     }
 }

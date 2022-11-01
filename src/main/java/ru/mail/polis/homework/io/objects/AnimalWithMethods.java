@@ -84,21 +84,42 @@ public class AnimalWithMethods implements Serializable {
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeUTF(name);
-        out.writeBoolean(isDomestic);
-        out.writeBoolean(haveClaws);
-        out.writeInt(legsCount);
-        out.writeUTF(animalTypeWithMethods.name());
-        out.writeObject(organizationWithMethods);
+        DataByte dataByte = new DataByte(this);
+        out.writeByte(dataByte.getByte());
+
+        if (dataByte.isAnimalNotNull()) {
+            if (dataByte.isNameNotNull()) {
+                out.writeUTF(name);
+            }
+            out.writeInt(legsCount);
+            if (dataByte.isTypeNotNull()) {
+                out.writeUTF(animalTypeWithMethods.name());
+            }
+            if (dataByte.isOrgNotNull()) {
+                OrganizationWithMethods org = organizationWithMethods;
+                if (dataByte.isTitleNotNull()) {
+                    out.writeUTF(org.getTitle());
+                }
+                out.writeInt(org.getAnimalsCount());
+            }
+        }
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        name = in.readUTF();
-        isDomestic = in.readBoolean();
-        haveClaws = in.readBoolean();
+        DataByte dataByte = new DataByte(in.readByte());
+
+        name = dataByte.isNameNotNull() ? in.readUTF() : null;
+        isDomestic = dataByte.isDomestic();
+        haveClaws = dataByte.isHaveClaws();
         legsCount = in.readInt();
-        animalTypeWithMethods = AnimalTypeWithMethods.valueOf(in.readUTF());
-        organizationWithMethods = (OrganizationWithMethods) in.readObject();
+        animalTypeWithMethods = dataByte.isTypeNotNull() ? AnimalTypeWithMethods.valueOf(in.readUTF()) : null;
+        organizationWithMethods =
+                dataByte.isOrgNotNull()
+                        ? new OrganizationWithMethods(
+                        dataByte.isTitleNotNull() ? in.readUTF() : null,
+                        dataByte.isCommercial(),
+                        in.readInt())
+                        : null;
     }
 }
 
@@ -112,11 +133,11 @@ enum AnimalTypeWithMethods {
     INVERTEBRATE
 }
 
-class OrganizationWithMethods implements Serializable {
+class OrganizationWithMethods {
 
-    private String title;
-    private boolean isCommercial;
-    private int animalsCount;
+    private final String title;
+    private final boolean isCommercial;
+    private final int animalsCount;
 
     public OrganizationWithMethods(String title, boolean isCommercial, int animalsCount) {
         this.title = title;
@@ -157,17 +178,5 @@ class OrganizationWithMethods implements Serializable {
                 ", isCommercial=" + isCommercial +
                 ", animalsCount=" + animalsCount +
                 '}';
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeUTF(title);
-        out.writeBoolean(isCommercial);
-        out.writeInt(animalsCount);
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException {
-        title = in.readUTF();
-        isCommercial = in.readBoolean();
-        animalsCount = in.readInt();
     }
 }
