@@ -88,7 +88,7 @@ public class AnimalWithMethods implements Serializable {
         out.writeBoolean(isDomestic);
         out.writeBoolean(haveClaws);
         out.writeInt(legsCount);
-        out.writeByte(animalTypeWithMethods.ordinal());
+        out.writeUTF(animalTypeWithMethods.name());
         out.writeObject(organizationWithMethods);
     }
 
@@ -97,7 +97,7 @@ public class AnimalWithMethods implements Serializable {
         isDomestic = in.readBoolean();
         haveClaws = in.readBoolean();
         legsCount = in.readInt();
-        animalTypeWithMethods = AnimalTypeWithMethods.values()[in.readByte()];
+        animalTypeWithMethods = AnimalTypeWithMethods.valueOf(in.readUTF());
         organizationWithMethods = (OrganizationWithMethods) in.readObject();
     }
 }

@@ -92,7 +92,7 @@ public class AnimalExternalizable implements Externalizable {
         out.writeBoolean(isDomestic);
         out.writeBoolean(haveClaws);
         out.writeInt(legsCount);
-        out.writeByte(animalTypeExternalizable.ordinal());
+        out.writeUTF(animalTypeExternalizable.name());
         out.writeObject(organizationExternalizable);
     }
 
@@ -102,7 +102,7 @@ public class AnimalExternalizable implements Externalizable {
         isDomestic = in.readBoolean();
         haveClaws = in.readBoolean();
         legsCount = in.readInt();
-        animalTypeExternalizable = AnimalTypeExternalizable.values()[in.readByte()];
+        animalTypeExternalizable = AnimalTypeExternalizable.valueOf(in.readUTF());
         organizationExternalizable = (OrganizationExternalizable) in.readObject();
     }
 }

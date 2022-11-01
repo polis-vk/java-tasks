@@ -204,7 +204,7 @@ public class Serializer {
                 output.writeBoolean(animal.isDomestic());
                 output.writeBoolean(animal.isHaveClaws());
                 output.writeInt(animal.getLegsCount());
-                output.writeByte(animal.getAnimalType().ordinal());
+                output.writeUTF(animal.getAnimalType().name());
 
                 Organization organization = animal.getOrganization();
                 output.writeUTF(organization.getTitle());
@@ -241,7 +241,7 @@ public class Serializer {
                         input.readBoolean(),
                         input.readBoolean(),
                         input.readInt(),
-                        AnimalType.values()[input.readByte()],
+                        AnimalType.valueOf(input.readUTF()),
                         new Organization(
                                 input.readUTF(),
                                 input.readBoolean(),
