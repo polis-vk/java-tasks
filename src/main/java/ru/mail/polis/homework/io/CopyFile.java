@@ -39,7 +39,10 @@ public class CopyFile {
         Files.walkFileTree(pathFrom, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                Files.createDirectories(pathTo.resolve(pathFrom.relativize(dir)));
+                Path dirPath = pathTo.resolve(pathFrom.relativize(dir));
+                if (Files.notExists(dirPath)) {
+                    Files.createDirectory(dirPath);
+                }
                 return FileVisitResult.CONTINUE;
             }
 
