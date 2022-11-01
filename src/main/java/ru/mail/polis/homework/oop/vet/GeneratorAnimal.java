@@ -23,7 +23,7 @@ public class GeneratorAnimal {
      * @return - соответствующего потомка
      */
     public static Animal generateAnimal(String animalType) {
-        switch (animalType) {
+        switch (animalType.toLowerCase()) {
             case "dog":
                 return new Dog();
             case "cat":
