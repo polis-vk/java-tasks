@@ -31,6 +31,30 @@ public class AnimalWithMethods implements Serializable {
         this.organizationWithMethods = organizationWithMethods;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public boolean isDomestic() {
+        return isDomestic;
+    }
+
+    public boolean isHaveClaws() {
+        return haveClaws;
+    }
+
+    public int getLegsCount() {
+        return legsCount;
+    }
+
+    public AnimalTypeWithMethods getAnimalTypeWithMethods() {
+        return animalTypeWithMethods;
+    }
+
+    public OrganizationWithMethods getOrganizationWithMethods() {
+        return organizationWithMethods;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -98,6 +122,18 @@ class OrganizationWithMethods implements Serializable {
         this.title = title;
         this.isCommercial = isCommercial;
         this.animalsCount = animalsCount;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public boolean isCommercial() {
+        return isCommercial;
+    }
+
+    public int getAnimalsCount() {
+        return animalsCount;
     }
 
     @Override

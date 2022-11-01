@@ -33,6 +33,30 @@ public class AnimalExternalizable implements Externalizable {
         this.organizationExternalizable = organizationExternalizable;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public boolean isDomestic() {
+        return isDomestic;
+    }
+
+    public boolean isHaveClaws() {
+        return haveClaws;
+    }
+
+    public int getLegsCount() {
+        return legsCount;
+    }
+
+    public AnimalTypeExternalizable getAnimalTypeExternalizable() {
+        return animalTypeExternalizable;
+    }
+
+    public OrganizationExternalizable getOrganizationExternalizable() {
+        return organizationExternalizable;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -106,6 +130,18 @@ class OrganizationExternalizable implements Externalizable {
         this.title = title;
         this.isCommercial = isCommercial;
         this.animalsCount = animalsCount;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public boolean isCommercial() {
+        return isCommercial;
+    }
+
+    public int getAnimalsCount() {
+        return animalsCount;
     }
 
     @Override
