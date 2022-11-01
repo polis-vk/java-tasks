@@ -13,12 +13,12 @@ import java.util.Objects;
  */
 public class Animal implements Serializable {
 
-    private String name;
-    private boolean isDomestic;
-    private boolean haveClaws;
-    private int legsCount;
-    private AnimalType animalType;
-    private Organization organization;
+    private final String name;
+    private final boolean isDomestic;
+    private final boolean haveClaws;
+    private final int legsCount;
+    private final AnimalType animalType;
+    private final Organization organization;
 
     public Animal(String name, boolean isDomestic, boolean haveClaws, int legsCount, AnimalType animalType,
                   Organization organization) {
@@ -105,9 +105,9 @@ enum AnimalType {
 
 class Organization implements Serializable {
 
-    private String title;
-    private boolean isCommercial;
-    private int animalsCount;
+    private final String title;
+    private final boolean isCommercial;
+    private final int animalsCount;
 
     public Organization(String title, boolean isCommercial, int animalsCount) {
         this.title = title;
