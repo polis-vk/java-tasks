@@ -98,8 +98,7 @@ public class AnimalExternalizable implements Externalizable {
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeObject(alias);
         out.writeInt(legs);
-        out.writeBoolean(wild);
-        out.writeBoolean(furry);
+        out.writeByte(setBooleanFlags(wild, furry));
         out.writeObject(organization);
         out.writeObject(moveType);
     }
@@ -108,10 +107,18 @@ public class AnimalExternalizable implements Externalizable {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         alias = (String) in.readObject();
         legs = in.readInt();
-        wild = in.readBoolean();
-        furry = in.readBoolean();
+        byte booleanFlags = in.readByte();
+        wild = (booleanFlags & 1) != 0;
+        furry = (booleanFlags & 2) != 0;
         organization = (OrganizationExternalizable) in.readObject();
         moveType = (MoveType) in.readObject();
+    }
+
+    private static byte setBooleanFlags(boolean wild, boolean furry) {
+        byte result = 0;
+        if (wild) result = (byte) (result | 1);
+        if (furry) result = (byte) (result | 2);
+        return result;
     }
 }
 

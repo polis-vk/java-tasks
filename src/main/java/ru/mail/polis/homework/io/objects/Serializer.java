@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.io.objects;
 
+//#TODO записать 2 boolean (2 байта) в 1 байт по 1 биту
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -193,8 +194,7 @@ public class Serializer {
             for (Animal animal : animals) {
                 outputStream.writeObject(animal.getAlias());
                 outputStream.writeInt(animal.getLegs());
-                outputStream.writeBoolean(animal.isWild());
-                outputStream.writeBoolean(animal.isFurry());
+                outputStream.writeByte(setBooleanFlags(animal.isWild(), animal.isFurry()));
                 outputStream.writeObject(animal.getOrganization());
                 outputStream.writeObject(animal.getMoveType());
             }
@@ -224,8 +224,9 @@ public class Serializer {
                 Animal animal = new Animal();
                 animal.setAlias((String) inputStream.readObject());
                 animal.setLegs(inputStream.readInt());
-                animal.setWild(inputStream.readBoolean());
-                animal.setFurry(inputStream.readBoolean());
+                byte booleanFlags = inputStream.readByte();
+                animal.setWild((booleanFlags & 1) != 0);
+                animal.setFurry((booleanFlags & 2) != 0);
                 animal.setOrganization((Organization) inputStream.readObject());
                 animal.setMoveType((MoveType) inputStream.readObject());
                 animals.add(animal);
@@ -234,5 +235,12 @@ public class Serializer {
             e.printStackTrace();
         }
         return animals;
+    }
+
+    private static byte setBooleanFlags(boolean wild, boolean furry) {
+        byte result = 0;
+        if (wild) result = (byte) (result | 1);
+        if (furry) result = (byte) (result | 2);
+        return result;
     }
 }
