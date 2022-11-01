@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.oop.vet;
 
-import org.graalvm.compiler.lir.sparc.SPARCMove;
-
 public class Kangaroo extends Animal implements WildAnimal {
     private String organizationName;
 
