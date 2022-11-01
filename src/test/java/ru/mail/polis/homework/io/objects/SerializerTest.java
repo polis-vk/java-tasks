@@ -29,7 +29,7 @@ public class SerializerTest {
     private static final int MAX_STR_LEN = 20;
     private static final int FIRST_ASCII_CODE = 97;
     private static final int LAST_ASCII_CODE = 122;
-    private static final int ANIMALS_COUNT = 1_000_000;
+    private static final int ANIMALS_COUNT = 10;
     private static final Serializer SERIALIZER = new Serializer();
 
     @Before
@@ -37,6 +37,7 @@ public class SerializerTest {
         Files.createDirectories(DIR_PATH);
     }
 
+/*
     @Test
     public void serializationTest() throws Exception {
         System.out.println("-----------------------------ПЕРВЫЙ ПРОГОН-----------------------------");
@@ -57,7 +58,9 @@ public class SerializerTest {
         externalizableSerializationTest();
         customSerializationTest();
     }
+*/
 
+    @Test
     public void defaultSerializationTest() throws Exception {
         Files.deleteIfExists(DEFAULT_FILE_PATH);
 
@@ -81,6 +84,7 @@ public class SerializerTest {
                 millisAfterSerialization, millisBeforeDeserialization, millisAfterDeserialization);
     }
 
+    @Test
     public void withMethodsSerializationTest() throws Exception {
         Files.deleteIfExists(WITH_METHODS_FILE_PATH);
 
@@ -104,6 +108,7 @@ public class SerializerTest {
                 millisAfterSerialization, millisBeforeDeserialization, millisAfterDeserialization);
     }
 
+    @Test
     public void externalizableSerializationTest() throws Exception {
         Files.deleteIfExists(EXTERNALIZABLE_FILE_PATH);
 
@@ -127,6 +132,7 @@ public class SerializerTest {
                 millisAfterSerialization, millisBeforeDeserialization, millisAfterDeserialization);
     }
 
+    @Test
     public void customSerializationTest() throws Exception {
         Files.deleteIfExists(CUSTOM_FILE_PATH);
 
