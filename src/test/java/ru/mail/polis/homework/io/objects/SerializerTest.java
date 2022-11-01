@@ -29,10 +29,10 @@ public class SerializerTest {
     private static final int MAX_STR_LEN = 20;
     private static final int FIRST_ASCII_CODE = 97;
     private static final int LAST_ASCII_CODE = 122;
-    private static final int ANIMALS_COUNT = 100000;
+    private static final int ANIMALS_COUNT = 1_000_000;
     private static final Serializer SERIALIZER = new Serializer();
     private static Random random;
-    private static final double NULL_PERCENT = 20.0;
+    private static final double NULL_PERCENT = 30.0;
 
     @Before
     public void setUp() throws Exception {
@@ -40,7 +40,6 @@ public class SerializerTest {
         random = new Random();
     }
 
-/*
     @Test
     public void serializationTest() throws Exception {
         System.out.println("-----------------------------ПЕРВЫЙ ПРОГОН-----------------------------");
@@ -61,9 +60,7 @@ public class SerializerTest {
         externalizableSerializationTest();
         customSerializationTest();
     }
-*/
 
-    @Test
     public void defaultSerializationTest() throws Exception {
         Files.deleteIfExists(DEFAULT_FILE_PATH);
 
@@ -84,7 +81,6 @@ public class SerializerTest {
                 millisAfterSerialization, millisAfterDeserialization);
     }
 
-    @Test
     public void withMethodsSerializationTest() throws Exception {
         Files.deleteIfExists(WITH_METHODS_FILE_PATH);
 
@@ -94,7 +90,8 @@ public class SerializerTest {
         SERIALIZER.serializeWithMethods(generatedAnimals, WITH_METHODS_FILE_PATH.toString());
         long millisAfterSerialization = System.currentTimeMillis();
 
-        List<AnimalWithMethods> deserializedAnimals = SERIALIZER.deserializeWithMethods(WITH_METHODS_FILE_PATH.toString());
+        List<AnimalWithMethods> deserializedAnimals =
+                SERIALIZER.deserializeWithMethods(WITH_METHODS_FILE_PATH.toString());
         long millisAfterDeserialization = System.currentTimeMillis();
         long fileLength = getFileLength(WITH_METHODS_FILE_PATH);
 
@@ -105,7 +102,6 @@ public class SerializerTest {
                 millisAfterSerialization, millisAfterDeserialization);
     }
 
-    @Test
     public void externalizableSerializationTest() throws Exception {
         Files.deleteIfExists(EXTERNALIZABLE_FILE_PATH);
 
@@ -115,7 +111,8 @@ public class SerializerTest {
         SERIALIZER.serializeWithExternalizable(generatedAnimals, EXTERNALIZABLE_FILE_PATH.toString());
         long millisAfterSerialization = System.currentTimeMillis();
 
-        List<AnimalExternalizable> deserializedAnimals = SERIALIZER.deserializeWithExternalizable(EXTERNALIZABLE_FILE_PATH.toString());
+        List<AnimalExternalizable> deserializedAnimals =
+                SERIALIZER.deserializeWithExternalizable(EXTERNALIZABLE_FILE_PATH.toString());
         long millisAfterDeserialization = System.currentTimeMillis();
         long fileLength = getFileLength(EXTERNALIZABLE_FILE_PATH);
 
@@ -126,7 +123,6 @@ public class SerializerTest {
                 millisAfterSerialization, millisAfterDeserialization);
     }
 
-    @Test
     public void customSerializationTest() throws Exception {
         Files.deleteIfExists(CUSTOM_FILE_PATH);
 
@@ -326,8 +322,10 @@ public class SerializerTest {
         System.out.println("-------------------------------------------------------------------------");
         System.out.println(serializationType + " прошла успешно.");
         System.out.println("Размер получившегося файла: " + fileLength + " байт.");
-        System.out.println("Время сериализации: " + (millisAfterSerialization - millisBeforeSerialization) + " миллисекунд.");
-        System.out.println("Время десериализации: " + (millisAfterDeserialization - millisAfterSerialization) + " миллисекунд.");
+        System.out.println("Время сериализации: " + (millisAfterSerialization - millisBeforeSerialization) + " " +
+                "миллисекунд.");
+        System.out.println("Время десериализации: " + (millisAfterDeserialization - millisAfterSerialization) + " " +
+                "миллисекунд.");
         System.out.println("-------------------------------------------------------------------------");
     }
 
