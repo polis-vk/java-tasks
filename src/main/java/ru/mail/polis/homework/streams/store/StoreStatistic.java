@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.streams.store;
 
 import java.sql.Timestamp;
-import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -41,12 +41,12 @@ public class StoreStatistic {
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
         return orders.stream()
+                .peek(order -> getOnlyDate(order.getTime()))
                 .collect(Collectors.toMap(
-                        order -> Timestamp.from(order.getTime().toInstant().truncatedTo(ChronoUnit.DAYS)),
+                        order -> getOnlyDate(order.getTime()),
                         Order::getItemCount,
                         (itemIntegerMap1, itemIntegerMap2) -> {
-                            itemIntegerMap2.entrySet().forEach(itemIntegerEntry ->
-                                    itemIntegerMap1.merge(itemIntegerEntry.getKey(), itemIntegerEntry.getValue(), Integer::sum));
+                            itemIntegerMap2.forEach((key, value) -> itemIntegerMap1.merge(key, value, Integer::sum));
                             return itemIntegerMap1;
                         }
                 ));
@@ -93,5 +93,9 @@ public class StoreStatistic {
                                 .mapToLong(entry -> entry.getKey().getPrice() * entry.getValue())
                                 .sum()
                 ));
+    }
+
+    private Timestamp getOnlyDate(Timestamp from) {
+        return Timestamp.valueOf(from.toString().split(" ")[0] + " 00:00:00");
     }
 }
