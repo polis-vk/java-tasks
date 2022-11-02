@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.io.objects;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,17 +10,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SerializerTest {
     private static final Random RANDOM = new Random();
-
     private static final Serializer SERIALIZER = new Serializer();
     private static final String WORKING_FILENAME = "ficko.bin";
     private static final Path WORKING_PATH = Paths.get(WORKING_FILENAME);
-    private static final int MAX_ANIMAL_LEGS_COUNT = 4;
-    private static final int SELECTION_COUNT = 20_000;
+    private static final int ANIMAL_LEGS_MAX_COUNT = 4;
+    private static final int SELECTION_COUNT = 500_000;
 
     @Before
     public void setUp() throws IOException {
@@ -35,48 +36,53 @@ public class SerializerTest {
     }
 
     @Test
-    public void checkSerializeAndDeserializeWithExternalizableForCorrectness() {
-        List<AnimalExternalizable> animals = Stream.generate(SerializerTest::generateAnimalExternalizable)
-                .limit(SELECTION_COUNT)
-                .collect(Collectors.toList());
-        SERIALIZER.serializeWithExternalizable(animals, WORKING_FILENAME);
-        List<AnimalExternalizable> animalsDeserialized = SERIALIZER.deserializeWithExternalizable(WORKING_FILENAME);
-        assertEquals(animals, animalsDeserialized);
+    public void serializingWithExternalizable() throws IOException {
+        serializingTestTemplate(SerializerTest::generateAnimalExternalizable,
+                                SERIALIZER::serializeWithExternalizable,
+                                SERIALIZER::deserializeWithExternalizable);
     }
 
     @Test
-    public void checkDefaultSerializeAndDeserializeForCorrectness() {
-        List<Animal> animals = Stream.generate(SerializerTest::generateAnimal)
-                .limit(SELECTION_COUNT)
-                .collect(Collectors.toList());
-        SERIALIZER.defaultSerialize(animals, WORKING_FILENAME);
-        List<Animal> animalsDeserialized = SERIALIZER.defaultDeserialize(WORKING_FILENAME);
-        assertEquals(animals, animalsDeserialized);
+    public void defaultSerializing() throws IOException {
+        serializingTestTemplate(SerializerTest::generateAnimal,
+                                SERIALIZER::defaultSerialize,
+                                SERIALIZER::defaultDeserialize);
     }
 
     @Test
-    public void checkSerializeAndDeserializeWithMethodsForCorrectness() {
-        List<AnimalWithMethods> animals = Stream.generate(SerializerTest::generateAnimalWithMethods)
-                .limit(SELECTION_COUNT)
-                .collect(Collectors.toList());
-        SERIALIZER.serializeWithMethods(animals, WORKING_FILENAME);
-        List<AnimalWithMethods> animalsDeserialized = SERIALIZER.deserializeWithMethods(WORKING_FILENAME);
-        assertEquals(animals, animalsDeserialized);
+    public void serializingWithMethods() throws IOException {
+        serializingTestTemplate(SerializerTest::generateAnimalWithMethods,
+                                SERIALIZER::serializeWithMethods,
+                                SERIALIZER::deserializeWithMethods);
     }
 
     @Test
-    public void checkCustomSerializeAndDeserializeForCorrectness() {
-        List<Animal> animals = Stream.generate(SerializerTest::generateAnimal)
-                .limit(SELECTION_COUNT)
-                .collect(Collectors.toList());
-        SERIALIZER.customSerialize(animals, WORKING_FILENAME);
-        List<Animal> animalsDeserialized = SERIALIZER.customDeserialize(WORKING_FILENAME);
-        assertEquals(animals, animalsDeserialized);
+    public void checkCustomSerializeAndDeserializeForCorrectness() throws IOException {
+        serializingTestTemplate(SerializerTest::generateAnimal,
+                                SERIALIZER::customSerialize,
+                                SERIALIZER::customDeserialize);
+    }
+
+    public <A> void serializingTestTemplate(Supplier<A> generator,
+                                            BiConsumer<List<A>, String> serializer,
+                                            Function<String, List<A>> deserializer) throws IOException {
+        List<A> generatedAnimals = Stream.generate(generator)
+                                         .limit(SELECTION_COUNT)
+                                         .collect(Collectors.toList());
+        long timeMillisBeforeWriting = System.currentTimeMillis();
+        serializer.accept(generatedAnimals, WORKING_FILENAME);
+        long timeMillisAfterWriting = System.currentTimeMillis();
+        List<A> deserializedAnimals = deserializer.apply(WORKING_FILENAME);
+        long timeMillisAfterReading = System.currentTimeMillis();
+        assertEquals(generatedAnimals, deserializedAnimals);
+        System.out.printf("Размер файла: %d\n", Files.size(WORKING_PATH));
+        System.out.printf("Время записи: %d\n", timeMillisAfterWriting - timeMillisBeforeWriting);
+        System.out.printf("Время чтения: %d\n", timeMillisAfterReading - timeMillisAfterWriting);
     }
 
     private static Animal generateAnimal() {
         return new Animal(generateLetterString(),
-                          RANDOM.nextInt(MAX_ANIMAL_LEGS_COUNT + 1),
+                          RANDOM.nextInt(ANIMAL_LEGS_MAX_COUNT + 1),
                           RANDOM.nextBoolean(),
                           RANDOM.nextBoolean(),
                           generateOrganization(),
@@ -85,7 +91,7 @@ public class SerializerTest {
 
     private static AnimalExternalizable generateAnimalExternalizable() {
         return new AnimalExternalizable(generateLetterString(),
-                                        RANDOM.nextInt(MAX_ANIMAL_LEGS_COUNT + 1),
+                                        RANDOM.nextInt(ANIMAL_LEGS_MAX_COUNT + 1),
                                         RANDOM.nextBoolean(),
                                         RANDOM.nextBoolean(),
                                         generateOrganizationExternalizable(),
@@ -94,7 +100,7 @@ public class SerializerTest {
 
     private static AnimalWithMethods generateAnimalWithMethods() {
         return new AnimalWithMethods(generateLetterString(),
-                                     RANDOM.nextInt(MAX_ANIMAL_LEGS_COUNT + 1),
+                                     RANDOM.nextInt(ANIMAL_LEGS_MAX_COUNT + 1),
                                      RANDOM.nextBoolean(),
                                      RANDOM.nextBoolean(),
                                      generateOrganizationWithMethods(),
