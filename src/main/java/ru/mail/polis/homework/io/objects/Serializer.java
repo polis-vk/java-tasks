@@ -2,10 +2,7 @@ package ru.mail.polis.homework.io.objects;
 
 //#TODO записать 2 boolean (2 байта) в 1 байт по 1 биту
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -190,13 +187,18 @@ public class Serializer {
             return;
         }
 
-        try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(fileTo))) {
+        try (DataOutputStream outputStream = new DataOutputStream(Files.newOutputStream(fileTo))) {
             for (Animal animal : animals) {
-                outputStream.writeObject(animal.getAlias());
+                outputStream.writeUTF(writeString(animal.getAlias()));
                 outputStream.writeInt(animal.getLegs());
-                outputStream.writeByte(setBooleanFlags(animal.isWild(), animal.isFurry()));
-                outputStream.writeObject(animal.getOrganization());
-                outputStream.writeObject(animal.getMoveType());
+                Organization organization = animal.getOrganization();
+                outputStream.writeByte(setBooleanFlags(animal.isWild(), animal.isFurry(), organization != null));
+                if (organization != null) {
+                    outputStream.writeUTF(writeString(organization.getName()));
+                    outputStream.writeUTF(writeString(organization.getOwner()));
+                    outputStream.writeBoolean(organization.isForeign());
+                }
+                outputStream.writeUTF(String.valueOf(animal.getMoveType()));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -219,28 +221,51 @@ public class Serializer {
 
         List<Animal> animals = new ArrayList<>();
         try (InputStream fileInputStream = Files.newInputStream(fileFrom);
-             ObjectInputStream inputStream = new ObjectInputStream(fileInputStream)) {
+             DataInputStream inputStream = new DataInputStream(fileInputStream)) {
             while (fileInputStream.available() != 0) {
                 Animal animal = new Animal();
-                animal.setAlias((String) inputStream.readObject());
+                animal.setAlias(readString(inputStream));
                 animal.setLegs(inputStream.readInt());
                 byte booleanFlags = inputStream.readByte();
                 animal.setWild((booleanFlags & 1) != 0);
                 animal.setFurry((booleanFlags & 2) != 0);
-                animal.setOrganization((Organization) inputStream.readObject());
-                animal.setMoveType((MoveType) inputStream.readObject());
+                boolean hasOrganization = ((booleanFlags & 4) != 0);
+                if (hasOrganization) {
+                    Organization organization = new Organization();
+                    organization.setName(readString(inputStream));
+                    organization.setOwner(readString(inputStream));
+                    organization.setForeign(inputStream.readBoolean());
+                    animal.setOrganization(organization);
+                }
+                animal.setMoveType(MoveType.valueOf(readString(inputStream)));
                 animals.add(animal);
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return animals;
     }
 
-    private static byte setBooleanFlags(boolean wild, boolean furry) {
+    private static String writeString(String str) {
+        return str == null ? "null" : str;
+    }
+
+    private static String readString(DataInputStream inputStream) throws IOException {
+        String str = inputStream.readUTF();
+        return str.equals("null") ? null : str;
+    }
+
+    private static byte setBooleanFlags(boolean wild, boolean furry, boolean hasOrganization) {
         byte result = 0;
-        if (wild) result = (byte) (result | 1);
-        if (furry) result = (byte) (result | 2);
+        if (wild) {
+            result = (byte) (result | 1);
+        }
+        if (furry) {
+            result = (byte) (result | 2);
+        }
+        if (hasOrganization) {
+            result = (byte) (result | 4);
+        }
         return result;
     }
 }
