@@ -1,13 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Collection;
-import java.util.ListIterator;
-import java.util.NoSuchElementException;
-import java.util.ConcurrentModificationException;
+import java.util.*;
 
 
 /**
@@ -26,8 +19,8 @@ public class CustomArrayList<E> implements List<E> {
         this.internalArray = new Object[DEFAULT_SIZE];
     }
 
-    public CustomArrayList(List<E> list) {
-        this.internalArray = list.toArray();
+    public CustomArrayList(Collection<E> collection) {
+        this.internalArray = collection.toArray();
     }
 
     @Override
@@ -278,15 +271,14 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        int i = 0;
         if (Objects.equals(null, o)) {
-            for (; i < size; i++) {
+            for (int i = 0; i < size; i++) {
                 if (internalArray[i] == null) {
                     return i;
                 }
             }
         } else {
-            for (; i < size; i++) {
+            for (int i = 0; i < size; i++) {
                 if (internalArray[i].equals(o)) {
                     return i;
                 }
@@ -436,17 +428,74 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-
         if (fromIndex < 0 || toIndex > size || fromIndex > toIndex) {
             throw new IndexOutOfBoundsException();
         }
+        return new SubList<E>(this, fromIndex, toIndex);
+    }
 
-        CustomArrayList<E> sublist = new CustomArrayList<>();
+    private static class SubList<E> extends AbstractList<E> implements RandomAccess {
 
-        for (int i = fromIndex; i < toIndex; i++) {
-            sublist.add((E) internalArray[i]);
+        private final CustomArrayList<E> root;
+        private final SubList<E> parent;
+        private final int offset;
+        private int size;
+
+        public SubList(CustomArrayList<E> root, int fromIndex, int toIndex) {
+            this.root = root;
+            this.parent = null;
+            this.offset = fromIndex;
+            this.size = toIndex - fromIndex;
+            this.modCount = root.modCount;
         }
 
-        return sublist;
+        public SubList(SubList<E> parent, int fromIndex, int toIndex) {
+            this.root = parent.root;
+            this.parent = parent;
+            this.offset = parent.offset + fromIndex;
+            this.size = toIndex - fromIndex;
+            this.modCount = parent.modCount;
+        }
+
+        @Override
+        public E get(int index) {
+            checkForComodification();
+            checkIndex(index, size);
+            return (E) root.internalArray[offset + index];
+        }
+
+        @Override
+        public int size() {
+            checkForComodification();
+            return size;
+        }
+
+        public E set(int index, E element) {
+            checkIndex(index, size);
+            checkForComodification();
+            E oldValue = (E) root.internalArray[offset + index];
+            root.internalArray[offset + index] = element;
+            return oldValue;
+        }
+
+        public void add(int index, E element) {
+            checkIndex(index, size);
+            checkForComodification();
+            root.add(offset + index, element);
+            this.size++;
+            this.modCount = root.modCount;
+        }
+
+        private void checkForComodification() {
+            if (root.modCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+        }
+
+        private void checkIndex(int index, int length) {
+            if (index < 0 || index >= length) {
+                throw new IndexOutOfBoundsException();
+            }
+        }
     }
 }
