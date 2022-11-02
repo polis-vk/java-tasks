@@ -2,12 +2,18 @@ package ru.mail.polis.homework.streams.lib;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Класс для работы со статистикой по библиотеке.
  * Оценка 5-ть баллов
  */
 public class LibraryStatistic {
+
+    private final static int DAYS = 14;
+
+    private final static int SECOND_DAYS = 30;
+    private final static int COUNT_OF_BOOKS = 5;
 
     /**
      * Вернуть "специалистов" в литературном жанре с кол-вом прочитанных страниц.
@@ -18,7 +24,15 @@ public class LibraryStatistic {
      * @return - map пользователь / кол-во прочитанных страниц
      */
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
-        return null;
+        return library.getArchive().stream()
+                .filter(archivedData -> archivedData.getBook().getGenre().equals(genre))
+                .filter(archivedData -> archivedData.getReturned().getTime() <= DAYS)
+                .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.toList()))
+                .entrySet().stream().filter(users -> users.getValue().size() >= COUNT_OF_BOOKS)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        userListEntry -> userListEntry.getKey().getReadedPages()
+                ));
     }
 
     /**
@@ -29,7 +43,20 @@ public class LibraryStatistic {
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
-        return null;
+        return library.getArchive().stream().filter(archive -> user.equals(archive.getUser()))
+                .collect(Collectors.groupingBy(archive -> archive.getBook().getGenre()))
+                .entrySet().stream()
+                .max(((or1, or2) -> {
+                    if (or1.getValue().size() == or2.getValue().size()) {
+                        if (or1.getValue().stream().anyMatch(data -> data.getReturned() == null)) {
+                            return 1;
+                        }
+                        return 0;
+                    }
+                    return or1.getValue().size() - or2.getValue().size();
+                }))
+                .map(Map.Entry::getKey)
+                .orElse(null);
     }
 
     /**
@@ -39,7 +66,17 @@ public class LibraryStatistic {
      * @return - список ненадежных пользователей
      */
     public List<User> unreliableUsers(Library library) {
-        return null;
+        return library.getArchive().stream()
+                .collect(Collectors.groupingBy(
+                        ArchivedData::getUser,
+                        Collectors.toList()
+                )).entrySet().stream()
+                .filter(users -> users.getValue().stream()
+                        .filter(archivedData ->
+                                archivedData.getReturned().getTime() - archivedData.getTake().getTime() >= SECOND_DAYS)
+                        .count() > (users.getValue().size() / 2))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -49,7 +86,7 @@ public class LibraryStatistic {
      * @return - список книг
      */
     public List<Book> booksWithMoreCountPages(Library library, int countPage) {
-        return null;
+        return library.getBooks().stream().filter(book -> book.getPage() >= countPage).collect(Collectors.toList());
     }
 
     /**
@@ -58,6 +95,21 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return null;
+        return library.getBooks().stream().collect(Collectors.groupingBy(
+                        Book::getGenre,
+                        Collectors.groupingBy(
+                                Book::getAuthor,
+                                Collectors.counting()
+                        ))).entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        genreMapEntry -> genreMapEntry.getValue().entrySet().stream()
+                                .max((o1, o2) -> {
+                                    long temp = o2.getValue() - o1.getValue();
+                                    if (temp == 0) {
+                                        return o1.getKey().compareTo(o2.getKey());
+                                    }
+                                    return (int) temp;
+                                }).get().getKey()));
     }
 }
