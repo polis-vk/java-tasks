@@ -18,13 +18,14 @@ public class CustomArrayList<E> implements List<E> {
     public CustomArrayList(int size) {
         if (size >= 0) {
             this.elementData = new Object[size];
+            this.size = size;
         } else {
             throw new IllegalArgumentException();
         }
     }
 
     public CustomArrayList() {
-        this.elementData = new Object[0];
+        this.elementData = new Object[10];
     }
 
     public CustomArrayList(Collection<? extends E> collection) {
@@ -34,6 +35,11 @@ public class CustomArrayList<E> implements List<E> {
         } else {
             elementData = new Object[0];
         }
+    }
+
+    public CustomArrayList(Object[] elementData) {
+        this.elementData = elementData;
+        size = elementData.length;
     }
 
     @Override
@@ -163,26 +169,11 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean remove(Object o) {
-        int i = 0;
-        boolean notFound;
-        if (o == null) {
-            while ((notFound = elementData[i] != null) && i < this.size) {
-                i++;
-            }
-        } else {
-            while ((notFound = !o.equals(elementData[i])) && i < this.size) {
-                i++;
-            }
-        }
-        if (notFound) {
+        int index = indexOf(o);
+        if (index == -1) {
             return false;
         }
-        modCount++;
-        size--;
-        if (size > i) {
-            System.arraycopy(elementData, i + 1, elementData, i, size - i);
-        }
-        elementData[size] = null;
+        remove(index);
         return true;
     }
 
@@ -238,52 +229,28 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public boolean removeAll(Collection<?> collection) {
-        return batchRemove(collection, false, size);
-    }
-
-    private boolean batchRemove(Collection<?> collection, boolean complement, final int end) {
-        Objects.requireNonNull(collection);
-        int run = 0;
-        while (true) {
-            if (run == end) {
-                return false;
-            }
-            if (collection.contains(elementData[run]) != complement) {
-                break;
-            }
-            run++;
-        }
-        int pointer = run;
-        run++;
-        try {
-            while (run < end) {
-                if (collection.contains(elementData[run]) == complement) {
-                    elementData[pointer] = elementData[run];
-                    pointer++;
-                }
-                run++;
-            }
-        } catch (Throwable exception) {
-            System.arraycopy(elementData, run, elementData, pointer, end - run);
-            pointer += end - run;
-            throw exception;
-        } finally {
-            modCount += end - pointer;
-            System.arraycopy(elementData, end, elementData, pointer, size - end);
-            int to = size;
-            size -= end - pointer;
-            int i = size;
-            while (i < to) {
-                elementData[i] = null;
-                i++;
+        boolean removed = false;
+        for (Object elem : collection) {
+            while (remove(elem)) {
+                removed = true;
             }
         }
-        return true;
+        return removed;
     }
 
     @Override
     public boolean retainAll(Collection<?> collection) {
-        return batchRemove(collection, true, size);
+        boolean retained = false;
+        int i = 0;
+        while (i < size) {
+            if (!collection.contains(elementData[i])) {
+                remove(i);
+                retained = true;
+            } else {
+                i++;
+            }
+        }
+        return retained;
     }
 
     @Override
