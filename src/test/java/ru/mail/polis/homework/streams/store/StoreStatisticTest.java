@@ -42,9 +42,9 @@ public class StoreStatisticTest {
         Order order_day_1_1 = generateByItemList(new Timestamp(date1.getTime()), Stream.of(banana, banana, chery, apple).collect(Collectors.toList()));
         Order order_day_1_2 = generateByItemList(new Timestamp(date1.getTime() + 10000L), Stream.of(chery, chery, chery, apple).collect(Collectors.toList()));
         Order order_day_2_1 = generateByItemList(new Timestamp(date2.getTime()), Stream.of(apple, apple, chery, apple).collect(Collectors.toList()));
-        Order order_day_2_2 = generateByItemList(new Timestamp(date1.getTime() + TimeUnit.DAYS.toMillis(1) - 10000L), Stream.of(chery, banana, banana, banana).collect(Collectors.toList()));
+        Order order_day_2_2 = generateByItemList(new Timestamp(date2.getTime() + TimeUnit.DAYS.toMillis(1) - 10000L), Stream.of(chery, banana, banana, banana).collect(Collectors.toList()));
         Order order_day_3_1 = generateByItemList(new Timestamp(date3.getTime()), Stream.of(chery, apple, chery, apple).collect(Collectors.toList()));
-        Order order_day_3_2 = generateByItemList(new Timestamp(date1.getTime() + TimeUnit.DAYS.toMillis(1) / 2), Stream.of(chery, banana, apple).collect(Collectors.toList()));
+        Order order_day_3_2 = generateByItemList(new Timestamp(date3.getTime() + TimeUnit.DAYS.toMillis(1) / 2), Stream.of(chery, banana, apple).collect(Collectors.toList()));
 
         List<Order> orders = Stream.of(order_day_1_1, order_day_2_1, order_day_3_1, order_day_1_2, order_day_2_2, order_day_3_2).collect(Collectors.toList());
 
@@ -141,8 +141,8 @@ public class StoreStatisticTest {
 
         assertEquals(3, result.size());
         assertEquals(Long.valueOf(banana.getPrice()), result.get(order1));
-        assertEquals(Long.valueOf(chery.getPrice()), result.get(order1));
-        assertEquals(Long.valueOf(apple.getPrice()), result.get(order1));
+        assertEquals(Long.valueOf(chery.getPrice()), result.get(order2));
+        assertEquals(Long.valueOf(apple.getPrice()), result.get(order3));
     }
 
     private Order generateByItemList(Timestamp timestamp, List<Item> items) {
