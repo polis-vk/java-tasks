@@ -190,7 +190,7 @@ public class Serializer {
                 out.writeUTF(animalOrganization.getCountry());
                 out.writeLong(animalOrganization.getLicenseNumber());
                 out.writeUTF(animal.getGender().name());
-//                out.flush();
+                out.flush();
             }
         } catch (IOException e) {
             e.printStackTrace();
