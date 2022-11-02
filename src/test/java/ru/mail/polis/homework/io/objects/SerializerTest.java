@@ -22,7 +22,7 @@ public class SerializerTest {
     private static final String WORKING_FILENAME = "ficko.bin";
     private static final Path WORKING_PATH = Paths.get(WORKING_FILENAME);
     private static final int ANIMAL_LEGS_MAX_COUNT = 4;
-    private static final int SELECTION_COUNT = 1000;
+    private static final int SELECTION_COUNT = 500_000;
 
     @Before
     public void setUp() throws IOException {
