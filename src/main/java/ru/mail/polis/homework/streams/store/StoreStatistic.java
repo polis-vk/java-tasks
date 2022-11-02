@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.streams.store;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -46,8 +47,13 @@ public class StoreStatistic {
         return orders.stream()
                 .collect(Collectors.groupingBy(
                         order -> {
-                            long orderTime = order.getTime().getTime();
-                            return new Timestamp((orderTime / DAYS_DIVIDER) * DAYS_DIVIDER);
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.setTimeInMillis(order.getTime().getTime());
+                            calendar.set(Calendar.HOUR_OF_DAY, 0);
+                            calendar.set(Calendar.MINUTE, 0);
+                            calendar.set(Calendar.SECOND, 0);
+                            calendar.set(Calendar.MILLISECOND, 0);
+                            return new Timestamp(calendar.getTimeInMillis());
                         }
                 ))
                 .entrySet()
