@@ -30,8 +30,7 @@ public class ValidatorForParentheses {
         brackets.put((int) ')', (int) '(');
         ArrayDeque<Integer> arrayDeque = new ArrayDeque<>();
         boolean mod = false;
-        for (int i :
-                value.getBytes(StandardCharsets.UTF_8)) {
+        for (int i : value.getBytes(StandardCharsets.UTF_8)) {
             if (brackets.containsValue(i)) {
                 arrayDeque.addLast(i);
                 mod = true;
