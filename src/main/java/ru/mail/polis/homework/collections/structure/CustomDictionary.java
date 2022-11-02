@@ -18,7 +18,7 @@ public class CustomDictionary {
     private final Map<Map<Character, Integer>, Set<String>> data;
     private int size;
 
-    CustomDictionary() {
+    public CustomDictionary() {
         data = new HashMap<>();
     }
 
@@ -54,7 +54,7 @@ public class CustomDictionary {
     public boolean contains(String value) {
         checkArgument(value);
         Set<String> setWithThisValue = data.get(convertToMapOfLetters(value));
-        return hasElements(setWithThisValue) && setWithThisValue.contains(value);
+        return !isEmpty(setWithThisValue) && setWithThisValue.contains(value);
     }
 
     /**
@@ -68,7 +68,7 @@ public class CustomDictionary {
     public boolean remove(String value) {
         checkArgument(value);
         Set<String> setWithThisValue = data.get(convertToMapOfLetters(value));
-        if (hasElements(setWithThisValue) && setWithThisValue.removeIf(str -> (str.equals(value)))) {
+        if (!isEmpty(setWithThisValue) && setWithThisValue.removeIf(str -> (str.equals(value)))) {
             size--;
             return true;
         }
@@ -97,7 +97,7 @@ public class CustomDictionary {
     public List<String> getSimilarWords(String value) {
         checkArgument(value);
         Set<String> setWithThisValue = data.get(convertToMapOfLetters(value));
-        if (hasElements(setWithThisValue)) {
+        if (!isEmpty(setWithThisValue)) {
             return new ArrayList<>(setWithThisValue);
         }
         return Collections.emptyList();
@@ -123,8 +123,8 @@ public class CustomDictionary {
         return letterCountMap;
     }
 
-    private static boolean hasElements(Set<String> setWithStrings) {
-        return setWithStrings != null && !setWithStrings.isEmpty();
+    private static boolean isEmpty(Set<String> setWithStrings) {
+        return setWithStrings == null || setWithStrings.isEmpty();
     }
 
     private static void checkArgument(String value) {

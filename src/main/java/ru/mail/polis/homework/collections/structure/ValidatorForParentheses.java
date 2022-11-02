@@ -2,6 +2,7 @@ package ru.mail.polis.homework.collections.structure;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
 
 /**
  * Задание оценивается в 2 тугрика.
@@ -24,8 +25,28 @@ public class ValidatorForParentheses {
         return symbol == '}' || symbol == ']' || symbol == ')' || symbol == '>';
     }
 
+    private static boolean isSquareBrackets(char leftParenthesis, char rightParenthesis) {
+        return leftParenthesis == '[' && rightParenthesis == ']';
+    }
+
+
+    private static boolean isAngleBrackets(char leftParenthesis, char rightParenthesis) {
+        return leftParenthesis == '<' && rightParenthesis == '>';
+    }
+
+    private static boolean isCircularBrackets(char leftParenthesis, char rightParenthesis) {
+        return leftParenthesis == '(' && rightParenthesis == ')';
+    }
+
+    private static boolean isCurlyBrackets(char leftParenthesis, char rightParenthesis) {
+        return leftParenthesis == '{' && rightParenthesis == '}';
+    }
+
     private static boolean areEqual(char leftParenthesis, char rightParenthesis) {
-        return (leftParenthesis == '{' && rightParenthesis == '}') || (leftParenthesis == '[' && rightParenthesis == ']') || (leftParenthesis == '(' && rightParenthesis == ')') || (leftParenthesis == '<' && rightParenthesis == '>');
+        return isSquareBrackets(leftParenthesis, rightParenthesis)
+                || isCurlyBrackets(leftParenthesis, rightParenthesis)
+                || isCircularBrackets(leftParenthesis, rightParenthesis)
+                || isAngleBrackets(leftParenthesis, rightParenthesis);
     }
 
     public static boolean validate(String value) {
@@ -35,7 +56,6 @@ public class ValidatorForParentheses {
         boolean hasBrackets = false;
         Deque<Character> myStack = new ArrayDeque<>();
         char[] charsOfValue = value.toCharArray();
-        int size = charsOfValue.length;
         for (char symbol : charsOfValue) {
             if (isLeftParenthesis(symbol)) {
                 myStack.addLast(symbol);
@@ -45,11 +65,10 @@ public class ValidatorForParentheses {
                 if (myStack.isEmpty()) {
                     return false;
                 }
-                char leftParenthesis = myStack.peekLast();
+                char leftParenthesis = myStack.pollLast();
                 if (!areEqual(leftParenthesis, symbol)) {
                     return false;
                 }
-                myStack.pollLast();
             }
         }
         return myStack.isEmpty() && hasBrackets;
