@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -10,7 +13,7 @@ import java.util.*;
  */
 public class CustomDictionary {
 
-    List<String> store = new ArrayList<>();
+    private final List<String> store = new ArrayList<>();
 
     /**
      * Сохранить строку в структуру данных
@@ -72,50 +75,21 @@ public class CustomDictionary {
      */
     public List<String> getSimilarWords(String value) {
 
-        Character[] letters = new Character[value.length()];
+        char[] letters = value.toLowerCase().toCharArray();
+        Arrays.sort(letters);
+        String currentElement;
         List<String> result = new ArrayList<>();
 
-        for (int i = 0; i < value.length(); i++) {
-            if (value.toLowerCase(Locale.ROOT).charAt(i) >= 97 && value.toLowerCase(Locale.ROOT).charAt(i) <= 122) {
-                letters[i] = value.toLowerCase(Locale.ROOT).charAt(i);
-            }
-        }
-
-        // Counting unique letters in value
-        int[] countOfUniqueLetterInValue = new int[26];
-        int shift = 97; // Position of 'a' in ascii
-
-        for (int i = 0; i < letters.length; i++) {
-            if (letters[i] == null) {
-                continue;
-            }
-            countOfUniqueLetterInValue[letters[i] - shift]++;
-        }
-
         for (String element : store) {
-            if (value.length() != element.length()) {
+            if (letters.length != element.length()) {
                 continue;
             }
 
-            int[] countOfUniqueLetterInElement = new int[26];
-            Character[] lettersInElement = new Character[element.length()];
-
-            for (int i = 0; i < value.length(); i++) {
-                if (element.toLowerCase(Locale.ROOT).charAt(i) >= 97 && element.toLowerCase(Locale.ROOT).charAt(i) <= 122) {
-                    lettersInElement[i] = element.toLowerCase(Locale.ROOT).charAt(i);
-                }
-            }
-
-
-            for (int i = 0; i < element.length(); i++) {
-                if (lettersInElement[i] == null) {
-                    continue;
-                }
-                countOfUniqueLetterInElement[lettersInElement[i] - shift]++;
-            }
-
-            if (Arrays.equals(countOfUniqueLetterInElement, countOfUniqueLetterInValue)) {
-                result.add(element);
+            currentElement = element;
+            char[] elementChars = element.toLowerCase().toCharArray();
+            Arrays.sort(elementChars);
+            if (Arrays.equals(elementChars, letters)) {
+                result.add(currentElement);
             }
         }
 

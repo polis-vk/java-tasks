@@ -1,20 +1,33 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Collection;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
+import java.util.ConcurrentModificationException;
+
 
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
  * При изменении размера массива помните про метод System.arraycopy()
- *
+ * <p>
  * Задание оценивается в 10 тугриков
  */
 public class CustomArrayList<E> implements List<E> {
     private Object[] internalArray;
     private int size;
     private int modCount;
+    private final int DEFAULT_SIZE = 16;
 
     public CustomArrayList() {
-        this.internalArray = new Object[0];
+        this.internalArray = new Object[DEFAULT_SIZE];
+    }
+
+    public CustomArrayList(List<E> list) {
+        this.internalArray = list.toArray();
     }
 
     @Override
@@ -49,11 +62,11 @@ public class CustomArrayList<E> implements List<E> {
                     throw new ConcurrentModificationException();
                 }
 
-                if (hasNext()) {
-                    return (E) internalArray[lastEl++];
-                } else {
+                if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
+
+                return (E) internalArray[lastEl++];
             }
         };
     }
@@ -65,11 +78,13 @@ public class CustomArrayList<E> implements List<E> {
 
     @Override
     public <T> T[] toArray(T[] a) {
-        if (a.length < size)
+        if (a.length < size) {
             return (T[]) Arrays.copyOf(internalArray, size, a.getClass());
+        }
         System.arraycopy(internalArray, 0, a, 0, size);
-        if (a.length > size)
+        if (a.length > size) {
             a[size] = null;
+        }
         return a;
     }
 
@@ -93,22 +108,24 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public boolean remove(Object o) {
         int indexOfO = 0;
-        if (o == null) {
-            for (; indexOfO < size; indexOfO++) {
-                if (internalArray[indexOfO] == null) {
+        if (Objects.equals(null, o)) {
+            for (int i = 0; i < size; i++) {
+                if (internalArray[i] == null) {
+                    indexOfO = i;
                     break;
-                } else if (indexOfO == size - 1 && internalArray[indexOfO] != null) {
-                    return false;
                 }
             }
         } else {
-            for (; indexOfO < size; indexOfO++) {
-                if (internalArray[indexOfO].equals(o)) {
+            for (int i = 0; i < size; i++) {
+                if (internalArray[i].equals(o)) {
+                    indexOfO = i;
                     break;
-                } else if (indexOfO == size - 1 && !internalArray[indexOfO].equals(o)) {
-                    return false;
                 }
             }
+        }
+
+        if (indexOfO == size - 1 && !internalArray[indexOfO].equals(o)) {
+            return false;
         }
 
         if (indexOfO == size - 1) {
@@ -117,7 +134,7 @@ public class CustomArrayList<E> implements List<E> {
         }
 
         System.arraycopy(internalArray, indexOfO + 1, internalArray, indexOfO, size - indexOfO);
-        size--;
+        internalArray[size--] = null;
         modCount++;
 
         return true;
@@ -126,11 +143,9 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public boolean containsAll(Collection<?> c) {
         Object[] arrayFromC = c.toArray();
-        boolean result;
 
         for (int i = 0; i < arrayFromC.length; i++) {
-            result = this.contains(arrayFromC[i]);
-            if (!result) {
+            if (!contains(arrayFromC[i])) {
                 return false;
             }
         }
@@ -167,7 +182,8 @@ public class CustomArrayList<E> implements List<E> {
             System.arraycopy(internalArray, index, newInternalArray, arrayOfNewElements.length + index, internalArray.length - index);
             internalArray = newInternalArray;
         } else {
-            System.arraycopy(arrayOfNewElements, 0, internalArray, size, arrayOfNewElements.length);
+            System.arraycopy(internalArray, index, internalArray, arrayOfNewElements.length + index, size - index);
+            System.arraycopy(arrayOfNewElements, 0, internalArray, index, arrayOfNewElements.length);
         }
 
         size += arrayOfNewElements.length;
@@ -180,7 +196,9 @@ public class CustomArrayList<E> implements List<E> {
         Object[] arrFromC = c.toArray();
 
         for (Object o : arrFromC) {
-            this.remove(o);
+            while (this.contains(o)) {
+                this.remove(o);
+            }
         }
 
         modCount++;
@@ -193,7 +211,7 @@ public class CustomArrayList<E> implements List<E> {
 
         for (int i = 0; i < size; i++) {
             if (!c.contains(internalArray[i])) {
-                this.remove(internalArray[i]);
+                this.remove(i);
                 i--;
             }
         }
@@ -230,13 +248,14 @@ public class CustomArrayList<E> implements List<E> {
         Object[] newInternalArray;
         if (size >= internalArray.length) {
             newInternalArray = new Object[(int) (internalArray.length * 1.5 + 1)];
+            System.arraycopy(internalArray, 0, newInternalArray, 0, index);
+            newInternalArray[index] = element;
+            System.arraycopy(internalArray, index, newInternalArray, index + 1, size - index);
+            internalArray = newInternalArray;
         } else {
-            newInternalArray = new Object[internalArray.length];
+            System.arraycopy(internalArray, index, internalArray, index + 1, size - index);
+            internalArray[index] = element;
         }
-        System.arraycopy(internalArray, 0, newInternalArray, 0, index);
-        newInternalArray[index] = element;
-        System.arraycopy(internalArray, index, newInternalArray, index + 1, size - index);
-        internalArray = newInternalArray;
 
         size++;
         modCount++;
@@ -260,14 +279,14 @@ public class CustomArrayList<E> implements List<E> {
     @Override
     public int indexOf(Object o) {
         int i = 0;
-        if (o == null) {
-            for(; i < size; i++) {
+        if (Objects.equals(null, o)) {
+            for (; i < size; i++) {
                 if (internalArray[i] == null) {
                     return i;
                 }
             }
         } else {
-            for(; i < size; i++) {
+            for (; i < size; i++) {
                 if (internalArray[i].equals(o)) {
                     return i;
                 }
@@ -281,13 +300,13 @@ public class CustomArrayList<E> implements List<E> {
     public int lastIndexOf(Object o) {
         int i = size - 1;
         if (o == null) {
-            for(; i >= 0; i--) {
+            for (; i >= 0; i--) {
                 if (internalArray[i] == null) {
                     return i;
                 }
             }
         } else {
-            for(; i >= 0; i--) {
+            for (; i >= 0; i--) {
                 if (internalArray[i].equals(o)) {
                     return i;
                 }
@@ -324,7 +343,7 @@ public class CustomArrayList<E> implements List<E> {
         @Override
         public E next() {
             if (hasNext()) {
-                lastReturned++;
+                lastReturned = pointer;
                 return (E) internalArray[pointer++];
             } else {
                 throw new NoSuchElementException();
@@ -339,13 +358,16 @@ public class CustomArrayList<E> implements List<E> {
         @Override
         public E previous() {
             int i = pointer - 1;
-            if (i < 0)
+            if (i < 0) {
                 throw new NoSuchElementException();
-            Object[] internalArray = CustomArrayList.this.internalArray;
-            if (i >= internalArray.length)
+            }
+
+            if (i >= internalArray.length) {
                 throw new ConcurrentModificationException();
+            }
             pointer = i;
-            return (E) internalArray[lastReturned = i];
+            lastReturned = i;
+            return (E) internalArray[i];
         }
 
         @Override
@@ -380,8 +402,9 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public void set(E e) {
-            if (lastReturned < 0)
+            if (lastReturned < 0) {
                 throw new IllegalStateException();
+            }
 
             if (modCount != expectedModCount) {
                 throw new ConcurrentModificationException();
