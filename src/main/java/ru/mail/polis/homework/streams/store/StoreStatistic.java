@@ -27,7 +27,7 @@ public class StoreStatistic {
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
         return orders.stream()
-                .filter(order -> order.getTime().before(to) && order.getTime().after(from))
+                .filter(order -> order.getTime().compareTo(to) <= 0 && order.getTime().compareTo(from) >= 0)
                 .map(order -> order.getItemCount().getOrDefault(typeItem, 0))
                 .reduce(0, Integer::sum);
     }
@@ -46,6 +46,7 @@ public class StoreStatistic {
                     Calendar calendar = new GregorianCalendar();
                     calendar.setTime(new Date(timestamp.getTime()));
                     calendar.set(Calendar.HOUR, 0);
+                    calendar.set(Calendar.HOUR_OF_DAY, 0);
                     calendar.set(Calendar.MINUTE, 0);
                     calendar.set(Calendar.SECOND, 0);
                     calendar.set(Calendar.MILLISECOND, 0);
@@ -96,8 +97,8 @@ public class StoreStatistic {
                 .sorted((o1, o2) -> o2.getValue() - o1.getValue())
                 .limit(5)
                 .map(entry -> {
-                    long sum = entry.getKey().getItemCount().keySet().stream()
-                            .map(Item::getPrice)
+                    long sum = entry.getKey().getItemCount().entrySet().stream()
+                            .map(entryItem -> entryItem.getValue() * entryItem.getKey().getPrice())
                             .reduce(0L, Long::sum);
                     return new AbstractMap.SimpleEntry<>(entry.getKey(), sum);
                 })
