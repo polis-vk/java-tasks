@@ -1,15 +1,15 @@
 package ru.mail.polis.homework.streams.store;
 
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Класс для работы со статистикой по заказам магазина.
  * Оценка 5-ть баллов
  */
 public class StoreStatistic {
-
+    private final static int LIMIT = 5;
     /**
      * Вернуть сколько было продано определенного товара за переданный промежуток времени
      *
@@ -20,7 +20,16 @@ public class StoreStatistic {
      * @return - кол-во проданного товара
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
-        return 0L;
+        long startTime = from.getTime();
+        long endTime = to.getTime();
+        return orders.stream()
+                .filter(order -> {
+                    long orderTime = order.getTime().getTime();
+                    return orderTime >= startTime && orderTime <= endTime && order.getItemCount().get(typeItem) != null;
+                })
+                .map(order -> order.getItemCount().get(typeItem))
+                .mapToLong(Integer::longValue)
+                .sum();
     }
 
     /**
@@ -39,7 +48,17 @@ public class StoreStatistic {
      * @return - товар
      */
     public Item mostPopularItem(List<Order> orders) {
-        return null;
+        return orders.stream()
+                .flatMap(order -> order.getItemCount()
+                        .entrySet()
+                        .stream())
+                .collect(Collectors
+                        .groupingBy(Map.Entry::getKey, Collectors.summingLong(Map.Entry::getValue)))
+                .entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .get()
+                .getKey();
     }
 
     /**
@@ -48,6 +67,20 @@ public class StoreStatistic {
      * @return map - заказ / общая сумма заказа
      */
     public Map<Order, Long> sum5biggerOrders(List<Order> orders) {
-        return null;
+        return orders.stream()
+                .sorted(Comparator.comparingLong(order -> -order.getItemCount()
+                        .entrySet()
+                        .stream()
+                        .mapToLong(Map.Entry::getValue)
+                        .sum()))
+                .limit(LIMIT)
+                .collect(Collectors.toMap(
+                        order -> order,
+                        order -> order.getItemCount()
+                                .entrySet()
+                                .stream()
+                                .mapToLong(entry -> entry.getValue() * entry.getKey().getPrice())
+                                .sum()
+                ));
     }
 }
