@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.io.objects;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -177,7 +179,7 @@ public class Serializer {
         if (!Files.exists(fileNamePath)) {
             return;
         }
-        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(fileNamePath))) {
+        try (DataOutputStream out = new DataOutputStream(Files.newOutputStream(fileNamePath))) {
             for (Animal animal : animals) {
                 out.writeUTF(animal.getAlias());
                 out.writeInt(animal.getLegsCount());
@@ -188,7 +190,6 @@ public class Serializer {
                 out.writeUTF(animalOrganization.getCountry());
                 out.writeLong(animalOrganization.getLicenseNumber());
                 out.writeUTF(animal.getGender().name());
-                out.flush();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -210,19 +211,19 @@ public class Serializer {
         }
         List<Animal> animals = new ArrayList<>();
         try (InputStream in = Files.newInputStream(fileNamePath)) {
-            ObjectInputStream objectIn = new ObjectInputStream(in);
+            DataInputStream dataIn = new DataInputStream(in);
             while (in.available() > 0) {
                 Animal animal = new Animal();
-                animal.setAlias(objectIn.readUTF());
-                animal.setLegsCount(objectIn.readInt());
-                animal.setPoisonous(objectIn.readBoolean());
-                animal.setWild(objectIn.readBoolean());
+                animal.setAlias(dataIn.readUTF());
+                animal.setLegsCount(dataIn.readInt());
+                animal.setPoisonous(dataIn.readBoolean());
+                animal.setWild(dataIn.readBoolean());
                 Organization animalOrganization = new Organization();
-                animalOrganization.setName(objectIn.readUTF());
-                animalOrganization.setCountry(objectIn.readUTF());
-                animalOrganization.setLicenseNumber(objectIn.readLong());
+                animalOrganization.setName(dataIn.readUTF());
+                animalOrganization.setCountry(dataIn.readUTF());
+                animalOrganization.setLicenseNumber(dataIn.readLong());
                 animal.setOrganization(animalOrganization);
-                animal.setGender(Gender.valueOf(objectIn.readUTF()));
+                animal.setGender(Gender.valueOf(dataIn.readUTF()));
                 animals.add(animal);
             }
         } catch (IOException e) {
