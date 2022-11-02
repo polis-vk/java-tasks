@@ -1,6 +1,12 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,7 +36,13 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
-
+        try (final ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            for (Animal animal : animals) {
+                objectOutputStream.writeObject(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -41,7 +53,15 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
+        ArrayList<Animal> list = new ArrayList<>();
+        try (final ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
+            while (objectInputStream.available() > 0) {
+                list.add((Animal) objectInputStream.readObject());
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
 
@@ -52,7 +72,13 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
-
+        try (final ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            for (AnimalWithMethods animal : animals) {
+                objectOutputStream.writeObject(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -64,7 +90,15 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
-        return Collections.emptyList();
+        ArrayList<AnimalWithMethods> list = new ArrayList<>();
+        try (final ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
+            while (objectInputStream.available() > 0) {
+                list.add((AnimalWithMethods) objectInputStream.readObject());
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     /**
@@ -74,7 +108,13 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
-
+        try (final ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            for (AnimalExternalizable animal : animals) {
+                objectOutputStream.writeObject(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -86,7 +126,15 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-        return Collections.emptyList();
+        ArrayList<AnimalExternalizable> list = new ArrayList<>();
+        try (final ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
+            while (objectInputStream.available() > 0) {
+                list.add((AnimalExternalizable) objectInputStream.readObject());
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     /**

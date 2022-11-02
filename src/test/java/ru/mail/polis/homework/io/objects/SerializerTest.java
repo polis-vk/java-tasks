@@ -1,42 +1,42 @@
 package ru.mail.polis.homework.io.objects;
 
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class SerializerTest {
 
-    private static final AnimalExternalizable ANIMAL_EXAMPLE = new AnimalExternalizable("COLOR");
-
-    @Test
-    public void testSerializeWithExternalizable() throws IOException {
-        FileOutputStream fos = new FileOutputStream("file.txt");
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-
-        oos.writeObject(ANIMAL_EXAMPLE);
-
-        oos.flush();
-        oos.close();
-        fos.close();
+    private static Animal getRandomAnimal() {
+        return null;
     }
 
     @Test
-    public void testDeserializeWithExternalizable() throws IOException, ClassNotFoundException {
-        FileInputStream fis = new FileInputStream("file.txt");
-        ObjectInputStream ois = new ObjectInputStream(fis);
+    public void testDefaultSerialize() {
+    }
 
-        AnimalExternalizable animal = (AnimalExternalizable) ois.readObject();
+    @Test
+    public void testDefaultDeserialize() {
+    }
 
-        assertEquals(ANIMAL_EXAMPLE, animal);
+    @Test
+    public void testSerializeWithMethods() {
+    }
 
-        ois.close();
-        fis.close();
+    @Test
+    public void testDeserializeWithMethods() {
+    }
+
+    @Test
+    public void testSerializeWithExternalizable() {
+    }
+
+    @Test
+    public void testDeserializeWithExternalizable() {
+    }
+
+    @Test
+    public void testCustomSerialize() {
+    }
+
+    @Test
+    public void testCustomDeserialize() {
     }
 }
