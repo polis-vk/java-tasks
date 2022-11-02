@@ -112,7 +112,7 @@ public class Serializer {
         List<AnimalWithMethods> animals = new ArrayList<>();
         try (InputStream in = Files.newInputStream(fileNamePath)) {
             ObjectInputStream objectIn = new ObjectInputStream(in);
-            if (in.available() > 0) {
+            while (in.available() > 0) {
                 animals.add((AnimalWithMethods) objectIn.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -175,6 +175,26 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
+        Path fileNamePath = Paths.get(fileName);
+        if (!Files.exists(fileNamePath)) {
+            return;
+        }
+        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(fileNamePath))) {
+            for (Animal animal : animals) {
+                out.writeUTF(animal.getAlias());
+                out.writeInt(animal.getLegsCount());
+                out.writeBoolean(animal.isPoisonous());
+                out.writeBoolean(animal.isWild());
+                Organization animalOrganization = animal.getOrganization();
+                out.writeUTF(animalOrganization.getName());
+                out.writeUTF(animalOrganization.getCountry());
+                out.writeLong(animalOrganization.getLicenseNumber());
+                out.writeUTF(animal.getGender().name());
+//                out.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -186,6 +206,30 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+        Path fileNamePath = Paths.get(fileName);
+        if (!Files.exists(fileNamePath)) {
+            return null;
+        }
+        List<Animal> animals = new ArrayList<>();
+        try (InputStream in = Files.newInputStream(fileNamePath)) {
+            ObjectInputStream objectIn = new ObjectInputStream(in);
+            while (in.available() > 0) {
+                Animal animal = new Animal();
+                animal.setAlias(objectIn.readUTF());
+                animal.setLegsCount(objectIn.readInt());
+                animal.setPoisonous(objectIn.readBoolean());
+                animal.setWild(objectIn.readBoolean());
+                Organization animalOrganization = new Organization();
+                animalOrganization.setName(objectIn.readUTF());
+                animalOrganization.setCountry(objectIn.readUTF());
+                animalOrganization.setLicenseNumber(objectIn.readLong());
+                animal.setOrganization(animalOrganization);
+                animal.setGender(Gender.valueOf(objectIn.readUTF()));
+                animals.add(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return animals;
     }
 }

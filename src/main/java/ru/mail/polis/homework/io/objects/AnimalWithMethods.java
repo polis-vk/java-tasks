@@ -183,7 +183,6 @@ class OrganizationWithMethods implements Serializable {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-
         OrganizationWithMethods organizationObj = (OrganizationWithMethods) obj;
         return getName().equals(organizationObj.getName()) &&
                 getCountry().equals(organizationObj.getCountry()) &&

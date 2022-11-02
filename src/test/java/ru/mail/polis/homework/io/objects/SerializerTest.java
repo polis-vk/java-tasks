@@ -18,10 +18,10 @@ public class SerializerTest {
     private static final Random RANDOM = new Random();
 
     private static final Serializer SERIALIZER = new Serializer();
-    private static final String WORKING_FILENAME = "ficko.txt";
+    private static final String WORKING_FILENAME = "ficko.bin";
     private static final Path WORKING_PATH = Paths.get(WORKING_FILENAME);
     private static final int MAX_ANIMAL_LEGS_COUNT = 4;
-    private static final int SELECTION_COUNT = 6;
+    private static final int SELECTION_COUNT = 20_000;
 
     @Before
     public void setUp() throws IOException {
@@ -61,6 +61,16 @@ public class SerializerTest {
                 .collect(Collectors.toList());
         SERIALIZER.serializeWithMethods(animals, WORKING_FILENAME);
         List<AnimalWithMethods> animalsDeserialized = SERIALIZER.deserializeWithMethods(WORKING_FILENAME);
+        assertEquals(animals, animalsDeserialized);
+    }
+
+    @Test
+    public void checkCustomSerializeAndDeserializeForCorrectness() {
+        List<Animal> animals = Stream.generate(SerializerTest::generateAnimal)
+                .limit(SELECTION_COUNT)
+                .collect(Collectors.toList());
+        SERIALIZER.customSerialize(animals, WORKING_FILENAME);
+        List<Animal> animalsDeserialized = SERIALIZER.customDeserialize(WORKING_FILENAME);
         assertEquals(animals, animalsDeserialized);
     }
 

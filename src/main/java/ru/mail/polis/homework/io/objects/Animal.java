@@ -17,6 +17,9 @@ public class Animal implements Serializable {
     private Organization organization;
     private Gender gender;
 
+    public Animal() {
+    }
+
     public Animal(String alias, int legsCount, boolean poisonous,
                   boolean wild, Organization organization, Gender gender) {
         this.alias = alias;
@@ -119,6 +122,9 @@ class Organization implements Serializable {
     private String name;
     private String country;
     private long licenseNumber;
+
+    public Organization() {
+    }
 
     public Organization(String name, String country, int licenseNumber) {
         this.name = name;
