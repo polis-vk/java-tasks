@@ -23,13 +23,17 @@ public class StoreStatistic {
      * @return - кол-во проданного товара
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
+        long fromTime = from.getTime();
+        long toTime = to.getTime();
         return orders.stream()
                 .filter(order -> {
-                    Timestamp orderTime = order.getTime();
-                    // maybe should consider item doesn't exist in order ?
-                    return orderTime.after(from) && orderTime.before(to);
+                    long orderTime = order.getTime().getTime();
+                    return order.getItemCount().get(typeItem) != null &&
+                            orderTime >= fromTime &&
+                            orderTime <= toTime;
                 })
-                .collect(Collectors.summingLong(order -> order.getItemCount().get(typeItem)));
+                .mapToLong(order -> order.getItemCount().get(typeItem))
+                .sum();
     }
 
     /**
@@ -43,7 +47,7 @@ public class StoreStatistic {
                 .collect(Collectors.groupingBy(
                         order -> {
                             long orderTime = order.getTime().getTime();
-                            return new Timestamp(orderTime - orderTime % DAYS_DIVIDER);
+                            return new Timestamp((orderTime / DAYS_DIVIDER) * DAYS_DIVIDER);
                         }
                 ))
                 .entrySet()
@@ -70,9 +74,7 @@ public class StoreStatistic {
                 .flatMap(order -> order.getItemCount().entrySet().stream())
                 .collect(Collectors.groupingBy(
                         Map.Entry::getKey,
-                        // maybe should summarize?
-                        Collectors.counting()
-                ))
+                        Collectors.summingLong(Map.Entry::getValue)))
                 .entrySet()
                 .stream()
                 .max(Comparator.comparingLong(Map.Entry::getValue))
