@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.streams.store;
 
 import java.sql.Timestamp;
-import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,8 @@ public class StoreStatistic {
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
         return orders.stream()
-                .filter(order -> order.getTime().after(from) && order.getTime().before(to))
+                .filter(order -> (from.compareTo(order.getTime()) <= 0 &&
+                        to.compareTo(order.getTime()) >= 0))
                 .flatMap(order -> (order.getItemCount().entrySet().stream()))
                 .filter(entrySet -> (entrySet.getKey().equals(typeItem)))
                 .mapToLong(Map.Entry::getValue).sum();
@@ -39,8 +39,7 @@ public class StoreStatistic {
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
         return orders.stream()
-                .collect(Collectors.groupingBy(order ->
-                        Timestamp.from(order.getTime().toInstant().truncatedTo(ChronoUnit.DAYS))))
+                .collect(Collectors.groupingBy(order -> getDateWithZeroTime(order.getTime())))
                 .entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, dayOrdersEntry -> dayOrdersEntry.getValue()
                         .stream()
@@ -75,11 +74,15 @@ public class StoreStatistic {
                 .collect(Collectors.toMap(order -> order, Order::getItemCount))
                 .entrySet().stream()
                 .sorted(Comparator.comparingLong(entryOrderMap ->
-                                        (-entryOrderMap.getValue().values().stream()
-                                                .mapToLong(value -> value).sum())))
+                        (-entryOrderMap.getValue().values().stream()
+                                .mapToLong(value -> value).sum())))
                 .limit(5)
                 .collect(Collectors.toMap(Map.Entry::getKey, entryOrderMap -> (entryOrderMap.getValue().entrySet().stream()
                         .mapToLong(entryItemCount ->
                                 (entryItemCount.getKey().getPrice() * entryItemCount.getValue())).sum())));
+    }
+
+    private Timestamp getDateWithZeroTime(Timestamp timestamp) {
+        return Timestamp.valueOf(timestamp.toString().split(" ")[0] + " 00:00:00");
     }
 }
