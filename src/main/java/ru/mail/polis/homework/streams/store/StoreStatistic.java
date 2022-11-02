@@ -25,7 +25,8 @@ public class StoreStatistic {
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
         return orders.stream()
-                .filter(order -> order.getTime().after(from) && order.getTime().before(to))
+                .filter(order -> order.getTime().equals(from) ||
+                        order.getTime().after(from) && order.getTime().before(to) || order.getTime().equals(to))
                 .map(order -> order.getItemCount().get(typeItem))
                 .filter(Objects::nonNull)
                 .mapToLong(Integer::longValue)
