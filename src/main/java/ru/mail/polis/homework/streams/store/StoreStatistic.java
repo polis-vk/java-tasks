@@ -3,6 +3,7 @@ package ru.mail.polis.homework.streams.store;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,7 +28,7 @@ public class StoreStatistic {
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
         return orders.stream()
-                .filter(order -> order.getTime().after(from) && order.getTime().before(to))
+                .filter(order -> order.getTime().compareTo(from) >= 0 && order.getTime().compareTo(to) <= 0)
                 .flatMap(order -> order.getItemCount().entrySet().stream())
                 .filter(itemIntegerEntry -> itemIntegerEntry.getKey().equals(typeItem))
                 .mapToLong(Map.Entry::getValue)
@@ -84,7 +85,7 @@ public class StoreStatistic {
                                 .sum()
                 ))
                 .entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .limit(BIGGER_ORDERS_COUNT)
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
