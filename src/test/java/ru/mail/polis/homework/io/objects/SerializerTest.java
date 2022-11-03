@@ -75,9 +75,9 @@ public class SerializerTest {
         List<A> deserializedAnimals = deserializer.apply(WORKING_FILENAME);
         long timeMillisAfterReading = System.currentTimeMillis();
         assertEquals(generatedAnimals, deserializedAnimals);
-        System.out.printf("Размер файла: %d\n", Files.size(WORKING_PATH));
-        System.out.printf("Время записи: %d\n", timeMillisAfterWriting - timeMillisBeforeWriting);
-        System.out.printf("Время чтения: %d\n", timeMillisAfterReading - timeMillisAfterWriting);
+        System.out.printf("Размер файла: %d байт\n", Files.size(WORKING_PATH));
+        System.out.printf("Время записи: %d мс\n", timeMillisAfterWriting - timeMillisBeforeWriting);
+        System.out.printf("Время чтения: %d мс\n", timeMillisAfterReading - timeMillisAfterWriting);
     }
 
     private static Animal generateAnimal() {
