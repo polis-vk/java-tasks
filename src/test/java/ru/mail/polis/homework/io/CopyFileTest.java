@@ -23,70 +23,70 @@ public class CopyFileTest {
 
     @Before
     public void setUp() throws Exception {
-//        // --------------------------------------- create source for copyOnlyFile --------------------------------------
-//        Path dir = Paths.get("src", "test", "resources", "directories", "copy", "first");
-//        Path file = Paths.get("src", "test", "resources", "directories", "copy", "first", "file.txt");
-//        Files.createDirectories(dir);
-//        createFile(file);
-//        // --------------------------------------- create source for copyOnlyFile --------------------------------------
-//
-//
-//        // --------------------------------------- create source for copyOnlyDir ---------------------------------------
-//        Path dir2 = Paths.get("src", "test", "resources", "directories", "copy", "second");
-//        Files.createDirectories(dir2);
-//        // --------------------------------------- create source for copyOnlyDir ---------------------------------------
-//
-//
-//        // ------------------------------------- create source for copyDirWithFiles ------------------------------------
-//        Path dir3 = Paths.get("src", "test", "resources", "directories", "copy", "third");
-//        Path file1 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file1.txt");
-//        Path file2 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file2.txt");
-//        Path file3 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file3.txt");
-//        Path file4 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file4.txt");
-//        Files.createDirectories(dir3);
-//        createFile(file1);
-//        createFile(file2);
-//        createFile(file3);
-//        createFile(file4);
-//        // ------------------------------------- create source for copyDirWithFiles ------------------------------------
-//
-//
-//        // --------------------------------------- create source for copyDirHard ---------------------------------------
-//        Path dir5 = Paths.get("src", "test", "resources", "directories", "copy", "fifth");
-//        Files.createDirectories(dir5);
-//        for (int i = 0; i < 10; i++) {
-//            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "file" + i + ".txt"));
-//        }
-//        Path dir51 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1");
-//        Files.createDirectories(dir51);
-//        createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1", "file1.txt"));
-//        Path dir52 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2");
-//        Files.createDirectories(dir52);
-//        Path dir53 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1", "dir1dir1");
-//        Files.createDirectories(dir53);
-//        for (int i = 0; i < 3; i++) {
-//            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1", "dir1dir1",
-//                    "file" + i + ".txt"));
-//        }
-//        Path dir54 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1", "dir1dir2");
-//        Files.createDirectories(dir54);
-//        Path dir55 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1");
-//        Files.createDirectories(dir55);
-//        createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1",
-//                "file1.txt"));
-//        Path dir56 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir2");
-//        Files.createDirectories(dir56);
-//        for (int i = 0; i < 5; i++) {
-//            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir2",
-//                    "file" + i + ".txt"));
-//        }
-//        Path dir57 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1", "dirdir");
-//        Files.createDirectories(dir57);
-//        for (int i = 0; i < 7; i++) {
-//            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1", "dirdir",
-//                    "file" + i + ".txt"));
-//        }
-//        // --------------------------------------- create source for copyDirHard ---------------------------------------
+        // --------------------------------------- create source for copyOnlyFile --------------------------------------
+        Path dir = Paths.get("src", "test", "resources", "directories", "copy", "first");
+        Path file = Paths.get("src", "test", "resources", "directories", "copy", "first", "file.txt");
+        Files.createDirectories(dir);
+        createFile(file);
+        // --------------------------------------- create source for copyOnlyFile --------------------------------------
+
+
+        // --------------------------------------- create source for copyOnlyDir ---------------------------------------
+        Path dir2 = Paths.get("src", "test", "resources", "directories", "copy", "second");
+        Files.createDirectories(dir2);
+        // --------------------------------------- create source for copyOnlyDir ---------------------------------------
+
+
+        // ------------------------------------- create source for copyDirWithFiles ------------------------------------
+        Path dir3 = Paths.get("src", "test", "resources", "directories", "copy", "third");
+        Path file1 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file1.txt");
+        Path file2 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file2.txt");
+        Path file3 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file3.txt");
+        Path file4 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file4.txt");
+        Files.createDirectories(dir3);
+        createFile(file1);
+        createFile(file2);
+        createFile(file3);
+        createFile(file4);
+        // ------------------------------------- create source for copyDirWithFiles ------------------------------------
+
+
+        // --------------------------------------- create source for copyDirHard ---------------------------------------
+        Path dir5 = Paths.get("src", "test", "resources", "directories", "copy", "fifth");
+        Files.createDirectories(dir5);
+        for (int i = 0; i < 10; i++) {
+            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "file" + i + ".txt"));
+        }
+        Path dir51 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1");
+        Files.createDirectories(dir51);
+        createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1", "file1.txt"));
+        Path dir52 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2");
+        Files.createDirectories(dir52);
+        Path dir53 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1", "dir1dir1");
+        Files.createDirectories(dir53);
+        for (int i = 0; i < 3; i++) {
+            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1", "dir1dir1",
+                    "file" + i + ".txt"));
+        }
+        Path dir54 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1", "dir1dir2");
+        Files.createDirectories(dir54);
+        Path dir55 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1");
+        Files.createDirectories(dir55);
+        createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1",
+                "file1.txt"));
+        Path dir56 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir2");
+        Files.createDirectories(dir56);
+        for (int i = 0; i < 5; i++) {
+            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir2",
+                    "file" + i + ".txt"));
+        }
+        Path dir57 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1", "dirdir");
+        Files.createDirectories(dir57);
+        for (int i = 0; i < 7; i++) {
+            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1", "dirdir",
+                    "file" + i + ".txt"));
+        }
+        // --------------------------------------- create source for copyDirHard ---------------------------------------
 
     }
 
@@ -97,7 +97,7 @@ public class CopyFileTest {
 
     @Test
     public void copyOnlyFile() throws IOException {
-        Path file = Paths.get("src", "test", "resources", "directories", "copy", "first", "file.txt");
+        Path file = Paths.get("src",    "test", "resources", "directories", "copy", "first", "file.txt");
         Path dest = Paths.get("src", "test", "resources", "directories", "copy1", "first", "file.txt");
         CopyFile.copyFiles(file.toString(), dest.toString());
         checkCopy(file, dest, false);
