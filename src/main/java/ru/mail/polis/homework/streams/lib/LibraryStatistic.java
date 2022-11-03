@@ -1,13 +1,20 @@
 package ru.mail.polis.homework.streams.lib;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Класс для работы со статистикой по библиотеке.
  * Оценка 5-ть баллов
  */
 public class LibraryStatistic {
+    private static final int SPECIALIST_MIN_BOOKS = 5;
+    private static final int SPECIALIST_MIN_DAYS = 14;
+    private static final int READING_DAYS_LIMIT = 30;
 
     /**
      * Вернуть "специалистов" в литературном жанре с кол-вом прочитанных страниц.
@@ -18,7 +25,20 @@ public class LibraryStatistic {
      * @return - map пользователь / кол-во прочитанных страниц
      */
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
-        return null;
+        return library.getUsers().stream()
+                .filter(user -> library.getArchive().stream()
+                        .filter(data -> data.getUser().equals(user)
+                                && data.getBook().getGenre().equals(genre)
+                                && getReadingDays(data) >= SPECIALIST_MIN_DAYS)
+                        .count() >= SPECIALIST_MIN_BOOKS)
+                .collect(Collectors.toMap(Function.identity(), User::getReadedPages));
+    }
+
+    public int getReadingDays(ArchivedData data) {
+        if (data.getReturned() == null) {
+            return (int) TimeUnit.DAYS.convert(System.currentTimeMillis() - data.getTake().getTime(), TimeUnit.MILLISECONDS);
+        }
+        return (int) TimeUnit.DAYS.convert(data.getReturned().getTime() - data.getTake().getTime(), TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -29,7 +49,13 @@ public class LibraryStatistic {
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
-        return null;
+        return library.getArchive().stream()
+                .filter(archive -> archive.getUser().equals(user))
+                .collect(Collectors.groupingBy(data -> data.getBook().getGenre(), Collectors.counting()))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .get()
+                .getKey();
     }
 
     /**
@@ -39,7 +65,15 @@ public class LibraryStatistic {
      * @return - список ненадежных пользователей
      */
     public List<User> unreliableUsers(Library library) {
-        return null;
+        return library.getUsers().stream()
+                .filter(user -> library
+                        .getArchive().stream()
+                        .filter(data -> data.getUser().equals(user)
+                                && getReadingDays(data) > READING_DAYS_LIMIT)
+                        .count() > library.getArchive().stream()
+                        .filter(data -> data.getUser().equals(user))
+                        .count() / 2)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -49,7 +83,9 @@ public class LibraryStatistic {
      * @return - список книг
      */
     public List<Book> booksWithMoreCountPages(Library library, int countPage) {
-        return null;
+        return library.getBooks().stream()
+                .filter(book -> book.getPage() >= countPage)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -58,6 +94,18 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return null;
+        return library.getBooks().stream()
+                .collect(Collectors.groupingBy(Book::getGenre,
+                        Collectors.groupingBy(Book::getAuthor, Collectors.counting())))
+                .entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        genreMapEntry -> genreMapEntry
+                                .getValue()
+                                .entrySet()
+                                .stream()
+                                .max(Comparator.comparingLong(Map.Entry<String, Long>::getValue)
+                                        .thenComparing(Map.Entry.comparingByKey()))
+                                .get()
+                                .getKey()));
     }
 }
