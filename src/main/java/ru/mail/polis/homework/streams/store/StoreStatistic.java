@@ -5,7 +5,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import ru.mail.polis.homework.streams.lib.ArchivedData;
 
 /**
  * Класс для работы со статистикой по заказам магазина.
@@ -36,7 +40,16 @@ public class StoreStatistic {
      * значение - map товар/кол-во
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
-        return null;
+        return orders
+                .stream()
+                .collect(Collectors.toMap(
+                        o -> new Timestamp(o.getTime().getTime() - (o.getTime().getTime() + 10800000) % 86400000),
+                        Order::getItemCount,
+                        (map1, map2) -> {
+                            map2.forEach((item, amount) -> map1.merge(item, amount, Integer::sum));
+                            return map1;
+                        })
+                );
     }
 
     /**
