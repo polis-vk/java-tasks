@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.streams.store;
 
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 public class StoreStatistic {
 
     private static final int BEGINNING_OF_A_DAY_MILLISECONDS = 86400000;
+    private static final long TIMEZONE_OFFSET = ZonedDateTime.now().getOffset().getTotalSeconds() * 1000L;
 
     /**
      * Вернуть сколько было продано определенного товара за переданный промежуток времени
@@ -25,7 +27,9 @@ public class StoreStatistic {
      * @return - кол-во проданного товара
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
-        return orders.stream().filter(it -> it.getTime().before(to) && it.getTime().after(from))
+        return orders.stream().filter(it ->
+                (it.getTime().before(to) && it.getTime().after(from))
+                        || it.getTime().equals(from) || it.getTime().equals(to))
                 .mapToLong(it -> it.getItemCount().getOrDefault(typeItem, 0)).sum();
     }
 
@@ -37,8 +41,8 @@ public class StoreStatistic {
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
         return orders.stream().map(it ->
-                new Order(new Timestamp(it.getTime().getTime() -
-                        it.getTime().getTime() % BEGINNING_OF_A_DAY_MILLISECONDS),
+                new Order(new Timestamp(((it.getTime().getTime() + TIMEZONE_OFFSET)
+                        / BEGINNING_OF_A_DAY_MILLISECONDS) * BEGINNING_OF_A_DAY_MILLISECONDS - TIMEZONE_OFFSET),
                 it.getItemCount()))
                 .collect(Collectors.groupingBy(Order::getTime)).entrySet().stream().map(it ->
                         new Order(it.getKey(), it.getValue().stream()
