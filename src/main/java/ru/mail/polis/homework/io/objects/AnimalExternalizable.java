@@ -57,24 +57,8 @@ public class AnimalExternalizable implements Externalizable {
         this.age = age;
     }
 
-    public void setFriendly(boolean friendly) {
-        this.friendly = friendly;
-    }
-
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setWarmBlooded(boolean warmBlooded) {
-        this.warmBlooded = warmBlooded;
-    }
-
-    public void setAnimalType(AnimalType animalType) {
-        this.animalType = animalType;
-    }
-
-    public void setPopulation(Population population) {
-        this.population = population;
     }
 
     @Override

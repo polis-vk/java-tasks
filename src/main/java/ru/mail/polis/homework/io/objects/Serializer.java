@@ -1,10 +1,7 @@
 package ru.mail.polis.homework.io.objects;
 
-import java.io.DataOutputStream;
-import java.io.DataInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
@@ -49,10 +46,14 @@ public class Serializer {
     @SuppressWarnings("unchecked")
     private <T> List<T> deserialize(String fileName) {
         Path file = Paths.get(fileName);
+        if (Files.notExists(file)) {
+            return null;
+        }
         List<T> animals = new ArrayList<>();
-        try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(file))) {
-            while (inputStream.available() > 0) {
-                animals.add((T) inputStream.readObject());
+        try (InputStream is = Files.newInputStream(file)) {
+            ObjectInputStream ois = new ObjectInputStream(is);
+            while (is.available() > 0) {
+                animals.add((T) ois.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -138,19 +139,19 @@ public class Serializer {
         if (Files.notExists(file)) {
             return;
         }
-        try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(Files.newOutputStream(file)))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(file))) {
             for (Animal animal : animals) {
-                dos.writeUTF(animal.getName());
-                dos.writeInt(animal.getAge());
-                dos.writeBoolean(animal.isFriendly());
-                dos.writeBoolean(animal.isWarmBlooded());
-                dos.writeUTF(animal.getAnimalType().name());
+                oos.writeUTF(animal.getName());
+                oos.writeInt(animal.getAge());
+                oos.writeBoolean(animal.isFriendly());
+                oos.writeBoolean(animal.isWarmBlooded());
+                oos.writeUTF(animal.getAnimalType().name());
 
                 Population population = animal.getPopulation();
                 if (population != null) {
-                    dos.writeUTF(population.getName());
-                    dos.writeLong(population.getSize());
-                    dos.writeInt(population.getDensity());
+                    oos.writeUTF(population.getName());
+                    oos.writeLong(population.getSize());
+                    oos.writeInt(population.getDensity());
                 }
             }
         } catch (IOException e) {
@@ -172,14 +173,14 @@ public class Serializer {
             return null;
         }
         List<Animal> animals = new ArrayList<>();
-        try (DataInputStream dis = new DataInputStream(new BufferedInputStream(Files.newInputStream(file)))) {
-            while (dis.available() > 0) {
-                String name = dis.readUTF();
-                int age = dis.readInt();
-                boolean friendly = dis.readBoolean();
-                boolean warmBlooded = dis.readBoolean();
-                AnimalType animalType = AnimalType.valueOf(dis.readUTF());
-                Population population = new Population(dis.readUTF(), dis.readLong(), dis.readInt());
+        try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(file))) {
+            while (ois.available() > 0) {
+                String name = ois.readUTF();
+                int age = ois.readInt();
+                boolean friendly = ois.readBoolean();
+                boolean warmBlooded = ois.readBoolean();
+                AnimalType animalType = AnimalType.valueOf(ois.readUTF());
+                Population population = new Population(ois.readUTF(), ois.readLong(), ois.readInt());
                 animals.add(new Animal(name, age, friendly, warmBlooded, animalType, population));
             }
         } catch (IOException e) {

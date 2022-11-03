@@ -11,10 +11,10 @@ import java.io.Serializable;
 public class Animal implements Serializable {
     private String name;
     private int age;
-    private boolean friendly;
-    private boolean warmBlooded;
-    private AnimalType animalType;
-    private Population population;
+    private final boolean friendly;
+    private final boolean warmBlooded;
+    private final AnimalType animalType;
+    private final Population population;
 
     public Animal(String name, int age, boolean friendly, boolean warmBlooded, AnimalType animalType, Population population) {
         this.name = name;
@@ -53,24 +53,8 @@ public class Animal implements Serializable {
         this.age = age;
     }
 
-    public void setFriendly(boolean friendly) {
-        this.friendly = friendly;
-    }
-
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setWarmBlooded(boolean warmBlooded) {
-        this.warmBlooded = warmBlooded;
-    }
-
-    public void setAnimalType(AnimalType animalType) {
-        this.animalType = animalType;
-    }
-
-    public void setPopulation(Population population) {
-        this.population = population;
     }
 
     @Override
