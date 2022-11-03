@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.io;
 
-import ru.mail.polis.homework.io.objects.CopyingFileVisitor;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

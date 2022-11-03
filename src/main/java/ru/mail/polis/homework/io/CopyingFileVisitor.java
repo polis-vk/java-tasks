@@ -1,4 +1,4 @@
-package ru.mail.polis.homework.io.objects;
+package ru.mail.polis.homework.io;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
