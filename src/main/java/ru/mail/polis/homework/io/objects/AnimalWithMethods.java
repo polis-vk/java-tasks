@@ -99,11 +99,11 @@ public class AnimalWithMethods implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(getAlias(),
-                getLegsCount(),
-                isPoisonous(),
-                isWild(),
-                getOrganization(),
-                getGender());
+                            getLegsCount(),
+                            isPoisonous(),
+                            isWild(),
+                            getOrganization(),
+                            getGender());
     }
 
     @Override

@@ -22,7 +22,7 @@ public class AnimalExternalizable implements Externalizable {
     }
 
     public AnimalExternalizable(String alias, int legsCount, boolean poisonous,
-                  boolean wild, OrganizationExternalizable organization, Gender gender) {
+                                boolean wild, OrganizationExternalizable organization, Gender gender) {
         this.alias = alias;
         this.legsCount = legsCount;
         this.poisonous = poisonous;
@@ -99,11 +99,11 @@ public class AnimalExternalizable implements Externalizable {
     @Override
     public int hashCode() {
         return Objects.hash(getAlias(),
-                getLegsCount(),
-                isPoisonous(),
-                isWild(),
-                getOrganization(),
-                getGender());
+                            getLegsCount(),
+                            isPoisonous(),
+                            isWild(),
+                            getOrganization(),
+                            getGender());
     }
 
     @Override
