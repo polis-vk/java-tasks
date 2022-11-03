@@ -1,7 +1,16 @@
 package ru.mail.polis.homework.io.objects;
 
-
-import java.util.Collections;
+import java.io.DataOutputStream;
+import java.io.DataInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,6 +32,33 @@ import java.util.List;
  */
 public class Serializer {
 
+    private <T> void serialize(List<T> animals, String fileName) {
+        Path file = Paths.get(fileName);
+        if (Files.notExists(file)) {
+            return;
+        }
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(file))) {
+            for (T animal : animals) {
+                outputStream.writeObject(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> List<T> deserialize(String fileName) {
+        Path file = Paths.get(fileName);
+        List<T> animals = new ArrayList<>();
+        try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(file))) {
+            while (inputStream.available() > 0) {
+                animals.add((T) inputStream.readObject());
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return animals;
+    }
     /**
      * 1 тугрик
      * Реализовать простую сериализацию, с помощью специального потока для сериализации объектов
@@ -30,7 +66,7 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
-
+        serialize(animals, fileName);
     }
 
     /**
@@ -41,7 +77,7 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
+        return deserialize(fileName);
     }
 
 
@@ -52,7 +88,7 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
-
+        serialize(animals, fileName);
     }
 
     /**
@@ -64,7 +100,7 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
-        return Collections.emptyList();
+        return deserialize(fileName);
     }
 
     /**
@@ -74,7 +110,7 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
-
+        serialize(animals, fileName);
     }
 
     /**
@@ -86,7 +122,7 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-        return Collections.emptyList();
+        return deserialize(fileName);
     }
 
     /**
@@ -98,7 +134,28 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
+        Path file = Paths.get(fileName);
+        if (Files.notExists(file)) {
+            return;
+        }
+        try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(Files.newOutputStream(file)))) {
+            for (Animal animal : animals) {
+                dos.writeUTF(animal.getName());
+                dos.writeInt(animal.getAge());
+                dos.writeBoolean(animal.isFriendly());
+                dos.writeBoolean(animal.isWarmBlooded());
+                dos.writeUTF(animal.getAnimalType().name());
 
+                Population population = animal.getPopulation();
+                if (population != null) {
+                    dos.writeUTF(population.getName());
+                    dos.writeLong(population.getSize());
+                    dos.writeInt(population.getDensity());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -110,6 +167,24 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+        Path file = Paths.get(fileName);
+        if (Files.notExists(file)) {
+            return null;
+        }
+        List<Animal> animals = new ArrayList<>();
+        try (DataInputStream dis = new DataInputStream(new BufferedInputStream(Files.newInputStream(file)))) {
+            while (dis.available() > 0) {
+                String name = dis.readUTF();
+                int age = dis.readInt();
+                boolean friendly = dis.readBoolean();
+                boolean warmBlooded = dis.readBoolean();
+                AnimalType animalType = AnimalType.valueOf(dis.readUTF());
+                Population population = new Population(dis.readUTF(), dis.readLong(), dis.readInt());
+                animals.add(new Animal(name, age, friendly, warmBlooded, animalType, population));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return animals;
     }
 }
