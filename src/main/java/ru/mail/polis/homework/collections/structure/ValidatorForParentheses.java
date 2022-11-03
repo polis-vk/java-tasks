@@ -17,10 +17,9 @@ import java.util.HashMap;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
-    private static final HashMap<Character, Character> pairsOfBrackets;
+    private static final HashMap<Character, Character> pairsOfBrackets = new HashMap<>();
 
     static {
-        pairsOfBrackets = new HashMap<>();
         pairsOfBrackets.put('{','}');
         pairsOfBrackets.put('[',']');
         pairsOfBrackets.put('(',')');
