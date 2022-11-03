@@ -3,6 +3,7 @@ package ru.mail.polis.homework.io.objects;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -13,26 +14,32 @@ import org.junit.Test;
 import org.junit.BeforeClass;
 import org.junit.runners.MethodSorters;
 
+import static org.junit.Assert.assertEquals;
+
 @FixMethodOrder(MethodSorters.JVM)
 public class SerializerTest {
+    private static final double NULL_PERCENTAGE = 0.05;
     private static List<Animal> animalList;
     private static List<AnimalWithMethods> animalWithMethodsList;
     private static List<AnimalExternalizable> animalExternalizableList;
+    private static Serializer serializer;
 
     @BeforeClass
     public static void generateLists() {
+        serializer = new Serializer();
         animalList = new LinkedList<>();
         animalWithMethodsList = new LinkedList<>();
         animalExternalizableList = new LinkedList<>();
+        Random random = new Random();
         for (int i = 0; i < 100_000; i++) {
-            animalList.add(generateRandomAnimal());
-            animalWithMethodsList.add(generateRandomAnimalWithMethods());
-            animalExternalizableList.add(generateRandomAnimalExternalizable());
+            animalList.add(generateRandomAnimal(random));
+            animalWithMethodsList.add(generateRandomAnimalWithMethods(random));
+            animalExternalizableList.add(generateRandomAnimalExternalizable(random));
         }
     }
 
     @Test
-    public void warmUp() throws IOException, ClassNotFoundException {
+    public void warmUp() throws IOException {
         for (int i = 0; i < 3; i++) {
             System.out.println(i + " итерация прогрева");
             customSerializeTest();
@@ -47,7 +54,6 @@ public class SerializerTest {
         long lastCheckTime = System.currentTimeMillis();
         System.out.println("customSerializeTest");
 
-        Serializer serializer = new Serializer();
         serializer.customSerialize(animalList, "custom.bin");
 
         System.out.println(System.currentTimeMillis() - lastCheckTime);
@@ -55,142 +61,177 @@ public class SerializerTest {
         lastCheckTime = System.currentTimeMillis();
 
         List<Animal> test = serializer.customDeserialize("custom.bin");
-        assert test.equals(animalList);
-
         System.out.println(System.currentTimeMillis() - lastCheckTime);
+        assertEquals(test.size(), animalList.size());
+        Iterator<Animal> testIt = test.iterator();
+        Iterator<Animal> animalIterator = animalList.iterator();
+        while (testIt.hasNext()) {
+            assertEquals(testIt.next(), animalIterator.next());
+        }
+
     }
 
     @Test
-    public void defaultSerializeTest() throws IOException, ClassNotFoundException {
+    public void defaultSerializeTest() throws IOException {
         long lastCheckTime = System.currentTimeMillis();
         System.out.println("defaultSerializeTest");
-        Serializer serializer = new Serializer();
         serializer.defaultSerialize(animalList, "default.bin");
         System.out.println(System.currentTimeMillis() - lastCheckTime);
         System.out.println(Files.size(Paths.get("default.bin")));
         lastCheckTime = System.currentTimeMillis();
         List<Animal> test = serializer.defaultDeserialize("default.bin");
-        assert test.equals(animalList);
         System.out.println(System.currentTimeMillis() - lastCheckTime);
+        assertEquals(test, animalList);
     }
 
     @Test
-    public void serializeWithMethodsTest() throws IOException, ClassNotFoundException {
+    public void serializeWithMethodsTest() throws IOException {
         long lastCheckTime = System.currentTimeMillis();
         System.out.println("serializeWithMethodsTest");
-        Serializer serializer = new Serializer();
         serializer.serializeWithMethods(animalWithMethodsList, "methods.bin");
         System.out.println(System.currentTimeMillis() - lastCheckTime);
         System.out.println(Files.size(Paths.get("methods.bin")));
         lastCheckTime = System.currentTimeMillis();
         List<AnimalWithMethods> test = serializer.deserializeWithMethods("methods.bin");
-        assert test.equals(animalWithMethodsList);
         System.out.println(System.currentTimeMillis() - lastCheckTime);
+        assertEquals(test, animalWithMethodsList);
     }
 
     @Test
-    public void serializeExternalizableTest() throws IOException, ClassNotFoundException {
+    public void serializeExternalizableTest() throws IOException {
         long lastCheckTime = System.currentTimeMillis();
         System.out.println("serializeExternalizableTest");
-        Serializer serializer = new Serializer();
         serializer.serializeWithExternalizable(animalExternalizableList, "externalizable.bin");
         System.out.println(System.currentTimeMillis() - lastCheckTime);
         System.out.println(Files.size(Paths.get("externalizable.bin")));
         lastCheckTime = System.currentTimeMillis();
         List<AnimalExternalizable> test = serializer.deserializeWithExternalizable("externalizable.bin");
-        assert test.equals(animalExternalizableList);
         System.out.println(System.currentTimeMillis() - lastCheckTime);
+        assertEquals(test.size(), animalExternalizableList.size());
+        Iterator<AnimalExternalizable> testIt = test.iterator();
+        Iterator<AnimalExternalizable> animalExternalizableIt = animalExternalizableList.iterator();
+        while (testIt.hasNext()) {
+            assertEquals(testIt.next(), animalExternalizableIt.next());
+        }
     }
 
 
-
-
-
-    private static Animal generateRandomAnimal() {
-        Random random = new Random();
+    private static Animal generateRandomAnimal(Random random) {
         return new Animal(
                 random.nextBoolean(),
                 random.nextBoolean(),
                 Math.abs(random.nextInt(10)),
                 Math.abs(random.nextDouble()),
                 generateRandomString(random),
-                TypeOfAnimal.values()[random.nextInt(5)],
-                new OwnerOfAnimal(
-                        generateRandomString(random),
-                        generateRandomString(random),
-                        Gender.values()[random.nextInt(3)],
-                        new Address(
+                random.nextDouble() < NULL_PERCENTAGE ?
+                        null :
+                        TypeOfAnimal.values()[random.nextInt(5)],
+                random.nextDouble() < NULL_PERCENTAGE ?
+                        null :
+                        new OwnerOfAnimal(
                                 generateRandomString(random),
                                 generateRandomString(random),
-                                generateRandomString(random),
-                                random.nextInt(100),
-                                random.nextInt(100),
-                                String.valueOf((char) (random.nextInt(33) + 'a')),
-                                random.nextInt(1000)
+                                random.nextDouble() < NULL_PERCENTAGE ?
+                                        null :
+                                        Gender.values()[random.nextInt(3)],
+                                random.nextDouble() < NULL_PERCENTAGE ?
+                                        null :
+                                        new Address(
+                                                generateRandomString(random),
+                                                generateRandomString(random),
+                                                generateRandomString(random),
+                                                random.nextInt(100),
+                                                random.nextInt(100),
+                                                random.nextDouble() < NULL_PERCENTAGE ?
+                                                        null :
+                                                        String.valueOf((char) (random.nextInt(33) + 'a')),
+                                                random.nextInt(1000)
+                                        )
                         )
-                )
         );
     }
 
-    private static AnimalExternalizable generateRandomAnimalExternalizable() {
-        Random random = new Random();
+    private static AnimalExternalizable generateRandomAnimalExternalizable(Random random) {
         return new AnimalExternalizable(
                 random.nextBoolean(),
                 random.nextBoolean(),
                 Math.abs(random.nextInt(10)),
                 Math.abs(random.nextDouble()),
                 generateRandomString(random),
-                TypeOfAnimal.values()[random.nextInt(5)],
-                new OwnerOfAnimalExternalizable(
-                        generateRandomString(random),
-                        generateRandomString(random),
-                        Gender.values()[random.nextInt(3)],
-                        new AddressExternalizable(
+                random.nextDouble() < NULL_PERCENTAGE ?
+                        null :
+                        TypeOfAnimal.values()[random.nextInt(5)],
+                random.nextDouble() < NULL_PERCENTAGE ?
+                        null :
+                        new OwnerOfAnimalExternalizable(
                                 generateRandomString(random),
                                 generateRandomString(random),
-                                generateRandomString(random),
-                                random.nextInt(100),
-                                random.nextInt(100),
-                                String.valueOf((char) (random.nextInt(33) + 'a')),
-                                random.nextInt(1000)
+                                random.nextDouble() < NULL_PERCENTAGE ?
+                                        null :
+                                        Gender.values()[random.nextInt(3)],
+                                random.nextDouble() < NULL_PERCENTAGE ?
+                                        null :
+                                        new AddressExternalizable(
+                                                generateRandomString(random),
+                                                generateRandomString(random),
+                                                generateRandomString(random),
+                                                random.nextInt(100),
+                                                random.nextInt(100),
+                                                random.nextDouble() < NULL_PERCENTAGE ?
+                                                        null :
+                                                        String.valueOf((char) (random.nextInt(33) + 'a')),
+                                                random.nextInt(1000)
+                                        )
                         )
-                )
         );
     }
 
-    private static AnimalWithMethods generateRandomAnimalWithMethods() {
-        Random random = new Random();
+    private static AnimalWithMethods generateRandomAnimalWithMethods(Random random) {
         return new AnimalWithMethods(
                 random.nextBoolean(),
                 random.nextBoolean(),
                 Math.abs(random.nextInt(10)),
                 Math.abs(random.nextDouble()),
                 generateRandomString(random),
-                TypeOfAnimal.values()[random.nextInt(5)],
-                new OwnerOfAnimalWithMethods(
-                        generateRandomString(random),
-                        generateRandomString(random),
-                        Gender.values()[random.nextInt(3)],
-                        new AddressWithMethods(
+                random.nextDouble() < NULL_PERCENTAGE ?
+                        null :
+                        TypeOfAnimal.values()[random.nextInt(5)],
+                random.nextDouble() < NULL_PERCENTAGE ?
+                        null :
+                        new OwnerOfAnimalWithMethods(
                                 generateRandomString(random),
                                 generateRandomString(random),
-                                generateRandomString(random),
-                                random.nextInt(100),
-                                random.nextInt(100),
-                                String.valueOf((char) (random.nextInt(33) + 'a')),
-                                random.nextInt(1000)
+                                random.nextDouble() < NULL_PERCENTAGE ?
+                                        null :
+                                        Gender.values()[random.nextInt(3)],
+                                random.nextDouble() < NULL_PERCENTAGE ?
+                                        null :
+                                        new AddressWithMethods(
+                                                generateRandomString(random),
+                                                generateRandomString(random),
+                                                generateRandomString(random),
+                                                random.nextInt(100),
+                                                random.nextInt(100),
+                                                random.nextDouble() < NULL_PERCENTAGE ?
+                                                        null :
+                                                        String.valueOf((char) (random.nextInt(33) + 'a')),
+                                                random.nextInt(1000)
+                                        )
                         )
-                )
         );
     }
 
     private static String generateRandomString(Random random) {
+        if (random.nextDouble() < NULL_PERCENTAGE) {
+            return null;
+        }
         StringBuilder ans = new StringBuilder();
         for (int i = 0; i < random.nextInt(16) + 1; i++) {
             ans.append((char) (random.nextInt(33) + 'а'));
         }
         return ans.toString();
     }
+
 
     @After
     public void deleteFiles() throws IOException {

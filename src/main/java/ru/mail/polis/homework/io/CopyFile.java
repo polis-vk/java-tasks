@@ -1,14 +1,16 @@
 package ru.mail.polis.homework.io;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+
 
 public class CopyFile {
 
@@ -25,37 +27,41 @@ public class CopyFile {
             return;
         }
 
-        Files.createDirectories(to.getParent());
-        Files.walkFileTree(from, new SimpleFileVisitor<Path>(){
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
-                    throws IOException
-            {
-                Files.createDirectories(to.resolve(from.relativize(dir)));
-                return FileVisitResult.CONTINUE;
-            }
+        try {
+            Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+                        throws IOException {
+                    Files.createDirectories(to.resolve(from.relativize(dir)));
+                    return FileVisitResult.CONTINUE;
+                }
 
-            /**
-             * Invoked for a file in a directory.
-             *
-             * <p> Unless overridden, this method returns {@link FileVisitResult#CONTINUE
-             * CONTINUE}.
-             */
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                    throws IOException
-            {
-                copy(file, to.resolve(from.relativize(file)));
-                return FileVisitResult.CONTINUE;
-            }
+                /**
+                 * Invoked for a file in a directory.
+                 *
+                 * <p> Unless overridden, this method returns {@link FileVisitResult#CONTINUE
+                 * CONTINUE}.
+                 */
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                        throws IOException {
+                    copy(file, to.resolve(from.relativize(file)));
+                    return FileVisitResult.CONTINUE;
+                }
 
-        });
+            });
+        } catch (NoSuchFileException e) {
+            Files.createDirectories(to.getParent());
+            copy(from, to);
+        }
     }
+
     private static void copy(Path from, Path to) throws IOException {
         String pathFrom = from.toString();
         String pathTo = to.toString();
 
-        try (FileInputStream inp = new FileInputStream(pathFrom); FileOutputStream out = new FileOutputStream(pathTo)) {
+        try (BufferedInputStream inp = new BufferedInputStream(Files.newInputStream(Paths.get(pathFrom)));
+             BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(Paths.get(pathTo)))) {
             byte[] buffer = new byte[1024];
             int sizeOfBlock;
             do {

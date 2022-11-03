@@ -19,6 +19,9 @@ public class Animal implements Serializable {
     private OwnerOfAnimal owner;
 
 
+    public Animal() {
+    }
+
     public Animal(boolean isAggressive, boolean isVegetarian, int numOfLegs, double maxVelocity,
                   String name, TypeOfAnimal type, OwnerOfAnimal owner) {
         this.isAggressive = isAggressive;
@@ -53,9 +56,9 @@ public class Animal implements Serializable {
                 isVegetarian == animal.isVegetarian &&
                 numOfLegs == animal.numOfLegs &&
                 Math.abs(animal.maxVelocity - maxVelocity) <= 1e-6 &&
-                name.equals(animal.name) &&
-                type == animal.type &&
-                owner.equals(animal.owner);
+                Objects.equals(name, animal.name) &&
+                Objects.equals(type, animal.type) &&
+                Objects.equals(owner, animal.owner);
     }
 
     @Override
@@ -90,6 +93,34 @@ public class Animal implements Serializable {
     public OwnerOfAnimal getOwner() {
         return owner;
     }
+
+    public void setAggressive(boolean aggressive) {
+        isAggressive = aggressive;
+    }
+
+    public void setVegetarian(boolean vegetarian) {
+        isVegetarian = vegetarian;
+    }
+
+    public void setNumOfLegs(int numOfLegs) {
+        this.numOfLegs = numOfLegs;
+    }
+
+    public void setMaxVelocity(double maxVelocity) {
+        this.maxVelocity = maxVelocity;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setType(TypeOfAnimal type) {
+        this.type = type;
+    }
+
+    public void setOwner(OwnerOfAnimal owner) {
+        this.owner = owner;
+    }
 }
 
 enum TypeOfAnimal {
@@ -105,6 +136,9 @@ class OwnerOfAnimal implements Serializable {
     private String phoneNumber;
     private Gender gender;
     private Address homeAddress;
+
+    public OwnerOfAnimal() {
+    }
 
     public OwnerOfAnimal(String name, String phoneNumber, Gender gender, Address address) {
         this.name = name;
@@ -129,10 +163,10 @@ class OwnerOfAnimal implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OwnerOfAnimal that = (OwnerOfAnimal) o;
-        return name.equals(that.name) &&
-                phoneNumber.equals(that.phoneNumber) &&
-                gender == that.gender &&
-                homeAddress.equals(that.homeAddress);
+        return Objects.equals(name, that.name) &&
+                Objects.equals(phoneNumber, that.phoneNumber) &&
+                Objects.equals(gender, that.gender) &&
+                Objects.equals(homeAddress, that.homeAddress);
     }
 
     @Override
@@ -154,6 +188,22 @@ class OwnerOfAnimal implements Serializable {
 
     public Address getHomeAddress() {
         return homeAddress;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public void setHomeAddress(Address homeAddress) {
+        this.homeAddress = homeAddress;
     }
 }
 
@@ -181,6 +231,38 @@ class Address implements Serializable {
     private int numOfBuilding;
     private String liter;
     private int room;
+
+    public Address() {
+
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public void setNumOfHouse(int numOfHouse) {
+        this.numOfHouse = numOfHouse;
+    }
+
+    public void setNumOfBuilding(int numOfBuilding) {
+        this.numOfBuilding = numOfBuilding;
+    }
+
+    public void setLiter(String liter) {
+        this.liter = liter;
+    }
+
+    public void setRoom(int room) {
+        this.room = room;
+    }
 
     public Address(String country, String city, String street, int numOfHouse,
                    int numOfBuilding, String liter, int room) {
@@ -224,10 +306,10 @@ class Address implements Serializable {
         return numOfHouse == address.numOfHouse &&
                 numOfBuilding == address.numOfBuilding &&
                 room == address.room &&
-                country.equals(address.country) &&
-                city.equals(address.city) &&
-                street.equals(address.street) &&
-                liter.equals(address.liter);
+                Objects.equals(country, address.country) &&
+                Objects.equals(city, address.city) &&
+                Objects.equals(street, address.street) &&
+                Objects.equals(liter, address.liter);
     }
 
     @Override
