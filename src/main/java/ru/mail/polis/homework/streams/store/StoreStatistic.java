@@ -73,7 +73,9 @@ public class StoreStatistic {
         return orders.stream().sorted((first, second) ->
                 second.getItemCount().values().stream().mapToInt(integer -> integer).sum() -
                         first.getItemCount().values().stream().mapToInt(integer -> integer).sum())
-                .limit(5).collect(Collectors.toMap(key -> key,
-                        value -> value.getItemCount().values().stream().mapToLong(integer -> integer).sum()));
+                .limit(5)
+                .collect(Collectors.toMap(key -> key,
+                        value -> value.getItemCount().entrySet().stream().mapToLong(i -> i.getKey().getPrice() *
+                                i.getValue()).sum()));
     }
 }
