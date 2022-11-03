@@ -17,6 +17,16 @@ import java.util.HashMap;
  * Отрабатывать метод должен за О(n)
  */
 public class ValidatorForParentheses {
+    private static final HashMap<Character, Character> pairsOfBrackets;
+
+    static {
+        pairsOfBrackets = new HashMap<>();
+        pairsOfBrackets.put('{','}');
+        pairsOfBrackets.put('[',']');
+        pairsOfBrackets.put('(',')');
+        pairsOfBrackets.put('<','>');
+    }
+
     private static boolean isLeftParenthesis(char symbol) {
         return symbol == '{' || symbol == '[' || symbol == '(' || symbol == '<';
     }
@@ -25,28 +35,8 @@ public class ValidatorForParentheses {
         return symbol == '}' || symbol == ']' || symbol == ')' || symbol == '>';
     }
 
-    private static boolean isSquareBrackets(char leftParenthesis, char rightParenthesis) {
-        return leftParenthesis == '[' && rightParenthesis == ']';
-    }
-
-
-    private static boolean isAngleBrackets(char leftParenthesis, char rightParenthesis) {
-        return leftParenthesis == '<' && rightParenthesis == '>';
-    }
-
-    private static boolean isCircularBrackets(char leftParenthesis, char rightParenthesis) {
-        return leftParenthesis == '(' && rightParenthesis == ')';
-    }
-
-    private static boolean isCurlyBrackets(char leftParenthesis, char rightParenthesis) {
-        return leftParenthesis == '{' && rightParenthesis == '}';
-    }
-
     private static boolean areEqual(char leftParenthesis, char rightParenthesis) {
-        return isSquareBrackets(leftParenthesis, rightParenthesis)
-                || isCurlyBrackets(leftParenthesis, rightParenthesis)
-                || isCircularBrackets(leftParenthesis, rightParenthesis)
-                || isAngleBrackets(leftParenthesis, rightParenthesis);
+        return pairsOfBrackets.get(leftParenthesis).equals(rightParenthesis);
     }
 
     public static boolean validate(String value) {
