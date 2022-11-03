@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,8 +28,7 @@ public class LibraryStatistic {
         return library.getArchive().stream()
                 .filter(archivedData -> archivedData.getBook().getGenre().equals(genre) && bookTimeHolding(archivedData) >= timeLimit)
                 .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.mapping(ArchivedData::getBook, Collectors.counting())))
-                .entrySet()
-                .stream()
+                .entrySet().stream()
                 .filter(pairOfUserAndBooks -> pairOfUserAndBooks.getValue() >= 5)
                 .collect(Collectors.toMap(Map.Entry::getKey, pairOfUserAndBooks -> pairOfUserAndBooks.getKey().getReadedPages()));
     }
@@ -44,30 +42,21 @@ public class LibraryStatistic {
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
-        Stream<ArchivedData> neededUser = library.getArchive()
-                .stream()
-                .filter(archivedData -> archivedData.getUser().equals(user) && archivedData.getReturned() == null);
-        return library.getArchive()
-                .stream()
+        return library.getArchive().stream()
                 .filter(archivedData -> archivedData.getUser().equals(user) && archivedData.getReturned() != null)
                 .collect(Collectors.groupingBy(archivedData -> archivedData.getBook().getGenre(), Collectors.counting()))
-                .entrySet()
-                .stream()
+                .entrySet().stream()
                 .max((pairWithGenreAndAmount1, pairWithGenreAndAmount2) -> {
-                    int difference = pairWithGenreAndAmount2.getValue().compareTo(pairWithGenreAndAmount1.getValue());
-                    if (difference != 0) {
-                        return difference;
+                    if (!pairWithGenreAndAmount2.getValue().equals(pairWithGenreAndAmount1.getValue())) {
+                        return pairWithGenreAndAmount2.getValue().compareTo(pairWithGenreAndAmount1.getValue());
                     }
-                    Long amountOfAllBooksInFirstGenre = neededUser
-                            .filter(archivedData -> archivedData.getBook().getGenre().equals(pairWithGenreAndAmount1.getKey()))
-                            .count();
-                    Long amountOfAllBooksInSecondGenre = neededUser
-                            .filter(archivedData -> archivedData.getBook().getGenre().equals(pairWithGenreAndAmount2.getKey()))
-                            .count();
+                    Stream<ArchivedData> neededUser = library.getArchive().stream()
+                            .filter(archivedData -> archivedData.getUser().equals(user) && archivedData.getReturned() == null);
+                    Long amountOfAllBooksInFirstGenre = amountOfAllBooks(pairWithGenreAndAmount1.getKey(), neededUser);
+                    Long amountOfAllBooksInSecondGenre = amountOfAllBooks(pairWithGenreAndAmount2.getKey(), neededUser);
                     return amountOfAllBooksInSecondGenre.compareTo(amountOfAllBooksInFirstGenre);
                 })
-                .map(Map.Entry::getKey)
-                .orElse(null);
+                .map(Map.Entry::getKey).orElse(null);
     }
 
     /**
@@ -79,19 +68,15 @@ public class LibraryStatistic {
      */
     public List<User> unreliableUsers(Library library) {
         final long timeLimit = TIME_PER_DAY * 30;
-        Map<User, Set<Book>> usersWithBooks = library.getArchive()
-                .stream()
-                .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.mapping(ArchivedData::getBook, Collectors.toSet())));
         return library.getArchive().stream()
                 .filter(archivedData -> bookTimeHolding(archivedData) > timeLimit)
                 .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.mapping(ArchivedData::getBook, Collectors.toSet())))
-                .entrySet()
-                .stream()
+                .entrySet().stream()
                 .filter(userListEntry -> {
                     int amountBooksOfUserWith30DaysHolding = userListEntry.getValue().size() * 2;
-                    int amountOfAllBooksForAUser = usersWithBooks
-                            .entrySet()
-                            .stream()
+                    int amountOfAllBooksForAUser = library.getArchive().stream()
+                            .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.mapping(ArchivedData::getBook, Collectors.toSet())))
+                            .entrySet().stream()
                             .filter(userListWithBooksEntry -> userListWithBooksEntry.getKey().equals(userListEntry.getKey()))
                             .flatMap(userListWithBooksEntry -> userListWithBooksEntry.getValue().stream())
                             .collect(Collectors.toSet()).size();
@@ -121,22 +106,18 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return library.getBooks()
-                .stream()
+        return library.getBooks().stream()
                 .collect(Collectors.groupingBy(Book::getGenre, Collectors.groupingBy(Book::getAuthor, Collectors.counting())))
-                .entrySet()
-                .stream()
+                .entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         genreAndMapEntry -> genreAndMapEntry.getValue()
-                                .entrySet()
-                                .stream()
+                                .entrySet().stream()
                                 .max((genreAndMapEntry1, genreAndMapEntry2) -> {
                                     int difference = genreAndMapEntry2.getValue().compareTo(genreAndMapEntry1.getValue());
                                     return difference != 0 ? difference : genreAndMapEntry2.getKey().compareTo(genreAndMapEntry1.getKey());
                                 })
-                                .map(Map.Entry::getKey)
-                                .orElse("")
+                                .map(Map.Entry::getKey).orElse("")
                 ));
     }
 
@@ -144,5 +125,9 @@ public class LibraryStatistic {
         long currentTime = Timestamp.from(Instant.now()).getTime();
         long startTime = data.getTake().getTime();
         return data.getReturned() != null ? data.getReturned().getTime() - startTime : currentTime - startTime;
+    }
+
+    private static long amountOfAllBooks(Genre genre, Stream<ArchivedData> neededUser) {
+        return neededUser.filter(archivedData -> archivedData.getBook().getGenre().equals(genre)).count();
     }
 }
