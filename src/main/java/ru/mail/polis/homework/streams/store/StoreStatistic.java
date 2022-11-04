@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.streams.store;
 
 import java.sql.Timestamp;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +40,7 @@ public class StoreStatistic {
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
         return orders.stream()
-                .collect(Collectors.groupingBy(order -> new Timestamp(
-                        order.getTime().getTime() / (1000 * 60 * 60 * 24)))).entrySet().stream()
+                .collect(Collectors.groupingBy(order -> Timestamp.valueOf(order.getTime().toLocalDateTime().truncatedTo(ChronoUnit.DAYS)))).entrySet().stream()
                 .map(orderEntry -> new Pair<>(orderEntry.getKey(), orderEntry.getValue().stream()
                         .map(Order::getItemCount)
                         .flatMap(itemCount -> itemCount.entrySet().stream())
@@ -71,7 +71,8 @@ public class StoreStatistic {
     public Map<Order, Long> sum5biggerOrders(List<Order> orders) {
         return orders.stream().sorted((a, b) -> (int) (orderItemCountSum(b) - orderItemCountSum(a)))
                 .limit(5)
-                .collect(Collectors.toMap(order -> order, this::orderItemCountSum));
+                .collect(Collectors.toMap(order -> order, order -> order.getItemCount().entrySet().stream()
+                        .mapToLong(entry -> entry.getKey().getPrice() * entry.getValue()).sum()));
     }
 
     private Long orderItemCountSum(Order order) {
