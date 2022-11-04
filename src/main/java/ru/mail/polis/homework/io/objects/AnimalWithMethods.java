@@ -2,7 +2,9 @@ package ru.mail.polis.homework.io.objects;
 
 
 import java.io.IOException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Objects;
@@ -93,92 +95,109 @@ public class AnimalWithMethods implements Serializable {
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeObject(alias);
+        writeString(out, alias);
         out.writeInt(legs);
         out.writeByte(setBooleanFlags(wild, furry));
         out.writeObject(organization);
-        out.writeObject(moveType);
+        writeString(out, moveType.toString());
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        alias = (String) in.readObject();
+        alias = readString(in);
         legs = in.readInt();
         byte booleanFlags = in.readByte();
         wild = (booleanFlags & 1) != 0;
         furry = (booleanFlags & 2) != 0;
         organization = (OrganizationWithMethods) in.readObject();
-        moveType = (MoveType) in.readObject();
+        moveType = MoveType.valueOf(readString(in));
+    }
+
+    private static void writeString(ObjectOutput output, String str) throws IOException {
+        if (str == null) {
+            output.writeByte(0);
+        } else {
+            output.writeByte(1);
+            output.writeUTF(str);
+        }
+    }
+
+    private static String readString(ObjectInput input) throws IOException {
+        return input.readByte() == 0 ? null : input.readUTF();
     }
 
     private static byte setBooleanFlags(boolean wild, boolean furry) {
         byte result = 0;
-        if (wild) result = (byte) (result | 1);
-        if (furry) result = (byte) (result | 2);
+        if (wild) {
+            result = (byte) (result | 1);
+        }
+        if (furry) {
+            result = (byte) (result | 2);
+        }
         return result;
     }
-}
 
-class OrganizationWithMethods implements Serializable {
-    private String name;
-    private String owner;
-    private boolean foreign;
+    static class OrganizationWithMethods implements Serializable {
+        private String name;
+        private String owner;
+        private boolean foreign;
 
-    public String getName() {
-        return name;
-    }
+        public String getName() {
+            return name;
+        }
 
-    public String getOwner() {
-        return owner;
-    }
+        public String getOwner() {
+            return owner;
+        }
 
-    public boolean isForeign() {
-        return foreign;
-    }
+        public boolean isForeign() {
+            return foreign;
+        }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+        public void setName(String name) {
+            this.name = name;
+        }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
+        public void setOwner(String owner) {
+            this.owner = owner;
+        }
 
-    public void setForeign(boolean foreign) {
-        this.foreign = foreign;
-    }
+        public void setForeign(boolean foreign) {
+            this.foreign = foreign;
+        }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OrganizationWithMethods that = (OrganizationWithMethods) o;
-        return isForeign() == that.isForeign() && Objects.equals(getName(), that.getName()) && Objects.equals(getOwner(), that.getOwner());
-    }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            OrganizationWithMethods that = (OrganizationWithMethods) o;
+            return isForeign() == that.isForeign() && Objects.equals(getName(), that.getName()) && Objects.equals(getOwner(), that.getOwner());
+        }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getName(), getOwner(), isForeign());
-    }
+        @Override
+        public int hashCode() {
+            return Objects.hash(getName(), getOwner(), isForeign());
+        }
 
-    @Override
-    public String toString() {
-        return "OrganizationWithMethods{" +
-                "name='" + name + '\'' +
-                ", owner='" + owner + '\'' +
-                ", foreign=" + foreign +
-                '}';
-    }
+        @Override
+        public String toString() {
+            return "OrganizationWithMethods{" +
+                    "name='" + name + '\'' +
+                    ", owner='" + owner + '\'' +
+                    ", foreign=" + foreign +
+                    '}';
+        }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeObject(name);
-        out.writeObject(owner);
-        out.writeBoolean(foreign);
-    }
+        private void writeObject(ObjectOutputStream out) throws IOException {
+            writeString(out, name);
+            writeString(out, owner);
+            out.writeBoolean(foreign);
+        }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        name = (String) in.readObject();
-        owner = (String) in.readObject();
-        foreign = in.readBoolean();
+        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+            name = readString(in);
+            owner = readString(in);
+            foreign = in.readBoolean();
+        }
     }
 }
 
