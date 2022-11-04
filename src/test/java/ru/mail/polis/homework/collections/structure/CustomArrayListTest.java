@@ -298,18 +298,4 @@ public class CustomArrayListTest {
             assertEquals(DEFAULT_ARRAY[i], (int) iterator.next());
         }
     }
-
-    @Test
-    public void subListTest() {
-        List<Integer> list = new CustomArrayList<>();
-        Arrays.stream(DEFAULT_ARRAY).forEach(list::add);
-
-        int fromIndex = 3;
-        int toIndex = 7;
-        List<Integer> subList = list.subList(fromIndex, toIndex);
-        assertEquals(subList.size(), toIndex - fromIndex - 1);
-        for (int i = 0; i < toIndex - fromIndex - 1; i++) {
-            assertEquals((int) subList.get(i), fromIndex + i + 1);
-        }
-    }
 }
