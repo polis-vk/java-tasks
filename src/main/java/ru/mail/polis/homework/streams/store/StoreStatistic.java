@@ -17,6 +17,10 @@ import ru.mail.polis.homework.streams.lib.ArchivedData;
  */
 public class StoreStatistic {
 
+    private final long TIMEZONE = 10800000;
+
+    private final long MILLISECONDS_IN_DAY = 86400000;
+
     /**
      * Вернуть сколько было продано определенного товара за переданный промежуток времени
      *
@@ -43,7 +47,7 @@ public class StoreStatistic {
         return orders
                 .stream()
                 .collect(Collectors.toMap(
-                        o -> new Timestamp(o.getTime().getTime() - (o.getTime().getTime() + 10800000) % 86400000),
+                        o -> new Timestamp(o.getTime().getTime() - (o.getTime().getTime() + TIMEZONE) % MILLISECONDS_IN_DAY),
                         Order::getItemCount,
                         (map1, map2) -> {
                             map2.forEach((item, amount) -> map1.merge(item, amount, Integer::sum));
