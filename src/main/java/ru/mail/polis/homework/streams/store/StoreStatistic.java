@@ -23,9 +23,11 @@ public class StoreStatistic {
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
         return orders.stream().filter(
-                        order -> order.getTime().after(from) && order.getTime().before(to)
+                        order -> order.getTime().equals(from) ||
+                                order.getTime().equals(to) ||
+                                order.getTime().after(from) && order.getTime().before(to)
                 )
-                .mapToLong(order -> order.getItemCount().get(typeItem)).sum();
+                .mapToLong(order -> order.getItemCount().getOrDefault(typeItem, 0)).sum();
     }
 
     /**
@@ -65,13 +67,14 @@ public class StoreStatistic {
      */
     public Map<Order, Long> sum5biggerOrders(List<Order> orders) {
 
-        return orders.stream().sorted(Comparator.comparing(
-                        order -> order.getItemCount().size())
-                )
+        return orders.stream().sorted(Comparator.comparing(order -> order.getItemCount().size()))
                 .limit(5)
                 .collect(Collectors.toMap(
-                        order -> order,
-                        order -> order.getItemCount().entrySet().stream()
-                                .mapToLong(entry -> entry.getKey().getPrice() * entry.getValue()).sum()));
+                                order -> order,
+                                order -> order.getItemCount().entrySet().stream()
+                                        .mapToLong(entry -> entry.getKey().getPrice() * entry.getValue()).sum()
+                        )
+                );
+
     }
 }
