@@ -87,12 +87,12 @@ public class Animal implements Serializable {
             return false;
         }
         Animal animalObj = (Animal) obj;
-        return getAlias().equals(animalObj.getAlias()) &&
-                getLegsCount() == animalObj.getLegsCount() &&
-                isPoisonous() == animalObj.isPoisonous() &&
-                isWild() == animalObj.isWild() &&
-                organization.equals(animalObj.getOrganization()) &&
-                getGender() == animalObj.getGender();
+        return Objects.equals(alias, animalObj.getAlias()) &&
+               legsCount == animalObj.getLegsCount() &&
+               poisonous == animalObj.isPoisonous() &&
+               wild == animalObj.isWild() &&
+               Objects.equals(organization, animalObj.getOrganization()) &&
+               Objects.equals(gender, animalObj.getGender());
     }
 
     @Override
@@ -164,11 +164,10 @@ class Organization implements Serializable {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-
         Organization organizationObj = (Organization) obj;
-        return getName().equals(organizationObj.getName()) &&
-                getCountry().equals(organizationObj.getCountry()) &&
-                getLicenseNumber() == organizationObj.getLicenseNumber();
+        return Objects.equals(name, organizationObj.getName()) &&
+               Objects.equals(country, organizationObj.getCountry()) &&
+               licenseNumber == organizationObj.getLicenseNumber();
     }
 
     @Override

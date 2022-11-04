@@ -18,9 +18,6 @@ public class AnimalWithMethods implements Serializable {
     private OrganizationWithMethods organization;
     private Gender gender;
 
-    public AnimalWithMethods() {
-    }
-
     public AnimalWithMethods(String alias, int legsCount, boolean poisonous,
                              boolean wild, OrganizationWithMethods organization, Gender gender) {
         this.alias = alias;
@@ -88,12 +85,12 @@ public class AnimalWithMethods implements Serializable {
             return false;
         }
         AnimalWithMethods animalObj = (AnimalWithMethods) obj;
-        return getAlias().equals(animalObj.getAlias()) &&
-                getLegsCount() == animalObj.getLegsCount() &&
-                isPoisonous() == animalObj.isPoisonous() &&
-                isWild() == animalObj.isWild() &&
-                organization.equals(animalObj.getOrganization()) &&
-                getGender() == animalObj.getGender();
+        return Objects.equals(alias, animalObj.getAlias()) &&
+               legsCount == animalObj.getLegsCount() &&
+               poisonous == animalObj.isPoisonous() &&
+               wild == animalObj.isWild() &&
+               Objects.equals(organization, animalObj.getOrganization()) &&
+               Objects.equals(gender, animalObj.getGender());
     }
 
     @Override
@@ -142,9 +139,6 @@ class OrganizationWithMethods implements Serializable {
     private String country;
     private long licenseNumber;
 
-    public OrganizationWithMethods() {
-    }
-
     public OrganizationWithMethods(String name, String country, int licenseNumber) {
         this.name = name;
         this.country = country;
@@ -184,9 +178,9 @@ class OrganizationWithMethods implements Serializable {
             return false;
         }
         OrganizationWithMethods organizationObj = (OrganizationWithMethods) obj;
-        return getName().equals(organizationObj.getName()) &&
-                getCountry().equals(organizationObj.getCountry()) &&
-                getLicenseNumber() == organizationObj.getLicenseNumber();
+        return Objects.equals(name, organizationObj.getName()) &&
+               Objects.equals(country, organizationObj.getCountry()) &&
+               licenseNumber == organizationObj.getLicenseNumber();
     }
 
     @Override

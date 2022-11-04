@@ -63,16 +63,16 @@ public class SerializerTest {
                                 SERIALIZER::customDeserialize);
     }
 
-    public <A> void serializingTestTemplate(Supplier<A> generator,
-                                            BiConsumer<List<A>, String> serializer,
-                                            Function<String, List<A>> deserializer) throws IOException {
-        List<A> generatedAnimals = Stream.generate(generator)
+    public <T> void serializingTestTemplate(Supplier<T> generator,
+                                            BiConsumer<List<T>, String> serializer,
+                                            Function<String, List<T>> deserializer) throws IOException {
+        List<T> generatedAnimals = Stream.generate(generator)
                                          .limit(SELECTION_COUNT)
                                          .collect(Collectors.toList());
         long timeMillisBeforeWriting = System.currentTimeMillis();
         serializer.accept(generatedAnimals, WORKING_FILENAME);
         long timeMillisAfterWriting = System.currentTimeMillis();
-        List<A> deserializedAnimals = deserializer.apply(WORKING_FILENAME);
+        List<T> deserializedAnimals = deserializer.apply(WORKING_FILENAME);
         long timeMillisAfterReading = System.currentTimeMillis();
         assertEquals(generatedAnimals, deserializedAnimals);
         System.out.printf("Размер файла: %d байт\n", Files.size(WORKING_PATH));

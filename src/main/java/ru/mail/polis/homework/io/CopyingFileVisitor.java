@@ -17,14 +17,13 @@ public class CopyingFileVisitor extends SimpleFileVisitor<Path> {
     private final Path to;
 
     private static void copy(Path from, Path to) {
-        try (InputStream in = new FileInputStream(from.toString())) {
-            OutputStream out = new FileOutputStream(to.toString());
+        try (InputStream in = new FileInputStream(from.toString());
+             OutputStream out = new FileOutputStream(to.toString())) {
             byte[] buffer = new byte[BUFFER_SIZE];
             int readBytes = 0;
             while ((readBytes = in.read(buffer)) > 0) {
                 out.write(buffer, 0, readBytes);
             }
-            out.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

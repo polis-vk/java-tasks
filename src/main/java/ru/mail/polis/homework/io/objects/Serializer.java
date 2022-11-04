@@ -64,8 +64,8 @@ public class Serializer {
             return null;
         }
         List<Animal> animals = new ArrayList<>();
-        try (InputStream in = Files.newInputStream(fileNamePath)) {
-            ObjectInputStream objectIn = new ObjectInputStream(in);
+        try (InputStream in = Files.newInputStream(fileNamePath);
+             ObjectInputStream objectIn = new ObjectInputStream(in)) {
             while (in.available() > 0) {
                 animals.add((Animal) objectIn.readObject());
             }
@@ -110,8 +110,8 @@ public class Serializer {
             return null;
         }
         List<AnimalWithMethods> animals = new ArrayList<>();
-        try (InputStream in = Files.newInputStream(fileNamePath)) {
-            ObjectInputStream objectIn = new ObjectInputStream(in);
+        try (InputStream in = Files.newInputStream(fileNamePath);
+             ObjectInputStream objectIn = new ObjectInputStream(in)) {
             while (in.available() > 0) {
                 animals.add((AnimalWithMethods) objectIn.readObject());
             }
@@ -155,8 +155,8 @@ public class Serializer {
             return null;
         }
         List<AnimalExternalizable> animals = new ArrayList<>();
-        try (InputStream in = Files.newInputStream(fileNamePath)) {
-            ObjectInputStream objectIn = new ObjectInputStream(in);
+        try (InputStream in = Files.newInputStream(fileNamePath);
+             ObjectInputStream objectIn = new ObjectInputStream(in)) {
             while (in.available() > 0) {
                 animals.add((AnimalExternalizable) objectIn.readObject());
             }
@@ -210,8 +210,8 @@ public class Serializer {
             return null;
         }
         List<Animal> animals = new ArrayList<>();
-        try (InputStream in = Files.newInputStream(fileNamePath)) {
-            DataInputStream dataIn = new DataInputStream(in);
+        try (InputStream in = Files.newInputStream(fileNamePath);
+             DataInputStream dataIn = new DataInputStream(in)) {
             while (in.available() > 0) {
                 Animal animal = new Animal();
                 animal.setAlias(dataIn.readUTF());
