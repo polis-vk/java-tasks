@@ -100,11 +100,11 @@ public class LibraryStatistic {
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
         return library.getBooks().stream()
                 .collect(Collectors.groupingBy(Book::getGenre,
-                                Collectors.groupingBy(Book::getAuthor, Collectors.counting())))
+                        Collectors.groupingBy(Book::getAuthor, Collectors.counting())))
                 .entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, genreMapEntry -> genreMapEntry.getValue()
-                                .entrySet().stream()
-                                .max(Comparator.comparingLong(Map.Entry::getValue)).get().getKey())
+                        .entrySet().stream()
+                        .max(Comparator.comparingLong(Map.Entry::getValue)).get().getKey())
                 );
     }
 }
