@@ -2,6 +2,8 @@ package ru.mail.polis.homework.streams.lib;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 
 /**
  * Класс для работы со статистикой по библиотеке.
@@ -49,7 +51,9 @@ public class LibraryStatistic {
      * @return - список книг
      */
     public List<Book> booksWithMoreCountPages(Library library, int countPage) {
-        return null;
+        return library.getBooks().stream()
+                .filter(book -> book.getPage() >= countPage)
+                .collect(Collectors.toList());
     }
 
     /**
