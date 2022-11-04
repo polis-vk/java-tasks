@@ -1,7 +1,16 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.*;
 
+import java.util.Collection;
+import java.util.ConcurrentModificationException;
+import java.util.NoSuchElementException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.ListIterator;
+import java.util.AbstractList;
+import java.util.RandomAccess;
 
 /**
  * Необходимо реализовать свой ArrayList (динамический массив).
