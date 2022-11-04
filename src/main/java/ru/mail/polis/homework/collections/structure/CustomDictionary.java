@@ -13,9 +13,10 @@ public class CustomDictionary {
 
     /**
      * Сохранить строку в структуру данных
+     *
      * @param value - передаваемая строка
      * @return - успешно сохранили строку или нет.
-     *
+     * <p>
      * Сложность - []
      */
     public boolean add(String value) {
@@ -24,9 +25,10 @@ public class CustomDictionary {
 
     /**
      * Проверяем, хранится ли такая строка уже у нас
+     *
      * @param value - передаваемая строка
      * @return - есть такая строка или нет в нашей структуре
-     *
+     * <p>
      * Сложность - []
      */
     public boolean contains(String value) {
@@ -35,9 +37,10 @@ public class CustomDictionary {
 
     /**
      * Удаляем сохраненную строку если она есть
+     *
      * @param value - какую строку мы хотим удалить
      * @return - true если удалили, false - если такой строки нет
-     *
+     * <p>
      * Сложность - []
      */
     public boolean remove(String value) {
@@ -51,7 +54,7 @@ public class CustomDictionary {
      * сохраняем строки ["aaa", "aBa", "baa", "aaB"]
      * При поиске по строке "AAb" нам должен вернуться следующий
      * список: ["aBa","baa","aaB"]
-     *
+     * <p>
      * сохраняем строки ["aaa", "aAa", "a"]
      * поиск "aaaa"
      * результат: []
@@ -60,7 +63,7 @@ public class CustomDictionary {
      *
      * @return - список слов которые состоят из тех же букв, что и передаваемая
      * строка.
-     *
+     * <p>
      * Сложность - []
      */
     public List<String> getSimilarWords(String value) {
@@ -69,8 +72,9 @@ public class CustomDictionary {
 
     /**
      * Колл-во хранимых строк.
-     * @return - Колл-во хранимых строк.
      *
+     * @return - Колл-во хранимых строк.
+     * <p>
      * Сложность - []
      */
     public int size() {
@@ -78,3 +82,4 @@ public class CustomDictionary {
     }
 
 
+}
