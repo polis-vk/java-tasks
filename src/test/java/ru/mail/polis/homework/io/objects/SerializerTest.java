@@ -22,7 +22,7 @@ public class SerializerTest {
     private static final Path WITH_METHODS_PATH = Paths.get("src", "test", "resources", "objects", "methods.txt");
     private static final Path CUSTOM_PATH = Paths.get("src", "test", "resources", "objects", "custom.txt");
     private static final Serializer SERIALIZER = new Serializer();
-    private static final int ANIMALS_COUNT = 5;
+    private static final int ANIMALS_COUNT = 500_000;
 
 
     @Before
