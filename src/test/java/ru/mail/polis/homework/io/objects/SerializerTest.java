@@ -22,7 +22,7 @@ public class SerializerTest {
     private static final Path WITH_METHODS_PATH = Paths.get("src", "test", "resources", "objects", "methods.txt");
     private static final Path CUSTOM_PATH = Paths.get("src", "test", "resources", "objects", "custom.txt");
     private static final Serializer SERIALIZER = new Serializer();
-    private static final int ANIMALS_COUNT = 500000;
+    private static final int ANIMALS_COUNT = 5;
 
 
     @Before
@@ -137,6 +137,10 @@ public class SerializerTest {
     private static final Random RND = new Random();
 
     private static Animal generateAnimal() {
+        if (RND.nextBoolean()) {
+            return null;
+        }
+
         Animal animal = new Animal();
         if (RND.nextBoolean()) {
             animal.setAlias(generateString());
