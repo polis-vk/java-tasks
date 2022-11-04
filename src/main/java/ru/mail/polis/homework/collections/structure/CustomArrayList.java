@@ -305,24 +305,8 @@ public class CustomArrayList<E> implements List<E> {
         return new CustomSubList(fromIndex, toIndex);
     }
 
-    private void ensureCapacity(int minCapacity) {
-        if (minCapacity <= data.length) {
-            return;
-        }
-        int newCapacity = (int) (minCapacity * GOLD_RATIO);
-        E[] newArray = (E[]) new Object[newCapacity];
-        System.arraycopy(data, 0, newArray, 0, size);
-        data = newArray;
-    }
-
-    private void checkOutOfBoundException(int index) {
-        if (index < 0 || index >= data.length) {
-            throw new IndexOutOfBoundsException();
-        }
-    }
-
     private class CustomSubList implements List<E> {
-        private int startIndex;
+        private final int startIndex;
         private int size;
 
         public CustomSubList(int fromIndex, int toIndex) {
@@ -374,7 +358,7 @@ public class CustomArrayList<E> implements List<E> {
         @Override
         public boolean remove(Object o) {
             int position = indexOf(o);
-            if (position < startIndex || position >= startIndex + size) {
+            if (!isIndexInCorrectRange(position)) {
                 return false;
             }
             remove(position);
@@ -398,6 +382,7 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public boolean addAll(int index, Collection<? extends E> c) {
+            checkOutOfBoundException(index);
             CustomArrayList.this.addAll(startIndex + index, c);
             size += c.size();
             return true;
@@ -441,22 +426,26 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public E get(int index) {
+            checkOutOfBoundException(index);
             return CustomArrayList.this.get(startIndex + index);
         }
 
         @Override
         public E set(int index, E element) {
+            checkOutOfBoundException(index);
             return CustomArrayList.this.set(startIndex + index, element);
         }
 
         @Override
         public void add(int index, E element) {
+            checkOutOfBoundException(index);
             CustomArrayList.this.add(startIndex + index, element);
             size++;
         }
 
         @Override
         public E remove(int index) {
+            checkOutOfBoundException(index);
             E previousElement = CustomArrayList.this.remove(startIndex + index);
             size--;
             return previousElement;
@@ -479,12 +468,29 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public ListIterator<E> listIterator(int index) {
+            checkOutOfBoundException(index);
             return CustomArrayList.this.listIterator(startIndex + index);
         }
 
         @Override
         public List<E> subList(int fromIndex, int toIndex) {
+            if (fromIndex < startIndex || toIndex > startIndex + size || fromIndex > toIndex) {
+                throw new IndexOutOfBoundsException();
+            }
+            if (fromIndex == toIndex) {
+                return Collections.emptyList();
+            }
             return CustomArrayList.this.subList(startIndex + fromIndex, startIndex + toIndex);
+        }
+
+        private void checkOutOfBoundException(int index) {
+            if (!isIndexInCorrectRange(index)) {
+                throw new IndexOutOfBoundsException();
+            }
+        }
+
+        private boolean isIndexInCorrectRange(int index) {
+            return index >= startIndex && index < startIndex + size;
         }
     }
 
@@ -508,5 +514,21 @@ public class CustomArrayList<E> implements List<E> {
             }
         }
         return index;
+    }
+
+    private void ensureCapacity(int minCapacity) {
+        if (minCapacity <= data.length) {
+            return;
+        }
+        int newCapacity = (int) (minCapacity * GOLD_RATIO);
+        E[] newArray = (E[]) new Object[newCapacity];
+        System.arraycopy(data, 0, newArray, 0, size);
+        data = newArray;
+    }
+
+    private void checkOutOfBoundException(int index) {
+        if (index < 0 || index >= data.length) {
+            throw new IndexOutOfBoundsException();
+        }
     }
 }
