@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.io.objects;
 
-
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -89,57 +88,57 @@ public class Animal implements Serializable {
                 ", moveType=" + moveType +
                 '}';
     }
-}
 
-class Organization implements Serializable {
-    private String name;
-    private String owner;
-    private boolean foreign;
+    static class Organization implements Serializable {
+        private String name;
+        private String owner;
+        private boolean foreign;
 
-    public String getName() {
-        return name;
-    }
+        public String getName() {
+            return name;
+        }
 
-    public String getOwner() {
-        return owner;
-    }
+        public String getOwner() {
+            return owner;
+        }
 
-    public boolean isForeign() {
-        return foreign;
-    }
+        public boolean isForeign() {
+            return foreign;
+        }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+        public void setName(String name) {
+            this.name = name;
+        }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
+        public void setOwner(String owner) {
+            this.owner = owner;
+        }
 
-    public void setForeign(boolean foreign) {
-        this.foreign = foreign;
-    }
+        public void setForeign(boolean foreign) {
+            this.foreign = foreign;
+        }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Organization that = (Organization) o;
-        return isForeign() == that.isForeign() && Objects.equals(getName(), that.getName()) && Objects.equals(getOwner(), that.getOwner());
-    }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Organization that = (Organization) o;
+            return isForeign() == that.isForeign() && Objects.equals(getName(), that.getName()) && Objects.equals(getOwner(), that.getOwner());
+        }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getName(), getOwner(), isForeign());
-    }
+        @Override
+        public int hashCode() {
+            return Objects.hash(getName(), getOwner(), isForeign());
+        }
 
-    @Override
-    public String toString() {
-        return "Organization{" +
-                "name='" + name + '\'' +
-                ", owner='" + owner + '\'' +
-                ", foreign=" + foreign +
-                '}';
+        @Override
+        public String toString() {
+            return "Organization{" +
+                    "name='" + name + '\'' +
+                    ", owner='" + owner + '\'' +
+                    ", foreign=" + foreign +
+                    '}';
+        }
     }
 }
 

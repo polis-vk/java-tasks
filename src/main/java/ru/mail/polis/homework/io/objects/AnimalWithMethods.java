@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.io.objects;
 
-
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;

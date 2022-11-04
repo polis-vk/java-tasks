@@ -188,8 +188,8 @@ public class SerializerTest {
         return animal;
     }
 
-    private static Organization generateOrganization() {
-        Organization organization = new Organization();
+    private static Animal.Organization generateOrganization() {
+        Animal.Organization organization = new Animal.Organization();
         organization.setName(generateString());
         if (RND.nextBoolean()) {
             organization.setOwner(generateString());
@@ -198,8 +198,8 @@ public class SerializerTest {
         return organization;
     }
 
-    private static OrganizationExternalizable generateOrganizationExternalizable() {
-        OrganizationExternalizable organization = new OrganizationExternalizable();
+    private static AnimalExternalizable.OrganizationExternalizable generateOrganizationExternalizable() {
+        AnimalExternalizable.OrganizationExternalizable organization = new AnimalExternalizable.OrganizationExternalizable();
         organization.setName(generateString());
         if (RND.nextBoolean()) {
             organization.setOwner(generateString());
@@ -208,8 +208,8 @@ public class SerializerTest {
         return organization;
     }
 
-    private static OrganizationWithMethods generateOrganizationWithMethods() {
-        OrganizationWithMethods organization = new OrganizationWithMethods();
+    private static AnimalWithMethods.OrganizationWithMethods generateOrganizationWithMethods() {
+        AnimalWithMethods.OrganizationWithMethods organization = new AnimalWithMethods.OrganizationWithMethods();
         organization.setName(generateString());
         if (RND.nextBoolean()) {
             organization.setOwner(generateString());
@@ -227,3 +227,4 @@ public class SerializerTest {
         return new String(chars);
     }
 }
+
