@@ -1,7 +1,10 @@
 package ru.mail.polis.homework.streams.lib;
 
+import java.time.Period;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * Класс для работы со статистикой по библиотеке.
@@ -13,19 +16,33 @@ public class LibraryStatistic {
      * Вернуть "специалистов" в литературном жанре с кол-вом прочитанных страниц.
      * Специалист жанра считается пользователь который прочел как минимум 5 книг в этом жанре,
      * при этом читал каждую из них не менее 14 дней.
+     *
      * @param library - данные библиотеки
-     * @param genre - жанр
+     * @param genre   - жанр
      * @return - map пользователь / кол-во прочитанных страниц
      */
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
-        return null;
+        return library
+                .getArchive()
+                .stream()
+                .filter(e -> Period.between(e.getReturned().toLocalDateTime().toLocalDate(), e.getTake().toLocalDateTime().toLocalDate()).getDays() > 13 && e.getBook().getGenre().equals(genre))
+                .collect(Collectors.toMap(
+                        ArchivedData::getUser,
+                        e -> 1,
+                        Integer::sum
+                ))
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue() >= 5)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     /**
      * Вернуть любимый жанр пользователя. Тот что чаще всего встречается. Не учитывать тот что пользователь читает в данный момент.
      * Если есть несколько одинаковых по весам жанров - брать в расчет то, что пользователь читает в данный момент.
+     *
      * @param library - данные библиотеки
-     * @param user - пользователь
+     * @param user    - пользователь
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
@@ -35,29 +52,64 @@ public class LibraryStatistic {
     /**
      * Вернуть список пользователей которые больше половины книг держали на руках более 30-ти дней. Брать в расчет и книги которые сейчас
      * пользователи держат у себя (ArchivedData.returned == null)
+     *
      * @param library - данные библиотеки
      * @return - список ненадежных пользователей
      */
     public List<User> unreliableUsers(Library library) {
-        return null;
+        return library
+                .getArchive()
+                .stream()
+                .collect(Collectors.groupingBy(ArchivedData::getUser))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().stream().filter(a -> a.getTake() != null).count()
+                        / e.getValue().stream().filter(a -> a.getTake() != null && (a.getReturned() == null
+                        || Period.between(a.getReturned().toLocalDateTime().toLocalDate(), a.getTake().toLocalDateTime().toLocalDate()).getDays() > 30)).count()
+                ))
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue() == 1)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
     /**
      * Вернуть список книг у которых страниц равно или больше чем переданное значение
-     * @param library - данные библиотеки
+     *
+     * @param library   - данные библиотеки
      * @param countPage - кол-во страниц
      * @return - список книг
      */
     public List<Book> booksWithMoreCountPages(Library library, int countPage) {
-        return null;
+        return library
+                .getBooks()
+                .stream()
+                .filter(b -> b.getPage() >= countPage)
+                .collect(Collectors.toList());
     }
 
     /**
      * Вернуть самого популярного автора в каждом жанре. Если кол-во весов у авторов одинаково брать по алфавиту.
+     *
      * @param library - данные библиотеки
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return null;
+        return library
+                .getArchive()
+                .stream()
+                .collect(Collectors.groupingBy(a -> a.getBook().getGenre()))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> e.getValue().stream().collect(Collectors.groupingBy(a -> a.getBook().getAuthor(), Collectors.counting()))
+                                .entrySet()
+                                .stream()
+                                .max((c1, c2) -> c2.getValue().compareTo(c1.getValue()))
+                                .get()
+                                .getKey()
+                ));
     }
 }
