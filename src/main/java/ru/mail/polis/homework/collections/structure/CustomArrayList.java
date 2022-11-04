@@ -11,6 +11,7 @@ import java.util.function.Consumer;
  */
 
 public class CustomArrayList<E> implements List<E> {
+    private static final int DEFAULT_CAPACITY = 10;
     private int size;
     private Object[] elementData;
     private int modCount = 0;
@@ -25,7 +26,7 @@ public class CustomArrayList<E> implements List<E> {
     }
 
     public CustomArrayList() {
-        this.elementData = new Object[10];
+        this.elementData = new Object[DEFAULT_CAPACITY];
     }
 
     public CustomArrayList(Collection<? extends E> collection) {
