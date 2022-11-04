@@ -463,13 +463,94 @@ public class CustomArrayList<E> implements List<E> {
 
         @Override
         public ListIterator<E> listIterator() {
-            return CustomArrayList.this.listIterator(startIndex);
+            return new CustomSubListIterator();
         }
 
         @Override
         public ListIterator<E> listIterator(int index) {
             checkOutOfBoundException(index);
-            return CustomArrayList.this.listIterator(startIndex + index);
+            return new CustomSubListIterator(index);
+        }
+
+        private class CustomSubListIterator implements ListIterator<E> {
+            private int modificationsCounter = modifications;
+            private int currentIndex;
+
+            public CustomSubListIterator() {
+                this(startIndex);
+            }
+
+            public CustomSubListIterator(int startIndex) {
+                currentIndex = startIndex;
+            }
+
+            @Override
+            public boolean hasNext() {
+                checkModificationsCount();
+                return currentIndex < startIndex + size;
+            }
+
+            @Override
+            public E next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                return data[currentIndex++];
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                checkModificationsCount();
+                return currentIndex >= startIndex;
+            }
+
+            @Override
+            public E previous() {
+                if (!hasPrevious()) {
+                    throw new NoSuchElementException();
+                }
+                return data[--currentIndex];
+            }
+
+            @Override
+            public int nextIndex() {
+                checkModificationsCount();
+                return currentIndex;
+            }
+
+            @Override
+            public int previousIndex() {
+                checkModificationsCount();
+                return currentIndex - 1;
+            }
+
+            @Override
+            public void remove() {
+                checkModificationsCount();
+                CustomArrayList.this.remove(currentIndex);
+                modificationsCounter = modifications;
+            }
+
+            @Override
+            public void set(E e) {
+                checkModificationsCount();
+                CustomArrayList.this.set(currentIndex, e);
+                modificationsCounter = modifications;
+            }
+
+            @Override
+            public void add(E e) {
+                checkModificationsCount();
+                CustomArrayList.this.add(currentIndex, e);
+                modificationsCounter = modifications;
+                currentIndex++;
+            }
+
+            private void checkModificationsCount() {
+                if (modifications != modificationsCounter) {
+                    throw new ConcurrentModificationException();
+                }
+            }
         }
 
         @Override
