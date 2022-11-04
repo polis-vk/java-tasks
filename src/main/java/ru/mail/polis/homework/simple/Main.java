@@ -9,4 +9,3 @@ public class Main {
     static String hello() {
         return "Hello world! I am а first program";
     }
-}

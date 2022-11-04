@@ -16,4 +16,3 @@ dependencies {
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.23.0'
     testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
 
-}
