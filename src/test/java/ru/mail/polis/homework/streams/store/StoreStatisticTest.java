@@ -141,8 +141,8 @@ public class StoreStatisticTest {
 
         assertEquals(3, result.size());
         assertEquals(Long.valueOf(banana.getPrice()), result.get(order1));
-        assertEquals(Long.valueOf(chery.getPrice()), result.get(order1));
-        assertEquals(Long.valueOf(apple.getPrice()), result.get(order1));
+        assertEquals(Long.valueOf(chery.getPrice()), result.get(order2));
+        assertEquals(Long.valueOf(apple.getPrice()), result.get(order3));
     }
 
     private Order generateByItemList(Timestamp timestamp, List<Item> items) {
