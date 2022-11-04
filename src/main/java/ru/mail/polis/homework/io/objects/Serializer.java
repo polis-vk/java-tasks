@@ -1,8 +1,13 @@
 package ru.mail.polis.homework.io.objects;
 
-//#TODO записать 2 boolean (2 байта) в 1 байт по 1 биту
-
-import java.io.*;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -65,11 +70,18 @@ public class Serializer {
         }
 
         List<Animal> animals = new ArrayList<>();
-        try (InputStream fileInputStream = Files.newInputStream(fileFrom);
-             ObjectInputStream inputStream = new ObjectInputStream(fileInputStream)) {
-            while (fileInputStream.available() != 0) {
-                animals.add((Animal) inputStream.readObject());
+        try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(fileFrom))) {
+            Object currObject;
+            while (true) {
+                currObject = inputStream.readObject();
+                if (currObject instanceof Animal) {
+                    animals.add((Animal) currObject);
+                } else {
+                    animals.add(null);
+                }
             }
+        } catch (EOFException e) {
+//            ignored
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
@@ -114,11 +126,18 @@ public class Serializer {
         }
 
         List<AnimalWithMethods> animals = new ArrayList<>();
-        try (InputStream fileInputStream = Files.newInputStream(fileFrom);
-             ObjectInputStream inputStream = new ObjectInputStream(fileInputStream)) {
-            while (fileInputStream.available() != 0) {
-                animals.add((AnimalWithMethods) inputStream.readObject());
+        try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(fileFrom))) {
+            Object currObject;
+            while (true) {
+                currObject = inputStream.readObject();
+                if (currObject instanceof AnimalWithMethods) {
+                    animals.add((AnimalWithMethods) currObject);
+                } else {
+                    animals.add(null);
+                }
             }
+        } catch (EOFException e) {
+//            ignored
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
@@ -162,11 +181,18 @@ public class Serializer {
         }
 
         List<AnimalExternalizable> animals = new ArrayList<>();
-        try (InputStream fileInputStream = Files.newInputStream(fileFrom);
-             ObjectInputStream inputStream = new ObjectInputStream(fileInputStream)) {
-            while (fileInputStream.available() != 0) {
-                animals.add((AnimalExternalizable) inputStream.readObject());
+        try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(fileFrom))) {
+            Object currObject;
+            while (true) {
+                currObject = inputStream.readObject();
+                if (currObject instanceof AnimalExternalizable) {
+                    animals.add((AnimalExternalizable) currObject);
+                } else {
+                    animals.add(null);
+                }
             }
+        } catch (EOFException e) {
+//            ignored
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
@@ -189,16 +215,22 @@ public class Serializer {
 
         try (DataOutputStream outputStream = new DataOutputStream(Files.newOutputStream(fileTo))) {
             for (Animal animal : animals) {
-                outputStream.writeUTF(writeString(animal.getAlias()));
+                if (animal == null) {
+                    outputStream.writeByte(0);
+                    continue;
+                }
+
+                outputStream.writeByte(1);
+                writeString(outputStream, animal.getAlias());
                 outputStream.writeInt(animal.getLegs());
-                Organization organization = animal.getOrganization();
+                Animal.Organization organization = animal.getOrganization();
                 outputStream.writeByte(setBooleanFlags(animal.isWild(), animal.isFurry(), organization != null));
                 if (organization != null) {
-                    outputStream.writeUTF(writeString(organization.getName()));
-                    outputStream.writeUTF(writeString(organization.getOwner()));
+                    writeString(outputStream, organization.getName());
+                    writeString(outputStream, organization.getOwner());
                     outputStream.writeBoolean(organization.isForeign());
                 }
-                outputStream.writeUTF(String.valueOf(animal.getMoveType()));
+                writeString(outputStream, animal.getMoveType().toString());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -220,9 +252,13 @@ public class Serializer {
         }
 
         List<Animal> animals = new ArrayList<>();
-        try (InputStream fileInputStream = Files.newInputStream(fileFrom);
-             DataInputStream inputStream = new DataInputStream(fileInputStream)) {
-            while (fileInputStream.available() != 0) {
+        try (DataInputStream inputStream = new DataInputStream(Files.newInputStream(fileFrom))) {
+            while (inputStream.available() != 0) {
+                if (inputStream.readByte() == 0) {
+                    animals.add(null);
+                    continue;
+                }
+
                 Animal animal = new Animal();
                 animal.setAlias(readString(inputStream));
                 animal.setLegs(inputStream.readInt());
@@ -231,7 +267,7 @@ public class Serializer {
                 animal.setFurry((booleanFlags & 2) != 0);
                 boolean hasOrganization = ((booleanFlags & 4) != 0);
                 if (hasOrganization) {
-                    Organization organization = new Organization();
+                    Animal.Organization organization = new Animal.Organization();
                     organization.setName(readString(inputStream));
                     organization.setOwner(readString(inputStream));
                     organization.setForeign(inputStream.readBoolean());
@@ -246,13 +282,17 @@ public class Serializer {
         return animals;
     }
 
-    private static String writeString(String str) {
-        return str == null ? "null" : str;
+    private static void writeString(DataOutput outputStream, String str) throws IOException {
+        if (str == null) {
+            outputStream.writeByte(0);
+        } else {
+            outputStream.writeByte(1);
+            outputStream.writeUTF(str);
+        }
     }
 
-    private static String readString(DataInputStream inputStream) throws IOException {
-        String str = inputStream.readUTF();
-        return str.equals("null") ? null : str;
+    private static String readString(DataInput inputStream) throws IOException {
+        return inputStream.readByte() == 0 ? null : inputStream.readUTF();
     }
 
     private static byte setBooleanFlags(boolean wild, boolean furry, boolean hasOrganization) {
@@ -269,3 +309,4 @@ public class Serializer {
         return result;
     }
 }
+
