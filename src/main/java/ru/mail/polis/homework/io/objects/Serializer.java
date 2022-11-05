@@ -4,7 +4,6 @@ package ru.mail.polis.homework.io.objects;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
@@ -46,6 +45,7 @@ public class Serializer {
         Path filePath = Paths.get(fileName);
 
         try (ObjectOutputStream output = new ObjectOutputStream(Files.newOutputStream(filePath))) {
+            output.writeInt(animals.size());
             for (Animal animal : animals) {
                 output.writeObject(animal);
             }
@@ -72,9 +72,9 @@ public class Serializer {
         }
 
         List<Animal> result = new ArrayList<>();
-        try (InputStream fileInput = Files.newInputStream(filePath);
-             ObjectInputStream input = new ObjectInputStream(fileInput)) {
-            while (fileInput.available() > 0) {
+        try (ObjectInputStream input = new ObjectInputStream(Files.newInputStream(filePath))) {
+            int count = input.readInt();
+            for (int i = 0; i < count; i++) {
                 result.add((Animal) input.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -99,6 +99,7 @@ public class Serializer {
         Path filePath = Paths.get(fileName);
 
         try (ObjectOutputStream output = new ObjectOutputStream(Files.newOutputStream(filePath))) {
+            output.writeInt(animals.size());
             for (AnimalWithMethods animal : animals) {
                 output.writeObject(animal);
             }
@@ -126,9 +127,9 @@ public class Serializer {
         }
 
         List<AnimalWithMethods> result = new ArrayList<>();
-        try (InputStream fileInput = Files.newInputStream(filePath);
-             ObjectInputStream input = new ObjectInputStream(fileInput)) {
-            while (fileInput.available() > 0) {
+        try (ObjectInputStream input = new ObjectInputStream(Files.newInputStream(filePath))) {
+            int count = input.readInt();
+            for (int i = 0; i < count; i++) {
                 result.add((AnimalWithMethods) input.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -152,6 +153,7 @@ public class Serializer {
         Path filePath = Paths.get(fileName);
 
         try (ObjectOutputStream output = new ObjectOutputStream(Files.newOutputStream(filePath))) {
+            output.writeInt(animals.size());
             for (AnimalExternalizable animal : animals) {
                 output.writeObject(animal);
             }
@@ -179,9 +181,9 @@ public class Serializer {
         }
 
         List<AnimalExternalizable> result = new ArrayList<>();
-        try (InputStream fileInput = Files.newInputStream(filePath);
-             ObjectInputStream input = new ObjectInputStream(fileInput)) {
-            while (fileInput.available() > 0) {
+        try (ObjectInputStream input = new ObjectInputStream(Files.newInputStream(filePath))) {
+            int count = input.readInt();
+            for (int i = 0; i < count; i++) {
                 result.add((AnimalExternalizable) input.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -207,6 +209,7 @@ public class Serializer {
         Path filePath = Paths.get(fileName);
 
         try (DataOutputStream output = new DataOutputStream(Files.newOutputStream(filePath))) {
+            output.writeInt(animals.size());
             for (Animal animal : animals) {
                 DataByte dataByte = new DataByte(animal);
                 output.writeByte(dataByte.getByte());
@@ -252,9 +255,9 @@ public class Serializer {
         }
 
         List<Animal> result = new ArrayList<>();
-        try (InputStream fileInput = Files.newInputStream(filePath);
-             DataInputStream input = new DataInputStream(fileInput)) {
-            while (fileInput.available() > 0) {
+        try (DataInputStream input = new DataInputStream(Files.newInputStream(filePath))) {
+            int count = input.readInt();
+            for (int i = 0; i < count; i++) {
                 DataByte dataByte = new DataByte(input.readByte());
                 result.add(
                         dataByte.isAnimalNotNull()
