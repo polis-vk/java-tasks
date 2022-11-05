@@ -23,6 +23,7 @@ public class SerializerTest {
     private static final Path WORKING_PATH = Paths.get(WORKING_FILENAME);
     private static final int ANIMAL_LEGS_MAX_COUNT = 4;
     private static final int SELECTION_COUNT = 500_000;
+    private static final double NULL_OCCURRENCE_PROBABILITY = 0.05;
 
     @Before
     public void setUp() throws IOException {
@@ -37,21 +38,21 @@ public class SerializerTest {
 
     @Test
     public void serializingWithExternalizable() throws IOException {
-        serializingTestTemplate(SerializerTest::generateAnimalExternalizable,
+        serializingTestTemplate(nullableGenerator(SerializerTest::generateAnimalExternalizable),
                                 SERIALIZER::serializeWithExternalizable,
                                 SERIALIZER::deserializeWithExternalizable);
     }
 
     @Test
     public void defaultSerializing() throws IOException {
-        serializingTestTemplate(SerializerTest::generateAnimal,
+        serializingTestTemplate(nullableGenerator(SerializerTest::generateAnimal),
                                 SERIALIZER::defaultSerialize,
                                 SERIALIZER::defaultDeserialize);
     }
 
     @Test
     public void serializingWithMethods() throws IOException {
-        serializingTestTemplate(SerializerTest::generateAnimalWithMethods,
+        serializingTestTemplate(nullableGenerator(SerializerTest::generateAnimalWithMethods),
                                 SERIALIZER::serializeWithMethods,
                                 SERIALIZER::deserializeWithMethods);
     }
@@ -81,47 +82,47 @@ public class SerializerTest {
     }
 
     private static Animal generateAnimal() {
-        return new Animal(generateLetterString(),
+        return new Animal(generateNullable(SerializerTest::generateLetterString),
                           RANDOM.nextInt(ANIMAL_LEGS_MAX_COUNT + 1),
                           RANDOM.nextBoolean(),
                           RANDOM.nextBoolean(),
-                          generateOrganization(),
-                          generateGender());
+                          generateNullable(SerializerTest::generateOrganization),
+                          generateNullable(SerializerTest::generateGender));
     }
 
     private static AnimalExternalizable generateAnimalExternalizable() {
-        return new AnimalExternalizable(generateLetterString(),
+        return new AnimalExternalizable(generateNullable(SerializerTest::generateLetterString),
                                         RANDOM.nextInt(ANIMAL_LEGS_MAX_COUNT + 1),
                                         RANDOM.nextBoolean(),
                                         RANDOM.nextBoolean(),
-                                        generateOrganizationExternalizable(),
-                                        generateGender());
+                                        generateNullable(SerializerTest::generateOrganizationExternalizable),
+                                        generateNullable(SerializerTest::generateGender));
     }
 
     private static AnimalWithMethods generateAnimalWithMethods() {
-        return new AnimalWithMethods(generateLetterString(),
+        return new AnimalWithMethods(generateNullable(SerializerTest::generateLetterString),
                                      RANDOM.nextInt(ANIMAL_LEGS_MAX_COUNT + 1),
                                      RANDOM.nextBoolean(),
                                      RANDOM.nextBoolean(),
-                                     generateOrganizationWithMethods(),
-                                     generateGender());
+                                     generateNullable(SerializerTest::generateOrganizationWithMethods),
+                                     generateNullable(SerializerTest::generateGender));
     }
 
     private static OrganizationWithMethods generateOrganizationWithMethods() {
-        return new OrganizationWithMethods(generateLetterString(),
-                                           generateLetterString(),
+        return new OrganizationWithMethods(generateNullable(SerializerTest::generateLetterString),
+                                           generateNullable(SerializerTest::generateLetterString),
                                            RANDOM.nextInt());
     }
 
     private static Organization generateOrganization() {
-        return new Organization(generateLetterString(),
-                                generateLetterString(),
+        return new Organization(generateNullable(SerializerTest::generateLetterString),
+                                generateNullable(SerializerTest::generateLetterString),
                                 RANDOM.nextInt());
     }
 
     private static OrganizationExternalizable generateOrganizationExternalizable() {
-        return new OrganizationExternalizable(generateLetterString(),
-                                              generateLetterString(),
+        return new OrganizationExternalizable(generateNullable(SerializerTest::generateLetterString),
+                                              generateNullable(SerializerTest::generateLetterString),
                                               RANDOM.nextInt());
     }
 
@@ -131,7 +132,7 @@ public class SerializerTest {
     }
 
     private static String generateLetterString() {
-        return generateLetterString(20, 100);
+        return generateLetterString(30, 40);
     }
 
     private static String generateLetterString(int minLength, int maxLength) {
@@ -145,5 +146,16 @@ public class SerializerTest {
             letterStringBuilder.append(RANDOM.nextBoolean() ? letter : Character.toUpperCase(letter));
         }
         return letterStringBuilder.toString();
+    }
+
+    private static <T> Supplier<T> nullableGenerator(Supplier<T> supplier) {
+        return () -> generateNullable(supplier);
+    }
+
+    private static <T> T generateNullable(Supplier<T> supplier) {
+        if (RANDOM.nextDouble() <= NULL_OCCURRENCE_PROBABILITY) {
+            return null;
+        }
+        return supplier.get();
     }
 }
