@@ -11,6 +11,10 @@ import java.util.Objects;
  * 3 тугрика
  */
 public class AnimalWithMethods implements Serializable {
+    private static final byte POISONOUS_BIT_MASK = 0b1;
+    private static final byte WILD_BIT_MASK = 0b10;
+    private static final byte NULLABLE_BYTE = 0;
+    private static final byte NOT_NULLABLE_BYTE = 1;
     private String alias;
     private int legsCount;
     private boolean poisonous;
@@ -32,48 +36,24 @@ public class AnimalWithMethods implements Serializable {
         return alias;
     }
 
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
-
     public int getLegsCount() {
         return legsCount;
-    }
-
-    public void setLegsCount(int legsCount) {
-        this.legsCount = legsCount;
     }
 
     public boolean isPoisonous() {
         return poisonous;
     }
 
-    public void setPoisonous(boolean poisonous) {
-        this.poisonous = poisonous;
-    }
-
     public boolean isWild() {
         return wild;
-    }
-
-    public void setWild(boolean wild) {
-        this.wild = wild;
     }
 
     public OrganizationWithMethods getOrganization() {
         return organization;
     }
 
-    public void setOrganization(OrganizationWithMethods organization) {
-        this.organization = organization;
-    }
-
     public Gender getGender() {
         return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
     }
 
     @Override
@@ -116,25 +96,62 @@ public class AnimalWithMethods implements Serializable {
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeUTF(alias);
+        if (alias == null) {
+            out.writeByte(NULLABLE_BYTE);
+        } else {
+            out.writeByte(NOT_NULLABLE_BYTE);
+            out.writeUTF(alias);
+        }
         out.writeInt(legsCount);
-        out.writeBoolean(poisonous);
-        out.writeBoolean(wild);
-        out.writeObject(organization);
-        out.writeUTF(gender.name());
+        out.writeByte(getBooleansMask());
+        if (organization == null) {
+            out.writeByte(NULLABLE_BYTE);
+        } else {
+            out.writeByte(NOT_NULLABLE_BYTE);
+            out.writeObject(organization);
+        }
+        if (gender == null) {
+            out.writeByte(NULLABLE_BYTE);
+        } else {
+            out.writeByte(NOT_NULLABLE_BYTE);
+            out.writeUTF(gender.name());
+        }
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        alias = in.readUTF();
+        if (in.readByte() != NULLABLE_BYTE) {
+            alias = in.readUTF();
+        }
         legsCount = in.readInt();
-        poisonous = in.readBoolean();
-        wild = in.readBoolean();
-        organization = (OrganizationWithMethods) in.readObject();
-        gender = Gender.valueOf(in.readUTF());
+        setBooleansFromMask(in.readByte());
+        if (in.readByte() != NULLABLE_BYTE) {
+            organization = (OrganizationWithMethods) in.readObject();
+        }
+        if (in.readByte() != NULLABLE_BYTE) {
+            gender = Gender.valueOf(in.readUTF());
+        }
+    }
+
+    private byte getBooleansMask() {
+        byte mask = 0;
+        if (poisonous) {
+            mask |= POISONOUS_BIT_MASK;
+        }
+        if (wild) {
+            mask |= WILD_BIT_MASK;
+        }
+        return mask;
+    }
+
+    private void setBooleansFromMask(byte mask) {
+        poisonous = (mask & POISONOUS_BIT_MASK) != 0;
+        wild = (mask & WILD_BIT_MASK) != 0;
     }
 }
 
 class OrganizationWithMethods implements Serializable {
+    private static final byte NULLABLE_BYTE = 0;
+    private static final byte NOT_NULLABLE_BYTE = 1;
     private String name;
     private String country;
     private long licenseNumber;
@@ -157,16 +174,8 @@ class OrganizationWithMethods implements Serializable {
         return country;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
     public long getLicenseNumber() {
         return licenseNumber;
-    }
-
-    public void setLicenseNumber(long licenseNumber) {
-        this.licenseNumber = licenseNumber;
     }
 
     @Override
@@ -198,14 +207,28 @@ class OrganizationWithMethods implements Serializable {
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeUTF(name);
-        out.writeUTF(country);
+        if (name == null) {
+            out.writeByte(NULLABLE_BYTE);
+        } else {
+            out.writeByte(NOT_NULLABLE_BYTE);
+            out.writeUTF(name);
+        }
+        if (country == null) {
+            out.writeByte(NULLABLE_BYTE);
+        } else {
+            out.writeByte(NOT_NULLABLE_BYTE);
+            out.writeUTF(country);
+        }
         out.writeLong(licenseNumber);
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        name = in.readUTF();
-        country = in.readUTF();
+        if (in.readByte() != NULLABLE_BYTE) {
+            name = in.readUTF();
+        }
+        if (in.readByte() != NULLABLE_BYTE) {
+            country = in.readUTF();
+        }
         licenseNumber = in.readLong();
     }
 }
