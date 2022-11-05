@@ -38,7 +38,7 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void defaultSerialize(List<Animal> animals, String fileName) throws IOException {
+    public void defaultSerialize(List<Animal> animals, String fileName) {
         if (fileName == null || animals == null) {
             return;
         }
@@ -49,6 +49,8 @@ public class Serializer {
             for (Animal animal : animals) {
                 output.writeObject(animal);
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -59,7 +61,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> defaultDeserialize(String fileName) throws IOException, ClassNotFoundException {
+    public List<Animal> defaultDeserialize(String fileName) {
         if (fileName == null) {
             return null;
         }
@@ -75,6 +77,8 @@ public class Serializer {
             while (fileInput.available() > 0) {
                 result.add((Animal) input.readObject());
             }
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
         return result;
@@ -87,7 +91,7 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) throws IOException {
+    public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
         if (fileName == null || animals == null) {
             return;
         }
@@ -98,6 +102,8 @@ public class Serializer {
             for (AnimalWithMethods animal : animals) {
                 output.writeObject(animal);
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -109,7 +115,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<AnimalWithMethods> deserializeWithMethods(String fileName) throws IOException, ClassNotFoundException {
+    public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
         if (fileName == null) {
             return null;
         }
@@ -125,6 +131,8 @@ public class Serializer {
             while (fileInput.available() > 0) {
                 result.add((AnimalWithMethods) input.readObject());
             }
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
         return result;
@@ -136,7 +144,7 @@ public class Serializer {
      * @param animals Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) throws IOException {
+    public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
         if (fileName == null || animals == null) {
             return;
         }
@@ -147,6 +155,8 @@ public class Serializer {
             for (AnimalExternalizable animal : animals) {
                 output.writeObject(animal);
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -158,8 +168,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) throws IOException,
-            ClassNotFoundException {
+    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
         if (fileName == null) {
             return null;
         }
@@ -175,6 +184,8 @@ public class Serializer {
             while (fileInput.available() > 0) {
                 result.add((AnimalExternalizable) input.readObject());
             }
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
         return result;
@@ -188,7 +199,7 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
-    public void customSerialize(List<Animal> animals, String fileName) throws IOException {
+    public void customSerialize(List<Animal> animals, String fileName) {
         if (fileName == null || animals == null) {
             return;
         }
@@ -217,6 +228,8 @@ public class Serializer {
                     }
                 }
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -228,7 +241,7 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) throws IOException {
+    public List<Animal> customDeserialize(String fileName) {
         if (fileName == null) {
             return null;
         }
@@ -261,6 +274,8 @@ public class Serializer {
                                 : null
                 );
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         return result;
