@@ -30,6 +30,29 @@ import java.util.List;
  * В конце теста по чтению данных, не забывайте удалять файлы
  */
 public class Serializer {
+    private static final byte POISONOUS_BIT_MASK = 0b1;
+    private static final byte WILD_BIT_MASK = 0b10;
+    private static final byte NULLABLE_BYTE = 0;
+    private static final byte NOT_NULLABLE_BYTE = 1;
+
+    private static byte getBooleansMask(boolean poisonous, boolean wild) {
+        byte mask = 0;
+        if (poisonous) {
+            mask |= POISONOUS_BIT_MASK;
+        }
+        if (wild) {
+            mask |= WILD_BIT_MASK;
+        }
+        return mask;
+    }
+
+    private static boolean isPoisonousFromMask(byte mask) {
+        return (mask & POISONOUS_BIT_MASK) != 0;
+    }
+
+    private static boolean isWildFromMask(byte mask) {
+        return (mask & WILD_BIT_MASK) != 0;
+    }
 
     /**
      * 1 тугрик
@@ -181,15 +204,43 @@ public class Serializer {
         }
         try (DataOutputStream out = new DataOutputStream(Files.newOutputStream(fileNamePath))) {
             for (Animal animal : animals) {
-                out.writeUTF(animal.getAlias());
+                String alias = animal.getAlias();
+                if (alias == null) {
+                    out.writeByte(NULLABLE_BYTE);
+                } else {
+                    out.writeByte(NOT_NULLABLE_BYTE);
+                    out.writeUTF(alias);
+                }
                 out.writeInt(animal.getLegsCount());
-                out.writeBoolean(animal.isPoisonous());
-                out.writeBoolean(animal.isWild());
-                Organization animalOrganization = animal.getOrganization();
-                out.writeUTF(animalOrganization.getName());
-                out.writeUTF(animalOrganization.getCountry());
-                out.writeLong(animalOrganization.getLicenseNumber());
-                out.writeUTF(animal.getGender().name());
+                out.writeByte(getBooleansMask(animal.isPoisonous(), animal.isWild()));
+                Organization organization = animal.getOrganization();
+                if (organization == null) {
+                    out.writeByte(NULLABLE_BYTE);
+                } else {
+                    out.writeByte(NOT_NULLABLE_BYTE);
+                    String name = organization.getName();
+                    if (name == null) {
+                        out.writeByte(NULLABLE_BYTE);
+                    } else {
+                        out.writeByte(NOT_NULLABLE_BYTE);
+                        out.writeUTF(name);
+                    }
+                    String country = organization.getCountry();
+                    if (country == null) {
+                        out.writeByte(NULLABLE_BYTE);
+                    } else {
+                        out.writeByte(NOT_NULLABLE_BYTE);
+                        out.writeUTF(country);
+                    }
+                    out.writeLong(organization.getLicenseNumber());
+                }
+                Gender gender = animal.getGender();
+                if (gender == null) {
+                    out.writeByte(NULLABLE_BYTE);
+                } else {
+                    out.writeByte(NOT_NULLABLE_BYTE);
+                    out.writeUTF(gender.name());
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -214,16 +265,27 @@ public class Serializer {
              DataInputStream dataIn = new DataInputStream(in)) {
             while (in.available() > 0) {
                 Animal animal = new Animal();
-                animal.setAlias(dataIn.readUTF());
+                if (dataIn.readByte() != NULLABLE_BYTE) {
+                    animal.setAlias(dataIn.readUTF());
+                }
                 animal.setLegsCount(dataIn.readInt());
-                animal.setPoisonous(dataIn.readBoolean());
-                animal.setWild(dataIn.readBoolean());
-                Organization animalOrganization = new Organization();
-                animalOrganization.setName(dataIn.readUTF());
-                animalOrganization.setCountry(dataIn.readUTF());
-                animalOrganization.setLicenseNumber(dataIn.readLong());
-                animal.setOrganization(animalOrganization);
-                animal.setGender(Gender.valueOf(dataIn.readUTF()));
+                byte booleansMask = dataIn.readByte();
+                animal.setPoisonous(isPoisonousFromMask(booleansMask));
+                animal.setWild(isWildFromMask(booleansMask));
+                if (dataIn.readByte() != NULLABLE_BYTE) {
+                    Organization animalOrganization = new Organization();
+                    if (dataIn.readByte() != NULLABLE_BYTE) {
+                        animalOrganization.setName(dataIn.readUTF());
+                    }
+                    if (dataIn.readByte() != NULLABLE_BYTE) {
+                        animalOrganization.setCountry(dataIn.readUTF());
+                    }
+                    animalOrganization.setLicenseNumber(dataIn.readLong());
+                    animal.setOrganization(animalOrganization);
+                }
+                if (dataIn.readByte() != NULLABLE_BYTE) {
+                    animal.setGender(Gender.valueOf(dataIn.readUTF()));
+                }
                 animals.add(animal);
             }
         } catch (IOException e) {
