@@ -1,115 +1,260 @@
 package ru.mail.polis.homework.io.objects;
 
-
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * РќСѓР¶РЅРѕ СЂРµР°Р»РёР·РѕРІР°С‚СЊ РјРµС‚РѕРґС‹ СЌС‚РѕРіРѕ РєР»Р°СЃСЃР° Рё СЂРµР°Р»РёР·РѕРІР°С‚СЊ С‚РµСЃС‚РёСЂРѕРІР°РЅРёРµ 4-РµС… СЃРїРѕСЃРѕР±РѕРІ Р·Р°РїРёСЃРё.
- * Р”Р»СЏ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ РЅР°РґРѕ СЃРѕР·РґР°С‚СЊ СЃРїРёСЃРѕРє РёР· 1000+ СЂР°Р·РЅС‹С… РѕР±СЉРµРєС‚РѕРІ (Р·Р°РїРѕР»РЅСЏС‚СЊ РѕР±СЉРµРєС‚С‹ РјРѕР¶РЅРѕ СЂР°РЅРґРѕРјРѕРј,
- * СЃ РїРѕРјРѕС‰СЊСЋ РєР»Р°СЃСЃР° Random). Р’Р°Р¶РЅРѕ, С‡С‚РѕР±С‹ РІ СЃРїРёСЃРєРµ Р¶РёРІРѕС‚РЅС‹С… РїРѕРїР°РґР°Р»РёСЃСЊ null-С‹
- * РџРѕС‚РѕРј РїРѕР»СѓС‡РёРІС€РёР№СЃСЏ СЃРїРёСЃРѕРє Р·Р°РїРёСЃР°С‚СЊ РІ С„Р°Р№Р» (РЅРµРѕР±С…РѕРґРёРјРѕ СѓРІРµР»РёС‡РёС‚СЊ СЂР°Р·РјРµСЂ СЃРїРёСЃРєР°, РµСЃР»Рё Р·Р°РїРёСЃСЊ РїСЂРѕРёСЃС…РѕРґРёС‚ РјРµРЅРµРµ 5 СЃРµРєСѓРЅРґ).
- * РќР• РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ СЃСЃС‹Р»РѕРє РЅР° РѕРґРЅРё Рё С‚Рµ Р¶Рµ РѕР±СЉРµРєС‚С‹
+ * Нужно реализовать методы этого класса и реализовать тестирование 4-ех (2-ух) способов записи.
+ * Для тестирования надо создать список из 1000+ разных объектов (заполнять объекты можно рандомом,
+ * с помощью класса Random).
+ * Потом получившийся список записать в файл (необходимо увеличить размер списка, если запись происходит менее 5 секунд).
+ * НЕ должно быть ссылок на одни и те же объекты
  *
- * Р”Р°Р»РµРµ СЌС‚РѕС‚ СЃРїРёСЃРѕРє РЅР°РґРѕ РїСЂРѕС‡РёС‚Р°С‚СЊ РёР· С„Р°Р№Р»Р°.
+ * <p>
+ * Далее этот список надо прочитать из файла.
  *
- * Р РµР·СѓР»СЊС‚Р°С‚РѕРј С‚РµСЃС‚Р° РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ СЃР»РµРґСѓСЋС‰РµРµ: СЂР°Р·РјРµСЂ С„Р°Р№Р»Р°, РІСЂРµРјСЏ Р·Р°РїРёСЃРё Рё РІСЂРµРјСЏ С‡С‚РµРЅРёСЏ.
- * Р’СЂРµРјСЏ СЃС‡РёС‚Р°С‚СЊ С‡РµСЂРµР· System.currentTimeMillis().
- * Р’ РёС‚РѕРіРѕРІРѕРј РїСѓР»Р РµРєРІРµСЃС‚Рµ РґРѕР»Р¶РЅР° Р±С‹С‚СЊ РёРЅС„РѕСЂРјР°С†РёСЏ РѕР± СЌС‚РёС… Р·РЅР°С‡РµРЅРёСЏС… РґР»СЏ РєР°Р¶РґРѕРіРѕ С‚РµСЃС‚Р°. (РІСЃРµРіРѕ 4 С‚РµСЃС‚Р°,
- * Р·Р° РєР°Р¶РґС‹Р№ С‚РµСЃС‚ 1 Р±Р°Р»Р»)  Рё 3 Р±Р°Р»Р»Р° Р·Р° РїСЂР°РІРёР»СЊРЅРѕРµ РѕР±СЉСЏСЃРЅРµРЅРёРµ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ
- * Р”Р»СЏ С‚РµСЃС‚РѕРІ СЃРѕР·РґР°Р№С‚Рµ РєР»Р°СЃСЃ РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РµРј РїР°РєРµС‚Рµ РІ РїР°РїРєРµ С‚РµСЃС‚РѕРІ. РСЃРїРѕР»СЊР·СѓР№С‚Рµ РґСЂСѓРіРёРµ С‚РµСЃС‚С‹ - РєР°Рє РїСЂРёРјРµСЂС‹.
+ * <p>
+ * Результатом теста должно быть следующее: размер файла, время записи и время чтения.
+ * Время считать через System.currentTimeMillis().
+ * В итоговом пулРеквесте должна быть информация об этих значениях для каждого теста. (всего 4 теста,
+ * за каждый тест 1 балл)  и 3 балла за правильное объяснение результатов
+ * Для тестов создайте класс в соответствующем пакете в папке тестов. Используйте другие тесты - как примеры.
  *
- * Р’ РєРѕРЅС†Рµ С‚РµСЃС‚Р° РїРѕ С‡С‚РµРЅРёСЋ РґР°РЅРЅС‹С…, РЅРµ Р·Р°Р±С‹РІР°Р№С‚Рµ СѓРґР°Р»СЏС‚СЊ С„Р°Р№Р»С‹
+ * <p>
+ * В конце теста по чтению данных, не забывайте удалять файлы
  */
 public class Serializer {
 
     /**
-     * 1 С‚СѓРіСЂРёРє
-     * Р РµР°Р»РёР·РѕРІР°С‚СЊ РїСЂРѕСЃС‚СѓСЋ СЃРµСЂРёР°Р»РёР·Р°С†РёСЋ, СЃ РїРѕРјРѕС‰СЊСЋ СЃРїРµС†РёР°Р»СЊРЅРѕРіРѕ РїРѕС‚РѕРєР° РґР»СЏ СЃРµСЂРёР°Р»РёР·Р°С†РёРё РѕР±СЉРµРєС‚РѕРІ
-     * @param animals РЎРїРёСЃРѕРє Р¶РёРІРѕС‚РЅС‹С… РґР»СЏ СЃРµСЂРёР°Р»РёР·Р°С†РёРё
-     * @param fileName С„Р°Р№Р» РІ РєРѕС‚РѕСЂС‹Р№ "РїРёС€РµРј" Р¶РёРІРѕС‚РЅС‹С…
+     * 1 тугрик
+     * Реализовать простую сериализацию, с помощью специального потока для сериализации объектов
+     *
+     * @param animals  Список животных для сериализации
+     * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
+        Path fileTo = Paths.get(fileName);
+        if (Files.notExists(fileTo)) {
+            return;
+        }
 
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(fileTo))) {
+            for (Animal animal : animals) {
+                outputStream.writeObject(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
-     * 1 С‚СѓРіСЂРёРє
-     * Р РµР°Р»РёР·РѕРІР°С‚СЊ РїСЂРѕСЃС‚СѓСЋ РґРёСЃРµСЂРёР°Р»РёР·Р°С†РёСЋ, СЃ РїРѕРјРѕС‰СЊСЋ СЃРїРµС†РёР°Р»СЊРЅРѕРіРѕ РїРѕС‚РѕРєР° РґР»СЏ РґРёСЃРµСЂРёР°Р»РёР·Р°С†РёРё РѕР±СЉРµРєС‚РѕРІ
+     * 1 тугрик
+     * Реализовать простую дисериализацию, с помощью специального потока для дисериализации объектов
      *
-     * @param fileName С„Р°Р№Р» РёР· РєРѕС‚РѕСЂРѕРіРѕ "С‡РёС‚Р°РµРј" Р¶РёРІРѕС‚РЅС‹С…
-     * @return СЃРїРёСЃРѕРє Р¶РёРІРѕС‚РЅС‹С…
+     * @param fileName файл из которого "читаем" животных
+     * @return список животных
      */
     public List<Animal> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
+
+        Path fileFrom = Paths.get(fileName);
+        if (Files.notExists(fileFrom)) {
+            return Collections.emptyList();
+        }
+
+        List<Animal> animals = new ArrayList<>();
+        try (InputStream fileInputStream = Files.newInputStream(fileFrom);
+             ObjectInputStream inputStream = new ObjectInputStream(fileInputStream)) {
+            while (fileInputStream.available() > 0) {
+                animals.add((Animal) inputStream.readObject());
+            }
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
+        return animals;
     }
 
 
     /**
-     * 1 С‚СѓРіСЂРёРє
-     * Р РµР°Р»РёР·РѕРІР°С‚СЊ РїСЂРѕСЃС‚СѓСЋ СЂСѓС‡РЅСѓСЋ СЃРµСЂРёР°Р»РёР·Р°С†РёСЋ, СЃ РїРѕРјРѕС‰СЊСЋ СЃРїРµС†РёР°Р»СЊРЅРѕРіРѕ РїРѕС‚РѕРєР° РґР»СЏ СЃРµСЂРёР°Р»РёР·Р°С†РёРё РѕР±СЉРµРєС‚РѕРІ Рё СЃРїРµС†РёР°Р»СЊРЅС‹С… РјРµС‚РѕРґРѕРІ
-     * @param animals РЎРїРёСЃРѕРє Р¶РёРІРѕС‚РЅС‹С… РґР»СЏ СЃРµСЂРёР°Р»РёР·Р°С†РёРё
-     * @param fileName С„Р°Р№Р» РІ РєРѕС‚РѕСЂС‹Р№ "РїРёС€РµРј" Р¶РёРІРѕС‚РЅС‹С…
+     * 1 тугрик
+     * Реализовать простую ручную сериализацию, с помощью специального потока для сериализации объектов и специальных методов
+     *
+     * @param animals  Список животных для сериализации
+     * @param fileName файл в который "пишем" животных
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
+        Path fileTo = Paths.get(fileName);
+        if (Files.notExists(fileTo)) {
+            return;
+        }
 
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(fileTo))) {
+            for (AnimalWithMethods animal : animals) {
+                outputStream.writeObject(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
-     * 1 С‚СѓРіСЂРёРє
-     * Р РµР°Р»РёР·РѕРІР°С‚СЊ РїСЂРѕСЃС‚СѓСЋ СЂСѓС‡РЅСѓСЋ РґРёСЃРµСЂРёР°Р»РёР·Р°С†РёСЋ, СЃ РїРѕРјРѕС‰СЊСЋ СЃРїРµС†РёР°Р»СЊРЅРѕРіРѕ РїРѕС‚РѕРєР° РґР»СЏ РґРёСЃРµСЂРёР°Р»РёР·Р°С†РёРё РѕР±СЉРµРєС‚РѕРІ
-     * Рё СЃРїРµС†РёР°Р»СЊРЅС‹С… РјРµС‚РѕРґРѕРІ
+     * 1 тугрик
+     * Реализовать простую ручную дисериализацию, с помощью специального потока для дисериализации объектов
+     * и специальных методов
      *
-     * @param fileName С„Р°Р№Р» РёР· РєРѕС‚РѕСЂРѕРіРѕ "С‡РёС‚Р°РµРј" Р¶РёРІРѕС‚РЅС‹С…
-     * @return СЃРїРёСЃРѕРє Р¶РёРІРѕС‚РЅС‹С…
+     * @param fileName файл из которого "читаем" животных
+     * @return список животных
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
-        return Collections.emptyList();
+
+        Path fileFrom = Paths.get(fileName);
+        if (Files.notExists(fileFrom)) {
+            return Collections.emptyList();
+        }
+
+        List<AnimalWithMethods> animals = new ArrayList<>();
+        try (InputStream fileInputStream = Files.newInputStream(fileFrom);
+             ObjectInputStream inputStream = new ObjectInputStream(fileInputStream)) {
+            while (fileInputStream.available() > 0) {
+                animals.add((AnimalWithMethods) inputStream.readObject());
+            }
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
+        return animals;
     }
 
     /**
-     * 1 С‚СѓРіСЂРёРє
-     * Р РµР°Р»РёР·РѕРІР°С‚СЊ РїСЂРѕСЃС‚СѓСЋ СЂСѓС‡РЅСѓСЋ СЃРµСЂРёР°Р»РёР·Р°С†РёСЋ, СЃ РїРѕРјРѕС‰СЊСЋ СЃРїРµС†РёР°Р»СЊРЅРѕРіРѕ РїРѕС‚РѕРєР° РґР»СЏ СЃРµСЂРёР°Р»РёР·Р°С†РёРё РѕР±СЉРµРєС‚РѕРІ Рё РёРЅС‚РµСЂС„РµР№СЃР° Externalizable
-     * @param animals РЎРїРёСЃРѕРє Р¶РёРІРѕС‚РЅС‹С… РґР»СЏ СЃРµСЂРёР°Р»РёР·Р°С†РёРё
-     * @param fileName С„Р°Р№Р» РІ РєРѕС‚РѕСЂС‹Р№ "РїРёС€РµРј" Р¶РёРІРѕС‚РЅС‹С…
+     * 1 тугрик
+     * Реализовать простую ручную сериализацию, с помощью специального потока для сериализации объектов и интерфейса Externalizable
+     *
+     * @param animals  Список животных для сериализации
+     * @param fileName файл в который "пишем" животных
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
-
+        Path fileTo = Paths.get(fileName);
+        if (Files.notExists(fileTo)) {
+            return;
+        }
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(fileTo))) {
+            for (AnimalExternalizable animal : animals) {
+                outputStream.writeObject(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
-     * 1 С‚СѓРіСЂРёРє
-     * Р РµР°Р»РёР·РѕРІР°С‚СЊ РїСЂРѕСЃС‚СѓСЋ СЂСѓС‡РЅСѓСЋ РґРёСЃРµСЂРёР°Р»РёР·Р°С†РёСЋ, СЃ РїРѕРјРѕС‰СЊСЋ СЃРїРµС†РёР°Р»СЊРЅРѕРіРѕ РїРѕС‚РѕРєР° РґР»СЏ РґРёСЃРµСЂРёР°Р»РёР·Р°С†РёРё РѕР±СЉРµРєС‚РѕРІ
-     * Рё РёРЅС‚РµСЂС„РµР№СЃР° Externalizable
+     * 1 тугрик
+     * Реализовать простую ручную дисериализацию, с помощью специального потока для дисериализации объектов
+     * и интерфейса Externalizable
      *
-     * @param fileName С„Р°Р№Р» РёР· РєРѕС‚РѕСЂРѕРіРѕ "С‡РёС‚Р°РµРј" Р¶РёРІРѕС‚РЅС‹С…
-     * @return СЃРїРёСЃРѕРє Р¶РёРІРѕС‚РЅС‹С…
+     * @param fileName файл из которого "читаем" животных
+     * @return список животных
      */
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-        return Collections.emptyList();
+        Path fileFrom = Paths.get(fileName);
+        if (Files.notExists(fileFrom)) {
+            return Collections.emptyList();
+        }
+        List<AnimalExternalizable> animals = new ArrayList<>();
+        try (InputStream fileInputStream = Files.newInputStream(fileFrom);
+             ObjectInputStream inputStream = new ObjectInputStream(fileInputStream)) {
+            while (fileInputStream.available() > 0) {
+                animals.add((AnimalExternalizable) inputStream.readObject());
+            }
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
+        return animals;
     }
 
     /**
-     * 2 С‚СѓРіСЂРёРєР°
-     * Р РµР°Р»РёР·РѕРІР°С‚СЊ СЂСѓС‡РЅСѓСЋ СЃРµСЂРёР°Р»РёР·Р°С†РёСЋ, СЃ РїРѕРјРѕС‰СЊСЋ РІС‹СЃРѕРєРѕСѓСЂРѕРІРЅРµРІС‹С… РїРѕС‚РѕРєРѕРІ. РЎР°РјРё СЂСѓС‡РєР°РјРё РїРёС€РµРј РїРѕР»СЏ,
-     * Р±РµР· РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ РјРµС‚РѕРґРѕРІ writeObject
+     * 2 тугрика
+     * Реализовать ручную сериализацию, с помощью высокоуровневых потоков. Сами ручками пишем поля,
+     * без использования методов writeObject
      *
-     * @param animals  РЎРїРёСЃРѕРє Р¶РёРІРѕС‚РЅС‹С… РґР»СЏ СЃРµСЂРёР°Р»РёР·Р°С†РёРё
-     * @param fileName С„Р°Р№Р», РІ РєРѕС‚РѕСЂС‹Р№ "РїРёС€РµРј" Р¶РёРІРѕС‚РЅС‹С…
+     * @param animals  Список животных для сериализации
+     * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
-
+        Path fileTo = Paths.get(fileName);
+        if (Files.notExists(fileTo)) {
+            return;
+        }
+        try (DataOutputStream outputStream = new DataOutputStream(Files.newOutputStream(fileTo))) {
+            for (Animal animal : animals) {
+                outputStream.writeUTF(writeString(animal.getName()));
+                outputStream.writeUTF(writeString(String.valueOf(animal.getAnimalType())));
+                outputStream.writeInt(animal.getCountLegs());
+                outputStream.writeByte(animal.isDomesticated() ? 1 : 0);
+                outputStream.writeByte(animal.isHerbivore() ? 1 : 0);
+                Owner owner = animal.getOwner();
+                if (owner != null) {
+                    outputStream.writeUTF(writeString(owner.getName()));
+                    outputStream.writeBoolean(owner.isOrganization());
+                } else {
+                    outputStream.writeUTF("null");
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
-     * 2 С‚СѓРіСЂРёРєР°
-     * Р РµР°Р»РёР·РѕРІР°С‚СЊ СЂСѓС‡РЅСѓСЋ РґРёСЃРµСЂРёР°Р»РёР·Р°С†РёСЋ, СЃ РїРѕРјРѕС‰СЊСЋ РІС‹СЃРѕРєРѕСѓСЂРѕРІРЅРµРІС‹С… РїРѕС‚РѕРєРѕРІ. РЎР°РјРё СЂСѓС‡РєР°РјРё С‡РёС‚Р°РµРј РїРѕР»СЏ,
-     * Р±РµР· РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ РјРµС‚РѕРґРѕРІ readObject
+     * 2 тугрика
+     * Реализовать ручную дисериализацию, с помощью высокоуровневых потоков. Сами ручками читаем поля,
+     * без использования методов readObject
      *
-     * @param fileName С„Р°Р№Р» РёР· РєРѕС‚РѕСЂРѕРіРѕ "С‡РёС‚Р°РµРј" Р¶РёРІРѕС‚РЅС‹С…
-     * @return СЃРїРёСЃРѕРє Р¶РёРІРѕС‚РЅС‹С…
+     * @param fileName файл из которого "читаем" животных
+     * @return список животных
      */
     public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+
+        Path fileFrom = Paths.get(fileName);
+        if (Files.notExists(fileFrom)) {
+            return Collections.emptyList();
+        }
+        List<Animal> animals = new ArrayList<>();
+        try (InputStream fileInputStream = Files.newInputStream(fileFrom);
+             DataInputStream inputStream = new DataInputStream(fileInputStream)) {
+            while (fileInputStream.available() != 0) {
+                Animal animal = new Animal();
+                animal.setName(readString(inputStream));
+                String type = readString(inputStream);
+                if (type != null) {
+                    animal.setAnimalType(AnimalType.valueOf(type));
+                }
+                animal.setCountLegs(inputStream.readInt());
+                animal.setDomesticated(inputStream.readByte() == 1);
+                animal.setHerbivore(inputStream.readByte() == 1);
+                String stringOwner = inputStream.readUTF();
+                if (!stringOwner.equals("null")) {
+                    Owner owner = new Owner();
+                    owner.setName(stringOwner);
+                    owner.setOrganization(inputStream.readBoolean());
+                    animal.setOwner(owner);
+                }
+                animals.add(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return animals;
+    }
+
+    private static String writeString(String str) {
+        return str == null ? "null" : str;
+    }
+
+    private static String readString(DataInputStream inputStream) throws IOException {
+        String str = inputStream.readUTF();
+        return str.equals("null") ? null : str;
     }
 }
