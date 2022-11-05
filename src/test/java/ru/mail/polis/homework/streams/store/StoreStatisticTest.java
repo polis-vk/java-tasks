@@ -3,12 +3,10 @@ package ru.mail.polis.homework.streams.store;
 import org.junit.Test;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -18,9 +16,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 public class StoreStatisticTest {
-
-    private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-
     private static final Item banana = new Item("banana", 80L);
     private static final Item chery = new Item("chery", 120L);
     private static final Item apple = new Item("apple", 40L);
@@ -74,7 +69,7 @@ public class StoreStatisticTest {
     @Test
     public void mostPopularItem() {
         LocalDateTime date = LocalDateTime.of(2015, Month.SEPTEMBER, 5, 0, 0, 0);
-        ;
+
         Order order1 = generateByItemList(Timestamp.valueOf(date), Stream.of(chery, chery, chery, banana).collect(Collectors.toList()));
         Order order2 = generateByItemList(Timestamp.valueOf(date), Stream.of(banana, banana, apple, apple).collect(Collectors.toList()));
         Order order3 = generateByItemList(Timestamp.valueOf(date), Stream.of(apple, banana, apple, chery).collect(Collectors.toList()));
