@@ -6,19 +6,19 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Objects;
 
+import static ru.mail.polis.homework.io.objects.SerializationUtils.*;
+
 /**
  * Дубль класса Animal, для Serializer.serializeWithExternalizable
  * 3 тугрика
  */
 public class AnimalExternalizable implements Externalizable {
-    private static final long serialVersionUID = 1357924680098765432L;
-
-    protected String name;
-    protected int age;
-    protected boolean isWild;
-    protected boolean isFed;
-    protected AnimalAbilityType animalAbilityType;
-    protected Location animalLocation;
+    private String name;
+    private int age;
+    private boolean isWild;
+    private boolean isFed;
+    private AnimalAbilityType animalAbilityType;
+    private Location animalLocation;
 
     public AnimalExternalizable() {
     }
@@ -56,30 +56,6 @@ public class AnimalExternalizable implements Externalizable {
         return animalLocation;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public void setWild(boolean wild) {
-        isWild = wild;
-    }
-
-    public void setFed(boolean fed) {
-        isFed = fed;
-    }
-
-    public void setAnimalAbilityType(AnimalAbilityType animalAbilityType) {
-        this.animalAbilityType = animalAbilityType;
-    }
-
-    public void setAnimalLocation(Location animalLocation) {
-        this.animalLocation = animalLocation;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -107,28 +83,36 @@ public class AnimalExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        // Write Location first as it's Object
-        out.writeUTF(animalLocation.getLatitude());
-        out.writeUTF(animalLocation.getLongitude());
+        // Write Location first as it's an object
+        if (animalLocation == null) {
+            out.writeByte(SerializationUtils.NULL);
+        } else {
+            out.writeByte(SerializationUtils.NOT_NULL);
+            writeUTFOrNull(animalLocation.getLongitude(), out);
+            writeUTFOrNull(animalLocation.getLatitude(), out);
+        }
         // Write other fields of superclass
-        out.writeUTF(name);
+        writeUTFOrNull(name, out);
         out.writeInt(age);
-        out.writeBoolean(isWild);
-        out.writeBoolean(isFed);
-        out.writeUTF(animalAbilityType.toString());
+        out.writeByte(booleanToByte(isWild));
+        out.writeByte(booleanToByte(isFed));
+        writeUTFOrNull(enumToString(animalAbilityType), out);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException {
         // Read Location first
-        animalLocation = new Location();
-        animalLocation.setLatitude(in.readUTF());
-        animalLocation.setLongitude(in.readUTF());
+        if (in.readByte() != NULL) {
+            this.animalLocation = new Location(
+                    readUTFOrNull(in),
+                    readUTFOrNull(in)
+            );
+        }
         // Read other fields
-        name = in.readUTF();
-        age = in.readInt();
-        isWild = in.readBoolean();
-        isFed = in.readBoolean();
-        animalAbilityType = AnimalAbilityType.valueOf(in.readUTF());
+        this.name = readUTFOrNull(in);
+        this.age = in.readInt();
+        this.isWild = byteToBoolean(in.readByte());
+        this.isFed = byteToBoolean(in.readByte());
+        this.animalAbilityType = stringToEnum(readUTFOrNull(in), AnimalAbilityType.class);
     }
 }

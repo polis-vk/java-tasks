@@ -10,19 +10,14 @@ import java.util.Objects;
  * 1 тугрик
  */
 public class Animal implements Serializable {
-    private static final long serialVersionUID = 1357924680098765432L;
+    private final String name;
+    private final int age;
+    private final boolean isWild;
+    private final boolean isFed;
+    private final AnimalAbilityType animalAbilityType;
+    private final Location animalLocation;
 
-    protected String name;
-    protected int age;
-    protected boolean isWild;
-    protected boolean isFed;
-    protected AnimalAbilityType animalAbilityType;
-    protected Location animalLocation;
-
-    public Animal() {
-    }
-
-    public Animal(String name, int age, boolean isWild, boolean isFed, AnimalAbilityType animalAbilityType, Location animalLocation) {
+    public Animal(Location animalLocation, String name, int age, boolean isWild, boolean isFed, AnimalAbilityType animalAbilityType) {
         this.name = name;
         this.age = age;
         this.isWild = isWild;
@@ -53,30 +48,6 @@ public class Animal implements Serializable {
 
     public Location getAnimalLocation() {
         return animalLocation;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public void setWild(boolean wild) {
-        isWild = wild;
-    }
-
-    public void setFed(boolean fed) {
-        isFed = fed;
-    }
-
-    public void setAnimalAbilityType(AnimalAbilityType animalAbilityType) {
-        this.animalAbilityType = animalAbilityType;
-    }
-
-    public void setAnimalLocation(Location animalLocation) {
-        this.animalLocation = animalLocation;
     }
 
     @Override

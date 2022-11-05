@@ -4,11 +4,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class Location implements Serializable {
-    private String longitude;
-    private String latitude;
-
-    public Location() {
-    }
+    private final String longitude;
+    private final String latitude;
 
     public Location(String longitude, String latitude) {
         this.longitude = longitude;
@@ -21,14 +18,6 @@ public class Location implements Serializable {
 
     public String getLatitude() {
         return latitude;
-    }
-
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
-
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
     }
 
     @Override

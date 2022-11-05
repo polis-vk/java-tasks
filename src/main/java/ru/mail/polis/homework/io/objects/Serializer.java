@@ -1,14 +1,22 @@
 package ru.mail.polis.homework.io.objects;
 
-
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import static ru.mail.polis.homework.io.objects.SerializationUtils.NULL;
+import static ru.mail.polis.homework.io.objects.SerializationUtils.booleanToByte;
+import static ru.mail.polis.homework.io.objects.SerializationUtils.byteToBoolean;
+import static ru.mail.polis.homework.io.objects.SerializationUtils.enumToString;
+import static ru.mail.polis.homework.io.objects.SerializationUtils.readUTFOrNull;
+import static ru.mail.polis.homework.io.objects.SerializationUtils.stringToEnum;
+import static ru.mail.polis.homework.io.objects.SerializationUtils.writeUTFOrNull;
 
 /**
  * Нужно реализовать методы этого класса и реализовать тестирование 4-ех способов записи.
@@ -39,6 +47,7 @@ public class Serializer {
         try (final ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
             for (Animal animal : animals) {
                 objectOutputStream.writeObject(animal);
+                objectOutputStream.flush();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -53,9 +62,10 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> defaultDeserialize(String fileName) {
-        ArrayList<Animal> list = new ArrayList<>();
-        try (final ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
-            while (objectInputStream.available() > 0) {
+        List<Animal> list = new ArrayList<>();
+        try (final FileInputStream fileInputStream = new FileInputStream(fileName);
+             final ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
+            while (fileInputStream.available() > 0) {
                 list.add((Animal) objectInputStream.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -75,6 +85,7 @@ public class Serializer {
         try (final ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
             for (AnimalWithMethods animal : animals) {
                 objectOutputStream.writeObject(animal);
+                objectOutputStream.flush();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -90,9 +101,10 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
-        ArrayList<AnimalWithMethods> list = new ArrayList<>();
-        try (final ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
-            while (objectInputStream.available() > 0) {
+        List<AnimalWithMethods> list = new ArrayList<>();
+        try (final FileInputStream fileInputStream = new FileInputStream(fileName);
+             final ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
+            while (fileInputStream.available() > 0) {
                 list.add((AnimalWithMethods) objectInputStream.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -111,6 +123,7 @@ public class Serializer {
         try (final ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
             for (AnimalExternalizable animal : animals) {
                 objectOutputStream.writeObject(animal);
+                objectOutputStream.flush();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -126,9 +139,10 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-        ArrayList<AnimalExternalizable> list = new ArrayList<>();
-        try (final ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
-            while (objectInputStream.available() > 0) {
+        List<AnimalExternalizable> list = new ArrayList<>();
+        try (final FileInputStream fileInputStream = new FileInputStream(fileName);
+             final ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
+            while (fileInputStream.available() > 0) {
                 list.add((AnimalExternalizable) objectInputStream.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -146,7 +160,26 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<Animal> animals, String fileName) {
-
+        try (final DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(fileName))) {
+            for (Animal animal : animals) {
+                // Write Location first as it's an object
+                if (animal.getAnimalLocation() == null) {
+                    dataOutputStream.writeByte(SerializationUtils.NULL);
+                } else {
+                    dataOutputStream.writeByte(SerializationUtils.NOT_NULL);
+                    writeUTFOrNull(animal.getAnimalLocation().getLongitude(), dataOutputStream);
+                    writeUTFOrNull(animal.getAnimalLocation().getLatitude(), dataOutputStream);
+                }
+                // Write other fields of superclass
+                writeUTFOrNull(animal.getName(), dataOutputStream);
+                dataOutputStream.writeInt(animal.getAge());
+                dataOutputStream.writeByte(booleanToByte(animal.isWild()));
+                dataOutputStream.writeByte(booleanToByte(animal.isFed()));
+                writeUTFOrNull(enumToString(animal.getAnimalAbilityType()), dataOutputStream);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -158,6 +191,27 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+        List<Animal> list = new ArrayList<>();
+        try (final FileInputStream fileInputStream = new FileInputStream(fileName);
+             final DataInputStream dataInputStream = new DataInputStream(fileInputStream)) {
+            while (fileInputStream.available() > 0) {
+                Animal animal = new Animal(
+                        dataInputStream.readByte() == NULL ? null :
+                                new Location(
+                                        readUTFOrNull(dataInputStream),
+                                        readUTFOrNull(dataInputStream)
+                                ),
+                        readUTFOrNull(dataInputStream),
+                        dataInputStream.readInt(),
+                        byteToBoolean(dataInputStream.readByte()),
+                        byteToBoolean(dataInputStream.readByte()),
+                        stringToEnum(readUTFOrNull(dataInputStream), AnimalAbilityType.class)
+                );
+                list.add(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }
