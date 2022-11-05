@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.streams.store;
 
 import java.sql.Timestamp;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -67,7 +66,10 @@ public class StoreStatistic {
      */
     public Map<Order, Long> sum5biggerOrders(List<Order> orders) {
 
-        return orders.stream().sorted(Comparator.comparing(order -> order.getItemCount().size()))
+        return orders.stream()
+                .sorted(((o1, o2) -> Long.compare(
+                        o2.getItemCount().values().stream().mapToLong(Integer::longValue).sum(),
+                        o1.getItemCount().values().stream().mapToLong(Integer::longValue).sum())))
                 .limit(5)
                 .collect(Collectors.toMap(
                                 order -> order,
