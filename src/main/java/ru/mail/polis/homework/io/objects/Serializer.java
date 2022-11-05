@@ -73,8 +73,7 @@ public class Serializer {
         try (InputStream fileInput = Files.newInputStream(filePath);
              ObjectInputStream input = new ObjectInputStream(fileInput)) {
             while (fileInput.available() > 0) {
-                Animal deserializedAnimal = (Animal) input.readObject();
-                result.add(deserializedAnimal);
+                result.add((Animal) input.readObject());
             }
         }
 
@@ -124,8 +123,7 @@ public class Serializer {
         try (InputStream fileInput = Files.newInputStream(filePath);
              ObjectInputStream input = new ObjectInputStream(fileInput)) {
             while (fileInput.available() > 0) {
-                AnimalWithMethods deserializedAnimal = (AnimalWithMethods) input.readObject();
-                result.add(deserializedAnimal);
+                result.add((AnimalWithMethods) input.readObject());
             }
         }
 
@@ -175,8 +173,7 @@ public class Serializer {
         try (InputStream fileInput = Files.newInputStream(filePath);
              ObjectInputStream input = new ObjectInputStream(fileInput)) {
             while (fileInput.available() > 0) {
-                AnimalExternalizable deserializedAnimal = (AnimalExternalizable) input.readObject();
-                result.add(deserializedAnimal);
+                result.add((AnimalExternalizable) input.readObject());
             }
         }
 
@@ -246,24 +243,23 @@ public class Serializer {
              DataInputStream input = new DataInputStream(fileInput)) {
             while (fileInput.available() > 0) {
                 DataByte dataByte = new DataByte(input.readByte());
-
-                Animal deserializedAnimal = dataByte.isAnimalNotNull()
-                        ? new Animal(
-                        dataByte.isNameNotNull() ? input.readUTF() : null,
-                        dataByte.isDomestic(),
-                        dataByte.isHaveClaws(),
-                        input.readInt(),
-                        dataByte.isTypeNotNull() ? AnimalType.valueOf(input.readUTF()) : null,
-                        dataByte.isOrgNotNull()
-                                ? new Organization(
-                                dataByte.isTitleNotNull() ? input.readUTF() : null,
-                                dataByte.isCommercial(),
-                                input.readInt())
+                result.add(
+                        dataByte.isAnimalNotNull()
+                                ? new Animal(
+                                dataByte.isNameNotNull() ? input.readUTF() : null,
+                                dataByte.isDomestic(),
+                                dataByte.isHaveClaws(),
+                                input.readInt(),
+                                dataByte.isTypeNotNull() ? AnimalType.valueOf(input.readUTF()) : null,
+                                dataByte.isOrgNotNull()
+                                        ? new Organization(
+                                        dataByte.isTitleNotNull() ? input.readUTF() : null,
+                                        dataByte.isCommercial(),
+                                        input.readInt())
+                                        : null
+                        )
                                 : null
-                )
-                        : null;
-
-                result.add(deserializedAnimal);
+                );
             }
         }
 
