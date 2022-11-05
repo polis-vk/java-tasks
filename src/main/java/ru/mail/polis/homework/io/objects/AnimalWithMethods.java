@@ -84,42 +84,32 @@ public class AnimalWithMethods implements Serializable {
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        DataByte dataByte = new DataByte(this);
-        out.writeByte(dataByte.getByte());
+        AnimalDataByte animalDataByte = new AnimalDataByte(this);
+        out.writeByte(animalDataByte.getByte());
 
-        if (dataByte.isAnimalNotNull()) {
-            if (dataByte.isNameNotNull()) {
+        if (animalDataByte.isAnimalNotNull()) {
+            if (animalDataByte.isNameNotNull()) {
                 out.writeUTF(name);
             }
             out.writeInt(legsCount);
-            if (dataByte.isTypeNotNull()) {
+            if (animalDataByte.isTypeNotNull()) {
                 out.writeUTF(animalTypeWithMethods.name());
             }
-            if (dataByte.isOrgNotNull()) {
-                OrganizationWithMethods org = organizationWithMethods;
-                if (dataByte.isTitleNotNull()) {
-                    out.writeUTF(org.getTitle());
-                }
-                out.writeInt(org.getAnimalsCount());
+            if (animalDataByte.isOrgNotNull()) {
+                out.writeObject(organizationWithMethods);
             }
         }
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        DataByte dataByte = new DataByte(in.readByte());
+        AnimalDataByte animalDataByte = new AnimalDataByte(in.readByte());
 
-        name = dataByte.isNameNotNull() ? in.readUTF() : null;
-        isDomestic = dataByte.isDomestic();
-        haveClaws = dataByte.isHaveClaws();
+        name = animalDataByte.isNameNotNull() ? in.readUTF() : null;
+        isDomestic = animalDataByte.isDomestic();
+        haveClaws = animalDataByte.isHaveClaws();
         legsCount = in.readInt();
-        animalTypeWithMethods = dataByte.isTypeNotNull() ? AnimalTypeWithMethods.valueOf(in.readUTF()) : null;
-        organizationWithMethods =
-                dataByte.isOrgNotNull()
-                        ? new OrganizationWithMethods(
-                        dataByte.isTitleNotNull() ? in.readUTF() : null,
-                        dataByte.isCommercial(),
-                        in.readInt())
-                        : null;
+        animalTypeWithMethods = animalDataByte.isTypeNotNull() ? AnimalTypeWithMethods.valueOf(in.readUTF()) : null;
+        organizationWithMethods = animalDataByte.isOrgNotNull() ? (OrganizationWithMethods) in.readObject() : null;
     }
 }
 
@@ -133,11 +123,11 @@ enum AnimalTypeWithMethods {
     INVERTEBRATE
 }
 
-class OrganizationWithMethods {
+class OrganizationWithMethods implements Serializable {
 
-    private final String title;
-    private final boolean isCommercial;
-    private final int animalsCount;
+    private String title;
+    private boolean isCommercial;
+    private int animalsCount;
 
     public OrganizationWithMethods(String title, boolean isCommercial, int animalsCount) {
         this.title = title;
@@ -178,5 +168,25 @@ class OrganizationWithMethods {
                 ", isCommercial=" + isCommercial +
                 ", animalsCount=" + animalsCount +
                 '}';
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        OrganizationDataByte organizationDataByte = new OrganizationDataByte(this);
+        out.writeByte(organizationDataByte.getByte());
+
+        if (organizationDataByte.isOrgNotNull()) {
+            if (organizationDataByte.isTitleNotNull()) {
+                out.writeUTF(title);
+            }
+            out.writeInt(animalsCount);
+        }
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        OrganizationDataByte organizationDataByte = new OrganizationDataByte(in.readByte());
+
+        title = organizationDataByte.isTitleNotNull() ? in.readUTF() : null;
+        isCommercial = organizationDataByte.isCommercial();
+        animalsCount = in.readInt();
     }
 }
