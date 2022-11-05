@@ -204,6 +204,11 @@ public class Serializer {
         }
         try (DataOutputStream out = new DataOutputStream(Files.newOutputStream(fileNamePath))) {
             for (Animal animal : animals) {
+                if (animal == null) {
+                    out.writeByte(NULLABLE_BYTE);
+                    continue;
+                }
+                out.writeByte(NOT_NULLABLE_BYTE);
                 String alias = animal.getAlias();
                 if (alias == null) {
                     out.writeByte(NULLABLE_BYTE);
@@ -264,6 +269,10 @@ public class Serializer {
         try (InputStream in = Files.newInputStream(fileNamePath);
              DataInputStream dataIn = new DataInputStream(in)) {
             while (in.available() > 0) {
+                if (dataIn.readByte() == NULLABLE_BYTE) {
+                    animals.add(null);
+                    continue;
+                }
                 Animal animal = new Animal();
                 if (dataIn.readByte() != NULLABLE_BYTE) {
                     animal.setAlias(dataIn.readUTF());

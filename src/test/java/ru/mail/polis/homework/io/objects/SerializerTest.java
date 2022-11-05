@@ -59,7 +59,7 @@ public class SerializerTest {
 
     @Test
     public void customSerializing() throws IOException {
-        serializingTestTemplate(SerializerTest::generateAnimal,
+        serializingTestTemplate(nullableGenerator(SerializerTest::generateAnimal),
                                 SERIALIZER::customSerialize,
                                 SERIALIZER::customDeserialize);
     }
