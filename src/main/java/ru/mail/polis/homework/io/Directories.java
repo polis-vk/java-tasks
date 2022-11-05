@@ -8,9 +8,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Deque;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Directories {
@@ -29,24 +29,20 @@ public class Directories {
             return 0;
         }
 
-        int count = 0;
-        Deque<File> filesToVisit = new ArrayDeque<>();
-        Deque<File> dirsToDelete = new ArrayDeque<>();
-
-        filesToVisit.offerLast(file);
-        while (filesToVisit.size() > 0) {
-            File curFile = filesToVisit.pollFirst();
+        List<File> filesToDelete = new ArrayList<>();
+        filesToDelete.add(file);
+        for (int i = 0; i < filesToDelete.size(); i++) {
+            File curFile = filesToDelete.get(i);
             if (curFile.isDirectory()) {
-                Arrays.stream(curFile.listFiles()).forEach(filesToVisit::offerLast);
-                dirsToDelete.offerFirst(curFile);
-            } else {
-                curFile.delete();
+                filesToDelete.addAll(Arrays.asList(curFile.listFiles()));
             }
-            count++;
         }
-        dirsToDelete.stream().forEach(File::delete);
 
-        return count;
+        for (int i = filesToDelete.size() - 1; i > -1; i--) {
+            filesToDelete.get(i).delete();
+        }
+
+        return filesToDelete.size();
     }
 
     /**
