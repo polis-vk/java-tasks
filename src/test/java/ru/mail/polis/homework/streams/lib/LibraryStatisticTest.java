@@ -175,7 +175,7 @@ public class LibraryStatisticTest {
 
         assertEquals(2, page1184result.size());
         assertTrue(page1184result.contains(getBookByName(books, "Сандро из Чегема")));
-        assertTrue(page1184result.contains(getBookByName(books, "Ведьмака")));
+        assertTrue(page1184result.contains(getBookByName(books, "Ведьмак")));
 
         assertEquals(books.size(), page0result.size());
     }
