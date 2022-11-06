@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -37,7 +38,7 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
-        if (animals == null || !isFileNameValid(fileName)) {
+        if (!checkSerialize(animals, fileName)) {
             return;
         }
 
@@ -59,15 +60,19 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> defaultDeserialize(String fileName) {
-        if (!isFileNameValid(fileName)) {
+        if (!checkDeserialize(fileName)) {
             return null;
         }
 
         Path file = Paths.get(fileName);
         List<Animal> animals = new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(file))) {
-            while (in.available() > 0) {
-                animals.add((Animal) in.readObject());
+            try {
+                while (true) {
+                    animals.add((Animal) in.readObject());
+                }
+            } catch (EOFException e) {
+                return animals;
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -129,7 +134,7 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
-    public void customSerialize(List<Animal> animals, String fileName) {
+    public void customSerialize(List<AnimalWithMethods> animals, String fileName) {
 
     }
 
@@ -141,14 +146,21 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) {
+    public List<AnimalWithMethods> customDeserialize(String fileName) {
         return Collections.emptyList();
     }
 
-    private boolean isFileNameValid(String fileName) {
+    private boolean checkSerialize(List<Animal> animals, String fileName) {
+        if (animals == null || fileName == null) {
+            return false;
+        }
+        return Files.exists(Paths.get(fileName).getParent());
+    }
+
+    private boolean checkDeserialize(String fileName) {
         if (fileName == null) {
             return false;
         }
-        return Files.exists(Paths.get(fileName));
+        return Files.isRegularFile(Paths.get(fileName));
     }
 }

@@ -15,7 +15,7 @@ public class Animal implements Serializable {
         RUN, FLY, CRAWL
     }
 
-    public static class Address {
+    public static class Address implements Serializable {
         private final String street;
         private final int house;
         private final String phoneNumber;
