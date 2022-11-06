@@ -19,7 +19,14 @@ public class CopyFile {
             return;
         }
         Path to = Paths.get(pathTo);
+        Path toDir = to;
+        if (!Files.isDirectory(toDir)) {
+            toDir = toDir.getParent();
+        }
         try {
+            if (!Files.exists(toDir)) {
+                Files.createDirectories(toDir);
+            }
             Files.walkFileTree(from, new CopyingFileVisitor(from, to));
         } catch (IOException e) {
             e.printStackTrace();

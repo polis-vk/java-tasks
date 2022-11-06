@@ -16,7 +16,7 @@ public class CopyingFileVisitor extends SimpleFileVisitor<Path> {
     private final Path from;
     private final Path to;
 
-    private static void copy(Path from, Path to) {
+    private static void copy(Path from, Path to) throws IOException {
         try (InputStream in = new FileInputStream(from.toString());
              OutputStream out = new FileOutputStream(to.toString())) {
             byte[] buffer = new byte[BUFFER_SIZE];
@@ -24,8 +24,6 @@ public class CopyingFileVisitor extends SimpleFileVisitor<Path> {
             while ((readBytes = in.read(buffer)) > 0) {
                 out.write(buffer, 0, readBytes);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -38,10 +36,6 @@ public class CopyingFileVisitor extends SimpleFileVisitor<Path> {
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         Path fileToCreate = to.resolve(from.relativize(file));
         if (!Files.exists(fileToCreate)) {
-            Path dir = fileToCreate.getParent();
-            if (!Files.exists(dir)) {
-                Files.createDirectories(dir);
-            }
             Files.createFile(fileToCreate);
         }
         copy(file, fileToCreate);
@@ -52,7 +46,7 @@ public class CopyingFileVisitor extends SimpleFileVisitor<Path> {
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         Path dirToCreate = to.resolve(from.relativize(dir));
         if (!Files.exists(dirToCreate)) {
-            Files.createDirectories(dirToCreate);
+            Files.createDirectory(dirToCreate);
         }
         return FileVisitResult.CONTINUE;
     }
