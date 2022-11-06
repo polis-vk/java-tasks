@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.io.blocking;
 
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -9,7 +10,7 @@ import java.util.Objects;
  * Можно изменять/удалять СУЩЕСТВУЮЩИЕ методы.
  *
  */
-public class Structure {
+public class Structure implements Serializable {
 
     private long id;
     //Nullable
