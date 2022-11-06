@@ -30,7 +30,7 @@ public class CopyFile {
             if (Files.isRegularFile(from)) {
                 Files.createDirectories(to.getParent());
             } else if (Files.exists(from)) {
-                Files.createDirectory(to.getParent());
+                Files.createDirectories(to);
             }
             copy(from, to);
         } catch (IOException e) {
