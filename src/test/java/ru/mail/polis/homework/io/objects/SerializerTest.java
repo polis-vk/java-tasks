@@ -1,60 +1,109 @@
 package ru.mail.polis.homework.io.objects;
 
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class SerializerTest {
     private static final Serializer SERIALIZER = new Serializer();
     private static final int ANIMALS_COUNT = 500000;
-    private final static String FILE_PATH = "./src/test/resources/object/serializeTest.bin";
+    private final static Path FILE_PATH = Paths.get("src", "test", "resources", "objects", "serializeTest.bin");
 
     @Before
     public void setUp() throws Exception {
         Files.createDirectories(Paths.get("src", "test", "resources", "objects"));
-        Files.createFile(Paths.get(FILE_PATH));
+        Files.createFile(FILE_PATH);
     }
 
     @After
     public void tearDown() throws Exception {
-//        FileUtils.forceDelete(Paths.get(FILE_PATH).toFile());
-        Files.deleteIfExists(Paths.get(FILE_PATH));
+        Files.deleteIfExists(FILE_PATH);
     }
 
     @Test
-    public void testDefaultSerialize() {
-//        List<Animal> animalList = new ArrayList<>();
-//        for (int i = 0; i < ANIMALS_COUNT; i++) {
-//            animalList.add(generateAnimal());
-//        }
-//        long startSerialize = System.currentTimeMillis();
-//        SERIALIZER.defaultSerialize(animalList, FILE_PATH);
-//        long endSerialize = System.currentTimeMillis();
-//        long startDeserialize = System.currentTimeMillis();
-//        SERIALIZER.customDeserialize(FILE_PATH);
-//        long endDeserialize = System.currentTimeMillis();
-//        System.out.println("Default Serialize: \n" +
-//                "Serialization: " + (endSerialize - startSerialize) +
-//                "\n Deserialization: " + (endDeserialize - startDeserialize));
+    public void testDefaultSerialize() throws IOException {
+        List<Animal> animalList = new ArrayList<>();
+        for (int i = 0; i < ANIMALS_COUNT; i++) {
+            animalList.add(generateAnimal());
+        }
+        long startSerialize = System.currentTimeMillis();
+        SERIALIZER.defaultSerialize(animalList, FILE_PATH.toString());
+        long endSerialize = System.currentTimeMillis();
+        long startDeserialize = System.currentTimeMillis();
+        List<Animal> deserializedAnimalList = SERIALIZER.defaultDeserialize(FILE_PATH.toString());
+        long endDeserialize = System.currentTimeMillis();
+        assertEquals(animalList, deserializedAnimalList);
+        System.out.println("Default Serialize:" +
+                "\nSerialization: " + (endSerialize - startSerialize) +
+                "\nDeserialization: " + (endDeserialize - startDeserialize) +
+                "\nFile size: " + Files.size(FILE_PATH) + "\n");
     }
 
     @Test
-    public void testSerializeWithMethods() {
+    public void testSerializeWithMethods() throws IOException {
+        List<AnimalWithMethods> animalList = new ArrayList<>();
+        for (int i = 0; i < ANIMALS_COUNT; i++) {
+            animalList.add(generateAnimalWithMethods());
+        }
+        long startSerialize = System.currentTimeMillis();
+        SERIALIZER.serializeWithMethods(animalList, FILE_PATH.toString());
+        long endSerialize = System.currentTimeMillis();
+        long startDeserialize = System.currentTimeMillis();
+        List<AnimalWithMethods> deserializedAnimalList = SERIALIZER.deserializeWithMethods(FILE_PATH.toString());
+        long endDeserialize = System.currentTimeMillis();
+        assertEquals(animalList, deserializedAnimalList);
+        System.out.println("Serialize with methods:" +
+                "\nSerialization: " + (endSerialize - startSerialize) +
+                "\nDeserialization: " + (endDeserialize - startDeserialize) +
+                "\nFile size: " + Files.size(FILE_PATH) + "\n");
     }
 
     @Test
-    public void testSerializeExternalizable() {
+    public void testSerializeExternalizable() throws IOException {
+        List<AnimalExternalizable> animalList = new ArrayList<>();
+        for (int i = 0; i < ANIMALS_COUNT; i++) {
+            animalList.add(generateAnimalExternalizable());
+        }
+        long startSerialize = System.currentTimeMillis();
+        SERIALIZER.serializeWithExternalizable(animalList, FILE_PATH.toString());
+        long endSerialize = System.currentTimeMillis();
+        long startDeserialize = System.currentTimeMillis();
+        List<AnimalExternalizable> deserializedAnimalList = SERIALIZER.deserializeWithExternalizable(FILE_PATH.toString());
+        long endDeserialize = System.currentTimeMillis();
+        assertEquals(animalList, deserializedAnimalList);
+        System.out.println("Serialize externalizable:" +
+                "\nSerialization: " + (endSerialize - startSerialize) +
+                "\nDeserialization: " + (endDeserialize - startDeserialize) +
+                "\nFile size: " + Files.size(FILE_PATH) + "\n");
     }
 
     @Test
-    public void testCustomSerialize() {
+    public void testCustomSerialize() throws IOException {
+        List<Animal> animalList = new ArrayList<>();
+        for (int i = 0; i < ANIMALS_COUNT; i++) {
+            animalList.add(generateAnimal());
+        }
+        long startSerialize = System.currentTimeMillis();
+        SERIALIZER.customSerialize(animalList, FILE_PATH.toString());
+        long endSerialize = System.currentTimeMillis();
+        long startDeserialize = System.currentTimeMillis();
+        List<Animal> deserializedAnimalList = SERIALIZER.customDeserialize(FILE_PATH.toString());
+        long endDeserialize = System.currentTimeMillis();
+        assertEquals(animalList, deserializedAnimalList);
+        System.out.println("Custom serialize:" +
+                "\nSerialization: " + (endSerialize - startSerialize) +
+                "\nDeserialization: " + (endDeserialize - startDeserialize) +
+                "\nFile size: " + Files.size(FILE_PATH) + "\n");
     }
 
     private static Animal generateAnimal() {
@@ -75,6 +124,48 @@ public class SerializerTest {
 
         randomAnimal.setAnimalPassport(animalPassport);
         return randomAnimal;
+    }
+
+    private static AnimalWithMethods generateAnimalWithMethods() {
+        AnimalWithMethods randomAnimalWithMethods = new AnimalWithMethods();
+        randomAnimalWithMethods.setPet(generateBoolean());
+        randomAnimalWithMethods.setPredator(generateBoolean());
+        randomAnimalWithMethods.setLegs(generateInt(1, 5));
+        randomAnimalWithMethods.setColor(generateString());
+        randomAnimalWithMethods.setMoveType(generateMoveType());
+
+        AnimalWithMethods.AnimalPassportWithMethods animalPassportWithMethods =
+                new AnimalWithMethods.AnimalPassportWithMethods();
+        animalPassportWithMethods.setSpecies(generateString());
+        animalPassportWithMethods.setSex(generateSex());
+        animalPassportWithMethods.setName(generateString());
+        animalPassportWithMethods.setAge(generateInt(1, 31));
+        animalPassportWithMethods.setVaccinated(generateBoolean());
+        animalPassportWithMethods.setDescriptionOfAnimal(generateString());
+
+        randomAnimalWithMethods.setAnimalPassportWithMethods(animalPassportWithMethods);
+        return randomAnimalWithMethods;
+    }
+
+    private static AnimalExternalizable generateAnimalExternalizable() {
+        AnimalExternalizable randomAnimalExternalizable = new AnimalExternalizable();
+        randomAnimalExternalizable.setPet(generateBoolean());
+        randomAnimalExternalizable.setPredator(generateBoolean());
+        randomAnimalExternalizable.setLegs(generateInt(1, 5));
+        randomAnimalExternalizable.setColor(generateString());
+        randomAnimalExternalizable.setMoveType(generateMoveType());
+
+        AnimalExternalizable.AnimalPassportExternalizable animalPassportExternalizable =
+                new AnimalExternalizable.AnimalPassportExternalizable();
+        animalPassportExternalizable.setSpecies(generateString());
+        animalPassportExternalizable.setSex(generateSex());
+        animalPassportExternalizable.setName(generateString());
+        animalPassportExternalizable.setAge(generateInt(1, 31));
+        animalPassportExternalizable.setVaccinated(generateBoolean());
+        animalPassportExternalizable.setDescriptionOfAnimal(generateString());
+
+        randomAnimalExternalizable.setAnimalPassportExternalizable(animalPassportExternalizable);
+        return randomAnimalExternalizable;
     }
 
     private static boolean generateBoolean() {

@@ -115,7 +115,7 @@ public class Animal implements Serializable {
                 '}';
     }
 
-    static class AnimalPassport {
+    static class AnimalPassport implements Serializable {
         private String species;
         private Sex sex;
 

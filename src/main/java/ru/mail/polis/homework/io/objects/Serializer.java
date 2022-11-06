@@ -6,6 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
@@ -75,9 +76,10 @@ public class Serializer {
             return null;
         }
         List<Animal> animals = new ArrayList<>();
-        try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(from))) {
+        try (InputStream inputStream = Files.newInputStream(from);
+             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
             while (inputStream.available() > 0) {
-                animals.add((Animal) inputStream.readObject());
+                animals.add((Animal) objectInputStream.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -126,9 +128,10 @@ public class Serializer {
             return null;
         }
         List<AnimalWithMethods> animals = new ArrayList<>();
-        try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(from))) {
+        try (InputStream inputStream = Files.newInputStream(from);
+             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
             while (inputStream.available() > 0) {
-                animals.add((AnimalWithMethods) inputStream.readObject());
+                animals.add((AnimalWithMethods) objectInputStream.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -177,9 +180,10 @@ public class Serializer {
             return null;
         }
         List<AnimalExternalizable> animals = new ArrayList<>();
-        try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(from))) {
+        try (InputStream inputStream = Files.newInputStream(from);
+             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
             while (inputStream.available() > 0) {
-                animals.add((AnimalExternalizable) inputStream.readObject());
+                animals.add((AnimalExternalizable) objectInputStream.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -214,13 +218,15 @@ public class Serializer {
                 outputStream.writeByte(booleansAsByte);
                 outputStream.writeInt(animal.getLegs());
                 writeString(animal.getColor(), outputStream);
-                writeString(animal.getMoveType().toString(), outputStream);
+                MoveType moveType = animal.getMoveType();
+                writeString(moveType == null ? null : moveType.toString(), outputStream);
                 if (animal.getAnimalPassport() == null) {
                     outputStream.writeByte(NULL_BYTE);
                 } else {
                     outputStream.writeByte(NOT_NULL_BYTE);
                     writeString(animal.getAnimalPassport().getSpecies(), outputStream);
-                    writeString(animal.getAnimalPassport().getSex().toString(), outputStream);
+                    Sex sex = animal.getAnimalPassport().getSex();
+                    writeString(sex == null ? null : sex.toString(), outputStream);
                     writeString(animal.getAnimalPassport().getName(), outputStream);
                     outputStream.writeInt(animal.getAnimalPassport().getAge());
                     outputStream.writeByte(animal.getAnimalPassport().isVaccinated() ? 1 : 0);
@@ -249,28 +255,32 @@ public class Serializer {
             return null;
         }
         List<Animal> animals = new ArrayList<>();
-        try (DataInputStream inputStream = new DataInputStream(Files.newInputStream(from))) {
-            while (inputStream.available() > 0) {
-                if (inputStream.readByte() == NULL_BYTE) {
+        try (InputStream inputStream = Files.newInputStream(from);
+             DataInputStream dataInputStream = new DataInputStream(inputStream)) {
+            while (dataInputStream.available() > 0) {
+                if (dataInputStream.readByte() == NULL_BYTE) {
                     animals.add(null);
                     continue;
                 }
                 Animal animal = new Animal();
-                byte booleansAsByte = inputStream.readByte();
-                animal.setPet((booleansAsByte & 1) != 0);
-                animal.setPredator((booleansAsByte & 2) != 0);
-                animal.setLegs(inputStream.readInt());
-                animal.setColor(readString(inputStream));
-                animal.setMoveType(MoveType.valueOf(readString(inputStream)));
-                byte objIsNull = inputStream.readByte();
+                byte booleansAsByte = dataInputStream.readByte();
+                animal.setPredator((booleansAsByte & 1) != 0);
+                animal.setPet((booleansAsByte & 2) != 0);
+                animal.setLegs(dataInputStream.readInt());
+                animal.setColor(readString(dataInputStream));
+                String moveTypeValue = readString(dataInputStream);
+                animal.setMoveType(moveTypeValue == null ? null : MoveType.valueOf(moveTypeValue));
+                byte objIsNull = dataInputStream.readByte();
                 if (objIsNull == NOT_NULL_BYTE) {
                     Animal.AnimalPassport animalPassport = new Animal.AnimalPassport();
-                    animalPassport.setSpecies(readString(inputStream));
-                    animalPassport.setSex(Sex.valueOf(readString(inputStream)));
-                    animalPassport.setName(readString(inputStream));
-                    animalPassport.setAge(inputStream.readInt());
-                    animalPassport.setVaccinated(inputStream.readByte() == 1);
-                    animalPassport.setDescriptionOfAnimal(readString(inputStream));
+                    animal.setAnimalPassport(animalPassport);
+                    animalPassport.setSpecies(readString(dataInputStream));
+                    String sexValue = readString(dataInputStream);
+                    animal.getAnimalPassport().setSex(sexValue == null ? null : Sex.valueOf(sexValue));
+                    animalPassport.setName(readString(dataInputStream));
+                    animalPassport.setAge(dataInputStream.readInt());
+                    animalPassport.setVaccinated(dataInputStream.readByte() == 1);
+                    animalPassport.setDescriptionOfAnimal(readString(dataInputStream));
                     animal.setAnimalPassport(animalPassport);
                 }
                 animals.add(animal);

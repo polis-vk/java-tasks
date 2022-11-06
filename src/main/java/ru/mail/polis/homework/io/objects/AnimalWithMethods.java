@@ -26,6 +26,9 @@ public class AnimalWithMethods implements Serializable {
 
     private AnimalPassportWithMethods animalPassportWithMethods;
 
+    public AnimalWithMethods() {
+    }
+
     public AnimalWithMethods(boolean isPet, boolean isPredator, int legs,
                              String color, MoveType moveType, AnimalPassportWithMethods animalPassportWithMethods) {
         this.isPet = isPet;
@@ -124,7 +127,8 @@ public class AnimalWithMethods implements Serializable {
         out.writeByte(booleansAsByte);
         out.writeInt(getLegs());
         writeString(getColor(), out);
-        writeString(getMoveType().toString(), out);
+        MoveType moveType = getMoveType();
+        writeString(moveType == null ? null : moveType.toString(), out);
         if (getAnimalPassportWithMethods() == null) {
             out.writeByte(NULL_BYTE);
         } else {
@@ -135,11 +139,12 @@ public class AnimalWithMethods implements Serializable {
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         byte booleansAsByte = in.readByte();
-        setPet((booleansAsByte & 1) != 0);
-        setPredator((booleansAsByte & 2) != 0);
+        setPredator((booleansAsByte & 1) != 0);
+        setPet((booleansAsByte & 2) != 0);
         setLegs(in.readInt());
         setColor(readString(in));
-        setMoveType(MoveType.valueOf(readString(in)));
+        String moveTypeValue = readString(in);
+        setMoveType(moveTypeValue == null ? null : MoveType.valueOf(moveTypeValue));
         byte objIsNull = in.readByte();
         if (objIsNull == NULL_BYTE) {
             setAnimalPassportWithMethods(null);
@@ -156,6 +161,9 @@ public class AnimalWithMethods implements Serializable {
         private int age;
         private boolean isVaccinated;
         private String descriptionOfAnimal;
+
+        public AnimalPassportWithMethods() {
+        }
 
         public AnimalPassportWithMethods(String name, Sex sex, int age, String species, boolean isVaccinated, String descriptionOfAnimal) {
             this.name = name;
@@ -250,7 +258,8 @@ public class AnimalWithMethods implements Serializable {
 
         private void writeObject(ObjectOutputStream out) throws IOException {
             writeString(getSpecies(), out);
-            writeString(getSex().toString(), out);
+            Sex sex = getSex();
+            writeString(sex == null ? null : sex.toString(), out);
             writeString(getName(), out);
             out.writeInt(getAge());
             out.writeByte(isVaccinated() ? 1 : 0);
@@ -259,7 +268,8 @@ public class AnimalWithMethods implements Serializable {
 
         private void readObject(ObjectInputStream in) throws IOException {
             setSpecies(readString(in));
-            setSex(Sex.valueOf(readString(in)));
+            String sexValue = readString(in);
+            setSex(sexValue == null ? null : Sex.valueOf(sexValue));
             setName(readString(in));
             setAge(in.readInt());
             setVaccinated(in.readByte() == 1);
