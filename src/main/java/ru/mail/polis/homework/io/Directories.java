@@ -24,6 +24,10 @@ public class Directories {
      * 2 тугрика
      */
     public static int removeWithFile(String pathStr) {
+        if (pathStr == null) {
+            return 0;
+        }
+
         File file = new File(pathStr);
         if (!file.exists()) {
             return 0;
@@ -50,6 +54,10 @@ public class Directories {
      * 2 тугрика
      */
     public static int removeWithPath(String pathStr) throws IOException {
+        if (pathStr == null) {
+            return 0;
+        }
+
         Path path = Paths.get(pathStr);
         if (Files.notExists(path)) {
             return 0;
