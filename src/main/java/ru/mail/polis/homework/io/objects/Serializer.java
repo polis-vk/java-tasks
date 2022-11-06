@@ -1,6 +1,13 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,7 +37,18 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
+        if (animals == null || !isFileNameValid(fileName)) {
+            return;
+        }
 
+        Path file = Paths.get(fileName);
+        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(file))) {
+            for (Animal animal : animals) {
+                out.writeObject(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -41,7 +59,21 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> defaultDeserialize(String fileName) {
-        return Collections.emptyList();
+        if (!isFileNameValid(fileName)) {
+            return null;
+        }
+
+        Path file = Paths.get(fileName);
+        List<Animal> animals = new ArrayList<>();
+        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(file))) {
+            while (in.available() > 0) {
+                animals.add((Animal) in.readObject());
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return animals;
     }
 
 
@@ -111,5 +143,12 @@ public class Serializer {
      */
     public List<Animal> customDeserialize(String fileName) {
         return Collections.emptyList();
+    }
+
+    private boolean isFileNameValid(String fileName) {
+        if (fileName == null) {
+            return false;
+        }
+        return Files.exists(Paths.get(fileName));
     }
 }
