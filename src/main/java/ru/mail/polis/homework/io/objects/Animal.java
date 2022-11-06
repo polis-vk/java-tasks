@@ -2,6 +2,7 @@ package ru.mail.polis.homework.io.objects;
 
 
 import java.io.Serializable;
+import java.util.Objects;
 /**
  * Класс должен содержать несколько полей с примитивами (минимум 2 булеана и еще что-то), строками, энамами и некоторыми сапомисными объектами (не энам).
  * Всего должно быть минимум 6 полей с разными типами.
@@ -65,10 +66,10 @@ public class Animal implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Animal animal = (Animal) o;
-        return animal.getName().equals(getName()) && animal.getAge() == getAge()
-                && animal.isFriendly() == isFriendly() && animal.isWarmBlooded() == isWarmBlooded()
-                && animal.getAnimalType() == getAnimalType() && animal.getPopulation() == getPopulation();
+        Animal that = (Animal) o;
+        return Objects.equals(that.getName(), getName()) && that.getAge() == getAge()
+                && that.isFriendly() == isFriendly() && that.isWarmBlooded() == isWarmBlooded()
+                && that.getAnimalType() == getAnimalType() && Objects.equals(that.getPopulation(), getPopulation());
     }
 
     @Override

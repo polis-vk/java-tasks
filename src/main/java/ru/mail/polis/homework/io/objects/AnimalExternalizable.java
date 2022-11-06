@@ -4,6 +4,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Objects;
 
 /**
  * Дубль класса Animal, для Serializer.serializeWithExternalizable
@@ -15,12 +16,12 @@ public class AnimalExternalizable implements Externalizable {
     private boolean friendly;
     private boolean warmBlooded;
     private AnimalType animalType;
-    private Population population;
+    private PopulationExternalizable population;
 
     public AnimalExternalizable() {
     }
 
-    public AnimalExternalizable(String name, int age, boolean friendly, boolean warmBlooded, AnimalType animalType, Population population) {
+    public AnimalExternalizable(String name, int age, boolean friendly, boolean warmBlooded, AnimalType animalType, PopulationExternalizable population) {
         this.name = name;
         this.age = age;
         this.friendly = friendly;
@@ -49,7 +50,7 @@ public class AnimalExternalizable implements Externalizable {
         return animalType;
     }
 
-    public Population getPopulation() {
+    public PopulationExternalizable getPopulation() {
         return population;
     }
 
@@ -63,22 +64,21 @@ public class AnimalExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeUTF(name);
+        writeString(out, name);
         out.writeInt(age);
-        out.writeBoolean(friendly);
-        out.writeBoolean(warmBlooded);
-        out.writeUTF(animalType.toString());
+        out.writeByte((byte) ((isFriendly() ? 1 : 0) << 1 + (isWarmBlooded() ? 1 : 0)));
+        out.writeByte(animalType.getOrdinal());
         out.writeObject(population);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        name = in.readUTF();
+        name = readString(in);
         age = in.readInt();
         friendly = in.readBoolean();
         warmBlooded = in.readBoolean();
-        animalType = AnimalType.valueOf(in.readUTF());
-        population = (Population) in.readObject();
+        animalType = AnimalType.getOrdinal(in.readByte());
+        population = (PopulationExternalizable) in.readObject();
     }
 
     @Override
@@ -90,9 +90,9 @@ public class AnimalExternalizable implements Externalizable {
             return false;
         }
         AnimalExternalizable that = (AnimalExternalizable) o;
-        return that.getName().equals(getName()) && that.getAge() == getAge()
+        return Objects.equals(that.getName(), getName()) && that.getAge() == getAge()
                 && that.isFriendly() == isFriendly() && that.isWarmBlooded() == isWarmBlooded()
-                && that.getAnimalType() == getAnimalType() && that.getPopulation() == getPopulation();
+                && that.getAnimalType() == getAnimalType() && Objects.equals(that.getPopulation(), getPopulation());
     }
 
     @Override
@@ -106,4 +106,21 @@ public class AnimalExternalizable implements Externalizable {
                 ", animalType=" + animalType +
                 '}';
     }
+
+    private static void writeString(ObjectOutput out, String str) throws IOException {
+        if (str == null) {
+            out.writeByte(0);
+        } else {
+            out.writeByte(1);
+            out.writeUTF(str);
+        }
+    }
+
+    private static String readString(ObjectInput in) throws IOException {
+        if (in.readByte() == 0) {
+            return null;
+        }
+        return in.readUTF();
+    }
+
 }
