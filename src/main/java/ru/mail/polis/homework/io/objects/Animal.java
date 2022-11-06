@@ -2,6 +2,7 @@ package ru.mail.polis.homework.io.objects;
 
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 /**
  * Класс должен содержать несколько полей с примитивами (минимум 2 булеана и еще что-то), строками, энамами и некоторыми самописными объектами (не энам).
@@ -19,6 +20,10 @@ public class Animal implements Serializable {
 }
 
 class Person implements Serializable {
+    private String name;
+    private String shortBio;
+    private LocalDate born;
+    private LocalDate died;
 }
 
 enum Diet {
