@@ -246,6 +246,7 @@ public class Serializer {
                     out.writeByte(NOT_NULLABLE_BYTE);
                     out.writeUTF(gender.name());
                 }
+                out.flush();
             }
         } catch (IOException e) {
             e.printStackTrace();
