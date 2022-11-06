@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -14,9 +17,9 @@ public class AnimalWithMethods implements Serializable {
     }
 
     public static class AddressWithMethods implements Serializable {
-        private final String street;
-        private final int house;
-        private final String phoneNumber;
+        private String street;
+        private int house;
+        private String phoneNumber;
 
         public AddressWithMethods(String street, int house, String phoneNumber) {
             this.street = street;
@@ -57,14 +60,26 @@ public class AnimalWithMethods implements Serializable {
                     ", phoneNumber='" + phoneNumber + '\'' +
                     '}';
         }
+
+        public void writeObject(ObjectOutputStream out) throws IOException {
+            writeString(out, street);
+            out.writeInt(house);
+            writeString(out, phoneNumber);
+        }
+
+        public void readObject(ObjectInputStream in) throws IOException {
+            street = readString(in);
+            house = in.readInt();
+            phoneNumber = readString(in);
+        }
     }
 
-    private final boolean isHappy;
-    private final boolean isAngry;
-    private final int legs;
-    private final String name;
-    private final MoveType moveType;
-    private final AddressWithMethods homeAddress;
+    private boolean isHappy;
+    private boolean isAngry;
+    private int legs;
+    private String name;
+    private MoveType moveType;
+    private AddressWithMethods homeAddress;
 
     public AnimalWithMethods(boolean isHappy, boolean isAngry, int legs, String name, MoveType moveType, AddressWithMethods homeAddress) {
         this.isHappy = isHappy;
@@ -122,5 +137,44 @@ public class AnimalWithMethods implements Serializable {
                 ", moveType=" + moveType +
                 ", homeAddress=" + homeAddress +
                 '}';
+    }
+
+    public void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeBoolean(isHappy);
+        out.writeBoolean(isAngry);
+        out.writeInt(legs);
+        writeString(out, name);
+        writeString(out, moveType.name());
+        out.writeObject(homeAddress);
+    }
+
+    public void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        isHappy = in.readBoolean();
+        isAngry = in.readBoolean();
+        legs = in.readInt();
+        name = readString(in);
+        String moveStr = readString(in);
+        if (moveStr != null) {
+            moveType = MoveType.valueOf(moveStr);
+        } else {
+            moveType = null;
+        }
+        homeAddress = (AddressWithMethods) in.readObject();
+    }
+
+    private static void writeString(ObjectOutputStream out, String str) throws IOException{
+        boolean isStrNull = (str == null);
+        out.writeBoolean(isStrNull);
+        if (!isStrNull) {
+            out.writeUTF(str);
+        }
+    }
+
+    private static String readString(ObjectInputStream in) throws IOException {
+        boolean isStrNull = in.readBoolean();
+        if (isStrNull) {
+            return null;
+        }
+        return in.readUTF();
     }
 }
