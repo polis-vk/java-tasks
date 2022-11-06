@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.objects;
 
 import org.junit.Test;
-import ru.mail.polis.homework.exception.objects.StringTasks;
 
 import static org.junit.Assert.assertEquals;
 
