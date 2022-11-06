@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 public class Animal implements Serializable {
     public enum MoveType {
-        RUN, FLY, SWIM, CRAWL
+        RUN, FLY, CRAWL
     }
 
     public static class Address {
