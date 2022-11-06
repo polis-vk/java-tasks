@@ -2,7 +2,8 @@ package ru.mail.polis.homework.io;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -21,78 +22,83 @@ import static org.junit.Assert.fail;
 
 public class CopyFileTest {
 
-    @Before
-    public void setUp() throws Exception {
-//        // --------------------------------------- create source for copyOnlyFile --------------------------------------
-//        Path dir = Paths.get("src", "test", "resources", "directories", "copy", "first");
-//        Path file = Paths.get("src", "test", "resources", "directories", "copy", "first", "file.txt");
-//        Files.createDirectories(dir);
-//        createFile(file);
-//        // --------------------------------------- create source for copyOnlyFile --------------------------------------
-//
-//
-//        // --------------------------------------- create source for copyOnlyDir ---------------------------------------
-//        Path dir2 = Paths.get("src", "test", "resources", "directories", "copy", "second");
-//        Files.createDirectories(dir2);
-//        // --------------------------------------- create source for copyOnlyDir ---------------------------------------
-//
-//
-//        // ------------------------------------- create source for copyDirWithFiles ------------------------------------
-//        Path dir3 = Paths.get("src", "test", "resources", "directories", "copy", "third");
-//        Path file1 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file1.txt");
-//        Path file2 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file2.txt");
-//        Path file3 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file3.txt");
-//        Path file4 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file4.txt");
-//        Files.createDirectories(dir3);
-//        createFile(file1);
-//        createFile(file2);
-//        createFile(file3);
-//        createFile(file4);
-//        // ------------------------------------- create source for copyDirWithFiles ------------------------------------
-//
-//
-//        // --------------------------------------- create source for copyDirHard ---------------------------------------
-//        Path dir5 = Paths.get("src", "test", "resources", "directories", "copy", "fifth");
-//        Files.createDirectories(dir5);
-//        for (int i = 0; i < 10; i++) {
-//            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "file" + i + ".txt"));
-//        }
-//        Path dir51 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1");
-//        Files.createDirectories(dir51);
-//        createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1", "file1.txt"));
-//        Path dir52 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2");
-//        Files.createDirectories(dir52);
-//        Path dir53 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1", "dir1dir1");
-//        Files.createDirectories(dir53);
-//        for (int i = 0; i < 3; i++) {
-//            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1", "dir1dir1",
-//                    "file" + i + ".txt"));
-//        }
-//        Path dir54 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1", "dir1dir2");
-//        Files.createDirectories(dir54);
-//        Path dir55 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1");
-//        Files.createDirectories(dir55);
-//        createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1",
-//                "file1.txt"));
-//        Path dir56 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir2");
-//        Files.createDirectories(dir56);
-//        for (int i = 0; i < 5; i++) {
-//            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir2",
-//                    "file" + i + ".txt"));
-//        }
-//        Path dir57 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1", "dirdir");
-//        Files.createDirectories(dir57);
-//        for (int i = 0; i < 7; i++) {
-//            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1", "dirdir",
-//                    "file" + i + ".txt"));
-//        }
-//        // --------------------------------------- create source for copyDirHard ---------------------------------------
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // --------------------------------------- create source for copyOnlyFile --------------------------------------
+        Path dir = Paths.get("src", "test", "resources", "directories", "copy", "first");
+        Path file = Paths.get("src", "test", "resources", "directories", "copy", "first", "file.txt");
+        Files.createDirectories(dir);
+        createFile(file);
+        // --------------------------------------- create source for copyOnlyFile --------------------------------------
+
+
+        // --------------------------------------- create source for copyOnlyDir ---------------------------------------
+        Path dir2 = Paths.get("src", "test", "resources", "directories", "copy", "second");
+        Files.createDirectories(dir2);
+        // --------------------------------------- create source for copyOnlyDir ---------------------------------------
+
+
+        // ------------------------------------- create source for copyDirWithFiles ------------------------------------
+        Path dir3 = Paths.get("src", "test", "resources", "directories", "copy", "third");
+        Path file1 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file1.txt");
+        Path file2 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file2.txt");
+        Path file3 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file3.txt");
+        Path file4 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file4.txt");
+        Files.createDirectories(dir3);
+        createFile(file1);
+        createFile(file2);
+        createFile(file3);
+        createFile(file4);
+        // ------------------------------------- create source for copyDirWithFiles ------------------------------------
+
+
+        // --------------------------------------- create source for copyDirHard ---------------------------------------
+        Path dir5 = Paths.get("src", "test", "resources", "directories", "copy", "fifth");
+        Files.createDirectories(dir5);
+        for (int i = 0; i < 10; i++) {
+            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "file" + i + ".txt"));
+        }
+        Path dir51 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1");
+        Files.createDirectories(dir51);
+        createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1", "file1.txt"));
+        Path dir52 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2");
+        Files.createDirectories(dir52);
+        Path dir53 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1", "dir1dir1");
+        Files.createDirectories(dir53);
+        for (int i = 0; i < 3; i++) {
+            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1", "dir1dir1",
+                    "file" + i + ".txt"));
+        }
+        Path dir54 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir1", "dir1dir2");
+        Files.createDirectories(dir54);
+        Path dir55 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1");
+        Files.createDirectories(dir55);
+        createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1",
+                "file1.txt"));
+        Path dir56 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir2");
+        Files.createDirectories(dir56);
+        for (int i = 0; i < 5; i++) {
+            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir2",
+                    "file" + i + ".txt"));
+        }
+        Path dir57 = Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1", "dirdir");
+        Files.createDirectories(dir57);
+        for (int i = 0; i < 7; i++) {
+            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1", "dirdir",
+                    "file" + i + ".txt"));
+        }
+        // --------------------------------------- create source for copyDirHard ---------------------------------------
 
     }
 
     @After
     public void tearDown() throws Exception {
         FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy1").toFile());
+    }
+
+    @AfterClass
+    public static void deleteDirectoriesForTests() throws IOException {
+        FileUtils.deleteDirectory(Paths.get("src", "test", "resources", "directories", "copy").toFile());
     }
 
     @Test
@@ -120,7 +126,7 @@ public class CopyFileTest {
     }
 
     @Test
-    public void copyDirEmpty() throws IOException {
+    public void copyDirEmpty() {
         Path source = Paths.get("src", "test", "resources", "directories", "copy", "forth");
         Path dest = Paths.get("src", "test", "resources", "directories", "copy1", "forth");
         CopyFile.copyFiles(source.toString(), dest.toString());
@@ -140,7 +146,7 @@ public class CopyFileTest {
         checkCopy(source, dest, true);
     }
 
-    private void createFile(Path path) throws IOException {
+    private static void createFile(Path path) throws IOException {
         List<String> strings = Arrays.asList("Жили-были три китайца: Як, Як-цедрак, Як-цедрак-цедрак-цедрони.",
                 "Жили-были три китайки: Цыпа, Цыпа-дрыпа, Цыпа-дрыпа-дрымпампони.",
                 "Все они переженились: Як на Цыпе, Як-цедрак на Цыпе-дрыпе,",
