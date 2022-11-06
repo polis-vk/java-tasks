@@ -3,8 +3,8 @@ package ru.mail.polis.homework.io.objects;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 @FixMethodOrder(MethodSorters.JVM)
 public class SerializerTest {
     private static final double NULL_PERCENTAGE = 0.05;
+    private static final int NUM_OF_ANIMALS = 1_000_000;
     private static List<Animal> animalList;
     private static List<AnimalWithMethods> animalWithMethodsList;
     private static List<AnimalExternalizable> animalExternalizableList;
@@ -27,11 +28,11 @@ public class SerializerTest {
     @BeforeClass
     public static void generateLists() {
         serializer = new Serializer();
-        animalList = new LinkedList<>();
-        animalWithMethodsList = new LinkedList<>();
-        animalExternalizableList = new LinkedList<>();
+        animalList = new ArrayList<>(NUM_OF_ANIMALS);
+        animalWithMethodsList = new ArrayList<>(NUM_OF_ANIMALS);
+        animalExternalizableList = new ArrayList<>(NUM_OF_ANIMALS);
         Random random = new Random();
-        for (int i = 0; i < 100_000; i++) {
+        for (int i = 0; i < NUM_OF_ANIMALS; i++) {
             animalList.add(generateRandomAnimal(random));
             animalWithMethodsList.add(generateRandomAnimalWithMethods(random));
             animalExternalizableList.add(generateRandomAnimalExternalizable(random));
@@ -81,7 +82,12 @@ public class SerializerTest {
         lastCheckTime = System.currentTimeMillis();
         List<Animal> test = serializer.defaultDeserialize("default.bin");
         System.out.println(System.currentTimeMillis() - lastCheckTime);
-        assertEquals(test, animalList);
+        assertEquals(test.size(), animalExternalizableList.size());
+        Iterator<Animal> testIt = test.iterator();
+        Iterator<Animal> animalIterator = animalList.iterator();
+        while (testIt.hasNext()) {
+            assertEquals(testIt.next(), animalIterator.next());
+        }
     }
 
     @Test
@@ -94,7 +100,12 @@ public class SerializerTest {
         lastCheckTime = System.currentTimeMillis();
         List<AnimalWithMethods> test = serializer.deserializeWithMethods("methods.bin");
         System.out.println(System.currentTimeMillis() - lastCheckTime);
-        assertEquals(test, animalWithMethodsList);
+        assertEquals(test.size(), animalWithMethodsList.size());
+        Iterator<AnimalWithMethods> testIt = test.iterator();
+        Iterator<AnimalWithMethods> animalWithMethodsIterator = animalWithMethodsList.iterator();
+        while (testIt.hasNext()) {
+            assertEquals(testIt.next(), animalWithMethodsIterator.next());
+        }
     }
 
     @Test
@@ -117,6 +128,9 @@ public class SerializerTest {
 
 
     private static Animal generateRandomAnimal(Random random) {
+        if (random.nextDouble() < NULL_PERCENTAGE) {
+            return null;
+        }
         return new Animal(
                 random.nextBoolean(),
                 random.nextBoolean(),
@@ -152,6 +166,9 @@ public class SerializerTest {
     }
 
     private static AnimalExternalizable generateRandomAnimalExternalizable(Random random) {
+        if (random.nextDouble() < NULL_PERCENTAGE) {
+            return null;
+        }
         return new AnimalExternalizable(
                 random.nextBoolean(),
                 random.nextBoolean(),
@@ -187,6 +204,9 @@ public class SerializerTest {
     }
 
     private static AnimalWithMethods generateRandomAnimalWithMethods(Random random) {
+        if (random.nextDouble() < NULL_PERCENTAGE) {
+            return null;
+        }
         return new AnimalWithMethods(
                 random.nextBoolean(),
                 random.nextBoolean(),

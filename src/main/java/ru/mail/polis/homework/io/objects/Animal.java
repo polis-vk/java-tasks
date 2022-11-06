@@ -124,11 +124,30 @@ public class Animal implements Serializable {
 }
 
 enum TypeOfAnimal {
-    INSECT,
-    MAMMAL,
-    FISH,
-    BIRD,
-    ALIEN
+    INSECT((byte) 1),
+    MAMMAL((byte) 2),
+    FISH((byte) 3),
+    BIRD((byte) 4),
+    ALIEN((byte) 5);
+
+    private final byte ord;
+
+    TypeOfAnimal(byte b) {
+        this.ord = b;
+    }
+
+    public byte getOrd() {
+        return ord;
+    }
+
+    public static TypeOfAnimal getByOrd(byte b) {
+        for (TypeOfAnimal animal : TypeOfAnimal.values()) {
+            if (animal.ord == b) {
+                return animal;
+            }
+        }
+        return null;
+    }
 }
 
 class OwnerOfAnimal implements Serializable {
@@ -152,8 +171,8 @@ class OwnerOfAnimal implements Serializable {
         StringBuilder ans = new StringBuilder("Владелец: ");
         ans.append(name).append("\n");
         ans.append("Номер телефона - ").append(phoneNumber).append("\n");
-        ans.append("Пол - ").append(gender.toString()).append("\n");
-        ans.append("Домашний адрес - ").append(homeAddress.getFullAddress()).append("\n");
+        ans.append("Пол - ").append(gender == null ? "Отсутствует" : gender.toString()).append("\n");
+        ans.append("Домашний адрес - ").append(homeAddress == null ? "Отсутствует" : homeAddress.getFullAddress()).append("\n");
         return ans.toString();
 
     }
@@ -288,7 +307,7 @@ class Address implements Serializable {
             ans.append("корпус ").append(numOfBuilding).append(", ");
         }
 
-        if (!liter.isEmpty()) {
+        if (liter != null && !liter.isEmpty()) {
             ans.append("литера ").append(liter).append(", ");
         }
 

@@ -47,60 +47,42 @@ public class AnimalWithMethods implements Serializable {
     }
 
     public void writeObject(ObjectOutput out) throws IOException {
-        byte twoBools = (byte) ((isAggressive ? 0 : 1) << 1);
-        twoBools += (isVegetarian ? 0 : 1);
-        out.writeByte(FieldOfAnimal.IS_AGGRESSIVE_IS_VEGETARIAN.getOrd());
+        AnimalNullables animalNullables = new AnimalNullables(this);
+        out.writeByte(animalNullables.toByte());
+        byte twoBools = (byte) ((isAggressive ? 1 : 0) << 1 + (isVegetarian ? 1 : 0));
         out.writeByte(twoBools);
-        out.writeByte(FieldOfAnimal.NUM_OF_LEGS.getOrd());
         out.writeInt(numOfLegs);
-        out.writeByte(FieldOfAnimal.MAX_VELOCITY.getOrd());
         out.writeDouble(maxVelocity);
-        if (type != null) {
-            out.writeByte(FieldOfAnimal.TYPE.getOrd());
-            out.writeByte(type.ordinal());
-        }
-        if (name != null) {
-            out.writeByte(FieldOfAnimal.NAME.getOrd());
+        if (!animalNullables.isNameNull()) {
             out.writeUTF(name);
         }
-        if (owner != null) {
-            out.writeByte(FieldOfAnimal.START_OF_OWNER.getOrd());
+        if (!animalNullables.isTypeNull()) {
+            out.writeByte(type.getOrd());
+        }
+        if (!animalNullables.isOwnerNull()) {
             out.writeObject(owner);
         }
-        out.writeByte(FieldOfAnimal.END_OF_ANIMAL.getOrd());
     }
 
     public void readObject(ObjectInput in) throws IOException, ClassNotFoundException {
-        while (true) {
-            FieldOfAnimal fieldType = FieldOfAnimal.getByOrd(in.readByte());
-            switch (fieldType) {
-                case IS_AGGRESSIVE_IS_VEGETARIAN:
-                    byte twoBools = in.readByte();
-                    this.isVegetarian = (twoBools % 2) == 0;
-                    twoBools >>= 1;
-                    this.isAggressive = (twoBools % 2) == 0;
-                    break;
-                case NUM_OF_LEGS:
-                    this.numOfLegs = in.readInt();
-                    break;
-                case MAX_VELOCITY:
-                    this.maxVelocity = in.readDouble();
-                    break;
-                case TYPE:
-                    this.type = TypeOfAnimal.values()[in.readByte()];
-                    break;
-                case NAME:
-                    this.name = in.readUTF();
-                    break;
-                case START_OF_OWNER:
-                    this.owner = (OwnerOfAnimalWithMethods) in.readObject();
-                    break;
-            }
-            if (fieldType == FieldOfAnimal.END_OF_ANIMAL) {
-                break;
-            }
+        AnimalNullables animalNullables = new AnimalNullables(in.readByte());
+        byte twoBools = in.readByte();
+        isVegetarian = twoBools % 2 == 1;
+        twoBools >>= 1;
+        isAggressive = twoBools % 2 == 1;
+        this.numOfLegs = in.readInt();
+        this.maxVelocity = in.readDouble();
+        if (!animalNullables.isNameNull()) {
+            this.name = in.readUTF();
+        }
+        if (!animalNullables.isTypeNull()) {
+            this.type = TypeOfAnimal.getByOrd(in.readByte());
+        }
+        if (!animalNullables.isOwnerNull()) {
+            this.owner = (OwnerOfAnimalWithMethods) in.readObject();
         }
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -195,9 +177,9 @@ class OwnerOfAnimalWithMethods implements Serializable {
     public String toString() {
         StringBuilder ans = new StringBuilder("Владелец: ");
         ans.append(name).append("\n");
-        ans.append("Номер телефона - ").append(phoneNumber).append("\n");
-        ans.append("Пол - ").append(gender.toString()).append("\n");
-        ans.append("Домашний адрес - ").append(homeAddress.getFullAddress()).append("\n");
+        ans.append("Номер телефона - ").append(phoneNumber == null ? "нет" : phoneNumber).append("\n");
+        ans.append("Пол - ").append(gender == null ? "нет" : gender.toString()).append("\n");
+        ans.append("Домашний адрес - ").append(homeAddress == null ? "нет" : homeAddress.getFullAddress()).append("\n");
         return ans.toString();
 
     }
@@ -219,48 +201,35 @@ class OwnerOfAnimalWithMethods implements Serializable {
     }
 
     public void writeObject(ObjectOutput out) throws IOException {
-        if (name != null) {
-            out.writeByte(FieldOfOwner.NAME.getOrd());
+        OwnerNullables ownerNullables = new OwnerNullables(this);
+        out.writeByte(ownerNullables.toByte());
+        if (!ownerNullables.isNameNull()) {
             out.writeUTF(name);
         }
-        if (phoneNumber != null) {
-            out.writeByte(FieldOfOwner.NUMBER.getOrd());
+        if (!ownerNullables.isPhoneNull()) {
             out.writeUTF(phoneNumber);
         }
-        if (gender != null) {
-            out.writeByte(FieldOfOwner.GENDER.getOrd());
+        if (!ownerNullables.isGenderNull()) {
             out.writeByte(gender.ordinal());
         }
-
-        if (homeAddress != null) {
-            out.writeByte(FieldOfOwner.START_OF_ADDRESS.getOrd());
+        if (!ownerNullables.isAddressNull()) {
             out.writeObject(homeAddress);
         }
-
-        out.writeByte(FieldOfOwner.END_OF_OWNER.getOrd());
     }
 
     public void readObject(ObjectInput in) throws IOException, ClassNotFoundException {
-        while (true) {
-            FieldOfOwner field = FieldOfOwner.getByOrd(in.readByte());
-            switch (field) {
-                case NAME:
-                    this.name = in.readUTF();
-                    break;
-                case NUMBER:
-                    this.phoneNumber = in.readUTF();
-                    break;
-                case GENDER:
-                    this.gender = Gender.values()[in.readByte()];
-                    break;
-                case START_OF_ADDRESS:
-                    this.homeAddress = (AddressWithMethods) in.readObject();
-                    break;
-            }
-
-            if (field == FieldOfOwner.END_OF_OWNER) {
-                break;
-            }
+        OwnerNullables ownerNullables = new OwnerNullables(in.readByte());
+        if (!ownerNullables.isNameNull()) {
+            this.name = in.readUTF();
+        }
+        if (!ownerNullables.isPhoneNull()) {
+            this.phoneNumber = in.readUTF();
+        }
+        if (!ownerNullables.isGenderNull()) {
+            this.gender = Gender.values()[in.readByte()];
+        }
+        if (!ownerNullables.isAddressNull()) {
+            this.homeAddress = (AddressWithMethods) in.readObject();
         }
     }
 
@@ -319,9 +288,15 @@ class AddressWithMethods implements Serializable {
 
     public String getFullAddress() {
         StringBuilder ans = new StringBuilder();
-        ans.append(country).append(", ");
-        ans.append(city).append(", ");
-        ans.append(street).append(", ");
+        if (country != null ) {
+            ans.append(country).append(", ");
+        }
+        if (city != null) {
+            ans.append(city).append(", ");
+        }
+        if (street != null) {
+            ans.append(street).append(", ");
+        }
         if (numOfHouse > 0) {
             ans.append("дом ").append(numOfHouse).append(", ");
         }
@@ -330,7 +305,7 @@ class AddressWithMethods implements Serializable {
             ans.append("корпус ").append(numOfBuilding).append(", ");
         }
 
-        if (!liter.isEmpty()) {
+        if (liter != null && !liter.isEmpty()) {
             ans.append("литера ").append(liter).append(", ");
         }
 
@@ -361,52 +336,97 @@ class AddressWithMethods implements Serializable {
 
 
     public void writeObject(ObjectOutput out) throws IOException {
-        out.writeByte(FieldOfAddress.COUNTRY.getOrd());
-        out.writeUTF(country);
-        out.writeByte(FieldOfAddress.CITY.getOrd());
-        out.writeUTF(city);
-        out.writeByte(FieldOfAddress.STREET.getOrd());
-        out.writeUTF(street);
-        out.writeByte(FieldOfAddress.NUM_OF_HOUSE.getOrd());
+        AddressNullables addressNullables = new AddressNullables(this);
+        out.writeByte(addressNullables.toByte());
+        if (!addressNullables.isCountryNull()) {
+            out.writeUTF(country);
+        }
+        if (!addressNullables.isCityNull()) {
+            out.writeUTF(city);
+        }
+        if (!addressNullables.isStreetNull()) {
+            out.writeUTF(street);
+        }
         out.writeInt(numOfHouse);
-        out.writeByte(FieldOfAddress.NUM_OF_BUILDING.getOrd());
         out.writeInt(numOfBuilding);
-        out.writeByte(FieldOfAddress.LITER.getOrd());
-        out.writeUTF(liter);
-        out.writeByte(FieldOfAddress.ROOM.getOrd());
+        if (!addressNullables.isLiterNull()) {
+            out.writeUTF(liter);
+        }
         out.writeInt(room);
-        out.writeByte(FieldOfAddress.END_OF_ADDRESS.getOrd());
     }
 
     public void readObject(ObjectInput in) throws IOException {
-        while (true) {
-            FieldOfAddress key = FieldOfAddress.getByOrd(in.readByte());
-            switch (key) {
-                case COUNTRY:
-                    this.country = in.readUTF();
-                    break;
-                case CITY:
-                    this.city = in.readUTF();
-                    break;
-                case STREET:
-                    this.street = in.readUTF();
-                    break;
-                case NUM_OF_HOUSE:
-                    this.numOfHouse = in.readInt();
-                    break;
-                case NUM_OF_BUILDING:
-                    this.numOfBuilding = in.readInt();
-                    break;
-                case LITER:
-                    this.liter = in.readUTF();
-                    break;
-                case ROOM:
-                    this.room = in.readInt();
-                    break;
-            }
-            if (key == FieldOfAddress.END_OF_ADDRESS) {
-                break;
-            }
+        AddressNullables addressNullables = new AddressNullables(in.readByte());
+        if (!addressNullables.isCountryNull()) {
+            this.country = in.readUTF();
         }
+        if (!addressNullables.isCityNull()) {
+            this.city = in.readUTF();
+        }
+        if (!addressNullables.isStreetNull()) {
+            this.street = in.readUTF();
+        }
+        this.numOfHouse = in.readInt();
+        this.numOfBuilding = in.readInt();
+        if (!addressNullables.isLiterNull()) {
+            this.liter = in.readUTF();
+        }
+        this.room = in.readInt();
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public int getNumOfHouse() {
+        return numOfHouse;
+    }
+
+    public void setNumOfHouse(int numOfHouse) {
+        this.numOfHouse = numOfHouse;
+    }
+
+    public int getNumOfBuilding() {
+        return numOfBuilding;
+    }
+
+    public void setNumOfBuilding(int numOfBuilding) {
+        this.numOfBuilding = numOfBuilding;
+    }
+
+    public String getLiter() {
+        return liter;
+    }
+
+    public void setLiter(String liter) {
+        this.liter = liter;
+    }
+
+    public int getRoom() {
+        return room;
+    }
+
+    public void setRoom(int room) {
+        this.room = room;
     }
 }

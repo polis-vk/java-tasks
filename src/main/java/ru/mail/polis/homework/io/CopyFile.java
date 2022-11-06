@@ -5,7 +5,6 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
@@ -20,10 +19,21 @@ public class CopyFile {
      * В тесте для создания нужных файлов для первого запуска надо раскомментировать код в setUp()
      * 3 тугрика
      */
-    public static void copyFiles(String pathFrom, String pathTo) throws IOException {
-        Path to = Paths.get(pathTo);
-        Path from = Paths.get(pathFrom);
+    public static void copyFiles(String pathFrom, String pathTo) {
+        Path to = Paths.get(pathTo).normalize();
+        Path from = Paths.get(pathFrom).normalize();
         if (!Files.exists(from)) {
+            return;
+        }
+
+        if (Files.isRegularFile(from)) {
+            try {
+                Path thisFileTo = to.resolve(from.relativize(to)).normalize();
+                Files.createDirectories(thisFileTo.getParent());
+                copy(from, thisFileTo);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             return;
         }
 
@@ -50,9 +60,8 @@ public class CopyFile {
                 }
 
             });
-        } catch (NoSuchFileException e) {
-            Files.createDirectories(to.getParent());
-            copy(from, to);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

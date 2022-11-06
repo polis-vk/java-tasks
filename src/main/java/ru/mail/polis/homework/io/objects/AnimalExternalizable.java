@@ -48,59 +48,40 @@ public class AnimalExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        byte twoBools = (byte) ((isAggressive ? 0 : 1) << 1);
-        twoBools += (isVegetarian ? 0 : 1);
-        out.writeByte(FieldOfAnimal.IS_AGGRESSIVE_IS_VEGETARIAN.getOrd());
+        AnimalNullables animalNullables = new AnimalNullables(this);
+        out.writeByte(animalNullables.toByte());
+        byte twoBools = (byte) ((isAggressive ? 1 : 0) << 1 + (isVegetarian ? 1 : 0));
         out.writeByte(twoBools);
-        out.writeByte(FieldOfAnimal.NUM_OF_LEGS.getOrd());
         out.writeInt(numOfLegs);
-        out.writeByte(FieldOfAnimal.MAX_VELOCITY.getOrd());
         out.writeDouble(maxVelocity);
-        if (type != null) {
-            out.writeByte(FieldOfAnimal.TYPE.getOrd());
-            out.writeByte(type.ordinal());
-        }
-        if (name != null) {
-            out.writeByte(FieldOfAnimal.NAME.getOrd());
+        if (!animalNullables.isNameNull()) {
             out.writeUTF(name);
         }
-        if (owner != null) {
-            out.writeByte(FieldOfAnimal.START_OF_OWNER.getOrd());
+        if (!animalNullables.isTypeNull()) {
+            out.writeByte(type.getOrd());
+        }
+        if (!animalNullables.isOwnerNull()) {
             out.writeObject(owner);
         }
-        out.writeByte(FieldOfAnimal.END_OF_ANIMAL.getOrd());
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        while (true) {
-            FieldOfAnimal fieldType = FieldOfAnimal.getByOrd(in.readByte());
-            switch (fieldType) {
-                case IS_AGGRESSIVE_IS_VEGETARIAN:
-                    byte twoBools = in.readByte();
-                    this.isVegetarian = (twoBools % 2) == 0;
-                    twoBools >>= 1;
-                    this.isAggressive = (twoBools % 2) == 0;
-                    break;
-                case NUM_OF_LEGS:
-                    this.numOfLegs = in.readInt();
-                    break;
-                case MAX_VELOCITY:
-                    this.maxVelocity = in.readDouble();
-                    break;
-                case TYPE:
-                    this.type = TypeOfAnimal.values()[in.readByte()];
-                    break;
-                case NAME:
-                    this.name = in.readUTF();
-                    break;
-                case START_OF_OWNER:
-                    this.owner = (OwnerOfAnimalExternalizable) in.readObject();
-                    break;
-            }
-            if (fieldType == FieldOfAnimal.END_OF_ANIMAL) {
-                break;
-            }
+        AnimalNullables animalNullables = new AnimalNullables(in.readByte());
+        byte twoBools = in.readByte();
+        isVegetarian = twoBools % 2 == 1;
+        twoBools >>= 1;
+        isAggressive = twoBools % 2 == 1;
+        this.numOfLegs = in.readInt();
+        this.maxVelocity = in.readDouble();
+        if (!animalNullables.isNameNull()) {
+            this.name = in.readUTF();
+        }
+        if (!animalNullables.isTypeNull()) {
+            this.type = TypeOfAnimal.getByOrd(in.readByte());
+        }
+        if (!animalNullables.isOwnerNull()) {
+            this.owner = (OwnerOfAnimalExternalizable) in.readObject();
         }
     }
 
@@ -114,7 +95,7 @@ public class AnimalExternalizable implements Externalizable {
                 numOfLegs == that.numOfLegs &&
                 Double.compare(that.maxVelocity, maxVelocity) == 0 &&
                 Objects.equals(name, that.name) &&
-                type == that.type &&
+                type == null ? that.type == null : type == that.type &&
                 Objects.equals(owner, that.owner);
     }
 
@@ -209,49 +190,36 @@ class OwnerOfAnimalExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        if (name != null) {
-            out.writeByte(FieldOfOwner.NAME.getOrd());
+        OwnerNullables ownerNullables = new OwnerNullables(this);
+        out.writeByte(ownerNullables.toByte());
+        if (!ownerNullables.isNameNull()) {
             out.writeUTF(name);
         }
-        if (phoneNumber != null) {
-            out.writeByte(FieldOfOwner.NUMBER.getOrd());
+        if (!ownerNullables.isPhoneNull()) {
             out.writeUTF(phoneNumber);
         }
-        if (gender != null) {
-            out.writeByte(FieldOfOwner.GENDER.getOrd());
+        if (!ownerNullables.isGenderNull()) {
             out.writeByte(gender.ordinal());
         }
-
-        if (homeAddress != null) {
-            out.writeByte(FieldOfOwner.START_OF_ADDRESS.getOrd());
+        if (!ownerNullables.isAddressNull()) {
             out.writeObject(homeAddress);
         }
-
-        out.writeByte(FieldOfOwner.END_OF_OWNER.getOrd());
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        while (true) {
-            FieldOfOwner field = FieldOfOwner.getByOrd(in.readByte());
-            switch (field) {
-                case NAME:
-                    this.name = in.readUTF();
-                    break;
-                case NUMBER:
-                    this.phoneNumber = in.readUTF();
-                    break;
-                case GENDER:
-                    this.gender = Gender.values()[in.readByte()];
-                    break;
-                case START_OF_ADDRESS:
-                    this.homeAddress = (AddressExternalizable) in.readObject();
-                    break;
-            }
-
-            if (field == FieldOfOwner.END_OF_OWNER) {
-                break;
-            }
+        OwnerNullables ownerNullables = new OwnerNullables(in.readByte());
+        if (!ownerNullables.isNameNull()) {
+            this.name = in.readUTF();
+        }
+        if (!ownerNullables.isPhoneNull()) {
+            this.phoneNumber = in.readUTF();
+        }
+        if (!ownerNullables.isGenderNull()) {
+            this.gender = Gender.values()[in.readByte()];
+        }
+        if (!ownerNullables.isAddressNull()) {
+            this.homeAddress = (AddressExternalizable) in.readObject();
         }
     }
 
@@ -262,7 +230,7 @@ class OwnerOfAnimalExternalizable implements Externalizable {
         OwnerOfAnimalExternalizable that = (OwnerOfAnimalExternalizable) o;
         return Objects.equals(name, that.name) &&
                 Objects.equals(phoneNumber, that.phoneNumber) &&
-                Objects.equals(gender, that.gender) &&
+                gender == null ? that.gender == null : that.gender == gender  &&
                 Objects.equals(homeAddress, that.homeAddress);
     }
 
@@ -351,62 +319,43 @@ class AddressExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        if (country != null) {
-            out.writeByte(FieldOfAddress.COUNTRY.getOrd());
+        AddressNullables addressNullables = new AddressNullables(this);
+        out.writeByte(addressNullables.toByte());
+        if (!addressNullables.isCountryNull()) {
             out.writeUTF(country);
         }
-        if (city != null) {
-            out.writeByte(FieldOfAddress.CITY.getOrd());
+        if (!addressNullables.isCityNull()) {
             out.writeUTF(city);
         }
-        if (street != null) {
-            out.writeByte(FieldOfAddress.STREET.getOrd());
+        if (!addressNullables.isStreetNull()) {
             out.writeUTF(street);
         }
-        out.writeByte(FieldOfAddress.NUM_OF_HOUSE.getOrd());
         out.writeInt(numOfHouse);
-        out.writeByte(FieldOfAddress.NUM_OF_BUILDING.getOrd());
         out.writeInt(numOfBuilding);
-        if (liter != null) {
-            out.writeByte(FieldOfAddress.LITER.getOrd());
+        if (!addressNullables.isLiterNull()) {
             out.writeUTF(liter);
         }
-        out.writeByte(FieldOfAddress.ROOM.getOrd());
         out.writeInt(room);
-        out.writeByte(FieldOfAddress.END_OF_ADDRESS.getOrd());
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException {
-        while (true) {
-            FieldOfAddress key = FieldOfAddress.getByOrd(in.readByte());
-            switch (key) {
-                case COUNTRY:
-                    this.country = in.readUTF();
-                    break;
-                case CITY:
-                    this.city = in.readUTF();
-                    break;
-                case STREET:
-                    this.street = in.readUTF();
-                    break;
-                case NUM_OF_HOUSE:
-                    this.numOfHouse = in.readInt();
-                    break;
-                case NUM_OF_BUILDING:
-                    this.numOfBuilding = in.readInt();
-                    break;
-                case LITER:
-                    this.liter = in.readUTF();
-                    break;
-                case ROOM:
-                    this.room = in.readInt();
-                    break;
-            }
-            if (key == FieldOfAddress.END_OF_ADDRESS) {
-                break;
-            }
+        AddressNullables addressNullables = new AddressNullables(in.readByte());
+        if (!addressNullables.isCountryNull()) {
+            this.country = in.readUTF();
         }
+        if (!addressNullables.isCityNull()) {
+            this.city = in.readUTF();
+        }
+        if (!addressNullables.isStreetNull()) {
+            this.street = in.readUTF();
+        }
+        this.numOfHouse = in.readInt();
+        this.numOfBuilding = in.readInt();
+        if (!addressNullables.isLiterNull()) {
+            this.liter = in.readUTF();
+        }
+        this.room = in.readInt();
     }
 
     @Override
@@ -484,90 +433,211 @@ class AddressExternalizable implements Externalizable {
     }
 }
 
-enum FieldOfAnimal {
-    IS_AGGRESSIVE_IS_VEGETARIAN((byte) 1),
-    NUM_OF_LEGS((byte) 2),
-    MAX_VELOCITY((byte) 3),
-    NAME((byte) 4),
-    TYPE((byte) 5),
-    START_OF_OWNER((byte) 6),
-    END_OF_ANIMAL((byte) 7);
+class AnimalNullables {
+    private boolean isNull;
+    private boolean isNameNull;
+    private boolean isTypeNull;
+    private boolean isOwnerNull;
 
-    private final int ord;
-
-    public static FieldOfAnimal getByOrd(byte i) {
-        for (FieldOfAnimal field : FieldOfAnimal.values()) {
-            if (field.ord == i) {
-                return field;
-            }
+    public AnimalNullables(AnimalExternalizable animalExternalizable) {
+        if (animalExternalizable == null) {
+            isNull = true;
+            return;
         }
-        return null;
+        isNameNull = animalExternalizable.getName() == null;
+        isTypeNull = animalExternalizable.getType() == null;
+        isOwnerNull = animalExternalizable.getOwner() == null;
     }
 
-    FieldOfAnimal(byte i) {
-        this.ord = i;
+    public AnimalNullables(Animal animal) {
+        if (animal == null) {
+            isNull = true;
+            return;
+        }
+        isNameNull = animal.getName() == null;
+        isTypeNull = animal.getType() == null;
+        isOwnerNull = animal.getOwner() == null;
+    }
+    public AnimalNullables(AnimalWithMethods animalWithMethods) {
+        if (animalWithMethods == null) {
+            isNull = true;
+            return;
+        }
+        isNameNull = animalWithMethods.getName() == null;
+        isTypeNull = animalWithMethods.getType() == null;
+        isOwnerNull = animalWithMethods.getOwner() == null;
+    }
+    public AnimalNullables(byte inp) {
+        isOwnerNull = inp % 2 == 1;
+        inp >>= 1;
+        isTypeNull = inp % 2 == 1;
+        inp >>= 1;
+        isNameNull = inp % 2 == 1;
+        inp >>= 1;
+        isNull = inp % 2 == 1;
     }
 
 
-    public int getOrd() {
-        return ord;
+
+    public byte toByte() {
+        byte ans = (byte) (isNull ? 1 : 0);
+        ans <<= 1;
+        ans += (byte) (isNameNull ? 1 : 0);
+        ans <<= 1;
+        ans += (byte) (isTypeNull ? 1 : 0);
+        ans <<= 1;
+        ans += (byte) (isOwnerNull ? 1 : 0);
+        return ans;
+    }
+
+
+    public boolean isNull() {
+        return isNull;
+    }
+
+    public boolean isNameNull() {
+        return isNameNull;
+    }
+
+    public boolean isTypeNull() {
+        return isTypeNull;
+    }
+
+    public boolean isOwnerNull() {
+        return isOwnerNull;
     }
 }
 
-enum FieldOfOwner {
-    NAME((byte) 1),
-    NUMBER((byte) 2),
-    GENDER((byte) 3),
-    START_OF_ADDRESS((byte) 4),
-    END_OF_OWNER((byte) 5);
+class OwnerNullables {
+    private final boolean isNameNull;
+    private final boolean isPhoneNull;
+    private final boolean isGenderNull;
+    private final boolean isAddressNull;
 
-    private final byte ord;
-
-    FieldOfOwner(byte b) {
-        this.ord = b;
+    public OwnerNullables(OwnerOfAnimalExternalizable owner) {
+        isNameNull = owner.getName() == null;
+        isPhoneNull = owner.getPhoneNumber() == null;
+        isGenderNull = owner.getGender() == null;
+        isAddressNull = owner.getHomeAddress() == null;
     }
 
-    public byte getOrd() {
-        return ord;
+    public OwnerNullables(OwnerOfAnimalWithMethods ownerOfAnimalWithMethods) {
+        isNameNull = ownerOfAnimalWithMethods.getName() == null;
+        isPhoneNull = ownerOfAnimalWithMethods.getPhoneNumber() == null;
+        isGenderNull = ownerOfAnimalWithMethods.getGender() == null;
+        isAddressNull = ownerOfAnimalWithMethods.getHomeAddress() == null;
     }
 
-    public static FieldOfOwner getByOrd(byte b) {
-        for (FieldOfOwner field : FieldOfOwner.values()) {
-            if (field.ord == b) {
-                return field;
-            }
-        }
-        return null;
+    public OwnerNullables(OwnerOfAnimal ownerOfAnimal) {
+        isNameNull = ownerOfAnimal.getName() == null;
+        isPhoneNull = ownerOfAnimal.getPhoneNumber() == null;
+        isGenderNull = ownerOfAnimal.getGender() == null;
+        isAddressNull = ownerOfAnimal.getHomeAddress() == null;
+    }
+
+    public OwnerNullables(byte inp) {
+        isNameNull = inp % 2 == 1;
+        inp >>= 1;
+        isPhoneNull = inp % 2 == 1;
+        inp >>= 1;
+        isGenderNull = inp % 2 == 1;
+        inp >>= 1;
+        isAddressNull = inp % 2 == 1;
+    }
+
+
+
+    public byte toByte() {
+        byte ans = (byte) (isAddressNull ? 1 : 0);
+        ans <<= 1;
+        ans += (byte) (isGenderNull ? 1 : 0);
+        ans <<= 1;
+        ans += (byte) (isPhoneNull ? 1 : 0);
+        ans <<= 1;
+        ans += (byte) (isNameNull ? 1 : 0);
+        return ans;
+    }
+
+    public boolean isNameNull() {
+        return isNameNull;
+    }
+
+    public boolean isPhoneNull() {
+        return isPhoneNull;
+    }
+
+    public boolean isGenderNull() {
+        return isGenderNull;
+    }
+
+    public boolean isAddressNull() {
+        return isAddressNull;
     }
 }
 
+class AddressNullables {
+    private final boolean isCountryNull;
+    private final boolean isCityNull;
+    private final boolean isStreetNull;
+    private final boolean isLiterNull;
 
-enum FieldOfAddress {
-    COUNTRY((byte) 1),
-    CITY((byte) 2),
-    STREET((byte) 3),
-    NUM_OF_HOUSE((byte) 4),
-    NUM_OF_BUILDING((byte) 5),
-    LITER((byte) 6),
-    ROOM((byte) 7),
-    END_OF_ADDRESS((byte) 8);
-
-    private final byte ord;
-
-    FieldOfAddress(byte b) {
-        this.ord = b;
+    public AddressNullables(AddressExternalizable addressExternalizable) {
+        isCountryNull = addressExternalizable.getCountry() == null;
+        isCityNull = addressExternalizable.getCity() == null;
+        isStreetNull = addressExternalizable.getStreet() == null;
+        isLiterNull = addressExternalizable.getLiter() == null;
     }
 
-    public byte getOrd() {
-        return ord;
+    public AddressNullables(AddressWithMethods addressWithMethods) {
+        isCountryNull = addressWithMethods.getCountry() == null;
+        isCityNull = addressWithMethods.getCity() == null;
+        isStreetNull = addressWithMethods.getStreet() == null;
+        isLiterNull = addressWithMethods.getLiter() == null;
     }
 
-    public static FieldOfAddress getByOrd(byte b) {
-        for (FieldOfAddress field : FieldOfAddress.values()) {
-            if (field.ord == b) {
-                return field;
-            }
-        }
-        return null;
+    public AddressNullables(Address address) {
+        isCountryNull = address.getCountry() == null;
+        isCityNull = address.getCity() == null;
+        isStreetNull = address.getStreet() == null;
+        isLiterNull = address.getLiter() == null;
+    }
+
+    public AddressNullables(byte inp) {
+        isCountryNull = inp % 2 == 1;
+        inp >>= 1;
+        isCityNull = inp % 2 == 1;
+        inp >>= 1;
+        isStreetNull = inp % 2 == 1;
+        inp >>= 1;
+        isLiterNull = inp % 2 == 1;
+    }
+
+
+
+    public byte toByte() {
+        byte ans = (byte) (isLiterNull ? 1 : 0);
+        ans <<= 1;
+        ans += isStreetNull ? 1 : 0;
+        ans <<= 1;
+        ans += isCityNull ? 1 : 0;
+        ans <<= 1;
+        ans += isCountryNull ? 1 : 0;
+        return ans;
+    }
+
+    public boolean isCountryNull() {
+        return isCountryNull;
+    }
+
+    public boolean isCityNull() {
+        return isCityNull;
+    }
+
+    public boolean isStreetNull() {
+        return isStreetNull;
+    }
+
+    public boolean isLiterNull() {
+        return isLiterNull;
     }
 }
