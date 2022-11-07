@@ -31,7 +31,16 @@ public class LibraryStatistic {
                 .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.counting()))
                 .entrySet().stream()
                 .filter(entry -> entry.getValue() >= SPECIALIST_COUNT_OF_BOOKS)
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getKey().getReadedPages()));
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                            int sum = library.getArchive().stream()
+                                    .filter(archived -> archived.getUser().equals(entry.getKey()) && archived.getBook().getGenre().equals(genre))
+                                    .map(x -> x.getBook().getPage())
+                                    .reduce(0, Integer::sum);
+                            if (entry.getKey().getBook().getGenre().equals(genre)) {
+                                return sum + entry.getKey().getReadedPages();
+                            }
+                            return sum;
+                        }));
     }
 
     /**
@@ -46,20 +55,23 @@ public class LibraryStatistic {
                 .filter(archivedData -> archivedData.getUser().equals(user) && archivedData.getReturned() != null)
                 .collect(Collectors.groupingBy(arch -> arch.getBook().getGenre(), Collectors.counting()))
                 .entrySet().stream()
-                .max((genre1, genre2) -> {
+                .max((entry1, entry2) -> {
                     // Если один любимый жанр
-                    if (genre1.getValue() - genre2.getValue() != 0) {
-                        return (int) (genre1.getValue() - genre2.getValue());
+                    if (entry1.getValue() - entry2.getValue() != 0) {
+                        return (int) (entry1.getValue() - entry2.getValue());
                     }
                     // Находим жанр, который сейчас читает пользователь
-                    Genre genreOfNotReturnedBook = library.getArchive().stream()
-                            .filter(archivedData -> archivedData.getUser().equals(user) && archivedData.getReturned() == null)
-                            .map(x -> x.getBook().getGenre()).findFirst().get();
+                    Genre genreOfNotReturnedBook = library.getUsers().stream()
+                            .filter(x -> x.equals(user))
+                            .findFirst().get().getBook().getGenre();
 
-                    if (genreOfNotReturnedBook.equals(genre2.getKey())) {
-                        return Math.toIntExact(genre2.getValue());
+                    if (genreOfNotReturnedBook.equals(entry2.getKey())) {
+                        entry2.setValue(entry2.getValue() + 1);
                     }
-                    return Math.toIntExact(genre1.getValue());
+                    if (genreOfNotReturnedBook.equals(entry1.getKey())) {
+                        entry1.setValue(entry1.getValue() + 1);
+                    }
+                    return (int) (entry1.getValue() - entry2.getValue());
                 }).get().getKey();
     }
 
@@ -115,8 +127,8 @@ public class LibraryStatistic {
         final long MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
 
         if (archivedData.getReturned() == null) {
-            return (System.currentTimeMillis() - archivedData.getTake().getTime()) / MILLIS_PER_DAY > nDays;
+            return (System.currentTimeMillis() - archivedData.getTake().getTime()) / MILLIS_PER_DAY >= nDays;
         }
-        return (archivedData.getReturned().getTime() - archivedData.getTake().getTime()) / MILLIS_PER_DAY > nDays;
+        return (archivedData.getReturned().getTime() - archivedData.getTake().getTime()) / MILLIS_PER_DAY >= nDays;
     }
 }
