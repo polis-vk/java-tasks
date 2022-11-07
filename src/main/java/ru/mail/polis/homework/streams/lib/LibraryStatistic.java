@@ -3,6 +3,7 @@ package ru.mail.polis.homework.streams.lib;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -27,9 +28,24 @@ public class LibraryStatistic {
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
         return library.getArchive().stream()
                 .filter(a -> a.getBook().getGenre().equals(genre) && getDays(a.getTake(), a.getReturned(), 0) >= 14)
-                .collect(Collectors.toMap(ArchivedData::getUser, v -> 1, (v1, v2) -> ++v1))
-                .entrySet().stream().filter(el -> el.getValue() >= 5)
-                .collect(Collectors.toMap(Map.Entry::getKey, v -> v.getKey().getReadedPages()));
+                .collect(Collectors.toMap(ArchivedData::getUser, v -> new PageStatistic(v.getBook().getPage(), 1), (v1, v2) -> {
+                    v1.pages += v2.pages;
+                    v1.amount += 1;
+                    return v1;
+                }))
+                .entrySet().stream().filter(el -> el.getValue().amount >= 5)
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        v -> v.getValue().pages + (v.getKey().getBook().getGenre().equals(genre) ? v.getKey().getReadedPages() : 0)));
+    }
+
+    private static class PageStatistic {
+        public int pages;
+        public long amount;
+
+        public PageStatistic(int pages, int amount) {
+            this.pages = pages;
+            this.amount = amount;
+        }
     }
 
 
@@ -91,13 +107,25 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return null;
+        Map<Genre, String> map = library.getArchive().stream()
+                .collect(Collectors.groupingBy(d -> d.getBook().getGenre(), Collectors.groupingBy(d -> d.getBook().getAuthor(), Collectors.counting())))
+                .entrySet().stream().collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        it -> it.getValue().entrySet().stream().max((a, b) -> {
+                            if (a.getKey().equals(b.getKey())) {
+                                return a.getValue().compareTo(b.getValue());
+                            }
+                            return b.getKey().compareTo(a.getKey());
+                        }).get().getKey())
+                );
+        library.getBooks().forEach(it -> map.putIfAbsent(it.getGenre(), "Author not determined"));
+        return map;
     }
 
     private long getDays(Timestamp take, Timestamp returned, long val) {
-        if (returned.equals(null)) {
+        if (returned == null) {
             return val;
         }
-        return TimeUnit.DAYS.convert(returned.getTime() - take.getTime(), TimeUnit.DAYS);
+        return TimeUnit.MILLISECONDS.toDays(returned.getTime() - take.getTime());
     }
 }
