@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -31,7 +33,7 @@ import java.util.List;
  * В конце теста по чтению данных, не забывайте удалять файлы
  */
 public class Serializer {
-
+    private static final int BUFFER_SIZE = 256 * 1024;
     /**
      * 1 тугрик
      * Реализовать простую сериализацию, с помощью специального потока для сериализации объектов
@@ -48,7 +50,7 @@ public class Serializer {
            return;
         }
 
-        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(file))) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(Files.newOutputStream(file), BUFFER_SIZE))) {
             for (Animal animal : animals) {
                 out.writeObject(animal);
             }
@@ -75,7 +77,7 @@ public class Serializer {
         }
 
         List<Animal> animals = new ArrayList<>();
-        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(file))) {
+        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(Files.newInputStream(file), BUFFER_SIZE))) {
             try {
                 while (true) {
                     animals.add((Animal) in.readObject());
@@ -107,7 +109,7 @@ public class Serializer {
             return;
         }
 
-        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(file))) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(Files.newOutputStream(file), BUFFER_SIZE))) {
             for (AnimalWithMethods animal : animals) {
                 out.writeObject(animal);
             }
@@ -135,7 +137,7 @@ public class Serializer {
         }
 
         List<AnimalWithMethods> animals = new ArrayList<>();
-        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(file))) {
+        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(Files.newInputStream(file), BUFFER_SIZE))) {
             try {
                 while (true) {
                     animals.add((AnimalWithMethods) in.readObject());
@@ -166,7 +168,7 @@ public class Serializer {
             return;
         }
 
-        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(file))) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(Files.newOutputStream(file), BUFFER_SIZE))) {
             for (AnimalExternalizable animal : animals) {
                 out.writeObject(animal);
             }
@@ -194,7 +196,7 @@ public class Serializer {
         }
 
         List<AnimalExternalizable> animals = new ArrayList<>();
-        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(file))) {
+        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(Files.newInputStream(file), BUFFER_SIZE))) {
             try {
                 while (true) {
                     animals.add((AnimalExternalizable) in.readObject());
@@ -227,7 +229,7 @@ public class Serializer {
             return;
         }
 
-        try (DataOutputStream out = new DataOutputStream(Files.newOutputStream(file))) {
+        try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(Files.newOutputStream(file), BUFFER_SIZE))) {
             for (AnimalWithMethods animal : animals) {
                 boolean isNull = (animal == null);
                 out.writeBoolean(isNull);
@@ -265,7 +267,7 @@ public class Serializer {
         }
 
         List<AnimalWithMethods> animals = new ArrayList<>();
-        try (DataInputStream in = new DataInputStream(Files.newInputStream(file))) {
+        try (DataInputStream in = new DataInputStream(new BufferedInputStream(Files.newInputStream(file), BUFFER_SIZE))) {
             try {
                 while (true) {
                     boolean isNull = in.readBoolean();

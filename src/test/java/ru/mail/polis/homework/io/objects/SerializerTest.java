@@ -216,7 +216,7 @@ public class SerializerTest {
 
     private static int getFileSize() {
         try {
-            return (int) (Files.size(test_file) / 1024);
+            return (int) (Files.size(test_file) / (1024 * 1024));
         } catch (IOException e) {
             e.printStackTrace();
         }
