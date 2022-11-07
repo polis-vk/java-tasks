@@ -214,24 +214,27 @@ public class Serializer {
                 AnimalDataByte animalDataByte = new AnimalDataByte(animal);
                 output.writeByte(animalDataByte.getByte());
 
-                if (animalDataByte.isAnimalNotNull()) {
-                    if (animalDataByte.isNameNotNull()) {
-                        output.writeUTF(animal.getName());
-                    }
-                    output.writeInt(animal.getLegsCount());
-                    if (animalDataByte.isTypeNotNull()) {
-                        output.writeUTF(animal.getAnimalType().name());
-                    }
-                    if (animalDataByte.isOrgNotNull()) {
-                        Organization org = animal.getOrganization();
-                        OrganizationDataByte organizationDataByte = new OrganizationDataByte(org);
-                        output.writeByte(organizationDataByte.getByte());
-                        if (organizationDataByte.isTitleNotNull()) {
-                            output.writeUTF(org.getTitle());
-                        }
-                        output.writeInt(org.getAnimalsCount());
-                    }
+                if (!animalDataByte.isAnimalNotNull()) {
+                    continue;
                 }
+                if (animalDataByte.isNameNotNull()) {
+                    output.writeUTF(animal.getName());
+                }
+                output.writeInt(animal.getLegsCount());
+                if (animalDataByte.isTypeNotNull()) {
+                    output.writeUTF(animal.getAnimalType().name());
+                }
+
+                if (!animalDataByte.isOrgNotNull()) {
+                    continue;
+                }
+                Organization org = animal.getOrganization();
+                OrganizationDataByte organizationDataByte = new OrganizationDataByte(org);
+                output.writeByte(organizationDataByte.getByte());
+                if (organizationDataByte.isTitleNotNull()) {
+                    output.writeUTF(org.getTitle());
+                }
+                output.writeInt(org.getAnimalsCount());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -261,27 +264,32 @@ public class Serializer {
             int count = input.readInt();
             for (int i = 0; i < count; i++) {
                 AnimalDataByte animalDataByte = new AnimalDataByte(input.readByte());
-                Animal animal = null;
+                Animal animal;
 
-                if (animalDataByte.isAnimalNotNull()) {
-                    String name = animalDataByte.isNameNotNull() ? input.readUTF() : null;
-                    boolean isDomestic = animalDataByte.isDomestic();
-                    boolean isHaveClaws = animalDataByte.isHaveClaws();
-                    int legsCount = input.readInt();
-                    AnimalType animalType = animalDataByte.isTypeNotNull() ? AnimalType.valueOf(input.readUTF()) : null;
-                    Organization organization = null;
-
-                    if (animalDataByte.isOrgNotNull()) {
-                        OrganizationDataByte organizationDataByte = new OrganizationDataByte(input.readByte());
-                        String title = organizationDataByte.isTitleNotNull() ? input.readUTF() : null;
-                        boolean isCommecial = organizationDataByte.isCommercial();
-                        int animalsCount = input.readInt();
-                        organization = new Organization(title, isCommecial, animalsCount);
-                    }
-
-                    animal = new Animal(name, isDomestic, isHaveClaws, legsCount, animalType, organization);
+                if (!animalDataByte.isAnimalNotNull()) {
+                    result.add(null);
+                    continue;
                 }
 
+                String name = animalDataByte.isNameNotNull() ? input.readUTF() : null;
+                boolean isDomestic = animalDataByte.isDomestic();
+                boolean isHaveClaws = animalDataByte.isHaveClaws();
+                int legsCount = input.readInt();
+                AnimalType animalType = animalDataByte.isTypeNotNull() ? AnimalType.valueOf(input.readUTF()) : null;
+
+                Organization organization;
+                if (!animalDataByte.isOrgNotNull()) {
+                    animal = new Animal(name, isDomestic, isHaveClaws, legsCount, animalType, null);
+                    result.add(animal);
+                    continue;
+                }
+                OrganizationDataByte organizationDataByte = new OrganizationDataByte(input.readByte());
+                String title = organizationDataByte.isTitleNotNull() ? input.readUTF() : null;
+                boolean isCommecial = organizationDataByte.isCommercial();
+                int animalsCount = input.readInt();
+                organization = new Organization(title, isCommecial, animalsCount);
+
+                animal = new Animal(name, isDomestic, isHaveClaws, legsCount, animalType, organization);
                 result.add(animal);
             }
         } catch (IOException e) {
