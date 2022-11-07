@@ -25,7 +25,9 @@ public class LibraryStatistic {
                 .stream().filter(it -> it.getBook().getGenre()==genre)
                 .collect(Collectors.groupingBy(ArchivedData::getUser)).entrySet().stream()
                 .filter(it -> it.getValue().size() >= 5 && it.getValue().stream().allMatch(data ->
-                        (data.getReturned().getTime() - data.getTake().getTime())
+                        (((data.getReturned() != null) ? data.getReturned().getTime() :
+                                (new Timestamp(System.currentTimeMillis())).getTime())
+                                - data.getTake().getTime())
                                 >= 14L * DAYS_TO_MILLISECONDS))
                 .collect(Collectors.toMap(Map.Entry::getKey,
                         it -> (it.getValue().stream().mapToInt(value -> value.getBook().getPage()).sum() +
@@ -60,8 +62,8 @@ public class LibraryStatistic {
      */
     public List<User> unreliableUsers(Library library) {
         return library.getUsers().stream().filter(user -> (double) library.getArchive().stream().filter(it ->
-                (it.getReturned() != null ?
-                        it.getReturned().getTime() : new Timestamp(System.currentTimeMillis()).getTime() -
+                ((it.getReturned() != null ?
+                        it.getReturned().getTime() : (new Timestamp(System.currentTimeMillis())).getTime()) -
                         it.getTake().getTime()) > 30L * DAYS_TO_MILLISECONDS && it.getUser() == user).count() /
                         (double) library.getArchive().stream().filter(it -> it.getUser() == user).count() > 0.5
                 )
