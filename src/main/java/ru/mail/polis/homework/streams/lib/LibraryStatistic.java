@@ -116,16 +116,25 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return library.getBooks().stream()
-                .collect(Collectors.groupingBy(Book::getGenre,
-                        Collectors.groupingBy(Book::getAuthor, Collectors.counting())))
+        Map<Genre, String> mapOfPopularity = library.getArchive().stream()
+                .collect(Collectors.groupingBy(archivedData -> archivedData.getBook().getGenre(),
+                        Collectors.groupingBy(archivedData -> archivedData.getBook().getAuthor(), Collectors.counting())))
                 .entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, genreMapEntry -> genreMapEntry.getValue().entrySet().stream()
-                            .max(Map.Entry.<String,Long>comparingByValue(Comparator.reverseOrder())
-                                    .thenComparing(Map.Entry::getKey))
-                            .map(Map.Entry::getKey)
-                            .orElse("")
+                        .max(Map.Entry.<String,Long>comparingByValue().reversed().thenComparing(Map.Entry::getKey))
+                        .map(Map.Entry::getKey)
+                        .get()
                 ));
+
+        List<Genre> allGenres = library.getBooks().stream().map(Book::getGenre).distinct().collect(Collectors.toList());
+
+        for (Genre genre : allGenres) {
+            if (!mapOfPopularity.containsKey(genre)) {
+                mapOfPopularity.put(genre, "Author not determined");
+            }
+        }
+
+        return mapOfPopularity;
     }
 
     private boolean isMoreThanNDays(ArchivedData archivedData, int nDays) {
