@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.streams.lib;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.sql.Timestamp;
 import java.util.stream.Collectors;
 
@@ -85,16 +84,17 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        // Под "самым популярным автором в каждом жанре" я понимаю автора, книги которого брали чаще всего
-        return library.getArchive().stream().collect(Collectors.groupingBy(it -> it.getBook().getGenre()))
-                .entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
-                        it -> it.getValue().stream().collect(Collectors.groupingBy(data ->
+        return Arrays.stream(Genre.values()).collect(Collectors.toMap(key -> key,
+                value -> (library.getArchive().stream().filter(data -> data.getBook().getGenre() == value)
+                        .collect(Collectors.groupingBy(data ->
                                 data.getBook().getAuthor())).entrySet().stream()
-                                .max((first, second) -> {
-                                    if (first.getValue().size() == second.getValue().size()) {
-                                        return first.getKey().compareTo(second.getKey());
-                                    }
-                                    return first.getValue().size() - second.getValue().size();
-                                }).get().getKey()));
+                        .max((first, second) -> {
+                            if (first.getValue().size() == second.getValue().size()) {
+                                return second.getKey().compareTo(first.getKey());
+                            }
+                            return first.getValue().size() - second.getValue().size();
+                        })
+                        .orElse(new AbstractMap.SimpleImmutableEntry<>("Author not determined",
+                                Collections.emptyList())).getKey())));
     }
 }
