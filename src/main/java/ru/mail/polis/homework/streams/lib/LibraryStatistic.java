@@ -32,7 +32,10 @@ public class LibraryStatistic {
                 .filter(userListEntry -> userListEntry.getValue().size() >= 5)
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        userListEntry -> userListEntry.getKey().getReadedPages()
+                        userListEntry -> userListEntry.getValue().stream()
+                                .mapToInt(archivedData -> archivedData.getBook().getPage())
+                                .sum() + (userListEntry.getKey().getBook().getGenre().equals(genre) ?
+                                userListEntry.getKey().getReadedPages() : 0)
                 ));
     }
 
