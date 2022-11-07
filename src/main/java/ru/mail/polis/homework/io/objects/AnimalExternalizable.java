@@ -74,7 +74,9 @@ public class AnimalExternalizable implements Externalizable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AnimalExternalizable that = (AnimalExternalizable) o;
-        return getLegs() == that.getLegs() && isWild() == that.isWild() && isFurry() == that.isFurry() && Objects.equals(getAlias(), that.getAlias()) && Objects.equals(getOrganization(), that.getOrganization()) && getMoveType() == that.getMoveType();
+        return legs == that.getLegs() && wild == that.isWild() && furry == that.isFurry()
+                && Objects.equals(alias, that.getAlias()) && Objects.equals(organization, that.getOrganization())
+                && moveType == that.getMoveType();
     }
 
     @Override
@@ -175,7 +177,8 @@ public class AnimalExternalizable implements Externalizable {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             OrganizationExternalizable that = (OrganizationExternalizable) o;
-            return isForeign() == that.isForeign() && Objects.equals(getName(), that.getName()) && Objects.equals(getOwner(), that.getOwner());
+            return foreign == that.isForeign() && Objects.equals(name, that.getName())
+                    && Objects.equals(owner, that.getOwner());
         }
 
         @Override

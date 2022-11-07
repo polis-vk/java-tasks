@@ -69,7 +69,9 @@ public class Animal implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return getLegs() == animal.getLegs() && isWild() == animal.isWild() && isFurry() == animal.isFurry() && Objects.equals(getAlias(), animal.getAlias()) && Objects.equals(getOrganization(), animal.getOrganization()) && getMoveType() == animal.getMoveType();
+        return legs == animal.getLegs() && wild == animal.isWild() && furry == animal.isFurry()
+                && Objects.equals(alias, animal.getAlias()) && Objects.equals(organization, animal.getOrganization())
+                && moveType == animal.getMoveType();
     }
 
     @Override
@@ -123,7 +125,8 @@ public class Animal implements Serializable {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Organization that = (Organization) o;
-            return isForeign() == that.isForeign() && Objects.equals(getName(), that.getName()) && Objects.equals(getOwner(), that.getOwner());
+            return foreign == that.isForeign() && Objects.equals(name, that.getName())
+                    && Objects.equals(owner, that.getOwner());
         }
 
         @Override
