@@ -38,11 +38,15 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
-        if (!checkSerialize(animals, fileName)) {
+        if (animals == null || fileName == null) {
             return;
         }
 
         Path file = Paths.get(fileName);
+        if (Files.notExists(file.getParent())) {
+           return;
+        }
+
         try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(file))) {
             for (Animal animal : animals) {
                 out.writeObject(animal);
@@ -60,11 +64,15 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> defaultDeserialize(String fileName) {
-        if (!checkDeserialize(fileName)) {
+        if (fileName == null) {
             return null;
         }
 
         Path file = Paths.get(fileName);
+        if (!Files.isRegularFile(file)) {
+            return null;
+        }
+
         List<Animal> animals = new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(file))) {
             try {
@@ -89,7 +97,22 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
+        if (animals == null || fileName == null) {
+            return;
+        }
 
+        Path file = Paths.get(fileName);
+        if (Files.notExists(file.getParent())) {
+            return;
+        }
+
+        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(file))) {
+            for (AnimalWithMethods animal : animals) {
+                out.writeObject(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -101,7 +124,29 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
-        return Collections.emptyList();
+        if (fileName == null) {
+            return null;
+        }
+
+        Path file = Paths.get(fileName);
+        if (!Files.isRegularFile(file)) {
+            return null;
+        }
+
+        List<AnimalWithMethods> animals = new ArrayList<>();
+        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(file))) {
+            try {
+                while (true) {
+                    animals.add((AnimalWithMethods) in.readObject());
+                }
+            } catch (EOFException e) {
+                return animals;
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return animals;
     }
 
     /**
@@ -149,14 +194,6 @@ public class Serializer {
     public List<AnimalWithMethods> customDeserialize(String fileName) {
         return Collections.emptyList();
     }
-
-    private boolean checkSerialize(List<Animal> animals, String fileName) {
-        if (animals == null || fileName == null) {
-            return false;
-        }
-        return Files.exists(Paths.get(fileName).getParent());
-    }
-
     private boolean checkDeserialize(String fileName) {
         if (fileName == null) {
             return false;
