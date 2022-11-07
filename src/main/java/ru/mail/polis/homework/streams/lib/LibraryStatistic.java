@@ -26,11 +26,11 @@ public class LibraryStatistic {
                 .stream().filter(it -> it.getBook().getGenre()==genre)
                 .collect(Collectors.groupingBy(ArchivedData::getUser)).entrySet().stream()
                 .filter(it -> it.getValue().size() >= 5 && it.getValue().stream().allMatch(data ->
-                        (data.getReturned() != null ?
-                                data.getReturned().getTime() : new Timestamp(System.currentTimeMillis()).getTime() -
-                                data.getTake().getTime()) >= 14L * DAYS_TO_MILLISECONDS))
+                        (data.getReturned().getTime() - data.getTake().getTime())
+                                >= 14L * DAYS_TO_MILLISECONDS))
                 .collect(Collectors.toMap(Map.Entry::getKey,
-                        it -> it.getValue().stream().mapToInt(value -> value.getBook().getPage()).sum()));
+                        it -> (it.getValue().stream().mapToInt(value -> value.getBook().getPage()).sum() +
+                                ((it.getKey().getBook().getGenre()==genre) ? it.getKey().getReadedPages() : 0))));
     }
 
     /**
