@@ -212,7 +212,7 @@ public class LibraryStatisticTest {
         Map<Genre, String> result = statistic.mostPopularAuthorInGenre(library);
 
         assertEquals(Genre.values().length, result.size());
-        assertNull(result.get(Genre.NOVEL));
+        assertEquals("Author not determined", result.get(Genre.NOVEL));
         assertEquals("Лервмонтов", result.get(Genre.ADVENTURE));
         assertEquals("Булычев", result.get(Genre.FANTASY));
         assertEquals("Бобров", result.get(Genre.HISTORY));
