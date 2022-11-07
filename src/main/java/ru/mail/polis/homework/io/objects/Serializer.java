@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -9,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -156,7 +157,22 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
+        if (animals == null || fileName == null) {
+            return;
+        }
 
+        Path file = Paths.get(fileName);
+        if (Files.notExists(file.getParent())) {
+            return;
+        }
+
+        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(file))) {
+            for (AnimalExternalizable animal : animals) {
+                out.writeObject(animal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -168,7 +184,29 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-        return Collections.emptyList();
+        if (fileName == null) {
+            return null;
+        }
+
+        Path file = Paths.get(fileName);
+        if (!Files.isRegularFile(file)) {
+            return null;
+        }
+
+        List<AnimalExternalizable> animals = new ArrayList<>();
+        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(file))) {
+            try {
+                while (true) {
+                    animals.add((AnimalExternalizable) in.readObject());
+                }
+            } catch (EOFException e) {
+                return animals;
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return animals;
     }
 
     /**
@@ -180,7 +218,32 @@ public class Serializer {
      * @param fileName файл, в который "пишем" животных
      */
     public void customSerialize(List<AnimalWithMethods> animals, String fileName) {
+        if (animals == null || fileName == null) {
+            return;
+        }
 
+        Path file = Paths.get(fileName);
+        if (Files.notExists(file.getParent())) {
+            return;
+        }
+
+        try (DataOutputStream out = new DataOutputStream(Files.newOutputStream(file))) {
+            for (AnimalWithMethods animal : animals) {
+                boolean isNull = (animal == null);
+                out.writeBoolean(isNull);
+                if (!isNull) {
+                    out.writeBoolean(animal.isHappy());
+                    out.writeBoolean(animal.isAngry());
+                    out.writeInt(animal.getLegs());
+                    writeString(out, animal.getName());
+                    AnimalWithMethods.MoveType moveType = animal.getMoveType();
+                    writeString(out, (moveType == null ? null : moveType.name()));
+                    writeAddressWithMethods(out, animal.getHomeAddress());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -192,12 +255,83 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalWithMethods> customDeserialize(String fileName) {
-        return Collections.emptyList();
-    }
-    private boolean checkDeserialize(String fileName) {
         if (fileName == null) {
-            return false;
+            return null;
         }
-        return Files.isRegularFile(Paths.get(fileName));
+
+        Path file = Paths.get(fileName);
+        if (!Files.isRegularFile(file)) {
+            return null;
+        }
+
+        List<AnimalWithMethods> animals = new ArrayList<>();
+        try (DataInputStream in = new DataInputStream(Files.newInputStream(file))) {
+            try {
+                while (true) {
+                    boolean isNull = in.readBoolean();
+                    if (isNull) {
+                        animals.add(null);
+                    } else {
+                        boolean isHappy = in.readBoolean();
+                        boolean isAngry = in.readBoolean();
+                        int legs = in.readInt();
+                        String name = readString(in);
+                        String moveStr = readString(in);
+                        AnimalWithMethods.MoveType moveType;
+                        if (moveStr != null) {
+                            moveType = AnimalWithMethods.MoveType.valueOf(moveStr);
+                        } else {
+                            moveType = null;
+                        }
+                        AnimalWithMethods.AddressWithMethods homeAddress = readAddressWithMethods(in);
+                        animals.add(new AnimalWithMethods(isHappy, isAngry, legs, name, moveType, homeAddress));
+                    }
+                }
+            } catch (EOFException e) {
+                return animals;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return animals;
+    }
+
+    private static void writeString(DataOutputStream out, String str) throws IOException{
+        boolean isStrNull = (str == null);
+        out.writeBoolean(isStrNull);
+        if (!isStrNull) {
+            out.writeUTF(str);
+        }
+    }
+
+    private static String readString(DataInputStream in) throws IOException {
+        boolean isStrNull = in.readBoolean();
+        if (isStrNull) {
+            return null;
+        }
+        return in.readUTF();
+    }
+
+    private static void writeAddressWithMethods(DataOutputStream out,
+                                                AnimalWithMethods.AddressWithMethods address) throws IOException{
+        boolean isAddressNull = (address == null);
+        out.writeBoolean(isAddressNull);
+        if (!isAddressNull) {
+            writeString(out, address.getStreet());
+            out.writeInt(address.getHouse());
+            writeString(out, address.getPhoneNumber());
+        }
+    }
+
+    private static AnimalWithMethods.AddressWithMethods readAddressWithMethods(DataInputStream in) throws IOException {
+        boolean isAddressNull = in.readBoolean();
+        if (isAddressNull) {
+            return null;
+        }
+        String street = readString(in);
+        int house = in.readInt();
+        String phoneNumber = readString(in);
+        return new AnimalWithMethods.AddressWithMethods(street, house, phoneNumber);
     }
 }
