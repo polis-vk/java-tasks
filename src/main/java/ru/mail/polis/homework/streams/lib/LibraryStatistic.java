@@ -4,11 +4,10 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.AbstractMap;
-import java.util.Comparator;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -17,6 +16,8 @@ import java.util.stream.Collectors;
  * Оценка 5-ть баллов
  */
 public class LibraryStatistic {
+    private static final String NO_AUTHOR = "Author not determined";
+    private static final Map.Entry<String, Integer> EMPTY = new AbstractMap.SimpleEntry<>(null, null);
 
     /**
      * Вернуть "специалистов" в литературном жанре с кол-вом прочитанных страниц.
@@ -43,7 +44,6 @@ public class LibraryStatistic {
                                 return archivedData.getTake().toInstant().compareTo(archivedData.getReturned().toInstant().minus(14, ChronoUnit.DAYS)) <= 0;
                             })
                             .count();
-                    System.out.println(userListEntry.getKey().getName() + " " + count);
                     return count >= 5;
                 })
                 .map(entry -> {
@@ -137,15 +137,18 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return library.getArchive().stream()
-                .collect(Collectors.groupingBy(archivedData -> archivedData.getBook().getGenre()))
-                .entrySet().stream()
-                .map(entry -> {
+        return Arrays.stream(Genre.values())
+                .map(genre -> {
                     Map<String, Integer> map = new HashMap<>();
-                    entry.getValue().stream()
-                            .map(archivedData -> archivedData.getBook().getAuthor())
-                            .forEach(s -> map.merge(s, 1, Integer::sum));
-                    String mostFamous = map.entrySet().stream()
+                    library.getArchive().stream()
+                            .filter(archivedData -> archivedData.getBook().getGenre() == genre)
+                            .forEach(archivedData -> map.merge(archivedData.getBook().getAuthor(), 1, Integer::sum));
+                    // No books were taken in this genre
+                    if (map.isEmpty()) {
+                        return new AbstractMap.SimpleEntry<>(genre, NO_AUTHOR);
+                    }
+                    // Otherwise, we look for the most famous author
+                    String mostFamousAuthor = map.entrySet().stream()
                             .max((o1, o2) -> {
                                 int compare = o1.getValue().compareTo(o2.getValue());
                                 if (compare == 0) {
@@ -153,9 +156,9 @@ public class LibraryStatistic {
                                 }
                                 return compare;
                             })
-                            .orElse(new AbstractMap.SimpleEntry<>(null, null))
+                            .orElse(EMPTY)
                             .getKey();
-                    return new AbstractMap.SimpleEntry<>(entry.getKey(), mostFamous);
+                    return new AbstractMap.SimpleEntry<>(genre, mostFamousAuthor);
                 })
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
