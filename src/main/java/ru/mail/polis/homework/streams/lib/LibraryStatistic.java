@@ -43,13 +43,13 @@ public class LibraryStatistic {
     public Genre loveGenre(Library library, User user) {
         return library.getArchive().stream().filter(it -> it.getUser() == user).collect(Collectors.groupingBy(it ->
                 it.getBook().getGenre())).entrySet().stream().max((first, second) -> {
-                    if (first.getValue().stream().filter(data -> data.getReturned() != null).count()
-                            == second.getValue().stream().filter(data -> data.getReturned() != null).count()) {
-                        return first.getValue().size() - second.getValue().size();
+                    long firstCount = first.getValue().stream().filter(data -> data.getReturned() != null).count();
+                    long secondCount = second.getValue().stream().filter(data -> data.getReturned() != null).count();
+                    if (firstCount == secondCount) {
+                        return ((user.getBook().getGenre() == first.getKey()) ? 1 : 0) -
+                                ((user.getBook().getGenre() == second.getKey()) ? 1 : 0);
                     }
-                    return (int) (first.getValue().stream().filter(data ->
-                            data.getReturned() != null).count() - second.getValue().stream().filter(data ->
-                            data.getReturned() != null).count());
+                    return (int) (firstCount - secondCount);
         }).get().getKey();
     }
 
