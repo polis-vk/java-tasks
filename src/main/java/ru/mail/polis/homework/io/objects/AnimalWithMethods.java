@@ -61,13 +61,13 @@ public class AnimalWithMethods implements Serializable {
                     '}';
         }
 
-        public void writeObject(ObjectOutputStream out) throws IOException {
+        private void writeObject(ObjectOutputStream out) throws IOException {
             writeString(out, street);
             out.writeInt(house);
             writeString(out, phoneNumber);
         }
 
-        public void readObject(ObjectInputStream in) throws IOException {
+        private void readObject(ObjectInputStream in) throws IOException {
             street = readString(in);
             house = in.readInt();
             phoneNumber = readString(in);
@@ -139,16 +139,16 @@ public class AnimalWithMethods implements Serializable {
                 '}';
     }
 
-    public void writeObject(ObjectOutputStream out) throws IOException {
+    private void writeObject(ObjectOutputStream out) throws IOException {
         out.writeBoolean(isHappy);
         out.writeBoolean(isAngry);
         out.writeInt(legs);
         writeString(out, name);
-        writeString(out, moveType.name());
+        writeString(out, (moveType == null ? null : moveType.name()));
         out.writeObject(homeAddress);
     }
 
-    public void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         isHappy = in.readBoolean();
         isAngry = in.readBoolean();
         legs = in.readInt();
