@@ -4,7 +4,6 @@ import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -48,6 +47,7 @@ public class Serializer {
         }
 
         try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(fileTo))) {
+            outputStream.writeInt(animals.size());
             for (Animal animal : animals) {
                 outputStream.writeObject(animal);
             }
@@ -71,17 +71,10 @@ public class Serializer {
 
         List<Animal> animals = new ArrayList<>();
         try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(fileFrom))) {
-            Object currObject;
-            while (true) {
-                currObject = inputStream.readObject();
-                if (currObject instanceof Animal) {
-                    animals.add((Animal) currObject);
-                } else {
-                    animals.add(null);
-                }
+            int animalsCount = inputStream.readInt();
+            for (int i = 0; i < animalsCount; i++) {
+                animals.add((Animal) inputStream.readObject());
             }
-        } catch (EOFException e) {
-//            ignored
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
@@ -103,6 +96,7 @@ public class Serializer {
         }
 
         try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(fileTo))) {
+            outputStream.writeInt(animals.size());
             for (AnimalWithMethods animal : animals) {
                 outputStream.writeObject(animal);
             }
@@ -127,17 +121,10 @@ public class Serializer {
 
         List<AnimalWithMethods> animals = new ArrayList<>();
         try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(fileFrom))) {
-            Object currObject;
-            while (true) {
-                currObject = inputStream.readObject();
-                if (currObject instanceof AnimalWithMethods) {
-                    animals.add((AnimalWithMethods) currObject);
-                } else {
-                    animals.add(null);
-                }
+            int animalsCount = inputStream.readInt();
+            for (int i = 0; i < animalsCount; i++) {
+                animals.add((AnimalWithMethods) inputStream.readObject());
             }
-        } catch (EOFException e) {
-//            ignored
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
@@ -158,6 +145,7 @@ public class Serializer {
         }
 
         try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(fileTo))) {
+            outputStream.writeInt(animals.size());
             for (AnimalExternalizable animal : animals) {
                 outputStream.writeObject(animal);
             }
@@ -182,17 +170,10 @@ public class Serializer {
 
         List<AnimalExternalizable> animals = new ArrayList<>();
         try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(fileFrom))) {
-            Object currObject;
-            while (true) {
-                currObject = inputStream.readObject();
-                if (currObject instanceof AnimalExternalizable) {
-                    animals.add((AnimalExternalizable) currObject);
-                } else {
-                    animals.add(null);
-                }
+            int animalsCount = inputStream.readInt();
+            for (int i = 0; i < animalsCount; i++) {
+                animals.add((AnimalExternalizable) inputStream.readObject());
             }
-        } catch (EOFException e) {
-//            ignored
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
