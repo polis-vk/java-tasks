@@ -1,21 +1,24 @@
 package ru.mail.polis.homework.streams.lib;
 
-import java.util.HashMap;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 /**
  * Класс для работы со статистикой по библиотеке.
  * Оценка 5-ть баллов
  */
 public class LibraryStatistic {
-    private final static long day = 86_400_400;
 
     /**
      * Вернуть "специалистов" в литературном жанре с кол-вом прочитанных страниц.
-     * Специалист жанра считается пользователь который прочел как минимум 5 книг в этом жанре,
+     * Специалистом жанра считается пользователь который прочел как минимум 5 книг в этом жанре,
      * при этом читал каждую из них не менее 14 дней.
      *
      * @param library - данные библиотеки
@@ -23,22 +26,23 @@ public class LibraryStatistic {
      * @return - map пользователь / кол-во прочитанных страниц
      */
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
-        Map<User, Integer> specialists = new HashMap<>();
-        List<ArchivedData> archiveStorage = library.getArchive();
-        List<User> users = library.getUsers();
-        long readBooks;
-        long twoWeeks = day * 14;
-        for (User user : users) {
-            readBooks = archiveStorage.stream()
-                    .filter(x -> x.getBook().getGenre() == genre)
-                    .filter(x -> x.getUser() == user)
-                    .filter(x -> (x.getReturned().getTime() - x.getTake().getTime()) >= twoWeeks)
-                    .count();
-            if (readBooks >= 5) {
-                specialists.put(user, user.getReadedPages());
-            }
-        }
-        return specialists;
+        return library.getArchive().stream()
+                .filter(x -> x.getBook().getGenre() == genre)
+                .filter(x -> x.getReturned() == null |
+                        (x.getTake().toLocalDateTime().toLocalDate().plusWeeks(2).compareTo(x.getReturned().toLocalDateTime().toLocalDate())) <= 0)
+                .collect(groupingBy(ArchivedData::getUser, mapping(ArchivedData::getBook, toList()))).entrySet().stream()
+                .filter(x -> x.getValue().size() >= 5)
+                .collect(toMap(Map.Entry::getKey, x -> {
+                            int value = x.getValue().stream()
+                                    .mapToInt(Book::getPage)
+                                    .sum();
+                            if (x.getKey().getBook().getGenre() == genre) {
+                                value += x.getKey().getReadedPages();
+                            }
+                            return value;
+                        }
+
+                ));
     }
 
     /**
@@ -51,17 +55,26 @@ public class LibraryStatistic {
      */
     public Genre loveGenre(Library library, User user) {
         return library.getArchive().stream()
-                .filter(data -> data.getUser() == user)
+                .filter(x -> x.getUser() == user)
                 .map(ArchivedData::getBook)
                 .map(Book::getGenre)
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .collect(groupingBy(Function.identity(), counting()))
                 .entrySet()
-                .stream()
-                .distinct()
-                .sorted((o1, o2) -> Long.compare(o2.getValue(), o1.getValue()))
-                .findFirst()
-                .get()
-                .getKey();
+                .stream().min((o1, o2) -> {
+                    if (o1.getValue().compareTo(o2.getValue()) != 0) {
+                        return Long.compare(o2.getValue(), o1.getValue());
+                    }
+                    Genre curBook = user.getBook().getGenre();
+                    if (curBook == o1.getKey()) {
+                        return -1;
+                    }
+                    if (curBook == o2.getKey()) {
+                        return 1;
+                    }
+                    return 0;
+                })
+                .orElseThrow().getKey();
+
     }
 
     /**
@@ -72,11 +85,24 @@ public class LibraryStatistic {
      * @return - список ненадежных пользователей
      */
     public List<User> unreliableUsers(Library library) {
-        final long month = day * 30;
         return library.getArchive().stream()
-                .filter(x -> (x.getReturned() == null ? x.getTake().getTime() : (x.getReturned().getTime() - x.getTake().getTime())) > month)
-                .map(ArchivedData::getUser)
-                .collect(Collectors.toList());
+                .collect(groupingBy(ArchivedData::getUser,
+                        toMap(ArchivedData::getBook, value -> {
+                            if (value.getReturned() == null) {
+                                return new Timestamp(System.currentTimeMillis() - value.getTake().getTime());
+                            }
+                            return new Timestamp(value.getReturned().getTime() - value.getTake().getTime());
+                        })
+                )).entrySet().stream()
+                .filter(map -> {
+                    final LocalDateTime month = LocalDateTime.of(1970, Month.FEBRUARY, 1, 0, 0, 0);
+                    long bookCountKeepingOverMonth = map.getValue().entrySet().stream()
+                            .filter(entry -> entry.getValue().toLocalDateTime().isAfter(month))
+                            .count();
+                    return bookCountKeepingOverMonth > map.getValue().size() / 2;
+                })
+                .map(Map.Entry::getKey)
+                .collect(toList());
     }
 
     /**
@@ -87,11 +113,9 @@ public class LibraryStatistic {
      * @return - список книг
      */
     public List<Book> booksWithMoreCountPages(Library library, int countPage) {
-        return library.getArchive().stream()
-                .map(ArchivedData::getBook)
+        return library.getBooks().stream()
                 .filter(book -> book.getPage() >= countPage)
-                .distinct()
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     /**
@@ -101,30 +125,22 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        Map<Genre, String> mostPopularAuthorInGenre = new HashMap<>();
-        List<Genre> libraryGenres = library.getArchive()
-                .stream()
-                .map(ArchivedData::getBook)
-                .map(Book::getGenre)
-                .distinct()
-                .collect(Collectors.toList());
-
-        for (Genre genre : libraryGenres) {
-            String authorInGenre = library.getArchive().stream()
-                    .map(ArchivedData::getBook)
-                    .filter(x -> x.getGenre() == genre)
-                    .map(Book::getAuthor)
-                    .sorted()
-                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                    .entrySet()
-                    .stream()
-                    .distinct()
-                    .sorted((o1, o2) -> Long.compare(o2.getValue(), o1.getValue()))
-                    .findFirst()
-                    .get()
-                    .getKey();
-            mostPopularAuthorInGenre.put(genre, authorInGenre);
-        }
-        return mostPopularAuthorInGenre;
+        return Arrays.stream(Genre.values())
+                .collect(toMap(Function.identity(),
+                        value -> library.getArchive().stream()
+                                .map(ArchivedData::getBook)
+                                .filter(book -> book.getGenre() == value)
+                                .map(Book::getAuthor)
+                                .collect(groupingBy(Function.identity(), counting()))
+                                .entrySet().stream()
+                                .max((o1, o2) -> {
+                                    if (o1.getValue().equals(o2.getValue())) {
+                                        return o2.getKey().compareTo(o1.getKey());
+                                    }
+                                    return Long.compare(o2.getValue(), o1.getValue());
+                                })
+                                .orElseGet(() -> Map.entry("Author not determined", 0L)).getKey(),
+                        (value1, value2) -> value1
+                ));
     }
 }
