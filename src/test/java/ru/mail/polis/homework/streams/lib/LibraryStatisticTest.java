@@ -21,7 +21,7 @@ public class LibraryStatisticTest {
         List<User> users = generateUsers();
         List<Book> books = generateBooks();
 
-        LocalDateTime mashaTakeDate = LocalDateTime.of(2015, Month.SEPTEMBER, 5, 0, 0, 0);
+        LocalDateTime mashaTakeDate = LocalDateTime.of(2015, Month.SEPTEMBER, 1, 0, 0, 0);
         LocalDateTime mashaReturnedDate = LocalDateTime.of(2015, Month.SEPTEMBER, 15, 0, 0, 0);
         List<ArchivedData> dataMasha = new ArrayList<>();
         dataMasha.addAll(generateArchiveData(getUserByName(users, "Маша"), books, Genre.FANTASY, Timestamp.valueOf(mashaTakeDate), Timestamp.valueOf(mashaReturnedDate)));
@@ -175,7 +175,7 @@ public class LibraryStatisticTest {
 
         assertEquals(2, page1184result.size());
         assertTrue(page1184result.contains(getBookByName(books, "Сандро из Чегема")));
-        assertTrue(page1184result.contains(getBookByName(books, "Ведьмака")));
+        assertTrue(page1184result.contains(getBookByName(books, "Ведьмак")));
 
         assertEquals(books.size(), page0result.size());
     }
