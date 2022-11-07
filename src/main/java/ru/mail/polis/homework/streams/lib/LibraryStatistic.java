@@ -4,8 +4,11 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.AbstractMap;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -35,16 +38,24 @@ public class LibraryStatistic {
                                 Timestamp returned = archivedData.getReturned();
                                 if (returned == null) {
                                     Instant now = new Timestamp(System.currentTimeMillis()).toInstant();
-                                    return archivedData.getTake().toInstant().isBefore(now.minus(14, ChronoUnit.DAYS));
+                                    return archivedData.getTake().toInstant().compareTo(now.minus(14, ChronoUnit.DAYS)) <= 0;
                                 }
-                                return archivedData.getTake().toInstant().isBefore(
-                                        archivedData.getReturned().toInstant().minus(14, ChronoUnit.DAYS)
-                                );
+                                return archivedData.getTake().toInstant().compareTo(archivedData.getReturned().toInstant().minus(14, ChronoUnit.DAYS)) <= 0;
                             })
                             .count();
+                    System.out.println(userListEntry.getKey().getName() + " " + count);
                     return count >= 5;
                 })
-                .collect(Collectors.toMap(Map.Entry::getKey, userListEntry -> userListEntry.getKey().getReadedPages()));
+                .map(entry -> {
+                    int sum = entry.getValue().stream()
+                            .map(archivedData -> archivedData.getBook().getPage())
+                            .reduce(0, Integer::sum);
+                    if (entry.getKey().getBook().getGenre() == genre) {
+                        sum += entry.getKey().getReadedPages();
+                    }
+                    return new AbstractMap.SimpleEntry<>(entry.getKey(), sum);
+                })
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     /**
@@ -126,22 +137,24 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return library.getBooks().stream()
-                .collect(Collectors.groupingBy(Book::getGenre))
+        return library.getArchive().stream()
+                .collect(Collectors.groupingBy(archivedData -> archivedData.getBook().getGenre()))
                 .entrySet().stream()
                 .map(entry -> {
-                    String mostFamous = entry.getValue().stream()
-                            .collect(Collectors.groupingBy(Book::getAuthor))
-                            .entrySet().stream()
+                    Map<String, Integer> map = new HashMap<>();
+                    entry.getValue().stream()
+                            .map(archivedData -> archivedData.getBook().getAuthor())
+                            .forEach(s -> map.merge(s, 1, Integer::sum));
+                    String mostFamous = map.entrySet().stream()
                             .max((o1, o2) -> {
-                                int compareResult = Integer.compare(o1.getValue().size(), o2.getValue().size());
-                                if (compareResult == 0) {
-                                    return o1.getKey().compareTo(o2.getKey());
+                                int compare = o1.getValue().compareTo(o2.getValue());
+                                if (compare == 0) {
+                                    return o2.getKey().compareTo(o1.getKey());
                                 }
-                                return compareResult;
+                                return compare;
                             })
-                            .map(Map.Entry::getKey)
-                            .orElse(null);
+                            .orElse(new AbstractMap.SimpleEntry<>(null, null))
+                            .getKey();
                     return new AbstractMap.SimpleEntry<>(entry.getKey(), mostFamous);
                 })
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
