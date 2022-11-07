@@ -23,17 +23,27 @@ public class LibraryStatistic {
      * @param genre - жанр
      * @return - map пользователь / кол-во прочитанных страниц
      */
-    private static final Timestamp TWO_WEEK = new Timestamp(14L * 24 * 60 * 60 * 1000);
-    private static final Timestamp MONTH = new Timestamp(30L * 24 * 60 * 60 * 1000);
+
+    private static final Date TWO_WEEK = new Date(13L * 24 * 60 * 60 * 1000);
+    private static final Date MONTH = new Date(29L * 24 * 60 * 60 * 1000);
 
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
         return library.getArchive().stream()
                 .filter(archivedData -> archivedData.getBook().getGenre() == genre)
                 .filter(this::bookFilter)
-                .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.toSet()))
+                .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.toList()))
                 .entrySet().stream()
                 .filter(userSetEntry -> userSetEntry.getValue().size() >= 5)
-                .collect(Collectors.toMap(Map.Entry::getKey, userSetEntry -> userSetEntry.getKey().getReadedPages()));
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        userListEntry -> {
+                            int readPages = userListEntry.getValue().stream()
+                                    .mapToInt(value -> value.getBook().getPage()).sum();
+                            if (userListEntry.getValue().get(0).getUser().getBook().getGenre().equals(genre)) {
+                                return readPages += userListEntry.getValue().get(0).getUser().getReadedPages();
+                            }
+                            return readPages;
+                        }));
     }
 
 
@@ -48,7 +58,8 @@ public class LibraryStatistic {
     /*
      * Сначала проходимся по жанрам и создаем мапу с сопоставленими Жанр - Рейтинг. Дальше ищем жанр с наибольшим
      * рейтингом. Если рейтинги разные то ищем мксимальный по рейтингу. Если рейтинг одинаковый, подсчитываем рейтинг
-     * книг, которые юзер сейчас читает и прибавляем к соответствующему рейтингу. Дальше выводим результат для сравнения.
+     * книги, которую юзер сейчас читает и прибавляем к соответствующему рейтингу. Если книги такой нет, то показывается
+     * первая в мапе с рейтингами. Дальше выводим результат для сравнения.
      */
     public Genre loveGenre(Library library, User user) {
         return library.getArchive().stream()
@@ -59,19 +70,16 @@ public class LibraryStatistic {
                         Collectors.counting()))
                 .entrySet().stream()
                 .max((currentEntry, nextEntry) -> {
-                    int comparedInt = nextEntry.getValue().compareTo(currentEntry.getValue());
-                    if (comparedInt != 0) {
-                        return comparedInt;
+                    int comparedInt = currentEntry.getValue().compareTo(nextEntry.getValue());
+                    Book userBook = user.getBook();
+                    if (userBook != null && comparedInt == 0) {
+                        if (userBook.getGenre().equals(currentEntry.getKey()) &&
+                                !userBook.getGenre().equals(nextEntry.getKey())) {
+                            return ++comparedInt;
+                        }
+                        return --comparedInt;
                     }
-                    long newCurrentEntryScore = currentEntry.getValue() + library.getArchive().stream()
-                            .filter(archivedData -> archivedData.getUser().equals(user) &&
-                                    archivedData.getBook().getGenre().equals(currentEntry.getKey()))
-                            .count();
-                    long newNextEntryScore = nextEntry.getValue() + library.getArchive().stream()
-                            .filter(archivedData -> archivedData.getUser().equals(user) &&
-                                    archivedData.getBook().getGenre().equals(nextEntry.getKey()))
-                            .count();
-                    return (int) (newNextEntryScore - newCurrentEntryScore);
+                    return comparedInt;
                 })
                 .orElseThrow(NoSuchElementException::new).getKey();
     }
@@ -112,7 +120,7 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return library.getArchive().stream()
+        Map<Genre, String> mostPopularAuthor = library.getArchive().stream()
                 .map(ArchivedData::getBook)
                 .collect(Collectors.groupingBy(
                         Book::getGenre,
@@ -123,9 +131,16 @@ public class LibraryStatistic {
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         genreMapEntry -> genreMapEntry.getValue().entrySet().stream()
-                                .max(Comparator.comparingLong(Map.Entry<String, Long>::getValue)
-                                        .thenComparing((Map.Entry::getKey)))
+                                .min(Comparator.comparingLong(Map.Entry<String, Long>::getValue)
+                                        .reversed()
+                                        .thenComparing(Map.Entry::getKey))
                                 .map(Map.Entry::getKey).orElseThrow(NoSuchElementException::new)));
+        for (Genre genre : Genre.values()) {
+            if (!mostPopularAuthor.containsKey(genre)) {
+                mostPopularAuthor.put(genre, "Author not determined");
+            }
+        }
+        return mostPopularAuthor;
     }
 
     private boolean bookFilter(ArchivedData archivedData) {
@@ -149,6 +164,6 @@ public class LibraryStatistic {
                 })
                 .count();
 
-        return countUnreliableData > ((long) Math.ceil(archivedData.size() / 2.));
+        return countUnreliableData > (long) Math.floor(archivedData.size() / 2.);
     }
 }
