@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class LibraryStatistic {
 
     private final int SPECIALIST_COUNT_OF_BOOKS = 5;
-    private final int SPECIALISTS_DAYS_OF_READING_BOOK = 14;
+    private final int SPECIALISTS_DAYS_OF_READING_BOOK = 13;
     private final int DAYS_FOR_UNRELIABLE_USERS = 30;
 
     /**
@@ -82,13 +82,18 @@ public class LibraryStatistic {
      * @return - список ненадежных пользователей
      */
     public List<User> unreliableUsers(Library library) {
-        return library.getArchive().stream()
-                .collect(Collectors.groupingBy(ArchivedData::getUser,
-                        Collectors.toMap(ArchivedData::getBook, archivedData -> isMoreThanNDays(archivedData, DAYS_FOR_UNRELIABLE_USERS))))
+        return library.getUsers().stream()
+                .collect(Collectors.toMap(user -> user, user -> {
+                    long countOfNotReturnedInTime = library.getArchive().stream()
+                            .filter(x -> x.getUser().equals(user) && isMoreThanNDays(x, DAYS_FOR_UNRELIABLE_USERS))
+                            .count();
+                    long countOfAll = library.getArchive().stream()
+                            .filter(x -> x.getUser().equals(user))
+                            .count();
+                    return (countOfNotReturnedInTime * 1.0) / countOfAll;
+                }))
                 .entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().entrySet().stream().filter(Map.Entry::getValue).count() * 1.0 / (long) entry.getValue().entrySet().size()))
-                .entrySet().stream()
-                .filter(user -> Double.compare(0.5, user.getValue()) > 0)
+                .filter(user -> user.getValue() > 0.5)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
@@ -127,8 +132,8 @@ public class LibraryStatistic {
         final long MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
 
         if (archivedData.getReturned() == null) {
-            return (System.currentTimeMillis() - archivedData.getTake().getTime()) / MILLIS_PER_DAY >= nDays;
+            return (System.currentTimeMillis() - archivedData.getTake().getTime()) / MILLIS_PER_DAY > nDays;
         }
-        return (archivedData.getReturned().getTime() - archivedData.getTake().getTime()) / MILLIS_PER_DAY >= nDays;
+        return (archivedData.getReturned().getTime() - archivedData.getTake().getTime()) / MILLIS_PER_DAY > nDays;
     }
 }
