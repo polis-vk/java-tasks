@@ -53,20 +53,21 @@ public class LibraryStatistic {
                         archivedData -> archivedData.getBook().getGenre(),
                         Collectors.counting()
                 )).entrySet().stream()
+                .peek(genreLongEntry -> {
+                    System.out.println("-----------------------");
+                    System.out.println(genreLongEntry.getKey());
+                    System.out.println(genreLongEntry.getValue());
+                    System.out.println("-----------------------");
+                })
                 .max((o1, o2) -> {
-                    long cmp = o2.getValue() - o1.getValue();
+                    long cmp = o1.getValue() - o2.getValue();
                     if (cmp == 0) {
-                        int secondNotReturnedCount = (int) library.getArchive().stream()
-                                .filter(archivedData -> archivedData.getUser().equals(user) &&
-                                        archivedData.getBook().getGenre().equals(o2.getKey()) &&
-                                        archivedData.getReturned() == null)
-                                .count();
-                        int firstNotReturnedCount = (int) library.getArchive().stream()
-                                .filter(archivedData -> archivedData.getUser().equals(user) &&
-                                        archivedData.getBook().getGenre().equals(o1.getKey()) &&
-                                        archivedData.getReturned() == null)
-                                .count();
-                        return secondNotReturnedCount - firstNotReturnedCount;
+                        if (user.getBook().getGenre().equals(o1.getKey())) {
+                            return 1;
+                        }
+                        if (user.getBook().getGenre().equals(o2.getKey())) {
+                            return -1;
+                        }
                     }
                     return (int) cmp;
                 }).get().getKey();
