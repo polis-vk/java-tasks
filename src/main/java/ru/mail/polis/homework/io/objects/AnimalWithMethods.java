@@ -87,17 +87,15 @@ public class AnimalWithMethods implements Serializable {
         AnimalDataByte animalDataByte = new AnimalDataByte(this);
         out.writeByte(animalDataByte.getByte());
 
-        if (animalDataByte.isAnimalNotNull()) {
-            if (animalDataByte.isNameNotNull()) {
-                out.writeUTF(name);
-            }
-            out.writeInt(legsCount);
-            if (animalDataByte.isTypeNotNull()) {
-                out.writeUTF(animalTypeWithMethods.name());
-            }
-            if (animalDataByte.isOrgNotNull()) {
-                out.writeObject(organizationWithMethods);
-            }
+        if (animalDataByte.isNameNotNull()) {
+            out.writeUTF(name);
+        }
+        out.writeInt(legsCount);
+        if (animalDataByte.isTypeNotNull()) {
+            out.writeUTF(animalTypeWithMethods.name());
+        }
+        if (animalDataByte.isOrgNotNull()) {
+            out.writeObject(organizationWithMethods);
         }
     }
 
@@ -174,12 +172,10 @@ class OrganizationWithMethods implements Serializable {
         OrganizationDataByte organizationDataByte = new OrganizationDataByte(this);
         out.writeByte(organizationDataByte.getByte());
 
-        if (organizationDataByte.isOrgNotNull()) {
-            if (organizationDataByte.isTitleNotNull()) {
-                out.writeUTF(title);
-            }
-            out.writeInt(animalsCount);
+        if (organizationDataByte.isTitleNotNull()) {
+            out.writeUTF(title);
         }
+        out.writeInt(animalsCount);
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
