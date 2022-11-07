@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 public class LibraryStatistic {
 
     private final static int READING_DAYS = 14;
-
     private final static int SECOND_DAYS = 30;
     private final static int COUNT_OF_BOOKS = 5;
     private final static String AUTHOR_ERROR = "Author not determined";
