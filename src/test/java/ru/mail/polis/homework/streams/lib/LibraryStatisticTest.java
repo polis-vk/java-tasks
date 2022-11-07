@@ -21,7 +21,7 @@ public class LibraryStatisticTest {
         List<User> users = generateUsers();
         List<Book> books = generateBooks();
 
-        LocalDateTime mashaTakeDate = LocalDateTime.of(2015, Month.SEPTEMBER, 5, 0, 0, 0);
+        LocalDateTime mashaTakeDate = LocalDateTime.of(2015, Month.SEPTEMBER, 1, 0, 0, 0);
         LocalDateTime mashaReturnedDate = LocalDateTime.of(2015, Month.SEPTEMBER, 15, 0, 0, 0);
         List<ArchivedData> dataMasha = new ArrayList<>();
         dataMasha.addAll(generateArchiveData(getUserByName(users, "Маша"), books, Genre.FANTASY, Timestamp.valueOf(mashaTakeDate), Timestamp.valueOf(mashaReturnedDate)));
@@ -212,7 +212,7 @@ public class LibraryStatisticTest {
         Map<Genre, String> result = statistic.mostPopularAuthorInGenre(library);
 
         assertEquals(Genre.values().length, result.size());
-        assertNull(result.get(Genre.NOVEL));
+        assertEquals("Author not determined", result.get(Genre.NOVEL));
         assertEquals("Лервмонтов", result.get(Genre.ADVENTURE));
         assertEquals("Булычев", result.get(Genre.FANTASY));
         assertEquals("Бобров", result.get(Genre.HISTORY));
