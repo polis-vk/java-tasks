@@ -2,6 +2,7 @@ package ru.mail.polis.homework.streams.lib;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,7 @@ public class LibraryStatistic {
     private static final int BOOKS_REQUIREMENT = 5;
     private static final int DAYS_REQUIREMENT = 14;
     private static final int DAYS_UNRELIABLE = 30;
+    private static final String AUTHOR_NOT_DETERMINED = "Author not determined";
 
     /**
      * Вернуть "специалистов" в литературном жанре с кол-вом прочитанных страниц.
@@ -30,7 +32,12 @@ public class LibraryStatistic {
             .filter(data -> isBorrowedInDays(data, DAYS_REQUIREMENT))
             .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.toList()))
             .entrySet().stream().filter(user -> user.getValue().size() >= BOOKS_REQUIREMENT)
-            .collect(Collectors.toMap(Map.Entry::getKey, user -> user.getKey().getReadedPages()));
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                userEntry -> (userEntry.getKey().getBook().getGenre().equals(genre) ?
+                    userEntry.getKey().getReadedPages() : 0) + (userEntry.getValue().stream()
+                    .mapToInt(data -> data.getBook().getPage()).sum())
+            ));
     }
 
     /**
@@ -48,19 +55,10 @@ public class LibraryStatistic {
             .entrySet().stream()
             .max((entry1, entry2) -> {
                 if (entry1.getValue().size() == entry2.getValue().size()) {
-                    long firstNotReturnedCount = library.getArchive().stream()
-                        .filter(data -> data.getUser().equals(user) &&
-                            data.getBook().getGenre().equals(entry1.getKey()) &&
-                            data.getReturned() == null)
-                        .count();
-                    long secondNotReturnedCount = library.getArchive().stream()
-                        .filter(data -> data.getUser().equals(user) &&
-                            data.getBook().getGenre().equals(entry1.getKey()) &&
-                            data.getReturned() == null)
-                        .count();
-                    return (int) (secondNotReturnedCount - firstNotReturnedCount);
+                    return (user.getBook().getGenre().equals(entry1.getKey()) ? 1 : 0) -
+                        (user.getBook().getGenre().equals(entry2.getKey()) ? 1 : 0);
                 }
-                return entry2.getValue().size() - entry1.getValue().size();
+                return entry1.getValue().size() - entry2.getValue().size();
             }).orElseThrow(IllegalStateException::new).getKey();
     }
 
@@ -106,22 +104,29 @@ public class LibraryStatistic {
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
         return library.getBooks().stream()
-            .collect(Collectors.groupingBy(
-                Book::getGenre,
-                Collectors.groupingBy(
-                    Book::getAuthor,
-                    Collectors.counting()
-                )))
-            .entrySet().stream()
+            .map(Book::getGenre)
+            .distinct()
             .collect(Collectors.toMap(
-                Map.Entry::getKey,
-                genreMapEntry -> genreMapEntry.getValue().entrySet().stream()
-                    .max((entry1, entry2) -> {
-                        if (entry1.getValue().equals(entry2.getValue())) {
-                            return entry1.getKey().compareTo(entry2.getKey());
-                        }
-                        return (int) (entry2.getValue() - entry1.getValue());
-                    }).orElseThrow(IllegalStateException::new).getKey()
+                genre -> genre,
+                genre -> library.getArchive().stream()
+                    .map(ArchivedData::getBook)
+                    .collect(Collectors.groupingBy(
+                        Book::getGenre,
+                        Collectors.groupingBy(
+                            Book::getAuthor,
+                            Collectors.counting()
+                        )))
+                    .entrySet().stream()
+                    .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        genreMapEntry -> genreMapEntry.getValue().entrySet().stream()
+                            .max((entry1, entry2) -> {
+                                if (entry1.getValue().equals(entry2.getValue())) {
+                                    return entry2.getKey().compareTo(entry1.getKey());
+                                }
+                                return (int) (entry1.getValue() - entry2.getValue());
+                            }).orElseThrow(IllegalStateException::new).getKey()
+                    )).getOrDefault(genre, AUTHOR_NOT_DETERMINED)
             ));
     }
 
