@@ -2,6 +2,7 @@ package ru.mail.polis.homework.streams.lib;
 
 import java.sql.Timestamp;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -27,10 +28,16 @@ public class LibraryStatistic {
         return library.getArchive().stream()
                 .filter(e -> (e.getBook().getGenre() == genre))
                 .filter(e -> (getDays(e.getTake(), e.getReturned()) >= 14))
-                .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.counting()))
+                .collect(Collectors.groupingBy(ArchivedData::getUser))
                 .entrySet().stream()
-                .filter(s -> (s.getValue() >= 5))
-                .map(Map.Entry::getKey).collect(Collectors.toMap(s -> s, User::getReadedPages));
+                .filter(entry -> (entry.getValue().size() >= 5))
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                    List<ArchivedData> list = entry.getValue();
+                    User user = entry.getKey();
+                    int currentBookGetPages = user.getBook().getGenre() == genre ? user.getReadedPages() : 0;
+                    return list.stream().mapToInt(data -> data.getBook().getPage()).sum() +
+                            currentBookGetPages;
+                }));
     }
 
     /**
@@ -96,15 +103,17 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return library.getArchive().stream()
-                .collect(Collectors.groupingBy(s -> (s.getBook().getGenre()),
-                        Collectors.groupingBy(s -> s.getBook().getAuthor(), Collectors.counting())))
-                .entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey, genreMapEntrySet -> genreMapEntrySet.getValue().entrySet().stream()
-                                .max((o1, o2) -> o2.getValue().compareTo(o1.getValue()))
-                                .get()
-                                .getKey()));
+        return Arrays.stream(Genre.values())
+                .collect(Collectors.toMap(genre -> genre, genre -> library.getArchive().stream()
+                        .filter(data -> data.getBook().getGenre() == genre)
+                        .collect(Collectors.groupingBy(data -> data.getBook().getAuthor(), Collectors.counting()))
+                        .entrySet().stream()
+                        .max((o1, o2) -> {
+                            int cmp = o2.getValue().compareTo(o1.getValue());
+                            return cmp == 0 ? o2.getKey().compareTo(o1.getKey()) : cmp;
+                        })
+                        .map(Map.Entry::getKey)
+                        .orElse("Author not determined")));
     }
 
     private long getDays(Timestamp timestamp1, Timestamp timestamp2) {
