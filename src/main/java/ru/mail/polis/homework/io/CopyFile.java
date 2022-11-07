@@ -26,23 +26,20 @@ public class CopyFile {
             return;
         }
 
-        if (Files.isRegularFile(from)) {
-            try {
+        try {
+            if (Files.isRegularFile(from)) {
                 Path thisFileTo = to.resolve(from.relativize(to)).normalize();
                 Files.createDirectories(thisFileTo.getParent());
                 copy(from, thisFileTo);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                return;
             }
-            return;
-        }
 
-        try {
+            Files.createDirectories(to.getParent());
             Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
                         throws IOException {
-                    Files.createDirectories(to.resolve(from.relativize(dir)));
+                    Files.createDirectory(to.resolve(from.relativize(dir)));
                     return FileVisitResult.CONTINUE;
                 }
 
