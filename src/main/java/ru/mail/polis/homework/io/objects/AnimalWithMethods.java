@@ -11,10 +11,11 @@ import java.util.Objects;
  * 3 тугрика
  */
 public class AnimalWithMethods implements Serializable {
-    private static final byte POISONOUS_BIT_MASK = 0b1;
-    private static final byte WILD_BIT_MASK = 0b10;
-    private static final byte NULLABLE_BYTE = 0;
-    private static final byte NOT_NULLABLE_BYTE = 1;
+    private static final byte POISONOUS_BIT = 0b1;
+    private static final byte WILD_BIT = 0b10;
+    private static final byte ALIAS_NULLABLE_BIT = 0b100;
+    private static final byte GENDER_NULLABLE_BIT = 0b1000;
+
     private String alias;
     private int legsCount;
     private boolean poisonous;
@@ -96,67 +97,61 @@ public class AnimalWithMethods implements Serializable {
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        if (alias == null) {
-            out.writeByte(NULLABLE_BYTE);
-        } else {
-            out.writeByte(NOT_NULLABLE_BYTE);
+        out.writeByte(getMetaByte());
+        out.writeInt(legsCount);
+        if (alias != null) {
             out.writeUTF(alias);
         }
-        out.writeInt(legsCount);
-        out.writeByte(getBooleansMask());
-        if (organization == null) {
-            out.writeByte(NULLABLE_BYTE);
-        } else {
-            out.writeByte(NOT_NULLABLE_BYTE);
-            out.writeObject(organization);
-        }
-        if (gender == null) {
-            out.writeByte(NULLABLE_BYTE);
-        } else {
-            out.writeByte(NOT_NULLABLE_BYTE);
+        if (gender != null) {
             out.writeUTF(gender.name());
         }
+        out.writeObject(organization);
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        if (in.readByte() != NULLABLE_BYTE) {
+        byte metaByte = in.readByte();
+        setBooleansFromMetaByte(metaByte);
+        legsCount = in.readInt();
+        if ((ALIAS_NULLABLE_BIT & metaByte) == 0) {
             alias = in.readUTF();
         }
-        legsCount = in.readInt();
-        setBooleansFromMask(in.readByte());
-        if (in.readByte() != NULLABLE_BYTE) {
-            organization = (OrganizationWithMethods) in.readObject();
-        }
-        if (in.readByte() != NULLABLE_BYTE) {
+        if ((GENDER_NULLABLE_BIT & metaByte) == 0) {
             gender = Gender.valueOf(in.readUTF());
         }
+        organization = (OrganizationWithMethods) in.readObject();
     }
 
-    private byte getBooleansMask() {
-        byte mask = 0;
+    private void setBooleansFromMetaByte(byte metaByte) {
+        poisonous = (metaByte & POISONOUS_BIT) != 0;
+        wild = (metaByte & WILD_BIT) != 0;
+    }
+
+    private byte getMetaByte() {
+        byte metaByte = 0;
         if (poisonous) {
-            mask |= POISONOUS_BIT_MASK;
+            metaByte |= POISONOUS_BIT;
         }
         if (wild) {
-            mask |= WILD_BIT_MASK;
+            metaByte |= WILD_BIT;
         }
-        return mask;
-    }
-
-    private void setBooleansFromMask(byte mask) {
-        poisonous = (mask & POISONOUS_BIT_MASK) != 0;
-        wild = (mask & WILD_BIT_MASK) != 0;
+        if (alias == null) {
+            metaByte |= ALIAS_NULLABLE_BIT;
+        }
+        if (gender == null) {
+            metaByte |= GENDER_NULLABLE_BIT;
+        }
+        return metaByte;
     }
 }
 
 class OrganizationWithMethods implements Serializable {
-    private static final byte NULLABLE_BYTE = 0;
-    private static final byte NOT_NULLABLE_BYTE = 1;
+    private static final byte NAME_NULLABLE_BIT = 0b1;
+    private static final byte COUNTRY_NULLABLE_BIT = 0b10;
     private String name;
     private String country;
     private long licenseNumber;
 
-    public OrganizationWithMethods(String name, String country, int licenseNumber) {
+    public OrganizationWithMethods(String name, String country, long licenseNumber) {
         this.name = name;
         this.country = country;
         this.licenseNumber = licenseNumber;
@@ -207,28 +202,35 @@ class OrganizationWithMethods implements Serializable {
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        if (name == null) {
-            out.writeByte(NULLABLE_BYTE);
-        } else {
-            out.writeByte(NOT_NULLABLE_BYTE);
+        out.writeByte(getMetaByte());
+        if (name != null) {
             out.writeUTF(name);
         }
-        if (country == null) {
-            out.writeByte(NULLABLE_BYTE);
-        } else {
-            out.writeByte(NOT_NULLABLE_BYTE);
+        if (country != null) {
             out.writeUTF(country);
         }
         out.writeLong(licenseNumber);
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        if (in.readByte() != NULLABLE_BYTE) {
+        byte metaByte = in.readByte();
+        if ((metaByte & NAME_NULLABLE_BIT) == 0) {
             name = in.readUTF();
         }
-        if (in.readByte() != NULLABLE_BYTE) {
+        if ((metaByte & COUNTRY_NULLABLE_BIT) == 0) {
             country = in.readUTF();
         }
         licenseNumber = in.readLong();
+    }
+
+    private byte getMetaByte() {
+        byte metaByte = 0;
+        if (name == null) {
+            metaByte |= NAME_NULLABLE_BIT;
+        }
+        if (country == null) {
+            metaByte |= COUNTRY_NULLABLE_BIT;
+        }
+        return metaByte;
     }
 }
