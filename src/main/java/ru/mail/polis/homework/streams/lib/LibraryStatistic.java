@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -110,7 +111,11 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return library.getBooks().stream()
+        Set<Genre> genreSet = library.getBooks().stream()
+                .map(Book::getGenre)
+                .collect(Collectors.toSet());
+        Map<Genre, String> genreStringMap = library.getArchive().stream()
+                .map(ArchivedData::getBook)
                 .collect(Collectors.groupingBy(
                         Book::getGenre,
                         Collectors.groupingBy(
@@ -121,13 +126,18 @@ public class LibraryStatistic {
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         genreMapEntry -> genreMapEntry.getValue().entrySet().stream()
-                                .max((o1, o2) -> {
+                                .max((o2, o1) -> {
                                     long cmp = o2.getValue() - o1.getValue();
                                     if (cmp == 0) {
                                         return o1.getKey().compareTo(o2.getKey());
                                     }
                                     return (int) cmp;
                                 }).get().getKey()
+                ));
+        return genreSet.stream()
+                .collect(Collectors.toMap(
+                        genre -> genre,
+                        genre -> genreStringMap.getOrDefault(genre, "Author not determined")
                 ));
     }
 
