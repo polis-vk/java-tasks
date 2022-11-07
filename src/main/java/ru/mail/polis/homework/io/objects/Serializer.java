@@ -32,6 +32,15 @@ import java.util.List;
  * В конце теста по чтению данных, не забывайте удалять файлы
  */
 public class Serializer {
+    private static final byte ANIMAL_IS_NULL = 1;
+    private static final byte HAS_ALIAS = 2;
+    private static final byte HAS_MOVE_TYPE = 4;
+    private static final byte HAS_ORGANIZATION = 8;
+    private static final byte IS_WILD = 16;
+    private static final byte IS_FURRY = 32;
+    private static final byte HAS_ORGANIZATION_NAME = 1;
+    private static final byte HAS_ORGANIZATION_OWNER = 2;
+    private static final byte ORGANIZATION_IS_FOREIGN = 4;
 
     /**
      * 1 тугрик
@@ -196,20 +205,18 @@ public class Serializer {
 
         try (DataOutputStream outputStream = new DataOutputStream(Files.newOutputStream(fileTo))) {
             for (Animal animal : animals) {
+                outputStream.writeByte(setAnimalFlags(animal));
                 if (animal == null) {
-                    outputStream.writeByte(0);
                     continue;
                 }
 
-                outputStream.writeByte(1);
                 writeString(outputStream, animal.getAlias());
                 outputStream.writeInt(animal.getLegs());
                 Animal.Organization organization = animal.getOrganization();
-                outputStream.writeByte(setBooleanFlags(animal.isWild(), animal.isFurry(), organization != null));
                 if (organization != null) {
+                    outputStream.writeByte(setOrganizationFlags(organization));
                     writeString(outputStream, organization.getName());
                     writeString(outputStream, organization.getOwner());
-                    outputStream.writeBoolean(organization.isForeign());
                 }
                 writeString(outputStream, animal.getMoveType().toString());
             }
@@ -234,27 +241,28 @@ public class Serializer {
 
         List<Animal> animals = new ArrayList<>();
         try (DataInputStream inputStream = new DataInputStream(Files.newInputStream(fileFrom))) {
+            byte animalFlags;
             while (inputStream.available() != 0) {
-                if (inputStream.readByte() == 0) {
+                animalFlags = inputStream.readByte();
+                if ((animalFlags & ANIMAL_IS_NULL) != 0) {
                     animals.add(null);
                     continue;
                 }
 
                 Animal animal = new Animal();
-                animal.setAlias(readString(inputStream));
+                animal.setAlias(readString(inputStream, animalFlags, HAS_ALIAS));
                 animal.setLegs(inputStream.readInt());
-                byte booleanFlags = inputStream.readByte();
-                animal.setWild((booleanFlags & 1) != 0);
-                animal.setFurry((booleanFlags & 2) != 0);
-                boolean hasOrganization = ((booleanFlags & 4) != 0);
-                if (hasOrganization) {
+                animal.setWild((animalFlags & IS_WILD) != 0);
+                animal.setFurry((animalFlags & IS_FURRY) != 0);
+                if ((animalFlags & HAS_ORGANIZATION) != 0) {
+                    byte organizationFlags = inputStream.readByte();
                     Animal.Organization organization = new Animal.Organization();
-                    organization.setName(readString(inputStream));
-                    organization.setOwner(readString(inputStream));
-                    organization.setForeign(inputStream.readBoolean());
+                    organization.setName(readString(inputStream, organizationFlags, HAS_ORGANIZATION_NAME));
+                    organization.setOwner(readString(inputStream, organizationFlags, HAS_ORGANIZATION_OWNER));
+                    organization.setForeign((organizationFlags & ORGANIZATION_IS_FOREIGN) != 0);
                     animal.setOrganization(organization);
                 }
-                animal.setMoveType(MoveType.valueOf(readString(inputStream)));
+                animal.setMoveType(MoveType.valueOf(readString(inputStream, animalFlags, HAS_MOVE_TYPE)));
                 animals.add(animal);
             }
         } catch (IOException e) {
@@ -264,28 +272,48 @@ public class Serializer {
     }
 
     private static void writeString(DataOutput outputStream, String str) throws IOException {
-        if (str == null) {
-            outputStream.writeByte(0);
-        } else {
-            outputStream.writeByte(1);
+        if (str != null) {
             outputStream.writeUTF(str);
         }
     }
 
-    private static String readString(DataInput inputStream) throws IOException {
-        return inputStream.readByte() == 0 ? null : inputStream.readUTF();
+    private static String readString(DataInput input, byte flags, byte category) throws IOException {
+        return (flags & category) != 0 ? input.readUTF() : null;
     }
 
-    private static byte setBooleanFlags(boolean wild, boolean furry, boolean hasOrganization) {
+    private static byte setAnimalFlags(Animal animal) {
         byte result = 0;
-        if (wild) {
-            result = (byte) (result | 1);
+        if (animal == null) {
+            return (byte) (result | ANIMAL_IS_NULL);
         }
-        if (furry) {
-            result = (byte) (result | 2);
+        if (animal.getAlias() != null) {
+            result = (byte) (result | HAS_ALIAS);
         }
-        if (hasOrganization) {
-            result = (byte) (result | 4);
+        if (animal.getMoveType() != null) {
+            result = (byte) (result | HAS_MOVE_TYPE);
+        }
+        if (animal.getOrganization() != null) {
+            result = (byte) (result | HAS_ORGANIZATION);
+        }
+        if (animal.isWild()) {
+            result = (byte) (result | IS_WILD);
+        }
+        if (animal.isFurry()) {
+            result = (byte) (result | IS_FURRY);
+        }
+        return result;
+    }
+
+    private static byte setOrganizationFlags(Animal.Organization organization) {
+        byte result = 0;
+        if (organization.getName() != null) {
+            result = (byte) (result | HAS_ORGANIZATION_NAME);
+        }
+        if (organization.getOwner() != null) {
+            result = (byte) (result | HAS_ORGANIZATION_OWNER);
+        }
+        if (organization.isForeign()) {
+            result = (byte) (result | ORGANIZATION_IS_FOREIGN);
         }
         return result;
     }
