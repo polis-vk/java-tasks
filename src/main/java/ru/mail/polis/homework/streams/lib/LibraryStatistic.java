@@ -1,11 +1,9 @@
 package ru.mail.polis.homework.streams.lib;
 
 import java.sql.Timestamp;
+import java.time.Period;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -13,6 +11,9 @@ import java.util.stream.Collectors;
  * Оценка 5-ть баллов
  */
 public class LibraryStatistic {
+    private final long DAY_IN_MILLISECONDS = 30 * 86400000;
+    private final int MIN_CNT_BOOKS = 5;
+    private final int MIN_CNT_DAYS_FOR_READ = 14;
 
     /**
      * Вернуть "специалистов" в литературном жанре с кол-вом прочитанных страниц.
@@ -28,21 +29,24 @@ public class LibraryStatistic {
                 .stream()
                 .filter(archivedData -> archivedData.getBook().getGenre().equals(genre))
                 .filter(archivedData -> {
-                    if (archivedData.getReturned() != null) {
+                    if (archivedData.getReturned() == null) {
                         return false;
                     }
-
-                    return getCntDays(archivedData.getReturned(), archivedData.getTake()) >= 14;
+                    return getCntDays(archivedData.getReturned(), archivedData.getTake()) >= MIN_CNT_DAYS_FOR_READ;
                 })
                 .collect(Collectors.groupingBy(ArchivedData::getUser))
                 .entrySet().stream()
-                .filter(books -> books.getValue().size() >= 5)
+                .filter(archive -> archive.getValue().size() >= MIN_CNT_BOOKS)
                 .collect(
                         Collectors.toMap(
                                 Map.Entry::getKey,
-                                archive -> archive.getValue().stream()
-                                        .mapToInt(archivedData -> archivedData.getUser().getReadedPages())
-                                        .sum()
+                                archive -> {
+                                    return archive.getValue().stream()
+                                            .mapToInt(archivedData -> archivedData.getBook().getPage())
+                                            .sum() + (archive.getKey().getBook().getGenre().equals(genre) ?
+                                            archive.getKey().getReadedPages() : 0);
+                                }
+
                         )
                 );
 
@@ -59,10 +63,19 @@ public class LibraryStatistic {
     public Genre loveGenre(Library library, User user) {
         return library.getArchive().stream()
                 .filter(archivedData -> archivedData.getUser().equals(user) && archivedData.getReturned() != null)
-                .collect(Collectors.groupingBy(archive -> archive.getBook().getGenre(), Collectors.counting()))
+                .collect(Collectors.groupingBy(archive -> archive.getBook().getGenre()))
                 .entrySet().stream()
-                .max((first, second) -> (int) (first.getValue() - second.getValue()))
-                .get()
+                .max(
+                        (first, second) -> {
+                            int result = first.getValue().size() - second.getValue().size();
+                            if (result == 0) {
+                                return (user.getBook().getGenre().equals(first.getKey()) ? 1 : 0) -
+                                        (user.getBook().getGenre().equals(second.getKey()) ? 1 : 0);
+                            }
+
+                            return result;
+                        })
+                .orElse(null)
                 .getKey();
     }
 
@@ -81,7 +94,7 @@ public class LibraryStatistic {
                         archive -> archive.getValue().stream()
                                 .filter(book -> {
                                     if (book.getReturned() == null) {
-                                        return book.getTake().getTime() > 30 * 86400000;
+                                        return book.getTake().getTime() > DAY_IN_MILLISECONDS;
                                     }
 
                                     return getCntDays(book.getReturned(), book.getTake()) > 30;
@@ -109,11 +122,11 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return library.getBooks().stream()
+        Map<Genre, String> genres = library.getArchive().stream()
                 .collect(Collectors.groupingBy(
-                        Book::getGenre,
+                        book -> book.getBook().getGenre(),
                         Collectors.groupingBy(
-                                Book::getAuthor,
+                                book -> book.getBook().getAuthor(),
                                 Collectors.counting()
                         )
                 ))
@@ -121,18 +134,24 @@ public class LibraryStatistic {
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         o -> o.getValue()
-                                .entrySet()
-                                .stream()
-                                .max((o1, o2) -> (int) (o1.getValue() - o2.getValue())).get().getKey()
+                                .entrySet().stream()
+                                .max((o1, o2) -> {
+                                    long result = o1.getValue().compareTo(o2.getValue());
+
+                                    if (result == 0) {
+                                        return -o1.getKey().compareTo(o2.getKey());
+                                    }
+
+                                    return (int) result;
+                                }).get().getKey()
                 ));
+
+        library.getBooks().forEach(it -> genres.putIfAbsent(it.getGenre(), "Author not determined"));
+        return genres;
     }
 
 
     public static int getCntDays(Timestamp returnedTime, Timestamp takeTime) {
         return (int) Math.abs(ChronoUnit.DAYS.between(returnedTime.toInstant(), takeTime.toInstant()));
-    }
-
-    public static void main(String[] args) {
-        System.out.println(getCntDays(new Timestamp(System.currentTimeMillis() - 86400000), new Timestamp(System.currentTimeMillis())));
     }
 }

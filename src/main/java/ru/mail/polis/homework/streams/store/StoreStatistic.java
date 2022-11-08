@@ -2,6 +2,7 @@ package ru.mail.polis.homework.streams.store;
 
 import java.security.Key;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,15 +44,12 @@ public class StoreStatistic {
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
         return orders.stream()
-                .collect(Collectors.groupingBy(Order::getTime))
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        order -> order.getValue().stream()
-                                .flatMap(order1 -> order1.getItemCount().entrySet().stream())
-                                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)))
-                ));
+                .collect(Collectors.toMap(order -> Timestamp.valueOf(order.getTime().toString().split(" ")[0] + " 00:00:00"),
+                        Order::getItemCount,
+                        (first, second) -> {
+                            first.forEach((key, value) -> second.merge(key, value, Integer::sum));
+                            return second;
+                        }));
     }
 
 
@@ -79,9 +77,12 @@ public class StoreStatistic {
     public Map<Order, Long> sum5biggerOrders(List<Order> orders) {
         return orders.stream()
                 .sorted((o1, o2) ->
-                        o1.getItemCount().entrySet().stream().mapToInt(value -> value.getValue()).sum() -
-                                o2.getItemCount().entrySet().stream().mapToInt(value -> value.getValue()).sum()
+                        o2.getItemCount().entrySet().stream().mapToInt(value -> value.getValue()).sum() -
+                                o1.getItemCount().entrySet().stream().mapToInt(value -> value.getValue()).sum()
                 ).limit(5)
+                .peek(value -> {
+                    value.getItemCount().entrySet().stream().forEach(a -> System.out.println(a.getKey().getName() + " "));
+                })
                 .collect(Collectors.toMap(
                         first -> first,
                         second -> second.getItemCount()
