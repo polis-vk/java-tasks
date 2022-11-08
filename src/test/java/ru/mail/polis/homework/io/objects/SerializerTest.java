@@ -28,7 +28,7 @@ public class SerializerTest {
         Files.createDirectories(PATH_TO_DIR);
         Files.createFile(PATH_TO_FILE);
 
-        final int amountOfAnimalsInList = 1;
+        final int amountOfAnimalsInList = 100_000;
         for (int i = 0; i < amountOfAnimalsInList; i++) {
             listOfAnimalsWithDefaultSerializer.add(AnimalGeneration.generateDefaultAnimal());
             listOfAnimalsWithExternalizer.add(AnimalGeneration.generateExternalizableAnimal());
@@ -50,9 +50,9 @@ public class SerializerTest {
         timerStart = System.currentTimeMillis();
         List<Animal> deserializedAnimalsList = SERIALIZER.defaultDeserialize(PATH_TO_FILE.toString());
         long deserializationTime = System.currentTimeMillis() - timerStart;
-
+        long fileSize = Files.size(PATH_TO_FILE);
         assertEquals(listOfAnimalsWithDefaultSerializer, deserializedAnimalsList);
-        System.out.print("Размер файла: " + Files.size(PATH_TO_FILE) + "байт");
+        System.out.print("Размер файла: " + fileSize + "байт");
         System.out.print("Время записи:  " + serializationTime + "мс");
         System.out.print("Время чтения: " + deserializationTime + "мс");
     }
@@ -66,9 +66,9 @@ public class SerializerTest {
         timerStart = System.currentTimeMillis();
         List<AnimalWithMethods> resultOfDeserialization = SERIALIZER.deserializeWithMethods(PATH_TO_FILE.toString());
         long deserializationTime = System.currentTimeMillis() - timerStart;
-
+        long fileSize = Files.size(PATH_TO_FILE);
         assertEquals(listOfAnimalsWithMethods, resultOfDeserialization);
-        System.out.print("Размер файла: " + Files.size(PATH_TO_FILE) + "байт");
+        System.out.print("Размер файла: " + fileSize + "байт");
         System.out.print("Время записи:  " + serializationTime + "мс");
         System.out.print("Время чтения: " + deserializationTime + "мс");
     }
@@ -82,9 +82,9 @@ public class SerializerTest {
         timerStart = System.currentTimeMillis();
         List<AnimalExternalizable> resultOfDeserialization = SERIALIZER.deserializeWithExternalizable(PATH_TO_FILE.toString());
         long deserializationTime = System.currentTimeMillis() - timerStart;
-
+        long fileSize = Files.size(PATH_TO_FILE);
         assertEquals(listOfAnimalsWithExternalizer, resultOfDeserialization);
-        System.out.print("Размер файла: " + Files.size(PATH_TO_FILE) + "байт");
+        System.out.print("Размер файла: " + fileSize + "байт");
         System.out.print("Время записи:  " + serializationTime + "мс");
         System.out.print("Время чтения: " + deserializationTime + "мс");
     }
