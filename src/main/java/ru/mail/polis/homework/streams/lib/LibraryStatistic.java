@@ -36,7 +36,13 @@ public class LibraryStatistic {
                 .collect(
                         Collectors.toMap(
                                 Map.Entry::getKey,
-                                entry -> entry.getValue().stream().mapToInt(elem -> elem).sum()
+                                entry -> {
+                                    int sum = entry.getValue().stream().mapToInt(elem -> elem).sum();
+                                    if (entry.getKey().getBook().getGenre() == genre) {
+                                        sum += entry.getKey().getReadedPages();
+                                    }
+                                    return sum;
+                                }
                         )
                 );
     }
@@ -58,7 +64,7 @@ public class LibraryStatistic {
                 library.getArchive().stream().filter(archivedData -> archivedData.getUser() == user)
                         .collect(
                                 Collectors.groupingBy(
-                                        archive -> archive.getUser().getBook().getGenre(),
+                                        archive -> archive.getBook().getGenre(),
                                         Collectors.counting()
                                 )
                         ).entrySet().stream().max((o1, o2) -> {
@@ -88,10 +94,24 @@ public class LibraryStatistic {
      * @return - список ненадежных пользователей
      */
     public List<User> unreliableUsers(Library library) {
-        return library.getArchive().stream().filter(archive ->
-                archive.getReturned() == null ||
-                        getDays(archive.getReturned().getTime() - archive.getTake().getTime()) > 30
-        ).map(ArchivedData::getUser).collect(Collectors.toList());
+        return library.getArchive().stream().collect(
+                Collectors.groupingBy(
+                        ArchivedData::getUser,
+                        Collectors.mapping(
+                                archive -> {
+                                    if (archive.getReturned() == null) {
+                                        return null;
+                                    } else {
+                                        return getDays(archive.getReturned().getTime() - archive.getTake().getTime());
+                                    }
+                                },
+                                Collectors.toList()
+                        )
+                )
+        ).entrySet().stream().filter(
+                entry -> entry.getValue().stream().filter(elem -> elem == null || elem > 30)
+                                .count() > entry.getValue().size() / 2
+        ).map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
     /**
@@ -112,7 +132,13 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return library.getArchive().stream().map(ArchivedData::getBook)
+        Map<Genre, String> allGenres = library.getBooks().stream().map(Book::getGenre).distinct().collect(
+                Collectors.toMap(
+                        genre -> genre,
+                        elem -> "Author not determined"
+                )
+        );
+        Map<Genre, String> genres = library.getArchive().stream().map(ArchivedData::getBook)
                 .collect(
                         Collectors.groupingBy(
                                 Book::getGenre,
@@ -125,17 +151,19 @@ public class LibraryStatistic {
                         Collectors.toMap(
                                 Map.Entry::getKey,
                                 entry -> Objects.requireNonNull(entry.getValue().entrySet().stream()
-                                        .max((o1, o2) -> {
+                                        .min((o1, o2) -> {
                                                     if (o1.getValue() > o2.getValue()) {
                                                         return 1;
                                                     } else if (o1.getValue() < o2.getValue()) {
                                                         return -1;
                                                     } else {
-                                                        return o1.getKey().compareTo(o2.getKey());
+                                                        return o1.getKey().compareToIgnoreCase(o2.getKey());
                                                     }
                                                 }
                                         ).orElse(null)).getKey()
                         )
                 );
+        allGenres.putAll(genres);
+        return allGenres;
     }
 }
