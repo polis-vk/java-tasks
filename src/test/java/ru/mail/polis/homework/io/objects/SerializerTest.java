@@ -31,6 +31,7 @@ public class SerializerTest {
     public void tearDown() throws Exception {
         Files.deleteIfExists(FILE_PATH);
         Files.delete(DIRECTORY);
+        Files.delete(Paths.get("src", "test", "resources"));
     }
 
     @Test
