@@ -24,7 +24,7 @@ public class SerializerTest {
     private static final Path CUSTOM = Paths.get("src", "test", "resources", "objects", "custom.txt");
 
     private static final Serializer SERIALIZER = new Serializer();
-    private static final int ANIMALS_COUNT = 100_000;
+    private static final int ANIMALS_COUNT = 1_000_000;
 
 
     @Before
@@ -102,6 +102,9 @@ public class SerializerTest {
     private static final Random RND = new Random();
 
     private static Animal generateAnimal() {
+        if (!RND.nextBoolean()) {
+            return null;
+        }
         Animal animal = new Animal();
         if (RND.nextBoolean()) {
             animal.setName(generateString());
@@ -184,8 +187,8 @@ public class SerializerTest {
     private static void message(String serialization, long beforeSerialization, long afterSerialization, long size, long AfterDeserialization) {
         System.out.println(serialization);
         System.out.println("file size: " + size + " bytes");
-        System.out.println("it took " + (afterSerialization - beforeSerialization) + "ms to serialize");
-        System.out.println("it took " + (AfterDeserialization - afterSerialization) + "ms to deserialize");
+        System.out.println("it took " + (afterSerialization - beforeSerialization) / 100 + "s to serialize");
+        System.out.println("it took " + (AfterDeserialization - afterSerialization) / 100 + "s to deserialize");
         System.out.println();
     }
 }

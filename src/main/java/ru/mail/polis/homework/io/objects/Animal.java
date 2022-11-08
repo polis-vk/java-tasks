@@ -18,9 +18,6 @@ public class Animal implements Serializable {
     private boolean isHerbivore;
     private Owner owner;
 
-    public Animal() {
-    }
-
     public String getName() {
         return name;
     }
@@ -74,7 +71,9 @@ public class Animal implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return countLegs == animal.countLegs && isDomesticated == animal.isDomesticated && isHerbivore == animal.isHerbivore && Objects.equals(name, animal.name) && animalType == animal.animalType && Objects.equals(owner, animal.owner);
+        return countLegs == animal.getCountLegs() && isDomesticated == animal.isDomesticated()
+                && isHerbivore == animal.isHerbivore() && Objects.equals(name, animal.getName())
+                && animalType == animal.getAnimalType() && Objects.equals(owner, animal.getOwner());
     }
 
     @Override
@@ -122,7 +121,7 @@ class Owner implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Owner owner = (Owner) o;
-        return isOrganization == owner.isOrganization && Objects.equals(name, owner.name);
+        return isOrganization == owner.isOrganization() && Objects.equals(name, owner.getName());
     }
 
     @Override

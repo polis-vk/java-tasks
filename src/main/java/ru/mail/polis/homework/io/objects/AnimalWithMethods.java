@@ -24,6 +24,26 @@ public class AnimalWithMethods implements Serializable {
         return name;
     }
 
+    public AnimalType getAnimalType() {
+        return animalType;
+    }
+
+    public int getCountLegs() {
+        return countLegs;
+    }
+
+    public boolean isDomesticated() {
+        return isDomesticated;
+    }
+
+    public boolean isHerbivore() {
+        return isHerbivore;
+    }
+
+    public OwnerWithMethods getOwnerWithMethods() {
+        return ownerWithMethods;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -53,7 +73,10 @@ public class AnimalWithMethods implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AnimalWithMethods that = (AnimalWithMethods) o;
-        return countLegs == that.countLegs && isDomesticated == that.isDomesticated && isHerbivore == that.isHerbivore && Objects.equals(name, that.name) && animalType == that.animalType && Objects.equals(ownerWithMethods, that.ownerWithMethods);
+        return countLegs == that.getCountLegs() && isDomesticated == that.isDomesticated()
+                && isHerbivore == that.isHerbivore() && Objects.equals(name, that.getName())
+                && animalType == that.getAnimalType()
+                && Objects.equals(ownerWithMethods, that.getOwnerWithMethods());
     }
 
     @Override
@@ -75,20 +98,21 @@ public class AnimalWithMethods implements Serializable {
 
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.writeObject(name);
+        out.writeInt(animalType == null ? -1 : animalType.ordinal());
         out.writeInt(countLegs);
         out.writeByte(isDomesticated ? 1 : 0);
         out.writeByte(isHerbivore ? 1 : 0);
         out.writeObject(ownerWithMethods);
-        out.writeObject(animalType);
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         name = (String) in.readObject();
+        int at = in.readInt();
+        animalType = at == -1 ? null : AnimalType.values()[at];
         countLegs = in.readInt();
         isDomesticated = in.readByte() == 1;
         isHerbivore = in.readByte() == 1;
         ownerWithMethods = (OwnerWithMethods) in.readObject();
-        animalType = (AnimalType) in.readObject();
     }
 }
 
@@ -98,6 +122,10 @@ class OwnerWithMethods implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isOrganization() {
+        return isOrganization;
     }
 
     public void setName(String name) {
@@ -113,7 +141,7 @@ class OwnerWithMethods implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OwnerWithMethods that = (OwnerWithMethods) o;
-        return isOrganization == that.isOrganization && Objects.equals(name, that.name);
+        return isOrganization == that.isOrganization() && Objects.equals(name, that.getName());
     }
 
     @Override

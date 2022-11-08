@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.io.objects;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.*;
 import java.util.Objects;
 
 /**
@@ -25,6 +22,26 @@ public class AnimalExternalizable implements Externalizable {
 
     public String getName() {
         return name;
+    }
+
+    public AnimalType getAnimalType() {
+        return animalType;
+    }
+
+    public int getCountLegs() {
+        return countLegs;
+    }
+
+    public boolean isDomesticated() {
+        return isDomesticated;
+    }
+
+    public boolean isHerbivore() {
+        return isHerbivore;
+    }
+
+    public OwnerExternalizable getOwnerExternalizable() {
+        return ownerExternalizable;
     }
 
     public void setName(String name) {
@@ -56,7 +73,10 @@ public class AnimalExternalizable implements Externalizable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AnimalExternalizable that = (AnimalExternalizable) o;
-        return countLegs == that.countLegs && isDomesticated == that.isDomesticated && isHerbivore == that.isHerbivore && Objects.equals(name, that.name) && animalType == that.animalType && Objects.equals(ownerExternalizable, that.ownerExternalizable);
+        return countLegs == that.getCountLegs() && isDomesticated == that.isDomesticated()
+                && isHerbivore == that.isHerbivore() && Objects.equals(name, that.getName())
+                && animalType == that.getAnimalType()
+                && Objects.equals(ownerExternalizable, that.getOwnerExternalizable());
     }
 
     @Override
@@ -79,7 +99,7 @@ public class AnimalExternalizable implements Externalizable {
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeObject(name);
-        out.writeObject(animalType);
+        out.writeInt(animalType == null ? -1 : animalType.ordinal());
         out.writeInt(countLegs);
         out.writeByte(isDomesticated ? 1 : 0);
         out.writeByte(isHerbivore ? 1 : 0);
@@ -89,7 +109,8 @@ public class AnimalExternalizable implements Externalizable {
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         name = (String) in.readObject();
-        animalType = (AnimalType) in.readObject();
+        int at = in.readInt();
+        animalType = at == -1 ? null : AnimalType.values()[at];
         countLegs = in.readInt();
         isDomesticated = in.readByte() == 1;
         isHerbivore = in.readByte() == 1;
@@ -108,6 +129,10 @@ class OwnerExternalizable implements Externalizable {
         return name;
     }
 
+    public boolean isOrganization() {
+        return isOrganization;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -122,7 +147,7 @@ class OwnerExternalizable implements Externalizable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OwnerExternalizable that = (OwnerExternalizable) o;
-        return isOrganization == that.isOrganization && Objects.equals(name, that.name);
+        return isOrganization == that.isOrganization() && Objects.equals(name, that.getName());
     }
 
     @Override
