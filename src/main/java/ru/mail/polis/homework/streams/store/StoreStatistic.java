@@ -3,7 +3,6 @@ package ru.mail.polis.homework.streams.store;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -22,8 +21,9 @@ public class StoreStatistic {
      * @return - кол-во проданного товара
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
-        return orders.stream().filter(order -> order.getTime().after(from)
-                && order.getTime().before(to))
+        return orders.stream().filter(order -> from.compareTo(order.getTime()) <= 0
+                        && to.compareTo(order.getTime()) >= 0
+                        && order.getItemCount().containsKey(typeItem))
                 .mapToLong(order -> order.getItemCount().get(typeItem)).sum();
     }
 
@@ -35,11 +35,11 @@ public class StoreStatistic {
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
         return orders.stream().collect(Collectors.groupingBy(
-                order -> new Timestamp(TimeUnit.MILLISECONDS.toDays(order.getTime().getTime()))))
+                order -> Timestamp.valueOf(order.getTime().toString()
+                        .split(" ")[0] + " 00:00:00")))
                 .entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, item -> item.getValue()
-                        .stream()
-                        .flatMap(order -> order.getItemCount().entrySet().stream())
+                        .stream().flatMap(order -> order.getItemCount().entrySet().stream())
                         .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)))));
     }
 

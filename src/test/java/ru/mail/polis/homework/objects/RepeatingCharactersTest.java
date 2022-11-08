@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.objects;
 
 import org.junit.Test;
-import ru.mail.polis.homework.exception.objects.RepeatingCharacters;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
