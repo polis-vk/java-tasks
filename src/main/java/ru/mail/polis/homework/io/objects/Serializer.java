@@ -193,6 +193,11 @@ public class Serializer {
         }
         try (DataOutputStream out = new DataOutputStream(Files.newOutputStream(filePath))) {
             for (Animal animal : animals) {
+                if (animal == null) {
+                    out.writeBoolean(false);
+                    continue;
+                }
+                out.writeBoolean(true);
                 out.writeUTF(convertValueToString(animal.getName()));
                 out.writeInt(animal.getAge());
                 out.writeBoolean(animal.isAggressive());
@@ -200,8 +205,9 @@ public class Serializer {
                 out.writeUTF(convertValueToString(String.valueOf(animal.getAnimalType())));
                 GeneralInformation information = animal.getInformation();
                 if (information == null) {
-                    out.writeUTF("null");
+                    out.writeBoolean(false);
                 } else {
+                    out.writeBoolean(true);
                     out.writeUTF(convertValueToString(String.valueOf(information.getHabitat())));
                     out.writeLong(information.getPopulationSize());
                     out.writeBoolean(information.isListedInTheRedBook());
@@ -232,6 +238,10 @@ public class Serializer {
         List<Animal> animals = new ArrayList<>();
         try (DataInputStream in = new DataInputStream(Files.newInputStream(filePath))) {
             while (in.available() > 0) {
+                if (!in.readBoolean()) {
+                    animals.add(null);
+                    continue;
+                }
                 String currentName = in.readUTF();
                 currentName = currentName.equals("null") ? null : currentName;
                 int currentAge = in.readInt();
@@ -244,9 +254,8 @@ public class Serializer {
                 } else {
                     currentAnimalType = AnimalType.valueOf(currentStringForAnimalType);
                 }
-                String informationString = in.readUTF();
                 GeneralInformation information;
-                if (informationString.equals("null")) {
+                if (!in.readBoolean()) {
                     information = null;
                 } else {
                     Habitat currentHabitat;

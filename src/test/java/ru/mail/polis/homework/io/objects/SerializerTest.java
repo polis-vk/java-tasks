@@ -28,7 +28,7 @@ public class SerializerTest {
         Files.createDirectories(PATH_TO_DIR);
         Files.createFile(PATH_TO_FILE);
 
-        final int amountOfAnimalsInList = 100_000;
+        final int amountOfAnimalsInList = 500_000;
         for (int i = 0; i < amountOfAnimalsInList; i++) {
             listOfAnimalsWithDefaultSerializer.add(AnimalGeneration.generateDefaultAnimal());
             listOfAnimalsWithExternalizer.add(AnimalGeneration.generateExternalizableAnimal());
@@ -84,6 +84,22 @@ public class SerializerTest {
         long deserializationTime = System.currentTimeMillis() - timerStart;
         long fileSize = Files.size(PATH_TO_FILE);
         assertEquals(listOfAnimalsWithExternalizer, resultOfDeserialization);
+        System.out.print("Размер файла: " + fileSize + "байт");
+        System.out.print("Время записи:  " + serializationTime + "мс");
+        System.out.print("Время чтения: " + deserializationTime + "мс");
+    }
+
+    @Test
+    public void testCustomSerializer() throws Exception {
+        long timerStart = System.currentTimeMillis();
+        SERIALIZER.customSerialize(listOfAnimalsWithDefaultSerializer, PATH_TO_FILE.toString());
+        long serializationTime = System.currentTimeMillis() - timerStart;
+
+        timerStart = System.currentTimeMillis();
+        List<Animal> resultOfDeserialization = SERIALIZER.customDeserialize(PATH_TO_FILE.toString());
+        long deserializationTime = System.currentTimeMillis() - timerStart;
+        long fileSize = Files.size(PATH_TO_FILE);
+        assertEquals(listOfAnimalsWithDefaultSerializer, resultOfDeserialization);
         System.out.print("Размер файла: " + fileSize + "байт");
         System.out.print("Время записи:  " + serializationTime + "мс");
         System.out.print("Время чтения: " + deserializationTime + "мс");
