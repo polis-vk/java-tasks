@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Дубль класса Animal, для Serializer.serializeWithMethods
@@ -53,6 +54,19 @@ public class AnimalWithMethods implements Serializable {
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AnimalWithMethods that = (AnimalWithMethods) o;
+        return age == that.age && Double.compare(that.weight, weight) == 0 && name.equals(that.name) && type == that.type && meal.equals(that.meal);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, type, age, weight, meal);
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Objects;
 
 /**
  * Дубль класса Animal, для Serializer.serializeWithExternalizable
@@ -26,6 +27,19 @@ public class AnimalExternalizable implements Externalizable {
     }
 
     public Meal meal;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AnimalExternalizable that = (AnimalExternalizable) o;
+        return age == that.age && Double.compare(that.weight, weight) == 0 && name.equals(that.name) && type == that.type && meal.equals(that.meal);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, type, age, weight, meal);
+    }
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
