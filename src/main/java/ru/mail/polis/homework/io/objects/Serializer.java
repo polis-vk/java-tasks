@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.io.objects;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -219,7 +221,7 @@ public class Serializer {
         if (!Files.exists(fileNamePath)) {
             return;
         }
-        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(fileNamePath))) {
+        try (DataOutputStream out = new DataOutputStream(Files.newOutputStream(fileNamePath))) {
             for (Animal animal : animals) {
                 out.writeByte(getMetaByte(animal));
                 if (animal == null) {
@@ -273,7 +275,7 @@ public class Serializer {
             return null;
         }
         List<Animal> animals = new ArrayList<>();
-        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(fileNamePath))) {
+        try (DataInputStream in = new DataInputStream(Files.newInputStream(fileNamePath))) {
             while (in.available() > 0) {
                 byte animalMetaByte = in.readByte();
                 if ((animalMetaByte & ANIMAL_NULLABLE_BIT) != 0) {
