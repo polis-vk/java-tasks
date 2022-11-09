@@ -1,9 +1,11 @@
 package ru.mail.polis.homework.streams.lib;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -11,6 +13,9 @@ import java.util.stream.Collectors;
  * Оценка 5-ть баллов
  */
 public class LibraryStatistic {
+    static final int COUNT_DAYS_FOR_SPECIALIST = 14;
+    static final int COUNT_BOOKS_FOR_SPECIALIST = 5;
+
     /**
      * Вернуть "специалистов" в литературном жанре с кол-вом прочитанных страниц.
      * Специалист жанра считается пользователь который прочел как минимум 5 книг в этом жанре,
@@ -21,28 +26,24 @@ public class LibraryStatistic {
      * @return - map пользователь / кол-во прочитанных страниц
      */
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
-        Map<User, Integer> resultMap = new HashMap<>();
-        List<User> users = library.getUsers();
-        List<ArchivedData> archivedData = library.getArchive();
-        List<Book> curListOfBooks;
-        int curCountPages;
-        for (User user : users) {
-            curListOfBooks = archivedData.stream()
-                    .filter(d -> d.getUser() == user)
-                    .filter(d -> d.getBook().getGenre() == genre)
-                    .filter(d -> d.getReturned() != null)
-                    .filter(d -> (d.getReturned().getTime() - d.getTake().getTime()) > 840000L)
-                    .map(ArchivedData::getBook)
-                    .collect(Collectors.toList());
-            if (curListOfBooks.size() >= 5) {
-                curCountPages = curListOfBooks.stream()
-                        .map(Book::getPage)
-                        .mapToInt(i -> i)
-                        .sum();
-                resultMap.put(user, curCountPages);
-            }
-        }
-        return resultMap;
+        return library.getArchive().stream()
+                .filter(d -> d.getBook().getGenre() == genre)
+                .filter(d -> d.getReturned() != null
+                        && TimeUnit.MILLISECONDS.toDays(d.getReturned().getTime() - d.getTake().getTime())
+                        >= COUNT_DAYS_FOR_SPECIALIST
+                        ||
+                        d.getReturned() == null
+                                && TimeUnit.MILLISECONDS.toDays(new Timestamp(System.currentTimeMillis()).getTime() - d.getTake().getTime())
+                                >= COUNT_DAYS_FOR_SPECIALIST)
+                .collect(Collectors.groupingBy(ArchivedData::getUser))
+                .entrySet().stream()
+                .filter(d -> d.getValue().size() >= COUNT_BOOKS_FOR_SPECIALIST)
+                .collect(Collectors.toMap(Map.Entry::getKey, v ->
+                        (v.getKey().getBook().getGenre() == genre ?
+                                v.getKey().getReadedPages() : 0)
+                                + v.getValue().stream()
+                                .map(d -> d.getBook().getPage())
+                                .mapToInt(i -> i).sum()));
     }
 
     /**
@@ -107,16 +108,16 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        Map<Genre, String> resultMap = new HashMap<>();
+        Map<Genre, String> result = new HashMap<>();
         for (Genre genre : Genre.values()) {
-            resultMap.put(genre, library.getBooks().stream()
-                    .filter(b -> b.getGenre() == genre)
+            result.put(genre, library.getBooks().stream()
+                    .filter(d -> d.getGenre() == genre)
                     .collect(Collectors.groupingBy(Book::getAuthor, Collectors.counting()))
                     .entrySet().stream()
                     .sorted(Map.Entry.comparingByKey())
                     .max(Map.Entry.comparingByValue())
-                    .map(Map.Entry::getKey).orElse(null));
+                    .map(Map.Entry::getKey).orElse("Author not determined"));
         }
-        return resultMap;
+        return result;
     }
 }
