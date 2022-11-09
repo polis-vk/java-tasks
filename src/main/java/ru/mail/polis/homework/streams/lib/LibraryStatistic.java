@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.streams.lib;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +38,14 @@ public class LibraryStatistic {
                 .filter(userListEntry -> userListEntry.getValue().size() >= BOOKS_COUNT_FOR_SPECIALIST)
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        userListEntry -> userListEntry.getValue().stream()
-                                .mapToInt(value -> value.getBook().getPage()).sum()
+                        userListEntry -> {
+                            int readedPages = 0;
+                            if (userListEntry.getKey().getBook().getGenre().equals(genre)) {
+                                readedPages = userListEntry.getKey().getReadedPages();
+                            }
+                            return userListEntry.getValue().stream()
+                                    .mapToInt(value -> value.getBook().getPage()).sum() + readedPages;
+                        }
                 ));
     }
 
@@ -62,7 +69,16 @@ public class LibraryStatistic {
                             .filter(archivedData -> archivedData.getReturned() != null)
                             .count();
                     int difference = readedBooksCount1 - readedBooksCount2;
-                    return difference != 0 ? difference : entry1.getValue().size() - entry2.getValue().size();
+                    int differenceWithNotReturned = difference != 0 ? difference :
+                            entry1.getValue().size() - entry2.getValue().size();
+                    if (differenceWithNotReturned == 0) {
+                        if (user.getBook().getGenre().equals(entry1.getKey())) {
+                            return 1;
+                        } else if (user.getBook().getGenre().equals(entry2.getKey())) {
+                            return -1;
+                        }
+                    }
+                    return differenceWithNotReturned;
                 }).get().getKey();
     }
 
@@ -84,7 +100,7 @@ public class LibraryStatistic {
                             } else {
                                 difference = archivedData.getReturned().getTime() - archivedData.getTake().getTime();
                             }
-                            return difference > DAYS_COUNT_TO_READ;
+                            return TimeUnit.DAYS.convert(difference, TimeUnit.MILLISECONDS) > DAYS_COUNT_TO_READ;
                         }).count() > userListEntry.getValue().size() / 2)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
@@ -108,18 +124,20 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return library.getArchive().stream()
-                .map(ArchivedData::getBook)
-                .collect(Collectors.groupingBy(Book::getGenre,
-                        Collectors.groupingBy(Book::getAuthor, Collectors.counting())))
-                .entrySet().stream()
+        return Arrays.stream(Genre.values())
                 .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        genreMapEntry -> genreMapEntry.getValue().entrySet().stream()
+                        genre -> genre,
+                        genre -> library.getArchive().stream()
+                                .map(ArchivedData::getBook)
+                                .filter(book -> book.getGenre().equals(genre))
+                                .collect(Collectors.groupingBy(Book::getAuthor, Collectors.counting()))
+                                .entrySet().stream()
                                 .max((entry1, entry2) -> {
                                     int difference = (int) (entry1.getValue() - entry2.getValue());
-                                    return difference != 0 ? difference : entry1.getKey().compareTo(entry2.getKey());
-                                }).get().getKey()
+                                    return difference != 0 ? difference : -entry1.getKey().compareTo(entry2.getKey());
+                                })
+                                .map(Map.Entry::getKey)
+                                .orElse("Author not determined")
                 ));
     }
 }

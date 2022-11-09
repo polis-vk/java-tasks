@@ -44,9 +44,8 @@ public class StoreStatistic {
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
         return orders.stream()
                 .collect(Collectors.toMap(
-                        order -> Timestamp.from(
-                                order.getTime().toLocalDateTime().toLocalDate().atStartOfDay(
-                                        ZoneId.of("UTC")).toInstant()
+                        order -> Timestamp.valueOf(
+                                order.getTime().toLocalDateTime().toLocalDate().atStartOfDay()
                         ),
                         Order::getItemCount,
                         (itemIntegerMap1, itemIntegerMap2) ->
