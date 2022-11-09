@@ -25,8 +25,10 @@ public class StoreStatistic {
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
         return orders.stream()
-                .filter(o -> o.getTime().after(from) && o.getTime().before(to))
-                .map(o -> o.getItemCount().get(typeItem))
+                .filter(o -> o.getTime().compareTo(from) >= 0 && o.getTime().compareTo(to) <= 0)
+                .map(Order::getItemCount)
+                .filter(o -> o.containsKey(typeItem))
+                .map(o -> o.get(typeItem))
                 .mapToLong(Integer::longValue)
                 .sum();
     }
@@ -88,7 +90,9 @@ public class StoreStatistic {
                 .limit(5)
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        Map.Entry::getValue
+                        v -> v.getKey().getItemCount().entrySet().stream()
+                                .mapToLong(e -> e.getKey().getPrice() * e.getValue())
+                                .sum()
                 ));
     }
 }
