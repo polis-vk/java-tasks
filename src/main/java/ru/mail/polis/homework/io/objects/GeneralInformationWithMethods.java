@@ -7,9 +7,9 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class GeneralInformationWithMethods implements Serializable {
-    private static final byte habitatBit = 0b100;
-    private static final byte isListedInTheRedBookBit = 0b010;
-    private static final byte isDangerousBit = 0b001;
+    private static final byte HABITAT_BYTE = 0b100;
+    private static final byte IS_LISTED_IN_RED_BOOK_BYTE = 0b010;
+    private static final byte IS_DANGEROUS_BYTE = 0b001;
 
     private Habitat habitat;
     private long populationSize;
@@ -78,13 +78,13 @@ public class GeneralInformationWithMethods implements Serializable {
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         byte byteDataFromInput = in.readByte();
-        if ((byteDataFromInput & habitatBit) != 0) {
+        if ((byteDataFromInput & HABITAT_BYTE) != 0) {
             habitat = Habitat.valueOf(in.readUTF());
         } else {
             habitat = null;
         }
-        isListedInTheRedBook = (byteDataFromInput & isListedInTheRedBookBit) != 0;
-        isDangerous = (byteDataFromInput & isDangerousBit) != 0;
+        isListedInTheRedBook = (byteDataFromInput & IS_LISTED_IN_RED_BOOK_BYTE) != 0;
+        isDangerous = (byteDataFromInput & IS_DANGEROUS_BYTE) != 0;
         populationSize = in.readLong();
     }
 
@@ -95,10 +95,10 @@ public class GeneralInformationWithMethods implements Serializable {
     private byte getBooleanData() {
         byte result = 0;
         if (isListedInTheRedBook) {
-            result |= isListedInTheRedBookBit;
+            result |= IS_LISTED_IN_RED_BOOK_BYTE;
         }
         if (isDangerous) {
-            result |= isDangerousBit;
+            result |= IS_DANGEROUS_BYTE;
         }
         return result;
     }
@@ -106,7 +106,7 @@ public class GeneralInformationWithMethods implements Serializable {
     private byte getNullableElements() {
         byte result = 0;
         if (habitat != null) {
-            result |= habitatBit;
+            result |= HABITAT_BYTE;
         }
         return result;
     }

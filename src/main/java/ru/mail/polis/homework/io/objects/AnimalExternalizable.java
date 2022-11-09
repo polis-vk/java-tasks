@@ -11,10 +11,10 @@ import java.util.Objects;
  * 3 тугрика
  */
 public class AnimalExternalizable implements Externalizable {
-    private static final byte nameBit = 0b1000;
-    private static final byte aggressiveBit = 0b0100;
-    private static final byte invertebrateBit = 0b0010;
-    private static final byte animalTypeBit = 0b0001;
+    private static final byte NAME_BYTE = 0b1000;
+    private static final byte AGGRESSIVE_BYTE = 0b0100;
+    private static final byte INVERTEBRATE_BYTE = 0b0010;
+    private static final byte ANIMAL_TYPE_BYTE = 0b0001;
 
     private String name;
     private int age;
@@ -108,14 +108,14 @@ public class AnimalExternalizable implements Externalizable {
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         byte byteDataFromInput = in.readByte();
-        if ((byteDataFromInput & nameBit) != 0) {
+        if ((byteDataFromInput & NAME_BYTE) != 0) {
             name = in.readUTF();
         } else {
             name = null;
         }
-        isAggressive = (byteDataFromInput & aggressiveBit) != 0;
-        isInvertebrate = (byteDataFromInput & invertebrateBit) != 0;
-        if ((byteDataFromInput & animalTypeBit) != 0) {
+        isAggressive = (byteDataFromInput & AGGRESSIVE_BYTE) != 0;
+        isInvertebrate = (byteDataFromInput & INVERTEBRATE_BYTE) != 0;
+        if ((byteDataFromInput & ANIMAL_TYPE_BYTE) != 0) {
             animalType = AnimalType.valueOf(in.readUTF());
         } else {
             animalType = null;
@@ -131,10 +131,10 @@ public class AnimalExternalizable implements Externalizable {
     private byte getBooleanData() {
         byte result = 0;
         if (isAggressive) {
-            result |= aggressiveBit;
+            result |= AGGRESSIVE_BYTE;
         }
         if (isInvertebrate) {
-            result |= invertebrateBit;
+            result |= INVERTEBRATE_BYTE;
         }
         return result;
     }
@@ -142,10 +142,10 @@ public class AnimalExternalizable implements Externalizable {
     private byte getNullableElements() {
         byte result = 0;
         if (name != null) {
-            result |= nameBit;
+            result |= NAME_BYTE;
         }
         if (animalType != null) {
-            result |= animalTypeBit;
+            result |= ANIMAL_TYPE_BYTE;
         }
         return result;
     }
