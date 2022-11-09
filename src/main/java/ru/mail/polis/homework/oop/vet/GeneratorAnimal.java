@@ -23,19 +23,19 @@ public class GeneratorAnimal {
     public static Animal generateAnimal(String animalType) {
         switch (animalType) {
             case ("cat"):
-                return new CatAnimal(animalType);
+                return new CatAnimal();
             case ("dog"):
-                return new DogAnimal(animalType);
+                return new DogAnimal();
             case ("cow"):
-                return new CowAnimal(animalType);
+                return new CowAnimal();
             case ("kangaroo"):
-                return new KangarooAnimal(animalType);
+                return new KangarooAnimal();
             case ("shark"):
-                return new SharkAnimal(animalType);
+                return new SharkAnimal();
             case ("pigeon"):
-                return new PigeonAnimal(animalType);
+                return new PigeonAnimal();
             case ("snake"):
-                return new SnakeAnimal(animalType);
+                return new SnakeAnimal();
         }
         throw new IllegalArgumentException(animalType);
     }
