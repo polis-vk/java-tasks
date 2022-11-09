@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 
 public class CopyFile {
+    private static final int BUFFER_CAPACITY = 1024;
 
     /**
      * Реализовать копирование папки из pathFrom в pathTo. Скопировать надо все внутренности
@@ -20,41 +21,41 @@ public class CopyFile {
      */
     public static void copyFiles(String pathFrom, String pathTo) {
         Path from = Paths.get(pathFrom);
-        if (!Files.exists(from)) {
+        if (Files.notExists(from)) {
             return;
         }
         try {
             createParentDirs(Paths.get(pathTo).getParent());
             if (Files.isRegularFile(from)) {
                 copyFile(pathFrom, pathTo);
-            } else {
-                int firstDirIndex = from.getNameCount() - 1;
-                Files.walkFileTree(from, new FileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        Path newPathTo = getNewParentDirPath(dir, firstDirIndex, pathTo);
-                        Files.createDirectory(newPathTo);
-                        return FileVisitResult.CONTINUE;
-                    }
-
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        Path newPathTo = getNewParentDirPath(file, firstDirIndex, pathTo);
-                        copyFile(file.toString(), newPathTo.toString());
-                        return FileVisitResult.CONTINUE;
-                    }
-
-                    @Override
-                    public FileVisitResult visitFileFailed(Path file, IOException exc) {
-                        return FileVisitResult.CONTINUE;
-                    }
-
-                    @Override
-                    public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
+                return;
             }
+            int firstDirIndex = from.getNameCount() - 1;
+            Files.walkFileTree(from, new FileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    Path newPathTo = getNewParentDirPath(dir, firstDirIndex, pathTo);
+                    Files.createDirectory(newPathTo);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Path newPathTo = getNewParentDirPath(file, firstDirIndex, pathTo);
+                    copyFile(file.toString(), newPathTo.toString());
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -73,19 +74,22 @@ public class CopyFile {
 
     private static void createParentDirs(Path path) throws IOException {
         Path parent = path.getParent();
-        if (!Files.exists(parent)) {
+        if (Files.notExists(parent)) {
             createParentDirs(parent);
         }
-        if (!Files.exists(path)) {
+        if (Files.notExists(path)) {
             Files.createDirectory(path);
         }
     }
 
     private static void copyFile(String pathFrom, String pathTo) throws IOException {
-        try (FileInputStream inputStream = new FileInputStream(pathFrom);
-             FileOutputStream outputStream = new FileOutputStream(pathTo)) {
-            while (inputStream.available() > 0) {
-                outputStream.write(inputStream.read());
+        try (FileInputStream inputStream = new FileInputStream(pathFrom)) {
+            try (FileOutputStream outputStream = new FileOutputStream(pathTo)) {
+                byte[] buffer = new byte[BUFFER_CAPACITY];
+                int bytes;
+                while ((bytes = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, bytes);
+                }
             }
         }
     }

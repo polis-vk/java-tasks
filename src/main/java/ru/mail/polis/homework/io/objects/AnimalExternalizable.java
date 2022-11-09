@@ -6,13 +6,18 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Objects;
 
-import static ru.mail.polis.homework.io.objects.SerializationUtils.*;
-
 /**
  * Дубль класса Animal, для Serializer.serializeWithExternalizable
  * 3 тугрика
  */
 public class AnimalExternalizable implements Externalizable {
+    private static final byte NAME_NULL = 0b1;
+    private static final byte IS_WILD = 0b10;
+    private static final byte IS_FED = 0b100;
+    private static final byte ANIMAL_ABILITY_TYPE_NULL = 0b1000;
+    private static final byte ANIMAL_LOCATION_NULL = 0b10000;
+    private static final byte ANIMAL_LOCATION_LONGITUDE_NULL = 0b100000;
+    private static final byte ANIMAL_LOCATION_LATITUDE_NULL = 0b1000000;
     private String name;
     private int age;
     private boolean isWild;
@@ -58,10 +63,17 @@ public class AnimalExternalizable implements Externalizable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+            return true;
+        }
         if (o == null || getClass() != o.getClass()) return false;
         AnimalExternalizable animal = (AnimalExternalizable) o;
-        return age == animal.age && isWild == animal.isWild && isFed == animal.isFed && Objects.equals(name, animal.name) && animalAbilityType == animal.animalAbilityType && Objects.equals(animalLocation, animal.animalLocation);
+        return age == animal.age
+                && isWild == animal.isWild
+                && isFed == animal.isFed
+                && Objects.equals(name, animal.name)
+                && animalAbilityType == animal.animalAbilityType
+                && Objects.equals(animalLocation, animal.animalLocation);
     }
 
     @Override
@@ -83,36 +95,75 @@ public class AnimalExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        // Write Location first as it's an object
+        byte info = 0;
+        if (name == null) {
+            info |= NAME_NULL;
+        }
+        if (isWild) {
+            info |= IS_WILD;
+        }
+        if (isFed) {
+            info |= IS_FED;
+        }
+        if (animalAbilityType == null) {
+            info |= ANIMAL_ABILITY_TYPE_NULL;
+        }
         if (animalLocation == null) {
-            out.writeByte(SerializationUtils.NULL);
+            info |= ANIMAL_LOCATION_NULL;
         } else {
-            out.writeByte(SerializationUtils.NOT_NULL);
-            writeUTFOrNull(animalLocation.getLongitude(), out);
-            writeUTFOrNull(animalLocation.getLatitude(), out);
+            if (animalLocation.getLongitude() == null) {
+                info |= ANIMAL_LOCATION_LONGITUDE_NULL;
+            }
+            if (animalLocation.getLatitude() == null) {
+                info |= ANIMAL_LOCATION_LATITUDE_NULL;
+            }
+        }
+        out.writeByte(info);
+        // Write Location first as it's an object
+        if (animalLocation != null) {
+            if (animalLocation.getLongitude() != null) {
+                out.writeUTF(animalLocation.getLongitude());
+            }
+            if (animalLocation.getLatitude() != null) {
+                out.writeUTF(animalLocation.getLatitude());
+            }
         }
         // Write other fields of superclass
-        writeUTFOrNull(name, out);
+        if (name != null) {
+            out.writeUTF(name);
+        }
         out.writeInt(age);
-        out.writeByte(booleanToByte(isWild));
-        out.writeByte(booleanToByte(isFed));
-        writeUTFOrNull(enumToString(animalAbilityType), out);
+        if (animalAbilityType != null) {
+            out.writeUTF(animalAbilityType.toString());
+        }
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException {
+        int info = in.readByte();
         // Read Location first
-        if (in.readByte() != NULL) {
-            this.animalLocation = new Location(
-                    readUTFOrNull(in),
-                    readUTFOrNull(in)
-            );
+        if ((info & ANIMAL_LOCATION_NULL) == 0) {
+            this.animalLocation = new Location();
+            if ((info & ANIMAL_LOCATION_LONGITUDE_NULL) == 0) {
+                this.animalLocation.setLongitude(in.readUTF());
+            }
+            if ((info & ANIMAL_LOCATION_LATITUDE_NULL) == 0) {
+                this.animalLocation.setLatitude(in.readUTF());
+            }
         }
         // Read other fields
-        this.name = readUTFOrNull(in);
+        if ((info & NAME_NULL) == 0) {
+            this.name = in.readUTF();
+        }
         this.age = in.readInt();
-        this.isWild = byteToBoolean(in.readByte());
-        this.isFed = byteToBoolean(in.readByte());
-        this.animalAbilityType = stringToEnum(readUTFOrNull(in), AnimalAbilityType.class);
+        if ((info & IS_WILD) == IS_WILD) {
+            this.isWild = true;
+        }
+        if ((info & IS_FED) == IS_FED) {
+            this.isFed = true;
+        }
+        if ((info & ANIMAL_ABILITY_TYPE_NULL) == 0) {
+            this.animalAbilityType = AnimalAbilityType.valueOf(in.readUTF());
+        }
     }
 }
