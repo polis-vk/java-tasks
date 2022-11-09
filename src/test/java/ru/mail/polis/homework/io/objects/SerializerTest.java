@@ -22,7 +22,7 @@ public class SerializerTest {
     private static final String WORKING_FILENAME = "ficko.bin";
     private static final Path WORKING_PATH = Paths.get(WORKING_FILENAME);
     private static final int ANIMAL_LEGS_MAX_COUNT = 4;
-    private static final int SELECTION_COUNT = 500_000;
+    private static final int SELECTION_COUNT = 750_000;
     private static final double NULL_OCCURRENCE_PROBABILITY = 0.05;
 
     @Before
@@ -32,7 +32,7 @@ public class SerializerTest {
     }
 
     @After
-    public void undoSetUp() throws IOException {
+    public void tearDown() throws IOException {
         Files.deleteIfExists(WORKING_PATH);
     }
 
