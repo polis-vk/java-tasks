@@ -69,7 +69,13 @@ public class GeneralInformationExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeObject(habitat);
+        if (habitat == null) {
+            out.writeBoolean(false);
+        }
+        else {
+            out.writeBoolean(true);
+            out.writeUTF(String .valueOf(habitat));
+        }
         out.writeLong(populationSize);
         out.writeBoolean(isListedInTheRedBook);
         out.writeBoolean(isDangerous);
@@ -77,7 +83,12 @@ public class GeneralInformationExternalizable implements Externalizable {
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        habitat = (Habitat) in.readObject();
+        if (in.readBoolean()){
+            habitat = Habitat.valueOf(in.readUTF());
+        }
+        else {
+            habitat = null;
+        }
         populationSize = in.readLong();
         isListedInTheRedBook = in.readBoolean();
         isDangerous = in.readBoolean();
