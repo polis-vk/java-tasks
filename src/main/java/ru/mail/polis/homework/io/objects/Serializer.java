@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.io.objects;
 
 
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,9 +12,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Нужно реализовать методы этого класса и реализовать тестирование 4-ех способов записи.
@@ -79,8 +85,12 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл в который "пишем" животных
      */
-    public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
-
+    public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) throws IOException {
+        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
+            for (AnimalWithMethods animal : animals) {
+                out.writeObject(animal);
+            }
+        }
     }
 
     /**
@@ -91,8 +101,21 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
-        return Collections.emptyList();
+    public List<AnimalWithMethods> deserializeWithMethods(String fileName) throws IOException {
+        List<AnimalWithMethods> animals = new ArrayList<>();
+        try (InputStream in = Files.newInputStream((Paths.get(fileName)));
+             ObjectInputStream obj = new ObjectInputStream(in)) {
+            while (in.available() > 0) {
+                try {
+                    AnimalWithMethods animal = (AnimalWithMethods) obj.readObject();
+                    animals.add(animal);
+                } catch(ClassNotFoundException e) {
+                    e.printStackTrace();
+                    return Collections.emptyList();
+                }
+            }
+        }
+        return animals;
     }
 
     /**
@@ -103,7 +126,11 @@ public class Serializer {
      * @param fileName файл в который "пишем" животных
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) throws IOException {
-
+        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
+            for (AnimalExternalizable animal : animals) {
+                out.writeObject(animal);
+            }
+        }
     }
 
     /**
@@ -114,8 +141,21 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-        return Collections.emptyList();
+    public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) throws IOException {
+        List<AnimalExternalizable> animals = new ArrayList<>();
+        try (InputStream in = Files.newInputStream((Paths.get(fileName)));
+             ObjectInputStream obj = new ObjectInputStream(in)) {
+            while (in.available() > 0) {
+                try {
+                    AnimalExternalizable animal = (AnimalExternalizable) obj.readObject();
+                    animals.add(animal);
+                } catch(ClassNotFoundException e) {
+                    e.printStackTrace();
+                    return Collections.emptyList();
+                }
+            }
+        }
+        return animals;
     }
 
     /**
@@ -126,8 +166,50 @@ public class Serializer {
      * @param animals  Список животных для сериализации
      * @param fileName файл, в который "пишем" животных
      */
-    public void customSerialize(List<Animal> animals, String fileName) {
+    public void customSerialize(List<Animal> animals, String fileName) throws IOException {
+        try (DataOutputStream in = new DataOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
+            for(Animal animal : animals) {
+                if (animal == null) {
+                    in.writeByte(0);
+                    continue;
+                }
+                in.writeByte(1);
+                in.writeBoolean(animal.isWild());
+                in.writeBoolean(animal.isAquaticAnimal());
 
+                if (animal.getName() == null) {
+                    in.writeByte(0);
+                } else {
+                    in.writeByte(1);
+                    in.writeUTF(animal.getName());
+                }
+
+                byte indexOfType = (byte) Arrays.stream(AnimalType.values()).collect(Collectors.toList()).indexOf(animal.getAnimalType());
+                in.writeByte(indexOfType);
+
+                LocalDate date = animal.getDateOfBirth();
+                if (date == null) {
+                    in.writeByte(0);
+                } else {
+                    in.writeByte(1);
+                    in.writeInt(date.getYear());
+                    in.writeInt(date.getMonthValue());
+                    in.writeInt(date.getDayOfMonth());
+                }
+
+                in.writeInt(animal.getAge());
+
+                Owner owner = animal.getOwner();
+                if (owner == null) {
+                    in.writeByte(0);
+                } else {
+                    in.writeByte(1);
+                    in.writeUTF(owner.getSurname());
+                    in.writeUTF(owner.getName());
+                    in.writeInt(owner.getAge());
+                }
+            }
+        }
     }
 
     /**
@@ -138,7 +220,48 @@ public class Serializer {
      * @param fileName файл из которого "читаем" животных
      * @return список животных
      */
-    public List<Animal> customDeserialize(String fileName) {
-        return Collections.emptyList();
+    public List<Animal> customDeserialize(String fileName) throws IOException {
+        List<Animal> animals = new ArrayList<>();
+        try (DataInputStream out = new DataInputStream(Files.newInputStream(Paths.get(fileName)))) {
+            while (out.available() > 0) {
+                try {
+                    if (out.readByte() == 0) {
+                        animals.add(null);
+                        continue;
+                    }
+
+                    boolean isWild = out.readBoolean();
+                    boolean isAquaticAnimal = out.readBoolean();
+                    String name = null;
+                    LocalDate dateOfBirth = null;
+                    int age = 0;
+                    Owner owner = null;
+
+                    byte nameHere = out.readByte();
+                    if (nameHere != 0) {
+                        name = out.readUTF();
+                    }
+
+                    AnimalType animalType = AnimalType.values()[out.readByte()];
+
+                    byte dateHere = out.readByte();
+                    if (dateHere != 0) {
+                        dateOfBirth = LocalDate.of(out.readInt(), out.readInt(), out.readInt());
+                    }
+
+                    age = out.readInt();
+                    animals.add(new Animal(name, age, isWild, isAquaticAnimal, animalType, dateOfBirth));
+                    byte ownerHere = out.readByte();
+                    if (ownerHere != 0) {
+                        owner = new Owner(out.readUTF(), out.readUTF(), out.readInt());
+                    }
+                    animals.get(animals.size() - 1).setOwner(owner);
+                } catch(IllegalArgumentException e) {
+                    e.printStackTrace();
+                    return Collections.emptyList();
+                }
+            }
+        }
+        return animals;
     }
 }

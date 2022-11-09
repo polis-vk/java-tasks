@@ -2,12 +2,12 @@ package ru.mail.polis.homework.io.objects;
 
 public enum AnimalType {
     CAT,
-    CATFISH,
     DOG,
-    ELEPHANT,
-    LYNX,
     CAVY,
     SHARK,
-    DEER,
-    SEAL
+    SEAL,
+    CATFISH,
+    ELEPHANT,
+    LYNX,
+    DEER
 }

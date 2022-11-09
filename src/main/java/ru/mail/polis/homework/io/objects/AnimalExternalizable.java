@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Дубль класса Animal, для Serializer.serializeWithExternalizable
@@ -19,6 +21,8 @@ public class AnimalExternalizable implements Externalizable {
     private AnimalType animalType;
     private LocalDate dateOfBirth;
     private Owner owner;
+
+    public AnimalExternalizable() {}
 
     public AnimalExternalizable(String name, int age, boolean isWild, boolean isAquaticAnimal, AnimalType animalType, LocalDate dateOfBirth) {
         this.name = name;
@@ -78,12 +82,63 @@ public class AnimalExternalizable implements Externalizable {
     }
 
     @Override
-    public void writeExternal(ObjectOutput objectOutput) throws IOException {
+    public void writeExternal(ObjectOutput in) throws IOException {
+        in.writeBoolean(isWild);
+        in.writeBoolean(isAquaticAnimal);
 
+        if (name == null) {
+            in.writeByte(0);
+        } else {
+            in.writeByte(1);
+            in.writeUTF(name);
+        }
+
+        byte indexOfType = (byte) Arrays.stream(AnimalType.values()).collect(Collectors.toList()).indexOf(animalType);
+        in.writeByte(indexOfType);
+
+        if (dateOfBirth == null) {
+            in.writeByte(0);
+        } else {
+            in.writeByte(1);
+            in.writeInt(dateOfBirth.getYear());
+            in.writeInt(dateOfBirth.getMonthValue());
+            in.writeInt(dateOfBirth.getDayOfMonth());
+        }
+
+        in.writeInt(age);
+
+        if (owner == null) {
+            in.writeByte(0);
+        } else {
+            in.writeByte(1);
+            in.writeUTF(owner.getSurname());
+            in.writeUTF(owner.getName());
+            in.writeInt(owner.getAge());
+        }
     }
 
     @Override
-    public void readExternal(ObjectInput objectInput) throws IOException, ClassNotFoundException {
+    public void readExternal(ObjectInput out) throws IOException, ClassNotFoundException {
+        isWild = out.readBoolean();
+        isAquaticAnimal = out.readBoolean();
 
+        byte nameHere = out.readByte();
+        if (nameHere != 0) {
+            name = out.readUTF();
+        }
+
+        animalType = AnimalType.values()[out.readByte()];
+
+        byte dateHere = out.readByte();
+        if (dateHere != 0) {
+            dateOfBirth = LocalDate.of(out.readInt(), out.readInt(), out.readInt());
+        }
+
+        age = out.readInt();
+
+        byte ownerHere = out.readByte();
+        if (ownerHere != 0) {
+            owner = new Owner(out.readUTF(), out.readUTF(), out.readInt());
+        }
     }
 }

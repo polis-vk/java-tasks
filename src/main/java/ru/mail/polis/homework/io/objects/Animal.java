@@ -76,6 +76,4 @@ public class Animal implements Serializable {
     public int hashCode() {
         return Objects.hash(name, age, isWild, isAquaticAnimal, animalType, dateOfBirth, owner);
     }
-
-
 }
