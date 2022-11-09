@@ -12,7 +12,21 @@ import java.util.stream.Collectors;
  * Оценка 5-ть баллов
  */
 public class StoreStatistic {
-    private static final int DAYS_DIVIDER = 1000 * 60 * 60 * 24;
+
+    private static boolean timeBetweenInclusive(Timestamp left, Timestamp time, Timestamp right) {
+        return (time.equals(left) || time.after(left)) &&
+               (time.equals(right) || time.before(right));
+    }
+
+    private static Timestamp discardExceptingDays(Timestamp time) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time.getTime());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return new Timestamp(calendar.getTimeInMillis());
+    }
 
     /**
      * Вернуть сколько было продано определенного товара за переданный промежуток времени
@@ -24,15 +38,9 @@ public class StoreStatistic {
      * @return - кол-во проданного товара
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
-        long fromTime = from.getTime();
-        long toTime = to.getTime();
         return orders.stream()
-                .filter(order -> {
-                    long orderTime = order.getTime().getTime();
-                    return order.getItemCount().get(typeItem) != null &&
-                            orderTime >= fromTime &&
-                            orderTime <= toTime;
-                })
+                .filter(order -> order.getItemCount().containsKey(typeItem) &&
+                                 timeBetweenInclusive(from, order.getTime(), to))
                 .mapToLong(order -> order.getItemCount().get(typeItem))
                 .sum();
     }
@@ -45,17 +53,7 @@ public class StoreStatistic {
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
         return orders.stream()
-                .collect(Collectors.groupingBy(
-                        order -> {
-                            Calendar calendar = Calendar.getInstance();
-                            calendar.setTimeInMillis(order.getTime().getTime());
-                            calendar.set(Calendar.HOUR_OF_DAY, 0);
-                            calendar.set(Calendar.MINUTE, 0);
-                            calendar.set(Calendar.SECOND, 0);
-                            calendar.set(Calendar.MILLISECOND, 0);
-                            return new Timestamp(calendar.getTimeInMillis());
-                        }
-                ))
+                .collect(Collectors.groupingBy(order -> discardExceptingDays(order.getTime())))
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(

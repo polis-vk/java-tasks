@@ -14,6 +14,30 @@ import java.util.stream.Collectors;
  * Оценка 5-ть баллов
  */
 public class LibraryStatistic {
+    private static boolean isHeldEqualsOrMoreThanInDays(ArchivedData archivedData, int days) {
+        Timestamp returnedTimestamp = archivedData.getReturned();
+        LocalDateTime returned;
+        if (returnedTimestamp == null) {
+            returned = LocalDateTime.now();
+        } else {
+            returned = returnedTimestamp.toLocalDateTime();
+        }
+        LocalDateTime takePlusDays = archivedData.getTake()
+                .toLocalDateTime()
+                .plusDays(days);
+        return returned.isAfter(takePlusDays) ||
+                returned.isEqual(takePlusDays);
+    }
+
+    private static long expiredInDaysBooksCount(List<ArchivedData> archive, int maxDays) {
+        return archive.stream()
+                .filter(archiveData -> isHeldEqualsOrMoreThanInDays(archiveData, maxDays))
+                .count();
+    }
+
+    private static long booksCount(List<ArchivedData> archive) {
+        return archive.size();
+    }
 
     /**
      * Вернуть "специалистов" в литературном жанре с кол-вом прочитанных страниц.
@@ -26,21 +50,8 @@ public class LibraryStatistic {
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
         return library.getArchive()
                 .stream()
-                .filter(archivedData -> {
-                    if (archivedData.getBook().getGenre() != genre) {
-                        return false;
-                    }
-                    Timestamp returnedTimestamp = archivedData.getReturned();
-                    if (returnedTimestamp == null) {
-                        return false;
-                    }
-                    LocalDateTime returned = returnedTimestamp.toLocalDateTime();
-                    LocalDateTime takePlus14Days = archivedData.getTake()
-                            .toLocalDateTime()
-                            .plusDays(14);
-                    return returned.isAfter(takePlus14Days) ||
-                            returned.isEqual(takePlus14Days);
-                })
+                .filter(archivedData -> Objects.equals(archivedData.getBook().getGenre(), genre) &&
+                        isHeldEqualsOrMoreThanInDays(archivedData,14))
                 .collect(Collectors.groupingBy(ArchivedData::getUser,
                         Collectors.mapping(archivedData -> archivedData.getBook().getPage(), Collectors.toList())))
                 .entrySet()
@@ -48,7 +59,7 @@ public class LibraryStatistic {
                 .peek(entry -> {
                     User user = entry.getKey();
                     Book userBook = user.getBook();
-                    if (userBook != null && userBook.getGenre() == genre) {
+                    if (userBook != null && Objects.equals(userBook.getGenre(), genre)) {
                         entry.getValue().add(user.getReadedPages());
                     }
                 })
@@ -105,24 +116,7 @@ public class LibraryStatistic {
                 .collect(Collectors.groupingBy(ArchivedData::getUser))
                 .entrySet()
                 .stream()
-                .filter(entry -> {
-                    Long booksCount = entry.getValue().stream().count();
-                    Long expiredBooksCount = entry.getValue()
-                            .stream()
-                            .filter(archivedData -> {
-                                LocalDateTime takePlus30Days = archivedData.getTake()
-                                        .toLocalDateTime()
-                                        .plusDays(30);
-                                LocalDateTime returned = LocalDateTime.now();
-                                Timestamp returnedTimestamp = archivedData.getReturned();
-                                if (returnedTimestamp != null) {
-                                    returned = returnedTimestamp.toLocalDateTime();
-                                }
-                                return returned.isAfter(takePlus30Days);
-                            })
-                            .count();
-                    return expiredBooksCount > (booksCount >> 1);
-                })
+                .filter(entry -> expiredInDaysBooksCount(entry.getValue(), 30) > booksCount(entry.getValue()) / 2)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
