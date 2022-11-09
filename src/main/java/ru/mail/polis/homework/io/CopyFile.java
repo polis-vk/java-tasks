@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
+import static ru.mail.polis.homework.io.ThrowingConsumer.throwingConsumerWrapper;
+
 public class CopyFile {
 
     /**
@@ -18,7 +20,7 @@ public class CopyFile {
      */
     public static void copyFiles(String pathFrom, String pathTo) {
         Path from = Paths.get(pathFrom);
-        if (!Files.exists(from)) {
+        if (Files.notExists(from)) {
             return;
         }
         Path to = Paths.get(pathTo);
@@ -32,18 +34,14 @@ public class CopyFile {
         }
         try (Stream<Path> walk = Files.walk(from)) {
             Files.createDirectories(to);
-            walk.forEach(departure -> {
+            walk.forEach(throwingConsumerWrapper(departure -> {
                 Path destination = to.resolve(from.relativize(departure));
-                try {
-                    if (Files.isDirectory(departure)) {
-                        copyDirectory(destination);
-                    } else {
-                        copyFile(departure, destination);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (Files.isDirectory(departure)) {
+                    copyDirectory(destination);
+                } else {
+                    copyFile(departure, destination);
                 }
-            });
+            }));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,3 +66,4 @@ public class CopyFile {
         }
     }
 }
+

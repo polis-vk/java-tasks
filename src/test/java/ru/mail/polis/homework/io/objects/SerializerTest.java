@@ -124,13 +124,20 @@ public class SerializerTest {
     }
 
     private static Animal generateAnimal() {
+        if (rnd.nextInt() % (SIZE_OF_ANIMALS_LIST / 1000) == 1) {
+            return null;
+        }
         Animal animal = new Animal();
         animal.setCountLegs(rnd.nextInt(MAX_COUNT_LEGS));
         animal.setName(generateString());
         animal.setFly(rnd.nextBoolean());
         animal.setPet(rnd.nextBoolean());
         animal.setMoveType(MoveType.values()[rnd.nextInt(MoveType.values().length)]);
-        animal.setPopulation(new Population(Mainland.values()[rnd.nextInt(Mainland.values().length)], rnd.nextLong()));
+        if (rnd.nextInt() % (SIZE_OF_ANIMALS_LIST / 1000) == 1) {
+            animal.setPopulation(null);
+        } else {
+            animal.setPopulation(new Population(Mainland.values()[rnd.nextInt(Mainland.values().length)], rnd.nextLong()));
+        }
         return animal;
     }
 
@@ -157,6 +164,9 @@ public class SerializerTest {
     }
 
     private static String generateString() {
+        if (rnd.nextInt() % (SIZE_OF_ANIMALS_LIST / 1000) == 1) {
+            return null;
+        }
         char[] chars = new char[rnd.nextInt(18) + 2];
         for (int i = 0; i < chars.length; i++) {
             chars[i] = (char) (rnd.nextInt('z' - '0') + '0');

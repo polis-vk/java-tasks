@@ -36,19 +36,28 @@ public class AnimalWithMethods implements Serializable {
 
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.write(countLegs);
-        out.writeBoolean(isPet);
-        out.writeBoolean(isFly);
-        out.writeObject(name);
-        out.writeObject(moveType);
+        out.writeByte(isPet ? 1 : 0);
+        out.writeByte(isFly ? 1 : 0);
+        if (name == null) {
+            out.writeInt(-1);
+        } else {
+            out.writeInt(1);
+            out.writeUTF(name);
+        }
+        out.writeInt(moveType.ordinal());
         out.writeObject(population);
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         countLegs = in.read();
-        isPet = in.readBoolean();
-        isFly = in.readBoolean();
-        name = (String) in.readObject();
-        moveType = (MoveType) in.readObject();
+        isPet = in.readByte() == 1;
+        isFly = in.readByte() == 1;
+        if (in.readInt() == -1) {
+            name = null;
+        } else {
+            name = in.readUTF();
+        }
+        moveType = MoveType.values()[in.readInt()];
         population = (Population) in.readObject();
     }
 
@@ -57,22 +66,21 @@ public class AnimalWithMethods implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AnimalWithMethods animal = (AnimalWithMethods) o;
-        return countLegs == animal.countLegs && isFly == animal.isFly
-                && isPet == animal.isPet && moveType == animal.moveType
-                && Objects.equals(name, animal.name)
-                && Objects.equals(population, animal.population);
+        return countLegs == animal.getCountLegs() && isFly == animal.isFly()
+                && isPet == animal.isPet() && moveType == animal.getMoveType()
+                && Objects.equals(name, animal.getName())
+                && Objects.equals(population, animal.getPopulation());
     }
 
     @Override
     public String toString() {
         return "AnimalWithMethods{" +
                 "countLegs=" + countLegs +
-                ", name='" + name +
+                ", name='" + (name == null ? "null" : name) +
                 ", isPet=" + isPet +
                 ", isFly=" + isFly +
                 ", moveType=" + moveType +
-                ", population.mainland=" + population.mainland +
-                ", population.size=" + population.size + "}";
+                ", population" + (population == null ? "null" : population);
     }
 
     @Override

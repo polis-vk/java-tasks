@@ -11,6 +11,9 @@ import java.util.List;
 import ru.mail.polis.homework.oop.vet.MoveType;
 
 public class AnimalInputStream extends FileInputStream {
+
+    static final byte[] BUFFER_4_BYTES = new byte[4];
+    static final byte[] BUFFER_8_BYTES = new byte[8];
     List<Animal> animalList = new ArrayList<>();
 
     public AnimalInputStream(File file) throws FileNotFoundException {
@@ -18,10 +21,11 @@ public class AnimalInputStream extends FileInputStream {
     }
 
     public Animal readAnimal() throws IOException {
-        Animal animal = new Animal();
-        if (available() == 0) {
+        if (readInt() == -1) {
+            animalList.add(null);
             return null;
         }
+        Animal animal = new Animal();
         animal.setCountLegs(readInt());
         animal.setPet(readInt() == 1);
         animal.setFly(readInt() == 1);
@@ -56,15 +60,13 @@ public class AnimalInputStream extends FileInputStream {
     }
 
     private int readInt() throws IOException {
-        byte[] buffer = new byte[4];
-        read(buffer);
-        return bytesToInt(buffer);
+        read(BUFFER_4_BYTES);
+        return bytesToInt(BUFFER_4_BYTES);
     }
 
     private Long readLong() throws IOException {
-        byte[] buffer = new byte[8];
-        read(buffer);
-        return bytesToLong(buffer);
+        read(BUFFER_8_BYTES);
+        return bytesToLong(BUFFER_8_BYTES);
     }
 
     private String readString(int length) throws IOException {
@@ -82,10 +84,9 @@ public class AnimalInputStream extends FileInputStream {
     }
 
     public List<Animal> readAnimals() throws IOException {
-        Animal animal;
-        do {
-            animal = readAnimal();
-        } while (animal != null);
+        while (available() > 0) {
+            readAnimal();
+        }
         return animalList;
     }
 }

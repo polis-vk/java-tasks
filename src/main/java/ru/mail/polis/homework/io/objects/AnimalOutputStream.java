@@ -14,6 +14,12 @@ public class AnimalOutputStream extends FileOutputStream {
 
     public void writeAnimal(Animal animal) {
         try {
+            if (animal == null) {
+                write(intToBytes(-1));
+                return;
+            } else {
+                write(intToBytes(1));
+            }
             write(intToBytes(animal.countLegs));
             write(intToBytes(animal.isPet ? 1 : 0));
             write(intToBytes(animal.isFly ? 1 : 0));

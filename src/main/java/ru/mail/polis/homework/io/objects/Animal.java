@@ -38,23 +38,21 @@ public class Animal implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return countLegs == animal.countLegs && isFly == animal.isFly
-                && isPet == animal.isPet && moveType == animal.moveType
-                && Objects.equals(name, animal.name)
-                && Objects.equals(population, animal.population);
+        return countLegs == animal.getCountLegs() && isFly == animal.isFly()
+                && isPet == animal.isPet() && moveType == animal.getMoveType()
+                && Objects.equals(name, animal.getName())
+                && Objects.equals(population, animal.getPopulation());
     }
-
 
     @Override
     public String toString() {
         return "Animal{" +
                 "countLegs=" + countLegs +
-                ", name='" + name +
+                ", name='" + (name == null ? "null" : name) +
                 ", isPet=" + isPet +
                 ", isFly=" + isFly +
                 ", moveType=" + moveType +
-                ", population.mainland=" + population.mainland +
-                ", population.size=" + population.size + "}";
+                ", population" + (population == null ? "null" : population);
     }
 
     @Override

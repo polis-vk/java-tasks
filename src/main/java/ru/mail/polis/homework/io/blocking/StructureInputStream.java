@@ -13,7 +13,8 @@ import java.util.Arrays;
  * 3 тугрика
  */
 public class StructureInputStream extends FileInputStream {
-
+    static final byte[] BUFFER_4_BYTES = new byte[4];
+    static final byte[] BUFFER_8_BYTES = new byte[8];
     private Structure[] structures = new Structure[0];
 
     public StructureInputStream(File fileName) throws FileNotFoundException {
@@ -60,15 +61,13 @@ public class StructureInputStream extends FileInputStream {
     }
 
     public int readInt() throws IOException {
-        byte[] buffer = new byte[4];
-        read(buffer);
-        return bytesToInt(buffer);
+        read(BUFFER_4_BYTES);
+        return bytesToInt(BUFFER_4_BYTES);
     }
 
     public Long readLong() throws IOException {
-        byte[] buffer = new byte[8];
-        read(buffer);
-        return bytesToLong(buffer);
+        read(BUFFER_8_BYTES);
+        return bytesToLong(BUFFER_8_BYTES);
     }
 
     public String readString(int length) throws IOException {

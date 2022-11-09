@@ -22,7 +22,7 @@ public class Population implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Population population = (Population) o;
-        return mainland == population.mainland && population.size == size;
+        return mainland == population.getMainland() && size == population.getSize();
     }
 
     @Override
@@ -31,5 +31,13 @@ public class Population implements Serializable {
                 "MainLand=" + mainland.toString() +
                 ", size='" + size +
                 '}';
+    }
+
+    public Mainland getMainland() {
+        return mainland;
+    }
+
+    public long getSize() {
+        return size;
     }
 }
