@@ -74,7 +74,7 @@ public class SerializerTest {
     }
 
     @Test
-    public void testExternalizerWithMethods() throws Exception {
+    public void testExternalizer() throws Exception {
         long timerStart = System.currentTimeMillis();
         SERIALIZER.serializeWithExternalizable(listOfAnimalsWithExternalizer, PATH_TO_FILE.toString());
         long serializationTime = System.currentTimeMillis() - timerStart;

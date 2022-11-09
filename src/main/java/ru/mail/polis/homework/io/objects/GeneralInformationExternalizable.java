@@ -7,6 +7,10 @@ import java.io.ObjectOutput;
 import java.util.Objects;
 
 public class GeneralInformationExternalizable implements Externalizable {
+    private static final byte habitatBit = 0b100;
+    private static final byte isListedInTheRedBookBit = 0b010;
+    private static final byte isDangerousBit = 0b001;
+
     private Habitat habitat;
     private long populationSize;
     private boolean isListedInTheRedBook;
@@ -69,28 +73,47 @@ public class GeneralInformationExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        if (habitat == null) {
-            out.writeBoolean(false);
-        }
-        else {
-            out.writeBoolean(true);
+        out.writeByte(getByteFromData());
+        if (habitat != null) {
             out.writeUTF(String .valueOf(habitat));
         }
         out.writeLong(populationSize);
-        out.writeBoolean(isListedInTheRedBook);
-        out.writeBoolean(isDangerous);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        if (in.readBoolean()){
+        byte byteDataFromInput = in.readByte();
+        if ((byteDataFromInput & habitatBit) != 0){
             habitat = Habitat.valueOf(in.readUTF());
         }
         else {
             habitat = null;
         }
+        isListedInTheRedBook = (byteDataFromInput & isListedInTheRedBookBit) != 0;
+        isDangerous = (byteDataFromInput & isDangerousBit) != 0;
         populationSize = in.readLong();
-        isListedInTheRedBook = in.readBoolean();
-        isDangerous = in.readBoolean();
+    }
+
+    private byte getByteFromData() {
+        return (byte) (getBooleanData() | getNullableElements());
+    }
+
+    private byte getBooleanData() {
+        byte result = 0;
+        if (isListedInTheRedBook) {
+            result |= isListedInTheRedBookBit;
+        }
+        if (isDangerous) {
+            result |= isDangerousBit;
+        }
+        return result;
+    }
+
+    private byte getNullableElements() {
+        byte result = 0;
+        if (habitat != null) {
+            result |= habitatBit;
+        }
+        return result;
     }
 }

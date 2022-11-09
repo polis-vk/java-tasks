@@ -11,6 +11,11 @@ import java.util.Objects;
  * 3 тугрика
  */
 public class AnimalExternalizable implements Externalizable {
+    private static final byte nameBit = 0b1000;
+    private static final byte aggressiveBit = 0b0100;
+    private static final byte invertebrateBit = 0b0010;
+    private static final byte animalTypeBit = 0b0001;
+
     private String name;
     private int age;
     private boolean isAggressive;
@@ -89,37 +94,61 @@ public class AnimalExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeUTF(convertValueToString(name));
-        out.writeInt(age);
-        out.writeBoolean(isAggressive);
-        out.writeBoolean(isInvertebrate);
-        if (animalType == null) {
-            out.writeBoolean(false);
+        out.writeByte(getByteFromData());
+        if (name != null) {
+            out.writeUTF(name);
         }
-        else {
-            out.writeBoolean(true);
+        if (animalType != null) {
             out.writeUTF(String.valueOf(animalType));
         }
+        out.writeInt(age);
         out.writeObject(information);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        String nameFromInput = in.readUTF();
-        name = nameFromInput.equals("null") ? null : nameFromInput;
-        age = in.readInt();
-        isAggressive = in.readBoolean();
-        isInvertebrate = in.readBoolean();
-        if (in.readBoolean()) {
+        byte byteDataFromInput = in.readByte();
+        if ((byteDataFromInput & nameBit) != 0){
+            name = in.readUTF();
+        }
+        else {
+            name = null;
+        }
+        isAggressive = (byteDataFromInput & aggressiveBit) != 0;
+        isInvertebrate = (byteDataFromInput & invertebrateBit) != 0;
+        if ((byteDataFromInput & animalTypeBit) != 0){
             animalType = AnimalType.valueOf(in.readUTF());
         }
         else {
             animalType = null;
         }
+        age = in.readInt();
         information = (GeneralInformationExternalizable) in.readObject();
     }
 
-    private static String convertValueToString(String value) {
-        return value == null ? "null" : value;
+    private byte getByteFromData() {
+        return (byte) (getBooleanData() | getNullableElements());
+    }
+
+    private byte getBooleanData() {
+        byte result = 0;
+        if (isAggressive) {
+            result |= aggressiveBit;
+        }
+        if (isInvertebrate) {
+            result |= invertebrateBit;
+        }
+        return result;
+    }
+
+    private byte getNullableElements() {
+        byte result = 0;
+        if (name != null) {
+            result |= nameBit;
+        }
+        if (animalType != null) {
+            result |= animalTypeBit;
+        }
+        return result;
     }
 }
