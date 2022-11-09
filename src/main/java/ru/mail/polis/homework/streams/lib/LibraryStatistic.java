@@ -5,7 +5,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Класс для работы со статистикой по библиотеке.
@@ -27,10 +26,16 @@ public class LibraryStatistic {
         final long timeLimit = TIME_PER_DAY * 14;
         return library.getArchive().stream()
                 .filter(archivedData -> archivedData.getBook().getGenre().equals(genre) && bookTimeHolding(archivedData) >= timeLimit)
-                .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.mapping(ArchivedData::getBook, Collectors.counting())))
+                .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.mapping(archivedData -> archivedData.getBook().getPage(), Collectors.toList())))
                 .entrySet().stream()
-                .filter(pairOfUserAndBooks -> pairOfUserAndBooks.getValue() >= 5)
-                .collect(Collectors.toMap(Map.Entry::getKey, pairOfUserAndBooks -> pairOfUserAndBooks.getKey().getReadedPages()));
+                .filter(pairOfUserAndListWithPages -> pairOfUserAndListWithPages.getValue().size() >= 5)
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                    int sumOfPages = entry.getValue().stream()
+                            .mapToInt(elem -> elem)
+                            .sum();
+                    sumOfPages += entry.getKey().getBook().getGenre().equals(genre) ? entry.getKey().getReadedPages() : 0;
+                    return sumOfPages;
+                }));
     }
 
     /**
