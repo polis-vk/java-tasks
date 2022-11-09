@@ -40,6 +40,7 @@ public class Serializer {
     private static final byte ANIMAL_TYPE_BYTE = 0b1000000;
     private static final byte IS_DANGEROUS_BYTE = 0b10;
     private static final byte IS_LISTED_IN_RED_BOOK_BYTE = 0b01;
+
     /**
      * 1 тугрик
      * Реализовать простую сериализацию, с помощью специального потока для сериализации объектов
@@ -220,10 +221,10 @@ public class Serializer {
                     }
                     out.writeLong(information.getPopulationSize());
                     byte booleanDataInInformation = 0;
-                    if (information.isDangerous()){
+                    if (information.isDangerous()) {
                         booleanDataInInformation |= IS_DANGEROUS_BYTE;
                     }
-                    if (information.isListedInTheRedBook()){
+                    if (information.isListedInTheRedBook()) {
                         booleanDataInInformation |= IS_LISTED_IN_RED_BOOK_BYTE;
                     }
                     out.writeByte(booleanDataInInformation);
@@ -262,16 +263,14 @@ public class Serializer {
                 String currentName;
                 if ((byteOfAnimalDataFromInput & NAME_BYTE) != 0) {
                     currentName = in.readUTF();
-                }
-                else {
+                } else {
                     currentName = null;
                 }
                 int currentAge = in.readInt();
                 AnimalType currentAnimalType;
                 if ((byteOfAnimalDataFromInput & ANIMAL_TYPE_BYTE) != 0) {
                     currentAnimalType = AnimalType.valueOf(in.readUTF());
-                }
-                else {
+                } else {
                     currentAnimalType = null;
                 }
                 boolean isAggressive = (byteOfAnimalDataFromInput & IS_AGGRESSIVE_BYTE) != 0;
@@ -290,8 +289,7 @@ public class Serializer {
                     boolean listedInTheRedBook = (booleanDataFromInformation & IS_LISTED_IN_RED_BOOK_BYTE) != 0;
                     boolean isDangerous = (booleanDataFromInformation & IS_DANGEROUS_BYTE) != 0;
                     information = new GeneralInformation(currentHabitat, currentPopulationSize, listedInTheRedBook, isDangerous);
-                }
-                else {
+                } else {
                     information = null;
                 }
                 Animal currentAnimal = new Animal(currentName, currentAge, isAggressive, isInvertebrate, currentAnimalType, information);
@@ -322,8 +320,7 @@ public class Serializer {
         byte result = 0;
         if (animal != null) {
             result |= ANIMAL_BYTE;
-        }
-        else {
+        } else {
             return result;
         }
         if (animal.getName() != null) {
@@ -334,8 +331,7 @@ public class Serializer {
         }
         if (animal.getInformation() != null) {
             result |= INFORMATION_BYTE;
-        }
-        else {
+        } else {
             return result;
         }
         if (animal.getInformation().getHabitat() != null) {
