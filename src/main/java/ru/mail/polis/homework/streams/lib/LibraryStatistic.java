@@ -48,13 +48,14 @@ public class LibraryStatistic {
                 .entrySet().stream()
                 .max((pairWithGenreAndAmount1, pairWithGenreAndAmount2) -> {
                     if (!pairWithGenreAndAmount2.getValue().equals(pairWithGenreAndAmount1.getValue())) {
-                        return pairWithGenreAndAmount2.getValue().compareTo(pairWithGenreAndAmount1.getValue());
+                        return pairWithGenreAndAmount1.getValue().compareTo(pairWithGenreAndAmount2.getValue());
                     }
-                    Stream<ArchivedData> neededUser = library.getArchive().stream()
-                            .filter(archivedData -> archivedData.getUser().equals(user) && archivedData.getReturned() == null);
-                    Long amountOfAllBooksInFirstGenre = amountOfAllBooks(pairWithGenreAndAmount1.getKey(), neededUser);
-                    Long amountOfAllBooksInSecondGenre = amountOfAllBooks(pairWithGenreAndAmount2.getKey(), neededUser);
-                    return amountOfAllBooksInSecondGenre.compareTo(amountOfAllBooksInFirstGenre);
+                    if (user.getBook().getGenre().equals(pairWithGenreAndAmount1.getKey())) {
+                        return 1;
+                    } else if (user.getBook().getGenre().equals(pairWithGenreAndAmount2.getKey())) {
+                        return -1;
+                    }
+                    return 0;
                 })
                 .map(Map.Entry::getKey).orElse(null);
     }
@@ -125,9 +126,5 @@ public class LibraryStatistic {
         long currentTime = Timestamp.from(Instant.now()).getTime();
         long startTime = data.getTake().getTime();
         return data.getReturned() != null ? data.getReturned().getTime() - startTime : currentTime - startTime;
-    }
-
-    private static long amountOfAllBooks(Genre genre, Stream<ArchivedData> neededUser) {
-        return neededUser.filter(archivedData -> archivedData.getBook().getGenre().equals(genre)).count();
     }
 }
