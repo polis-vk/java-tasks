@@ -38,6 +38,8 @@ public class Serializer {
     private static final byte IS_INVERTEBRATE_BYTE = 0b0010000;
     private static final byte IS_AGGRESSIVE_BYTE = 0b0100000;
     private static final byte ANIMAL_TYPE_BYTE = 0b1000000;
+    private static final byte IS_DANGEROUS_BYTE = 0b10;
+    private static final byte IS_LISTED_IN_RED_BOOK_BYTE = 0b01;
     /**
      * 1 тугрик
      * Реализовать простую сериализацию, с помощью специального потока для сериализации объектов
@@ -217,8 +219,14 @@ public class Serializer {
                         out.writeUTF(String.valueOf(information.getHabitat()));
                     }
                     out.writeLong(information.getPopulationSize());
-                    out.writeBoolean(information.isListedInTheRedBook());
-                    out.writeBoolean(information.isDangerous());
+                    byte booleanDataInInformation = 0;
+                    if (information.isDangerous()){
+                        booleanDataInInformation |= IS_DANGEROUS_BYTE;
+                    }
+                    if (information.isListedInTheRedBook()){
+                        booleanDataInInformation |= IS_LISTED_IN_RED_BOOK_BYTE;
+                    }
+                    out.writeByte(booleanDataInInformation);
                 }
 
             }
@@ -278,8 +286,9 @@ public class Serializer {
                         currentHabitat = Habitat.valueOf(in.readUTF());
                     }
                     long currentPopulationSize = in.readLong();
-                    boolean listedInTheRedBook = in.readBoolean();
-                    boolean isDangerous = in.readBoolean();
+                    byte booleanDataFromInformation = in.readByte();
+                    boolean listedInTheRedBook = (booleanDataFromInformation & IS_LISTED_IN_RED_BOOK_BYTE) != 0;
+                    boolean isDangerous = (booleanDataFromInformation & IS_DANGEROUS_BYTE) != 0;
                     information = new GeneralInformation(currentHabitat, currentPopulationSize, listedInTheRedBook, isDangerous);
                 }
                 else {
