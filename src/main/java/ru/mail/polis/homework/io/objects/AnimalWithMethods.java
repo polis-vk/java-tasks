@@ -85,20 +85,36 @@ public class AnimalWithMethods implements Serializable {
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeObject(name);
+        out.writeUTF(convertValueToString(name));
         out.writeInt(age);
         out.writeBoolean(isAggressive);
         out.writeBoolean(isInvertebrate);
-        out.writeObject(animalType);
+        if (animalType == null) {
+            out.writeBoolean(false);
+        }
+        else {
+            out.writeBoolean(true);
+            out.writeUTF(String.valueOf(animalType));
+        }
         out.writeObject(information);
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        name = (String) in.readObject();
+        String nameFromInput = in.readUTF();
+        name = nameFromInput.equals("null") ? null : nameFromInput;
         age = in.readInt();
         isAggressive = in.readBoolean();
         isInvertebrate = in.readBoolean();
-        animalType = (AnimalType) in.readObject();
+        if (in.readBoolean()) {
+            animalType = AnimalType.valueOf(in.readUTF());
+        }
+        else {
+            animalType = null;
+        }
         information = (GeneralInformationWithMethods) in.readObject();
+    }
+
+    private static String convertValueToString(String value) {
+        return value == null ? "null" : value;
     }
 }
