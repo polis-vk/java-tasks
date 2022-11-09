@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
  */
 public class LibraryStatistic {
     private static final long TIME_PER_DAY = 24 * 60 * 60 * 1000;
+    private static final String AUTHOR_IS_NOT_FOUND = "Author not determined";
 
     /**
      * Вернуть "специалистов" в литературном жанре с кол-вом прочитанных страниц.
@@ -112,19 +113,20 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return library.getBooks().stream()
-                .collect(Collectors.groupingBy(Book::getGenre, Collectors.groupingBy(Book::getAuthor, Collectors.counting())))
+        Map<Genre, String> mapOfGenreAndAuthor = library.getArchive().stream()
+                .collect(Collectors.groupingBy(archivedData -> archivedData.getBook().getGenre(), Collectors.groupingBy(archivedData -> archivedData.getBook().getAuthor(), Collectors.counting())))
                 .entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         genreAndMapEntry -> genreAndMapEntry.getValue()
                                 .entrySet().stream()
                                 .max((genreAndMapEntry1, genreAndMapEntry2) -> {
-                                    int difference = genreAndMapEntry2.getValue().compareTo(genreAndMapEntry1.getValue());
+                                    int difference = genreAndMapEntry1.getValue().compareTo(genreAndMapEntry2.getValue());
                                     return difference != 0 ? difference : genreAndMapEntry2.getKey().compareTo(genreAndMapEntry1.getKey());
                                 })
-                                .map(Map.Entry::getKey).orElse("")
-                ));
+                                .map(Map.Entry::getKey).orElse("")));
+        library.getBooks().forEach(it -> mapOfGenreAndAuthor.putIfAbsent(it.getGenre(), AUTHOR_IS_NOT_FOUND));
+        return mapOfGenreAndAuthor;
     }
 
     private static long bookTimeHolding(ArchivedData data) {
