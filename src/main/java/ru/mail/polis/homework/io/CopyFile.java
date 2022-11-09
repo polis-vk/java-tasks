@@ -15,16 +15,17 @@ public class CopyFile {
      */
     public static void copyFiles(String pathFrom, String pathTo) throws IOException {
         File fileFrom = new File(pathFrom);
+        Path destinationPath = Paths.get(pathTo);
         if (fileFrom.isDirectory()) {
-            Files.createDirectories(Paths.get(pathTo));
-            int fromDirNameCount = Paths.get(pathFrom).getNameCount();
+            Files.createDirectories(destinationPath);
+            int pathFromNameCount = Paths.get(pathFrom).getNameCount();
             Files.walkFileTree(Paths.get(pathFrom), new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     int currDirNameCount = dir.getNameCount();
-                    if (currDirNameCount - fromDirNameCount > 0) {
-                        Path newPathPart = dir.subpath(fromDirNameCount, currDirNameCount);
-                        Path newDirPath = Paths.get(pathTo).resolve(newPathPart);
+                    if (currDirNameCount - pathFromNameCount > 0) {
+                        Path newPathPart = dir.subpath(pathFromNameCount, currDirNameCount);
+                        Path newDirPath = destinationPath.resolve(newPathPart);
                         Files.createDirectory(newDirPath);
                     }
                     return FileVisitResult.CONTINUE;
@@ -32,16 +33,16 @@ public class CopyFile {
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Path newPathPart = file.subpath(Paths.get(pathFrom).getNameCount(), file.getNameCount());
-                    Path newFilePath = Paths.get(pathTo).resolve(newPathPart);
+                    Path newPathPart = file.subpath(pathFromNameCount, file.getNameCount());
+                    Path newFilePath = destinationPath.resolve(newPathPart);
                     Files.createFile(newFilePath.toAbsolutePath());
                     fileCopy(file, newFilePath);
                     return FileVisitResult.CONTINUE;
                 }
             });
         } else if (fileFrom.isFile()) {
-            Files.createDirectories(Paths.get(pathTo).getParent());
-            fileCopy(Paths.get(pathFrom), Paths.get(pathTo));
+            Files.createDirectories(destinationPath.getParent());
+            fileCopy(Paths.get(pathFrom), destinationPath);
         }
     }
 
