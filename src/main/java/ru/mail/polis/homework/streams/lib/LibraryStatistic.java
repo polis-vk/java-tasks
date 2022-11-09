@@ -74,7 +74,7 @@ public class LibraryStatistic {
                 .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.mapping(ArchivedData::getBook, Collectors.toSet())))
                 .entrySet().stream()
                 .filter(userListEntry -> {
-                    int amountBooksOfUserWith30DaysHolding = userListEntry.getValue().size() * 2;
+                    int amountBooksOfUserWith30DaysHolding = userListEntry.getValue().size();
                     int amountOfAllBooksForAUser = library.getArchive().stream()
                             .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.mapping(ArchivedData::getBook, Collectors.toSet())))
                             .entrySet().stream()
