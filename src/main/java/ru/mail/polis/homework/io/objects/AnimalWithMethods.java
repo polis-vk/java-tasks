@@ -103,18 +103,16 @@ public class AnimalWithMethods implements Serializable {
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         byte byteDataFromInput = in.readByte();
-        if ((byteDataFromInput & nameBit) != 0){
+        if ((byteDataFromInput & nameBit) != 0) {
             name = in.readUTF();
-        }
-        else {
+        } else {
             name = null;
         }
         isAggressive = (byteDataFromInput & aggressiveBit) != 0;
         isInvertebrate = (byteDataFromInput & invertebrateBit) != 0;
-        if ((byteDataFromInput & animalTypeBit) != 0){
+        if ((byteDataFromInput & animalTypeBit) != 0) {
             animalType = AnimalType.valueOf(in.readUTF());
-        }
-        else {
+        } else {
             animalType = null;
         }
         age = in.readInt();

@@ -71,17 +71,16 @@ public class GeneralInformationWithMethods implements Serializable {
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeByte(getByteFromData());
         if (habitat != null) {
-            out.writeUTF(String .valueOf(habitat));
+            out.writeUTF(String.valueOf(habitat));
         }
         out.writeLong(populationSize);
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         byte byteDataFromInput = in.readByte();
-        if ((byteDataFromInput & habitatBit) != 0){
+        if ((byteDataFromInput & habitatBit) != 0) {
             habitat = Habitat.valueOf(in.readUTF());
-        }
-        else {
+        } else {
             habitat = null;
         }
         isListedInTheRedBook = (byteDataFromInput & isListedInTheRedBookBit) != 0;
