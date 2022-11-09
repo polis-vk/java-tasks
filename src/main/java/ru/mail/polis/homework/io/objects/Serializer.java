@@ -221,7 +221,7 @@ public class Serializer {
         if (!Files.exists(fileNamePath)) {
             return;
         }
-        try (DataOutputStream out = new DataOutputStream(Files.newOutputStream(fileNamePath))) {
+        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(fileNamePath))) {
             for (Animal animal : animals) {
                 out.writeByte(getMetaByte(animal));
                 if (animal == null) {
@@ -275,36 +275,35 @@ public class Serializer {
             return null;
         }
         List<Animal> animals = new ArrayList<>();
-        try (InputStream in = Files.newInputStream(fileNamePath);
-             DataInputStream dataIn = new DataInputStream(in)) {
+        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(fileNamePath))) {
             while (in.available() > 0) {
-                byte animalMetaByte = dataIn.readByte();
+                byte animalMetaByte = in.readByte();
                 if ((animalMetaByte & ANIMAL_NULLABLE_BIT) != 0) {
                     animals.add(null);
                     continue;
                 }
                 boolean poisonous = (animalMetaByte & ANIMAL_POISONOUS_BIT) != 0;
                 boolean wild = (animalMetaByte & ANIMAL_WILD_BIT) != 0;
-                int legsCount = dataIn.readInt();
+                int legsCount = in.readInt();
                 String alias = null;
                 if ((animalMetaByte & ANIMAL_ALIAS_NULLABLE_BIT) == 0) {
-                    alias = dataIn.readUTF();
+                    alias = in.readUTF();
                 }
                 Gender gender = null;
                 if ((animalMetaByte & ANIMAL_GENDER_NULLABLE_BIT) == 0) {
-                    gender = Gender.valueOf(dataIn.readUTF());
+                    gender = Gender.valueOf(in.readUTF());
                 }
                 Organization organization = null;
-                byte organizationMetaByte = dataIn.readByte();
+                byte organizationMetaByte = in.readByte();
                 if ((organizationMetaByte & ORGANIZATION_NULLABLE_BIT) == 0) {
-                    long licenceNumber = dataIn.readLong();
+                    long licenceNumber = in.readLong();
                     String name = null;
                     if ((organizationMetaByte & ORGANIZATION_NAME_NULLABLE_BIT) == 0) {
-                        name = dataIn.readUTF();
+                        name = in.readUTF();
                     }
                     String country = null;
                     if ((organizationMetaByte & ORGANIZATION_COUNTRY_NULLABLE_BIT) == 0) {
-                        country = dataIn.readUTF();
+                        country = in.readUTF();
                     }
                     organization = new Organization(name, country, licenceNumber);
                 }
