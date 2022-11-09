@@ -10,12 +10,12 @@ import java.util.Objects;
  * 1 тугрик
  */
 public class Animal implements Serializable {
-    private int legs;
-    private boolean hair;
-    private boolean vertebrate;
-    private String name;
-    private AnimalType type;
-    private AnimalOwner owner;
+    private final int legs;
+    private final boolean hair;
+    private final boolean vertebrate;
+    private final String name;
+    private final AnimalType type;
+    private final AnimalOwner owner;
 
     public Animal(int legs, boolean hair, boolean vertebrate, String name, AnimalType type, AnimalOwner owner) {
         this.legs = legs;

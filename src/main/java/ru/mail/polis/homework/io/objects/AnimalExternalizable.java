@@ -18,6 +18,9 @@ public class AnimalExternalizable implements Externalizable {
     private AnimalType type;
     private AnimalOwnerExternalizable owner;
 
+    private static final int TRUE = 1;
+    private static final int FALSE = 0;
+
     public AnimalExternalizable() {
     }
 
@@ -79,19 +82,19 @@ public class AnimalExternalizable implements Externalizable {
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeInt(legs);
 
-        byte hairAndVertebrate = (byte) ((hair ? 1 : 0) << 1);
-        hairAndVertebrate += vertebrate ? 1 : 0;
+        byte hairAndVertebrate = (byte) ((hair ? TRUE : FALSE) << 1);
+        hairAndVertebrate += vertebrate ? TRUE : FALSE;
         out.writeByte(hairAndVertebrate);
 
-        byte nameIsNull = (byte) (name == null ? 1 : 0);
+        byte nameIsNull = (byte) (name == null ? TRUE : FALSE);
         out.writeByte(nameIsNull);
-        if (nameIsNull == 0) {
+        if (nameIsNull == FALSE) {
             out.writeUTF(name);
         }
 
-        byte typeIsNull = (byte) (type == null ? 1 : 0);
+        byte typeIsNull = (byte) (type == null ? TRUE : FALSE);
         out.writeByte(typeIsNull);
-        if (typeIsNull == 0) {
+        if (typeIsNull == FALSE) {
             out.writeUTF(type.name());
         }
 
@@ -103,14 +106,14 @@ public class AnimalExternalizable implements Externalizable {
         legs = in.readInt();
 
         byte hairAndVertebrate = in.readByte();
-        hair = hairAndVertebrate >> 1 % 2 == 1;
-        vertebrate = hairAndVertebrate % 2 == 1;
+        hair = hairAndVertebrate >> 1 == TRUE;
+        vertebrate = hairAndVertebrate % 2 == TRUE;
 
-        if (in.readByte() == 0) {
+        if (in.readByte() == FALSE) {
             name = in.readUTF();
         }
 
-        if (in.readByte() == 0) {
+        if (in.readByte() == FALSE) {
             type = AnimalType.valueOf(in.readUTF());
         }
 

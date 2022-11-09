@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.io;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -19,23 +21,28 @@ public class CopyFileVisitor extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-        Path dirToCopy = to.resolve(from.relativize(dir));
+        Path dirToCopy = getDirectoryToCopy(dir);
         if (Files.notExists(dirToCopy)) {
             Files.createDirectories(dirToCopy);
         }
-
         return FileVisitResult.CONTINUE;
     }
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        copyFile(file, to.resolve(from.relativize(file)));
+        copyFile(file, getDirectoryToCopy(file));
         return FileVisitResult.CONTINUE;
     }
 
+    private Path getDirectoryToCopy(Path directory) {
+        return to.resolve(from.relativize(directory));
+    }
+
     private void copyFile(Path pathFrom, Path pathTo) throws IOException {
-        try (FileChannel source = new FileInputStream(pathFrom.toFile()).getChannel();
-             FileChannel destination = new FileOutputStream(pathTo.toFile()).getChannel()) {
+        try (FileInputStream sourceStream = new FileInputStream(pathFrom.toFile());
+             FileOutputStream destinationStream = new FileOutputStream(pathTo.toFile());
+             FileChannel source = sourceStream.getChannel();
+             FileChannel destination = destinationStream.getChannel()) {
             destination.transferFrom(source, 0, source.size());
         }
     }

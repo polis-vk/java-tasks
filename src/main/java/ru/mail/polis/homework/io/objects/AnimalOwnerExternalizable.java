@@ -11,6 +11,9 @@ public class AnimalOwnerExternalizable implements Externalizable {
     private String address;
     private long phoneNumber;
 
+    private static final int TRUE = 1;
+    private static final int FALSE = 0;
+
     public AnimalOwnerExternalizable() {
     }
 
@@ -53,15 +56,15 @@ public class AnimalOwnerExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        byte nameIsNull = (byte) (name == null ? 1 : 0);
+        byte nameIsNull = (byte) (name == null ? TRUE : FALSE);
         out.writeByte(nameIsNull);
-        if (nameIsNull == 0) {
+        if (nameIsNull == FALSE) {
             out.writeUTF(name);
         }
 
-        byte addressIsNull = (byte) (address == null ? 1 : 0);
+        byte addressIsNull = (byte) (address == null ? TRUE : FALSE);
         out.writeByte(addressIsNull);
-        if (addressIsNull == 0) {
+        if (addressIsNull == FALSE) {
             out.writeUTF(address);
         }
 
@@ -70,11 +73,11 @@ public class AnimalOwnerExternalizable implements Externalizable {
 
     @Override
     public void readExternal(ObjectInput in) throws IOException {
-        if (in.readByte() == 0) {
+        if (in.readByte() == FALSE) {
             name = in.readUTF();
         }
 
-        if (in.readByte() == 0) {
+        if (in.readByte() == FALSE) {
             address = in.readUTF();
         }
 

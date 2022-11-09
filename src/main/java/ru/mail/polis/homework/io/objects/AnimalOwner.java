@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class AnimalOwner implements Serializable {
-    private String name;
-    private String address;
-    private long phoneNumber;
+    private final String name;
+    private final String address;
+    private final long phoneNumber;
 
     public AnimalOwner(String name, String address, long phoneNumber) {
         this.name = name;

@@ -27,6 +27,8 @@ import java.util.Objects;
  * В конце теста по чтению данных, не забывайте удалять файлы
  */
 public class Serializer {
+    private static final int TRUE = 1;
+    private static final int FALSE = 0;
 
     /**
      * 1 тугрик
@@ -53,9 +55,10 @@ public class Serializer {
      * @return список животных
      */
     public List<Animal> defaultDeserialize(String fileName) {
-        List<Animal> animals = new ArrayList<>();
+        List<Animal> animals;
         try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
             int animalsCount = inputStream.readInt();
+            animals = new ArrayList<>(animalsCount);
             for (int i = 0; i < animalsCount; i++) {
                 animals.add((Animal) inputStream.readObject());
             }
@@ -91,9 +94,10 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
-        List<AnimalWithMethods> animals = new ArrayList<>();
+        List<AnimalWithMethods> animals;
         try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
             int animalsCount = inputStream.readInt();
+            animals = new ArrayList<>(animalsCount);
             for (int i = 0; i < animalsCount; i++) {
                 animals.add((AnimalWithMethods) inputStream.readObject());
             }
@@ -129,9 +133,10 @@ public class Serializer {
      * @return список животных
      */
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
-        List<AnimalExternalizable> animals = new ArrayList<>();
+        List<AnimalExternalizable> animals;
         try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
             int animalsCount = inputStream.readInt();
+            animals = new ArrayList<>(animalsCount);
             for (int i = 0; i < animalsCount; i++) {
                 animals.add((AnimalExternalizable) inputStream.readObject());
             }
@@ -153,42 +158,42 @@ public class Serializer {
         try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
             outputStream.writeInt(animals.size());
             for (Animal animal : animals) {
-                byte animalIsNull = (byte) (Objects.equals(animal, null) ? 1 : 0);
+                byte animalIsNull = (byte) (Objects.equals(animal, null) ? TRUE : FALSE);
                 outputStream.writeByte(animalIsNull);
-                if (animalIsNull == 1) {
+                if (animalIsNull == TRUE) {
                     continue;
                 }
 
                 outputStream.writeInt(animal.getLegs());
 
-                byte hairAndVertebrate = (byte) ((animal.isHair() ? 1 : 0) << 1);
-                hairAndVertebrate += animal.isVertebrate() ? 1 : 0;
+                byte hairAndVertebrate = (byte) ((animal.isHair() ? TRUE : FALSE) << 1);
+                hairAndVertebrate += animal.isVertebrate() ? TRUE : FALSE;
                 outputStream.writeByte(hairAndVertebrate);
 
-                byte nameIsNull = (byte) (animal.getName() == null ? 1 : 0);
+                byte nameIsNull = (byte) (animal.getName() == null ? TRUE : FALSE);
                 outputStream.writeByte(nameIsNull);
-                if (nameIsNull == 0) {
+                if (nameIsNull == FALSE) {
                     outputStream.writeUTF(animal.getName());
                 }
 
-                byte typeIsNull = (byte) (animal.getType() == null ? 1 : 0);
+                byte typeIsNull = (byte) (animal.getType() == null ? TRUE : FALSE);
                 outputStream.writeByte(typeIsNull);
-                if (typeIsNull == 0) {
+                if (typeIsNull == FALSE) {
                     outputStream.writeUTF(animal.getType().name());
                 }
 
-                byte ownerIsNull = (byte) (animal.getOwner() == null ? 1 : 0);
+                byte ownerIsNull = (byte) (animal.getOwner() == null ? TRUE : FALSE);
                 outputStream.writeByte(ownerIsNull);
-                if (ownerIsNull == 0) {
-                    byte ownerNameIsNull = (byte) (animal.getOwner().getName() == null ? 1 : 0);
+                if (ownerIsNull == FALSE) {
+                    byte ownerNameIsNull = (byte) (animal.getOwner().getName() == null ? TRUE : FALSE);
                     outputStream.writeByte(ownerNameIsNull);
-                    if (ownerNameIsNull == 0) {
+                    if (ownerNameIsNull == FALSE) {
                         outputStream.writeUTF(animal.getOwner().getName());
                     }
 
-                    byte ownerAddressIsNull = (byte) (animal.getOwner().getAddress() == null ? 1 : 0);
+                    byte ownerAddressIsNull = (byte) (animal.getOwner().getAddress() == null ? TRUE : FALSE);
                     outputStream.writeByte(ownerAddressIsNull);
-                    if (ownerAddressIsNull == 0) {
+                    if (ownerAddressIsNull == FALSE) {
                         outputStream.writeUTF(animal.getOwner().getAddress());
                     }
 
@@ -213,7 +218,7 @@ public class Serializer {
         try (ObjectInputStream inputStream = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
             int animalsCount = inputStream.readInt();
             for (int i = 0; i < animalsCount; i++) {
-                if (inputStream.readByte() == 1) {
+                if (inputStream.readByte() == TRUE) {
                     animals.add(null);
                     continue;
                 }
@@ -221,28 +226,28 @@ public class Serializer {
                 int legs = inputStream.readInt();
 
                 byte hairAndVertebrate = inputStream.readByte();
-                boolean hair = hairAndVertebrate >> 1 % 2 == 1;
-                boolean vertebrate = hairAndVertebrate % 2 == 1;
+                boolean hair = hairAndVertebrate >> 1 == TRUE;
+                boolean vertebrate = hairAndVertebrate % 2 == TRUE;
 
                 String name = null;
-                if (inputStream.readByte() == 0) {
+                if (inputStream.readByte() == FALSE) {
                     name = inputStream.readUTF();
                 }
 
                 AnimalType type = null;
-                if (inputStream.readByte() == 0) {
+                if (inputStream.readByte() == FALSE) {
                     type = AnimalType.valueOf(inputStream.readUTF());
                 }
 
                 AnimalOwner owner = null;
-                if (inputStream.readByte() == 0) {
+                if (inputStream.readByte() == FALSE) {
                     String ownerName = null;
-                    if (inputStream.readByte() == 0) {
+                    if (inputStream.readByte() == FALSE) {
                         ownerName = inputStream.readUTF();
                     }
 
                     String ownerAddress = null;
-                    if (inputStream.readByte() == 0) {
+                    if (inputStream.readByte() == FALSE) {
                         ownerAddress = inputStream.readUTF();
                     }
 

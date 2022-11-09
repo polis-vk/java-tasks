@@ -24,10 +24,15 @@ public class CopyFile {
         if (Files.notExists(dirToCopy)) {
             try {
                 Files.createDirectories(dirToCopy);
-                Files.walkFileTree(from, new CopyFileVisitor(from, to));
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
+        }
+
+        try {
+            Files.walkFileTree(from, new CopyFileVisitor(from, to));
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 }
