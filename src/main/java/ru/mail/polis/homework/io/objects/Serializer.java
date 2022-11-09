@@ -31,7 +31,13 @@ import java.util.List;
  * В конце теста по чтению данных, не забывайте удалять файлы
  */
 public class Serializer {
-
+    private static final byte ANIMAL_BYTE = 0b0000001;
+    private static final byte NAME_BYTE = 0b0000010;
+    private static final byte INFORMATION_BYTE = 0b0000100;
+    private static final byte HABITAT_BYTE = 0b0001000;
+    private static final byte IS_INVERTEBRATE_BYTE = 0b0010000;
+    private static final byte IS_AGGRESSIVE_BYTE = 0b0100000;
+    private static final byte ANIMAL_TYPE_BYTE = 0b1000000;
     /**
      * 1 тугрик
      * Реализовать простую сериализацию, с помощью специального потока для сериализации объектов
@@ -194,25 +200,27 @@ public class Serializer {
         try (DataOutputStream out = new DataOutputStream(Files.newOutputStream(filePath))) {
             for (Animal animal : animals) {
                 if (animal == null) {
-                    out.writeBoolean(false);
+                    out.writeByte(0b0);
                     continue;
                 }
-                out.writeBoolean(true);
-                out.writeUTF(convertValueToString(animal.getName()));
+                out.writeByte(getByteFromData(animal));
+                if (animal.getName() != null) {
+                    out.writeUTF(animal.getName());
+                }
                 out.writeInt(animal.getAge());
-                out.writeBoolean(animal.isAggressive());
-                out.writeBoolean(animal.isInvertebrate());
-                out.writeUTF(convertValueToString(String.valueOf(animal.getAnimalType())));
+                if (animal.getAnimalType() != null) {
+                    out.writeUTF(String.valueOf(animal.getAnimalType()));
+                }
                 GeneralInformation information = animal.getInformation();
-                if (information == null) {
-                    out.writeBoolean(false);
-                } else {
-                    out.writeBoolean(true);
-                    out.writeUTF(convertValueToString(String.valueOf(information.getHabitat())));
+                if (information != null) {
+                    if (information.getHabitat() != null) {
+                        out.writeUTF(String.valueOf(information.getHabitat()));
+                    }
                     out.writeLong(information.getPopulationSize());
                     out.writeBoolean(information.isListedInTheRedBook());
                     out.writeBoolean(information.isDangerous());
                 }
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -238,37 +246,44 @@ public class Serializer {
         List<Animal> animals = new ArrayList<>();
         try (DataInputStream in = new DataInputStream(Files.newInputStream(filePath))) {
             while (in.available() > 0) {
-                if (!in.readBoolean()) {
+                byte byteOfAnimalDataFromInput = in.readByte();
+                if ((byteOfAnimalDataFromInput & ANIMAL_BYTE) == 0) {
                     animals.add(null);
                     continue;
                 }
-                String currentName = in.readUTF();
-                currentName = currentName.equals("null") ? null : currentName;
-                int currentAge = in.readInt();
-                boolean isAggressive = in.readBoolean();
-                boolean isInvertebrate = in.readBoolean();
-                String currentStringForAnimalType = in.readUTF();
-                AnimalType currentAnimalType;
-                if (currentStringForAnimalType.equals("null")) {
-                    currentAnimalType = null;
-                } else {
-                    currentAnimalType = AnimalType.valueOf(currentStringForAnimalType);
+                String currentName;
+                if ((byteOfAnimalDataFromInput & NAME_BYTE) != 0) {
+                    currentName = in.readUTF();
                 }
+                else {
+                    currentName = null;
+                }
+                int currentAge = in.readInt();
+                AnimalType currentAnimalType;
+                if ((byteOfAnimalDataFromInput & ANIMAL_TYPE_BYTE) != 0) {
+                    currentAnimalType = AnimalType.valueOf(in.readUTF());
+                }
+                else {
+                    currentAnimalType = null;
+                }
+                boolean isAggressive = (byteOfAnimalDataFromInput & IS_AGGRESSIVE_BYTE) != 0;
+                boolean isInvertebrate = (byteOfAnimalDataFromInput & IS_INVERTEBRATE_BYTE) != 0;
+
                 GeneralInformation information;
-                if (!in.readBoolean()) {
-                    information = null;
-                } else {
+                if ((byteOfAnimalDataFromInput & INFORMATION_BYTE) != 0) {
                     Habitat currentHabitat;
-                    String currentHabitatString = in.readUTF();
-                    if (currentHabitatString.equals("null")) {
+                    if ((byteOfAnimalDataFromInput & HABITAT_BYTE) == 0) {
                         currentHabitat = null;
                     } else {
-                        currentHabitat = Habitat.valueOf(currentHabitatString);
+                        currentHabitat = Habitat.valueOf(in.readUTF());
                     }
                     long currentPopulationSize = in.readLong();
                     boolean listedInTheRedBook = in.readBoolean();
                     boolean isDangerous = in.readBoolean();
                     information = new GeneralInformation(currentHabitat, currentPopulationSize, listedInTheRedBook, isDangerous);
+                }
+                else {
+                    information = null;
                 }
                 Animal currentAnimal = new Animal(currentName, currentAge, isAggressive, isInvertebrate, currentAnimalType, information);
                 animals.add(currentAnimal);
@@ -279,8 +294,44 @@ public class Serializer {
         return animals;
     }
 
-    private static String convertValueToString(String value) {
-        return value == null ? "null" : value;
+    private static byte getByteFromData(Animal animal) {
+        return (byte) (getBooleanData(animal) | getNullableElements(animal));
     }
 
+    private static byte getBooleanData(Animal animal) {
+        byte result = 0;
+        if (animal.isAggressive()) {
+            result |= IS_AGGRESSIVE_BYTE;
+        }
+        if (animal.isInvertebrate()) {
+            result |= IS_INVERTEBRATE_BYTE;
+        }
+        return result;
+    }
+
+    private static byte getNullableElements(Animal animal) {
+        byte result = 0;
+        if (animal != null) {
+            result |= ANIMAL_BYTE;
+        }
+        else {
+            return result;
+        }
+        if (animal.getName() != null) {
+            result |= NAME_BYTE;
+        }
+        if (animal.getAnimalType() != null) {
+            result |= ANIMAL_TYPE_BYTE;
+        }
+        if (animal.getInformation() != null) {
+            result |= INFORMATION_BYTE;
+        }
+        else {
+            return result;
+        }
+        if (animal.getInformation().getHabitat() != null) {
+            result |= HABITAT_BYTE;
+        }
+        return result;
+    }
 }

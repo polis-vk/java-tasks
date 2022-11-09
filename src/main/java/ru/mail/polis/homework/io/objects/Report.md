@@ -4,10 +4,10 @@
 
 |     serializarion method      | file size, bytes | serialization time, ms | deserialization time, ms |
 |:-----------------------------:|:----------------:|:----------------------:|:------------------------:|
-|     defaultSerialization      |     17268943     |          5895          |           9100           |
-|   serializationWithMethods    |     17288442     |          5905          |           9098           |
-| serializationWithExternalizer |     19773634     |         11930          |          12664           |
-|      customSerialization      |     16429425     |         14430          |          12774           |
+|     defaultSerialization      |     17268943     |          5866          |           9100           |
+|   serializationWithMethods    |     17288442     |          5905          |           9186           |
+| serializationWithExternalizer |     21154048     |          8954          |           9398           |
+|      customSerialization      |     14090183     |         10900          |          10041           |
 
 ### Выводы
 
