@@ -16,6 +16,8 @@ public class AnimalExternalizable implements Externalizable {
     }
 
     public static class AddressExternalizable implements Externalizable {
+        private static final int IS_STREET_NULL_POS = 0;
+        private static final int IS_PHONE_NULL_POS = 1;
         private String street;
         private int house;
         private String phoneNumber;
@@ -65,18 +67,27 @@ public class AnimalExternalizable implements Externalizable {
 
         @Override
         public void writeExternal(ObjectOutput out) throws IOException {
-            writeString(out, street);
+            byte booleans = setBoolAt((byte) 0, IS_STREET_NULL_POS, street == null);
+            booleans = setBoolAt(booleans, IS_PHONE_NULL_POS, phoneNumber == null);
+            out.writeByte(booleans);
+            if (!getBoolAt(booleans, IS_STREET_NULL_POS)) out.writeUTF(street);
             out.writeInt(house);
-            writeString(out, phoneNumber);
+            if (!getBoolAt(booleans, IS_PHONE_NULL_POS)) out.writeUTF(phoneNumber);
         }
 
         @Override
         public void readExternal(ObjectInput in) throws IOException {
-            street = readString(in);
+            byte booleans = in.readByte();
+            if (!getBoolAt(booleans, IS_STREET_NULL_POS)) street = in.readUTF();
             house = in.readInt();
-            phoneNumber = readString(in);
+            if (!getBoolAt(booleans, IS_PHONE_NULL_POS)) phoneNumber = in.readUTF();
         }
     }
+
+    private final static int IS_HAPPY_POS = 0;
+    private final static int IS_ANGRY_POS = 1;
+    private final static int IS_NAME_NULL_POS = 2;
+    private final static int IS_MOVE_NULL_POS = 3;
 
     private boolean isHappy;
     private boolean isAngry;
@@ -148,42 +159,37 @@ public class AnimalExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeBoolean(isHappy);
-        out.writeBoolean(isAngry);
+        byte booleans = setBoolAt((byte) 0, IS_HAPPY_POS, isHappy);
+        booleans = setBoolAt(booleans, IS_ANGRY_POS, isAngry);
+        booleans = setBoolAt(booleans, IS_NAME_NULL_POS, name == null);
+        booleans = setBoolAt(booleans, IS_MOVE_NULL_POS, moveType == null);
+
+        out.writeByte(booleans);
         out.writeInt(legs);
-        writeString(out, name);
-        writeString(out, (moveType == null ? null : moveType.name()));
+        if (!getBoolAt(booleans, IS_NAME_NULL_POS)) out.writeUTF(name);
+        if (!getBoolAt(booleans, IS_MOVE_NULL_POS)) out.writeUTF(moveType.name());
         out.writeObject(homeAddress);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        isHappy = in.readBoolean();
-        isAngry = in.readBoolean();
+        byte booleans = in.readByte();
+        isHappy = getBoolAt(booleans, IS_HAPPY_POS);
+        isAngry = getBoolAt(booleans, IS_ANGRY_POS);
         legs = in.readInt();
-        name = readString(in);
-        String moveStr = readString(in);
-        if (moveStr != null) {
-            moveType = MoveType.valueOf(moveStr);
-        } else {
-            moveType = null;
-        }
+        if (!getBoolAt(booleans, IS_NAME_NULL_POS)) name = in.readUTF();
+        if (!getBoolAt(booleans, IS_MOVE_NULL_POS)) moveType = MoveType.valueOf(in.readUTF());
         homeAddress = (AddressExternalizable) in.readObject();
     }
 
-    private static void writeString(ObjectOutput out, String str) throws IOException{
-        boolean isStrNull = (str == null);
-        out.writeBoolean(isStrNull);
-        if (!isStrNull) {
-            out.writeUTF(str);
+    private static byte setBoolAt(byte byt, int i, boolean bool) {
+        if (bool) {
+            return (byte) (byt | (1 << i));
         }
+        return (byte) (byt & ~(1 << i));
     }
 
-    private static String readString(ObjectInput in) throws IOException {
-        boolean isStrNull = in.readBoolean();
-        if (isStrNull) {
-            return null;
-        }
-        return in.readUTF();
+    private static boolean getBoolAt(byte byt, int i) {
+        return (byt & (1 << i)) != 0;
     }
 }
