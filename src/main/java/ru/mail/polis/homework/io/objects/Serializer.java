@@ -46,10 +46,6 @@ public class Serializer {
         }
 
         Path file = Paths.get(fileName);
-        if (Files.notExists(file.getParent())) {
-           return;
-        }
-
         try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(Files.newOutputStream(file), BUFFER_SIZE))) {
             for (Animal animal : animals) {
                 out.writeObject(animal);
@@ -72,10 +68,6 @@ public class Serializer {
         }
 
         Path file = Paths.get(fileName);
-        if (!Files.isRegularFile(file)) {
-            return null;
-        }
-
         List<Animal> animals = new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(Files.newInputStream(file), BUFFER_SIZE))) {
             try {
@@ -105,10 +97,6 @@ public class Serializer {
         }
 
         Path file = Paths.get(fileName);
-        if (Files.notExists(file.getParent())) {
-            return;
-        }
-
         try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(Files.newOutputStream(file), BUFFER_SIZE))) {
             for (AnimalWithMethods animal : animals) {
                 out.writeObject(animal);
@@ -132,10 +120,6 @@ public class Serializer {
         }
 
         Path file = Paths.get(fileName);
-        if (!Files.isRegularFile(file)) {
-            return null;
-        }
-
         List<AnimalWithMethods> animals = new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(Files.newInputStream(file), BUFFER_SIZE))) {
             try {
@@ -164,10 +148,6 @@ public class Serializer {
         }
 
         Path file = Paths.get(fileName);
-        if (Files.notExists(file.getParent())) {
-            return;
-        }
-
         try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(Files.newOutputStream(file), BUFFER_SIZE))) {
             for (AnimalExternalizable animal : animals) {
                 out.writeObject(animal);
@@ -191,10 +171,6 @@ public class Serializer {
         }
 
         Path file = Paths.get(fileName);
-        if (!Files.isRegularFile(file)) {
-            return null;
-        }
-
         List<AnimalExternalizable> animals = new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(Files.newInputStream(file), BUFFER_SIZE))) {
             try {
@@ -225,10 +201,6 @@ public class Serializer {
         }
 
         Path file = Paths.get(fileName);
-        if (Files.notExists(file.getParent())) {
-            return;
-        }
-
         try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(Files.newOutputStream(file), BUFFER_SIZE))) {
             for (AnimalWithMethods animal : animals) {
                 boolean isNull = (animal == null);
@@ -262,10 +234,6 @@ public class Serializer {
         }
 
         Path file = Paths.get(fileName);
-        if (!Files.isRegularFile(file)) {
-            return null;
-        }
-
         List<AnimalWithMethods> animals = new ArrayList<>();
         try (DataInputStream in = new DataInputStream(new BufferedInputStream(Files.newInputStream(file), BUFFER_SIZE))) {
             try {
