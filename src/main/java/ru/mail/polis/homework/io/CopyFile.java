@@ -18,41 +18,47 @@ public class CopyFile {
      * В тесте для создания нужных файлов для первого запуска надо раскомментировать код в setUp()
      * 3 тугрика
      */
-    public static void copyFiles(String pathFrom, String pathTo) throws IOException {
+    public static void copyFiles(String pathFrom, String pathTo) {
         Path fromDir = Paths.get(pathFrom);
         if (Files.notExists(fromDir)) {
             return;
         }
         Path toDir = Paths.get(pathTo);
-        if (!Files.isDirectory(toDir)) {
-            toDir = toDir.getParent();
-        }
-        if (!Files.exists(toDir)) {
-            Files.createDirectories(toDir);
-        }
-        Files.walk(fromDir)
-                .forEach(source -> {
-                    Path destination = Paths.get(pathTo, source.toString()
-                            .substring(pathFrom.length()));
-                    try {
-                        if (Files.isDirectory(source)) {
-                            Files.copy(source, destination);
-                        } else if (Files.isRegularFile(source)) {
-                            copy(source, destination);
+        try {
+            if (!Files.isDirectory(toDir)) {
+                toDir = toDir.getParent();
+            }
+            if (!Files.exists(toDir)) {
+                Files.createDirectories(toDir);
+            }
+            Files.walk(fromDir)
+                    .forEach(source -> {
+                        Path destination = Paths.get(pathTo, source.toString()
+                                .substring(pathFrom.length()));
+                        try {
+                            if (Files.isDirectory(source)) {
+                                Files.copy(source, destination);
+                            } else if (Files.isRegularFile(source)) {
+                                copy(source, destination);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
+                    });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private static void copy(Path from, Path to) throws IOException {
-        try (InputStream inputStream = Files.newInputStream(from);
-             OutputStream outputStream = Files.newOutputStream(to)) {
-            byte[] buffer = new byte[BUF_SIZE];
-            int length;
-            while ((length = inputStream.read(buffer)) > 0) {
-                outputStream.write(buffer, 0, length);
+        try(InputStream inputStream = Files.newInputStream(from)){
+            try(OutputStream outputStream = Files.newOutputStream(to)){
+                byte[] buffer = new byte[BUF_SIZE];
+                int length;
+                while ((length = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, length);
+                }
             }
         }
     }

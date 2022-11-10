@@ -13,9 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static org.junit.Assert.assertEquals;
+
 public class SerializerTest {
 
-    private static final int NUMBER_OF_OBJECTS = 100000;
+    private static final int NUMBER_OF_OBJECTS = 1500000;
     private static final Path PATH = Paths.get("src", "test", "resources", "objects");
     private final static String fileName = "src/test/resources/objects/serializeTest.bin";
     private static final Serializer serializer = new Serializer();
@@ -39,16 +41,14 @@ public class SerializerTest {
         for (int i = 0; i < NUMBER_OF_OBJECTS; i++) {
             animals.add(generateAnimal());
         }
-
         long startOut = System.currentTimeMillis();
         serializer.defaultSerialize(animals, fileName);
         long endOut = System.currentTimeMillis();
 
         long startIn = System.currentTimeMillis();
-        serializer.defaultDeserialize(fileName);
+        List<Animal> animalsAfterDeserialize = serializer.defaultDeserialize(fileName);
         long endIn = System.currentTimeMillis();
-
-
+        assertEquals(animals,animalsAfterDeserialize);
         System.out.println("Default Serialization: \n\tSerialization time: \t" + (endOut - startOut) + " ms\n" +
                 "\tDeserialization time: \t" + (endIn - startIn) + " ms\n" +
                 "\tFile size: \t" + Files.size(Paths.get(fileName)) + " b\n");
@@ -63,14 +63,14 @@ public class SerializerTest {
 
         long startOut = System.currentTimeMillis();
         serializer.serializeWithMethods(animals, fileName);
-        long finishOut = System.currentTimeMillis();
+        long endOut = System.currentTimeMillis();
 
         long startIn = System.currentTimeMillis();
-        serializer.deserializeWithMethods(fileName);
-        long finishIn = System.currentTimeMillis();
-
-        System.out.println("Serialization with methods: \n\tSerialization time: \t" + (finishOut - startOut) + " ms\n" +
-                "\tDeserialization time: \t" + (finishIn - startIn) + " ms\n" +
+        List<AnimalWithMethods> animalsAfterDeserialize = serializer.deserializeWithMethods(fileName);
+        long endIn = System.currentTimeMillis();
+        assertEquals(animals,animalsAfterDeserialize);
+        System.out.println("Serialization with methods: \n\tSerialization time: \t" + (endOut - startOut) + " ms\n" +
+                "\tDeserialization time: \t" + (endIn - startIn) + " ms\n" +
                 "\tFile size: \t" + Files.size(Paths.get(fileName)) + " b\n");
     }
 
@@ -86,9 +86,9 @@ public class SerializerTest {
         long finishOut = System.currentTimeMillis();
 
         long startIn = System.currentTimeMillis();
-        serializer.deserializeWithExternalizable(fileName);
+        List<AnimalExternalizable> animalsAfterDeserialize = serializer.deserializeWithExternalizable(fileName);
         long finishIn = System.currentTimeMillis();
-
+        assertEquals(animals,animalsAfterDeserialize);
         System.out.println("Serialization with externalizable: \n\tSerialization time: \t" + (finishOut - startOut) + " ms\n" +
                 "\tDeserialization time: \t" + (finishIn - startIn) + " ms\n" +
                 "\tFile size: \t" + Files.size(Paths.get(fileName)) + " b\n");
@@ -106,9 +106,10 @@ public class SerializerTest {
         long finishOut = System.currentTimeMillis();
 
         long startIn = System.currentTimeMillis();
-        serializer.customDeserialize(fileName);
+        List<Animal> animalsAfterDeserialize = serializer.customDeserialize(fileName);
         long finishIn = System.currentTimeMillis();
 
+        assertEquals(animals,animalsAfterDeserialize);
         System.out.println("Custom serialization: \n\tSerialization time: \t" + (finishOut - startOut) + " ms\n" +
                 "\tDeserialization time: \t" + (finishIn - startIn) + " ms\n" +
                 "\tFile size: \t" + Files.size(Paths.get(fileName)) + " b\n");
@@ -121,7 +122,7 @@ public class SerializerTest {
                 random.nextDouble() * random.nextInt(100),
                 random.nextBoolean(),
                 AnimalType.values()[random.nextInt(AnimalType.values().length)],
-                random.nextBoolean(), new PlaceOfResidence(generateString(), generateString()));
+                random.nextBoolean(), new ResidencePlace(generateString(), generateString()));
         if (animal.getAge() % 2 == 0 && random.nextInt(100) % 2 == 0) {
             animal.setName(null);
         }
@@ -129,10 +130,13 @@ public class SerializerTest {
             animal.setType(null);
         }
         if (random.nextInt(100) - 50 > 40) {
-            animal.setPlaceOfResidence(null);
+            animal.getResidencePlace().setCountry(null);
+        }
+        if (random.nextInt(100) - 50 > 40) {
+            animal.getResidencePlace().setTerrain(null);
         }
         if (animal.getAge() % 2 == 0 && random.nextInt(100) % 2 == 0) {
-            animal.setPlaceOfResidence(null);
+            animal.setResidencePlace(null);
         }
         if (animal.getWeight() - random.nextDouble() * random.nextInt(100) < 0) {
             animal.setName(null);
@@ -152,7 +156,7 @@ public class SerializerTest {
                 random.nextDouble() * random.nextInt(100),
                 random.nextBoolean(),
                 AnimalType.values()[random.nextInt(AnimalType.values().length)],
-                random.nextBoolean(), new PlaceOfResidence(generateString(), generateString()));
+                random.nextBoolean(), new ResidencePlace(generateString(), generateString()));
         if (animal.getAge() % 2 == 0 && random.nextInt(100) % 2 == 0) {
             animal.setName(null);
         }
@@ -160,10 +164,13 @@ public class SerializerTest {
             animal.setType(null);
         }
         if (random.nextInt(100) - 50 > 40) {
-            animal.setPlaceOfResidence(null);
+            animal.getResidencePlace().setCountry(null);
+        }
+        if (random.nextInt(100) - 50 > 40) {
+            animal.getResidencePlace().setTerrain(null);
         }
         if (animal.getAge() % 2 == 0 && random.nextInt(100) % 2 == 0) {
-            animal.setPlaceOfResidence(null);
+            animal.setResidencePlace(null);
         }
         if (animal.getWeight() - random.nextDouble() * random.nextInt(100) < 0) {
             animal.setName(null);
@@ -183,7 +190,7 @@ public class SerializerTest {
                 random.nextDouble() * random.nextInt(100),
                 random.nextBoolean(),
                 AnimalType.values()[random.nextInt(AnimalType.values().length)],
-                random.nextBoolean(), new PlaceOfResidence(generateString(), generateString()));
+                random.nextBoolean(), new ResidencePlace(generateString(), generateString()));
         if (animal.getAge() % 2 == 0 && random.nextInt(100) % 2 == 0) {
             animal.setName(null);
         }
@@ -191,10 +198,13 @@ public class SerializerTest {
             animal.setType(null);
         }
         if (random.nextInt(100) - 50 > 40) {
-            animal.setPlaceOfResidence(null);
+            animal.getResidencePlace().setCountry(null);
+        }
+        if (random.nextInt(100) - 50 > 40) {
+            animal.getResidencePlace().setTerrain(null);
         }
         if (animal.getAge() % 2 == 0 && random.nextInt(100) % 2 == 0) {
-            animal.setPlaceOfResidence(null);
+            animal.setResidencePlace(null);
         }
         if (animal.getWeight() - random.nextDouble() * random.nextInt(100) < 0) {
             animal.setName(null);

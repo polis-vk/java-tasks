@@ -1,17 +1,18 @@
 package ru.mail.polis.homework.io.objects;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-public class PlaceOfResidence implements Serializable {
+public class ResidencePlace implements Serializable {
     private String country;
     private String terrain;
 
-    public PlaceOfResidence(String country, String terrain) {
+    public ResidencePlace(String country, String terrain) {
         this.country = country;
         this.terrain = terrain;
     }
 
-    public PlaceOfResidence() {
+    public ResidencePlace() {
 
     }
 
@@ -32,8 +33,21 @@ public class PlaceOfResidence implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ResidencePlace that = (ResidencePlace) o;
+        return Objects.equals(country, that.country) && Objects.equals(terrain, that.terrain);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(country, terrain);
+    }
+
+    @Override
     public String toString() {
-        return "PlaceOfResidence{" +
+        return "ResidencePlace{" +
                 "country='" + country + '\'' +
                 ", terrain='" + terrain + '\'' +
                 '}';

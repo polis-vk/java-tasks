@@ -1,10 +1,8 @@
 package ru.mail.polis.homework.io.objects;
 
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
+import java.util.Objects;
 
 /**
  * Дубль класса Animal, для Serializer.serializeWithMethods
@@ -13,22 +11,24 @@ import java.io.Serializable;
 public class AnimalWithMethods implements Serializable {
     private static final byte NULL_VALUE = 0;
     private static final byte NOT_NULL_VALUE = 1;
+    private static final byte TRUE = 1;
+    private static final byte FALSE = 0;
     private String name;
     private int age;
     private double weight;
     private boolean alive;
     private AnimalType type;
     private boolean isPet;
-    private PlaceOfResidence placeOfResidence;
+    private ResidencePlace residencePlace;
 
-    public AnimalWithMethods(String name, int age, double weight, boolean alive, AnimalType type, boolean isPet, PlaceOfResidence placeOfResidence) {
+    public AnimalWithMethods(String name, int age, double weight, boolean alive, AnimalType type, boolean isPet, ResidencePlace residencePlace) {
         this.name = name;
         this.age = age;
         this.weight = weight;
         this.alive = alive;
         this.type = type;
         this.isPet = isPet;
-        this.placeOfResidence = placeOfResidence;
+        this.residencePlace = residencePlace;
     }
 
     public String getName() {
@@ -51,43 +51,19 @@ public class AnimalWithMethods implements Serializable {
         return weight;
     }
 
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
-
-    public boolean isAlive() {
-        return alive;
-    }
-
-    public void setAlive(boolean alive) {
-        this.alive = alive;
-    }
-
-    public AnimalType getType() {
-        return type;
-    }
-
     public void setType(AnimalType type) {
         this.type = type;
     }
 
-    public boolean isPet() {
-        return isPet;
+    public ResidencePlace getResidencePlace() {
+        return residencePlace;
     }
 
-    public void setPet(boolean pet) {
-        isPet = pet;
+    public void setResidencePlace(ResidencePlace residencePlace) {
+        this.residencePlace = residencePlace;
     }
 
-    public PlaceOfResidence getPlaceOfResidence() {
-        return placeOfResidence;
-    }
-
-    public void setPlaceOfResidence(PlaceOfResidence placeOfResidence) {
-        this.placeOfResidence = placeOfResidence;
-    }
-
-    private void writeObject(ObjectOutputStream output) throws IOException {
+    private void writeObject(ObjectOutput output) throws IOException {
         if (name == null) {
             output.writeByte(NULL_VALUE);
         } else {
@@ -96,25 +72,34 @@ public class AnimalWithMethods implements Serializable {
         }
         output.writeInt(age);
         output.writeDouble(weight);
-        output.writeBoolean(alive);
+        if(alive){
+            output.writeByte(TRUE);
+        }else{
+            output.writeByte(FALSE);
+        }
         if (type == null) {
             output.writeByte(NULL_VALUE);
         } else {
             output.writeByte(NOT_NULL_VALUE);
             output.writeUTF(type.toString());
         }
-        output.writeBoolean(isPet);
-        if (placeOfResidence == null) {
+        if(isPet){
+            output.writeByte(TRUE);
+        }else{
+            output.writeByte(FALSE);
+        }
+        if (residencePlace == null) {
             output.writeByte(NULL_VALUE);
         } else {
-            String country = placeOfResidence.getCountry();
+            output.writeByte(NOT_NULL_VALUE);
+            String country = residencePlace.getCountry();
             if (country == null) {
                 output.writeByte(NULL_VALUE);
             } else {
                 output.writeByte(NOT_NULL_VALUE);
                 output.writeUTF(country);
             }
-            String terrain = placeOfResidence.getTerrain();
+            String terrain = residencePlace.getTerrain();
             if (terrain == null) {
                 output.writeByte(NULL_VALUE);
             } else {
@@ -124,39 +109,67 @@ public class AnimalWithMethods implements Serializable {
         }
     }
 
-    private void readObject(ObjectInputStream input) throws IOException, ClassNotFoundException {
-        if (input.readByte() == NULL_VALUE) {
-            name = null;
-        } else {
+
+    private void readObject(ObjectInput input) throws IOException {
+        if (input.readByte() != NULL_VALUE) {
             name = input.readUTF();
         }
         age = input.readInt();
         weight = input.readDouble();
-        alive = input.readBoolean();
+        if(input.readByte() == TRUE){
+            alive = true;
+        }else{
+            alive = false;
+        }
         if (input.readByte() == NULL_VALUE) {
             type = null;
         } else {
             type = AnimalType.valueOf(input.readUTF());
         }
-        isPet = input.readBoolean();
+        if(input.readByte() == TRUE){
+            isPet = true;
+        }else{
+            isPet = false;
+        }
         if (input.readByte() == NULL_VALUE) {
-            placeOfResidence = null;
+            residencePlace = null;
         } else {
-            PlaceOfResidence placeOfResidence = new PlaceOfResidence();
+            ResidencePlace residencePlace = new ResidencePlace();
             if (input.readByte() == NULL_VALUE) {
-                placeOfResidence.setCountry(null);
+                residencePlace.setCountry(null);
             } else {
-                placeOfResidence.setCountry(input.readUTF());
+                residencePlace.setCountry(input.readUTF());
             }
             if (input.readByte() == NULL_VALUE) {
-                placeOfResidence.setTerrain(null);
+                residencePlace.setTerrain(null);
             } else {
-                placeOfResidence.setTerrain(input.readUTF());
+                residencePlace.setTerrain(input.readUTF());
             }
-            this.placeOfResidence = placeOfResidence;
+            this.residencePlace = residencePlace;
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        AnimalWithMethods that = (AnimalWithMethods) o;
+        return age == that.age
+                && Double.compare(that.weight, weight) == 0
+                && alive == that.alive && isPet == that.isPet
+                && Objects.equals(name, that.name)
+                && type == that.type
+                && Objects.equals(residencePlace, that.residencePlace);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, age, weight, alive, type, isPet, residencePlace);
+    }
 
     @Override
     public String toString() {
@@ -167,7 +180,7 @@ public class AnimalWithMethods implements Serializable {
                 ", alive=" + alive +
                 ", type=" + type +
                 ", isPet=" + isPet +
-                ", placeOfResidence=" + placeOfResidence +
+                ", residencePlace=" + residencePlace +
                 '}';
     }
 }

@@ -28,6 +28,8 @@ import java.util.List;
 public class Serializer {
     private static final byte NULL_VALUE = 0;
     private static final byte NOT_NULL_VALUE = 1;
+    private static final byte TRUE = 1;
+    private static final byte FALSE = 0;
 
     /**
      * 1 тугрик
@@ -38,7 +40,7 @@ public class Serializer {
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
         Path path = Paths.get(fileName);
-        if (!Files.exists(path)) {
+        if (!Files.exists(path) || animals == null) {
             throw new IllegalArgumentException();
         }
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
@@ -63,12 +65,15 @@ public class Serializer {
             return null;
         }
         List<Animal> animals = new ArrayList<>();
-        try (InputStream inputStream = Files.newInputStream(path);
-             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
-            while (inputStream.available() > 0) {
-                animals.add((Animal) objectInputStream.readObject());
+        try (InputStream inputStream = Files.newInputStream(path)) {
+            try (ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+                while (inputStream.available() > 0) {
+                    animals.add((Animal) objectInputStream.readObject());
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return animals;
@@ -84,7 +89,7 @@ public class Serializer {
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
         Path path = Paths.get(fileName);
-        if (!Files.exists(path)) {
+        if (!Files.exists(path) || animals == null) {
             throw new IllegalArgumentException();
         }
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
@@ -110,15 +115,17 @@ public class Serializer {
             return null;
         }
         List<AnimalWithMethods> animals = new ArrayList<>();
-        try (InputStream inputStream = Files.newInputStream(path);
-             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
-            while (inputStream.available() > 0) {
-                animals.add((AnimalWithMethods) objectInputStream.readObject());
+        try (InputStream inputStream = Files.newInputStream(path)) {
+            try (ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+                while (inputStream.available() > 0) {
+                    animals.add((AnimalWithMethods) objectInputStream.readObject());
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
-        } catch (IOException | ClassNotFoundException ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
         return animals;
     }
 
@@ -131,7 +138,7 @@ public class Serializer {
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
         Path path = Paths.get(fileName);
-        if (!Files.exists(path)) {
+        if (!Files.exists(path) || animals == null) {
             throw new IllegalArgumentException();
         }
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
@@ -157,12 +164,15 @@ public class Serializer {
             return null;
         }
         List<AnimalExternalizable> animals = new ArrayList<>();
-        try (InputStream inputStream = Files.newInputStream(path);
-             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
-            while (inputStream.available() > 0) {
-                animals.add((AnimalExternalizable) objectInputStream.readObject());
+        try (InputStream inputStream = Files.newInputStream(path)) {
+            try (ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+                while (inputStream.available() > 0) {
+                    animals.add((AnimalExternalizable) objectInputStream.readObject());
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return animals;
@@ -178,7 +188,7 @@ public class Serializer {
      */
     public void customSerialize(List<Animal> animals, String fileName) {
         Path path = Paths.get(fileName);
-        if (!Files.exists(path)) {
+        if (!Files.exists(path) || animals == null) {
             throw new IllegalArgumentException();
         }
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
@@ -193,28 +203,36 @@ public class Serializer {
                         objectOutputStream.writeByte(NOT_NULL_VALUE);
                         objectOutputStream.writeUTF(animal.getName());
                     }
-
                     objectOutputStream.writeInt(animal.getAge());
                     objectOutputStream.writeDouble(animal.getWeight());
-                    objectOutputStream.writeBoolean(animal.isAlive());
+                    if(animal.isAlive()){
+                        objectOutputStream.writeByte(TRUE);
+                    }else{
+                        objectOutputStream.writeByte(FALSE);
+                    }
                     if (animal.getType() == null) {
                         objectOutputStream.writeByte(NULL_VALUE);
                     } else {
+                        objectOutputStream.writeByte(NOT_NULL_VALUE);
                         objectOutputStream.writeUTF(animal.getType().toString());
                     }
-                    objectOutputStream.writeBoolean(animal.isPet());
-                    if (animal.getPlaceOfResidence() == null) {
+                    if(animal.isPet()){
+                        objectOutputStream.writeByte(TRUE);
+                    }else{
+                        objectOutputStream.writeByte(FALSE);
+                    }
+                    if (animal.getResidencePlace() == null) {
                         objectOutputStream.writeByte(NULL_VALUE);
                     } else {
                         objectOutputStream.writeByte(NOT_NULL_VALUE);
-                        String country = animal.getPlaceOfResidence().getCountry();
+                        String country = animal.getResidencePlace().getCountry();
                         if (country == null) {
                             objectOutputStream.writeByte(NULL_VALUE);
                         } else {
                             objectOutputStream.writeByte(NOT_NULL_VALUE);
                             objectOutputStream.writeUTF(country);
                         }
-                        String terrain = animal.getPlaceOfResidence().getTerrain();
+                        String terrain = animal.getResidencePlace().getTerrain();
                         if (terrain == null) {
                             objectOutputStream.writeByte(NULL_VALUE);
                         } else {
@@ -223,7 +241,6 @@ public class Serializer {
                         }
                     }
                 }
-
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -244,44 +261,55 @@ public class Serializer {
             return null;
         }
         List<Animal> animals = new ArrayList<>();
-        try (InputStream inputStream = Files.newInputStream(path);
-             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
-            while (inputStream.available() > 0) {
-                if (objectInputStream.readByte() == NULL_VALUE) {
-                    animals.add(null);
-                } else {
-                    String name;
-                    if (objectInputStream.readByte() == NULL_VALUE) {
-                        name = null;
-                    } else {
-                        name = objectInputStream.readUTF();
-                    }
-                    int age = objectInputStream.readInt();
-                    double weight = objectInputStream.readDouble();
-                    boolean alive = objectInputStream.readBoolean();
-                    AnimalType type;
-                    if (objectInputStream.readByte() == NULL_VALUE) {
-                        type = null;
-                    } else {
-                        type = AnimalType.valueOf(objectInputStream.readUTF());
-                    }
-                    boolean isPet = objectInputStream.readBoolean();
-                    PlaceOfResidence placeOfResidence = new PlaceOfResidence();
-                    if (objectInputStream.readByte() != NULL_VALUE) {
-                        if (objectInputStream.readByte() == NULL_VALUE) {
-                            placeOfResidence.setCountry(null);
-                        } else {
-                            placeOfResidence.setCountry(objectInputStream.readUTF());
-                        }
-                        if (objectInputStream.readByte() == NULL_VALUE) {
-                            placeOfResidence.setTerrain(null);
-                        } else {
-                            placeOfResidence.setTerrain(objectInputStream.readUTF());
-                        }
-                    }
-                    animals.add(new Animal(name, age, weight, alive, type, isPet, placeOfResidence));
-                }
 
+        try (InputStream inputStream = Files.newInputStream(path)) {
+            try (ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+                while (objectInputStream.available() > 0) {
+                    if (objectInputStream.readByte() == NULL_VALUE) {
+                        animals.add(null);
+                    } else {
+                        String name = null;
+                        if (objectInputStream.readByte() != NULL_VALUE) {
+                            name = objectInputStream.readUTF();
+                        }
+                        int age = objectInputStream.readInt();
+                        double weight = objectInputStream.readDouble();
+                        boolean alive;
+                        if(objectInputStream.readByte() == TRUE){
+                            alive = true;
+                        }else {
+                            alive = false;
+                        }
+                        AnimalType type;
+                        if (objectInputStream.readByte() == NULL_VALUE) {
+                            type = null;
+                        } else {
+                            type = AnimalType.valueOf(objectInputStream.readUTF());
+                        }
+                        boolean isPet;
+                        if(objectInputStream.readByte() == TRUE){
+                            isPet = true;
+                        }else {
+                            isPet = false;
+                        }
+                        ResidencePlace residencePlace = new ResidencePlace();
+                        if (objectInputStream.readByte() == NULL_VALUE) {
+                            residencePlace = null;
+                        } else {
+                            if (objectInputStream.readByte() == NULL_VALUE) {
+                                residencePlace.setCountry(null);
+                            } else {
+                                residencePlace.setCountry(objectInputStream.readUTF());
+                            }
+                            if (objectInputStream.readByte() == NULL_VALUE) {
+                                residencePlace.setTerrain(null);
+                            } else {
+                                residencePlace.setTerrain(objectInputStream.readUTF());
+                            }
+                        }
+                        animals.add(new Animal(name, age, weight, alive, type, isPet, residencePlace));
+                    }
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
