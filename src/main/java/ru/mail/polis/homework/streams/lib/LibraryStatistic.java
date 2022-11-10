@@ -5,7 +5,6 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 
 import static java.util.stream.Collectors.groupingBy;
@@ -30,14 +29,21 @@ public class LibraryStatistic {
      * @return - map пользователь / кол-во прочитанных страниц
      */
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
-        long limitOfTimeMillis = 14L * 7 * 24 * 60 * 60 * 1_000;
+        long limitOfTimeMillis = 14L * 24 * 60 * 60 * 1_000;
         return library.getArchive().stream()
                 .filter(archivedData -> genre.equals(archivedData.getBook().getGenre()))
                 .filter(archivedData -> timeOfHolding(archivedData) >= limitOfTimeMillis)
                 .collect(groupingBy(ArchivedData::getUser, toSet())).entrySet().stream()
                 .filter(userSetEntry -> userSetEntry.getValue().size() >= 5)
-                .collect(toMap(Map.Entry::getKey, userSetEntry -> userSetEntry.getKey().getReadedPages()));
+                .collect(
+                        toMap(
+                                Map.Entry::getKey,
+                                userSetEntry -> userSetEntry.getValue().stream().mapToInt(
+                                        i -> i.getBook().getPage()).sum()
+                                        + (userSetEntry.getKey().getBook().getGenre() == genre ?
+                                        userSetEntry.getKey().getReadedPages() : 0)));
     }
+
 
     long timeOfHolding(ArchivedData archivedData) {
         if (archivedData.getReturned() == null) {
@@ -56,19 +62,11 @@ public class LibraryStatistic {
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
-        Stream<ArchivedData> usersBook = library.getArchive().stream().filter(i -> i.getUser().equals(user));
-        Map<Genre, Integer> returnedCount = usersBook.collect(
+        List<ArchivedData> usersBook = library.getArchive().stream().filter(i -> i.getUser().equals(user)).collect(toList());
+        Map<Genre, Integer> returnedCount = usersBook.stream().collect(
                 toMap(
                         archivedData -> archivedData.getBook().getGenre(),
                         archivedData -> archivedData.getReturned() == null ? 0 : 1,
-                        Integer::sum
-                )
-        );
-
-        Map<Genre, Integer> allCount = usersBook.collect(
-                toMap(
-                        i -> i.getBook().getGenre(),
-                        i -> 1,
                         Integer::sum
                 )
         );
@@ -77,7 +75,7 @@ public class LibraryStatistic {
                 returnedCount.entrySet(),
                 (Map.Entry<Genre, Integer> first, Map.Entry<Genre, Integer> second) ->
                         (first.getValue().equals(second.getValue())) ?
-                                allCount.get(first).compareTo(allCount.get(second)) :
+                                (user.getBook().getGenre() == first.getKey() ? 1 : user.getBook().getGenre() == second.getKey() ? -1 : 0) :
                                 first.getValue().compareTo(second.getValue())
         );
 
@@ -112,7 +110,7 @@ public class LibraryStatistic {
      * @return - список книг
      */
     public List<Book> booksWithMoreCountPages(Library library, int countPage) {
-        return library.getBooks().stream().filter(i -> i.getPage() > countPage).collect(toList());
+        return library.getBooks().stream().filter(i -> i.getPage() >= countPage).collect(toList());
     }
 
     /**
@@ -122,7 +120,7 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return library.getArchive().stream().collect(
+        Map<Genre, String> ans = library.getArchive().stream().collect(
                         groupingBy(
                                 i -> i.getBook().getGenre(),
                                 groupingBy(
@@ -138,10 +136,16 @@ public class LibraryStatistic {
                                         i.getValue().entrySet(),
                                         (first, second) ->
                                                 first.getValue().equals(second.getValue()) ?
-                                                        first.getKey().compareTo(second.getKey()) :
+                                                        -first.getKey().compareTo(second.getKey()) :
                                                         first.getValue().compareTo(second.getValue())
                                 ).getKey()
                         )
                 );
+        for (Genre genre : Genre.values()) {
+            if (!ans.containsKey(genre)) {
+                ans.put(genre, "Author not determined");
+            }
+        }
+        return ans;
     }
 }
