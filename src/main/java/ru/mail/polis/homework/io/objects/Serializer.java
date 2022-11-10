@@ -42,7 +42,7 @@ public class Serializer {
      */
     public void defaultSerialize(List<Animal> animals, String fileName) {
         if (animals == null || fileName == null) {
-            return;
+            throw new IllegalArgumentException();
         }
 
         Path file = Paths.get(fileName);
@@ -68,7 +68,7 @@ public class Serializer {
      */
     public List<Animal> defaultDeserialize(String fileName) {
         if (fileName == null) {
-            return null;
+            throw new IllegalArgumentException();
         }
 
         Path file = Paths.get(fileName);
@@ -101,7 +101,7 @@ public class Serializer {
      */
     public void serializeWithMethods(List<AnimalWithMethods> animals, String fileName) {
         if (animals == null || fileName == null) {
-            return;
+            throw new IllegalArgumentException();
         }
 
         Path file = Paths.get(fileName);
@@ -128,7 +128,7 @@ public class Serializer {
      */
     public List<AnimalWithMethods> deserializeWithMethods(String fileName) {
         if (fileName == null) {
-            return null;
+            throw new IllegalArgumentException();
         }
 
         Path file = Paths.get(fileName);
@@ -160,7 +160,7 @@ public class Serializer {
      */
     public void serializeWithExternalizable(List<AnimalExternalizable> animals, String fileName) {
         if (animals == null || fileName == null) {
-            return;
+            throw new IllegalArgumentException();
         }
 
         Path file = Paths.get(fileName);
@@ -187,7 +187,7 @@ public class Serializer {
      */
     public List<AnimalExternalizable> deserializeWithExternalizable(String fileName) {
         if (fileName == null) {
-            return null;
+            throw new IllegalArgumentException();
         }
 
         Path file = Paths.get(fileName);
@@ -221,7 +221,7 @@ public class Serializer {
      */
     public void customSerialize(List<AnimalWithMethods> animals, String fileName) {
         if (animals == null || fileName == null) {
-            return;
+            throw new IllegalArgumentException();
         }
 
         Path file = Paths.get(fileName);
@@ -258,7 +258,7 @@ public class Serializer {
      */
     public List<AnimalWithMethods> customDeserialize(String fileName) {
         if (fileName == null) {
-            return null;
+            throw new IllegalArgumentException();
         }
 
         Path file = Paths.get(fileName);
