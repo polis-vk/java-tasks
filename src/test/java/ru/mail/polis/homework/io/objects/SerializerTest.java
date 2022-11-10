@@ -27,12 +27,13 @@ public class SerializerTest {
     public void setUp() throws Exception {
         Files.createDirectories(PATH_TO_DIR);
         Files.createFile(PATH_TO_FILE);
-
-        final int amountOfAnimalsInList = 500_000;
-        for (int i = 0; i < amountOfAnimalsInList; i++) {
-            listOfAnimalsWithDefaultSerializer.add(AnimalGeneration.generateDefaultAnimal());
-            listOfAnimalsWithExternalizer.add(AnimalGeneration.generateExternalizableAnimal());
-            listOfAnimalsWithMethods.add(AnimalGeneration.generateAnimalWithMethods());
+        if (!AnimalGeneration.generatedElementShouldBeNull()) {
+            final int amountOfAnimalsInList = 50_000;
+            for (int i = 0; i < amountOfAnimalsInList; i++) {
+                listOfAnimalsWithDefaultSerializer.add(AnimalGeneration.generateDefaultAnimal());
+                listOfAnimalsWithExternalizer.add(AnimalGeneration.generateExternalizableAnimal());
+                listOfAnimalsWithMethods.add(AnimalGeneration.generateAnimalWithMethods());
+            }
         }
     }
 
@@ -52,9 +53,9 @@ public class SerializerTest {
         long deserializationTime = System.currentTimeMillis() - timerStart;
         long fileSize = Files.size(PATH_TO_FILE);
         assertEquals(listOfAnimalsWithDefaultSerializer, deserializedAnimalsList);
-        System.out.print("Размер файла: " + fileSize + "байт");
-        System.out.print("Время записи:  " + serializationTime + "мс");
-        System.out.print("Время чтения: " + deserializationTime + "мс");
+        System.out.println("Размер файла: " + fileSize + "байт");
+        System.out.println("Время записи:  " + serializationTime + "мс");
+        System.out.println("Время чтения: " + deserializationTime + "мс");
     }
 
     @Test
@@ -68,9 +69,9 @@ public class SerializerTest {
         long deserializationTime = System.currentTimeMillis() - timerStart;
         long fileSize = Files.size(PATH_TO_FILE);
         assertEquals(listOfAnimalsWithMethods, resultOfDeserialization);
-        System.out.print("Размер файла: " + fileSize + "байт");
-        System.out.print("Время записи:  " + serializationTime + "мс");
-        System.out.print("Время чтения: " + deserializationTime + "мс");
+        System.out.println("Размер файла: " + fileSize + "байт");
+        System.out.println("Время записи:  " + serializationTime + "мс");
+        System.out.println("Время чтения: " + deserializationTime + "мс");
     }
 
     @Test
@@ -84,9 +85,9 @@ public class SerializerTest {
         long deserializationTime = System.currentTimeMillis() - timerStart;
         long fileSize = Files.size(PATH_TO_FILE);
         assertEquals(listOfAnimalsWithExternalizer, resultOfDeserialization);
-        System.out.print("Размер файла: " + fileSize + "байт");
-        System.out.print("Время записи:  " + serializationTime + "мс");
-        System.out.print("Время чтения: " + deserializationTime + "мс");
+        System.out.println("Размер файла: " + fileSize + "байт");
+        System.out.println("Время записи:  " + serializationTime + "мс");
+        System.out.println("Время чтения: " + deserializationTime + "мс");
     }
 
     @Test
@@ -100,9 +101,9 @@ public class SerializerTest {
         long deserializationTime = System.currentTimeMillis() - timerStart;
         long fileSize = Files.size(PATH_TO_FILE);
         assertEquals(listOfAnimalsWithDefaultSerializer, resultOfDeserialization);
-        System.out.print("Размер файла: " + fileSize + "байт");
-        System.out.print("Время записи:  " + serializationTime + "мс");
-        System.out.print("Время чтения: " + deserializationTime + "мс");
+        System.out.println("Размер файла: " + fileSize + "байт");
+        System.out.println("Время записи:  " + serializationTime + "мс");
+        System.out.println("Время чтения: " + deserializationTime + "мс");
     }
 
     private static class AnimalGeneration {
@@ -190,7 +191,7 @@ public class SerializerTest {
             return RANDOM.nextInt(MAX_AGES) + 1;
         }
 
-        private static boolean generatedElementShouldBeNull() {
+        public static boolean generatedElementShouldBeNull() {
             return RANDOM.nextInt(6) == 0;
         }
     }

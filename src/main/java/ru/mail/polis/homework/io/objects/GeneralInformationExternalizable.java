@@ -85,8 +85,6 @@ public class GeneralInformationExternalizable implements Externalizable {
         byte byteDataFromInput = in.readByte();
         if ((byteDataFromInput & HABITAT_BYTE) != 0) {
             habitat = Habitat.valueOf(in.readUTF());
-        } else {
-            habitat = null;
         }
         isListedInTheRedBook = (byteDataFromInput & IS_LISTED_IN_RED_BOOK_BYTE) != 0;
         isDangerous = (byteDataFromInput & IS_DANGEROUS_BYTE) != 0;

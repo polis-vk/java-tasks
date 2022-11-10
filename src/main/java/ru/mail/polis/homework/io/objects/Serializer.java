@@ -31,15 +31,17 @@ import java.util.List;
  * В конце теста по чтению данных, не забывайте удалять файлы
  */
 public class Serializer {
-    private static final byte ANIMAL_BYTE = 0b0000001;
-    private static final byte NAME_BYTE = 0b0000010;
-    private static final byte INFORMATION_BYTE = 0b0000100;
-    private static final byte HABITAT_BYTE = 0b0001000;
+    private static final byte COLLECTION_BYTE = 0b0000001;
+    private static final byte ANIMAL_BYTE = 0b0000010;
+    private static final byte NAME_BYTE = 0b0000100;
+    private static final byte INFORMATION_BYTE = 0b0001000;
     private static final byte IS_INVERTEBRATE_BYTE = 0b0010000;
     private static final byte IS_AGGRESSIVE_BYTE = 0b0100000;
     private static final byte ANIMAL_TYPE_BYTE = 0b1000000;
-    private static final byte IS_DANGEROUS_BYTE = 0b10;
-    private static final byte IS_LISTED_IN_RED_BOOK_BYTE = 0b01;
+
+    private static final byte IS_DANGEROUS_BYTE = 0b010;
+    private static final byte IS_LISTED_IN_RED_BOOK_BYTE = 0b001;
+    private static final byte HABITAT_BYTE = 0b100;
 
     /**
      * 1 тугрик
@@ -78,10 +80,11 @@ public class Serializer {
             return Collections.emptyList();
         }
         List<Animal> animals = new ArrayList<>();
-        try (InputStream in = Files.newInputStream(filePath);
-             ObjectInputStream objIn = new ObjectInputStream(in)) {
-            while (in.available() > 0) {
-                animals.add((Animal) objIn.readObject());
+        try (InputStream in = Files.newInputStream(filePath)) {
+            try (ObjectInputStream objIn = new ObjectInputStream(in)) {
+                while (in.available() > 0) {
+                    animals.add((Animal) objIn.readObject());
+                }
             }
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
@@ -127,10 +130,11 @@ public class Serializer {
             return Collections.emptyList();
         }
         List<AnimalWithMethods> animals = new ArrayList<>();
-        try (InputStream in = Files.newInputStream(filePath);
-             ObjectInputStream objIn = new ObjectInputStream(in)) {
-            while (in.available() > 0) {
-                animals.add((AnimalWithMethods) objIn.readObject());
+        try (InputStream in = Files.newInputStream(filePath)) {
+            try (ObjectInputStream objIn = new ObjectInputStream(in)) {
+                while (in.available() > 0) {
+                    animals.add((AnimalWithMethods) objIn.readObject());
+                }
             }
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
@@ -176,10 +180,11 @@ public class Serializer {
             return Collections.emptyList();
         }
         List<AnimalExternalizable> animals = new ArrayList<>();
-        try (InputStream in = Files.newInputStream(filePath);
-             ObjectInputStream objIn = new ObjectInputStream(in)) {
-            while (in.available() > 0) {
-                animals.add((AnimalExternalizable) objIn.readObject());
+        try (InputStream in = Files.newInputStream(filePath)) {
+            try (ObjectInputStream objIn = new ObjectInputStream(in)) {
+                while (in.available() > 0) {
+                    animals.add((AnimalExternalizable) objIn.readObject());
+                }
             }
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
@@ -201,12 +206,16 @@ public class Serializer {
             return;
         }
         try (DataOutputStream out = new DataOutputStream(Files.newOutputStream(filePath))) {
+            if (animals.isEmpty()) {
+                out.writeByte(0b0);
+                return;
+            }
             for (Animal animal : animals) {
                 if (animal == null) {
-                    out.writeByte(0b0);
+                    out.writeByte(COLLECTION_BYTE);
                     continue;
                 }
-                out.writeByte(getByteFromData(animal));
+                out.writeByte(getByteFromData(animal) + COLLECTION_BYTE);
                 if (animal.getName() != null) {
                     out.writeUTF(animal.getName());
                 }
@@ -216,10 +225,6 @@ public class Serializer {
                 }
                 GeneralInformation information = animal.getInformation();
                 if (information != null) {
-                    if (information.getHabitat() != null) {
-                        out.writeUTF(String.valueOf(information.getHabitat()));
-                    }
-                    out.writeLong(information.getPopulationSize());
                     byte booleanDataInInformation = 0;
                     if (information.isDangerous()) {
                         booleanDataInInformation |= IS_DANGEROUS_BYTE;
@@ -227,7 +232,14 @@ public class Serializer {
                     if (information.isListedInTheRedBook()) {
                         booleanDataInInformation |= IS_LISTED_IN_RED_BOOK_BYTE;
                     }
+                    if (animal.getInformation().getHabitat() != null) {
+                        booleanDataInInformation |= HABITAT_BYTE;
+                    }
                     out.writeByte(booleanDataInInformation);
+                    if (information.getHabitat() != null) {
+                        out.writeUTF(String.valueOf(information.getHabitat()));
+                    }
+                    out.writeLong(information.getPopulationSize());
                 }
 
             }
@@ -256,41 +268,35 @@ public class Serializer {
         try (DataInputStream in = new DataInputStream(Files.newInputStream(filePath))) {
             while (in.available() > 0) {
                 byte byteOfAnimalDataFromInput = in.readByte();
+                if ((byteOfAnimalDataFromInput & COLLECTION_BYTE) == 0) {
+                    return Collections.emptyList();
+                }
                 if ((byteOfAnimalDataFromInput & ANIMAL_BYTE) == 0) {
                     animals.add(null);
                     continue;
                 }
-                String currentName;
+                String currentName = null;
                 if ((byteOfAnimalDataFromInput & NAME_BYTE) != 0) {
                     currentName = in.readUTF();
-                } else {
-                    currentName = null;
                 }
                 int currentAge = in.readInt();
-                AnimalType currentAnimalType;
+                AnimalType currentAnimalType = null;
                 if ((byteOfAnimalDataFromInput & ANIMAL_TYPE_BYTE) != 0) {
                     currentAnimalType = AnimalType.valueOf(in.readUTF());
-                } else {
-                    currentAnimalType = null;
                 }
                 boolean isAggressive = (byteOfAnimalDataFromInput & IS_AGGRESSIVE_BYTE) != 0;
                 boolean isInvertebrate = (byteOfAnimalDataFromInput & IS_INVERTEBRATE_BYTE) != 0;
-
-                GeneralInformation information;
+                GeneralInformation information = null;
                 if ((byteOfAnimalDataFromInput & INFORMATION_BYTE) != 0) {
-                    Habitat currentHabitat;
-                    if ((byteOfAnimalDataFromInput & HABITAT_BYTE) == 0) {
-                        currentHabitat = null;
-                    } else {
+                    byte dataForInformation = in.readByte();
+                    boolean listedInTheRedBook = (dataForInformation & IS_LISTED_IN_RED_BOOK_BYTE) != 0;
+                    boolean isDangerous = (dataForInformation & IS_DANGEROUS_BYTE) != 0;
+                    Habitat currentHabitat = null;
+                    if ((dataForInformation & HABITAT_BYTE) != 0) {
                         currentHabitat = Habitat.valueOf(in.readUTF());
                     }
                     long currentPopulationSize = in.readLong();
-                    byte booleanDataFromInformation = in.readByte();
-                    boolean listedInTheRedBook = (booleanDataFromInformation & IS_LISTED_IN_RED_BOOK_BYTE) != 0;
-                    boolean isDangerous = (booleanDataFromInformation & IS_DANGEROUS_BYTE) != 0;
                     information = new GeneralInformation(currentHabitat, currentPopulationSize, listedInTheRedBook, isDangerous);
-                } else {
-                    information = null;
                 }
                 Animal currentAnimal = new Animal(currentName, currentAge, isAggressive, isInvertebrate, currentAnimalType, information);
                 animals.add(currentAnimal);
@@ -334,9 +340,7 @@ public class Serializer {
         } else {
             return result;
         }
-        if (animal.getInformation().getHabitat() != null) {
-            result |= HABITAT_BYTE;
-        }
+
         return result;
     }
 }

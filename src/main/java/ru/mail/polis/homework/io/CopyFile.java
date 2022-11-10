@@ -58,12 +58,13 @@ public class CopyFile {
     }
 
     private static void copyFile(Path from, Path to) throws IOException {
-        try (BufferedReader input = new BufferedReader(new InputStreamReader(Files.newInputStream(from), StandardCharsets.UTF_8));
-             BufferedWriter output = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(to), StandardCharsets.UTF_8))) {
-            while (input.ready()) {
-                output.write(input.readLine());
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(Files.newInputStream(from), StandardCharsets.UTF_8))) {
+            try (BufferedWriter output = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(to), StandardCharsets.UTF_8))) {
+                while (input.ready()) {
+                    output.write(input.readLine());
+                }
+                output.flush();
             }
-            output.flush();
         }
     }
 }

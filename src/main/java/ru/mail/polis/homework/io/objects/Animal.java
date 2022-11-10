@@ -65,7 +65,7 @@ public class Animal implements Serializable {
                 && isAggressive == anotherAnimal.isAggressive()
                 && isInvertebrate == anotherAnimal.isInvertebrate()
                 && Objects.equals(animalType, anotherAnimal.getAnimalType())
-                && information.equals(anotherAnimal.getInformation());
+                && Objects.equals(information, anotherAnimal.getInformation());
     }
 
     @Override

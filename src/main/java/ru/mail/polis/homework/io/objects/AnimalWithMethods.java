@@ -70,7 +70,7 @@ public class AnimalWithMethods implements Serializable {
                 && isAggressive == anotherAnimal.isAggressive()
                 && isInvertebrate == anotherAnimal.isInvertebrate()
                 && Objects.equals(animalType, anotherAnimal.getAnimalType())
-                && information.equals(anotherAnimal.getInformation());
+                && Objects.equals(information, anotherAnimal.getInformation());
     }
 
     @Override
@@ -105,15 +105,11 @@ public class AnimalWithMethods implements Serializable {
         byte byteDataFromInput = in.readByte();
         if ((byteDataFromInput & NAME_BYTE) != 0) {
             name = in.readUTF();
-        } else {
-            name = null;
         }
         isAggressive = (byteDataFromInput & AGGRESSIVE_BYTE) != 0;
         isInvertebrate = (byteDataFromInput & INVERTEBRATE_BYTE) != 0;
         if ((byteDataFromInput & ANIMAL_TYPE_BYTE) != 0) {
             animalType = AnimalType.valueOf(in.readUTF());
-        } else {
-            animalType = null;
         }
         age = in.readInt();
         information = (GeneralInformationWithMethods) in.readObject();
