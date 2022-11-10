@@ -34,7 +34,7 @@ public class SerializerTest {
     @BeforeClass
     public static void generateData() throws IOException {
         if (Files.notExists(test_file.getParent())) {
-            Files.createDirectory(test_file.getParent());
+            Files.createDirectories(test_file.getParent());
         }
 
         for (int i = 0; i < NUMBER_ANIMALS; i++) {
