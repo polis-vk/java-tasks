@@ -39,8 +39,8 @@ public class PopulationExternalizable implements Externalizable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PopulationExternalizable that = (PopulationExternalizable) o;
-        return that.getName().equals(getName()) && that.getSize() == getSize() && that.getDensity() == getDensity();
+        PopulationExternalizable population = (PopulationExternalizable) o;
+        return population.name.equals(name) && population.size == size && population.density == density;
     }
 
     @Override
@@ -54,32 +54,23 @@ public class PopulationExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        writeString(out, name);
+        PopulationByte populationByte = new PopulationByte(this);
+        out.writeByte(populationByte.writeByte());
+        if (populationByte.nameIsNotNull()) {
+            out.writeUTF(name);
+        }
         out.writeLong(size);
         out.writeInt(density);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException {
-        name = readString(in);
+        PopulationByte populationByte = new PopulationByte(in.readByte());
+        if (populationByte.nameIsNotNull()) {
+            name = in.readUTF();
+        }
         size = in.readLong();
         density = in.readInt();
-    }
-
-    private static void writeString(ObjectOutput out, String str) throws IOException {
-        if (str == null) {
-            out.writeByte(0);
-        } else {
-            out.writeByte(1);
-            out.writeUTF(str);
-        }
-    }
-
-    private static String readString(ObjectInput in) throws IOException {
-        if (in.readByte() == 0) {
-            return null;
-        }
-        return in.readUTF();
     }
 
 }

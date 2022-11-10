@@ -33,8 +33,8 @@ public class Population implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Population that = (Population) o;
-        return that.getName().equals(getName()) && that.getSize() == getSize() && that.getDensity() == getDensity();
+        Population population = (Population) o;
+        return population.name.equals(name) && population.size == size && population.density == density;
     }
 
     @Override
@@ -45,4 +45,5 @@ public class Population implements Serializable {
                 ", density=" + density +
                 '}';
     }
+
 }

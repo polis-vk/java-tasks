@@ -2,8 +2,6 @@ package ru.mail.polis.homework.io.objects;
 
 import java.io.Serializable;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
@@ -39,8 +37,8 @@ public class PopulationWithMethods implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PopulationWithMethods that = (PopulationWithMethods) o;
-        return that.getName().equals(getName()) && that.getSize() == getSize() && that.getDensity() == getDensity();
+        PopulationWithMethods population = (PopulationWithMethods) o;
+        return population.name.equals(name) && population.size == size && population.density == density;
     }
 
     @Override
@@ -52,32 +50,23 @@ public class PopulationWithMethods implements Serializable {
                 '}';
     }
 
-    public void writeObject(ObjectOutputStream out) throws IOException {
-        writeString(out, name);
-        out.writeLong(size);
-        out.writeInt(density);
-    }
-
-    public void readObject(ObjectInputStream in) throws IOException {
-        name = readString(in);
-        size = in.readLong();
-        density = in.readInt();
-    }
-
-    private static void writeString(ObjectOutput out, String str) throws IOException {
-        if (str == null) {
-            out.writeByte(0);
-        } else {
-            out.writeByte(1);
-            out.writeUTF(str);
+    public void writeObject(ObjectOutputStream oos) throws IOException {
+        PopulationByte populationByte = new PopulationByte(this);
+        oos.writeByte(populationByte.writeByte());
+        if (populationByte.nameIsNotNull()) {
+            oos.writeUTF(name);
         }
+        oos.writeLong(size);
+        oos.writeInt(density);
     }
 
-    private static String readString(ObjectInput in) throws IOException {
-        if (in.readByte() == 0) {
-            return null;
+    public void readObject(ObjectInputStream ois) throws IOException {
+        PopulationByte populationByte = new PopulationByte(ois.readByte());
+        if (populationByte.nameIsNotNull()) {
+            name = ois.readUTF();
         }
-        return in.readUTF();
+        size = ois.readLong();
+        density = ois.readInt();
     }
 
 }

@@ -66,10 +66,10 @@ public class Animal implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Animal that = (Animal) o;
-        return Objects.equals(that.getName(), getName()) && that.getAge() == getAge()
-                && that.isFriendly() == isFriendly() && that.isWarmBlooded() == isWarmBlooded()
-                && that.getAnimalType() == getAnimalType() && Objects.equals(that.getPopulation(), getPopulation());
+        Animal animal = (Animal) o;
+        return Objects.equals(animal.name, name) && animal.age == age
+                && animal.friendly == friendly && animal.warmBlooded == warmBlooded
+                && animal.animalType == animalType && Objects.equals(animal.population, population);
     }
 
     @Override

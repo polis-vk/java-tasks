@@ -4,8 +4,6 @@ package ru.mail.polis.homework.io.objects;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectInput;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -63,20 +61,34 @@ public class AnimalWithMethods implements Serializable {
     }
 
     private void writeObject(ObjectOutputStream oos) throws IOException {
-        writeString(oos, name);
+        AnimalByte animalByte = new AnimalByte(this);
+        oos.writeByte(animalByte.writeByte());
+        if (animalByte.nameIsNotNull()) {
+            oos.writeUTF(name);
+        }
         oos.writeInt(age);
-        oos.writeByte((byte) ((isFriendly() ? 1 : 0) << 1 + (isWarmBlooded() ? 1 : 0)));
-        oos.writeByte(animalType.getOrdinal());
-        oos.writeObject(population);
+        if (animalByte.animalTypeIsNotNull()) {
+            oos.writeUTF(animalType.name());
+        }
+        if (animalByte.populationIsNotNull()) {
+            oos.writeObject(population);
+        }
     }
 
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        name = readString(ois);
+        AnimalByte animalByte = new AnimalByte(ois.readByte());
+        if (animalByte.nameIsNotNull()) {
+            name = ois.readUTF();
+        }
         age = ois.readInt();
-        friendly = ois.readBoolean();
-        warmBlooded = ois.readBoolean();
-        animalType = AnimalType.getOrdinal(ois.readByte());
-        population = (PopulationWithMethods) ois.readObject();
+        friendly = animalByte.isFriendly();
+        warmBlooded = animalByte.isWarmBlooded();
+        if (animalByte.animalTypeIsNotNull()) {
+            animalType = AnimalType.valueOf(ois.readUTF());
+        }
+        if (animalByte.populationIsNotNull()) {
+            population = (PopulationWithMethods) ois.readObject();
+        }
     }
 
     @Override
@@ -87,10 +99,10 @@ public class AnimalWithMethods implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        AnimalWithMethods that = (AnimalWithMethods) o;
-        return Objects.equals(that.getName(), getName()) && that.getAge() == getAge()
-                && that.isFriendly() == isFriendly() && that.isWarmBlooded() == isWarmBlooded()
-                && that.getAnimalType() == getAnimalType() && Objects.equals(that.getPopulation(), getPopulation());
+        AnimalWithMethods animal = (AnimalWithMethods) o;
+        return Objects.equals(animal.name, name) && animal.age == age
+                && animal.friendly == friendly && animal.warmBlooded == warmBlooded
+                && animal.animalType == animalType && Objects.equals(animal.population, population);
     }
 
     @Override
@@ -103,22 +115,6 @@ public class AnimalWithMethods implements Serializable {
                 ", population=" + population + '\'' +
                 ", animalType=" + animalType +
                 '}';
-    }
-
-    private static void writeString(ObjectOutput out, String str) throws IOException {
-        if (str == null) {
-            out.writeByte(0);
-        } else {
-            out.writeByte(1);
-            out.writeUTF(str);
-        }
-    }
-
-    private static String readString(ObjectInput in) throws IOException {
-        if (in.readByte() == 0) {
-            return null;
-        }
-        return in.readUTF();
     }
 
 }

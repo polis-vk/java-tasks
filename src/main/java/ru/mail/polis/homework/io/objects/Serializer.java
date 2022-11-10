@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.io.objects;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
@@ -37,6 +34,7 @@ public class Serializer {
             return;
         }
         try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(file))) {
+            outputStream.writeInt(animals.size());
             for (T animal : animals) {
                 outputStream.writeObject(animal);
             }
@@ -52,15 +50,10 @@ public class Serializer {
             return null;
         }
         List<T> animals = new ArrayList<>();
-        try (InputStream is = Files.newInputStream(file);
-             ObjectInputStream ois = new ObjectInputStream(is)) {
-            while (is.available() > 0) {
-                Object o = ois.readObject();
-                if (o instanceof Animal) {
-                    animals.add((T) o);
-                } else {
-                    animals.add(null);
-                }
+        try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(file))) {
+            int size = ois.readInt();
+            for (int i = 0; i < size; i++) {
+                animals.add((T) ois.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -147,27 +140,37 @@ public class Serializer {
             return;
         }
         try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(file))) {
+            oos.writeInt(animals.size());
             for (Animal animal : animals) {
-                if (animal == null) {
-                    oos.writeByte(0);
+                AnimalByte animalByte = new AnimalByte(animal);
+                oos.writeByte(animalByte.writeByte());
+                if (animalByte.animalIsNull()) {
                     continue;
                 }
-                oos.writeByte(1);
-                writeString(oos, animal.getName());
-                oos.writeInt(animal.getAge());
-                oos.writeByte((byte) ((animal.isFriendly() ? 1 : 0) << 1 + (animal.isWarmBlooded() ? 1 : 0)));
-                oos.writeByte(animal.getAnimalType().getOrdinal());
-
-                Population population = animal.getPopulation();
-                if (population != null) {
-                    writeString(oos, population.getName());
-                    oos.writeLong(population.getSize());
-                    oos.writeInt(population.getDensity());
+                if (animalByte.nameIsNotNull()) {
+                    oos.writeUTF(animal.getName());
                 }
+                oos.writeInt(animal.getAge());
+                if (animalByte.animalTypeIsNotNull()) {
+                    oos.writeUTF(animal.getAnimalType().name());
+                }
+                Population population = animal.getPopulation();
+                PopulationByte populationByte = new PopulationByte(population);
+                oos.writeByte(populationByte.writeByte());
+                if (populationByte.populationIsNull()) {
+                    continue;
+                }
+                if (populationByte.nameIsNotNull()) {
+                    oos.writeUTF(population.getName());
+                }
+                oos.writeLong(population.getSize());
+                oos.writeInt(population.getDensity());
             }
-        } catch (IOException e) {
+        } catch (
+                IOException e) {
             e.printStackTrace();
         }
+
     }
 
     /**
@@ -185,21 +188,35 @@ public class Serializer {
         }
         List<Animal> animals = new ArrayList<>();
         try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(file))) {
-            while (ois.available() > 0) {
-                if (ois.readByte() == 0) {
+            int size = ois.readInt();
+            for (int i = 0; i < size; i++) {
+                AnimalByte animalByte = new AnimalByte(ois.readByte());
+                if (animalByte.animalIsNull()) {
                     animals.add(null);
                     continue;
                 }
-                String name = readString(ois);
+                String name = null;
+                if (animalByte.nameIsNotNull()) {
+                    name = ois.readUTF();
+                }
                 int age = ois.readInt();
-                boolean friendly = ois.readBoolean();
-                boolean warmBlooded = ois.readBoolean();
-                AnimalType animalType = AnimalType.getOrdinal(ois.readByte());
-                if (ois.readByte() != 0) {
-                    animals.add(new Animal(name, age, friendly, warmBlooded, animalType,
-                            new Population(readString(ois), ois.readLong(), ois.readInt())));
-                } else {
+                boolean friendly = animalByte.isFriendly();
+                boolean warmBlooded = animalByte.isWarmBlooded();
+                AnimalType animalType = null;
+                if (animalByte.animalTypeIsNotNull()) {
+                    animalType = AnimalType.valueOf(ois.readUTF());
+                }
+                PopulationByte populationByte = new PopulationByte(ois.readByte());
+                if (populationByte.populationIsNull()) {
                     animals.add(new Animal(name, age, friendly, warmBlooded, animalType, null));
+                    continue;
+                }
+                if (populationByte.nameIsNotNull()) {
+                    animals.add(new Animal(name, age, friendly, warmBlooded, animalType,
+                            new Population(ois.readUTF(), ois.readLong(), ois.readInt())));
+                } else {
+                    animals.add(new Animal(name, age, friendly, warmBlooded, animalType,
+                            new Population(null, ois.readLong(), ois.readInt())));
                 }
             }
         } catch (IOException e) {
@@ -208,20 +225,4 @@ public class Serializer {
         return animals;
     }
 
-    private static void writeString(ObjectOutput out, String str) throws IOException {
-        if (str == null) {
-            out.writeByte(0);
-        } else {
-            out.writeByte(1);
-            out.writeUTF(str);
-        }
-    }
-
-    private static String readString(ObjectInput in) throws IOException {
-        if (in.readByte() == 0) {
-            return null;
-        }
-        return in.readUTF();
-    }
-    
 }
