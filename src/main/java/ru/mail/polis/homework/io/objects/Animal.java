@@ -82,8 +82,8 @@ public class Animal implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(isPet(), isPredator(), getLegs(),
-                getColor(), getMoveType(), getAnimalPassport());
+        return Objects.hash(isPet, isPredator, legs,
+                color, moveType, animalPassport);
     }
 
     @Override
@@ -95,127 +95,120 @@ public class Animal implements Serializable {
             return false;
         }
         Animal animal = (Animal) obj;
-        return isPet() == animal.isPet() &&
-                isPredator() == animal.isPredator() &&
-                getLegs() == animal.getLegs() &&
-                Objects.equals(getColor(), animal.getColor()) &&
-                getMoveType() == animal.getMoveType() &&
-                Objects.equals(getAnimalPassport(), animal.getAnimalPassport());
+        return isPet == animal.isPet &&
+                isPredator == animal.isPredator &&
+                legs == animal.legs &&
+                Objects.equals(color, animal.color) &&
+                moveType == animal.moveType &&
+                Objects.equals(animalPassport, animal.animalPassport);
     }
 
     @Override
     public String toString() {
         return "Animal{" +
-                "pet='" + isPet() + '\'' +
-                ", predator=" + isPredator() +
-                ", legs=" + getLegs() +
-                ", color=" + getColor() +
-                ", moveType=" + getMoveType() +
-                ", animalPassport=" + getAnimalPassport() +
+                "pet='" + isPet + '\'' +
+                ", predator=" + isPredator +
+                ", legs=" + legs +
+                ", color=" + color +
+                ", moveType=" + moveType +
+                ", animalPassport=" + animalPassport +
                 '}';
     }
 
-    static class AnimalPassport implements Serializable {
-        private String species;
-        private Sex sex;
+}
 
-        private String name;
-        private int age;
-        private boolean isVaccinated;
-        private String descriptionOfAnimal;
+class AnimalPassport implements Serializable {
+    private String species;
+    private Sex sex;
 
-        public AnimalPassport() {
-        }
+    private String name;
+    private int age;
+    private boolean isVaccinated;
+    private String descriptionOfAnimal;
 
-        public AnimalPassport(String name, Sex sex, int age, String species, boolean isVaccinated, String descriptionOfAnimal) {
-            this.name = name;
-            this.sex = sex;
-            this.age = age;
-            this.species = species;
-            this.isVaccinated = isVaccinated;
-            this.descriptionOfAnimal = descriptionOfAnimal;
-        }
-
-        public String getSpecies() {
-            return species;
-        }
-
-        public void setSpecies(String species) {
-            this.species = species;
-        }
-
-        public Sex getSex() {
-            return sex;
-        }
-
-        public void setSex(Sex sex) {
-            this.sex = sex;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public int getAge() {
-            return age;
-        }
-
-        public void setAge(int age) {
-            this.age = age;
-        }
-
-        public boolean isVaccinated() {
-            return isVaccinated;
-        }
-
-        public void setVaccinated(boolean vaccinated) {
-            isVaccinated = vaccinated;
-        }
-
-        public String getDescriptionOfAnimal() {
-            return descriptionOfAnimal;
-        }
-
-        public void setDescriptionOfAnimal(String descriptionOfAnimal) {
-            this.descriptionOfAnimal = descriptionOfAnimal;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(getSpecies(), getSex(), getName(), getAge(), isVaccinated(), getDescriptionOfAnimal());
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null || obj.getClass() != getClass()) {
-                return false;
-            }
-            AnimalPassport animalPassport = (AnimalPassport) obj;
-            return Objects.equals(getSpecies(), animalPassport.getSpecies()) &&
-                    getSex() == animalPassport.getSex() &&
-                    Objects.equals(getName(), animalPassport.getName()) &&
-                    getAge() == animalPassport.getAge() &&
-                    isVaccinated() == animalPassport.isVaccinated() &&
-                    Objects.equals(getDescriptionOfAnimal(), animalPassport.getDescriptionOfAnimal());
-        }
-
-        @Override
-        public String toString() {
-            return "AnimalPassport{" +
-                    "species='" + getSpecies() + '\'' +
-                    ", sex=" + getSex() +
-                    ", name=" + getName() +
-                    ", age=" + getAge() +
-                    ", vaccinated=" + isVaccinated() +
-                    ", descriptionOfAnimal=" + getDescriptionOfAnimal() +
-                    '}';
-        }
+    public AnimalPassport() {
     }
+
+    public String getSpecies() {
+        return species;
+    }
+
+    public void setSpecies(String species) {
+        this.species = species;
+    }
+
+    public Sex getSex() {
+        return sex;
+    }
+
+    public void setSex(Sex sex) {
+        this.sex = sex;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public boolean isVaccinated() {
+        return isVaccinated;
+    }
+
+    public void setVaccinated(boolean vaccinated) {
+        isVaccinated = vaccinated;
+    }
+
+    public String getDescriptionOfAnimal() {
+        return descriptionOfAnimal;
+    }
+
+    public void setDescriptionOfAnimal(String descriptionOfAnimal) {
+        this.descriptionOfAnimal = descriptionOfAnimal;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(species, sex, name, age, isVaccinated, descriptionOfAnimal);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != getClass()) {
+            return false;
+        }
+        AnimalPassport animalPassport = (AnimalPassport) obj;
+        return Objects.equals(species, animalPassport.species) &&
+                sex == animalPassport.sex &&
+                Objects.equals(name, animalPassport.name) &&
+                age == animalPassport.age &&
+                isVaccinated == animalPassport.isVaccinated &&
+                Objects.equals(descriptionOfAnimal, animalPassport.descriptionOfAnimal);
+    }
+
+    @Override
+    public String toString() {
+        return "AnimalPassport{" +
+                "species='" + species + '\'' +
+                ", sex=" + sex +
+                ", name=" + name +
+                ", age=" + age +
+                ", vaccinated=" + isVaccinated +
+                ", descriptionOfAnimal=" + descriptionOfAnimal +
+                '}';
+    }
+
 }

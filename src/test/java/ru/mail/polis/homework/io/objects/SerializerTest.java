@@ -107,6 +107,9 @@ public class SerializerTest {
     }
 
     private static Animal generateAnimal() {
+        if (rndThrowNull()) {
+            return null;
+        }
         Animal randomAnimal = new Animal();
         randomAnimal.setPet(generateBoolean());
         randomAnimal.setPredator(generateBoolean());
@@ -114,7 +117,7 @@ public class SerializerTest {
         randomAnimal.setColor(generateString());
         randomAnimal.setMoveType(generateMoveType());
 
-        Animal.AnimalPassport animalPassport = new Animal.AnimalPassport();
+        AnimalPassport animalPassport = new AnimalPassport();
         animalPassport.setSpecies(generateString());
         animalPassport.setSex(generateSex());
         animalPassport.setName(generateString());
@@ -127,6 +130,9 @@ public class SerializerTest {
     }
 
     private static AnimalWithMethods generateAnimalWithMethods() {
+        if (rndThrowNull()) {
+            return null;
+        }
         AnimalWithMethods randomAnimalWithMethods = new AnimalWithMethods();
         randomAnimalWithMethods.setPet(generateBoolean());
         randomAnimalWithMethods.setPredator(generateBoolean());
@@ -134,8 +140,8 @@ public class SerializerTest {
         randomAnimalWithMethods.setColor(generateString());
         randomAnimalWithMethods.setMoveType(generateMoveType());
 
-        AnimalWithMethods.AnimalPassportWithMethods animalPassportWithMethods =
-                new AnimalWithMethods.AnimalPassportWithMethods();
+        AnimalPassportWithMethods animalPassportWithMethods =
+                new AnimalPassportWithMethods();
         animalPassportWithMethods.setSpecies(generateString());
         animalPassportWithMethods.setSex(generateSex());
         animalPassportWithMethods.setName(generateString());
@@ -148,6 +154,9 @@ public class SerializerTest {
     }
 
     private static AnimalExternalizable generateAnimalExternalizable() {
+        if (rndThrowNull()) {
+            return null;
+        }
         AnimalExternalizable randomAnimalExternalizable = new AnimalExternalizable();
         randomAnimalExternalizable.setPet(generateBoolean());
         randomAnimalExternalizable.setPredator(generateBoolean());
@@ -155,8 +164,8 @@ public class SerializerTest {
         randomAnimalExternalizable.setColor(generateString());
         randomAnimalExternalizable.setMoveType(generateMoveType());
 
-        AnimalExternalizable.AnimalPassportExternalizable animalPassportExternalizable =
-                new AnimalExternalizable.AnimalPassportExternalizable();
+        AnimalPassportExternalizable animalPassportExternalizable =
+                new AnimalPassportExternalizable();
         animalPassportExternalizable.setSpecies(generateString());
         animalPassportExternalizable.setSex(generateSex());
         animalPassportExternalizable.setName(generateString());
@@ -204,4 +213,5 @@ public class SerializerTest {
     private static boolean rndThrowNull() {
         return ThreadLocalRandom.current().nextInt(1, 10) == 5;
     }
+
 }

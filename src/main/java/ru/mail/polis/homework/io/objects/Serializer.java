@@ -1,10 +1,5 @@
 package ru.mail.polis.homework.io.objects;
 
-
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -207,30 +202,30 @@ public class Serializer {
         if (Files.notExists(to)) {
             return;
         }
-        try (DataOutputStream outputStream = new DataOutputStream(Files.newOutputStream(to))) {
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(Files.newOutputStream(to))) {
             for (Animal animal : animals) {
                 if (animal == null) {
                     outputStream.writeByte(NULL_BYTE);
                     continue;
                 }
                 outputStream.writeByte(NOT_NULL_BYTE);
-                byte booleansAsByte = (byte) (((animal.isPet() ? 1 : 0) * 2) + (animal.isPredator() ? 1 : 0));
+                byte booleansAsByte = (byte) (((animal.isPet() ? 1 : 0) << 1) + (animal.isPredator() ? 1 : 0));
                 outputStream.writeByte(booleansAsByte);
                 outputStream.writeInt(animal.getLegs());
-                writeString(animal.getColor(), outputStream);
+                SerializationUtilMethods.writeString(animal.getColor(), outputStream);
                 MoveType moveType = animal.getMoveType();
-                writeString(moveType == null ? null : moveType.toString(), outputStream);
+                SerializationUtilMethods.writeString(moveType == null ? null : moveType.toString(), outputStream);
                 if (animal.getAnimalPassport() == null) {
                     outputStream.writeByte(NULL_BYTE);
                 } else {
                     outputStream.writeByte(NOT_NULL_BYTE);
-                    writeString(animal.getAnimalPassport().getSpecies(), outputStream);
+                    SerializationUtilMethods.writeString(animal.getAnimalPassport().getSpecies(), outputStream);
                     Sex sex = animal.getAnimalPassport().getSex();
-                    writeString(sex == null ? null : sex.toString(), outputStream);
-                    writeString(animal.getAnimalPassport().getName(), outputStream);
+                    SerializationUtilMethods.writeString(sex == null ? null : sex.toString(), outputStream);
+                    SerializationUtilMethods.writeString(animal.getAnimalPassport().getName(), outputStream);
                     outputStream.writeInt(animal.getAnimalPassport().getAge());
                     outputStream.writeByte(animal.getAnimalPassport().isVaccinated() ? 1 : 0);
-                    writeString(animal.getAnimalPassport().getDescriptionOfAnimal(), outputStream);
+                    SerializationUtilMethods.writeString(animal.getAnimalPassport().getDescriptionOfAnimal(), outputStream);
                 }
             }
         } catch (IOException e) {
@@ -256,31 +251,31 @@ public class Serializer {
         }
         List<Animal> animals = new ArrayList<>();
         try (InputStream inputStream = Files.newInputStream(from);
-             DataInputStream dataInputStream = new DataInputStream(inputStream)) {
-            while (dataInputStream.available() > 0) {
-                if (dataInputStream.readByte() == NULL_BYTE) {
+             ObjectInputStream objInputStream = new ObjectInputStream(inputStream)) {
+            while (objInputStream.available() > 0) {
+                if (objInputStream.readByte() == NULL_BYTE) {
                     animals.add(null);
                     continue;
                 }
                 Animal animal = new Animal();
-                byte booleansAsByte = dataInputStream.readByte();
+                byte booleansAsByte = objInputStream.readByte();
                 animal.setPredator((booleansAsByte & 1) != 0);
                 animal.setPet((booleansAsByte & 2) != 0);
-                animal.setLegs(dataInputStream.readInt());
-                animal.setColor(readString(dataInputStream));
-                String moveTypeValue = readString(dataInputStream);
+                animal.setLegs(objInputStream.readInt());
+                animal.setColor(SerializationUtilMethods.readString(objInputStream));
+                String moveTypeValue = SerializationUtilMethods.readString(objInputStream);
                 animal.setMoveType(moveTypeValue == null ? null : MoveType.valueOf(moveTypeValue));
-                byte objIsNull = dataInputStream.readByte();
+                byte objIsNull = objInputStream.readByte();
                 if (objIsNull == NOT_NULL_BYTE) {
-                    Animal.AnimalPassport animalPassport = new Animal.AnimalPassport();
+                    AnimalPassport animalPassport = new AnimalPassport();
                     animal.setAnimalPassport(animalPassport);
-                    animalPassport.setSpecies(readString(dataInputStream));
-                    String sexValue = readString(dataInputStream);
+                    animalPassport.setSpecies(SerializationUtilMethods.readString(objInputStream));
+                    String sexValue = SerializationUtilMethods.readString(objInputStream);
                     animal.getAnimalPassport().setSex(sexValue == null ? null : Sex.valueOf(sexValue));
-                    animalPassport.setName(readString(dataInputStream));
-                    animalPassport.setAge(dataInputStream.readInt());
-                    animalPassport.setVaccinated(dataInputStream.readByte() == 1);
-                    animalPassport.setDescriptionOfAnimal(readString(dataInputStream));
+                    animalPassport.setName(SerializationUtilMethods.readString(objInputStream));
+                    animalPassport.setAge(objInputStream.readInt());
+                    animalPassport.setVaccinated(objInputStream.readByte() == 1);
+                    animalPassport.setDescriptionOfAnimal(SerializationUtilMethods.readString(objInputStream));
                     animal.setAnimalPassport(animalPassport);
                 }
                 animals.add(animal);
@@ -291,20 +286,4 @@ public class Serializer {
         return animals;
     }
 
-    private static void writeString(String str, DataOutput out) throws IOException {
-        if (str == null) {
-            out.writeByte(NULL_BYTE);
-            return;
-        }
-        out.writeByte(NOT_NULL_BYTE);
-        out.writeUTF(str);
-    }
-
-    private static String readString(DataInput in) throws IOException {
-        byte stringIsNull = in.readByte();
-        if (stringIsNull == NULL_BYTE) {
-            return null;
-        }
-        return in.readUTF();
-    }
 }

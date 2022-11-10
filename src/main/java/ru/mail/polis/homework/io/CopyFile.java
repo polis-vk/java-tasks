@@ -46,7 +46,7 @@ public class CopyFile {
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                 Path pathForCopy = to.resolve(from.relativize(dir));
                 if (Files.notExists(pathForCopy)) {
-                    Files.createDirectories(pathForCopy);
+                    Files.createDirectory(pathForCopy);
                 }
                 return FileVisitResult.CONTINUE;
             }
@@ -60,12 +60,13 @@ public class CopyFile {
     }
 
     private static void copy(Path from, Path to) throws IOException {
-        try (InputStream inputStream = Files.newInputStream(from);
-             OutputStream outputStream = Files.newOutputStream(to)) {
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int read;
-            while ((read = inputStream.read(buffer)) > 0) {
-                outputStream.write(buffer, 0, read);
+        try (InputStream inputStream = Files.newInputStream(from)) {
+            try (OutputStream outputStream = Files.newOutputStream(to)) {
+                byte[] buffer = new byte[BUFFER_SIZE];
+                int read;
+                while ((read = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, read);
+                }
             }
         }
     }

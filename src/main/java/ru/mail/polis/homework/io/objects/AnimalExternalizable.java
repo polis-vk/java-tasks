@@ -25,58 +25,24 @@ public class AnimalExternalizable implements Externalizable {
     public AnimalExternalizable() {
     }
 
-    public AnimalExternalizable(boolean isPet, boolean isPredator, int legs, String color,
-                                MoveType moveType, AnimalPassportExternalizable animalPassportExternalizable) {
-        this.isPet = isPet;
-        this.isPredator = isPredator;
-        this.legs = legs;
-        this.color = color;
-        this.moveType = moveType;
-        this.animalPassportExternalizable = animalPassportExternalizable;
-    }
-
-    public boolean isPet() {
-        return isPet;
-    }
-
     public void setPet(boolean pet) {
         isPet = pet;
-    }
-
-    public boolean isPredator() {
-        return isPredator;
     }
 
     public void setPredator(boolean predator) {
         isPredator = predator;
     }
 
-    public int getLegs() {
-        return legs;
-    }
-
     public void setLegs(int legs) {
         this.legs = legs;
-    }
-
-    public String getColor() {
-        return color;
     }
 
     public void setColor(String color) {
         this.color = color;
     }
 
-    public MoveType getMoveType() {
-        return moveType;
-    }
-
     public void setMoveType(MoveType moveType) {
         this.moveType = moveType;
-    }
-
-    public AnimalPassportExternalizable getAnimalPassportExternalizable() {
-        return animalPassportExternalizable;
     }
 
     public void setAnimalPassportExternalizable(AnimalPassportExternalizable animalPassportExternalizable) {
@@ -85,8 +51,8 @@ public class AnimalExternalizable implements Externalizable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(isPet(), isPredator(), getLegs(),
-                getColor(), getMoveType(), getAnimalPassportExternalizable());
+        return Objects.hash(isPet, isPredator, legs,
+                color, moveType, animalPassportExternalizable);
     }
 
     @Override
@@ -98,201 +64,160 @@ public class AnimalExternalizable implements Externalizable {
             return false;
         }
         AnimalExternalizable animalExternalizable = (AnimalExternalizable) obj;
-        return isPet() == animalExternalizable.isPet() &&
-                isPredator() == animalExternalizable.isPredator() &&
-                getLegs() == animalExternalizable.getLegs() &&
-                Objects.equals(getColor(), animalExternalizable.getColor()) &&
-                getMoveType() == animalExternalizable.getMoveType() &&
-                Objects.equals(getAnimalPassportExternalizable(),
-                        animalExternalizable.getAnimalPassportExternalizable());
+        return isPet == animalExternalizable.isPet &&
+                isPredator == animalExternalizable.isPredator &&
+                legs == animalExternalizable.legs &&
+                Objects.equals(color, animalExternalizable.color) &&
+                moveType == animalExternalizable.moveType &&
+                Objects.equals(animalPassportExternalizable,
+                        animalExternalizable.animalPassportExternalizable);
     }
 
     @Override
     public String toString() {
         return "AnimalExternalizable{" +
-                "pet='" + isPet() + '\'' +
-                ", predator=" + isPredator() +
-                ", legs=" + getLegs() +
-                ", color=" + getColor() +
-                ", moveType=" + getMoveType() +
-                ", animalPassportExternalizable=" + getAnimalPassportExternalizable() +
+                "pet='" + isPet + '\'' +
+                ", predator=" + isPredator +
+                ", legs=" + legs +
+                ", color=" + color +
+                ", moveType=" + moveType +
+                ", animalPassportExternalizable=" + animalPassportExternalizable +
                 '}';
     }
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        byte booleansAsByte = (byte) (((isPet() ? 1 : 0) * 2) + (isPredator() ? 1 : 0));
+        byte booleansAsByte = (byte) (((isPet ? 1 : 0) << 1) + (isPredator ? 1 : 0));
         out.writeByte(booleansAsByte);
-        out.writeInt(getLegs());
-        writeString(getColor(), out);
-        MoveType moveType = getMoveType();
-        writeString(moveType == null ? null : moveType.toString(), out);
-        if (getAnimalPassportExternalizable() == null) {
+        out.writeInt(legs);
+        SerializationUtilMethods.writeString(color, out);
+        MoveType currentMoveType = moveType;
+        SerializationUtilMethods.writeString(currentMoveType == null ? null : currentMoveType.toString(), out);
+        if (animalPassportExternalizable == null) {
             out.writeByte(NULL_BYTE);
         } else {
             out.writeByte(NOT_NULL_BYTE);
-            out.writeObject(getAnimalPassportExternalizable());
+            out.writeObject(animalPassportExternalizable);
         }
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         byte booleansAsByte = in.readByte();
-        setPredator((booleansAsByte & 1) != 0);
-        setPet((booleansAsByte & 2) != 0);
-        setLegs(in.readInt());
-        setColor(readString(in));
-        String moveTypeValue = readString(in);
-        setMoveType(moveTypeValue == null ? null : MoveType.valueOf(moveTypeValue));
+        isPredator = (booleansAsByte & 1) != 0;
+        isPet = (booleansAsByte & 2) != 0;
+        legs = in.readInt();
+        color = SerializationUtilMethods.readString(in);
+        String moveTypeValue = SerializationUtilMethods.readString(in);
+        moveType = moveTypeValue == null ? null : MoveType.valueOf(moveTypeValue);
         byte objIsNull = in.readByte();
         if (objIsNull == NULL_BYTE) {
-            setAnimalPassportExternalizable(null);
+            animalPassportExternalizable = null;
         } else {
-            setAnimalPassportExternalizable((AnimalPassportExternalizable) in.readObject());
+            animalPassportExternalizable = (AnimalPassportExternalizable) in.readObject();
         }
     }
 
-    static class AnimalPassportExternalizable implements Externalizable {
-        private String species;
-        private Sex sex;
+}
 
-        private String name;
-        private int age;
-        private boolean isVaccinated;
-        private String descriptionOfAnimal;
+class AnimalPassportExternalizable implements Externalizable {
+    private String species;
+    private Sex sex;
 
-        public AnimalPassportExternalizable() {
-        }
+    private String name;
+    private int age;
+    private boolean isVaccinated;
+    private String descriptionOfAnimal;
 
-        public AnimalPassportExternalizable(String name, Sex sex, int age, String species,
-                                            boolean isVaccinated, String descriptionOfAnimal) {
-            this.name = name;
-            this.sex = sex;
-            this.age = age;
-            this.species = species;
-            this.isVaccinated = isVaccinated;
-            this.descriptionOfAnimal = descriptionOfAnimal;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public Sex getSex() {
-            return sex;
-        }
-
-        public void setSex(Sex sex) {
-            this.sex = sex;
-        }
-
-        public int getAge() {
-            return age;
-        }
-
-        public void setAge(int age) {
-            this.age = age;
-        }
-
-        public String getSpecies() {
-            return species;
-        }
-
-        public void setSpecies(String species) {
-            this.species = species;
-        }
-
-        public boolean isVaccinated() {
-            return isVaccinated;
-        }
-
-        public void setVaccinated(boolean vaccinated) {
-            isVaccinated = vaccinated;
-        }
-
-        public String getDescriptionOfAnimal() {
-            return descriptionOfAnimal;
-        }
-
-        public void setDescriptionOfAnimal(String descriptionOfAnimal) {
-            this.descriptionOfAnimal = descriptionOfAnimal;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(getSpecies(), getSex(), getName(), getAge(), isVaccinated(), getDescriptionOfAnimal());
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null || obj.getClass() != getClass()) {
-                return false;
-            }
-            AnimalPassportExternalizable animalPassportExternalizable = (AnimalPassportExternalizable) obj;
-            return Objects.equals(getSpecies(), animalPassportExternalizable.getSpecies()) &&
-                    getSex() == animalPassportExternalizable.getSex() &&
-                    Objects.equals(getName(), animalPassportExternalizable.getName()) &&
-                    getAge() == animalPassportExternalizable.getAge() &&
-                    isVaccinated() == animalPassportExternalizable.isVaccinated() &&
-                    Objects.equals(getDescriptionOfAnimal(), animalPassportExternalizable.getDescriptionOfAnimal());
-        }
-
-        @Override
-        public String toString() {
-            return "AnimalPassportExternalizable {" +
-                    "species='" + getSpecies() + '\'' +
-                    ", sex=" + getSex() +
-                    ", name=" + getName() +
-                    ", age=" + getAge() +
-                    ", vaccinated=" + isVaccinated() +
-                    ", descriptionOfAnimal=" + getDescriptionOfAnimal() +
-                    '}';
-        }
-
-        @Override
-        public void writeExternal(ObjectOutput out) throws IOException {
-            writeString(getSpecies(), out);
-            Sex sex = getSex();
-            writeString(sex == null ? null : sex.toString(), out);
-            writeString(getName(), out);
-            out.writeInt(getAge());
-            out.writeByte(isVaccinated() ? 1 : 0);
-            writeString(getDescriptionOfAnimal(), out);
-        }
-
-        @Override
-        public void readExternal(ObjectInput in) throws IOException {
-            setSpecies(readString(in));
-            String sexValue = readString(in);
-            setSex(sexValue == null ? null : Sex.valueOf(sexValue));
-            setName(readString(in));
-            setAge(in.readInt());
-            setVaccinated(in.readByte() == 1);
-            setDescriptionOfAnimal(readString(in));
-        }
+    public AnimalPassportExternalizable() {
     }
 
-    private static void writeString(String str, ObjectOutput out) throws IOException {
-        if (str == null) {
-            out.writeByte(NULL_BYTE);
-            return;
-        }
-        out.writeByte(NOT_NULL_BYTE);
-        out.writeUTF(str);
+    public String getName() {
+        return name;
     }
 
-    private static String readString(ObjectInput in) throws IOException {
-        byte stringIsNull = in.readByte();
-        if (stringIsNull == NULL_BYTE) {
-            return null;
-        }
-        return in.readUTF();
+    public void setName(String name) {
+        this.name = name;
     }
+
+    public void setSex(Sex sex) {
+        this.sex = sex;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public void setSpecies(String species) {
+        this.species = species;
+    }
+
+    public void setVaccinated(boolean vaccinated) {
+        isVaccinated = vaccinated;
+    }
+
+    public void setDescriptionOfAnimal(String descriptionOfAnimal) {
+        this.descriptionOfAnimal = descriptionOfAnimal;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(species, sex, name, age, isVaccinated, descriptionOfAnimal);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != getClass()) {
+            return false;
+        }
+        AnimalPassportExternalizable animalPassportExternalizable = (AnimalPassportExternalizable) obj;
+        return Objects.equals(species, animalPassportExternalizable.species) &&
+                sex == animalPassportExternalizable.sex &&
+                Objects.equals(name, animalPassportExternalizable.name) &&
+                age == animalPassportExternalizable.age &&
+                isVaccinated == animalPassportExternalizable.isVaccinated &&
+                Objects.equals(descriptionOfAnimal, animalPassportExternalizable.descriptionOfAnimal);
+    }
+
+    @Override
+    public String toString() {
+        return "AnimalPassportExternalizable {" +
+                "species='" + species + '\'' +
+                ", sex=" + sex +
+                ", name=" + name +
+                ", age=" + age +
+                ", vaccinated=" + isVaccinated +
+                ", descriptionOfAnimal=" + descriptionOfAnimal +
+                '}';
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        SerializationUtilMethods.writeString(species, out);
+        Sex currentSex = sex;
+        SerializationUtilMethods.writeString(currentSex == null ? null : currentSex.toString(), out);
+        SerializationUtilMethods.writeString(name, out);
+        out.writeInt(age);
+        out.writeByte(isVaccinated ? 1 : 0);
+        SerializationUtilMethods.writeString(descriptionOfAnimal, out);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException {
+        species = SerializationUtilMethods.readString(in);
+        String sexValue = SerializationUtilMethods.readString(in);
+        sex = sexValue == null ? null : Sex.valueOf(sexValue);
+        name = SerializationUtilMethods.readString(in);
+        age = in.readInt();
+        isVaccinated = in.readByte() == 1;
+        descriptionOfAnimal = SerializationUtilMethods.readString(in);
+    }
+
 }
