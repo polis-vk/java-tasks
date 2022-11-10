@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.io.objects;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -139,32 +137,32 @@ public class Serializer {
         if (Files.notExists(file)) {
             return;
         }
-        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(file))) {
-            oos.writeInt(animals.size());
+        try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(Files.newOutputStream(file)))) {
+            dos.writeInt(animals.size());
             for (Animal animal : animals) {
                 AnimalByte animalByte = new AnimalByte(animal);
-                oos.writeByte(animalByte.writeByte());
+                dos.writeByte(animalByte.writeByte());
                 if (animalByte.animalIsNull()) {
                     continue;
                 }
                 if (animalByte.nameIsNotNull()) {
-                    oos.writeUTF(animal.getName());
+                    dos.writeUTF(animal.getName());
                 }
-                oos.writeInt(animal.getAge());
+                dos.writeInt(animal.getAge());
                 if (animalByte.animalTypeIsNotNull()) {
-                    oos.writeUTF(animal.getAnimalType().name());
+                    dos.writeUTF(animal.getAnimalType().name());
                 }
                 Population population = animal.getPopulation();
                 PopulationByte populationByte = new PopulationByte(population);
-                oos.writeByte(populationByte.writeByte());
+                dos.writeByte(populationByte.writeByte());
                 if (populationByte.populationIsNull()) {
                     continue;
                 }
                 if (populationByte.nameIsNotNull()) {
-                    oos.writeUTF(population.getName());
+                    dos.writeUTF(population.getName());
                 }
-                oos.writeLong(population.getSize());
-                oos.writeInt(population.getDensity());
+                dos.writeLong(population.getSize());
+                dos.writeInt(population.getDensity());
             }
         } catch (
                 IOException e) {
@@ -187,36 +185,36 @@ public class Serializer {
             return null;
         }
         List<Animal> animals = new ArrayList<>();
-        try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(file))) {
-            int size = ois.readInt();
+        try (DataInputStream dis = new DataInputStream(new BufferedInputStream(Files.newInputStream(file)))) {
+            int size = dis.readInt();
             for (int i = 0; i < size; i++) {
-                AnimalByte animalByte = new AnimalByte(ois.readByte());
+                AnimalByte animalByte = new AnimalByte(dis.readByte());
                 if (animalByte.animalIsNull()) {
                     animals.add(null);
                     continue;
                 }
                 String name = null;
                 if (animalByte.nameIsNotNull()) {
-                    name = ois.readUTF();
+                    name = dis.readUTF();
                 }
-                int age = ois.readInt();
+                int age = dis.readInt();
                 boolean friendly = animalByte.isFriendly();
                 boolean warmBlooded = animalByte.isWarmBlooded();
                 AnimalType animalType = null;
                 if (animalByte.animalTypeIsNotNull()) {
-                    animalType = AnimalType.valueOf(ois.readUTF());
+                    animalType = AnimalType.valueOf(dis.readUTF());
                 }
-                PopulationByte populationByte = new PopulationByte(ois.readByte());
+                PopulationByte populationByte = new PopulationByte(dis.readByte());
                 if (populationByte.populationIsNull()) {
                     animals.add(new Animal(name, age, friendly, warmBlooded, animalType, null));
                     continue;
                 }
                 if (populationByte.nameIsNotNull()) {
                     animals.add(new Animal(name, age, friendly, warmBlooded, animalType,
-                            new Population(ois.readUTF(), ois.readLong(), ois.readInt())));
+                            new Population(dis.readUTF(), dis.readLong(), dis.readInt())));
                 } else {
                     animals.add(new Animal(name, age, friendly, warmBlooded, animalType,
-                            new Population(null, ois.readLong(), ois.readInt())));
+                            new Population(null, dis.readLong(), dis.readInt())));
                 }
             }
         } catch (IOException e) {
