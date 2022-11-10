@@ -34,6 +34,14 @@ import java.util.List;
  */
 public class Serializer {
     private static final int BUFFER_SIZE = 256 * 1024;
+    private final static int IS_ANIMAL_NUL_POS = 0;
+    private final static int IS_HAPPY_POS = 1;
+    private final static int IS_ANGRY_POS = 2;
+    private final static int IS_NAME_NULL_POS = 3;
+    private final static int IS_MOVE_NULL_POS = 4;
+    private final static int IS_ADDRESS_NULL_POS = 5;
+    private static final int IS_STREET_NULL_POS = 6;
+    private static final int IS_PHONE_NULL_POS = 7;
     /**
      * 1 тугрик
      * Реализовать простую сериализацию, с помощью специального потока для сериализации объектов
@@ -203,16 +211,31 @@ public class Serializer {
         Path file = Paths.get(fileName);
         try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(Files.newOutputStream(file), BUFFER_SIZE))) {
             for (AnimalWithMethods animal : animals) {
-                boolean isNull = (animal == null);
-                out.writeBoolean(isNull);
-                if (!isNull) {
-                    out.writeBoolean(animal.isHappy());
-                    out.writeBoolean(animal.isAngry());
+                byte booleans = setBoolAt((byte) 0, IS_ANIMAL_NUL_POS, animal == null);
+                if (!getBoolAt(booleans, IS_ANIMAL_NUL_POS)) {
+                    booleans = setBoolAt(booleans, IS_HAPPY_POS, animal.isHappy());
+                    booleans = setBoolAt(booleans, IS_ANGRY_POS, animal.isAngry());
+                    booleans = setBoolAt(booleans, IS_NAME_NULL_POS, animal.getName() == null);
+                    booleans = setBoolAt(booleans, IS_MOVE_NULL_POS, animal.getMoveType() == null);
+
+                    AnimalWithMethods.AddressWithMethods address = animal.getHomeAddress();
+                    booleans = setBoolAt(booleans, IS_ADDRESS_NULL_POS, address == null);
+                    if (!getBoolAt(booleans, IS_ADDRESS_NULL_POS)) {
+                        booleans = setBoolAt(booleans, IS_STREET_NULL_POS, address.getStreet() == null);
+                        booleans = setBoolAt(booleans, IS_PHONE_NULL_POS, address.getPhoneNumber() == null);
+                    }
+
+                    out.writeByte(booleans);
                     out.writeInt(animal.getLegs());
-                    writeString(out, animal.getName());
-                    AnimalWithMethods.MoveType moveType = animal.getMoveType();
-                    writeString(out, (moveType == null ? null : moveType.name()));
-                    writeAddressWithMethods(out, animal.getHomeAddress());
+                    if (!getBoolAt(booleans, IS_NAME_NULL_POS)) out.writeUTF(animal.getName());
+                    if (!getBoolAt(booleans, IS_MOVE_NULL_POS)) out.writeUTF(animal.getMoveType().name());
+                    if (!getBoolAt(booleans, IS_ADDRESS_NULL_POS)) {
+                        if (!getBoolAt(booleans, IS_STREET_NULL_POS)) out.writeUTF(address.getStreet());
+                        out.writeInt(address.getHouse());
+                        if (!getBoolAt(booleans, IS_PHONE_NULL_POS)) out.writeUTF(address.getPhoneNumber());
+                    }
+                }  else {
+                    out.writeByte(booleans);
                 }
             }
         } catch (IOException e) {
@@ -238,22 +261,23 @@ public class Serializer {
         try (DataInputStream in = new DataInputStream(new BufferedInputStream(Files.newInputStream(file), BUFFER_SIZE))) {
             try {
                 while (true) {
-                    boolean isNull = in.readBoolean();
-                    if (isNull) {
+                    byte booleans = in.readByte();
+                    if (getBoolAt(booleans, IS_ANIMAL_NUL_POS)) {
                         animals.add(null);
                     } else {
-                        boolean isHappy = in.readBoolean();
-                        boolean isAngry = in.readBoolean();
+                        boolean isHappy = getBoolAt(booleans, IS_HAPPY_POS);
+                        boolean isAngry = getBoolAt(booleans, IS_ANGRY_POS);
                         int legs = in.readInt();
-                        String name = readString(in);
-                        String moveStr = readString(in);
-                        AnimalWithMethods.MoveType moveType;
-                        if (moveStr != null) {
-                            moveType = AnimalWithMethods.MoveType.valueOf(moveStr);
-                        } else {
-                            moveType = null;
+                        String name = (getBoolAt(booleans, IS_NAME_NULL_POS) ? null : in.readUTF());
+                        AnimalWithMethods.MoveType moveType = (getBoolAt(booleans, IS_MOVE_NULL_POS) ? null :
+                                AnimalWithMethods.MoveType.valueOf(in.readUTF()));
+                        AnimalWithMethods.AddressWithMethods homeAddress = null;
+                        if (!getBoolAt(booleans, IS_ADDRESS_NULL_POS)) {
+                            String street = (getBoolAt(booleans, IS_STREET_NULL_POS) ? null : in.readUTF());
+                            int house = in.readInt();
+                            String phone = (getBoolAt(booleans, IS_PHONE_NULL_POS) ? null : in.readUTF());
+                            homeAddress = new AnimalWithMethods.AddressWithMethods(street, house, phone);
                         }
-                        AnimalWithMethods.AddressWithMethods homeAddress = readAddressWithMethods(in);
                         animals.add(new AnimalWithMethods(isHappy, isAngry, legs, name, moveType, homeAddress));
                     }
                 }
@@ -267,41 +291,14 @@ public class Serializer {
         return animals;
     }
 
-    private static void writeString(DataOutputStream out, String str) throws IOException{
-        boolean isStrNull = (str == null);
-        out.writeBoolean(isStrNull);
-        if (!isStrNull) {
-            out.writeUTF(str);
+    private static byte setBoolAt(byte byt, int i, boolean bool) {
+        if (bool) {
+            return (byte) (byt | (1 << i));
         }
+        return (byte) (byt & ~(1 << i));
     }
 
-    private static String readString(DataInputStream in) throws IOException {
-        boolean isStrNull = in.readBoolean();
-        if (isStrNull) {
-            return null;
-        }
-        return in.readUTF();
-    }
-
-    private static void writeAddressWithMethods(DataOutputStream out,
-                                                AnimalWithMethods.AddressWithMethods address) throws IOException{
-        boolean isAddressNull = (address == null);
-        out.writeBoolean(isAddressNull);
-        if (!isAddressNull) {
-            writeString(out, address.getStreet());
-            out.writeInt(address.getHouse());
-            writeString(out, address.getPhoneNumber());
-        }
-    }
-
-    private static AnimalWithMethods.AddressWithMethods readAddressWithMethods(DataInputStream in) throws IOException {
-        boolean isAddressNull = in.readBoolean();
-        if (isAddressNull) {
-            return null;
-        }
-        String street = readString(in);
-        int house = in.readInt();
-        String phoneNumber = readString(in);
-        return new AnimalWithMethods.AddressWithMethods(street, house, phoneNumber);
+    private static boolean getBoolAt(byte byt, int i) {
+        return (byt & (1 << i)) != 0;
     }
 }
