@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 
 public class SerializerTest {
 
-    private static final int ANIMALS_COUNT = 300000;
+    private static final int ANIMALS_COUNT = 1000000;
     private static final int MAX_STRING_LENGTH = 10;
     private static final Path TEST_DIRECTORY_PATH =
             Paths.get("src", "test", "resources", "io", "objects");
