@@ -3,9 +3,10 @@ package ru.mail.polis.homework.reflection;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -54,12 +55,15 @@ public class ReflectionToStringHelper {
             return "null";
         }
         Class<?> clazz = object.getClass();
-        Field[] toStringFields = getToStringFields(clazz);
         StringBuilder sb = new StringBuilder();
         boolean isSomethingRecorded = false;
         sb.append("{");
         while (clazz != Object.class) {
-            for (Field field : toStringFields) {
+            List<Field> addedFields = Arrays.stream(clazz.getDeclaredFields())
+                    .filter(field -> !Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class))
+                    .sorted(Comparator.comparing(Field::getName))
+                    .collect(Collectors.toList());
+            for (Field field : addedFields) {
                 try {
                     field.setAccessible(true);
                     sb.append(field.getName())
@@ -76,26 +80,12 @@ public class ReflectionToStringHelper {
                 }
             }
             clazz = clazz.getSuperclass();
-            toStringFields = getToStringFields(clazz);
         }
         if (isSomethingRecorded) {
             sb.setLength(sb.length() - 2);
         }
         sb.append("}");
         return sb.toString();
-    }
-
-    private static Field[] getToStringFields(Class<?> clazz) {
-        Field[] allFields = clazz.getDeclaredFields();
-        List<Field> fields = new ArrayList<>(allFields.length);
-        for (Field field : allFields) {
-            if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
-                continue;
-            }
-            fields.add(field);
-        }
-        fields.sort(Comparator.comparing(Field::getName));
-        return fields.toArray(new Field[0]);
     }
 
     private static void fillStringBuilderFromArray(StringBuilder sb, Field field, Object object) throws IllegalAccessException {
