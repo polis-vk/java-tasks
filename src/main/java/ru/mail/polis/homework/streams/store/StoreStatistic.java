@@ -38,14 +38,14 @@ public class StoreStatistic {
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
         return orders.stream()
-                .flatMap(order -> order.getItemCount().entrySet().stream()
-                        .map(itemIntegerEntry -> Map.entry(Timestamp.valueOf(order.getTime()
+                .collect(Collectors.toMap(order -> Timestamp.valueOf(order.getTime()
                                 .toLocalDateTime()
                                 .toLocalDate()
-                                .atStartOfDay()), itemIntegerEntry)))
-                .collect(Collectors.groupingBy(Map.Entry::getKey,
-                        Collectors.groupingBy(timestampEntryEntry -> timestampEntryEntry.getValue().getKey(),
-                                Collectors.summingInt(entry -> entry.getValue().getValue()))));
+                                .atStartOfDay()),
+                        Order::getItemCount, (o1, o2) -> {
+                            o1.forEach((key, value) -> o2.merge(key, value, Integer::sum));
+                            return o2;
+                        }));
     }
 
     /**

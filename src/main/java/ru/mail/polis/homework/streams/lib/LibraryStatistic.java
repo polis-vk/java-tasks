@@ -1,11 +1,15 @@
 package ru.mail.polis.homework.streams.lib;
 
 import java.sql.Timestamp;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.reverseOrder;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Класс для работы со статистикой по библиотеке.
@@ -30,31 +34,35 @@ public class LibraryStatistic {
                 .filter(archivedData -> archivedData.getBook().getGenre().equals(genre))
                 .filter(archivedData -> archivedData.getReturned() != null
                         && TimeUnit.MILLISECONDS.toDays(archivedData.getReturned().getTime()
-                        - archivedData.getTake().getTime()) >= EXPERT_DAY_LIMIT
-                        || archivedData.getReturned() == null
-                        && TimeUnit.MILLISECONDS.toDays(new Timestamp(System.currentTimeMillis()).getTime()
                         - archivedData.getTake().getTime()) >= EXPERT_DAY_LIMIT)
-                .collect(Collectors.groupingBy(ArchivedData::getUser))
+                .collect(groupingBy(ArchivedData::getUser))
                 .entrySet().stream()
                 .filter(archiveMap -> archiveMap.getValue().size() >= BOOKS_PER_EXPERT)
-                .collect(Collectors.toMap(Map.Entry::getKey, value -> value.getValue().size()));
+                .collect(toMap(Map.Entry::getKey, value -> value.getValue()
+                        .stream().mapToInt(data -> data.getBook().getPage()).sum()
+                        + (value.getKey().getBook().getGenre().equals(genre) ? value.getKey().getReadedPages() : 0)));
     }
 
     /**
      * Вернуть любимый жанр пользователя. Тот что чаще всего встречается. Не учитывать тот что пользователь читает в данный момент.
      * Если есть несколько одинаковых по весам жанров - брать в расчет то, что пользователь читает в данный момент.
+     *
      * @param library - данные библиотеки
-     * @param user - пользователь
+     * @param user    - пользователь
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
         return library.getArchive().stream()
                 .filter(archivedData -> archivedData.getUser().equals(user))
-                .collect(Collectors.groupingBy(archivedData -> archivedData.getBook().getGenre(),
-                        Collectors.counting()))
+                .collect(groupingBy(archivedData -> archivedData.getBook().getGenre(),
+                        counting()))
                 .entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey).orElse(null);
+                .max((o1, o2) -> {
+                    if (o1.getValue().equals(o2.getValue())) {
+                        return (o1.getKey().equals(user.getBook().getGenre())) ? 1 : -1;
+                    }
+                    return o1.getValue().compareTo(o2.getValue());
+                }).get().getKey();
     }
 
     /**
@@ -65,7 +73,7 @@ public class LibraryStatistic {
      */
     public List<User> unreliableUsers(Library library) {
         return library.getArchive().stream()
-                .collect(Collectors.groupingBy(ArchivedData::getUser))
+                .collect(groupingBy(ArchivedData::getUser))
                 .entrySet().stream()
                 .filter(userListEntry -> userListEntry.getValue().stream()
                         .filter(archivedData -> archivedData.getReturned() != null
@@ -73,8 +81,8 @@ public class LibraryStatistic {
                                 - archivedData.getTake().getTime()) > UNRELIABLE_DAY_LIMIT
                                 || archivedData.getReturned() == null
                                 && TimeUnit.MILLISECONDS.toDays(
-                                        new Timestamp(System.currentTimeMillis()).getTime()
-                                                - archivedData.getTake().getTime()) > UNRELIABLE_DAY_LIMIT)
+                                new Timestamp(System.currentTimeMillis()).getTime()
+                                        - archivedData.getTake().getTime()) > UNRELIABLE_DAY_LIMIT)
                         .count() > userListEntry.getValue().size() / 2)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
@@ -104,7 +112,11 @@ public class LibraryStatistic {
                 .entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, genreMapEntry -> genreMapEntry.getValue()
                         .entrySet().stream()
-                        .max(Comparator.comparingLong(Map.Entry::getValue)).get().getKey())
-                );
+                        .max(Map.Entry.<String, Long>comparingByValue()
+                                .thenComparing(reverseOrder(Map.Entry.comparingByKey())))
+                        .filter(entry -> library.getArchive()
+                                .stream()
+                                .anyMatch(archivedData -> archivedData.getBook().getAuthor().equals(entry.getKey())))
+                        .map(Map.Entry::getKey).orElse("Author not determined")));
     }
 }
