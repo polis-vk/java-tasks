@@ -1,14 +1,10 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -51,9 +47,57 @@ import java.util.stream.Stream;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
+    private static final String COMMA_SEPARATOR = ", ";
+    private static final String COLON_SEPARATOR = ": ";
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("{");
+        try {
+            Class<?> currentClass = object.getClass();
+            do {
+                Field[] currentFields = Arrays.stream(currentClass.getDeclaredFields())
+                        .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                        .filter(field -> !field.isAnnotationPresent(SkipField.class))
+                        .sorted(Comparator.comparing(Field::getName))
+                        .toArray(Field[]::new);
+
+                for (Field field : currentFields) {
+                    builder.append(field.getName()).append(COLON_SEPARATOR);
+                    appendInString(builder, field, object);
+                    builder.append(COMMA_SEPARATOR);
+                }
+                currentClass = currentClass.getSuperclass();
+            } while (currentClass != null);
+
+            builder.delete(builder.length() - COMMA_SEPARATOR.length(), builder.length());
+        } catch (Exception ignored) {
+        }
+        builder.append("}");
+        return builder.toString();
+    }
+
+    private static void appendInString(StringBuilder builder, Field field, Object object) throws IllegalAccessException {
+        field.setAccessible(true);
+        Object value = field.get(object);
+        Class<?> currentClass = field.getType();
+        if (value == null || !currentClass.isArray()) {
+            builder.append(value);
+            return;
+        }
+
+        builder.append("[");
+        for (int i = 0; i < Array.getLength(value); i++) {
+            if (i != 0) {
+                builder.append(COMMA_SEPARATOR);
+            }
+            builder.append(Array.get(value, i));
+        }
+        builder.append("]");
     }
 }
+
