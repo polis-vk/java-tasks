@@ -50,42 +50,47 @@ import java.util.stream.Collectors;
  */
 public class ReflectionToStringHelper {
 
+    private static final String COMMA = ", ";
+
     public static String reflectiveToString(Object object) {
         if (object == null) {
             return "null";
         }
+
         Class<?> clazz = object.getClass();
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder().append("{");
         boolean isSomethingRecorded = false;
-        sb.append("{");
+
         while (clazz != Object.class) {
             List<Field> addedFields = Arrays.stream(clazz.getDeclaredFields())
-                    .filter(field -> !Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class))
+                    .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                    .filter(field -> !field.isAnnotationPresent(SkipField.class))
                     .sorted(Comparator.comparing(Field::getName))
                     .collect(Collectors.toList());
+
             for (Field field : addedFields) {
                 try {
                     field.setAccessible(true);
-                    sb.append(field.getName())
-                            .append(": ");
+                    sb.append(field.getName()).append(": ");
                     if (field.getType().isArray()) {
                         fillStringBuilderFromArray(sb, field, object);
                     } else {
                         sb.append(field.get(object));
                     }
-                    sb.append(", ");
+                    sb.append(COMMA);
                     isSomethingRecorded = true;
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
             }
+
             clazz = clazz.getSuperclass();
         }
+
         if (isSomethingRecorded) {
-            sb.setLength(sb.length() - 2);
+            removeExtraComma(sb);
         }
-        sb.append("}");
-        return sb.toString();
+        return sb.append("}").toString();
     }
 
     private static void fillStringBuilderFromArray(StringBuilder sb, Field field, Object object) throws IllegalAccessException {
@@ -101,10 +106,13 @@ public class ReflectionToStringHelper {
             return;
         }
         for (int i = 0; i < length; i++) {
-            sb.append(Array.get(array, i))
-                    .append(", ");
+            sb.append(Array.get(array, i)).append(COMMA);
         }
-        sb.setLength(sb.length() - 2);
+        removeExtraComma(sb);
         sb.append("]");
+    }
+
+    private static void removeExtraComma(StringBuilder sb) {
+        sb.setLength(sb.length() - COMMA.length());
     }
 }
