@@ -7,8 +7,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.Objects;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,7 +52,68 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        Class<?> clazz = object.getClass();
+        StringBuilder stringBuilder = new StringBuilder("{");
+
+        while (!Objects.equals(clazz, Object.class)) {
+            for (Field field : getSortedFields(clazz)) {
+                if (shouldSkipField(field)) {
+                    continue;
+                }
+                appendFieldToStringBuilder(field, object, stringBuilder);
+                stringBuilder.append(", ");
+            }
+            clazz = clazz.getSuperclass();
+        }
+
+        if (stringBuilder.length() > 1) {
+            stringBuilder.setLength(stringBuilder.length() - 2);
+        }
+
+        stringBuilder.append("}");
+
+        return stringBuilder.toString();
+    }
+
+    private static void appendFieldToStringBuilder(Field field, Object object, StringBuilder stringBuilder) {
+        field.setAccessible(true);
+        stringBuilder.append(field.getName()).append(": ");
+        Object value = null;
+        try {
+            value = field.get(object);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        if (value != null && field.getType().isArray()) {
+            appendArrayToStringBuilder(value, stringBuilder);
+        } else {
+            stringBuilder.append(value);
+        }
+    }
+
+    private static void appendArrayToStringBuilder(Object object, StringBuilder stringBuilder) {
+        int length = Array.getLength(object);
+        stringBuilder.append("[");
+        if (length > 0) {
+            stringBuilder.append(Array.get(object, 0));
+        }
+        for (int i = 1; i < length; i++) {
+            stringBuilder.append(", ").append(Array.get(object, i));
+        }
+        stringBuilder.append("]");
+    }
+
+    private static Field[] getSortedFields(Class<?> clazz) {
+        Field[] fields = clazz.getDeclaredFields();
+        Arrays.sort(fields, Comparator.comparing(Field::getName));
+        return fields;
+    }
+
+    private static boolean shouldSkipField(Field field) {
+        return field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers());
     }
 }
