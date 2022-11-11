@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.streams.lib;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,17 +32,18 @@ public class LibraryStatistic {
                 .stream()
                 .filter(archive -> archive.getValue()
                         .stream()
-                        .allMatch(data -> daysHold(data) >= MIN_DAYS))
+                        .allMatch(data -> data.getReturned() != null
+                                ? ChronoUnit.DAYS.between(data.getTake().toInstant(), data.getReturned().toInstant()) >= (long) MIN_DAYS
+                                : ChronoUnit.DAYS.between(data.getTake().toInstant(), Instant.now()) >= (long) MIN_DAYS))
                 .filter(archive -> archive.getValue().size() >= MIN_READ)
-                .collect(Collectors.toMap(Map.Entry::getKey, lib -> lib.getValue()
+                .collect(Collectors.toMap(Map.Entry::getKey, userListEntry -> userListEntry.getValue()
                         .stream()
-                        .map(ArchivedData::getBook)
-                        .mapToInt(Book::getPage).sum()));
-    }
-
-    private static int daysHold(ArchivedData archive) {
-        return (int) ((archive.getReturned() == null ? System.currentTimeMillis() : archive.getReturned().getTime())
-                - archive.getTake().getTime() / (1000 * 60 * 60 * 24));
+                        .mapToInt(archivedData -> archivedData.getBook().getPage())
+                        .sum()
+                        + (userListEntry.getKey().getBook().getGenre().equals(genre)
+                        ? userListEntry.getKey().getReadedPages()
+                        : 0)
+                ));
     }
 
     /**
@@ -51,26 +55,23 @@ public class LibraryStatistic {
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
-        var genre = library.getArchive().stream()
-                .filter(archive -> archive.getUser().equals(user)
-                        && archive.getReturned() != null)
-                .collect(Collectors.groupingBy(archive -> archive.getBook().getGenre(),
-                        Collectors.counting()))
+        return library.getArchive()
+                .stream()
+                .filter(archive -> archive.getUser().equals(user) && archive.getReturned() != null)
+                .collect(Collectors.groupingBy(archive -> archive.getBook().getGenre(), Collectors.counting()))
                 .entrySet()
                 .stream()
                 .max((a1, a2) -> {
-                    long cmp = a2.getValue() - a1.getValue();
+                    long cmp = a1.getValue() - a2.getValue();
                     if (cmp != 0) {
                         return (int) cmp;
                     }
-                    var lib = library.getArchive()
-                            .stream()
-                            .filter(archive -> archive.getUser().equals(user) && archive.getReturned() == null);
-                    int first = (int) lib.filter(archive -> archive.getBook().getGenre().equals(a1.getKey())).count();
-                    int second = (int) lib.filter(archive -> archive.getBook().getGenre().equals(a2.getKey())).count();
-                    return second - first;
-                });
-        return genre.map(Map.Entry::getKey).orElse(null);
+                    if (a1.getKey().equals(user.getBook().getGenre())) {
+                        return 1;
+                    }
+                    return -1;
+                }).map(Map.Entry::getKey)
+                .orElse(null);
     }
 
     /**
@@ -81,14 +82,18 @@ public class LibraryStatistic {
      * @return - список ненадежных пользователей
      */
     public List<User> unreliableUsers(Library library) {
-        final int daysHolding = 30;
+        final int DAYS_HOLDING = 30;
         return library.getArchive()
                 .stream()
                 .collect(Collectors.groupingBy(ArchivedData::getUser))
                 .entrySet()
                 .stream()
-                .filter(archive -> archive.getValue().stream().filter(e -> daysHold(e) >= daysHolding).count()
-                        > archive.getValue().size() / 2)
+                .filter(archive -> archive.getValue()
+                        .stream()
+                        .filter(data -> data.getReturned() != null
+                                ? ChronoUnit.DAYS.between(data.getTake().toInstant(), data.getReturned().toInstant()) >= (long) DAYS_HOLDING
+                                : ChronoUnit.DAYS.between(data.getTake().toInstant(), Instant.now()) >= (long) DAYS_HOLDING)
+                        .count() > archive.getValue().size() / 2)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
@@ -123,8 +128,12 @@ public class LibraryStatistic {
                 .collect(Collectors.toMap(Map.Entry::getKey, genreMapEntry -> genreMapEntry.getValue()
                         .entrySet()
                         .stream()
-                        .max(Map.Entry.<String, Long>comparingByValue().thenComparing(Map.Entry.comparingByKey()))
+                        .max(Map.Entry.<String, Long>comparingByValue()
+                                .thenComparing(Map.Entry.comparingByKey(Comparator.reverseOrder())))
+                        .filter(authorEntry -> library.getArchive()
+                                .stream()
+                                .anyMatch(archivedData -> archivedData.getBook().getAuthor().equals(authorEntry.getKey())))
                         .map(Map.Entry::getKey)
-                        .orElse("")));
+                        .orElse("Author not determined")));
     }
 }
