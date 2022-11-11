@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Класс для работы со статистикой по заказам магазина.
@@ -55,14 +56,18 @@ public class StoreStatistic {
      * @return - товар
      */
     public Item mostPopularItem(List<Order> orders) {
-        return orders.stream()
+        Map<Item, Integer> itemsMapWithCount = orders.stream()
                 .flatMap(order -> order.getItemCount().entrySet().stream())
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
                         Integer::sum
-                ))
-                .entrySet().stream().max(Map.Entry.comparingByValue())
+                ));
+
+        return itemsMapWithCount
+                .entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
                 .get().getKey();
     }
 
@@ -73,13 +78,14 @@ public class StoreStatistic {
      * @return map - заказ / общая сумма заказа
      */
     public Map<Order, Long> sum5biggerOrders(List<Order> orders) {
-        return orders.stream()
+        Stream<Order> sortedForCountOrderStream = orders.stream()
                 .sorted(Comparator.comparingInt(order -> order.getItemCount()
                         .values()
                         .stream()
                         .mapToInt(count -> -count)
-                        .sum()))
-                .limit(5)
+                        .sum()));
+
+        return sortedForCountOrderStream.limit(5)
                 .collect(Collectors.toMap(
                         order -> order,
                         order -> order.getItemCount()

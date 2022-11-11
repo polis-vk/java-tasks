@@ -1,9 +1,8 @@
 package ru.mail.polis.homework.streams.lib;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -15,6 +14,7 @@ public class LibraryStatistic {
     private final static int EXPERT_BOOK_NORM = 5;
 
     private final static int RELIABILITY_DAYS_NORM = 30;
+
     /**
      * Вернуть "специалистов" в литературном жанре с кол-вом прочитанных страниц.
      * Специалист жанра считается пользователь который прочел как минимум 5 книг в этом жанре,
@@ -26,15 +26,17 @@ public class LibraryStatistic {
      */
 
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
-        return library.getArchive().stream()
+        Map<User, List<ArchivedData>> expertsForDayNormInGenre = library.getArchive().stream()
                 .filter(archivedData -> archivedData.getBook().getGenre() == genre)
                 .filter(archivedData -> {
                     LocalDateTime twoWeeksAfterTake = archivedData.getTake().toLocalDateTime().plusDays(EXPERT_DAY_NORM);
                     return archivedData.getReturned().toLocalDateTime().isEqual(twoWeeksAfterTake) ||
                             archivedData.getReturned().toLocalDateTime().isAfter(twoWeeksAfterTake);
                 })
-                .collect(Collectors.groupingBy(ArchivedData::getUser))
-                .entrySet().stream()
+                .collect(Collectors.groupingBy(ArchivedData::getUser));
+
+
+        return expertsForDayNormInGenre.entrySet().stream()
                 .filter(books -> books.getValue().size() >= EXPERT_BOOK_NORM)
                 .collect(Collectors.toMap(Map.Entry::getKey, archivedData ->
                         (archivedData.getKey().getBook().getGenre() == genre ?
@@ -53,9 +55,11 @@ public class LibraryStatistic {
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
-        return library.getArchive().stream()
+        Map<Genre, Long> UserGenreMap = library.getArchive().stream()
                 .filter(archivedData -> archivedData.getUser().equals(user))
-                .collect(Collectors.groupingBy(archivedData -> archivedData.getBook().getGenre(), Collectors.counting()))
+                .collect(Collectors.groupingBy(archivedData -> archivedData.getBook().getGenre(), Collectors.counting()));
+
+        return UserGenreMap
                 .entrySet().stream()
                 .max((genre1, genre2) -> {
                     if (genre1.getValue() - genre2.getValue() != 0) {
@@ -81,9 +85,10 @@ public class LibraryStatistic {
      * @return - список ненадежных пользователей
      */
     public List<User> unreliableUsers(Library library) {
-        return library.getArchive().stream()
-                .collect(Collectors.groupingBy(ArchivedData::getUser))
-                .entrySet().stream()
+        Map<User, List<ArchivedData>> UsersDataMap = library.getArchive().stream()
+                .collect(Collectors.groupingBy(ArchivedData::getUser));
+
+        return UsersDataMap.entrySet().stream()
                 .filter(userListEntry -> userListEntry.getValue().stream()
                         .filter(archivedData -> archivedData.getReturned() != null
                                 && archivedData.getReturned().toLocalDateTime()
@@ -116,22 +121,23 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        Map<Genre, String> mapOfPopularity = library.getArchive().stream()
+        Map<Genre, Map<String, Long>> genresForAuthorsCountBooksMap = library.getArchive().stream()
                 .collect(Collectors.groupingBy(archivedData -> archivedData.getBook().getGenre(),
-                        Collectors.groupingBy(archivedData -> archivedData.getBook().getAuthor(), Collectors.counting())))
-                .entrySet().stream()
+                        Collectors.groupingBy(archivedData -> archivedData.getBook().getAuthor(), Collectors.counting())));
+
+        Map<Genre, String> popularityAuthorsInGenre = genresForAuthorsCountBooksMap.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, genreMapEntry -> genreMapEntry.getValue().entrySet().stream()
-                        .max(Map.Entry.<String,Long>comparingByValue().reversed().thenComparing(Map.Entry::getKey))
+                        .max(Map.Entry.<String, Long>comparingByValue().reversed().thenComparing(Map.Entry::getKey))
                         .map(Map.Entry::getKey)
                         .get()
                 ));
 
         for (Genre genre : Genre.values()) {
-            if (!mapOfPopularity.containsKey(genre)) {
-                mapOfPopularity.put(genre, "Author not determined");
+            if (!popularityAuthorsInGenre.containsKey(genre)) {
+                popularityAuthorsInGenre.put(genre, "Author not determined");
             }
         }
 
-        return mapOfPopularity;
+        return popularityAuthorsInGenre;
     }
 }
