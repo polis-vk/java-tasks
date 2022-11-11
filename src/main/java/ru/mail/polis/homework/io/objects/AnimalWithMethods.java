@@ -12,7 +12,17 @@ import java.util.Objects;
  * 3 балла
  */
 public class AnimalWithMethods implements Serializable {
-    public AnimalWithMethods(String name, AnimalType type, int age, double weight, Meal meal) {
+
+    private static final byte NULL_VALUE = 0;
+    private static final byte NOT_NULL_VALUE = 1;
+
+    private String name;
+    private AnimalType type;
+    private int age;
+    private double weight;
+    private MealWithMethods meal;
+
+    public AnimalWithMethods(String name, AnimalType type, int age, double weight, MealWithMethods meal) {
         this.name = name;
         this.type = type;
         this.age = age;
@@ -20,48 +30,33 @@ public class AnimalWithMethods implements Serializable {
         this.meal = meal;
     }
 
-    public String name;
-    public AnimalType type;
-    public int age;
-    public double weight;
-
-    public boolean isDangerous() {
-        return age > 2 && weight > 40;
+    public String getName() {
+        return name;
     }
 
-    public Meal meal;
-
-    private void writeObject(ObjectOutputStream o) {
-        try {
-            o.writeUTF(name);
-            o.writeObject(type);
-            o.writeInt(age);
-            o.writeDouble(weight);
-            o.writeObject(meal);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+    public void setName(String name) {
+        this.name = name;
     }
 
-    private void readObject(ObjectInputStream o) {
-        try {
-            name = (String) o.readObject();
-            type = (AnimalType) o.readObject();
-            age = (Integer) o.readObject();
-            weight = (Double) o.readObject();
-            meal = (Meal) o.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         AnimalWithMethods that = (AnimalWithMethods) o;
-        return age == that.age && Double.compare(that.weight, weight) == 0 && name.equals(that.name) && type == that.type && meal.equals(that.meal);
+        return age == that.age && Double.compare(that.weight, weight) == 0
+                && name.equals(that.name) && type == that.type && meal.equals(that.meal);
     }
 
     @Override
@@ -78,5 +73,55 @@ public class AnimalWithMethods implements Serializable {
                 ", weight=" + weight +
                 ", meal=" + meal +
                 '}';
+    }
+
+    private void writeObject(ObjectOutputStream out) {
+        try {
+            writeUTF(out, name);
+            writeObject(out, type);
+            out.writeInt(age);
+            out.writeDouble(weight);
+            out.writeObject(meal);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void readObject(ObjectInputStream in) {
+        try {
+            name = readUTF(in);
+            type = (AnimalType) readObjectorNull(in);
+            age = in.readInt();
+            weight = in.readDouble();
+            meal = (MealWithMethods) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void writeUTF(ObjectOutputStream out, String string) throws IOException {
+        if (string == null) {
+            out.write(NULL_VALUE);
+        } else {
+            out.write(NOT_NULL_VALUE);
+            out.writeUTF(string);
+        }
+    }
+
+    private void writeObject(ObjectOutputStream out, Object object) throws IOException {
+        if (object == null) {
+            out.write(NULL_VALUE);
+        } else {
+            out.write(NOT_NULL_VALUE);
+            out.writeObject(object);
+        }
+    }
+
+    private String readUTF(ObjectInputStream in) throws IOException {
+        return in.readByte() == 1 ? in.readUTF() : null;
+    }
+
+    private Object readObjectorNull(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        return in.readByte() == 1 ? in.readObject() : null;
     }
 }

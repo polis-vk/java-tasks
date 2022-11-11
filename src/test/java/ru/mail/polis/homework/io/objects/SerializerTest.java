@@ -10,13 +10,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import static org.junit.Assert.assertEquals;
 
 public class SerializerTest {
 
-    private static final int NUMBER_OF_OBJECTS = 100;
+    private static final int NUMBER_OF_OBJECTS = 500000;
     private static final Path PATH = Path.of("src", "test", "resources", "objects");
     private final static String fileName = "src/test/resources/objects/serializeTest.bin";
     private static final Serializer serializer = new Serializer();
@@ -45,9 +45,10 @@ public class SerializerTest {
         long finishOut = System.currentTimeMillis();
 
         long startIn = System.currentTimeMillis();
-        serializer.defaultDeserialize(fileName);
+        var animalsAfter = serializer.defaultDeserialize(fileName);
         long finishIn = System.currentTimeMillis();
 
+        assertEquals(animals, animalsAfter);
         System.out.println("Default: \n\tSerialization time: \t" + (finishOut - startOut) + " ms\n" +
                 "\tDeserialization time: \t" + (finishIn - startIn) + " ms\n" +
                 "\tFile size: \t" + Files.size(Path.of(fileName)) + " b\n");
@@ -65,9 +66,10 @@ public class SerializerTest {
         long finishOut = System.currentTimeMillis();
 
         long startIn = System.currentTimeMillis();
-        serializer.deserializeWithMethods(fileName);
+        var animalsAfter = serializer.deserializeWithMethods(fileName);
         long finishIn = System.currentTimeMillis();
 
+        assertEquals(animals, animalsAfter);
         System.out.println("With methods: \n\tSerialization time: \t" + (finishOut - startOut) + " ms\n" +
                 "\tDeserialization time: \t" + (finishIn - startIn) + " ms\n" +
                 "\tFile size: \t" + Files.size(Path.of(fileName)) + " b\n");
@@ -85,9 +87,10 @@ public class SerializerTest {
         long finishOut = System.currentTimeMillis();
 
         long startIn = System.currentTimeMillis();
-        serializer.deserializeWithExternalizable(fileName);
+        var animalsAfter = serializer.deserializeWithExternalizable(fileName);
         long finishIn = System.currentTimeMillis();
 
+        assertEquals(animals, animalsAfter);
         System.out.println("With externalizable: \n\tSerialization time: \t" + (finishOut - startOut) + " ms\n" +
                 "\tDeserialization time: \t" + (finishIn - startIn) + " ms\n" +
                 "\tFile size: \t" + Files.size(Path.of(fileName)) + " b\n");
@@ -105,19 +108,16 @@ public class SerializerTest {
         long finishOut = System.currentTimeMillis();
 
         long startIn = System.currentTimeMillis();
-        serializer.customDeserialize(fileName);
+        var animalsAfter = serializer.customDeserialize(fileName);
         long finishIn = System.currentTimeMillis();
 
+        assertEquals(animals, animalsAfter);
         System.out.println("Custom: \n\tSerialization time: \t" + (finishOut - startOut) + " ms\n" +
                 "\tDeserialization time: \t" + (finishIn - startIn) + " ms\n" +
                 "\tFile size: \t" + Files.size(Path.of(fileName)) + " b\n");
     }
 
     private Animal generateAnimal() {
-        HashSet<String> food = new HashSet<>();
-        for (int i = 0; i < rnd.nextInt(10) + 1; i++) {
-            food.add(generateString());
-        }
         return new Animal(
                 generateString(),
                 AnimalType.values()[rnd.nextInt(AnimalType.values().length)],
@@ -126,43 +126,35 @@ public class SerializerTest {
                 new Meal(
                         generateString(),
                         LocalDateTime.now(),
-                        food
+                        rnd.nextInt(10) + 1
                 )
         );
     }
 
     private AnimalWithMethods generateAnimalWithMethods() {
-        HashSet<String> food = new HashSet<>();
-        for (int i = 0; i < rnd.nextInt(10) + 1; i++) {
-            food.add(generateString());
-        }
         return new AnimalWithMethods(
                 generateString(),
                 AnimalType.values()[rnd.nextInt(AnimalType.values().length)],
                 rnd.nextInt(100),
                 rnd.nextDouble() * rnd.nextInt(100),
-                new Meal(
+                new MealWithMethods(
                         generateString(),
                         LocalDateTime.now(),
-                        food
+                        rnd.nextInt(10) + 1
                 )
         );
     }
 
     private AnimalExternalizable generateAnimalExternalizable() {
-        HashSet<String> food = new HashSet<>();
-        for (int i = 0; i < rnd.nextInt(10) + 1; i++) {
-            food.add(generateString());
-        }
         return new AnimalExternalizable(
                 generateString(),
                 AnimalType.values()[rnd.nextInt(AnimalType.values().length)],
                 rnd.nextInt(100),
                 rnd.nextDouble() * rnd.nextInt(100),
-                new Meal(
+                new MealExternalizable(
                         generateString(),
                         LocalDateTime.now(),
-                        food
+                        rnd.nextInt(10) + 1
                 )
         );
     }

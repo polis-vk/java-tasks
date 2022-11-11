@@ -8,9 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Нужно реализовать методы этого класса и реализовать тестирование 4-ех (2-ух) способов записи.
@@ -32,6 +30,9 @@ import java.util.Set;
  */
 public class Serializer {
 
+    private static final byte NULL_VALUE = 0;
+    private static final byte NOT_NULL_VALUE = 1;
+
     /**
      * 1 балл
      * Реализовать простую сериализацию, с помощью специального потока для сериализации объектов
@@ -44,9 +45,10 @@ public class Serializer {
         if (!Files.exists(path)) {
             throw new IllegalArgumentException();
         }
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
+        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(path))) {
+            out.writeInt(animals.size());
             for (Animal animal : animals) {
-                objectOutputStream.writeObject(animal);
+                out.writeObject(animal);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -66,9 +68,10 @@ public class Serializer {
             throw new IllegalArgumentException();
         }
         List<Animal> animals = new ArrayList<>();
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))) {
-            while (objectInputStream.available() > 0) {
-                animals.add((Animal) objectInputStream.readObject());
+        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(path))) {
+            int size = in.readInt();
+            for (int i = 0; i < size; i++) {
+                animals.add((Animal) in.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -89,9 +92,10 @@ public class Serializer {
         if (!Files.exists(path)) {
             throw new IllegalArgumentException();
         }
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
+        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(path))) {
+            out.writeInt(animals.size());
             for (AnimalWithMethods animal : animals) {
-                objectOutputStream.writeObject(animal);
+                out.writeObject(animal);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -112,9 +116,10 @@ public class Serializer {
             throw new IllegalArgumentException();
         }
         List<AnimalWithMethods> animals = new ArrayList<>();
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))) {
-            while (objectInputStream.available() > 0) {
-                animals.add((AnimalWithMethods) objectInputStream.readObject());
+        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(path))) {
+            int size = in.readInt();
+            for (int i = 0; i < size; i++) {
+                animals.add((AnimalWithMethods) in.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -134,9 +139,10 @@ public class Serializer {
         if (!Files.exists(path)) {
             throw new IllegalArgumentException();
         }
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(path))) {
+        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(path))) {
+            out.writeInt(animals.size());
             for (AnimalExternalizable animal : animals) {
-                objectOutputStream.writeObject(animal);
+                out.writeObject(animal);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -157,9 +163,10 @@ public class Serializer {
             throw new IllegalArgumentException();
         }
         List<AnimalExternalizable> animals = new ArrayList<>();
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(path))) {
-            while (objectInputStream.available() > 0) {
-                animals.add((AnimalExternalizable) objectInputStream.readObject());
+        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(path))) {
+            int size = in.readInt();
+            for (int i = 0; i < size; i++) {
+                animals.add((AnimalExternalizable) in.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -180,16 +187,16 @@ public class Serializer {
         if (!Files.exists(path)) {
             throw new IllegalArgumentException();
         }
-        try (ObjectOutputStream o = new ObjectOutputStream(Files.newOutputStream(path))) {
+        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(path))) {
+            out.writeInt(animals.size());
             for (Animal animal : animals) {
-                o.writeUTF(animal.name);
-                o.writeUTF(animal.type.toString());
-                o.writeInt(animal.age);
-                o.writeDouble(animal.weight);
-                o.writeUTF(animal.meal.favouriteMeal);
-                o.writeUTF(animal.meal.lastMeal.toString());
-                o.writeInt(animal.meal.allergicTo.size());
-                o.writeUTF(animal.meal.allergicTo.toString());
+                writeUTF(out, animal.getName());
+                writeUTF(out, animal.getType().toString());
+                out.writeInt(animal.getAge());
+                out.writeDouble(animal.getWeight());
+                writeUTF(out, animal.getMeal().getFavouriteMeal());
+                writeUTF(out, animal.getMeal().getLastMeal().toString());
+                out.writeInt(animal.getMeal().getMealsPerDay());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -210,23 +217,39 @@ public class Serializer {
             throw new IllegalArgumentException();
         }
         List<Animal> animals = new ArrayList<>();
-        try (ObjectInputStream o = new ObjectInputStream(Files.newInputStream(path))) {
-            while (o.available() > 0) {
-                String name = o.readUTF();
-                AnimalType type = AnimalType.valueOf(o.readUTF());
-                int age = o.readInt();
-                double weight = o.readDouble();
-                String favouriteMeal = o.readUTF();
-                LocalDateTime lastMeal = LocalDateTime.parse(o.readUTF());
-                Set<String> allergicTo = new HashSet<>();
-                for (int i = 0; i < o.readInt(); i++) {
-                    allergicTo.add(o.readUTF());
+        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(path))) {
+            int size = in.readInt();
+            for (int i = 0; i < size; i++) {
+                String name = readUTF(in);
+                String animalType = readUTF(in);
+                AnimalType type = animalType != null ? AnimalType.valueOf(animalType) : null;
+                int age = in.readInt();
+                double weight = in.readDouble();
+                String favouriteMeal = readUTF(in);
+                String lastMealString = readUTF(in);
+                LocalDateTime lastMeal = null;
+                if (lastMealString != null) {
+                    lastMeal = LocalDateTime.parse(lastMealString);
                 }
-                animals.add(new Animal(name, type, age, weight, new Meal(favouriteMeal, lastMeal, allergicTo)));
+                int mealsPerDay = in.readInt();
+                animals.add(new Animal(name, type, age, weight, new Meal(favouriteMeal, lastMeal, mealsPerDay)));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return animals;
+    }
+
+    private void writeUTF(ObjectOutputStream out, String string) throws IOException {
+        if (string == null) {
+            out.write(NULL_VALUE);
+        } else {
+            out.write(NOT_NULL_VALUE);
+            out.writeUTF(string);
+        }
+    }
+
+    private String readUTF(ObjectInputStream in) throws IOException {
+        return in.readByte() == 1 ? in.readUTF() : null;
     }
 }

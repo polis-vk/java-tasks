@@ -15,6 +15,12 @@ public class CopyFile {
      * В тесте для создания нужных файлов для первого запуска надо раскомментировать код в setUp()
      * 3 тугрика
      */
+    public static void copyFiles(String pathFrom, String pathTo) {
+        Path pathF = Path.of(pathFrom);
+        Path pathT = Path.of(pathTo);
+        copyFiles(pathF, pathT);
+    }
+
     private static void copyFiles(Path pathF, Path pathT) {
         if (Files.notExists(pathF)) {
             return;
@@ -42,22 +48,15 @@ public class CopyFile {
     }
 
     private static void copyFile(Path pathF, Path pathT) {
-        try (
-                InputStream in = Files.newInputStream(pathF);
-                OutputStream out = Files.newOutputStream(pathT)
-        ) {
-            byte[] buffer = new byte[BUFFER_SIZE];
-            while (in.read(buffer) > 0) {
-                out.write(buffer);
+        try (InputStream in = Files.newInputStream(pathF)) {
+            try (OutputStream out = Files.newOutputStream(pathT)) {
+                byte[] buffer = new byte[BUFFER_SIZE];
+                while (in.read(buffer) > 0) {
+                    out.write(buffer);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void copyFiles(String pathFrom, String pathTo) {
-        Path pathF = Path.of(pathFrom);
-        Path pathT = Path.of(pathTo);
-        copyFiles(pathF, pathT);
     }
 }

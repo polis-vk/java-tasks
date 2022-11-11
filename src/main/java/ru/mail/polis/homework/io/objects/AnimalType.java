@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.io.objects;
 
 public enum AnimalType {
-    mammal,
-    bird,
-    insect,
-    reptile
+    MAMMAL,
+    BIRD,
+    INSECT,
+    REPTILE
 }

@@ -10,6 +10,11 @@ import java.util.Objects;
  * 1 балл
  */
 public class Animal implements Serializable {
+    private String name;
+    private AnimalType type;
+    private int age;
+    private double weight;
+    private Meal meal;
 
     public Animal(String name, AnimalType type, int age, double weight, Meal meal) {
         this.name = name;
@@ -18,22 +23,46 @@ public class Animal implements Serializable {
         this.weight = weight;
         this.meal = meal;
     }
-    public String name;
-    public AnimalType type;
-    public int age;
-    public double weight;
-    public boolean isDangerous() {
-        return age > 2 && weight > 40;
+
+    public String getName() {
+        return name;
     }
 
-    public Meal meal;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public AnimalType getType() {
+        return type;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public Meal getMeal() {
+        return meal;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Animal animal = (Animal) o;
-        return age == animal.age && Double.compare(animal.weight, weight) == 0 && name.equals(animal.name) && type == animal.type && meal.equals(animal.meal);
+        return age == animal.age && Double.compare(animal.weight, weight) == 0
+                && name.equals(animal.name) && type == animal.type && meal.equals(animal.meal);
     }
 
     @Override
@@ -51,6 +80,4 @@ public class Animal implements Serializable {
                 ", meal=" + meal +
                 '}';
     }
-
-
 }
