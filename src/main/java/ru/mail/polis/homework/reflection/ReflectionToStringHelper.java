@@ -51,6 +51,8 @@ import java.util.Objects;
  */
 public class ReflectionToStringHelper {
 
+    private static final String COMMA = ", ";
+
     public static String reflectiveToString(Object object) {
         if (object == null) {
             return "null";
@@ -64,17 +66,16 @@ public class ReflectionToStringHelper {
                     continue;
                 }
                 appendFieldToStringBuilder(field, object, stringBuilder);
-                stringBuilder.append(", ");
+                stringBuilder.append(COMMA);
             }
             clazz = clazz.getSuperclass();
         }
-
-        if (stringBuilder.length() > 1) {
-            stringBuilder.setLength(stringBuilder.length() - 2);
+        int lastCommaIndex = stringBuilder.lastIndexOf(COMMA);
+        if (lastCommaIndex > 0) {
+            stringBuilder.setLength(lastCommaIndex);
         }
 
         stringBuilder.append("}");
-
         return stringBuilder.toString();
     }
 
@@ -87,7 +88,6 @@ public class ReflectionToStringHelper {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
         if (value != null && field.getType().isArray()) {
             appendArrayToStringBuilder(value, stringBuilder);
         } else {
@@ -102,7 +102,7 @@ public class ReflectionToStringHelper {
             stringBuilder.append(Array.get(object, 0));
         }
         for (int i = 1; i < length; i++) {
-            stringBuilder.append(", ").append(Array.get(object, i));
+            stringBuilder.append(COMMA).append(Array.get(object, i));
         }
         stringBuilder.append("]");
     }
