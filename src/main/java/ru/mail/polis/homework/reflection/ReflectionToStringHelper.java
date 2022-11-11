@@ -1,14 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.List;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,7 +50,71 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        Class<?> clazz = object.getClass();
+        Field[] toStringFields = getToStringFields(clazz);
+        StringBuilder sb = new StringBuilder();
+        boolean isSomethingRecorded = false;
+        sb.append("{");
+        while (clazz != Object.class) {
+            for (Field field : toStringFields) {
+                try {
+                    field.setAccessible(true);
+                    sb.append(field.getName())
+                            .append(": ");
+                    if (field.getType().isArray()) {
+                        fillStringBuilderFromArray(sb, field, object);
+                    } else {
+                        sb.append(field.get(object));
+                    }
+                    sb.append(", ");
+                    isSomethingRecorded = true;
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+            clazz = clazz.getSuperclass();
+            toStringFields = getToStringFields(clazz);
+        }
+        if (isSomethingRecorded) {
+            sb.setLength(sb.length() - 2);
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+    private static Field[] getToStringFields(Class<?> clazz) {
+        Field[] allFields = clazz.getDeclaredFields();
+        List<Field> fields = new ArrayList<>(allFields.length);
+        for (Field field : allFields) {
+            if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
+                continue;
+            }
+            fields.add(field);
+        }
+        fields.sort(Comparator.comparing(Field::getName));
+        return fields.toArray(new Field[0]);
+    }
+
+    private static void fillStringBuilderFromArray(StringBuilder sb, Field field, Object object) throws IllegalAccessException {
+        Object array = field.get(object);
+        if (array == null) {
+            sb.append("null");
+            return;
+        }
+        sb.append("[");
+        int length = Array.getLength(array);
+        if (length == 0) {
+            sb.append("]");
+            return;
+        }
+        for (int i = 0; i < length; i++) {
+            sb.append(Array.get(array, i))
+                    .append(", ");
+        }
+        sb.setLength(sb.length() - 2);
+        sb.append("]");
     }
 }
