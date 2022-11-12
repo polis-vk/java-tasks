@@ -24,17 +24,18 @@ public class LibraryStatistic {
      * @return - map пользователь / кол-во прочитанных страниц
      */
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
-        return library.getUsers()
+        return library.getArchive()
                 .stream()
-                .filter(user -> library.getArchive().stream().filter(archivedData -> archivedData.getBook().getGenre().equals(genre)
-                        && archivedData.getUser().equals(user)
-                        && isExpert(archivedData, DAYS_MIN)).count() >= BOOKS_MIN)
-                .collect(Collectors.toMap(user -> user, User::getReadedPages));
-    }
-
-    private boolean isExpert(ArchivedData data, int days) {
-        return TimeUnit.MILLISECONDS.toDays(data.getReturned() == null ?
-                new Date().getTime() : data.getReturned().getTime() - data.getTake().getTime()) >= days;
+                .filter(this::isExpert)
+                .filter(archivedData -> archivedData.getBook().getGenre().equals(genre))
+                .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.toList())).entrySet().stream()
+                .filter(userListEntry -> userListEntry.getValue().size() >= BOOKS_MIN)
+                .collect(Collectors.toMap(Map.Entry::getKey, userListEntry -> userListEntry.getValue()
+                        .stream()
+                        .mapToInt(archivedData -> archivedData.getBook().getPage()).sum() + (userListEntry.getKey()
+                        .getBook()
+                        .getGenre()
+                        .equals(genre) ? userListEntry.getKey().getReadedPages() : 0)));
     }
 
 
@@ -49,7 +50,7 @@ public class LibraryStatistic {
     public Genre loveGenre(Library library, User user) {
         Map<Genre, Long> allGeners = library.getArchive()
                 .stream()
-                .filter(archivedData -> archivedData.getUser().equals(user))
+                .filter(archivedData -> archivedData.getUser().equals(user) && archivedData.getReturned() != null)
                 .collect(Collectors.groupingBy(archivedData -> archivedData.getBook().getGenre(), Collectors.counting()));
         long userGener = allGeners
                 .values()
@@ -61,6 +62,9 @@ public class LibraryStatistic {
                 .filter(genreLongEntry -> genreLongEntry.getValue() == userGener)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
+        if (user.getBook() != null && bestGeners.contains(user.getBook().getGenre())) {
+            return user.getBook().getGenre();
+        }
         return bestGeners.stream().findFirst().orElse(null);
     }
 
@@ -72,15 +76,16 @@ public class LibraryStatistic {
      * @return - список ненадежных пользователей
      */
     public List<User> unreliableUsers(Library library) {
-        return library.getUsers()
+        return library.getArchive()
                 .stream()
-                .filter(user -> library.getArchive()
+                .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.toList()))
+                .entrySet()
+                .stream()
+                .filter(userListEntry -> userListEntry.getValue()
                         .stream()
-                        .filter(archivedData -> archivedData.getUser().equals(user) && isExpert(archivedData, MONTH) || (archivedData.getReturned() == null))
-                        .count() > library.getArchive().stream()
-                        .filter(archivedData -> archivedData.getUser().equals(user))
-                        .count() / 2)
-                .collect(Collectors.toList());
+                        .filter(archivedData -> isExpert(archivedData, MONTH))
+                        .count() > (userListEntry.getValue().size() / 2))
+                .map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
     /**
@@ -104,6 +109,25 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        return null;
+        return Arrays.stream(Genre.values())
+                .collect(Collectors.toMap(genre -> genre, genre -> library.getArchive().stream()
+                        .filter(datum -> datum.getBook().getGenre().equals(genre))
+                        .collect(Collectors.groupingBy(datum -> datum.getBook()
+                                .getAuthor(), Collectors.counting()))
+                        .entrySet().stream()
+                        .sorted(Map.Entry.comparingByKey())
+                        .max(Map.Entry.comparingByValue()).map(Map.Entry::getKey)
+                        .orElse("Author not determined")
+                ));
+    }
+
+    private boolean isExpert(ArchivedData data) {
+        return TimeUnit.MILLISECONDS.toDays(data.getReturned() == null ?
+                new Date().getTime() : data.getReturned().getTime() - data.getTake().getTime()) >= DAYS_MIN;
+    }
+
+    private boolean isExpert(ArchivedData data, int days) {
+        return TimeUnit.MILLISECONDS.toDays(data.getReturned() == null ?
+                new Date().getTime() : data.getReturned().getTime() - data.getTake().getTime()) >= days;
     }
 }

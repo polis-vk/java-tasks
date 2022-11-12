@@ -39,7 +39,17 @@ public class StoreStatistic {
      * значение - map товар/кол-во
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
-        return null;
+        return orders.stream()
+                .collect(Collectors.toMap(
+                        order -> Timestamp.valueOf(order
+                                .getTime()
+                                .toLocalDateTime()
+                                .toLocalDate()
+                                .atStartOfDay()),
+                        Order::getItemCount, (old, cur) -> {
+                            old.forEach((key, value) -> cur.merge(key, value, Integer::sum));
+                            return cur;
+                        }));
     }
 
     /**
