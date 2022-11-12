@@ -68,7 +68,7 @@ public class ReflectionToStringHelper {
     private static Stream<Field> getConsideringFieldsStream(Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredFields())
                      .filter(field -> !field.isAnnotationPresent(SkipField.class) &&
-                                      (field.getModifiers() & Modifier.STATIC) == 0)
+                                      !Modifier.isStatic(field.getModifiers()))
                      .sorted(Comparator.comparing(Field::getName));
     }
 
