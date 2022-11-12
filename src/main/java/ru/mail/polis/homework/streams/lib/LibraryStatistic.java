@@ -60,7 +60,21 @@ public class LibraryStatistic {
                 .collect(Collectors.groupingBy(
                         archivedData -> archivedData.getBook().getGenre(),
                         Collectors.counting()
-                )).entrySet().stream().max((o1, o2) -> (int) (o1.getValue() - o2.getValue()))
+                )).entrySet().stream().max((o1, o2) -> {
+                    if (o1.getValue() - o2.getValue() != 0) {
+                        return (int) (o1.getValue() - o2.getValue());
+                    }
+                    Genre genreOfNotReturnedBook = library.getUsers().stream()
+                            .filter(x -> x.equals(user))
+                            .findFirst().orElseThrow(NoSuchElementException::new).getBook().getGenre();
+                    if (genreOfNotReturnedBook.equals(o2.getKey())) {
+                        o2.setValue(o2.getValue() + 1);
+                    }
+                    if (genreOfNotReturnedBook.equals(o1.getKey())) {
+                        o1.setValue(o1.getValue() + 1);
+                    }
+                    return (int) (o1.getValue() - o2.getValue());
+                })
                 .orElseThrow(NoSuchElementException::new)
                 .getKey();
     }
