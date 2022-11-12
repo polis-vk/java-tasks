@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Класс для работы со статистикой по библиотеке.
@@ -22,24 +21,21 @@ public class LibraryStatistic {
      * @return - map пользователь / кол-во прочитанных страниц
      */
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
-        Map<User, Integer> specialistInGenre = new HashMap<>();
-        Stream<ArchivedData> archivedData = library.getArchive().stream();
-        archivedData.filter(archivedData1 -> archivedData1.getBook().getGenre().equals(genre))
+        return library.getArchive().stream()
+                .filter(archivedData1 -> archivedData1.getBook().getGenre().equals(genre))
                 .filter(archivedData1 -> checkDaysOfReadingBook(archivedData1, 14))
                 .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.toList()))
                 .entrySet().stream().filter(entry -> entry.getValue().size() >= 5)
-                .forEach(entry -> specialistInGenre.merge(entry.getKey(), entry.getValue().stream()
-                        .map(archivedData1 -> archivedData1.getBook().getPage())
-                        .mapToInt(Integer::intValue).sum(), Integer::sum));
-        for (Map.Entry<User, Integer> entry : specialistInGenre.entrySet()) {
-            if (entry.getKey().getBook().getGenre().equals(genre)) {
-                entry.setValue(entry.getValue() + entry.getKey().getReadedPages());
-            }
-        }
-        return specialistInGenre;
+                .collect(Collectors.toMap(Map.Entry::getKey, userEntry -> {
+                    int sumOfPages = userEntry.getValue().stream().mapToInt(value -> value.getBook().getPage()).sum();
+                    if (userEntry.getKey().getBook().getGenre().equals(genre)) {
+                        return sumOfPages + userEntry.getKey().getReadedPages();
+                    }
+                    return sumOfPages;
+                }));
     }
 
-    public boolean checkDaysOfReadingBook(ArchivedData archivedData, int days) {
+    private static boolean checkDaysOfReadingBook(ArchivedData archivedData, int days) {
         if (archivedData.getReturned() == null) {
             return ChronoUnit.DAYS.between(archivedData.getTake().toInstant(), Instant.now()) >= days;
         } else
@@ -55,24 +51,23 @@ public class LibraryStatistic {
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
-        Map<Genre, Integer> specialistInGenre = new HashMap<>();
-        Stream<ArchivedData> archivedData = library.getArchive().stream();
-        archivedData.filter(archivedData1 -> archivedData1.getUser().equals(user))
-                .filter(archivedData1 -> archivedData1.getReturned() != null)
-                .forEach(archivedData1 -> specialistInGenre.merge(archivedData1.getBook().getGenre(), 1, Integer::sum));
-        int maxValueInMap = Collections.max(specialistInGenre.values());
-        List<Genre> maxValueKeys = specialistInGenre.entrySet().stream()
-                .filter(entry -> entry.getValue() == maxValueInMap)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
-        if (maxValueKeys.size() > 1) {
-            for (Genre favoriteGenre : maxValueKeys) {
-                if (favoriteGenre.equals(user.getBook().getGenre())) {
-                    return favoriteGenre;
-                }
-            }
-        }
-        return maxValueKeys.get(0);
+        return library.getArchive().stream()
+                .filter(archivedData -> archivedData.getUser().equals(user))
+                .filter(archivedData -> archivedData.getReturned() != null)
+                .collect(Collectors.groupingBy(archivedData ->
+                        archivedData.getBook().getGenre(), Collectors.counting()))
+                .entrySet().stream().max((entry1, entry2) -> {
+                    int resultOfComparing = entry1.getValue().compareTo(entry2.getValue());
+                    if (user.getBook() != null && resultOfComparing == 0) {
+                        if (user.getBook().getGenre().equals(entry1.getKey()) &&
+                                !user.getBook().getGenre().equals(entry2.getKey())) {
+                            return ++resultOfComparing;
+                        }
+                        return --resultOfComparing;
+                    }
+                    return resultOfComparing;
+                })
+                .orElseThrow(NoSuchElementException::new).getKey();
     }
 
     /**
@@ -100,11 +95,9 @@ public class LibraryStatistic {
      * @return - список книг
      */
     public List<Book> booksWithMoreCountPages(Library library, int countPage) {
-        List<Book> largeBooks = new ArrayList<>();
-        Stream<Book> stream = library.getBooks().stream();
-        stream.filter(book -> book.getPage() >= countPage)
-                .forEach(largeBooks::add);
-        return largeBooks;
+        return library.getBooks().stream()
+                .filter(book -> book.getPage() >= countPage)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -125,16 +118,12 @@ public class LibraryStatistic {
                                 .max((o1, o2) -> {
                                     long compareValue = o2.getValue() - o1.getValue();
                                     if (compareValue == 0) {
-                                        return o1.getKey().compareTo(o2.getKey());
+                                        return o2.getKey().compareTo(o1.getKey());
                                     }
                                     return (int) compareValue;
                                 }).get().getKey()
                 ));
-        for (Genre genre : Genre.values()) {
-            if (!mostPopularAuthorInGenre.containsKey(genre)) {
-                mostPopularAuthorInGenre.put(genre, "Author not determined");
-            }
-        }
+        Arrays.stream(Genre.values()).forEach(genre -> mostPopularAuthorInGenre.putIfAbsent(genre, "Author not determined"));
         return mostPopularAuthorInGenre;
     }
 }
