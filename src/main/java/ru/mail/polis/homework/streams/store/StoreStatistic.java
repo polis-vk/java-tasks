@@ -1,8 +1,10 @@
 package ru.mail.polis.homework.streams.store;
 
 import java.sql.Timestamp;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Класс для работы со статистикой по заказам магазина.
@@ -20,7 +22,11 @@ public class StoreStatistic {
      * @return - кол-во проданного товара
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
-        return 0L;
+        return orders.stream().filter(order -> order.getTime().compareTo(from) >= 0)
+                .filter(order -> order.getTime().compareTo(to) <= 0)
+                .flatMap(order -> order.getItemCount().entrySet().stream())
+                .filter(itemIntegerEntry -> itemIntegerEntry.getKey().getName().equals(typeItem.getName()))
+                .map(Map.Entry::getValue).mapToInt(Integer::intValue).sum();
     }
 
     /**
@@ -39,7 +45,9 @@ public class StoreStatistic {
      * @return - товар
      */
     public Item mostPopularItem(List<Order> orders) {
-        return null;
+        return orders.stream().flatMap(order -> order.getItemCount().entrySet().stream())
+                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)))
+                .entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
     }
 
     /**
@@ -48,6 +56,12 @@ public class StoreStatistic {
      * @return map - заказ / общая сумма заказа
      */
     public Map<Order, Long> sum5biggerOrders(List<Order> orders) {
-        return null;
+        return orders.stream().sorted(Comparator.comparingLong(order -> -order.getItemCount().entrySet()
+                .stream().mapToLong(Map.Entry::getValue)
+                .sum())).limit(5).collect(Collectors
+                .toMap( o1 -> o1,
+                        o1 -> o1.getItemCount().entrySet()
+                                .stream()
+                                .mapToLong(e -> e.getKey().getPrice() * e.getValue()).sum()));
     }
 }
