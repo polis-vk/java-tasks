@@ -127,7 +127,14 @@ public class LibraryStatistic {
 
         Map<Genre, String> popularityAuthorsInGenre = genresForAuthorsCountBooksMap.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, genreMapEntry -> genreMapEntry.getValue().entrySet().stream()
-                        .max(Map.Entry.<String, Long>comparingByValue().reversed().thenComparing(Map.Entry::getKey))
+                        .max((author1, author2) -> {
+                            long cmp = author1.getValue() - author2.getValue();
+                            if (cmp == 0) {
+                                return author1.getKey().compareTo(author2.getKey());
+                            }
+
+                            return (int) cmp;
+                        })
                         .map(Map.Entry::getKey)
                         .get()
                 ));
