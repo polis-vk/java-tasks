@@ -43,7 +43,8 @@ public class CopyFile {
     }
 
     private static void copy(Path from, Path to) throws IOException {
-        try (InputStream in = Files.newInputStream(from); OutputStream out = Files.newOutputStream(to)) {
+        try (InputStream in = Files.newInputStream(from);
+             OutputStream out = Files.newOutputStream(to)) {
             byte[] buffer = new byte[CAPACITY];
             int length;
             while ((length = in.read(buffer)) > 0) {
@@ -62,7 +63,7 @@ public class CopyFile {
             try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(from)) {
                 for (Path file : directoryStream) {
                     if (Files.isDirectory(file)) {
-                        Files.createDirectories(Path.of(to + File.separator + file.getFileName()));
+                        Files.createDirectory(Path.of(to + File.separator + file.getFileName()));
                     }
                     deepCopy(file, Paths.get(to + File.separator + file.toString().substring(to.toString().length())));
                 }
