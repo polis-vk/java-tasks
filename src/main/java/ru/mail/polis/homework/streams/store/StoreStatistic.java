@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
 /**
  * Класс для работы со статистикой по заказам магазина.
  * Оценка 5-ть баллов
@@ -24,12 +25,16 @@ public class StoreStatistic {
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
         return orders.stream().filter(
-                order -> order.getTime().getTime() < to.getTime() && order.getTime().getTime() > from.getTime()
+                order -> tsBetween(order.getTime(), from, to)
         ).reduce(
                 0,
                 (first, second) -> first + second.getItemCount().getOrDefault(typeItem, 0),
                 Integer::sum
         );
+    }
+
+    private boolean tsBetween(Timestamp ts, Timestamp tsAft, Timestamp tsBef) {
+        return (ts.equals(tsAft) || ts.after(tsAft)) && (ts.equals(tsBef) || ts.before(tsBef));
     }
 
     /**
@@ -40,10 +45,9 @@ public class StoreStatistic {
      * значение - map товар/кол-во
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
-        long dayInMillis = 24 * 60 * 60 * 1_000;
         return orders.stream().collect(
                 Collectors.groupingBy(
-                        order -> new Timestamp(order.getTime().getTime() % dayInMillis),
+                        order -> Timestamp.valueOf(order.getTime().toLocalDateTime().toLocalDate().atStartOfDay()),
                         Collectors.toSet()
                 )
         ).entrySet().stream().collect(
