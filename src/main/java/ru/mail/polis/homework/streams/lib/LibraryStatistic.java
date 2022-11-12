@@ -77,9 +77,9 @@ public class LibraryStatistic {
         final long timeLimit = TIME_PER_DAY * 30;
         return library.getArchive().stream()
                 .filter(archivedData -> bookTimeHolding(archivedData) > timeLimit)
-                .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.mapping(ArchivedData::getBook, Collectors.toSet())))
+                .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.mapping(ArchivedData::getBook, Collectors.counting())))
                 .entrySet().stream()
-                .filter(userListEntry -> getAmountOfAllBooksForCurrentUser(library, userListEntry.getKey()) < 2 * userListEntry.getValue().size())
+                .filter(userAndAmountOfBooksWith30DaysHoldingEntry -> getAmountOfAllBooksForCurrentUser(library, userAndAmountOfBooksWith30DaysHoldingEntry.getKey()) < 2 * userAndAmountOfBooksWith30DaysHoldingEntry.getValue())
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
@@ -126,13 +126,12 @@ public class LibraryStatistic {
         return data.getReturned() != null ? data.getReturned().getTime() - startTime : currentTime - startTime;
     }
 
-    private static int getAmountOfAllBooksForCurrentUser(Library library, User user) {
+    private static long getAmountOfAllBooksForCurrentUser(Library library, User user) {
         return library.getArchive().stream()
-                .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.mapping(ArchivedData::getBook, Collectors.toSet())))
+                .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.mapping(ArchivedData::getBook, Collectors.counting())))
                 .entrySet().stream()
                 .filter(userListWithBooksEntry -> userListWithBooksEntry.getKey().equals(user))
-                .flatMap(userListWithBooksEntry -> userListWithBooksEntry.getValue().stream())
-                .collect(Collectors.toSet())
-                .size();
+                .mapToLong(Map.Entry::getValue)
+                .sum();
     }
 }
