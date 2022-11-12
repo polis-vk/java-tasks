@@ -26,10 +26,8 @@ public class LibraryStatistic {
      */
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
         return library.getArchive().stream()
-                .filter(archive -> archive.getReturned() != null)
                 .filter(archive -> archive.getBook().getGenre().equals(genre))
-                .filter(arch -> TimeUnit.MILLISECONDS
-                        .toDays(arch.getReturned().getTime() - arch.getTake().getTime()) >= READING_DAYS_FOR_EXPERT)
+                .filter(archive -> isMoreThanDays(archive, READING_DAYS_FOR_EXPERT))
                 .collect(Collectors.groupingBy(ArchivedData::getUser,
                         Collectors.mapping(archive -> archive.getBook().getPage(), Collectors.toList())))
                 .entrySet().stream()
@@ -46,8 +44,8 @@ public class LibraryStatistic {
      */
     public Genre loveGenre(Library library, User user) {
         return library.getArchive().stream()
-                .filter(archivedData -> archivedData.getUser().equals(user))
-                .collect(groupingBy(archivedData -> archivedData.getBook().getGenre(), Collectors.counting()))
+                .filter(archive -> archive.getUser().equals(user))
+                .collect(groupingBy(archive -> archive.getBook().getGenre(), Collectors.counting()))
                 .entrySet().stream()
                 .min((o1, o2) -> {
                     int compare = Long.compare(o2.getValue(), o1.getValue());
@@ -75,8 +73,8 @@ public class LibraryStatistic {
         return library.getArchive().stream()
                 .collect(groupingBy(ArchivedData::getUser))
                 .entrySet().stream()
-                .filter(arch -> arch.getValue().stream()
-                        .filter(LibraryStatistic::isMoreThanMonth).count() > arch.getValue().size() / 2)
+                .filter(entryMap -> entryMap.getValue().stream()
+                        .filter(archive -> isMoreThanDays(archive, MONTH)).count() > entryMap.getValue().size() / 2)
                 .map(Map.Entry::getKey).collect(toList());
     }
 
@@ -106,16 +104,15 @@ public class LibraryStatistic {
                         .max(Map.Entry.<String, Long>comparingByValue()
                                 .thenComparing(Map.Entry.comparingByKey(Comparator.reverseOrder())))
                         .filter(entryMap -> library.getArchive().stream()
-                                .anyMatch(archivedData -> archivedData.getBook().getAuthor()
-                                        .equals(entryMap.getKey()))).map(Map.Entry::getKey)
-                        .orElse("Author not determined")));
+                                .anyMatch(archive -> archive.getBook().getAuthor().equals(entryMap.getKey())))
+                        .map(Map.Entry::getKey).orElse("Author not determined")));
     }
 
-    private static boolean isMoreThanMonth(ArchivedData a) {
+    private static boolean isMoreThanDays(ArchivedData a, int days) {
         if (a.getReturned() == null) {
-            return TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - a.getTake().getTime()) >= MONTH;
+            return TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - a.getTake().getTime()) >= days;
         }
-        return TimeUnit.MILLISECONDS.toDays(a.getReturned().getTime() - a.getTake().getTime()) >= MONTH;
+        return TimeUnit.MILLISECONDS.toDays(a.getReturned().getTime() - a.getTake().getTime()) >= days;
     }
 
     private int getReadPages(Genre genre, Map.Entry<User, List<Integer>> archiveMap) {
