@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.streams.lib;
 
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -30,7 +31,7 @@ public class LibraryStatistic {
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
         return library.getArchive().stream()
                 .filter(archivedData -> archivedData.getBook().getGenre() == genre)
-                .filter(this::bookFilter)
+                .filter(archivedData -> timeDelinquency(archivedData, TWO_WEEK, true))
                 .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.toList()))
                 .entrySet().stream()
                 .filter(userSetEntry -> userSetEntry.getValue().size() >= 5)
@@ -40,7 +41,8 @@ public class LibraryStatistic {
                             int readPages = userListEntry.getValue().stream()
                                     .mapToInt(value -> value.getBook().getPage()).sum();
                             if (userListEntry.getValue().get(0).getUser().getBook().getGenre().equals(genre)) {
-                                return readPages += userListEntry.getValue().get(0).getUser().getReadedPages();
+                                readPages += userListEntry.getValue().get(0).getUser().getReadedPages();
+                                return readPages;
                             }
                             return readPages;
                         }));
@@ -95,7 +97,13 @@ public class LibraryStatistic {
         return library.getArchive().stream()
                 .collect(Collectors.groupingBy(ArchivedData::getUser))
                 .entrySet().stream()
-                .filter(userListEntry -> unreliableUsersFilter(userListEntry.getValue()))
+                .filter(userListEntry -> {
+                    List<ArchivedData> dataList = userListEntry.getValue();
+                    long countUnreliableData = dataList.stream()
+                            .filter(data -> timeDelinquency(data, MONTH, false))
+                            .count();
+                    return countUnreliableData > (long) Math.floor(dataList.size() / 2.);
+                })
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
@@ -120,13 +128,15 @@ public class LibraryStatistic {
      * @return - map жанр / самый популярный автор
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
-        Map<Genre, String> mostPopularAuthor = library.getArchive().stream()
-                .map(ArchivedData::getBook)
-                .collect(Collectors.groupingBy(
-                        Book::getGenre,
-                        Collectors.groupingBy(
-                                Book::getAuthor,
-                                Collectors.counting())))
+        return Arrays.stream(Genre.values())
+                .collect(Collectors.toMap(
+                        genre -> genre,
+                        genre -> library.getArchive().stream()
+                                .map(ArchivedData::getBook)
+                                .filter(book -> book.getGenre() == genre)
+                                .collect(Collectors.groupingBy(
+                                        Book::getAuthor,
+                                        Collectors.counting()))))
                 .entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
@@ -134,36 +144,27 @@ public class LibraryStatistic {
                                 .min(Comparator.comparingLong(Map.Entry<String, Long>::getValue)
                                         .reversed()
                                         .thenComparing(Map.Entry::getKey))
-                                .map(Map.Entry::getKey).orElseThrow(NoSuchElementException::new)));
-        for (Genre genre : Genre.values()) {
-            if (!mostPopularAuthor.containsKey(genre)) {
-                mostPopularAuthor.put(genre, "Author not determined");
+                                .map(Map.Entry::getKey).orElse("Author not determined")));
+    }
+
+    private boolean timeDelinquency(ArchivedData archivedData, Date maxTimePeriod, boolean greaterOrEquals) {
+        boolean notReturned = archivedData.getReturned() == null;
+
+        // Случай с больше или равно.
+        if (greaterOrEquals) {
+            if (notReturned && new Timestamp(new Date().getTime()).getTime() - archivedData.getTake().getTime()
+                    >= maxTimePeriod.getTime()) {
+                return true;
             }
+            return archivedData.getReturned().getTime() - archivedData.getTake().getTime()
+                    >= maxTimePeriod.getTime();
         }
-        return mostPopularAuthor;
-    }
 
-    private boolean bookFilter(ArchivedData archivedData) {
-        if (archivedData.getReturned() == null &&
-                new Timestamp(new Date().getTime()).getTime() -
-                        archivedData.getTake().getTime() >= TWO_WEEK.getTime()) {
+        if (notReturned && new Timestamp(new Date().getTime()).getTime() - archivedData.getTake().getTime()
+                > maxTimePeriod.getTime()) {
             return true;
-        } else return (archivedData.getReturned().getTime() -
-                archivedData.getTake().getTime()) >= TWO_WEEK.getTime();
-    }
-
-    private boolean unreliableUsersFilter(List<ArchivedData> archivedData) {
-        long countUnreliableData = archivedData.stream()
-                .filter(archivedData1 -> {
-                    if (archivedData1.getReturned() == null &&
-                            new Timestamp(new Date().getTime()).getTime() -
-                                    archivedData1.getTake().getTime() > MONTH.getTime()) {
-                        return true;
-                    } else return (archivedData1.getReturned().getTime() -
-                            archivedData1.getTake().getTime()) > MONTH.getTime();
-                })
-                .count();
-
-        return countUnreliableData > (long) Math.floor(archivedData.size() / 2.);
+        }
+        return archivedData.getReturned().getTime() - archivedData.getTake().getTime()
+                > maxTimePeriod.getTime();
     }
 }
