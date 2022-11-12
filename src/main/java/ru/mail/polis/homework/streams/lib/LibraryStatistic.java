@@ -79,16 +79,7 @@ public class LibraryStatistic {
                 .filter(archivedData -> bookTimeHolding(archivedData) > timeLimit)
                 .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.mapping(ArchivedData::getBook, Collectors.toSet())))
                 .entrySet().stream()
-                .filter(userListEntry -> {
-                    int amountBooksOfUserWith30DaysHolding = userListEntry.getValue().size();
-                    int amountOfAllBooksForAUser = library.getArchive().stream()
-                            .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.mapping(ArchivedData::getBook, Collectors.toSet())))
-                            .entrySet().stream()
-                            .filter(userListWithBooksEntry -> userListWithBooksEntry.getKey().equals(userListEntry.getKey()))
-                            .flatMap(userListWithBooksEntry -> userListWithBooksEntry.getValue().stream())
-                            .collect(Collectors.toSet()).size();
-                    return amountOfAllBooksForAUser < 2 * amountBooksOfUserWith30DaysHolding;
-                })
+                .filter(userListEntry -> getAmountOfAllBooksForCurrentUser(library, userListEntry.getKey()) < 2 * userListEntry.getValue().size())
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
@@ -133,5 +124,15 @@ public class LibraryStatistic {
         long currentTime = Timestamp.from(Instant.now()).getTime();
         long startTime = data.getTake().getTime();
         return data.getReturned() != null ? data.getReturned().getTime() - startTime : currentTime - startTime;
+    }
+
+    private static int getAmountOfAllBooksForCurrentUser(Library library, User user) {
+        return library.getArchive().stream()
+                .collect(Collectors.groupingBy(ArchivedData::getUser, Collectors.mapping(ArchivedData::getBook, Collectors.toSet())))
+                .entrySet().stream()
+                .filter(userListWithBooksEntry -> userListWithBooksEntry.getKey().equals(user))
+                .flatMap(userListWithBooksEntry -> userListWithBooksEntry.getValue().stream())
+                .collect(Collectors.toSet())
+                .size();
     }
 }
