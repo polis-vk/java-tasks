@@ -31,21 +31,16 @@ public class LibraryStatistic {
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
         return library.getArchive().stream()
                 .filter(o -> o.getBook().getGenre() == genre)
+                .filter(archivedData -> {
+                    if (archivedData.getReturned() == null) {
+                        Instant now = new Timestamp(System.currentTimeMillis()).toInstant();
+                        return archivedData.getTake().toInstant().compareTo(now.minus(14, ChronoUnit.DAYS)) <= 0;
+                    }
+                    return archivedData.getTake().toInstant().compareTo(archivedData.getReturned().toInstant().minus(14, ChronoUnit.DAYS)) <= 0;
+                })
                 .collect(Collectors.groupingBy(ArchivedData::getUser))
                 .entrySet().stream()
-                .filter(userListEntry -> {
-                    long count = userListEntry.getValue().stream()
-                            .filter(archivedData -> {
-                                Timestamp returned = archivedData.getReturned();
-                                if (returned == null) {
-                                    Instant now = new Timestamp(System.currentTimeMillis()).toInstant();
-                                    return archivedData.getTake().toInstant().compareTo(now.minus(14, ChronoUnit.DAYS)) <= 0;
-                                }
-                                return archivedData.getTake().toInstant().compareTo(archivedData.getReturned().toInstant().minus(14, ChronoUnit.DAYS)) <= 0;
-                            })
-                            .count();
-                    return count >= 5;
-                })
+                .filter(entry -> entry.getValue().size() >= 5)
                 .map(entry -> {
                     int sum = entry.getValue().stream()
                             .map(archivedData -> archivedData.getBook().getPage())
