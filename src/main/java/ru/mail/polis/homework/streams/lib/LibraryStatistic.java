@@ -113,10 +113,11 @@ public class LibraryStatistic {
                         .collect(Collectors.groupingBy(archivedData -> archivedData.getBook().getAuthor(),
                                 Collectors.counting()))))
                 .entrySet().stream()
-                .peek(entry -> {
+                .map(entry -> {
                     if (entry.getValue().size() == 0) {
                         entry.getValue().put(authorPlaceholder, 1L);
                     }
+                    return entry;
                 })
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().entrySet().stream()
                         .max((a, b) -> {
