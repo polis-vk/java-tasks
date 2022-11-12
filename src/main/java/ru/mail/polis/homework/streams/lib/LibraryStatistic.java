@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -26,12 +25,18 @@ public class LibraryStatistic {
      */
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
         return library.getUsers().stream()
-                .filter(user -> library.getArchive().stream()
-                        .filter(data -> data.getUser().equals(user)
-                                && data.getBook().getGenre().equals(genre)
-                                && getReadingDays(data) >= SPECIALIST_MIN_DAYS)
-                        .count() >= SPECIALIST_MIN_BOOKS)
-                .collect(Collectors.toMap(Function.identity(), User::getReadedPages));
+                .collect(Collectors.toMap(user -> user,
+                        user -> library.getArchive().stream()
+                                .filter(data -> data.getUser().equals(user)
+                                        && data.getBook().getGenre().equals(genre)
+                                        && getReadingDays(data) >= SPECIALIST_MIN_DAYS)
+                                .collect(Collectors.toList())))
+                .entrySet().stream()
+                .filter(user -> user.getValue().size() >= SPECIALIST_MIN_BOOKS)
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        user -> (user.getKey().getBook().getGenre().equals(genre) ?
+                                user.getKey().getReadedPages() : 0) + (user.getValue().stream()
+                                .mapToInt(data -> data.getBook().getPage()).sum())));
     }
 
     public int getReadingDays(ArchivedData data) {
@@ -53,7 +58,22 @@ public class LibraryStatistic {
                 .filter(archive -> archive.getUser().equals(user))
                 .collect(Collectors.groupingBy(data -> data.getBook().getGenre(), Collectors.counting()))
                 .entrySet().stream()
-                .max(Map.Entry.comparingByValue())
+                .max((genre1, genre2) -> {
+                    if (genre1.getValue() > genre2.getValue()) {
+                        return 1;
+                    } else if (genre1.getValue() < genre2.getValue()) {
+                        return -1;
+                    } else {
+                        Genre currentGenre = user.getBook().getGenre();
+                        if (genre1.getKey() == currentGenre && genre2.getKey() == currentGenre) {
+                            return 0;
+                        } else if (genre1.getKey() == currentGenre) {
+                            return 1;
+                        } else {
+                            return -1;
+                        }
+                    }
+                })
                 .get()
                 .getKey();
     }
@@ -95,17 +115,23 @@ public class LibraryStatistic {
      */
     public Map<Genre, String> mostPopularAuthorInGenre(Library library) {
         return library.getBooks().stream()
-                .collect(Collectors.groupingBy(Book::getGenre,
-                        Collectors.groupingBy(Book::getAuthor, Collectors.counting())))
-                .entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey,
-                        genreMapEntry -> genreMapEntry
-                                .getValue()
-                                .entrySet()
-                                .stream()
-                                .max(Comparator.comparingLong(Map.Entry<String, Long>::getValue)
-                                        .thenComparing(Map.Entry.comparingByKey()))
-                                .get()
-                                .getKey()));
+                .map(Book::getGenre)
+                .distinct()
+                .collect(Collectors.toMap(
+                        genre -> genre,
+                        genre -> library.getArchive().stream()
+                                .map(ArchivedData::getBook)
+                                .collect(Collectors.groupingBy(Book::getGenre,
+                                        Collectors.groupingBy(Book::getAuthor, Collectors.counting())))
+                                .entrySet().stream()
+                                .collect(Collectors.toMap(Map.Entry::getKey,
+                                        genreMapEntry -> genreMapEntry
+                                                .getValue()
+                                                .entrySet().stream()
+                                                .max(Comparator.comparingLong(Map.Entry<String, Long>::getValue)
+                                                        .thenComparing(Map.Entry.comparingByKey(Comparator.reverseOrder())))
+                                                .get()
+                                                .getKey()))
+                                .getOrDefault(genre, "Author not determined")));
     }
 }
