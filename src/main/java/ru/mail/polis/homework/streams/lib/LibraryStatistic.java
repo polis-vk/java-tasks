@@ -1,11 +1,23 @@
 package ru.mail.polis.homework.streams.lib;
 
+import org.graalvm.compiler.lir.LIRInstruction;
+
+import javax.swing.*;
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import java.util.Comparator;
+import java.util.Objects;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Set;
 
 /**
  * Класс для работы со статистикой по библиотеке.
@@ -23,14 +35,15 @@ public class LibraryStatistic {
      */
     public Map<User, Integer> specialistInGenre(Library library, Genre genre) {
         return library.getArchive().stream()
+                .filter(archivedData -> archivedData.getBook().getGenre().equals(genre))
                 .filter(archivedData -> {
-                    long takeTime = archivedData.getTake().getTime();
+                    Temporal takeTime = archivedData.getTake().toInstant();
                     Timestamp returnedTime = archivedData.getReturned();
 
                     if (returnedTime == null) {
-                        return false;
+                        return countHoldDays(takeTime, Instant.now()) >= 14;
                     } else {
-                        return countHoldDays(takeTime, returnedTime.getTime()) >= 14;
+                        return countHoldDays(takeTime, returnedTime.toInstant()) >= 14;
                     }
                 })
                 .collect(Collectors.groupingBy(ArchivedData::getUser))
@@ -38,7 +51,10 @@ public class LibraryStatistic {
                 .filter(entry -> entry.getValue().size() >= 5)
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        entry -> entry.getKey().getReadedPages()
+                        userListEntry -> userListEntry.getValue().stream()
+                                .mapToInt(archivedData -> archivedData.getBook().getPage())
+                                .sum() + (userListEntry.getKey().getBook().getGenre().equals(genre) ?
+                                userListEntry.getKey().getReadedPages() : 0)
                 ));
     }
 
@@ -50,17 +66,27 @@ public class LibraryStatistic {
      * @return - жанр
      */
     public Genre loveGenre(Library library, User user) {
+        Genre currentGenre = user.getBook() == null ? null : user.getBook().getGenre();
         return library.getArchive().stream()
-                .filter(archivedData -> archivedData.getUser().equals(user)
-                        && user.getBook().getGenre() != archivedData.getBook().getGenre())
+                .filter(archivedData -> !Objects.equals(archivedData.getBook().getGenre(), currentGenre)
+                        && archivedData.getUser().equals(user))
                 .collect(Collectors.groupingBy(
                         archivedData -> archivedData.getBook().getGenre(),
                         Collectors.counting()
                 ))
                 .entrySet().stream()
-                .max((o1, o2) -> (int) (o1.getValue() - o2.getValue()))
-                .orElseThrow(NoSuchElementException::new)
-                .getKey();
+                .collect(Collectors.groupingBy(Map.Entry::getValue,
+                        Collectors.mapping(Map.Entry::getKey, Collectors.toList())))
+                .entrySet().stream()
+                .max(Comparator.comparingLong(Map.Entry::getKey))
+                .map(entry -> {
+                    List<Genre> maxGenres = entry.getValue();
+                    if (maxGenres.size() > 1) {
+                        return currentGenre;
+                    }
+                    return maxGenres.get(0);
+                })
+                .orElse(null);
     }
 
     /**
@@ -77,13 +103,13 @@ public class LibraryStatistic {
                 )).entrySet().stream()
                 .filter(entry -> entry.getValue().stream()
                         .filter(archivedData -> {
-                            long takeTime = archivedData.getTake().getTime();
+                            Temporal takeTime = archivedData.getTake().toInstant();
                             Timestamp returnedTime = archivedData.getReturned();
 
                             if (returnedTime == null) {
-                                return false;
+                                return countHoldDays(takeTime, Instant.now()) >= 14;
                             } else {
-                                return countHoldDays(takeTime, returnedTime.getTime()) > 30;
+                                return countHoldDays(takeTime, returnedTime.toInstant()) >= 14;
                             }
                         })
                         .count() > (entry.getValue().size() / 2))
@@ -128,10 +154,8 @@ public class LibraryStatistic {
                                 .getKey()));
     }
 
-    private static int countHoldDays(long takeTime, long returnedTime) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(returnedTime - takeTime);
-        return calendar.get(Calendar.DATE) - 1;
+    private static int countHoldDays(Temporal takeTime, Temporal returnedTime) {
+        return (int) ChronoUnit.DAYS.between(takeTime, returnedTime);
     }
 
 }
