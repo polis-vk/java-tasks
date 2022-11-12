@@ -60,9 +60,12 @@ public class Animal implements Serializable {
             return false;
         }
         Animal animal = (Animal) o;
-        return Objects.equals(name, animal.name) && age == animal.age && Double.compare(animal.weight, weight) == 0
-                && isVegetarian == animal.isVegetarian && Objects.equals(animalType, animal.animalType)
-                && Objects.equals(overseer, animal.overseer);
+        return Objects.equals(name, animal.getName())
+                && age == animal.getAge()
+                && Double.compare(animal.getWeight(), weight) == 0
+                && isVegetarian == animal.isVegetarian()
+                && Objects.equals(animalType, animal.getAnimalType())
+                && Objects.equals(overseer, animal.getOverseer());
     }
 
     @Override

@@ -41,7 +41,9 @@ public class WorkerExternalizable implements Externalizable {
             return false;
         }
         WorkerExternalizable worker = (WorkerExternalizable) o;
-        return Objects.equals(surname, worker.surname) && id == worker.id && isOnVacation == worker.isOnVacation;
+        return Objects.equals(surname, worker.getSurname())
+                && id == worker.getId()
+                && isOnVacation == worker.isOnVacation();
     }
 
     @Override
@@ -67,7 +69,7 @@ public class WorkerExternalizable implements Externalizable {
             out.writeByte(0);
         }
         out.writeLong(id);
-        out.writeBoolean(isOnVacation);
+        out.writeByte(isOnVacation ? 1 : 0);
     }
 
     @Override
@@ -76,6 +78,6 @@ public class WorkerExternalizable implements Externalizable {
             surname = in.readUTF();
         }
         id = in.readLong();
-        isOnVacation = in.readBoolean();
+        isOnVacation = (in.readByte() == 1);
     }
 }

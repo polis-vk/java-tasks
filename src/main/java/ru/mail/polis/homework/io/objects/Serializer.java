@@ -193,7 +193,7 @@ public class Serializer {
                 }
                 objectOutputStream.writeInt(animal.getAge());
                 objectOutputStream.writeDouble(animal.getWeight());
-                objectOutputStream.writeBoolean(animal.isVegetarian());
+                objectOutputStream.writeByte(animal.isVegetarian() ? 1 : 0);
                 AnimalType animalType = animal.getAnimalType();
                 if (animalType == null) {
                     objectOutputStream.writeByte(0);
@@ -213,7 +213,7 @@ public class Serializer {
                         objectOutputStream.writeUTF(overseer.getSurname());
                     }
                     objectOutputStream.writeLong(overseer.getId());
-                    objectOutputStream.writeBoolean(overseer.isOnVacation());
+                    objectOutputStream.writeByte(overseer.isOnVacation() ? 1 : 0);
                 }
             }
         } catch (IOException e) {
@@ -247,7 +247,7 @@ public class Serializer {
                 }
                 int age = objectInputStream.readInt();
                 double weight = objectInputStream.readDouble();
-                boolean isVegeterian = objectInputStream.readBoolean();
+                boolean isVegetarian = (objectInputStream.readByte() == 1);
                 AnimalType animalType = null;
                 if (objectInputStream.readByte() == 1) {
                     animalType = AnimalType.valueOf(objectInputStream.readUTF());
@@ -259,10 +259,10 @@ public class Serializer {
                         surname = objectInputStream.readUTF();
                     }
                     long id = objectInputStream.readLong();
-                    boolean isOnVacation = objectInputStream.readBoolean();
+                    boolean isOnVacation = (objectInputStream.readByte() == 1);
                     overseer = new Worker(surname, id, isOnVacation);
                 }
-                animals.add(new Animal(name, age, weight, isVegeterian, animalType, overseer));
+                animals.add(new Animal(name, age, weight, isVegetarian, animalType, overseer));
             }
         } catch (IOException e) {
             e.printStackTrace();

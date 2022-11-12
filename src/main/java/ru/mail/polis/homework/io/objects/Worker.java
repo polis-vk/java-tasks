@@ -35,7 +35,9 @@ public class Worker implements Serializable {
             return false;
         }
         Worker worker = (Worker) o;
-        return Objects.equals(surname, worker.surname) && id == worker.id && isOnVacation == worker.isOnVacation;
+        return Objects.equals(surname, worker.getSurname())
+                && id == worker.getId()
+                && isOnVacation == worker.isOnVacation();
     }
 
     @Override

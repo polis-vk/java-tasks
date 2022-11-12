@@ -18,8 +18,8 @@ public class AnimalExternalizable implements Externalizable {
     private AnimalType animalType;
     private WorkerExternalizable overseer;
 
-    public AnimalExternalizable(String name, int age, double weight,
-                                boolean isVegetarian, AnimalType animalType, WorkerExternalizable overseer) {
+    public AnimalExternalizable(String name, int age, double weight, boolean isVegetarian, AnimalType animalType,
+                                WorkerExternalizable overseer) {
         this.name = name;
         this.age = age;
         this.weight = weight;
@@ -64,9 +64,12 @@ public class AnimalExternalizable implements Externalizable {
             return false;
         }
         AnimalExternalizable animal = (AnimalExternalizable) o;
-        return Objects.equals(name, animal.name) && age == animal.age && Double.compare(animal.weight, weight) == 0
-                && isVegetarian == animal.isVegetarian && Objects.equals(animalType, animal.animalType)
-                && Objects.equals(overseer, animal.overseer);
+        return Objects.equals(name, animal.getName())
+                && age == animal.getAge()
+                && Double.compare(animal.getWeight(), weight) == 0
+                && isVegetarian == animal.isVegetarian()
+                && Objects.equals(animalType, animal.getAnimalType())
+                && Objects.equals(overseer, animal.getOverseer());
     }
 
     @Override
@@ -96,7 +99,7 @@ public class AnimalExternalizable implements Externalizable {
         }
         out.writeInt(age);
         out.writeDouble(weight);
-        out.writeBoolean(isVegetarian);
+        out.writeByte(isVegetarian ? 1 : 0);
         if (animalType != null) {
             out.writeByte(1);
             out.writeUTF(animalType.name());
@@ -113,7 +116,7 @@ public class AnimalExternalizable implements Externalizable {
         }
         age = in.readInt();
         weight = in.readDouble();
-        isVegetarian = in.readBoolean();
+        isVegetarian = (in.readByte() == 1);
         if (in.readByte() == 1) {
             animalType = AnimalType.valueOf(in.readUTF());
         }

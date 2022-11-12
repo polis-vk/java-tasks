@@ -38,7 +38,9 @@ public class WorkerWithMethods implements Serializable {
             return false;
         }
         WorkerWithMethods worker = (WorkerWithMethods) o;
-        return Objects.equals(surname, worker.surname) && id == worker.id && isOnVacation == worker.isOnVacation;
+        return Objects.equals(surname, worker.getSurname())
+                && id == worker.getId()
+                && isOnVacation == worker.isOnVacation();
     }
 
     @Override
@@ -63,7 +65,7 @@ public class WorkerWithMethods implements Serializable {
             out.writeByte(0);
         }
         out.writeLong(id);
-        out.writeBoolean(isOnVacation);
+        out.writeByte(isOnVacation ? 1 : 0);
     }
 
     public void readObject(ObjectInputStream in) throws IOException {
@@ -71,6 +73,6 @@ public class WorkerWithMethods implements Serializable {
             surname = in.readUTF();
         }
         id = in.readLong();
-        isOnVacation = in.readBoolean();
+        isOnVacation = (in.readByte() == 1);
     }
 }
