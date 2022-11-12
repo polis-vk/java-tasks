@@ -3,6 +3,7 @@ package ru.mail.polis.homework.streams.store;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -14,13 +15,13 @@ import java.util.stream.Collectors;
 public class StoreStatistic {
 
     /**
-     * Р’РµСЂРЅСѓС‚СЊ СЃРєРѕР»СЊРєРѕ Р±С‹Р»Рѕ РїСЂРѕРґР°РЅРѕ РѕРїСЂРµРґРµР»РµРЅРЅРѕРіРѕ С‚РѕРІР°СЂР° Р·Р° РїРµСЂРµРґР°РЅРЅС‹Р№ РїСЂРѕРјРµР¶СѓС‚РѕРє РІСЂРµРјРµРЅРё
+     * Вернуть сколько было продано определенного товара за переданный промежуток времени
      *
-     * @param orders   - СЃРїРёСЃРѕРє Р·Р°РєР°Р·РѕРІ
-     * @param typeItem - РІРёРґ С‚РѕРІР°СЂР°
-     * @param from     - СЃ РєР°РєРѕРіРѕ РјРѕРјРµРЅС‚Р° РІРµСЃС‚Рё РїРѕРґСЃС‡РµС‚
-     * @param to       - РїРѕ РєР°РєРѕР№ РјРѕРјРµРЅС‚ РІРµСЃС‚Рё РїРѕРґСЃС‡РµС‚
-     * @return - РєРѕР»-РІРѕ РїСЂРѕРґР°РЅРЅРѕРіРѕ С‚РѕРІР°СЂР°
+     * @param orders   - список заказов
+     * @param typeItem - вид товара
+     * @param from     - с какого момента вести подсчет
+     * @param to       - по какой момент вести подсчет
+     * @return - кол-во проданного товара
      */
     public long proceedsByItems(List<Order> orders, Item typeItem, Timestamp from, Timestamp to) {
         return orders
@@ -32,11 +33,11 @@ public class StoreStatistic {
     }
 
     /**
-     * Р’РµСЂРЅСѓС‚СЊ СЃС‚Р°С‚РёСЃС‚РёРєСѓ РїРѕ РєР°Р¶РґРѕРјСѓ РґРЅСЋ СЃРєРѕР»СЊРєРѕ РєР°РєРѕРіРѕ С‚РѕРІР°СЂР° Р±С‹Р»Рѕ РїСЂРѕРґР°РЅРЅРѕ
+     * Вернуть статистику по каждому дню сколько какого товара было проданно
      *
-     * @param orders - СЃРїРёСЃРѕРє Р·Р°РєР°Р·РѕРІ
-     * @return - map, РіРґРµ РєР»СЋС‡ - РЅР°С‡Р°Р»Рѕ РґРЅСЏ (00:00:00 000 UTC) РґР»СЏ РєРѕС‚РѕСЂРѕРіРѕ СЃРѕР±СЂР°РЅР° СЃС‚Р°С‚РёСЃС‚РёРєР°
-     * Р·РЅР°С‡РµРЅРёРµ - map С‚РѕРІР°СЂ/РєРѕР»-РІРѕ
+     * @param orders - список заказов
+     * @return - map, где ключ - начало дня (00:00:00 000 UTC) для которого собрана статистика
+     * значение - map товар/кол-во
      */
     public Map<Timestamp, Map<Item, Integer>> statisticItemsByDay(List<Order> orders) {
         return orders
@@ -52,32 +53,32 @@ public class StoreStatistic {
     }
 
     /**
-     * Р’РµСЂРЅСѓС‚СЊ СЃР°РјС‹Р№ РїРѕРїСѓР»СЏСЂРЅС‹Р№ С‚РѕРІР°СЂ
+     * Вернуть самый популярный товар
      *
-     * @param orders - СЃРїРёСЃРѕРє Р·Р°РєР°Р·РѕРІ
-     * @return - С‚РѕРІР°СЂ
+     * @param orders - список заказов
+     * @return - товар
      */
     public Item mostPopularItem(List<Order> orders) {
         return orders
                 .stream()
                 .flatMap(o -> o.getItemCount().entrySet().stream())
                 .max(Map.Entry.comparingByValue())
-                .get()
+                .orElseThrow(NoSuchElementException::new)
                 .getKey();
     }
 
     /**
-     * Р’РµСЂРЅСѓС‚СЊ СЃСѓРјРјСѓ РґР»СЏ 5 СЃР°РјС‹С… Р±РѕР»СЊС€РёС… РїРѕ РєРѕР»-РІСѓ С‚РѕРІР°СЂРѕРІ Р·Р°РєР°Р·Сѓ.
+     * Вернуть сумму для 5 самых больших по кол-ву товаров заказу.
      *
-     * @param orders - СЃРїРёСЃРѕРє Р·Р°РєР°Р·РѕРІ
-     * @return map - Р·Р°РєР°Р· / РѕР±С‰Р°СЏ СЃСѓРјРјР° Р·Р°РєР°Р·Р°
+     * @param orders - список заказов
+     * @return map - заказ / общая сумма заказа
      */
     public Map<Order, Long> sum5biggerOrders(List<Order> orders) {
         return orders
                 .stream()
                 .collect(Collectors.toMap(
                         Function.identity(),
-                        o -> Long.valueOf(o.getItemCount().values().stream().mapToInt(i -> 1).sum())
+                        o -> (long) o.getItemCount().values().size()
                 ))
                 .entrySet()
                 .stream()
