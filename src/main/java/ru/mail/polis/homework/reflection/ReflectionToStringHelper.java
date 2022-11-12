@@ -1,5 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.stream.Stream;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -43,7 +49,64 @@ package ru.mail.polis.homework.reflection;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
+        if (object == null) {
+            return "null";
+        }
+        Class<?> clazz = object.getClass();
+        Stream<Field> fieldsStream = Stream.empty();
+        while (clazz != null) {
+            fieldsStream = Stream.concat(fieldsStream, getConsideringFieldsStream(clazz));
+            clazz = clazz.getSuperclass();
+        }
+        return '{' +
+                fieldsStream.map(field -> field.getName() + ": " + getRepresentationOf(field, object))
+                            .reduce((expression, fieldStringified) -> expression + ", " + fieldStringified)
+                            .orElse("") +
+                '}';
+    }
+
+    private static Stream<Field> getConsideringFieldsStream(Class<?> clazz) {
+        return Arrays.stream(clazz.getDeclaredFields())
+                     .filter(field -> !field.isAnnotationPresent(SkipField.class) &&
+                                      (field.getModifiers() & Modifier.STATIC) == 0)
+                     .sorted(Comparator.comparing(Field::getName));
+    }
+
+    private static String getRepresentationOf(Field field, Object object) {
+        field.setAccessible(true);
+        try {
+            Object value = field.get(object);
+            if (value instanceof Object[]) {
+                return Arrays.toString((Object[]) value);
+            }
+            if (value instanceof boolean[]) {
+                return Arrays.toString((boolean[]) value);
+            }
+            if (value instanceof byte[]) {
+                return Arrays.toString((byte[]) value);
+            }
+            if (value instanceof short[]) {
+                return Arrays.toString((short[]) value);
+            }
+            if (value instanceof int[]) {
+                return Arrays.toString((int[]) value);
+            }
+            if (value instanceof long[]) {
+                return Arrays.toString((long[]) value);
+            }
+            if (value instanceof char[]) {
+                return Arrays.toString((char[]) value);
+            }
+            if (value instanceof float[]) {
+                return Arrays.toString((float[]) value);
+            }
+            if (value instanceof double[]) {
+                return Arrays.toString((double[]) value);
+            }
+            return String.valueOf(value);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }
