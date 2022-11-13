@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class AnimalNursery implements Serializable {
-    String address;
-    boolean isWork;
+    private final String address;
+    private final boolean isWork;
 
     public AnimalNursery(String address, boolean isWork) {
         this.address = address;

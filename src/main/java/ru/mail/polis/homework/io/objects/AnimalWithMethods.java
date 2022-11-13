@@ -32,28 +32,12 @@ public class AnimalWithMethods implements Serializable {
         this.inNursery = inNursery;
     }
 
-    public AnimalNurseryWithMethods getNursery() {
-        return nursery;
-    }
-
     public int getAge() {
         return age;
     }
 
-    public AnimalType getType() {
-        return type;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public boolean isSeek() {
-        return isSeek;
-    }
-
-    public boolean isInNursery() {
-        return inNursery;
     }
 
     @Override
@@ -83,7 +67,7 @@ public class AnimalWithMethods implements Serializable {
 
         AnimalWithMethods animal = (AnimalWithMethods) obj;
         return Objects.equals(nursery, animal.nursery) &&
-                type.equals(animal.type) &&
+                Objects.equals(type, animal.type) &&
                 Objects.equals(name, animal.name) &&
                 age == animal.age &&
                 isSeek == animal.isSeek &&
@@ -97,10 +81,10 @@ public class AnimalWithMethods implements Serializable {
         out.writeObject(nursery);
         out.writeInt(age);
 
-        byte zip = AnimalNurseryWithMethods.byteZip(nullType, TYPE_BIT_INDEX, (byte) 0);
-        zip = AnimalNurseryWithMethods.byteZip(nullName, NAME_BIT_INDEX, zip);
-        zip = AnimalNurseryWithMethods.byteZip(!isSeek, IS_SEEK_BIT_INDEX, zip);
-        zip = AnimalNurseryWithMethods.byteZip(!inNursery, IN_NURSERY_BIT_INDEX, zip);
+        byte zip = Animal.byteZip(nullType, TYPE_BIT_INDEX, (byte) 0);
+        zip = Animal.byteZip(nullName, NAME_BIT_INDEX, zip);
+        zip = Animal.byteZip(!isSeek, IS_SEEK_BIT_INDEX, zip);
+        zip = Animal.byteZip(!inNursery, IN_NURSERY_BIT_INDEX, zip);
         out.writeByte(zip);
 
         if (!nullType) {
@@ -117,15 +101,15 @@ public class AnimalWithMethods implements Serializable {
         age = in.readInt();
 
         byte zip = in.readByte();
-        if (AnimalNurseryWithMethods.trueOrNotNullContain(TYPE_BIT_INDEX, zip)) {
+        if (Animal.trueOrNotNullContain(TYPE_BIT_INDEX, zip)) {
             type = AnimalType.valueOf(in.readUTF());
         }
 
-        if (AnimalNurseryWithMethods.trueOrNotNullContain(NAME_BIT_INDEX, zip)) {
+        if (Animal.trueOrNotNullContain(NAME_BIT_INDEX, zip)) {
             name = in.readUTF();
         }
 
-        isSeek = AnimalNurseryWithMethods.trueOrNotNullContain(IS_SEEK_BIT_INDEX, zip);
-        inNursery = AnimalNurseryWithMethods.trueOrNotNullContain(IN_NURSERY_BIT_INDEX, zip);
+        isSeek = Animal.trueOrNotNullContain(IS_SEEK_BIT_INDEX, zip);
+        inNursery = Animal.trueOrNotNullContain(IN_NURSERY_BIT_INDEX, zip);
     }
 }

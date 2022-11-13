@@ -58,7 +58,7 @@ public class Animal implements Serializable {
 
     @Override
     public String toString() {
-        return "{\"AnimalNursery\":"  + nursery + "," +
+        return "{\"AnimalNursery\":" + nursery + "," +
                 "\"AnimalType\":" + "\"" + type + "\"," +
                 "\"Name\":" + "\"" + name + "\"," +
                 "\"Age\":" + age + "," +
@@ -78,10 +78,22 @@ public class Animal implements Serializable {
 
         Animal animal = (Animal) obj;
         return Objects.equals(nursery, animal.nursery) &&
-                type.equals(animal.type) &&
+                Objects.equals(type, animal.type) &&
                 Objects.equals(name, animal.name) &&
                 age == animal.age &&
                 isSeek == animal.isSeek &&
                 inNursery == animal.inNursery;
+    }
+
+
+    public static byte byteZip(boolean maskOne, int index, byte zipObj) {
+        if (maskOne) {
+            return (byte) (zipObj & ~(1 << index));
+        }
+        return (byte) (zipObj | 1 << index);
+    }
+
+    public static boolean trueOrNotNullContain(int index, byte zipObj) {
+        return (zipObj & (1 << index)) != 0;
     }
 }
