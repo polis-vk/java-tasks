@@ -44,7 +44,7 @@ public class AnimalExternalizable implements Externalizable {
             out.writeInt(1);
             out.writeUTF(name);
         }
-        out.writeInt(moveType.ordinal());
+        out.writeUTF(moveType.toString());
         out.writeObject(population);
     }
 
@@ -58,7 +58,13 @@ public class AnimalExternalizable implements Externalizable {
         } else {
             name = in.readUTF();
         }
-        moveType = MoveType.values()[in.readInt()];
+        String moveTypeStr = in.readUTF();
+        for (int i = 0; i < MoveType.values().length; i++) {
+            if(moveTypeStr.equals(MoveType.values()[i].toString())){
+                moveType = MoveType.values()[i];
+                break;
+            }
+        }
         population = (Population) in.readObject();
     }
 

@@ -29,10 +29,12 @@ public class AnimalOutputStream extends FileOutputStream {
             } else {
                 write(intToBytes(-1));
             }
-            write(intToBytes(animal.moveType.ordinal()));
+            write(intToBytes(animal.moveType.toString().length()));
+            write(animal.moveType.toString().getBytes(StandardCharsets.UTF_8));
             if (animal.population != null) {
                 write(intToBytes(1));
-                write(intToBytes(animal.population.mainland.ordinal()));
+                write(intToBytes(animal.population.mainland.toString().length()));
+                write(animal.population.mainland.toString().getBytes(StandardCharsets.UTF_8));
                 write(longToBytes(animal.population.size));
             } else {
                 write(intToBytes(-1));

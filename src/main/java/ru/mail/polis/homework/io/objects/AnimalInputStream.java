@@ -30,12 +30,26 @@ public class AnimalInputStream extends FileInputStream {
         animal.setPet(readInt() == 1);
         animal.setFly(readInt() == 1);
         animal.setName(readName());
-        animal.setMoveType(MoveType.values()[readInt()]);
+        String moveTypeStr = readString(readInt());
+        for (int i = 0; i < MoveType.values().length; i++) {
+            if(moveTypeStr.equals(MoveType.values()[i].toString())){
+                animal.setMoveType(MoveType.values()[i]);
+                break;
+            }
+        }
         int buf = readInt();
         if (buf == -1) {
             animal.setPopulation(null);
         } else {
-            animal.setPopulation(new Population(Mainland.values()[readInt()], readLong()));
+            String mainlandStr = readString(readInt());
+            Mainland mainland = Mainland.Africa;
+            for (int i = 0; i < Mainland.values().length; i++) {
+                if(mainlandStr.equals(Mainland.values()[i].toString())){
+                    mainland = Mainland.values()[i];
+                    break;
+                }
+            }
+            animal.setPopulation(new Population(mainland, readLong()));
         }
         animalList.add(animal);
         return animal;
