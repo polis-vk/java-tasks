@@ -1,14 +1,13 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -51,9 +50,69 @@ import java.util.stream.Stream;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
-
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        return "{" + classToString(object.getClass(), object) + "}";
+    }
+
+    private static String classToString(Class clazz, Object object) {
+        StringBuilder result = new StringBuilder();
+        List<Field> fields = Arrays.stream(clazz.getDeclaredFields())
+                .filter(field -> !Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class))
+                .collect(Collectors.toList());
+
+        if (fields.size() > 0) {
+            List<String> fieldStrings = new ArrayList<>();
+            fieldStrings.add(fieldToString(fields.get(0), object));
+            for (int i = 1; i < fields.size(); i++) {
+                fieldStrings.add(fieldToString(fields.get(i), object));
+            }
+            Collections.sort(fieldStrings);
+
+            result.append(fieldStrings.get(0));
+            for (int i = 1; i < fieldStrings.size(); i++) {
+                result.append(", ").append(fieldStrings.get(i));
+            }
+        }
+
+        Class superclass = clazz.getSuperclass();
+        if (Object.class != superclass) {
+            result.append(", ").append(classToString(superclass, object));
+        }
+
+        return result.toString();
+    }
+
+    private static String fieldToString(Field field, Object object) {
+        StringBuilder result = new StringBuilder();
+        field.setAccessible(true);
+
+        try {
+            result.append(field.getName())
+                    .append(": ");
+            Object value = field.get(object);
+
+            if (value == null) {
+                result.append("null");
+            } else if (field.getType().isArray()) {
+                result.append("[");
+                int length = Array.getLength(value);
+                if (length > 0) {
+                    result.append(Array.get(value, 0));
+                    for (int i = 1; i < length; i++) {
+                        result.append(", ").append(Array.get(value, i));
+                    }
+                }
+                result.append("]");
+            } else {
+                result.append(value);
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return result.toString();
     }
 }
