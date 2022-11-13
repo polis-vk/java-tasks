@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.io.objects;
 
-import java.io.*;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Objects;
 
 /**
@@ -98,23 +101,31 @@ public class AnimalExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeObject(name);
-        out.writeInt(animalType == null ? -1 : animalType.ordinal());
+        out.writeUTF(writing(name));
+        out.writeUTF(animalType == null ? "null" : animalType.name());
         out.writeInt(countLegs);
         out.writeByte(isDomesticated ? 1 : 0);
         out.writeByte(isHerbivore ? 1 : 0);
         out.writeObject(ownerExternalizable);
     }
 
+    private static String writing(String str) {
+        return str == null ? "null" : str;
+    }
+
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        name = (String) in.readObject();
-        int at = in.readInt();
-        animalType = at == -1 ? null : AnimalType.values()[at];
+        name = reading(in.readUTF());
+        String at = reading(in.readUTF());
+        animalType = at == null ? null : AnimalType.valueOf(at);
         countLegs = in.readInt();
         isDomesticated = in.readByte() == 1;
         isHerbivore = in.readByte() == 1;
         ownerExternalizable = (OwnerExternalizable) in.readObject();
+    }
+
+    private String reading(String str) {
+        return str.equals("null") ? null : str;
     }
 }
 
@@ -165,13 +176,13 @@ class OwnerExternalizable implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeObject(name);
+        out.writeUTF(name);
         out.writeByte(isOrganization ? 1 : 0);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        name = (String) in.readObject();
+        name = in.readUTF();
         isOrganization = in.readByte() == 1;
     }
 }

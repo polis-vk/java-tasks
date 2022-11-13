@@ -97,22 +97,30 @@ public class AnimalWithMethods implements Serializable {
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeObject(name);
-        out.writeInt(animalType == null ? -1 : animalType.ordinal());
+        out.writeUTF(writing(name));
+        out.writeUTF(animalType == null ? "null" : animalType.name());
         out.writeInt(countLegs);
         out.writeByte(isDomesticated ? 1 : 0);
         out.writeByte(isHerbivore ? 1 : 0);
         out.writeObject(ownerWithMethods);
     }
 
+    private static String writing(String str) {
+        return str == null ? "null" : str;
+    }
+
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        name = (String) in.readObject();
-        int at = in.readInt();
-        animalType = at == -1 ? null : AnimalType.values()[at];
+        name = reading(in.readUTF());
+        String at = reading(in.readUTF());
+        animalType = at == null ? null : AnimalType.valueOf(at);
         countLegs = in.readInt();
         isDomesticated = in.readByte() == 1;
         isHerbivore = in.readByte() == 1;
         ownerWithMethods = (OwnerWithMethods) in.readObject();
+    }
+
+    private String reading(String str) {
+        return str.equals("null") ? null : str;
     }
 }
 
@@ -158,12 +166,12 @@ class OwnerWithMethods implements Serializable {
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeObject(name);
+        out.writeUTF(name);
         out.writeByte(isOrganization ? 1 : 0);
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        name = (String) in.readObject();
+        name = in.readUTF();
         isOrganization = in.readByte() == 1;
     }
 }
