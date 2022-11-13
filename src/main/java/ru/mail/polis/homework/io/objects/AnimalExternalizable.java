@@ -49,9 +49,9 @@ public class AnimalExternalizable implements Externalizable {
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         AnimalNullables animalNullables = new AnimalNullables(this);
-        out.writeByte(animalNullables.toByte());
-        byte twoBools = (byte) ((isAggressive ? 1 : 0) << 1 + (isVegetarian ? 1 : 0));
-        out.writeByte(twoBools);
+        byte complexData = animalNullables.toByte();
+        complexData += ((byte) (((this.isAggressive() ? 1 : 0) << 1) + (this.isVegetarian() ? 1 : 0))) << 4;
+        out.writeByte(complexData);
         out.writeInt(numOfLegs);
         out.writeDouble(maxVelocity);
         if (!animalNullables.isNameNull()) {
@@ -67,11 +67,12 @@ public class AnimalExternalizable implements Externalizable {
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        AnimalNullables animalNullables = new AnimalNullables(in.readByte());
-        byte twoBools = in.readByte();
-        isVegetarian = twoBools % 2 == 1;
-        twoBools >>= 1;
-        isAggressive = twoBools % 2 == 1;
+        byte complexData = in.readByte();
+        AnimalNullables animalNullables = new AnimalNullables((byte) (complexData % 16));
+        complexData >>= 4;
+        isVegetarian = complexData % 2 == 1;
+        complexData >>= 1;
+        isAggressive = complexData % 2 == 1;
         this.numOfLegs = in.readInt();
         this.maxVelocity = in.readDouble();
         if (!animalNullables.isNameNull()) {

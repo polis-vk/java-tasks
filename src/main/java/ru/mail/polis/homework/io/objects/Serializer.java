@@ -155,12 +155,13 @@ public class Serializer {
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
             for (Animal animal : animals) {
                 AnimalNullables animalNullables = new AnimalNullables(animal);
-                objectOutputStream.writeByte(animalNullables.toByte());
+                byte complexData = animalNullables.toByte();
                 if (animalNullables.isNull()) {
+                    objectOutputStream.writeByte(complexData);
                     continue;
                 }
-                byte twoBools = (byte) (((animal.isAggressive() ? 1 : 0) << 1) + (animal.isVegetarian() ? 1 : 0));
-                objectOutputStream.writeByte(twoBools);
+                complexData += ((byte) (((animal.isAggressive() ? 1 : 0) << 1) + (animal.isVegetarian() ? 1 : 0))) << 4;
+                objectOutputStream.writeByte(complexData);
                 objectOutputStream.writeInt(animal.getNumOfLegs());
                 objectOutputStream.writeDouble(animal.getMaxVelocity());
                 if (!animalNullables.isNameNull()) {
@@ -223,16 +224,17 @@ public class Serializer {
         try (InputStream in = Files.newInputStream(Paths.get(fileName));
              ObjectInputStream objectInputStream = new ObjectInputStream(in)) {
             while (objectInputStream.available() > 0) {
-                AnimalNullables animalNullables = new AnimalNullables(objectInputStream.readByte());
+                byte complexData = objectInputStream.readByte();
+                AnimalNullables animalNullables = new AnimalNullables((byte) (complexData % 16));
                 if (animalNullables.isNull()) {
                     ans.add(null);
                     continue;
                 }
                 Animal animal = new Animal();
-                byte twoBools = objectInputStream.readByte();
-                animal.setVegetarian(twoBools % 2 == 1);
-                twoBools >>= 1;
-                animal.setAggressive(twoBools % 2 == 1);
+                complexData >>= 4;
+                animal.setVegetarian(complexData % 2 == 1);
+                complexData >>= 1;
+                animal.setAggressive(complexData % 2 == 1);
                 animal.setNumOfLegs(objectInputStream.readInt());
                 animal.setMaxVelocity(objectInputStream.readDouble());
                 if (!animalNullables.isNameNull()) {

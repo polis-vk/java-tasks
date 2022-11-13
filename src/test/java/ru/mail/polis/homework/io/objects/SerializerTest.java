@@ -16,9 +16,8 @@ import org.junit.runners.MethodSorters;
 
 import static org.junit.Assert.assertEquals;
 
-@FixMethodOrder(MethodSorters.JVM)
 public class SerializerTest {
-    private static final double NULL_PERCENTAGE = 0.05;
+    private static final double NULL_PERCENTAGE = 0.15;
     private static final int NUM_OF_ANIMALS = 1_000_000;
     private static List<Animal> animalList;
     private static List<AnimalWithMethods> animalWithMethodsList;
