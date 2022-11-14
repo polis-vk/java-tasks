@@ -1,14 +1,9 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -51,9 +46,99 @@ import java.util.stream.Stream;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
+    private static final String NULL = "null";
+    private static final String EMPTY = "{}";
+    private static final String ELEMENTS_SEPARATOR = ", ";
+    private static final String BETWEEN_SEPARATOR = ": ";
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return NULL;
+        }
+
+        String objectFieldsInString = toStringRecursively(object.getClass(), object);
+
+        if (objectFieldsInString == null) {
+            return EMPTY;
+        }
+
+        return "{" + objectFieldsInString + "}";
+    }
+
+    private static String toStringRecursively(Class<?> clazz, Object object) {
+        if (clazz == null) {
+            return null;
+        }
+
+        // Make strings out of all fields of current object (can be empty if none of those suits)
+        StringBuilder thisClassFieldsInString = new StringBuilder(fieldsToString(clazz.getDeclaredFields(), object));
+
+        // Recursively get superclass' fields stringified
+        String superclassFieldsInString = toStringRecursively(clazz.getSuperclass(), object);
+
+        // This condition can be false in cases when current object does not have superclass,
+        // Or superclass does not have any suitable fields to stringify
+        if (superclassFieldsInString != null) {
+            thisClassFieldsInString.append(ELEMENTS_SEPARATOR).append(superclassFieldsInString);
+        }
+
+        return thisClassFieldsInString.length() > 0 ? thisClassFieldsInString.toString() : null;
+    }
+
+    private static String fieldsToString(Field[] fields, final Object object) {
+        return Arrays.stream(fields)
+                .filter(field -> (field.getModifiers() & Modifier.STATIC) == 0)
+                .filter(field -> !field.isAnnotationPresent(SkipField.class))
+                .sorted(Comparator.comparing(Field::getName))
+                .map(field -> {
+                    try {
+                        field.setAccessible(true);
+                        return objectFieldToString(field.getName(), field.get(object));
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                    return objectFieldToString(field.getName(), NULL);
+                })
+                .reduce("", (result, current) -> result.isEmpty() ? current : result + ELEMENTS_SEPARATOR + current);
+    }
+
+    private static String objectFieldToString(String field, Object object) {
+        String value;
+
+        if (object == null) {
+            value = NULL;
+        } else if (isArray(object)) {
+            value = arrayToString(object);
+        } else {
+            value = String.valueOf(object);
+        }
+
+        return field + BETWEEN_SEPARATOR + value;
+    }
+
+    private static String arrayToString(Object array) {
+        // All the data types are covered
+        if (array instanceof Object[]) {
+            return Arrays.toString((Object[]) array);
+        } else if (array instanceof byte[]) {
+            return Arrays.toString((byte[]) array);
+        } else if (array instanceof short[]) {
+            return Arrays.toString((short[]) array);
+        } else if (array instanceof int[]) {
+            return Arrays.toString((int[]) array);
+        } else if (array instanceof long[]) {
+            return Arrays.toString((long[]) array);
+        } else if (array instanceof float[]) {
+            return Arrays.toString((float[]) array);
+        } else if (array instanceof double[]) {
+            return Arrays.toString((double[]) array);
+        }
+        return Arrays.toString((char[]) array);
+    }
+
+    private static boolean isArray(Object object) {
+        return object instanceof Object[] || object instanceof byte[] || object instanceof short[]
+                || object instanceof int[] || object instanceof long[] || object instanceof float[]
+                || object instanceof double[] || object instanceof char[];
     }
 }
