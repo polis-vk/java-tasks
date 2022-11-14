@@ -1,14 +1,10 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -51,9 +47,61 @@ import java.util.stream.Stream;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
+    private static final String NULL_STRING = "null";
+    private static final String SEPARATOR_BETWEEN_FIELDS = ", ";
+    private static final String SEPARATOR_INSIDE_FIELDS = ": ";
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return NULL_STRING;
+        }
+        StringBuilder sb = new StringBuilder("{");
+        Class<?> clazz = object.getClass();
+
+        try {
+            while (clazz != null) {
+                Field[] fieldsArray = Arrays.stream(clazz.getDeclaredFields())
+                        .filter(field -> !Modifier.isStatic(field.getModifiers())
+                                && !field.isAnnotationPresent(SkipField.class))
+                        .sorted(Comparator.comparing(Field::getName))
+                        .toArray(Field[]::new);
+
+                for (Field field : fieldsArray) {
+                    sb.append(field.getName()).append(SEPARATOR_INSIDE_FIELDS);
+                    field.setAccessible(true);
+                    if (field.getType().isArray()) {
+                        sb.append(parseArrayToSb(field.get(object)));
+                    } else {
+                        sb.append(field.get(object));
+                    }
+                    sb.append(SEPARATOR_BETWEEN_FIELDS);
+                }
+                clazz = clazz.getSuperclass();
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        int length = sb.length();
+        if (length >= SEPARATOR_BETWEEN_FIELDS.length()) {
+            sb.delete(length - SEPARATOR_BETWEEN_FIELDS.length(), length);
+        }
+        return sb.append("}").toString();
     }
+
+    private static StringBuilder parseArrayToSb(Object array) {
+        StringBuilder sb = new StringBuilder();
+        if (array == null) {
+            return sb.append(NULL_STRING);
+        }
+        int length = Array.getLength(array);
+        if (length == 0) {
+            return sb.append("[]");
+        }
+        sb.append("[").append(Array.get(array, 0));
+        for (int i = 1; i < length; i++) {
+            sb.append(SEPARATOR_BETWEEN_FIELDS).append(Array.get(array, i));
+        }
+        return sb.append("]");
+    }
+
 }
