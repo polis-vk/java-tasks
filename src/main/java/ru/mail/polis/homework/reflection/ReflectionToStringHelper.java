@@ -1,14 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
-import java.lang.reflect.Array;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.lang.reflect.Array;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,7 +50,63 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        Class<?> clazz = object.getClass();
+        List<Field> currentClassFields = new LinkedList<>();
+        while (clazz != null) {
+            currentClassFields.addAll(getSortedAndFilteredFields(clazz));
+            clazz = clazz.getSuperclass();
+        }
+        if (currentClassFields.size() == 0) {
+            return "{}";
+        }
+        StringBuffer objectInfo = new StringBuffer("{");
+        for (Field field : currentClassFields) {
+            field.setAccessible(true);
+            try {
+                if (field.getType().isArray()) {
+                    objectInfo.append(field.getName());
+                    objectInfo.append(": ");
+                    if (field.getType().getComponentType().isPrimitive()) {
+                        List<Object> array = new ArrayList<>();
+                        if (field.get(object) == null) {
+                            objectInfo.append(field.get(object));
+                        } else {
+                            for (int i = 0; i < Array.getLength(field.get(object)); i++) {
+                                array.add(Array.get(field.get(object), i));
+                            }
+                            objectInfo.append(array);
+                        }
+                    } else {
+                        objectInfo.append(Arrays.toString((Object[]) field.get(object)));
+                    }
+                    objectInfo.append(", ");
+                } else if (field.getType().isLocalClass()) {
+                    Objects.requireNonNull(getSortedAndFilteredFields(field.getClass())).forEach(field1 ->
+                    {
+                        try {
+                            objectInfo.append(field1.getName()).append(": ").append(field1.get(field1.getClass() + ", "));
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                } else {
+                    objectInfo.append(field.getName()).append(": ").append(field.get(object)).append(", ");
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        objectInfo.delete(objectInfo.length() - 2, objectInfo.length()).append('}');
+        return objectInfo.toString();
+    }
+
+    public static List<Field> getSortedAndFilteredFields(Class clazz) {
+        return Arrays.stream(clazz.getDeclaredFields()).filter(field -> !Modifier.isStatic(field.getModifiers())
+                        && !Arrays.stream(field.getAnnotations()).collect(Collectors.groupingBy(Annotation::annotationType)).containsKey((SkipField.class)))
+                .sorted(Comparator.comparing(Field::getName))
+                .collect(Collectors.toList());
     }
 }
