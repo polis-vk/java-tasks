@@ -47,9 +47,6 @@ import java.util.Comparator;
  */
 public class ReflectionToStringHelper {
     private static final String NULL = "null";
-    private static final String EMPTY = "{}";
-    private static final String ELEMENTS_SEPARATOR = ", ";
-    private static final String BETWEEN_SEPARATOR = ": ";
 
     public static String reflectiveToString(Object object) {
         if (object == null) {
@@ -59,7 +56,7 @@ public class ReflectionToStringHelper {
         String objectFieldsInString = toStringRecursively(object.getClass(), object);
 
         if (objectFieldsInString == null) {
-            return EMPTY;
+            return "{}";
         }
 
         return "{" + objectFieldsInString + "}";
@@ -79,7 +76,7 @@ public class ReflectionToStringHelper {
         // This condition can be false in cases when current object does not have superclass,
         // Or superclass does not have any suitable fields to stringify
         if (superclassFieldsInString != null) {
-            thisClassFieldsInString.append(ELEMENTS_SEPARATOR).append(superclassFieldsInString);
+            thisClassFieldsInString.append(", ").append(superclassFieldsInString);
         }
 
         return thisClassFieldsInString.length() > 0 ? thisClassFieldsInString.toString() : null;
@@ -91,20 +88,24 @@ public class ReflectionToStringHelper {
                 .filter(field -> !field.isAnnotationPresent(SkipField.class))
                 .sorted(Comparator.comparing(Field::getName))
                 .map(field -> {
-                    String value;
-                    boolean isAccessible = field.isAccessible();
+                    String value = null;
+                    boolean wasNotAccessible = !field.isAccessible();
                     try {
-                        // Turn accessibility on
-                        field.setAccessible(true);
+                        // Turn accessibility on if necessary
+                        if (wasNotAccessible) {
+                            field.setAccessible(true);
+                        }
                         value = objectFieldToString(field.getName(), field.get(object));
                     } catch (IllegalAccessException e) {
-                        value = objectFieldToString(field.getName(), NULL);
+                        e.printStackTrace();
                     }
-                    // Turn accessibility back
-                    field.setAccessible(isAccessible);
+                    // Turn accessibility back if necessary
+                    if (wasNotAccessible) {
+                        field.setAccessible(false);
+                    }
                     return value;
                 })
-                .reduce("", (result, current) -> result.isEmpty() ? current : result + ELEMENTS_SEPARATOR + current);
+                .reduce("", (result, current) -> result.isEmpty() ? current : result + ", " + current);
     }
 
     private static String objectFieldToString(String field, Object object) {
@@ -118,7 +119,7 @@ public class ReflectionToStringHelper {
             value = String.valueOf(object);
         }
 
-        return field + BETWEEN_SEPARATOR + value;
+        return field + ": " + value;
     }
 
     private static String arrayToString(Object array) {
