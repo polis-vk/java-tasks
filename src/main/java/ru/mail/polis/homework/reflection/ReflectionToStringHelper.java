@@ -91,13 +91,18 @@ public class ReflectionToStringHelper {
                 .filter(field -> !field.isAnnotationPresent(SkipField.class))
                 .sorted(Comparator.comparing(Field::getName))
                 .map(field -> {
+                    String value;
+                    boolean isAccessible = field.isAccessible();
                     try {
+                        // Turn accessibility on
                         field.setAccessible(true);
-                        return objectFieldToString(field.getName(), field.get(object));
+                        value = objectFieldToString(field.getName(), field.get(object));
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                        value = objectFieldToString(field.getName(), NULL);
                     }
-                    return objectFieldToString(field.getName(), NULL);
+                    // Turn accessibility back
+                    field.setAccessible(isAccessible);
+                    return value;
                 })
                 .reduce("", (result, current) -> result.isEmpty() ? current : result + ELEMENTS_SEPARATOR + current);
     }
