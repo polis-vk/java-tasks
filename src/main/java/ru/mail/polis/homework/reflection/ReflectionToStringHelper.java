@@ -1,14 +1,18 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import ru.mail.polis.homework.reflection.objects.easy.Easy;
+import ru.mail.polis.homework.reflection.objects.hard.Gender;
+import ru.mail.polis.homework.reflection.objects.hard.Hard;
+import ru.mail.polis.homework.reflection.objects.medium.Medium;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -52,8 +56,51 @@ import java.util.stream.Stream;
  */
 public class ReflectionToStringHelper {
 
+    private static void filterForFields(List<Field> fields, Class<?> clazz) {
+        fields.addAll(Arrays.stream(clazz.getDeclaredFields())
+                .filter(o -> !o.toString().contains("static") && o.getAnnotation(SkipField.class) == null)
+                .collect(Collectors.toList())
+                .stream()
+                .sorted(Comparator.comparing(Field::getName))
+                .collect(Collectors.toList()));
+        if (!clazz.getSuperclass().getSimpleName().equals("Object")) {
+            filterForFields(fields, clazz.getSuperclass());
+        }
+    }
+
+    private static String getArrayElements(Object obj) {
+        StringBuilder sb = new StringBuilder(Arrays.deepToString(new Object[]{obj}));
+        return sb.deleteCharAt(sb.length() - 1).deleteCharAt(0).toString();
+    }
+
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        List<Field> fields = new ArrayList<>();
+        if (object == null) {
+            return "null";
+        }
+        filterForFields(fields, object.getClass());
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < fields.size(); ++i) {
+            Field field = fields.get(i);
+            try {
+                if (Modifier.isPrivate(field.getModifiers())) {
+                    field.setAccessible(true);
+                }
+                builder.append(field.getName()).append(": ");
+                Object obj = field.get(object);
+                builder.append((obj != null && field.getType().isArray()) ? getArrayElements(obj) :obj);
+                if (i < fields.size() - 1) {
+                    builder.append(", ");
+                }
+            } catch (IllegalAccessException e) {
+                System.out.println(e.getMessage());
+            }
+
+        }
+        builder.insert(0, "{").append("}");
+        return builder.toString();
+    }
+
+    public static void main(String[] args) {
     }
 }
