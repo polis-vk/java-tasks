@@ -68,7 +68,9 @@ public class ReflectionToStringHelper {
 
             for (Field field : addedFields) {
                 try {
-                    field.setAccessible(true);
+                    if (!field.canAccess(object)) {
+                        field.setAccessible(true);
+                    }
                     sb.append(field.getName()).append(": ");
                     if (field.getType().isArray()) {
                         fillStringBuilderFromArray(sb, field, object);
