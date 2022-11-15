@@ -1,5 +1,9 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.*;
+import java.util.Arrays;
+import java.util.Comparator;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -43,7 +47,58 @@ package ru.mail.polis.homework.reflection;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return ("null");
+        }
+        Class<?> objectClass = object.getClass();
+        Class<?> objectSuperclass = objectClass.getSuperclass();
+        StringBuilder result = new StringBuilder();
+        result.append("{");
+        while (objectClass != objectSuperclass && objectSuperclass != null) {
+            Arrays.stream(objectClass.getDeclaredFields())
+                    .filter(field -> !field.isAnnotationPresent(SkipField.class))
+                    .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                    .sorted(Comparator.comparing(Field::getName))
+                    .forEach(field -> result.append(fieldToString(field, object)));
+            objectClass = objectSuperclass;
+            objectSuperclass = objectSuperclass.getSuperclass();
+        }
+        if (result.length() > 2) {
+            result.setLength(result.length() - 2);
+        }
+        return result.append("}").toString();
+    }
+
+    private static StringBuilder fieldToString(Field field, Object object) {
+        StringBuilder result = new StringBuilder();
+        try {
+            field.setAccessible(true);
+            result.append(field.getName()).append(": ");
+            if (field.getType().isArray()) {
+                result.append(arrayToString(field.get(object)));
+            } else {
+                result.append(field.get(object));
+            }
+            result.append(", ");
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private static StringBuilder arrayToString(Object array) {
+        StringBuilder result = new StringBuilder();
+        if (array == null) {
+            result.append("null");
+            return result;
+        }
+        result.append("[");
+        for (int i = 0; i < Array.getLength(array); i++) {
+            result.append(Array.get(array, i)).append(", ");
+        }
+        if (result.length() > 2) {
+            result.setLength(result.length() - 2);
+        }
+        return result.append("]");
     }
 }
