@@ -53,7 +53,54 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        StringBuilder ans = new StringBuilder();
+        ans.append("{");
+        Class<?> currentClass = object.getClass();
+        while (currentClass != Object.class) {
+            Field[] currentFields = Arrays.stream(currentClass.getDeclaredFields())       // Убираем "неподходящие" поля
+                    .filter(it -> !(Modifier.isStatic(it.getModifiers()) || it.isAnnotationPresent(SkipField.class)))
+                    .sorted(Comparator.comparing(Field::getName)).toArray(Field[]::new);  // и сортируем их
+            boolean isFirstField = true;
+            for (Field field : currentFields) {
+                if (!isFirstField) {
+                    ans.append(", ");
+                }
+                isFirstField = false;
+                field.setAccessible(true);
+                ans.append(field.getName());
+                ans.append(": ");
+                try {
+                    if (field.getType().isArray()) {                // Если поле массив
+                        Object array = field.get(object);
+                        if (array == null) {
+                            ans.append("null");
+                        } else {
+                            int len = Array.getLength(array);
+                            ans.append("[");
+                            for (int i = 0; i < len; i++) {
+                                ans.append(Array.get(array, i));
+                                if (!(i == len - 1)) {
+                                    ans.append(", ");
+                                }
+                            }
+                            ans.append("]");
+                        }
+                    }
+                    else {                                          // Если поле - не массив
+                        ans.append(field.get(object));
+                    }
+                } catch (IllegalAccessException a) {
+                    a.printStackTrace();
+                }
+            }
+            currentClass = currentClass.getSuperclass();
+            if (currentClass != Object.class) {
+                ans.append(", ");
+            }
+        }
+        return ans.append("}").toString();
     }
 }
