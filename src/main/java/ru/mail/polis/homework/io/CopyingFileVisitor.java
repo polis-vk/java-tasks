@@ -35,9 +35,6 @@ public class CopyingFileVisitor extends SimpleFileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         Path fileToCreate = to.resolve(from.relativize(file));
-        if (!Files.exists(fileToCreate)) {
-            Files.createFile(fileToCreate);
-        }
         copy(file, fileToCreate);
         return FileVisitResult.CONTINUE;
     }

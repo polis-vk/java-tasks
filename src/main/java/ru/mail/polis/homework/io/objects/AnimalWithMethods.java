@@ -66,33 +66,33 @@ public class AnimalWithMethods implements Serializable {
             return false;
         }
         AnimalWithMethods animalObj = (AnimalWithMethods) obj;
-        return Objects.equals(alias, animalObj.getAlias()) &&
-               legsCount == animalObj.getLegsCount() &&
-               poisonous == animalObj.isPoisonous() &&
-               wild == animalObj.isWild() &&
-               Objects.equals(organization, animalObj.getOrganization()) &&
-               Objects.equals(gender, animalObj.getGender());
+        return Objects.equals(alias, animalObj.alias) &&
+               legsCount == animalObj.legsCount &&
+               poisonous == animalObj.poisonous &&
+               wild == animalObj.wild &&
+               Objects.equals(organization, animalObj.organization) &&
+               Objects.equals(gender, animalObj.gender);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAlias(),
-                            getLegsCount(),
-                            isPoisonous(),
-                            isWild(),
-                            getOrganization(),
-                            getGender());
+        return Objects.hash(alias,
+                            legsCount,
+                            poisonous,
+                            wild,
+                            organization,
+                            gender);
     }
 
     @Override
     public String toString() {
         return "AnimalWithMethods{" +
-                "alias='" + getAlias() + '\'' +
-                ", legsCount=" + getLegsCount() +
-                ", poisonous=" + isPoisonous() +
-                ", wild=" + isWild() +
-                ", organization=" + getOrganization() +
-                ", gender=" + getGender() +
+                "alias='" + alias + '\'' +
+                ", legsCount=" + legsCount +
+                ", poisonous=" + poisonous +
+                ", wild=" + wild +
+                ", organization=" + organization +
+                ", gender=" + gender +
                 '}';
     }
 
@@ -182,22 +182,22 @@ class OrganizationWithMethods implements Serializable {
             return false;
         }
         OrganizationWithMethods organizationObj = (OrganizationWithMethods) obj;
-        return Objects.equals(name, organizationObj.getName()) &&
-               Objects.equals(country, organizationObj.getCountry()) &&
-               licenseNumber == organizationObj.getLicenseNumber();
+        return Objects.equals(name, organizationObj.name) &&
+               Objects.equals(country, organizationObj.country) &&
+               licenseNumber == organizationObj.licenseNumber;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getCountry(), getLicenseNumber());
+        return Objects.hash(name, country, licenseNumber);
     }
 
     @Override
     public String toString() {
         return "OrganizationWithMethods{" +
-                "name='" + getName() + '\'' +
-                ", country='" + getCountry() + '\'' +
-                ", licenseNumber=" + getLicenseNumber() +
+                "name='" + name + '\'' +
+                ", country='" + country + '\'' +
+                ", licenseNumber=" + licenseNumber +
                 '}';
     }
 
