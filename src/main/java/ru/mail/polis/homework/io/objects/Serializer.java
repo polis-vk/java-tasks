@@ -229,28 +229,28 @@ public class Serializer {
                     continue;
                 }
                 int legsCount = animal.getLegsCount();
-                String alias = animal.getAlias();
-                Organization organization = animal.getOrganization();
-                Gender gender = animal.getGender();
                 out.writeInt(legsCount);
+                String alias = animal.getAlias();
                 if (alias != null) {
                     out.writeUTF(alias);
                 }
+                Gender gender = animal.getGender();
                 if (gender != null) {
                     out.writeUTF(gender.name());
                 }
+                Organization organization = animal.getOrganization();
                 out.writeByte(getMetaByte(organization));
                 if (organization == null) {
                     out.flush();
                     continue;
                 }
                 long licenseNumber = organization.getLicenseNumber();
-                String name = organization.getName();
-                String country = organization.getCountry();
                 out.writeLong(licenseNumber);
+                String name = organization.getName();
                 if (name != null) {
                     out.writeUTF(name);
                 }
+                String country = organization.getCountry();
                 if (country != null) {
                     out.writeUTF(country);
                 }
