@@ -70,7 +70,7 @@ public class ReflectionToStringHelper {
                             }
                             sb.append(field.getName()).append(": ");
                             if (field.getType().isArray()) {
-                                fillStringBuilderFromArray(sb, field, object);
+                                fillStringBuilderFromArray(sb, field.get(object));
                             } else {
                                 sb.append(field.get(object));
                             }
@@ -90,22 +90,24 @@ public class ReflectionToStringHelper {
         return sb.append("}").toString();
     }
 
-    private static void fillStringBuilderFromArray(StringBuilder sb, Field field, Object object) throws IllegalAccessException {
-        Object array = field.get(object);
+    private static void fillStringBuilderFromArray(StringBuilder sb, Object array) throws IllegalAccessException {
         if (array == null) {
             sb.append("null");
             return;
         }
+
         sb.append("[");
+        AtomicBoolean isSomethingRecorded = new AtomicBoolean(false);
+
         int length = Array.getLength(array);
-        if (length == 0) {
-            sb.append("]");
-            return;
-        }
         for (int i = 0; i < length; i++) {
             sb.append(Array.get(array, i)).append(", ");
+            isSomethingRecorded.set(true);
         }
-        removeExtraComma(sb);
+
+        if (isSomethingRecorded.get()) {
+            removeExtraComma(sb);
+        }
         sb.append("]");
     }
 
