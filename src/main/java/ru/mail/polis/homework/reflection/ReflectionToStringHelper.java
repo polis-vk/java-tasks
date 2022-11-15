@@ -50,21 +50,13 @@ import java.util.stream.Collectors;
  */
 public class ReflectionToStringHelper {
 
-    private static final String FIELD_SEPARATOR = ", ";
-    private static final String KEY_VALUE_SEPARATOR = ": ";
-    private static final String NULL = "null";
-    private static final String OPENING = "{";
-    private static final String ENDING = "}";
-    private static final String ARRAY_OPENING = "[";
-    private static final String ARRAY_ENDING = "]";
-
     public static String reflectiveToString(Object object) {
         if (object == null) {
-            return NULL;
+            return "null";
         }
 
         Class<?> clazz = object.getClass();
-        StringBuilder sb = new StringBuilder().append(OPENING);
+        StringBuilder sb = new StringBuilder().append("{");
         boolean isSomethingRecorded = false;
 
         while (clazz != Object.class) {
@@ -77,13 +69,13 @@ public class ReflectionToStringHelper {
             for (Field field : addedFields) {
                 try {
                     field.setAccessible(true);
-                    sb.append(field.getName()).append(KEY_VALUE_SEPARATOR);
+                    sb.append(field.getName()).append(": ");
                     if (field.getType().isArray()) {
                         fillStringBuilderFromArray(sb, field, object);
                     } else {
                         sb.append(field.get(object));
                     }
-                    sb.append(FIELD_SEPARATOR);
+                    sb.append(", ");
                     isSomethingRecorded = true;
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -96,29 +88,29 @@ public class ReflectionToStringHelper {
         if (isSomethingRecorded) {
             removeExtraComma(sb);
         }
-        return sb.append(ENDING).toString();
+        return sb.append("}").toString();
     }
 
     private static void fillStringBuilderFromArray(StringBuilder sb, Field field, Object object) throws IllegalAccessException {
         Object array = field.get(object);
         if (array == null) {
-            sb.append(NULL);
+            sb.append("null");
             return;
         }
-        sb.append(ARRAY_OPENING);
+        sb.append("[");
         int length = Array.getLength(array);
         if (length == 0) {
-            sb.append(ARRAY_ENDING);
+            sb.append("]");
             return;
         }
         for (int i = 0; i < length; i++) {
-            sb.append(Array.get(array, i)).append(FIELD_SEPARATOR);
+            sb.append(Array.get(array, i)).append(", ");
         }
         removeExtraComma(sb);
-        sb.append(ARRAY_ENDING);
+        sb.append("]");
     }
 
     private static void removeExtraComma(StringBuilder sb) {
-        sb.setLength(sb.length() - FIELD_SEPARATOR.length());
+        sb.setLength(sb.length() - 2);
     }
 }
