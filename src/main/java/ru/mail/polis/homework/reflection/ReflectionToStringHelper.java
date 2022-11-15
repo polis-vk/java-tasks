@@ -47,9 +47,6 @@ import java.util.Comparator;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
-    private static final String COMMA_SEPARATOR = ", ";
-    private static final String COLON_SEPARATOR = ": ";
-
     public static String reflectiveToString(Object object) {
         if (object == null) {
             return "null";
@@ -67,21 +64,22 @@ public class ReflectionToStringHelper {
                         .toArray(Field[]::new);
 
                 for (Field field : currentFields) {
-                    builder.append(field.getName()).append(COLON_SEPARATOR);
-                    appendInString(builder, field, object);
-                    builder.append(COMMA_SEPARATOR);
+                    builder.append(field.getName()).append(": ");
+                    appendField(builder, field, object);
+                    builder.append(", ");
                 }
                 currentClass = currentClass.getSuperclass();
             } while (currentClass != null);
 
-            builder.delete(builder.length() - COMMA_SEPARATOR.length(), builder.length());
+            builder.delete(builder.length() - 2, builder.length());
         } catch (Exception ignored) {
         }
         builder.append("}");
         return builder.toString();
     }
 
-    private static void appendInString(StringBuilder builder, Field field, Object object) throws IllegalAccessException {
+    private static void appendField(StringBuilder builder, Field field, Object object) throws IllegalAccessException {
+        boolean oldValue = field.isAccessible();
         field.setAccessible(true);
         Object value = field.get(object);
         Class<?> currentClass = field.getType();
@@ -93,11 +91,12 @@ public class ReflectionToStringHelper {
         builder.append("[");
         for (int i = 0; i < Array.getLength(value); i++) {
             if (i != 0) {
-                builder.append(COMMA_SEPARATOR);
+                builder.append(", ");
             }
             builder.append(Array.get(value, i));
         }
         builder.append("]");
+        field.setAccessible(oldValue);
     }
 }
 
