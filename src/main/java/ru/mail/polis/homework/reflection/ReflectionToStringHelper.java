@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.stream.Stream;
+import static java.util.stream.Stream.Builder;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -48,22 +49,26 @@ import java.util.stream.Stream;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
-
     public static String reflectiveToString(Object object) {
         if (object == null) {
-            return String.valueOf(null);
+            return "null";
         }
+        String fieldsRepresentation = getClassesChain(object)
+                .flatMap(ReflectionToStringHelper::getConsideringFieldsStream)
+                .map(field -> field.getName() + ": " + getRepresentationOf(field, object))
+                .reduce((expression, fieldStringified) -> expression + ", " + fieldStringified)
+                .orElse("");
+        return '{' + fieldsRepresentation + '}';
+    }
+
+    private static Stream<Class<?>> getClassesChain(Object object) {
+        Builder<Class<?>> superClassesBuilder = Stream.builder();
         Class<?> clazz = object.getClass();
-        Stream<Field> fieldsStream = Stream.empty();
         while (clazz != null) {
-            fieldsStream = Stream.concat(fieldsStream, getConsideringFieldsStream(clazz));
+            superClassesBuilder.add(clazz);
             clazz = clazz.getSuperclass();
         }
-        String fieldsRepresentation
-                = fieldsStream.map(field -> field.getName() + ": " + getRepresentationOf(field, object))
-                              .reduce((expression, fieldStringified) -> expression + ", " + fieldStringified)
-                              .orElse("");
-        return '{' + fieldsRepresentation + '}';
+        return superClassesBuilder.build();
     }
 
     private static Stream<Field> getConsideringFieldsStream(Class<?> clazz) {
