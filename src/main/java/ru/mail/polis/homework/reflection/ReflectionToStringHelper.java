@@ -51,8 +51,6 @@ import java.util.Objects;
  */
 public class ReflectionToStringHelper {
 
-    private static final String COMMA = ", ";
-
     public static String reflectiveToString(Object object) {
         if (object == null) {
             return "null";
@@ -66,11 +64,11 @@ public class ReflectionToStringHelper {
                     continue;
                 }
                 appendFieldToStringBuilder(field, object, stringBuilder);
-                stringBuilder.append(COMMA);
+                stringBuilder.append(", ");
             }
             clazz = clazz.getSuperclass();
         }
-        int lastCommaIndex = stringBuilder.lastIndexOf(COMMA);
+        int lastCommaIndex = stringBuilder.lastIndexOf(", ");
         if (lastCommaIndex > 0) {
             stringBuilder.setLength(lastCommaIndex);
         }
@@ -80,7 +78,10 @@ public class ReflectionToStringHelper {
     }
 
     private static void appendFieldToStringBuilder(Field field, Object object, StringBuilder stringBuilder) {
-        field.setAccessible(true);
+        boolean accessFlag = field.isAccessible();
+        if (!accessFlag) {
+            field.setAccessible(true);
+        }
         stringBuilder.append(field.getName()).append(": ");
         Object value = null;
         try {
@@ -93,16 +94,16 @@ public class ReflectionToStringHelper {
         } else {
             stringBuilder.append(value);
         }
+        field.setAccessible(accessFlag);
     }
 
     private static void appendArrayToStringBuilder(Object object, StringBuilder stringBuilder) {
-        int length = Array.getLength(object);
         stringBuilder.append("[");
-        if (length > 0) {
-            stringBuilder.append(Array.get(object, 0));
-        }
-        for (int i = 1; i < length; i++) {
-            stringBuilder.append(COMMA).append(Array.get(object, i));
+        for (int i = 0; i < Array.getLength(object); i++) {
+            if (i != 0) {
+                stringBuilder.append(", ");
+            }
+            stringBuilder.append(Array.get(object, i));
         }
         stringBuilder.append("]");
     }
