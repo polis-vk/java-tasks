@@ -51,11 +51,11 @@ import java.util.stream.Collectors;
  */
 public class ReflectionToStringHelper {
     private static final String DELIMITER_OF_FIELDS = ", ";
-    private static final String NULL_VALUE = "null";
 
     public static String reflectiveToString(Object object) {
+        final String nullValue = "null";
         if (object == null) {
-            return NULL_VALUE;
+            return nullValue;
         }
         Class<?> classOfObject = object.getClass();
         StringBuilder result = new StringBuilder("{");
@@ -79,7 +79,7 @@ public class ReflectionToStringHelper {
                 }
                 result.append(field.getName()).append(": ");
                 if (value == null) {
-                    result.append(NULL_VALUE);
+                    result.append(nullValue);
                 } else if (field.getType().isArray()) {
                     addArrayToResult(result, value);
                 } else {
