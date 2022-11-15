@@ -54,57 +54,55 @@ public class ReflectionToStringHelper {
             return "null";
         }
 
-        Class easyClass = object.getClass();
-        Field[] fields = easyClass.getDeclaredFields();
-        if (fields.length == 0) {
-            return "{}";
-        }
-
-        Arrays.sort(fields, Comparator.comparing(Field::getName));
+        Class<?> someClass = object.getClass();
         StringBuilder result = new StringBuilder("{");
 
-        for (Field field : fields) {
-            if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
+        while (!someClass.equals(Object.class)) {
+            Field[] fields = someClass.getDeclaredFields();
+
+            if (fields.length == 0) {
+                someClass = someClass.getSuperclass();
                 continue;
             }
-            field.setAccessible(true);
-            result.append(field.getName());
-            result.append(": ");
-            try {
-                if (field.get(object) != null && field.getType().isArray()) {
-//                    if (Array.getLength(field.get(object)) > 0) {
-//                        Object[] copy = Arrays.copyOf((Object[]) field.getType().cast(field.get(object)), Array.getLength(field.get(object)));
-//                        System.out.println("        TIST " + Arrays.toString(copy));
-//
-//                        result.append(Arrays.toString(copy));
-//                    }
-//                    //result.append(Array.get(field.get(object), ));
-                    int length = Array.getLength(field.get(object));
-                    result.append("[");
-                    for (int i = 0; i < length; i++) {
-                        result.append(", ").append(Array.get(field.get(object), i));
-                    }
-                    result.delete(result.length() - 2, result.length()).append("]");
-                } else {
-                    result.append(field.get(object)).append(", ");
+
+            Arrays.sort(fields, Comparator.comparing(Field::getName));
+
+            for (Field field : fields) {
+                if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
+                    continue;
                 }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                field.setAccessible(true);
+                result.append(field.getName());
+                result.append(": ");
+                try {
+                    if (field.get(object) != null && field.getType().isArray()) {
+                        result.append(arrayToStringReflective(field, object));
+                    } else {
+                        result.append(field.get(object)).append(", ");
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
+            someClass = someClass.getSuperclass();
         }
-
-        if (easyClass.getSuperclass() != Object.class) {
-            result.append(reflectiveToString(easyClass.getSuperclass()));
+        if (result.length() == 1) {
+            return "{}"; // result only contains "{"
         }
-
-        result.delete(result.length() - 2, result.length()).append("}");
-        return result.toString();
+        return result.delete(result.length() - 2, result.length()).append("}").toString();
     }
 
-    public static void main(String[] args) {
-        int[] array = {6, 7645, 63, 25, 6};
-        System.out.println(Arrays.toString(array));
-
-
+    public static StringBuilder arrayToStringReflective(Field field, Object object) throws IllegalAccessException {
+        StringBuilder result = new StringBuilder();
+        int length = Array.getLength(field.get(object));
+        result.append("[");
+        for (int i = 0; i < length; i++) {
+            result.append(Array.get(field.get(object), i)).append(", ");
+        }
+        if (length > 0) {
+            result.delete(result.length() - 2, result.length());
+        }
+        result.append("], ");
+        return result;
     }
 }
