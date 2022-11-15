@@ -70,16 +70,19 @@ public class ReflectionToStringHelper {
                 }
                 currentClass = currentClass.getSuperclass();
             } while (currentClass != null);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
 
+        if (builder.length() > 1) {
             builder.delete(builder.length() - 2, builder.length());
-        } catch (Exception ignored) {
         }
         builder.append("}");
         return builder.toString();
     }
 
     private static void appendField(StringBuilder builder, Field field, Object object) throws IllegalAccessException {
-        boolean oldValue = field.isAccessible();
+        final boolean oldAccessValue = field.isAccessible();
         field.setAccessible(true);
         Object value = field.get(object);
         Class<?> currentClass = field.getType();
@@ -96,7 +99,7 @@ public class ReflectionToStringHelper {
             builder.append(Array.get(value, i));
         }
         builder.append("]");
-        field.setAccessible(oldValue);
+        field.setAccessible(oldAccessValue);
     }
 }
 
