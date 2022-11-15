@@ -39,7 +39,7 @@ public class CopyFile {
     }
 
     private static void copy(Path from, Path to) throws IOException {
-        if (!Files.isDirectory(from)) {
+        if (Files.isRegularFile(from)) {
             byte[] buff = new byte[BUFFER_SIZE];
             try (InputStream in = Files.newInputStream(from);
                  OutputStream out = Files.newOutputStream(to)) {
