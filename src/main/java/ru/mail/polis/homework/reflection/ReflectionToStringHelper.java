@@ -5,8 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -57,37 +56,35 @@ public class ReflectionToStringHelper {
 
         Class<?> clazz = object.getClass();
         StringBuilder sb = new StringBuilder().append("{");
-        boolean isSomethingRecorded = false;
+        AtomicBoolean isSomethingRecorded = new AtomicBoolean(false);
 
         while (clazz != Object.class) {
-            List<Field> addedFields = Arrays.stream(clazz.getDeclaredFields())
+            Arrays.stream(clazz.getDeclaredFields())
                     .filter(field -> !Modifier.isStatic(field.getModifiers()))
                     .filter(field -> !field.isAnnotationPresent(SkipField.class))
                     .sorted(Comparator.comparing(Field::getName))
-                    .collect(Collectors.toList());
-
-            for (Field field : addedFields) {
-                try {
-                    if (!field.canAccess(object)) {
-                        field.setAccessible(true);
-                    }
-                    sb.append(field.getName()).append(": ");
-                    if (field.getType().isArray()) {
-                        fillStringBuilderFromArray(sb, field, object);
-                    } else {
-                        sb.append(field.get(object));
-                    }
-                    sb.append(", ");
-                    isSomethingRecorded = true;
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
+                    .forEach(field -> {
+                        try {
+                            if (!field.canAccess(object)) {
+                                field.setAccessible(true);
+                            }
+                            sb.append(field.getName()).append(": ");
+                            if (field.getType().isArray()) {
+                                fillStringBuilderFromArray(sb, field, object);
+                            } else {
+                                sb.append(field.get(object));
+                            }
+                            sb.append(", ");
+                            isSomethingRecorded.set(true);
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    });
 
             clazz = clazz.getSuperclass();
         }
 
-        if (isSomethingRecorded) {
+        if (isSomethingRecorded.get()) {
             removeExtraComma(sb);
         }
         return sb.append("}").toString();
