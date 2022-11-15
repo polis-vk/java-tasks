@@ -1,14 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
+import java.util.List;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -52,8 +49,72 @@ import java.util.stream.Stream;
  */
 public class ReflectionToStringHelper {
 
+    private static final String EMPTY = "{}";
+    private static final String EMPTY_ARRAY = "[]";
+    private static final String NULL = "null";
+
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return NULL;
+        }
+        return parse(object);
+    }
+
+    private static String parse(Object object) {
+        StringBuilder result = new StringBuilder();
+        Class<?> objectClass = object.getClass();
+        List<Field> fields;
+        Object resultValue;
+        result.append("{");
+        while (objectClass.getSuperclass() != null) {
+            fields = Arrays.asList(objectClass.getDeclaredFields());
+            if (fields.size() == 0) {
+                return EMPTY;
+            }
+            fields.sort(Comparator.comparing(Field::getName));
+            for (Field field : fields) {
+                if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
+                    continue;
+                }
+                resultValue = parseValue(field, object);
+                result.append(field.getName()).append(": ").append(resultValue).append(", ");
+            }
+            objectClass = objectClass.getSuperclass();
+        }
+        result.delete(result.length() - 2, result.length());
+        return result.append("}").toString();
+    }
+
+    private static Object parseValue(Field field, Object object) {
+        Object value = null;
+        try {
+            field.setAccessible(true);
+            if (field.getType().isArray()) {
+                value = createArrayForm(field.get(object));
+                return value;
+            }
+            value = field.get(object);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    private static String createArrayForm(Object array) throws IllegalAccessException {
+        StringBuilder stringBuilderArray = new StringBuilder();
+        if (array == null) {
+            stringBuilderArray.append(NULL);
+            return stringBuilderArray.toString();
+        }
+        int length = Array.getLength(array);
+        if (length == 0) {
+            return EMPTY_ARRAY;
+        }
+        stringBuilderArray.append("[");
+        for (int i = 0; i < length; i++) {
+            stringBuilderArray.append(Array.get(array, i)).append(", ");
+        }
+        stringBuilderArray.delete(stringBuilderArray.length() - 2, stringBuilderArray.length());
+        return stringBuilderArray.append("]").toString();
     }
 }
