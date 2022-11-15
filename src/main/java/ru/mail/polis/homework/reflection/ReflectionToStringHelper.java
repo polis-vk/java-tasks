@@ -1,14 +1,13 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -51,9 +50,82 @@ import java.util.stream.Stream;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
+    private static final String DELIMITER_OF_FIELDS = ", ";
+    private static final String NULL_VALUE = "null";
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return NULL_VALUE;
+        }
+        Class<?> classOfObject = object.getClass();
+        StringBuilder result = new StringBuilder("{");
+        boolean hasExtraDelimiterOfFields = false;
+        while (!Objects.equals(classOfObject, Object.class)) {
+            List<Field> requiredFields = getSortedRequiredFields(classOfObject);
+            for (Field field : requiredFields) {
+                Object value = null;
+                try {
+                    if (isPrivate(field)) {
+                        field.setAccessible(true);
+                    }
+                    value = field.get(object);
+                    if (isPrivate(field)) {
+                        field.setAccessible(false);
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } finally {
+                    field.setAccessible(false);
+                }
+                result.append(field.getName()).append(": ");
+                if (value == null) {
+                    result.append(NULL_VALUE);
+                } else if (field.getType().isArray()) {
+                    addArrayToResult(result, value);
+                } else {
+                    result.append(value);
+                }
+                result.append(DELIMITER_OF_FIELDS);
+                hasExtraDelimiterOfFields = true;
+            }
+            classOfObject = classOfObject.getSuperclass();
+        }
+        if (hasExtraDelimiterOfFields) {
+            deleteExtraDelimiterOfFields(result);
+        }
+        return result.append("}").toString();
+    }
+
+    private static boolean shouldBeIgnored(Field field) {
+        return !field.isAnnotationPresent(SkipField.class) && !Modifier.isStatic(field.getModifiers());
+    }
+
+    private static void deleteExtraDelimiterOfFields(StringBuilder src) {
+        int lastIndexWithDelimiter = src.lastIndexOf(DELIMITER_OF_FIELDS);
+        src.delete(lastIndexWithDelimiter, lastIndexWithDelimiter + 2);
+    }
+
+    private static void addArrayToResult(StringBuilder result, Object value) {
+        result.append("[");
+        int length = Array.getLength(value);
+        if (length != 0) {
+            for (int i = 0; i < length; i++) {
+                result.append(Array.get(value, i)).append(DELIMITER_OF_FIELDS);
+            }
+            deleteExtraDelimiterOfFields(result);
+        }
+        result.append("]");
+    }
+
+    private static List<Field> getSortedRequiredFields(Class<?> clazz) {
+        return Arrays.stream(clazz.getDeclaredFields())
+                .filter(ReflectionToStringHelper::shouldBeIgnored)
+                .sorted(Comparator.comparing(Field::getName))
+                .collect(Collectors.toList());
+    }
+
+    private static boolean isPrivate(Field field) {
+        final int privateModifier = Modifier.PRIVATE;
+        return (field.getModifiers() & privateModifier) == privateModifier;
     }
 }
