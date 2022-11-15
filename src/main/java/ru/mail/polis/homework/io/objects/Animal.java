@@ -69,14 +69,14 @@ public class Animal implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return legs == animal.getLegs() && wild == animal.isWild() && furry == animal.isFurry()
-                && Objects.equals(alias, animal.getAlias()) && Objects.equals(organization, animal.getOrganization())
-                && moveType == animal.getMoveType();
+        return legs == animal.legs && wild == animal.wild && furry == animal.furry
+                && Objects.equals(alias, animal.alias) && Objects.equals(organization, animal.organization)
+                && moveType == animal.moveType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAlias(), getLegs(), isWild(), isFurry(), getOrganization(), getMoveType());
+        return Objects.hash(alias, legs, wild, furry, organization, moveType);
     }
 
     @Override
@@ -124,14 +124,14 @@ public class Animal implements Serializable {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            Organization that = (Organization) o;
-            return foreign == that.isForeign() && Objects.equals(name, that.getName())
-                    && Objects.equals(owner, that.getOwner());
+            Organization organization = (Organization) o;
+            return foreign == organization.foreign && Objects.equals(name, organization.name)
+                    && Objects.equals(owner, organization.owner);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(getName(), getOwner(), isForeign());
+            return Objects.hash(name, owner, foreign);
         }
 
         @Override

@@ -78,14 +78,14 @@ public class AnimalWithMethods implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AnimalWithMethods animal = (AnimalWithMethods) o;
-        return legs == animal.getLegs() && wild == animal.isWild() && furry == animal.isFurry()
-                && Objects.equals(alias, animal.getAlias()) && Objects.equals(organization, animal.getOrganization())
-                && moveType == animal.getMoveType();
+        return legs == animal.legs && wild == animal.wild && furry == animal.furry
+                && Objects.equals(alias, animal.alias) && Objects.equals(organization, animal.organization)
+                && moveType == animal.moveType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAlias(), getLegs(), isWild(), isFurry(), getOrganization(), getMoveType());
+        return Objects.hash(alias, legs, wild, furry, organization, moveType);
     }
 
     @Override
@@ -105,7 +105,9 @@ public class AnimalWithMethods implements Serializable {
         writeString(out, alias);
         out.writeInt(legs);
         out.writeObject(organization);
-        writeString(out, moveType.toString());
+        if (moveType != null) {
+            writeString(out, moveType.toString());
+        }
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -115,7 +117,10 @@ public class AnimalWithMethods implements Serializable {
         wild = (flags & IS_WILD) != 0;
         furry = (flags & IS_FURRY) != 0;
         organization = (OrganizationWithMethods) in.readObject();
-        moveType = MoveType.valueOf(readString(in, flags, HAS_MOVE_TYPE));
+        String currMoveType = readString(in, flags, HAS_MOVE_TYPE);
+        if (currMoveType != null) {
+            moveType = MoveType.valueOf(currMoveType);
+        }
     }
 
     private static void writeString(ObjectOutput output, String str) throws IOException {
@@ -182,14 +187,14 @@ public class AnimalWithMethods implements Serializable {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            OrganizationWithMethods that = (OrganizationWithMethods) o;
-            return foreign == that.isForeign() && Objects.equals(name, that.getName())
-                    && Objects.equals(owner, that.getOwner());
+            OrganizationWithMethods organization = (OrganizationWithMethods) o;
+            return foreign == organization.foreign && Objects.equals(name, organization.name)
+                    && Objects.equals(owner, organization.owner);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(getName(), getOwner(), isForeign());
+            return Objects.hash(name, owner, foreign);
         }
 
         @Override

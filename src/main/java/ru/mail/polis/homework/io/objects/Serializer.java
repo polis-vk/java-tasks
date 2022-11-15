@@ -218,7 +218,10 @@ public class Serializer {
                     writeString(outputStream, organization.getName());
                     writeString(outputStream, organization.getOwner());
                 }
-                writeString(outputStream, animal.getMoveType().toString());
+                MoveType moveType = animal.getMoveType();
+                if (moveType != null) {
+                    writeString(outputStream, moveType.toString());
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -262,7 +265,10 @@ public class Serializer {
                     organization.setForeign((organizationFlags & ORGANIZATION_IS_FOREIGN) != 0);
                     animal.setOrganization(organization);
                 }
-                animal.setMoveType(MoveType.valueOf(readString(inputStream, animalFlags, HAS_MOVE_TYPE)));
+                String moveType = readString(inputStream, animalFlags, HAS_MOVE_TYPE);
+                if (moveType != null) {
+                    animal.setMoveType(MoveType.valueOf(moveType));
+                }
                 animals.add(animal);
             }
         } catch (IOException e) {
