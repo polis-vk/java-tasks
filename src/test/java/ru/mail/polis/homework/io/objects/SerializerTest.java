@@ -152,7 +152,9 @@ public class SerializerTest {
             animal.setOrganization(generateOrganization());
         }
         MoveType[] values = MoveType.values();
-        animal.setMoveType(MoveType.values()[RND.nextInt(values.length)]);
+        if (RND.nextBoolean()) {
+            animal.setMoveType(MoveType.values()[RND.nextInt(values.length)]);
+        }
         return animal;
     }
 
@@ -168,7 +170,9 @@ public class SerializerTest {
             animal.setOrganization(generateOrganizationExternalizable());
         }
         MoveType[] values = MoveType.values();
-        animal.setMoveType(MoveType.values()[RND.nextInt(values.length)]);
+        if (RND.nextBoolean()) {
+            animal.setMoveType(MoveType.values()[RND.nextInt(values.length)]);
+        }
         return animal;
     }
 
@@ -184,7 +188,9 @@ public class SerializerTest {
             animal.setOrganization(generateOrganizationWithMethods());
         }
         MoveType[] values = MoveType.values();
-        animal.setMoveType(MoveType.values()[RND.nextInt(values.length)]);
+        if (RND.nextBoolean()) {
+            animal.setMoveType(MoveType.values()[RND.nextInt(values.length)]);
+        }
         return animal;
     }
 
