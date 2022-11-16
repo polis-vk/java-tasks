@@ -1,5 +1,13 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.StringJoiner;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -43,7 +51,47 @@ package ru.mail.polis.homework.reflection;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+
+        Class<?> reflectionClass = object.getClass();
+        StringJoiner joiner = new StringJoiner(", ");
+        while (reflectionClass != null) {
+            Arrays.stream(reflectionClass.getDeclaredFields())
+                    .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                    .filter(field -> !field.isAnnotationPresent(SkipField.class))
+                    .sorted(Comparator.comparing(Field::getName))
+                    .forEach(field -> addFieldToStringJoiner(joiner, field, object));
+            reflectionClass = reflectionClass.getSuperclass();
+        }
+        return "{" + joiner.toString() + "}";
+    }
+
+    private static void addFieldToStringJoiner(StringJoiner joiner, Field field, Object object) {
+        boolean fieldAccessFlag = field.isAccessible();
+        if (!fieldAccessFlag) {
+            field.setAccessible(true);
+        }
+
+        try {
+            Object value = field.get(object);
+            if (field.getType().isArray() && value != null) {
+                joiner.add(field.getName() + ": " + arrayToString(value));
+            } else {
+                joiner.add(field.getName() + ": " + Optional.ofNullable(value).orElse("null"));
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        field.setAccessible(fieldAccessFlag);
+    }
+
+    private static String arrayToString(Object arrayObject) {
+        StringJoiner joiner = new StringJoiner(", ");
+        for (int i = 0; i < Array.getLength(arrayObject); i++) {
+            joiner.add(String.valueOf(Array.get(arrayObject, i)));
+        }
+        return "[" + joiner.toString() + "]";
     }
 }
