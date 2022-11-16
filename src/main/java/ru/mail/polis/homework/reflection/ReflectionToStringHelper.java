@@ -1,14 +1,12 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -47,13 +45,66 @@ import java.util.stream.Stream;
  * Easy + Medium - нет наследования, массивов, но есть статические поля и поля с аннотацией SkipField (6 баллов)
  * Easy + Medium + Hard - нужно реализовать все требования задания (10 баллов)
  * <p>
- * Итого, по заданию можно набрать 10 баллов
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
+    private static void appendClassesList(Class<?> c, List<Class<?>> classes) {
+        while (c != null) {
+            classes.add(c);
+            c = c.getSuperclass();
+        }
+    }
+
+    private static List<Field> getSortedDeclaredFields(Class<?> clazz) {
+        return Arrays.stream(clazz.getDeclaredFields())
+                .sorted(Comparator.comparing(Field::getName))
+                .filter(field -> !field.toString().contains("static") &&
+                        (field.getAnnotation(SkipField.class) == null))
+                .collect(Collectors.toList());
+    }
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        List<Class<?>> classes = new ArrayList<>();
+        appendClassesList(object.getClass(), classes);
+
+        stringBuilder.append("{");
+        for (Class<?> clazz : classes) {
+            for (Field field : getSortedDeclaredFields(clazz)) {
+                field.setAccessible(true);
+
+                if (field.getType().isArray()) {
+                    List<Object> array = new ArrayList<>();
+                    try {
+                        if (field.get(object) == null) {
+                            stringBuilder.append(field.getName() + ": " + "null" + ", ");
+                            continue;
+                        }
+                        for (int i = 0; i < Array.getLength(field.get(object)); i++) {
+                            array.add(Array.get(field.get(object), i));
+                        }
+                        stringBuilder.append(field.getName() + ": " + array + ", ");
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                    continue;
+                }
+                try {
+                    stringBuilder.append(field.getName() + ": " + field.get(object) + ", ");
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        int newLength = stringBuilder.lastIndexOf(", ");
+        if (newLength > 0) {
+            stringBuilder.setLength(newLength);
+        }
+
+        stringBuilder.append("}");
+        return stringBuilder.toString();
     }
 }
