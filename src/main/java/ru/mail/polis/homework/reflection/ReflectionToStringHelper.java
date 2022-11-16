@@ -1,14 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.List;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,7 +50,82 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        StringBuilder result = new StringBuilder("{");
+        Class<?> curClass = object.getClass();
+        Field[] fields = curClass.getDeclaredFields();
+        try {
+            do {
+                result.append(electedFieldsToString(fields, object));
+                curClass = curClass.getSuperclass();
+                fields = curClass.getDeclaredFields();
+                if (fields.length == 0) {
+                    continue;
+                }
+                result.append(", ");
+            } while (curClass != Object.class);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return result.append("}").toString();
+    }
+
+    private static String arrayToString(Object value) {
+        if (value == null) {
+            return "null";
+        }
+        int arrLength = Array.getLength(value);
+        if (arrLength == 0) {
+            return "[]";
+        }
+        StringBuilder result = new StringBuilder("[");
+        for (int i = 0; i < arrLength; i++) {
+            result.append(Array.get(value, i));
+            if (i == arrLength - 1) {
+                break;
+            }
+            result.append(", ");
+        }
+        return result.append("]").toString();
+    }
+
+    private static String electedFieldsToString(Field[] fields, Object object) throws IllegalAccessException {
+        if (fields.length == 0) {
+            return "";
+        }
+        List<Field> electedFields = new ArrayList<>();
+        for (Field field : fields) {
+            if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
+                continue;
+            }
+            electedFields.add(field);
+        }
+        if (electedFields.size() == 0) {
+            return "";
+        }
+        StringBuilder result = new StringBuilder();
+        electedFields.sort(Comparator.comparing(Field::getName));
+        for (int i = 0; i < electedFields.size(); i++) {
+            Field field = electedFields.get(i);
+            result.append(field.getName());
+            result.append(": ");
+            if (!field.isAccessible()) {
+                field.setAccessible(true);
+            }
+            Object value = field.get(object);
+            if (field.getType().isArray()) {
+                result.append(arrayToString(value));
+            } else {
+                result.append(value);
+            }
+            if (i == electedFields.size() - 1) {
+                break;
+            }
+            result.append(", ");
+        }
+        return result.toString();
     }
 }
+
