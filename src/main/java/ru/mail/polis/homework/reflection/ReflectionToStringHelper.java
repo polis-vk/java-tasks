@@ -1,14 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
+import java.lang.reflect.*;
+import java.util.stream.Collectors;
+import java.util.*;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -50,10 +47,65 @@ import java.util.stream.Stream;
  * Итого, по заданию можно набрать 10 баллов
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
+
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (Objects.isNull(object)) {
+            return "null";
+        }
+
+        Class<?> clazz = object.getClass();
+        StringBuilder resultString = new StringBuilder("{");
+
+        do {
+            Field[] fields = clazz.getDeclaredFields();
+            String fieldsStringRepresentation = Arrays.stream(fields)
+                    .filter(field -> field.getAnnotation(SkipField.class) == null && !Modifier.isStatic(field.getModifiers()))
+                    .collect(
+                            Collectors.toMap(
+                                    Field::getName,
+                                    field -> {
+                                        field.setAccessible(true);
+                                        Object value;
+                                        try {
+                                            value = field.get(object);
+                                        } catch (IllegalAccessException e) {
+                                            return "null";
+                                        }
+                                        if (value == null) {
+                                            return "null";
+                                        } else if (field.getType().isArray()) {
+                                            return arrayToString(value);
+                                        } else {
+                                            return value;
+                                        }
+                                    }
+                            )
+                    ).entrySet().stream()
+                    .sorted(Map.Entry.comparingByKey())
+                    .map(entry -> entry.getKey() + ": " + entry.getValue())
+                    .collect(joining(", "));
+            resultString.append(fieldsStringRepresentation);
+            clazz = clazz.getSuperclass();
+            if (clazz != null && clazz != Object.class) {
+                resultString.append(", ");
+            } else {
+                break;
+            }
+        } while (true);
+
+        return resultString.append("}").toString();
+    }
+
+    private static String arrayToString(Object array) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < Array.getLength(array); i++) {
+            sb.append(Array.get(array, i));
+            if (i < Array.getLength(array) - 1) {
+                sb.append(", ");
+            }
+        }
+        return sb.append("]").toString();
     }
 }
