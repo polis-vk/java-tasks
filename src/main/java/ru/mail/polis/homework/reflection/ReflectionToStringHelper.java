@@ -1,14 +1,10 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,7 +49,57 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        StringBuilder result = new StringBuilder("{");
+        Class<?> clazz = object.getClass();
+        try {
+            while (clazz != null) {
+                Field[] fields = clazz.getDeclaredFields();
+                Arrays.sort(fields, Comparator.comparing(Field::getName));
+                for (Field field : fields) {
+                    if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
+                        continue;
+                    }
+                    field.setAccessible(true);
+                    result.append(field.getName());
+                    result.append(": ");
+                    if (field.getType().isArray()) {
+                        appendArrayFieldToResult(field.get(object), result);
+                    } else {
+                        result.append(field.get(object));
+                    }
+                    result.append(", ");
+                }
+                clazz = clazz.getSuperclass();
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        if (result.length() > 1) {
+            result.delete(result.length() - 2, result.length());
+        }
+        result.append("}");
+        return result.toString();
+    }
+
+    private static void appendArrayFieldToResult(Object array, StringBuilder result) {
+        if (array == null) {
+            result.append("null");
+            return;
+        }
+        int arrayLength = Array.getLength(array);
+        if (arrayLength == 0) {
+            result.append("[]");
+            return;
+        }
+        result.append("[");
+        result.append(Array.get(array, 0));
+        for (int i = 1; i < arrayLength; i++) {
+            result.append(", ");
+            result.append(Array.get(array, i));
+        }
+        result.append("]");
     }
 }
