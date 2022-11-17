@@ -7,8 +7,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
