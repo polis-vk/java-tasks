@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Field;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -44,6 +46,36 @@ public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
         // TODO: implement
+        if (object == null) {
+            return "null";
+        }
+
+        StringBuilder result = new StringBuilder("{");
+        try {
+            Field[] fieldlist = object.getClass().getDeclaredFields();
+            Field fld;
+            for (int i = 0; i < fieldlist.length; i++) {
+                fld = fieldlist[i];
+                fld.setAccessible(true);
+                if (fld.get(object) == null) {
+                    result.append(fld.getName()).append(": null");
+                } else {
+                    result.append(fld.getName()).append(": ").append(fld.get(object));
+                }
+
+                if (i != fieldlist.length - 1) {
+                    result.append(", ");
+                }
+            }
+        }
+        catch (Throwable e) {
+            System.err.println(e);
+        }
+        return result.append("}").toString();
+    }
+
+    private static String arrayToString(Field arrayField) {
+
         return null;
     }
 }
