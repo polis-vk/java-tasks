@@ -87,25 +87,27 @@ public class ReflectionToStringHelper {
                 .filter(field -> (field.getModifiers() & Modifier.STATIC) == 0)
                 .filter(field -> !field.isAnnotationPresent(SkipField.class))
                 .sorted(Comparator.comparing(Field::getName))
-                .map(field -> {
-                    String value = null;
-                    boolean wasNotAccessible = !field.isAccessible();
-                    try {
-                        // Turn accessibility on if necessary
-                        if (wasNotAccessible) {
-                            field.setAccessible(true);
-                        }
-                        value = objectFieldToString(field.getName(), field.get(object));
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                    // Turn accessibility back if necessary
-                    if (wasNotAccessible) {
-                        field.setAccessible(false);
-                    }
-                    return value;
-                })
+                .map(field -> mapFieldWithObjectToString(field, object))
                 .reduce("", (result, current) -> result.isEmpty() ? current : result + ", " + current);
+    }
+
+    private static String mapFieldWithObjectToString(Field field, Object object) {
+        String value = null;
+        boolean wasNotAccessible = !field.isAccessible();
+        try {
+            // Turn accessibility on if necessary
+            if (wasNotAccessible) {
+                field.setAccessible(true);
+            }
+            value = objectFieldToString(field.getName(), field.get(object));
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        // Turn accessibility back if necessary
+        if (wasNotAccessible) {
+            field.setAccessible(false);
+        }
+        return value;
     }
 
     private static String objectFieldToString(String field, Object object) {
@@ -113,16 +115,14 @@ public class ReflectionToStringHelper {
 
         if (object == null) {
             value = NULL;
-        } else if (isArray(object)) {
-            value = arrayToString(object);
         } else {
-            value = String.valueOf(object);
+            value = objectToString(object);
         }
 
         return field + ": " + value;
     }
 
-    private static String arrayToString(Object array) {
+    private static String objectToString(Object array) {
         // All the data types are covered
         if (array instanceof Object[]) {
             return Arrays.toString((Object[]) array);
@@ -138,13 +138,9 @@ public class ReflectionToStringHelper {
             return Arrays.toString((float[]) array);
         } else if (array instanceof double[]) {
             return Arrays.toString((double[]) array);
+        } else if (array instanceof char[]) {
+            return Arrays.toString((char[]) array);
         }
-        return Arrays.toString((char[]) array);
-    }
-
-    private static boolean isArray(Object object) {
-        return object instanceof Object[] || object instanceof byte[] || object instanceof short[]
-                || object instanceof int[] || object instanceof long[] || object instanceof float[]
-                || object instanceof double[] || object instanceof char[];
+        return String.valueOf(array);
     }
 }
