@@ -101,7 +101,7 @@ public class ReflectionToStringHelper {
             }
 
             if (sizeArray > 0) {
-                stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+                deleteExtraComma(stringBuilder);
             }
 
             stringBuilder.append(']');
@@ -123,5 +123,9 @@ public class ReflectionToStringHelper {
         }
 
         return fieldValue;
+    }
+
+    private static void deleteExtraComma(StringBuilder stringBuilder) {
+        stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
     }
 }
