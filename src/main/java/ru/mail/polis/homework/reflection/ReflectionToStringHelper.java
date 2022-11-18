@@ -1,13 +1,12 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -47,13 +46,45 @@ import java.util.stream.Stream;
  * Easy + Medium - нет наследования, массивов, но есть статические поля и поля с аннотацией SkipField (6 баллов)
  * Easy + Medium + Hard - нужно реализовать все требования задания (10 баллов)
  * <p>
- * Итого, по заданию можно набрать 10 баллов
+ * того, по заданию можно набрать 10 баллов
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        Class<?> aClass = object.getClass();
+        StringBuilder out = new StringBuilder();
+        while (aClass != null) {
+            List<Field> classFields = Stream.of(aClass.getDeclaredFields())
+                    .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                    .filter(field -> !field.isAnnotationPresent(SkipField.class))
+                    .sorted(Comparator.comparing(Field::getName)).collect(Collectors.toList());
+            for (Field classField : classFields) {
+                out.append(classField.getName());
+                out.append(": ");
+                classField.setAccessible(true);
+                try {
+                    String value = classField.get(object).toString();
+                    if (classField.getType().isArray()) {
+                        value = Arrays.deepToString(new Object[]{classField.get(object)});
+                        value = value.substring(1, value.length() - 1);
+                    }
+                    out.append(value);
+                } catch (NullPointerException e) {
+                    out.append("null");
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                out.append(", ");
+            }
+            aClass = aClass.getSuperclass();
+        }
+        if (out.length() > 2) {
+            out.delete(out.length() - 2, out.length());
+        }
+        return "{" + out + "}";
     }
 }
