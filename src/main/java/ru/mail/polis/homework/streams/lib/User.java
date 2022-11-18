@@ -52,3 +52,4 @@ public class User {
         return Objects.hash(name, age, book, readedPages);
     }
 }
+
