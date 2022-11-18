@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -101,17 +102,10 @@ public class ReflectionToStringHelper {
     }
 
     private static String getRepresentationOfArray(Object array) {
-        StringBuilder representationBuilder = new StringBuilder();
-        representationBuilder.append('[');
-        int arrayLength = Array.getLength(array);
-        for (int i = 0; i < arrayLength - 1; i++) {
-            representationBuilder.append(Array.get(array, i));
-            representationBuilder.append(", ");
-        }
-        if (arrayLength > 0) {
-            representationBuilder.append(Array.get(array,arrayLength - 1));
-        }
-        return representationBuilder.append(']')
-                                    .toString();
+        String elementsRepresentation = IntStream.range(0, Array.getLength(array))
+                .mapToObj(index -> String.valueOf(Array.get(array, index)))
+                .reduce((expression, elementStringified) -> expression + ", " + elementStringified)
+                .orElse("");
+        return '[' + elementsRepresentation + ']';
     }
 }
