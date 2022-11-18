@@ -6,7 +6,6 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.stream.Stream;
-import static java.util.stream.Stream.Builder;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -49,6 +48,7 @@ import static java.util.stream.Stream.Builder;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
+
     public static String reflectiveToString(Object object) {
         if (object == null) {
             return "null";
@@ -62,7 +62,7 @@ public class ReflectionToStringHelper {
     }
 
     private static Stream<Class<?>> getClassesChain(Object object) {
-        Builder<Class<?>> superClassesBuilder = Stream.builder();
+        Stream.Builder<Class<?>> superClassesBuilder = Stream.builder();
         Class<?> clazz = object.getClass();
         while (clazz != null) {
             superClassesBuilder.add(clazz);
@@ -73,13 +73,16 @@ public class ReflectionToStringHelper {
 
     private static Stream<Field> getConsideringFieldsStream(Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredFields())
-                     .filter(field -> !field.isAnnotationPresent(SkipField.class))
-                     .filter(field -> !Modifier.isStatic(field.getModifiers()))
-                     .sorted(Comparator.comparing(Field::getName));
+                .filter(field -> !field.isAnnotationPresent(SkipField.class))
+                .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                .sorted(Comparator.comparing(Field::getName));
     }
 
     private static String getRepresentationOf(Field field, Object object) {
-        field.setAccessible(true);
+        final boolean initialAccessible = field.isAccessible();
+        if (!initialAccessible) {
+            field.setAccessible(true);
+        }
         Object value = null;
         try {
             value = field.get(object);
@@ -87,7 +90,9 @@ public class ReflectionToStringHelper {
             e.printStackTrace();
             return null;
         } finally {
-            field.setAccessible(false);
+            if (!initialAccessible) {
+                field.setAccessible(false);
+            }
         }
         if (value == null || !value.getClass().isArray()) {
             return String.valueOf(value);
