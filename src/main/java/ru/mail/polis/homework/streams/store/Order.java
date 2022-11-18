@@ -19,5 +19,4 @@ public class Order {
     public Map<Item, Integer> getItemCount() {
         return itemCount;
     }
-
 }
