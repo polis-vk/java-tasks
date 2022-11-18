@@ -20,7 +20,7 @@ public class SerializerTest {
     private final static String fileName = "./src/test/resources/object/serializeTest.bin";
     private static final Serializer SERIALIZER = new Serializer();
     private static final Random RANDOM = new Random();
-    private static final int NUMBER_OF_OBJECT = 1_000_000;
+    private static final int NUMBER_OF_OBJECT = 3_000_000;
 
     @Before
     public void setUp() throws Exception {
