@@ -38,16 +38,18 @@ public class CopyFileTest {
 //
 //
 //        // ------------------------------------- create source for copyDirWithFiles ------------------------------------
-//        Path dir3 = Paths.get("src", "test", "resources", "directories", "copy", "third");
-//        Path file1 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file1.txt");
-//        Path file2 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file2.txt");
-//        Path file3 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file3.txt");
-//        Path file4 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file4.txt");
-//        Files.createDirectories(dir3);
-//        createFile(file1);
-//        createFile(file2);
-//        createFile(file3);
-//        createFile(file4);
+        Path dir3 = Paths.get("src", "test", "resources", "directories", "copy", "third");
+        Path file1 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file1.txt");
+        Path file2 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file2.txt");
+        Path file3 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file3.txt");
+        Path file4 = Paths.get("src", "test", "resources", "directories", "copy", "third", "file4.txt");
+        Files.createDirectories(dir3);
+        createFile(file1);
+        createFile(file2);
+        createFile(file3);
+        createFile(file4);
+
+
 //        // ------------------------------------- create source for copyDirWithFiles ------------------------------------
 //
 //
