@@ -47,13 +47,10 @@ import java.util.Comparator;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
-    private static final String NULL_STRING = "null";
-    private static final String SEPARATOR_BETWEEN_FIELDS = ", ";
-    private static final String SEPARATOR_INSIDE_FIELDS = ": ";
 
     public static String reflectiveToString(Object object) {
         if (object == null) {
-            return NULL_STRING;
+            return "null";
         }
         StringBuilder sb = new StringBuilder("{");
         Class<?> clazz = object.getClass();
@@ -67,14 +64,16 @@ public class ReflectionToStringHelper {
                         .toArray(Field[]::new);
 
                 for (Field field : fieldsArray) {
-                    sb.append(field.getName()).append(SEPARATOR_INSIDE_FIELDS);
+                    sb.append(field.getName()).append(": ");
+                    boolean isAccessible = field.isAccessible();
                     field.setAccessible(true);
                     if (field.getType().isArray()) {
                         sb.append(parseArrayToSb(field.get(object)));
                     } else {
                         sb.append(field.get(object));
                     }
-                    sb.append(SEPARATOR_BETWEEN_FIELDS);
+                    sb.append(", ");
+                    field.setAccessible(isAccessible);
                 }
                 clazz = clazz.getSuperclass();
             }
@@ -82,8 +81,8 @@ public class ReflectionToStringHelper {
             e.printStackTrace();
         }
         int length = sb.length();
-        if (length >= SEPARATOR_BETWEEN_FIELDS.length()) {
-            sb.delete(length - SEPARATOR_BETWEEN_FIELDS.length(), length);
+        if (length >= 2) {
+            sb.delete(length - 2, length);
         }
         return sb.append("}").toString();
     }
@@ -91,7 +90,7 @@ public class ReflectionToStringHelper {
     private static StringBuilder parseArrayToSb(Object array) {
         StringBuilder sb = new StringBuilder();
         if (array == null) {
-            return sb.append(NULL_STRING);
+            return sb.append("null");
         }
         int length = Array.getLength(array);
         if (length == 0) {
@@ -99,7 +98,7 @@ public class ReflectionToStringHelper {
         }
         sb.append("[").append(Array.get(array, 0));
         for (int i = 1; i < length; i++) {
-            sb.append(SEPARATOR_BETWEEN_FIELDS).append(Array.get(array, i));
+            sb.append(", ").append(Array.get(array, i));
         }
         return sb.append("]");
     }
