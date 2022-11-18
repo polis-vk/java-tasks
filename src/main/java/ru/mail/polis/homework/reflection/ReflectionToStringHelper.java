@@ -72,6 +72,7 @@ public class ReflectionToStringHelper {
 
     private static String fieldToString(Field field, Object object) {
         StringBuilder result = new StringBuilder();
+        boolean isFieldAccessible = field.isAccessible();
         field.setAccessible(true);
 
         try {
@@ -88,6 +89,7 @@ public class ReflectionToStringHelper {
             e.printStackTrace();
         }
 
+        field.setAccessible(isFieldAccessible);
         return result.toString();
     }
 
