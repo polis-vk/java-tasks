@@ -61,4 +61,3 @@ public class LibraryStatistic {
         return null;
     }
 }
-

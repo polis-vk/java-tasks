@@ -5,8 +5,8 @@ import java.util.Objects;
 public class User {
     private final String name;
     private final int age;
-    private Book book;
-    private int readedPages;
+    private final Book book;
+    private final int readedPages;
 
     public User(String name, int age, Book book, int readedPages) {
         this.name = name;
@@ -31,25 +31,5 @@ public class User {
         return readedPages;
     }
 
-    public void setBook(Book book) {
-        this.book = book;
-    }
-
-    public void setReadedPages(int readedPages) {
-        this.readedPages = readedPages;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return age == user.age && name.equals(user.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, age, book, readedPages);
-    }
 }
 
