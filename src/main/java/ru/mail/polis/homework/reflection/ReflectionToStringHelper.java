@@ -1,5 +1,13 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.lang.Object;
+
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
@@ -43,7 +51,87 @@ package ru.mail.polis.homework.reflection;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+
+        ArrayList<Field> fields = getSortedFields(object);
+        String result = "{";
+        for (int i = 0; i < fields.size(); i++) {
+            Field field = fields.get(i);
+            field.setAccessible(true);
+            result += field.getName() + ": " + getValue(field, object);
+            if (i != fields.size() - 1) {
+                result += ", ";
+            }
+        }
+        result += "}";
+        return result;
+    }
+
+    private static ArrayList<Field> getCorrectField(Field[] fields) {
+        ArrayList<Field> correctField = new ArrayList<>();
+        for (Field field : fields) {
+            if (Modifier.isStatic(field.getModifiers())
+                    || field.isAnnotationPresent(SkipField.class)) {
+                continue;
+            }
+            correctField.add(field);
+        }
+        return correctField;
+    }
+
+    private static Object[] unpackArray(Object array) {
+        if (array == null) {
+            return null;
+        }
+
+        Object[] unpackedArray = new Object[Array.getLength(array)];
+        for (int i = 0; i < unpackedArray.length; i++) {
+            unpackedArray[i] = Array.get(array, i);
+        }
+        return unpackedArray;
+    }
+
+    private static String getValue(Field field, Object object) {
+        try {
+            String fieldValue = "";
+            if (field.getType().isArray()) {
+                fieldValue += "[";
+                Object[] values = unpackArray(field.get(object));
+                if (values == null) {
+                    return "null";
+                }
+
+                for (int j = 0; j < values.length; j++) {
+                    fieldValue += values[j];
+                    if (j != values.length - 1) {
+                        fieldValue += ", ";
+                    }
+                }
+                fieldValue += "]";
+            } else {
+                if (field.get(object) == null) {
+                    return "null";
+                }
+                fieldValue = field.get(object).toString();
+            }
+            return fieldValue;
+        } catch (IllegalAccessException  e) {
+            e.printStackTrace();
+            return "null";
+        }
+    }
+
+    private static ArrayList<Field> getSortedFields (Object object) {
+        Class<?> currentClass = object.getClass();
+        ArrayList<Field> result = new ArrayList<>();
+        do {
+            ArrayList<Field> fields = getCorrectField(currentClass.getDeclaredFields());
+            fields.sort(Comparator.comparing(Field::getName));
+            result.addAll(fields);
+            currentClass = currentClass.getSuperclass();
+        } while (currentClass != null);
+        return result;
     }
 }
