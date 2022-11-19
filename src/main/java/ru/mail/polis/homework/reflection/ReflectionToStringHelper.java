@@ -1,12 +1,17 @@
 package ru.mail.polis.homework.reflection;
 
-import java.lang.annotation.Annotation;
+import ru.mail.polis.homework.reflection.objects.easy.Easy;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Optional;
+import java.util.stream.Stream;
+import java.util.ArrayList;
 import java.lang.Object;
+import java.lang.annotation.Annotation;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
