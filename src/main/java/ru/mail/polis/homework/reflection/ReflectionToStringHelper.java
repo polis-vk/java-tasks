@@ -51,11 +51,11 @@ import java.util.stream.Collectors;
  */
 public class ReflectionToStringHelper {
     private static final String DELIMITER_OF_FIELDS = ", ";
+    private static final String NULL_VALUE = "null";
 
     public static String reflectiveToString(Object object) {
-        final String nullValue = "null";
         if (object == null) {
-            return nullValue;
+            return NULL_VALUE;
         }
         Class<?> classOfObject = object.getClass();
         StringBuilder result = new StringBuilder("{");
@@ -65,11 +65,12 @@ public class ReflectionToStringHelper {
             for (Field field : requiredFields) {
                 Object value = null;
                 try {
-                    if (isPrivate(field)) {
+                    boolean isCurrentFieldPrivate = isPrivateField(field);
+                    if (isCurrentFieldPrivate) {
                         field.setAccessible(true);
                     }
                     value = field.get(object);
-                    if (isPrivate(field)) {
+                    if (isCurrentFieldPrivate) {
                         field.setAccessible(false);
                     }
                 } catch (IllegalAccessException e) {
@@ -79,7 +80,7 @@ public class ReflectionToStringHelper {
                 }
                 result.append(field.getName()).append(": ");
                 if (value == null) {
-                    result.append(nullValue);
+                    result.append(NULL_VALUE);
                 } else if (field.getType().isArray()) {
                     addArrayToResult(result, value);
                 } else {
@@ -108,11 +109,11 @@ public class ReflectionToStringHelper {
     private static void addArrayToResult(StringBuilder result, Object value) {
         result.append("[");
         int length = Array.getLength(value);
-        if (length != 0) {
-            for (int i = 0; i < length; i++) {
-                result.append(Array.get(value, i)).append(DELIMITER_OF_FIELDS);
+        for (int i = 0; i < length; i++) {
+            result.append(Array.get(value, i));
+            if (i != length - 1) {
+                result.append(DELIMITER_OF_FIELDS);
             }
-            deleteExtraDelimiterOfFields(result);
         }
         result.append("]");
     }
@@ -124,8 +125,7 @@ public class ReflectionToStringHelper {
                 .collect(Collectors.toList());
     }
 
-    private static boolean isPrivate(Field field) {
-        final int privateModifier = Modifier.PRIVATE;
-        return (field.getModifiers() & privateModifier) == privateModifier;
+    private static boolean isPrivateField(Field field) {
+        return Modifier.isPrivate(field.getModifiers());
     }
 }
