@@ -1,14 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -52,8 +49,69 @@ import java.util.stream.Stream;
  */
 public class ReflectionToStringHelper {
 
+    private static final String NULL_VALUE = "null";
+
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return NULL_VALUE;
+        }
+
+        AtomicBoolean isEmpty = new AtomicBoolean(true);
+        StringBuilder result = new StringBuilder("{");
+        Class<?> objectClass = object.getClass();
+        while (objectClass != Object.class) {
+            Arrays.stream(objectClass.getDeclaredFields())
+                .sorted(Comparator.comparing(Field::getName))
+                .filter(field -> !Modifier.isStatic(field.getModifiers()) &&
+                    !field.isAnnotationPresent(SkipField.class))
+                .forEach(field -> {
+                    try {
+                        field.setAccessible(true);
+                        isEmpty.set(false);
+                        Object value = field.get(object);
+                        if (field.getType().isArray()) {
+                            value = arrayToString(value);
+                        }
+                        value = value == null ? NULL_VALUE : value;
+
+                        result
+                            .append(field.getName())
+                            .append(": ")
+                            .append(value)
+                            .append(", ");
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                });
+            objectClass = objectClass.getSuperclass();
+        }
+
+        if (!isEmpty.get()) {
+            deleteTwoLastChars(result);
+        }
+        result.append("}");
+        return result.toString();
+    }
+
+    private static String arrayToString(Object array) {
+        if (array == null) {
+            return NULL_VALUE;
+        }
+
+        StringBuilder result = new StringBuilder("[");
+        int length = Array.getLength(array);
+        for (int i = 0; i < length; i++) {
+            result.append(Array.get(array, i)).append(", ");
+        }
+        if (length != 0) {
+            deleteTwoLastChars(result);
+        }
+        result.append("]");
+        return result.toString();
+    }
+
+    private static void deleteTwoLastChars(StringBuilder stringBuilder) {
+        int charsToDelete = 2;
+        stringBuilder.delete(stringBuilder.length() - charsToDelete, stringBuilder.length());
     }
 }
