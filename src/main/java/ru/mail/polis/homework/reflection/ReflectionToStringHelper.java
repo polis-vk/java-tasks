@@ -1,14 +1,17 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,7 +56,74 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        StringBuilder stringBuilder = new StringBuilder("{");
+        Map<String, String> fieldValueMap = new TreeMap<>();
+        try {
+            Class clazz = object.getClass();
+            while (clazz != Object.class) {
+                if (stringBuilder.length() != 1) {
+                    stringBuilder.append(", ");
+                }
+                List<Field> fields = getFields(clazz.getDeclaredFields());
+                fillMap(fieldValueMap, fields, object);
+                stringBuilder.append(mapToString(fieldValueMap));
+                fieldValueMap.clear();
+                clazz = clazz.getSuperclass();
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        stringBuilder.append("}");
+        return stringBuilder.toString();
+    }
+
+    private static void fillMap(Map<String, String> fieldValueMap,
+                                List<Field> fields,
+                                Object object) throws IllegalAccessException {
+        for (Field field : fields) {
+            field.setAccessible(true);
+            String value = "";
+            if (field.getType().isArray()) {
+                value = arrayToStirng(field.get(object));
+            } else {
+                value = field.get(object) == null ? "null" : field.get(object).toString();
+            }
+            fieldValueMap.put(field.getName(), value);
+        }
+    }
+
+    private static String arrayToStirng(Object object) {
+        if (object == null) {
+            return "null";
+        }
+        StringBuilder stringBuilder = new StringBuilder("[");
+        for (int i = 0; i < Array.getLength(object); i++) {
+            stringBuilder.append(Array.get(object, i));
+            if (i != Array.getLength(object) - 1) {
+                stringBuilder.append(", ");
+            }
+        }
+        stringBuilder.append("]");
+        return stringBuilder.toString();
+    }
+
+    private static String mapToString(Map<String, String> fieldValueMap) {
+        return fieldValueMap.entrySet().stream()
+                .map(e -> e.getKey() + ": " + e.getValue())
+                .collect(Collectors.joining(", "));
+    }
+
+    private static List<Field> getFields(Field[] fields) {
+        List<Field> fieldsList = new ArrayList<>();
+        for (Field field : fields) {
+            if (!java.lang.reflect.Modifier.isStatic(field.getModifiers()) &&
+                    !field.isAnnotationPresent(SkipField.class)) {
+                fieldsList.add(field);
+            }
+        }
+        return fieldsList;
     }
 }
