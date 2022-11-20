@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -13,7 +13,7 @@ import java.util.concurrent.RejectedExecutionException;
  * Max 6 тугриков
  */
 public class SingleExecutor implements Executor {
-    private final Deque<Runnable> commandsQueue = new ArrayDeque<>();
+    private final Queue<Runnable> commandsQueue = new ConcurrentLinkedQueue<>();
     private final Thread everlastingThread;
     private boolean isShuttingDown;
 
@@ -23,8 +23,7 @@ public class SingleExecutor implements Executor {
             public void run() {
                 while (!isInterrupted()) {
                     if (!commandsQueue.isEmpty()) {
-                        Thread currentCommand = new Thread(commandsQueue.pollFirst());
-                        currentCommand.run();
+                        commandsQueue.poll().run();
                     }
                 }
             }
@@ -38,10 +37,13 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (command == null) {
+            throw new NullPointerException();
+        }
         if (isShuttingDown) {
             throw new RejectedExecutionException();
         }
-        commandsQueue.offerLast(command);
+        commandsQueue.offer(command);
     }
 
     /**
