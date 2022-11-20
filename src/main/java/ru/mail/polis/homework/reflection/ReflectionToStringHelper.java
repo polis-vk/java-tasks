@@ -1,14 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.Objects;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -50,10 +47,81 @@ import java.util.stream.Stream;
  * Итого, по заданию можно набрать 10 баллов
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
-public class ReflectionToStringHelper {
 
+public class ReflectionToStringHelper {
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+
+        StringBuilder totalString = new StringBuilder("{");
+        Class<?> clss = object.getClass();
+
+        while (clss != Object.class) {
+            try {
+                convertToStringForOneClass(clss.getDeclaredFields(), object, totalString);
+            } catch (IllegalAccessException exc) {
+                exc.getStackTrace();
+            }
+            clss = clss.getSuperclass();
+        }
+        deleteExtraChar(totalString);
+        totalString.append("}");
+
+        return totalString.toString();
+    }
+
+    private static void convertToStringForOneClass(Field[] fields, Object obj, StringBuilder strBuilder) throws IllegalAccessException {
+        if (fields.length == 0) {
+            strBuilder.append("null").append(", ");
+        }
+
+        Arrays.sort(fields, Comparator.comparing(Field::getName));
+        for (Field field : fields) {
+            boolean isAccessChanged = Modifier.isPrivate(field.getModifiers()) ||
+                    Modifier.isProtected(field.getModifiers());
+
+            if (field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+            if (isAccessChanged) {
+                field.setAccessible(true);
+            }
+            strBuilder.append(field.getName()).append(": ");
+            if (field.getType().isArray()) {
+                convertArrayToString(strBuilder, field.get(obj));
+            } else {
+                strBuilder.append(field.get(obj));
+            }
+            strBuilder.append(", ");
+
+            if (isAccessChanged) {
+                field.setAccessible(false);
+            }
+        }
+    }
+
+    private static void convertArrayToString(StringBuilder strBuilder, Object fieldVal) {
+        if (Objects.equals(fieldVal, null)) {
+            strBuilder.append("null");
+            return;
+        }
+
+        int len = Array.getLength(fieldVal);
+        if (len == 0) {
+            strBuilder.append("[]");
+            return;
+        }
+
+        strBuilder.append("[");
+        for (int iter = 0; iter < len; iter++) {
+            strBuilder.append(Array.get(fieldVal, iter)).append(", ");
+        }
+        deleteExtraChar(strBuilder);
+        strBuilder.append("]");
+    }
+
+    private static void deleteExtraChar(StringBuilder strBuilder) {
+        strBuilder.delete(strBuilder.length() - 2, strBuilder.length());
     }
 }
