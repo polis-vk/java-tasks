@@ -84,9 +84,11 @@ public class ReflectionToStringHelper {
             if (field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
+
             if (isAccessChanged) {
                 field.setAccessible(true);
             }
+
             strBuilder.append(field.getName()).append(": ");
             if (field.getType().isArray()) {
                 convertArrayToString(strBuilder, field.get(obj));
@@ -117,6 +119,7 @@ public class ReflectionToStringHelper {
         for (int iter = 0; iter < len; iter++) {
             strBuilder.append(Array.get(fieldVal, iter)).append(", ");
         }
+
         deleteExtraChar(strBuilder);
         strBuilder.append("]");
     }
