@@ -48,20 +48,18 @@ public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
         if (object == null) {
-            return ("null");
+            return "null";
         }
         Class<?> objectClass = object.getClass();
-        Class<?> objectSuperclass = objectClass.getSuperclass();
         StringBuilder result = new StringBuilder();
         result.append("{");
-        while (objectClass != objectSuperclass && objectSuperclass != null) {
+        while (objectClass != objectClass.getSuperclass() && objectClass.getSuperclass() != null) {
             Arrays.stream(objectClass.getDeclaredFields())
                     .filter(field -> !field.isAnnotationPresent(SkipField.class))
                     .filter(field -> !Modifier.isStatic(field.getModifiers()))
                     .sorted(Comparator.comparing(Field::getName))
-                    .forEach(field -> result.append(fieldToString(field, object)));
-            objectClass = objectSuperclass;
-            objectSuperclass = objectSuperclass.getSuperclass();
+                    .forEach(field -> fieldToString(field, object, result));
+            objectClass = objectClass.getSuperclass();
         }
         if (result.length() > 2) {
             result.setLength(result.length() - 2);
@@ -69,13 +67,14 @@ public class ReflectionToStringHelper {
         return result.append("}").toString();
     }
 
-    private static StringBuilder fieldToString(Field field, Object object) {
-        StringBuilder result = new StringBuilder();
+    private static void fieldToString(Field field, Object object, StringBuilder result) {
         try {
-            field.setAccessible(true);
+            if (!field.canAccess(object)) {
+                field.setAccessible(true);
+            }
             result.append(field.getName()).append(": ");
             if (field.getType().isArray()) {
-                result.append(arrayToString(field.get(object)));
+                arrayToString(field.get(object), result);
             } else {
                 result.append(field.get(object));
             }
@@ -83,22 +82,21 @@ public class ReflectionToStringHelper {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        return result;
     }
 
-    private static StringBuilder arrayToString(Object array) {
-        StringBuilder result = new StringBuilder();
+    private static void arrayToString(Object array, StringBuilder result) {
         if (array == null) {
             result.append("null");
-            return result;
+            return;
         }
         result.append("[");
-        for (int i = 0; i < Array.getLength(array); i++) {
-            result.append(Array.get(array, i)).append(", ");
+        int arrayLength = Array.getLength(array);
+        for (int i = 0; i < arrayLength; i++) {
+            result.append(Array.get(array, i));
+            if (i != arrayLength - 1) {
+                result.append(", ");
+            }
         }
-        if (result.length() > 2) {
-            result.setLength(result.length() - 2);
-        }
-        return result.append("]");
+        result.append("]");
     }
 }
