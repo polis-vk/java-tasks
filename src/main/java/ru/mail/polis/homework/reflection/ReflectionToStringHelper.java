@@ -76,16 +76,25 @@ public class ReflectionToStringHelper {
 
     private static void processField(Field field, Object object, AtomicBoolean isSomethingRecorded, StringBuilder sb) {
         try {
+            boolean isAccessibleChanged = false;
             if (!field.canAccess(object)) {
                 field.setAccessible(true);
+                isAccessibleChanged = true;
             }
+
             sb.append(field.getName()).append(": ");
+
             if (field.getType().isArray()) {
                 fillStringBuilderFromArray(sb, field.get(object));
             } else {
                 sb.append(field.get(object));
             }
+
             sb.append(", ");
+
+            if (isAccessibleChanged) {
+                field.setAccessible(false);
+            }
             isSomethingRecorded.set(true);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
