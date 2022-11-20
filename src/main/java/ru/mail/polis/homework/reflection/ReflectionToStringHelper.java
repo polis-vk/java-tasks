@@ -63,23 +63,7 @@ public class ReflectionToStringHelper {
                     .filter(field -> !Modifier.isStatic(field.getModifiers()))
                     .filter(field -> !field.isAnnotationPresent(SkipField.class))
                     .sorted(Comparator.comparing(Field::getName))
-                    .forEach(field -> {
-                        try {
-                            if (!field.canAccess(object)) {
-                                field.setAccessible(true);
-                            }
-                            sb.append(field.getName()).append(": ");
-                            if (field.getType().isArray()) {
-                                fillStringBuilderFromArray(sb, field.get(object));
-                            } else {
-                                sb.append(field.get(object));
-                            }
-                            sb.append(", ");
-                            isSomethingRecorded.set(true);
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    });
+                    .forEach(field -> processField(field, object, isSomethingRecorded, sb));
 
             clazz = clazz.getSuperclass();
         }
@@ -88,6 +72,24 @@ public class ReflectionToStringHelper {
             removeExtraComma(sb);
         }
         return sb.append("}").toString();
+    }
+
+    private static void processField(Field field, Object object, AtomicBoolean isSomethingRecorded, StringBuilder sb) {
+        try {
+            if (!field.canAccess(object)) {
+                field.setAccessible(true);
+            }
+            sb.append(field.getName()).append(": ");
+            if (field.getType().isArray()) {
+                fillStringBuilderFromArray(sb, field.get(object));
+            } else {
+                sb.append(field.get(object));
+            }
+            sb.append(", ");
+            isSomethingRecorded.set(true);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void fillStringBuilderFromArray(StringBuilder sb, Object array) throws IllegalAccessException {
