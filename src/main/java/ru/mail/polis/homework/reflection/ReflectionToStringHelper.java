@@ -58,47 +58,50 @@ public class ReflectionToStringHelper {
         ans.append("{");
         Class<?> currentClass = object.getClass();
         while (currentClass != Object.class) {
-            Field[] currentFields = Arrays.stream(currentClass.getDeclaredFields())       // Убираем "неподходящие" поля
+            Arrays.stream(currentClass.getDeclaredFields())         // Убираем "неподходящие" поля
                     .filter(it -> !(Modifier.isStatic(it.getModifiers()) || it.isAnnotationPresent(SkipField.class)))
-                    .sorted(Comparator.comparing(Field::getName)).toArray(Field[]::new);  // и сортируем их
-            boolean isFirstField = true;
-            for (Field field : currentFields) {
-                if (!isFirstField) {
-                    ans.append(", ");
-                }
-                isFirstField = false;
-                field.setAccessible(true);
-                ans.append(field.getName());
-                ans.append(": ");
-                try {
-                    if (field.getType().isArray()) {                // Если поле массив
-                        Object array = field.get(object);
-                        if (array == null) {
-                            ans.append("null");
-                        } else {
-                            int len = Array.getLength(array);
-                            ans.append("[");
-                            for (int i = 0; i < len; i++) {
-                                ans.append(Array.get(array, i));
-                                if (!(i == len - 1)) {
-                                    ans.append(", ");
-                                }
-                            }
-                            ans.append("]");
-                        }
-                    }
-                    else {                                          // Если поле - не массив
-                        ans.append(field.get(object));
-                    }
-                } catch (IllegalAccessException a) {
-                    a.printStackTrace();
-                }
-            }
+                    .sorted(Comparator.comparing(Field::getName))   // и сортируем их
+                    .forEach(it -> processField(object, ans, it));
             currentClass = currentClass.getSuperclass();
-            if (currentClass != Object.class) {
-                ans.append(", ");
-            }
+        }
+        if (ans.length() > 1) {          // (ans.length() == 1) верно только в случае, если нам передан объект без полей
+            ans.delete(ans.length() - 2, ans.length());     // И только в этом случае у нас нет лишних запятой и пробела
         }
         return ans.append("}").toString();
+    }
+
+    private static void processField(Object object, StringBuilder ans, Field field) {
+        boolean initAccess = field.isAccessible();
+        field.setAccessible(true);
+        ans.append(field.getName()).append(": ");
+        try {
+            if (field.getType().isArray()) {
+                ansAppendArray(object, ans, field);
+            }
+            else {
+                ans.append(field.get(object));
+            }
+            ans.append(", ");
+        } catch (IllegalAccessException a) {
+            a.printStackTrace();
+        }
+        field.setAccessible(initAccess);
+    }
+
+    private static void ansAppendArray(Object object, StringBuilder ans, Field field) throws IllegalAccessException {
+        Object array = field.get(object);
+        if (array == null) {
+            ans.append("null");
+        } else {
+            int len = Array.getLength(array);
+            ans.append("[");
+            for (int i = 0; i < len; i++) {
+                ans.append(Array.get(array, i));
+                if (!(i == len - 1)) {
+                    ans.append(", ");
+                }
+            }
+            ans.append("]");
+        }
     }
 }
