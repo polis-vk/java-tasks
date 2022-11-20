@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.reflection;
 
-import java.util.List;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.lang.reflect.Array;
@@ -57,27 +56,25 @@ public class ReflectionToStringHelper {
         if (object == null) {
             return NULL;
         }
-        return parse(object);
+        return reflect(object);
     }
 
-    private static String parse(Object object) {
+    private static String reflect(Object object) {
         StringBuilder result = new StringBuilder();
         Class<?> objectClass = object.getClass();
-        List<Field> fields;
-        Object resultValue;
+        Field[] fields;
         result.append("{");
         while (objectClass.getSuperclass() != null) {
-            fields = Arrays.asList(objectClass.getDeclaredFields());
-            if (fields.size() == 0) {
+            fields = objectClass.getDeclaredFields();
+            if (fields.length == 0) {
                 return EMPTY;
             }
-            fields.sort(Comparator.comparing(Field::getName));
+            Arrays.sort(fields, Comparator.comparing(Field::getName));
             for (Field field : fields) {
                 if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
                     continue;
                 }
-                resultValue = parseValue(field, object);
-                result.append(field.getName()).append(": ").append(resultValue).append(", ");
+                result.append(field.getName()).append(": ").append(reflectFieldValues(field, object)).append(", ");
             }
             objectClass = objectClass.getSuperclass();
         }
@@ -85,12 +82,12 @@ public class ReflectionToStringHelper {
         return result.append("}").toString();
     }
 
-    private static Object parseValue(Field field, Object object) {
+    private static Object reflectFieldValues(Field field, Object object) {
         Object value = null;
         try {
             field.setAccessible(true);
             if (field.getType().isArray()) {
-                value = createArrayForm(field.get(object));
+                value = makeDisplayOfArray(field.get(object));
                 return value;
             }
             value = field.get(object);
@@ -100,7 +97,7 @@ public class ReflectionToStringHelper {
         return value;
     }
 
-    private static String createArrayForm(Object array) throws IllegalAccessException {
+    private static String makeDisplayOfArray(Object array) throws IllegalAccessException {
         StringBuilder stringBuilderArray = new StringBuilder();
         if (array == null) {
             stringBuilderArray.append(NULL);
