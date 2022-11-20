@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -13,8 +14,8 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SingleExecutor implements Executor {
     private final MyThread thread = new MyThread();
-    private final LinkedList<Runnable> tasks = new LinkedList<>();
-    private boolean terminated = false;
+    private final Queue<Runnable> tasks = new LinkedList<>();
+    private boolean terminated;
 
     public SingleExecutor() {
         thread.start();
@@ -52,8 +53,9 @@ public class SingleExecutor implements Executor {
     private class MyThread extends Thread {
         @Override
         public void run() {
+            Runnable task;
             while (!isInterrupted() && (!terminated || !tasks.isEmpty())) {
-                Runnable task = tasks.poll();
+                task = tasks.poll();
                 if (task != null) {
                     task.run();
                 }
