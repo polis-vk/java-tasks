@@ -21,25 +21,10 @@ public class SingleExecutor implements Executor {
         everlastingThread = new Thread() {
             @Override
             public void run() {
-                Thread currentCommand = new Thread();
-                while (true) {
-                    if (isInterrupted()) {
-                        currentCommand.interrupt();
-                        break;
-                    }
-
-                    if (!currentCommand.isAlive()) {
-                        if (!commandsQueue.isEmpty()) {
-                            currentCommand = new Thread(commandsQueue.pollFirst());
-                            currentCommand.start();
-                        }
-                    } else {
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {
-                            currentCommand.interrupt();
-                            break;
-                        }
+                while (!isInterrupted()) {
+                    if (!commandsQueue.isEmpty()) {
+                        Thread currentCommand = new Thread(commandsQueue.pollFirst());
+                        currentCommand.run();
                     }
                 }
             }
