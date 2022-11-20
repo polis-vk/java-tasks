@@ -1,6 +1,12 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -50,32 +56,81 @@ public class ReflectionToStringHelper {
             return "null";
         }
 
-        StringBuilder result = new StringBuilder("{");
+        List<String> result = new ArrayList<>();
         try {
-            Field[] fieldlist = object.getClass().getDeclaredFields();
-            Field fld;
-            for (int i = 0; i < fieldlist.length; i++) {
-                fld = fieldlist[i];
-                fld.setAccessible(true);
-                if (fld.get(object) == null) {
-                    result.append(fld.getName()).append(": null");
-                } else {
-                    result.append(fld.getName()).append(": ").append(fld.get(object));
-                }
+            Field[] allFields = getAllFields(object);
+            boolean isStaticFld;
+            boolean isSkip;
+            boolean isArray;
+            StringBuilder currentElement;
 
-                if (i != fieldlist.length - 1) {
-                    result.append(", ");
+            for (Field fld : allFields) {
+                fld.setAccessible(true);
+                isStaticFld = Modifier.isStatic(fld.getModifiers());
+                isSkip = fld.isAnnotationPresent(SkipField.class);
+                isArray = fld.getType().isArray();
+                currentElement = new StringBuilder();
+
+                if (!isStaticFld && !isSkip) {
+                    if (fld.get(object) == null) {
+                        result.add(currentElement
+                                .append(fld.getName())
+                                .append(": null").toString());
+                    } else if (isArray) {
+                        result.add(currentElement
+                                .append(fld.getName())
+                                .append(": ")
+                                .append(arrayToString(fld.get(object))).toString());
+                    } else {
+                        result.add(currentElement
+                                .append(fld.getName())
+                                .append(": ")
+                                .append(fld.get(object)).toString());
+                    }
                 }
             }
         }
         catch (Throwable e) {
             System.err.println(e);
         }
-        return result.append("}").toString();
+        return "{" + String.join(", ", result) + "}";
     }
 
-    private static String arrayToString(Field arrayField) {
+    private static Field[] getAllFields(Object object) {
+        Field[] currentFieldsList = object.getClass().getDeclaredFields();
+        Field[] allFields = currentFieldsList;
+        Field[] tempArrFields;
+        Arrays.sort(currentFieldsList, Comparator.comparing(Field::getName));
+        Class<?> superClass = object.getClass().getSuperclass();
 
-        return null;
+        while (!superClass.equals(Object.class)) {
+            currentFieldsList = superClass.getDeclaredFields();
+            Arrays.sort(currentFieldsList, Comparator.comparing(Field::getName));
+            tempArrFields = new Field[allFields.length + currentFieldsList.length];
+            System.arraycopy(allFields, 0, tempArrFields, 0, allFields.length);
+            System.arraycopy(currentFieldsList, 0, tempArrFields, allFields.length, currentFieldsList.length);
+            superClass = superClass.getSuperclass();
+            allFields = tempArrFields;
+        }
+
+        return allFields;
+    }
+
+    private static String arrayToString(Object array) {
+        if (array == null) {
+            return "null";
+        }
+
+        int arrayLength = Array.getLength(array);
+        if (arrayLength == 0) {
+            return "[]";
+        }
+
+        List<String> result = new ArrayList<>();
+
+        for (int i = 0; i < arrayLength; i++) {
+            result.add(String.valueOf(Array.get(array, i)));
+        }
+        return "[" + String.join(", ", result) + "]";
     }
 }
