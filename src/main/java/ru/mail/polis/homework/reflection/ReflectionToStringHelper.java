@@ -2,13 +2,17 @@ package ru.mail.polis.homework.reflection;
 
 import ru.mail.polis.homework.reflection.objects.easy.Easy;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -52,8 +56,81 @@ import java.util.stream.Stream;
  */
 public class ReflectionToStringHelper {
 
+    public static void main(String[] args) {
+        reflectiveToString(new Easy(1, "Damn", 12.5));
+    }
+
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (Objects.equals(object, null)) {
+            return "null";
+        }
+        Class<?> clazz = object.getClass();
+        List<Field> fields = new ArrayList<>();
+        do {
+            fields.addAll(
+                    Arrays.stream(clazz.getDeclaredFields())
+                            .filter(f -> (!Modifier.isStatic(f.getModifiers()) && !hasSkipFieldAnnotation(f)))
+                            .sorted(Comparator.comparing(Field::getName))
+                            .collect(Collectors.toList())
+            );
+            clazz = clazz.getSuperclass();
+        }
+        while (clazz != null);
+        String result = null;
+        try {
+            result = getStringOfObject(object, fields);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private static String getStringOfObject(Object obj, List<Field> fields) throws IllegalAccessException {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("{");
+        for (Field f : fields) {
+            if (Modifier.isPrivate(f.getModifiers())) {
+                f.setAccessible(true);
+            }
+            if (f.getType().isArray()) {
+                addStringOfArrayField(obj, f, stringBuilder);
+            } else {
+                stringBuilder.append(f.getName()).append(": ").append(f.get(obj)).append(", ");
+            }
+            f.setAccessible(false);
+        }
+        if (!fields.isEmpty()) {
+            stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+        }
+        stringBuilder.append('}');
+        return stringBuilder.toString();
+    }
+
+    private static void addStringOfArrayField(Object obj, Field f, StringBuilder stringBuilder) throws IllegalAccessException {
+        Object array = f.get(obj);
+        stringBuilder.append(f.getName()).append(": ");
+        if (array != null) {
+            stringBuilder.append("[");
+            int i;
+            for (i = 0; i < Array.getLength(array); i++) {
+                stringBuilder.append(Array.get(array, i)).append(", ");
+            }
+            if (i != 0) {
+                stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+            }
+            stringBuilder.append("], ");
+        } else {
+            stringBuilder.append("null, ");
+        }
+    }
+
+    private static boolean hasSkipFieldAnnotation(Field f) {
+        Annotation[] annotations = f.getAnnotations();
+        for (Annotation annotation : annotations) {
+            if (annotation instanceof SkipField) {
+                return true;
+            }
+        }
+        return false;
     }
 }
