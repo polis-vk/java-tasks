@@ -1,9 +1,13 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Objects;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -115,32 +119,19 @@ public class ReflectionToStringHelper {
 
         if (object == null) {
             value = NULL;
+        } else if (object.getClass().isArray()) {
+            value = arrayToString(object);
         } else {
-            value = objectToString(object);
+            value = String.valueOf(object);
         }
 
         return field + ": " + value;
     }
 
-    private static String objectToString(Object array) {
-        // All the data types are covered
-        if (array instanceof Object[]) {
-            return Arrays.toString((Object[]) array);
-        } else if (array instanceof byte[]) {
-            return Arrays.toString((byte[]) array);
-        } else if (array instanceof short[]) {
-            return Arrays.toString((short[]) array);
-        } else if (array instanceof int[]) {
-            return Arrays.toString((int[]) array);
-        } else if (array instanceof long[]) {
-            return Arrays.toString((long[]) array);
-        } else if (array instanceof float[]) {
-            return Arrays.toString((float[]) array);
-        } else if (array instanceof double[]) {
-            return Arrays.toString((double[]) array);
-        } else if (array instanceof char[]) {
-            return Arrays.toString((char[]) array);
-        }
-        return String.valueOf(array);
+    private static String arrayToString(Object array) {
+        return "[" + Stream.iterate(0, i -> i + 1)
+                .limit(Array.getLength(array))
+                .map(i -> String.valueOf(Array.get(array, i)))
+                .reduce("", (result, current) -> result.isEmpty() ? current : result + ", " + current) + "]";
     }
 }
