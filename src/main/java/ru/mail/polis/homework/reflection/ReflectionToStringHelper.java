@@ -47,6 +47,7 @@ import java.util.Comparator;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
+    private static final int EXTRA_CHARACTERS = 2;
 
     public static String reflectiveToString(Object object) {
         if (object == null) {
@@ -55,52 +56,55 @@ public class ReflectionToStringHelper {
         StringBuilder sb = new StringBuilder("{");
         Class<?> clazz = object.getClass();
 
-        try {
-            while (clazz != null) {
-                Field[] fieldsArray = Arrays.stream(clazz.getDeclaredFields())
-                        .filter(field -> !Modifier.isStatic(field.getModifiers())
-                                && !field.isAnnotationPresent(SkipField.class))
-                        .sorted(Comparator.comparing(Field::getName))
-                        .toArray(Field[]::new);
-
-                for (Field field : fieldsArray) {
-                    sb.append(field.getName()).append(": ");
-                    boolean isAccessible = field.isAccessible();
-                    field.setAccessible(true);
-                    if (field.getType().isArray()) {
-                        sb.append(parseArrayToSb(field.get(object)));
-                    } else {
-                        sb.append(field.get(object));
-                    }
-                    sb.append(", ");
-                    field.setAccessible(isAccessible);
-                }
-                clazz = clazz.getSuperclass();
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        while (clazz != null) {
+            Arrays.stream(clazz.getDeclaredFields())
+                    .filter(field -> !Modifier.isStatic(field.getModifiers())
+                            && !field.isAnnotationPresent(SkipField.class))
+                    .sorted(Comparator.comparing(Field::getName))
+                    .forEachOrdered(field -> fieldToString(sb, field, object));
+            clazz = clazz.getSuperclass();
         }
         int length = sb.length();
-        if (length >= 2) {
-            sb.delete(length - 2, length);
+        if (length >= EXTRA_CHARACTERS) {
+            sb.delete(length - EXTRA_CHARACTERS, length);
         }
         return sb.append("}").toString();
     }
 
-    private static StringBuilder parseArrayToSb(Object array) {
-        StringBuilder sb = new StringBuilder();
+    private static void fieldToString(StringBuilder sb, Field field, Object object) {
+        try {
+            sb.append(field.getName()).append(": ");
+            boolean isAccessible = field.isAccessible();
+            if (!isAccessible) {
+                field.setAccessible(true);
+            }
+            if (field.getType().isArray()) {
+                appendArrayToSb(field.get(object), sb);
+            } else {
+                sb.append(field.get(object));
+            }
+            sb.append(", ");
+            field.setAccessible(isAccessible);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void appendArrayToSb(Object array, StringBuilder sb) {
         if (array == null) {
-            return sb.append("null");
+            sb.append("null");
+            return;
         }
         int length = Array.getLength(array);
         if (length == 0) {
-            return sb.append("[]");
+            sb.append("[]");
+            return;
         }
         sb.append("[").append(Array.get(array, 0));
         for (int i = 1; i < length; i++) {
             sb.append(", ").append(Array.get(array, i));
         }
-        return sb.append("]");
+        sb.append("]");
     }
 
 }
