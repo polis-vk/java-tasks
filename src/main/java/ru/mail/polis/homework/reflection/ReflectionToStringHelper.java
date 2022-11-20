@@ -110,8 +110,7 @@ public class ReflectionToStringHelper {
         sb.append("[");
         AtomicBoolean isSomethingRecorded = new AtomicBoolean(false);
 
-        int length = Array.getLength(array);
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < Array.getLength(array); i++) {
             sb.append(Array.get(array, i)).append(", ");
             isSomethingRecorded.set(true);
         }
