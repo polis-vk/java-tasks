@@ -65,16 +65,19 @@ public class ReflectionToStringHelper {
             List<Field> requiredFields = getSortedRequiredFields(classOfObject);
             for (Field field : requiredFields) {
                 Object value = null;
+                final int fieldModifiers = field.getModifiers();
+                boolean shouldChangeAccessible = Modifier.isPrivate(fieldModifiers) || Modifier.isProtected(fieldModifiers);
                 try {
-                    final int fieldModifiers = field.getModifiers();
-                    if (Modifier.isPrivate(fieldModifiers) || Modifier.isProtected(fieldModifiers)) {
+                    if (shouldChangeAccessible) {
                         field.setAccessible(true);
                     }
                     value = field.get(object);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } finally {
-                    field.setAccessible(false);
+                    if (shouldChangeAccessible) {
+                        field.setAccessible(false);
+                    }
                 }
                 result.append(field.getName()).append(NAME_AND_VALUE_DELIMITER);
                 if (value == null) {
