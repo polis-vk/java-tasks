@@ -15,13 +15,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class SingleExecutor implements Executor {
 
-    private final Thread thread;
     private final AtomicBoolean isShutdown;
-    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Runnable> tasks;
+    private final Thread thread;
 
     public SingleExecutor() {
         this.isShutdown = new AtomicBoolean(false);
-
+        this.tasks = new LinkedBlockingQueue<>();
         this.thread = new Thread(() -> {
             while (!isShutdown.get() || (!tasks.isEmpty() && !Thread.currentThread().isInterrupted())) {
                 try {
@@ -44,6 +44,7 @@ public class SingleExecutor implements Executor {
         if (isShutdown.get()) {
             throw new RejectedExecutionException();
         }
+
         try {
             tasks.put(command);
         } catch (InterruptedException e) {
