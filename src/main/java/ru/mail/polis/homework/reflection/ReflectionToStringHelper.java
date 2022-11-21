@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.reflection;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Array;
@@ -54,59 +53,60 @@ public class ReflectionToStringHelper {
             return "null";
         }
         Class<?> clazz = object.getClass();
-        List<Field> currentClassFields = new LinkedList<>();
+        StringBuilder objectInfo = new StringBuilder("{");
         while (clazz != null) {
-            currentClassFields.addAll(getSortedAndFilteredFields(clazz));
+            for (Field field : getSortedAndFilteredFields(clazz)) {
+                allClassFieldsToString(field, object, objectInfo);
+            }
             clazz = clazz.getSuperclass();
         }
-        if (currentClassFields.size() == 0) {
+        if (objectInfo.length() == 1) {
             return "{}";
-        }
-        StringBuffer objectInfo = new StringBuffer("{");
-        for (Field field : currentClassFields) {
-            field.setAccessible(true);
-            try {
-                if (field.getType().isArray()) {
-                    objectInfo.append(field.getName());
-                    objectInfo.append(": ");
-                    if (field.getType().getComponentType().isPrimitive()) {
-                        List<Object> array = new ArrayList<>();
-                        if (field.get(object) == null) {
-                            objectInfo.append(field.get(object));
-                        } else {
-                            for (int i = 0; i < Array.getLength(field.get(object)); i++) {
-                                array.add(Array.get(field.get(object), i));
-                            }
-                            objectInfo.append(array);
-                        }
-                    } else {
-                        objectInfo.append(Arrays.toString((Object[]) field.get(object)));
-                    }
-                    objectInfo.append(", ");
-                } else if (field.getType().isLocalClass()) {
-                    Objects.requireNonNull(getSortedAndFilteredFields(field.getClass())).forEach(field1 ->
-                    {
-                        try {
-                            objectInfo.append(field1.getName()).append(": ").append(field1.get(field1.getClass() + ", "));
-                        } catch (IllegalAccessException e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
-                } else {
-                    objectInfo.append(field.getName()).append(": ").append(field.get(object)).append(", ");
-                }
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
         }
         objectInfo.delete(objectInfo.length() - 2, objectInfo.length()).append('}');
         return objectInfo.toString();
     }
 
-    public static List<Field> getSortedAndFilteredFields(Class clazz) {
+    public static List<Field> getSortedAndFilteredFields(Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredFields()).filter(field -> !Modifier.isStatic(field.getModifiers())
-                        && !Arrays.stream(field.getAnnotations()).collect(Collectors.groupingBy(Annotation::annotationType)).containsKey((SkipField.class)))
+                        && !field.isAnnotationPresent(SkipField.class))
                 .sorted(Comparator.comparing(Field::getName))
                 .collect(Collectors.toList());
+    }
+
+    public static void arrayFieldProcessing(StringBuilder objectInfo, Field field, Object object) throws IllegalAccessException {
+        objectInfo.append(field.getName()).append(": ");
+        if (field.get(object) == null) {
+            objectInfo.append(field.get(object));
+        } else {
+            objectInfo.append("[");
+            for (int i = 0; i < Array.getLength(field.get(object)); i++) {
+                if (Array.get(field.get(object), i) == null) {
+                    objectInfo.append("null");
+                } else {
+                    objectInfo.append(Array.get(field.get(object), i).toString());
+                }
+                if (i != Array.getLength(field.get(object)) - 1) {
+                    objectInfo.append(", ");
+                }
+            }
+            objectInfo.append("]");
+        }
+        objectInfo.append(", ");
+    }
+
+    public static void allClassFieldsToString(Field field, Object object, StringBuilder objectInfo) {
+        if (Modifier.isPrivate(field.getModifiers()) || Modifier.isProtected(field.getModifiers())) {
+            field.setAccessible(true);
+        }
+        try {
+            if (field.getType().isArray()) {
+                arrayFieldProcessing(objectInfo, field, object);
+            } else {
+                objectInfo.append(field.getName()).append(": ").append(field.get(object)).append(", ");
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
