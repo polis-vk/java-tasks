@@ -18,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Задачи должны выполняться в порядке FIFO
  * Потоки после завершения выполнения задачи НЕ умирают, а ждут.
  * <p>
- * Max 10 баллов
+ * Max 10 тугриков
  */
 public class SimpleExecutor implements Executor {
 
@@ -37,7 +37,7 @@ public class SimpleExecutor implements Executor {
 
     /**
      * Ставит задачу в очередь на исполнение, если надо -- создает новый поток.
-     * 8 баллов
+     * 8 тугриков
      */
     @Override
     public void execute(Runnable command) {
@@ -58,7 +58,7 @@ public class SimpleExecutor implements Executor {
 
     /**
      * Дает текущим задачам выполниться. Добавление новых - бросает RejectedExecutionException
-     * 1 балл за метод
+     * 1 тугрик за метод
      */
     public void shutdown() {
         isShutdown = true;
@@ -66,7 +66,7 @@ public class SimpleExecutor implements Executor {
 
     /**
      * Прерывает текущие задачи. При добавлении новых - бросает RejectedExecutionException
-     * 1 балла за метод
+     * 1 тугрик за метод
      */
     public void shutdownNow() {
         shutDownNowLock.lock();
