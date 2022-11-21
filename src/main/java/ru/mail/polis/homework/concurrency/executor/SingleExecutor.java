@@ -20,9 +20,9 @@ public class SingleExecutor implements Executor {
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
 
     public SingleExecutor() {
-        isShutdown = new AtomicBoolean(false);
+        this.isShutdown = new AtomicBoolean(false);
 
-        thread = new Thread(() -> {
+        this.thread = new Thread(() -> {
             while (true) {
                 try {
                     tasks.take().run();
