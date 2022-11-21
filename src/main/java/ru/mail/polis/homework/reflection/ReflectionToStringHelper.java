@@ -50,7 +50,8 @@ import java.util.stream.Collectors;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
-    private static final String DELIMITER_OF_FIELDS = ", ";
+    private static final String FIELDS_DELIMITER = ", ";
+    private static final String NAME_AND_VALUE_DELIMITER = ": ";
     private static final String NULL_VALUE = "null";
 
     public static String reflectiveToString(Object object) {
@@ -65,20 +66,17 @@ public class ReflectionToStringHelper {
             for (Field field : requiredFields) {
                 Object value = null;
                 try {
-                    boolean isCurrentFieldPrivate = isPrivateField(field);
-                    if (isCurrentFieldPrivate) {
+                    final int fieldModifiers = field.getModifiers();
+                    if (Modifier.isPrivate(fieldModifiers) || Modifier.isProtected(fieldModifiers)) {
                         field.setAccessible(true);
                     }
                     value = field.get(object);
-                    if (isCurrentFieldPrivate) {
-                        field.setAccessible(false);
-                    }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } finally {
                     field.setAccessible(false);
                 }
-                result.append(field.getName()).append(": ");
+                result.append(field.getName()).append(NAME_AND_VALUE_DELIMITER);
                 if (value == null) {
                     result.append(NULL_VALUE);
                 } else if (field.getType().isArray()) {
@@ -86,7 +84,7 @@ public class ReflectionToStringHelper {
                 } else {
                     result.append(value);
                 }
-                result.append(DELIMITER_OF_FIELDS);
+                result.append(FIELDS_DELIMITER);
                 hasExtraDelimiterOfFields = true;
             }
             classOfObject = classOfObject.getSuperclass();
@@ -102,7 +100,7 @@ public class ReflectionToStringHelper {
     }
 
     private static void deleteExtraDelimiterOfFields(StringBuilder src) {
-        int lastIndexWithDelimiter = src.lastIndexOf(DELIMITER_OF_FIELDS);
+        int lastIndexWithDelimiter = src.lastIndexOf(FIELDS_DELIMITER);
         src.delete(lastIndexWithDelimiter, lastIndexWithDelimiter + 2);
     }
 
@@ -112,7 +110,7 @@ public class ReflectionToStringHelper {
         for (int i = 0; i < length; i++) {
             result.append(Array.get(value, i));
             if (i != length - 1) {
-                result.append(DELIMITER_OF_FIELDS);
+                result.append(FIELDS_DELIMITER);
             }
         }
         result.append("]");
@@ -123,9 +121,5 @@ public class ReflectionToStringHelper {
                 .filter(ReflectionToStringHelper::shouldBeIgnored)
                 .sorted(Comparator.comparing(Field::getName))
                 .collect(Collectors.toList());
-    }
-
-    private static boolean isPrivateField(Field field) {
-        return Modifier.isPrivate(field.getModifiers());
     }
 }
