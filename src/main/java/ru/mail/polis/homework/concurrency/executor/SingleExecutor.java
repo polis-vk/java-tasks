@@ -23,7 +23,7 @@ public class SingleExecutor implements Executor {
         this.isShutdown = new AtomicBoolean(false);
 
         this.thread = new Thread(() -> {
-            while (true) {
+            while (!isShutdown.get() || (!tasks.isEmpty() && !Thread.currentThread().isInterrupted())) {
                 try {
                     tasks.take().run();
                 } catch (InterruptedException e) {
