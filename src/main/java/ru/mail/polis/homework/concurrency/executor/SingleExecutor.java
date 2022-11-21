@@ -17,7 +17,7 @@ public class SingleExecutor implements Executor {
 
     private final Thread thread;
     private final AtomicBoolean isShutdown;
-    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
 
     public SingleExecutor() {
         isShutdown = new AtomicBoolean(false);
@@ -25,7 +25,7 @@ public class SingleExecutor implements Executor {
         thread = new Thread(() -> {
             while (true) {
                 try {
-                    queue.take().run();
+                    tasks.take().run();
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -45,7 +45,7 @@ public class SingleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
         try {
-            queue.put(command);
+            tasks.put(command);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
