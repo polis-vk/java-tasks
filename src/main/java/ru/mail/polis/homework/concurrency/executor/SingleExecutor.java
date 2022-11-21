@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -16,7 +15,7 @@ import java.util.concurrent.RejectedExecutionException;
 public class SingleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> workerTasks = new LinkedBlockingQueue<>();
-    private boolean shutDown;
+    private boolean isShutDown;
 
     public SingleExecutor() {
         Thread worker = new Thread(new Worker());
@@ -30,7 +29,7 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (shutDown) {
+        if (isShutDown) {
             throw new RejectedExecutionException();
         }
         workerTasks.add(command);
@@ -41,7 +40,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        shutDown = true;
+        isShutDown = true;
     }
 
     /**
@@ -49,7 +48,7 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
-        shutDown = true;
+        isShutDown = true;
         Thread.currentThread().interrupt();
     }
 
