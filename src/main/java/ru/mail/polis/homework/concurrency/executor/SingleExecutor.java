@@ -20,7 +20,6 @@ public class SingleExecutor implements Executor {
     public SingleExecutor(){
         workQueue = new LinkedBlockingQueue<>();
         singleThread = new Thread(new Worker());
-        isShutdown = false;
         singleThread.start();
     }
     /**
