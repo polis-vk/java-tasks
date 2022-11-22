@@ -24,7 +24,6 @@ public class SimpleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> workersTasks = new LinkedBlockingQueue<>();
     private final ReentrantLock executeLock = new ReentrantLock();
-    private final ReentrantLock shutDownNowLock = new ReentrantLock();
     private final AtomicInteger freeWorkers = new AtomicInteger(0);
     private final List<Thread> workers;
     private final int maxThreadCount;
@@ -41,18 +40,18 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        executeLock.lock();
         if (isShutdown) {
             throw new RejectedExecutionException();
         }
 
-        executeLock.lock();
         if (workers.size() < maxThreadCount && freeWorkers.get() == 0) {
             Thread worker = new Thread(new Worker());
             workers.add(worker);
             worker.start();
         }
-        workersTasks.add(command);
         executeLock.unlock();
+        workersTasks.add(command);
     }
 
     /**
@@ -68,12 +67,10 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdownNow() {
-        shutDownNowLock.lock();
         isShutdown = true;
         for (Thread worker : workers) {
             worker.interrupt();
         }
-        shutDownNowLock.unlock();
     }
 
     /**

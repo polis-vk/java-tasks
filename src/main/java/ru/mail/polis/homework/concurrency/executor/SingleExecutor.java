@@ -4,6 +4,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
@@ -15,10 +16,12 @@ import java.util.concurrent.RejectedExecutionException;
 public class SingleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> workerTasks = new LinkedBlockingQueue<>();
+    private final ReentrantLock executeLock = new ReentrantLock();
+    private final Thread worker;
     private boolean isShutDown;
 
     public SingleExecutor() {
-        Thread worker = new Thread(new Worker());
+        this.worker = new Thread(new Worker());
         worker.start();
     }
 
@@ -28,9 +31,11 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        executeLock.lock();
         if (isShutDown) {
             throw new RejectedExecutionException();
         }
+        executeLock.unlock();
         workerTasks.add(command);
     }
 
@@ -48,7 +53,7 @@ public class SingleExecutor implements Executor {
      */
     public void shutdownNow() {
         isShutDown = true;
-        Thread.currentThread().interrupt();
+        worker.interrupt();
     }
 
     private class Worker implements Runnable {
