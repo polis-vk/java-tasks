@@ -4,8 +4,10 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -95,13 +97,9 @@ public class ReflectionToStringHelper {
         if (fields.length == 0) {
             return "";
         }
-        List<Field> electedFields = new ArrayList<>();
-        for (Field field : fields) {
-            if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
-                continue;
-            }
-            electedFields.add(field);
-        }
+        List<Field> electedFields = Arrays.stream(fields)
+                .filter(field -> !Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class))
+                .collect(Collectors.toList());
         if (electedFields.size() == 0) {
             return "";
         }
@@ -115,6 +113,9 @@ public class ReflectionToStringHelper {
                 field.setAccessible(true);
             }
             Object value = field.get(object);
+            if (field.isAccessible()) {
+                field.setAccessible(false);
+            }
             if (field.getType().isArray()) {
                 result.append(arrayToString(value));
             } else {
