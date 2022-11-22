@@ -3,8 +3,9 @@ package ru.mail.polis.homework.reflection;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Array;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.Comparator;
+
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -55,9 +56,7 @@ public class ReflectionToStringHelper {
         Class<?> clazz = object.getClass();
         StringBuilder objectInfo = new StringBuilder("{");
         while (clazz != null) {
-            for (Field field : getSortedAndFilteredFields(clazz)) {
-                allClassFieldsToString(field, object, objectInfo);
-            }
+            appendClassFieldsToObjectInfo(clazz, object, objectInfo);
             clazz = clazz.getSuperclass();
         }
         if (objectInfo.length() == 1) {
@@ -67,26 +66,24 @@ public class ReflectionToStringHelper {
         return objectInfo.toString();
     }
 
-    public static List<Field> getSortedAndFilteredFields(Class<?> clazz) {
-        return Arrays.stream(clazz.getDeclaredFields()).filter(field -> !Modifier.isStatic(field.getModifiers())
+    public static void appendClassFieldsToObjectInfo(Class<?> clazz, Object object, StringBuilder objectInfo) {
+        Arrays.stream(clazz.getDeclaredFields())
+                .filter(field -> !Modifier.isStatic(field.getModifiers())
                         && !field.isAnnotationPresent(SkipField.class))
                 .sorted(Comparator.comparing(Field::getName))
-                .collect(Collectors.toList());
+                .forEach(field -> appendClassFieldToObjectInfo(field, object, objectInfo));
     }
 
-    public static void arrayFieldProcessing(StringBuilder objectInfo, Field field, Object object) throws IllegalAccessException {
+    public static void appendArrayFieldToObjectInfo(StringBuilder objectInfo, Field field, Object object) throws IllegalAccessException {
         objectInfo.append(field.getName()).append(": ");
         if (field.get(object) == null) {
             objectInfo.append(field.get(object));
         } else {
             objectInfo.append("[");
-            for (int i = 0; i < Array.getLength(field.get(object)); i++) {
-                if (Array.get(field.get(object), i) == null) {
-                    objectInfo.append("null");
-                } else {
-                    objectInfo.append(Array.get(field.get(object), i).toString());
-                }
-                if (i != Array.getLength(field.get(object)) - 1) {
+            int arrayLength = Array.getLength(field.get(object));
+            for (int i = 0; i < arrayLength; i++) {
+                objectInfo.append(Array.get(field.get(object), i));
+                if (i != arrayLength - 1) {
                     objectInfo.append(", ");
                 }
             }
@@ -95,18 +92,25 @@ public class ReflectionToStringHelper {
         objectInfo.append(", ");
     }
 
-    public static void allClassFieldsToString(Field field, Object object, StringBuilder objectInfo) {
-        if (Modifier.isPrivate(field.getModifiers()) || Modifier.isProtected(field.getModifiers())) {
+    public static void appendClassFieldToObjectInfo(Field field, Object object, StringBuilder objectInfo) {
+        boolean isNotAccessible = Modifier.isPrivate(field.getModifiers())
+                || Modifier.isProtected(field.getModifiers())
+                || field.getModifiers() == 0;
+        if (isNotAccessible) {
             field.setAccessible(true);
         }
         try {
             if (field.getType().isArray()) {
-                arrayFieldProcessing(objectInfo, field, object);
+                appendArrayFieldToObjectInfo(objectInfo, field, object);
             } else {
                 objectInfo.append(field.getName()).append(": ").append(field.get(object)).append(", ");
             }
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (isNotAccessible) {
+                field.setAccessible(false);
+            }
         }
     }
 }
