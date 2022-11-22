@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -46,12 +47,10 @@ import java.util.Comparator;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
-
     public static String reflectiveToString(Object object) {
         if (object == null) {
             return "null";
         }
-        // TODO: implement
 
         String ans = reflectiveClassToString(object, object.getClass());
         if (ans.length() == 0) {
@@ -74,14 +73,7 @@ public class ReflectionToStringHelper {
                 field.setAccessible(true);
                 ans.append(field.getName()).append(": ");
                 if (field.getType().isArray()) {
-                    if (field.getType().getComponentType().isPrimitive()) {
-                        if (field.getType().getComponentType() == int.class) {
-                            // выглядит как очень плохо, но не могу найти как сделать toString у массива абстрактных примитивов
-                            ans.append(Arrays.toString((int[]) field.get(object)));
-                        }
-                    } else {
-                        ans.append(reflectiveArrToString((Object[]) field.get(object)));
-                    }
+                    ans.append(reflectiveArrToString(field.get(object)));
                 } else {
                     ans.append(field.get(object));
                 }
@@ -96,14 +88,15 @@ public class ReflectionToStringHelper {
         }
         return ans.toString();
     }
-    
-    
-    private static String reflectiveArrToString(Object[] objects) {
+
+
+    private static String reflectiveArrToString(Object objects) {
         StringBuilder ans = new StringBuilder();
         if (objects == null) {
             return "null";
         }
-        for (Object object: objects) {
+        for (int i = 0; i < Array.getLength(objects); i++) {
+            Object object = Array.get(objects, i);
             if (object == null) {
                 ans.append("null");
             } else {
@@ -117,6 +110,4 @@ public class ReflectionToStringHelper {
             return "[]";
         }
     }
-
-
 }
