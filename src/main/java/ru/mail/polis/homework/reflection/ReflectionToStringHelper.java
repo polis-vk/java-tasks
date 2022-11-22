@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -54,54 +52,55 @@ public class ReflectionToStringHelper {
         if (object == null) {
             return "null";
         }
-        StringBuilder ans = new StringBuilder();
-        ans.append("{");
+        StringBuilder result = new StringBuilder();
+        result.append("{");
         Class<?> currentClass = object.getClass();
         while (currentClass != Object.class) {
             Arrays.stream(currentClass.getDeclaredFields())         // Убираем "неподходящие" поля
                     .filter(it -> !(Modifier.isStatic(it.getModifiers()) || it.isAnnotationPresent(SkipField.class)))
                     .sorted(Comparator.comparing(Field::getName))   // и сортируем их
-                    .forEach(it -> processField(object, ans, it));
+                    .forEach(it -> processField(object, result, it));
             currentClass = currentClass.getSuperclass();
         }
-        if (ans.length() > 1) {          // (ans.length() == 1) верно только в случае, если нам передан объект без полей
-            ans.delete(ans.length() - 2, ans.length());     // И только в этом случае у нас нет лишних запятой и пробела
+        if (result.length() > 1) {          // (result.length() == 1) верно только в случае, если нам передан объект без полей
+            result.delete(result.length() - 2, result.length());     // И только в этом случае у нас нет лишних запятой и пробела
         }
-        return ans.append("}").toString();
+        return result.append("}").toString();
     }
 
-    private static void processField(Object object, StringBuilder ans, Field field) {
+    private static void processField(Object object, StringBuilder result, Field field) {
         boolean initAccess = field.isAccessible();
         field.setAccessible(true);
-        ans.append(field.getName()).append(": ");
         try {
+            result.append(field.getName()).append(": ");
             if (field.getType().isArray()) {
-                ansAppendArray(object, ans, field);
+                appendArrayFieldToResult(object, result, field);
             }
             else {
-                ans.append(field.get(object));
+                result.append(field.get(object));
             }
-            ans.append(", ");
+            result.append(", ");
         } catch (IllegalAccessException a) {
             a.printStackTrace();
+        } finally {
+            field.setAccessible(initAccess);
         }
-        field.setAccessible(initAccess);
     }
 
-    private static void ansAppendArray(Object object, StringBuilder ans, Field field) throws IllegalAccessException {
+    private static void appendArrayFieldToResult(Object object, StringBuilder result, Field field) throws IllegalAccessException {
         Object array = field.get(object);
         if (array == null) {
-            ans.append("null");
+            result.append("null");
         } else {
             int len = Array.getLength(array);
-            ans.append("[");
+            result.append("[");
             for (int i = 0; i < len; i++) {
-                ans.append(Array.get(array, i));
+                result.append(Array.get(array, i));
                 if (!(i == len - 1)) {
-                    ans.append(", ");
+                    result.append(", ");
                 }
             }
-            ans.append("]");
+            result.append("]");
         }
     }
 }
