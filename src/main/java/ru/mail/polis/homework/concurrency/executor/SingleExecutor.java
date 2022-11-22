@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -13,12 +13,12 @@ import java.util.concurrent.RejectedExecutionException;
  * Max 6 тугриков
  */
 public class SingleExecutor implements Executor {
-    private final Queue<Runnable> commands;
+    private final BlockingQueue<Runnable> commands;
     private final Thread eternalThread;
     private boolean shutdownMode;
 
     public SingleExecutor() {
-        commands = new LinkedList<>();
+        commands = new LinkedBlockingQueue<>();
         shutdownMode = false;
         eternalThread = new EternalThread();
         eternalThread.start();
@@ -49,17 +49,23 @@ public class SingleExecutor implements Executor {
      * 2 тугрика за метод
      */
     public void shutdownNow() {
-        shutdownMode = true;
-        eternalThread.interrupt();
+        shutdown();
+        while (!eternalThread.isInterrupted()) {
+            eternalThread.interrupt();
+        }
     }
 
     private class EternalThread extends Thread {
         @Override
         public void run() {
-            while (!isInterrupted() && (!shutdownMode || !commands.isEmpty())) {
-                if (!commands.isEmpty()) {
-                    commands.poll().run();
+            while (!shutdownMode || !commands.isEmpty()) {
+                Runnable command = null;
+                try {
+                    command = commands.take();
+                } catch (InterruptedException e) {
+                    return;
                 }
+                command.run();
             }
         }
     }
