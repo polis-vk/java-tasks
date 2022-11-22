@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -18,15 +18,17 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Max 10 тугриков
  */
 public class SimpleExecutor implements Executor {
+    private final int maxThreadCount;
     private final Thread[] threads;
-    private final Queue<Runnable> commands;
+    private final BlockingQueue<Runnable> commands;
     private AtomicInteger waitingThreadsCount;
     private AtomicInteger threadsInitialized;
     private volatile boolean shutdownMode;
 
     public SimpleExecutor(int maxThreadCount) {
+        this.maxThreadCount = maxThreadCount;
         threads = new EternalThread[maxThreadCount];
-        commands = new ConcurrentLinkedQueue<>();
+        commands = new LinkedBlockingQueue<>();
         waitingThreadsCount = new AtomicInteger(0);
         threadsInitialized = new AtomicInteger(0);
         shutdownMode = false;
@@ -41,12 +43,14 @@ public class SimpleExecutor implements Executor {
         if (shutdownMode) {
             throw new RejectedExecutionException();
         }
-        commands.offer(command);
-        if (waitingThreadsCount.get() == 0 && threadsInitialized.get() < threads.length && !commands.isEmpty()) {
-            Thread eternalThread = new EternalThread();
-            threads[threadsInitialized.getAndIncrement()] = eternalThread;
-            eternalThread.start();
+        synchronized (threadsInitialized) {
+            if (waitingThreadsCount.get() == 0 && threadsInitialized.get() < threads.length) {
+                Thread eternalThread = new EternalThread();
+                threads[threadsInitialized.getAndIncrement()] = eternalThread;
+                eternalThread.start();
+            }
         }
+        commands.offer(command);
     }
 
     /**
@@ -64,7 +68,9 @@ public class SimpleExecutor implements Executor {
     public void shutdownNow() {
         shutdown();
         for (int i = 0; i < threadsInitialized.get(); i++) {
-            threads[i].interrupt();
+            while (!threads[i].isInterrupted()) {
+                threads[i].interrupt();
+            }
         }
     }
 
@@ -79,16 +85,18 @@ public class SimpleExecutor implements Executor {
 
         @Override
         public void run() {
-            waitingThreadsCount.incrementAndGet();
-            while (!isInterrupted() && (!shutdownMode || !commands.isEmpty())) {
-                Runnable command = commands.poll();
-                if (command != null) {
+            while (!shutdownMode || !commands.isEmpty()) {
+                waitingThreadsCount.incrementAndGet();
+                Runnable command = null;
+                try {
+                    command = commands.take();
+                } catch (InterruptedException e) {
+                    return;
+                } finally {
                     waitingThreadsCount.decrementAndGet();
-                    command.run();
-                    waitingThreadsCount.incrementAndGet();
                 }
+                command.run();
             }
-            waitingThreadsCount.decrementAndGet();
         }
     }
 }
