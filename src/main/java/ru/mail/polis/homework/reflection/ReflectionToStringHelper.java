@@ -59,32 +59,7 @@ public class ReflectionToStringHelper {
 
         while (!someClass.equals(Object.class)) {
             Field[] fields = someClass.getDeclaredFields();
-
-            if (fields.length == 0) {
-                someClass = someClass.getSuperclass();
-                continue;
-            }
-
-            Arrays.sort(fields, Comparator.comparing(Field::getName));
-
-            for (Field field : fields) {
-                if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
-                    continue;
-                }
-                field.setAccessible(true);
-                result.append(field.getName());
-                result.append(": ");
-                try {
-                    if (field.get(object) != null && field.getType().isArray()) {
-                        result.append(arrayToStringReflective(field, object));
-                    } else {
-                        result.append(field.get(object)).append(", ");
-                    }
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-            someClass = someClass.getSuperclass();
+            someClass = processFields(fields, someClass, object, result);
         }
         if (result.length() == 1) {
             return "{}"; // result only contains "{"
@@ -92,8 +67,37 @@ public class ReflectionToStringHelper {
         return result.delete(result.length() - 2, result.length()).append("}").toString();
     }
 
-    public static StringBuilder arrayToStringReflective(Field field, Object object) throws IllegalAccessException {
-        StringBuilder result = new StringBuilder();
+    private static Class<?> processFields(Field[] fields, Class<?> someClass, Object object, StringBuilder result) {
+        if (fields.length == 0) {
+            return someClass.getSuperclass();
+        }
+
+        Arrays.sort(fields, Comparator.comparing(Field::getName));
+
+        for (Field field : fields) {
+            if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
+                continue;
+            }
+            if (!field.canAccess(object)) {
+                field.setAccessible(true);
+            }
+            result.append(field.getName());
+            result.append(": ");
+            try {
+                if (field.get(object) != null && field.getType().isArray()) {
+                    arrayToStringReflective(field, object, result);
+                } else {
+                    result.append(field.get(object));
+                }
+                result.append(", ");
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return someClass.getSuperclass();
+    }
+
+    private static void arrayToStringReflective(Field field, Object object, StringBuilder result) throws IllegalAccessException {
         int length = Array.getLength(field.get(object));
         result.append("[");
         for (int i = 0; i < length; i++) {
@@ -102,7 +106,6 @@ public class ReflectionToStringHelper {
         if (length > 0) {
             result.delete(result.length() - 2, result.length());
         }
-        result.append("], ");
-        return result;
+        result.append("]");
     }
 }
