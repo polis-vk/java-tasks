@@ -49,46 +49,54 @@ import java.util.stream.Stream;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
-    private static final String nullToString = "null";
+    private static final String NULL_CONVERT_TO_STRING = "null";
 
     public static String reflectiveToString(Object object) {
         if (object == null) {
-            return nullToString;
+            return NULL_CONVERT_TO_STRING;
         }
 
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append('{');
+
         Class<?> currentReflectionClass = object.getClass();
 
         while (currentReflectionClass != null) {
-            Set<Field> fields = getFields(currentReflectionClass);
-            fields.stream()
-                    .sorted(Comparator.comparing(Field::getName))
-                    .forEach(field -> addToFinalString(stringBuilder, object, field));
+            Stream<Field> streamOfFields = getStreamOfFields(currentReflectionClass);
+            streamOfFields.sorted(Comparator.comparing(Field::getName))
+                    .forEach(field -> includeFieldsToFinalString(stringBuilder, object, field));
+
             currentReflectionClass = currentReflectionClass.getSuperclass();
         }
 
         if (stringBuilder.length() > 0) {
-            stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+            deleteExtraComma(stringBuilder);
         }
 
-        return '{' + stringBuilder.toString() + '}';
+        stringBuilder.append('}');
+        return stringBuilder.toString();
     }
 
-    public static Set<Field> getFields(Class<?> clazz) {
+    public static Stream<Field> getStreamOfFields(Class<?> clazz) {
         return Stream.of(clazz.getDeclaredFields())
-                .filter(field -> !Modifier.isStatic(field.getModifiers()))
-                .filter(field -> !field.isAnnotationPresent(SkipField.class))
-                .collect(Collectors.toSet());
+                .filter(field -> !Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class));
     }
 
-    public static void addToFinalString(StringBuilder stringBuilder, Object object, Field field) {
+    public static void includeFieldsToFinalString(StringBuilder stringBuilder, Object object, Field field) {
         stringBuilder.append(field.getName() + ": ");
         field.setAccessible(true);
 
-        Object fieldValue = isNullField(object, field);
+        Object fieldValue = null;
+
+        try {
+            fieldValue = field.get(object);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
 
         if (fieldValue == null) {
-            stringBuilder.append(nullToString + ", ");
+            stringBuilder.append(NULL_CONVERT_TO_STRING + ", ");
             return;
         }
 
@@ -111,18 +119,6 @@ public class ReflectionToStringHelper {
 
         stringBuilder.append(", ");
         field.setAccessible(false);
-    }
-
-    private static Object isNullField(Object object, Field field) {
-        Object fieldValue = null;
-
-        try {
-            fieldValue = field.get(object);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        return fieldValue;
     }
 
     private static void deleteExtraComma(StringBuilder stringBuilder) {
