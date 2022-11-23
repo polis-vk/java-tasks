@@ -1,7 +1,8 @@
 package ru.mail.polis.homework.reflection;
 
-import java.lang.reflect.*;
-import java.util.stream.Collectors;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 
@@ -62,29 +63,8 @@ public class ReflectionToStringHelper {
             Field[] fields = clazz.getDeclaredFields();
             String fieldsStringRepresentation = Arrays.stream(fields)
                     .filter(field -> field.getAnnotation(SkipField.class) == null && !Modifier.isStatic(field.getModifiers()))
-                    .collect(
-                            Collectors.toMap(
-                                    Field::getName,
-                                    field -> {
-                                        field.setAccessible(true);
-                                        Object value;
-                                        try {
-                                            value = field.get(object);
-                                        } catch (IllegalAccessException e) {
-                                            return "null";
-                                        }
-                                        if (value == null) {
-                                            return "null";
-                                        } else if (field.getType().isArray()) {
-                                            return arrayToString(value);
-                                        } else {
-                                            return value;
-                                        }
-                                    }
-                            )
-                    ).entrySet().stream()
-                    .sorted(Map.Entry.comparingByKey())
-                    .map(entry -> entry.getKey() + ": " + entry.getValue())
+                    .sorted(Comparator.comparing(Field::getName))
+                    .map(field -> field.getName() + ": " + getStringFromField(object, field))
                     .collect(joining(", "));
             resultString.append(fieldsStringRepresentation);
             clazz = clazz.getSuperclass();
@@ -98,11 +78,36 @@ public class ReflectionToStringHelper {
         return resultString.append("}").toString();
     }
 
+    private static Object getStringFromField(Object object, Field field) {
+        Object value;
+        boolean wasInaccessible = false;
+        if (!field.isAccessible()) {
+            field.setAccessible(true);
+            wasInaccessible = true;
+        }
+        try {
+            value = field.get(object);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException();
+        }
+        if (wasInaccessible) {
+            field.setAccessible(false);
+        }
+        if (Objects.isNull(value)) {
+            return "null";
+        } else if (field.getType().isArray()) {
+            return arrayToString(value);
+        } else {
+            return value;
+        }
+    }
+
     private static String arrayToString(Object array) {
         StringBuilder sb = new StringBuilder("[");
-        for (int i = 0; i < Array.getLength(array); i++) {
+        int arrayLength = Array.getLength(array);
+        for (int i = 0; i < arrayLength; i++) {
             sb.append(Array.get(array, i));
-            if (i < Array.getLength(array) - 1) {
+            if (i < arrayLength - 1) {
                 sb.append(", ");
             }
         }
