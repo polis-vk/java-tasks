@@ -5,9 +5,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -60,39 +59,15 @@ public class ReflectionToStringHelper {
         }
         Class<?> classOfObject = object.getClass();
         StringBuilder result = new StringBuilder("{");
-        boolean hasExtraDelimiterOfFields = false;
+        AtomicBoolean hasExtraDelimiterOfFields = new AtomicBoolean(false);
         while (!Objects.equals(classOfObject, Object.class)) {
-            List<Field> requiredFields = getSortedRequiredFields(classOfObject);
-            for (Field field : requiredFields) {
-                Object value = null;
-                final int fieldModifiers = field.getModifiers();
-                boolean shouldChangeAccessible = Modifier.isPrivate(fieldModifiers) || Modifier.isProtected(fieldModifiers);
-                try {
-                    if (shouldChangeAccessible) {
-                        field.setAccessible(true);
-                    }
-                    value = field.get(object);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (shouldChangeAccessible) {
-                        field.setAccessible(false);
-                    }
-                }
-                result.append(field.getName()).append(NAME_AND_VALUE_DELIMITER);
-                if (value == null) {
-                    result.append(NULL_VALUE);
-                } else if (field.getType().isArray()) {
-                    addArrayToResult(result, value);
-                } else {
-                    result.append(value);
-                }
-                result.append(FIELDS_DELIMITER);
-                hasExtraDelimiterOfFields = true;
-            }
+            Arrays.stream(classOfObject.getDeclaredFields())
+                    .filter(ReflectionToStringHelper::shouldBeIgnored)
+                    .sorted(Comparator.comparing(Field::getName))
+                    .forEach((field) -> addCurrentFieldToResult(field,object,hasExtraDelimiterOfFields,result));
             classOfObject = classOfObject.getSuperclass();
         }
-        if (hasExtraDelimiterOfFields) {
+        if (hasExtraDelimiterOfFields.get()) {
             deleteExtraDelimiterOfFields(result);
         }
         return result.append("}").toString();
@@ -119,10 +94,35 @@ public class ReflectionToStringHelper {
         result.append("]");
     }
 
-    private static List<Field> getSortedRequiredFields(Class<?> clazz) {
-        return Arrays.stream(clazz.getDeclaredFields())
-                .filter(ReflectionToStringHelper::shouldBeIgnored)
-                .sorted(Comparator.comparing(Field::getName))
-                .collect(Collectors.toList());
+    private static void addCurrentFieldToResult(Field field, Object object, AtomicBoolean isModified, StringBuilder result) {
+        Object value = null;
+        boolean isNotAccessible = shouldChangeAccessible(field);
+        try {
+            if (isNotAccessible) {
+                field.setAccessible(true);
+            }
+            value = field.get(object);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (isNotAccessible) {
+                field.setAccessible(false);
+            }
+        }
+        result.append(field.getName()).append(NAME_AND_VALUE_DELIMITER);
+        if (value == null) {
+            result.append(NULL_VALUE);
+        } else if (field.getType().isArray()) {
+            addArrayToResult(result, value);
+        } else {
+            result.append(value);
+        }
+        result.append(FIELDS_DELIMITER);
+        isModified.set(true);
+    }
+
+    private static boolean shouldChangeAccessible(Field field) {
+        final int fieldModifiers = field.getModifiers();
+        return Modifier.isPrivate(fieldModifiers) || Modifier.isProtected(fieldModifiers);
     }
 }
