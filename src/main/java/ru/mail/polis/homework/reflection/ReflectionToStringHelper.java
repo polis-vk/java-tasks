@@ -80,23 +80,15 @@ public class ReflectionToStringHelper {
 
                     if (!field.getType().isArray()) {
                         stringBuilder.append(field.getName()).append(": ").append(field.get(object)).append(", ");
-                        field.setAccessible(false);
-                        continue;
-                    }
-
-                    List<Object> array = new ArrayList<>();
-
-                    if (field.get(object) == null) {
+                    } else if (field.get(object) == null) {
                         stringBuilder.append(field.getName()).append(": ").append("null").append(", ");
-                        field.setAccessible(false);
-                        continue;
+                    } else {
+                        List<Object> array = new ArrayList<>();
+                        for (int i = 0; i < Array.getLength(field.get(object)); i++) {
+                            array.add(Array.get(field.get(object), i));
+                        }
+                        stringBuilder.append(field.getName()).append(": ").append(array).append(", ");
                     }
-
-                    for (int i = 0; i < Array.getLength(field.get(object)); i++) {
-                        array.add(Array.get(field.get(object), i));
-                    }
-                    stringBuilder.append(field.getName()).append(": ").append(array).append(", ");
-
                     field.setAccessible(false);
                 }
             }
