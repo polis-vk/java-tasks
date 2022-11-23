@@ -53,12 +53,12 @@ public class ReflectionToStringHelper {
         Class<?> objectClass = object.getClass();
         StringBuilder result = new StringBuilder();
         result.append("{");
-        while (objectClass != objectClass.getSuperclass() && objectClass.getSuperclass() != null) {
+        while (objectClass != Object.class) {
             Arrays.stream(objectClass.getDeclaredFields())
-                    .filter(field -> !field.isAnnotationPresent(SkipField.class))
-                    .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                    .filter(field ->
+                            !field.isAnnotationPresent(SkipField.class) && !Modifier.isStatic(field.getModifiers()))
                     .sorted(Comparator.comparing(Field::getName))
-                    .forEach(field -> fieldToString(field, object, result));
+                    .forEach(field -> buildFieldString(field, object, result));
             objectClass = objectClass.getSuperclass();
         }
         if (result.length() > 2) {
@@ -67,24 +67,24 @@ public class ReflectionToStringHelper {
         return result.append("}").toString();
     }
 
-    private static void fieldToString(Field field, Object object, StringBuilder result) {
+    private static void buildFieldString(Field field, Object object, StringBuilder result) {
         try {
-            if (!field.canAccess(object)) {
+            if (!field.isAccessible()) {
                 field.setAccessible(true);
             }
             result.append(field.getName()).append(": ");
             if (field.getType().isArray()) {
-                arrayToString(field.get(object), result);
+                buildArrayString(field.get(object), result);
             } else {
                 result.append(field.get(object));
             }
             result.append(", ");
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
-    private static void arrayToString(Object array, StringBuilder result) {
+    private static void buildArrayString(Object array, StringBuilder result) {
         if (array == null) {
             result.append("null");
             return;
