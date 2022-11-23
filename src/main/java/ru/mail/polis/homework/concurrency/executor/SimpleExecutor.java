@@ -2,7 +2,7 @@ package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class SimpleExecutor implements Executor {
     private final List<MyThread> threads = new ArrayList<>();
-    private final Queue<Runnable> tasks = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private final AtomicInteger accessibleThreadCount = new AtomicInteger();
     private final int maxThreadCount;
     private volatile boolean terminated;
@@ -75,22 +75,21 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        synchronized (this) {
-            return threads.size();
-        }
+        return threads.size();
     }
 
     private class MyThread extends Thread {
         @Override
         public void run() {
-            Runnable task;
-            while (!isInterrupted() && (!terminated || !tasks.isEmpty())) {
-                accessibleThreadCount.incrementAndGet();
-                task = tasks.poll();
-                accessibleThreadCount.decrementAndGet();
-                if (task != null) {
+            try {
+                Runnable task;
+                while (!isInterrupted() && (!terminated || !tasks.isEmpty())) {
+                    accessibleThreadCount.incrementAndGet();
+                    task = tasks.take();
+                    accessibleThreadCount.decrementAndGet();
                     task.run();
                 }
+            } catch (InterruptedException ignored) {
             }
         }
     }
