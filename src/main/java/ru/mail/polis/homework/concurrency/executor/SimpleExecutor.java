@@ -68,9 +68,7 @@ public class SimpleExecutor implements Executor {
     public void shutdownNow() {
         shutdown();
         for (int i = 0; i < threadsInitialized.get(); i++) {
-            while (!threads[i].isInterrupted()) {
-                threads[i].interrupt();
-            }
+            threads[i].interrupt();
         }
     }
 
@@ -85,7 +83,7 @@ public class SimpleExecutor implements Executor {
 
         @Override
         public void run() {
-            while (!shutdownMode || !commands.isEmpty()) {
+            while (!shutdownMode) {
                 waitingThreadsCount.incrementAndGet();
                 Runnable command = null;
                 try {
