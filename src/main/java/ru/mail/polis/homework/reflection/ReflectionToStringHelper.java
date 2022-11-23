@@ -3,8 +3,8 @@ package ru.mail.polis.homework.reflection;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -48,44 +48,44 @@ import java.util.stream.Stream;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
+    private static final String NULL_STRING = "null";
 
     public static String reflectiveToString(Object object) {
         if (object == null) {
-            return "null";
+            return NULL_STRING;
         }
-        Field[] fields = findAllFields(object);
+        List<Field> fields = findAllFields(object);
         StringBuilder answer = new StringBuilder("{");
+        StringBuilder arrayToString = new StringBuilder();
         for (Field field : fields) {
-            if (!Modifier.isStatic(field.getModifiers()) && field.getAnnotation(SkipField.class) == null) {
-                answer.append(field.getName());
-                answer.append(": ");
-                answer.append(getValue(object, field));
-                answer.append(", ");
-            }
+            answer.append(field.getName());
+            answer.append(": ");
+            answer.append(getValue(object, field, arrayToString));
+            answer.append(", ");
+            arrayToString.delete(0, arrayToString.length());
         }
-        if (answer.length() != 1) {
-            answer.deleteCharAt(answer.length() - 1);
-            answer.deleteCharAt(answer.length() - 1);
-        }
+        removeExtraChars(answer);
         answer.append("}");
         return answer.toString();
     }
 
-    private static Field[] findAllFields(Object object) {
+    private static List<Field> findAllFields(Object object) {
         Class<?> someClass = object.getClass();
         Field[] currentFields;
-        Field[] resultFields = new Field[0];
+        List<Field> resultFields = new ArrayList<>();
         while (someClass != Object.class) {
             currentFields = someClass.getDeclaredFields();
-            Arrays.sort(currentFields, Comparator.comparing(Field::getName));
-            resultFields = Stream.concat(Arrays.stream(resultFields), Arrays.stream(currentFields))
-                    .toArray(Field[]::new);
+            currentFields = Arrays.stream(currentFields)
+                    .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                    .filter(field -> field.getAnnotation(SkipField.class) == null)
+                    .sorted(Comparator.comparing(Field::getName)).toArray(Field[]::new);
+            Collections.addAll(resultFields, currentFields);
             someClass = someClass.getSuperclass();
         }
         return resultFields;
     }
 
-    private static String getValue(Object object, Field field) {
+    private static String getValue(Object object, Field field, StringBuilder arrayToString) {
         field.setAccessible(true);
         Object value = null;
         try {
@@ -94,25 +94,28 @@ public class ReflectionToStringHelper {
             e.printStackTrace();
         }
         if (value == null) {
-            return "null";
+            return NULL_STRING;
         }
         if (field.getType().isArray()) {
-            StringBuilder result = new StringBuilder("[");
+            arrayToString.append("[");
             for (int i = 0; i < Array.getLength(value); i++) {
                 if (Array.get(value, i) == null) {
-                    result.append("null");
+                    arrayToString.append(NULL_STRING);
                 } else {
-                    result.append(Array.get(value, i).toString());
+                    arrayToString.append(Array.get(value, i).toString());
                 }
-                result.append(", ");
+                arrayToString.append(", ");
             }
-            if (result.length() != 1) {
-                result.deleteCharAt(result.length() - 1);
-                result.deleteCharAt(result.length() - 1);
-            }
-            result.append("]");
-            return result.toString();
+            removeExtraChars(arrayToString);
+            arrayToString.append("]");
+            return arrayToString.toString();
         }
         return value.toString();
+    }
+
+    private static void removeExtraChars(StringBuilder result) {
+        if (result.length() != 1) {
+            result.delete(result.length() - 2, result.length());
+        }
     }
 }
