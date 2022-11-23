@@ -15,7 +15,7 @@ import java.util.concurrent.RejectedExecutionException;
 public class SingleExecutor implements Executor {
     private final BlockingQueue<Runnable> commands;
     private final Thread eternalThread;
-    private boolean shutdownMode;
+    private volatile boolean shutdownMode;
 
     public SingleExecutor() {
         commands = new LinkedBlockingQueue<>();
