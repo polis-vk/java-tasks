@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -50,17 +52,25 @@ import java.util.stream.Collectors;
  */
 public class ReflectionToStringHelper {
 
-    private static String filterForFields(Class<?> clazz, Object object) {
+    public static String reflectiveToString(Object object) {
+        if (object == null) {
+            return "null";
+        }
+        String result = getFieldInfoWithReflection(object.getClass(), object);
+        return "{" + result.substring(0, result.length() - 2) + "}";
+    }
+
+    private static String getFieldInfoWithReflection(Class<?> clazz, Object object) {
         String str = Arrays.stream(clazz.getDeclaredFields())
                 .filter(o -> !Modifier.isStatic(o.getModifiers()) && o.getAnnotation(SkipField.class) == null)
                 .sorted(Comparator.comparing(Field::getName))
-                .map(field -> convertFiledToString(field, object))
+                .map(field -> convertFieldToString(field, object))
                 .collect(Collectors.joining(", "));
-        return (!(clazz.getSuperclass() == null)) ? str + ", " + filterForFields(clazz.getSuperclass(), object)
+        return (!(clazz.getSuperclass() == null)) ? str + ", " + getFieldInfoWithReflection(clazz.getSuperclass(), object)
                 : str;
     }
 
-    private static String convertFiledToString(Field field, Object object) {
+    private static String convertFieldToString(Field field, Object object) {
         StringBuilder builder = new StringBuilder();
         boolean isAccessibleDefault = true;
         try {
@@ -70,9 +80,13 @@ public class ReflectionToStringHelper {
             }
             builder.append(field.getName()).append(": ");
             Object obj = field.get(object);
-            builder.append((obj != null && field.getType().isArray()) ? getArrayElements(obj) : obj);
+            if (obj != null && field.getType().isArray()) {
+                getArrayElements(obj, builder);
+            } else {
+                builder.append(obj);
+            }
         } catch (IllegalAccessException e) {
-            System.out.println(e.getMessage());
+            throw new IllegalStateException(e);
         } finally {
             if (!isAccessibleDefault) {
                 field.setAccessible(false);
@@ -81,16 +95,10 @@ public class ReflectionToStringHelper {
         return builder.toString();
     }
 
-    private static String getArrayElements(Object obj) {
-        StringBuilder sb = new StringBuilder(Arrays.deepToString(new Object[]{obj}));
-        return sb.deleteCharAt(sb.length() - 1).deleteCharAt(0).toString();
+    private static void getArrayElements(Object obj, StringBuilder sb) {
+        sb.append("[").append(IntStream.range(0, Array.getLength(obj))
+                .mapToObj(i -> (Array.get(obj, i) != null) ? Array.get(obj, i).toString() : "null")
+                .collect(Collectors.joining(", "))).append("]");
     }
 
-    public static String reflectiveToString(Object object) {
-        if (object == null) {
-            return "null";
-        }
-        String result = filterForFields(object.getClass(), object);
-        return "{" + result.substring(0, result.length() - 2) + "}";
-    }
 }
