@@ -47,8 +47,6 @@ import java.lang.reflect.Modifier;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
-
-    private static final String EMPTY = "{}";
     private static final String EMPTY_ARRAY = "[]";
     private static final String NULL = "null";
 
@@ -56,62 +54,61 @@ public class ReflectionToStringHelper {
         if (object == null) {
             return NULL;
         }
-        return reflect(object);
+        return reflectiveToStringInternal(object);
     }
 
-    private static String reflect(Object object) {
+    private static String reflectiveToStringInternal(Object object) {
         StringBuilder result = new StringBuilder();
         Class<?> objectClass = object.getClass();
-        Field[] fields;
         result.append("{");
         while (objectClass.getSuperclass() != null) {
+            Field[] fields;
             fields = objectClass.getDeclaredFields();
-            if (fields.length == 0) {
-                return EMPTY;
-            }
             Arrays.sort(fields, Comparator.comparing(Field::getName));
             for (Field field : fields) {
                 if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
                     continue;
                 }
-                result.append(field.getName()).append(": ").append(reflectFieldValues(field, object)).append(", ");
+                reflectFieldValues(field, object, result);
+                field.setAccessible(false);
             }
             objectClass = objectClass.getSuperclass();
         }
-        result.delete(result.length() - 2, result.length());
+        if (result.length() > 2) {
+            result.delete(result.length() - 2, result.length());
+        }
         return result.append("}").toString();
     }
 
-    private static Object reflectFieldValues(Field field, Object object) {
-        Object value = null;
+    private static void reflectFieldValues(Field field, Object object, StringBuilder result) {
+        field.setAccessible(true);
+        result.append(field.getName()).append(": ");
         try {
-            field.setAccessible(true);
             if (field.getType().isArray()) {
-                value = makeDisplayOfArray(field.get(object));
-                return value;
+                makeDisplayOfArray(field.get(object), result);
+                return;
             }
-            value = field.get(object);
+            result.append(field.get(object)).append(", ");
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            throw new RuntimeException("You are trying to modify or access immutable objects");
         }
-        return value;
     }
 
-    private static String makeDisplayOfArray(Object array) throws IllegalAccessException {
-        StringBuilder stringBuilderArray = new StringBuilder();
+    private static void makeDisplayOfArray(Object array, StringBuilder result) throws IllegalAccessException {
         if (array == null) {
-            stringBuilderArray.append(NULL);
-            return stringBuilderArray.toString();
+            result.append(NULL).append(", ");
+            return;
         }
         int length = Array.getLength(array);
         if (length == 0) {
-            return EMPTY_ARRAY;
+            result.append(EMPTY_ARRAY).append(", ");
+            return;
         }
-        stringBuilderArray.append("[");
+        result.append("[");
         for (int i = 0; i < length; i++) {
-            stringBuilderArray.append(Array.get(array, i)).append(", ");
+            result.append(Array.get(array, i)).append(", ");
         }
-        stringBuilderArray.delete(stringBuilderArray.length() - 2, stringBuilderArray.length());
-        return stringBuilderArray.append("]").toString();
+        result.delete(result.length() - 2, result.length());
+        result.append("]").append(", ");
     }
 }
