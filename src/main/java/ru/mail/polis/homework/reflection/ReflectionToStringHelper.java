@@ -3,8 +3,10 @@ package ru.mail.polis.homework.reflection;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -83,23 +85,18 @@ public class ReflectionToStringHelper {
         for (Field field : fields) {
             boolean isAccessible = field.isAccessible();
             field.setAccessible(true);
-            StringBuilder value = new StringBuilder();
+            String value;
             if (field.getType().isArray()) {
                 Object[] objectArray = objectToArray(field.get(object));
                 if (objectArray == null) {
-                    value.append(NULL);
+                    value = NULL;
                 } else {
-                    value.append("[");
-                    for (int i = 0; i < objectArray.length; i++) {
-                        value.append(objectArray[i]);
-                        if (i != objectArray.length - 1) {
-                            value.append(", ");
-                        }
-                    }
-                    value.append("]");
+                    value = "[" + Arrays.stream(objectArray)
+                                    .map(Objects::toString)
+                                    .collect(Collectors.joining(", ")) + "]";
                 }
             } else {
-                value.append(field.get(object) == null ? NULL : field.get(object).toString());
+                value = field.get(object) == null ? NULL : field.get(object).toString();
             }
             fieldValueMap.put(field.getName(), value.toString());
             field.setAccessible(isAccessible);
