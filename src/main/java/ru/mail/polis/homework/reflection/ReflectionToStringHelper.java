@@ -1,12 +1,9 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -58,33 +55,55 @@ public class ReflectionToStringHelper {
         Class<?> aClass = object.getClass();
         StringBuilder out = new StringBuilder();
         while (aClass != null) {
-            List<Field> classFields = Stream.of(aClass.getDeclaredFields())
-                    .filter(field -> !Modifier.isStatic(field.getModifiers()))
-                    .filter(field -> !field.isAnnotationPresent(SkipField.class))
-                    .sorted(Comparator.comparing(Field::getName)).collect(Collectors.toList());
-            for (Field classField : classFields) {
-                out.append(classField.getName());
-                out.append(": ");
-                classField.setAccessible(true);
-                try {
-                    String value = classField.get(object).toString();
-                    if (classField.getType().isArray()) {
-                        value = Arrays.deepToString(new Object[]{classField.get(object)});
-                        value = value.substring(1, value.length() - 1);
-                    }
-                    out.append(value);
-                } catch (NullPointerException e) {
-                    out.append("null");
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-                out.append(", ");
-            }
+            Stream.of(aClass.getDeclaredFields())
+                    .filter(field -> !Modifier.isStatic(field.getModifiers())
+                            && !field.isAnnotationPresent(SkipField.class))
+                    .sorted(Comparator.comparing(Field::getName))
+                    .forEach(classField -> reflectField(classField, object, out));
             aClass = aClass.getSuperclass();
         }
         if (out.length() > 2) {
             out.delete(out.length() - 2, out.length());
         }
         return "{" + out + "}";
+    }
+
+    private static void reflectField(Field classField, Object object, StringBuilder out) {
+        out.append(classField.getName());
+        out.append(": ");
+        try {
+            boolean changedAccessible = false;
+            if (!classField.canAccess(object)) {
+                classField.setAccessible(true);
+                changedAccessible = true;
+            }
+            if (classField.getType().isArray()) {
+                reflectArray(classField.get(object), out);
+            } else {
+                out.append(classField.get(object));
+            }
+            if (changedAccessible) {
+                classField.setAccessible(false);
+            }
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        }
+        out.append(", ");
+    }
+
+    private static void reflectArray(Object object, StringBuilder out) {
+        if (object == null) {
+            out.append("null");
+            return;
+        }
+        out.append("[");
+        for (int i = 0; i < Array.getLength(object); i++) {
+            out.append(Array.get(object, i));
+            out.append(", ");
+        }
+        if (out.charAt(out.length() - 1) != '[') {
+            out.delete(out.length() - 2, out.length());
+        }
+        out.append("]");
     }
 }
