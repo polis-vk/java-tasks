@@ -50,9 +50,11 @@ import java.util.stream.Collectors;
  */
 public class ReflectionToStringHelper {
 
+    private static final String NULL = "null";
+
     public static String reflectiveToString(Object object) {
         if (object == null) {
-            return "null";
+            return NULL;
         }
         StringBuilder stringBuilder = new StringBuilder("{");
         Map<String, String> fieldValueMap = new TreeMap<>();
@@ -64,7 +66,7 @@ public class ReflectionToStringHelper {
                 }
                 List<Field> fields = getFields(clazz.getDeclaredFields());
                 fillMap(fieldValueMap, fields, object);
-                stringBuilder.append(mapToString(fieldValueMap));
+                stringBuilder.append(fieldValueMapToString(fieldValueMap));
                 fieldValueMap.clear();
                 clazz = clazz.getSuperclass();
             }
@@ -79,34 +81,46 @@ public class ReflectionToStringHelper {
                                 List<Field> fields,
                                 Object object) throws IllegalAccessException {
         for (Field field : fields) {
+            boolean isAccessible = field.isAccessible();
             field.setAccessible(true);
-            String value = "";
+            StringBuilder value = new StringBuilder();
             if (field.getType().isArray()) {
-                value = arrayToStirng(field.get(object));
+                Object[] objectArray = objectToArray(field.get(object));
+                if (objectArray == null) {
+                    value.append(NULL);
+                } else {
+                    value.append("[");
+                    for (int i = 0; i < objectArray.length; i++) {
+                        value.append(objectArray[i]);
+                        if (i != objectArray.length - 1) {
+                            value.append(", ");
+                        }
+                    }
+                    value.append("]");
+                }
             } else {
-                value = field.get(object) == null ? "null" : field.get(object).toString();
+                value.append(field.get(object) == null ? NULL : field.get(object).toString());
             }
-            fieldValueMap.put(field.getName(), value);
+            fieldValueMap.put(field.getName(), value.toString());
+            field.setAccessible(isAccessible);
         }
     }
 
-    private static String arrayToStirng(Object object) {
+    private static Object[] objectToArray(Object object) {
         if (object == null) {
-            return "null";
+            return null;
         }
-        StringBuilder stringBuilder = new StringBuilder("[");
-        for (int i = 0; i < Array.getLength(object); i++) {
-            stringBuilder.append(Array.get(object, i));
-            if (i != Array.getLength(object) - 1) {
-                stringBuilder.append(", ");
-            }
+        Object[] objectArray = new Object[Array.getLength(object)];
+        for (int i = 0; i < objectArray.length; i++) {
+            objectArray[i] = Array.get(object, i);
         }
-        stringBuilder.append("]");
-        return stringBuilder.toString();
+        return objectArray;
     }
 
-    private static String mapToString(Map<String, String> fieldValueMap) {
-        return fieldValueMap.entrySet().stream()
+    private static String fieldValueMapToString(Map<String, String> fieldValueMap) {
+        return fieldValueMap
+                .entrySet()
+                .stream()
                 .map(e -> e.getKey() + ": " + e.getValue())
                 .collect(Collectors.joining(", "));
     }
