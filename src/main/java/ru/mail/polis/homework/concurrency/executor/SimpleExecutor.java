@@ -44,7 +44,7 @@ public class SimpleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
         synchronized (threadsInitialized) {
-            if (waitingThreadsCount.get() == 0 && threadsInitialized.get() < threads.length) {
+            if (waitingThreadsCount.get() == 0 && threadsInitialized.get() < maxThreadCount) {
                 Thread eternalThread = new EternalThread();
                 threads[threadsInitialized.getAndIncrement()] = eternalThread;
                 eternalThread.start();
@@ -83,7 +83,7 @@ public class SimpleExecutor implements Executor {
 
         @Override
         public void run() {
-            while (!shutdownMode) {
+            while (!shutdownMode || !commands.isEmpty()) {
                 waitingThreadsCount.incrementAndGet();
                 Runnable command = null;
                 try {
