@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
 import java.util.StringJoiner;
 
 /**
@@ -56,16 +55,16 @@ public class ReflectionToStringHelper {
         }
 
         Class<?> reflectionClass = object.getClass();
-        StringJoiner joiner = new StringJoiner(", ");
-        while (reflectionClass != null) {
+        StringJoiner joiner = new StringJoiner(", ", "{", "}");
+        while (!reflectionClass.equals(Object.class)) {
             Arrays.stream(reflectionClass.getDeclaredFields())
-                    .filter(field -> !Modifier.isStatic(field.getModifiers()))
-                    .filter(field -> !field.isAnnotationPresent(SkipField.class))
+                    .filter(field -> !Modifier.isStatic(field.getModifiers()) &&
+                            !field.isAnnotationPresent(SkipField.class))
                     .sorted(Comparator.comparing(Field::getName))
                     .forEach(field -> addFieldToStringJoiner(joiner, field, object));
             reflectionClass = reflectionClass.getSuperclass();
         }
-        return "{" + joiner.toString() + "}";
+        return joiner.toString();
     }
 
     private static void addFieldToStringJoiner(StringJoiner joiner, Field field, Object object) {
@@ -77,21 +76,33 @@ public class ReflectionToStringHelper {
         try {
             Object value = field.get(object);
             if (field.getType().isArray() && value != null) {
-                joiner.add(field.getName() + ": " + arrayToString(value));
+                addArrayToStringJoiner(joiner, field, value);
             } else {
-                joiner.add(field.getName() + ": " + Optional.ofNullable(value).orElse("null"));
+                joiner.add(field.getName() + ": " + (value == null ? "null" : value));
             }
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            field.setAccessible(fieldAccessFlag);
         }
-        field.setAccessible(fieldAccessFlag);
     }
 
-    private static String arrayToString(Object arrayObject) {
-        StringJoiner joiner = new StringJoiner(", ");
-        for (int i = 0; i < Array.getLength(arrayObject); i++) {
-            joiner.add(String.valueOf(Array.get(arrayObject, i)));
+    private static void addArrayToStringJoiner(StringJoiner joiner, Field field, Object arrayObject) {
+        int arraySize = Array.getLength(arrayObject);
+        switch (arraySize) {
+            case 0:
+                joiner.add(field.getName() + ": []");
+                break;
+            case 1:
+                joiner.add(field.getName() + ": [" + Array.get(arrayObject, 0) + "]");
+                break;
+            default:
+                joiner.add(field.getName() + ": [" + Array.get(arrayObject, 0));
+                for (int i = 1; i < arraySize - 1; i++) {
+                    joiner.add(String.valueOf(Array.get(arrayObject, i)));
+                }
+                joiner.add(Array.get(arrayObject, arraySize - 1) + "]");
+                break;
         }
-        return "[" + joiner.toString() + "]";
     }
 }
