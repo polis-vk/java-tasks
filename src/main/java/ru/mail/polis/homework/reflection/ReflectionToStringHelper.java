@@ -61,7 +61,7 @@ public class ReflectionToStringHelper {
                     .filter(field -> !Modifier.isStatic(field.getModifiers())
                             && !field.isAnnotationPresent(SkipField.class))
                     .sorted(Comparator.comparing(Field::getName))
-                    .forEachOrdered(field -> fieldToString(sb, field, object));
+                    .forEachOrdered(field -> appendFieldToStringBuilder(sb, field, object));
             clazz = clazz.getSuperclass();
         }
         int length = sb.length();
@@ -71,10 +71,11 @@ public class ReflectionToStringHelper {
         return sb.append("}").toString();
     }
 
-    private static void fieldToString(StringBuilder sb, Field field, Object object) {
+    private static void appendFieldToStringBuilder(StringBuilder sb, Field field, Object object) {
+        boolean isAccessible = false;
         try {
             sb.append(field.getName()).append(": ");
-            boolean isAccessible = field.isAccessible();
+            isAccessible = field.isAccessible();
             if (!isAccessible) {
                 field.setAccessible(true);
             }
@@ -84,9 +85,10 @@ public class ReflectionToStringHelper {
                 sb.append(field.get(object));
             }
             sb.append(", ");
-            field.setAccessible(isAccessible);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            field.setAccessible(isAccessible);
         }
     }
 
