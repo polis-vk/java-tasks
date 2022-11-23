@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -50,15 +49,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ReflectionToStringHelper {
 
     private static final String NULL_VALUE = "null";
+    private static final String EMPTY_RESULT = "{}";
 
     public static String reflectiveToString(Object object) {
         if (object == null) {
             return NULL_VALUE;
         }
 
-        AtomicBoolean isEmpty = new AtomicBoolean(true);
         StringBuilder result = new StringBuilder("{");
         Class<?> objectClass = object.getClass();
+
         while (objectClass != Object.class) {
             Arrays.stream(objectClass.getDeclaredFields())
                 .sorted(Comparator.comparing(Field::getName))
@@ -66,19 +66,22 @@ public class ReflectionToStringHelper {
                     !field.isAnnotationPresent(SkipField.class))
                 .forEach(field -> {
                     try {
-                        field.setAccessible(true);
-                        isEmpty.set(false);
-                        Object value = field.get(object);
-                        if (field.getType().isArray()) {
-                            value = arrayToString(value);
+                        boolean isFieldNotAccessible = !field.canAccess(object);
+                        if (isFieldNotAccessible) {
+                            field.setAccessible(true);
                         }
-                        value = value == null ? NULL_VALUE : value;
-
-                        result
-                            .append(field.getName())
-                            .append(": ")
-                            .append(value)
-                            .append(", ");
+                        Object value = field.get(object);
+                        result.append(field.getName()).append(": ");
+                        if (field.getType().isArray()) {
+                            arrayToString(result, value);
+                        } else {
+                            value = value == null ? NULL_VALUE : value;
+                            result.append(value);
+                        }
+                        result.append(", ");
+                        if (isFieldNotAccessible) {
+                            field.setAccessible(false);
+                        }
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
@@ -86,32 +89,30 @@ public class ReflectionToStringHelper {
             objectClass = objectClass.getSuperclass();
         }
 
-        if (!isEmpty.get()) {
+        if (result.length() > EMPTY_RESULT.length()) {
             deleteTwoLastChars(result);
         }
-        result.append("}");
-        return result.toString();
+        return result.append("}").toString();
     }
 
-    private static String arrayToString(Object array) {
+    private static void arrayToString(StringBuilder stringBuilder, Object array) {
         if (array == null) {
-            return NULL_VALUE;
+            stringBuilder.append(NULL_VALUE);
+            return;
         }
 
-        StringBuilder result = new StringBuilder("[");
+        stringBuilder.append("[");
         int length = Array.getLength(array);
         for (int i = 0; i < length; i++) {
-            result.append(Array.get(array, i)).append(", ");
+            stringBuilder.append(Array.get(array, i)).append(", ");
         }
         if (length != 0) {
-            deleteTwoLastChars(result);
+            deleteTwoLastChars(stringBuilder);
         }
-        result.append("]");
-        return result.toString();
+        stringBuilder.append("]");
     }
 
     private static void deleteTwoLastChars(StringBuilder stringBuilder) {
-        int charsToDelete = 2;
-        stringBuilder.delete(stringBuilder.length() - charsToDelete, stringBuilder.length());
+        stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
     }
 }
