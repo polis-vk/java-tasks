@@ -58,8 +58,8 @@ public class ReflectionToStringHelper {
     private static List<Field> getSortedDeclaredFields(Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredFields())
                 .sorted(Comparator.comparing(Field::getName))
-                .filter(field -> !field.toString().contains("static") &&
-                        (field.getAnnotation(SkipField.class) == null))
+                .filter(field -> !field.toString().contains("static"))
+                .filter(field -> field.getAnnotation(SkipField.class) == null)
                 .collect(Collectors.toList());
     }
 
@@ -67,38 +67,43 @@ public class ReflectionToStringHelper {
         if (object == null) {
             return "null";
         }
+
         StringBuilder stringBuilder = new StringBuilder();
         List<Class<?>> classes = new ArrayList<>();
         appendClassesList(object.getClass(), classes);
 
         stringBuilder.append("{");
-        for (Class<?> clazz : classes) {
-            for (Field field : getSortedDeclaredFields(clazz)) {
-                field.setAccessible(true);
+        try {
+            for (Class<?> clazz : classes) {
+                for (Field field : getSortedDeclaredFields(clazz)) {
+                    field.setAccessible(true);
 
-                if (field.getType().isArray()) {
-                    List<Object> array = new ArrayList<>();
-                    try {
-                        if (field.get(object) == null) {
-                            stringBuilder.append(field.getName() + ": " + "null" + ", ");
-                            continue;
-                        }
-                        for (int i = 0; i < Array.getLength(field.get(object)); i++) {
-                            array.add(Array.get(field.get(object), i));
-                        }
-                        stringBuilder.append(field.getName() + ": " + array + ", ");
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
+                    if (!field.getType().isArray()) {
+                        stringBuilder.append(field.getName()).append(": ").append(field.get(object)).append(", ");
+                        field.setAccessible(false);
+                        continue;
                     }
-                    continue;
-                }
-                try {
-                    stringBuilder.append(field.getName() + ": " + field.get(object) + ", ");
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
+
+                    List<Object> array = new ArrayList<>();
+
+                    if (field.get(object) == null) {
+                        stringBuilder.append(field.getName()).append(": ").append("null").append(", ");
+                        field.setAccessible(false);
+                        continue;
+                    }
+
+                    for (int i = 0; i < Array.getLength(field.get(object)); i++) {
+                        array.add(Array.get(field.get(object), i));
+                    }
+                    stringBuilder.append(field.getName()).append(": ").append(array).append(", ");
+
+                    field.setAccessible(false);
                 }
             }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
+
         int newLength = stringBuilder.lastIndexOf(", ");
         if (newLength > 0) {
             stringBuilder.setLength(newLength);
