@@ -27,7 +27,7 @@ public class SimpleExecutor implements Executor {
     private final AtomicInteger freeWorkers = new AtomicInteger(0);
     private final List<Thread> workers;
     private final int maxThreadCount;
-    private boolean isShutdown;
+    private volatile boolean isShutdown;
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
@@ -40,17 +40,19 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        executeLock.lock();
         if (isShutdown) {
             throw new RejectedExecutionException();
         }
 
         if (workers.size() < maxThreadCount && freeWorkers.get() == 0) {
-            Thread worker = new Thread(new Worker());
-            workers.add(worker);
-            worker.start();
+            executeLock.lock();
+            if (workers.size() < maxThreadCount && freeWorkers.get() == 0) {
+                Thread worker = new Thread(new Worker());
+                workers.add(worker);
+                worker.start();
+            }
+            executeLock.unlock();
         }
-        executeLock.unlock();
         workersTasks.add(command);
     }
 

@@ -16,9 +16,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class SingleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> workerTasks = new LinkedBlockingQueue<>();
-    private final ReentrantLock executeLock = new ReentrantLock();
     private final Thread worker;
-    private boolean isShutDown;
+    private volatile boolean isShutDown;
 
     public SingleExecutor() {
         this.worker = new Thread(new Worker());
@@ -31,11 +30,9 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        executeLock.lock();
         if (isShutDown) {
             throw new RejectedExecutionException();
         }
-        executeLock.unlock();
         workerTasks.add(command);
     }
 
@@ -60,7 +57,7 @@ public class SingleExecutor implements Executor {
         @Override
         public void run() {
             try {
-                while (!Thread.currentThread().isInterrupted()) {
+                while (!isShutDown || !workerTasks.isEmpty()) {
                     workerTasks.take().run();
                 }
             } catch (InterruptedException e) {
