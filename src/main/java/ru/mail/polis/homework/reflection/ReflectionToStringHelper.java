@@ -54,34 +54,46 @@ public class ReflectionToStringHelper {
         }
         StringBuilder result = new StringBuilder("{");
         Class<?> clazz = object.getClass();
-        try {
-            while (clazz != null) {
-                Field[] fields = clazz.getDeclaredFields();
-                Arrays.sort(fields, Comparator.comparing(Field::getName));
-                for (Field field : fields) {
-                    if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
-                        continue;
-                    }
-                    field.setAccessible(true);
-                    result.append(field.getName());
-                    result.append(": ");
-                    if (field.getType().isArray()) {
-                        appendArrayFieldToResult(field.get(object), result);
-                    } else {
-                        result.append(field.get(object));
-                    }
-                    result.append(", ");
-                }
-                clazz = clazz.getSuperclass();
+        while (clazz != null) {
+            Field[] fields = clazz.getDeclaredFields();
+            Arrays.sort(fields, Comparator.comparing(Field::getName));
+            for (Field field : fields) {
+                appendFieldToResult(field, result, object);
             }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            clazz = clazz.getSuperclass();
         }
         if (result.length() > 1) {
             result.delete(result.length() - 2, result.length());
         }
         result.append("}");
         return result.toString();
+    }
+
+    private static void appendFieldToResult(Field field, StringBuilder result, Object object) {
+        if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
+            return;
+        }
+        boolean accessible = field.isAccessible();
+        if (!accessible) {
+            field.setAccessible(true);
+        }
+        result.append(field.getName());
+        result.append(": ");
+        Object value;
+        try {
+            value = field.get(object);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        if (field.getType().isArray()) {
+            appendArrayFieldToResult(value, result);
+        } else {
+            result.append(value);
+        }
+        result.append(", ");
+        if (!accessible) {
+            field.setAccessible(false);
+        }
     }
 
     private static void appendArrayFieldToResult(Object array, StringBuilder result) {
