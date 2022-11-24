@@ -55,23 +55,29 @@ import java.lang.annotation.Annotation;
  */
 public class ReflectionToStringHelper {
 
+    private static final String NULL_VALUE = "null";
+
     public static String reflectiveToString(Object object) {
         if (object == null) {
-            return "null";
+            return NULL_VALUE;
         }
 
+        StringBuilder result = new StringBuilder();
+        result.append("{");
         ArrayList<Field> fields = getSortedFields(object);
-        String result = "{";
         for (int i = 0; i < fields.size(); i++) {
             Field field = fields.get(i);
             field.setAccessible(true);
-            result += field.getName() + ": " + getValue(field, object);
+            result.append(field.getName());
+            result.append(": ");
+            result.append(getValue(field, object));
             if (i != fields.size() - 1) {
-                result += ", ";
+                result.append(", ");
             }
+            field.setAccessible(false);
         }
-        result += "}";
-        return result;
+        result.append("}");
+        return result.toString();
     }
 
     private static ArrayList<Field> getCorrectField(Field[] fields) {
@@ -100,31 +106,32 @@ public class ReflectionToStringHelper {
 
     private static String getValue(Field field, Object object) {
         try {
-            String fieldValue = "";
+            StringBuilder fieldValue = new StringBuilder();
             if (field.getType().isArray()) {
-                fieldValue += "[";
+                fieldValue.append("[");
                 Object[] values = unpackArray(field.get(object));
                 if (values == null) {
-                    return "null";
+                    return NULL_VALUE;
                 }
 
                 for (int j = 0; j < values.length; j++) {
-                    fieldValue += values[j];
+                    fieldValue.append(values[j]);
                     if (j != values.length - 1) {
-                        fieldValue += ", ";
+                        fieldValue.append(", ");
                     }
                 }
-                fieldValue += "]";
+                fieldValue.append("]");
             } else {
-                if (field.get(object) == null) {
-                    return "null";
+                Object objectField = field.get(object);
+                if (objectField == null) {
+                    return NULL_VALUE;
                 }
-                fieldValue = field.get(object).toString();
+                fieldValue.append(objectField);
             }
-            return fieldValue;
+            return fieldValue.toString();
         } catch (IllegalAccessException  e) {
             e.printStackTrace();
-            return "null";
+            return NULL_VALUE;
         }
     }
 
