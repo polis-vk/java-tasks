@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
@@ -31,7 +30,7 @@ public class SimpleExecutor implements Executor {
     public SimpleExecutor(int maxThreadCount) {
         this.isShutdown = false;
         this.tasks = new LinkedBlockingQueue<>();
-        this.threads = Collections.synchronizedList(new ArrayList<>());
+        this.threads = new ArrayList<>(maxThreadCount);
         this.maxThreadCount = maxThreadCount;
         this.freeThreadsCount = new AtomicInteger(0);
     }
