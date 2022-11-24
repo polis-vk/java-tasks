@@ -122,11 +122,11 @@ public class ReflectionToStringHelper {
                 }
                 fieldValue.append("]");
             } else {
-                Object objectField = field.get(object);
-                if (objectField == null) {
+                Object objectValue = field.get(object);
+                if (objectValue == null) {
                     return NULL_VALUE;
                 }
-                fieldValue.append(objectField);
+                fieldValue.append(objectValue);
             }
             return fieldValue.toString();
         } catch (IllegalAccessException  e) {
