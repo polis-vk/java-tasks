@@ -53,7 +53,20 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        Field[] fields = object.getClass().getDeclaredFields();
+        StringBuilder stringBuilder = new StringBuilder("{");
+        try {
+            for (Field field : fields) {
+                field.setAccessible(true);
+                stringBuilder.append(field.getName());
+                stringBuilder.append(": ");
+
+                stringBuilder.append(field.get(object));
+                stringBuilder.append(", ");
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return stringBuilder.replace(stringBuilder.length() - 2, stringBuilder.length(), "}").toString();
     }
 }
