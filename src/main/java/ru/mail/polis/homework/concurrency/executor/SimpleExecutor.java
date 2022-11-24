@@ -1,6 +1,12 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -15,8 +21,17 @@ import java.util.concurrent.Executor;
  */
 public class SimpleExecutor implements Executor {
 
-    public SimpleExecutor(int maxThreadCount) {
+    private final int maxThreadCount;
+    private final AtomicInteger availableThreadsCount;
+    private final BlockingQueue<Runnable> workQueue;
+    private final Set<Worker> workers;
+    private volatile boolean isShutdown;
 
+    public SimpleExecutor(int maxThreadCount) {
+        this.maxThreadCount = maxThreadCount;
+        availableThreadsCount = new AtomicInteger(0);
+        workQueue = new LinkedBlockingQueue<>();
+        workers = new HashSet<>(maxThreadCount);
     }
 
     /**
@@ -25,7 +40,18 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (isShutdown) {
+            throw new RejectedExecutionException();
+        }
 
+        synchronized (workQueue) {
+            if (availableThreadsCount.get() == 0 && workers.size() < maxThreadCount) {
+                Worker worker = new Worker();
+                worker.start();
+                workers.add(worker);
+            }
+        }
+        workQueue.offer(command);
     }
 
     /**
@@ -33,6 +59,7 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
+        isShutdown = true;
     }
 
     /**
@@ -40,13 +67,34 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdownNow() {
-
+        for (Worker worker : workers) {
+            worker.interrupt();
+        }
+        isShutdown = true;
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        return workers.size();
+    }
+
+    private class Worker extends Thread {
+        @Override
+        public void run() {
+            while ((!isShutdown || !workQueue.isEmpty()) && !isInterrupted()) {
+                availableThreadsCount.incrementAndGet();
+                try {
+                    Runnable command = workQueue.take();
+                    availableThreadsCount.decrementAndGet();
+                    command.run();
+                } catch (InterruptedException e) {
+                    workers.remove(this);
+                    return;
+                }
+            }
+            workers.remove(this);
+        }
     }
 }
