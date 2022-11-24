@@ -4,7 +4,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
@@ -15,15 +14,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class SingleExecutor implements Executor {
 
-    private final AtomicBoolean isShutdown;
+    private volatile boolean isShutdown;
     private final BlockingQueue<Runnable> tasks;
     private final Thread thread;
 
     public SingleExecutor() {
-        this.isShutdown = new AtomicBoolean(false);
+        this.isShutdown = false;
         this.tasks = new LinkedBlockingQueue<>();
         this.thread = new Thread(() -> {
-            while (!isShutdown.get() || (!tasks.isEmpty() && !Thread.currentThread().isInterrupted())) {
+            while (!isShutdown || (!tasks.isEmpty() && !Thread.currentThread().isInterrupted())) {
                 try {
                     tasks.take().run();
                 } catch (InterruptedException e) {
@@ -41,7 +40,7 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (isShutdown.get()) {
+        if (isShutdown) {
             throw new RejectedExecutionException();
         }
 
@@ -57,7 +56,7 @@ public class SingleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
-        isShutdown.compareAndSet(false, true);
+        isShutdown = true;
     }
 
     /**
@@ -66,6 +65,6 @@ public class SingleExecutor implements Executor {
      */
     public void shutdownNow() {
         thread.interrupt();
-        isShutdown.compareAndSet(false, true);
+        isShutdown = true;
     }
 }

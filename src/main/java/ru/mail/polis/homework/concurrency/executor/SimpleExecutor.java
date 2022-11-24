@@ -7,7 +7,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -24,13 +23,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SimpleExecutor implements Executor {
 
     private final List<Thread> threads;
-    private final AtomicBoolean isShutdown;
+    private volatile boolean isShutdown;
     private final BlockingQueue<Runnable> tasks;
     private final int maxThreadCount;
     private final AtomicInteger freeThreadsCount;
 
     public SimpleExecutor(int maxThreadCount) {
-        this.isShutdown = new AtomicBoolean(false);
+        this.isShutdown = false;
         this.tasks = new LinkedBlockingQueue<>();
         this.threads = Collections.synchronizedList(new ArrayList<>());
         this.maxThreadCount = maxThreadCount;
@@ -43,7 +42,7 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (isShutdown.get()) {
+        if (isShutdown) {
             throw new RejectedExecutionException();
         }
 
@@ -56,7 +55,7 @@ public class SimpleExecutor implements Executor {
         synchronized (threads) {
             if (freeThreadsCount.get() == 0 && threads.size() < maxThreadCount) {
                 Thread newThread = new Thread(() -> {
-                    while (!isShutdown.get() || (!tasks.isEmpty() && !Thread.currentThread().isInterrupted())) {
+                    while (!isShutdown || (!tasks.isEmpty() && !Thread.currentThread().isInterrupted())) {
                         freeThreadsCount.getAndIncrement();
                         try {
                             Runnable task = tasks.take();
@@ -78,7 +77,7 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
-        isShutdown.compareAndSet(false, true);
+        isShutdown = true;
     }
 
     /**
@@ -89,7 +88,7 @@ public class SimpleExecutor implements Executor {
         for (Thread thread : threads) {
             thread.interrupt();
         }
-        isShutdown.compareAndSet(false, true);
+        isShutdown = true;
     }
 
     /**
