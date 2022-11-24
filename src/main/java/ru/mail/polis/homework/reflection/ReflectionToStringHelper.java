@@ -5,6 +5,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -48,58 +51,79 @@ import java.util.Comparator;
  */
 public class ReflectionToStringHelper {
 
+    public static final String NULL = "null";
+    public static final String ARRAY_DELIMITER = ", ";
+    public static final Predicate<Field> isStaticOrSkipField =
+            (field) -> !Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class);
+
+
+    // working with object's classes (exact class and super classes)
     public static String reflectiveToString(Object object) {
         if (object == null) {
             return "null";
         }
         StringBuilder stringBuilder = new StringBuilder("{");
-        Class<?> clazz = object.getClass();
         try {
-            while (clazz != Object.class) {
-                Field[] fields = clazz.getDeclaredFields();
-                Arrays.sort(fields, Comparator.comparing(Field::getName));
-                for (Field field : fields) {
-                    if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
-                        continue;
-                    }
-                    stringBuilder.append(field.getName()).append(": ");
-                    field.setAccessible(true);
-                    if (field.getType().isArray()) {
-                        appendArrToStringBuilder(field.get(object), stringBuilder);
-                    } else {
-                        appendFieldToStringBuilder(stringBuilder, field, object);
-                    }
-                    stringBuilder.append(", ");
-                }
-                clazz = clazz.getSuperclass();
+            for (Class<?> clazz = object.getClass(); ; clazz = clazz.getSuperclass()) {
+                proceedClass(object, clazz, stringBuilder);
+
+                // Adding delimiter if need
+                if (clazz.getSuperclass() == Object.class)
+                    break;
+                stringBuilder.append(ARRAY_DELIMITER);
             }
         } catch (IllegalAccessException e) {
-            System.err.printf("IllegalAccessException while working with class: %s", clazz.getName());
-        }
-        if (stringBuilder.length() > 1) {
-            stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+            System.err.println("IllegalAccessException while working" + e.getMessage());
         }
         stringBuilder.append("}");
         return stringBuilder.toString();
     }
 
-    // Field should be accessible, otherwise this function will behave undefinable
-    private static void appendFieldToStringBuilder(StringBuilder stringBuilder, Field field, Object object) throws IllegalAccessException {
-        stringBuilder.append(field.get(object));
+    // Working with exact class (not super class)
+    private static void proceedClass(Object object, Class<?> clazz, StringBuilder stringBuilder) throws IllegalAccessException {
+        List<Field> listOfFields = getClassFields(clazz);
+
+        Field lastField = listOfFields.get(listOfFields.size() - 1);
+        for (Field field : listOfFields) {
+            proceedField(object, field, stringBuilder);
+
+            // Adding delimiter if need
+            if (field == lastField)
+                break;
+            stringBuilder.append(ARRAY_DELIMITER);
+        }
     }
 
-    private static void appendArrToStringBuilder(Object object, StringBuilder stringBuilder) {
-        if (object == null) {
-            stringBuilder.append("null");
-            return;
+    private static List<Field> getClassFields(Class<?> clazz) {
+        return Arrays.stream(clazz.getDeclaredFields())
+                .sorted(Comparator.comparing(Field::getName))
+                .filter(isStaticOrSkipField)
+                .collect(Collectors.toList());
+    }
+
+    private static void proceedField(Object object, Field field, StringBuilder stringBuilder) throws IllegalAccessException {
+        field.setAccessible(true);
+        stringBuilder.append(field.getName()).append(": ");
+
+        if (field.getType().isArray())
+            stringBuilder.append((Object) Arrays.deepToString(covertToArray(field.get(object))));
+        else {
+            stringBuilder.append(field.get(object));
         }
-        stringBuilder.append("[");
-        if (Array.getLength(object) > 0) {
-            stringBuilder.append(Array.get(object, 0));
-        }
-        for (int i = 1; i < Array.getLength(object); i++) {
-            stringBuilder.append(", ").append(Array.get(object, i));
-        }
-        stringBuilder.append("]");
+    }
+
+    public static Object[] covertToArray(Object value) {
+        if (value == null) return null;
+        if (value.getClass().isArray()) { // array of Object predecessors
+            if (value instanceof Object[]) {
+                return (Object[]) value;
+            } else { // array of primitives types
+                Object[] boxedArray = new Object[Array.getLength(value)];
+                for (int index = 0; index < boxedArray.length; index++) {
+                    boxedArray[index] = Array.get(value, index);
+                }
+                return boxedArray;
+            }
+        } else throw new IllegalArgumentException("Not an array");
     }
 }
