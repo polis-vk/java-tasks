@@ -53,7 +53,75 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if(object == null){
+            return "null";
+        }
+
+        Class<?> clazz = object.getClass();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        Field[] fields = clazz.getDeclaredFields();
+        Comparator<Field> fieldComparator = Comparator.comparing(Field::getName);
+        Arrays.sort(fields, fieldComparator);
+
+        int countOfFields = fields.length, countCommas = 0, countOfFieldsWithAnnotationSkip = 0;
+
+        stringBuilder.append("{");
+        for (Field field : fields) {
+            field.setAccessible(true);
+
+            if (field.getType().isArray()) {
+                Object valueField = null;
+                field.setAccessible(true);
+                try {
+                    valueField = field.get(object);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                if (valueField != null) {
+                    stringBuilder.append(field.getName()).append(": ");
+                    stringBuilder.append("[");
+                    if (Array.getLength(valueField) > 0) {
+                        stringBuilder.append(Array.get(valueField, 0));
+                    }
+                    for (int i = 1; i < Array.getLength(valueField); i++) {
+                        stringBuilder.append(", ").append(Array.get(valueField, i));
+                    }
+                    stringBuilder.append("]");
+                    field.setAccessible(false);
+                    return stringBuilder.append("}").toString();
+                }
+            }
+            int mod = field.getModifiers();
+            if (field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(mod)) {
+                countOfFieldsWithAnnotationSkip++;
+                continue;
+            }
+
+            String nameOfField = field.getName();
+            stringBuilder.append(nameOfField).append(": ");
+            Object valueOfField = null;
+            try {
+                valueOfField = field.get(object);
+            } catch (ReflectiveOperationException e) {
+                e.printStackTrace();
+            }
+            stringBuilder.append(valueOfField);
+            if (countOfFields == countCommas + 1) {
+                stringBuilder.append("}");
+                return stringBuilder.toString();
+            }
+            stringBuilder.append(", ");
+            countCommas++;
+            field.setAccessible(false);
+        }
+
+        if(countOfFieldsWithAnnotationSkip != 0){
+            stringBuilder.replace(stringBuilder.length() - 2, stringBuilder.length() ,"}");
+            return stringBuilder.toString();
+        }
+
+        stringBuilder.append("}");
+        return stringBuilder.toString();
     }
 }
