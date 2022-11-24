@@ -52,6 +52,9 @@ public class SimpleExecutor implements Executor {
             throw new RuntimeException(e);
         }
 
+        if (freeThreadsCount.get() > 0 || threads.size() == maxThreadCount) {
+            return;
+        }
         synchronized (threads) {
             if (freeThreadsCount.get() == 0 && threads.size() < maxThreadCount) {
                 Thread newThread = new Thread(() -> {
