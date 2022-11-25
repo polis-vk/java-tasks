@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.ArrayList;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -15,8 +19,18 @@ import java.util.concurrent.Executor;
  */
 public class SimpleExecutor implements Executor {
 
-    public SimpleExecutor(int maxThreadCount) {
+    private final LinkedBlockingQueue<Runnable> tasks;
+    private boolean isStopped;
+    private final ArrayList<Thread> threadList;
+    private final AtomicInteger freeThreads;
+    private final int maxThreadCount;
 
+    public SimpleExecutor(int maxThreadCount) {
+        this.tasks = new LinkedBlockingQueue<>();
+        this.isStopped = false;
+        this.threadList = new ArrayList<>(maxThreadCount);
+        this.freeThreads = new AtomicInteger(0);
+        this.maxThreadCount = maxThreadCount;
     }
 
     /**
@@ -25,7 +39,33 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (isStopped) {
+            throw new RejectedExecutionException();
+        }
+        tasks.add(command);
 
+        synchronized (this) {
+            if (freeThreads.get() == 0 && getLiveThreadsCount() < maxThreadCount) {
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            while (!Thread.currentThread().isInterrupted() && (!isStopped || !tasks.isEmpty())) {
+                                freeThreads.incrementAndGet();
+                                if (!tasks.isEmpty()) {
+                                    freeThreads.decrementAndGet();
+                                    tasks.take().run();
+                                }
+                            }
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+                threadList.add(thread);
+                thread.start();
+            }
+        }
     }
 
     /**
@@ -33,6 +73,7 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
+        isStopped = true;
     }
 
     /**
@@ -40,13 +81,16 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdownNow() {
-
+        isStopped = true;
+        for (Thread thread : threadList) {
+            thread.interrupt();
+        }
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        return threadList.size();
     }
 }
