@@ -42,13 +42,11 @@ public class SimpleExecutor implements Executor {
         if (isShutdown) {
             throw new RejectedExecutionException();
         }
-
         try {
             tasks.put(command);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
         if (newThreadShouldBeCreated()) {
             synchronized (this) {
                 if (newThreadShouldBeCreated()) {
@@ -86,10 +84,10 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdownNow() {
+        shutdown();
         for (Thread thread : threads) {
             thread.interrupt();
         }
-        shutdown();
     }
 
     /**
