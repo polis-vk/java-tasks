@@ -53,8 +53,8 @@ public class SimpleExecutor implements Executor {
                     Thread newThread = new Thread(new Runnable() {
                         public void run() {
                             while (!isShutdown || !(tasks.isEmpty() || Thread.currentThread().isInterrupted())) {
-                                counterOfFreeTreads.getAndIncrement();
                                 try {
+                                    counterOfFreeTreads.getAndIncrement();
                                     Runnable task = tasks.take();
                                     counterOfFreeTreads.getAndDecrement();
                                     task.run();
