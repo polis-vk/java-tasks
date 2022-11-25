@@ -1,16 +1,41 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
  *
  * Задачи должны выполняться в порядке FIFO
  *
- * Max 6 баллов
+ * Max 6 тугриков
  */
 public class SingleExecutor implements Executor {
 
+    private volatile boolean isTerminated;
+    private final customThread thread;
+    private final BlockingQueue<Runnable> tasks;
+
+    private class customThread extends Thread {
+        @Override
+        public void run() {
+            while (!(isTerminated && tasks.isEmpty())) {
+                try {
+                    tasks.take().run();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public SingleExecutor() {
+        tasks = new LinkedBlockingQueue<>();
+        thread = new customThread();
+        thread.start();
+    }
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -18,6 +43,10 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (isTerminated) {
+            throw new RejectedExecutionException();
+        }
+        tasks.add(command);
     }
 
     /**
@@ -25,6 +54,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
+        isTerminated = true;
     }
 
     /**
@@ -32,6 +62,7 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
-
+        thread.interrupt();
+        isTerminated = true;
     }
 }
