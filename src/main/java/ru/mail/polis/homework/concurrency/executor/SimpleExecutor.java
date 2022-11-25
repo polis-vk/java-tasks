@@ -53,7 +53,6 @@ public class SimpleExecutor implements Executor {
             synchronized (this) {
                 if (newThreadShouldBeCreated()) {
                     Thread newThread = new Thread(new Runnable() {
-                        @Override
                         public void run() {
                             while (!isShutdown || !(tasks.isEmpty() || Thread.currentThread().isInterrupted())) {
                                 counterOfFreeTreads.getAndIncrement();
