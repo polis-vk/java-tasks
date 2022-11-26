@@ -52,7 +52,7 @@ public class SimpleExecutor implements Executor {
                 if (newThreadShouldBeCreated()) {
                     Thread newThread = new Thread(new Runnable() {
                         public void run() {
-                            while (!isShutdown || !tasks.isEmpty()) {
+                            while (!isShutdown) {
                                 try {
                                     counterOfFreeTreads.getAndIncrement();
                                     Runnable task = tasks.take();
