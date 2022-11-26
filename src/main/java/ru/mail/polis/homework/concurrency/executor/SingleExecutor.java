@@ -23,7 +23,7 @@ public class SingleExecutor implements Executor {
     public SingleExecutor() {
         workQueue = new LinkedBlockingQueue<>();
         currentState = RUNNING;
-        thread = new Thread(new TaskWorker());
+        thread = new Thread(new Worker());
         thread.start();
     }
 
@@ -59,7 +59,7 @@ public class SingleExecutor implements Executor {
         currentState = STOP;
     }
 
-    private final class TaskWorker implements Runnable {
+    private final class Worker implements Runnable {
         @Override
         public void run() {
             while (currentState == RUNNING || !thread.isInterrupted()) {
@@ -70,4 +70,5 @@ public class SingleExecutor implements Executor {
             }
         }
     }
+
 }
