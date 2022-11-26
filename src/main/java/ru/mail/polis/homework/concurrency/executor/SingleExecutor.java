@@ -58,7 +58,7 @@ public class SingleExecutor implements Executor {
         @Override
         public void run() {
             try {
-                while (!isShutdown || !(tasks.isEmpty() || thread.isInterrupted())) {
+                while (!isShutdown || !tasks.isEmpty()) {
                     tasks.take().run();
                 }
             } catch (InterruptedException e) {
