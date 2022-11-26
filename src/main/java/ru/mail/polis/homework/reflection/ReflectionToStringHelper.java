@@ -1,11 +1,15 @@
 package ru.mail.polis.homework.reflection;
 
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -44,7 +48,7 @@ import java.util.stream.Stream;
  * Easy + Medium - нет наследования, массивов, но есть статические поля и поля с аннотацией SkipField (6 баллов)
  * Easy + Medium + Hard - нужно реализовать все требования задания (10 баллов)
  * <p>
- * того, по заданию можно набрать 10 баллов
+ * Итого, по заданию можно набрать 10 баллов
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
