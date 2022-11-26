@@ -1,15 +1,29 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
- *
+ * <p>
  * Задачи должны выполняться в порядке FIFO
- *
+ * <p>
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
+
+    private final BlockingQueue<Runnable> taskQueue;
+    private final SingleThread mainThread;
+    private static volatile boolean isRunning;
+
+    public SingleExecutor() {
+        taskQueue = new LinkedBlockingQueue<>();
+        mainThread = new SingleThread();
+        mainThread.start();
+        isRunning = true;
+    }
 
 
     /**
@@ -18,6 +32,19 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (command == null) {
+            throw new NullPointerException();
+        }
+
+        if (!isRunning) {
+            throw new RejectedExecutionException();
+        }
+
+        try {
+            taskQueue.put(command);
+        } catch (InterruptedException exc) {
+            throw new RuntimeException(exc);
+        }
     }
 
     /**
@@ -25,6 +52,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
+        isRunning = false;
     }
 
     /**
@@ -32,6 +60,20 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
+        shutdown();
+        mainThread.interrupt();
+    }
 
+    class SingleThread extends Thread {
+        @Override
+        public void run() {
+            try {
+                while (!this.isInterrupted() && (isRunning || !taskQueue.isEmpty())) {
+                    taskQueue.take().run();
+                }
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+        }
     }
 }
