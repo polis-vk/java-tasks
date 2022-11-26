@@ -1,6 +1,11 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.ArrayList;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -15,8 +20,32 @@ import java.util.concurrent.Executor;
  */
 public class SimpleExecutor implements Executor {
 
-    public SimpleExecutor(int maxThreadCount) {
+    private volatile boolean isTerminated;
+    private volatile AtomicInteger freeThreads = new AtomicInteger();
+    private volatile AtomicInteger totalThreads = new AtomicInteger();
+    private final BlockingQueue<Runnable> tasks;
+    private final ArrayList<CustomThread> threads;
 
+    private class CustomThread extends Thread {
+        @Override
+        public void run() {
+            while (!(isTerminated && tasks.isEmpty())) {
+                try {
+                    freeThreads.incrementAndGet();
+                    Runnable task = tasks.take();
+                    freeThreads.decrementAndGet();
+                    task.run();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public SimpleExecutor(int maxThreadCount) {
+        totalThreads.set(maxThreadCount);
+        tasks = new LinkedBlockingQueue<>();
+        threads = new ArrayList<>(maxThreadCount);
     }
 
     /**
@@ -25,7 +54,17 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-
+        if (isTerminated) {
+            throw new RejectedExecutionException();
+        }
+        tasks.add(command);
+        synchronized (this) {
+            if (threads.size() < totalThreads.get() && freeThreads.get() < tasks.size()) {
+                CustomThread customThread = new CustomThread();
+                threads.add(customThread);
+                customThread.start();
+            }
+        }
     }
 
     /**
@@ -33,6 +72,7 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
+        isTerminated = true;
     }
 
     /**
@@ -40,13 +80,18 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-
+        isTerminated = true;
+        synchronized (threads) {
+            threads.forEach(Thread::interrupt);
+        }
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        synchronized (threads) {
+            return threads.size();
+        }
     }
 }

@@ -15,10 +15,10 @@ import java.util.concurrent.RejectedExecutionException;
 public class SingleExecutor implements Executor {
 
     private volatile boolean isTerminated;
-    private final customThread thread;
+    private final CustomThread thread;
     private final BlockingQueue<Runnable> tasks;
 
-    private class customThread extends Thread {
+    private class CustomThread extends Thread {
         @Override
         public void run() {
             while (!(isTerminated && tasks.isEmpty())) {
@@ -33,7 +33,7 @@ public class SingleExecutor implements Executor {
 
     public SingleExecutor() {
         tasks = new LinkedBlockingQueue<>();
-        thread = new customThread();
+        thread = new CustomThread();
         thread.start();
     }
 
