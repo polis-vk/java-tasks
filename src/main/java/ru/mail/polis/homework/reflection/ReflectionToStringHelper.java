@@ -3,10 +3,7 @@ package ru.mail.polis.homework.reflection;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -49,71 +46,61 @@ import java.util.List;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
+    private static final String NULL_RESULT = "null";
 
     public static String reflectiveToString(Object object) {
         // TODO: implement
         if (object == null) {
-            return "null";
+            return NULL_RESULT;
         }
 
         List<String> result = new ArrayList<>();
         try {
-            Field[] allFields = getAllFields(object);
+            List<Field> allFields = getAllFields(object);
             boolean isStaticFld;
             boolean isSkip;
             boolean isArray;
-            StringBuilder currentElement;
+            StringBuilder currentElement = new StringBuilder();
 
             for (Field fld : allFields) {
                 fld.setAccessible(true);
                 isStaticFld = Modifier.isStatic(fld.getModifiers());
                 isSkip = fld.isAnnotationPresent(SkipField.class);
                 isArray = fld.getType().isArray();
-                currentElement = new StringBuilder();
 
                 if (!isStaticFld && !isSkip) {
+                    currentElement.append(fld.getName()).append(": ");
                     if (fld.get(object) == null) {
-                        result.add(currentElement
-                                .append(fld.getName())
-                                .append(": null").toString());
+                        result.add(currentElement.append("null").toString());
                     } else if (isArray) {
-                        result.add(currentElement
-                                .append(fld.getName())
-                                .append(": ")
-                                .append(arrayToString(fld.get(object))).toString());
+                        result.add(currentElement.append(arrayToString(fld.get(object))).toString());
                     } else {
-                        result.add(currentElement
-                                .append(fld.getName())
-                                .append(": ")
-                                .append(fld.get(object)).toString());
+                        result.add(currentElement.append(fld.get(object)).toString());
                     }
                 }
+                fld.setAccessible(false);
+                currentElement.setLength(0);
             }
         }
         catch (Throwable e) {
             System.err.println(e);
         }
-        return "{" + String.join(", ", result) + "}";
+        return new StringBuilder(String.join(", ", result)).insert(0, "{").append("}").toString();
     }
 
-    private static Field[] getAllFields(Object object) {
-        Field[] currentFieldsList = object.getClass().getDeclaredFields();
-        Field[] allFields = currentFieldsList;
-        Field[] tempArrFields;
-        Arrays.sort(currentFieldsList, Comparator.comparing(Field::getName));
-        Class<?> superClass = object.getClass().getSuperclass();
+    private static List<Field> getAllFields(Object object) {
+        List<Field> allSortedFields = new ArrayList<>();
+        Field[] currentSortedFields;
+        Class<?> currentClass = object.getClass();
 
-        while (!superClass.equals(Object.class)) {
-            currentFieldsList = superClass.getDeclaredFields();
-            Arrays.sort(currentFieldsList, Comparator.comparing(Field::getName));
-            tempArrFields = new Field[allFields.length + currentFieldsList.length];
-            System.arraycopy(allFields, 0, tempArrFields, 0, allFields.length);
-            System.arraycopy(currentFieldsList, 0, tempArrFields, allFields.length, currentFieldsList.length);
-            superClass = superClass.getSuperclass();
-            allFields = tempArrFields;
+        while (!currentClass.equals(Object.class)) {
+            currentSortedFields = currentClass.getDeclaredFields();
+            Arrays.sort(currentSortedFields, Comparator.comparing(Field::getName));
+            allSortedFields.addAll(List.of(currentSortedFields));
+            currentClass = currentClass.getSuperclass();
         }
 
-        return allFields;
+        return allSortedFields;
     }
 
     private static String arrayToString(Object array) {
@@ -131,6 +118,6 @@ public class ReflectionToStringHelper {
         for (int i = 0; i < arrayLength; i++) {
             result.add(String.valueOf(Array.get(array, i)));
         }
-        return "[" + String.join(", ", result) + "]";
+        return new StringBuilder(String.join(", ", result)).insert(0, "[").append("]").toString();
     }
 }
