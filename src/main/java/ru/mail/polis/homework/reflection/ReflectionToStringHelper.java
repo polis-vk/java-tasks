@@ -55,27 +55,23 @@ import java.util.stream.Collectors;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
-
-    public static void main(String[] args) {
-        reflectiveToString(new Easy(1, "Damn", 12.5));
-    }
+    private static final String NULL = "null";
 
     public static String reflectiveToString(Object object) {
         if (Objects.equals(object, null)) {
-            return "null";
+            return NULL;
         }
         Class<?> clazz = object.getClass();
         List<Field> fields = new ArrayList<>();
         do {
             fields.addAll(
                     Arrays.stream(clazz.getDeclaredFields())
-                            .filter(f -> (!Modifier.isStatic(f.getModifiers()) && !hasSkipFieldAnnotation(f)))
+                            .filter(field -> (!Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class)))
                             .sorted(Comparator.comparing(Field::getName))
                             .collect(Collectors.toList())
             );
             clazz = clazz.getSuperclass();
-        }
-        while (clazz != null);
+        } while (clazz != null);
         String result = null;
         try {
             result = getStringOfObject(object, fields);
@@ -88,16 +84,21 @@ public class ReflectionToStringHelper {
     private static String getStringOfObject(Object obj, List<Field> fields) throws IllegalAccessException {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("{");
-        for (Field f : fields) {
-            if (Modifier.isPrivate(f.getModifiers())) {
-                f.setAccessible(true);
+        boolean accesibilityIsChanged = false;
+        for (Field field : fields) {
+            if (!field.canAccess(obj)) {
+                accesibilityIsChanged = true;
+                field.setAccessible(true);
             }
-            if (f.getType().isArray()) {
-                addStringOfArrayField(obj, f, stringBuilder);
+            if (field.getType().isArray()) {
+                addStringOfArrayField(obj, field, stringBuilder);
             } else {
-                stringBuilder.append(f.getName()).append(": ").append(f.get(obj)).append(", ");
+                stringBuilder.append(field.getName()).append(": ").append(field.get(obj)).append(", ");
             }
-            f.setAccessible(false);
+            if (accesibilityIsChanged) {
+                field.setAccessible(false);
+                accesibilityIsChanged = false;
+            }
         }
         if (!fields.isEmpty()) {
             stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
@@ -106,9 +107,9 @@ public class ReflectionToStringHelper {
         return stringBuilder.toString();
     }
 
-    private static void addStringOfArrayField(Object obj, Field f, StringBuilder stringBuilder) throws IllegalAccessException {
-        Object array = f.get(obj);
-        stringBuilder.append(f.getName()).append(": ");
+    private static void addStringOfArrayField(Object obj, Field field, StringBuilder stringBuilder) throws IllegalAccessException {
+        Object array = field.get(obj);
+        stringBuilder.append(field.getName()).append(": ");
         if (array != null) {
             stringBuilder.append("[");
             int i;
@@ -122,15 +123,5 @@ public class ReflectionToStringHelper {
         } else {
             stringBuilder.append("null, ");
         }
-    }
-
-    private static boolean hasSkipFieldAnnotation(Field f) {
-        Annotation[] annotations = f.getAnnotations();
-        for (Annotation annotation : annotations) {
-            if (annotation instanceof SkipField) {
-                return true;
-            }
-        }
-        return false;
     }
 }
