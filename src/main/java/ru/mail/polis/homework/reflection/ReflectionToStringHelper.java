@@ -5,7 +5,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -59,7 +58,7 @@ public class ReflectionToStringHelper {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append('{');
 
-        Class<?> currentReflectionClass = object.getClass();
+        Class currentReflectionClass = object.getClass();
 
         while (currentReflectionClass != null) {
             Stream<Field> streamOfFields = getStreamOfFields(currentReflectionClass);
@@ -77,7 +76,7 @@ public class ReflectionToStringHelper {
         return stringBuilder.toString();
     }
 
-    public static Stream<Field> getStreamOfFields(Class<?> clazz) {
+    public static Stream<Field> getStreamOfFields(Class clazz) {
         return Stream.of(clazz.getDeclaredFields())
                 .filter(field -> !Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class));
     }
