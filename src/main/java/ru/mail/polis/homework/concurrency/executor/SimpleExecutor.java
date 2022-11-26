@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.ArrayList;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.Executor;
 
 /**
@@ -15,8 +18,16 @@ import java.util.concurrent.Executor;
  */
 public class SimpleExecutor implements Executor {
 
-    public SimpleExecutor(int maxThreadCount) {
+    private BlockingQueue<Runnable> commands = new LinkedBlockingDeque<>();
+    private ArrayList<MyThread> threads;
+    private volatile boolean isRunning = true;
+    private int maxThreadCount;
+    private AtomicInteger size = new AtomicInteger();
 
+
+    public SimpleExecutor(int maxThreadCount) {
+        this.maxThreadCount = maxThreadCount;
+        threads = new ArrayList<>(maxThreadCount);
     }
 
     /**
@@ -25,7 +36,18 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-
+        if (!isRunning) {
+            throw new RejectedExecutionException();
+        }
+        synchronized (threads) {
+            if (getLiveThreadsCount() < maxThreadCount && isAllBusy()) {
+                MyThread thread = new MyThread();
+                threads.add(thread);
+                thread.start();
+                size.incrementAndGet();
+            }
+        }
+        commands.add(command);
     }
 
     /**
@@ -33,6 +55,7 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
+        isRunning = false;
     }
 
     /**
@@ -40,13 +63,49 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-
+        isRunning = false;
+        for (Thread thread : threads) {
+            thread.interrupt();
+        }
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        return size.get();
+    }
+
+    public boolean isAllBusy() {
+        for (MyThread thread : threads) {
+            if (!thread.getBusy()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private class MyThread extends Thread {
+
+        private volatile boolean isBusy = true;
+
+        @Override
+        public void run() {
+            while (!commands.isEmpty() || isRunning) {
+                try {
+                    isBusy = false;
+                    Runnable command = commands.take();
+                    isBusy = true;
+                    command.run();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        public boolean getBusy() {
+            return isBusy;
+        }
+
     }
 }

@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.ArrayDeque;
 import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
@@ -11,6 +13,9 @@ import java.util.concurrent.Executor;
  */
 public class SingleExecutor implements Executor {
 
+    private ArrayDeque<Runnable> commands = new ArrayDeque<>();
+    private volatile boolean isRunning = true;
+    private Thread thread;
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -18,6 +23,11 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (isRunning) {
+            commands.addLast(command);
+        } else {
+            throw new RejectedExecutionException();
+        }
     }
 
     /**
@@ -25,6 +35,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
+        isRunning = false;
     }
 
     /**
@@ -32,6 +43,24 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
+        isRunning = false;
+        thread.interrupt();
+    }
 
+    public SingleExecutor() {
+        thread = new Thread(() -> existCommand());
+        thread.start();
+    }
+
+    private void existCommand () {
+        while (true) {
+            if (commands.isEmpty() && !isRunning) {
+                break;
+            }
+
+            if (!commands.isEmpty()) {
+                commands.pollFirst().run();
+            }
+        }
     }
 }
