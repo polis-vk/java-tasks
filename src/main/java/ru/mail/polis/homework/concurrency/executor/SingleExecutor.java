@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.Executor;
 
 /**
@@ -14,14 +14,15 @@ import java.util.concurrent.Executor;
 public class SingleExecutor implements Executor {
 
     private final Thread singleThread;
-    private final ConcurrentLinkedDeque<Runnable> commandDeque = new ConcurrentLinkedDeque<>();
-    private volatile boolean isShutDown = false;
+    private final ConcurrentLinkedQueue<Runnable> commandQueue = new ConcurrentLinkedQueue<>();
+    private volatile boolean isShutDown;
 
     public SingleExecutor() {
         this.singleThread = new Thread(() -> {
-            while (true) {
-                if (!commandDeque.isEmpty()) {
-                    commandDeque.pollLast().run();
+            while (!isShutDown || !commandQueue.isEmpty()) {
+                try {
+                    commandQueue.poll().run();
+                } catch (NullPointerException ignored) {
                 }
             }
         });
@@ -37,7 +38,7 @@ public class SingleExecutor implements Executor {
         if (isShutDown) {
             throw new RejectedExecutionException();
         }
-        commandDeque.addFirst(command);
+        commandQueue.add(command);
     }
 
     /**
