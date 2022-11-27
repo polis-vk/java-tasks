@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
@@ -24,14 +26,14 @@ public class SimpleExecutor implements Executor {
     private final int maxThreadCount;
     private final AtomicInteger availableThreadsCount;
     private final BlockingQueue<Runnable> workQueue;
-    private final Set<Worker> workers;
+    private final List<Worker> workers;
     private volatile boolean isShutdown;
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
         availableThreadsCount = new AtomicInteger(0);
         workQueue = new LinkedBlockingQueue<>();
-        workers = new HashSet<>(maxThreadCount);
+        workers = new ArrayList<>(maxThreadCount);
     }
 
     /**
@@ -40,12 +42,15 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (command == null) {
+            throw new RuntimeException("Incorrect runnable object.");
+        }
         if (isShutdown) {
             throw new RejectedExecutionException();
         }
 
-        synchronized (workQueue) {
-            if (availableThreadsCount.get() == 0 && workers.size() < maxThreadCount) {
+        synchronized (workers) {
+            if (workers.size() < maxThreadCount && availableThreadsCount.compareAndSet(0, 1)) {
                 Worker worker = new Worker();
                 worker.start();
                 workers.add(worker);
@@ -67,10 +72,10 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdownNow() {
+        isShutdown = true;
         for (Worker worker : workers) {
             worker.interrupt();
         }
-        isShutdown = true;
     }
 
     /**
@@ -84,12 +89,13 @@ public class SimpleExecutor implements Executor {
         @Override
         public void run() {
             while ((!isShutdown || !workQueue.isEmpty()) && !isInterrupted()) {
-                availableThreadsCount.incrementAndGet();
                 try {
                     Runnable command = workQueue.take();
                     availableThreadsCount.decrementAndGet();
                     command.run();
+                    availableThreadsCount.incrementAndGet();
                 } catch (InterruptedException e) {
+                    availableThreadsCount.decrementAndGet();
                     workers.remove(this);
                     return;
                 }

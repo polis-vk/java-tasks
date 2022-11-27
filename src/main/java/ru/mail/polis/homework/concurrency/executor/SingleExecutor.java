@@ -30,9 +30,13 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (command == null) {
+            throw new RuntimeException("Incorrect runnable object.");
+        }
         if (isShutdown) {
             throw new RejectedExecutionException();
         }
+
         workQueue.add(command);
     }
 
@@ -49,8 +53,8 @@ public class SingleExecutor implements Executor {
      * 2 тугрика за метод
      */
     public void shutdownNow() {
-        workerThread.interrupt();
         isShutdown = true;
+        workerThread.interrupt();
     }
 
     private class Worker extends Thread {
