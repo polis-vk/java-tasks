@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.Executor;
@@ -18,16 +19,15 @@ import java.util.concurrent.Executor;
  */
 public class SimpleExecutor implements Executor {
 
-    private BlockingQueue<Runnable> commands = new LinkedBlockingDeque<>();
-    private ArrayList<MyThread> threads;
-    private volatile boolean isRunning = true;
+    private final BlockingQueue<Runnable> commands = new LinkedBlockingDeque<>();
+    private volatile boolean running = true;
     private int maxThreadCount;
+    private List<MyThread> threads = new ArrayList<>(maxThreadCount);
     private AtomicInteger size = new AtomicInteger();
 
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
-        threads = new ArrayList<>(maxThreadCount);
     }
 
     /**
@@ -36,7 +36,7 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (!isRunning) {
+        if (!running) {
             throw new RejectedExecutionException();
         }
         synchronized (threads) {
@@ -55,7 +55,7 @@ public class SimpleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        isRunning = false;
+        running = false;
     }
 
     /**
@@ -63,9 +63,11 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-        isRunning = false;
-        for (Thread thread : threads) {
-            thread.interrupt();
+        running = false;
+        synchronized (threads) {
+            for (Thread thread : threads) {
+                thread.interrupt();
+            }
         }
     }
 
@@ -91,7 +93,7 @@ public class SimpleExecutor implements Executor {
 
         @Override
         public void run() {
-            while (!commands.isEmpty() || isRunning) {
+            while (!commands.isEmpty() || running) {
                 try {
                     isBusy = false;
                     Runnable command = commands.take();

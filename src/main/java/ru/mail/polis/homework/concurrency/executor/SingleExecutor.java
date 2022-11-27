@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -13,9 +14,9 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SingleExecutor implements Executor {
 
-    private ArrayDeque<Runnable> commands = new ArrayDeque<>();
-    private volatile boolean isRunning = true;
-    private Thread thread;
+    private final Deque<Runnable> commands = new ArrayDeque<>();
+    private volatile boolean running = true;
+    private final Thread thread;
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -23,7 +24,7 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (isRunning) {
+        if (running) {
             commands.addLast(command);
         } else {
             throw new RejectedExecutionException();
@@ -35,7 +36,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        isRunning = false;
+        running = false;
     }
 
     /**
@@ -43,7 +44,7 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
-        isRunning = false;
+        running = false;
         thread.interrupt();
     }
 
@@ -53,11 +54,7 @@ public class SingleExecutor implements Executor {
     }
 
     private void existCommand () {
-        while (true) {
-            if (commands.isEmpty() && !isRunning) {
-                break;
-            }
-
+        while (!commands.isEmpty() || running) {
             if (!commands.isEmpty()) {
                 commands.pollFirst().run();
             }
