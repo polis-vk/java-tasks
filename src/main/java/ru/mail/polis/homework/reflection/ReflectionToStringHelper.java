@@ -49,9 +49,11 @@ import java.util.Objects;
  */
 
 public class ReflectionToStringHelper {
+    private static final String NULLSTRING = "null";
+
     public static String reflectiveToString(Object object) {
         if (object == null) {
-            return "null";
+            return NULLSTRING;
         }
 
         StringBuilder totalString = new StringBuilder("{");
@@ -73,20 +75,19 @@ public class ReflectionToStringHelper {
 
     private static void convertToStringForOneClass(Field[] fields, Object obj, StringBuilder strBuilder) throws IllegalAccessException {
         if (fields.length == 0) {
-            strBuilder.append("null").append(", ");
+            strBuilder.append(NULLSTRING).append(", ");
         }
 
         Arrays.sort(fields, Comparator.comparing(Field::getName));
         for (Field field : fields) {
-            boolean isAccessChanged = Modifier.isPrivate(field.getModifiers()) ||
-                    Modifier.isProtected(field.getModifiers());
-
+            boolean isAccessChanged = false;
             if (field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
 
-            if (isAccessChanged) {
+            if (!field.isAccessible()) {
                 field.setAccessible(true);
+                isAccessChanged = true;
             }
 
             strBuilder.append(field.getName()).append(": ");
@@ -105,7 +106,7 @@ public class ReflectionToStringHelper {
 
     private static void convertArrayToString(StringBuilder strBuilder, Object fieldVal) {
         if (Objects.equals(fieldVal, null)) {
-            strBuilder.append("null");
+            strBuilder.append(NULLSTRING);
             return;
         }
 
