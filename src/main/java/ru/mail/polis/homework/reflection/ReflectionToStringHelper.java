@@ -70,8 +70,7 @@ public class ReflectionToStringHelper {
                 field.setAccessible(true);
             }
 
-            int mod = field.getModifiers();
-            if (field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(mod)) {
+            if (field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers())) {
                 countOfFieldsWithAnnotationSkip++;
                 continue;
             }
