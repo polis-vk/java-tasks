@@ -5,8 +5,8 @@ import java.util.Objects;
 public class User {
     private final String name;
     private final int age;
-    private Book book;
-    private int readedPages;
+    private final Book book;
+    private final int readedPages;
 
     public User(String name, int age, Book book, int readedPages) {
         this.name = name;
@@ -29,14 +29,6 @@ public class User {
 
     public int getReadedPages() {
         return readedPages;
-    }
-
-    public void setBook(Book book) {
-        this.book = book;
-    }
-
-    public void setReadedPages(int readedPages) {
-        this.readedPages = readedPages;
     }
 
     @Override

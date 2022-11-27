@@ -20,17 +20,4 @@ public class Order {
     public Map<Item, Integer> getItemCount() {
         return itemCount;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Order order = (Order) o;
-        return Objects.equals(time, order.time) && Objects.equals(itemCount, order.itemCount);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(time, itemCount);
-    }
 }

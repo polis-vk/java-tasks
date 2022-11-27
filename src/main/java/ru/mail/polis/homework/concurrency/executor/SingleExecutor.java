@@ -9,7 +9,7 @@ import java.util.concurrent.RejectedExecutionException;
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
  * <p>
  * Задачи должны выполняться в порядке FIFO
- * <p>
+ *
  * Max 6 баллов
  */
 public class SingleExecutor implements Executor {
