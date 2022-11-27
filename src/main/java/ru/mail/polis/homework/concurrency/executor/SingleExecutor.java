@@ -15,7 +15,7 @@ import java.util.concurrent.RejectedExecutionException;
 public class SingleExecutor implements Executor {
     private final BlockingQueue<Runnable> commandQueue = new LinkedBlockingQueue<>();
     private volatile boolean isShutdown = false;
-    private final MyThread thread = new MyThread();
+    private final Thread thread = new SingleThread();
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -49,7 +49,7 @@ public class SingleExecutor implements Executor {
         thread.interrupt();
     }
 
-    private class MyThread extends Thread {
+    private class SingleThread extends Thread {
         @Override
         public void run() {
             while (!isShutdown || !commandQueue.isEmpty()) {

@@ -39,12 +39,14 @@ public class SimpleExecutor implements Executor {
         if (isShutdown) {
             throw new RejectedExecutionException();
         }
-        commandQueue.add(command);
-        if (freeThreadCount.get() == 0 && threads.size() < maxThreadCount) {
-            Thread thread = new MyThread();
-            threads.add(thread);
-            thread.start();
+        synchronized (this) {
+            if (freeThreadCount.get() == 0 && threads.size() < maxThreadCount) {
+                Thread thread = new SimpleThread();
+                threads.add(thread);
+                thread.start();
+            }
         }
+        commandQueue.add(command);
     }
 
     /**
@@ -61,8 +63,10 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         isShutdown = true;
-        for (Thread thread : threads) {
-            thread.interrupt();
+        synchronized (this) {
+            for (Thread thread : threads) {
+                thread.interrupt();
+            }
         }
     }
 
@@ -70,10 +74,12 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return threads.size();
+        synchronized (this) {
+            return threads.size();
+        }
     }
 
-    private class MyThread extends Thread {
+    private class SimpleThread extends Thread {
         @Override
         public void run() {
             while (!isShutdown || !commandQueue.isEmpty()) {
