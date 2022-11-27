@@ -111,7 +111,6 @@ public class ReflectionToStringHelper {
 
     private static String getArray(Field field, StringBuilder stringBuilder, Object object) {
         Object valueField = null;
-        field.setAccessible(true);
         try {
             valueField = field.get(object);
         } catch (IllegalAccessException e) {
