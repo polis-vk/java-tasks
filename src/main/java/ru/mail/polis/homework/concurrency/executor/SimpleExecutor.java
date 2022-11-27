@@ -24,7 +24,9 @@ public class SimpleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> workersTasks = new LinkedBlockingQueue<>();
     private final ReentrantLock executeLock = new ReentrantLock();
+    private final ReentrantLock shutDownLock = new ReentrantLock();
     private final AtomicInteger freeWorkers = new AtomicInteger(0);
+    private final AtomicInteger workersCounter = new AtomicInteger(0);
     private final List<Thread> workers;
     private final int maxThreadCount;
     private volatile boolean isShutdown;
@@ -43,17 +45,17 @@ public class SimpleExecutor implements Executor {
         if (isShutdown) {
             throw new RejectedExecutionException();
         }
-
-        if (workers.size() < maxThreadCount && freeWorkers.get() == 0) {
+        workersTasks.add(command);
+        if (workersCounter.get() < maxThreadCount && freeWorkers.get() == 0) {
             executeLock.lock();
-            if (workers.size() < maxThreadCount && freeWorkers.get() == 0) {
+            if (workersCounter.get() < maxThreadCount && freeWorkers.get() == 0) {
                 Thread worker = new Thread(new Worker());
+                workersCounter.incrementAndGet();
                 workers.add(worker);
                 worker.start();
             }
             executeLock.unlock();
         }
-        workersTasks.add(command);
     }
 
     /**
@@ -70,16 +72,18 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         isShutdown = true;
+        shutDownLock.lock();
         for (Thread worker : workers) {
             worker.interrupt();
         }
+        shutDownLock.unlock();
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return workers.size();
+        return workersCounter.get();
     }
 
     private class Worker implements Runnable {
