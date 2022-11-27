@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -14,7 +14,7 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SingleExecutor implements Executor {
 
-    private final Deque<Runnable> commands = new ArrayDeque<>();
+    private final BlockingQueue<Runnable> commands = new LinkedBlockingQueue<>();
     private volatile boolean running = true;
     private final Thread thread;
 
@@ -25,7 +25,7 @@ public class SingleExecutor implements Executor {
     @Override
     public void execute(Runnable command) {
         if (running) {
-            commands.addLast(command);
+            commands.add(command);
         } else {
             throw new RejectedExecutionException();
         }
@@ -55,8 +55,12 @@ public class SingleExecutor implements Executor {
 
     private void existCommand () {
         while (!commands.isEmpty() || running) {
-            if (!commands.isEmpty()) {
-                commands.pollFirst().run();
+            try {
+                if (!commands.isEmpty()) {
+                    commands.take().run();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
