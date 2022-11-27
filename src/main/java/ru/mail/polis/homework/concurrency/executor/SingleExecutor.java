@@ -19,7 +19,6 @@ public class SingleExecutor implements Executor {
 
     public SingleExecutor() {
         commands = new LinkedBlockingQueue<>();
-        shutdownMode = false;
         eternalThread = new EternalThread();
         eternalThread.start();
     }
@@ -50,9 +49,7 @@ public class SingleExecutor implements Executor {
      */
     public void shutdownNow() {
         shutdown();
-        while (!eternalThread.isInterrupted()) {
-            eternalThread.interrupt();
-        }
+        eternalThread.interrupt();
     }
 
     private class EternalThread extends Thread {

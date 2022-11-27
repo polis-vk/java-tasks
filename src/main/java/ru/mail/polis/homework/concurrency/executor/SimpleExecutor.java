@@ -29,9 +29,8 @@ public class SimpleExecutor implements Executor {
         this.maxThreadCount = maxThreadCount;
         threads = new EternalThread[maxThreadCount];
         commands = new LinkedBlockingQueue<>();
-        waitingThreadsCount = new AtomicInteger(0);
-        threadsInitialized = new AtomicInteger(0);
-        shutdownMode = false;
+        waitingThreadsCount = new AtomicInteger();
+        threadsInitialized = new AtomicInteger();
     }
 
     /**
@@ -44,7 +43,7 @@ public class SimpleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
         synchronized (threadsInitialized) {
-            if (waitingThreadsCount.get() == 0 && threadsInitialized.get() < maxThreadCount) {
+            if (waitingThreadsCount.get() == 0 && threadsInitialized.get() < maxThreadCount && !shutdownMode) {
                 Thread eternalThread = new EternalThread();
                 threads[threadsInitialized.getAndIncrement()] = eternalThread;
                 eternalThread.start();
@@ -67,8 +66,10 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         shutdown();
-        for (int i = 0; i < threadsInitialized.get(); i++) {
-            threads[i].interrupt();
+        synchronized (threadsInitialized) {
+            for (int i = 0; i < threadsInitialized.get(); i++) {
+                threads[i].interrupt();
+            }
         }
     }
 
