@@ -1,9 +1,9 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.ArrayDeque;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
@@ -15,24 +15,19 @@ import java.util.concurrent.RejectedExecutionException;
 public class SingleExecutor implements Executor {
 
     private final LinkedBlockingQueue<Runnable> tasks;
-    private boolean isStopped;
+    private final AtomicBoolean isStopped;
     private final Thread thread;
 
     public SingleExecutor() {
         this.tasks = new LinkedBlockingQueue<>();
-        this.isStopped = false;
-        this.thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    while (!thread.isInterrupted() && (!isStopped || !tasks.isEmpty())) {
-                        if (!tasks.isEmpty()) {
-                            tasks.take().run();
-                        }
-                    }
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+        this.isStopped = new AtomicBoolean(false);
+        this.thread = new Thread(() -> {
+            try {
+                while (!isStopped.get() || !tasks.isEmpty()) {
+                    tasks.take().run();
                 }
+            } catch (InterruptedException ignored) {
+
             }
         });
         thread.start();
@@ -43,10 +38,12 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (isStopped) {
+        if (isStopped.get()) {
             throw new RejectedExecutionException();
         }
-        tasks.add(command);
+        if (command != null) {
+            tasks.add(command);
+        }
     }
 
     /**
@@ -54,7 +51,7 @@ public class SingleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
-        isStopped = true;
+        isStopped.set(true);
     }
 
     /**
@@ -62,7 +59,8 @@ public class SingleExecutor implements Executor {
      * 2 тугрика за метод
      */
     public void shutdownNow() {
-        isStopped = true;
+        isStopped.set(true);
         thread.interrupt();
     }
+
 }

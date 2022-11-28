@@ -1,9 +1,11 @@
 package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -20,15 +22,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SimpleExecutor implements Executor {
 
     private final LinkedBlockingQueue<Runnable> tasks;
-    private boolean isStopped;
-    private final ArrayList<Thread> threadList;
+    private final AtomicBoolean isStopped;
+    private final CopyOnWriteArrayList<Thread> threadList;
     private final AtomicInteger freeThreads;
     private final int maxThreadCount;
 
     public SimpleExecutor(int maxThreadCount) {
         this.tasks = new LinkedBlockingQueue<>();
-        this.isStopped = false;
-        this.threadList = new ArrayList<>(maxThreadCount);
+        this.isStopped = new AtomicBoolean(false);
+        this.threadList = new CopyOnWriteArrayList<>(new ArrayList<>(maxThreadCount));
         this.freeThreads = new AtomicInteger(0);
         this.maxThreadCount = maxThreadCount;
     }
@@ -39,31 +41,29 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (isStopped) {
+        if (isStopped.get()) {
             throw new RejectedExecutionException();
         }
-        tasks.add(command);
-
         synchronized (this) {
             if (freeThreads.get() == 0 && getLiveThreadsCount() < maxThreadCount) {
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            while (!Thread.currentThread().isInterrupted() && (!isStopped || !tasks.isEmpty())) {
-                                freeThreads.incrementAndGet();
-                                if (!tasks.isEmpty()) {
-                                    freeThreads.decrementAndGet();
-                                    tasks.take().run();
-                                }
+                Thread thread = new Thread(() -> {
+                    try {
+                        while (!isStopped.get()) {
+                            freeThreads.incrementAndGet();
+                            if (!tasks.isEmpty()) {
+                                freeThreads.decrementAndGet();
+                                tasks.take().run();
                             }
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
                         }
+                    } catch (InterruptedException ignored) {
+
                     }
                 });
                 threadList.add(thread);
                 thread.start();
+            }
+            if (command != null) {
+                tasks.add(command);
             }
         }
     }
@@ -73,7 +73,7 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
-        isStopped = true;
+        isStopped.set(true);
     }
 
     /**
@@ -81,7 +81,7 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdownNow() {
-        isStopped = true;
+        isStopped.set(true);
         for (Thread thread : threadList) {
             thread.interrupt();
         }
