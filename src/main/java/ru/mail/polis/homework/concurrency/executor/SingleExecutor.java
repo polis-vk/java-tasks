@@ -18,19 +18,6 @@ public class SingleExecutor implements Executor {
     private final CustomThread thread;
     private final BlockingQueue<Runnable> tasks;
 
-    private class CustomThread extends Thread {
-        @Override
-        public void run() {
-            while (!(isTerminated && tasks.isEmpty())) {
-                try {
-                    tasks.take().run();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
     public SingleExecutor() {
         tasks = new LinkedBlockingQueue<>();
         thread = new CustomThread();
@@ -43,6 +30,9 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (command == null) {
+            return;
+        }
         if (isTerminated) {
             throw new RejectedExecutionException();
         }
@@ -62,7 +52,20 @@ public class SingleExecutor implements Executor {
      * 2 балла за метод
      */
     public void shutdownNow() {
-        thread.interrupt();
         isTerminated = true;
+        thread.interrupt();
+    }
+
+    private class CustomThread extends Thread {
+        @Override
+        public void run() {
+            while (!(isTerminated && tasks.isEmpty())) {
+                try {
+                    tasks.take().run();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

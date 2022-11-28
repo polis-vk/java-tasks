@@ -21,26 +21,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SimpleExecutor implements Executor {
 
     private volatile boolean isTerminated;
-    private volatile AtomicInteger freeThreads = new AtomicInteger();
-    private volatile AtomicInteger totalThreads = new AtomicInteger();
+    private AtomicInteger usedThreads = new AtomicInteger();
+    private AtomicInteger totalThreads = new AtomicInteger();
     private final BlockingQueue<Runnable> tasks;
     private final ArrayList<CustomThread> threads;
-
-    private class CustomThread extends Thread {
-        @Override
-        public void run() {
-            while (!(isTerminated && tasks.isEmpty())) {
-                try {
-                    freeThreads.incrementAndGet();
-                    Runnable task = tasks.take();
-                    freeThreads.decrementAndGet();
-                    task.run();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
     public SimpleExecutor(int maxThreadCount) {
         totalThreads.set(maxThreadCount);
@@ -54,12 +38,15 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (command == null) {
+            return;
+        }
         if (isTerminated) {
             throw new RejectedExecutionException();
         }
         tasks.add(command);
         synchronized (this) {
-            if (threads.size() < totalThreads.get() && freeThreads.get() < tasks.size()) {
+            if (threads.size() < totalThreads.get() && usedThreads.get() < tasks.size()) {
                 CustomThread customThread = new CustomThread();
                 threads.add(customThread);
                 customThread.start();
@@ -81,7 +68,7 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         isTerminated = true;
-        synchronized (threads) {
+        synchronized (this) {
             threads.forEach(Thread::interrupt);
         }
     }
@@ -90,8 +77,24 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        synchronized (threads) {
+        synchronized (this) {
             return threads.size();
+        }
+    }
+
+    private class CustomThread extends Thread {
+        @Override
+        public void run() {
+            while (!(isTerminated && tasks.isEmpty())) {
+                try {
+                    usedThreads.incrementAndGet();
+                    Runnable task = tasks.take();
+                    usedThreads.decrementAndGet();
+                    task.run();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
