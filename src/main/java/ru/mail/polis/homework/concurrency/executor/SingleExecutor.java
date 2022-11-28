@@ -60,20 +60,15 @@ public class SingleExecutor implements Executor {
     }
 
     private class Worker extends Thread {
-        private boolean isWorking = true;
+        private volatile boolean isWorking = true;
 
         @Override
         public void run() {
             while (isWorking || !queue.isEmpty()) {
-                if (!queue.isEmpty()) {
-                    if (isInterrupted()) {
-                        return;
-                    }
-                    try {
-                        queue.take().run();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    queue.take().run();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }

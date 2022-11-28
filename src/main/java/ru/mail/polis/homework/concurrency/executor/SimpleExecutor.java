@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -43,11 +42,13 @@ public class SimpleExecutor implements Executor {
         if (command == null) {
             throw new NullPointerException();
         }
-        synchronized (this) {
-            if (availableThreadCount.get() == 0 && currentThreadCount.get() < maxThreadCount) {
-                Worker worker = new Worker();
-                worker.start();
-                workersPool[currentThreadCount.getAndIncrement()] = worker;
+        if (availableThreadCount.get() == 0 && currentThreadCount.get() < maxThreadCount) {
+            synchronized (this) {
+                if (availableThreadCount.get() == 0 && currentThreadCount.get() < maxThreadCount) {
+                    Worker worker = new Worker();
+                    worker.start();
+                    workersPool[currentThreadCount.getAndIncrement()] = worker;
+                }
             }
         }
         commandsQueue.add(command);
@@ -68,8 +69,11 @@ public class SimpleExecutor implements Executor {
     public void shutdownNow() {
         if (!isShutdown) {
             isShutdown = true;
-            Arrays.stream(workersPool)
-                    .forEach(Thread::interrupt);
+            synchronized (this) {
+                for (int i = 0; i < currentThreadCount.get(); i++) {
+                    workersPool[i].interrupt();
+                }
+            }
         }
     }
 
