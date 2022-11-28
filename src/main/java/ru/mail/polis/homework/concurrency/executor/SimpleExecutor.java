@@ -20,10 +20,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class SimpleExecutor implements Executor {
 
-    private boolean stopped = false;
+    private volatile boolean stopped = false;
     private final List<CustomThread> threadList;
     private final LinkedBlockingQueue<Runnable> runnableQueue = new LinkedBlockingQueue<>();
-    private final AtomicInteger numOfFreeThreads = new AtomicInteger(0);
+    private final AtomicInteger freeThreadsCnt = new AtomicInteger(0);
     private final int maxThreadCount;
 
     public SimpleExecutor(int maxThreadCount) {
@@ -41,15 +41,17 @@ public class SimpleExecutor implements Executor {
         if (stopped) {
             throw new RejectedExecutionException();
         }
-        runnableQueue.add(command);
-        synchronized (this) {
-            if (runnableQueue.size() > numOfFreeThreads.get() && threadList.size() < maxThreadCount) {
-                numOfFreeThreads.incrementAndGet();
-                CustomThread newThread = new CustomThread();
-                threadList.add(newThread);
-                newThread.start();
+        if (runnableQueue.size() >= freeThreadsCnt.get() && threadList.size() < maxThreadCount) {
+            synchronized (this) {
+                if (runnableQueue.size() >= freeThreadsCnt.get() && threadList.size() < maxThreadCount) {
+                    freeThreadsCnt.incrementAndGet();
+                    CustomThread newThread = new CustomThread();
+                    threadList.add(newThread);
+                    newThread.start();
+                }
             }
         }
+        runnableQueue.add(command);
     }
 
     /**
@@ -84,9 +86,9 @@ public class SimpleExecutor implements Executor {
             while (!stopped) {
                 Runnable task = SimpleExecutor.this.runnableQueue.poll();
                 if (task != null) {
-                    SimpleExecutor.this.numOfFreeThreads.decrementAndGet();
+                    freeThreadsCnt.decrementAndGet();
                     task.run();
-                    SimpleExecutor.this.numOfFreeThreads.incrementAndGet();
+                    freeThreadsCnt.incrementAndGet();
                 }
             }
         }

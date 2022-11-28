@@ -15,7 +15,7 @@ public class SingleExecutor implements Executor {
 
     private final Thread thread;
     private final LinkedBlockingQueue<Runnable> runnableQueue;
-    private boolean stopped = false;
+    private volatile boolean stopped = false;
 
     public SingleExecutor() {
         runnableQueue = new LinkedBlockingQueue<>();
@@ -31,6 +31,9 @@ public class SingleExecutor implements Executor {
     public void execute(Runnable command) {
         if (stopped) {
             throw new RejectedExecutionException();
+        }
+        if (command == null) {
+            throw new NullPointerException();
         }
         runnableQueue.offer(command);
 
@@ -59,9 +62,7 @@ public class SingleExecutor implements Executor {
         public void run() {
             try {
                 while (!isInterrupted() && (!stopped || !runnableQueue.isEmpty())) {
-                    if (!runnableQueue.isEmpty()) {
-                        SingleExecutor.this.runnableQueue.take().run();
-                    }
+                    SingleExecutor.this.runnableQueue.take().run();
                 }
             } catch (InterruptedException ignored) {
             }
