@@ -22,7 +22,7 @@ public class SingleExecutor implements Executor {
         this.isShutdown = false;
         this.tasks = new LinkedBlockingQueue<>();
         this.thread = new Thread(() -> {
-            while (!isShutdown || (!tasks.isEmpty() && !Thread.currentThread().isInterrupted())) {
+            while (!isShutdown || (!tasks.isEmpty())) {
                 try {
                     tasks.take().run();
                 } catch (InterruptedException e) {

@@ -57,7 +57,7 @@ public class SimpleExecutor implements Executor {
         synchronized (threads) {
             if (freeThreadsCount.get() == 0 && threads.size() < maxThreadCount) {
                 Thread newThread = new Thread(() -> {
-                    while (!isShutdown || (!tasks.isEmpty() && !Thread.currentThread().isInterrupted())) {
+                    while (!isShutdown || (!tasks.isEmpty())) {
                         freeThreadsCount.getAndIncrement();
                         try {
                             Runnable task = tasks.take();
