@@ -15,17 +15,22 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p>
  * Задачи должны выполняться в порядке FIFO
  * Потоки после завершения выполнения задачи НЕ умирают, а ждут.
- *
+ * <p>
  * Max 10 баллов
  */
 public class SimpleExecutor implements Executor {
-    private BlockingQueue<Runnable> tasksQueue;
-    private ArrayList<Thread> threadsArray;
-    private AtomicInteger cntFreeThreads;
+    private final BlockingQueue<Runnable> tasksQueue;
+    private final ArrayList<Thread> threadsArray;
+    private final AtomicInteger cntFreeThreads;
     private volatile boolean isShutdownThreads;
-    private int maxThreadCount;
+    private final int maxThreadCount;
+    private final int DEFAULT_MAX_THREAD_COUNT = 5;
 
     public SimpleExecutor(int maxThreadCount) {
+        if (maxThreadCount < 0) {
+            maxThreadCount = DEFAULT_MAX_THREAD_COUNT;
+        }
+
         tasksQueue = new LinkedBlockingQueue<>();
         threadsArray = new ArrayList<>(maxThreadCount);
         cntFreeThreads = new AtomicInteger(0);
