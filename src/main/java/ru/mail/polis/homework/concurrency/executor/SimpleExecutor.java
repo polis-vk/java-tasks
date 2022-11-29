@@ -21,7 +21,7 @@ public class SimpleExecutor implements Executor {
     private final List<Thread> threadList;
     private final BlockingQueue<Runnable> queue;
     private final int maxThreadCount;
-    private boolean exit;
+    private volatile boolean exit;
     private final AtomicInteger freeThreads;
 
     public SimpleExecutor(int maxThreadCount) {
@@ -29,7 +29,6 @@ public class SimpleExecutor implements Executor {
         freeThreads = new AtomicInteger(0);
         queue = new LinkedBlockingQueue<>();
         threadList = new ArrayList<>(maxThreadCount);
-        exit = false;
     }
 
     /**
