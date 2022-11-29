@@ -44,12 +44,14 @@ public class SimpleExecutor implements Executor {
         if (!running) {
             throw new RejectedExecutionException();
         }
-        synchronized (threads) {
-            if (getLiveThreadsCount() < maxThreadCount && isAllBusy()) {
-                SimpleThread thread = new SimpleThread();
-                threads.add(thread);
-                thread.start();
-                size.incrementAndGet();
+        if (getLiveThreadsCount() < maxThreadCount && isAllBusy()) {
+            synchronized (threads) {
+                if (getLiveThreadsCount() < maxThreadCount && isAllBusy()) {
+                    SimpleThread thread = new SimpleThread();
+                    threads.add(thread);
+                    thread.start();
+                    size.incrementAndGet();
+                }
             }
         }
         commands.add(command);
