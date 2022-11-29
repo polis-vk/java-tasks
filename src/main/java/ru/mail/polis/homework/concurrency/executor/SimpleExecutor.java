@@ -9,10 +9,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * Ленивая инициализация означает, что если вам приходит раз в 5 секунд задача, которую вы выполняете 2 секунды,
  * то вы создаете только один поток. Если приходит сразу 2 задачи - то два потока.  То есть, если приходит задача
  * и есть свободный запущенный поток - он берет задачу, если такого нет, то создается новый поток.
- *
+ * <p>
  * Задачи должны выполняться в порядке FIFO
  * Потоки после завершения выполнения задачи НЕ умирают, а ждут.
- *
+ * <p>
  * Max 10 тугриков
  */
 public class SimpleExecutor implements Executor {
@@ -20,11 +20,12 @@ public class SimpleExecutor implements Executor {
     private final BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
     private final ReentrantReadWriteLock mainLock = new ReentrantReadWriteLock();
     private final HashSet<Worker> workers = new HashSet<>();
-    private final int maximumPoolSize;
+    private int maximumPoolSize;
     private volatile boolean acceptingNew = true;
+    private static final int MAX_THREADS_AMOUNT = Integer.MAX_VALUE;
 
     public SimpleExecutor(int maxThreadCount) {
-        maximumPoolSize = maxThreadCount;
+        maximumPoolSize = maximumPoolSize < 0 ? MAX_THREADS_AMOUNT : maxThreadCount;
     }
 
     /**
@@ -114,25 +115,25 @@ public class SimpleExecutor implements Executor {
     }
 
     // Should be executed only by Worker w
-    final void runWorker(Worker w) {
+    final void runWorker(Worker worker) {
         Thread wt = Thread.currentThread();
         try {
-            while ((acceptingNew || w.task != null || (w.task = workQueue.poll()) != null)
-                    && (w.task != null || (w.task = getTask()) != null)) {
+            while ((acceptingNew || worker.task != null || (worker.task = workQueue.poll()) != null)
+                    && (worker.task != null || (worker.task = getTask()) != null)) {
                 try {
-                    w.task.run();
+                    worker.task.run();
                 } finally {
                     mainLock.readLock().lock();
                     try {
-                        w.task = null;
+                        worker.task = null;
                     } finally {
                         mainLock.readLock().unlock();
                     }
                 }
             }
-            w.thread.interrupt();
+            worker.thread.interrupt();
         } catch (InterruptedException e) {
-            w.thread.interrupt();
+            worker.thread.interrupt();
         }
     }
 

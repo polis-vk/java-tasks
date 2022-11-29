@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
@@ -47,20 +51,20 @@ public class SingleExecutor implements Executor {
         worker.thread.interrupt();
     }
 
-    final void runWorker(Worker w) {
+    final void runWorker(Worker worker) {
         Thread wt = Thread.currentThread();
         try {
-            while ((acceptingNew || w.task != null || (w.task = workQueue.poll()) != null)
-                    && (w.task != null || (w.task = getTask()) != null)) {
+            while ((acceptingNew || worker.task != null || (worker.task = workQueue.poll()) != null)
+                    && (worker.task != null || (worker.task = getTask()) != null)) {
                 try {
-                    w.task.run();
+                    worker.task.run();
                 } finally {
-                    w.task = null;
+                    worker.task = null;
                 }
             }
-            w.thread.interrupt();
+            worker.thread.interrupt();
         } catch (InterruptedException e) {
-            w.thread.interrupt();
+            worker.thread.interrupt();
         }
     }
 
@@ -79,9 +83,9 @@ public class SingleExecutor implements Executor {
             thread.start();
         }
 
-        private Worker(Runnable r) {
+        private Worker(Runnable run) {
             this.thread = Executors.defaultThreadFactory().newThread(this);
-            task = r;
+            task = run;
             thread.start();
         }
 
