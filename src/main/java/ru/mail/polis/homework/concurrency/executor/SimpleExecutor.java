@@ -42,6 +42,9 @@ public class SimpleExecutor implements Executor {
         if (shutdownMode) {
             throw new RejectedExecutionException();
         }
+        if (command == null) {
+            throw new NullPointerException();
+        }
         synchronized (threadsInitialized) {
             if (waitingThreadsCount.get() == 0 && threadsInitialized.get() < maxThreadCount && !shutdownMode) {
                 Thread eternalThread = new EternalThread();

@@ -32,6 +32,9 @@ public class SingleExecutor implements Executor {
         if (shutdownMode) {
             throw new RejectedExecutionException();
         }
+        if (command == null) {
+            throw new NullPointerException();
+        }
         commands.offer(command);
     }
 
