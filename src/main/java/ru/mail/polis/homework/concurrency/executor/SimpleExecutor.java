@@ -89,15 +89,14 @@ public class SimpleExecutor implements Executor {
         public void run() {
             while (!shutdownMode || !commands.isEmpty()) {
                 waitingThreadsCount.incrementAndGet();
-                Runnable command = null;
                 try {
-                    command = commands.take();
+                    Runnable command = commands.take();
+                    command.run();
                 } catch (InterruptedException e) {
                     return;
                 } finally {
                     waitingThreadsCount.decrementAndGet();
                 }
-                command.run();
             }
         }
     }
