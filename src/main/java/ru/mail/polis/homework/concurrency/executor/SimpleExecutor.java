@@ -42,9 +42,9 @@ public class SimpleExecutor implements Executor {
         }
 
         tasks.add(command);
-        if (accessibleThreadCount.get() == 0) {
+        if (!terminated && accessibleThreadCount.get() == 0 && liveThreadCount < maxThreadCount) {
             synchronized (this) {
-                if (!terminated && accessibleThreadCount.get() < tasks.size() && threads.size() < maxThreadCount) {
+                if (!terminated && accessibleThreadCount.get() == 0 && liveThreadCount < maxThreadCount) {
                     MyThread thread = new MyThread();
                     threads.add(thread);
                     liveThreadCount++;
