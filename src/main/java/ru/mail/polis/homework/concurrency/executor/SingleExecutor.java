@@ -36,7 +36,9 @@ public class SingleExecutor implements Executor {
         if (isTerminated) {
             throw new RejectedExecutionException();
         }
-        tasks.add(command);
+        synchronized (this) {
+            tasks.add(command);
+        }
     }
 
     /**
@@ -59,12 +61,12 @@ public class SingleExecutor implements Executor {
     private class CustomThread extends Thread {
         @Override
         public void run() {
-            while (!(isTerminated && tasks.isEmpty())) {
-                try {
+            try {
+                while (!(isTerminated && tasks.isEmpty())) {
                     tasks.take().run();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }

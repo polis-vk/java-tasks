@@ -22,12 +22,12 @@ public class SimpleExecutor implements Executor {
 
     private volatile boolean isTerminated;
     private AtomicInteger usedThreads = new AtomicInteger();
-    private AtomicInteger totalThreads = new AtomicInteger();
+    private int maxThreads;
     private final BlockingQueue<Runnable> tasks;
     private final ArrayList<CustomThread> threads;
 
     public SimpleExecutor(int maxThreadCount) {
-        totalThreads.set(maxThreadCount);
+        maxThreads = maxThreadCount;
         tasks = new LinkedBlockingQueue<>();
         threads = new ArrayList<>(maxThreadCount);
     }
@@ -44,9 +44,9 @@ public class SimpleExecutor implements Executor {
         if (isTerminated) {
             throw new RejectedExecutionException();
         }
-        tasks.add(command);
         synchronized (this) {
-            if (threads.size() < totalThreads.get() && usedThreads.get() < tasks.size()) {
+            tasks.add(command);
+            if (threads.size() < maxThreads && usedThreads.get() == 0) {
                 CustomThread customThread = new CustomThread();
                 threads.add(customThread);
                 customThread.start();
@@ -85,15 +85,15 @@ public class SimpleExecutor implements Executor {
     private class CustomThread extends Thread {
         @Override
         public void run() {
-            while (!(isTerminated && tasks.isEmpty())) {
-                try {
+            try {
+                while (!(isTerminated && tasks.isEmpty())) {
                     usedThreads.incrementAndGet();
                     Runnable task = tasks.take();
                     usedThreads.decrementAndGet();
                     task.run();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
