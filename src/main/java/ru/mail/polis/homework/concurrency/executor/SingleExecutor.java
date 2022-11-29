@@ -14,7 +14,7 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SingleExecutor implements Executor {
     private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
-    private volatile boolean exit = false;
+    private volatile boolean exit;
     Thread timelessWorker = new TimelessThread();
 
     public SingleExecutor() {
