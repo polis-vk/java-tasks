@@ -20,8 +20,16 @@ public class SingleExecutor implements Executor {
 
     public SingleExecutor() {
         taskQueue = new LinkedBlockingQueue<>();
-        thread = new SingleThread();
-        isShutdown = false;
+        Runnable task = () -> {
+            while (!taskQueue.isEmpty() || !isShutdown) {
+                try {
+                    taskQueue.take().run();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        thread = new Thread(task);
         thread.start();
     }
 
@@ -35,11 +43,7 @@ public class SingleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
 
-        try {
-            taskQueue.put(command);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        taskQueue.add(command);
     }
 
     /**
@@ -57,18 +61,5 @@ public class SingleExecutor implements Executor {
     public void shutdownNow() {
         shutdown();
         thread.interrupt();
-    }
-
-    private class SingleThread extends Thread {
-        @Override
-        public void run() {
-            while (!taskQueue.isEmpty() || !isShutdown) {
-                try {
-                    taskQueue.take().run();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 }
