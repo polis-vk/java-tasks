@@ -2,7 +2,6 @@ package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.Vector;
 import java.util.concurrent.Executor;
-
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -12,10 +11,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Ленивая инициализация означает, что если вам приходит раз в 5 секунд задача, которую вы выполняете 2 секунды,
  * то вы создаете только один поток. Если приходит сразу 2 задачи - то два потока.  То есть, если приходит задача
  * и есть свободный запущенный поток - он берет задачу, если такого нет, то создается новый поток.
- *
+ * <p>
  * Задачи должны выполняться в порядке FIFO
  * Потоки после завершения выполнения задачи НЕ умирают, а ждут.
- *
+ * <p>
  * Max 10 тугриков
  */
 public class SimpleExecutor implements Executor {
@@ -23,13 +22,12 @@ public class SimpleExecutor implements Executor {
     private final LinkedBlockingQueue<Runnable> queue;
     private final Vector<TreadOfTreadPool> threadPool;
     private final int maxThreadCount;
-    private volatile boolean isNotShutDown;
+    private volatile boolean shutDown;
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
         queue = new LinkedBlockingQueue<>();
         threadPool = new Vector<>(maxThreadCount);
-        isNotShutDown = true;
         vacantThreadCount = new AtomicInteger(0);
     }
 
@@ -39,34 +37,36 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (!isNotShutDown) {
+        if (command == null) {
+            throw new NullPointerException();
+        }
+        if (shutDown) {
             throw new RejectedExecutionException();
         }
-        queue.add(command);
         synchronized (vacantThreadCount) {
-            if (vacantThreadCount.get() == 0 && threadPool.size() < maxThreadCount) {
-                threadPool.add(new TreadOfTreadPool());
+            if (vacantThreadCount.get() == 0 && getLiveThreadsCount() < maxThreadCount) {
+                TreadOfTreadPool thread = new TreadOfTreadPool();
+                threadPool.add(thread);
+                thread.start();
             }
         }
+        queue.add(command);
     }
 
     private class TreadOfTreadPool extends Thread {
-        TreadOfTreadPool() {
-            this.start();
-        }
-
         @Override
         public void run() {
-            Runnable command;
-            while (isNotShutDown || !queue.isEmpty()) {
+            while (!shutDown || !queue.isEmpty()) {
                 vacantThreadCount.incrementAndGet();
+                Runnable command;
                 try {
                     command = queue.take();
-                    vacantThreadCount.decrementAndGet();
-                    command.run();
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    return;
+                } finally {
+                    vacantThreadCount.decrementAndGet();
                 }
+                command.run();
             }
         }
     }
@@ -76,7 +76,7 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
-        isNotShutDown = false;
+        shutDown = true;
     }
 
     /**
@@ -85,8 +85,8 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         shutdown();
-        for (TreadOfTreadPool tread : threadPool) {
-            tread.interrupt();
+        for (TreadOfTreadPool thread : threadPool) {
+            thread.interrupt();
         }
     }
 
