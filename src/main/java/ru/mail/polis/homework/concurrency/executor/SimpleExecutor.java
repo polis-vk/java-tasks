@@ -40,6 +40,19 @@ public class SimpleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
 
+        mainLock.writeLock().lock();
+        try {
+            if (amountOfNotTerminatedWorkers() < maximumPoolSize
+                    && amountOfIdleWorkers() == 0) {
+                final Worker newWorker = new Worker(command);
+                workers.add(newWorker);
+                newWorker.thread.start();
+            } else {
+                workQueue.add(command);
+            }
+        } finally {
+            mainLock.writeLock().unlock();
+        }
     }
 
     /**
@@ -70,33 +83,56 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        mainLock.readLock().lock();
+        mainLock.writeLock().lock();
         try {
-            return workers.size();
+            return amountOfNotTerminatedWorkers();
         } finally {
-            mainLock.readLock().unlock();
+            mainLock.writeLock().unlock();
         }
+    }
+
+    // only after mainLock.writelock!
+    private int amountOfNotTerminatedWorkers() {
+        int answer = 0;
+        for (Worker worker : workers) {
+            if (!worker.thread.isInterrupted()) {
+                answer++;
+            }
+        }
+        return answer;
+    }
+
+    // only after mainLock.writelock!
+    private int amountOfIdleWorkers() {
+        int answer = 0;
+        for (Worker worker : workers) {
+            if (worker.task == null) {
+                answer++;
+            }
+        }
+        return answer;
     }
 
     // Should be executed only by Worker w
     final void runWorker(Worker w) {
         Thread wt = Thread.currentThread();
-        Runnable task = null;
         try {
-// если мы не принимает новые, а полл вернул null -> больше элементов не будет
-// если мы принимаем новое, то встаем в ожидание пока появится таска или нас интераптнут
-            while ((acceptingNew || (task = workQueue.poll()) != null)
-                    && (task != null || (task = getTask()) != null)) {
+            while ((acceptingNew || w.task != null || (w.task = workQueue.poll()) != null)
+                    && (w.task != null || (w.task = getTask()) != null)) {
                 try {
-                    w.state = Worker.RUNNING;
-                    task.run();
+                    w.task.run();
                 } finally {
-                    w.state = Worker.IDLE;
+                    mainLock.readLock().lock();
+                    try {
+                        w.task = null;
+                    } finally {
+                        mainLock.readLock().unlock();
+                    }
                 }
             }
-            w.state = Worker.TERMINATED;
+            w.thread.interrupt();
         } catch (InterruptedException e) {
-            w.state = Worker.TERMINATED;
+            w.thread.interrupt();
         }
     }
 
@@ -106,15 +142,12 @@ public class SimpleExecutor implements Executor {
     }
 
     private final class Worker implements Runnable {
-        static final int TERMINATED = -1;
-        static final int IDLE = 0;
-        static final int RUNNING = 1;
         final Thread thread;
-        // Should be changed only by this worker
-        int state;
+        Runnable task;
 
-        private Worker() {
+        private Worker(Runnable r) {
             this.thread = Executors.defaultThreadFactory().newThread(this);
+            task = r;
         }
 
         @Override
