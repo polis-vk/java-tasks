@@ -24,6 +24,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class SimpleExecutor implements Executor {
     private final BlockingQueue<Runnable> workQueue;
     private final AtomicInteger freeWorkers;
+    private final AtomicInteger threadsCount;
     private final List<Thread> threads;
     private final Lock lock;
     private volatile boolean isShutdown;
@@ -36,6 +37,7 @@ public class SimpleExecutor implements Executor {
         }
         workQueue = new LinkedBlockingQueue<>();
         freeWorkers = new AtomicInteger();
+        threadsCount = new AtomicInteger();
         threads = new ArrayList<>();
         lock = new ReentrantLock();
         this.maxThreadCount = maxThreadCount;
@@ -53,19 +55,15 @@ public class SimpleExecutor implements Executor {
         if (isShutdown) {
             throw new RejectedExecutionException();
         }
+        workQueue.add(command);
         lock.lock();
-        try {
-            if (freeWorkers.get() == 0 && getLiveThreadsCount() < maxThreadCount) {
-                Thread thread = new Thread(new Worker());
-                thread.start();
-                threads.add(thread);
-            }
-            workQueue.put(command);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
+        if (freeWorkers.get() == 0 && getLiveThreadsCount() < maxThreadCount) {
+            Thread thread = new Thread(new Worker());
+            thread.start();
+            threads.add(thread);
+            threadsCount.incrementAndGet();
         }
+        lock.unlock();
     }
 
     /**
@@ -82,8 +80,10 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         shutdown();
-        for (Thread thread : threads) {
-            thread.interrupt();
+        synchronized (this){
+            for (Thread thread : threads) {
+                thread.interrupt();
+            }
         }
     }
 
@@ -91,7 +91,7 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return threads.size();
+        return threadsCount.intValue();
     }
 
     private class Worker implements Runnable {
