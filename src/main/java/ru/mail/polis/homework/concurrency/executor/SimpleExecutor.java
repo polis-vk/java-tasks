@@ -25,6 +25,7 @@ public class SimpleExecutor implements Executor {
     private final AtomicInteger accessibleThreadCount = new AtomicInteger();
     private final int maxThreadCount;
     private volatile boolean terminated;
+    private volatile int liveThreadCount;
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
@@ -46,6 +47,7 @@ public class SimpleExecutor implements Executor {
                 if (!terminated && accessibleThreadCount.get() < tasks.size() && threads.size() < maxThreadCount) {
                     MyThread thread = new MyThread();
                     threads.add(thread);
+                    liveThreadCount++;
                     thread.start();
                 }
             }
@@ -75,7 +77,7 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return threads.size();
+        return liveThreadCount;
     }
 
     private class MyThread extends Thread {
@@ -83,7 +85,7 @@ public class SimpleExecutor implements Executor {
         public void run() {
             try {
                 Runnable task;
-                while (!isInterrupted() && (!terminated || !tasks.isEmpty())) {
+                while (!terminated || !tasks.isEmpty()) {
                     accessibleThreadCount.incrementAndGet();
                     task = tasks.take();
                     accessibleThreadCount.decrementAndGet();
