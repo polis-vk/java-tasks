@@ -19,10 +19,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class SimpleExecutor implements Executor {
     private final BlockingQueue<Runnable> commandsQueue = new LinkedBlockingQueue<>();
-    private final AtomicInteger currentThreadCount = new AtomicInteger();
     private final AtomicInteger availableThreadCount = new AtomicInteger();
     private final Worker[] workersPool;
     private final int maxThreadCount;
+    private volatile int currentThreadCount;
     private volatile boolean isShutdown;
 
     public SimpleExecutor(int maxThreadCount) {
@@ -42,12 +42,13 @@ public class SimpleExecutor implements Executor {
         if (command == null) {
             throw new NullPointerException();
         }
-        if (availableThreadCount.get() == 0 && currentThreadCount.get() < maxThreadCount) {
+        if (availableThreadCount.get() == 0 && currentThreadCount < maxThreadCount) {
             synchronized (this) {
-                if (availableThreadCount.get() == 0 && currentThreadCount.get() < maxThreadCount) {
+                if (availableThreadCount.get() == 0 && currentThreadCount < maxThreadCount) {
                     Worker worker = new Worker();
                     worker.start();
-                    workersPool[currentThreadCount.getAndIncrement()] = worker;
+                    workersPool[currentThreadCount] = worker;
+                    currentThreadCount++;
                 }
             }
         }
@@ -70,7 +71,7 @@ public class SimpleExecutor implements Executor {
         if (!isShutdown) {
             isShutdown = true;
             synchronized (this) {
-                for (int i = 0; i < currentThreadCount.get(); i++) {
+                for (int i = 0; i < currentThreadCount; i++) {
                     workersPool[i].interrupt();
                 }
             }
@@ -81,7 +82,7 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return currentThreadCount.get();
+        return currentThreadCount;
     }
 
     private class Worker extends Thread {

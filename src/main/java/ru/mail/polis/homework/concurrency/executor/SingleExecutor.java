@@ -13,12 +13,9 @@ import java.util.concurrent.RejectedExecutionException;
  * Max 6 тугриков
  */
 public class SingleExecutor implements Executor {
-    private final Worker worker;
+    private final Worker worker = new Worker();
     private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
-
-    public SingleExecutor() {
-        this.worker = new Worker();
-    }
+    private volatile boolean isStarted;
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -32,7 +29,8 @@ public class SingleExecutor implements Executor {
         if (command == null) {
             throw new NullPointerException();
         }
-        if (!worker.isAlive()) {
+        if (!isStarted) {
+            isStarted = true;
             worker.start();
         }
         queue.add(command);
@@ -43,9 +41,7 @@ public class SingleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
-        if (worker.isWorking()) {
-            worker.shutdown();
-        }
+        worker.shutdown();
     }
 
     /**
@@ -54,9 +50,9 @@ public class SingleExecutor implements Executor {
      */
     public void shutdownNow() {
         if (worker.isWorking()) {
-            worker.shutdown();
             worker.interrupt();
         }
+        shutdown();
     }
 
     private class Worker extends Thread {
@@ -80,5 +76,9 @@ public class SingleExecutor implements Executor {
         private boolean isWorking() {
             return isWorking;
         }
+    }
+
+    private enum State {
+
     }
 }
