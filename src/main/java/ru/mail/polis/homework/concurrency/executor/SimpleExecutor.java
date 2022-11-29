@@ -85,7 +85,7 @@ public class SimpleExecutor implements Executor {
         public void run() {
             Runnable deal;
             try {
-                while ((!queue.isEmpty() || !exit) && !isInterrupted()) {
+                while (!queue.isEmpty() || !exit) {
                     freeThreads.incrementAndGet();
                     deal = queue.take();
                     freeThreads.decrementAndGet();
