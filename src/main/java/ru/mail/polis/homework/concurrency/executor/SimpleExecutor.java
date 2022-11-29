@@ -19,15 +19,20 @@ import java.util.concurrent.Executor;
  */
 public class SimpleExecutor implements Executor {
 
-    private final BlockingQueue<Runnable> commands = new LinkedBlockingDeque<>();
-    private volatile boolean running = true;
-    private int maxThreadCount;
-    private List<MyThread> threads = new ArrayList<>(maxThreadCount);
-    private AtomicInteger size = new AtomicInteger();
+    private final BlockingQueue<Runnable> commands;
+    private final int maxThreadCount;
+    private final List<SimpleThread> threads;
+    private final AtomicInteger size;
+    private volatile boolean running;
 
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
+        commands = new LinkedBlockingDeque<>();
+        threads = new ArrayList<>(maxThreadCount);
+        size = new AtomicInteger();
+        running = true;
+
     }
 
     /**
@@ -41,7 +46,7 @@ public class SimpleExecutor implements Executor {
         }
         synchronized (threads) {
             if (getLiveThreadsCount() < maxThreadCount && isAllBusy()) {
-                MyThread thread = new MyThread();
+                SimpleThread thread = new SimpleThread();
                 threads.add(thread);
                 thread.start();
                 size.incrementAndGet();
@@ -79,7 +84,7 @@ public class SimpleExecutor implements Executor {
     }
 
     public boolean isAllBusy() {
-        for (MyThread thread : threads) {
+        for (SimpleThread thread : threads) {
             if (!thread.getBusy()) {
                 return false;
             }
@@ -87,7 +92,7 @@ public class SimpleExecutor implements Executor {
         return true;
     }
 
-    private class MyThread extends Thread {
+    private class SimpleThread extends Thread {
 
         private volatile boolean isBusy = true;
 

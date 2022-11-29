@@ -14,9 +14,16 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SingleExecutor implements Executor {
 
-    private final BlockingQueue<Runnable> commands = new LinkedBlockingQueue<>();
-    private volatile boolean running = true;
+    private final BlockingQueue<Runnable> commands;
     private final Thread thread;
+    private volatile boolean running;
+
+    public SingleExecutor() {
+        commands = new LinkedBlockingQueue<>();
+        thread = new Thread(this::runCommand);
+        thread.start();
+        running = true;
+    }
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -48,12 +55,7 @@ public class SingleExecutor implements Executor {
         thread.interrupt();
     }
 
-    public SingleExecutor() {
-        thread = new Thread(() -> existCommand());
-        thread.start();
-    }
-
-    private void existCommand () {
+    private void runCommand () {
         while (!commands.isEmpty() || running) {
             try {
                 if (!commands.isEmpty()) {
