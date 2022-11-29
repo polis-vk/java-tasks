@@ -44,10 +44,12 @@ public class SimpleExecutor implements Executor {
         queue.offer(command);
     }
 
-    private synchronized void createNewThreadOrNot() {
-        if (threadList.size() < maxThreadCount && freeThreads.get() == 0) {
-            threadList.add(new CustomThread());
-            threadList.get(threadList.size() - 1).start();
+    private void createNewThreadOrNot() {
+        synchronized (freeThreads) {
+            if (threadList.size() < maxThreadCount && freeThreads.get() == 0) {
+                threadList.add(new CustomThread());
+                threadList.get(threadList.size() - 1).start();
+            }
         }
     }
 
@@ -65,13 +67,15 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         shutdown();
-        threadList.forEach(Thread::interrupt);
+        synchronized (this) {
+            threadList.forEach(Thread::interrupt);
+        }
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
-    public int getLiveThreadsCount() {
+    public synchronized int getLiveThreadsCount() {
         return threadList.size();
     }
 
