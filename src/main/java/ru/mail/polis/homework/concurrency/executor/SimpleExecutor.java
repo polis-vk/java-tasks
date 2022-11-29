@@ -15,10 +15,10 @@ import java.util.concurrent.locks.ReentrantLock;
  * Ленивая инициализация означает, что если вам приходит раз в 5 секунд задача, которую вы выполняете 2 секунды,
  * то вы создаете только один поток. Если приходит сразу 2 задачи - то два потока.  То есть, если приходит задача
  * и есть свободный запущенный поток - он берет задачу, если такого нет, то создается новый поток.
- *
+ * <p>
  * Задачи должны выполняться в порядке FIFO
  * Потоки после завершения выполнения задачи НЕ умирают, а ждут.
- *
+ * <p>
  * Max 10 тугриков
  */
 public class SimpleExecutor implements Executor {
@@ -55,15 +55,20 @@ public class SimpleExecutor implements Executor {
         if (isShutdown) {
             throw new RejectedExecutionException();
         }
-        workQueue.add(command);
-        lock.lock();
-        if (freeWorkers.get() == 0 && getLiveThreadsCount() < maxThreadCount) {
-            Thread thread = new Thread(new Worker());
-            thread.start();
-            threads.add(thread);
-            threadsCount.incrementAndGet();
+        if (threadsCount.intValue() < maxThreadCount) {
+            lock.lock();
+            try {
+                if (freeWorkers.get() == 0 && getLiveThreadsCount() < maxThreadCount) {
+                    Thread thread = new Thread(new Worker());
+                    threads.add(thread);
+                    threadsCount.incrementAndGet();
+                    thread.start();
+                }
+            } finally {
+                lock.unlock();
+            }
         }
-        lock.unlock();
+        workQueue.add(command);
     }
 
     /**
@@ -80,7 +85,7 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         shutdown();
-        synchronized (this){
+        synchronized (this) {
             for (Thread thread : threads) {
                 thread.interrupt();
             }

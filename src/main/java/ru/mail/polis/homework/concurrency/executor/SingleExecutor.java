@@ -7,9 +7,9 @@ import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
- *
+ * <p>
  * Задачи должны выполняться в порядке FIFO
- *
+ * <p>
  * Max 6 тугриков
  */
 public class SingleExecutor implements Executor {
@@ -17,11 +17,12 @@ public class SingleExecutor implements Executor {
     private final Thread singleThread;
     private volatile boolean isShutdown;
 
-    public SingleExecutor(){
+    public SingleExecutor() {
         workQueue = new LinkedBlockingQueue<>();
         singleThread = new Thread(new Worker());
         singleThread.start();
     }
+
     /**
      * Метод ставит задачу в очередь на исполнение.
      * 3 тугрика за метод
@@ -31,14 +32,10 @@ public class SingleExecutor implements Executor {
         if (command == null) {
             throw new NullPointerException();
         }
-        if (isShutdown){
+        if (isShutdown) {
             throw new RejectedExecutionException();
         }
-        try {
-            workQueue.put(command);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        workQueue.add(command);
     }
 
     /**
@@ -62,7 +59,7 @@ public class SingleExecutor implements Executor {
         @Override
         public void run() {
             try {
-                while (!workQueue.isEmpty() || !isShutdown){
+                while (!workQueue.isEmpty() || !isShutdown) {
                     workQueue.take().run();
                 }
             } catch (InterruptedException e) {
