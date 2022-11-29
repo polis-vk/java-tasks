@@ -21,17 +21,19 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class SimpleExecutor implements Executor {
     private final BlockingQueue<Runnable> taskQueue;
+    private final int maxThreads;
     private final HashSet<WorkThread> threadSet;
-    private volatile boolean isRunning;
     private final AtomicInteger freeThreads;
-    private final int maxThreadCount;
+    private volatile boolean running;
+    private volatile int existingThreads;
 
     public SimpleExecutor(int maxThreadCount) {
-        this.maxThreadCount = maxThreadCount;
         taskQueue = new LinkedBlockingQueue<>();
+        maxThreads = maxThreadCount;
         threadSet = new HashSet<>();
         freeThreads = new AtomicInteger(0);
-        isRunning = true;
+        running = true;
+        existingThreads = 0;
     }
 
     /**
@@ -44,30 +46,27 @@ public class SimpleExecutor implements Executor {
             throw new NullPointerException();
         }
 
-        if (!isRunning) {
+        if (!running) {
             throw new RejectedExecutionException();
         }
 
-        try {
-            taskQueue.put(command);
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
-        }
-
-        synchronized (freeThreads) {
-            if (isRunning && freeThreads.get() == 0 && threadSet.size() < maxThreadCount) {
-                threadSet.add(new WorkThread());
+        if (running && existingThreads < maxThreads) {
+            synchronized (freeThreads) {
+                if (running && freeThreads.get() == 0 && existingThreads < maxThreads) {
+                    threadSet.add(new WorkThread());
+                    existingThreads++;
+                }
             }
         }
+        taskQueue.add(command);
     }
-
 
     /**
      * Дает текущим задачам выполниться. Добавление новых - бросает RejectedExecutionException
      * 1 балл за метод
      */
     public void shutdown() {
-        isRunning = false;
+        running = false;
     }
 
     /**
@@ -75,9 +74,11 @@ public class SimpleExecutor implements Executor {
      * 1 балла за метод
      */
     public void shutdownNow() {
-        shutdown();
-        for (WorkThread obj : threadSet) {
-            obj.interrupt();
+        synchronized (freeThreads) {
+            shutdown();
+            for (WorkThread thread : threadSet) {
+                thread.interrupt();
+            }
         }
     }
 
@@ -85,22 +86,20 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return threadSet.size();
+        return existingThreads;
     }
 
     class WorkThread extends Thread {
-
         public WorkThread() {
             start();
         }
 
         @Override
         public void run() {
-            Runnable task;
-            while (!this.isInterrupted() && (isRunning || !taskQueue.isEmpty())) {
+            while (!this.isInterrupted() && (running || !taskQueue.isEmpty())) {
                 freeThreads.incrementAndGet();
                 try {
-                    task = taskQueue.take();
+                    Runnable task = taskQueue.take();
                     freeThreads.decrementAndGet();
                     task.run();
                 } catch (InterruptedException exc) {

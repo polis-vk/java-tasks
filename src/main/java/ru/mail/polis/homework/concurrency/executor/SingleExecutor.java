@@ -16,15 +16,14 @@ public class SingleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> taskQueue;
     private final SingleThread mainThread;
-    private static volatile boolean isRunning;
+    private volatile boolean running;
 
     public SingleExecutor() {
         taskQueue = new LinkedBlockingQueue<>();
         mainThread = new SingleThread();
         mainThread.start();
-        isRunning = true;
+        running = true;
     }
-
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -36,15 +35,10 @@ public class SingleExecutor implements Executor {
             throw new NullPointerException();
         }
 
-        if (!isRunning) {
+        if (!running) {
             throw new RejectedExecutionException();
         }
-
-        try {
-            taskQueue.put(command);
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
-        }
+        taskQueue.add(command);
     }
 
     /**
@@ -52,7 +46,7 @@ public class SingleExecutor implements Executor {
      * 1 балл за метод
      */
     public void shutdown() {
-        isRunning = false;
+        running = false;
     }
 
     /**
@@ -68,7 +62,7 @@ public class SingleExecutor implements Executor {
         @Override
         public void run() {
             try {
-                while (!this.isInterrupted() && (isRunning || !taskQueue.isEmpty())) {
+                while (!this.isInterrupted() && (running || !taskQueue.isEmpty())) {
                     taskQueue.take().run();
                 }
             } catch (InterruptedException exc) {
