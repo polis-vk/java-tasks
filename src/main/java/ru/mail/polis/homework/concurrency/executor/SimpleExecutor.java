@@ -1,9 +1,7 @@
 package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -43,14 +41,14 @@ public class SimpleExecutor implements Executor {
     @Override
     public void execute(Runnable command) {
         if (command == null) {
-            throw new RuntimeException("Incorrect runnable object.");
+            throw new IllegalArgumentException("Incorrect runnable object.");
         }
         if (isShutdown) {
             throw new RejectedExecutionException();
         }
 
         synchronized (workers) {
-            if (workers.size() < maxThreadCount && availableThreadsCount.compareAndSet(0, 1)) {
+            if (availableThreadsCount.get() == 0 && workers.size() < maxThreadCount) {
                 Worker worker = new Worker();
                 worker.start();
                 workers.add(worker);
@@ -73,8 +71,10 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         isShutdown = true;
-        for (Worker worker : workers) {
-            worker.interrupt();
+        synchronized (workers) {
+            for (Worker worker : workers) {
+                worker.interrupt();
+            }
         }
     }
 
@@ -88,6 +88,7 @@ public class SimpleExecutor implements Executor {
     private class Worker extends Thread {
         @Override
         public void run() {
+            availableThreadsCount.incrementAndGet();
             while ((!isShutdown || !workQueue.isEmpty()) && !isInterrupted()) {
                 try {
                     Runnable command = workQueue.take();
@@ -100,6 +101,7 @@ public class SimpleExecutor implements Executor {
                     return;
                 }
             }
+            availableThreadsCount.decrementAndGet();
             workers.remove(this);
         }
     }

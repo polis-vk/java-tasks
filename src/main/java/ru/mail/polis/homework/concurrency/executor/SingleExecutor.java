@@ -31,7 +31,7 @@ public class SingleExecutor implements Executor {
     @Override
     public void execute(Runnable command) {
         if (command == null) {
-            throw new RuntimeException("Incorrect runnable object.");
+            throw new IllegalArgumentException("Incorrect runnable object.");
         }
         if (isShutdown) {
             throw new RejectedExecutionException();
