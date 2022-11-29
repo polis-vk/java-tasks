@@ -24,7 +24,7 @@ public class SimpleExecutor implements Executor {
     private final AtomicInteger cntFreeThreads;
     private volatile boolean isShutdownThreads;
     private final int maxThreadCount;
-    private final int DEFAULT_MAX_THREAD_COUNT = 5;
+    private final static int DEFAULT_MAX_THREAD_COUNT = 5;
 
     public SimpleExecutor(int maxThreadCount) {
         if (maxThreadCount < 0) {
