@@ -30,10 +30,13 @@ public class SingleExecutor implements Executor {
         if (isShutdown) {
             throw new RejectedExecutionException();
         }
+        if (command == null) {
+            throw new NullPointerException();
+        }
         try {
             tasks.put(command);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
@@ -62,7 +65,7 @@ public class SingleExecutor implements Executor {
                     tasks.take().run();
                 }
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
     }
