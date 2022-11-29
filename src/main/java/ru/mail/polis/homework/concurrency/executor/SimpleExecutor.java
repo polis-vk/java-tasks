@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
@@ -22,14 +24,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SimpleExecutor implements Executor {
     private final List<Thread> threads;
     private final BlockingQueue<Runnable> tasks;
-    private final AtomicInteger counterOfFreeTreads;
+    private final AtomicInteger freeThreadsCount;
     private final int maxThreadCount;
     private volatile boolean isShutdown;
+    private volatile int liveThreadCount;
 
     public SimpleExecutor(int maxThreadCount) {
+        if (maxThreadCount < 1) {
+            throw new IllegalArgumentException();
+        }
         this.threads = new ArrayList<>(maxThreadCount);
         this.tasks = new LinkedBlockingQueue<>();
-        this.counterOfFreeTreads = new AtomicInteger(0);
+        this.freeThreadsCount = new AtomicInteger(0);
         this.maxThreadCount = maxThreadCount;
     }
 
@@ -42,32 +48,36 @@ public class SimpleExecutor implements Executor {
         if (isShutdown) {
             throw new RejectedExecutionException();
         }
-        try {
-            tasks.put(command);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        if (command == null) {
+            throw new NullPointerException();
         }
-        if (newThreadShouldBeCreated()) {
+        if (threadShouldBeCreated()) {
             synchronized (this) {
-                if (newThreadShouldBeCreated()) {
+                if (threadShouldBeCreated()) {
                     Thread newThread = new Thread(new Runnable() {
                         public void run() {
-                            while (!isShutdown) {
+                            while (!isShutdown || !tasks.isEmpty()) {
                                 try {
-                                    counterOfFreeTreads.getAndIncrement();
+                                    freeThreadsCount.getAndIncrement();
                                     Runnable task = tasks.take();
-                                    counterOfFreeTreads.getAndDecrement();
+                                    freeThreadsCount.getAndDecrement();
                                     task.run();
                                 } catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
+                                    e.printStackTrace();
                                 }
                             }
                         }
                     });
                     newThread.start();
+                    liveThreadCount++;
                     threads.add(newThread);
                 }
             }
+        }
+        try {
+            tasks.put(command);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -85,8 +95,10 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         shutdown();
-        for (Thread thread : threads) {
-            thread.interrupt();
+        synchronized (this) {
+            for (Thread thread : threads) {
+                thread.interrupt();
+            }
         }
     }
 
@@ -94,10 +106,10 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return threads.size();
+        return liveThreadCount;
     }
 
-    private boolean newThreadShouldBeCreated() {
-        return !isShutdown && counterOfFreeTreads.get() == 0 && maxThreadCount > threads.size();
+    private boolean threadShouldBeCreated() {
+        return !isShutdown && freeThreadsCount.get() == 0 && maxThreadCount > liveThreadCount;
     }
 }
