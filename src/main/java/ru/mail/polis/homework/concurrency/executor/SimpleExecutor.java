@@ -45,11 +45,13 @@ public class SimpleExecutor implements Executor {
         if (command == null) {
             throw new NullPointerException();
         }
-        synchronized (threadsInitialized) {
-            if (waitingThreadsCount.get() == 0 && threadsInitialized.get() < maxThreadCount && !shutdownMode) {
-                Thread eternalThread = new EternalThread();
-                threads[threadsInitialized.getAndIncrement()] = eternalThread;
-                eternalThread.start();
+        if (threadsInitialized.get() < maxThreadCount) {
+            synchronized (threadsInitialized) {
+                if (waitingThreadsCount.get() == 0 && threadsInitialized.get() < maxThreadCount && !shutdownMode) {
+                    Thread eternalThread = new EternalThread();
+                    threads[threadsInitialized.getAndIncrement()] = eternalThread;
+                    eternalThread.start();
+                }
             }
         }
         commands.offer(command);
