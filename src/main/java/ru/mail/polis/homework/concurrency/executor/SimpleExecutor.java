@@ -87,10 +87,10 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdownNow() {
+        isShutdown = true;
         for (Thread thread : threads) {
             thread.interrupt();
         }
-        isShutdown = true;
     }
 
     /**

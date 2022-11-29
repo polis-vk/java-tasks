@@ -64,7 +64,7 @@ public class SingleExecutor implements Executor {
      * 2 тугрика за метод
      */
     public void shutdownNow() {
-        thread.interrupt();
         isShutdown = true;
+        thread.interrupt();
     }
 }
