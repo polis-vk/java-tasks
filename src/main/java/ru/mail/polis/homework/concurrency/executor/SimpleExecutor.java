@@ -23,8 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class SimpleExecutor implements Executor {
 
     private final BlockingQueue<Runnable> workersTasks = new LinkedBlockingQueue<>();
-    private final ReentrantLock executeLock = new ReentrantLock();
-    private final ReentrantLock shutDownLock = new ReentrantLock();
+    private final ReentrantLock workersLock = new ReentrantLock();
     private final AtomicInteger freeWorkers = new AtomicInteger(0);
     private final AtomicInteger workersCounter = new AtomicInteger(0);
     private final List<Thread> workers;
@@ -45,17 +44,22 @@ public class SimpleExecutor implements Executor {
         if (isShutdown) {
             throw new RejectedExecutionException();
         }
-        workersTasks.add(command);
         if (workersCounter.get() < maxThreadCount && freeWorkers.get() == 0) {
-            executeLock.lock();
-            if (workersCounter.get() < maxThreadCount && freeWorkers.get() == 0) {
-                Thread worker = new Thread(new Worker());
-                workersCounter.incrementAndGet();
-                workers.add(worker);
-                worker.start();
+            try {
+                workersLock.lock();
+                if (workersCounter.get() < maxThreadCount && freeWorkers.get() == 0) {
+                    Thread worker = new Thread(new Worker());
+                    workersCounter.incrementAndGet();
+                    workers.add(worker);
+                    worker.start();
+                }
+            } catch (IllegalMonitorStateException e) {
+                e.printStackTrace();
+            } finally {
+                workersLock.unlock();
             }
-            executeLock.unlock();
         }
+        workersTasks.add(command);
     }
 
     /**
@@ -72,11 +76,16 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         isShutdown = true;
-        shutDownLock.lock();
-        for (Thread worker : workers) {
-            worker.interrupt();
+        try {
+            workersLock.lock();
+            for (Thread worker : workers) {
+                worker.interrupt();
+            }
+        } catch (IllegalMonitorStateException e) {
+            e.printStackTrace();
+        } finally {
+            workersLock.unlock();
         }
-        shutDownLock.unlock();
     }
 
     /**
