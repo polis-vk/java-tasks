@@ -26,6 +26,7 @@ public class SimpleExecutor implements Executor {
     private final BlockingQueue<Runnable> tasks;
     private final int maxThreadCount;
     private final AtomicInteger freeThreadsCount;
+    private final AtomicInteger liveThreadsCount;
 
     public SimpleExecutor(int maxThreadCount) {
         this.isShutdown = false;
@@ -33,6 +34,7 @@ public class SimpleExecutor implements Executor {
         this.threads = new ArrayList<>(maxThreadCount);
         this.maxThreadCount = maxThreadCount;
         this.freeThreadsCount = new AtomicInteger(0);
+        this.liveThreadsCount = new AtomicInteger(0);
     }
 
     /**
@@ -67,9 +69,11 @@ public class SimpleExecutor implements Executor {
                             throw new RuntimeException(e);
                         }
                     }
+                    liveThreadsCount.getAndDecrement();
                 });
                 newThread.start();
                 threads.add(newThread);
+                liveThreadsCount.getAndIncrement();
             }
         }
     }
@@ -97,6 +101,6 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return threads.size();
+        return liveThreadsCount.intValue();
     }
 }
