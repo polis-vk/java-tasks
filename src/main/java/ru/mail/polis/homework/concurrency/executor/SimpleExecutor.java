@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p>
  * Задачи должны выполняться в порядке FIFO
  * Потоки после завершения выполнения задачи НЕ умирают, а ждут.
- * <p>
+ *
  * Max 10 баллов
  */
 public class SimpleExecutor implements Executor {
@@ -31,11 +31,11 @@ public class SimpleExecutor implements Executor {
             maxThreadCount = DEFAULT_MAX_THREAD_COUNT;
         }
 
-        tasksQueue = new LinkedBlockingQueue<>();
-        threadsArray = new ArrayList<>(maxThreadCount);
-        cntFreeThreads = new AtomicInteger(0);
-        isShutdownThreads = false;
+        this.tasksQueue = new LinkedBlockingQueue<>();
+        this.threadsArray = new ArrayList<>(maxThreadCount);
+        this.cntFreeThreads = new AtomicInteger(0);
         this.maxThreadCount = maxThreadCount;
+        this.isShutdownThreads = false;
     }
 
     /**
