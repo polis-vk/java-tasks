@@ -31,7 +31,7 @@ public class SingleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
         if (command == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         }
         try {
             tasks.put(command);

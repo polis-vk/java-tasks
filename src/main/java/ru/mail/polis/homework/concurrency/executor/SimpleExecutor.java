@@ -25,7 +25,7 @@ public class SimpleExecutor implements Executor {
     private final AtomicInteger freeThreadsCount;
     private final int maxThreadCount;
     private volatile boolean isShutdown;
-    private final AtomicInteger liveThreadCount;
+    private volatile int liveThreadCount;
 
     public SimpleExecutor(int maxThreadCount) {
         if (maxThreadCount < 1) {
@@ -35,7 +35,6 @@ public class SimpleExecutor implements Executor {
         this.tasks = new LinkedBlockingQueue<>();
         this.freeThreadsCount = new AtomicInteger();
         this.maxThreadCount = maxThreadCount;
-        this.liveThreadCount = new AtomicInteger();
     }
 
     /**
@@ -48,7 +47,7 @@ public class SimpleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
         if (command == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         }
         if (threadShouldBeCreated()) {
             synchronized (this) {
@@ -68,7 +67,7 @@ public class SimpleExecutor implements Executor {
                         }
                     });
                     newThread.start();
-                    liveThreadCount.getAndIncrement();
+                    liveThreadCount++;
                     threads.add(newThread);
                 }
             }
@@ -105,10 +104,10 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return liveThreadCount.get();
+        return liveThreadCount;
     }
 
     private boolean threadShouldBeCreated() {
-        return !isShutdown && freeThreadsCount.get() == 0 && maxThreadCount > liveThreadCount.get();
+        return !isShutdown && freeThreadsCount.get() == 0 && maxThreadCount > liveThreadCount;
     }
 }
