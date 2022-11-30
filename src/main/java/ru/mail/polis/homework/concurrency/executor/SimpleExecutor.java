@@ -53,8 +53,6 @@ public class SimpleExecutor implements Executor {
                     workers.add(worker);
                     worker.start();
                 }
-            } catch (IllegalMonitorStateException e) {
-                e.printStackTrace();
             } finally {
                 workersLock.unlock();
             }
@@ -81,8 +79,6 @@ public class SimpleExecutor implements Executor {
             for (Thread worker : workers) {
                 worker.interrupt();
             }
-        } catch (IllegalMonitorStateException e) {
-            e.printStackTrace();
         } finally {
             workersLock.unlock();
         }
