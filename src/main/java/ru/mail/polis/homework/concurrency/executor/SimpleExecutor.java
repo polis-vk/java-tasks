@@ -69,7 +69,6 @@ public class SimpleExecutor implements Executor {
                             throw new RuntimeException(e);
                         }
                     }
-                    liveThreadsCount.getAndDecrement();
                 });
                 newThread.start();
                 threads.add(newThread);
