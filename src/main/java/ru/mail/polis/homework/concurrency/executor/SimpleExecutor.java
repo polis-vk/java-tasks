@@ -21,8 +21,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SimpleExecutor implements Executor {
 
     private volatile boolean isTerminated;
-    private AtomicInteger usedThreads = new AtomicInteger();
-    private int maxThreads;
+    private final AtomicInteger usedThreads = new AtomicInteger();
+    private final int maxThreads;
     private final BlockingQueue<Runnable> tasks;
     private final ArrayList<CustomThread> threads;
 
@@ -45,13 +45,13 @@ public class SimpleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
         synchronized (this) {
-            tasks.add(command);
             if (threads.size() < maxThreads && usedThreads.get() == 0) {
                 CustomThread customThread = new CustomThread();
                 threads.add(customThread);
                 customThread.start();
             }
         }
+        tasks.add(command);
     }
 
     /**
@@ -77,16 +77,14 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        synchronized (this) {
-            return threads.size();
-        }
+        return threads.size();
     }
 
     private class CustomThread extends Thread {
         @Override
         public void run() {
             try {
-                while (!(isTerminated && tasks.isEmpty())) {
+                while ((!isTerminated || !tasks.isEmpty()) && !isInterrupted()) {
                     usedThreads.incrementAndGet();
                     Runnable task = tasks.take();
                     usedThreads.decrementAndGet();
