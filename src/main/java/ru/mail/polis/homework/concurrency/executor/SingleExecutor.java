@@ -31,7 +31,7 @@ public class SingleExecutor implements Executor {
     @Override
     public void execute(Runnable command) {
         if (command == null) {
-            return;
+            throw new IllegalArgumentException();
         }
         if (isTerminated) {
             throw new RejectedExecutionException();
