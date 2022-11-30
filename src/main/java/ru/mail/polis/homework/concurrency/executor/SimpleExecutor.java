@@ -1,9 +1,7 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executor;
-import java.util.concurrent.RejectedExecutionException;
+import java.util.Objects;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -20,10 +18,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SimpleExecutor implements Executor {
 
     private final int maxThreadCount;
-    private boolean isShutDown = false;
-    private boolean isShutDownNow = false;
+    private volatile boolean isShutDown = false;
     private final AtomicInteger readyThreadsCount = new AtomicInteger(0);
-    private final ConcurrentLinkedDeque<Runnable> commandDeque = new ConcurrentLinkedDeque<>();
+    private final LinkedBlockingQueue<Runnable> commandQueue = new LinkedBlockingQueue<>();
     private final CopyOnWriteArrayList<SimpleThread> threadPool = new CopyOnWriteArrayList<>();
 
     public SimpleExecutor(int maxThreadCount) {
@@ -32,23 +29,19 @@ public class SimpleExecutor implements Executor {
 
     private class SimpleThread extends Thread {
         public SimpleThread() {
-            readyThreadsCount.incrementAndGet();
             start();
         }
 
         @Override
         public void run() {
-            while (true) {
-                if (!commandDeque.isEmpty()) {
-                    readyThreadsCount.decrementAndGet();
-                    try {
-                        commandDeque.pollLast().run();
-                    } catch (NullPointerException ignored) {
+            while (!isShutDown) {
+                readyThreadsCount.incrementAndGet();
+                if (!commandQueue.isEmpty()) {
+                    Runnable command = commandQueue.poll();
+                    if (Objects.nonNull(command)) {
+                        readyThreadsCount.decrementAndGet();
+                        command.run();
                     }
-                    readyThreadsCount.incrementAndGet();
-                }
-                if (isShutDownNow) {
-                    this.interrupt();
                 }
             }
         }
@@ -60,10 +53,12 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (isShutDown || isShutDownNow) {
+        if (isShutDown) {
             throw new RejectedExecutionException();
+        } else if (command == null) {
+            return;
         }
-        commandDeque.addFirst(command);
+        commandQueue.add(command);
         synchronized (this) {
             if (readyThreadsCount.get() == 0 && getLiveThreadsCount() < maxThreadCount) {
                 threadPool.add(new SimpleThread());
@@ -84,7 +79,8 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdownNow() {
-        isShutDownNow = true;
+        isShutDown = true;
+        threadPool.forEach(Thread::interrupt);
     }
 
     /**
