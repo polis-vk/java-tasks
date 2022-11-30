@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
@@ -27,7 +25,7 @@ public class SimpleExecutor implements Executor {
     private final AtomicInteger freeThreadsCount;
     private final int maxThreadCount;
     private volatile boolean isShutdown;
-    private volatile int liveThreadCount;
+    private final AtomicInteger liveThreadCount;
 
     public SimpleExecutor(int maxThreadCount) {
         if (maxThreadCount < 1) {
@@ -35,8 +33,9 @@ public class SimpleExecutor implements Executor {
         }
         this.threads = new ArrayList<>(maxThreadCount);
         this.tasks = new LinkedBlockingQueue<>();
-        this.freeThreadsCount = new AtomicInteger(0);
+        this.freeThreadsCount = new AtomicInteger();
         this.maxThreadCount = maxThreadCount;
+        this.liveThreadCount = new AtomicInteger();
     }
 
     /**
@@ -69,7 +68,7 @@ public class SimpleExecutor implements Executor {
                         }
                     });
                     newThread.start();
-                    liveThreadCount++;
+                    liveThreadCount.getAndIncrement();
                     threads.add(newThread);
                 }
             }
@@ -106,10 +105,10 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return liveThreadCount;
+        return liveThreadCount.get();
     }
 
     private boolean threadShouldBeCreated() {
-        return !isShutdown && freeThreadsCount.get() == 0 && maxThreadCount > liveThreadCount;
+        return !isShutdown && freeThreadsCount.get() == 0 && maxThreadCount > liveThreadCount.get();
     }
 }

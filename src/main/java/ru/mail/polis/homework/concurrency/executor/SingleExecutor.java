@@ -60,12 +60,12 @@ public class SingleExecutor implements Executor {
     private class CustomTread extends Thread {
         @Override
         public void run() {
-            try {
-                while (!tasks.isEmpty() || !isShutdown) {
+            while (!tasks.isEmpty() || !isShutdown) {
+                try {
                     tasks.take().run();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
     }
