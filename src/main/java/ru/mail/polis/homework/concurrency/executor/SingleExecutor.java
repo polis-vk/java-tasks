@@ -1,15 +1,35 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
- *
  * Задачи должны выполняться в порядке FIFO
- *
  * Max 6 тугриков
  */
 public class SingleExecutor implements Executor {
+
+    private final BlockingQueue<Runnable> tasksQueue;
+    private final Thread singleThread;
+    private volatile boolean isAlive;
+
+    public SingleExecutor() {
+        tasksQueue = new LinkedBlockingDeque<>();
+        singleThread = new Thread(() -> {
+            try {
+                while (isAlive || !tasksQueue.isEmpty()) {
+                    tasksQueue.take().run();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        isAlive = true;
+        singleThread.start();
+    }
 
 
     /**
@@ -18,6 +38,10 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (!isAlive) {
+            throw new RejectedExecutionException();
+        }
+        tasksQueue.add(command);
     }
 
     /**
@@ -25,6 +49,7 @@ public class SingleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
+        isAlive = false;
     }
 
     /**
@@ -32,6 +57,7 @@ public class SingleExecutor implements Executor {
      * 2 тугрика за метод
      */
     public void shutdownNow() {
-
+        isAlive = false;
+        singleThread.interrupt();
     }
 }
