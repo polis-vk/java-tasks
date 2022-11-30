@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.concurrent.Executor;
+import java.util.concurrent.*;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
@@ -10,7 +10,25 @@ import java.util.concurrent.Executor;
  * Max 6 тугриков
  */
 public class SingleExecutor implements Executor {
+    private final Thread thread;
+    private final BlockingQueue<Runnable> blockingQueue;
+    private volatile boolean flag = false;
 
+    public SingleExecutor() {
+        blockingQueue = new LinkedBlockingQueue<>();
+        thread = new Thread(() -> {
+            try {
+                while (flag || !blockingQueue.isEmpty()) {
+                    Runnable task = blockingQueue.take();
+                    task.run();
+                }
+            } catch (InterruptedException exception) {
+                exception.getMessage();
+            }
+        });
+        flag = true;
+        thread.start();
+    }
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -18,6 +36,11 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (command == null) {
+            throw new IllegalArgumentException();
+        }
+        checkIsShutDown();
+        blockingQueue.offer(command);
     }
 
     /**
@@ -25,6 +48,7 @@ public class SingleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
+        flag = false;
     }
 
     /**
@@ -32,6 +56,13 @@ public class SingleExecutor implements Executor {
      * 2 тугрика за метод
      */
     public void shutdownNow() {
+        shutdown();
+        thread.interrupt();
+    }
 
+    private void checkIsShutDown() {
+        if (!flag) {
+            throw new RejectedExecutionException();
+        }
     }
 }
