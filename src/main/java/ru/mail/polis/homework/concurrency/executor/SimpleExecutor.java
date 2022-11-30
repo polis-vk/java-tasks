@@ -55,7 +55,7 @@ public class SimpleExecutor implements Executor {
     public void execute(Runnable command) {
         if (isShutDown) {
             throw new RejectedExecutionException();
-        } else if (command == null) {
+        } else if (Objects.isNull(command)) {
             return;
         }
         commandQueue.add(command);
