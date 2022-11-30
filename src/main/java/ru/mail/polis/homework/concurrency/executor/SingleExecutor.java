@@ -39,11 +39,7 @@ public class SingleExecutor implements Executor {
             return;
         }
         if (!isShutDown) {
-            try {
-                commands.put(command);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            commands.add(command);
         } else {
             throw new RejectedExecutionException();
         }
