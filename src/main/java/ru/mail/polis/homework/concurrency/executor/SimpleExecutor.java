@@ -24,7 +24,7 @@ public class SimpleExecutor implements Executor {
     private final AtomicInteger freeThreadCount = new AtomicInteger();
     private final BlockingQueue<Runnable> commandQueue = new LinkedBlockingQueue<>();
     private final List<Thread> threads = new ArrayList<>();
-    private volatile boolean isShutdown = false;
+    private volatile boolean shutdown = false;
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
@@ -36,14 +36,16 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (isShutdown) {
+        if (shutdown) {
             throw new RejectedExecutionException();
         }
-        synchronized (this) {
-            if (freeThreadCount.get() == 0 && threads.size() < maxThreadCount) {
-                Thread thread = new SimpleThread();
-                threads.add(thread);
-                thread.start();
+        if (threads.size() < maxThreadCount) {
+            synchronized (this) {
+                if (freeThreadCount.get() == 0 && threads.size() < maxThreadCount) {
+                    Thread thread = new SimpleThread();
+                    threads.add(thread);
+                    thread.start();
+                }
             }
         }
         commandQueue.add(command);
@@ -54,7 +56,7 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
-        isShutdown = true;
+        shutdown = true;
     }
 
     /**
@@ -62,7 +64,7 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdownNow() {
-        isShutdown = true;
+        shutdown = true;
         synchronized (this) {
             for (Thread thread : threads) {
                 thread.interrupt();
@@ -82,7 +84,7 @@ public class SimpleExecutor implements Executor {
     private class SimpleThread extends Thread {
         @Override
         public void run() {
-            while (!isShutdown || !commandQueue.isEmpty()) {
+            while (!shutdown || !commandQueue.isEmpty()) {
                 freeThreadCount.incrementAndGet();
                 Runnable command;
                 try {

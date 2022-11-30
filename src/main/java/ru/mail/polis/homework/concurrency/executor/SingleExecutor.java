@@ -7,15 +7,16 @@ import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
- *
+ * <p>
  * Задачи должны выполняться в порядке FIFO
- *
+ * <p>
  * Max 6 тугриков
  */
 public class SingleExecutor implements Executor {
     private final BlockingQueue<Runnable> commandQueue = new LinkedBlockingQueue<>();
-    private volatile boolean isShutdown = false;
+    private volatile boolean shutdown = false;
     private final Thread thread = new SingleThread();
+    private boolean threadRun = false;
 
     /**
      * Метод ставит задачу в очередь на исполнение.
@@ -23,12 +24,13 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (isShutdown) {
+        if (shutdown) {
             throw new RejectedExecutionException();
         }
         commandQueue.add(command);
-        if(!thread.isAlive()){
+        if (!thread.isAlive() && !threadRun) {
             thread.start();
+            threadRun = true;
         }
     }
 
@@ -37,7 +39,7 @@ public class SingleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
-        isShutdown = true;
+        shutdown = true;
     }
 
     /**
@@ -45,14 +47,14 @@ public class SingleExecutor implements Executor {
      * 2 тугрика за метод
      */
     public void shutdownNow() {
-        isShutdown = true;
+        shutdown = true;
         thread.interrupt();
     }
 
     private class SingleThread extends Thread {
         @Override
         public void run() {
-            while (!isShutdown || !commandQueue.isEmpty()) {
+            while (!shutdown || !commandQueue.isEmpty()) {
                 Runnable command;
                 try {
                     command = commandQueue.take();
