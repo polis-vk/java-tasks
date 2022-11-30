@@ -44,11 +44,7 @@ public class SingleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
 
-        try {
-            tasks.put(command);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        tasks.add(command);
     }
 
     /**
