@@ -25,18 +25,22 @@ public class SingleExecutor implements Executor {
                 try {
                     commands.take().run();
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             }
         });
         thread.start();
     }
+
     /**
      * Метод ставит задачу в очередь на исполнение.
      * 3 тугрика за метод
      */
     @Override
     public void execute(Runnable command) {
+        if (command == null) {
+            return;
+        }
         if (!isShutDown) {
             try {
                 commands.put(command);
