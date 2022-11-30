@@ -20,7 +20,7 @@ public class SimpleExecutor implements Executor {
     private final int maxThreadCount;
     private volatile boolean isShutDown = false;
     private final AtomicInteger readyThreadsCount = new AtomicInteger(0);
-    private final LinkedBlockingQueue<Runnable> commandQueue = new LinkedBlockingQueue<>();
+    private final ConcurrentLinkedQueue<Runnable> commandQueue = new ConcurrentLinkedQueue<>();
     private final CopyOnWriteArrayList<SimpleThread> threadPool = new CopyOnWriteArrayList<>();
 
     public SimpleExecutor(int maxThreadCount) {
