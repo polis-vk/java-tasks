@@ -22,11 +22,8 @@ public class SingleExecutor implements Executor {
         this.commands = new LinkedBlockingQueue<>();
         this.thread = new Thread(() -> {
             while (!isShutDown || !commands.isEmpty()) {
-                try {
-                    commands.take().run();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                if (commands.peek() != null)
+                    commands.poll().run();
             }
         });
         thread.start();
