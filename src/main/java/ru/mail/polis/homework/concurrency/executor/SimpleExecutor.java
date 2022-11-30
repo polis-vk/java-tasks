@@ -47,13 +47,9 @@ public class SimpleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
 
-        try {
-            tasks.put(command);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
 
         if (freeThreadsCount.get() > 0 || threads.size() == maxThreadCount) {
+            tasks.add(command);
             return;
         }
         synchronized (threads) {
@@ -74,6 +70,7 @@ public class SimpleExecutor implements Executor {
                 threads.add(newThread);
                 liveThreadsCount.getAndIncrement();
             }
+            tasks.add(command);
         }
     }
 
