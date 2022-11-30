@@ -5,7 +5,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -22,14 +21,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SimpleExecutor implements Executor {
 
     private final LinkedBlockingQueue<Runnable> tasks;
-    private final AtomicBoolean isStopped;
+    private volatile boolean isStopped;
     private final CopyOnWriteArrayList<Thread> threadList;
     private final AtomicInteger freeThreads;
     private final int maxThreadCount;
 
     public SimpleExecutor(int maxThreadCount) {
         this.tasks = new LinkedBlockingQueue<>();
-        this.isStopped = new AtomicBoolean(false);
         this.threadList = new CopyOnWriteArrayList<>(new ArrayList<>(maxThreadCount));
         this.freeThreads = new AtomicInteger(0);
         this.maxThreadCount = maxThreadCount;
@@ -41,14 +39,18 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (isStopped.get()) {
+        if (isStopped) {
             throw new RejectedExecutionException();
         }
+        if (command == null) {
+            return;
+        }
+        tasks.add(command);
         synchronized (this) {
             if (freeThreads.get() == 0 && getLiveThreadsCount() < maxThreadCount) {
                 Thread thread = new Thread(() -> {
                     try {
-                        while (!isStopped.get()) {
+                        while (!isStopped) {
                             freeThreads.incrementAndGet();
                             if (!tasks.isEmpty()) {
                                 freeThreads.decrementAndGet();
@@ -62,9 +64,6 @@ public class SimpleExecutor implements Executor {
                 threadList.add(thread);
                 thread.start();
             }
-            if (command != null) {
-                tasks.add(command);
-            }
         }
     }
 
@@ -73,7 +72,7 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
-        isStopped.set(true);
+        isStopped = true;
     }
 
     /**
@@ -81,7 +80,7 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdownNow() {
-        isStopped.set(true);
+        isStopped = true;
         for (Thread thread : threadList) {
             thread.interrupt();
         }

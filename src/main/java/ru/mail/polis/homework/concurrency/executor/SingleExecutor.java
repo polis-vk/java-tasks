@@ -3,7 +3,6 @@ package ru.mail.polis.homework.concurrency.executor;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Нужно сделать свой executor с одним вечным потоком. Пока не вызовут shutdown или shutdownNow
@@ -15,15 +14,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SingleExecutor implements Executor {
 
     private final LinkedBlockingQueue<Runnable> tasks;
-    private final AtomicBoolean isStopped;
+    private volatile boolean isStopped;
     private final Thread thread;
 
     public SingleExecutor() {
         this.tasks = new LinkedBlockingQueue<>();
-        this.isStopped = new AtomicBoolean(false);
         this.thread = new Thread(() -> {
             try {
-                while (!isStopped.get() || !tasks.isEmpty()) {
+                while (!isStopped || !tasks.isEmpty()) {
                     tasks.take().run();
                 }
             } catch (InterruptedException ignored) {
@@ -38,7 +36,7 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (isStopped.get()) {
+        if (isStopped) {
             throw new RejectedExecutionException();
         }
         if (command != null) {
@@ -51,7 +49,7 @@ public class SingleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
-        isStopped.set(true);
+        isStopped = true;
     }
 
     /**
@@ -59,7 +57,7 @@ public class SingleExecutor implements Executor {
      * 2 тугрика за метод
      */
     public void shutdownNow() {
-        isStopped.set(true);
+        isStopped = true;
         thread.interrupt();
     }
 
