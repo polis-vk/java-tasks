@@ -33,11 +33,7 @@ public class SingleExecutor implements Executor {
         if (command == null) {
             throw new IllegalArgumentException();
         }
-        try {
-            tasks.put(command);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        tasks.add(command);
     }
 
     /**
