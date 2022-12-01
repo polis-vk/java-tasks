@@ -68,8 +68,10 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         stopped = true;
-        for (Thread thread : threadList) {
-            thread.interrupt();
+        synchronized (this) {
+            for (Thread thread : threadList) {
+                thread.interrupt();
+            }
         }
     }
 
@@ -77,7 +79,9 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return threadList.size();
+        synchronized (this) {
+            return threadList.size();
+        }
     }
 
     private class CustomThread extends Thread {

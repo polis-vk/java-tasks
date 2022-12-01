@@ -32,9 +32,6 @@ public class SingleExecutor implements Executor {
         if (stopped) {
             throw new RejectedExecutionException();
         }
-        if (command == null) {
-            throw new NullPointerException();
-        }
         runnableQueue.offer(command);
 
     }
