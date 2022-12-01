@@ -38,7 +38,7 @@ public class SimpleExecutor implements Executor {
     @Override
     public void execute(Runnable command) {
         if (command == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         }
         if (shutDown) {
             throw new RejectedExecutionException();

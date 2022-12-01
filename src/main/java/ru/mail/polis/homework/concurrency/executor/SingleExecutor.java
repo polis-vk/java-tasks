@@ -19,7 +19,7 @@ public class SingleExecutor implements Executor {
     public SingleExecutor() {
         queue = new LinkedBlockingQueue<>();
         thread = new EternalTread();
-        this.thread.start();
+        thread.start();
     }
 
     /**
@@ -29,7 +29,7 @@ public class SingleExecutor implements Executor {
     @Override
     public void execute(Runnable command) {
         if (command == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         }
         if (shutDown) {
             throw new RejectedExecutionException();
