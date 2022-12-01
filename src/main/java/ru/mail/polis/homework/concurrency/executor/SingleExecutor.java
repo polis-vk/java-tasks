@@ -30,8 +30,12 @@ public class SingleExecutor implements Executor {
             throw new NullPointerException();
         }
         if (!isStarted) {
-            isStarted = true;
-            worker.start();
+            synchronized (this) {
+                if (!isStarted) {
+                    isStarted = true;
+                    worker.start();
+                }
+            }
         }
         queue.add(command);
     }
@@ -76,9 +80,5 @@ public class SingleExecutor implements Executor {
         private boolean isWorking() {
             return isWorking;
         }
-    }
-
-    private enum State {
-
     }
 }
