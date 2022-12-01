@@ -27,6 +27,9 @@ public class SimpleExecutor implements Executor {
     private volatile boolean running;
 
     public SimpleExecutor(int maxThreadCount) {
+        if (maxThreadCount < 1) {
+            throw new IllegalArgumentException();
+        }
         this.tasksQueue = new LinkedBlockingQueue<>();
         this.threads = new ArrayList<>();
         this.freeThreadsCount = new AtomicInteger();
