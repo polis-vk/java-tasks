@@ -43,11 +43,13 @@ public class SimpleExecutor implements Executor {
         }
         if (runnableQueue.size() >= freeThreadsCnt.get() && threadList.size() < maxThreadCount) {
             synchronized (this) {
-                if (runnableQueue.size() >= freeThreadsCnt.get() && threadList.size() < maxThreadCount) {
-                    freeThreadsCnt.incrementAndGet();
-                    CustomThread newThread = new CustomThread();
-                    threadList.add(newThread);
-                    newThread.start();
+                synchronized (threadList) {
+                    if (runnableQueue.size() >= freeThreadsCnt.get() && threadList.size() < maxThreadCount) {
+                        freeThreadsCnt.incrementAndGet();
+                        CustomThread newThread = new CustomThread();
+                        threadList.add(newThread);
+                        newThread.start();
+                    }
                 }
             }
         }
@@ -68,7 +70,7 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         stopped = true;
-        synchronized (this) {
+        synchronized (threadList) {
             for (Thread thread : threadList) {
                 thread.interrupt();
             }
