@@ -21,12 +21,10 @@ public class SimpleExecutor implements Executor {
     private final BlockingQueue<Runnable> commandsQueue = new LinkedBlockingQueue<>();
     private final AtomicInteger availableThreadCount = new AtomicInteger();
     private final Worker[] workersPool;
-    private final int maxThreadCount;
     private volatile int currentThreadCount;
     private volatile boolean isShutdown;
 
     public SimpleExecutor(int maxThreadCount) {
-        this.maxThreadCount = maxThreadCount;
         this.workersPool = new Worker[maxThreadCount];
     }
 
@@ -42,9 +40,9 @@ public class SimpleExecutor implements Executor {
         if (command == null) {
             throw new NullPointerException();
         }
-        if (availableThreadCount.get() == 0 && currentThreadCount < maxThreadCount) {
+        if (availableThreadCount.get() == 0 && currentThreadCount < workersPool.length) {
             synchronized (this) {
-                if (availableThreadCount.get() == 0 && currentThreadCount < maxThreadCount) {
+                if (availableThreadCount.get() == 0 && currentThreadCount < workersPool.length) {
                     Worker worker = new Worker();
                     worker.start();
                     workersPool[currentThreadCount] = worker;
@@ -69,7 +67,7 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         if (!isShutdown) {
-            isShutdown = true;
+            shutdown();
             synchronized (this) {
                 for (int i = 0; i < currentThreadCount; i++) {
                     workersPool[i].interrupt();

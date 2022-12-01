@@ -19,13 +19,11 @@ import java.util.concurrent.RejectedExecutionException;
 public class SimpleExecutorWithCompareAndSet implements Executor {
     private final BlockingQueue<Runnable> commandsQueue = new LinkedBlockingQueue<>();
     private final Worker[] workersPool;
-    private final int maxThreadCount;
     private volatile int currentThreadCount;
     private volatile int availableThreadCount;
     private volatile boolean isShutdown;
 
     public SimpleExecutorWithCompareAndSet(int maxThreadCount) {
-        this.maxThreadCount = maxThreadCount;
         this.workersPool = new Worker[maxThreadCount];
     }
 
@@ -41,9 +39,9 @@ public class SimpleExecutorWithCompareAndSet implements Executor {
         if (command == null) {
             throw new NullPointerException();
         }
-        if (availableThreadCount == 0 && currentThreadCount < maxThreadCount) {
+        if (availableThreadCount == 0 && currentThreadCount < workersPool.length) {
             synchronized (this) {
-                if (availableThreadCount == 0 && currentThreadCount < maxThreadCount) {
+                if (availableThreadCount == 0 && currentThreadCount < workersPool.length) {
                     Worker worker = new Worker();
                     worker.start();
                     workersPool[currentThreadCount] = worker;
@@ -68,7 +66,7 @@ public class SimpleExecutorWithCompareAndSet implements Executor {
      */
     public void shutdownNow() {
         if (!isShutdown) {
-            isShutdown = true;
+            shutdown();
             synchronized (this) {
                 for (int i = 0; i < currentThreadCount; i++) {
                     workersPool[i].interrupt();
