@@ -24,11 +24,11 @@ public class si__leThreadExecutor {
         if (command == null) {
             throw new NullPointerException();
         }
-        if (getPoolSize() < largestPoolSize) {
-            addWorker();
-        }
         if (status.get() == STOP) {
             throw new RejectedExecutionException("Task " + command + " rejected");
+        }
+        if (getPoolSize() < largestPoolSize) {
+            addWorker();
         }
         workQueue.add(command);
     }
