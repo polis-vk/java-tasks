@@ -42,7 +42,6 @@ public class SimpleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
         if (runnableQueue.size() >= freeThreadsCnt.get() && threadList.size() < maxThreadCount) {
-            synchronized (this) {
                 synchronized (threadList) {
                     if (runnableQueue.size() >= freeThreadsCnt.get() && threadList.size() < maxThreadCount) {
                         freeThreadsCnt.incrementAndGet();
@@ -51,7 +50,6 @@ public class SimpleExecutor implements Executor {
                         newThread.start();
                     }
                 }
-            }
         }
         runnableQueue.add(command);
     }
@@ -81,7 +79,7 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        synchronized (this) {
+        synchronized (threadList) {
             return threadList.size();
         }
     }
