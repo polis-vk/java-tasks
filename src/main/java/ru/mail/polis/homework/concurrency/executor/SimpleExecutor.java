@@ -63,6 +63,7 @@ public class SimpleExecutor implements Executor {
             mainLock.unlock();
         }
 
+
         synchronized (workers) {
             if (!workQueue.isEmpty() && workers.size() < threadsLimit) {
                 Thread w = new Thread(new Worker());
@@ -77,7 +78,9 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
+        mainLock.lock();
         currentState = State.SHUTDOWN;
+        mainLock.unlock();
     }
 
     /**
@@ -85,7 +88,9 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdownNow() {
+        mainLock.lock();
         currentState = State.STOP;
+        mainLock.unlock();
         interruptWorkers();
     }
 
