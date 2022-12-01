@@ -58,7 +58,7 @@ public class SimpleExecutor implements Executor {
         if (threadsCount.intValue() < maxThreadCount) {
             lock.lock();
             try {
-                if (freeWorkers.get() == 0 && getLiveThreadsCount() < maxThreadCount) {
+                if (freeWorkers.get() == 0 && threadsCount.intValue() < maxThreadCount) {
                     Thread thread = new Thread(new Worker());
                     threads.add(thread);
                     threadsCount.incrementAndGet();
