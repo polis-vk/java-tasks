@@ -90,15 +90,15 @@ public class SimpleExecutor implements Executor {
         @Override
         public void run() {
             while (!shutdownMode || !commands.isEmpty()) {
-                waitingThreadsCount.incrementAndGet();
+                Runnable command = null;
                 try {
-                    Runnable command = commands.take();
-                    command.run();
+                    command = commands.take();
                 } catch (InterruptedException e) {
                     return;
                 } finally {
                     waitingThreadsCount.decrementAndGet();
                 }
+                command.run();
             }
         }
     }

@@ -59,12 +59,13 @@ public class SingleExecutor implements Executor {
         @Override
         public void run() {
             while (!shutdownMode || !commands.isEmpty()) {
+                Runnable command = null;
                 try {
-                    Runnable command = commands.take();
-                    command.run();
+                    command = commands.take();
                 } catch (InterruptedException e) {
                     return;
                 }
+                command.run();
             }
         }
     }
