@@ -1,9 +1,7 @@
 package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.HashSet;
-import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -19,21 +17,21 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class SimpleExecutor implements Executor {
 
-    private static final int RUNNING = 0;
-    private static final int SHUTDOWN = 1;
-    private static final int STOP = 2;
+    private enum State {
+        RUNNING, SHUTDOWN, STOP
+    }
     private final int threadsLimit;
     private final LinkedBlockingQueue<Runnable> workQueue;
     private final HashSet<Thread> workers;
     private final ReentrantLock mainLock;
 
-    private int currentState;
+    private volatile State currentState;
 
     public SimpleExecutor(int maxThreadCount) {
         if (maxThreadCount <= 0) {
             throw new IllegalArgumentException();
         }
-        currentState = RUNNING;
+        currentState = State.RUNNING;
         threadsLimit = maxThreadCount;
         workQueue = new LinkedBlockingQueue<>();
         workers = new HashSet<>(threadsLimit);
@@ -49,26 +47,28 @@ public class SimpleExecutor implements Executor {
         if (command == null) {
             throw new NullPointerException();
         }
-        if (currentState != RUNNING) {
+        if (currentState != State.RUNNING) {
             throw new RejectedExecutionException();
         }
 
         try {
             mainLock.lock();
+            if (currentState != State.RUNNING) {
+                throw new RejectedExecutionException();
+            }
             workQueue.add(command);
-            mainLock.unlock();
         } catch (IllegalStateException e) {
             e.printStackTrace();
+        } finally {
+            mainLock.unlock();
         }
 
-        if (!workQueue.isEmpty() && workers.size() < threadsLimit) {
-            mainLock.lock();
+        synchronized (workers) {
             if (!workQueue.isEmpty() && workers.size() < threadsLimit) {
                 Thread w = new Thread(new Worker());
                 workers.add(w);
                 w.start();
             }
-            mainLock.unlock();
         }
     }
 
@@ -77,7 +77,7 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
-        currentState = SHUTDOWN;
+        currentState = State.SHUTDOWN;
     }
 
     /**
@@ -85,8 +85,8 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdownNow() {
+        currentState = State.STOP;
         interruptWorkers();
-        currentState = STOP;
     }
 
     /**
@@ -102,11 +102,13 @@ public class SimpleExecutor implements Executor {
     }
 
     private void interruptWorkers() {
-        for (Thread t : workers) {
-            if (!t.isInterrupted()) {
-                try {
-                    t.interrupt();
-                } catch (SecurityException ignore) {
+        synchronized (workers) {
+            for (Thread t : workers) {
+                if (!t.isInterrupted()) {
+                    try {
+                        t.interrupt();
+                    } catch (SecurityException ignore) {
+                    }
                 }
             }
         }
@@ -115,7 +117,7 @@ public class SimpleExecutor implements Executor {
     private final class Worker implements Runnable {
         @Override
         public void run() {
-            while (currentState == RUNNING ||
+            while (currentState == State.RUNNING ||
                     !Thread.currentThread().isInterrupted() && !workQueue.isEmpty()) {
                 Runnable nextTask = workQueue.poll();
                 if (nextTask != null) {

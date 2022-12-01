@@ -13,16 +13,17 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SingleExecutor implements Executor {
 
-    private static final int RUNNING = 0;
-    private static final int SHUTDOWN = 1;
-    private static final int STOP = 2;
-    LinkedBlockingQueue<Runnable> workQueue;
-    private int currentState;
+    private enum State {
+        RUNNING, SHUTDOWN, STOP
+    }
+
+    private final LinkedBlockingQueue<Runnable> workQueue;
+    private volatile State currentState;
     private final Thread thread;
 
     public SingleExecutor() {
         workQueue = new LinkedBlockingQueue<>();
-        currentState = RUNNING;
+        currentState = State.RUNNING;
         thread = new Thread(new Worker());
         thread.start();
     }
@@ -33,7 +34,10 @@ public class SingleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (currentState == RUNNING) {
+        if (command == null) {
+            throw new NullPointerException();
+        }
+        if (currentState == State.RUNNING) {
             workQueue.offer(command);
         } else {
             throw new RejectedExecutionException();
@@ -45,7 +49,7 @@ public class SingleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
-        currentState = SHUTDOWN;
+        currentState = State.SHUTDOWN;
     }
 
     /**
@@ -53,16 +57,16 @@ public class SingleExecutor implements Executor {
      * 2 тугрика за метод
      */
     public void shutdownNow() {
+        currentState = State.STOP;
         if (thread != null && !thread.isInterrupted()) {
             thread.interrupt();
         }
-        currentState = STOP;
     }
 
     private final class Worker implements Runnable {
         @Override
         public void run() {
-            while (currentState == RUNNING || !thread.isInterrupted()) {
+            while (currentState == State.RUNNING || !thread.isInterrupted()) {
                 Runnable nextTask = workQueue.poll();
                 if (nextTask != null) {
                     nextTask.run();
