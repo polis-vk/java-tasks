@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SimpleExecutor implements Executor {
     private final BlockingQueue<Runnable> taskQueue;
     private final int maxThreads;
-    private final HashSet<WorkThread> threadSet;
+    private final HashSet<Thread> threadSet;
     private final AtomicInteger freeThreads;
     private volatile boolean running;
     private volatile int existingThreads;
@@ -50,7 +50,7 @@ public class SimpleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
 
-        if (running && existingThreads < maxThreads) {
+        if (freeThreads.get() == 0 && existingThreads < maxThreads) {
             synchronized (freeThreads) {
                 if (running && freeThreads.get() == 0 && existingThreads < maxThreads) {
                     threadSet.add(new WorkThread());
@@ -76,7 +76,7 @@ public class SimpleExecutor implements Executor {
     public void shutdownNow() {
         synchronized (freeThreads) {
             shutdown();
-            for (WorkThread thread : threadSet) {
+            for (Thread thread : threadSet) {
                 thread.interrupt();
             }
         }
