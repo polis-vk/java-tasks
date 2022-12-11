@@ -22,6 +22,7 @@ public class SimpleExecutor implements Executor {
     private final int maxThreadCount;
     private volatile boolean isActive = true;
     private final AtomicInteger freeThreads = new AtomicInteger();
+    private final AtomicInteger holdOn = new AtomicInteger();
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
@@ -36,18 +37,15 @@ public class SimpleExecutor implements Executor {
         if (!isActive) {
             throw new RejectedExecutionException();
         }
-        if (freeThreads.get() == 0 && threadList.size() < maxThreadCount ) {
-            synchronized (freeThreads) {
-                if (!isActive) {
-                    return;
-                }
-                if (freeThreads.get() == 0 && threadList.size() < maxThreadCount) {
-                    Thread thread = new CustomThread();
-                    threadList.add(thread);
-                    thread.start();
-                }
+        if (holdOn.get() == 0 && freeThreads.get() == 0 && threadList.size() < maxThreadCount && isActive) {
+            holdOn.incrementAndGet();
+            if (freeThreads.get() == 0 && threadList.size() < maxThreadCount && isActive) {
+                Thread thread = new CustomThread();
+                threadList.add(thread);
+                thread.start();
             }
         }
+        holdOn.decrementAndGet();
         queue.add(command);
     }
 
