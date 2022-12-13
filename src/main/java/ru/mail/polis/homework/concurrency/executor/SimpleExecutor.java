@@ -40,11 +40,10 @@ public class SimpleExecutor implements Executor {
             int oldVal1 = statesContainer.get().freeThreads.get();
             boolean oldVal2 = statesContainer.get().isActive;
             statesContainer.set(new StatesContainer(oldVal2, oldVal1, 1));
-            if (statesContainer.get().freeThreads.get() == 0 && threadList.size() < maxThreadCount && statesContainer.get().isActive) {
-                Thread thread = new CustomThread();
-                threadList.add(thread);
-                thread.start();
-            }
+            Thread thread = new CustomThread();
+            threadList.add(thread);
+            thread.start();
+
         }
         int oldVal1 = statesContainer.get().freeThreads.get();
         boolean oldVal2 = statesContainer.get().isActive;
