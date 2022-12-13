@@ -22,9 +22,6 @@ public class SimpleExecutor implements Executor {
     private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
     private AtomicReference<StatesContainer> statesContainer = new AtomicReference<>(new StatesContainer(true, 0, 0));
     private final int maxThreadCount;
-//    private volatile boolean isActive = true;
-//    private final AtomicInteger freeThreads = new AtomicInteger();
-//    private final AtomicInteger holdOn = new AtomicInteger();
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
@@ -36,12 +33,10 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-//        !Active
         if (!statesContainer.get().isActive) {
             throw new RejectedExecutionException();
         }
         if (statesContainer.get().holdOn.get() == 0 && statesContainer.get().freeThreads.get() == 0 && threadList.size() < maxThreadCount && statesContainer.get().isActive) {
-//            statesContainer.get().holdOn.incrementAndGet();
             int oldVal1 = statesContainer.get().freeThreads.get();
             boolean oldVal2 = statesContainer.get().isActive;
             statesContainer.set(new StatesContainer(oldVal2, oldVal1, 1));
@@ -51,7 +46,9 @@ public class SimpleExecutor implements Executor {
                 thread.start();
             }
         }
-        statesContainer.get().holdOn.decrementAndGet();
+        int oldVal1 = statesContainer.get().freeThreads.get();
+        boolean oldVal2 = statesContainer.get().isActive;
+        statesContainer.set(new StatesContainer(oldVal2, oldVal1, 0));
         queue.add(command);
     }
 
@@ -87,11 +84,9 @@ public class SimpleExecutor implements Executor {
             int oldVal = statesContainer.get().freeThreads.get();
             statesContainer.set(new StatesContainer(statesContainer.get().isActive, ++oldVal,
                     statesContainer.get().holdOn.get()));
-//            freeThreads.incrementAndGet();
             while (!Thread.currentThread().isInterrupted() && (!queue.isEmpty() || statesContainer.get().isActive)) {
                 try {
                     Runnable deal = queue.take();
-//                    freeThreads.decrementAndGet();
                     oldVal = statesContainer.get().freeThreads.get();
                     statesContainer.set(new StatesContainer(statesContainer.get().isActive, --oldVal,
                             statesContainer.get().holdOn.get()));
@@ -99,7 +94,6 @@ public class SimpleExecutor implements Executor {
                     oldVal = statesContainer.get().freeThreads.get();
                     statesContainer.set(new StatesContainer(statesContainer.get().isActive, ++oldVal,
                             statesContainer.get().holdOn.get()));
-//                    freeThreads.incrementAndGet();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
