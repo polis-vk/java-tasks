@@ -36,17 +36,17 @@ public class SimpleExecutor implements Executor {
         if (!statesContainer.get().isActive) {
             throw new RejectedExecutionException();
         }
+        int oldVal1 = statesContainer.get().freeThreads.get();
+        boolean oldVal2 = statesContainer.get().isActive;
         if (statesContainer.get().holdOn.get() == 0 && statesContainer.get().freeThreads.get() == 0 && threadList.size() < maxThreadCount && statesContainer.get().isActive) {
-            int oldVal1 = statesContainer.get().freeThreads.get();
-            boolean oldVal2 = statesContainer.get().isActive;
             statesContainer.set(new StatesContainer(oldVal2, oldVal1, 1));
             Thread thread = new CustomThread();
             threadList.add(thread);
             thread.start();
 
         }
-        int oldVal1 = statesContainer.get().freeThreads.get();
-        boolean oldVal2 = statesContainer.get().isActive;
+        oldVal1 = statesContainer.get().freeThreads.get();
+        oldVal2 = statesContainer.get().isActive;
         statesContainer.set(new StatesContainer(oldVal2, oldVal1, 0));
         queue.add(command);
     }
