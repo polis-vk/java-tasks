@@ -20,7 +20,7 @@ public class SimpleExecutor implements Executor {
 
     private final List<Thread> threadList = new CopyOnWriteArrayList<>();
     private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
-    private AtomicReference<StatesContainer> statesContainer = new AtomicReference<>(new StatesContainer(true, 0, 0));
+    private final AtomicReference<StatesContainer> statesContainer = new AtomicReference<>(new StatesContainer(true, 0, 0));
     private final int maxThreadCount;
 
     public SimpleExecutor(int maxThreadCount) {
