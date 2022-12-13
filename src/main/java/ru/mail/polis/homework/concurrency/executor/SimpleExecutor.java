@@ -3,6 +3,7 @@ package ru.mail.polis.homework.concurrency.executor;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -19,10 +20,11 @@ public class SimpleExecutor implements Executor {
 
     private final List<Thread> threadList = new CopyOnWriteArrayList<>();
     private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+    private AtomicReference<StatesContainer> statesContainer = new AtomicReference<>(new StatesContainer(true, 0, 0));
     private final int maxThreadCount;
-    private volatile boolean isActive = true;
-    private final AtomicInteger freeThreads = new AtomicInteger();
-    private final AtomicInteger holdOn = new AtomicInteger();
+//    private volatile boolean isActive = true;
+//    private final AtomicInteger freeThreads = new AtomicInteger();
+//    private final AtomicInteger holdOn = new AtomicInteger();
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
@@ -34,18 +36,22 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (!isActive) {
+//        !Active
+        if (!statesContainer.get().isActive) {
             throw new RejectedExecutionException();
         }
-        if (holdOn.get() == 0 && freeThreads.get() == 0 && threadList.size() < maxThreadCount && isActive) {
-            holdOn.incrementAndGet();
-            if (freeThreads.get() == 0 && threadList.size() < maxThreadCount && isActive) {
+        if (statesContainer.get().holdOn.get() == 0 && statesContainer.get().freeThreads.get() == 0 && threadList.size() < maxThreadCount && statesContainer.get().isActive) {
+//            statesContainer.get().holdOn.incrementAndGet();
+            int oldVal1 = statesContainer.get().freeThreads.get();
+            boolean oldVal2 = statesContainer.get().isActive;
+            statesContainer.set(new StatesContainer(oldVal2, oldVal1, 1));
+            if (statesContainer.get().freeThreads.get() == 0 && threadList.size() < maxThreadCount && statesContainer.get().isActive) {
                 Thread thread = new CustomThread();
                 threadList.add(thread);
                 thread.start();
             }
         }
-        holdOn.decrementAndGet();
+        statesContainer.get().holdOn.decrementAndGet();
         queue.add(command);
     }
 
@@ -54,7 +60,9 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
-        isActive = false;
+        int oldVal1 = statesContainer.get().freeThreads.get();
+        int oldVal2 = statesContainer.get().holdOn.get();
+        statesContainer.set(new StatesContainer(false, oldVal1, oldVal2));
     }
 
     /**
@@ -62,7 +70,7 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdownNow() {
-        isActive = false;
+        shutdown();
         threadList.forEach(Thread::interrupt);
     }
 
@@ -76,17 +84,38 @@ public class SimpleExecutor implements Executor {
     private class CustomThread extends Thread {
         @Override
         public void run() {
-            freeThreads.incrementAndGet();
-            while (!Thread.currentThread().isInterrupted() && (!queue.isEmpty() || isActive)) {
+            int oldVal = statesContainer.get().freeThreads.get();
+            statesContainer.set(new StatesContainer(statesContainer.get().isActive, ++oldVal,
+                    statesContainer.get().holdOn.get()));
+//            freeThreads.incrementAndGet();
+            while (!Thread.currentThread().isInterrupted() && (!queue.isEmpty() || statesContainer.get().isActive)) {
                 try {
                     Runnable deal = queue.take();
-                    freeThreads.decrementAndGet();
+//                    freeThreads.decrementAndGet();
+                    oldVal = statesContainer.get().freeThreads.get();
+                    statesContainer.set(new StatesContainer(statesContainer.get().isActive, --oldVal,
+                            statesContainer.get().holdOn.get()));
                     deal.run();
-                    freeThreads.incrementAndGet();
+                    oldVal = statesContainer.get().freeThreads.get();
+                    statesContainer.set(new StatesContainer(statesContainer.get().isActive, ++oldVal,
+                            statesContainer.get().holdOn.get()));
+//                    freeThreads.incrementAndGet();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }
+    }
+
+    private class StatesContainer {
+        public StatesContainer(boolean isActive, int freeThreads, int holdOn) {
+            this.isActive = isActive;
+            this.freeThreads = new AtomicInteger(freeThreads);
+            this.holdOn = new AtomicInteger(holdOn);
+        }
+
+        private volatile boolean isActive;
+        private final AtomicInteger freeThreads;
+        private final AtomicInteger holdOn;
     }
 }
