@@ -20,8 +20,7 @@ public class SimpleExecutor implements Executor {
 
     private final List<Thread> threadList = new CopyOnWriteArrayList<>();
     private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
-    private final AtomicReference<StatesContainer> statesContainer = new AtomicReference<>(new StatesContainer(1, 0,
-            0));
+    private final AtomicReference<StatesContainer> statesContainer = new AtomicReference<>(new StatesContainer(true, 0, 0));
     private final int maxThreadCount;
 
     public SimpleExecutor(int maxThreadCount) {
@@ -34,12 +33,12 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (statesContainer.get().isActive.get() == 0) {
+        if (!statesContainer.get().isActive) {
             throw new RejectedExecutionException();
         }
         int oldVal1 = statesContainer.get().freeThreads.get();
-        int oldVal2 = statesContainer.get().isActive.get();
-        if (statesContainer.get().holdOn.get() == 0 && statesContainer.get().freeThreads.get() == 0 && threadList.size() < maxThreadCount && statesContainer.get().isActive.get() == 1) {
+        boolean oldVal2 = statesContainer.get().isActive;
+        if (statesContainer.get().holdOn.get() == 0 && statesContainer.get().freeThreads.get() == 0 && threadList.size() < maxThreadCount && statesContainer.get().isActive) {
             statesContainer.set(new StatesContainer(oldVal2, oldVal1, 1));
             Thread thread = new CustomThread();
             threadList.add(thread);
@@ -47,7 +46,7 @@ public class SimpleExecutor implements Executor {
 
         }
         oldVal1 = statesContainer.get().freeThreads.get();
-        oldVal2 = statesContainer.get().isActive.get();
+        oldVal2 = statesContainer.get().isActive;
         statesContainer.set(new StatesContainer(oldVal2, oldVal1, 0));
         queue.add(command);
     }
@@ -56,8 +55,8 @@ public class SimpleExecutor implements Executor {
      * Дает текущим задачам выполниться. Добавление новых - бросает RejectedExecutionException
      * 1 тугрик за метод
      */
-    public void shutdown() {
-        statesContainer.set(new StatesContainer(0, statesContainer.get().freeThreads.get(),
+    public synchronized void shutdown() {
+        statesContainer.set(new StatesContainer(false, statesContainer.get().freeThreads.get(),
                 statesContainer.get().holdOn.get()));
     }
 
@@ -81,17 +80,17 @@ public class SimpleExecutor implements Executor {
         @Override
         public void run() {
             int oldVal = statesContainer.get().freeThreads.get();
-            statesContainer.set(new StatesContainer(statesContainer.get().isActive.get(), ++oldVal,
+            statesContainer.set(new StatesContainer(statesContainer.get().isActive, ++oldVal,
                     statesContainer.get().holdOn.get()));
-            while (!Thread.currentThread().isInterrupted() && (!queue.isEmpty() || statesContainer.get().isActive.get() == 1)) {
+            while (!Thread.currentThread().isInterrupted() && (!queue.isEmpty() || statesContainer.get().isActive)) {
                 try {
                     Runnable deal = queue.take();
                     oldVal = statesContainer.get().freeThreads.get();
-                    statesContainer.set(new StatesContainer(statesContainer.get().isActive.get(), --oldVal,
+                    statesContainer.set(new StatesContainer(statesContainer.get().isActive, --oldVal,
                             statesContainer.get().holdOn.get()));
                     deal.run();
                     oldVal = statesContainer.get().freeThreads.get();
-                    statesContainer.set(new StatesContainer(statesContainer.get().isActive.get(), ++oldVal,
+                    statesContainer.set(new StatesContainer(statesContainer.get().isActive, ++oldVal,
                             statesContainer.get().holdOn.get()));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -101,13 +100,13 @@ public class SimpleExecutor implements Executor {
     }
 
     private class StatesContainer {
-        public StatesContainer(int isActive, int freeThreads, int holdOn) {
-            this.isActive = new AtomicInteger(isActive);
+        public StatesContainer(boolean isActive, int freeThreads, int holdOn) {
+            this.isActive = isActive;
             this.freeThreads = new AtomicInteger(freeThreads);
             this.holdOn = new AtomicInteger(holdOn);
         }
 
-        private final AtomicInteger isActive;
+        private volatile boolean isActive;
         private final AtomicInteger freeThreads;
         private final AtomicInteger holdOn;
     }
