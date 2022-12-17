@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.concurrency.executor;
 
+import java.util.concurrent.Executor;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -11,10 +12,12 @@ import java.util.concurrent.atomic.AtomicReference;
  * Ленивая инициализация означает, что если вам приходит раз в 5 секунд задача, которую вы выполняете 2 секунды,
  * то вы создаете только один поток. Если приходит сразу 2 задачи - то два потока.  То есть, если приходит задача
  * и есть свободный запущенный поток - он берет задачу, если такого нет, то создается новый поток.
+ *
  * <p>
  * Задачи должны выполняться в порядке FIFO
  * Потоки после завершения выполнения задачи НЕ умирают, а ждут.
- *
+ * <p>
+ * Max 10 баллов
  * Max 10 тугриков
  */
 public class SimpleExecutor implements Executor {
@@ -22,7 +25,6 @@ public class SimpleExecutor implements Executor {
     private final List<Thread> threadsArray = new CopyOnWriteArrayList<>();
     private final AtomicReference<ExecutorState> executorState = new AtomicReference<>(new ExecutorState(0, 0, false));
     private final int maxThreadCount;
-
     public SimpleExecutor(int maxThreadCount) {
         if (maxThreadCount <= 0) {
             throw new IllegalArgumentException();
@@ -47,10 +49,12 @@ public class SimpleExecutor implements Executor {
         }
 
         if (executorState.get().sizeThreadList.get() < maxThreadCount && executorState.get().cntFreeThreads.compareAndSet(0, executorState.get().cntFreeThreads.get())) {
-            executorState.get().sizeThreadList.incrementAndGet();
-            Thread newThread = new SimpleThread();
-            newThread.start();
-            threadsArray.add(newThread);
+            int currentSizeThreadList = executorState.get().sizeThreadList.incrementAndGet();
+            if (currentSizeThreadList <= maxThreadCount) {
+                Thread newThread = new SimpleThread();
+                newThread.start();
+                threadsArray.add(newThread);
+            }
         }
 
         tasksQueue.offer(command);
