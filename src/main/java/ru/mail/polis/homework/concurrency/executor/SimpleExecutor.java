@@ -37,7 +37,8 @@ public class SimpleExecutor implements Executor {
         if (!statesContainer.get().isActive.get()) {
             throw new RejectedExecutionException();
         }
-        if (statesContainer.get().holdOn.compareAndSet(0, 1) && statesContainer.get().freeThreads.get() == 0 && threadList.size() < maxThreadCount && statesContainer.get().isActive.get()) {
+        if (statesContainer.get().holdOn.compareAndSet(0, 1) && statesContainer.get().freeThreads.compareAndSet(0,
+                statesContainer.get().freeThreads.get()) && threadList.size() < maxThreadCount && statesContainer.get().isActive.get()) {
             Thread thread = new CustomThread();
             threadList.add(thread);
             thread.start();
