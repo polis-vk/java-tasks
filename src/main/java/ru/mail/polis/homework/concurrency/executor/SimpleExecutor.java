@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.concurrency.executor;
 
-import java.util.concurrent.Executor;
+import java.util.List;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -15,8 +19,14 @@ import java.util.concurrent.Executor;
  */
 public class SimpleExecutor implements Executor {
 
-    public SimpleExecutor(int maxThreadCount) {
+    private final BlockingQueue<Runnable> commands = new LinkedBlockingDeque<>();
+    private final int maxThreadCount;
+    private final List<Thread> threads = new CopyOnWriteArrayList<>();
+    private AtomicReference<State> state = new AtomicReference<State>(new State());
 
+
+    public SimpleExecutor(int maxThreadCount) {
+        this.maxThreadCount = maxThreadCount;
     }
 
     /**
@@ -25,7 +35,18 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
+        if (!state.get().getRunning().get()) {
+            throw new RejectedExecutionException();
+        }
 
+        if (state.get().getFreeThreadCount().get() == 0 && state.get().getThreadsSize().get() < maxThreadCount) {
+            state.get().getThreadsSize().incrementAndGet();
+            Thread thread = new SimpleThread();
+            threads.add(thread);
+            thread.start();
+        }
+
+        commands.add(command);
     }
 
     /**
@@ -33,6 +54,7 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
+        state.get().getRunning().compareAndSet(true, false);
     }
 
     /**
@@ -40,13 +62,60 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdownNow() {
-
+        state.get().getRunning().compareAndSet(true, false);
+        for (Thread thread : threads) {
+            thread.interrupt();
+        }
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return 0;
+        return state.get().getThreadsSize().get();
+    }
+
+    private class SimpleThread extends Thread {
+
+        @Override
+        public void run() {
+            state.get().getFreeThreadCount().incrementAndGet();
+            while (!Thread.currentThread().isInterrupted() &&
+                    (!commands.isEmpty() || state.get().getRunning().get())) {
+                try {
+                    Runnable command = commands.take();
+                    state.get().getFreeThreadCount().decrementAndGet();
+                    command.run();
+                    state.get().getFreeThreadCount().incrementAndGet();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+    private class State {
+
+        private final AtomicInteger freeThreadCount = new AtomicInteger();
+        private final AtomicBoolean running = new AtomicBoolean(true);
+        private final AtomicInteger threadsSize = new AtomicInteger();
+
+        public AtomicBoolean getRunning() {
+           return running;
+        }
+
+        public AtomicInteger getFreeThreadCount() {
+            return freeThreadCount;
+        }
+
+        public AtomicInteger getThreadsSize() {
+            return threadsSize;
+        }
+
+        public State() {
+
+        }
+
     }
 }
