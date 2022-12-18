@@ -13,10 +13,10 @@ import java.util.concurrent.atomic.AtomicReference;
  * то вы создаете только один поток. Если приходит сразу 2 задачи - то два потока.  То есть, если приходит задача
  * и есть свободный запущенный поток - он берет задачу, если такого нет, то создается новый поток.
  *
- * <p>
  * Задачи должны выполняться в порядке FIFO
  * Потоки после завершения выполнения задачи НЕ умирают, а ждут.
- * Max 10 тугриков
+ *
+ * Max 10 баллов
  */
 public class SimpleExecutor implements Executor {
     private final BlockingQueue<Runnable> tasksQueue = new LinkedBlockingQueue<>();
