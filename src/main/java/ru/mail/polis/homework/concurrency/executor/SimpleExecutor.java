@@ -8,6 +8,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+import sun.security.provider.NativePRNG;
 
 /**
  * Нужно сделать свой executor с ленивой инициализацией потоков до какого-то заданного предела.
@@ -22,16 +25,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class SimpleExecutor implements Executor {
 
-    BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
-
-    List<Thread> threads;
-    private final AtomicBoolean isActive = new AtomicBoolean(true);
-    private AtomicInteger freeThreadCount = new AtomicInteger(0);
+    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+    private final List<Thread> threads = new CopyOnWriteArrayList<>();
     private final int maxThreadCount;
 
+    private final AtomicBoolean isShutdown = new AtomicBoolean(false);
+    private final AtomicInteger freeThreads = new AtomicInteger(0);
+    private final AtomicInteger size = new AtomicInteger(0);
+
     public SimpleExecutor(int maxThreadCount) {
-        this.maxThreadCount = maxThreadCount;
-        threads = new CopyOnWriteArrayList<>();
+       this.maxThreadCount = maxThreadCount;
     }
 
     /**
@@ -40,17 +43,24 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (!isActive.get()) {
+        if (command == null) {
+            return;
+        }
+
+        if (isShutdown.get()) {
             throw new RejectedExecutionException();
         }
 
-        if (freeThreadCount.intValue() == 0 && threads.size() < maxThreadCount) {
-            Thread thread = new SimpleThread();
-            threads.add(thread);
-            thread.start();
+        if (freeThreads.get() == 0 && size.get() < maxThreadCount && !isShutdown.get()) {
+            size.incrementAndGet();
+            Thread t = new CustomThread();
+            threads.add(t);
+            t.start();
         }
 
-        queue.add(command);
+        if (!isShutdown.get()) {
+            queue.add(command);
+        }
     }
 
     /**
@@ -58,7 +68,7 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
-        isActive.set(false);
+        isShutdown.compareAndSet(false, true);
     }
 
     /**
@@ -66,33 +76,31 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdownNow() {
-        isActive.set(false);
-        for (Thread thread : threads) {
-            thread.interrupt();
-        }
+        shutdown();
+        threads.forEach(Thread::interrupt);
     }
 
     /**
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return threads.size();
+        return size.get();
     }
 
-    private class SimpleThread extends Thread {
-       @Override
-       public void run(){
-            freeThreadCount.incrementAndGet();
-            while (!Thread.currentThread().isInterrupted() && (!queue.isEmpty() || isActive.get())) {
+    private class CustomThread extends Thread {
+        @Override
+        public void run() {
+            freeThreads.getAndIncrement();
+            while (!Thread.currentThread().isInterrupted() && (!queue.isEmpty() || !isShutdown.get())) {
                 try {
-                    Runnable task = queue.take();
-                    freeThreadCount.decrementAndGet();
-                    task.run();
-                    freeThreadCount.incrementAndGet();
+                    Runnable runnable = queue.take();
+                    freeThreads.decrementAndGet();
+                    runnable.run();
+                    freeThreads.incrementAndGet();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-       }
+        }
     }
 }
