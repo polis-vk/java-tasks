@@ -2,6 +2,7 @@ package ru.mail.polis.homework.concurrency.executor;
 
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -33,12 +34,12 @@ public class SimpleExecutor implements Executor {
      */
     @Override
     public void execute(Runnable command) {
-        if (!statesContainer.get().isActive) {
+        if (!statesContainer.get().isActive.get()) {
             throw new RejectedExecutionException();
         }
         int oldVal1 = statesContainer.get().freeThreads.get();
-        boolean oldVal2 = statesContainer.get().isActive;
-        if (statesContainer.get().holdOn.get() == 0 && statesContainer.get().freeThreads.get() == 0 && threadList.size() < maxThreadCount && statesContainer.get().isActive) {
+        boolean oldVal2 = statesContainer.get().isActive.get();
+        if (statesContainer.get().holdOn.get() == 0 && statesContainer.get().freeThreads.get() == 0 && threadList.size() < maxThreadCount && statesContainer.get().isActive.get()) {
             statesContainer.set(new StatesContainer(oldVal2, oldVal1, 1));
             Thread thread = new CustomThread();
             threadList.add(thread);
@@ -46,7 +47,7 @@ public class SimpleExecutor implements Executor {
 
         }
         oldVal1 = statesContainer.get().freeThreads.get();
-        oldVal2 = statesContainer.get().isActive;
+        oldVal2 = statesContainer.get().isActive.get();
         statesContainer.set(new StatesContainer(oldVal2, oldVal1, 0));
         queue.add(command);
     }
@@ -55,9 +56,8 @@ public class SimpleExecutor implements Executor {
      * Дает текущим задачам выполниться. Добавление новых - бросает RejectedExecutionException
      * 1 тугрик за метод
      */
-    public synchronized void shutdown() {
-        statesContainer.set(new StatesContainer(false, statesContainer.get().freeThreads.get(),
-                statesContainer.get().holdOn.get()));
+    public void shutdown() {
+        statesContainer.set(new StatesContainer(false, statesContainer.get().freeThreads.get(), statesContainer.get().holdOn.get()));
     }
 
     /**
@@ -80,17 +80,17 @@ public class SimpleExecutor implements Executor {
         @Override
         public void run() {
             int oldVal = statesContainer.get().freeThreads.get();
-            statesContainer.set(new StatesContainer(statesContainer.get().isActive, ++oldVal,
+            statesContainer.set(new StatesContainer(statesContainer.get().isActive.get(), ++oldVal,
                     statesContainer.get().holdOn.get()));
-            while (!Thread.currentThread().isInterrupted() && (!queue.isEmpty() || statesContainer.get().isActive)) {
+            while (!Thread.currentThread().isInterrupted() && (!queue.isEmpty() || statesContainer.get().isActive.get())) {
                 try {
                     Runnable deal = queue.take();
                     oldVal = statesContainer.get().freeThreads.get();
-                    statesContainer.set(new StatesContainer(statesContainer.get().isActive, --oldVal,
+                    statesContainer.set(new StatesContainer(statesContainer.get().isActive.get(), --oldVal,
                             statesContainer.get().holdOn.get()));
                     deal.run();
                     oldVal = statesContainer.get().freeThreads.get();
-                    statesContainer.set(new StatesContainer(statesContainer.get().isActive, ++oldVal,
+                    statesContainer.set(new StatesContainer(statesContainer.get().isActive.get(), ++oldVal,
                             statesContainer.get().holdOn.get()));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -101,12 +101,12 @@ public class SimpleExecutor implements Executor {
 
     private class StatesContainer {
         public StatesContainer(boolean isActive, int freeThreads, int holdOn) {
-            this.isActive = isActive;
+            this.isActive = new AtomicBoolean(isActive);
             this.freeThreads = new AtomicInteger(freeThreads);
             this.holdOn = new AtomicInteger(holdOn);
         }
 
-        private volatile boolean isActive;
+        private AtomicBoolean isActive;
         private final AtomicInteger freeThreads;
         private final AtomicInteger holdOn;
     }
