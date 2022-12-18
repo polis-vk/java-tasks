@@ -94,14 +94,14 @@ public class SimpleExecutor implements Executor {
         }
     }
 
-    private class StatesContainer {
+    private static class StatesContainer {
         public StatesContainer(boolean isActive, int freeThreads, int holdOn) {
             this.isActive = new AtomicBoolean(isActive);
             this.freeThreads = new AtomicInteger(freeThreads);
             this.holdOn = new AtomicInteger(holdOn);
         }
 
-        private AtomicBoolean isActive;
+        private final AtomicBoolean isActive;
         private final AtomicInteger freeThreads;
         private final AtomicInteger holdOn;
     }
