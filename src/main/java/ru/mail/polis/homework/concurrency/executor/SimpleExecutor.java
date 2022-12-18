@@ -16,8 +16,6 @@ import java.util.concurrent.atomic.AtomicReference;
  * <p>
  * Задачи должны выполняться в порядке FIFO
  * Потоки после завершения выполнения задачи НЕ умирают, а ждут.
- * <p>
- * Max 10 баллов
  * Max 10 тугриков
  */
 public class SimpleExecutor implements Executor {
