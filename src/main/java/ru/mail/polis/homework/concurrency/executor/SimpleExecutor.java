@@ -17,10 +17,10 @@ import sun.security.provider.NativePRNG;
  * Ленивая инициализация означает, что если вам приходит раз в 5 секунд задача, которую вы выполняете 2 секунды,
  * то вы создаете только один поток. Если приходит сразу 2 задачи - то два потока.  То есть, если приходит задача
  * и есть свободный запущенный поток - он берет задачу, если такого нет, то создается новый поток.
- *
+ * <p>
  * Задачи должны выполняться в порядке FIFO
  * Потоки после завершения выполнения задачи НЕ умирают, а ждут.
- *
+ * <p>
  * Max 10 тугриков
  */
 public class SimpleExecutor implements Executor {
@@ -29,12 +29,11 @@ public class SimpleExecutor implements Executor {
     private final List<Thread> threads = new CopyOnWriteArrayList<>();
     private final int maxThreadCount;
 
-    private final AtomicBoolean isShutdown = new AtomicBoolean(false);
-    private final AtomicInteger freeThreads = new AtomicInteger(0);
-    private final AtomicInteger size = new AtomicInteger(0);
+    AtomicReference<State> state = new AtomicReference<>(new State());
+
 
     public SimpleExecutor(int maxThreadCount) {
-       this.maxThreadCount = maxThreadCount;
+        this.maxThreadCount = maxThreadCount;
     }
 
     /**
@@ -47,18 +46,21 @@ public class SimpleExecutor implements Executor {
             return;
         }
 
-        if (isShutdown.get()) {
+        if (state.get().isShutdown.get()) {
             throw new RejectedExecutionException();
         }
 
-        if (freeThreads.get() == 0 && size.get() < maxThreadCount && !isShutdown.get()) {
-            size.incrementAndGet();
+        if (state.get().lock.compareAndSet(false, true)
+                && state.get().freeThreads.get() == 0 && state.get().size.get() < maxThreadCount
+                && !state.get().isShutdown.get()) {
+            state.get().lock.set(false);
+            state.get().size.incrementAndGet();
             Thread t = new CustomThread();
             threads.add(t);
             t.start();
         }
 
-        if (!isShutdown.get()) {
+        if (!state.get().isShutdown.get()) {
             queue.add(command);
         }
     }
@@ -68,7 +70,7 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
-        isShutdown.compareAndSet(false, true);
+        state.get().isShutdown.compareAndSet(false, true);
     }
 
     /**
@@ -84,23 +86,31 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return size.get();
+        return state.get().size.get();
     }
 
     private class CustomThread extends Thread {
         @Override
         public void run() {
-            freeThreads.getAndIncrement();
-            while (!Thread.currentThread().isInterrupted() && (!queue.isEmpty() || !isShutdown.get())) {
+            state.get().freeThreads.getAndIncrement();
+            while (!Thread.currentThread().isInterrupted() && (!queue.isEmpty() || !state.get().isShutdown.get())) {
                 try {
                     Runnable runnable = queue.take();
-                    freeThreads.decrementAndGet();
+                    state.get().freeThreads.decrementAndGet();
                     runnable.run();
-                    freeThreads.incrementAndGet();
+                    state.get().freeThreads.incrementAndGet();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }
+    }
+
+    class State {
+        private final AtomicBoolean isShutdown = new AtomicBoolean(false);
+        private final AtomicInteger freeThreads = new AtomicInteger(0);
+        private final AtomicInteger size = new AtomicInteger(0);
+
+        private final AtomicBoolean lock = new AtomicBoolean(false);
     }
 }
