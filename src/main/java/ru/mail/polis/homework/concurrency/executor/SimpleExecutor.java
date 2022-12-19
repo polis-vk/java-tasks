@@ -46,16 +46,16 @@ public class SimpleExecutor implements Executor {
             throw new RejectedExecutionException();
         }
 
-        if (executorState.sizeThreadList.get() < maxThreadCount && executorState.cntFreeThreads.compareAndSet(0, executorState.cntFreeThreads.get())) {
+        tasksQueue.offer(command);
+
+        if (executorState.sizeThreadList.get() < maxThreadCount && executorState.cntFreeThreads.get() < tasksQueue.size()) {
             int currentSizeThreadList = executorState.sizeThreadList.incrementAndGet();
-            if (currentSizeThreadList <= maxThreadCount) {
+            if (currentSizeThreadList <= maxThreadCount && !executorState.isShutdownThreads.get()) {
                 Thread newThread = new SimpleThread();
                 newThread.start();
                 threadsArray.add(newThread);
             }
         }
-
-        tasksQueue.offer(command);
     }
 
     /**
@@ -72,16 +72,19 @@ public class SimpleExecutor implements Executor {
      */
     public void shutdownNow() {
         shutdown();
-        int currentThreadListSize = executorState.sizeThreadList.get();
+        int instanceThreadListSize = executorState.sizeThreadList.get();
 
         for (Thread currentThread : threadsArray) {
             currentThread.interrupt();
         }
 
-        if (currentThreadListSize != executorState.sizeThreadList.get()) {
-            for (int i = currentThreadListSize; i < executorState.sizeThreadList.get(); i++) {
+        while (instanceThreadListSize != executorState.sizeThreadList.get()) {
+            int currentThreadListSize = executorState.sizeThreadList.get();
+            for (int i = instanceThreadListSize; i < executorState.sizeThreadList.get(); i++) {
                 threadsArray.get(i).interrupt();
             }
+
+            instanceThreadListSize = currentThreadListSize;
         }
     }
 
@@ -95,13 +98,14 @@ public class SimpleExecutor implements Executor {
     class SimpleThread extends Thread {
         @Override
         public void run() {
-            while ((executorState.isShutdownThreads.compareAndSet(false, executorState.isShutdownThreads.get()) || !tasksQueue.isEmpty())
+            executorState.cntFreeThreads.incrementAndGet();
+            while ((executorState.isShutdownThreads.get() == false || !tasksQueue.isEmpty())
                     && !Thread.currentThread().isInterrupted()) {
                 try {
-                    executorState.cntFreeThreads.incrementAndGet();
                     Runnable currentTask = tasksQueue.take();
                     executorState.cntFreeThreads.decrementAndGet();
                     currentTask.run();
+                    executorState.cntFreeThreads.incrementAndGet();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
