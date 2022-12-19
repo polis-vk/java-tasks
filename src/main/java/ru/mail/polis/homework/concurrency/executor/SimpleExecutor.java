@@ -6,8 +6,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import sun.security.provider.NativePRNG;
@@ -25,12 +23,11 @@ import sun.security.provider.NativePRNG;
  */
 public class SimpleExecutor implements Executor {
 
-    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
-    private final List<Thread> threads = new CopyOnWriteArrayList<>();
+    BlockingQueue<Runnable> commands = new LinkedBlockingQueue<>();
+    List<Thread> threads = new CopyOnWriteArrayList<>();
     private final int maxThreadCount;
 
-    AtomicReference<State> state = new AtomicReference<>(new State());
-
+    AtomicReference<ThreadsState> state = new AtomicReference<>(new ThreadsState(0, 0, true));
 
     public SimpleExecutor(int maxThreadCount) {
         this.maxThreadCount = maxThreadCount;
@@ -46,22 +43,26 @@ public class SimpleExecutor implements Executor {
             return;
         }
 
-        if (state.get().isShutdown.get()) {
+        if (!getIsActive()) {
             throw new RejectedExecutionException();
         }
 
-        if (state.get().lock.compareAndSet(false, true)
-                && state.get().freeThreads.get() == 0 && state.get().size.get() < maxThreadCount
-                && !state.get().isShutdown.get()) {
-            state.get().lock.set(false);
-            state.get().size.incrementAndGet();
-            Thread t = new CustomThread();
-            threads.add(t);
-            t.start();
+        while (true) {
+            ThreadsState tmpState = state.get();
+            if (tmpState.isActive && tmpState.threadsSize < maxThreadCount && tmpState.freeThreads == 0) {
+                if (state.compareAndSet(tmpState, new ThreadsState(tmpState.freeThreads + 1, tmpState.threadsSize + 1, true))) {
+                    Thread t = new CustomThread();
+                    threads.add(t);
+                    t.start();
+                    break;
+                }
+            } else {
+                break;
+            }
         }
 
-        if (!state.get().isShutdown.get()) {
-            queue.add(command);
+        if (getIsActive()) {
+            commands.add(command);
         }
     }
 
@@ -70,7 +71,12 @@ public class SimpleExecutor implements Executor {
      * 1 тугрик за метод
      */
     public void shutdown() {
-        state.get().isShutdown.compareAndSet(false, true);
+        while (true) {
+            ThreadsState tmp = state.get();
+            if (state.compareAndSet(tmp, new ThreadsState(tmp.freeThreads, tmp.threadsSize, false))) {
+                return;
+            }
+        }
     }
 
     /**
@@ -86,19 +92,18 @@ public class SimpleExecutor implements Executor {
      * Должен возвращать количество созданных потоков.
      */
     public int getLiveThreadsCount() {
-        return state.get().size.get();
+        return state.get().threadsSize;
     }
 
     private class CustomThread extends Thread {
         @Override
         public void run() {
-            state.get().freeThreads.getAndIncrement();
-            while (!Thread.currentThread().isInterrupted() && (!queue.isEmpty() || !state.get().isShutdown.get())) {
+            while (!Thread.currentThread().isInterrupted() && (!commands.isEmpty() || getIsActive())) {
                 try {
-                    Runnable runnable = queue.take();
-                    state.get().freeThreads.decrementAndGet();
-                    runnable.run();
-                    state.get().freeThreads.incrementAndGet();
+                    Runnable command = commands.take();
+                    decrementFreeThreads();
+                    command.run();
+                    incrementFreeThreads();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -106,11 +111,38 @@ public class SimpleExecutor implements Executor {
         }
     }
 
-    class State {
-        private final AtomicBoolean isShutdown = new AtomicBoolean(false);
-        private final AtomicInteger freeThreads = new AtomicInteger(0);
-        private final AtomicInteger size = new AtomicInteger(0);
+    private class ThreadsState {
+        private final int freeThreads;
+        private final int threadsSize;
+        private final boolean isActive;
 
-        private final AtomicBoolean lock = new AtomicBoolean(false);
+        public ThreadsState(int freeThreads, int threadsSize, boolean isActive) {
+            this.freeThreads = freeThreads;
+            this.threadsSize = threadsSize;
+            this.isActive = isActive;
+        }
+    }
+
+    private boolean getIsActive() {
+        return state.get().isActive;
+    }
+
+    private void decrementFreeThreads() {
+        while (true) {
+            ThreadsState tmpState = state.get();
+            if (state.compareAndSet(tmpState, new ThreadsState(tmpState.freeThreads - 1, tmpState.threadsSize, tmpState.isActive))) {
+                return;
+            }
+        }
+    }
+
+    private void incrementFreeThreads() {
+        while (true) {
+            ThreadsState tmpState = state.get();
+            if (state.compareAndSet(tmpState, new ThreadsState(tmpState.freeThreads + 1, tmpState.threadsSize, tmpState.isActive))) {
+                return;
+            }
+        }
     }
 }
+
