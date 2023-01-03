@@ -9,7 +9,6 @@ package ru.mail.polis.homework.simple;
 public class DoubleTask {
     /**
      * Вывести два корня квадратного уравнения через запятую: a * x ^ 2 + b * x + c = 0;
-     * Вывод менять не нужно, надо только посчитать x1 и x2, где x1 > x2
      * Пример: (1, 5, 4) -> "-1.0, -4.0"
      */
     public static String equation(int a, int b, int c) {

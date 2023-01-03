@@ -18,7 +18,10 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (q == 1) {
+            return (long) a * n;
+        }
+        return (long) ((double) a * (1 - Math.pow(q, n)) / (1 - q));
     }
 
     /**
@@ -29,8 +32,26 @@ public class IntegerAdvancedTask {
      * Если она этого никогда не сможет сделать, Верните число Integer.MAX_VALUE;
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
+
+    public static int one_snake(int height, int top, int bottom) {
+        height -= top;
+
+        if (height <= 0) {
+            return 1;
+        }
+
+        if (top <= bottom) {
+            return Integer.MAX_VALUE;
+        }
+
+        int days = (height + (top - bottom) - 1) / (top - bottom);
+        return days + 1;
+    }
+
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int ver = one_snake(grassY, up, down);
+        int hor = one_snake(grassX, right, left);
+        return Math.min(ver, hor);
     }
 
     /**
@@ -40,7 +61,18 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        while (order > 1) {
+            n /= 16;
+            order--;
+        }
+        int dig = Math.abs(n % 16);
+        char ans;
+        if (dig < 10) {
+            ans = (char) ((int) '0' + dig);
+        } else {
+            ans = (char) ((int) 'A' + dig - 10);
+        }
+        return ans;
     }
 
     /**
@@ -51,7 +83,19 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte ind = -1;
+        long ma = 1000;
+        byte co = 0;
+        while (a != 0) {
+            int num = (int) Math.abs(a % 16);
+            if (num < ma) {
+                ma = num;
+                ind = (byte)(co + 1);
+            }
+            a /= 16;
+            co++;
+        }
+        return ind;
     }
 
 }

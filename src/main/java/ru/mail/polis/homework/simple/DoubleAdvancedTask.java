@@ -93,7 +93,7 @@ public class DoubleAdvancedTask {
         };
 
         int a = matrix[0][1] * matrix[1][2] - matrix[0][2] * matrix[1][1];
-        int b = - (matrix[0][0] * matrix[1][2] - matrix[0][2] * matrix[1][0]);
+        int b = -(matrix[0][0] * matrix[1][2] - matrix[0][2] * matrix[1][0]);
         int c = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
         int d = -(a * x1 + b * y1 + c * z1);
 
