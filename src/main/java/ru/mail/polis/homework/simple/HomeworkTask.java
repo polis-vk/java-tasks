@@ -13,12 +13,12 @@ public class HomeworkTask {
         double sum = 0;
         double left = a;
 
-        for (double i = a; i <= b; i += delta) {
+        for (double x = a; x <= b; x += delta) {
             double left_y = function.applyAsDouble(left);
-            double i_y = function.applyAsDouble(i);
+            double x_y = function.applyAsDouble(x);
             sum += delta * left_y;
-            sum += delta * (i_y - left_y) / 2;
-            left = i;
+            sum += delta * (x_y - left_y) / 2;
+            left = x;
         }
 
         return sum;
