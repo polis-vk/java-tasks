@@ -10,7 +10,13 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+
+        double sum = 0.0;
+        for (double x = a + delta / 2; x < b; x += delta) {
+            double y = function.applyAsDouble(x);
+            sum += y * delta;
+        }
+        return sum;
     }
 
     /**
@@ -18,7 +24,19 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        int maxDigit = 0;
+        int maxDigitIndex = 0;
+        int index = 1;
+        while (a > 0) {
+            int digit = (int)(a % 10);
+            if (digit > maxDigit) {
+                maxDigit = digit;
+                maxDigitIndex = index;
+            }
+            a /= 10L;
+            index++;
+        }
+        return (byte)(index-maxDigitIndex);
     }
 
 
@@ -27,7 +45,9 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+
+        double y3 = y1 + (double)((y2 - y1) * (x3 - x1)) / (double)(x2 - x1);
+        return y3;
     }
 
     /**
@@ -35,7 +55,19 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        //Формула Герона для вычисления площади треугольника
+        // (Разбиваем четырехугольник на два треугольника и складываем их площади)
+        double AB = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+        double BC = Math.sqrt(Math.pow(x3 - x2, 2) + Math.pow(y3 - y2, 2));
+        double CD = Math.sqrt(Math.pow(x4 - x3, 2) + Math.pow(y4 - y3, 2));
+        double DA = Math.sqrt(Math.pow(x1 - x4, 2) + Math.pow(y1 - y4, 2));
+        double AC = Math.sqrt(Math.pow(x3 - x1, 2) + Math.pow(y3 - y1, 2));
+        double BD = Math.sqrt(Math.pow(x4 - x2, 2) + Math.pow(y4 - y2, 2));
+        double p1 = (AB + BC + AC) / 2;
+        double p2 = (CD + DA + AC) / 2;
+        double area = Math.sqrt(p1 * (p1 - AB) * (p1 - BC) * (p1 - AC))
+                + Math.sqrt(p2 * (p2 - CD) * (p2 - DA) * (p2 - AC));
+        return area;
     }
 
 }
