@@ -2,6 +2,8 @@ package ru.mail.polis.homework.simple;
 
 import java.util.function.ToDoubleFunction;
 
+import static java.lang.Math.sqrt;
+
 public class HomeworkTask {
 
     /**
@@ -10,7 +12,13 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double integral = 0;
+
+        for (double i = a; i < b; i += delta) {
+            integral += function.applyAsDouble(i) * delta;
+        }
+
+        return integral;
     }
 
     /**
@@ -18,7 +26,24 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        long max = 0;
+        if (a == Long.MIN_VALUE) {
+            a = Long.MAX_VALUE;
+        } else if (a < 0) {
+            a *= -1;
+        }
+
+        byte pos = 1; // позиция максимальной цифры
+        byte i = 1;
+        for (; a % 10 != 0; i++) {
+            if (a % 10 >= max) {
+                max = a % 10;
+                pos = i;
+            }
+            a = a / 10;
+        }
+
+        return i != pos ? (byte) (i - pos) : pos;// позиция считается справа на лево, но при выводе отзеркаливается
     }
 
 
@@ -27,7 +52,8 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+
+        return (double) (x3 - x1) / (double) (x2 - x1) * (y2 - y1) + y1; // выразил у из уравнения прямой через две точки
     }
 
     /**
@@ -36,7 +62,23 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+
+        double a = sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2)); // длина первой стороны четырехугольника
+        double b = sqrt(Math.pow((x2 - x3), 2) + Math.pow((y2 - y3), 2)); // длина второй стороны четырехугольника
+        double c = sqrt(Math.pow((x3 - x4), 2) + Math.pow((y3 - y4), 2)); // длина третьей стороны четырехугольника
+        double d = sqrt(Math.pow((x4 - x1), 2) + Math.pow((y4 - y1), 2)); // длина четвертой стороны четырехугольника
+        double diagonal = sqrt(Math.pow((x3 - x1), 2) + Math.pow((y3 - y1), 2)); // длина диагонали четырехугольника
+
+        // Для нахождения площади разобьем четырехугольник на два треугольника.
+        // Найдя их площадь по формуле Герона, сложим и получим площадь данного четырехугольника.
+
+        double p1 = (a + b + diagonal) / 2; // полупериметр первого треугольника
+        double p2 = (c + d + diagonal) / 2; // полупериметр второго треугольника
+
+        double s1 = Math.sqrt(p1 * (p1 - a) * (p1 - b) * (p1 - diagonal)); // площадь первого треугольника
+        double s2 = Math.sqrt(p2 * (p2 - c) * (p2 - d) * (p2 - diagonal)); // площадь первого треугольника
+
+        return s1 + s2;
     }
 
 }

@@ -14,7 +14,7 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return 0;
+        return (1 + n) * n / 2;
     }
 
     /**
@@ -24,7 +24,13 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        return 0;
+        if (height <= top) {
+            return 1;
+        } else if ((top - bottom) > 0) {
+            if ((height - bottom) % (top - bottom) == 0) { // если число дней будет не целым, нам нужно добавить еще один день, так как деление целочисленное.
+                return (height - bottom) / (top - bottom);
+            } else return (height - bottom) / (top - bottom) + 1;
+        } else return Integer.MAX_VALUE;
     }
 
     /**
@@ -32,7 +38,17 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return 0;
+        if (n == Integer.MIN_VALUE) {
+            n = Integer.MAX_VALUE;
+        } else if (n < 0) {
+            n *= -1;
+        }
+
+        for (int i = 1; i < order; i++) {
+            n = n / 10;
+        }
+
+        return n >= 10 ? n % 10 : n;
     }
 
 
@@ -41,6 +57,6 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        return n >= 1 ? n * factorial((byte) (n - 1)) : 1;
     }
 }
