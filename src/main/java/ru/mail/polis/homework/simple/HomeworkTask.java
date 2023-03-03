@@ -10,7 +10,12 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double integral = 0;
+        a = Math.abs(a);
+        for (double x = a; x <= b; x += delta) {
+            integral += function.applyAsDouble(x) * delta;
+        }
+        return integral;
     }
 
     /**
@@ -18,7 +23,18 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        byte index = 0;
+        byte nDigits = 0;
+        byte maxDigit = 0;
+        while (a != 0) {
+            nDigits++;
+            if (Math.abs(a % 10) >= maxDigit) {
+                maxDigit = (byte) (Math.abs(a % 10));
+                index = nDigits;
+            }
+            a = a / 10;
+        }
+        return (byte) (nDigits - index + 1);
     }
 
 
@@ -27,7 +43,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        return (double) (x3 - x1) / (x2 - x1) * (y2 - y1) + y1; // Canonical equation of straight line
     }
 
     /**
@@ -36,7 +52,11 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        double[] vectorAC = {x3 - x1, y3 - y1};
+        double[] vectorBD = {x4 - x2, y4 - y2};
+        double modAC = Math.sqrt(Math.pow(vectorAC[0], 2) + Math.pow(vectorAC[1], 2));
+        double modBD = Math.sqrt(Math.pow(vectorBD[0], 2) + Math.pow(vectorBD[1], 2));
+        double sinDOC = Math.abs(vectorAC[0] * vectorBD[1] - vectorAC[1] * vectorBD[0]) / (modAC * modBD);
+        return 0.5 * modAC * modBD * sinDOC;
     }
-
 }
