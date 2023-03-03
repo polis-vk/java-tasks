@@ -7,6 +7,6 @@ public class MainTest {
 
     @Test
     public void hello() {
-        Assert.assertEquals("Hello world! I am a first program", MainTask.hello());
+        Assert.assertEquals("Hello world! I am a first program", Main.hello());
     }
 }
