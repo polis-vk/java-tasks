@@ -14,8 +14,15 @@ public class DoubleTask {
      * Пример: (1, 5, 4) -> "-1.0, -4.0"
      */
     public static String equation(int a, int b, int c) {
-        double x1 = 0;
-        double x2 = 0;
+        double x1, x2, D;
+        D = Math.pow(b, 2) - 4 * a * c;
+        x1 = (-b + Math.sqrt(D)) / (2 * a);
+        x2 = (-b - Math.sqrt(D)) / (2 * a);
+        double max, min;
+        max = (x1 > x2 ? x1 : x2);
+        min = (x1 < x2 ? x1 : x2);
+        x1 = max;
+        x2 = min;
         return x1 + ", " + x2;
     }
 
@@ -23,7 +30,10 @@ public class DoubleTask {
      * Нужно посчитать расстояние, между двумя точками (x1, y1) и (x2, y2)
      * Пример: (0, 0, 3, 4) -> 5.0
      */
-    public static float length(double x1, double y1, double x2, double y2) {
-        return 0;
+    public static float length(double x1, double y1, double x2, double y2)
+    {
+        double distanceBetweenPoints;
+        distanceBetweenPoints = Math.sqrt( (Math.pow((x2 - x1), 2)) + Math.pow((y2 - y1), 2) );
+        return (float)distanceBetweenPoints;
     }
 }
