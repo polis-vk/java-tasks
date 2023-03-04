@@ -9,5 +9,6 @@ public class MainTask {
      */
   public static void main(String[] args) {
       System.out.println("It is work.");
+      System.out.println(Math.abs(Long.MIN_VALUE));
    }
 }
