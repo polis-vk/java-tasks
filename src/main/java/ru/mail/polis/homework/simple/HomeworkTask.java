@@ -10,7 +10,17 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        // Метод прямоугольников
+        double temp = a;
+        double result = 0;
+        int i = 0;
+        while(a <= b){
+            i++;
+            result += function.applyAsDouble(a);
+            a+=delta;
+        }
+        result *= (b - temp) / i;
+        return result;
     }
 
     /**
@@ -18,7 +28,20 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        // Число переводится в строку для удобной поэлементной обработки числа
+        String str = String.valueOf(a);
+        int maxIndex = -1;
+        int max = -1;
+        for(int i = 0; i < str.length(); i++){
+            if(str.charAt(i) > max + 48) {
+                max = str.charAt(i) - 48;
+                maxIndex = i + 1;
+            }
+        }
+        if(str.charAt(0) == '-') {
+            maxIndex--;
+        }
+        return (byte) maxIndex;
     }
 
 
@@ -27,7 +50,9 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        // Функция выведена в соответствии каноническим уровнением прямой
+        double expression = (double)((x3 - x1) * y2 + (x2 - x3) * y1)/(x2-x1);
+        return y2 == y1 ? 1 : expression;
     }
 
     /**
@@ -36,7 +61,20 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        // диагональ AC
+        double diagonal = DoubleTask.length(x1, y1, x3, y3);
+        // стороны треугольника ABC
+        double sideAB = DoubleTask.length(x1, y1, x2, y2);
+        double sideBC = DoubleTask.length(x2, y2, x3, y3);
+        // стороны треугольника CDA
+        double sideCD = DoubleTask.length(x3, y3, x4, y4);
+        double sideDA = DoubleTask.length(x4, y4, x1, y1);
+        // полумериметры треугольников
+        double pABC = (sideAB + sideBC + diagonal) / 2;
+        double pCDA = (sideCD + sideDA + diagonal) / 2;
+        // площади треугольников
+        double squareABC = Math.sqrt(pABC * (pABC - sideAB) * (pABC-sideBC) * (pABC-diagonal));
+        double squareCDA = Math.sqrt(pCDA * (pCDA - sideCD) * (pCDA-sideDA) * (pCDA-diagonal));
+        return squareABC + squareCDA;
     }
-
 }
