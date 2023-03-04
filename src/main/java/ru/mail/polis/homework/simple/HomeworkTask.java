@@ -11,7 +11,6 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integral = 0;
-        a = Math.abs(a);
         for (double x = a; x <= b; x += delta) {
             integral += function.applyAsDouble(x) * delta;
         }
@@ -55,6 +54,9 @@ public class HomeworkTask {
         double[] vectorBD = {x4 - x2, y4 - y2};
         double modAC = Math.sqrt(Math.pow(vectorAC[0], 2) + Math.pow(vectorAC[1], 2));
         double modBD = Math.sqrt(Math.pow(vectorBD[0], 2) + Math.pow(vectorBD[1], 2));
+        if (modAC * modBD == 0) {
+            return 0;
+        }
         double sinDOC = Math.abs(vectorAC[0] * vectorBD[1] - vectorAC[1] * vectorBD[0]) / (modAC * modBD);
         return 0.5 * modAC * modBD * sinDOC;
     }
