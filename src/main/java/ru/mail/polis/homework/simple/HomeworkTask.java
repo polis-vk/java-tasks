@@ -18,10 +18,22 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte maxDigit = 0;
-        byte indexOfMaxDigit;
 
-        return maxDigit;
+        byte maxDigit = 0;
+        byte reversedIndex = 0;
+        byte i = 1;
+
+        while (a != 0){
+            if (a % 10 >= maxDigit){
+                maxDigit = (byte)(a % 10);
+                reversedIndex = i;
+            }
+            i++;
+            a /= 10;
+        }
+
+        int indexOfMaxDigit = i - reversedIndex;
+        return (byte) indexOfMaxDigit;
     }
 
 
@@ -30,7 +42,12 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+
+        double absX2X1 = x2 - x1;
+        double absY2Y1 = y2 - y1;
+        double absY3Y1 = y2 + (x3 - x2) * (absY2Y1 / absX2X1);
+
+        return absY3Y1;
     }
 
     /**
