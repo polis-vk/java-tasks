@@ -27,7 +27,7 @@ public class HomeworkTask {
     public static byte maxNumber(long a) {
 
         byte maxDigit = 0;
-        byte reverseIndex = 0;
+        byte reversePos = 0;
         byte i = 1;
 
         for  (; a != 0; i++, a /= 10){
@@ -35,7 +35,7 @@ public class HomeworkTask {
             byte digit = (byte) (a % 10);
             if (digit >= maxDigit){
                 maxDigit = digit;
-                reverseIndex = i;
+                reversePos = i;
             }
         }
 
