@@ -10,7 +10,11 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double res = 0.0;
+        for (double i = a; i < b; i += delta) {
+            res += delta * function.applyAsDouble(i);
+        }
+        return res;
     }
 
     /**
@@ -18,7 +22,29 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        long reverse = 0;
+        byte i = 0;              // current index of number
+        byte index = 0;          // needed index
+        int max = -1;
+
+        if (a >= 0 && a < 10) return 1;
+
+        while (a != 0) {
+            reverse *= 10;
+            reverse += Math.abs(a % 10);
+            a /= 10;
+        }
+
+        while (reverse > 0) {
+            i++;
+            if (max < reverse % 10) {
+                max = (byte) (reverse % 10);
+                index = (i);
+            }
+            reverse /= 10;
+        }
+
+        return index;
     }
 
 
@@ -27,7 +53,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        return y1 + ((x3 - x1) * (y2 - y1) / (double) (x2 - x1));
     }
 
     /**
@@ -35,7 +61,15 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        double AC = Math.sqrt(Math.pow(x1 - x3, 2) + Math.pow(y1 - y3, 2));
+        double BD = Math.sqrt(Math.pow(x2 - x4, 2) + Math.pow(y2 - y4, 2));
+
+        if (AC == 0 || BD == 0) return 0;
+
+        return 0.5 * AC * BD * Math.abs((x3 - x1) * (y4 - y2) - (y3 - y1) * (x4 - x2)) / (AC * BD);
     }
 
+    public static void main(String[] args) {
+        System.out.println(maxNumber(0));
+    }
 }
