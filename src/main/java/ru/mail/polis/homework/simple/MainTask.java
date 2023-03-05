@@ -12,7 +12,7 @@ public class MainTask {
 //        System.out.println("It is work.");
 //    }
 
-//    public static void main(String[] args) {
-//        MainTask.main("");
-//    }
+    public static void main(String[] args) {
+        System.out.println("It is work.");
+    }
 }
