@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.simple;
 
 
+import javax.swing.tree.FixedHeightLayoutCache;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -14,7 +16,7 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return 0;
+        return (n * (n + 1)) / 2;
     }
 
     /**
@@ -24,15 +26,21 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        return 0;
+        if (top - bottom <= 0 && height > top){
+            return Integer.MAX_VALUE;
+        }
+        if (height <= top){
+            return 1;
+        }
+        return (height - 1 - top) / (top - bottom) + 2;
     }
 
     /**
      * Дано число n и номер разряда order. Выведите цифру стояющую на нужном разряде
      * Пример: (454355, 3) -> 3
      */
-    public static int kDecimal(int n, int order) {
-        return 0;
+    public static int kDecimal(int n, int order){
+        return Math.abs(n / (int)Math.pow(10.0, order - 1) % 10);
     }
 
 
@@ -41,6 +49,13 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        long fact = 1;
+
+        while (n != 0){
+            fact *= n;
+            --n;
+        }
+
+        return fact;
     }
 }
