@@ -11,7 +11,13 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double valueOfIntegral = 0;
+        //Метод прямоугольников
+        while (Double.compare(a, b) < 0) {
+            valueOfIntegral += function.applyAsDouble(a) * delta;
+            a += delta;
+        }
+        return valueOfIntegral;
     }
 
     /**
@@ -62,6 +68,7 @@ public class HomeworkTask {
         double a = (double) (y2 - y1) / (x2 - x1);
         double b = y1 - a * x1;
 
+        //Решение заключается в поиске диагонали и разбиении четырехугольника на два треугольника
         double s1, s2;
         s1 = Math.abs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1)) / 2.0;
         if (Double.compare(Math.abs(a * x3 + b - y3), 0.0) * Double.compare(Math.abs(a * x4 + b - y4), 0.0) != 1) {
