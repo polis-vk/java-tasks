@@ -2,6 +2,8 @@ package ru.mail.polis.homework.simple;
 
 import java.util.function.ToDoubleFunction;
 
+import static ru.mail.polis.homework.simple.IntegerTask.getDigit;
+
 public class HomeworkTask {
 
     /**
@@ -18,7 +20,16 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        byte length = (byte) (Math.log10(a) + 1);
+        byte maxValue = 0;
+        byte maxValuePosition = 1;
+        for (byte i = length; i > 0; i--){
+            if (maxValue < getDigit(a, i)){ // функция из IntegerTask
+                maxValue = (byte) getDigit(a, i);
+                maxValuePosition = (byte) (length - i + 1);
+            }
+        }
+        return maxValuePosition;
     }
 
 
