@@ -52,7 +52,7 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
 
-        if (n <= 1){
+        if (n == 0){
             return 1;
         }
         return factorial( (byte)(n - 1) ) * n;
