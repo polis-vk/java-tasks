@@ -43,17 +43,18 @@ public class IntegerTask {
         return days;
     }
 
-    public static int getDigit(long n, int order) {
-        int b = (int) ((n % Math.pow(10, order)) / Math.pow(10, order - 1));
-        return Math.abs(b);
-    }
-
     /**
      * Дано число n и номер разряда order. Выведите цифру стояющую на нужном разряде
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return getDigit(n, order);
+        int b = (int) ((n % Math.pow(10, order)) / Math.pow(10, order - 1));
+        return Math.abs(b);
+    }
+
+    public static int kDecimal(long n, int order) { // добавил перегрузку для того, чтобы использовать метод в HomeworkTask, не знаю, можно ли изменять сигнатуру методов в дз.
+        int b = (int) ((n % Math.pow(10, order)) / Math.pow(10, order - 1));
+        return Math.abs(b);
     }
 
     /**
