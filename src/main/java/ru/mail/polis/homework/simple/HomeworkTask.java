@@ -2,6 +2,8 @@ package ru.mail.polis.homework.simple;
 
 import java.util.function.ToDoubleFunction;
 
+import java.lang.Math;
+
 public class HomeworkTask {
 
     /**
@@ -10,7 +12,11 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double integralValue = 0;
+        for (double i = a; i < b; i += delta) {
+            integralValue += delta * function.applyAsDouble(i);
+        }
+        return integralValue;
     }
 
     /**
@@ -18,16 +24,29 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        byte MaxVal = 0;
+        byte numberMaxVal = 0;
+        byte lenght = 1;
+        while (a != 0) {
+            if (Math.abs(a % 10) >= MaxVal) {
+                MaxVal = (byte) Math.abs((a % 10));
+                numberMaxVal = lenght;
+            }
+            lenght++;
+            a /= 10;
+        }
+        return (byte) (lenght - numberMaxVal);
     }
-
 
     /**
      * Даны две точки в пространстве (x1, y1) и (x2, y2). Вам нужно найти Y координату третьей точки (x3, y3),
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        //По формуле y3 = k * x3 + b
+        double k = (double) (y1 - y2) / (x1 - x2);
+        double b = y2 - k * x2;
+        return k * x3 + b;
     }
 
     /**
@@ -35,7 +54,7 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        //По формуле площади Гаусса
+        return (double) (0.5 * Math.abs(x1 * y2 + x2 * y3 + x3 * y4 + x4 * y1 - x2 * y1 - x3 * y2 - x4 * y3 - x1 * y4));
     }
-
 }
