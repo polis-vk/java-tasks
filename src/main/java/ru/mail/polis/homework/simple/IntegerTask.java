@@ -15,7 +15,7 @@ public class IntegerTask {
      */
     public static int sum(int n) {
         int count = 0;
-        for (int i = 1; i <= n; i++){
+        for (int i = 1; i <= n; i++) {
             count += i;
         }
         return count;
@@ -30,10 +30,10 @@ public class IntegerTask {
     public static int snake(int height, int top, int bottom) {
         int currentHeight = 0;
         int days = 0;
-        if (bottom >= top && top < height){
+        if (bottom >= top && top < height) {
             return Integer.MAX_VALUE;
         }
-        while(currentHeight < height) {
+        while (currentHeight < height) {
             days++;
             currentHeight += top;
             if (currentHeight < height) {

@@ -28,8 +28,8 @@ public class HomeworkTask {
         byte length = (byte) (Math.log10(a) + 1);
         byte maxValue = 0;
         byte maxValuePosition = 1;
-        for (byte i = length; i > 0; i--){
-            if (maxValue < kDecimal(a, i)){ // функция из IntegerTask
+        for (byte i = length; i > 0; i--) {
+            if (maxValue < kDecimal(a, i)) { // функция из IntegerTask
                 maxValue = (byte) kDecimal(a, i);
                 maxValuePosition = (byte) (length - i + 1);
             }
