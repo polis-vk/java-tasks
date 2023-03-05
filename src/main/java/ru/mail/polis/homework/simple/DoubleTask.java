@@ -16,8 +16,8 @@ public class DoubleTask {
     public static String equation(int a, int b, int c) {
         double sqrtD = Math.sqrt(b * b - 4 * a * c);
 
-        double x1 = (-b + sqrtD) / (2.0 * a );
-        double x2 = (-b - sqrtD) / (2.0 * a );
+        double x1 = (-b + sqrtD) / (2.0 * a);
+        double x2 = (-b - sqrtD) / (2.0 * a);
 
         if (x2 > x1){
             double tmp = x2;
