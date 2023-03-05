@@ -25,15 +25,14 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
         byte index = 0, max = 0, count = 0;
-        a = Math.abs(a);
-        while(a != 0){
-            if (a % 10 > max){
-                max = (byte)(a % 10);
+        do{
+            if (Math.abs(a % 10) >= max) {
+                max = (byte) (a % 10);
                 index = count;
             }
-            count++;
             a /= 10;
-        }
+            count++;
+        }while(a != 0);
         return (byte) (count - index);
     }
 
@@ -48,7 +47,7 @@ public class HomeworkTask {
         }
         else
         {
-            return (y1 + y2)/2;    //бесконечно много решений при x1 = x2 (как частное решение - точка по середине)
+            return (y1 + y2) / 2;    //бесконечно много решений при x1 = x2 (как частное решение - точка по середине)
         }
     }
 
