@@ -35,9 +35,10 @@ public class IntegerTask {
         if (increase <= 0) {
             return Integer.MAX_VALUE;
         }
+        int currentLevel = 0;
         int counter = 1;
-        while (height - top > 0) {
-            height -= increase;
+        while (currentLevel < height - top) {
+            currentLevel += increase;
             counter += 1;
         }
         return counter;
@@ -48,12 +49,9 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int digit = 0;
-        for(int i = 0; i < order; i++) {
-            digit = n % 10;
-            n /= 10;
-        }
-        return Math.abs(digit);
+        // Делим число на степень десятки, 
+        // чтобы нужна цифра оказалась на последнем месте, потом достаем ее
+        return (int) Math.abs(n / Math.pow(10, order - 1) % 10);
     }
 
 
@@ -63,7 +61,7 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long factorial = 1;
-        for(int i = 1; i <= n; i++) {
+        for (int i = 1; i <= n; i++) {
             factorial *= i;
         }
         return factorial;

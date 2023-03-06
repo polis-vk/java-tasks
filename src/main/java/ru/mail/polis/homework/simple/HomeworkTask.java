@@ -11,9 +11,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integral = 0;
-        while (a <= b) {
-            integral += function.applyAsDouble(a) * delta;
-            a += delta;
+        for (double x = a; x <= b; x += delta) {
+            integral += function.applyAsDouble(x) * delta;
         }
         return integral;
     }
@@ -23,18 +22,19 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte maxDigitIndex = 0;
+        long numberLength = (long) Math.pow(10, String.valueOf(a).length() - 1);
         long maxDigit = 0;
-        byte numberLength = 0;
-        while (a > 0) {
-            if (maxDigit < Math.abs(a % 10)) {
-                maxDigit = Math.abs(a % 10);
-                maxDigitIndex = numberLength;
+        byte maxDigitIndex = 1;
+        byte currentIndex = 1;
+        while (maxDigit != 9 && numberLength > 0) {
+            if (a / numberLength % 10 > maxDigit) {
+                maxDigit = a / numberLength % 10;
+                maxDigitIndex = currentIndex;
             }
-            numberLength += 1;
-            a /= 10;
+            currentIndex++;
+            numberLength /= 10;
         }
-        return (byte) (numberLength - maxDigitIndex);
+        return maxDigitIndex;
     }
 
 
