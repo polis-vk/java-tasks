@@ -48,8 +48,9 @@ public class IntegerTask {
      */
     public static int kDecimal(int n, int order)
     {
-        n = (int)Math.abs(n) / (int)Math.pow(10, order - 1);
-        return Math.abs(n) % 10;
+        int numToOrder;
+        numToOrder = Math.abs(n) / (int)Math.pow(10, order - 1);
+        return Math.abs(numToOrder) % 10;
     }
 
 
