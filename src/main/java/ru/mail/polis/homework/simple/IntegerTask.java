@@ -26,10 +26,10 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        if (top <= bottom && height > top){
+        if (top <= bottom && height > top) {
             return Integer.MAX_VALUE;
         }
-        if (height <= top){
+        if (height <= top) {
             return 1;
         }
         return (height - 1 - top) / (top - bottom) + 2;
@@ -39,8 +39,8 @@ public class IntegerTask {
      * Дано число n и номер разряда order. Выведите цифру стояющую на нужном разряде
      * Пример: (454355, 3) -> 3
      */
-    public static int kDecimal(int n, int order){
-        return Math.abs(n / (int)Math.pow(10.0, order - 1) % 10);
+    public static int kDecimal(int n, int order) {
+        return Math.abs(n / (int) Math.pow(10.0, order - 1) % 10);
     }
 
 
@@ -49,9 +49,9 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        if (n == 0){
+        if (n == 0) {
             return 1;
         }
-        return factorial( (byte)(n - 1) ) * n;
+        return factorial((byte) (n - 1)) * n;
     }
 }
