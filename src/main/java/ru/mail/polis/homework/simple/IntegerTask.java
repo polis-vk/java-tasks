@@ -26,11 +26,9 @@ public class IntegerTask {
     public static int snake(int height, int top, int bottom) {
         if (top >= height) {
             return 1;
-        } else if (bottom >= top) {
-            return Integer.MAX_VALUE;
         }
         int speed = top - bottom;
-        return ((height - top + (speed - 1)) / speed) + 1; // First brackets use ceiling formula: (a + b - 1) / b
+        return (speed > 0 ? ((height - top + (speed - 1)) / speed) + 1 : Integer.MAX_VALUE);
     }
 
     /**
@@ -48,7 +46,7 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long result = 1;
-        for (byte i = 1; i <= n; i++) { // Don't use recursion to avoid stack overflow + more efficient
+        for (byte i = 1; i <= n; i++) {
             result *= i;
         }
         return result;
