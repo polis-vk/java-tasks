@@ -33,6 +33,7 @@ public class IntegerTask {
         }
         int days = 0;
         int distance = 0;
+
         while ((distance + top) < height) {
             distance += top;
             distance -= bottom;
