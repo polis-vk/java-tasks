@@ -11,9 +11,10 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double sum = 0;
-        while (a < b) {
-            sum += function.applyAsDouble(a) * delta;
-            a += delta;
+        double temp = a;
+        while (temp < b) {
+            sum += function.applyAsDouble(temp) * delta;
+            temp += delta;
         }
         return sum;
     }
@@ -23,15 +24,18 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte index = 0, max = 0, count = 0;
+        byte index = 0;
+        byte max = 0;
+        byte count = 0;
+        long input = a;
         do {
-            if (Math.abs(a % 10) >= max) {
-                max = (byte) (a % 10);
+            if (input % 10 >= max || input % 10 <= -max) {
+                max = (byte) (Math.abs(input % 10));
                 index = count;
             }
-            a /= 10;
+            input /= 10;
             count++;
-        } while (a != 0);
+        } while (input != 0);
         return (byte) (count - index);
     }
 
@@ -41,11 +45,13 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
+        double res;
         if (x1 != x2) {
-            return y1 - ((double) ((x1 - x3) * (y1 - y2)) / (x1 - x2));   //вывод формулы из равенста отношений (x1 - x3) / (x1 - x2) = (y1 -y3) / (y1 - y2)
+            res = y1 - ((double) ((x1 - x3) * (y1 - y2)) / (x1 - x2));   //вывод формулы из равенста отношений (x1 - x3) / (x1 - x2) = (y1 -y3) / (y1 - y2)
         } else {
-            return (double) (y1 + y2) / 2;    //бесконечно много решений при x1 = x2 (как частное решение - точка по середине)
+            res = (double) (y1 + y2) / 2;    //бесконечно много решений при x1 = x2 (как частное решение - точка по середине)
         }
+        return res;
     }
 
     /**
