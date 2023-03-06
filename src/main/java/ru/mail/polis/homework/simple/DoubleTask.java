@@ -14,9 +14,26 @@ public class DoubleTask {
      * Пример: (1, 5, 4) -> "-1.0, -4.0"
      */
     public static String equation(int a, int b, int c) {
+
+        double D = Math.pow(b, 2) - 4 * a * c;
         double x1 = 0;
         double x2 = 0;
+        if (a > 0) {
+            x1 = firstRoot(a, b, D);
+            x2 = secondRoot(a, b, D);
+        } else {
+            x1 = secondRoot(a, b, D);
+            x2 = firstRoot(a, b, D);
+        }
         return x1 + ", " + x2;
+    }
+
+    public static double firstRoot(double a, double b, double d) {
+        return (-b + Math.sqrt(d)) / (2 * a);
+    }
+
+    public static double secondRoot(double a, double b, double d) {
+        return (-b - Math.sqrt(d)) / (2 * a);
     }
 
     /**
@@ -24,6 +41,6 @@ public class DoubleTask {
      * Пример: (0, 0, 3, 4) -> 5.0
      */
     public static float length(double x1, double y1, double x2, double y2) {
-        return 0;
+        return (float) Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1),2));
     }
 }
