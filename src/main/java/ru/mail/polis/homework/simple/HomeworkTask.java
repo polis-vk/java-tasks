@@ -22,12 +22,11 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        long absNumber = Math.abs(a);
-        byte nDigits = (byte) ((int) Math.log10(absNumber) + 1);
+        byte nDigits = (byte) ((int) Math.log10(Math.abs(a)) + 1);
         byte maxDigit = 0;
         byte index = 1;
         for (byte i = 1; i <= nDigits; i++) {
-            byte currentDigit = (byte) (absNumber / (Math.pow(10, nDigits - i)) % 10);
+            byte currentDigit = (byte) (Math.abs(a) / (Math.pow(10, nDigits - i)) % 10);
             if (currentDigit == 9) {
                 return i;
             } else if (currentDigit > maxDigit) {
