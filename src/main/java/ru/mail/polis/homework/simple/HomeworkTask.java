@@ -25,13 +25,14 @@ public class HomeworkTask {
         byte index = 0;
         byte nDigits = 0;
         byte maxDigit = 0;
-        while (a != 0) {
+        long leftDigits = a;
+        while (leftDigits != 0) {
             nDigits++;
             if (Math.abs(a % 10) >= maxDigit) {
                 maxDigit = (byte) (Math.abs(a % 10));
                 index = nDigits;
             }
-            a = a / 10;
+            leftDigits /= 10;
         }
         return (byte) (nDigits - index + 1);
     }
