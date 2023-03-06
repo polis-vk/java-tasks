@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.simple;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -12,13 +15,17 @@ public class IntegerAdvancedTask {
     private static final double EPS = 1e-10;
 
     /**
-     * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
+     * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r    /////(q??)
      * a + aq + aq^2 + ... + aq^(n-1)
      * <p>
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        long sumOfN = 0;
+        for (int i = 0; i < n; i++) {
+            sumOfN += a * Math.pow(q, i);
+        }
+        return sumOfN;
     }
 
     /**
@@ -40,7 +47,55 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        List<Character> listOfHexDigits = new ArrayList<>();
+        if (n <= 0) {
+            return 0;
+        } else {
+            while (n != 0) {
+                listOfHexDigits.add(replacer((char) (n % 16)));
+                n /= 16;
+            }
+            //listOfHexDigits.forEach(temp -> listOfHexDigits.add(replacer(temp)));
+            return listOfHexDigits.get(order - 1);
+        }
+    }
+
+    private static char replacer(char innerChar) {
+            switch (innerChar) {
+                case 0:
+                    return '0';
+                case 1:
+                    return '1';
+                case 2:
+                    return '2';
+                case 3:
+                    return '3';
+                case 4:
+                    return '4';
+                case 5:
+                    return '5';
+                case 6:
+                    return '6';
+                case 7:
+                    return '7';
+                case 8:
+                    return '8';
+                case 9:
+                    return '9';
+                case 10:
+                    return 'A';
+                case 11:
+                    return 'B';
+                case 12:
+                    return 'C';
+                case 13:
+                    return 'D';
+                case 14:
+                    return 'E';
+                case 15:
+                    return 'F';
+            }
+            return 999;
     }
 
     /**
@@ -51,7 +106,20 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        List<Byte> listOfHexDigits = new ArrayList<>();
+        if (a <= 0) {
+            return 0;
+        } else {
+            while (a != 0) {
+                listOfHexDigits.add((byte) (a % 16));
+                a /= 16;
+            }
+            byte minHex = Byte.MAX_VALUE;
+            for (byte b : listOfHexDigits) {
+                minHex = (minHex > b) ? (minHex = b) : minHex;
+            }
+            return (byte) (listOfHexDigits.indexOf(minHex) + 1);
+        }
     }
 
 }

@@ -18,8 +18,52 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        String aStr = String.valueOf(a);
+        byte aMax = 0;
+        if (a < 0) {
+            for (int i = 1; i < aStr.length(); i++) {
+                byte tempByteVar = (byte) aStr.charAt(i);
+                if (aMax < tempByteVar) {
+                    aMax = tempByteVar;
+                }
+            }
+        } else {
+            for (int i = 0; i < aStr.length(); i++) {
+                byte tempByteVar = Byte.parseByte(String.valueOf(aStr.charAt(i)));
+                if (aMax < tempByteVar) {
+                    aMax = tempByteVar;
+                }
+            }
+        }
+        if (a >= 0) {
+            return (byte) (aStr.indexOf(String.valueOf(aMax)) + 1);
+        } else {
+            return (byte) (aStr.indexOf(String.valueOf(aMax)) + 2);
+        }
     }
+        /*
+        int maxA = -1;
+        String aStr = String.valueOf(a);
+        String[] arrayOfDigits = aStr.split("");
+        for (int i = 0; i < arrayOfDigits.length; i++) {
+            byte tempVar = 0;
+            try {
+                 tempVar = Byte.parseByte(arrayOfDigits[i]);
+            } catch (NumberFormatException e) {
+
+            }
+            if (maxA < tempVar) {
+                maxA = tempVar;
+            }
+        }
+        if (a < 0) {
+            return (byte) (aStr.indexOf(maxA) + 1);
+        } else {
+            return (byte) aStr.indexOf(maxA);
+        }
+
+    }
+    */
 
 
     /**
