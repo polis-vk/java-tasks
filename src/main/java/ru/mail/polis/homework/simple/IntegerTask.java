@@ -49,7 +49,7 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        // Делим число на степень десятки, 
+        // Делим число на степень десятки,
         // чтобы нужна цифра оказалась на последнем месте, потом достаем ее
         return (int) Math.abs(n / Math.pow(10, order - 1) % 10);
     }
