@@ -27,7 +27,8 @@ public class HomeworkTask {
         byte maxDecimal = 0;
         byte maxNumber = 0;
         long num = a;
-        byte i = 0;
+        byte i;
+        i = (byte)(num == 0 ? 1 : 0);
         while (num != 0) {
             if (Math.abs(num) % 10 >= maxDecimal) {
                 maxDecimal = (byte)(Math.abs(num) % 10);
