@@ -13,8 +13,7 @@ public class HomeworkTask {
 
         double sum = 0.0;
         for (double x = a + delta / 2; x < b; x += delta) {
-            double y = function.applyAsDouble(x);
-            sum += y * delta;
+            sum += function.applyAsDouble(x) * delta;
         }
         return sum;
     }
@@ -24,19 +23,20 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
+        long number = a; // в комментарии бало сказано "изменять входные переменные плохой тон"
         int maxDigit = 0;
         int maxDigitIndex = 0;
         int index = 1;
-        while (a > 0) {
-            int digit = (int)(a % 10);
+        while (number > 0) {
+            int digit = (int) (number % 10);
             if (digit > maxDigit) {
                 maxDigit = digit;
                 maxDigitIndex = index;
             }
-            a /= 10L;
+            number /= 10L;
             index++;
         }
-        return (byte)(index-maxDigitIndex);
+        return (byte) (index - maxDigitIndex);
     }
 
 
@@ -46,7 +46,7 @@ public class HomeworkTask {
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
 
-        double y3 = y1 + (double)((y2 - y1) * (x3 - x1)) / (double)(x2 - x1);
+        double y3 = y1 + (double) ((y2 - y1) * (x3 - x1)) / (double) (x2 - x1);
         return y3;
     }
 
@@ -62,7 +62,6 @@ public class HomeworkTask {
         double CD = Math.sqrt(Math.pow(x4 - x3, 2) + Math.pow(y4 - y3, 2));
         double DA = Math.sqrt(Math.pow(x1 - x4, 2) + Math.pow(y1 - y4, 2));
         double AC = Math.sqrt(Math.pow(x3 - x1, 2) + Math.pow(y3 - y1, 2));
-        double BD = Math.sqrt(Math.pow(x4 - x2, 2) + Math.pow(y4 - y2, 2));
         double p1 = (AB + BC + AC) / 2;
         double p2 = (CD + DA + AC) / 2;
         double area = Math.sqrt(p1 * (p1 - AB) * (p1 - BC) * (p1 - AC))
