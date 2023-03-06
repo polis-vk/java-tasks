@@ -46,8 +46,8 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long result = 1;
-        for (byte i = 1; i <= n; i++) {
-            result *= i;
+        for (byte number = 1; number <= n; number++) {
+            result *= number;
         }
         return result;
     }
