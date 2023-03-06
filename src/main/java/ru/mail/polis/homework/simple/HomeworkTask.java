@@ -14,8 +14,8 @@ public class HomeworkTask {
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integral = 0;
 
-        for (double i = a; i < b; i += delta) {
-            integral += function.applyAsDouble(i) * delta;
+        for (double t = a; t < b; t += delta) {
+            integral += function.applyAsDouble(t) * delta;
         }
 
         return integral;
@@ -26,24 +26,23 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        long max = 0;
-        if (a == Long.MIN_VALUE) {
-            a = Long.MAX_VALUE;
-        } else if (a < 0) {
-            a *= -1;
-        }
-
+        long b = a;
+        byte max = 0;
         byte pos = 1; // позиция максимальной цифры
-        byte i = 1;
-        for (; a % 10 != 0; i++) {
-            if (a % 10 >= max) {
-                max = a % 10;
+        long digit;
+        byte num;
+
+        for (byte i = 1; b % 10 != 0; i++) {
+            digit = (long) Math.pow(10, (byte) Math.log10(b));
+            num = (byte) (b / digit);
+            if (num == 9) return i;
+            if (Math.abs(num) > max) {
+                max = num;
                 pos = i;
             }
-            a = a / 10;
+            b = b % digit;
         }
-
-        return i != pos ? (byte) (i - pos) : pos;// позиция считается справа на лево, но при выводе отзеркаливается
+        return pos;
     }
 
 

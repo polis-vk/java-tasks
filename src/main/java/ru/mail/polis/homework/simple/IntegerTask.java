@@ -26,29 +26,27 @@ public class IntegerTask {
     public static int snake(int height, int top, int bottom) {
         if (height <= top) {
             return 1;
-        } else if ((top - bottom) > 0) {
-            if ((height - bottom) % (top - bottom) == 0) { // если число дней будет не целым, нам нужно добавить еще один день, так как деление целочисленное.
-                return (height - bottom) / (top - bottom);
-            } else return (height - bottom) / (top - bottom) + 1;
-        } else return Integer.MAX_VALUE;
+        }
+        if ((top - bottom) <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        if ((height - bottom) % (top - bottom) == 0) { // если число дней будет не целым, нам нужно добавить еще один день, так как деление целочисленное.
+            return (height - bottom) / (top - bottom);
+        } else
+            return (height - bottom) / (top - bottom) + 1;
     }
 
     /**
-     * Дано число n и номер разряда order. Выведите цифру стояющую на нужном разряде
+     * Дано число a и номер разряда order. Выведите цифру стояющую на нужном разряде
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        if (n == Integer.MIN_VALUE) {
-            n = Integer.MAX_VALUE;
-        } else if (n < 0) {
-            n *= -1;
-        }
-
+        int a = n;
         for (int i = 1; i < order; i++) {
-            n = n / 10;
+            a = a / 10;
         }
 
-        return n >= 10 ? n % 10 : n;
+        return a >= 10 || a<=-10 ? Math.abs(a) % 10 : a;
     }
 
 
