@@ -32,16 +32,15 @@ public class HomeworkTask {
         long num = Math.abs(a);
 
         while (num != 0){
-            byte digit = (byte) (num % 10);
-            if (digit >= maxDigit){
-                maxDigit = digit;
+            if (num % 10 >= maxDigit){
+                maxDigit = (byte)(num % 10);
                 reversePos = i;
             }
             i++;
             num /= 10;
         }
 
-        int indexOfMaxDigit = i - reversePos; //position from left to right
+        int indexOfMaxDigit = i - reversePos; //reverse position
         return (byte) indexOfMaxDigit;
     }
 
