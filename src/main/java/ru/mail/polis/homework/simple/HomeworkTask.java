@@ -23,19 +23,20 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
         byte maxDigit = 0;
-        byte reversePos = 0; //position from right to left
+        byte pos = 0; //position from right to left
         byte i = 1; //iterator from right to left
-        long num = Math.abs(a);
+        long num = a;
+        byte digit = 0;
         while (num != 0){
-            if (num % 10 >= maxDigit){
-                maxDigit = (byte)(num % 10);
-                reversePos = i;
+            digit = (byte)Math.abs(num % 10);
+            if (digit >= maxDigit){
+                maxDigit = digit;
+                pos = i;
             }
             i++;
             num /= 10;
         }
-        int indexOfMaxDigit = i - reversePos; //reverse position
-        return (byte) indexOfMaxDigit;
+        return (byte)(i - pos); //reverse position
     }
 
 
