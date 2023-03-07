@@ -24,17 +24,17 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        if ((top < height) && (top <= bottom)) {
+        if (top < height && top <= bottom) {
             return Integer.MAX_VALUE;
         }
 
-        int i;
-        for (i = 1; i <= height; ++i) {
-            if ((top * i - bottom * (i - 1)) >= height) {
+        int dayCount;
+        for (dayCount = 1; dayCount <= height; ++dayCount) {
+            if (top * dayCount - bottom * (dayCount - 1) >= height) {
                 break;
             }
         }
-        return i;
+        return dayCount;
     }
 
     /**
@@ -52,7 +52,7 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long result = 1;
-        for (long i = 2; i <= (long) n; ++i) {
+        for (byte i = 2; i <= n; ++i) {
             result *= i;
         }
         return result;
