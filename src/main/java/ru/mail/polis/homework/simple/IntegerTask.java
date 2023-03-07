@@ -32,9 +32,10 @@ public class IntegerTask {
         if ((step <= 0) & (bottom < height)) {
             return Integer.MAX_VALUE;
         }
+        int height_tmp = height;
         int days = 0;
-        while (height > top) {
-            height -= step;
+        while (height_tmp > top) {
+            height_tmp -= step;
             days += 1;
         }
         return days + 1;
@@ -46,9 +47,10 @@ public class IntegerTask {
      */
     public static int kDecimal(int n, int order) {
         int answer = 0;
+        int tmp = n;
         for (int i = 0; i < order; i++) {
-            answer = n % 10;
-            n /= 10;
+            answer = tmp % 10;
+            tmp /= 10;
         }
         return Math.abs(answer);
 
