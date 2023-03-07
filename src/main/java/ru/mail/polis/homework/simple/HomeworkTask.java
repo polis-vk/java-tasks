@@ -11,12 +11,12 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        double copyA = a;
+        double copyOfA = a;
         double valueOfIntegral = 0;
         //Используем метод прямоугольников
-        while (Double.compare(copyA, b) < 0) {
-            valueOfIntegral += function.applyAsDouble(copyA) * delta;
-            copyA += delta;
+        while (Double.compare(copyOfA, b) < 0) {
+            valueOfIntegral += function.applyAsDouble(copyOfA) * delta;
+            copyOfA += delta;
         }
         return valueOfIntegral;
     }
