@@ -13,7 +13,7 @@ public class HomeworkTask {
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double copyA = a;
         double valueOfIntegral = 0;
-        //Метод прямоугольников     
+        //Используем метод прямоугольников
         while (Double.compare(copyA, b) < 0) {
             valueOfIntegral += function.applyAsDouble(copyA) * delta;
             copyA += delta;
