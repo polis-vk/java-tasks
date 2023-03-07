@@ -15,7 +15,7 @@ public class HomeworkTask {
         double valueOfIntegral = 0;
         //Метод прямоугольников
         while (Double.compare(copyA, b) < 0) {
-            valueOfIntegral += function.applyAsDouble(a) * delta;
+            valueOfIntegral += function.applyAsDouble(copyA) * delta;
             copyA += delta;
         }
         return valueOfIntegral;
