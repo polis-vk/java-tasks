@@ -17,7 +17,6 @@ public class DoubleAdvancedTask {
      * Пример: (1, -4, -7, 10) -> "-2.0, 1.0, 5.0"
      */
     public static String equation(int a, int b, int c, int d) {
-
         double x1 = 0;
         double x2 = 0;
         double x3 = 0;

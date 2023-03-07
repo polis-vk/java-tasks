@@ -8,7 +8,7 @@ public class MainTask {
      * @param args
      */
     public static void main(String[] args) {
-        System.out.println("Is it work?" + "\n");
+        System.out.println("Is it work?" + "\n");  // \n мне нужен чтобы отделить строчку от того, что возвращают методы
         System.out.println(Long.MIN_VALUE);
     }
 }

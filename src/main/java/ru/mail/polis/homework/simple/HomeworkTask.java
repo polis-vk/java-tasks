@@ -19,59 +19,25 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
         String aStr = String.valueOf(a);
-        byte aMax = 0;
-        if (a < 0) {
-            for (int i = 1; i < aStr.length(); i++) {
-                byte tempByteVar = (byte) aStr.charAt(i);
-                if (aMax < tempByteVar) {
-                    aMax = tempByteVar;
-                }
-            }
-        } else {
-            for (int i = 0; i < aStr.length(); i++) {
-                byte tempByteVar = Byte.parseByte(String.valueOf(aStr.charAt(i)));
-                if (aMax < tempByteVar) {
-                    aMax = tempByteVar;
-                }
-            }
+        boolean isAPositive = a >= 0;
+        int aMax = 0;
+        while (a != 0) {
+            aMax = (int) Math.max(aMax, Math.abs(a % 10));
+            a /= 10;
         }
-        if (a >= 0) {
+        if (isAPositive) {
             return (byte) (aStr.indexOf(String.valueOf(aMax)) + 1);
-        } else {
-            return (byte) (aStr.indexOf(String.valueOf(aMax)) + 2);
         }
+        return (byte) (aStr.indexOf(String.valueOf(aMax)));
     }
-        /*
-        int maxA = -1;
-        String aStr = String.valueOf(a);
-        String[] arrayOfDigits = aStr.split("");
-        for (int i = 0; i < arrayOfDigits.length; i++) {
-            byte tempVar = 0;
-            try {
-                 tempVar = Byte.parseByte(arrayOfDigits[i]);
-            } catch (NumberFormatException e) {
-
-            }
-            if (maxA < tempVar) {
-                maxA = tempVar;
-            }
-        }
-        if (a < 0) {
-            return (byte) (aStr.indexOf(maxA) + 1);
-        } else {
-            return (byte) aStr.indexOf(maxA);
-        }
-
-    }
-    */
-
 
     /**
      * Даны две точки в пространстве (x1, y1) и (x2, y2). Вам нужно найти Y координату третьей точки (x3, y3),
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        return (x3-x1)*(y2-y1)/(x2-x1) + y1;
+        // Не проходит последний тест, не понимаю в чем проблема...  Help pls
     }
 
     /**
@@ -79,7 +45,17 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        int[] vectorAC = {x3 - x1, y3 - y1};
+        int[] vectorBD = {x4 - x2, y4 - y2};
+        double lengthOfAC = Math.sqrt(Math.pow(vectorAC[0], 2) + Math.pow(vectorAC[1], 2));
+        double lengthOfBD = Math.sqrt(Math.pow(vectorBD[0], 2) + Math.pow(vectorBD[1], 2));
+        double cosAngleACBD = (vectorAC[0] * vectorBD[0] + vectorAC[1] * vectorBD[1]) /
+                (Math.abs(lengthOfAC) * Math.abs(lengthOfBD));
+        if (Double.isNaN(cosAngleACBD)) {
+            return 0;
+        }
+        double sinAngleACBD = Math.sin(Math.acos(cosAngleACBD));
+        return 0.5 * lengthOfAC * lengthOfBD * sinAngleACBD;
     }
 
 }
