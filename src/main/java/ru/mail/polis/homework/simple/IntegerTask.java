@@ -15,8 +15,7 @@ public class IntegerTask {
      */
     public static int sum(int n) {
         //Формула арифметической прогрессии
-        int sumOfNumbers = (1 + n) * n / 2;
-        return sumOfNumbers;
+        return (1 + n) * n / 2;
     }
 
     /**
@@ -28,14 +27,11 @@ public class IntegerTask {
     public static int snake(int height, int top, int bottom) {
         if (top >= height) { //Если может добраться за день, спуск можно не учитывать
             return 1;
-        }
-        else if (top <= bottom) { //Если за день не добраться и значение спуска больше значения подъема, то будет только спускаться
+        } else if (top <= bottom) { //Если за день не добраться и значение спуска больше значения подъема, то будет только спускаться
             return Integer.MAX_VALUE;
-        }
-        else if ((height - top) % (top - bottom) != 0) {
+        } else if ((height - top) % (top - bottom) != 0) {
             return (height - top) / (top - bottom) + 2;
-        }
-        else {
+        } else {
             return (height - top) / (top - bottom) + 1;
         }
     }
@@ -45,17 +41,16 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
+        int number = n;
         int newOrder = 1; //Порядок очередной цифры числа
-        int figure = 0; //Очередная цифра числа с копированием знака числа, например в числе -111 каждая очередная цифра равна -1
-        while (n != 0) {
-            figure = n % 10;
+        while (number != 0) {
             if (newOrder == order) {
-                return Math.abs(figure);
+                break;
             }
             newOrder++;
-            n /= 10;
+            number /= 10;
         }
-        return Math.abs(figure);
+        return Math.abs(number % 10);
     }
 
 
