@@ -41,10 +41,11 @@ public class IntegerTask {
      */
     public static int kDecimal(int n, int order) {
         int number = 0;
+        int value = n;
         int count = order;
         while (count != 0) {
-            number = Math.abs(n % 10);
-            n /= 10;
+            number = Math.abs(value % 10);
+            value /= 10;
             count--;
         }
 

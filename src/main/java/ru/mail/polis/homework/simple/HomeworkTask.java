@@ -12,10 +12,11 @@ public class HomeworkTask {
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         //integral = сумме площадей прямоугольников
         double integral = 0;
+        double leftBorder = a;
 
-        for (double i = a; i < b; i += delta) {
-            integral += delta * function.applyAsDouble(a);
-            a += delta;
+        for (double i = leftBorder; i < b; i += delta) {
+            integral += delta * function.applyAsDouble(leftBorder);
+            leftBorder += delta;
         }
 
         return integral;
@@ -27,15 +28,16 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
         int maxNumber = 1;
-        long number = Math.abs(a % 10);
-        a /= 10;
+        long value = a;
+        long number = Math.abs(value % 10);
 
-        while (a != 0) {
-            if (Math.abs(a % 10) >= number) {
-                number = Math.abs(a % 10);
+        value /= 10;
+        while (value != 0) {
+            if (Math.abs(value % 10) >= number) {
+                number = Math.abs(value % 10);
                 maxNumber = 0;
             }
-            a /= 10;
+            value /= 10;
             maxNumber++;
         }
 
