@@ -12,9 +12,8 @@ public class HomeworkTask {
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         //integral = сумме площадей прямоугольников
         double integral = 0;
-        double countRectangle = Math.abs(b - a) / delta;
 
-        for (int i = 0; i < countRectangle; i++) {
+        for (double i = a; i < b; i += delta) {
             integral += delta * function.applyAsDouble(a);
             a += delta;
         }
@@ -27,19 +26,19 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        int maxNumber = String.valueOf(a).length();
-        int length = String.valueOf(a).length();
-        long number = a % 10;
+        int maxNumber = 1;
+        long number = Math.abs(a % 10);
         a /= 10;
 
-        while (length != 0) {
-            if (number <= a % 10) {
-                number = a % 10;
-                maxNumber = String.valueOf(a).length();
+        while (a != 0) {
+            if (Math.abs(a % 10) >= number) {
+                number = Math.abs(a % 10);
+                maxNumber = 0;
             }
             a /= 10;
-            length--;
+            maxNumber++;
         }
+
         return (byte) maxNumber;
     }
 
@@ -77,9 +76,7 @@ public class HomeworkTask {
         double k2 = (double) (y2 - y4) / (x2 - x4);
         double sin = Math.sin(Math.atan(Math.abs((k2 - k1) / (1 + k1 * k2))));
 
-        if ((x1 - x3) == 0) {
-            sin = 1;
-        } else if ((x2 - x4) == 0) {
+        if ((x1 - x3) == 0 || (x2 - x4) == 0) {
             sin = 1;
         }
 
