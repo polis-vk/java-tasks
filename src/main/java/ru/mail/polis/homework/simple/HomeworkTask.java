@@ -11,10 +11,10 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double sum = 0;
-        double temp = a;
-        while (temp < b) {
-            sum += function.applyAsDouble(temp) * delta;
-            temp += delta;
+        double x = a;
+        while (x < b) {
+            sum += function.applyAsDouble(x) * delta;
+            x += delta;
         }
         return sum;
     }
@@ -25,12 +25,12 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
         byte index = 0;
-        byte max = 0;
+        byte maxDigit = 0;
         byte count = 0;
         long input = a;
         do {
-            if (input % 10 >= max || input % 10 <= -max) {
-                max = (byte) (Math.abs(input % 10));
+            if (input % 10 >= maxDigit || input % 10 <= -maxDigit) {
+                maxDigit = (byte) (Math.abs(input % 10));
                 index = count;
             }
             input /= 10;
@@ -45,13 +45,10 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        double res;
         if (x1 != x2) {
-            res = y1 - ((double) ((x1 - x3) * (y1 - y2)) / (x1 - x2));   //вывод формулы из равенста отношений (x1 - x3) / (x1 - x2) = (y1 -y3) / (y1 - y2)
-        } else {
-            res = (double) (y1 + y2) / 2;    //бесконечно много решений при x1 = x2 (как частное решение - точка по середине)
+            return y1 - ((double) ((x1 - x3) * (y1 - y2)) / (x1 - x2));   //вывод формулы из равенста отношений (x1 - x3) / (x1 - x2) = (y1 -y3) / (y1 - y2)
         }
-        return res;
+        return (double) (y1 + y2) / 2;    //бесконечно много решений при x1 = x2 (как частное решение - точка по середине)
     }
 
     /**
