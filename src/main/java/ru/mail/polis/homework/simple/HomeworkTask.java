@@ -22,28 +22,17 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        long reverse = 0;
-        byte i = 0;              // current index of number
-        byte index = 0;          // needed index
+        String strNumber = Long.toString(a).replaceAll("[^0-9]", "");
         int max = -1;
+        byte index = -1;
 
-        if (a >= 0 && a < 10) return 1;
-
-        while (a != 0) {
-            reverse *= 10;
-            reverse += Math.abs(a % 10);
-            a /= 10;
-        }
-
-        while (reverse > 0) {
-            i++;
-            if (max < reverse % 10) {
-                max = (byte) (reverse % 10);
-                index = (i);
+        for (int i = 0; i < strNumber.length(); i++) {
+            int num = Integer.parseInt(strNumber.substring(i, i + 1));
+            if (max < num) {
+                max = num;
+                index = (byte) (i + 1);
             }
-            reverse /= 10;
         }
-
         return index;
     }
 
@@ -67,9 +56,5 @@ public class HomeworkTask {
         if (AC == 0 || BD == 0) return 0;
 
         return 0.5 * AC * BD * Math.abs((x3 - x1) * (y4 - y2) - (y3 - y1) * (x4 - x2)) / (AC * BD);
-    }
-
-    public static void main(String[] args) {
-        System.out.println(maxNumber(0));
     }
 }

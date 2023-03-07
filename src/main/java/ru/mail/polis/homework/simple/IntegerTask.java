@@ -14,11 +14,7 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        int sunOfNumbers = 0;
-        for (int i = 1; i <= n; i++) {
-            sunOfNumbers += i;
-        }
-        return sunOfNumbers;
+        return (n + 1) * n / 2;
     }
 
     /**
@@ -28,16 +24,9 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        int day = 1;
-        int way = 0;
-        if ((top <= bottom) && (top < height)) return Integer.MAX_VALUE;
-        else {
-            while (height > way + top) {
-                day++;
-                way += top - bottom;
-            }
-        }
-        return day;
+        if (top >= height) return 1;
+        if (top - bottom <= 0 && height - top > 0) return Integer.MAX_VALUE;
+        return 1 + (height - bottom - 1) / (top - bottom);
     }
 
     /**
