@@ -13,13 +13,12 @@ public class HomeworkTask {
         // Метод прямоугольников
         double temp = a;
         double result = 0;
-        int i = 0;
-        while(a <= b){
-            i++;
-            result += function.applyAsDouble(a);
-            a+=delta;
+        int i = 1;
+        for (; temp <= b; i++) {
+            result += function.applyAsDouble(temp);
+            temp += delta;
         }
-        result *= (b - temp) / i;
+        result *= (b - a) / i;
         return result;
     }
 
@@ -29,19 +28,19 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
         // Число переводится в строку для удобной поэлементной обработки числа
-        String str = String.valueOf(a);
-        int maxIndex = -1;
-        int max = -1;
-        for(int i = 0; i < str.length(); i++){
-            if(str.charAt(i) > max + 48) {
-                max = str.charAt(i) - 48;
-                maxIndex = i + 1;
+        byte maxIndex = 1;
+        byte numLen = 1;
+        byte max = -1;
+        long temp = a;
+        while (temp > 0) {
+            numLen++;
+            if (Math.abs(temp % 10) >= max) {
+                max = (byte) Math.abs(temp % 10);
+                maxIndex = numLen;
             }
+            temp /= 10;
         }
-        if(str.charAt(0) == '-') {
-            maxIndex--;
-        }
-        return (byte) maxIndex;
+        return (byte) (numLen - (maxIndex - 1));
     }
 
 
@@ -51,7 +50,7 @@ public class HomeworkTask {
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
         // Функция выведена в соответствии каноническим уровнением прямой
-        double expression = (double)((x3 - x1) * y2 + (x2 - x3) * y1)/(x2-x1);
+        double expression = (double) ((x3 - x1) * y2 + (x2 - x3) * y1) / (x2 - x1);
         return y2 == y1 ? 1 : expression;
     }
 
@@ -72,8 +71,8 @@ public class HomeworkTask {
         double pABC = (sideAB + sideBC + diagonal) / 2;
         double pCDA = (sideCD + sideDA + diagonal) / 2;
         // площади треугольников
-        double squareABC = Math.sqrt(pABC * (pABC - sideAB) * (pABC-sideBC) * (pABC-diagonal));
-        double squareCDA = Math.sqrt(pCDA * (pCDA - sideCD) * (pCDA-sideDA) * (pCDA-diagonal));
+        double squareABC = Math.sqrt(pABC * (pABC - sideAB) * (pABC - sideBC) * (pABC - diagonal));
+        double squareCDA = Math.sqrt(pCDA * (pCDA - sideCD) * (pCDA - sideDA) * (pCDA - diagonal));
         return squareABC + squareCDA;
     }
 }
