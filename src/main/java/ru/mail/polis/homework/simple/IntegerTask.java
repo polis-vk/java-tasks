@@ -14,11 +14,7 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        int count = 0;
-        for (int i = 1; i <= n; i++) {
-            count += i;
-        }
-        return count;
+        return (int) ((n / 2.0) * (2 + n - 1));
     }
 
     /**
@@ -28,19 +24,11 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        int currentHeight = 0;
-        int days = 0;
-        if (bottom >= top && top < height) {
+        if ((bottom >= top && top < height) || height == 0) {
             return Integer.MAX_VALUE;
         }
-        while (currentHeight < height) {
-            days++;
-            currentHeight += top;
-            if (currentHeight < height) {
-                currentHeight -= bottom;
-            }
-        }
-        return days;
+        double days = (height - top) > 0 ? (height - top) / ((double) (top - bottom)) + 1 : 1;
+        return (int) Math.ceil(days);
     }
 
     /**
@@ -48,13 +36,13 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int b = (int) ((n % Math.pow(10, order)) / Math.pow(10, order - 1));
-        return Math.abs(b);
+        int tempValue = (int) ((n % Math.pow(10, order)) / Math.pow(10, order - 1));
+        return Math.abs(tempValue);
     }
 
     public static int kDecimal(long n, int order) { // добавил перегрузку для того, чтобы использовать метод в HomeworkTask, не знаю, можно ли изменять сигнатуру методов в дз.
-        int b = (int) ((n % Math.pow(10, order)) / Math.pow(10, order - 1));
-        return Math.abs(b);
+        int numDigit = (int) ((n % Math.pow(10, order)) / Math.pow(10, order - 1));
+        return Math.abs(numDigit);
     }
 
     /**

@@ -28,10 +28,15 @@ public class HomeworkTask {
         byte length = (byte) (Math.log10(a) + 1);
         byte maxValue = 0;
         byte maxValuePosition = 1;
+        byte presentNum;
         for (byte i = length; i > 0; i--) {
-            if (maxValue < kDecimal(a, i)) { // функция из IntegerTask
-                maxValue = (byte) kDecimal(a, i);
+            presentNum = (byte) kDecimal(a, i);
+            if (maxValue < presentNum) { // функция из IntegerTask
+                maxValue = presentNum;
                 maxValuePosition = (byte) (length - i + 1);
+            }
+            if (maxValue == 9) {
+                break;
             }
         }
         return maxValuePosition;
@@ -63,7 +68,9 @@ public class HomeworkTask {
         double acos1 = Math.acos((da * da + ab * ab - bd * bd) / (2.0 * da * ab));
         double acos2 = Math.acos((cd * cd + bc * bc - bd * bd) / (2.0 * cd * bc));
         double cos = Math.cos((acos1 + acos2) / 2.0);
-        return Math.sqrt((semiPerimeter - ab) * (semiPerimeter - bc) * (semiPerimeter - cd) * (semiPerimeter - da) - ab * bc * cd * da * cos * cos);
+        double firstPart = (semiPerimeter - ab) * (semiPerimeter - bc) * (semiPerimeter - cd) * (semiPerimeter - da);
+        double secondPart = ab * bc * cd * da * cos * cos;
+        return Math.sqrt(firstPart - secondPart);
     }
 
 }
