@@ -16,6 +16,26 @@ public class DoubleTask {
     public static String equation(int a, int b, int c) {
         double x1 = 0;
         double x2 = 0;
+        if (a == 0 && c != 0 && b != 0) {
+            x1 = -((double) c /b);
+            x2 = x1;
+        } else if (b == 0 && c != 0) {
+            x1 = Math.sqrt(-(double) c /a);
+            x2 -= x1;
+        } else if (c == 0 && b != 0) {
+            double current = -(double) b /a;
+            x1 = Math.max(current, 0);
+            x2 = Math.min(current, 0);
+        } else if (c != 0) {
+            double d = Math.pow(b, 2) - 4 * a * c;
+            if (d > 0) {
+                x1 = (a > 0 ? (-b + Math.sqrt(d)) : (-b - Math.sqrt(d))) / (2 * a);
+                x2 = (a > 0 ? (-b - Math.sqrt(d)) : (-b + Math.sqrt(d))) / (2 * a);
+            } else if (d == 0) {
+                x1 = (double) -b / 2 * a;
+                x2 = x1;
+            }
+        }
         return x1 + ", " + x2;
     }
 
@@ -24,6 +44,6 @@ public class DoubleTask {
      * Пример: (0, 0, 3, 4) -> 5.0
      */
     public static float length(double x1, double y1, double x2, double y2) {
-        return 0;
+        return (float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 }

@@ -9,8 +9,13 @@ public class HomeworkTask {
      * Для того, что бы получить значение по Y для точки X, надо просто написать function.applyAsDouble(t)
      * Считаем, что функция определена на всем пространстве от a до b
      */
+    // Метод прямоугольников где одна сторона = шаг, а вторая значение по Y для точки X, что равняется высоте
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double result = 0;
+        for (double i = a; i <= b; i += delta) {
+            result += delta * function.applyAsDouble(i);
+        }
+        return result;
     }
 
     /**
@@ -18,7 +23,18 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        char[] numbers = String.valueOf(a).toCharArray();
+        int currentMax = 0;
+        int index = 0;
+        for (int i = 0; i < numbers.length; i++) {
+            int currentNumber = Character.getNumericValue(numbers[i]);
+            index = currentNumber > currentMax ? i : index;
+            currentMax = Math.max(currentNumber, currentMax);
+            if (currentMax == 9) {
+                break;
+            }
+        }
+        return numbers[0] == '-' ? (byte) index : (byte) (index + 1);
     }
 
 
@@ -26,16 +42,19 @@ public class HomeworkTask {
      * Даны две точки в пространстве (x1, y1) и (x2, y2). Вам нужно найти Y координату третьей точки (x3, y3),
      * которая находится на той же прямой что и первые две.
      */
+    // Уравнение прямой для 3-х точек : (x_3 - x_1) / (x_2 - x_1) = (y_3 - y_1) / (y_2 - y_1)
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        return ((double) (x3 - x1) * (y2 - y1) / (x2 - x1)) + y1;
     }
 
     /**
      * Даны 4 точки в пространстве A(x1, y1), B(x2, y2), C(x3, y3), D(x4, y4). Найдите площадь выпуклого
      * четырехуголька ABCD.
      */
+    // Сумма площадей 2-ух треугольников, разделенных диагональю
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        return Math.abs((double) ((x1 - x2) * (y3 - y2) - (y1 - y2) * (x3 - x2)) / 2)
+                + Math.abs((double) ((x1 - x3) * (y4 - y3) - (y1 - y3) * (x4 - x3)) / 2);
     }
 
 }
