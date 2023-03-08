@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.function.ToDoubleFunction;
 
 public class HomeworkTask {
@@ -10,7 +12,13 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double sum = 0;
+        double x = a;
+        while (x <= b) {
+            sum += function.applyAsDouble(x);
+            x += delta;
+        }
+        return delta * sum;
     }
 
     /**
@@ -18,7 +26,21 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        ArrayList<Integer> Arr = new ArrayList<>();
+        while (a > 0) {
+            Arr.add((int) a % 10);
+            a /= 10;
+        }
+        Collections.reverse(Arr);
+        int max = 0;
+        byte kmax = 1;
+        for (int i = 0; i < Arr.size(); i++) {
+            if (Arr.get(i) > max) {
+                max = Arr.get(i);
+                kmax = (byte) (i + 1);
+            }
+        }
+        return kmax;
     }
 
 
@@ -27,7 +49,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        return (double) (x3 - x1) / (x2 - x1) * (y2 - y1) + y1;
     }
 
     /**
@@ -35,7 +57,7 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        return (double) Math.abs((x1 - x2) * (y1 + y2) + (x2 - x3) * (y2 + y3) + (x3 - x4) * (y3 + y4) + (x4 - x1) * (y4 + y1)) / 2;
     }
 
 }
