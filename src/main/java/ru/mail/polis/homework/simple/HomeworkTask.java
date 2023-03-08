@@ -10,7 +10,13 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double sum = 0;
+        double step = a;
+        while (step <= b) {
+            sum += delta * function.applyAsDouble(step);
+            step += delta;
+        }
+        return sum;
     }
 
     /**
@@ -18,7 +24,19 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        long max = a % 10;
+        int maxIndex = 0;
+        int len = 1;
+
+        while (a > 0) {
+            if (max <= a % 10) {
+                max = a % 10;
+                maxIndex = len;
+            }
+            len++;
+            a /= 10;
+        }
+        return (byte) (len - maxIndex);
     }
 
 
@@ -27,7 +45,9 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        // Каноническое уравнение прямой (X - x1) / (x2 - x1) = (Y - y1) / (y2 - y1),
+        // найдем Y подставив x3 в X
+        return ((double) x3 - x1) / (x2 - x1) * (y2 - y1) + y1;
     }
 
     /**
@@ -35,7 +55,8 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        // Формула площади Гаусса для четырехуголька
+        return Math.abs(x1 * y2 + x2 * y3 + x3 * y4 + x4 * y1 - x2 * y1 - x3 * y2 - x4 * y3 - x1 * y4) / 2.0;
     }
 
 }
