@@ -29,7 +29,18 @@ public class DoubleAdvancedTask {
      * (0, 1, 0, 5) -> 4
      */
     public static float length(double a1, double b1, double a2, double b2) {
-        return 0;
+        if(a1!=a2){
+            return 0;
+        }else{
+            if(a1==0){
+                return (float) Math.abs(b2-b1);
+            }
+            return (float) ((float) Math.abs(b2-b1)/Math.abs(Math.sqrt(a1*a1+1)));
+        }
+
+
+
+
     }
 
     /**
@@ -44,6 +55,13 @@ public class DoubleAdvancedTask {
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
                                          int x4, int y4) {
-        return 0;
+
+//        зная, что Ax+ By+Cx+D = 0 будем выражать разницу xi и xj и решим СЛАУ относительно -A/C ,  -B/C, -D/C
+
+        double AC = (double) (z3-z2 - (double) (z2-z1)*(y3-y2)/(y2-y1))/(x3-x2 - (double) (y3-y2)*(x2-x1)/(y2-y1));
+        double BC= (double) (z2-z1 - AC*(x2-x1))/(y2-y1);
+        double DC= (double) z1- AC*x1 - BC*y1;
+
+        return DC + AC*x4+BC*y4;
     }
 }

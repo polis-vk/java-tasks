@@ -4,13 +4,29 @@ import java.util.function.ToDoubleFunction;
 
 public class HomeworkTask {
 
+    public static double len_dots(int x1, int y1, int x2, int y2){
+
+        return (double) Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
+
+    }
+
+    public static double square_triangle(double A, double B, double C){
+        double p1 = (A+B+C)/2;
+        return Math.sqrt(p1*(p1-A)*(p1-B)*(p1-C));
+    }
+
     /**
      * Нужно численно посчитать интеграл от a до b с шагом delta от функции function
      * Для того, что бы получить значение по Y для точки X, надо просто написать function.applyAsDouble(t)
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+
+        double sum = 0;
+        for(double i = a; i<=b; i+=delta){
+            sum+=(delta)*function.applyAsDouble(i);
+        }
+        return sum;
     }
 
     /**
@@ -18,7 +34,18 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        a = Math.abs(a);
+        byte max_number = -1;
+        byte len_number = 0, number = 0;
+        while(a!=0){
+            len_number+=1;
+            if(Math.abs(a%10)>=max_number){
+                max_number = (byte) Math.abs((a%10));
+                number = len_number;
+            }
+            a = a/10;
+        }
+        return (byte) (len_number-number+1);
     }
 
 
@@ -27,7 +54,9 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        double k = (double) (y1-y2)/(x1-x2);
+        double b = (double) y1 - k*x1;
+        return k*x3+b;
     }
 
     /**
@@ -36,7 +65,17 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+
+        double A = len_dots(x1, y1, x4, y4);
+        double B = len_dots(x1, y1, x2, y2);
+        double C = len_dots(x2, y2, x3, y3);
+        double D = len_dots(x3, y3, x4, y4);
+        double diag = len_dots(x1, y1, x3, y3);
+
+
+        double S1 = square_triangle(A, D, diag);
+        double S2 = square_triangle(B, C, diag);
+        return S1+S2;
     }
 
 }

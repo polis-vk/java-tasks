@@ -18,7 +18,12 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+
+        double result = 0;
+        for(int i = 0; i<n; i++){
+            result+=a*Math.pow(q, i);
+        }
+        return (long) result;
     }
 
     /**
