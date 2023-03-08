@@ -20,14 +20,13 @@ public class HomeworkTaskTest {
 
     @Test
     public void maxNumber() {
-//        assertEquals(2, HomeworkTask.maxNumber(892347384743343L));
-//        assertEquals(1, HomeworkTask.maxNumber(99999999999999L));
-//        assertEquals(1, HomeworkTask.maxNumber(0L));
-//        assertEquals(1, HomeworkTask.maxNumber(1L));
-//        assertEquals(2, HomeworkTask.maxNumber(12L));
-//        assertEquals(7, HomeworkTask.maxNumber(62467293));
-//        assertEquals(5, HomeworkTask.maxNumber(62467237));
-//        assertEquals(1, HomeworkTask.maxNumber(Long.MIN_VALUE));
+        assertEquals(2, HomeworkTask.maxNumber(892347384743343L));
+        assertEquals(1, HomeworkTask.maxNumber(99999999999999L));
+        assertEquals(1, HomeworkTask.maxNumber(0L));
+        assertEquals(1, HomeworkTask.maxNumber(1L));
+        assertEquals(7, HomeworkTask.maxNumber(62467293));
+        assertEquals(5, HomeworkTask.maxNumber(62467237));
+       assertEquals(1, HomeworkTask.maxNumber(Long.MIN_VALUE));
         assertEquals(1, HomeworkTask.maxNumber(Long.MIN_VALUE - 1));
     }
 
