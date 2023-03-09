@@ -32,8 +32,9 @@ public class HomeworkTask {
         }
 
         int length = Math.abs((int) (Math.log10(Math.abs(a)) + 1));
-        long value = (long) (a % Math.pow(10, length - 1));
+        long value = a;
         int maxNumber = (int) (value / Math.pow(10, length - 1)); //максимальное число
+        value = (long) (a % Math.pow(10, length - 1));
         byte count = 1; //счётчик цифры
         byte countMax = 1;  //номер максимальной цифры
 
