@@ -27,21 +27,30 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        int maxNumber = 1;
-        long value = a;
-        long number = Math.abs(value % 10);
-
-        value /= 10;
-        while (value != 0) {
-            if (Math.abs(value % 10) >= number) {
-                number = Math.abs(value % 10);
-                maxNumber = 0;
-            }
-            value /= 10;
-            maxNumber++;
+        if (a == 0) {
+            return 1;
         }
 
-        return (byte) maxNumber;
+        int length = Math.abs((int) (Math.log10(Math.abs(a)) + 1));
+        long value = (long) (a % Math.pow(10, length - 1));
+        int maxNumber = (int) (value / Math.pow(10, length - 1)); //максимальное число
+        byte count = 1; //счётчик цифры
+        byte countMax = 1;  //номер максимальной цифры
+
+        for (int i = length - 2; i >= 0; i--) {
+            if (maxNumber == 9) {
+                return count;
+            }
+            if (value / Math.pow(10, i) > maxNumber) {
+                maxNumber = (int) (value / Math.pow(10, i));
+                countMax = ++count;
+            } else {
+                count++;
+            }
+            value = (long) (a % Math.pow(10, i));
+        }
+
+        return countMax;
     }
 
 
