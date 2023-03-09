@@ -24,17 +24,18 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        long max = a % 10;
+        long acc = a;
+        long max = acc % 10;
         int maxIndex = 0;
         int len = 1;
 
-        while (a > 0) {
-            if (max <= a % 10) {
-                max = a % 10;
+        while (acc > 0) {
+            if (max <= acc % 10) {
+                max = acc % 10;
                 maxIndex = len;
             }
             len++;
-            a /= 10;
+            acc /= 10;
         }
         return (byte) (len - maxIndex);
     }
