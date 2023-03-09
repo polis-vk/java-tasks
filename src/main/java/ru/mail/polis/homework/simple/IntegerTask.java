@@ -28,16 +28,17 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        if ((top <= bottom) && (height > top)) {
+        if (top >= height) {
+            return 1;
+        }
+        if (top <= bottom) {
             return Integer.MAX_VALUE;
         }
-        int step = top;
-        int countDays = 1;
-        while (step < height) {
-            step += top - bottom;
-            countDays++;
-        }
-        return countDays;
+        /*(height - top) - расстояние, которое нужно проползти гусенице без последнего поднятия.
+        (top - bottom) - расстояние, которое проползает гусеница за сутки.
+        Частное этих значений равно количеству дней без последнего поднятия. После прибавления единицы получаем
+        количество дней, чтобы подняться до height*/
+        return (int) (Math.ceil((double) (height - top) / (top - bottom)) + 1);
     }
 
     /**
@@ -45,22 +46,19 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int value = 0;
-        while (order != 0) {
-            value = Math.abs(n % 10);
-            n = n / 10;
-            order--;
+        int number = (int) (n / (Math.pow(10, order - 1)) % 10);
+        if (n < 0) {
+            return Math.abs(number);
         }
-        return value;
+        return number;
     }
-
 
     /**
      * Выведите факториал от числа n
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        if ((n == 0) || (n == 1)) {
+        if (n <= 1) {
             return 1;
         }
         return n * factorial((byte) (n - 1));

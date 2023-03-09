@@ -24,18 +24,30 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte MaxVal = 0;
-        byte numberMaxVal = 0;
+        byte maxVal = 0;
+        byte indexMaxVal = 0;
         byte lenght = 1;
-        while (a != 0) {
-            if (Math.abs(a % 10) >= MaxVal) {
-                MaxVal = (byte) Math.abs((a % 10));
-                numberMaxVal = lenght;
+        long copyA = a;
+        if (copyA <= 0) {
+            while (copyA != 0) {
+                if ((copyA % 10) <= maxVal) {
+                    maxVal = (byte) (copyA % 10);
+                    indexMaxVal = lenght;
+                }
+                lenght++;
+                copyA /= 10;
             }
-            lenght++;
-            a /= 10;
+        } else {
+            while (copyA != 0) {
+                if ((copyA % 10) >= maxVal) {
+                    maxVal = (byte) (copyA % 10);
+                    indexMaxVal = lenght;
+                }
+                lenght++;
+                copyA /= 10;
+            }
         }
-        return (byte) (lenght - numberMaxVal);
+        return (byte) (lenght - indexMaxVal);
     }
 
     /**
