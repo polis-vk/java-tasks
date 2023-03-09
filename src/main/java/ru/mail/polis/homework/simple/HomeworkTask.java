@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.simple;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.function.ToDoubleFunction;
 
 public class HomeworkTask {
@@ -10,7 +12,11 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        BigDecimal sumAccumulator = new BigDecimal(0);
+        for (double i = a; i <= b; i += delta) {
+            sumAccumulator = sumAccumulator.add(BigDecimal.valueOf(function.applyAsDouble(i) * delta));
+        }
+        return sumAccumulator.doubleValue();
     }
 
     /**
@@ -36,7 +42,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return (x3-x1)*(y2-y1)/(x2-x1) + y1;
+        return (x3 - x1) * (y2 - y1) / (x2 - x1) + y1;
         // Не проходит последний тест, не понимаю в чем проблема...  Help pls
     }
 
