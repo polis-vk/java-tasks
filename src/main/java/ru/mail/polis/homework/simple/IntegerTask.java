@@ -14,8 +14,7 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        double s = (n + Math.pow(n, 2)) / 2;
-        return (int) s;
+        return (int) (n + Math.pow(n, 2)) / 2;
     }
 
     /**
@@ -30,18 +29,14 @@ public class IntegerTask {
         }
         int days = 0;
         int progress = 0;
-        if (height <= top){
-            return 1;
-        } else {
-            while (height > progress) {
-                days++;
-                progress += top;
-                if (height > progress) {
-                    progress -= bottom;
-                }
+        while (height > progress) {
+            days++;
+            progress += top;
+            if (height > progress) {
+                progress -= bottom;
             }
-            return days;
         }
+        return days;
     }
 
     /**
@@ -51,13 +46,14 @@ public class IntegerTask {
     public static int kDecimal(int n, int order) {
         int digit = 0;
         int serialNumber = 0;
-        while (n != 0) {
+        int copy = n;
+        while (copy != 0) {
             serialNumber++;
-            digit = Math.abs(n) % 10;
-            if (order == serialNumber){
+            digit = Math.abs(copy) % 10;
+            if (order == serialNumber) {
                 break;
             }
-            n /= 10;
+            copy /= 10;
         }
         return digit;
     }

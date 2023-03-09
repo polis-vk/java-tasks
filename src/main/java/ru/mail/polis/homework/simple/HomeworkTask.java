@@ -11,7 +11,7 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integral = 0;
-        for (double i = a; i < b;  i += delta) {
+        for (double i = a; i < b; i += delta) {
             integral += function.applyAsDouble(i) * delta;
         }
 
@@ -27,14 +27,15 @@ public class HomeworkTask {
         long digit = 0;
         int serialNumber = 0;
         int maxSerialNumber = 0;
-        while (a != 0) {
+        long copy = a;
+        while (copy != 0) {
             serialNumber++;
-            digit = Math.abs(a) % 10;
-            if (digit >= maxDigit){
+            digit = Math.abs(copy) % 10;
+            if (digit >= maxDigit) {
                 maxSerialNumber = serialNumber;
                 maxDigit = digit;
             }
-            a /= 10;
+            copy /= 10;
         }
         return (byte) (serialNumber - maxSerialNumber + 1);
     }
@@ -46,8 +47,7 @@ public class HomeworkTask {
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
         double k = (y2 - y1) / (double) (x2 - x1);
-        double y3 = k * (x3 - x1) + y1;
-        return y3;
+        return k * (x3 - x1) + y1;
     }
 
     /**
@@ -56,7 +56,15 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        double ab = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+        double bc = Math.sqrt(Math.pow((x3 - x2), 2) + Math.pow((y3 - y2), 2));
+        double ac = Math.sqrt(Math.pow((x3 - x1), 2) + Math.pow((y3 - y1), 2));
+        double semiPerimeter1 = (ab + bc + ac) / 2;
+        double area1 = Math.sqrt(semiPerimeter1 * (semiPerimeter1 - ab) * (semiPerimeter1 - bc) * (semiPerimeter1 - ac));
+        double cd = Math.sqrt(Math.pow((x4 - x3), 2) + Math.pow((y4 - y3), 2));
+        double da = Math.sqrt(Math.pow((x1 - x4), 2) + Math.pow((y1 - y4), 2));
+        double semiPerimeter2 = (cd + da + ac) / 2;
+        double area2 = Math.sqrt(semiPerimeter2 * (semiPerimeter2 - cd) * (semiPerimeter2 - da) * (semiPerimeter2 - ac));
+        return area1 + area2;
     }
-
 }
