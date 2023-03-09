@@ -17,12 +17,7 @@ public class DoubleTask {
         double sqrtD = Math.sqrt(b * b - 4 * a * c);
         double x1 = (-b + sqrtD) / (2.0 * a);
         double x2 = (-b - sqrtD) / (2.0 * a);
-        if (x2 > x1) {
-            double tmp = x2;
-            x2 = x1;
-            x1 = tmp;
-        }
-        return x1 + ", " + x2;
+        return x1 > x2 ? x1 + ", " + x2 : x2 + ", " + x1;
     }
 
     /**

@@ -26,7 +26,7 @@ public class HomeworkTask {
         byte pos = 0; //position from right to left
         byte i = 1; //iterator from right to left
         long num = a;
-        byte digit = 0;
+        byte digit;
         while (num != 0) {
             digit = (byte) Math.abs(num % 10);
             if (digit >= maxDigit) {
