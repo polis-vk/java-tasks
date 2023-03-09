@@ -14,7 +14,11 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return 0;
+        int count = 0;
+        for (int i = 1; i <= n; i++) {
+            count += i;
+        }
+        return count;
     }
 
     /**
@@ -24,7 +28,17 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        return 0;
+        if (top >= height) {
+            return 1;
+        }
+        if (top <= bottom) {
+            return Integer.MAX_VALUE;
+        }
+        /*(height - top) - расстояние, которое нужно проползти гусенице без последнего поднятия.
+        (top - bottom) - расстояние, которое проползает гусеница за сутки.
+        Частное этих значений равно количеству дней без последнего поднятия. После прибавления единицы получаем
+        количество дней, чтобы подняться до height*/
+        return (int) (Math.ceil((double) (height - top) / (top - bottom)) + 1);
     }
 
     /**
@@ -32,15 +46,21 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return 0;
+        int number = (int) (n / (Math.pow(10, order - 1)) % 10);
+        if (n < 0) {
+            return Math.abs(number);
+        }
+        return number;
     }
-
 
     /**
      * Выведите факториал от числа n
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        if (n <= 1) {
+            return 1;
+        }
+        return n * factorial((byte) (n - 1));
     }
 }
