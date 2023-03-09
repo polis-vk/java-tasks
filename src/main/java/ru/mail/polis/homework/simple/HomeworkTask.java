@@ -10,7 +10,7 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        double integralSum = 0.0;
+        double integralSum = 0;
         for (double value = a; value < b; value += delta) {
             integralSum += function.applyAsDouble(value) * delta;
         }
@@ -22,19 +22,22 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte counter = 1;
-        byte maxNumberPosition = 0;
-        long maxNumber = 0;
-        long currentNumber = 0;
-        long number = Math.abs(a);
-        while (number != 0) {
-            currentNumber = Math.abs(number % 10);
-            maxNumberPosition = (maxNumber > currentNumber) ? maxNumberPosition : counter;
-            maxNumber = Math.max(maxNumber, currentNumber);
-            number /= 10;
-            counter++;
+        long number = a;
+        int length = (int) (Math.abs(Math.log10(number)) + 1);
+        byte maxDigit = 0;
+        byte maxIndex = 1;
+        for (byte currentIndex = 1; number != 0; currentIndex++) {
+            byte currentDigit = (byte) (number / (Math.pow(10, length - currentIndex)));
+            if (currentDigit > maxDigit) {
+                if (currentDigit == 9) {
+                    return currentIndex;
+                }
+                maxDigit = currentDigit;
+                maxIndex = currentIndex;
+            }
+            number %= Math.pow(10, length - currentIndex);
         }
-        return (byte) (counter - maxNumberPosition);
+        return maxIndex;
     }
 
 
@@ -43,7 +46,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return y1 + ((y2 - y1) * 1.0 / (x2 - x1)) * (x3 - x1);
+        return y1 + ((double) (y2 - y1) / (x2 - x1)) * (x3 - x1);
     }
 
     /**
