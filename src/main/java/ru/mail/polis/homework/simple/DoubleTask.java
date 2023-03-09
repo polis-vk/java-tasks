@@ -17,7 +17,9 @@ public class DoubleTask {
         double D = Math.sqrt(Math.pow(b, 2) - 4 * a * c);
         double x1 = (-b + D) / (2 * a);
         double x2 = (-b - D) / (2 * a);
-        if (x1 > x2) return x1 + ", " + x2;
+        if (x1 > x2) {
+            return x1 + ", " + x2;
+        }
         return x2 + ", " + x1;
     }
 

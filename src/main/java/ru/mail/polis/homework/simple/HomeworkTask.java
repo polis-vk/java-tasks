@@ -11,8 +11,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double func = 0;
-        for (double i = a; i < b; i += delta) {
-            func += function.applyAsDouble(i) * delta;
+        for (double d = a; d < b; d += delta) {
+            func += function.applyAsDouble(d) * delta;
         }
         return func;
     }
@@ -22,19 +22,31 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        if (a == 0) return 1;
-        int pos = 0;
-        int maxPos = 0;
-        int maxNum = 0;
-        do {
+        if (a == 0) {
+            return 1;
+        }
+        if (a == Long.MIN_VALUE) {
+            return 1;
+        }
+        byte pos = 0;
+        byte maxPos = 0;
+        byte maxDig = 0;
+        byte dig;
+        long num = a;
+        byte numOfDigits = (byte) Math.ceil(Math.log10(Math.abs(a) + 0.5));
+        for (int i = 1; i <= numOfDigits; i++) {
+            dig = (byte) (num / (Math.pow(10, numOfDigits - i)));
             pos++;
-            if (Math.abs(a % 10) >= maxNum) {
-                maxNum = (int) (a % 10);
+            if (dig == 9) {
+                return pos;
+            }
+            if (dig > maxDig) {
+                maxDig = dig;
                 maxPos = pos;
             }
-            a /= 10;
-        } while (Math.abs(a) > 0);
-        return (byte) (pos - maxPos + 1);
+            num %= Math.pow(10, numOfDigits - i);
+        }
+        return maxPos;
     }
 
     /**
@@ -52,7 +64,9 @@ public class HomeworkTask {
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
         double d1 = DoubleTask.length(x1, y1, x3, y3);
         double d2 = DoubleTask.length(x2, y2, x4, y4);
-        if (d1 == 0 || d2 == 0) return 0;
+        if (d1 == 0 || d2 == 0) {
+            return 0;
+        }
         double sin = Math.abs((x3 - x1) * (y4 - y2) - (y3 - y1) * (x4 - x2)) / (d1 * d2);
         return 0.5 * d1 * d2 * sin;
     }
