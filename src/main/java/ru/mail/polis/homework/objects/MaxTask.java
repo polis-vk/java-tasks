@@ -12,6 +12,7 @@ public class MaxTask {
      *
      */
     public static int[] getMaxArray(int[] array, int count) {
+
         return null;
     }
 
