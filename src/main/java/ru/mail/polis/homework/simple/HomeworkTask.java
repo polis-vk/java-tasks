@@ -2,6 +2,8 @@ package ru.mail.polis.homework.simple;
 
 import java.util.function.ToDoubleFunction;
 
+import static java.lang.Math.*;
+
 public class HomeworkTask {
 
     /**
@@ -24,24 +26,22 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
         long tmp = a;
-        int length = 0;
-        while (tmp > 0) {
-            length += 1;
-            tmp /= 10;
-        }
-        int numberIndex = 0;
-        int number = 0;
+        int length = (int) ceil(log10(a));
+        int numberIndex = 1;
         int maxNumber = -1;
-        tmp = a;
-        while (tmp > 0) {
-            numberIndex += 1;
-            if (tmp % 10 >= maxNumber) {
-                maxNumber = (int) tmp % 10;
-                number = length - numberIndex;
+        for (int i = 1; i <= length; i++) {
+            ;
+            int number = (int) (tmp / pow(10, length - i));
+            if (number > maxNumber) {
+                maxNumber = number;
+                numberIndex = i;
+                if (number == 9) {
+                    break;
+                }
             }
-            tmp = tmp / 10;
+            tmp %= pow(10, length - i);
         }
-        return (byte) (number + 1);
+        return (byte) numberIndex;
     }
 
 
@@ -50,7 +50,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return ((y2 - y1) * (1.0 * x3 - x1) / (x2 - x1) + y1);
+        return ((double) (y2 - y1) * (x3 - x1) / (x2 - x1) + y1);
     }
 
     /**
@@ -58,8 +58,8 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        double s1 = Math.abs(1.0 * (x2 - x1) * (y3 - y1) - 1.0 * (x3 - x1) * (y2 - y1)) / 2;
-        double s2 = Math.abs(1.0 * (x4 - x1) * (y3 - y1) - 1.0 * (x3 - x1) * (y4 - y1)) / 2;
+        double s1 = (double) abs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1)) / 2;
+        double s2 = (double) abs((x4 - x1) * (y3 - y1) - (x3 - x1) * (y4 - y1)) / 2;
         return s1 + s2;
     }
 

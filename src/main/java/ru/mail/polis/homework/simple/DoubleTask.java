@@ -15,14 +15,14 @@ public class DoubleTask {
      */
     public static String equation(int a, int b, int c) {
         double discriminant = Math.sqrt(b * b - (4 * a * c));
-        double x1 = ((-1 * b) + discriminant) / (2 * a * 1.0);
-        double x2 = ((-1 * b) - discriminant) / (2 * a * 1.0);
+        double x1 = (-b + discriminant) / (2 * a);
+        double x2 = (-b - discriminant) / (2 * a);
         if (x1 < x2) {
-            discriminant = x2;
-            x2 = x1;
-            x1 = discriminant;
+            return x2 + ", " + x1;
+        } else {
+            return x1 + ", " + x2;
         }
-        return x1 + ", " + x2;
+
     }
 
     /**
