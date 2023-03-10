@@ -19,7 +19,7 @@ public class DoubleTaskTest {
 
     private double[] parse(String str) {
         String[] arr = str.split(", ");
-        return new double[]{Double.parseDouble(arr[0]), Double.parseDouble(arr[1])};
+        return new double[] {Double.parseDouble(arr[0]), Double.parseDouble(arr[1])};
     }
 
     private void assertX(double[] x12, double expectedX1, double expectedX2) {
