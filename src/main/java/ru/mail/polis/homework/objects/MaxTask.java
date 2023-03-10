@@ -12,7 +12,16 @@ public class MaxTask {
      * 4 тугрика
      */
     public static int[] getMaxArray(int[] array, int count) {
+
+        if (array == null || array.length < count){
+            return null;
+        }
+        int[] arrayOfMaxes = new int[count];
+
         return null;
+
+
+
     }
 
 }
