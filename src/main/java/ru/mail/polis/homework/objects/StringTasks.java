@@ -18,13 +18,10 @@ public class StringTasks {
         if (str == null || str.length() == 0 || str.charAt(str.length() - 1) == '-' || str.charAt(str.length() - 1) == 'e') {
             return null;
         }
-
         StringBuilder returnValue = new StringBuilder();
         int dotAmount = 0;
         int eAmount = 0;
-
-        for (int i = 0; i < str.length() - 1; ++i) {
-
+        for (int i = 0; i < str.length(); ++i) {
             if (str.charAt(i) != '-' && str.charAt(i) != 'e' && str.charAt(i) != '.' && !Character.isDigit(str.charAt(i))) {
                 continue;
             }
@@ -42,17 +39,12 @@ public class StringTasks {
             }
             returnValue.append(str.charAt(i));
         }
-        if (Character.isDigit(str.charAt(str.length() - 1))) {
-            returnValue.append(str.charAt(str.length() - 1));
-        }
-
         for (int i = 1; i < returnValue.length() - 1; ++i) {
             if (returnValue.charAt(i) == '-' && (returnValue.charAt(i - 1) != 'e'
                     || !Character.isDigit(returnValue.charAt(i + 1)))) {
                 return null;
             }
         }
-
         if (returnValue.indexOf(".") != -1 || returnValue.indexOf("e") != -1) {
             return Double.valueOf(returnValue.toString());
         }

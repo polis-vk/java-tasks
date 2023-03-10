@@ -13,15 +13,12 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-
         if (str == null || str.length() == 0) {
             return null;
         }
-
         int maxRepeatings = 1;
         int curRepeatings = 1;
         char maxRepeatingChar = 'a';
-
         for (int i = 0; i < str.length() - 1; ++i) {
             if (str.charAt(i) == str.charAt(i + 1)) {
                 curRepeatings++;
@@ -33,8 +30,6 @@ public class RepeatingCharacters {
                 curRepeatings = 1;
             }
         }
-
-
         return new Pair<>(maxRepeatingChar, maxRepeatings);
     }
 
