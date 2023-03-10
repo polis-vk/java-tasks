@@ -28,7 +28,10 @@ public class IntegerTask {
             return 1;
         }
         int speed = top - bottom;
-        return (speed > 0 ? ((height - top + (speed - 1)) / speed) + 1 : Integer.MAX_VALUE);
+        if (speed <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        return ((height - top + (speed - 1)) / speed) + 1;
     }
 
     /**

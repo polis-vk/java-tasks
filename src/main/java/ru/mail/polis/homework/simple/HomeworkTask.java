@@ -29,7 +29,8 @@ public class HomeworkTask {
             byte currentDigit = (byte) Math.abs(a / (Math.pow(10, nDigits - i)) % 10);
             if (currentDigit == 9) {
                 return i;
-            } else if (currentDigit > maxDigit) {
+            }
+            if (currentDigit > maxDigit) {
                 maxDigit = currentDigit;
                 index = i;
             }
