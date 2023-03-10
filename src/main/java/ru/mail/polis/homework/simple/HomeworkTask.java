@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-import java.awt.*;
 import java.util.function.ToDoubleFunction;
 
 public class HomeworkTask {
@@ -11,12 +10,12 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        double copyOfA = a;
+        double leftBound = a;
         double valueOfIntegral = 0;
         //Используем метод прямоугольников
-        while (Double.compare(copyOfA, b) < 0) {
-            valueOfIntegral += function.applyAsDouble(copyOfA) * delta;
-            copyOfA += delta;
+        while (Double.compare(leftBound, b) < 0) {
+            valueOfIntegral += function.applyAsDouble(leftBound) * delta;
+            leftBound += delta;
         }
         return valueOfIntegral;
     }
@@ -29,17 +28,12 @@ public class HomeworkTask {
         if (a < 10) {
             return 1;
         }
-
-        byte numberOfDigits = (byte) (Math.log10(a) + 1); //количество цифр в числе
-        long pow10 = (long) Math.pow(10, numberOfDigits - 1); //степень десяти для выделения очередной цифры числа
-
-        byte number = (byte) (a / pow10); //очередная цифра числа
-        pow10 /= 10;
-
-        byte maxNumber = number; //наибольшая цифра
-        byte maxOrder = 1; //номер максимальной цифры
-
-        for (byte i = 1; i < numberOfDigits; i++) {
+        byte numberOfDigits = (byte) Math.log10(a); //количество цифр в числе
+        long pow10 = (long) Math.pow(10, numberOfDigits); //степень десяти для выделения очередной цифры числа
+        byte number; //очередная цифра числа
+        byte maxNumber = -1; //наибольшая цифра
+        byte maxOrder = -1; //номер максимальной цифры
+        for (byte i = 0; i <= numberOfDigits; i++) {
             number = (byte) (a / pow10 % 10);
             if (number > maxNumber) {
                 maxNumber = number;
