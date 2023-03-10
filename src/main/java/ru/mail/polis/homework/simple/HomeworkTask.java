@@ -10,11 +10,9 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        double tempA = a;
         double sum = 0;
-        while (tempA < b) {
-            sum += function.applyAsDouble(tempA) * delta;
-            tempA += delta;
+        for (double aCopy = a; aCopy <= b; aCopy += delta) {
+            sum += function.applyAsDouble(aCopy) * delta;
         }
 
         return sum;
@@ -29,15 +27,14 @@ public class HomeworkTask {
         byte size = (byte) (Math.log10(a) + 1);
         double maxDigit = 0;
         byte maxIndex = 1;
-        byte grad = (byte) (size - 1);
-        for (byte curIndex = 1; curIndex < size + 1; ++curIndex, --grad) {
+        for (byte grad = (byte) (size - 1); grad != -1; --grad) {
             double curDigit = Math.abs(tempA / Math.pow(10, grad));
+            if (curDigit == 9) {
+                return (byte) (grad + 1);
+            }
             if (curDigit > maxDigit) {
-                if (curDigit == 9) {
-                    return curIndex;
-                }
                 maxDigit = curDigit;
-                maxIndex = curIndex;
+                maxIndex = (byte) (size - grad);
             }
             tempA %= Math.pow(10, grad);
         }
@@ -50,7 +47,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return y1 + (double) ((y2 - y1) * (x3 - x1)) / (double) (x2 - x1);
+        return y1 + (double) ((y2 - y1) * (x3 - x1)) / (x2 - x1);
     }
 
     /**
