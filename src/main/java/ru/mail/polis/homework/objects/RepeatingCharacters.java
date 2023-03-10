@@ -9,12 +9,33 @@ import java.util.Objects;
  * который первый встречается в строчке
  * Если строка пустая или null, то вернуть null
  * Пример abbasbdlbdbfklsssbb -> (s, 3)
- * 4 тугрика
  */
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        return new Pair<>('s', 4);
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+        int counter = 1;
+        char prevChar = str.charAt(0);
+        int ansrCounter = 1;
+        char ansrChar = prevChar;
+        for (char ch: str.substring(1).toCharArray()) {
+            if (prevChar != ch) {
+                if (counter > ansrCounter) {
+                    ansrCounter = counter;
+                    ansrChar = prevChar;
+                }
+                counter = 0;
+            }
+            prevChar = ch;
+            counter++;
+        }
+        if (counter > ansrCounter) {
+            ansrCounter = counter;
+            ansrChar = prevChar;
+        }
+        return new Pair<>(ansrChar, ansrCounter);
     }
 
     public static class Pair<T, V> {
