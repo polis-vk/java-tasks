@@ -17,19 +17,22 @@ public class DoubleTask {
         double x1 = 0;
         double x2 = 0;
         double discriminant = b * b - 4 * a * c;
+
         if (discriminant >= 0) {
+            double x11 = (-b - Math.sqrt(discriminant)) / (2 * a);
+            double x21 = (-b + Math.sqrt(discriminant)) / (2 * a);
             if (b < 0 && a < 0) {
-                x1 = (-b - Math.sqrt(discriminant)) / (2 * a);
-                x2 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                x1 = x11;
+                x2 = x21;
             } else if (b < 0 && a > 0) {
-                x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
-                x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                x2 = x11;
+                x1 = x21;
             } else if (b > 0 && a > 0) {
-                x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
-                x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                x2 = x11;
+                x1 = x21;
             } else {
-                x1 = (-b - Math.sqrt(discriminant)) / (2 * a);
-                x2 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                x1 = x11;
+                x2 = x21;
             }
         }
         return x1 + ", " + x2;
@@ -40,6 +43,6 @@ public class DoubleTask {
      * Пример: (0, 0, 3, 4) -> 5.0
      */
     public static float length(double x1, double y1, double x2, double y2) {
-        return (float) Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+        return (float) Math.sqrt(Math.pow((x1 - x2),2) + Math.pow((y1 - y2), 2));
     }
 }

@@ -24,19 +24,17 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte index = 1;
+        byte index = 0;
+        long number = a;
         byte counter = 1;
         byte maxNumber = -1;
-        while (a > 0) {
-            if (a % 10 >= maxNumber) {
-                maxNumber = (byte) (a % 10);
+        while (number > 0) {
+            if (number % 10 >= maxNumber) {
+                maxNumber = (byte) (number % 10);
                 index = counter;
             }
-            a /= 10;
+            number /= 10;
             counter++;
-        }
-        if (counter == 1) {
-            return 1;
         }
         return (byte) (counter - index);
     }
@@ -49,8 +47,7 @@ public class HomeworkTask {
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
         double k = (double) (y1 - y2) / (x1 - x2);
         double b = y2 - k * x2;
-        double y3 = k * x3 + b;
-        return y3;
+        return k * x3 + b;
     }
 
     /**

@@ -28,13 +28,13 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        if ((top <= bottom) && (top < height)) {
+        if (top <= bottom && top < height) {
             return Integer.MAX_VALUE;
         }
         int days = 0;
         int distance = 0;
 
-        while ((distance + top) < height) {
+        while (distance + top < height) {
             distance += top;
             distance -= bottom;
             days++;
@@ -48,11 +48,12 @@ public class IntegerTask {
      */
     public static int kDecimal(int n, int order) {
         byte counter = 1;
-        while (n != 0) {
+        int number = n;
+        while (number != 0) {
             if (counter == order) {
-                return Math.abs(n % 10);
+                return Math.abs(number % 10);
             } else {
-                n /= 10;
+                number /= 10;
                 counter++;
             }
         }
@@ -65,9 +66,9 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        if (n > 1) {
-            return n * factorial((byte) ((int) n - 1));
+        if (n <= 1) {
+            return 1;
         }
-        return 1;
+        return n * factorial((byte) (n - 1));
     }
 }
