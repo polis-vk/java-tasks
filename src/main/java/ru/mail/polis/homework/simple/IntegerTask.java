@@ -25,10 +25,10 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        if (top >= height) { // Гусеница может достичь потолка за один день
+        if (top >= height) {
             return 1;
         }
-        if (top <= bottom) { // Гусеница никогда не достигнет потолка
+        if (top <= bottom) {
             return Integer.MAX_VALUE;
         }
         return 1 + (int) Math.ceil((double) (height - top) / (top - bottom));

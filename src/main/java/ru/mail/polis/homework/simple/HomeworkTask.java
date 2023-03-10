@@ -2,6 +2,7 @@ package ru.mail.polis.homework.simple;
 
 import java.util.function.ToDoubleFunction;
 
+
 public class HomeworkTask {
 
     /**
@@ -25,18 +26,26 @@ public class HomeworkTask {
     public static byte maxNumber(long a) {
         long number = a; // в комментарии бало сказано "изменять входные переменные плохой тон"
         int maxDigit = 0;
-        int maxDigitIndex = 0;
+        int maxDigitIndex = 1;
         int index = 1;
-        while (number > 0) {
-            int digit = (int) (number % 10);
-            if (digit > maxDigit) {
+        if(number == 0){
+            return 1;
+        }
+        int lenght = (int)Math.ceil(Math.log10(number));
+        for (int order = lenght-1; order >= 0; order--){
+            int digit = (int)(number/Math.pow(10, order));
+            if(digit > maxDigit){
                 maxDigit = digit;
                 maxDigitIndex = index;
             }
-            number /= 10L;
+            if(digit == 9){
+                break;
+            }
+            number =  (number %(long) Math.pow(10, order));
             index++;
         }
-        return (byte) (index - maxDigitIndex);
+
+        return (byte) maxDigitIndex;
     }
 
 
@@ -45,9 +54,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-
-        double y3 = y1 + (double) ((y2 - y1) * (x3 - x1)) / (double) (x2 - x1);
-        return y3;
+        return y1 + (double) ((y2 - y1) * (x3 - x1)) / (double) (x2 - x1);
     }
 
     /**
@@ -64,9 +71,9 @@ public class HomeworkTask {
         double AC = Math.sqrt(Math.pow(x3 - x1, 2) + Math.pow(y3 - y1, 2));
         double p1 = (AB + BC + AC) / 2;
         double p2 = (CD + DA + AC) / 2;
-        double area = Math.sqrt(p1 * (p1 - AB) * (p1 - BC) * (p1 - AC))
+        return  Math.sqrt(p1 * (p1 - AB) * (p1 - BC) * (p1 - AC))
                 + Math.sqrt(p2 * (p2 - CD) * (p2 - DA) * (p2 - AC));
-        return area;
+
     }
 
 }
