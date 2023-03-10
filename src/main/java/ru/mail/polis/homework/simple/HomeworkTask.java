@@ -29,22 +29,27 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
         byte counter = 1;
+        byte digits = 0;
         byte maxCounter = 0;
         byte max = Byte.MIN_VALUE;
+        long b = Math.abs(a);
         if (a == 0) {
             return counter;
         }
-        while (a != 0) {
-            double curentNumber = Math.abs(a % 10);
-            if (max <= (byte) curentNumber) {
+        while (b != 0) {
+            digits++;
+            b /= 10;
+        }
+
+        for (int i = digits - 1; i >= 0; i--) {
+            double curentNumber = Math.abs(a / Math.pow(10, i) % 10);
+            if (max < (byte) curentNumber) {
                 max = (byte) curentNumber;
                 maxCounter = counter;
             }
             counter++;
-            a /= 10;
         }
-
-        return (byte) (counter - maxCounter);
+        return maxCounter;
     }
 
 
@@ -64,7 +69,7 @@ public class HomeworkTask {
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
         double result;
-        result = Math.abs(((double) (x1 - x2) * (y1 + y2) + (x2 - x3) * (y2 + y3) + (x3 - x4) * (y3 + y4) + (x4 - x1) * (y4 + y1))) / 2;
+        result=Math.abs(((double) (x1 - x2) * (y1 + y2) + (x2 - x3) * (y2 + y3) + (x3 - x4) * (y3 + y4) + (x4 - x1) * (y4 + y1))) / 2;
         return result;
     }
 
