@@ -35,7 +35,9 @@ public class IntegerTask {
         while (true) {
             currHeight += top;
             dayCount++;
-            if (currHeight >= height) break;
+            if (currHeight >= height) {
+                break;
+            }
             currHeight -= bottom;
         }
         return dayCount;

@@ -11,8 +11,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double func = 0;
-        for (double d = a; d < b; d += delta) {
-            func += function.applyAsDouble(d) * delta;
+        for (double x = a; x < b; x += delta) {
+            func += function.applyAsDouble(x) * delta;
         }
         return func;
     }
@@ -28,25 +28,25 @@ public class HomeworkTask {
         if (a == Long.MIN_VALUE) {
             return 1;
         }
-        byte pos = 0;
-        byte maxPos = 0;
-        byte maxDig = 0;
-        byte dig;
+        byte position = 0;
+        byte maxPosition = 0;
+        byte maxDigit = 0;
+        byte digit;
         long num = a;
         byte numOfDigits = (byte) Math.ceil(Math.log10(Math.abs(a) + 0.5));
         for (int i = 1; i <= numOfDigits; i++) {
-            dig = (byte) (num / (Math.pow(10, numOfDigits - i)));
-            pos++;
-            if (dig == 9) {
-                return pos;
+            digit = (byte) (num / (Math.pow(10, numOfDigits - i)));
+            position++;
+            if (digit == 9) {
+                return position;
             }
-            if (dig > maxDig) {
-                maxDig = dig;
-                maxPos = pos;
+            if (digit > maxDigit) {
+                maxDigit = digit;
+                maxPosition = position;
             }
             num %= Math.pow(10, numOfDigits - i);
         }
-        return maxPos;
+        return maxPosition;
     }
 
     /**
