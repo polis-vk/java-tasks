@@ -10,7 +10,14 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        //integral = сумме площадей прямоугольников
+        double integral = 0;
+
+        for (double i = a; i < b; i += delta) {
+            integral += delta * function.applyAsDouble(i);
+        }
+
+        return integral;
     }
 
     /**
@@ -18,7 +25,32 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        if (a == 0) {
+            return 1;
+        }
+
+        int length = Math.abs((int) (Math.log10(a) + 1));
+        long value = a;
+        int maxNumber = (int) (value / Math.pow(10, length - 1)); //максимальное число
+        value = (long) (a % Math.pow(10, length - 1));
+        int countMax = 1;  //номер максимальной цифры
+        int current = 0;
+
+        for (int i = length - 2; i >= 0; i--) {
+            if (maxNumber == 9) {
+                return (byte) countMax;
+            }
+
+            current = (int) (value / Math.pow(10, i));
+            if (current > maxNumber) {
+                maxNumber = current;
+                countMax = length - i;
+            }
+
+            value = (long) (a % Math.pow(10, i));
+        }
+
+        return (byte) countMax;
     }
 
 
@@ -27,7 +59,11 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        //y=kx+b
+        double k = (double) (y1 - y2) / (x1 - x2);
+        double b = y1 - k * x1;
+
+        return (k * x3 + b);
     }
 
     /**
@@ -35,7 +71,26 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
-    }
+        /*
+         * S = 0.5 * d1 * d2 * sin;
+         * d1, d2 - диагонали
+         * sin - угол между диагоналями
+         */
+        double d1 = Math.sqrt(Math.pow(x1 - x3, 2) + Math.pow(y1 - y3, 2));
+        double d2 = Math.sqrt(Math.pow(x2 - x4, 2) + Math.pow(y2 - y4, 2));
 
+        if (d1 == 0 || d2 == 0) {
+            return 0;
+        }
+        //k1, k2 - угловые коэффициенты диагоналей
+        double k1 = (double) (y1 - y3) / (x1 - x3);
+        double k2 = (double) (y2 - y4) / (x2 - x4);
+        double sin = Math.sin(Math.atan(Math.abs((k2 - k1) / (1 + k1 * k2))));
+
+        if ((x1 - x3) == 0 || (x2 - x4) == 0) {
+            sin = 1;
+        }
+
+        return (d1 * d2 * sin) / 2;
+    }
 }
