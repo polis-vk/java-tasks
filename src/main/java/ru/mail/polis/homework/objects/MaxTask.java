@@ -18,9 +18,11 @@ public class MaxTask {
         }
         int[] newArray = new int[count];
         int[] copyArray = array;
+        int currentMax;
+        int maxIndex;
         for (int i = 0; i < count; i++) {
-            int currentMax = copyArray[0];
-            int maxIndex = 0;
+            currentMax = copyArray[0];
+            maxIndex = 0;
             for (int j = 1; j < copyArray.length; j++) {
                 if (copyArray[j] > currentMax) {
                     currentMax = copyArray[j];
