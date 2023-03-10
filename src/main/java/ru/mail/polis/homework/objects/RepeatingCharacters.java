@@ -14,7 +14,7 @@ public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
 
-        if (str == null || str.length() == 0){
+        if (str == null || str.length() == 0) {
             return null;
         }
 
@@ -22,19 +22,17 @@ public class RepeatingCharacters {
         int curRepeatings = 1;
         char maxRepeatingChar = 'a';
 
-        for (int i = 0; i < str.length() - 1; ++i){
-            if (str.charAt(i) == str.charAt(i + 1)){
+        for (int i = 0; i < str.length() - 1; ++i) {
+            if (str.charAt(i) == str.charAt(i + 1)) {
                 curRepeatings++;
-                if (curRepeatings > maxRepeatings){
+                if (curRepeatings > maxRepeatings) {
                     maxRepeatingChar = str.charAt(i);
                     maxRepeatings = curRepeatings;
                 }
-            }
-            else{
+            } else {
                 curRepeatings = 1;
             }
         }
-
 
 
         return new Pair<>(maxRepeatingChar, maxRepeatings);
