@@ -21,7 +21,7 @@ public class MaxTask {
         }
 
         int[] result = new int[count];
-        for(int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++) {
             result[i] = Integer.MIN_VALUE;
         }
 
