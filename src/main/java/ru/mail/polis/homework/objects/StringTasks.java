@@ -23,8 +23,8 @@ public class StringTasks {
 
         StringBuilder result = new StringBuilder();
         byte countMinus = 0;
-        byte countPoint = 0;
-        byte countExp = 0;
+        boolean havePoint = false;
+        boolean haveExp = false;
 
         for (int i = 0; i < str.length(); ++i) {
             char symbol = str.charAt(i);
@@ -43,16 +43,16 @@ public class StringTasks {
                     countMinus++;
                     break;
                 case '.':
-                    if (countPoint == 1) {
+                    if (havePoint) {
                         return null;
                     }
-                    countPoint++;
+                    havePoint = true;
                     break;
                 case 'e':
-                    if (countExp == 1) {
+                    if (haveExp) {
                         return null;
                     }
-                    countExp++;
+                    haveExp = true;
                     break;
                 default:
                     if (!Character.isDigit(symbol)) {
@@ -62,17 +62,18 @@ public class StringTasks {
             result.append(symbol);
         }
 
-        if (countMinus == 2 && result.charAt(result.length() - 1) == '-') {
+        if (result.charAt(result.length() - 1) == '-') {
             return null;
         }
-        if (countExp == 1 && result.charAt(result.length() - 1) == 'e') {
+        if (haveExp && result.charAt(result.length() - 1) == 'e') {
             return null;
         }
 
-        if (countPoint > 0 || countExp > 0) {
+        if (havePoint || haveExp) {
             return (Number) Double.valueOf(result.toString());
         }
-        if (Long.valueOf(result.toString()) > Integer.MAX_VALUE || Long.valueOf(result.toString()) < Integer.MIN_VALUE) {
+        if (Long.parseLong(result.toString()) > Integer.MAX_VALUE ||
+                Long.parseLong(result.toString()) < Integer.MIN_VALUE) {
             return Long.valueOf(result.toString());
         }
         return Integer.valueOf(result.toString());
