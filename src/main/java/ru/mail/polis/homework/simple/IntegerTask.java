@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.simple;
 
 
-import java.util.stream.LongStream;
-
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -26,16 +24,16 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        int delta = top - bottom;
-        if (top >= height) {
+        if (top >= height)
             return 1;
-        } else if (delta <= 0) {
+
+        int delta = top - bottom;
+        if (delta <= 0)
             return Integer.MAX_VALUE;
-        } else {
-            // height - top / delta - количесво полных дней
-            // добавив + delta - 1 получим окргуление в большую строну
-            return (height - top + delta - 1) / delta + 1;
-        }
+
+        // height - top / delta - количесво полных дней
+        // добавив + delta - 1 получим окргуление в большую строну
+        return (height - top + delta - 1) / delta + 1;
     }
 
     /**
@@ -52,7 +50,10 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return LongStream.rangeClosed(1, n)
-                .reduce(1, (long x, long y) -> x * y);
+        long acc = 1;
+        for (byte i = 1; i <= n; ++i) {
+            acc *= i;
+        }
+        return acc;
     }
 }

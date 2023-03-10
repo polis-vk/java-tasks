@@ -11,10 +11,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double sum = 0;
-        double step = a;
-        while (step <= b) {
+        for (double step = a; step <= b; step += delta) {
             sum += delta * function.applyAsDouble(step);
-            step += delta;
         }
         return sum;
     }
@@ -25,19 +23,23 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
         long acc = a;
-        long max = acc % 10;
-        int maxIndex = 0;
-        int len = 1;
-
-        while (acc > 0) {
-            if (max <= acc % 10) {
-                max = acc % 10;
-                maxIndex = len;
+        int len = (int) Math.ceil(Math.log10(acc));
+        long max = -1;
+        byte maxIndex = 1;
+        long tmp, order;
+        for (byte i = 1; i <= len; i++) {
+            order = (long) Math.pow(10, len - i);
+            tmp = acc / order;
+            if (tmp > max) {
+                max = tmp;
+                maxIndex = i;
+                if (max == 9) {
+                    break;
+                }
             }
-            len++;
-            acc /= 10;
+            acc %= order;
         }
-        return (byte) (len - maxIndex);
+        return maxIndex;
     }
 
 
@@ -57,7 +59,7 @@ public class HomeworkTask {
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
         // Формула площади Гаусса для четырехуголька
-        return Math.abs(x1 * y2 + x2 * y3 + x3 * y4 + x4 * y1 - x2 * y1 - x3 * y2 - x4 * y3 - x1 * y4) / 2.0;
+        return (double) Math.abs(x1 * y2 + x2 * y3 + x3 * y4 + x4 * y1 - x2 * y1 - x3 * y2 - x4 * y3 - x1 * y4) / 2;
     }
 
 }
