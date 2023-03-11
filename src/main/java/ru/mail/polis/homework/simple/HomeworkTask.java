@@ -24,19 +24,29 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte index = 0;
+        byte index = 1;
         byte maxDigit = 0;
-        byte count = 0;
+        byte count = 1;
+        long divider = 1;
         long input = a;
+        while (input / 10 != 0) {
+            divider *= 10;
+            input /= 10;
+        }
+        input = a;
         do {
-            if (input % 10 >= maxDigit || input % 10 <= -maxDigit) {
-                maxDigit = (byte) (Math.abs(input % 10));
+            byte temp = (byte) Math.abs((input / divider) % 10);
+            if (temp > maxDigit) {
+                maxDigit = temp;
                 index = count;
             }
-            input /= 10;
+            if (maxDigit == 9) {
+                break;
+            }
+            divider /= 10;
             count++;
-        } while (input != 0);
-        return (byte) (count - index);
+        } while (divider != 0);
+        return index;
     }
 
 

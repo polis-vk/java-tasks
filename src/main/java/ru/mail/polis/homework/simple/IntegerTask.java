@@ -26,7 +26,8 @@ public class IntegerTask {
     public static int snake(int height, int top, int bottom) {
         if (top >= height) {
             return 1;
-        } else if (bottom >= top) {
+        }
+        if (bottom >= top) {
             return Integer.MAX_VALUE;
         }
         return (int) Math.ceil(((height - top) / (double) (top - bottom))) + 1;
