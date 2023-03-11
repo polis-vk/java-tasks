@@ -16,6 +16,8 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
+        int a = 0;
+
         return null;
     }
 }
