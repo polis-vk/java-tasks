@@ -14,7 +14,7 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return ((1 + n)*n) / 2;  // формула суммы арифметической прогрессии
+        return ((1 + n) * n) / 2;  // формула суммы арифметической прогрессии
     }
 
     /**
@@ -32,10 +32,10 @@ public class IntegerTask {
             return Integer.MAX_VALUE;
         }
 
-    /* (height - top) означает, что мы не учитываем расстояние, когда гусенице осталось добраться до
-    *  потолка за один прыжок вверх; (top - bottom) означает шаг, с которым гусеница доберется до такой точки
-    *  откуда она сможет гарантированно добраться до потолка за один день (это слагаемое "+1")*/
-        return (int)(Math.ceil((double)(height - top) / (top - bottom)) + 1);
+        /* (height - top) означает, что мы не учитываем расстояние, когда гусенице осталось добраться до
+         *  потолка за один прыжок вверх; (top - bottom) означает шаг, с которым гусеница доберется до такой точки
+         *  откуда она сможет гарантированно добраться до потолка за один день (это слагаемое "+1")*/
+        return (int) (Math.ceil((double) (height - top) / (top - bottom)) + 1);
     }
 
     /**
@@ -43,10 +43,10 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        for (int i = 1; i < order; i++) {
-            n = n / 10;
-        }
-        return Math.abs(n % 10);
+        int num = n;
+        num /= Math.pow(10, order - 1);
+
+        return Math.abs(num % 10);
     }
 
 
