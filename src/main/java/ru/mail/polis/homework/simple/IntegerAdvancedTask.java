@@ -20,8 +20,8 @@ public class IntegerAdvancedTask {
     public static long progression(int a, double q, int n) {
 
         double result = 0;
-        for(int i = 0; i<n; i++){
-            result+=a*Math.pow(q, i);
+        for (int i = 0; i < n; i++) {
+            result += a * Math.pow(q, i);
         }
         return (long) result;
     }
