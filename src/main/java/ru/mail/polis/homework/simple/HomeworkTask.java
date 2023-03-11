@@ -22,15 +22,16 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        String strNumber = Long.toString(a).replaceAll("[^0-9]", "");
-        int max = -1;
-        byte index = -1;
+        byte num = (byte) ((int) (Math.log10(a)) + 1);
+        byte index = num;
+        byte max = 0;
 
-        for (int i = 0; i < strNumber.length(); i++) {
-            int num = Integer.parseInt(strNumber.substring(i, i + 1));
-            if (max < num) {
-                max = num;
-                index = (byte) (i + 1);
+        for (byte i = 1; i <= num; i++) {
+            byte current = (byte) (a / Math.pow(10, num - i) % 10);
+            if (current == 9) return i;
+            if (current > max) {
+                max = current;
+                index = i;
             }
         }
         return index;
