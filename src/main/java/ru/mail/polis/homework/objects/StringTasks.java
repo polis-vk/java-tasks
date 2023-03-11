@@ -15,6 +15,58 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        return null;
+        Number value = null;
+        if (str != null && !str.isEmpty()) {
+            String copiedStr = new String(str);
+            int counterPoint = 0, counterE = 0;
+            boolean isDigit = false, isPoint = false, isE = false;
+            for (int counter = 0; counter < str.length(); counter++) {
+                if (Character.isLetter(str.charAt(counter)) && str.charAt(counter) != 'e') {
+                    copiedStr = copiedStr.replace(Character.toString(str.charAt(counter)), "");
+                }
+                if (Character.isDigit(str.charAt(counter))) {
+                    isDigit = true;
+                }
+                if (str.charAt(counter) == '.') {
+                    isPoint = true;
+                    counterPoint++;
+                }
+                if (str.charAt(counter) == 'e') {
+                    isE = true;
+                    counterE++;
+                    if (counter == str.length() - 1) {
+                        copiedStr = null;
+                        break;
+                    }
+                }
+                if (counterPoint >= 2 || counterE >= 2) {
+                    copiedStr = null;
+                    break;
+                }
+                if (str.charAt(counter) == '-') {
+                    if ((counter == str.length() - 1 || str.charAt(counter + 1) == '-')) {
+                        copiedStr = null;
+                        break;
+                    }
+                    if (counter != 0 && isDigit && !isE) {
+                        copiedStr = null;
+                        break;
+                    }
+                }
+            }
+            if (copiedStr != null && !copiedStr.isEmpty()) {
+                if (isE || isPoint) {
+                    value = Double.valueOf(copiedStr);
+                } else {
+                    Long value1 = Long.valueOf(copiedStr);
+                    if (value1 > (long) Integer.MAX_VALUE || value1 < (long) Integer.MIN_VALUE) {
+                        value = Long.valueOf(copiedStr);
+                    } else {
+                        value = Integer.valueOf(copiedStr);
+                    }
+                }
+            }
+        }
+        return value;
     }
 }
