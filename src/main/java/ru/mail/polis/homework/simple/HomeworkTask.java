@@ -4,7 +4,6 @@ import java.util.function.ToDoubleFunction;
 
 public class HomeworkTask {
 
-
     /**
      * Нужно численно посчитать интеграл от a до b с шагом delta от функции function
      * Для того, что бы получить значение по Y для точки X, надо просто написать function.applyAsDouble(t)
@@ -13,7 +12,7 @@ public class HomeworkTask {
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double sqr = 0;
         for (; a < b; a = a + delta) {
-            sqr = sqr + delta * function.applyAsDouble(a);
+            sqr += delta * function.applyAsDouble(a);
         }
         return sqr;
     }
@@ -23,19 +22,24 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
+
         int b;
+        long h = a;
         int k = 0;
         int kmax = 0;
         int max = 0;
-        int qtt = (int) Math.log10(a) + 1;
-        while (a != 0) {
-            b = (int) a % 10;
+        int qtt = (int) Math.log10(h) + 1;
+        if (qtt == 1){
+            return 1;
+        }
+        while (h != 0) {
+            b = (int) h % 10;
             if (b >= max) {
                 max = b;
                 kmax = k;
             }
-            a = a / 10;
-            k = k + 1;
+            h /= 10;
+            k++;
         }
         return (byte) (qtt - kmax);
     }

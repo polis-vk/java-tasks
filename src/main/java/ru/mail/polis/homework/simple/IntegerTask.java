@@ -27,19 +27,10 @@ public class IntegerTask {
         if (top >= height){
             return 1;
         }
-        if (top == bottom || top < bottom){
+        if (top <= bottom){
             return Integer.MAX_VALUE;
         }
-        int a = 0;
-        int k = 0;
-        while (a < height){
-            a = a + top;
-            if (a < height){
-                a = a - bottom;
-            }
-            k = k + 1;
-        }
-        return k;
+        return (int) Math.ceil((double) (height - top) / (top - bottom) + 1);
     }
 
     /**
@@ -60,7 +51,7 @@ public class IntegerTask {
     public static long factorial(byte n) {
         long fact = 1;
         for (int i = 1; i <= n; i++ ){
-            fact = fact * i;
+            fact *= i;
         }
         return fact;
     }
