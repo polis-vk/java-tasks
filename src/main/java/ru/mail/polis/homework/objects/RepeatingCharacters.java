@@ -9,6 +9,7 @@ import java.util.Objects;
  * который первый встречается в строчке
  * Если строка пустая или null, то вернуть null
  * Пример abbasbdlbdbfklsssbb -> (s, 3)
+ * 4 тугрика
  */
 public class RepeatingCharacters {
 
@@ -18,8 +19,8 @@ public class RepeatingCharacters {
         }
         int counter = 1;
         char prevChar = str.charAt(0);
-        int ansrCounter = 1;
-        char ansrChar = prevChar;
+        int ansrCounter = 0;
+        char ansrChar = 0;
         for (char ch: str.substring(1).toCharArray()) {
             if (prevChar != ch) {
                 if (counter > ansrCounter) {
