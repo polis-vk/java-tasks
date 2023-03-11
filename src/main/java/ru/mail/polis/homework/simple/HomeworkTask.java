@@ -22,21 +22,21 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte orders = (byte) ((int) (Math.log10(a)) + 1);
-        byte maxOrder = orders;
-        byte maxDecimal = 0;
+        byte digitsCount = (byte) ((int) (Math.log10(a)) + 1);
+        byte maxDigitPosition = digitsCount;
+        byte maxDigit = 0;
         byte current;
-        for (byte i = 1; i <= orders; i++) {
-            current = (byte) (a / Math.pow(10, orders - i) % 10);
+        for (byte i = 1; i <= digitsCount; i++) {
+            current = (byte) (a / Math.pow(10, digitsCount - i) % 10);
             if (current == 9) {
                 return i;
             }
-            if (current > maxDecimal) {
-                maxDecimal = current;
-                maxOrder = i;
+            if (current > maxDigit) {
+                maxDigit = current;
+                maxDigitPosition = i;
             }
         }
-        return maxOrder;
+        return maxDigitPosition;
     }
 
 
