@@ -16,8 +16,59 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        int a = 0;
 
-        return null;
+        if (str == null) {
+            return null;
+        }
+        if (str.isEmpty()) {
+            return null;
+        }
+        char letter;
+        StringBuilder result = new StringBuilder();
+        boolean isFloating = false;
+        boolean isExponential = false;
+        boolean isNegative = false;
+        boolean isNegativeInExponent = false;
+        for (int i = 0; i < str.length(); i++) {
+            letter = str.charAt(i);
+            if (Character.isDigit(letter) || letter == '.' || letter == '-' || letter == 'e') {
+                if (letter == '-' && (result.length() > 0) && !isExponential) {
+                    return null;
+                } else if (letter == '-' && (result.length() == 0)) {
+                    isNegative = true;
+                }
+                if (letter == '-' && isNegativeInExponent) {
+                    return null;
+                } else if (isExponential && result.charAt(result.length() - 1) != 'e' && letter == '-' && !isNegativeInExponent) {
+                    return null;
+                } else if (letter == '-' && isExponential && result.charAt(result.length() - 1) == 'e') {
+                    isNegativeInExponent = true;
+                }
+                if ((letter == '.' && isFloating) || (letter == 'e' && isExponential)) {
+                    return null;
+                }
+                if (letter == 'e') {
+                    if (i == str.length() - 1) {
+                        return null;
+                    }
+                    isExponential = true;
+                }
+                if (letter == '.') {
+                    isFloating = true;
+                }
+                result.append(letter);
+            }
+        }
+
+        if (isFloating || isExponential) {
+            return Double.valueOf(result.toString());
+        } else {
+            long value = Long.valueOf(result.toString());
+            if ((value <= Integer.MAX_VALUE && !isNegative) || (value >= Integer.MIN_VALUE && isNegative)) {
+                return Integer.valueOf(result.toString());
+            } else {
+                return value;
+            }
+        }
     }
 }
