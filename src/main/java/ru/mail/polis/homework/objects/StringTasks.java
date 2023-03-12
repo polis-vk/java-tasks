@@ -16,6 +16,56 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        return null;
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+        StringBuilder validString = new StringBuilder();
+        char ch;
+        boolean dotPresence = false;
+        boolean ePresence = false;
+        for (int i = 0; i < str.length(); i++) {
+            ch = str.charAt(i);
+            if (ch == '-') {
+                if (validString.length() == 0 || validString.charAt(validString.length() - 1) == 'e') {
+                    validString.append(ch);
+                } else {
+                    return null;
+                }
+            }
+            if (ch == 'e' || ch == '.') {
+                if (validString.length() == 0 ||
+                        !Character.isDigit(validString.charAt(validString.length() - 1)) ||
+                        i == str.length() - 1) {
+                    return null;
+                }
+                if (ch == 'e') {
+                    if (ePresence) {
+                        return null;
+                    }
+                    ePresence = true;
+                } else {
+                    if (dotPresence) {
+                        return null;
+                    }
+                    dotPresence = true;
+                }
+                validString.append(ch);
+            }
+            if (Character.isDigit(ch)) {
+                validString.append(ch);
+            }
+        }
+        if (dotPresence || ePresence) {
+            return Double.valueOf(validString.toString());
+        }
+        if (isLong(validString)) {
+            return Long.valueOf(validString.toString());
+        }
+        return Integer.valueOf(validString.toString());
+    }
+
+    static boolean isLong(StringBuilder validString) {
+        long longNum = Long.parseLong(validString.toString());
+        return (longNum != (int) longNum);
     }
 }
