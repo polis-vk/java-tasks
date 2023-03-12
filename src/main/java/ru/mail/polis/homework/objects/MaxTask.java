@@ -15,11 +15,17 @@ public class MaxTask {
         if (array == null || array.length < count) {
             return null;
         }
+        if (count == 0) {
+            return new int[0];
+        }
 
         int[] answer = new int[count];
         java.util.Arrays.fill(answer, Integer.MIN_VALUE);
 
         for (int element: array) {
+            if (element < answer[count - 1]) {
+                continue;
+            }
             for (int i = 0; i < count; i++) {
                 if (answer[i] < element) {
                     if (i != count - 1) {
