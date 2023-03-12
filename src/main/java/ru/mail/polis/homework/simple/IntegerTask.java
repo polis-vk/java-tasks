@@ -43,8 +43,15 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        String nString = String.valueOf(n);
-        return Character.getNumericValue(nString.charAt(nString.length() - order));
+        int indexEnd = 1;
+        while (n != 0) {
+            if (indexEnd == order) {
+                return Math.abs(n % 10);
+            }
+            indexEnd++;
+            n /= 10;
+        }
+        return -1;
     }
 
 

@@ -23,18 +23,19 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        char[] numbers = String.valueOf(a).toCharArray();
         int currentMax = 0;
-        int index = 0;
-        for (int i = 0; i < numbers.length; i++) {
-            int currentNumber = Character.getNumericValue(numbers[i]);
-            index = currentNumber > currentMax ? i : index;
-            currentMax = Math.max(currentNumber, currentMax);
-            if (currentMax == 9) {
-                break;
-            }
+        int currentNumber;
+        int resultIndexEnd = 0;
+        int counts = 0;
+        while (a > 0) {
+            counts += 1;
+            currentNumber = (int) (a % 10);
+            resultIndexEnd = currentNumber >= currentMax ? counts : resultIndexEnd;
+            currentMax = Math.max(currentMax, currentNumber);
+            a /= 10;
         }
-        return numbers[0] == '-' ? (byte) index : (byte) (index + 1);
+
+        return (byte) (counts - resultIndexEnd + 1);
     }
 
 
