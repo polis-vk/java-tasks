@@ -20,11 +20,10 @@ public class StringTasks {
             return null;
         }
         StringBuilder validString = new StringBuilder();
-        char ch;
-        boolean dotPresence = false;
-        boolean ePresence = false;
+        boolean dotPresent = false;
+        boolean ePresent = false;
         for (int i = 0; i < str.length(); i++) {
-            ch = str.charAt(i);
+            char ch = str.charAt(i);
             if (ch == '-') {
                 if (validString.length() == 0 || validString.charAt(validString.length() - 1) == 'e') {
                     validString.append(ch);
@@ -39,15 +38,15 @@ public class StringTasks {
                     return null;
                 }
                 if (ch == 'e') {
-                    if (ePresence) {
+                    if (ePresent) {
                         return null;
                     }
-                    ePresence = true;
+                    ePresent = true;
                 } else {
-                    if (dotPresence) {
+                    if (dotPresent) {
                         return null;
                     }
-                    dotPresence = true;
+                    dotPresent = true;
                 }
                 validString.append(ch);
             }
@@ -55,7 +54,7 @@ public class StringTasks {
                 validString.append(ch);
             }
         }
-        if (dotPresence || ePresence) {
+        if (dotPresent || ePresent) {
             return Double.valueOf(validString.toString());
         }
         if (isLong(validString)) {
