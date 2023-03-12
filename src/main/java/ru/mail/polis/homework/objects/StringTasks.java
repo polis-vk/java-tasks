@@ -16,6 +16,30 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        return null;
+        if (str == null || str.length() == 0) {
+            return null;
+        }
+        StringBuilder resultNumber = new StringBuilder();
+        int strLength = str.length();
+        char newChar;
+        for (int i = 0; i < strLength; i++) {
+            newChar = str.charAt(i);
+            if (Character.isDigit(newChar) || newChar == 'e' || newChar == '-' || newChar == '.') {
+                resultNumber.append(newChar);
+            }
+        }
+        try {
+            return Integer.valueOf(resultNumber.toString());
+        } catch (NumberFormatException ignored) {
+        }
+        try {
+            return Long.valueOf(resultNumber.toString());
+        } catch (NumberFormatException ignored) {
+        }
+        try {
+            return Double.valueOf(resultNumber.toString());
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }
