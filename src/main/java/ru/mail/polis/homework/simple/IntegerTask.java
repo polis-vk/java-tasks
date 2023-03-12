@@ -28,15 +28,14 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        boolean isMoving = top - bottom > 0;
-        int days = 1;
-        int pos = 0;
         if (top >= height){
             return 1;
         }
-        if (!isMoving) {
+        if (top - bottom <= 0) {
             return Integer.MAX_VALUE;
         }
+        int days = 1;
+        int pos = 0;
         pos += top;
         while (pos < height) {
             pos -= bottom;
@@ -61,7 +60,7 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long fact = 1;
-        for (int i = 1; i < n + 1; i++){
+        for (byte i = 1; i < n + 1; i++){
             fact *= i;
         }
         return fact;
