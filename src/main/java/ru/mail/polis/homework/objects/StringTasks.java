@@ -19,22 +19,23 @@ public class StringTasks {
         if (str == null || str.isEmpty()) {
             return null;
         }
-        String number = "";
+
+        StringBuilder number = new StringBuilder();
         byte[] countLimited = {0, 0};
         for (char ch: str.toCharArray()) {
             if (Character.isDigit(ch)) {
-                number += ch;
+                number.append(ch);
             } else if (ch == 'e' || ch == '.') {
                 countLimited[(int) ch % 2] += 1; // In ASCII 'e' is odd, '.' is even
                 if (countLimited[0] > 1 || countLimited[1] > 1) {
                     return null;
                 }
-                number += ch;
+                number.append(ch);
             } else if (ch == '-') {
-                if (!(number.isEmpty() || number.charAt(number.length() - 1) == 'e')) {
+                if (!((number.length() == 0) || number.charAt(number.length() - 1) == 'e')) {
                     return null;
                 }
-                number += ch;
+                number.append(ch);
             }
         }
 
@@ -42,12 +43,12 @@ public class StringTasks {
             return null;
         }
         if (countLimited[0] > 0 || countLimited[1] > 0) {
-            return Double.parseDouble(number);
+            return Double.parseDouble(number.toString());
         }
         try {
-            return Integer.parseInt(number);
+            return Integer.parseInt(number.toString());
         } catch (NumberFormatException e) {
-            return Long.valueOf(number);
+            return Long.valueOf(number.toString());
         }
     }
 }

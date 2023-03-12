@@ -17,10 +17,11 @@ public class RepeatingCharacters {
         if (str == null || str.isEmpty()) {
             return null;
         }
+
         int counter = 1;
         char prevChar = str.charAt(0);
-        int ansrCounter = 0;
-        char ansrChar = 0;
+        int ansrCounter = 1;
+        char ansrChar = prevChar;
         for (char ch: str.substring(1).toCharArray()) {
             if (prevChar != ch) {
                 if (counter > ansrCounter) {
@@ -32,6 +33,7 @@ public class RepeatingCharacters {
             prevChar = ch;
             counter++;
         }
+
         if (counter > ansrCounter) {
             ansrCounter = counter;
             ansrChar = prevChar;
