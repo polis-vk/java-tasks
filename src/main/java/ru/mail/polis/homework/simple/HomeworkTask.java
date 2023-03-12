@@ -22,13 +22,14 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        long numberLength = (long) Math.pow(10, String.valueOf(a).length() - 1);
+        long numberLength = (long) Math.pow(10, (int) (Math.log10(a)));
         long maxDigit = 0;
         byte maxDigitIndex = 1;
         byte currentIndex = 1;
         while (maxDigit != 9 && numberLength > 0) {
-            if (a / numberLength % 10 > maxDigit) {
-                maxDigit = a / numberLength % 10;
+            long currentDigit = (a / numberLength) % 10;
+            if (currentDigit > maxDigit) {
+                maxDigit = currentDigit;
                 maxDigitIndex = currentIndex;
             }
             currentIndex++;
@@ -58,8 +59,8 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        double sumX = x1 * y2 + x2 * y3 + x3 * y4 + x4 * y1;
-        double sumY = y1 * x2 + y2 * x3 + y3 * x4 + y4 * x1;
-        return Math.abs(sumX - sumY) / 2;
+        double sum1 = x1 * y2 + x2 * y3 + x3 * y4 + x4 * y1;
+        double sum2 = y1 * x2 + y2 * x3 + y3 * x4 + y4 * x1;
+        return Math.abs(sum1 - sum2) / 2;
     }
 }

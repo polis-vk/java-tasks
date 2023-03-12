@@ -14,11 +14,7 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        int sum = 0;
-        for (int i = 0; i <= n; i++) {
-            sum += i;
-        }
-        return sum;
+        return (1 + n) * n / 2;
     }
 
     /**
@@ -31,17 +27,17 @@ public class IntegerTask {
         if (top >= height) {
             return 1;
         }
-        int increase = top - bottom;
-        if (increase <= 0) {
+        if (top - bottom <= 0) {
             return Integer.MAX_VALUE;
         }
-        int currentLevel = 0;
-        int counter = 1;
-        while (currentLevel < height - top) {
-            currentLevel += increase;
-            counter += 1;
+        if ((height - bottom) % (top - bottom) == 0) {
+            return (height - bottom) / (top - bottom);
         }
-        return counter;
+        return (height - bottom) / (top - bottom) + 1;
+        // ((x-1) * bottom + height) / top = x - это общая формула для задачи, где x - количество дней
+        // откуда (height - bottom) / (top - bottom)
+        // улитке обязательно нужно целое количество дней, но так вся дробная часть числа отрезается
+        // пришлось использовать такой некрасивый прием с условием.
     }
 
     /**
@@ -51,7 +47,7 @@ public class IntegerTask {
     public static int kDecimal(int n, int order) {
         // Делим число на степень десятки,
         // чтобы нужна цифра оказалась на последнем месте, потом достаем ее
-        return (int) Math.abs(n / Math.pow(10, order - 1) % 10);
+        return (int) Math.abs((n / Math.pow(10, order - 1)) % 10);
     }
 
 
@@ -61,7 +57,7 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long factorial = 1;
-        for (int i = 1; i <= n; i++) {
+        for (int i = 2; i <= n; i++) {
             factorial *= i;
         }
         return factorial;
