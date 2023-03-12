@@ -24,10 +24,10 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        if ((bottom >= top && top < height) || height == 0) {
+        if (bottom >= top && top < height || height == 0) {
             return Integer.MAX_VALUE;
         }
-        double days = (height - top) > 0 ? (height - top) / ((double) (top - bottom)) + 1 : 1;
+        double days = height - top > 0 ? (height - top) / (double) (top - bottom) + 1 : 1;
         return (int) Math.ceil(days);
     }
 
@@ -40,7 +40,9 @@ public class IntegerTask {
         return Math.abs(tempValue);
     }
 
-    public static int kDecimal(long n, int order) { // добавил перегрузку для того, чтобы использовать метод в HomeworkTask, не знаю, можно ли изменять сигнатуру методов в дз.
+
+    // добавил перегрузку для того, чтобы использовать метод в HomeworkTask, не знаю, можно ли изменять сигнатуру методов в дз.
+    public static int kDecimal(long n, int order) {
         int numDigit = (int) ((n % Math.pow(10, order)) / Math.pow(10, order - 1));
         return Math.abs(numDigit);
     }
@@ -50,6 +52,6 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return n == 0 ? 1 : n * factorial((byte) (n - 1));
+        return n == 0L ? 1L : n * factorial((byte) (n - 1));
     }
 }

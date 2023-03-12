@@ -13,7 +13,7 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        double result = 0;
+        double result = 0.0;
         for (int i = 1; i < (b - a) / delta; i++) {
             result += function.applyAsDouble(a + i * delta);
         }
@@ -31,7 +31,7 @@ public class HomeworkTask {
         byte presentNum;
         for (byte i = length; i > 0; i--) {
             presentNum = (byte) kDecimal(a, i);
-            if (maxValue < presentNum) { // функция из IntegerTask
+            if (maxValue < presentNum) {
                 maxValue = presentNum;
                 maxValuePosition = (byte) (length - i + 1);
             }
@@ -61,10 +61,10 @@ public class HomeworkTask {
         double cd = length(x3, y3, x4, y4);
         double da = length(x4, y4, x1, y1);
         double bd = length(x2, y2, x4, y4);
-        double semiPerimeter = (ab + bc + cd + da) / 2.0;
-        if (ab == 0 || bc == 0 || cd == 0 || da == 0 || bd == 0) {
+        if (ab == 0.0 || bc == 0.0 || cd == 0.0 || da == 0.0 || bd == 0.0) {
             return 0;
         }
+        double semiPerimeter = (ab + bc + cd + da) / 2.0;
         double acos1 = Math.acos((da * da + ab * ab - bd * bd) / (2.0 * da * ab));
         double acos2 = Math.acos((cd * cd + bc * bc - bd * bd) / (2.0 * cd * bc));
         double cos = Math.cos((acos1 + acos2) / 2.0);
