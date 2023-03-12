@@ -12,7 +12,24 @@ public class MaxTask {
      * 4 тугрика
      */
     public static int[] getMaxArray(int[] array, int count) {
-        return null;
-    }
+        if (array == null || array.length < count) {
+            return null;
+        }
 
+        int[] answer = new int[count];
+        java.util.Arrays.fill(answer, Integer.MIN_VALUE);
+
+        for (int element: array) {
+            for (int i = 0; i < count; i++) {
+                if (answer[i] < element) {
+                    if (i != count - 1) {
+                        System.arraycopy(answer, i, answer, i + 1, count - i - 1);
+                    }
+                    answer[i] = element;
+                    break;
+                }
+            }
+        }
+        return answer;
+    }
 }
