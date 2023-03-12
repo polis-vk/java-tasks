@@ -13,8 +13,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double integralValue = 0;
-        for (double i = a; i < b; i += delta) {
-            integralValue += delta * function.applyAsDouble(i);
+        for (double x = a; x < b; x += delta) {
+            integralValue += delta * function.applyAsDouble(x);
         }
         return integralValue;
     }
@@ -24,30 +24,22 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte maxVal = 0;
-        byte indexMaxVal = 0;
-        byte lenght = 1;
-        long copyA = a;
-        if (copyA <= 0) {
-            while (copyA != 0) {
-                if ((copyA % 10) <= maxVal) {
-                    maxVal = (byte) (copyA % 10);
-                    indexMaxVal = lenght;
-                }
-                lenght++;
-                copyA /= 10;
+        byte maxNumber = 0;
+        byte currentNumber = 0;
+        byte indexMaxNumber = 1;
+        byte lengthNumber = (byte) Math.ceil(Math.log10(a + 1));
+        byte maxPossibleNumber = 9;
+        for (int i = 1; i <= lengthNumber; i++) {
+            currentNumber = (byte) (a / Math.pow(10, lengthNumber - i) % 10);
+            if (currentNumber > maxNumber) {
+                maxNumber = currentNumber;
+                indexMaxNumber = (byte) i;
             }
-        } else {
-            while (copyA != 0) {
-                if ((copyA % 10) >= maxVal) {
-                    maxVal = (byte) (copyA % 10);
-                    indexMaxVal = lenght;
-                }
-                lenght++;
-                copyA /= 10;
+            if (maxNumber == maxPossibleNumber) {
+                return indexMaxNumber;
             }
         }
-        return (byte) (lenght - indexMaxVal);
+        return indexMaxNumber;
     }
 
     /**

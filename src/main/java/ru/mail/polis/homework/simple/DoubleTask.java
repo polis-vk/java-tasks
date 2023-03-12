@@ -16,10 +16,10 @@ public class DoubleTask {
      * Пример: (1, 5, 4) -> "-1.0, -4.0"
      */
     public static String equation(int a, int b, int c) {
-        double squareRoot = Math.sqrt(Math.pow(b, 2) - 4 * a * c);
-        double x1 = Math.max((-b + squareRoot) / (2 * a), (-b - squareRoot) / (2 * a));
-        double x2 = ((-b + squareRoot) / (2 * a)) + ((-b - squareRoot) / (2 * a)) - x1;
-        return x1 + ", " + x2;
+        double discriminantSquare = Math.sqrt(b * b - 4 * a * c);
+        double x1 = (-b + discriminantSquare) / (2 * a);
+        double x2 = (-b - discriminantSquare) / (2 * a);
+        return Math.max(x1, x2) + ", " + Math.min(x1, x2);
     }
 
     /**
