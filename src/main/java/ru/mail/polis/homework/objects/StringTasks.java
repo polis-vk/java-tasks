@@ -44,18 +44,18 @@ public class StringTasks {
                 sb.append(c);
             }
         }
-        String num = sb.toString();
-        if (!Character.isDigit(num.charAt(num.length() - 1))) {
+        String strNum = sb.toString();
+        if (!Character.isDigit(strNum.charAt(strNum.length() - 1))) {
             return null;
         }
         if (isDot || isExp) {
-            return Double.parseDouble(num);
+            return Double.parseDouble(strNum);
         }
-        try {
-            return Integer.parseInt(num);
-        } catch (NumberFormatException e) {
-            return Long.valueOf(num);
+        long num = Long.parseLong(strNum);
+        if (num > Integer.MAX_VALUE || num < Integer.MIN_VALUE) {
+            return num;
         }
+        return (int) num;
     }
 
 }
