@@ -29,6 +29,6 @@ public class DoubleTask {
      */
     public static float length(double x1, double y1, double x2, double y2) {
         // реализация формулы: AB = √((xb - xa)^2 + (yb - ya)^2).
-        return (float) Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+        return (float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 }

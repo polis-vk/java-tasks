@@ -31,10 +31,8 @@ public class HomeworkTask {
             aMax = (int) Math.max(aMax, Math.abs(a % 10));
             a /= 10;
         }
-        if (isAPositive) {
-            return (byte) (aStr.indexOf(String.valueOf(aMax)) + 1);
-        }
-        return (byte) (aStr.indexOf(String.valueOf(aMax)));
+        return isAPositive ? (byte) (aStr.indexOf(String.valueOf(aMax)) + 1) :
+                (byte) (aStr.indexOf(String.valueOf(aMax)));
     }
 
     /**
@@ -42,8 +40,7 @@ public class HomeworkTask {
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return (x3 - x1) * (y2 - y1) / (x2 - x1) + y1;
-        // Не проходит последний тест, не понимаю в чем проблема...  Help pls
+        return (x3 - x1) * (y2 - y1) / (double) (x2 - x1) + y1;
     }
 
     /**
@@ -53,15 +50,15 @@ public class HomeworkTask {
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
         int[] vectorAC = {x3 - x1, y3 - y1};
         int[] vectorBD = {x4 - x2, y4 - y2};
-        double lengthOfAC = Math.sqrt(Math.pow(vectorAC[0], 2) + Math.pow(vectorAC[1], 2));
-        double lengthOfBD = Math.sqrt(Math.pow(vectorBD[0], 2) + Math.pow(vectorBD[1], 2));
+        double acLength = Math.sqrt(Math.pow(vectorAC[0], 2) + Math.pow(vectorAC[1], 2));
+        double bdLength = Math.sqrt(Math.pow(vectorBD[0], 2) + Math.pow(vectorBD[1], 2));
         double cosAngleACBD = (vectorAC[0] * vectorBD[0] + vectorAC[1] * vectorBD[1]) /
-                (Math.abs(lengthOfAC) * Math.abs(lengthOfBD));
+                (Math.abs(acLength) * Math.abs(bdLength));
         if (Double.isNaN(cosAngleACBD)) {
             return 0;
         }
         double sinAngleACBD = Math.sin(Math.acos(cosAngleACBD));
-        return 0.5 * lengthOfAC * lengthOfBD * sinAngleACBD;
+        return 0.5 * acLength * bdLength * sinAngleACBD;
     }
 
 }
