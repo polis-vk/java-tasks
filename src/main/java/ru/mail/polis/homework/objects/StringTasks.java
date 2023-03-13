@@ -72,10 +72,10 @@ public class StringTasks {
         if (havePoint || haveExp) {
             return (Number) Double.valueOf(result.toString());
         }
-        if (Long.parseLong(result.toString()) > Integer.MAX_VALUE ||
-                Long.parseLong(result.toString()) < Integer.MIN_VALUE) {
-            return Long.valueOf(result.toString());
+        long number = Long.parseLong(result.toString());
+        if (number > Integer.MAX_VALUE || number < Integer.MIN_VALUE) {
+            return number;
         }
-        return Integer.valueOf(result.toString());
+        return (int) number;
     }
 }
