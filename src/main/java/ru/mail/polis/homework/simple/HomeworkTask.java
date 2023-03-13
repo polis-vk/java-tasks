@@ -28,8 +28,9 @@ public class HomeworkTask {
         byte maxDigit = 0;
         byte currentDigit = 0;
         int numberLength = (int) Math.log10(a) + 1;
+        long numberOrder = (long) Math.pow(10, numberLength - 1);
         for (int i = 1; i <= numberLength; i++) {
-            currentDigit = (byte) (a / Math.pow(10, numberLength - i) % 10);
+            currentDigit = (byte) (a / numberOrder % 10);
             if (currentDigit > maxDigit) {
                 maxDigit = currentDigit;
                 result = (byte) i;
@@ -37,6 +38,7 @@ public class HomeworkTask {
                     break;
                 }
             }
+            numberOrder /= 10;
         }
         return result;
     }
