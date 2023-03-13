@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.simple;
 
 import java.util.function.ToDoubleFunction;
+import java.lang.Math;
 
 public class HomeworkTask {
 
