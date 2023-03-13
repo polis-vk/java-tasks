@@ -14,11 +14,9 @@ public class DoubleTask {
      */
 
     public static String equation(int a, int b, int c) {
-        double x1;
-        double x2;
         double discriminant = b * b - 4 * a * c;
-        x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
-        x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+        double x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+        double x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
         if (x1 < x2) {
             double temp = x1;
             x1 = x2;

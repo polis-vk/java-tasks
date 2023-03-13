@@ -22,16 +22,16 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        long aCopy = a;
+        long aTemp = a;
         byte[] reverseNumbers = new byte[19];
         byte sizeOfArray = 0;
         do {
             byte remains;
-            remains = (byte) Math.abs(aCopy % 10);
+            remains = (byte) Math.abs(aTemp % 10);
             reverseNumbers[sizeOfArray] = remains;
-            aCopy /= 10;
+            aTemp /= 10;
             ++sizeOfArray;
-        } while (aCopy != 0);
+        } while (aTemp != 0);
 
         byte maxDigitNumber = 0;
         byte maxDigit = reverseNumbers[0];
