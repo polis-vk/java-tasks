@@ -31,15 +31,13 @@ public class MaxTask {
             }
             result[count - 1] = element;
             for (int i = count - 1; i > 0; i--) {
-                if (result[i - 1] < element) {
-                    result[i] = result[i - 1];
-                    result[i - 1] = element;
-                } else {
+                if (result[i - 1] >= element) {
                     break;
                 }
+                result[i] = result[i - 1];
+                result[i - 1] = element;
             }
         }
-
         return result;
     }
 }
