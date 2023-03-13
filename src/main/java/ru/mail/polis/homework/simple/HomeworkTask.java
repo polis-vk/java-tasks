@@ -27,20 +27,35 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        // Число переводится в строку для удобной поэлементной обработки числа
-        byte maxIndex = 1;
-        byte numLen = 1;
-        byte max = -1;
-        long temp = a;
-        while (temp > 0) {
-            numLen++;
-            if (Math.abs(temp % 10) >= max) {
-                max = (byte) Math.abs(temp % 10);
-                maxIndex = numLen;
-            }
-            temp /= 10;
+        // длина входного числа
+        int aSize = 0;
+        long tempA = a;
+        // измеряем длину числа
+        while (tempA > 0) {
+            tempA /= 10;
+            aSize++;
         }
-        return (byte) (numLen - (maxIndex - 1));
+        // чтобы итерироваться по числу слева - направо нужен большой делитель
+        // (уменьшающийся по степени проходу по числу)
+        long divider = (long) Math.pow(10, aSize - 1);
+        // max - максимальная цифра
+        int max = 0;
+        // индекс максимальной цифры
+        int maxIndex = 1;
+        for (int i = 0; i < aSize; i++) {
+            if ((a / divider) % 10 > max) {
+                // если встречаем 9 - уже цифру больше точно не найдём
+                if ((a / divider) % 10 == 9) {
+                    return (byte) (i + 1);
+                }
+                // например чтобы получить 2 из числа 123: (123 / 10 = 12) => (12 % 10 = 2)
+                max = (int) (a / divider) % 10;
+                maxIndex = i + 1;
+            }
+            // уменьшаем делитель
+            divider = (long) Math.pow(10, aSize - 2 - i);
+        }
+        return (byte) maxIndex;
     }
 
 
