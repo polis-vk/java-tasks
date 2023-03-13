@@ -34,7 +34,9 @@ public class HomeworkTask {
         for (byte i = 1; temp % 10 != 0; i++) {
             digit = (long) Math.pow(10, (byte) Math.log10(temp));
             num = (byte) (temp / digit);
-            if (num == 9) return i;
+            if (num == 9) {
+                return i;
+            }
             if (Math.abs(num) > max) {
                 max = num;
                 pos = i;
