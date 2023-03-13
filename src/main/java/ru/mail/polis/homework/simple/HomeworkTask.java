@@ -24,7 +24,6 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        final byte maxPossibleDigit = 9;
         byte result = 1;
         byte maxDigit = 0;
         byte currentDigit = 0;
@@ -34,7 +33,7 @@ public class HomeworkTask {
             if (currentDigit > maxDigit) {
                 maxDigit = currentDigit;
                 result = (byte) i;
-                if (maxDigit == maxPossibleDigit) {
+                if (maxDigit == 9) {
                     break;
                 }
             }
