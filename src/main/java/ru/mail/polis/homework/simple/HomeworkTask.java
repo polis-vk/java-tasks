@@ -11,10 +11,9 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         // Метод прямоугольников
-        double temp = a;
         double result = 0;
         int i = 1;
-        for (; temp <= b; i++) {
+        for (double temp = a; temp <= b; i++) {
             result += function.applyAsDouble(temp);
             temp += delta;
         }
