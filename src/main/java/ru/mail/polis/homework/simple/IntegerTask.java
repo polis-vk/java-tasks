@@ -34,9 +34,9 @@ public class IntegerTask {
         if (bottom >= top) {
             return Integer.MAX_VALUE;
         }
-        height = height - top;
+        int heightToReach = height - top;
         int difference = top - bottom;
-        return height % difference > 0 ? height / difference + 2 : height / difference + 1;
+        return heightToReach % difference > 0 ? heightToReach / difference + 2 : heightToReach / difference + 1;
     }
 
     /**
