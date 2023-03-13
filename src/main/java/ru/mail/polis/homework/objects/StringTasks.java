@@ -22,7 +22,9 @@ public class StringTasks {
         StringBuilder sb = new StringBuilder();
         boolean isExp = false;
         boolean isDot = false;
-        for (char c : str.toCharArray()) {
+        char c;
+        for (int i = 0; i < str.length(); i++) {
+            c = str.charAt(i);
             if (Character.isDigit(c)) {
                 sb.append(c);
             } else if (c == '.') {
