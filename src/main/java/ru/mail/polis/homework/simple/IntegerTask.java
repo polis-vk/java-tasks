@@ -14,8 +14,7 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        int sum = (1 + n) * n / 2;
-        return sum;
+        return (1 + n) * n / 2;
     }
 
     /**
@@ -25,14 +24,18 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        int coordinate = top;
-        int days = 1;
+        int days;
         if (top <= bottom && top < height) {
             days = Integer.MAX_VALUE;
         } else {
-            while (coordinate < height) {
-                coordinate = coordinate - bottom + top;
-                days++;
+            if (top >= height) {
+                days = 1;
+            } else {
+                if ((height - bottom) % (top - bottom) == 0) {
+                    days = (height - bottom) / (top - bottom);
+                } else {
+                    days = (height - bottom) / (top - bottom) + 1;
+                }
             }
         }
         return days;
@@ -46,10 +49,11 @@ public class IntegerTask {
         int counter = 1;
         int factor = 10;
         while (counter < order) {
-            factor *= 10;
+            factor = (int) Math.pow(10, counter + 1);
             counter++;
         }
-        int remainder, wholePart;
+        int remainder;
+        int wholePart;
         if (order > 1) {
             remainder = n % factor;
             wholePart = remainder / (factor / 10);
@@ -68,11 +72,8 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long fact = 1;
-        long i = 1;
-
-        while (i < n) {
+        for (int i = 0; i < n; i++) {
             fact = fact * (i + 1);
-            i++;
         }
         return fact;
     }
