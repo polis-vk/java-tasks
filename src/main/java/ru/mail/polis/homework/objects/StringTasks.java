@@ -34,7 +34,7 @@ public class StringTasks {
                     if (countMinus == 2) {
                         return null;
                     }
-                    if (countMinus == 1 && (result.charAt(0) != '-' || result.charAt(result.length() - 1) != 'e')) {
+                    if (countMinus == 1 && result.charAt(result.length() - 1) != 'e') {
                         return null;
                     }
                     if (countMinus == 0 && (result.length() != 0 && result.charAt(result.length() - 1) != 'e')) {
