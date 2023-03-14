@@ -40,7 +40,7 @@ public class MaxTask {
             int startSearch = 0;
             int finSearch = count - 1;
             int middle = 0;
-            int indexForNewVal = -1;
+            int indexForNewVal;
 
             while (finSearch >= startSearch) {
                 middle = (startSearch + finSearch) / 2;
