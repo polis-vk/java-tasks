@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+
+import java.util.Arrays;
+
 public class MaxTask {
 
     /**
@@ -12,7 +15,41 @@ public class MaxTask {
      *
      */
     public static int[] getMaxArray(int[] array, int count) {
-        return null;
+        if (array == null || array.length < count) {
+            return null;
+        }
+        int[] result = new int[count];
+        int[] oldIndexes = new int[count];
+        Arrays.fill(oldIndexes, -1);
+        int maxIndex = 0;
+        int maxNumber = Integer.MIN_VALUE;
+        for (int j = 0; j < count; ++j) {
+
+            for (int i = 0; i < array.length; ++i) {
+
+                for (int k = 0; k < oldIndexes.length; ++k) {
+                    if (i == oldIndexes[k]) {
+                        ++i;
+                        k = -1;
+                    }
+                }
+
+                if (i >= array.length) {
+                    break;
+                }
+
+                if (array[i] >= maxNumber) {
+                    maxNumber = array[i];
+                    maxIndex = i;
+                }
+
+            }
+            result[j] = maxNumber;
+            oldIndexes[j] = maxIndex;
+            maxNumber = Integer.MIN_VALUE;
+        }
+
+        return result;
     }
 
 }
