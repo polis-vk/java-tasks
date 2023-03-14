@@ -23,15 +23,15 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
         long number = a;
-        int length = (int) (Math.abs(Math.log10(number)) + 1);
+        int length = (int) (Math.log10(number) + 1);
         byte maxDigit = 0;
         byte maxIndex = 1;
         for (byte currentIndex = 1; number != 0; currentIndex++) {
             byte currentDigit = (byte) (number / (Math.pow(10, length - currentIndex)));
+            if (currentDigit == 9) {
+                return currentIndex;
+            }
             if (currentDigit > maxDigit) {
-                if (currentDigit == 9) {
-                    return currentIndex;
-                }
                 maxDigit = currentDigit;
                 maxIndex = currentIndex;
             }

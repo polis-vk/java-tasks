@@ -43,9 +43,7 @@ public class IntegerTask {
      */
     public static int kDecimal(int n, int order) {
         int expression = n;
-        for (int i = 1; i != order; i++) {
-            expression /= 10;
-        }
+        expression /= Math.pow(10, order - 1);
         return Math.abs(expression % 10);
     }
 
