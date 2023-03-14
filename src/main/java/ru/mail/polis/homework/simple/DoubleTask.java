@@ -16,13 +16,9 @@ public class DoubleTask {
     public static String equation(int a, int b, int c) {
         double x1 = 0;
         double x2 = 0;
-        double sqrofdiscr = Math.sqrt(b * b - 4 * a * c);
-
-
-
-        x1 = (-b + sqrofdiscr) / (2 * a);
-        x2 = (-b - sqrofdiscr) / (2 * a);
-
+        double sqrOfDiscr = Math.sqrt(b * b - 4 * a * c);
+        x1 = (-b + sqrOfDiscr) / (2 * a);
+        x2 = (-b - sqrOfDiscr) / (2 * a);
         if (x1 > x2) {
             return x1 + ", " + x2;
         }

@@ -11,8 +11,9 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double sqr = 0;
-        for (; a < b; a = a + delta) {
-            sqr += delta * function.applyAsDouble(a);
+        double i = a;
+        for (; i < b; i += delta) {
+            sqr += delta * function.applyAsDouble(i);
         }
         return sqr;
     }
@@ -22,26 +23,25 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-
-        int b;
-        long h = a;
-        int k = 0;
-        int kmax = 0;
-        int max = 0;
-        int qtt = (int) Math.log10(h) + 1;
-        if (qtt == 1){
-            return 1;
-        }
-        while (h != 0) {
-            b = (int) h % 10;
-            if (b >= max) {
-                max = b;
-                kmax = k;
+        long num = a;
+        int digit;
+        long maxNumber = 0;
+        double quantityOfDigits = Math.ceil(Math.log10((double) num));
+        int indexOfMaxDigitCounter = 1;
+        long cutter = (long) Math.pow(10, quantityOfDigits - 1);
+        for (int i = 1; i < quantityOfDigits + 1; i++) {
+            digit = (int) (num / cutter);
+            if (digit > maxNumber) {
+                maxNumber = digit;
+                indexOfMaxDigitCounter = i;
             }
-            h /= 10;
-            k++;
+            if (digit == 9) {
+                break;
+            }
+            num %= cutter;
+            cutter /= 10;
         }
-        return (byte) (qtt - kmax);
+        return (byte) indexOfMaxDigitCounter;
     }
 
 
@@ -68,8 +68,11 @@ public class HomeworkTask {
         double p2 = (cd + da + ac) / 2;
         double s1 = Math.sqrt(p1 * (p1 - ab) * (p1 - bc) * (p1 - ac));
         double s2 = Math.sqrt(p2 * (p2 - cd) * (p2 - da) * (p2 - ac));
-
         return s1 + s2;
+    }
+    public static void main(String[] args){
+        long a = 12L;
+        maxNumber(a);
     }
 
 }

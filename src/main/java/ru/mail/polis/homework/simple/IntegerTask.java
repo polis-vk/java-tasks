@@ -39,7 +39,6 @@ public class IntegerTask {
      */
     public static int kDecimal(int n, int order) {
         int q = (int) Math.pow(10, order - 1);
-
         return Math.abs((n / q) % 10);
     }
 
