@@ -24,18 +24,21 @@ public class HomeworkTask {
     public static byte maxNumber(long a) {
         long acc = a;
         int len = (int) Math.ceil(Math.log10(acc));
-        long max = -1;
+        long max = 0;
         byte maxIndex = 1;
-        long tmp, order;
+        long tmp;
+        long order;
         for (byte i = 1; i <= len; i++) {
             order = (long) Math.pow(10, len - i);
             tmp = acc / order;
+
+            if (tmp == 9) {
+                return i;
+            }
+
             if (tmp > max) {
                 max = tmp;
                 maxIndex = i;
-                if (max == 9) {
-                    break;
-                }
             }
             acc %= order;
         }

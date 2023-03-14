@@ -28,8 +28,9 @@ public class IntegerTask {
             return 1;
 
         int delta = top - bottom;
-        if (delta <= 0)
+        if (delta <= 0) {
             return Integer.MAX_VALUE;
+        }
 
         // height - top / delta - количесво полных дней
         // добавив + delta - 1 получим окргуление в большую строну
@@ -51,7 +52,7 @@ public class IntegerTask {
      */
     public static long factorial(byte n) {
         long acc = 1;
-        for (byte i = 1; i <= n; ++i) {
+        for (byte i = 2; i <= n; ++i) {
             acc *= i;
         }
         return acc;

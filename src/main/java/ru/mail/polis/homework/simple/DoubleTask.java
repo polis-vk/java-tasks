@@ -17,7 +17,11 @@ public class DoubleTask {
         double sqrtDisc = Math.sqrt(Math.pow(b, 2) - 4 * a * c);
         double x1 = (-b + sqrtDisc) / (2 * a);
         double x2 = (-b - sqrtDisc) / (2 * a);
-        return Math.max(x1, x2) + ", " + Math.min(x1, x2);
+        if (x1 > x2) {
+            return x1 + ", " + x2;
+        } else {
+            return x2 + ", " + x1;
+        }
     }
 
     /**
