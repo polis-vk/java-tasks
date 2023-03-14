@@ -45,10 +45,10 @@ public class StringTasks {
         if (countLimited[0] > 0 || countLimited[1] > 0) {
             return Double.parseDouble(number.toString());
         }
-        try {
-            return Integer.parseInt(number.toString());
-        } catch (NumberFormatException e) {
-            return Long.valueOf(number.toString());
+        Long converted = Long.valueOf(number.toString());
+        if (converted > Integer.MAX_VALUE || converted < Integer.MIN_VALUE) {
+            return converted;
         }
+        return Integer.valueOf(number.toString());
     }
 }
