@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.simple;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
+import java.lang.Math;
 
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
@@ -17,15 +16,18 @@ public class DoubleTask {
      * Пример: (1, 5, 4) -> "-1.0, -4.0"
      */
     public static String equation(int a, int b, int c) {
-        double x1 = 0;
-        double x2 = 0;
+
         double d = b * b - 4 * a * c;
 
         if (d >= 0) {
-            x1 = max((-b + Math.sqrt(d)) / (2 * a), (-b - Math.sqrt(d)) / (2 * a));
-            x2 = ((double) -b / a) - x1;
+            double x1 = (-b + Math.sqrt(d)) / (2 * a);
+            double x2 = (-b - Math.sqrt(d)) / (2 * a);
+            if (x1 > x2) {
+                return x1 + ", " + x2;
+            }
+            return x2 + ", " + x1;
         }
-        return x1 + ", " + x2;
+        return "0";
     }
 
     /**

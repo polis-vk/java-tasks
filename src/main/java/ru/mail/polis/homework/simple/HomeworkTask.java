@@ -4,14 +4,6 @@ import java.util.function.ToDoubleFunction;
 
 public class HomeworkTask {
 
-    private static double lenDots(int x1, int y1, int x2, int y2) {
-        return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-    }
-
-    private static double squareTriangle(double A, double B, double C) {
-        double p1 = (A + B + C) / 2;
-        return Math.sqrt(p1 * (p1 - A) * (p1 - B) * (p1 - C));
-    }
 
     /**
      * Нужно численно посчитать интеграл от a до b с шагом delta от функции function
@@ -32,18 +24,25 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte maxNumber = -1;
-        byte lenNumber = 0;
-        byte number = 0;
-        while (a != 0) {
-            lenNumber += 1;
-            if (Math.abs(a % 10) >= maxNumber) {
-                maxNumber = (byte) Math.abs((a % 10));
-                number = lenNumber;
-            }
-            a = a / 10;
+        String S;
+        S = a + "";
+        if (a < 0) {
+            S = S.substring(1);
         }
-        return (byte) (lenNumber - number + 1);
+        int inDex = 0;
+        int maxNumber = 0;
+        int chislo = 0;
+        for (int i = 0; i < S.length(); i++) {
+            chislo = Integer.parseInt(String.valueOf(S.charAt(i)));
+            if (chislo == 9) {
+                return (byte) (i + 1);
+            }
+            if (chislo > maxNumber) {
+                maxNumber = chislo;
+                inDex = i;
+            }
+        }
+        return (byte) (inDex + 1);
     }
 
 
@@ -62,6 +61,15 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      * Это дополнительное задание, необязательное для выполнения
      */
+    private static double lenDots(int x1, int y1, int x2, int y2) {
+        return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+    }
+
+    private static double squareTriangle(double A, double B, double C) {
+        double p1 = (A + B + C) / 2;
+        return Math.sqrt(p1 * (p1 - A) * (p1 - B) * (p1 - C));
+    }
+
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
         double A = lenDots(x1, y1, x4, y4);
         double B = lenDots(x1, y1, x2, y2);

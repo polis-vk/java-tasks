@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.simple;
 
+import java.lang.Math;
 
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
@@ -14,7 +15,6 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-
         return (1 + n) * n / 2;
     }
 
@@ -28,14 +28,7 @@ public class IntegerTask {
         if (bottom >= top && top < height) {
             return Integer.MAX_VALUE;
         }
-        int days = 0;
-        for (int i = 0; i < height / (top - bottom); i++) {
-            days += 1;
-            if ((top - bottom) * days + top >= height) {
-                break;
-            }
-        }
-        return days + 1;
+        return (int) (1 + Math.ceil((double) Math.max((height - top), 0) / (top - bottom)));
     }
 
     /**
