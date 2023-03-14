@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 public class MaxTask {
 
     /**
@@ -20,23 +23,45 @@ public class MaxTask {
             return new int[0];
         }
 
-        int[] result = new int[count];
-        for (int i = 0; i < count; i++) {
-            result[i] = Integer.MIN_VALUE;
+        int[] result = Arrays.copyOf(array, count);
+        Arrays.sort(result);
+
+        for (int i = 0; i < count / 2; ++i) {
+            int buffer = result[i];
+            result[i] = result[count - i - 1];
+            result[count - i - 1] = buffer;
         }
 
-        for (int element : array) {
-            if (result[count - 1] > element) {
+        for (int i = count; i < array.length; ++i) {
+            int element = array[i];
+            if (element <= result[count - 1]) {
                 continue;
             }
-            result[count - 1] = element;
-            for (int i = count - 1; i > 0; i--) {
-                if (result[i - 1] >= element) {
+            int startSearch = 0;
+            int finSearch = count - 1;
+            int middle = 0;
+            int indexForNewVal = -1;
+
+            while (finSearch >= startSearch) {
+                middle = (startSearch + finSearch) / 2;
+                if (result[middle] > element) {
+                    startSearch = middle + 1;
+                } else if (result[middle] < element) {
+                    finSearch = middle - 1;
+                } else if (result[middle] == element) {
                     break;
                 }
-                result[i] = result[i - 1];
-                result[i - 1] = element;
             }
+
+            if (result[middle] >= element) {
+                indexForNewVal = middle + 1;
+            } else {
+                indexForNewVal = middle;
+            }
+
+            System.arraycopy(result, indexForNewVal, result,
+                    indexForNewVal + 1, count - indexForNewVal - 1);
+            result[indexForNewVal] = element;
         }
         return result;
     }
