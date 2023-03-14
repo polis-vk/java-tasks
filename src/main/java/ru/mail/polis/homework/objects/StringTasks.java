@@ -19,55 +19,53 @@ public class StringTasks {
             return null;
         }
         StringBuilder number = new StringBuilder();
-        boolean flagPoint = true;
-        boolean flagE = true;
-        boolean flagDash = true;
-        boolean firstSymbol = true;
+        boolean point = false;
+        boolean e = false;
+        boolean dash = false;
+        boolean firstSymbol = false;
         for (int i = 0; i < str.length(); i++) {
             if (Character.isDigit(str.charAt(i))) {
                 number.append(str.charAt(i));
-                firstSymbol = false;
+                firstSymbol = true;
             } else {
                 switch (str.charAt(i)) {
                     case '-':
-                        if (flagDash && flagPoint && firstSymbol) {
-                            flagDash = false;
-                            number.append(str.charAt(i));
-                        } else {
+                        if ((firstSymbol && number.charAt(number.length() - 1) != 'e') || dash) {
                             return null;
                         }
-                        break;
+                        dash = true;
+                        number.append(str.charAt(i));
+                        continue;
                     case '.':
-                        if (flagPoint) {
-                            flagPoint = false;
-                            number.append(str.charAt(i));
-                        } else {
+                        if (point) {
                             return null;
                         }
-                        break;
+                        point = true;
+                        number.append(str.charAt(i));
+                        continue;
                     case 'e':
-                        if (flagE) {
-                            flagE = false;
-                            flagDash = true;
-                            flagPoint = true;
-                            firstSymbol = true;
-                            number.append(str.charAt(i));
-                        } else {
-                            return null;
+                        if (e) {
+                            return  null;
                         }
-                        break;
+                        e = true;
+                        dash = false;
+                        point = true;
+                        firstSymbol = false;
+                        number.append(str.charAt(i));
                 }
             }
         }
-        if(number.charAt(number.length() - 1) == 'e'){
+        if (number.charAt(number.length() - 1) == 'e' || number.charAt(number.length() - 1) == '-') {
             return null;
         }
-        if (!flagPoint || !flagE) {
-            return Double.parseDouble(String.valueOf(number));
+        if (point || e) {
+            return Double.parseDouble(number.toString());
         }
-        if (Long.parseLong(String.valueOf(number)) <= Integer.MAX_VALUE && Long.parseLong(String.valueOf(number)) >= Integer.MIN_VALUE) {
-            return Integer.parseInt(String.valueOf(number));
+        long temp = Long.parseLong(number.toString());
+        if (temp <= Integer.MAX_VALUE && temp >= Integer.MIN_VALUE) {
+            return Integer.parseInt(number.toString());
         }
-        return Long.parseLong(String.valueOf(number));
+        return temp;
     }
 }
+
