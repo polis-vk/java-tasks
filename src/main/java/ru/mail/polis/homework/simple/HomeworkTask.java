@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.function.ToDoubleFunction;
 
 public class HomeworkTask {
@@ -26,15 +24,16 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
+
+        if (a == 0){
+            return 1;
+        }
+
         long aCopy = a;
         long maxNum = 0;
         int maxInd = 1;
         int fromEndInd = 0;
         int numLength = 0;
-
-        if (aCopy == 0){
-            return 1;
-        }
 
         while (aCopy != 0) {
             long currNum = Math.abs(aCopy % 10);
