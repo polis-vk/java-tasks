@@ -23,7 +23,7 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
         byte digitsCount = (byte) ((int) (Math.log10(a)) + 1);
-        byte maxDigitPosition = digitsCount;
+        byte maxDigitPosition = 1;
         byte maxDigit = 0;
         byte current;
         for (byte i = 1; i <= digitsCount; i++) {
@@ -54,7 +54,7 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        //площадь как сумма двух треугольников
+        // площадь как сумма двух треугольников
         // S = 1/2 module((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1))
         double S1 = 0.5 * Math.abs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1));
         double S2 = 0.5 * Math.abs((x3 - x1) * (y4 - y1) - (x4 - x1) * (y3 - y1));
