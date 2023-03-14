@@ -26,8 +26,10 @@ public class HomeworkTask {
         int len = (int) (Math.ceil(Math.log10(num)));
         int numMax = 0;
         int numIndex = 1;
+        long positionCounter = (long) (Math.pow(10, len - 1)); // переменная для получения первой цифры числа
         for (int i = 1; i <= len; i++) {
-            int digit = (int) (num / Math.pow(10, len - i));
+
+            int digit = (int) (num / positionCounter);
             if (numMax < digit) {
                 numMax = digit;
                 numIndex = i;
@@ -35,7 +37,8 @@ public class HomeworkTask {
             if (digit == 9) {
                 break;
             }
-            num %= Math.pow(10, len - i);
+            num %= positionCounter; // убираем первую цифру
+            positionCounter /= 10;
         }
         return (byte) (numIndex);
     }
@@ -55,12 +58,9 @@ public class HomeworkTask {
      * Это дополнительное задание, необязательное для выполнения
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        double areaABC;
-        double areaACD;
-        areaABC = Math.abs(0.5 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2))); // выводится из курса аналитической геометрии
-        areaACD = Math.abs(0.5 * (x1 * (y4 - y3) + x4 * (y3 - y1) + x3 * (y1 - y4)));
+        double areaABC = Math.abs(0.5 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2))); // выводится из курса аналитической геометрии
+        double areaACD = Math.abs(0.5 * (x1 * (y4 - y3) + x4 * (y3 - y1) + x3 * (y1 - y4)));
 
         return areaABC + areaACD;
     }
-
 }
