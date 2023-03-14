@@ -30,11 +30,10 @@ public class HomeworkTask {
         }
         byte numberOfDigits = (byte) Math.log10(a); //количество цифр в числе
         long pow10 = (long) Math.pow(10, numberOfDigits); //степень десяти для выделения очередной цифры числа
-        byte number; //очередная цифра числа
         byte maxNumber = -1; //наибольшая цифра
         byte maxOrder = -1; //номер максимальной цифры
         for (byte i = 0; i <= numberOfDigits; i++) {
-            number = (byte) (a / pow10 % 10);
+            byte number = (byte) (a / pow10 % 10); //очередная цифра числа
             if (number > maxNumber) {
                 maxNumber = number;
                 maxOrder = (byte) (i + 1);
