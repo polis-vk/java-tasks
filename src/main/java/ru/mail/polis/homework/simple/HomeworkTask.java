@@ -10,7 +10,11 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        return 0;
+        double sum = 0;
+        for (double x = a; x <= b; x += delta) {
+            sum += function.applyAsDouble(x) * delta;
+        }
+        return sum;
     }
 
     /**
@@ -18,16 +22,30 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        long tmp = a;
+        int length = (int) Math.ceil(Math.log10(a));
+        int numberIndex = 1;
+        int maxNumber = 0;
+        for (int i = 1; i <= length; i++) {
+            int number = (int) (tmp / Math.pow(10, length - i));
+            if (number > maxNumber) {
+                if (number == 9) {
+                    return (byte) i;
+                }
+                maxNumber = number;
+                numberIndex = i;
+            }
+            tmp %= Math.pow(10, length - i);
+        }
+        return (byte) numberIndex;
     }
-
 
     /**
      * Даны две точки в пространстве (x1, y1) и (x2, y2). Вам нужно найти Y координату третьей точки (x3, y3),
      * которая находится на той же прямой что и первые две.
      */
     public static double lineFunction(int x1, int y1, int x2, int y2, int x3) {
-        return 0;
+        return ((double) (y2 - y1) * (x3 - x1) / (x2 - x1) + y1);
     }
 
     /**
@@ -35,7 +53,8 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return 0;
+        double s1 = (double) Math.abs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1)) / 2;
+        double s2 = (double) Math.abs((x4 - x1) * (y3 - y1) - (x3 - x1) * (y4 - y1)) / 2;
+        return s1 + s2;
     }
-
 }
