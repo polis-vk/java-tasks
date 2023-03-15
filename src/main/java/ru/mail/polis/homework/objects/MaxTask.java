@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 public class MaxTask {
 
     /**
@@ -15,45 +18,43 @@ public class MaxTask {
         if (array == null || array.length < count) {
             return null;
         }
+
         if (array.length == 0 || count == 0) {
             return new int[0];
         }
 
-        int[] newArray = new int[count];
         int length = array.length;
-        int[] arrayOfIndex = new int[count];
-        int maxValue = Integer.MIN_VALUE;
+        String[] arrayStr = new String[length];
 
-        for (int i = 0; i < count; i++) {
-            arrayOfIndex[i] = -1;
+        for (int i = 0; i < length; i++) {
+            arrayStr[i] = String.valueOf(array[i]);
         }
 
+        int maxValue = Integer.MIN_VALUE;
         int index = 0;
-        boolean isAlreadyAdd = false;  //Добавление в arrayOfIndex
+        int[] maxArray = new int[count];
 
-        for (int j = 0; j < count; j++) {
+        int temp = 0;
+        int cnt = 0;  //count
+        while (cnt < count) {
             for (int i = 0; i < length; i++) {
-                if (maxValue <= array[i]) {
-                    for (int k : arrayOfIndex) {
-                        if (k == -1) {
-                            break;
-                        } else if (i == k) {
-                            isAlreadyAdd = true;
-                            break;
-                        }
-                    }
-                    if (!isAlreadyAdd) {
-                        maxValue = array[i];
-                        index = i;
-                    }
+                if (arrayStr[i] == null) {
+                    continue;
                 }
-                isAlreadyAdd = false;
+
+                temp = Integer.parseInt(arrayStr[i]);
+                if (maxValue < temp) {
+                    maxValue = temp;
+                    index = i;
+                }
             }
-            arrayOfIndex[j] = index;
-            newArray[j] = maxValue;
+
+            maxArray[cnt] = maxValue;
+            arrayStr[index] = null;
+            cnt++;
             maxValue = Integer.MIN_VALUE;
         }
 
-        return newArray;
+        return maxArray;
     }
 }
