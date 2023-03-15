@@ -23,15 +23,20 @@ public class RepeatingCharacters {
         for (int i = 1; i < str.length(); i++) {
             if (str.charAt(i) == str.charAt(i - 1)) {
                 currentLength++;
-                if (i != str.length() - 1) {
-                    continue;
-                }
+                continue;
             }
             if (currentLength > maxLength) {
                 maxLength = currentLength;
                 answer = str.charAt(i - 1);
+                if (maxLength >= (str.length() - i)) {
+                    break;
+                }
             }
             currentLength = 1;
+        }
+        if (currentLength > maxLength) {
+            maxLength = currentLength;
+            answer = str.charAt(str.length() - 1);
         }
         return new Pair<>(answer, maxLength);
     }
