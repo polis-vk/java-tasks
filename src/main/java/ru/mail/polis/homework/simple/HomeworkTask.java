@@ -18,7 +18,22 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        return 0;
+        byte max = 0;
+        long number = a;
+        int pos = 1;
+        int count = 0;
+        while (number > 0)
+        {
+            if (number % 10 >= max)
+            {
+                max = (byte)(number % 10);
+                pos = count;
+            }
+            number /= 10;
+            count++;
+        }
+        pos = Math.abs(count - pos);
+        return (byte)pos;
     }
 
 
