@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.simple;
 
-import java.text.CharacterIterator;
-import java.text.StringCharacterIterator;
 import java.util.function.ToDoubleFunction;
 
 public class HomeworkTask {
@@ -33,27 +31,21 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        String numString = Long.toString(a);
-
-        if (a < 0) {
-            numString = numString.substring(1);
-        }
-
-        CharacterIterator it = new StringCharacterIterator(numString);
-
-        char maxNum = it.current();
-        it.next();
-
-        int indexCurrent = 1;
-        while (it.current() != CharacterIterator.DONE) {
-            if (maxNum < it.current()) {
-                maxNum = it.current();
-                indexCurrent = it.getIndex() + 1;
+        byte lengthCount = 0;
+        byte maxCount = 0;
+        long maxNumber = 0;
+        long temp = a;
+        long absDigit;
+        while (temp != 0) {
+            ++lengthCount;
+            absDigit = Math.abs(temp % 10);
+            if (absDigit >= maxNumber) {
+                maxCount = lengthCount;
+                maxNumber = absDigit;
             }
-            it.next();
+            temp /= 10;
         }
-
-        return (byte) indexCurrent;
+        return (byte) (lengthCount - maxCount + 1);
     }
 
 
@@ -80,10 +72,10 @@ public class HomeworkTask {
         int[] yArray = new int[]{y1, y2, y3, y4};
 
         bubbleSort(xArray, yArray);
-        if ((yArray[1] < yArray[0]) & (yArray[1] < yArray[2])) {
+        if (yArray[1] < yArray[0] && yArray[1] < yArray[2]) {
             swapInArray(xArray, yArray, 0, 1);
         }
-        if ((yArray[2] < yArray[3]) & (yArray[1] > yArray[2])) {
+        if (yArray[2] < yArray[3] && yArray[1] > yArray[2]) {
             swapInArray(xArray, yArray, 2, 3);
         }
 
