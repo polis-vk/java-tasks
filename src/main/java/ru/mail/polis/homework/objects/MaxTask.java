@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.PriorityQueue;
+
 public class MaxTask {
 
     /**
@@ -15,22 +17,16 @@ public class MaxTask {
         if (array == null || count > array.length) {
             return null;
         }
-        int max;
-        int[] maxNums = new int[count];
-        int maxIndex = 0;
-        boolean[] takenMaximus = new boolean[array.length];
-        for (int i = 0; i < count; i++) {
-            max = Integer.MIN_VALUE;
-            for (int j = 0; j < array.length; j++) {
-                if ((i == 0 || array[j] <= maxNums[i - 1]) && array[j] >= max && !takenMaximus[j]) {
-                    max = array[j];
-                    maxIndex = j;
-                }
-            }
-            maxNums[i] = max;
-            takenMaximus[maxIndex] = true;
+        PriorityQueue<Integer> maxNums = new PriorityQueue<>();
+        for (int i : array) {
+            maxNums.add(i);
+            if (maxNums.size() > count) maxNums.poll();
         }
-        return maxNums;
+        int[] topKNums = new int[count];
+        for (int i = topKNums.length - 1; i >= 0; i--) {
+            topKNums[i] = maxNums.poll();
+        }
+        return topKNums;
     }
 
 }
