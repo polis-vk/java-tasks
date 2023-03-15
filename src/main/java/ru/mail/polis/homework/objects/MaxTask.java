@@ -12,7 +12,25 @@ public class MaxTask {
      * 4 тугрика
      */
     public static int[] getMaxArray(int[] array, int count) {
-        return null;
+        if(array == null || count > array.length) {
+            return null;
+        }
+        int[] arrayCopy = new int[array.length];
+        System.arraycopy(array, 0, arrayCopy, 0, array.length);
+        int[] maxElements = new int[count];
+        for(int i = 0; i < count; i++) {
+            int nextMaxElement = Integer.MIN_VALUE;
+            int nextMaxElIndex = 0;
+            for(int j = 0; j < arrayCopy.length; j++) {
+                if(nextMaxElement <= arrayCopy[j]) {
+                    nextMaxElement = arrayCopy[j];
+                    nextMaxElIndex = j;
+                }
+            }
+            maxElements[i] = nextMaxElement;
+            arrayCopy[nextMaxElIndex] = Integer.MIN_VALUE;
+        }
+        return maxElements;
     }
 
 }
