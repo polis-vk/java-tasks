@@ -27,16 +27,16 @@ public class IntegerTask {
         int days;
         if (top <= bottom && top < height) {
             days = Integer.MAX_VALUE;
+            return days;
+        }
+        if (top >= height) {
+            days = 1;
+            return days;
+        }
+        if ((height - bottom) % (top - bottom) == 0) {
+            days = (height - bottom) / (top - bottom);
         } else {
-            if (top >= height) {
-                days = 1;
-            } else {
-                if ((height - bottom) % (top - bottom) == 0) {
-                    days = (height - bottom) / (top - bottom);
-                } else {
-                    days = (height - bottom) / (top - bottom) + 1;
-                }
-            }
+            days = (height - bottom) / (top - bottom) + 1;
         }
         return days;
     }
@@ -46,12 +46,7 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int counter = 1;
-        int factor = 10;
-        while (counter < order) {
-            factor = (int) Math.pow(10, counter + 1);
-            counter++;
-        }
+        int factor = (int) Math.pow(10, order);
         int remainder;
         int wholePart;
         if (order > 1) {

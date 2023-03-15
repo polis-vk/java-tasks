@@ -10,11 +10,11 @@ public class HomeworkTask {
      * Считаем, что функция определена на всем пространстве от a до b
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
-        double arg = a;
+        double x = a;
         double integral = 0;
-        while (arg <= b) {
-            integral += function.applyAsDouble(arg) * delta;
-            arg += delta;
+        while (x <= b) {
+            integral += function.applyAsDouble(x) * delta;
+            x += delta;
         }
         return integral;
     }
@@ -24,13 +24,8 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        long factorWholePart = 1;
         long aHelp = Math.abs(a);
-        int n = 0;
-        while (Math.log10(aHelp) >= n + 1) {
-            factorWholePart = (long) Math.pow(10, n + 1);
-            n++;
-        }
+        long factorWholePart = (long) Math.pow(10, (int)Math.log10(aHelp));
         long currentFig;
         long max = 0;
         long counter = 1;
