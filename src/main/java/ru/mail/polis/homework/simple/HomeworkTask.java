@@ -29,25 +29,25 @@ public class HomeworkTask {
             return 1;
         }
 
-        int length = Math.abs((int) (Math.log10(a) + 1));
+        int length = (int) (Math.log10(a) + 1);
         long value = a;
-        int maxNumber = (int) (value / Math.pow(10, length - 1)); //максимальное число
+        int maxDigit = (int) (value / Math.pow(10, length - 1)); //максимальная цифра
         value = (long) (a % Math.pow(10, length - 1));
         int countMax = 1;  //номер максимальной цифры
         int current = 0;
 
-        for (int i = length - 2; i >= 0; i--) {
-            if (maxNumber == 9) {
+        for (int i = 2; i <= length; i++) {
+            if (maxDigit == 9) {
                 return (byte) countMax;
             }
 
-            current = (int) (value / Math.pow(10, i));
-            if (current > maxNumber) {
-                maxNumber = current;
-                countMax = length - i;
+            current = (int) (value / Math.pow(10, length - i));
+            if (current > maxDigit) {
+                maxDigit = current;
+                countMax = i;
             }
 
-            value = (long) (a % Math.pow(10, i));
+            value = (long) (a % Math.pow(10, length - i));
         }
 
         return (byte) countMax;

@@ -28,6 +28,7 @@ public class IntegerTask {
         if (top >= height) {
             return 1;
         }
+
         if (top <= bottom) {
             return Integer.MAX_VALUE;
         }
@@ -53,7 +54,7 @@ public class IntegerTask {
             return 1;
         }
         long factorial = 1;
-        for (int i = 1; i <= n; i++) {
+        for (byte i = 2; i <= n; i++) {
             factorial *= i;
         }
         return factorial;
