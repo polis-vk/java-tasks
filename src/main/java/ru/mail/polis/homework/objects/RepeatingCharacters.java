@@ -16,33 +16,26 @@ public class RepeatingCharacters {
         if (str == null || str.equals("")) {
             return null;
         }
-        int count = 0; // счётчик элементов в массивах
-        int[] arrayRepeats = new int[str.length()]; // массив количества повторений каждого символа
-        char[] arrayElems = new char[str.length()]; // массив символов
         char currentElem = str.charAt(0); // текущий элемент
         int countRepeats = 0; // количество повторений текущего элемента
+        int maxRepeats = 0;
+        char maxElem = '\n';
         for (int i = 0; i < str.length(); i++) {
             if (str.charAt(i) == currentElem) {
                 countRepeats++;
             } else {
-                // если встречаем новый элемент - заносим в массивы данные о предыдущем элементе и обновляем currentElem
-                arrayElems[count] = currentElem;
-                arrayRepeats[count] = countRepeats;
+                // если встречаем новый элемент - проверяем максимальна ли очередная последовательность
+                if (countRepeats > maxRepeats) {
+                    maxRepeats = countRepeats;
+                    maxElem = currentElem;
+                }
                 countRepeats = 1;
                 currentElem = str.charAt(i);
-                count++;
             }
         }
-        arrayElems[count] = currentElem;
-        arrayRepeats[count] = countRepeats;
-        int maxRepeats = 0;
-        char maxElem = '\n';
-        // выбираем максимальный
-        for (int i = 0; i <= count; i++) {
-            if (arrayRepeats[i] > maxRepeats) {
-                maxRepeats = arrayRepeats[i];
-                maxElem = arrayElems[i];
-            }
+        if (countRepeats > maxRepeats) {
+            maxRepeats = countRepeats;
+            maxElem = currentElem;
         }
         return new Pair<>(maxElem, maxRepeats);
     }
