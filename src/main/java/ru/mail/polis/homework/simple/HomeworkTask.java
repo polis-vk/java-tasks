@@ -14,8 +14,8 @@ public class HomeworkTask {
      */
     public static double calcIntegral(double a, double b, ToDoubleFunction<Double> function, double delta) {
         double result = 0.0;
-        for (int i = 1; i < (b - a) / delta; i++) {
-            result += function.applyAsDouble(a + i * delta);
+        for (int x = 1; x < (b - a) / delta; x++) {
+            result += function.applyAsDouble(a + x * delta);
         }
         return delta * (function.applyAsDouble(a) / 2 + result + function.applyAsDouble(b) / 2);
     }
@@ -25,7 +25,14 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        byte length = (byte) (Math.log10(a) + 1);
+        byte length;
+        if (a == Long.MIN_VALUE){
+            length = (byte) (Math.log10(Math.abs(a - 1)) + 1);
+            //нельзя получить модуль наименьшего значения, поэтому смотрим количество разрядов самого большого, порядок у них одинаковый
+        }
+        else {
+            length = (a == 0) ? 1 : (byte) (Math.log10(Math.abs(a)) + 1);
+        }
         byte maxValue = 0;
         byte maxValuePosition = 1;
         byte presentNum;

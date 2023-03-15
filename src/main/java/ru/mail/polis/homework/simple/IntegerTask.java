@@ -14,7 +14,7 @@ public class IntegerTask {
      * Пример: (5) -> 15
      */
     public static int sum(int n) {
-        return (int) ((n / 2.0) * (2 + n - 1));
+        return (int) (n / 2.0 * (2 + n - 1));
     }
 
     /**
@@ -36,14 +36,14 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        int tempValue = (int) ((n % Math.pow(10, order)) / Math.pow(10, order - 1));
+        int tempValue = (int) (n % Math.pow(10, order) / Math.pow(10, order - 1));
         return Math.abs(tempValue);
     }
 
 
     // добавил перегрузку для того, чтобы использовать метод в HomeworkTask, не знаю, можно ли изменять сигнатуру методов в дз.
     public static int kDecimal(long n, int order) {
-        int numDigit = (int) ((n % Math.pow(10, order)) / Math.pow(10, order - 1));
+        int numDigit = (int) (n % Math.pow(10, order) / Math.pow(10, order - 1));
         return Math.abs(numDigit);
     }
 
