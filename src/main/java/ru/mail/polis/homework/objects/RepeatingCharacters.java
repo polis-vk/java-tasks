@@ -17,25 +17,24 @@ public class RepeatingCharacters {
         if (str == null || str.isEmpty()) {
             return null;
         }
-        int stringLength = str.length();
         int numberOfRepetitions = 1;
-        char mostCommonLetter = str.charAt(0);
+        char symbol = str.charAt(0);
         int maxNumberOfRepetitions = 1;
-        for (int i = 1; i < stringLength; i++) {
+        for (int i = 1; i < str.length(); i++) {
             if (str.charAt(i) == str.charAt(i - 1)) {
                 numberOfRepetitions++;
             } else if (numberOfRepetitions > maxNumberOfRepetitions) {
                 maxNumberOfRepetitions = numberOfRepetitions;
-                mostCommonLetter = str.charAt(i - 1);
+                symbol = str.charAt(i - 1);
                 numberOfRepetitions = 1;
             } else {
                 numberOfRepetitions = 1;
             }
         }
         if (numberOfRepetitions > maxNumberOfRepetitions) {
-            return new Pair<>(str.charAt(stringLength - 1), numberOfRepetitions);
+            return new Pair<>(str.charAt(str.length() - 1), numberOfRepetitions);
         }
-        return new Pair<>(mostCommonLetter, maxNumberOfRepetitions);
+        return new Pair<>(symbol, maxNumberOfRepetitions);
     }
 
     public static class Pair<T, V> {
