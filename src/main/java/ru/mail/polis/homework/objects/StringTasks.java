@@ -27,29 +27,32 @@ public class StringTasks {
             c = str.charAt(i);
             if (Character.isDigit(c)) {
                 sb.append(c);
-            } else if (c == '.') {
-                if (isDot) {
+                continue;
+            }
+            if (c == '.') {
+                if (isDot || i == str.length() - 1) {
                     return null;
                 }
                 isDot = true;
                 sb.append(c);
-            } else if (c == 'e') {
-                if (isExp) {
+                continue;
+            }
+            if (c == 'e') {
+                if (isExp || i == str.length() - 1) {
                     return null;
                 }
                 isExp = true;
                 sb.append(c);
-            } else if (c == '-') {
-                if (sb.length() != 0 && sb.charAt(sb.length() - 1) != 'e') {
+                continue;
+            }
+            if (c == '-') {
+                if (sb.length() != 0 && sb.charAt(sb.length() - 1) != 'e' || i == str.length() - 1) {
                     return null;
                 }
                 sb.append(c);
             }
         }
         String strNum = sb.toString();
-        if (!Character.isDigit(strNum.charAt(strNum.length() - 1))) {
-            return null;
-        }
         if (isDot || isExp) {
             return Double.parseDouble(strNum);
         }
