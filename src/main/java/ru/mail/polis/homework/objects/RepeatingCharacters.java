@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.objects;
 
-
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
 import java.util.Objects;
 
 /**
@@ -14,7 +15,31 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        return new Pair<>('s', 4);
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+
+        CharacterIterator it = new StringCharacterIterator(str);
+        char currentSymbol = it.current();
+        it.next();
+        char mostOftenSymbol = currentSymbol;
+        int count = 1;
+        int maxCount = 1;
+
+        while (it.current() != CharacterIterator.DONE) {
+            if (it.current() == currentSymbol) {
+                ++count;
+                if (count > maxCount) {
+                    mostOftenSymbol = currentSymbol;
+                    maxCount = count;
+                }
+            } else {
+                currentSymbol = it.current();
+                count = 1;
+            }
+            it.next();
+        }
+        return new Pair<>(mostOftenSymbol, maxCount);
     }
 
     public static class Pair<T, V> {
