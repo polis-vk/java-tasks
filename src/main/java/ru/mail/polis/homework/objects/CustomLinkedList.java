@@ -8,8 +8,6 @@ import java.util.Iterator;
  */
 public class CustomLinkedList implements Iterable<Integer> {
 
-    private Node head;
-
     /**
      * 1 тугрик
      * Возвращает количество элементов в списке
@@ -28,7 +26,6 @@ public class CustomLinkedList implements Iterable<Integer> {
      * @param value - data for create Node.
      */
     public void add(int value) {
-
     }
 
     /**
