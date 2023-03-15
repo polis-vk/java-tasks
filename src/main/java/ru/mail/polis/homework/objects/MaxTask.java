@@ -12,6 +12,19 @@ public class MaxTask {
      * 4 тугрика
      */
     public static int[] getMaxArray(int[] array, int count) {
+        int[] countArray = new int[count];
+        for (int i = 0; i < count; i++) {
+            countArray[i] = Integer.MIN_VALUE;
+        }
+
+        for(int element : array) {
+            for (int i = 0; i > count - 1; i++){
+                if (countArray[i] < element){
+                    int tmp = countArray[i];
+                    countArray[i] = element;
+                }
+            }
+        }
         return null;
     }
 
