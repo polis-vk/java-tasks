@@ -30,8 +30,8 @@ public class HomeworkTask {
         byte maxDigit = 0;
         byte digit;
         long num = a;
-        int numOfDigits = (int) Math.ceil(Math.log10(a));
-        for (int i = 1; i <= numOfDigits + 1; i++) {
+        byte numOfDigits = (byte) Math.ceil(Math.log10(a));
+        for (int i = 1; i <= numOfDigits; i++) {
             digit = (byte) (num / (Math.pow(10, numOfDigits - i)));
             position++;
             if (digit == 9) {
