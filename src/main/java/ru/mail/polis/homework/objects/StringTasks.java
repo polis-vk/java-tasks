@@ -16,35 +16,59 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        if (str == null || str.equals("")) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
+        // переменные для проверки валидности потенциально переводимой в число строки
+        int eAppearance = 0;
+        int dotAppearance = 0;
+        int minusAppearance = 0;
+        boolean minusAfterE = true;
+        boolean validEnding = true;
+        //
         int length = str.length();
-        boolean flag = false;
+        boolean flagCastToDouble = false;
+        StringBuilder tempStr = new StringBuilder(str);
         for (int i = 0; i < length; i++) {
-            // флаг для проверки - кастить ли к Double (если . или 'e' - ДА)
-            if (str.charAt(i) == '.' || str.charAt(i) == 'e') {
-                flag = true;
+            if (tempStr.charAt(i) == 'e') {
+                eAppearance++;
             }
-            if (!(Character.isDigit(str.charAt(i)) || str.charAt(i) == '-' || str.charAt(i) == '.' || str.charAt(i) == 'e')) {
-                str = str.substring(0, i) + str.substring(i + 1);
+            if (tempStr.charAt(i) == '.') {
+                dotAppearance++;
+            }
+            if (tempStr.charAt(i) == '-' && i != 0) {
+                minusAppearance++;
+                if (eAppearance == 0) {
+                    minusAfterE = false;
+                }
+            }
+            if (i == length - 1 && (tempStr.charAt(i) == '-' || tempStr.charAt(i) == 'e')) {
+                validEnding = false;
+            }
+            // флаг для проверки - кастить ли к Double (если . или 'e' - ДА)
+            if (tempStr.charAt(i) == '.' || tempStr.charAt(i) == 'e') {
+                flagCastToDouble = true;
+            }
+            if (!(Character.isDigit(tempStr.charAt(i)) || tempStr.charAt(i) == '-' || tempStr.charAt(i) == '.' || tempStr.charAt(i) == 'e')) {
+                tempStr.delete(i, i + 1);
                 i--;
                 length--;
             }
         }
-        try {
-            if (flag) {
-                return Double.parseDouble(str);
+        String resultStr = tempStr.toString();
+        if (eAppearance > 1 || !minusAfterE || dotAppearance > 1 || minusAppearance > 1 || !validEnding) {
+            return null;
+        } else {
+            if (flagCastToDouble) {
+                return Double.parseDouble(resultStr);
             } else {
-                long result = Long.parseLong(str);
+                long result = Long.parseLong(resultStr);
                 if (result > Integer.MAX_VALUE || result < Integer.MIN_VALUE) {
                     return result;
                 } else {
                     return (int) result;
                 }
             }
-        } catch (Exception e) {
-            return null;
         }
     }
 }
