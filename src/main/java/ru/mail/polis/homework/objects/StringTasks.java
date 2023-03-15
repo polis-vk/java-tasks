@@ -43,7 +43,7 @@ public class StringTasks {
                     }
                     ePresent = true;
                 } else {
-                    if (dotPresent) {
+                    if (dotPresent || ePresent) {
                         return null;
                     }
                     dotPresent = true;
