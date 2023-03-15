@@ -14,16 +14,14 @@ public class DoubleTask {
      * Пример: (1, 5, 4) -> "-1.0, -4.0"
      */
     public static String equation(int a, int b, int c) {
-        double x1 = 0;
-        double x2 = 0;
         double d = Math.pow(b, 2) - 4 * a * c;
-        if (d > 0) {
-            x1 = (a > 0 ? (-b + Math.sqrt(d)) : (-b - Math.sqrt(d))) / (2 * a);
-            x2 = (a > 0 ? (-b - Math.sqrt(d)) : (-b + Math.sqrt(d))) / (2 * a);
-        } else if (d == 0) {
-            x1 = (double) -b / 2 * a;
-            x2 = x1;
-        }
+
+        double root1 = -b + Math.sqrt(d);
+        double root2 = -b - Math.sqrt(d);
+
+        double x1 = (a > 0 ? root1 : root2) / (2 * a);
+        double x2 = (a > 0 ? root2 : root1) / (2 * a);
+
         return x1 + ", " + x2;
     }
 
