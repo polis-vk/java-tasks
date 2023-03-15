@@ -25,16 +25,13 @@ public class HomeworkTask {
         if (a == 0) {
             return 1;
         }
-        if (a == Long.MIN_VALUE) {
-            return 1;
-        }
         byte position = 0;
-        byte maxPosition = 0;
+        byte maxPosition = 1;
         byte maxDigit = 0;
         byte digit;
         long num = a;
-        byte numOfDigits = (byte) Math.ceil(Math.log10(Math.abs(a) + 0.5));
-        for (int i = 1; i <= numOfDigits; i++) {
+        int numOfDigits = (int) Math.ceil(Math.log10(a));
+        for (int i = 1; i <= numOfDigits + 1; i++) {
             digit = (byte) (num / (Math.pow(10, numOfDigits - i)));
             position++;
             if (digit == 9) {
