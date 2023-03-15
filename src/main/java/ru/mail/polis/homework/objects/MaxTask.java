@@ -23,17 +23,16 @@ public class MaxTask {
         Arrays.fill(arrayOfMaxima, Integer.MIN_VALUE);
         arrayOfMaxima[0] = array[0];
         int numberOfFilledElements = 1; //Количество заполненных элементов в результирующем массиве
-        int arrayLength = array.length;
-        for (int i = 1; i < arrayLength; i++) {
-            int j = binarySelect(arrayOfMaxima, array[i]); //бинарная вставка элемента
+        for (int i = 1; i < array.length; i++) {
+            int indexOfTheElementToBeAdded = binarySelect(arrayOfMaxima, array[i]); //бинарная вставка элемента
             if (numberOfFilledElements < count) {
                 numberOfFilledElements++;
             }
-            for (int k = numberOfFilledElements - 1; k > j; k--) {
+            for (int k = numberOfFilledElements - 1; k > indexOfTheElementToBeAdded; k--) {
                 arrayOfMaxima[k] = arrayOfMaxima[k - 1];
             }
-            if (j < arrayOfMaxima.length) {
-                arrayOfMaxima[j] = array[i];
+            if (indexOfTheElementToBeAdded < arrayOfMaxima.length) {
+                arrayOfMaxima[indexOfTheElementToBeAdded] = array[i];
             }
         }
         return arrayOfMaxima;
