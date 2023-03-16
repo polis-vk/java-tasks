@@ -19,40 +19,41 @@ public class StringTasks {
         if (str == null || str.length() == 0 || str.charAt(str.length() - 1) == '-' || str.charAt(str.length() - 1) == 'e') {
             return null;
         }
-        StringBuilder returnValue = new StringBuilder();
+        StringBuilder result = new StringBuilder();
         int dotAmount = 0;
         int eAmount = 0;
-        for (int i = 0; i < str.length(); ++i) {
-            if (str.charAt(i) != '-' && str.charAt(i) != 'e' && str.charAt(i) != '.' && !Character.isDigit(str.charAt(i))) {
+        for (char c: str.toCharArray()) {
+            if (c != '-' && c != 'e' && c != '.' && !Character.isDigit(c)) {
                 continue;
             }
-            if (str.charAt(i) == '.') {
+            else if (c == '.') {
                 ++dotAmount;
                 if (dotAmount > 1) {
                     return null;
                 }
             }
-            if (str.charAt(i) == 'e') {
+            else if (c == 'e') {
                 ++eAmount;
                 if (eAmount > 1) {
                     return null;
                 }
             }
-            returnValue.append(str.charAt(i));
+            result.append(c);
         }
-        for (int i = 1; i < returnValue.length() - 1; ++i) {
-            if (returnValue.charAt(i) == '-' && (returnValue.charAt(i - 1) != 'e'
-                    || !Character.isDigit(returnValue.charAt(i + 1)))) {
+        for (int i = 1; i < result.length() - 1; ++i) {
+            if (result.charAt(i) == '-' && (result.charAt(i - 1) != 'e'
+                    || !Character.isDigit(result.charAt(i + 1)))) {
                 return null;
             }
         }
-        if (returnValue.indexOf(".") != -1 || returnValue.indexOf("e") != -1) {
-            return Double.valueOf(returnValue.toString());
+        if (eAmount == 1 || dotAmount == 1) {
+            return Double.valueOf(result.toString());
         }
-        if (Long.valueOf(returnValue.toString()) > Integer.MAX_VALUE
-                || Long.valueOf(returnValue.toString()) < Integer.MIN_VALUE) {
-            return Long.valueOf(returnValue.toString());
+        long longResult = Long.valueOf(result.toString());
+        if (longResult > Integer.MAX_VALUE
+                || longResult < Integer.MIN_VALUE) {
+            return longResult;
         }
-        return Integer.valueOf(returnValue.toString());
+        return Integer.valueOf(result.toString());
     }
 }
