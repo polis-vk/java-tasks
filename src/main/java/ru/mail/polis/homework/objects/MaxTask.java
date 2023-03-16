@@ -12,7 +12,47 @@ public class MaxTask {
      * 4 тугрика
      */
     public static int[] getMaxArray(int[] array, int count) {
-        return null;
+        if (array == null || count > array.length) {
+            return null;
+        }
+
+        if (count == 0) {
+            return new int[]{};
+        }
+
+        int[] tmp = new int[count];
+        tmp[0] = array[0];
+        int size = 1;
+        int left;
+        int right;
+        int mid;
+        for (int i = 1; i < array.length; i++) {
+            if (size < count) {
+                size++;
+            } else {
+                if (array[i] < tmp[size - 1]) {
+                    continue;
+                }
+            }
+
+            left = 0;
+            right = size - 1;
+            mid = (left + right) / 2;
+            while (left != right) {
+                if (tmp[mid] < array[i]) {
+                    right = mid;
+                } else {
+                    left = mid + 1;
+                }
+                mid = (left + right) / 2;
+            }
+
+            for (int j = size - 1; j > mid; j--) {
+                tmp[j] = tmp[j - 1];
+            }
+            tmp[mid] = array[i];
+        }
+        return tmp;
     }
 
 }
