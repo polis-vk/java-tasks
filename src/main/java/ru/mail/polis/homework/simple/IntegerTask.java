@@ -13,8 +13,9 @@ public class IntegerTask {
      * Сумма чисел от 1 до n (1 + 2 + 3 + ... + n)
      * Пример: (5) -> 15
      */
-    public static int sum(int n) {
-        return 0;
+    public static int sum(int n)
+    {
+        return (1 + n) * n / 2;
     }
 
     /**
@@ -24,7 +25,16 @@ public class IntegerTask {
      * Пример: (10, 3, 2) -> 8
      */
     public static int snake(int height, int top, int bottom) {
-        return 0;
+        if ((top - bottom) > 0) {
+            return (int)Math.ceil((height - top) / (double)(top - bottom)) + 1;
+            /* Мы вычитаем из height top и добавляем 1, так в последний день не нужно учитывать
+            то, что гусеница ночью будет сползать
+             */
+        } else if (height - top <= 0) {
+            return 1;
+        } else {
+            return Integer.MAX_VALUE;
+        }
     }
 
     /**
@@ -32,7 +42,7 @@ public class IntegerTask {
      * Пример: (454355, 3) -> 3
      */
     public static int kDecimal(int n, int order) {
-        return 0;
+        return Math.abs((int)((n / Math.pow(10.0, (double) order - 1.0)) % 10.0));
     }
 
 
@@ -41,6 +51,11 @@ public class IntegerTask {
      * Пример: (5) -> 120
      */
     public static long factorial(byte n) {
-        return 0;
+        long factorial = 1;
+        for (int i = 1; i <= n; i++)
+        {
+            factorial *= i;
+        }
+        return factorial;
     }
 }

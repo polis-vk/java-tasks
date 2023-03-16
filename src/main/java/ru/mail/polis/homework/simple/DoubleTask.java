@@ -16,6 +16,16 @@ public class DoubleTask {
     public static String equation(int a, int b, int c) {
         double x1 = 0;
         double x2 = 0;
+        double discriminantSqrt = Math.sqrt(b * b - 4 * a * c);
+        if (a < 0)
+        {
+            x1 = (-b - discriminantSqrt) / (2 * a);
+            x2 = (-b + discriminantSqrt) / (2 * a);
+        } else
+        {
+            x2 = (-b - discriminantSqrt) / (2 * a);
+            x1 = (-b + discriminantSqrt) / (2 * a);
+        }
         return x1 + ", " + x2;
     }
 
@@ -24,6 +34,6 @@ public class DoubleTask {
      * Пример: (0, 0, 3, 4) -> 5.0
      */
     public static float length(double x1, double y1, double x2, double y2) {
-        return 0;
+        return (float) Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
     }
 }
