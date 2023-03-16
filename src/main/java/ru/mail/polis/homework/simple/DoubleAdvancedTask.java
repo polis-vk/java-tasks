@@ -20,6 +20,8 @@ public class DoubleAdvancedTask {
         double x1 = 0;
         double x2 = 0;
         double x3 = 0;
+
+
         return x1 + ", " + x2 + ", " + x3;
     }
 
@@ -43,7 +45,22 @@ public class DoubleAdvancedTask {
     public static double surfaceFunction(int x1, int y1, int z1,
                                          int x2, int y2, int z2,
                                          int x3, int y3, int z3,
-                                         int x4, int y4) {
-        return 0;
+                                         int x4, int y4)
+    //создаем зубчатый массив, куда записываем уравнение плоскости по 3 точкам. Матрица с этими данными
+    //=0, выводим z4 из формулы. Переменные temp1,2,3 созданы для удобства
+    {
+
+        int[][] arr = new int[3][];
+        arr[0] = new int[]{x2 - x1, y2 - y1, z2 - z1};
+        arr[1] = new int[]{x3 - x1, y3 - y1, z3 - z1};
+        arr[2] = new int[]{x4 - x1, y4 - y1};
+
+        float temp1 = arr[1][2] * (arr[0][0] * arr[2][1] - arr[0][1] * arr[2][0]);
+        int temp2 = arr[0][2] * (arr[1][0] * arr[2][1] - arr[1][1] * arr[2][0]);
+        int temp3 = arr[0][0] * arr[1][1] - arr[0][1] * arr[1][0];
+
+
+        double z4 = z1 + ((temp1 - temp2) / temp3);
+        return z4;
     }
 }
