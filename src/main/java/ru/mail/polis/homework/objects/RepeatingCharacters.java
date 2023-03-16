@@ -18,17 +18,17 @@ public class RepeatingCharacters {
             return null;
         }
         int maxRepeatings = 1;
-        int curRepeatings = 1;
+        int repeatingsAmount = 1;
         char maxRepeatingChar = 'a';
         for (int i = 0; i < str.length() - 1; ++i) {
             if (str.charAt(i) == str.charAt(i + 1)) {
-                curRepeatings++;
-                if (curRepeatings > maxRepeatings) {
+                repeatingsAmount++;
+                if (repeatingsAmount > maxRepeatings) {
                     maxRepeatingChar = str.charAt(i);
-                    maxRepeatings = curRepeatings;
+                    maxRepeatings = repeatingsAmount;
                 }
             } else {
-                curRepeatings = 1;
+                repeatingsAmount = 1;
             }
         }
         return new Pair<>(maxRepeatingChar, maxRepeatings);
