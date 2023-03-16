@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.simple;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.function.ToDoubleFunction;
 
 public class HomeworkTask {
@@ -25,14 +24,13 @@ public class HomeworkTask {
      */
     public static byte maxNumber(long a) {
         String aStr = String.valueOf(a);
-        boolean isAPositive = a >= 0;
+        int coefficient = (a >= 0) ? 1 : 0;
         int aMax = 0;
         while (a != 0) {
             aMax = (int) Math.max(aMax, Math.abs(a % 10));
             a /= 10;
         }
-        return isAPositive ? (byte) (aStr.indexOf(String.valueOf(aMax)) + 1) :
-                (byte) (aStr.indexOf(String.valueOf(aMax)));
+        return (byte) (aStr.indexOf(String.valueOf(aMax)) + coefficient);
     }
 
     /**

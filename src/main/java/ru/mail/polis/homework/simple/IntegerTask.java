@@ -29,16 +29,15 @@ public class IntegerTask {
      */
     public static int snake(int height, int top, int bottom) {
         int count = 0;
-        if (!(top > bottom || top >= height)) {
+        if (top <= bottom && top < height) {
             return Integer.MAX_VALUE;
-        } else {
-            int actualHeight = 0;
-            while (actualHeight < height) {
-                actualHeight += top;
-                count++;
-                if (actualHeight < height) {
-                    actualHeight -= bottom;
-                }
+        }
+        int actualHeight = 0;
+        while (actualHeight < height) {
+            actualHeight += top;
+            count++;
+            if (actualHeight < height) {
+                actualHeight -= bottom;
             }
         }
         return count;
