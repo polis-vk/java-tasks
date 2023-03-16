@@ -14,39 +14,31 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if (str == null) {
-            return null;
-        }
-        if (str.equals("")) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
 
-        char[] arrayFromStr = str.toCharArray();
-        Pair[] arrayOfPair = new Pair[str.length()];
-        int countRepeat = 1;
-        int length = arrayFromStr.length;
+        int maxCount = 0;
+        int count = 1;
+        char symbol = '\0';
 
-        for (int i = 1, j = 0; i <= length; i++) {
-            if (i != length && arrayFromStr[j] == arrayFromStr[i]) {
-                countRepeat++;
-            } else {
-                arrayOfPair[j] = new Pair<>(arrayFromStr[j], countRepeat);
-                j = i;
-                countRepeat = 1;
+        for (int i = 0; i <= str.length() - 1; i++) {
+            if (i != str.length() - 1) {
+                if (str.charAt(i) == str.charAt(i + 1)) {
+                    count++;
+                    continue;
+                }
             }
+
+            if (count > maxCount) {
+                maxCount = count;
+                symbol = str.charAt(i);
+            }
+
+            count = 1;
         }
 
-        int maxCountOfRepetition = (int) arrayOfPair[0].getSecond();
-        int index = 0;
-
-        for (int i = 1; i < length; i++) {
-            if (arrayOfPair[i] != null && maxCountOfRepetition < (int) arrayOfPair[i].getSecond()) {
-                maxCountOfRepetition = (int) arrayOfPair[i].getSecond();
-                index = i;
-            }
-        }
-
-        return arrayOfPair[index];
+        return new Pair<>(symbol, maxCount);
     }
 
     public static class Pair<T, V> {
