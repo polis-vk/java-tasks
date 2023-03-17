@@ -12,32 +12,32 @@ import java.util.*;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if (str == null) return null;
+        if (str == null || str.equals("")) return null;
         char[] chars = str.toCharArray();
-        int currentCount;
-        Pair<Character, Integer> current = null;
-        Pair<Character, Integer> maximum = null;
+        int currentCount = 0;
+        char maximumChar = str.charAt(0);
+        int maximumCount = Integer.MIN_VALUE;
         for (int i = 0; i < chars.length; i++) {
-            Character currentChar = chars[i];
-            Character previousChar = i == 0 ? null : chars[i - 1];
-            if (previousChar != null ) {
+            char currentChar = chars[i];
+            if (i > 0) {
+                char previousChar = chars[i - 1];
                 if (previousChar == currentChar) {
-                    currentCount = current.second + 1;
+                    currentCount = currentCount + 1;
                 } else {
                     currentCount = 1;
                 }
             } else {
                 currentCount = 1;
-                maximum = new Pair<>(currentChar, currentCount);
+                maximumCount = 1;
+                maximumChar = currentChar;
             }
-            current = new Pair<>(currentChar, currentCount);
 
-            if (current.second > maximum.second) {
-                maximum = current;
+            if (currentCount > maximumCount) {
+                maximumCount = currentCount;
+                maximumChar = currentChar;
             }
         }
-
-        return maximum;
+        return new Pair<>(maximumChar, maximumCount);
     }
 
     public static class Pair<T, V> {
