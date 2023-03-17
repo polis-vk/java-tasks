@@ -14,8 +14,7 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if (str == null || str.isEmpty())
-        {
+        if (str == null || str.isEmpty()) {
             return null;
         }
         char[] arrStr = str.toCharArray();
@@ -23,18 +22,14 @@ public class RepeatingCharacters {
         char maxRepSymbol = arrStr[0];
         int currLength = 1;
         int maxLength = 1;
-        for (int i = 1; i < arrStr.length; i++)
-        {
-            if (currSymbol == arrStr[i])
-            {
+        for (int i = 1; i < arrStr.length; i++) {
+            if (currSymbol == arrStr[i]) {
                 currLength++;
-                if (currLength > maxLength)
-                {
+                if (currLength > maxLength) {
                     maxLength = currLength;
                     maxRepSymbol = currSymbol;
                 }
-            }
-            else {
+            } else {
                 currSymbol = arrStr[i];
                 currLength = 1;
             }
