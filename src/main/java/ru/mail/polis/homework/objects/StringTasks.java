@@ -16,6 +16,58 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        return null;
+        if (str == null || str.length() == 0) {
+            return null;
+        }
+        char[] strArray = str.toCharArray();
+        boolean pointHave = false;
+        boolean eHave = false;
+
+        StringBuilder digit = new StringBuilder();
+        for (int i = 0; i < strArray.length; i++) {
+            char cur = strArray[i];
+            switch (cur) {
+                case '.':
+                    if (pointHave) {
+                        return null;
+                    }
+                    pointHave = true;
+                    digit.append(cur);
+                    break;
+                case '-':
+                    //Нет выхода за предел массива благодаря первому условию
+                    if (i == strArray.length - 1 || strArray[i + 1] == '-') {
+                        return null;
+                    }
+                    if (digit.length() != 0 && digit.charAt(digit.length() - 1) != 'e') {
+                        return null;
+                    }
+                    digit.append(cur);
+                    break;
+                case 'e':
+                    if (eHave || i == strArray.length - 1) {
+                        return null;
+                    }
+                    eHave = true;
+                    digit.append(cur);
+                    break;
+                default:
+                    if (Character.isDigit(cur)) {
+                        digit.append(cur);
+                    }
+                    break;
+            }
+        }
+        if (pointHave || eHave) {
+            return Double.parseDouble(digit.toString());
+        } else {
+            long resultLong = Long.parseLong(digit.toString());
+            if (resultLong <= Integer.MAX_VALUE && resultLong >= Integer.MIN_VALUE) {
+                return Integer.parseInt(digit.toString());
+            } else {
+                return resultLong;
+            }
+        }
     }
+
 }
