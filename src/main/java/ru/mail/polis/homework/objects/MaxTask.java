@@ -31,30 +31,29 @@ public class MaxTask {
         }
         return result;
     }
-    public static int kThSmallest(int[] array, int left, int right, int k)
-    {
+    public static int kThSmallest(int[] array, int left, int right, int k) {
         int pos = partition(array, left, right);
 
-        if (pos-left == k - 1) {
+        if (pos - left == k - 1) {
             return array[pos];
         }
-        if (pos-left > k - 1) {
+        if (pos - left > k - 1) {
             return kThSmallest(array, left, pos - 1, k);
         }
         return kThSmallest(array, pos + 1, right, k - pos + left - 1);
     }
-    public static void swap(int[] array, int i, int j)
-    {
+    private static void swap(int[] array, int i, int j) {
         int temp = array[i];
         array[i] = array[j];
         array[j] = temp;
     }
-    static int partition(int[] array, int left, int right)
-    {
+    private static int partition(int[] array, int left, int right) {
         int i = left;
         for (int j = left; j <= right - 1; j++) {
             if (array[j] <= array[right]) {
-                swap(array, i, j);
+                if (i != j) {
+                    swap(array, i, j);
+                }
                 i++;
             }
         }

@@ -32,7 +32,7 @@ public class StringTasks {
                 }
                 number.append(ch);
             } else if (ch == '-') {
-                if (!((number.length() == 0) || number.charAt(number.length() - 1) == 'e')) {
+                if (number.length() != 0 && number.charAt(number.length() - 1) != 'e') {
                     return null;
                 }
                 number.append(ch);
@@ -49,6 +49,6 @@ public class StringTasks {
         if (converted > Integer.MAX_VALUE || converted < Integer.MIN_VALUE) {
             return converted;
         }
-        return Integer.valueOf(number.toString());
+        return converted.intValue();
     }
 }
