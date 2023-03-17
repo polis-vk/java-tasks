@@ -21,27 +21,44 @@ public class StringTasks {
         if (str == null || str.isEmpty()) return null;
 
         StringBuilder temp = new StringBuilder(str);
+        boolean isDouble = false;
+        boolean hasE = false;
+        int minusCount = 0;
 
         for (int i = 0; i < temp.length(); i++) {
             char currentChar = temp.charAt(i);
             if (!(Character.isDigit(currentChar) || currentChar == 'e' || currentChar == '-' || currentChar == '.')) {
                 temp.deleteCharAt(i);
                 i--;
+            } else if (currentChar == '.') {
+                if (isDouble) {
+                    return null;
+                }
+                isDouble = true;
+            } else if (currentChar == 'e') {
+                if (hasE || i == temp.length() - 1) {
+                    return null;
+                }
+                hasE = true;
+                isDouble = true;
+            } else if (currentChar == '-') {
+                minusCount++;
+                if ((i != 0 && !hasE)
+                        || i == temp.length() - 1
+                        || minusCount > 2
+                        || (temp.length() - 1 >= i + 1 && temp.charAt(i + 1) == '-')) {
+                    return null;
+                }
             }
         }
 
-        try {
-            try {
-                try {
-                    return Integer.valueOf(temp.toString());
-                } catch (NumberFormatException e) {
-                    return Long.valueOf(temp.toString());
-                }
-            } catch (NumberFormatException e) {
-                return Double.valueOf(temp.toString());
+        if (!isDouble) {
+            if (Long.parseLong(temp.toString()) <= Integer.MAX_VALUE && Long.parseLong(temp.toString()) >= Integer.MIN_VALUE) {
+                return Integer.valueOf(temp.toString());
+            } else {
+                return Long.valueOf(temp.toString());
             }
-        } catch (NumberFormatException e) {
-            return null;
         }
+        return Double.valueOf(temp.toString());
     }
 }

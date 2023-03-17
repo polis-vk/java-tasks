@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.objects;
 
-
 public class MaxTask {
 
     /**
