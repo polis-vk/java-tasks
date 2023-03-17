@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.PriorityQueue;
+import java.util.Collections;
+
 public class MaxTask {
 
     /**
@@ -15,19 +18,13 @@ public class MaxTask {
         if (array == null || array.length < count) {
             return null;
         }
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+        for (int j : array) {
+            maxHeap.offer(j);
+        }
         int[] result = new int[count];
-        int[] tempArray = array.clone();
         for (int i = 0; i < count; i++) {
-            int maxIndex = i;
-            for (int j = i + 1; j < tempArray.length; j++) {
-                if (tempArray[j] > tempArray[maxIndex]) {
-                    maxIndex = j;
-                }
-            }
-            int temp = tempArray[i];
-            tempArray[i] = tempArray[maxIndex];
-            tempArray[maxIndex] = temp;
-            result[i] = tempArray[i];
+            result[i] = maxHeap.poll();
         }
         return result;
     }

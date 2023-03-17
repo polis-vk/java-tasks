@@ -17,26 +17,21 @@ public class RepeatingCharacters {
         if (str == null || str.isEmpty()) {
             return null;
         }
-        int count;
-        char c;
-        int maxCount = 0;
-        char maxChar = ' ';
-        String input = str + " ";
-        for (int i = 0; i < input.length(); i++) {
-            c = input.charAt(i);
-            count = 1;
-            for (int j = i + 1; j < input.length(); j++) {
-                if (input.charAt(j) == c) {
-                    count++;
-                } else if (count > maxCount) {
+        int count = 1;
+        int maxCount = 1;
+        char maxChar = str.charAt(0);
+        for (int i = 1; i < str.length(); i++) {
+            if (str.charAt(i - 1) == str.charAt(i)) {
+                count++;
+                if (count > maxCount) {
+                    maxChar = str.charAt(i - 1);
                     maxCount = count;
-                    maxChar = c;
-                    i = j - 1;
-                    break;
-                } else {
-                    i = j - 1;
+                }
+            } else {
+                if (maxCount > str.length() - i) {
                     break;
                 }
+                count = 1;
             }
         }
         return new Pair<>(maxChar, maxCount);

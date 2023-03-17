@@ -27,41 +27,46 @@ public class StringTasks {
             char c = str.charAt(i);
             if (Character.isDigit(c)) {
                 res.append(c);
-            } else if (c == '-') {
+                continue;
+            }
+            if (c == '-') {
                 if (res.length() == 0 && !isNegative) {
                     res.append(c);
                     isNegative = true;
+                    continue;
                 } else if (res.charAt(res.length() - 1) == 'e') {
                     res.append(c);
-                } else {
-                    return null;
+                    continue;
                 }
-            } else if (c == '.') {
+                return null;
+            }
+            if (c == '.') {
                 if (countE < 1 && countDot < 1 && res.length() > 0) {
                     res.append(c);
                     countDot++;
-                } else {
-                    return null;
+                    continue;
                 }
-            } else if (c == 'e') {
+                return null;
+            }
+            if (c == 'e') {
                 if (countE < 1 && res.length() > 0) {
                     res.append(c);
                     countE++;
-                } else {
-                    return null;
+                    continue;
                 }
+                return null;
             }
         }
         if (res.charAt(res.length() - 1) == 'e') {
             return null;
         }
         if (countDot == 0 && countE == 0) {
-            Long temp = Long.valueOf(res.toString());
+            long temp = Long.parseLong(res.toString());
             if (temp >= Integer.MIN_VALUE && temp <= Integer.MAX_VALUE) {
-                return temp.intValue();
+                return (int) temp;
             }
             return temp;
         }
-        return Double.valueOf(res.toString());
+        return Double.parseDouble(res.toString());
     }
 }
