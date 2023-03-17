@@ -16,6 +16,51 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        return null;
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+        StringBuilder tmpStr = new StringBuilder();
+        char[] ch = str.toCharArray();
+        boolean haveE = false;
+        boolean haveDot = false;
+        for (int i = 0; i < str.length(); i++) {
+            if (Character.isDigit(ch[i])) {
+                tmpStr.append(ch[i]);
+            }
+            if (ch[i] == 'e' && Character.isDigit(tmpStr.charAt(tmpStr.length() - 1))) {
+                if (haveE) {
+                    return null;
+                }
+                tmpStr.append(ch[i]);
+                haveE = true;
+            }
+            if (ch[i] == '-') {
+                if ((tmpStr.length() == 0 || tmpStr.charAt(tmpStr.length() - 1) == 'e')) {
+                    tmpStr.append(ch[i]);
+                } else if (Character.isDigit(tmpStr.charAt(tmpStr.length() - 1)) || tmpStr.charAt(tmpStr.length() - 1) == '-') {
+                    return null;
+                }
+            }
+            if (ch[i] == '.') {
+                if (haveDot) {
+                    return null;
+                }
+                if (Character.isDigit(tmpStr.charAt(tmpStr.length() - 1))) {
+                    tmpStr.append(ch[i]);
+                    haveDot = true;
+                }
+            }
+        }
+        if (tmpStr.charAt(tmpStr.length() - 1) == '.' || tmpStr.charAt(tmpStr.length() - 1) == 'e' || tmpStr.charAt(tmpStr.length() - 1) == '-') {
+            return null;
+        }
+        String finalStr = tmpStr.toString();
+        if (haveDot | haveE) {
+            return Double.valueOf(finalStr);
+        }
+        if (Long.valueOf(finalStr) > Integer.MAX_VALUE || Long.valueOf(finalStr) < Integer.MIN_VALUE) {
+            return Long.valueOf(finalStr);
+        }
+        return Integer.valueOf(finalStr);
     }
 }
