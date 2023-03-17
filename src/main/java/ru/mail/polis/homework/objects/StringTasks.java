@@ -16,54 +16,58 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        if (str == null) {
-            return null;
-        }
-        if (str.equals("")) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
 
-        StringBuilder newStr = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
         int countE = 1;
         int countDots = 1;
 
         char[] arrayOfStr = str.toCharArray();
         for (int i = 0; i < arrayOfStr.length; i++) {
-            if (!Character.isDigit(arrayOfStr[i])) {
-                if (arrayOfStr[i] == 'e') {
-                    if (countE > 1 || i == str.length() - 1) {
-                        return null;
-                    }
-                    newStr.append(str.charAt(i));
-                    countE++;
-                    continue;
-                } else if (arrayOfStr[i] == '.') {
-                    if (countDots > 1) {
-                        return null;
-                    }
-                    newStr.append(str.charAt(i));
-                    countDots++;
-                    continue;
-                } else if (arrayOfStr[i] == '-') {
-                    if (newStr.length() == 0 || newStr.charAt(newStr.length() - 1) == 'e') {
-                        newStr.append(str.charAt(i));
-                        continue;
-                    }
-                    return null;
-                }
+            if (Character.isDigit(arrayOfStr[i])) {
+                sb.append(str.charAt(i));
                 continue;
             }
-            newStr.append(str.charAt(i));
+
+            if (arrayOfStr[i] == 'e') {
+                if (countE > 1 || i == str.length() - 1) {
+                    return null;
+                }
+                sb.append(str.charAt(i));
+                countE++;
+                continue;
+            }
+
+            if (arrayOfStr[i] == '.') {
+                if (countDots > 1) {
+                    return null;
+                }
+                sb.append(str.charAt(i));
+                countDots++;
+                continue;
+            }
+
+            if (arrayOfStr[i] == '-') {
+                if (sb.length() == 0 || sb.charAt(sb.length() - 1) == 'e') {
+                    sb.append(str.charAt(i));
+                    continue;
+                }
+                return null;
+            }
         }
 
         if (countE > 1 || countDots > 1) {
-            return Double.valueOf(newStr.toString());
-        } else if (Integer.MIN_VALUE > Long.valueOf(newStr.toString()) ||
-                Long.valueOf(newStr.toString()) > Integer.MAX_VALUE) {
-            return Long.valueOf(newStr.toString());
+            return Double.valueOf(sb.toString());
         }
 
-        return Integer.valueOf(newStr.toString());
+        if (Integer.MIN_VALUE > Long.valueOf(sb.toString()) ||
+                Long.valueOf(sb.toString()) > Integer.MAX_VALUE) {
+            return Long.valueOf(sb.toString());
+        }
+
+        return Integer.valueOf(sb.toString());
     }
 }

@@ -35,7 +35,7 @@ public class RepeatingCharacters {
                 symbol = str.charAt(i);
             }
 
-            if(maxCount>= str.length()-i){
+            if (maxCount >= str.length() - i) {
                 return new Pair<>(symbol, maxCount);
             }
 
