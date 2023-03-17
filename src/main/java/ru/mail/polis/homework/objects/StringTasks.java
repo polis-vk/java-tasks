@@ -57,7 +57,7 @@ public class StringTasks {
                 return null;
             }
         }
-        if (res.charAt(res.length() - 1) == 'e') {
+        if (res.charAt(res.length() - 1) == 'e' || res.charAt(res.length() - 1) == '-') { //исключительные случаи когда результативная строка оканчивается на 'e' или '-' например 1.3e или 1.3e-
             return null;
         }
         if (countDot == 0 && countE == 0) {
