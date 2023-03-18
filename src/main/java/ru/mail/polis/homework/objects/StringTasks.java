@@ -22,8 +22,8 @@ public class StringTasks {
 
         StringBuilder sb = new StringBuilder();
 
-        int countE = 1;
-        int countDots = 1;
+        boolean countE = true;
+        boolean countDots = true;
 
         char[] arrayOfStr = str.toCharArray();
         for (int i = 0; i < arrayOfStr.length; i++) {
@@ -33,20 +33,20 @@ public class StringTasks {
             }
 
             if (arrayOfStr[i] == 'e') {
-                if (countE > 1 || i == str.length() - 1) {
+                if (!countE || i == str.length() - 1) {
                     return null;
                 }
                 sb.append(str.charAt(i));
-                countE++;
+                countE = false;
                 continue;
             }
 
             if (arrayOfStr[i] == '.') {
-                if (countDots > 1) {
+                if (!countDots) {
                     return null;
                 }
                 sb.append(str.charAt(i));
-                countDots++;
+                countDots = false;
                 continue;
             }
 
@@ -59,13 +59,14 @@ public class StringTasks {
             }
         }
 
-        if (countE > 1 || countDots > 1) {
+        if (!countE || !countDots) {
             return Double.valueOf(sb.toString());
         }
 
-        if (Integer.MIN_VALUE > Long.valueOf(sb.toString()) ||
-                Long.valueOf(sb.toString()) > Integer.MAX_VALUE) {
-            return Long.valueOf(sb.toString());
+        long number = Long.parseLong(sb.toString());
+        if (Integer.MIN_VALUE > number ||
+                number > Integer.MAX_VALUE) {
+            return number;
         }
 
         return Integer.valueOf(sb.toString());

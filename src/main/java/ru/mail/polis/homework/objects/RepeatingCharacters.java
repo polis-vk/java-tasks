@@ -22,17 +22,15 @@ public class RepeatingCharacters {
         int count = 1;
         char symbol = '\0';
 
-        for (int i = 0; i <= str.length() - 1; i++) {
-            if (i != str.length() - 1) {
-                if (str.charAt(i) == str.charAt(i + 1)) {
-                    count++;
-                    continue;
-                }
+        for (int i = 1; i <= str.length(); i++) {
+            if (i != str.length() && str.charAt(i) == str.charAt(i - 1)) {
+                count++;
+                continue;
             }
 
             if (count > maxCount) {
                 maxCount = count;
-                symbol = str.charAt(i);
+                symbol = str.charAt(i - 1);
             }
 
             if (maxCount >= str.length() - i) {
