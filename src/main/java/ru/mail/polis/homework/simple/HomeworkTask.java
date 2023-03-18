@@ -17,8 +17,7 @@ public class HomeworkTask {
         for (double x = a; x <= b; x += h) {
                 sum += function.applyAsDouble(x);
             }
-            double ll = h * sum;
-            return ll;
+            return h * sum;
     }
 
     /**
@@ -26,11 +25,13 @@ public class HomeworkTask {
      * выводим номер первой максимальной цифры (если их несколько)
      */
     public static byte maxNumber(long a) {
-        long max = -1, maxIndex = 1;
+        long max = -1;
+        long maxIndex = 1;
         ArrayList<Long> numbers = new ArrayList<>();
-        while (a>=1){
+        long a_1 = a;
+        while (a_1 >= 1){
             numbers.add(a % 10);
-            a /= 10;
+            a_1 /= 10;
         }
         Collections.reverse(numbers);
         for(int i = 0; i < numbers.size(); i++) {
@@ -56,7 +57,11 @@ public class HomeworkTask {
      * четырехуголька ABCD.
      */
     public static double square(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-        return (double) (Math.abs((x1 - x2) * (y1 + y2) + (x2 - x3) * (y2 + y3) + (x3 - x4) * (y3 + y4) + (x4 - x1) * (y4 + y1))) / 2;
+        int line_1 = (x1 - x2) * (y1 + y2);
+        int line_2 = (x2 - x3) * (y2 + y3);
+        int line_3 = (x3 - x4) * (y3 + y4);
+        int line_4 = (x4 - x1) * (y4 + y1);
+        return (double) (Math.abs(line_1 + line_2 + line_3 + line_4))/ 2;
     }
 
 }

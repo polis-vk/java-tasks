@@ -15,7 +15,7 @@ public class DoubleTask {
      * Пример: (1, 5, 4) -> "-1.0, -4.0"
      */
     public static String equation(int a, int b, int c) {
-        double discriminant = Math.pow(b,2) - 4 * a * c;
+        double discriminant = Math.pow(b, 2) - 4 * a * c;
         double x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
         double x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
         if (x1 < x2) {
@@ -24,7 +24,7 @@ public class DoubleTask {
             x2 = swap;
         }
         return x1 + ", " + x2;
- }
+    }
 
     /**
      * Нужно посчитать расстояние, между двумя точками (x1, y1) и (x2, y2)
