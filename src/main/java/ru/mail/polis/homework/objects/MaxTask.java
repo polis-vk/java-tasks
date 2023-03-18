@@ -17,21 +17,28 @@ public class MaxTask {
         if (array == null || array.length < count) {
             return null;
         }
+        if (count == 0) {
+            return new int[count];
+        }
         int[] maxArray = new int[count];
         for (int i = 0; i < count; i++) {
             maxArray[i] = Integer.MIN_VALUE;
         }
         int[] arrayCopy = Arrays.copyOf(array, array.length);
-        int temp = 0;
-        for (int i = 0; i < count; i++) {
-            for (int j = 0; j < arrayCopy.length; j++) {
-                if (maxArray[i] < arrayCopy[j]) {
-                    maxArray[i] = arrayCopy[j];
-                    temp = j;
-                }
+        for (int i = 0; i < arrayCopy.length; i++) {
+            if (count - 1 < i && maxArray[0] < arrayCopy[i]) {
+                maxArray[0] = arrayCopy[i];
+                Arrays.sort(maxArray);
             }
-            arrayCopy[temp] = Integer.MIN_VALUE;
+            if (count > i) {
+                maxArray[i] = arrayCopy[i];
+            }
         }
-        return maxArray;
+        Arrays.sort(maxArray);
+        int[] reverseArray = new int[count];
+        for (int i = count - 1; i >= 0; i--) {
+            reverseArray[count - 1 - i] = maxArray[i];
+        }
+        return reverseArray;
     }
 }

@@ -16,47 +16,53 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        if (str == null || str.equals("")) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
-        StringBuilder newStr = new StringBuilder();
+        StringBuilder filteredStr = new StringBuilder();
         int dotCount = 0;
         int eCount = 0;
+        int indexE = Integer.MAX_VALUE;
+        int indexDot = 0;
         for (int i = 0; i < str.length(); i++) {
             if (Character.isDigit(str.charAt(i)) || str.charAt(i) == '.' || str.charAt(i) == 'e' || str.charAt(i) == '-') {
-                newStr.append(str.charAt(i));
-            }
-            if (str.charAt(i) == '.') {
-                dotCount++;
+                filteredStr.append(str.charAt(i));
             }
             if (str.charAt(i) == 'e') {
                 eCount++;
+                indexE = i;
+            }
+            if (str.charAt(i) == '.') {
+                dotCount++;
+                indexDot = i;
+            }
+            if (indexE < indexDot) {
+                return null;
             }
             if (dotCount > 1 || eCount > 1) {
                 return null;
             }
         }
-        char previousLetter = '.';
-        int indexLastLetter = newStr.length() - 1;
-        for (int i = 0; i < newStr.length(); i++) {
-            char currentLetter = newStr.charAt(i);
+        if (filteredStr.charAt(filteredStr.length() - 1) == 'e') {
+            return null;
+        }
+        char previousLetter = filteredStr.charAt(0);
+        for (int i = 1; i < filteredStr.length(); i++) {
+            char currentLetter = filteredStr.charAt(i);
             if (previousLetter == '-' && (previousLetter == currentLetter || currentLetter == 'e')) {
                 return null;
             }
             if (Character.isDigit(previousLetter) && currentLetter == '-') {
                 return null;
             }
-            if (newStr.charAt(indexLastLetter) == 'e') {
-                return null;
-            }
             previousLetter = currentLetter;
         }
         if (dotCount > 0 || eCount > 0) {
-            return Double.parseDouble(newStr.toString());
+            return Double.parseDouble(filteredStr.toString());
         }
-        long num = Long.parseLong(newStr.toString());
+        long num = Long.parseLong(filteredStr.toString());
         if (num <= Integer.MAX_VALUE && num >= Integer.MIN_VALUE) {
-            return Integer.parseInt(newStr.toString());
+            return (int) num;
         }
         return num;
     }

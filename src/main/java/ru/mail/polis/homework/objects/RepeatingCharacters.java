@@ -14,14 +14,17 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if (str == null || str.equals("")) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
-        char previousLetter = ' ';
-        int count = 0;
-        int maxCount = 0;
-        char maxLetter = ' ';
-        for (int i = 0; i < str.length(); i++) {
+        char previousLetter = str.charAt(0);
+        int count = 1;
+        int maxCount = 1;
+        char maxLetter = str.charAt(0);
+        if (str.length() == 1) {
+            return new Pair<>(maxLetter, maxCount);
+        }
+        for (int i = 1; i < str.length(); i++) {
             char currentLetter = str.charAt(i);
             if (previousLetter == currentLetter) {
                 count++;
