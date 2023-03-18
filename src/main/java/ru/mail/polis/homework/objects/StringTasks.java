@@ -18,46 +18,47 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        if (str == null || str.isEmpty()) return null;
+        if ((str == null) || str.isEmpty()) return null;
 
-        StringBuilder temp = new StringBuilder(str);
-        boolean isDouble = false;
+        StringBuilder temp = new StringBuilder();
+        char currentChar;
+        boolean hasDot = false;
         boolean hasE = false;
         int minusCount = 0;
 
-        for (int i = 0; i < temp.length(); i++) {
-            char currentChar = temp.charAt(i);
-            if (!(Character.isDigit(currentChar) || currentChar == 'e' || currentChar == '-' || currentChar == '.')) {
-                temp.deleteCharAt(i);
-                i--;
+        for (int i = 0; i < str.length(); i++) {
+            currentChar = str.charAt(i);
+            if (Character.isDigit(currentChar)) {
+                temp.append(currentChar);
             } else if (currentChar == '.') {
-                if (isDouble) {
+                if (hasDot) {
                     return null;
                 }
-                isDouble = true;
+                hasDot = true;
+                temp.append(currentChar);
             } else if (currentChar == 'e') {
-                if (hasE || i == temp.length() - 1) {
+                if (hasE || (i == str.length() - 1)) {
                     return null;
                 }
                 hasE = true;
-                isDouble = true;
+                temp.append(currentChar);
             } else if (currentChar == '-') {
                 minusCount++;
-                if ((i != 0 && !hasE)
-                        || i == temp.length() - 1
+                temp.append(currentChar);
+                if ((temp.length() != 1) && !hasE
                         || minusCount > 2
-                        || (temp.length() - 1 >= i + 1 && temp.charAt(i + 1) == '-')) {
+                        || ((temp.length() - 2 >= 0) && (temp.charAt(temp.length() - 2) == '-'))
+                        || i == str.length() - 1) {
                     return null;
                 }
             }
         }
 
-        if (!isDouble) {
+        if (!(hasDot || hasE)) {
             if (Long.parseLong(temp.toString()) <= Integer.MAX_VALUE && Long.parseLong(temp.toString()) >= Integer.MIN_VALUE) {
                 return Integer.valueOf(temp.toString());
-            } else {
-                return Long.valueOf(temp.toString());
             }
+            return Long.valueOf(temp.toString());
         }
         return Double.valueOf(temp.toString());
     }
