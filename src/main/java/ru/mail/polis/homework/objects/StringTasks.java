@@ -20,8 +20,8 @@ public class StringTasks {
             return null;
         }
         StringBuilder res = new StringBuilder();
-        boolean countDot = true;
-        boolean countE = true;
+        boolean noDot = true;
+        boolean noE = true;
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
             if (Character.isDigit(c)) {
@@ -39,17 +39,17 @@ public class StringTasks {
                 return null;
             }
             if (c == '.') {
-                if (countE && countDot && res.length() > 0) {
+                if (noE && noDot && res.length() > 0) {
                     res.append(c);
-                    countDot = false;
+                    noDot = false;
                     continue;
                 }
                 return null;
             }
             if (c == 'e') {
-                if (countE && res.length() > 0) {
+                if (noE && res.length() > 0) {
                     res.append(c);
-                    countE = false;
+                    noE = false;
                     continue;
                 }
                 return null;
@@ -58,7 +58,7 @@ public class StringTasks {
         if (res.charAt(res.length() - 1) == 'e' || res.charAt(res.length() - 1) == '-') { //исключительные случаи когда результативная строка оканчивается на 'e' или '-' например 1.3e или 1.3e-
             return null;
         }
-        if (countDot && countE) {
+        if (noDot && noE) {
             long temp = Long.parseLong(res.toString());
             if (temp >= Integer.MIN_VALUE && temp <= Integer.MAX_VALUE) {
                 return (int) temp;
