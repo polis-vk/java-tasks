@@ -7,14 +7,18 @@ import java.util.Objects;
 public class StringTasks {
 
 
-    private static int podschetSimvola(StringBuilder str, char c) {
-        int k = 0;
+    private static int[] symbolsCounts(StringBuilder str) {
+        int[] counts = new int[3];
         for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == c) {
-                k += 1;
+            if (str.charAt(i) == '-') {
+                counts[0] += 1;
+            } else if (str.charAt(i) == 'e') {
+                counts[1] += 1;
+            } else if (str.charAt(i) == '.') {
+                counts[2] += 1;
             }
         }
-        return k;
+        return counts;
     }
 
     private static int inDex(StringBuilder str, char s) {
@@ -41,58 +45,60 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        if (Objects.equals(str, null) || str.length() == 0) {
+        if (str == null || str.length() == 0) {
             return null;
         }
 
-        StringBuilder chislo = new StringBuilder();
-        int N = str.length();
-        for (int i = 0; i < N; i++) {
+        StringBuilder number = new StringBuilder();
+        int lenOfString = str.length();
+        for (int i = 0; i < lenOfString; i++) {
             if (Character.isDigit(str.charAt(i)) || str.charAt(i) == '-' || str.charAt(i) == 'e' || str.charAt(i) == '.') {
-                chislo.append(str.charAt(i));
+                number.append(str.charAt(i));
             }
         }
 
 
-        int indexDot = inDex(chislo, '.');
-        int indexE = inDex(chislo, 'e');
-        if (podschetSimvola(chislo, 'e') > 1 || podschetSimvola(chislo, '.') > 1 || podschetSimvola(chislo, '-') > 2
-                || indexDot == 0 || indexDot == chislo.length()) {
+        int indexDot = inDex(number, '.');
+        int indexE = inDex(number, 'e');
+        int[] specialSymbolCounts = symbolsCounts(number);
+        int dashCounts = specialSymbolCounts[0];
+        int eCounts = specialSymbolCounts[1];
+        int dotCounts = specialSymbolCounts[2];
+        if (eCounts > 1 || dotCounts > 1 || dashCounts > 2
+                || indexDot == 0 || indexDot == number.length()) {
             return null;
         }
 
 
-        int lenChislo = chislo.length();
-        chislo.insert(0, '?');
-        chislo.insert(chislo.length(), '?');
+        int lenChislo = number.length();
+        number.insert(0, '?');
+        number.insert(number.length(), '?');
         for (int i = 1; i < lenChislo + 1; i++) {
-            if (chislo.charAt(i) == '-') {
-                if (chislo.charAt(i - 1) == '.' || Character.isDigit(chislo.charAt(i - 1)) ||
-                        !Character.isDigit(chislo.charAt(i + 1))) {
-                    return null;
-                }
+            if (number.charAt(i) == '-' && (number.charAt(i - 1) == '.' || Character.isDigit(number.charAt(i - 1)) ||
+                    !Character.isDigit(number.charAt(i + 1)))) {
+                return null;
             }
-            if (chislo.charAt(i) == 'e') {
-                if (!Character.isDigit(chislo.charAt(i - 1)) || chislo.charAt(i + 1) == '?' || chislo.charAt(i + 1) == '.') {
+            if (number.charAt(i) == 'e') {
+                if (!Character.isDigit(number.charAt(i - 1)) || number.charAt(i + 1) == '?' || number.charAt(i + 1) == '.') {
                     return null;
                 }
             }
 
-            if (chislo.charAt(i) == '.') {
-                if (!Character.isDigit(chislo.charAt(i - 1)) || !Character.isDigit(chislo.charAt(i + 1))) {
+            if (number.charAt(i) == '.') {
+                if (!Character.isDigit(number.charAt(i - 1)) || !Character.isDigit(number.charAt(i + 1))) {
                     return null;
                 }
             }
         }
 
         if (indexDot != -1 || indexE != -1) {
-            return Double.valueOf(chislo.substring(1, lenChislo + 1));
+            return Double.valueOf(number.substring(1, lenChislo + 1));
         }
-        if (Integer.MIN_VALUE <= Long.parseLong(chislo.substring(1, lenChislo + 1)) &&
-                Long.parseLong(chislo.substring(1, lenChislo + 1)) <= Integer.MAX_VALUE) {
-            return Integer.parseInt(chislo.substring(1, lenChislo + 1));
+        if (Integer.MIN_VALUE <= Long.parseLong(number.substring(1, lenChislo + 1)) &&
+                Long.parseLong(number.substring(1, lenChislo + 1)) <= Integer.MAX_VALUE) {
+            return Integer.parseInt(number.substring(1, lenChislo + 1));
         }
-        return Long.valueOf(chislo.substring(1, lenChislo + 1));
+        return Long.valueOf(number.substring(1, lenChislo + 1));
 
     }
 }

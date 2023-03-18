@@ -17,50 +17,28 @@ import java.util.Objects;
  */
 public class RepeatingCharacters {
 
-    private static int inDex(Character[] array, char s) {
-
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] == s) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if (Objects.equals(str, null) || str.length() == 0) {
+        if (str == null || str.length() == 0) {
             return null;
         }
-        int N = str.length();
+        int lenOfString = str.length();
         str += '?';
-        Character[] chrs = new Character[N];
-        int[] counts = new int[N];
-        int lenPovtor = 1;
-        int position = 0;
-        int index;
-        for (int i = 0; i < N; i++) {
-            if (!Arrays.asList(chrs).contains(str.charAt(i))) {
-                chrs[position] = str.charAt(i);
-                position += 1;
-            }
-            if (str.charAt(i) == str.charAt(i + 1)) {
-                lenPovtor += 1;
-            } else {
-                index = inDex(chrs, str.charAt(i));
-                counts[index] = Math.max(lenPovtor, counts[index]);
-                lenPovtor = 1;
-            }
-
-        }
+        int lenRepeat = 1;
         int max = 0;
-        int indexChar = 0;
-        for (int i = 0; i < N; i++) {
-            if (counts[i] > max) {
-                max = counts[i];
-                indexChar = i;
+        char maxChar = 0;
+
+        for (int i = 0; i < lenOfString; i++) {
+            if (str.charAt(i) == str.charAt(i + 1)) {
+                lenRepeat += 1;
+            } else {
+                if (lenRepeat > max) {
+                    max = lenRepeat;
+                    maxChar = str.charAt(i);
+                }
+                lenRepeat = 1;
             }
         }
-        return new Pair<>(chrs[indexChar], max);
+        return new Pair<>(maxChar, max);
     }
 
     public static class Pair<T, V> {
