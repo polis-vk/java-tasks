@@ -20,9 +20,8 @@ public class StringTasks {
             return null;
         }
         StringBuilder res = new StringBuilder();
-        int countDot = 0;
-        int countE = 0;
-        boolean isNegative = false;
+        boolean countDot = true;
+        boolean countE = true;
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
             if (Character.isDigit(c)) {
@@ -30,9 +29,8 @@ public class StringTasks {
                 continue;
             }
             if (c == '-') {
-                if (res.length() == 0 && !isNegative) {
+                if (res.length() == 0) {
                     res.append(c);
-                    isNegative = true;
                     continue;
                 } else if (res.charAt(res.length() - 1) == 'e') {
                     res.append(c);
@@ -41,17 +39,17 @@ public class StringTasks {
                 return null;
             }
             if (c == '.') {
-                if (countE < 1 && countDot < 1 && res.length() > 0) {
+                if (countE && countDot && res.length() > 0) {
                     res.append(c);
-                    countDot++;
+                    countDot = false;
                     continue;
                 }
                 return null;
             }
             if (c == 'e') {
-                if (countE < 1 && res.length() > 0) {
+                if (countE && res.length() > 0) {
                     res.append(c);
-                    countE++;
+                    countE = false;
                     continue;
                 }
                 return null;
@@ -60,7 +58,7 @@ public class StringTasks {
         if (res.charAt(res.length() - 1) == 'e' || res.charAt(res.length() - 1) == '-') { //исключительные случаи когда результативная строка оканчивается на 'e' или '-' например 1.3e или 1.3e-
             return null;
         }
-        if (countDot == 0 && countE == 0) {
+        if (countDot && countE) {
             long temp = Long.parseLong(res.toString());
             if (temp >= Integer.MIN_VALUE && temp <= Integer.MAX_VALUE) {
                 return (int) temp;
