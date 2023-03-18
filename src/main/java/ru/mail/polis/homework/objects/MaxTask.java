@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.Arrays;
+
 public class MaxTask {
 
     /**
@@ -16,21 +18,27 @@ public class MaxTask {
         if (array != null && count <= array.length) {
             int[] copyArray = array.clone();
             int maximum = Integer.MIN_VALUE;
-            arrayMax = new int[count];
-            for (int arrayMaxCounter = 0; arrayMaxCounter < arrayMax.length; arrayMaxCounter++) {
-                for (int copyArrayCounter = 0; copyArrayCounter < copyArray.length; copyArrayCounter++) {
-                    if (copyArray[copyArrayCounter] > maximum) {
-                        maximum = copyArray[copyArrayCounter];
-                    }
+            arrayMax = Arrays.copyOf(copyArray, count);
+            int arrayMaxCounter = 0;
+//            for (int arrayMaxCounter = 0; arrayMaxCounter < arrayMax.length; arrayMaxCounter++) {
+//                for (int copyArrayCounter = 0; copyArrayCounter < copyArray.length; copyArrayCounter++) {
+//                    if (copyArray[copyArrayCounter] > maximum) {
+//                        maximum = copyArray[copyArrayCounter];
+//                    }
+//                }
+//                arrayMax[arrayMaxCounter] = maximum;
+//                for (int copyArrayCounter = 0; copyArrayCounter < copyArray.length; copyArrayCounter++) {
+//                    if (copyArray[copyArrayCounter] == arrayMax[arrayMaxCounter]) {
+//                        copyArray[copyArrayCounter] = Integer.MIN_VALUE;
+//                        break;
+//                    }
+//                }
+//                maximum = Integer.MIN_VALUE;
+//            }
+            for (int copyArrayCounter = 0; copyArrayCounter < copyArray.length; copyArrayCounter++) {
+                if (copyArray[copyArrayCounter] > arrayMax[arrayMaxCounter]) {
+                    arrayMax[arrayMaxCounter] = copyArray[copyArrayCounter];
                 }
-                arrayMax[arrayMaxCounter] = maximum;
-                for (int copyArrayCounter = 0; copyArrayCounter < copyArray.length; copyArrayCounter++) {
-                    if (copyArray[copyArrayCounter] == arrayMax[arrayMaxCounter]) {
-                        copyArray[copyArrayCounter] = Integer.MIN_VALUE;
-                        break;
-                    }
-                }
-                maximum = Integer.MIN_VALUE;
             }
         }
         return arrayMax;

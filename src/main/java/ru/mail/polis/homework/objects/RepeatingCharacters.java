@@ -14,22 +14,22 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        int maxNumRepeats = 0, numRepeats = 1;
+        int maxNumRepeats = 0;
+        int numRepeats = 1;
         char maxChar = '0';
-        if (str != null && !str.isEmpty()) {
-            for (int counter = 0; counter < str.length(); counter++) {
-                if (counter != str.length() - 1 && str.charAt(counter) == str.charAt(counter + 1)) {
-                    numRepeats++;
-                } else {
-                    if (numRepeats > maxNumRepeats) {
-                        maxNumRepeats = numRepeats;
-                        maxChar = str.charAt(counter);
-                    }
-                    numRepeats = 1;
-                }
-            }
-        } else {
+        if (str == null || str.isEmpty()) {
             return null;
+        }
+        for (int counter = 0; counter < str.length(); counter++) {
+            if (counter != str.length() - 1 && str.charAt(counter) == str.charAt(counter + 1)) {
+                numRepeats++;
+                continue;
+            }
+            if (numRepeats > maxNumRepeats) {
+                maxNumRepeats = numRepeats;
+                maxChar = str.charAt(counter);
+            }
+            numRepeats = 1;
         }
         return new Pair<>(maxChar, maxNumRepeats);
     }
