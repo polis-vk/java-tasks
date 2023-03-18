@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.objects;
 
 import java.util.Arrays;
+
 public class MaxTask {
 
     /**
@@ -19,25 +20,75 @@ public class MaxTask {
         if (count == 0) {
             return new int[0];
         }
-        int result[] = Arrays.copyOf(array, count);
-        Arrays.sort(result);
+        int[] result = Arrays.copyOf(array, count);
+        reversedQuickSort(result, 0, count - 1);
         int insertPos;
         for (int i = count; i < array.length; i++) {
-            if (array[i] < result[0]) {
+            if (array[i] < result[count - 1]) {
                 continue;
             }
-            insertPos = Arrays.binarySearch(result, array[i]);
-            insertPos = insertPos >= 0 ? insertPos : -insertPos - 2;
-            System.arraycopy(result, 1, result, 0, insertPos);
+            insertPos = binarySearch(result, array[i]);
+            System.arraycopy(result, insertPos, result, insertPos + 1, count - insertPos - 1);
             result[insertPos] = array[i];
         }
-        int temp;
-        for (int i = 0; i < count / 2; i++) {
-            temp = result[i];
-            result[i] = result[count - i - 1];
-            result[count - i - 1] = temp;
-        }
         return result;
+    }
+
+    static void reversedQuickSort(int[] array, int low, int high) {
+        if (array.length == 0 || low >= high) {
+            return;
+        }
+        int middle = low + (high - low) / 2;
+        int border = array[middle];
+        int i = low;
+        int j = high;
+        int swap;
+        while (i <= j) {
+            while (array[i] > border) {
+                i++;
+            }
+            while (array[j] < border) {
+                j--;
+            }
+            if (i <= j) {
+                swap = array[i];
+                array[i] = array[j];
+                array[j] = swap;
+                i++;
+                j--;
+            }
+        }
+        if (low > j) {
+            reversedQuickSort(array, low, j);
+        }
+        if (high < i) {
+            reversedQuickSort(array, i, high);
+        }
+    }
+
+    static int binarySearch(int[] sortedArray, int element) {
+        int left = 0;
+        int right = sortedArray.length - 1;
+        int middle;
+        int prev;
+        int next;
+        while (left <= right) {
+            middle = (left + right) / 2;
+            prev = sortedArray[middle];
+            next = sortedArray[middle + 1];
+            if (prev == element) {
+                return middle;
+            }
+            if (prev > element && next <= element) {
+                return middle + 1;
+            }
+            if (prev < element) {
+                right = middle - 1;
+            } else {
+                left = middle + 1;
+            }
+        }
+        return 0;
     }
 
 }
