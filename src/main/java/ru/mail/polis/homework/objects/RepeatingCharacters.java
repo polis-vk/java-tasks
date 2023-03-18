@@ -28,9 +28,9 @@ public class RepeatingCharacters {
             if (currentLength > maxLength) {
                 maxLength = currentLength;
                 answer = str.charAt(i - 1);
-                if (maxLength >= (str.length() - i)) {
-                    break;
-                }
+            }
+            if (maxLength >= str.length() - i) {
+                break;
             }
             currentLength = 1;
         }
