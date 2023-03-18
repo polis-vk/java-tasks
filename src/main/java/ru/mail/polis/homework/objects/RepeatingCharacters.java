@@ -22,15 +22,16 @@ public class RepeatingCharacters {
         for (int i = 1; i < str.length(); ++i) {
             if (str.charAt(i) == currentChar) {
                 ++count;
-            }
-            if (str.charAt(i) != currentChar || str.length() == i + 1) {
+            } else {
                 if (count > maxPair.second) {
                     maxPair = new Pair<>(currentChar, count);
                 }
                 currentChar = str.charAt(i);
                 count = 1;
-
             }
+        }
+        if (count > maxPair.second) {
+            return new Pair<>(currentChar, count);
         }
         return maxPair;
     }
