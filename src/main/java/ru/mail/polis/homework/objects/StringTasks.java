@@ -22,30 +22,34 @@ public class StringTasks {
         StringBuilder myStr = new StringBuilder();
         boolean isEpsPresent = false;
         boolean isPointPresent = false;
+        int posOfLastChar;
+        char lastMyStrChar = 0;
+        boolean isLastMyStrCharDigit = false;
         for (int i = 0; i < str.length(); i++) {
-            if (Character.isDigit(str.charAt(i))) {
-                myStr.append(str.charAt(i));
+            char currentChar = str.charAt(i);
+            posOfLastChar = myStr.length() - 1;
+            if (posOfLastChar >= 0) {
+                lastMyStrChar = myStr.charAt(posOfLastChar);
+                isLastMyStrCharDigit = Character.isDigit(myStr.charAt(posOfLastChar));
             }
-            else if (str.charAt(i) == 'e' && Character.isDigit(myStr.charAt(myStr.length() - 1))) {
-                if (!isEpsPresent){
+            if (Character.isDigit(currentChar)) {
+                myStr.append(currentChar);
+            } else if (currentChar == 'e' && isLastMyStrCharDigit) {
+                if (!isEpsPresent) {
                     myStr.append(str.charAt(i));
                     isEpsPresent = true;
                 }
-            }
-            else if (str.charAt(i) == '-') {
-                if (myStr.length() == 0 || myStr.charAt(myStr.length() - 1) == 'e') {
-                    myStr.append(str.charAt(i));
-                }
-                else if (myStr.charAt(myStr.length() - 1) == '-' || Character.isDigit(myStr.charAt(myStr.length() - 1)) || myStr.charAt(myStr.length() - 1) == '.') {
+            } else if (currentChar == '-') {
+                if (myStr.length() == 0 || lastMyStrChar == 'e') {
+                    myStr.append(currentChar);
+                } else if (lastMyStrChar == '-' || isLastMyStrCharDigit || lastMyStrChar == '.') {
                     return null;
                 }
-            }
-            else if (str.charAt(i) == '.') {
-                if (!isPointPresent && Character.isDigit(myStr.charAt(myStr.length() - 1))){
-                    myStr.append(str.charAt(i));
+            } else if (currentChar == '.') {
+                if (!isPointPresent && isLastMyStrCharDigit) {
+                    myStr.append(currentChar);
                     isPointPresent = true;
-                }
-                else {
+                } else {
                     return null;
                 }
             }
@@ -54,11 +58,12 @@ public class StringTasks {
             if (!Character.isDigit(myStr.charAt(myStr.length() - 1))) {
                 return null;
             }
-            return Double.valueOf(myStr.toString());
+            return Double.parseDouble(myStr.toString());
         }
-        if (Long.valueOf(myStr.toString()) <= 2147483647 && Long.valueOf(myStr.toString()) >= -2147483648) {
-            return Integer.valueOf(myStr.toString());
+        long longValue = Long.parseLong(myStr.toString());
+        if (longValue <= Integer.MAX_VALUE && longValue >= Integer.MIN_VALUE) {
+            return (int) longValue;
         }
-        return Long.valueOf(myStr.toString());
+        return longValue;
     }
 }
