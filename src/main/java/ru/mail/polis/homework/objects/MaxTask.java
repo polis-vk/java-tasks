@@ -10,7 +10,7 @@ public class MaxTask {
      * Если массив null или его длина меньше count, то вернуть null
      * Например ({1, 3, 10, 11, 22, 0}, 2) -> {22, 11}
      * ({1, 3, 22, 11, 22, 0}, 3) -> {22, 22, 11}
-     * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копии
+     * <p>
      * 4 тугрика
      */
     public static int[] getMaxArray(int[] array, int count) {
@@ -21,43 +21,61 @@ public class MaxTask {
             return new int[0];
         }
 
-        int[] copied = Arrays.copyOf(array, array.length);
-        kThSmallest(copied, 0, copied.length - 1, copied.length + 1 - count); // ~O(n)
-        Arrays.sort(copied, copied.length - count, copied.length); // O(count * log(count))
+        int[] result = Arrays.copyOf(array, count);
+        sortReverse(result);
+        for (int i = count; i < array.length; i++) {
+            if (array[i] <= result[count - 1]) {
+                continue;
+            }
 
-        int[] result = new int[count];
-        for (int i = 0; i < count; i++) {
-            result[i] = copied[copied.length - 1 - i];
+            int pos = findPLace(result, array[i]);
+            if (pos < 0) { // if 'key' wasn't found
+                pos = -(pos + 1);
+            } else {
+                pos += 1;
+            }
+            insertWithShift(result, pos, array[i]);
         }
+
         return result;
     }
-    public static int kThSmallest(int[] array, int left, int right, int k) {
-        int pos = partition(array, left, right);
 
-        if (pos - left == k - 1) {
-            return array[pos];
-        }
-        if (pos - left > k - 1) {
-            return kThSmallest(array, left, pos - 1, k);
-        }
-        return kThSmallest(array, pos + 1, right, k - pos + left - 1);
-    }
     private static void swap(int[] array, int i, int j) {
         int temp = array[i];
         array[i] = array[j];
         array[j] = temp;
     }
-    private static int partition(int[] array, int left, int right) {
-        int i = left;
-        for (int j = left; j <= right - 1; j++) {
-            if (array[j] <= array[right]) {
-                if (i != j) {
-                    swap(array, i, j);
-                }
-                i++;
+
+    private static void sortReverse(int[] array) {
+        Arrays.sort(array);
+        for (int i = 0; i < array.length / 2; i++) {
+            swap(array, i, array.length - 1 - i);
+        }
+    }
+
+    private static int findPLace(int[] array, int key) {
+        int left = 0;
+        int right = array.length - 1;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            if (array[mid] == key) {
+                return mid;
+            } else if (array[mid] < key) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
             }
         }
-        swap(array, i, right);
-        return i;
+        return -(left + 1);
+    }
+
+    private static void insertWithShift(int[] array, int pos, int key) {
+        int prev = array[pos];
+        for (int i = pos + 1; i < array.length; i++) {
+            int temp = array[i];
+            array[i] = prev;
+            prev = temp;
+        }
+        array[pos] = key;
     }
 }
