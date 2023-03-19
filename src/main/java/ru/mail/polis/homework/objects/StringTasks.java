@@ -20,17 +20,33 @@ public class StringTasks {
             return null;
         }
 
+        String number = representNumeric(str);
+        if (number == null) {
+            return null;
+        }
+
+        return convertToNumber(number);
+    }
+
+    private static String representNumeric(String str) {
         StringBuilder number = new StringBuilder();
-        byte[] countLimited = {0, 0};
-        for (char ch: str.toCharArray()) {
+        boolean metExp = false;
+        boolean metPoint = false;
+        for (char ch : str.toCharArray()) {
             if (Character.isDigit(ch)) {
                 number.append(ch);
-            } else if (ch == 'e' || ch == '.') {
-                countLimited[(int) ch % 2] += 1; // In ASCII 'e' is odd, '.' is even
-                if (countLimited[0] > 1 || countLimited[1] > 1) {
+            } else if (ch == 'e') {
+                if (metExp) {
                     return null;
                 }
                 number.append(ch);
+                metExp = true;
+            } else if (ch == '.') {
+                if (metPoint || metExp) {
+                    return null;
+                }
+                number.append(ch);
+                metPoint = true;
             } else if (ch == '-') {
                 if (number.length() != 0 && number.charAt(number.length() - 1) != 'e') {
                     return null;
@@ -42,10 +58,17 @@ public class StringTasks {
         if (!Character.isDigit(number.charAt(number.length() - 1))) {
             return null;
         }
-        if (countLimited[0] > 0 || countLimited[1] > 0) {
-            return Double.parseDouble(number.toString());
+        if (metExp || metPoint) {
+            number.append('D');
         }
-        Long converted = Long.valueOf(number.toString());
+        return number.toString();
+    }
+
+    private static Number convertToNumber(String numeric) {
+        if (numeric.charAt(numeric.length() - 1) == 'D') {
+            return Double.parseDouble(numeric);
+        }
+        Long converted = Long.valueOf(numeric);
         if (converted > Integer.MAX_VALUE || converted < Integer.MIN_VALUE) {
             return converted;
         }
