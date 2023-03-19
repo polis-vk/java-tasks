@@ -19,50 +19,67 @@ public class StringTasks {
         if (str == null || str.isEmpty()) {
             return null;
         }
-        String copiedStr = new String(str);
+        StringBuilder copiedStr = new StringBuilder(str);
         int counterPoint = 0;
         int counterE = 0;
-        boolean isDigit = false;
         boolean isPoint = false;
         boolean isE = false;
-        for (int counter = 0; counter < str.length(); counter++) {
-            if (Character.isLetter(str.charAt(counter)) && str.charAt(counter) != 'e') {
-                copiedStr = copiedStr.replace(Character.toString(str.charAt(counter)), "");
+        for (int counter = 0; counter < copiedStr.length(); counter++) {
+            while (counter != copiedStr.length() && Character.isLetter(copiedStr.charAt(counter)) && copiedStr.charAt(counter) != 'e') {
+                copiedStr.deleteCharAt(counter);
             }
-            if (Character.isDigit(str.charAt(counter))) {
-                isDigit = true;
+            if (counter == copiedStr.length()) {
+                if (copiedStr.charAt(counter - 1) == 'e' || copiedStr.charAt(counter - 1) == '.' || copiedStr.charAt(counter - 1) == '-') {
+                    return null;
+                }
+                break;
             }
-            if (str.charAt(counter) == '.') {
+            if (copiedStr.charAt(counter) == '.') {
                 isPoint = true;
                 counterPoint++;
+                if (counter == 0) {
+                    return null;
+                }
+                if (counterPoint >= 2) {
+                    return null;
+                }
+                if (counter == copiedStr.length() - 1) {
+                    return null;
+                }
             }
-            if (str.charAt(counter) == 'e') {
+            if (copiedStr.charAt(counter) == 'e') {
                 isE = true;
                 counterE++;
-                if (counter == str.length() - 1) {
+                if (counter == 0) {
+                    return null;
+                }
+                if (!Character.isDigit(copiedStr.charAt(counter - 1)) || counterE >= 2) {
+                    return null;
+                }
+                if (counter == copiedStr.length() - 1) {
                     return null;
                 }
             }
-            if (counterPoint >= 2 || counterE >= 2) {
-                return null;
-            }
-            if (str.charAt(counter) == '-') {
-                if ((counter == str.length() - 1 || str.charAt(counter + 1) == '-')) {
-                    return null;
-                }
-                if (counter != 0 && isDigit && !isE) {
-                    return null;
+            if (copiedStr.charAt(counter) == '-') {
+                if (counter != 0) {
+                    if (copiedStr.charAt(counter - 1) != 'e') {
+                        return null;
+                    }
+                    if (counter == copiedStr.length() - 1) {
+                        return null;
+                    }
                 }
             }
         }
-        if (!copiedStr.isEmpty()) {
+        String result = copiedStr.toString();
+        if (!result.isEmpty()) {
             if (isE || isPoint) {
-                return Double.valueOf(copiedStr);
+                return Double.valueOf(result);
             }
-            if (Long.valueOf(copiedStr) > (long) Integer.MAX_VALUE || Long.valueOf(copiedStr) < (long) Integer.MIN_VALUE) {
-                return Long.valueOf(copiedStr);
+            if (Long.valueOf(result) > (long) Integer.MAX_VALUE || Long.valueOf(result) < (long) Integer.MIN_VALUE) {
+                return Long.valueOf(result);
             }
-            return Integer.valueOf(copiedStr);
+            return Integer.valueOf(result);
         }
         return null;
     }
