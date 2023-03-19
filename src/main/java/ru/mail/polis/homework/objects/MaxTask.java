@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.Arrays;
+
 public class MaxTask {
 
     /**
@@ -19,37 +21,36 @@ public class MaxTask {
         }
         int[] maxArray = new int[count];
         for (int i = 0; i < count; i++) {
-            maxArray[i] = Integer.MIN_VALUE;
+            maxArray[i] = array[i];
         }
-        int min = findMinMaxArray(maxArray, count)[0];
-        int number = findMinMaxArray(maxArray, count)[1];
-        for (int i = 0; i < array.length; i++) {
-            if (min < array[i]) {
-                maxArray[number] = array[i];
-                min = findMinMaxArray(maxArray, count)[0];
-                number = findMinMaxArray(maxArray, count)[1];
+        minSort(maxArray, count);
+        for (int i = count; i < array.length; i++) {
+            if (maxArray[0] < array[i]) {
+                maxArray[0] = array[i];
+                minSort(maxArray, count);
             }
         }
-        sortMaxArray(maxArray, count);
+        maxSort(maxArray, count);
         return maxArray;
     }
 
-    public static int[] findMinMaxArray(int[] maxArray, int count) {
-        int min = Integer.MAX_VALUE;
-        int number = 0;
-        for (int i = 0; i < count; i++) {
-            if (maxArray[i] < min) {
-                min = maxArray[i];
-                number = i;
-            }
-        }
-        return new int[]{min, number};
-    }
-
-    public static int[] sortMaxArray(int[] maxArray, int count) {
+    public static int[] maxSort(int[] maxArray, int count) {
         for (int i = maxArray.length - 1; i > 0; i--) {
             for (int j = 0; j < i; j++) {
                 if (maxArray[j] < maxArray[j + 1]) {
+                    int tmp = maxArray[j];
+                    maxArray[j] = maxArray[j + 1];
+                    maxArray[j + 1] = tmp;
+                }
+            }
+        }
+        return maxArray;
+    }
+
+    public static int[] minSort(int[] maxArray, int count) {
+        for (int i = maxArray.length - 1; i > 0; i--) {
+            for (int j = 0; j < i; j++) {
+                if (maxArray[j] > maxArray[j + 1]) {
                     int tmp = maxArray[j];
                     maxArray[j] = maxArray[j + 1];
                     maxArray[j + 1] = tmp;

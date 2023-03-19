@@ -15,13 +15,14 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        if (str == "" || str == null) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
         String newStr = "";
         int digetCount = 0;
         int dotCount = 0;
         int eCount = 0;
+        int afterECount = 0;
         int minusCount = 0;
         for (int i = 0; i < str.length(); i++) {
             char strNumber = str.charAt(i);
@@ -31,29 +32,41 @@ public class StringTasks {
                         dotCount++;
                         break;
                     case '-':
+                        minusCount++;
                         if (i != 0 & digetCount > 0) {
-                            if (str.charAt(i - 1) != 'e') {
+                            if (eCount == 0) {
                                 return null;
                             }
                         }
-                        minusCount++;
+                        if (eCount == 1) {
+                            afterECount++;
+                            if (digetCount > 0) {
+                                return null;
+                            }
+                        }
                         break;
                     case 'e':
+                        digetCount = 0;
                         eCount++;
                         break;
                     default:
                         digetCount++;
                 }
-                if (dotCount > 1 || minusCount > 1 || eCount > 1) {
+                if (dotCount > 1 || (minusCount > 1 & eCount == 0) || eCount > 1 || afterECount > 1) {
                     return null;
                 }
                 newStr += strNumber;
             }
         }
-        if (!newStr.contains(".")) {
-            return Integer.valueOf(newStr);
+        if (digetCount == 0) {
+            return null;
         }
-        return Double.valueOf(newStr);
-
+        if (newStr.contains(".") || newStr.contains("e")) {
+            return Double.valueOf(newStr);
+        }
+        if (Long.parseLong(newStr) > Integer.MAX_VALUE || Long.parseLong(newStr) < Integer.MIN_VALUE) {
+            return Long.valueOf(newStr);
+        }
+        return Integer.valueOf(newStr);
     }
 }
