@@ -25,17 +25,15 @@ public class MaxTask {
         int[] maxNumbersArray = Arrays.copyOf(array, count);
         Arrays.sort(maxNumbersArray);
         int index;
-
         for (int i = count; i < array.length; ++i) {
-            if (array[i] <= maxNumbersArray[0]) {
-                continue;
-            }
-            index = Arrays.binarySearch(maxNumbersArray, array[i]);
-            index = index < 0? -(index + 1): index;
-            System.arraycopy(maxNumbersArray, 1, maxNumbersArray, 0, index - 1);
-            maxNumbersArray[index - 1] = array[i];
-        }
+            if (array[i] > maxNumbersArray[0]) {
+                index = Arrays.binarySearch(maxNumbersArray, array[i]);
+                index = index < 0? -(index + 1): index;
 
+                System.arraycopy(maxNumbersArray, 1, maxNumbersArray, 0, index - 1);
+                maxNumbersArray[index - 1] = array[i];
+            }
+        }
         int temp;
         for (int i = 0; i < maxNumbersArray.length / 2; ++i) {
             temp = maxNumbersArray[i];
