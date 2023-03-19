@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.objects;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 public class MaxTask {
 
     /**
@@ -12,30 +15,33 @@ public class MaxTask {
      * 4 тугрика
      */
     public static int[] getMaxArray(int[] array, int count) {
-        if (array == null || count > array.length) {
+
+        if (array == null || count > array.length){
             return null;
         }
-        if (count == 0) {
+        if (count == 0){
             return new int[0];
         }
-        int[] returnArray = new int[count];
-        int tmp;
-        for (int i = 0; i < returnArray.length; ++i) {
-            returnArray[i] = Integer.MIN_VALUE;
-        }
-        for (int num : array) {
-            if (returnArray[count - 1] > num) {
+        int[] maxNumbersArray = Arrays.copyOf(array, count);
+        Arrays.sort(maxNumbersArray);
+        int index;
+
+        for (int i = count; i < array.length; ++i) {
+            if (array[i] <= maxNumbersArray[0]) {
                 continue;
             }
-            returnArray[count - 1] = num;
-            for (int i = returnArray.length - 1; i >= 1; --i) {
-                if (returnArray[i] > returnArray[i - 1]) {
-                    tmp = returnArray[i];
-                    returnArray[i] = returnArray[i - 1];
-                    returnArray[i - 1] = tmp;
-                }
-            }
+            index = Arrays.binarySearch(maxNumbersArray, array[i]);
+            index = index < 0? -(index + 1): index;
+            System.arraycopy(maxNumbersArray, 1, maxNumbersArray, 0, index - 1);
+            maxNumbersArray[index - 1] = array[i];
         }
-        return returnArray;
+
+        int temp;
+        for (int i = 0; i < maxNumbersArray.length / 2; ++i) {
+            temp = maxNumbersArray[i];
+            maxNumbersArray[i] = maxNumbersArray[maxNumbersArray.length - 1 - i];
+            maxNumbersArray[maxNumbersArray.length - 1 - i] = temp;
+        }
+        return maxNumbersArray;
     }
 }
