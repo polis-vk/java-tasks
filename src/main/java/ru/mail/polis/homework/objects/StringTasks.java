@@ -15,7 +15,7 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        if (str == null || str.isEmpty()) {
+        if (str == null || str.length() == 0) {
             return null;
         }
         StringBuilder number = new StringBuilder();
@@ -24,35 +24,36 @@ public class StringTasks {
         boolean dash = false;
         boolean firstSymbol = false;
         for (int i = 0; i < str.length(); i++) {
-            if (Character.isDigit(str.charAt(i))) {
-                number.append(str.charAt(i));
-                firstSymbol = true;
-            } else {
-                switch (str.charAt(i)) {
-                    case '-':
-                        if ((firstSymbol && number.charAt(number.length() - 1) != 'e') || dash) {
-                            return null;
-                        }
-                        dash = true;
+            switch (str.charAt(i)) {
+                case '-':
+                    if ((firstSymbol && number.charAt(number.length() - 1) != 'e') || dash) {
+                        return null;
+                    }
+                    dash = true;
+                    number.append(str.charAt(i));
+                    continue;
+                case '.':
+                    if (point) {
+                        return null;
+                    }
+                    point = true;
+                    number.append(str.charAt(i));
+                    continue;
+                case 'e':
+                    if (e) {
+                        return null;
+                    }
+                    e = true;
+                    dash = false;
+                    point = true;
+                    firstSymbol = false;
+                    number.append(str.charAt(i));
+                    continue;
+                default:
+                    if (Character.isDigit(str.charAt(i))) {
                         number.append(str.charAt(i));
-                        continue;
-                    case '.':
-                        if (point) {
-                            return null;
-                        }
-                        point = true;
-                        number.append(str.charAt(i));
-                        continue;
-                    case 'e':
-                        if (e) {
-                            return  null;
-                        }
-                        e = true;
-                        dash = false;
-                        point = true;
-                        firstSymbol = false;
-                        number.append(str.charAt(i));
-                }
+                        firstSymbol = true;
+                    }
             }
         }
         if (number.charAt(number.length() - 1) == 'e' || number.charAt(number.length() - 1) == '-') {
@@ -63,7 +64,7 @@ public class StringTasks {
         }
         long temp = Long.parseLong(number.toString());
         if (temp <= Integer.MAX_VALUE && temp >= Integer.MIN_VALUE) {
-            return Integer.parseInt(number.toString());
+            return (int) temp;
         }
         return temp;
     }
