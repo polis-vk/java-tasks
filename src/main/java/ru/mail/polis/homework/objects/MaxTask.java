@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.objects;
 
-import java.util.PriorityQueue;
 
 public class MaxTask {
 
@@ -17,16 +16,50 @@ public class MaxTask {
         if (array == null || count > array.length) {
             return null;
         }
-        PriorityQueue<Integer> maxNums = new PriorityQueue<>();
-        for (int i : array) {
-            maxNums.add(i);
-            if (maxNums.size() > count) maxNums.poll();
+        int[] maxNums = new int[count];
+        for (int i = 0; i < array.length; i++) {
+            if (i < count) {
+                if (i == 0) {
+                    maxNums[i] = array[i];
+                } else {
+                    int insertPosition = -1;
+                    for (int j = i - 1; j >= 0; j--) {
+                        if (array[i] < maxNums[j]) {
+                            break;
+                        } else {
+                            insertPosition = j;
+                        }
+                    }
+                    if (insertPosition == -1) {
+                        maxNums[i] = array[i];
+                    } else {
+                        shift(maxNums, insertPosition, i);
+                        maxNums[insertPosition] = array[i];
+                    }
+                }
+            } else {
+                int insertPosition = -1;
+                for (int j = count - 1; j >= 0; j--) {
+                    if (array[i] < maxNums[j]) {
+                        break;
+                    } else {
+                        insertPosition = j;
+                    }
+                }
+                if (insertPosition != -1) {
+                    shift(maxNums, insertPosition, count - 1);
+                    maxNums[insertPosition] = array[i];
+                }
+            }
         }
-        int[] topKNums = new int[count];
-        for (int i = topKNums.length - 1; i >= 0; i--) {
-            topKNums[i] = maxNums.poll();
+        return maxNums;
+    }
+
+    public static void shift(int[] arr, int num, int length) {
+        for (int i = length; i > num; i--) {
+            arr[i] = arr[i - 1];
         }
-        return topKNums;
+
     }
 
 }
