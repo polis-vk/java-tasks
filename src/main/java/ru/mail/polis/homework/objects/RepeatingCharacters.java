@@ -14,30 +14,35 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if (str == null || str.length() == 0) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
 
-        char[] strArray = str.toCharArray();
-        int[] lengthArray = new int[strArray.length];
-        lengthArray[0] = 1;
+        int currentMax = 1;
+        int currentLength = 1;
+        int indexMax = 0;
 
-        for (int i = 1; i < strArray.length; i++) {
-            if (strArray[i] == strArray[i - 1]) {
-                lengthArray[i] = lengthArray[i - 1] + 1;
-            } else {
-                lengthArray[i] = 1;
+        for (int i = 1; i < str.length(); i++) {
+            if (str.charAt(i) == str.charAt(i - 1)) {
+                currentLength++;
+                continue;
+            }
+            indexMax = currentLength > currentMax ? i - 1 : indexMax;
+            currentMax = Math.max(currentLength, currentMax);
+            currentLength = 1;
+
+            //Досрочный выход из цикла, если максимум точно найден - если длина оставшейся строки меньше, чем текущий максимум
+            //Условие не можем записать в for так как мб ситуация "aaaссссса" и выход из цикла будет до нахождения максимума
+            //Корректно проверять условие каждый раз после нахождения длины подряд идущих символов
+            if (str.length() - i  < currentMax){
+                break;
             }
         }
 
-        int indexMax = 0;
-        int max = 0;
-        for (int i = 0; i < lengthArray.length; i++) {
-            indexMax = lengthArray[i] > max ? i : indexMax;
-            max = Math.max(max, lengthArray[i]);
-        }
+        indexMax = currentLength > currentMax ? str.length() - 1 : indexMax;
+        currentMax = Math.max(currentLength, currentMax);
 
-        return new Pair<>(strArray[indexMax], max);
+        return new Pair<>(str.charAt(indexMax), currentMax);
     }
 
     public static class Pair<T, V> {

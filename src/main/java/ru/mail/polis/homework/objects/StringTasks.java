@@ -16,7 +16,7 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        if (str == null || str.length() == 0) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
         char[] strArray = str.toCharArray();
@@ -24,8 +24,8 @@ public class StringTasks {
         boolean eHave = false;
 
         StringBuilder digit = new StringBuilder();
-        for (int i = 0; i < strArray.length; i++) {
-            char cur = strArray[i];
+        for (int i = 0; i < str.length(); i++) {
+            char cur = str.charAt(i);
             switch (cur) {
                 case '.':
                     if (pointHave) {
