@@ -17,21 +17,24 @@ public class RepeatingCharacters {
         if (str == null || str.isEmpty()) {
             return null;
         }
+        int strLength = str.length();
         char repeatingCharacter = str.charAt(0);
         int length = 1;
-        char maxRepeatingCharacter = str.charAt(0);
+        char maxRepeatingCharacter = repeatingCharacter;
         int maxLength = 1;
-        for (int i = 1; i < str.length(); i++) {
-            if (str.charAt(i) == repeatingCharacter) {
+        for (int i = 1; i < strLength; i++) {
+            char currentChar = str.charAt(i);
+            if (currentChar == repeatingCharacter) {
                 length++;
-                repeatingCharacter = str.charAt(i);
                 if (length > maxLength) {
                     maxRepeatingCharacter = repeatingCharacter;
                     maxLength = length;
+                    if (i != strLength - 1 && maxLength >= strLength - i && currentChar != str.charAt(i + 1)) {
+                        return new Pair<>(maxRepeatingCharacter, maxLength);
+                    }
                 }
-            }
-            else {
-                repeatingCharacter = str.charAt(i);
+            } else {
+                repeatingCharacter = currentChar;
                 length = 1;
             }
         }
