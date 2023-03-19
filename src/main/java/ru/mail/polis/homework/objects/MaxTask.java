@@ -15,14 +15,11 @@ public class MaxTask {
         if (array == null || array.length < count) {
             return null;
         }
-
         int[] result = new int[count];
         if (count == 0) {
             return result;
         }
-        for (int i = 0; i < count; i++) {
-            result[i] = array[i];
-        }
+        System.arraycopy(array, 0, result, 0, count);
         for (int i = count; i < array.length; i++) {
             int minIndex = getMinIndex(result);
             if (array[i] > result[minIndex]) {

@@ -16,59 +16,57 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
 
-        if (str == null) {
-            return null;
-        }
-        if (str.isEmpty()) {
-            return null;
-        }
-        char letter;
-        StringBuilder result = new StringBuilder();
-        boolean isFloating = false;
-        boolean isExponential = false;
-        boolean isNegative = false;
-        boolean isNegativeInExponent = false;
+        StringBuilder sb = new StringBuilder();
+        int dotCount = 0;
+        int eCount = 0;
+        boolean lastCharWasE = false;
+
         for (int i = 0; i < str.length(); i++) {
-            letter = str.charAt(i);
-            if (Character.isDigit(letter) || letter == '.' || letter == '-' || letter == 'e') {
-                if (letter == '-' && (result.length() > 0) && !isExponential) {
-                    return null;
-                } else if (letter == '-' && (result.length() == 0)) {
-                    isNegative = true;
-                }
-                if (letter == '-' && isNegativeInExponent) {
-                    return null;
-                } else if (isExponential && result.charAt(result.length() - 1) != 'e' && letter == '-' && !isNegativeInExponent) {
-                    return null;
-                } else if (letter == '-' && isExponential && result.charAt(result.length() - 1) == 'e') {
-                    isNegativeInExponent = true;
-                }
-                if ((letter == '.' && isFloating) || (letter == 'e' && isExponential)) {
+            char c = str.charAt(i);
+
+            if (Character.isDigit(c)) {
+                sb.append(c);
+                lastCharWasE = false;
+            } else if (c == '.') {
+                dotCount++;
+                if (dotCount > 1) {
                     return null;
                 }
-                if (letter == 'e') {
-                    if (i == str.length() - 1) {
-                        return null;
-                    }
-                    isExponential = true;
+                sb.append(c);
+                lastCharWasE = false;
+            } else if (c == 'e' || c == 'E') {
+                eCount++;
+                if (eCount > 1) {
+                    return null;
                 }
-                if (letter == '.') {
-                    isFloating = true;
+                sb.append('e');
+                lastCharWasE = true;
+            } else if (c == '-') {
+                if (sb.length() > 0 && !lastCharWasE) {
+                    return null;
                 }
-                result.append(letter);
+                sb.append(c);
+                lastCharWasE = false;
             }
         }
-
-        if (isFloating || isExponential) {
-            return Double.valueOf(result.toString());
-        } else {
-            long value = Long.valueOf(result.toString());
-            if ((value <= Integer.MAX_VALUE && !isNegative) || (value >= Integer.MIN_VALUE && isNegative)) {
-                return Integer.valueOf(result.toString());
-            } else {
-                return value;
+        try {
+            Double result = Double.valueOf(sb.toString());
+            if(eCount != 0) {
+                return result;
             }
+            if(result == result.intValue() ){
+                return result.intValue();
+            }
+            if(result > Integer.MAX_VALUE || result < Integer.MIN_VALUE){
+                return result.longValue();
+            }
+            return result;
+        } catch (NumberFormatException e) {
+            return null;
         }
     }
 }
