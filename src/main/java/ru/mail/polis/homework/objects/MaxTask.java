@@ -26,7 +26,7 @@ public class MaxTask {
                 result[minIndex] = array[i];
             }
         }
-        bubbleSortDescending(result);
+        quickSort(result, 0, result.length - 1);
         return result;
     }
 
@@ -40,18 +40,37 @@ public class MaxTask {
         return minIndex;
     }
 
-    private static void bubbleSortDescending(int[] array) {
-        boolean swapped;
-        do {
-            swapped = false;
-            for (int i = 0; i < array.length - 1; i++) {
-                if (array[i] < array[i + 1]) {
-                    int temp = array[i];
-                    array[i] = array[i + 1];
-                    array[i + 1] = temp;
-                    swapped = true;
-                }
-            }
-        } while (swapped);
+    public static void quickSort(int[] arr, int left, int right) {
+        if (left < right) {
+            int pivotIndex = partition(arr, left, right);
+            quickSort(arr, left, pivotIndex - 1);
+            quickSort(arr, pivotIndex + 1, right);
+        }
     }
+
+    private static int partition(int[] arr, int left, int right) {
+        int pivot = arr[right];
+        int i = left - 1;
+
+        for (int j = left; j < right; j++) {
+            if (arr[j] >= pivot) {
+                i++;
+                swap(arr, i, j);
+            }
+        }
+
+        swap(arr, i + 1, right);
+
+        return i + 1;
+    }
+
+    private static void swap(int[] arr, int i, int j) {
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+
 }
+
+
+

@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.objects;
 
-
-
 import java.util.Objects;
 
 /**
@@ -15,35 +13,23 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-
-        if (str == null) {
+        if (str == null || str.length() == 0) {
             return null;
         }
-        if (str.isEmpty()) {
-            return null;
-        }
-        char previousLetter = 0;
-        char letter;
-        Pair<Character, Integer> maxCharacter = new Pair<>('0', 0);
-        Pair<Character, Integer> currentCharacter = new Pair<>('0', 0);
-        for (int i = 0; i < str.length(); i++) {
-            letter = str.charAt(i);
-            if (i == 0) {
-                maxCharacter = new Pair<>(letter, 1);
-                currentCharacter = new Pair<>(letter, 1);
-            } else {
-                if (letter == previousLetter) {
-                    currentCharacter = new Pair<>(currentCharacter.first, currentCharacter.second + 1);
-                } else {
-                    currentCharacter = new Pair<>(letter, 1);
-                }
-                if (currentCharacter.second > maxCharacter.second) {
-                    maxCharacter = currentCharacter;
-                }
+        char letter = str.charAt(0);
+        int maxLetterCount = 1;
+        int currentCount = 1;
+        for (int i = 0; i < str.length() - 1; i++) {
+            if (str.charAt(i) != str.charAt(i + 1)) {
+                currentCount = 0;
             }
-            previousLetter = letter;
+            currentCount++;
+            if (currentCount > maxLetterCount) {
+                letter = str.charAt(i + 1);
+                maxLetterCount = currentCount;
+            }
         }
-        return maxCharacter;
+        return new Pair<>(letter, maxLetterCount);
     }
 
     public static class Pair<T, V> {

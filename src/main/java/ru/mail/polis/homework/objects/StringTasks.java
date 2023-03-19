@@ -55,13 +55,13 @@ public class StringTasks {
         }
         try {
             Double result = Double.valueOf(sb.toString());
-            if(eCount != 0) {
+            if (eCount != 0) {
                 return result;
             }
-            if(result == result.intValue() ){
+            if (result == result.intValue()) {
                 return result.intValue();
             }
-            if(result > Integer.MAX_VALUE || result < Integer.MIN_VALUE){
+            if (result > Integer.MAX_VALUE || result < Integer.MIN_VALUE) {
                 return result.longValue();
             }
             return result;
