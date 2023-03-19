@@ -16,23 +16,21 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        if (str == null || str.length() == 0 || str.charAt(str.length() - 1) == '-' || str.charAt(str.length() - 1) == 'e') {
+        if (str.isEmpty() || str.length() == 0 || str.endsWith("-") || str.endsWith("e")) {
             return null;
         }
         StringBuilder result = new StringBuilder();
         int dotAmount = 0;
         int eAmount = 0;
-        for (char c: str.toCharArray()) {
+        for (char c : str.toCharArray()) {
             if (c != '-' && c != 'e' && c != '.' && !Character.isDigit(c)) {
                 continue;
-            }
-            else if (c == '.') {
+            } else if (c == '.') {
                 ++dotAmount;
                 if (dotAmount > 1) {
                     return null;
                 }
-            }
-            else if (c == 'e') {
+            } else if (c == 'e') {
                 ++eAmount;
                 if (eAmount > 1) {
                     return null;
