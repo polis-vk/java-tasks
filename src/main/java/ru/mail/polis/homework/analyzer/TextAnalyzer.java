@@ -39,3 +39,4 @@ public interface TextAnalyzer {
     byte getPriority();
 }
 
+

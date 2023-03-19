@@ -3,6 +3,7 @@ package ru.mail.polis.homework.analyzer;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+
 /**
  * Задание написать систему фильтрации комментариев.
  * Надо реализовать три типа обязательных фильтров

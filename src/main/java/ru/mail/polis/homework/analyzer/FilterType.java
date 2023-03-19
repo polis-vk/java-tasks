@@ -10,3 +10,5 @@ public enum FilterType {
     NEGATIVE_TEXT,
     NOT_CONCISE_TEXT
 }
+
+
