@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.Arrays;
+
 public class MaxTask {
 
     /**
@@ -19,25 +21,34 @@ public class MaxTask {
             return new int[0];
         }
 
-        int[] copy = array;
-        int[] result = new int[count];
-        int counter = 0;
-        int maxId;
-        int curMax;
+        int[] result = Arrays.copyOf(array, count);
+        Arrays.sort(result);
+        int min = result[0];
+        int insertId;
+        int curId = count;
 
         do {
-            curMax = copy[0];
-            maxId = 0;
-            for (int id = 1; id < copy.length; id++) {
-                if (copy[id] > curMax) {
-                    curMax = copy[id];
-                    maxId = id;
-                }
+            if (array[curId] <= min) {
+                continue;
             }
-            copy[maxId] = Integer.MIN_VALUE;
-            result[counter] = curMax;
-            counter++;
-        } while (counter < count);
+            insertId = Arrays.binarySearch(result, array[curId]);
+            if (insertId >= 0) {
+                System.arraycopy(result, 1, result, 0, insertId);
+            } else {
+              insertId = -(insertId + 1);
+              System.arraycopy(result, 1, result, 0, insertId - 1);
+              result[insertId - 1] = array[curId];
+            }
+            min = result[0];
+            curId++;
+        } while (curId != array.length);
+
+        int temp;
+        for (int i = 0; i < count / 2; i++) {
+            temp = result[i];
+            result[i] = result[count - i - 1];
+            result[count - i - 1] = temp;
+        }
 
         return result;
     }

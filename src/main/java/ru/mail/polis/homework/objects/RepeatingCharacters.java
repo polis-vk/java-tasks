@@ -14,42 +14,29 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if (str == null || str == "") {
+        if (str == null || str.isEmpty()) {
             return null;
         }
-        StringBuilder strCopy = new StringBuilder();
-        StringBuilder strRepeat = new StringBuilder();
-        strCopy.append(str);
-        if (strCopy.length() == 1) {
-            return new Pair<>(strCopy.charAt(0), 1);
-        }
-        char repSym = '0';
-        int repeat = 1;
-        int maxRepeat = 0;
-        for (int i = 1; i < strCopy.length(); i++) {
-            char prevSym = strCopy.charAt(i - 1);
-            char curSym = strCopy.charAt(i);
-            if (prevSym == curSym) {
-                strRepeat.append(prevSym);
-                repeat++;
-                if (repeat > maxRepeat) {
-                    maxRepeat = repeat;
-                    repSym = prevSym;
+
+        int maxRepeat = 1;
+        int curRepeat = 1;
+        char sym = str.charAt(0);
+        int i = 0;
+
+        while(i != str.length() - 1) {
+            if (str.charAt(i) == str.charAt(i + 1)) {
+                curRepeat++;
+                if (maxRepeat < curRepeat) {
+                    maxRepeat = curRepeat;
+                    sym = str.charAt(i);
                 }
-                if (repeat == strCopy.length()) {
-                    new Pair<>(prevSym, repeat);
-                }
-            } else if (repeat > maxRepeat) {
-                maxRepeat = repeat;
-                repSym = prevSym;
-                repeat = 1;
-                strRepeat = new StringBuilder();
             } else {
-                repeat = 1;
-                strRepeat = new StringBuilder();
+                curRepeat = 1;
             }
+            i++;
         }
-        return new Pair<>(repSym, maxRepeat);
+
+        return new Pair<>(sym, maxRepeat);
     }
 
     public static class Pair<T, V> {
