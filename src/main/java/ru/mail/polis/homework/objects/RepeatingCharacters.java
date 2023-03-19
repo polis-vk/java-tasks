@@ -23,6 +23,9 @@ public class RepeatingCharacters {
         int ansrCounter = 1;
         char ansrChar = prevChar;
         for (int i = 1; i < str.length(); i++) {
+            if (counter + str.length() - i <= ansrCounter) {
+                break;
+            }
             char ch = str.charAt(i);
             if (prevChar != ch) {
                 if (counter > ansrCounter) {
