@@ -11,6 +11,7 @@ public class MaxTask {
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копии
      *
      */
+    
     public static int[] getMaxArray(int[] array, int count) {
         return null;
     }
