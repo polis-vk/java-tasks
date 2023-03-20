@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
 
+import org.w3c.dom.Text;
+
 /**
  * Задание написать систему фильтрации комментариев.
  * Надо реализовать три типа обязательных фильтров
@@ -32,9 +34,7 @@ package ru.mail.polis.homework.analyzer;
  * Итого 20 тугриков за все задание
  */
 public class TextFilterManager {
-    FilterNegative filterNegative;
-    FilterSpam filterSpam;
-    FilterToLong filterToLong;
+    TextAnalyzer[] filters;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -42,21 +42,22 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        for (TextAnalyzer i : filters) {
-
-        }
+        this.filters = filters;
     }
 
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-        if (text == null || text.isEmpty()) {
+        if (text == null) {
             return FilterType.GOOD;
-        } else if (text.contains(filterNegative.getSadStr1()) || text.contains(filterNegative.getSadStr2()) || text.contains(filterNegative.getSadStr3())) {
-            return FilterType.NEGATIVE_TEXT;
         }
-        return null;
+        for (TextAnalyzer i : this.filters) {
+            if (i.trigger(text)) {
+                return i.getType();
+            }
+        }
+        return FilterType.GOOD;
     }
 
 
@@ -68,23 +69,52 @@ class FilterSpam implements TextAnalyzer {
     public FilterSpam(String[] badStrings) {
         this.badStrings = badStrings;
     }
+
+    @Override
+    public FilterType getType() {
+        return FilterType.SPAM;
+    }
+
+    @Override
+    public boolean trigger(String str) {
+        for (String i : this.badStrings) {
+            if (str.contains(i)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 class FilterToLong implements TextAnalyzer {
-    private long maxQuantity;
+    private final long maxQuantity;
 
     public FilterToLong(long maxQuantity) {
         this.maxQuantity = maxQuantity;
     }
+
     long getMaxQuantity() {
         return maxQuantity;
+    }
+
+    @Override
+    public FilterType getType() {
+        return FilterType.TOO_LONG;
+    }
+
+    @Override
+    public boolean trigger(String str) {
+        if (str.length() > maxQuantity) {
+            return true;
+        }
+        return false;
     }
 }
 
 class FilterNegative implements TextAnalyzer {
-    private String sadStr1;
-    private String sadStr2;
-    private String sadStr3;
+    private final String sadStr1;
+    private final String sadStr2;
+    private final String sadStr3;
 
     public FilterNegative() {
         sadStr1 = "=(";
@@ -95,10 +125,42 @@ class FilterNegative implements TextAnalyzer {
     String getSadStr1() {
         return sadStr1;
     }
+
     String getSadStr2() {
         return sadStr2;
     }
+
     String getSadStr3() {
         return sadStr3;
+    }
+
+    @Override
+    public FilterType getType() {
+        return FilterType.NEGATIVE_TEXT;
+    }
+
+    @Override
+    public boolean trigger(String str) {
+        if (str.contains(sadStr1) || str.contains(sadStr2) || str.contains(sadStr3)) {
+            return true;
+        }
+        return false;
+    }
+}
+
+class FilterDigit implements TextAnalyzer {
+    @Override
+    public FilterType getType() {
+        return FilterType.CUSTOM;
+    }
+
+    @Override
+    public boolean trigger(String str) {
+        for (int counter = 0; counter < str.length(); counter++) {
+            if (Character.isDigit(str.charAt(counter))) {
+                return true;
+            }
+        }
+        return false;
     }
 }

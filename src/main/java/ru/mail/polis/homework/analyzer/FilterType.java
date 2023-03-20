@@ -4,5 +4,5 @@ package ru.mail.polis.homework.analyzer;
  * Типы фильтров (2 тугрика)
  */
 public enum FilterType {
-    TO_LONG, SPAM, NEGATIVE_TEXT, GOOD;
+    TOO_LONG, SPAM, NEGATIVE_TEXT, GOOD, CUSTOM;
 }

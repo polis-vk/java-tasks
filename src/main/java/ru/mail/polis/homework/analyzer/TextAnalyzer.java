@@ -32,6 +32,9 @@ public interface TextAnalyzer {
      * придумать свой фильтр
      */
     static <T> TextAnalyzer createCustomAnalyzer(T something) {
-        return null;
+        return new FilterDigit();
     }
+    boolean trigger(String str);
+
+    FilterType getType();
 }
