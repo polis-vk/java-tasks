@@ -20,57 +20,53 @@ public class StringTasks {
             return null;
         }
 
-        int dotCount = 0;
-        int eCount = 0;
-        boolean isDashPrevious = false;
+        StringBuilder numberStr = new StringBuilder();
 
-        int i = 0;
-        while (i < str.length()) {
-            if (Character.isDigit(str.charAt(i))) {
-                isDashPrevious = false;
-                ++i;
+        char symbol;
+        boolean isThereDot = false;
+        boolean isThereEps = false;
+
+        for (int i = 0; i < str.length(); ++i) {
+            symbol = str.charAt(i);
+            if (Character.isDigit(symbol)) {
+                numberStr.append(symbol);
                 continue;
             }
-            if (Character.isLetter(str.charAt(i)) && str.charAt(i) != 'e') {
-                isDashPrevious = false;
-                str = str.substring(0, i) + str.substring(i + 1);
-                continue;
-            }
-            switch (str.charAt(i)) {
-                case ('-'):
-                    boolean isWrong = i != 0 && str.charAt(i - 1) != 'e';
-                    if (isDashPrevious || isWrong) {
+            switch (symbol) {
+                case '-':
+                    if (numberStr.length() != 0) {
+                        if (numberStr.charAt(numberStr.length() - 1) != 'e') {
+                            return null;
+                        }
+                    }
+                    numberStr.append(symbol);
+                    break;
+                case '.':
+                    if (isThereDot) {
                         return null;
                     }
-                    isDashPrevious = true;
+                    numberStr.append(symbol);
+                    isThereDot = true;
                     break;
-                case ('.'):
-                    ++dotCount;
-                    break;
-                case ('e'):
-                    if (i + 1 == str.length()) {
+                case 'e':
+                    if (isThereEps || i + 1 == str.length()) {
                         return null;
                     }
-                    ++eCount;
+                    numberStr.append(symbol);
+                    isThereEps = true;
                     break;
                 default:
                     break;
             }
-
-            if (dotCount > 1 || eCount > 1) {
-                return null;
-            }
-            ++i;
         }
 
-        if (dotCount == 1 || eCount == 1) {
-            return Double.parseDouble(str);
+        if (isThereDot || isThereEps) {
+            return Double.parseDouble(numberStr.toString());
         }
-        long longNumber = Long.parseLong(str);
+        long longNumber = Long.parseLong(numberStr.toString());
         if (longNumber >= Integer.MIN_VALUE && longNumber <= Integer.MAX_VALUE) {
-            return Integer.parseInt(str);
+            return (int) longNumber;
         }
-
         return longNumber;
     }
 }
