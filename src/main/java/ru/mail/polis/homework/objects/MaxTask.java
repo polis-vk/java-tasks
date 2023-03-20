@@ -19,16 +19,16 @@ public class MaxTask {
         }
         int[] arrMaxElements = new int[count];
         Arrays.fill(arrMaxElements, Integer.MIN_VALUE);
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < arrMaxElements.length; j++) {
-                if (array[i] >= arrMaxElements[j]) {
-                    for (int k = arrMaxElements.length - 1; k >= j + 1; k--) {
-                        arrMaxElements[k] = arrMaxElements[k - 1];
-                    }
-                    arrMaxElements[j] = array[i];
-                    break;
+        int[] copyArray = array.clone();
+        int indexMaxElem = 0;
+        for (int i = 0; i < count; i++) {
+            for (int j = 0; j < copyArray.length; j++) {
+                if (arrMaxElements[i] < copyArray[j]) {
+                    arrMaxElements[i] = copyArray[j];
+                    indexMaxElem = j;
                 }
             }
+            copyArray[indexMaxElem] = Integer.MIN_VALUE;
         }
         return arrMaxElements;
     }

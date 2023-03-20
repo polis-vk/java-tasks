@@ -21,35 +21,41 @@ public class StringTasks {
             return null;
         }
         StringBuilder strBuilder = new StringBuilder(str);
-        int i = 0;
-        while (i <= strBuilder.length() - 1) {
-            if (Character.isLetter(strBuilder.charAt(i)) && strBuilder.charAt(i) != 'e') {
-                strBuilder.deleteCharAt(i);
-            } else {
-                i++;
-            }
+        for (int i = 0; Character.isLetter(strBuilder.charAt(i)) && strBuilder.charAt(i) != 'e'; ) {
+            strBuilder.deleteCharAt(i);
         }
-        String resultStr = strBuilder.toString();
-        for (int j = 1; j < resultStr.length() - 1; j++) {
-            boolean previousSymbolIsDigit = Character.isDigit(resultStr.charAt(j - 1));
-            boolean nextSymbolIsDigit = Character.isDigit(resultStr.charAt(j + 1));
-            if ((resultStr.charAt(j) == '-') && (resultStr.charAt(j - 1) == 'e') && nextSymbolIsDigit) {
+        for (int i = 1; i < strBuilder.length() - 1; i++) {
+            char previousElem = strBuilder.charAt(i - 1);
+            char currentElem = strBuilder.charAt(i);
+            char nextElem = strBuilder.charAt(i + 1);
+            boolean previousElemIsDigit = Character.isDigit(previousElem);
+            if (Character.isLetter(currentElem) && currentElem != 'e') {
+                strBuilder.deleteCharAt(i);
+                i--;
                 continue;
-            } else if ((resultStr.charAt(j) == '.') && previousSymbolIsDigit && nextSymbolIsDigit) {
+            }
+            if (Character.isLetter(nextElem) && nextElem != 'e') {
+                strBuilder.deleteCharAt(i + 1);
+                i--;
                 continue;
-            } else if ((resultStr.charAt(j) == 'e') && previousSymbolIsDigit
-                    && (nextSymbolIsDigit || (resultStr.charAt(j + 1) == '-'))) {
-                continue;
-            } else if (!Character.isDigit(resultStr.charAt(j))) {
+            }
+            boolean nextElemIsDigit = Character.isDigit(nextElem);
+            if ((currentElem == '-') && (previousElem != 'e') && nextElemIsDigit) {
+                return null;
+            } else if ((currentElem == '.') && !previousElemIsDigit && !nextElemIsDigit) {
+                return null;
+            } else if ((currentElem == 'e') && !previousElemIsDigit
+                    && (!nextElemIsDigit || (nextElem != '-'))) {
                 return null;
             }
         }
-        if (resultStr.contains("e") || resultStr.contains(".")) {
-            return Double.valueOf(resultStr);
+        if (strBuilder.indexOf("e") != -1 || strBuilder.indexOf(".") != -1) {
+            return Double.parseDouble(strBuilder.toString());
         }
-        if (Long.parseLong(resultStr) < Integer.MIN_VALUE || Long.parseLong(resultStr) > Integer.MAX_VALUE) {
-            return Long.valueOf(resultStr);
+        long resultLong = Long.parseLong(strBuilder.toString());
+        if (resultLong < Integer.MIN_VALUE || resultLong > Integer.MAX_VALUE) {
+            return resultLong;
         }
-        return Integer.valueOf(resultStr);
+        return Integer.parseInt(strBuilder.toString());
     }
 }
