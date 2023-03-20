@@ -122,6 +122,16 @@ public class TextFilterManagerTest {
         manyFilters(true);
     }
 
+    @Test
+    public void analyzeOnlyExcessiveSpacesFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createExcessiveSpacesAnalyzer()});
+        assertEquals("GOOD", manager.analyze("Строка без лишних пробелов").toString());
+        assertEquals("EXCESSIVE_SPACES", manager.analyze(" Строка с лишним пробелом в начале").toString());
+        assertEquals("EXCESSIVE_SPACES", manager.analyze("Строка с лишним пробелом в конце ").toString());
+        assertEquals("EXCESSIVE_SPACES", manager.analyze(" Строка с двумя  пробелами подряд").toString());
+        assertEquals("EXCESSIVE_SPACES", manager.analyze(" строка  с  лишними  пробелами  везде    ").toString());
+    }
+
     private void manyFilters(boolean withPriority) {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
