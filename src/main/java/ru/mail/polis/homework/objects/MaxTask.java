@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.objects;
 
-import java.sql.Array;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 
 public class MaxTask {
 
@@ -25,53 +22,39 @@ public class MaxTask {
             return new int[0];
         }
 
-        Integer[] maxArray = new Integer[count];
+        int[] maxArray = new int[count];
 
-        for (int i = 0; i < count; i++) {
-            maxArray[i] = array[i];
-        }
+        Arrays.fill(maxArray, Integer.MIN_VALUE);
+        binarySearch(array, maxArray, count);
 
-        Arrays.sort(maxArray, Collections.reverseOrder());
+        return maxArray;
+    }
 
-        int midl = (int) Math.ceil((double) count / 2);
+    private static void binarySearch(final int[] array, int[] maxArray, final int count) {
+        int left = 0;
+        int right = 0;
+        int midl = 0;
 
-        //бинарный поиск
-        for (int i = count; i < array.length; i++) {
-            if (array[i] > maxArray[midl]) {
-                for (int j = 0; j < midl; j++) {
-                    if (array[i] > maxArray[j]) {
-                        //сдвиг элементов вправо
-                        for (int k = count - 1; k > j; k--) {
-                            maxArray[k] = maxArray[k - 1];
-                        }
-                        maxArray[j] = array[i];
-                        break;
-                    }
-                }
-            } else {
-                for (int j = midl; j < count; j++) {
-                    if (array[i] > maxArray[j]) {
-                        if (j == count - 1) {
-                            maxArray[j] = array[i];
-                            break;
-                        }
-                        //сдвиг элементов вправо
-                        for (int k = count - 1; k >= j; k--) {
-                            maxArray[k] = maxArray[k - 1];
-                        }
-                        maxArray[j] = array[i];
-                        break;
-                    }
-                }
+        for (int i = 0; i < array.length; i++) {
+            left = 0;
+            right = count - 1;
+            midl = (left + right) / 2;
+
+            if (array[i] <= maxArray[count - 1]) {
+                continue;
             }
+
+            while (right >= left) {
+                if (array[i] > maxArray[midl]) {
+                    right = midl - 1;
+                } else {
+                    left = midl + 1;
+                }
+                midl = (left + right) / 2;
+            }
+
+            System.arraycopy(maxArray, left, maxArray, left + 1, count - left - 1);
+            maxArray[left] = array[i];
         }
-
-        int[] returnArray = new int[count];
-
-        for (int i = 0; i < count; i++) {
-            returnArray[i] = maxArray[i];
-        }
-
-        return returnArray;
     }
 }

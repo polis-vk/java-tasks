@@ -20,7 +20,7 @@ public class RepeatingCharacters {
 
         int maxCount = 0;
         int count = 1;
-        char symbol = '\0';
+        char symbol = str.charAt(0);
 
         for (int i = 1; i <= str.length(); i++) {
             if (i != str.length() && str.charAt(i) == str.charAt(i - 1)) {
