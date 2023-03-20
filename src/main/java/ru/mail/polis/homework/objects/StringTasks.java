@@ -15,160 +15,169 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        if (str == null || str.equals("")) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
 
-        String clearStr = "";
+        StringBuilder clearStr = new StringBuilder();
 
-        int eNum = 0;
-        int minusNum = 0;
-        int dotNum = 0;
+        int eInd = -1;
+        int dotInd = -1;
+        int fMinusInd = -1;
+        int sMinusInd = -1;
+        int clearStrInd = 0;
 
         for (int i = 0; i < str.length(); i++) {
             char currSym = str.charAt(i);
-            if (currSym >= '0' && currSym <= '9' || currSym == 'e' || currSym == '.' || currSym == '-') {
+            if (isNumber(currSym) || currSym == 'e' || currSym == '.' || currSym == '-') {
                 switch (currSym) {
                     case 'e':
-                        eNum++;
-                        break;
-                    case '-':
-                        minusNum++;
+                        if (eInd != -1) {
+                            return null;
+                        }
+                        eInd = clearStrInd;
                         break;
                     case '.':
-                        dotNum++;
+                        if (dotInd != -1) {
+                            return null;
+                        }
+                        dotInd = clearStrInd;
+                        break;
+                    case '-':
+                        if (sMinusInd != -1) {
+                            return null;
+                        }
+                        if (fMinusInd == -1){
+                            fMinusInd = clearStrInd;
+                        } else {
+                            sMinusInd = clearStrInd;
+                        }
                         break;
                 }
-                if (eNum > 1 || dotNum > 1 || minusNum > 2) {
-                    return null;
+                clearStr.append(currSym);
+                clearStrInd++;
+            }
+        }
+
+        if (!isCorrectPlacement(clearStr, eInd, dotInd, fMinusInd, sMinusInd)){
+            return null;
+        }
+
+        int sign1 = 1;
+        int sign2 = 1;
+
+        if (sMinusInd != -1 || (fMinusInd != -1 && fMinusInd != 0)) {
+            sign2 = -1;
+        }
+        if (fMinusInd == 0) {
+            sign1 = -1;
+        }
+
+
+        long integer = 0;
+        double fraction = 0;
+        int exp = 0;
+        int fractionCounter = 0;
+
+        for (int i = 0; i < clearStr.length(); i++) {
+            char currSym = clearStr.charAt(i);
+
+            if (isNumber(currSym)) {
+
+                if (eInd != -1) {
+                    if (i < eInd) {
+
+                        if (dotInd != -1) {
+                            if (i < dotInd) {
+                                integer *= 10;
+                                integer += currSym - 48;
+                            }
+                            if (i > dotInd) {
+                                fractionCounter--;
+                                fraction *= 10;
+                                fraction += currSym - 48;
+                            }
+
+                        } else {
+                            integer *= 10;
+                            integer += currSym - 48;
+                        }
+                    }
+                    if (i > eInd) {
+                        exp *= 10;
+                        exp += currSym - 48;
+                    }
+                } else if (dotInd != -1) {
+                    if (i < dotInd) {
+                        integer *= 10;
+                        integer += currSym - 48;
+                    }
+                    if (i > dotInd) {
+                        fractionCounter--;
+                        fraction *= 10;
+                        fraction += currSym - 48;
+                    }
+                } else {
+                    integer *= 10;
+                    integer += currSym - 48;
                 }
-                clearStr += currSym;
-            }
-        }
-
-        char firstSym = clearStr.charAt(0);
-        int strLen = clearStr.length();
-        char lastSym = clearStr.charAt(clearStr.length() - 1);
-
-        // Exceptions
-
-        if (firstSym == '0' && strLen > 1 ||
-                firstSym == '.' || lastSym == '.' ||
-                firstSym == 'e' || lastSym == 'e' ||
-                lastSym == '-') {
-            return null;
-        }
-
-        String beforeE = null;
-        String afterE = null;
-        String beforeDot = null;
-        String afterDot = null;
-
-
-        int sign = 1;
-
-        if (clearStr.charAt(0) == '-') {
-            sign = -1;
-            clearStr = clearStr.substring(1);
-            if (minusNum == 2) {
-                if (clearStr.charAt(0) == '-' || clearStr.charAt(clearStr.indexOf('-') - 1) != 'e') {
-                    return null;
-                }
-            }
-        } else if (minusNum == 1 && clearStr.charAt(clearStr.indexOf('-') - 1) != 'e' || minusNum == 2) {
-            return null;
-        }
-
-
-        int indexOfE = clearStr.indexOf('e');
-
-
-        if (indexOfE != -1) {
-            if (
-                    clearStr.charAt(indexOfE - 1) < '0' || clearStr.charAt(indexOfE - 1) > '9' ||
-                            (clearStr.charAt(indexOfE + 1) < '0' || clearStr.charAt(indexOfE + 1) > '9') &&
-                                    clearStr.charAt(indexOfE + 1) != '-') {
-                return null;
-            }
-
-            beforeE = clearStr.substring(0, indexOfE);
-            afterE = clearStr.substring(indexOfE + 1);
-
-        } else if (minusNum == 2 || clearStr.indexOf('-') != -1) {
-            return null;
-        }
-
-        int indexOfDot = clearStr.indexOf('.');
-
-
-        if (indexOfDot != -1) {
-            if (
-                    clearStr.charAt(indexOfDot - 1) < '0' || clearStr.charAt(indexOfDot - 1) > '9' ||
-                            clearStr.charAt(indexOfDot + 1) < '0' || clearStr.charAt(indexOfDot + 1) > '9') {
-                return null;
-            }
-
-            if (indexOfE != -1) {
-                beforeDot = beforeE.substring(0, indexOfDot);
-                afterDot = beforeE.substring(indexOfDot + 1);
-            } else {
-                beforeDot = clearStr.substring(0, indexOfDot);
-                afterDot = clearStr.substring(indexOfDot + 1);
             }
 
         }
 
-        if (afterDot != null) {
-
-            return sign * (StringTasks.parse(beforeDot, 0) + StringTasks.parse(afterDot, 1)) * Math.pow(10, StringTasks.parse(afterE, 2));
-
-        } else if (afterE != null) {
-
-            return sign * StringTasks.parse(beforeE, 0) * Math.pow(10, StringTasks.parse(afterE, 2));
-
-        } else if (sign * StringTasks.parse(clearStr, 0) > Integer.MAX_VALUE || sign * StringTasks.parse(clearStr, 0) < Integer.MIN_VALUE) {
-
-            return (long) (sign * StringTasks.parse(clearStr, 0));
-
-        }else {
-
-            return (int) (sign * StringTasks.parse(clearStr, 0));
-
+        if (eInd == -1 && dotInd == -1) {
+            long result = sign1 * integer;
+            if (result > Integer.MAX_VALUE || result < Integer.MIN_VALUE) {
+                return result;
+            }
+                return (int) result;
+        } else {
+            return sign1 * (integer + fraction * Math.pow(10, fractionCounter)) * Math.pow(10, sign2 * exp);
         }
+
     }
 
-    private static double parse(String str, int situation) {
-        if (str == null){
-            return 0;
-        }
-        double number = 0;
-        int len = str.length();
-
-        switch (situation){
-            case 0:
-                for (int i = 0; i < len; i++) {
-                    number += (str.charAt(i) - 48) * Math.pow(10, len - i - 1);
-                }
-                break;
-            case 1:
-                for (int i = 0; i < len; i++) {
-                    number += (str.charAt(i) - 48) * Math.pow(10, -1 - i );
-                }
-                break;
-            case 2:
-                int sign = 1;
-                if (str.charAt(0) == '-'){
-                    sign = -1;
-                    str = str.substring(1);
-                    len--;
-                }
-                for (int i = 0; i < len; i++) {
-                    number += (str.charAt(i) - 48) * Math.pow(10, len - i - 1);
-                }
-                number *= sign;
-                break;
-        }
-
-        return number;
+    private static boolean isFirstOrLast(StringBuilder str, int ind) {
+        return ind == 0 || ind == str.length() - 1;
     }
+
+    private static boolean isNumber(char sym) {
+        return sym >= '0' && sym <= '9';
+    }
+
+    private static boolean isCorrectPlacement(StringBuilder str, int eInd, int dotInd, int fMinusInd, int sMinusInd) {
+        if (isFirstOrLast(str, eInd) || isFirstOrLast(str, dotInd) || isFirstOrLast(str, sMinusInd)) {
+            return false;
+        }
+
+        if (dotInd != -1) {
+            if (!isNumber(str.charAt(dotInd - 1)) || !isNumber(str.charAt(dotInd + 1))) {
+                return false;
+            }
+        }
+
+        if (eInd != -1) {
+
+            if (fMinusInd != -1){
+                if (sMinusInd != -1 && sMinusInd != eInd + 1){
+                    return false;
+                } else if (!isNumber(str.charAt(eInd - 1))) {
+                    return false;
+                }
+                if (fMinusInd != 0) {
+                    if (fMinusInd != eInd + 1) {
+                        return false;
+                    } else return isNumber(str.charAt(eInd - 1));
+
+                } else return sMinusInd != -1 || (isNumber(str.charAt(eInd - 1)) && isNumber(str.charAt(eInd + 1)));
+            }
+        } else {
+            if (fMinusInd != -1) {
+                return fMinusInd == 0 && sMinusInd == -1;
+            }
+        }
+
+        return true;
+    }
+
 }

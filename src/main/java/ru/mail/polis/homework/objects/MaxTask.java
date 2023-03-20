@@ -12,28 +12,30 @@ public class MaxTask {
      *
      */
     public static int[] getMaxArray(int[] array, int count) {
-        if (array == null || array.length < count)
+        if (array == null || array.length < count) {
             return null;
-        if (array.length == 0 || count == 0)
-            return new int[] {};
+        }
+        if (array.length == 0 || count == 0) {
+            return new int[]{};
+        }
 
-        int[] arrayCopy = array;
+        int[] newArray = array;
         int[] maxElemArray = new int[count];
 
         for (int k = 0; k < count; k++) {
 
-            int maxElem = arrayCopy[0];
+            int maxElem = newArray[0];
             int maxInd = 0;
 
             for (int i = 0; i < array.length; i++) {
-                if (arrayCopy[i] > maxElem){
-                    maxElem = arrayCopy[i];
+                if (newArray[i] > maxElem) {
+                    maxElem = newArray[i];
                     maxInd = i;
                 }
             }
 
             maxElemArray[k] = maxElem;
-            arrayCopy[maxInd] = Integer.MIN_VALUE;
+            newArray[maxInd] = Integer.MIN_VALUE;
 
         }
         return maxElemArray;

@@ -14,15 +14,16 @@ public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
 
-        if (str == null || str.equals(""))
+        if (str == null || str.isEmpty()) {
             return null;
+        }
 
         char currSym;
         int currLen = 1;
         char maxSym = 0;
         int maxLen = 0;
 
-        if (str.length() - 1 == 0) {
+        if (str.length() == 1) {
             maxSym = str.charAt(0);
             maxLen = 1;
         }
