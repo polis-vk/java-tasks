@@ -60,14 +60,14 @@ public class StringTasks {
         }
         if (pointHave || eHave) {
             return Double.parseDouble(digit.toString());
-        } else {
-            long resultLong = Long.parseLong(digit.toString());
-            if (resultLong <= Integer.MAX_VALUE && resultLong >= Integer.MIN_VALUE) {
-                return Integer.parseInt(digit.toString());
-            } else {
-                return resultLong;
-            }
         }
+        long resultLong = Long.parseLong(digit.toString());
+        if (resultLong <= Integer.MAX_VALUE && resultLong >= Integer.MIN_VALUE) {
+            return Integer.parseInt(digit.toString());
+        }
+        return resultLong;
+
+
     }
 
 }
