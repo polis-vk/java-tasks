@@ -18,6 +18,14 @@ public class StringTasks {
         if (str == null || str.length() == 0) {
             return null;
         }
+        String number = convertStringToNumber(str);
+        if (number == null) {
+            return null;
+        }
+        return number(number);
+    }
+
+    public static String convertStringToNumber(String str) {
         StringBuilder number = new StringBuilder();
         boolean point = false;
         boolean e = false;
@@ -59,14 +67,19 @@ public class StringTasks {
         if (number.charAt(number.length() - 1) == 'e' || number.charAt(number.length() - 1) == '-') {
             return null;
         }
-        if (point || e) {
-            return Double.parseDouble(number.toString());
+        return number.toString();
+    }
+
+    public static Number number(String number) {
+        if (number.contains("e") || number.contains(".")) {
+            return Double.parseDouble(number);
         }
-        long temp = Long.parseLong(number.toString());
+        long temp = Long.parseLong(number);
         if (temp <= Integer.MAX_VALUE && temp >= Integer.MIN_VALUE) {
             return (int) temp;
         }
         return temp;
     }
 }
+
 
