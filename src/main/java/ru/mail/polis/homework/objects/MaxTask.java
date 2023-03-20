@@ -20,39 +20,37 @@ public class MaxTask {
             return new int[]{};
         }
 
-        int[] tmp = new int[count];
-        tmp[0] = array[0];
-        int size = 1;
-        int left;
-        int right;
-        int mid;
+        int[] result = new int[count];
+        result[0] = array[0];
+        int resultSize = 1;
+        int insertIndex;
         for (int i = 1; i < array.length; i++) {
-            if (size < count) {
-                size++;
-            } else {
-                if (array[i] < tmp[size - 1]) {
-                    continue;
-                }
+            if (resultSize < count) {
+                resultSize++;
+            } else if (array[i] < result[resultSize - 1]) {
+                continue;
             }
-
-            left = 0;
-            right = size - 1;
-            mid = (left + right) / 2;
-            while (left != right) {
-                if (tmp[mid] < array[i]) {
-                    right = mid;
-                } else {
-                    left = mid + 1;
-                }
-                mid = (left + right) / 2;
+            insertIndex = searchInsertIndex(result, resultSize, array[i]);
+            for (int j = resultSize - 1; j > insertIndex; j--) {
+                result[j] = result[j - 1];
             }
-
-            for (int j = size - 1; j > mid; j--) {
-                tmp[j] = tmp[j - 1];
-            }
-            tmp[mid] = array[i];
+            result[insertIndex] = array[i];
         }
-        return tmp;
+        return result;
     }
 
+    public static int searchInsertIndex(int[] array, int size, int insertVal) {
+        int left = 0;
+        int right = size - 1;
+        int mid = (left + right) / 2;
+        while (left != right) {
+            if (array[mid] < insertVal) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+            mid = (left + right) / 2;
+        }
+        return mid;
+    }
 }

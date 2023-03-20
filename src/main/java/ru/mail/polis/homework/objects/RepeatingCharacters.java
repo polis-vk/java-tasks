@@ -18,29 +18,31 @@ public class RepeatingCharacters {
             return null;
         }
 
-        char tmp = str.charAt(0);
+        char symbol = str.charAt(0);
         int frequency = 1;
-        Pair<Character, Integer> mostFrequent = new Pair<>(tmp, frequency);
-
+        char currMostFrequent = symbol;
+        int maxFrequency = frequency;
         for (int i = 1; i < str.length(); i++) {
-            if (str.charAt(i) == tmp) {
+            if (str.charAt(i) == symbol) {
                 frequency++;
             } else {
-                if (frequency > mostFrequent.second) {
-                    mostFrequent = new Pair<>(tmp, frequency);
+                if (frequency > maxFrequency) {
+                    currMostFrequent = symbol;
+                    maxFrequency = frequency;
                     if (frequency >= str.length() / 2) {
                         break;
                     }
                 }
-                tmp = str.charAt(i);
+                symbol = str.charAt(i);
                 frequency = 1;
             }
         }
 
-        if (frequency > mostFrequent.second) {
-            mostFrequent = new Pair<>(tmp, frequency);
+        if (frequency > maxFrequency) {
+            currMostFrequent = symbol;
+            maxFrequency = frequency;
         }
-        return mostFrequent;
+        return new Pair<>(currMostFrequent, maxFrequency);
     }
 
     public static class Pair<T, V> {

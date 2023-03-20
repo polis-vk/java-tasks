@@ -22,11 +22,12 @@ public class StringTasks {
 
         StringBuilder builder = new StringBuilder();
         boolean singleDot = false;
-        boolean singleMinus = false;
+        boolean isNegative = false;
         boolean singleE = false;
         char prev = ' ';
-
-        for (char c : str.toCharArray()) {
+        char c;
+        for (int i = 0; i < str.length(); i++) {
+            c = str.charAt(i);
             if (c == '.') {
                 if (singleDot) {
                     return null;
@@ -34,27 +35,28 @@ public class StringTasks {
                 singleDot = true;
             } else if (c == '-') {
                 if (prev != 'e') {
-                    if (singleMinus) {
+                    if (isNegative) {
                         return null;
                     }
-                    singleMinus = true;
+                    isNegative = true;
                 }
             } else if (c == 'e') {
                 if (singleE) {
                     return null;
                 }
                 singleE = true;
-            } else if (!(c >= '0' && c <= '9')) {
+            } else if (!Character.isDigit(c)) {
                 continue;
             }
             prev = c;
             builder.append(c);
         }
-        if (!(prev >= '0' && prev <= '9')) {
+
+        if (!Character.isDigit(prev)) {
             return null;
         }
 
-        if (singleMinus && builder.charAt(0) != '-') {
+        if (isNegative && builder.charAt(0) != '-') {
             return null;
         }
 
@@ -62,7 +64,7 @@ public class StringTasks {
         if (singleE || singleDot) {
             return Double.parseDouble(res);
         } else {
-            Long val = Long.parseLong(res);
+            long val = Long.parseLong(res);
             if (val >= Integer.MIN_VALUE && val <= Integer.MAX_VALUE) {
                 return Integer.parseInt(res);
             }
