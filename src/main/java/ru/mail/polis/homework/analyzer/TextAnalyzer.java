@@ -15,23 +15,27 @@ package ru.mail.polis.homework.analyzer;
  * 2 тугрика + (2 тугрика за каждый фильтр + 1 тугрик за тест на свой фильтр) ИТОГО 11
  */
 public interface TextAnalyzer {
-
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return null;
+        return new ru.mail.polis.homework.analyzer.Analyzers.TooLongAnalyzer(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return null;
+        return new ru.mail.polis.homework.analyzer.Analyzers.SpamAnalyzer(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return null;
+        return new ru.mail.polis.homework.analyzer.Analyzers.NegativeTextAnalyzer();
     }
 
     /**
      * придумать свой фильтр
      */
-    static <T> TextAnalyzer createCustomAnalyzer(T something) {
-        return null;
+    static TextAnalyzer createNotConciseTextAnalyzer() {
+        return new ru.mail.polis.homework.analyzer.Analyzers.NotConciseTextAnalyzer();
     }
+
+    ru.mail.polis.homework.analyzer.FilterType filtering(String text);
+
+    byte getPriority();
 }
+
