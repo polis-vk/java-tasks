@@ -34,15 +34,16 @@ import java.util.Comparator;
  * Итого 20 тугриков за все задание
  */
 public class TextFilterManager {
+    TextAnalyzer[] filters;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
      * что в них реализован интерфейс TextAnalyzer
      */
-    public TextFilterManager(TextAnalyzer[] filters) {
-        filters_ = filters;
-        Arrays.sort(filters_, Comparator.comparingInt(TextAnalyzer::getPriority));
+    public TextFilterManager(TextAnalyzer[] analyzers) {
+        filters = Arrays.copyOf(analyzers, analyzers.length);
+        Arrays.sort(filters, Comparator.comparingInt(TextAnalyzer::getPriority));
     }
 
     /**
@@ -52,13 +53,11 @@ public class TextFilterManager {
         if (text == null) {
             return FilterType.GOOD;
         }
-        for (TextAnalyzer filter : filters_) {
+        for (TextAnalyzer filter : filters) {
             if (filter.detected(text)) {
                 return filter.getFilterType();
             }
         }
         return FilterType.GOOD;
     }
-
-    TextAnalyzer[] filters_;
 }
