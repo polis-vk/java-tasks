@@ -1,10 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
 public class CatFriendlyTextAnalyzer implements TextAnalyzer {
-    public CatFriendlyTextAnalyzer() {
-
-    }
-
     @Override
     public boolean detected(String expression) {
         return filter.detected(expression) || expression.equals(expression.toUpperCase()); // Cats don't like loud scream

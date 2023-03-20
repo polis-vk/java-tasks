@@ -1,10 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyzer implements TextAnalyzer {
-    public NegativeTextAnalyzer() {
-
-    }
-
     @Override
     public boolean detected(String expression) {
         return filter.detected(expression);
