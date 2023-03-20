@@ -16,25 +16,25 @@ package ru.mail.polis.homework.analyzer;
  */
 public interface TextAnalyzer {
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return new ru.mail.polis.homework.analyzer.Analyzers.TooLongAnalyzer(maxLength);
+        return new Analyzers.TooLongAnalyzer(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return new ru.mail.polis.homework.analyzer.Analyzers.SpamAnalyzer(spam);
+        return new Analyzers.SpamAnalyzer(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return new ru.mail.polis.homework.analyzer.Analyzers.NegativeTextAnalyzer();
+        return new Analyzers.NegativeTextAnalyzer();
     }
 
     /**
      * придумать свой фильтр
      */
     static TextAnalyzer createNotConciseTextAnalyzer() {
-        return new ru.mail.polis.homework.analyzer.Analyzers.NotConciseTextAnalyzer();
+        return new Analyzers.NotConciseTextAnalyzer();
     }
 
-    ru.mail.polis.homework.analyzer.FilterType filtering(String text);
+    FilterType filtering(String text);
 
     byte getPriority();
 }

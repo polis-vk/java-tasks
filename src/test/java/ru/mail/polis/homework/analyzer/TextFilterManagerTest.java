@@ -89,7 +89,7 @@ public class TextFilterManagerTest {
 
     @Test
     public void analyzeOnlyCustomFilter() {
-        TextFilterManager manager = new TextFilterManager(new ru.mail.polis.homework.analyzer.TextAnalyzer[]{
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNotConciseTextAnalyzer()});
         assertEquals("GOOD", manager.analyze("Привет, я Петя!").toString());
         assertEquals("GOOD", manager.analyze("").toString());
