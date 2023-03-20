@@ -25,7 +25,7 @@ public class StringTasks {
         return number(number);
     }
 
-    public static String convertStringToNumber(String str) {
+    private static String convertStringToNumber(String str) {
         StringBuilder number = new StringBuilder();
         boolean point = false;
         boolean e = false;
@@ -70,7 +70,7 @@ public class StringTasks {
         return number.toString();
     }
 
-    public static Number number(String number) {
+    private static Number number(String number) {
         if (number.contains("e") || number.contains(".")) {
             return Double.parseDouble(number);
         }
