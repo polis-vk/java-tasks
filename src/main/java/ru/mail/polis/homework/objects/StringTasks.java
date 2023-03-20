@@ -18,14 +18,14 @@ public class StringTasks {
         if (str == null || str.length() == 0) {
             return null;
         }
-        String number = convertStringToNumber(str);
+        String number = convertStringToNumberForm(str);
         if (number == null) {
             return null;
         }
-        return number(number);
+        return convertStringToNumber(number);
     }
 
-    private static String convertStringToNumber(String str) {
+    private static String convertStringToNumberForm(String str) {
         StringBuilder number = new StringBuilder();
         boolean point = false;
         boolean e = false;
@@ -70,7 +70,7 @@ public class StringTasks {
         return number.toString();
     }
 
-    private static Number number(String number) {
+    private static Number convertStringToNumber(String number) {
         if (number.contains("e") || number.contains(".")) {
             return Double.parseDouble(number);
         }
