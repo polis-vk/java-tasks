@@ -19,42 +19,20 @@ public class MaxTask {
         } else if (array.length == 0 || count == 0) {
             return new int[0];
         }
-        int[] arrayOfMaxima = new int[count];
-        Arrays.fill(arrayOfMaxima, Integer.MIN_VALUE);
-        arrayOfMaxima[0] = array[0];
-        int numberOfFilledElements = 1; //Количество заполненных элементов в результирующем массиве
-        for (int i = 1; i < array.length; i++) {
-            int indexOfTheElementToBeAdded = binarySelect(arrayOfMaxima, array[i]); //бинарная вставка элемента
-            if (numberOfFilledElements < count) {
-                numberOfFilledElements++;
+        int[] maxArray = new int[count];
+        int[] copyArray = Arrays.copyOf(array, array.length);
+        for (int i = 0; i < count; i++) {
+            int max = Integer.MIN_VALUE;
+            int indexMax = 0;
+            for (int j = 0; j < copyArray.length; j++) {
+                if (copyArray[j] > max) {
+                    max = copyArray[j];
+                    indexMax = j;
+                }
             }
-            for (int k = numberOfFilledElements - 1; k > indexOfTheElementToBeAdded; k--) {
-                arrayOfMaxima[k] = arrayOfMaxima[k - 1];
-            }
-            if (indexOfTheElementToBeAdded < arrayOfMaxima.length) {
-                arrayOfMaxima[indexOfTheElementToBeAdded] = array[i];
-            }
+            maxArray[i] = max;
+            copyArray[indexMax] = Integer.MIN_VALUE;
         }
-        return arrayOfMaxima;
-    }
-
-    public static int binarySelect(int[] arr, int num) {
-        if (num >= arr[0]) {
-            return 0;
-        } else if (num <= arr[arr.length - 1]) {
-            return arr.length;
-        }
-        int low = 0;
-        int high = arr.length - 1;
-        while (low <= high) {
-            int mid = low + (high - low) / 2;
-            if (num == arr[mid])
-                return mid + 1;
-            else if (num < arr[mid])
-                low = mid + 1;
-            else
-                high = mid - 1;
-        }
-        return low;
+        return maxArray;
     }
 }

@@ -20,49 +20,55 @@ public class StringTasks {
             return null;
         }
         int expCounter = 0;
+        int expIndex = -1;
         int dotsCounter = 0;
         int minusCounter = 0;
+        int firstMinusIndex = -1;
+        int secondMinusIndex = -1;
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
-            char newChar = str.charAt(i);
-            if (Character.isDigit(newChar)) {
-                result.append(newChar);
-            } else if (newChar == 'e') {
-                result.append(newChar);
-                expCounter++;
+            char symbol = str.charAt(i);
+            if (Character.isDigit(symbol)) {
+                result.append(symbol);
+            } else if (symbol == 'e') {
                 if (minusCounter == 2) {
                     return null;
                 }
-            } else if (newChar == '.') {
-                result.append(newChar);
+                expCounter++;
+                expIndex = result.length();
+                result.append(symbol);
+            } else if (symbol == '.') {
                 dotsCounter++;
-            } else if (newChar == '-') {
-                result.append(newChar);
+                result.append(symbol);
+            } else if (symbol == '-') {
                 minusCounter++;
-                if (minusCounter == 2) {
-                    if (result.charAt(result.length() - 2) != 'e') {
-                        return null;
-                    }
+                if (minusCounter == 1) {
+                    firstMinusIndex = result.length();
+                } else if (minusCounter == 2) {
+                    secondMinusIndex = result.length();
                 }
+                result.append(symbol);
             }
             if (dotsCounter > 1 || expCounter > 1 || minusCounter > 2) {
                 return null;
             }
         }
-        if (minusCounter == 1 && result.charAt(0) != '-' && result.indexOf("e") + 1 != result.indexOf("-")) {
+        if (minusCounter == 1 && firstMinusIndex != 0 && expIndex + 1 != firstMinusIndex) {
             return null;
         }
-        if (result.charAt(result.length() - 1) == 'e') {
+        if (minusCounter == 2 && firstMinusIndex + 1 == secondMinusIndex) {
+            return null;
+        }
+        if (expIndex == result.length() - 1) {
             return null;
         }
         if (dotsCounter == 1 || expCounter == 1) {
-            return Double.valueOf(result.toString());
+            return Double.parseDouble(result.toString());
         }
-        Long resultNumber = Long.parseLong(result.toString());
+        long resultNumber = Long.parseLong(result.toString());
         if (resultNumber > Integer.MAX_VALUE || resultNumber < Integer.MIN_VALUE) {
             return resultNumber;
         }
-        return resultNumber.intValue();
-
+        return (int) resultNumber;
     }
 }
