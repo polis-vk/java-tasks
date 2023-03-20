@@ -40,16 +40,12 @@ public class MaxTask {
         return result;
     }
 
-    private static void swap(int[] array, int i, int j) {
-        int temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-
     private static void sortReverse(int[] array) {
         Arrays.sort(array);
         for (int i = 0; i < array.length / 2; i++) {
-            swap(array, i, array.length - 1 - i);
+            int temp = array[i];
+            array[i] = array[array.length - 1 - i];
+            array[array.length - 1 - i] = temp;
         }
     }
 
