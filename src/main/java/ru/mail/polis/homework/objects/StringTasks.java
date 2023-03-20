@@ -28,8 +28,8 @@ public class StringTasks {
         for (int i = 0; i < str.length(); i++) {  // очистка строки от букв
             char symbol = str.charAt(i);
             if (Character.isDigit(symbol)
-                    || (symbol == '-')
                     || (symbol == '.')
+                    || (symbol == '-')
                     || (symbol == 'e')) {
                 clearStr.append(symbol);
             }

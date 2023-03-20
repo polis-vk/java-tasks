@@ -19,8 +19,8 @@ public class RepeatingCharacters {
 
         char maxSymbol = str.charAt(0);
         char prevSymbol = str.charAt(0);
-        int counter = 0;
         int maxCounter = 0;
+        int counter = 0;
 
         for (int i = 0; i < str.length(); i++) {
             if (str.charAt(i) == prevSymbol) {
