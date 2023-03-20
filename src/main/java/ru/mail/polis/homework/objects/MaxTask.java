@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.Arrays;
+
 public class MaxTask {
 
     /**
@@ -12,24 +14,51 @@ public class MaxTask {
      * 4 тугрика
      */
     public static int[] getMaxArray(int[] array, int count) {
-        int max;
-        int maxIndex = 0;
-        int[] temp = array;
         int[] maxValues = new int[count];
-        if (array == null || count > array.length) return null;
+        Arrays.fill(maxValues, Integer.MIN_VALUE);
 
-        for (int i = 0; i < count; i++) {
-            max = Integer.MIN_VALUE;
-            for (int j = 0; j < temp.length; j++) {
-                if (temp[j] > max) {
-                    max = temp[j];
-                    maxIndex = j;
-                }
-            }
-            maxValues[i] = max;
-            temp[maxIndex] = Integer.MIN_VALUE;
+        if (array == null || count > array.length) return null;
+        if (count == 0) {
+            return new int[]{};
+        }
+
+        for (int elem :
+                array) {
+            shift(maxValues, elem);
         }
         return maxValues;
     }
 
+    public static int binarySearch(int[] array, int value) {
+        int low = 0;
+        int high = array.length - 1;
+
+        if (value < array[high]) {
+            return -1;
+        }
+
+        while (low < high) {
+            int mid = low + (high - low) / 2;
+            if (array[mid] > value) {
+                low = mid + 1;
+                continue;
+            }
+            if (array[mid] < value) {
+                high = mid;
+                continue;
+            }
+            return mid;
+        }
+        return low;
+    }
+
+    public static void shift(int[] array, int newValue) {
+        int shiftPos = binarySearch(array, newValue);
+        if (shiftPos >= 0) {
+            for (int i = array.length - 1; i > shiftPos; i--) {
+                array[i] = array[i - 1];
+            }
+            array[shiftPos] = newValue;
+        }
+    }
 }

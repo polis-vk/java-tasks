@@ -13,24 +13,26 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if ((str == null) || str.isEmpty()) return null;
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
 
-        int currentCount = 1;
+        int count = 1;
         int maxCount = 1;
-        char currentChar = str.charAt(0);
-        char maxCountChar = currentChar;
+        char prevChar = str.charAt(0);
+        char maxCountChar = prevChar;
 
         for (int i = 1; i < str.length(); i++) {
-            if (str.charAt(i) == currentChar) {
-                currentCount++;
+            if (str.charAt(i) == prevChar) {
+                count++;
             } else {
-                currentChar = str.charAt(i);
-                currentCount = 1;
+                prevChar = str.charAt(i);
+                count = 1;
             }
 
-            if (currentCount > maxCount) {
-                maxCount = currentCount;
-                maxCountChar = currentChar;
+            if (count > maxCount) {
+                maxCount = count;
+                maxCountChar = prevChar;
             }
         }
 

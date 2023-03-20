@@ -18,7 +18,9 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        if ((str == null) || str.isEmpty()) return null;
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
 
         StringBuilder temp = new StringBuilder();
         char currentChar;
@@ -30,19 +32,28 @@ public class StringTasks {
             currentChar = str.charAt(i);
             if (Character.isDigit(currentChar)) {
                 temp.append(currentChar);
-            } else if (currentChar == '.') {
+                continue;
+            }
+
+            if (currentChar == '.') {
                 if (hasDot) {
                     return null;
                 }
                 hasDot = true;
                 temp.append(currentChar);
-            } else if (currentChar == 'e') {
+                continue;
+            }
+
+            if (currentChar == 'e') {
                 if (hasE || (i == str.length() - 1)) {
                     return null;
                 }
                 hasE = true;
                 temp.append(currentChar);
-            } else if (currentChar == '-') {
+                continue;
+            }
+
+            if (currentChar == '-') {
                 minusCount++;
                 temp.append(currentChar);
                 if ((temp.length() != 1) && !hasE
