@@ -15,53 +15,55 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        if (str == null || str.equals("")) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
-        String newstr = str.replaceAll("[^-.e\\d]", "");
+        StringBuilder sb = new StringBuilder();
+        for (int j = 0; j < str.length(); j++) {
+            if (Character.isDigit(str.charAt(j)) || str.charAt(j) == 'e' || str.charAt(j) == '.' || str.charAt(j) == '-') {
+                sb.append(str.charAt(j));
+            }
+        }
         boolean negative = false;
         boolean hasDot = false;
         boolean hasE = false;
         double result = 0;
         int eCount = 0;
-        int dotPosition = 0;
-        int ePosition = 0;
         int i = 0;
-
         // Проверяем, что первый символ - знак "-" (если есть)
-        if (newstr.charAt(0) == '-') {
+        if (sb.charAt(0) == '-') {
             negative = true;
             i++;
         }
 
         // Проходим по каждому символу в строке
-        for (; i < newstr.length(); i++) {
-            char c = newstr.charAt(i);
-
+        for (; i < sb.length(); i++) {
+            char c = sb.charAt(i);
             // Проверяем, является ли символ цифрой, точкой, знаком "-" или "e"
-            if (c >= '0' && c <= '9') {
-                if (hasDot && !hasE) {
-                    dotPosition++;
-                }
+            if (Character.isDigit(c)) {
                 if (hasE) {
                     eCount = eCount * 10 + (c - '0');
-                }
-                else {
+                } else {
                     result = result * 10 + (c - '0');
                 }
-            } else if (c == '.') {
+                continue;
+            }
+            if (c == '.') {
                 if (hasDot || hasE) {
                     return null; // Ошибка: точка уже встречалась или число имеет экспоненциальную запись
                 }
                 hasDot = true;
-            } else if (c == 'e' || c == 'E') {
-                if (hasE || i == 0 || i == newstr.length() - 1) {
+                continue;
+            }
+            if (c == 'e') {
+                if (hasE || i == sb.length() - 1) {
                     return null; // Ошибка: число уже имеет экспоненциальную запись, "e" находится в начале или в конце строки
                 }
                 hasE = true;
-                ePosition = i;
-            } else if (c == '+' || c == '-') {
-                if (i == 0 || newstr.charAt(i - 1) != 'e' && newstr.charAt(i - 1) != 'E') {
+                continue;
+            }
+            if (c == '-') {
+                if (sb.charAt(i - 1) != 'e') {
                     return null; // Ошибка: знак "+" или "-" может следовать только за "e" или "E"
                 }
             } else {
@@ -73,24 +75,21 @@ public class StringTasks {
         if (negative) {
             result = -result;
         }
-
         // Если есть точка, делим результат на 10 в степени dotPosition
         if (hasDot) {
-            result = result / Math.pow(10, dotPosition);
+            result = result / Math.pow(10, sb.length() - sb.indexOf(".") - 1 - (hasE ? (sb.length() - sb.indexOf("e")) : 0));
         }
 
         // Если есть "e", умножаем результат на 10 в степени ePosition или делаем на 10 в степени ePosition (если ePosition отрицательное)
         if (hasE) {
-            result = result * Math.pow(10, eCount * (newstr.charAt(ePosition + 1) == '-' ? -1 : 1));
+            result = result * Math.pow(10, eCount * (sb.charAt(sb.indexOf("e") + 1) == '-' ? -1 : 1));
         }
         if (hasE || hasDot) {
             return result;
-        } else {
-            if (result < Integer.MIN_VALUE || result > Integer.MAX_VALUE) {
-                return (long) result;
-            } else {
-                return (int) result;
-            }
         }
+        if (result < Integer.MIN_VALUE || result > Integer.MAX_VALUE) {
+            return (long) result;
+        }
+        return (int) result;
     }
 }

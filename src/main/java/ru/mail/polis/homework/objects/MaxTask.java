@@ -13,17 +13,21 @@ public class MaxTask {
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копии
      */
     public static int[] getMaxArray(int[] array, int count) {
-        if(array == null || array.length < count) {
+        if (array == null || array.length < count) {
             return null;
         }
         // Создание массива для хранения count максимальных элементов
         int[] result = new int[count];
         int[] tempArray = Arrays.copyOf(array, array.length);
-        for(int i = 0; i < count; i++) {
+        //Если скопировать в result,
+        // работать не будет,
+        // смысл в том что мы постепенно выбираем,
+        // как выбирать без сортировки в тот же массив из которого выбираем, я не знаю
+        for (int i = 0; i < count; i++) {
             int maxElement = tempArray[0];
             int maxIndex = 0;
-            for(int j = 1; j < tempArray.length; j++) {
-                if(tempArray[j] > maxElement) {
+            for (int j = 1; j < tempArray.length; j++) {
+                if (tempArray[j] > maxElement) {
                     maxElement = array[j];
                     maxIndex = j;
                 }
@@ -34,5 +38,5 @@ public class MaxTask {
         }
 
         return result;
-        }
     }
+}
