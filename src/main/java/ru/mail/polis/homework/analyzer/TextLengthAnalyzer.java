@@ -16,4 +16,8 @@ public class TextLengthAnalyzer implements TextAnalyzer {
     public FilterType getTypeOfFilter() {
         return FilterType.TOO_LONG;
     }
+
+    public long getMaxTextLength() {
+        return this.maxTextLength;
+    }
 }

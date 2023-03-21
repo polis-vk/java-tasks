@@ -44,7 +44,7 @@ public class TextFilterManager {
     private final TextAnalyzer[] filters;
 
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = filters.clone();
+        this.filters = Arrays.copyOf(filters, filters.length);
         Arrays.sort(this.filters, (filter1, filter2) -> {
             if (filter1.getTypeOfFilter().getPriority() < filter2.getTypeOfFilter().getPriority()) {
                 return -1;
