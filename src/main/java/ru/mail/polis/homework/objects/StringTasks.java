@@ -20,8 +20,8 @@ public class StringTasks {
             return null;
         }
         StringBuilder res = new StringBuilder();
-        boolean noDot = true;
-        boolean noE = true;
+        boolean hasDot = false;
+        boolean hasExponent = false;
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
             if (Character.isDigit(c)) {
@@ -29,42 +29,40 @@ public class StringTasks {
                 continue;
             }
             if (c == '-') {
-                if (res.length() == 0) {
-                    res.append(c);
-                    continue;
-                } else if (res.charAt(res.length() - 1) == 'e') {
+                if (res.length() == 0 || res.charAt(res.length() - 1) == 'e') {
                     res.append(c);
                     continue;
                 }
                 return null;
             }
             if (c == '.') {
-                if (noE && noDot && res.length() > 0) {
+                if (!hasExponent && !hasDot && res.length() > 0) {
                     res.append(c);
-                    noDot = false;
+                    hasDot = true;
                     continue;
                 }
                 return null;
             }
             if (c == 'e') {
-                if (noE && res.length() > 0) {
+                if (!hasExponent && res.length() > 0) {
                     res.append(c);
-                    noE = false;
+                    hasExponent = true;
                     continue;
                 }
                 return null;
             }
         }
-        if (res.charAt(res.length() - 1) == 'e' || res.charAt(res.length() - 1) == '-') { //исключительные случаи когда результативная строка оканчивается на 'e' или '-' например 1.3e или 1.3e-
+        // исключительные случаи когда результативная строка оканчивается на 'e' или '-' например 1.3e или 1.3e-
+        if (res.charAt(res.length() - 1) == 'e' || res.charAt(res.length() - 1) == '-') {
             return null;
         }
-        if (noDot && noE) {
-            long temp = Long.parseLong(res.toString());
-            if (temp >= Integer.MIN_VALUE && temp <= Integer.MAX_VALUE) {
-                return (int) temp;
-            }
-            return temp;
+        if (hasDot || hasExponent) {
+            return Double.parseDouble(res.toString());
         }
-        return Double.parseDouble(res.toString());
+        long temp = Long.parseLong(res.toString());
+        if (temp >= Integer.MIN_VALUE && temp <= Integer.MAX_VALUE) {
+            return (int) temp;
+        }
+        return temp;
     }
 }
