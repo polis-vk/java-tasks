@@ -24,11 +24,14 @@ public class StringTasks {
             boolean hasDot = false;
             boolean hasEpsilon = false;
             boolean isNegative = false;
+            boolean hasDigit = false;
             StringBuilder numberBuilder = new StringBuilder();
             for (int currSymbolIndex = 0; currSymbolIndex < str.length(); currSymbolIndex++) {
                 char currSymbol = str.charAt(currSymbolIndex);
                 if (isValidNumberSymbol(currSymbol)) {
-                    if ((currSymbol == '-') && (prevSymbol != 'e')) {
+                    if (Character.isDigit(currSymbol)) {
+                        hasDigit = true;
+                    } else if ((currSymbol == '-') && (prevSymbol != 'e')) {
                         if (isNegative || (numberBuilder.length() != 0)) {
                             return result;
                         }
@@ -48,7 +51,7 @@ public class StringTasks {
                     numberBuilder.append(currSymbol);
                 }
             }
-            if (Character.isDigit(prevSymbol) || ((prevSymbol == '.') && (numberBuilder.length() > 1))) {
+            if (Character.isDigit(prevSymbol) || ((prevSymbol == '.') && hasDigit)) {
                 String resultNumberString = numberBuilder.toString();
                 if (hasDot || hasEpsilon) {
                     result = Double.parseDouble(resultNumberString);
