@@ -22,7 +22,7 @@ public class StringTasks {
         if (number == null) {
             return null;
         }
-        return convertStringToNumber(number);
+        return stringToNumber(number);
     }
 
     private static String convertStringToNumberForm(String str) {
@@ -39,14 +39,14 @@ public class StringTasks {
                     }
                     dash = true;
                     number.append(str.charAt(i));
-                    continue;
+                    break;
                 case '.':
                     if (point) {
                         return null;
                     }
                     point = true;
                     number.append(str.charAt(i));
-                    continue;
+                    break;
                 case 'e':
                     if (e) {
                         return null;
@@ -56,12 +56,13 @@ public class StringTasks {
                     point = true;
                     firstSymbol = false;
                     number.append(str.charAt(i));
-                    continue;
+                    break;
                 default:
                     if (Character.isDigit(str.charAt(i))) {
                         number.append(str.charAt(i));
                         firstSymbol = true;
                     }
+                    break;
             }
         }
         if (number.charAt(number.length() - 1) == 'e' || number.charAt(number.length() - 1) == '-') {
@@ -70,7 +71,7 @@ public class StringTasks {
         return number.toString();
     }
 
-    private static Number convertStringToNumber(String number) {
+    private static Number stringToNumber(String number) {
         if (number.contains("e") || number.contains(".")) {
             return Double.parseDouble(number);
         }
