@@ -14,7 +14,7 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if(str == "" || str == null) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
         char maxSymbol = str.charAt(0);
@@ -22,19 +22,21 @@ public class RepeatingCharacters {
         int maxTimes = 1;
         int times = 0;
         for (int i = 0; i < str.length(); i++) {
-            if(currentSymbol == str.charAt(i)) {
+            if (currentSymbol == str.charAt(i)) {
                 times++;
+                continue;
             }
-            else {
-                if(times > maxTimes) {
-                    maxTimes = times;
-                    maxSymbol = currentSymbol;
+            if (times > maxTimes) {
+                if(times > str.length() - i) {
+                    break;
                 }
-                currentSymbol = str.charAt(i);
-                times = 1;
+                maxTimes = times;
+                maxSymbol = currentSymbol;
             }
+            currentSymbol = str.charAt(i);
+            times = 1;
         }
-        if(times > maxTimes) {
+        if (times > maxTimes) {
             maxTimes = times;
             maxSymbol = currentSymbol;
         }

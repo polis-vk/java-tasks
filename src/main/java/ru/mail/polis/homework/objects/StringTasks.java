@@ -16,97 +16,56 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        if(str == null || str == "") {
+        if (str == null || str.isEmpty()) {
             return null;
         }
-        str = removeUnnecessarySymbols(str);
-        int i = 0;
-        if(str.charAt(i) != '-' && !Character.isDigit(str.charAt(i))) {
-            return null;
-        }
-        if(str.charAt(i) == '-') {
-            i++;
-        }
-        if(!Character.isDigit(str.charAt(i))) {
-            return null;
-        }
-        do {
-            i++;
-            if(i == str.length()) {
-                Long result = Long.valueOf(str);
-                if(result.intValue() == result.longValue()) {
-                    return Integer.valueOf(str);
-                } else {
-                    return result;
-                }
-            }
-        }while (Character.isDigit(str.charAt(i)));
-        if(str.charAt(i) == '.') {
-            i++;
-            if(!Character.isDigit(str.charAt(i))) {
-                return null;
-            }
-            else {
-                do {
-                    i++;
-                    if(i == str.length()) {
-                        return Double.valueOf(str);
-                    }
-                }while (Character.isDigit(str.charAt(i)));
-                if(str.charAt(i) != 'e') {
-                    return null;
-               }
-            }
-        }
-        if (str.charAt(i) == 'e') {
-            i++;
-            if(i == str.length()
-            || str.charAt(i) != '-'
-            && !Character.isDigit(str.charAt(i))) {
-                return null;
-            } else {
-                if(str.charAt(i) == '-') {
-                    i++;
-                }
-                if(!Character.isDigit(str.charAt(i))) {
-                    return null;
-                }
-                do {
-                    i++;
-                    if(i == str.length()) {
-                        return Double.valueOf(str);
-                    }
-                }while (Character.isDigit(str.charAt(i)));
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
-    private static String removeUnnecessarySymbols(String str) {
-        int i = 0;
-        while (i < str.length()) {
-            if(str.charAt(i) != '-'
-               && !Character.isDigit(str.charAt(i))
-               && str.charAt(i) != 'e'
-               && str.charAt(i) != '.'
-            ) {
-                if(i == 0) {
-                    if(i + 1 == str.length()) {
-                        return "";
-                    } else {
-                        str = str.substring(1);
-                    }
-                } else if(i == str.length() - 1){
-                    str = str.substring(0, i);
-                } else {
-                    str = str.substring(0, i) + str.substring(i + 1);
-                }
+        StringBuilder currentStr = new StringBuilder(str);
+        boolean hasDote = false;
+        boolean hasE = false;
 
+        for (int i = 0; i < str.length(); i++) {
+            while (i != currentStr.length()
+                    && currentStr.charAt(i) != 'e'
+                    && currentStr.charAt(i) != '-'
+                    && currentStr.charAt(i) != '.'
+                    && !Character.isDigit(currentStr.charAt(i))) {
+                currentStr.deleteCharAt(i);
+            }
+            if (currentStr.length() == i) {
+                break;
+            }
+            if (currentStr.charAt(i) == '-') {
+                if (i != 0) {
+                    if (currentStr.charAt(i - 1) != 'e') {
+                        return null;
+                    }
+                }
+            } else if (currentStr.charAt(i) == '.') {
+                if (i == 0 || !Character.isDigit(currentStr.charAt(i - 1)) || hasDote) {
+                    return null;
+                }
+                hasDote = true;
+            } else if (currentStr.charAt(i) == 'e') {
+                if (i == 0 || !Character.isDigit(currentStr.charAt(i - 1)) || hasE || i == currentStr.length() - 1) {
+                    return null;
+                }
+                hasE = true;
             } else {
-                i++;
+                continue;
             }
         }
-        return str;
+        String resultStr = currentStr.toString();
+        if (resultStr.isEmpty()) {
+            return null;
+        }
+        if (hasDote || hasE) {
+            return Double.valueOf(resultStr);
+        }
+        Long result = Long.valueOf(resultStr);
+        if (result.intValue() == result.longValue()) {
+            return Integer.valueOf(resultStr);
+        } else {
+            return result;
+        }
     }
 }
