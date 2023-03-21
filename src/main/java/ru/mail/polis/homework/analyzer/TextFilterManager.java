@@ -1,4 +1,6 @@
 package ru.mail.polis.homework.analyzer;
+import java.util.Arrays;
+import java.util.Comparator;
 
 
 /**
@@ -32,20 +34,29 @@ package ru.mail.polis.homework.analyzer;
  * Итого 20 тугриков за все задание
  */
 public class TextFilterManager {
-
+    private TextAnalyzer[] filters;
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-
+        this.filters = filters.clone();
+        Arrays.sort(this.filters, Comparator.comparing(TextAnalyzer::getFilterType));
     }
 
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-        return null;
+        if (text == null) {
+            return FilterType.GOOD;
+        }
+        for (TextAnalyzer a : filters) {
+            if (a.problemDetected(text)) {
+                return a.getFilterType();
+            }
+        }
+        return FilterType.GOOD;
     }
 }
