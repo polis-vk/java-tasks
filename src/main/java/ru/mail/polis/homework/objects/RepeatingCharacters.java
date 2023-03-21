@@ -20,14 +20,20 @@ public class RepeatingCharacters {
             int repeatSymbolCount = maxLength;
             char maxCommonSymbol = str.charAt(0);
             for (int i = 1; i < str.length(); i++) {
-                if (str.charAt(i - 1) == str.charAt(i)) {
+                char currSymbol = str.charAt(i);
+                char prevSymbol = str.charAt(i - 1);
+                
+                if (prevSymbol == currSymbol) {
                     repeatSymbolCount++;
                 } else {
                     repeatSymbolCount = 1;
                 }
                 if (repeatSymbolCount > maxLength) {
                     maxLength = repeatSymbolCount;
-                    maxCommonSymbol = str.charAt(i - 1);
+                    maxCommonSymbol = prevSymbol;
+                    if (maxLength > str.length() - i) {
+                        break;
+                    }
                 }
             }
             result = new Pair<>(maxCommonSymbol, maxLength);
