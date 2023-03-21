@@ -43,7 +43,9 @@ public class StringTasks {
                 return null;
             }
         }
-        if (filteredStr.charAt(filteredStr.length() - 1) == 'e') {
+        char firstSymbol = filteredStr.charAt(0);
+        char lastSymbol = filteredStr.charAt(filteredStr.length() - 1);
+        if (firstSymbol == 'e' || firstSymbol == '.' || lastSymbol == 'e' || lastSymbol == '-') {
             return null;
         }
         char previousLetter = filteredStr.charAt(0);

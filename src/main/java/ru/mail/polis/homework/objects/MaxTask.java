@@ -1,17 +1,19 @@
 package ru.mail.polis.homework.objects;
 
 import java.util.Arrays;
+import java.util.Queue;
 
 public class MaxTask {
 
+
     /**
-     * Р’Р°Рј РґР°РЅ РјР°СЃСЃРёРІ Рё РєРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ РІ РІРѕР·РІСЂР°С‰Р°РµРјРѕРј РјР°СЃСЃРёРІРµ
-     * Р’РµСЂРЅСѓС‚СЊ РЅСѓР¶РЅРѕ РјР°СЃСЃРёРІ РёР· count РјР°РєСЃРёРјР°Р»СЊРЅС‹С… СЌР»РµРјРµРЅС‚РѕРІ array, СѓРїРѕСЂСЏРґРѕС‡РµРЅРЅС‹Р№ РїРѕ СѓР±С‹РІР°РЅРёСЋ.
-     * Р•СЃР»Рё РјР°СЃСЃРёРІ null РёР»Рё РµРіРѕ РґР»РёРЅР° РјРµРЅСЊС€Рµ count, С‚Рѕ РІРµСЂРЅСѓС‚СЊ null
-     * РќР°РїСЂРёРјРµСЂ ({1, 3, 10, 11, 22, 0}, 2) -> {22, 11}
+     * Вам дан массив и количество элементов в возвращаемом массиве
+     * Вернуть нужно массив из count максимальных элементов array, упорядоченный по убыванию.
+     * Если массив null или его длина меньше count, то вернуть null
+     * Например ({1, 3, 10, 11, 22, 0}, 2) -> {22, 11}
      * ({1, 3, 22, 11, 22, 0}, 3) -> {22, 22, 11}
-     * РќР•Р›Р¬Р—РЇ РЎРћР РўРР РћР’РђРўР¬ РјР°СЃСЃРёРІ array Рё РµРіРѕ РєРѕРїРёРё
-     * 4 С‚СѓРіСЂРёРєР°
+     * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копии
+     * 4 тугрика
      */
     public static int[] getMaxArray(int[] array, int count) {
         if (array == null || array.length < count) {
@@ -20,25 +22,76 @@ public class MaxTask {
         if (count == 0) {
             return new int[count];
         }
-        int[] maxArray = new int[count];
-        for (int i = 0; i < count; i++) {
-            maxArray[i] = Integer.MIN_VALUE;
+
+        Heap heap = new Heap(array.length);
+        for (int el : array) {
+            heap.insert(el);
         }
-        int[] arrayCopy = Arrays.copyOf(array, array.length);
-        for (int i = 0; i < arrayCopy.length; i++) {
-            if (count - 1 < i && maxArray[0] < arrayCopy[i]) {
-                maxArray[0] = arrayCopy[i];
-                Arrays.sort(maxArray);
+
+        int[] res = new int[count];
+        for (int i = 0; i < count; ++i) {
+            res[i] = heap.getMax();
+        }
+
+        return res;
+    }
+
+    static class Heap {
+
+        private final int[] heap;
+        private int heapSize;
+
+        public Heap(int size) {
+            heap = new int[size];
+            heapSize = 0;
+        }
+
+        public void insert(int el) {
+            heapSize++;
+            heap[heapSize - 1] = el;
+            swim(heapSize - 1);
+        }
+
+        public int getMax() {
+            int max = heap[0];
+            heap[0] = heap[heapSize - 1];
+            heapSize--;
+            sink(0);
+            return max;
+        }
+
+        private void sink(int i) {
+            int left = 2 * i + 1;
+            int right = 2 * i + 2;
+            int j = i;
+
+            if (left < heapSize && heap[j] < heap[left]) {
+                j = left;
             }
-            if (count > i) {
-                maxArray[i] = arrayCopy[i];
+
+            if (right < heapSize && heap[j] < heap[right]) {
+                j = right;
+            }
+
+            if (j != i) {
+                swap(i, j);
+                sink(j);
+            }
+
+        }
+
+        private void swim(int i) {
+            while ((i - 1) / 2 >= 0 && heap[i] > heap[(i - 1) / 2]) {
+                swap(i, (i - 1) / 2);
+                i = (i - 1) / 2;
             }
         }
-        Arrays.sort(maxArray);
-        int[] reverseArray = new int[count];
-        for (int i = count - 1; i >= 0; i--) {
-            reverseArray[count - 1 - i] = maxArray[i];
+
+        private void swap(int i, int j) {
+            int tmp = heap[i];
+            heap[i] = heap[j];
+            heap[j] = tmp;
         }
-        return reverseArray;
+
     }
 }

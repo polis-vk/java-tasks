@@ -21,9 +21,6 @@ public class RepeatingCharacters {
         int count = 1;
         int maxCount = 1;
         char maxLetter = str.charAt(0);
-        if (str.length() == 1) {
-            return new Pair<>(maxLetter, maxCount);
-        }
         for (int i = 1; i < str.length(); i++) {
             char currentLetter = str.charAt(i);
             if (previousLetter == currentLetter) {

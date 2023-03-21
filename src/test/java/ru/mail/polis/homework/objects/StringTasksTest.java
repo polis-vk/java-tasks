@@ -36,5 +36,8 @@ public class StringTasksTest {
         assertEquals(1.3, StringTasks.valueOf("fff1fdf.asdsad3"));
         assertEquals(123612736712637.123123112313123123123123e122, StringTasks.valueOf("123612736712637.123123112313123123123123e122"));
         assertEquals(null, StringTasks.valueOf("fff1fdf.asdsad3e"));
+        assertEquals(null, StringTasks.valueOf("1e1.0"));
+        assertEquals(null, StringTasks.valueOf("e-"));
+        assertEquals(null, StringTasks.valueOf("e1"));
     }
 }
