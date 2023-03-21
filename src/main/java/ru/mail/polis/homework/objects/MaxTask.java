@@ -70,16 +70,12 @@ public class MaxTask {
         int left = 0;
         int right = sortedArray.length - 1;
         int middle;
-        int greater;
-        int less;
         while (left <= right) {
             middle = (left + right) / 2;
-            greater = sortedArray[middle];
-            less = sortedArray[middle + 1];
-            if (greater > element && less <= element) {
+            if (sortedArray[middle] > element && sortedArray[middle + 1] <= element) {
                 return middle + 1;
             }
-            if (greater < element) {
+            if (sortedArray[middle] < element) {
                 right = middle - 1;
             } else {
                 left = middle + 1;

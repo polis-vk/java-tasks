@@ -20,8 +20,8 @@ public class StringTasks {
             return null;
         }
         StringBuilder sb = new StringBuilder();
-        boolean isExp = false;
-        boolean isDot = false;
+        boolean hasExp = false;
+        boolean hasDot = false;
         char c;
         for (int i = 0; i < str.length(); i++) {
             c = str.charAt(i);
@@ -30,18 +30,18 @@ public class StringTasks {
                 continue;
             }
             if (c == '.') {
-                if (isDot || i == str.length() - 1) {
+                if (hasDot || i == str.length() - 1) {
                     return null;
                 }
-                isDot = true;
+                hasDot = true;
                 sb.append(c);
                 continue;
             }
             if (c == 'e') {
-                if (isExp || i == str.length() - 1) {
+                if (hasExp || i == str.length() - 1) {
                     return null;
                 }
-                isExp = true;
+                hasExp = true;
                 sb.append(c);
                 continue;
             }
@@ -53,7 +53,7 @@ public class StringTasks {
             }
         }
         String strNum = sb.toString();
-        if (isDot || isExp) {
+        if (hasDot || hasExp) {
             return Double.parseDouble(strNum);
         }
         long num = Long.parseLong(strNum);
@@ -62,5 +62,4 @@ public class StringTasks {
         }
         return (int) num;
     }
-
 }
