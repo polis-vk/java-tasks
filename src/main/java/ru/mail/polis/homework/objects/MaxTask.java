@@ -24,44 +24,57 @@ public class MaxTask {
 
         int[] result = Arrays.copyOf(array, count);
         Arrays.sort(result);
-
-        for (int i = 0; i < count / 2; ++i) {
-            int buffer = result[i];
-            result[i] = result[count - i - 1];
-            result[count - i - 1] = buffer;
-        }
+        result = reverseTheArray(result);
 
         for (int i = count; i < array.length; ++i) {
             int element = array[i];
             if (element <= result[count - 1]) {
                 continue;
             }
-            int startSearch = 0;
-            int finSearch = count - 1;
-            int middle = 0;
-            int indexForNewVal;
 
-            while (finSearch >= startSearch) {
-                middle = (startSearch + finSearch) / 2;
-                if (result[middle] > element) {
-                    startSearch = middle + 1;
-                } else if (result[middle] < element) {
-                    finSearch = middle - 1;
-                } else if (result[middle] == element) {
-                    break;
-                }
-            }
-
-            if (result[middle] >= element) {
-                indexForNewVal = middle + 1;
-            } else {
-                indexForNewVal = middle;
-            }
+            int indexForNewVal = searchBinaryIndexForAdd(result, element);
 
             System.arraycopy(result, indexForNewVal, result,
                     indexForNewVal + 1, count - indexForNewVal - 1);
             result[indexForNewVal] = element;
         }
         return result;
+    }
+
+    private static int[] reverseTheArray(int[] array) {
+        int[] result = array;
+        int count = result.length;
+        for (int i = 0; i < count / 2; ++i) {
+            int buffer = result[i];
+            result[i] = result[count - i - 1];
+            result[count - i - 1] = buffer;
+        }
+        return result;
+    }
+
+    private static int searchBinaryIndexForAdd(int[] array, int element) {
+        int startSearch = 0;
+        int finSearch = array.length - 1;
+        int middle = 0;
+        int indexForAdd;
+
+        while (finSearch >= startSearch) {
+            middle = (startSearch + finSearch) / 2;
+            if (array[middle] > element) {
+                startSearch = middle + 1;
+            } else if (array[middle] < element) {
+                finSearch = middle - 1;
+            } else if (array[middle] == element) {
+                break;
+            }
+        }
+
+        if (array[middle] >= element) {
+            indexForAdd = middle + 1;
+        } else {
+            indexForAdd = middle;
+        }
+
+        return indexForAdd;
     }
 }
