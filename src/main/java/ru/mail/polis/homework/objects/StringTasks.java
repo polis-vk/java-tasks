@@ -37,8 +37,7 @@ public class StringTasks {
             } else if (currentChar == 'e') {
                 if (myStr.length() == 0) {
                     return null;
-                }
-                else if (isLastMyStrCharDigit && !isEpsPresent) {
+                } else if (isLastMyStrCharDigit && !isEpsPresent) {
                     myStr.append(str.charAt(i));
                     isEpsPresent = true;
                 }
