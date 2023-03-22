@@ -39,10 +39,10 @@ public class RepeatingCharacters {
         }
 
         if (frequency > maxFrequency) {
-            currMostFrequent = symbol;
-            maxFrequency = frequency;
+            return new Pair<>(symbol, frequency);
+        } else {
+            return new Pair<>(currMostFrequent, maxFrequency);
         }
-        return new Pair<>(currMostFrequent, maxFrequency);
     }
 
     public static class Pair<T, V> {

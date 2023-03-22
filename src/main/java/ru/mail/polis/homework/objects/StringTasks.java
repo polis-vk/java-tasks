@@ -60,6 +60,10 @@ public class StringTasks {
             return null;
         }
 
+        if (builder.charAt(0) == 'e' || builder.charAt(0) == '.') {
+            return null;
+        }
+
         String res = builder.toString();
         if (singleE || singleDot) {
             return Double.parseDouble(res);
