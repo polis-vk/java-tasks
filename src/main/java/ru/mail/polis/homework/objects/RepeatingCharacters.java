@@ -28,6 +28,11 @@ public class RepeatingCharacters {
                 if (currLength > maxLength) {
                     maxLength = currLength;
                     maxRepSymbol = currSymbol;
+                    if (maxLength >= arrStr.length / 2 & (i + 1) < arrStr.length) {
+                        if (!(arrStr[i + 1] == currSymbol)) {
+                            break;
+                        }
+                    }
                 }
             } else {
                 currSymbol = arrStr[i];

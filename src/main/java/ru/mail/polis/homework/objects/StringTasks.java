@@ -23,21 +23,25 @@ public class StringTasks {
         char[] ch = str.toCharArray();
         boolean haveE = false;
         boolean haveDot = false;
+        char lastCharacter = 'e';
         for (int i = 0; i < str.length(); i++) {
             if (Character.isDigit(ch[i])) {
                 tmpStr.append(ch[i]);
+                lastCharacter = tmpStr.charAt(tmpStr.length() - 1);
             }
-            if (ch[i] == 'e' && Character.isDigit(tmpStr.charAt(tmpStr.length() - 1))) {
+            if (ch[i] == 'e' && Character.isDigit(lastCharacter)) {
                 if (haveE) {
                     return null;
                 }
                 tmpStr.append(ch[i]);
+                lastCharacter = tmpStr.charAt(tmpStr.length() - 1);
                 haveE = true;
             }
             if (ch[i] == '-') {
-                if ((tmpStr.length() == 0 || tmpStr.charAt(tmpStr.length() - 1) == 'e')) {
+                if ((tmpStr.length() == 0 || lastCharacter == 'e')) {
                     tmpStr.append(ch[i]);
-                } else if (Character.isDigit(tmpStr.charAt(tmpStr.length() - 1)) || tmpStr.charAt(tmpStr.length() - 1) == '-') {
+                    lastCharacter = tmpStr.charAt(tmpStr.length() - 1);
+                } else if (Character.isDigit(lastCharacter) || lastCharacter == '-') {
                     return null;
                 }
             }
@@ -45,22 +49,24 @@ public class StringTasks {
                 if (haveDot) {
                     return null;
                 }
-                if (Character.isDigit(tmpStr.charAt(tmpStr.length() - 1))) {
+                if (Character.isDigit(lastCharacter)) {
                     tmpStr.append(ch[i]);
+                    lastCharacter = tmpStr.charAt(tmpStr.length() - 1);
                     haveDot = true;
                 }
             }
         }
-        if (tmpStr.charAt(tmpStr.length() - 1) == '.' || tmpStr.charAt(tmpStr.length() - 1) == 'e' || tmpStr.charAt(tmpStr.length() - 1) == '-') {
+        if (lastCharacter == '.' || lastCharacter == 'e' || lastCharacter == '-') {
             return null;
         }
         String finalStr = tmpStr.toString();
         if (haveDot | haveE) {
             return Double.valueOf(finalStr);
         }
-        if (Long.valueOf(finalStr) > Integer.MAX_VALUE || Long.valueOf(finalStr) < Integer.MIN_VALUE) {
-            return Long.valueOf(finalStr);
+        long tmpLongValue = Long.valueOf(finalStr);
+        if (tmpLongValue <= Integer.MAX_VALUE & tmpLongValue >= Integer.MIN_VALUE) {
+            return Integer.valueOf(finalStr);
         }
-        return Integer.valueOf(finalStr);
+        return tmpLongValue;
     }
 }
