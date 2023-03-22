@@ -13,39 +13,80 @@ public class MaxTask {
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копии
      * 4 тугрика
      */
+    public static void binarySearchIndex(int[] a, int item) {
+        int low = 0, high = a.length - 1;
+        if (item >= a[low]) {
+            offsetArray(a, low);
+            a[low] = item;
+        } else if (item > a[high]) {
+            while (low <= high) {
+                int mid = low + ((high - low) / 2);
+                if (a[mid] < item) {
+                    if (a[mid - 1] > item) {
+                        offsetArray(a, mid);
+                        a[mid] = item;
+                        break;
+                    }
+                    high = mid - 1;
+                } else if (a[mid] > item) {
+                    if (a[mid + 1] < item) {
+                        offsetArray(a, mid);
+                        a[mid] = item;
+                        break;
+                    }
+                    low = mid + 1;
+                } else {
+                    offsetArray(a, mid);
+                    a[mid] = item;
+                    break;
+                }
+            }
+        }
+    }
+
+    public static void reverse(int[] array) {
+        if (array == null) {
+            return;
+        }
+        int i = 0;
+        int j = array.length - 1;
+        int tmp;
+        while (j > i) {
+            tmp = array[j];
+            array[j] = array[i];
+            array[i] = tmp;
+            j--;
+            i++;
+        }
+    }
+
+    public static void offsetArray(int[] a, int startIndex) {
+        if (startIndex < a.length) {
+            int temp = a[startIndex];
+            for (int i = startIndex + 1; i < a.length; i++) {
+                int nowTmp = a[i];
+                a[i] = temp;
+                temp = nowTmp;
+            }
+        }
+    }
+
     public static int[] getMaxArray(int[] array, int count) {
         if (array == null || array.length < count) {
             return null;
         }
-        int[] max = new int[count];
-        int indexMaxValue = -1;
-        int[] lastMaxValue = new int[count];
-        Arrays.fill(lastMaxValue, -1);
-        for (int j = 0; j < count; j++) {
-            int i = 0;
-            int tmpMax = Integer.MIN_VALUE;
-            while (i < array.length) {
-                boolean isLastMaxIndex = false;
-                for (int k = 0; k < lastMaxValue.length; k++) {
-                    if (i == lastMaxValue[k]) {
-                        isLastMaxIndex = true;
-                        break;
-                    }
-                }
-                if (isLastMaxIndex) {
-                    i++;
-                    continue;
-                }
-                if (tmpMax < array[i]) {
-                    tmpMax = array[i];
-                    indexMaxValue = i;
-                }
-                i++;
-            }
-            max[j] = tmpMax;
-            lastMaxValue[j] = indexMaxValue;
+        int[] finalItems = new int[count];
+        if (count == 0) {
+            return finalItems;
         }
-        return max;
+        for (int i = 0; i < count; i++) {
+            finalItems[i] = array[i];
+        }
+        Arrays.sort(finalItems);
+        reverse(finalItems);
+        for (int i = count; i < array.length; i++) {
+            binarySearchIndex(finalItems, array[i]);
+        }
+        return finalItems;
     }
-
 }
