@@ -141,5 +141,17 @@ public class TextFilterManagerTest {
         }
     }
 
+    @Test
+    public void analyzeCorrectStructure() {
+        TextFilterManager manager =
+                new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCorrectStructureAnalyzer()});
+        assertEquals("CORRECT_STRUCTURE", manager.analyze("Привет, я Петя :(").toString());
+        assertEquals("CORRECT_STRUCTURE", manager.analyze("смс пожалуйста.").toString());
+        assertEquals("CORRECT_STRUCTURE", manager.analyze("Привет, я Петя").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("Привет, как дела?").toString());
+    }
+
 
 }
