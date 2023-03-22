@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.Arrays;
+
 public class MaxTask {
 
     /**
@@ -16,9 +18,7 @@ public class MaxTask {
             return null;
         }
         int[] result = new int[count];
-        for (int i = 0; i < count; i++) {
-            result[i] = Integer.MIN_VALUE;
-        }
+        Arrays.fill(result, Integer.MIN_VALUE);
         for (int el : array) {
             for (int k = 0; k < result.length; k++) {
                 if (el > result[k]) {
@@ -33,6 +33,9 @@ public class MaxTask {
     static void insert(int[] arr, int pos, int value) {
         if (pos != arr.length - 1) {
             for (int i = arr.length - 1; i > pos; i--) {
+                if (arr[i - 1] == Integer.MIN_VALUE){
+                    continue;
+                }
                 arr[i] = arr[i - 1];
             }
         }
