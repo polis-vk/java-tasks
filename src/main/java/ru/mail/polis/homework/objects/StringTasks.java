@@ -1,8 +1,5 @@
 package ru.mail.polis.homework.objects;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class StringTasks {
 
     /**
@@ -19,24 +16,6 @@ public class StringTasks {
      * 6 тугриков
      */
 
-    private static final List<Character> list = new ArrayList<>();
-
-    static {
-        list.add('0');
-        list.add('1');
-        list.add('2');
-        list.add('3');
-        list.add('4');
-        list.add('5');
-        list.add('6');
-        list.add('7');
-        list.add('8');
-        list.add('9');
-        list.add('-');
-        list.add('.');
-        list.add('e');
-    }
-
     public static Number valueOf(String str) {
         if (str == null || str.equals("")) {
             return null;
@@ -47,7 +26,7 @@ public class StringTasks {
         int countMinus = 0;
         for (int i = 0; i < str.length(); i++) {
             char tempChar = str.charAt(i);
-            if (list.contains(tempChar)) {
+            if (Character.isDigit(tempChar) || tempChar == '-' || tempChar == '.' || tempChar == 'e') {
                 builder.append(tempChar);
                 countDots = tempChar == '.' ? countDots + 1 : countDots;
                 countE = tempChar == 'e' ? countE + 1 : countE;

@@ -14,28 +14,24 @@ public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
         if (str == null || str.equals("")) return null;
+
+        int currentCount = 1;
+        int maximumCount = 1;
         char[] chars = str.toCharArray();
-        int currentCount = 0;
-        char maximumChar = str.charAt(0);
-        int maximumCount = Integer.MIN_VALUE;
-        for (int i = 0; i < chars.length; i++) {
-            char currentChar = chars[i];
-            if (i > 0) {
-                char previousChar = chars[i - 1];
-                if (previousChar == currentChar) {
-                    currentCount = currentCount + 1;
-                } else {
-                    currentCount = 1;
-                }
+        char previousChar = chars[0];
+        char maximumChar = chars[0];
+
+        for (int i = 1; i < str.length(); i++) {
+            if (chars[i] == previousChar) {
+                currentCount++;
             } else {
+                previousChar = str.charAt(i);
                 currentCount = 1;
-                maximumCount = 1;
-                maximumChar = currentChar;
             }
 
             if (currentCount > maximumCount) {
                 maximumCount = currentCount;
-                maximumChar = currentChar;
+                maximumChar = previousChar;
             }
         }
         return new Pair<>(maximumChar, maximumCount);

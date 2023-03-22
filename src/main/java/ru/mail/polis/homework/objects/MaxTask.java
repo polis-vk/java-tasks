@@ -13,23 +13,53 @@ public class MaxTask {
      * НЕЛЬЗЯ СОРТИРОВАТЬ массив array и его копии
      * 4 тугрика
      */
+
     public static int[] getMaxArray(int[] array, int count) {
-        if (array == null || array.length < count) {
+        if (array == null || count > array.length) {
             return null;
         }
-        int[] tempArray = Arrays.copyOf(array, array.length);
-        int indexMax = 0;
-        int[] maxArray = new int[count];
-        for (int i = 0; i < count; i++) {
-            for (int j = 0; j < tempArray.length; j++) {
-                if (tempArray[indexMax] < tempArray[j]) {
-                    indexMax = j;
-                }
-            }
-            maxArray[i] = tempArray[indexMax];
-            tempArray[indexMax] = Integer.MIN_VALUE;
+        if (count == 0) {
+            return new int[]{};
         }
-        return maxArray;
+
+        int[] target = new int[count];
+        Arrays.fill(target, Integer.MIN_VALUE);
+
+        for (int i : array) {
+            putInSorted(i, target);
+        }
+
+        reverse(target);
+
+        return target;
     }
 
+    private static void reverse(int[] target) {
+        int temp;
+        for (int i = 0; i < target.length / 2; i++) {
+            temp = target[i];
+            target[i] = target[target.length - i - 1];
+            target[target.length - i - 1] = temp;
+        }
+    }
+
+    private static void putInSorted(int currentElement, int[] target) {
+        int positionToInsert = lookUpPositionToInsert(currentElement, target);
+        if (positionToInsert == target.length) {
+            System.arraycopy(target, 1, target, 0, target.length - 1);
+            target[target.length - 1] = currentElement;
+        } else if (positionToInsert >= 0) {
+            System.arraycopy(target, 1, target, 0, positionToInsert);
+            target[positionToInsert] = currentElement;
+        }
+    }
+
+    private static int lookUpPositionToInsert(int currentElement, int[] target) {
+        for (int i = -1; i < target.length - 1; i++) {
+            if (target[i + 1] > currentElement) {
+                return i;
+            }
+        }
+        return target.length;
+    }
 }
