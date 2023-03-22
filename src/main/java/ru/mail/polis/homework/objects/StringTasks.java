@@ -19,8 +19,9 @@ public class StringTasks {
         if (str == null || str.isEmpty()) {
             return null;
         }
-        if (str.endsWith("-") || str.endsWith("e") || str.indexOf('.') != str.lastIndexOf('.') || str.indexOf('e') != str.lastIndexOf('e'))
+        if (str.endsWith("-") || str.endsWith("e") || str.indexOf('.') != str.lastIndexOf('.') || str.indexOf('e') != str.lastIndexOf('e')) {
             return null;
+        }
 
         StringBuilder res = new StringBuilder();
 
