@@ -30,7 +30,7 @@ public class StringTasks {
                 continue;
             }
             if (c == '.') {
-                if (hasDot || i == str.length() - 1) {
+                if (hasDot || i == 0 || i == str.length() - 1) {
                     return null;
                 }
                 hasDot = true;
@@ -38,7 +38,7 @@ public class StringTasks {
                 continue;
             }
             if (c == 'e') {
-                if (hasExp || i == str.length() - 1) {
+                if (hasExp || i == 0 || i == str.length() - 1) {
                     return null;
                 }
                 hasExp = true;
