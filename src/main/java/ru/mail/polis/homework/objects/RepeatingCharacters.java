@@ -23,13 +23,13 @@ public class RepeatingCharacters {
         for (int i = 0; i < str.length() - 1; ++i) {
             if (str.charAt(i) == str.charAt(i + 1)) {
                 repeatingsAmount++;
-            } else {
-                if (repeatingsAmount > maxRepeatings) {
-                    maxRepeatingChar = str.charAt(i);
-                    maxRepeatings = repeatingsAmount;
-                }
-                repeatingsAmount = 1;
+                continue;
             }
+            if (repeatingsAmount > maxRepeatings) {
+                maxRepeatingChar = str.charAt(i);
+                maxRepeatings = repeatingsAmount;
+            }
+            repeatingsAmount = 1;
         }
         if (repeatingsAmount > maxRepeatings) {
             maxRepeatingChar = str.charAt(str.length() - 1);

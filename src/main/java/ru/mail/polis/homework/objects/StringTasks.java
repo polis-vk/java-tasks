@@ -25,7 +25,8 @@ public class StringTasks {
         for (char c : str.toCharArray()) {
             if (c != '-' && c != 'e' && c != '.' && !Character.isDigit(c)) {
                 continue;
-            } else if (c == '.') {
+            }
+            if (c == '.') {
                 ++dotAmount;
                 if (dotAmount > 1) {
                     return null;
