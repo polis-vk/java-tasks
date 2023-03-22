@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.objects;
 
+import java.util.Arrays;
+
 public class MaxTask {
 
     /**
@@ -12,24 +14,34 @@ public class MaxTask {
      * 4 тугрика
      */
     public static int[] getMaxArray(int[] array, int count) {
-        if (array == null || array.length < count) return null;
-        else if (count == 0) return new int[0];
+        if (array == null || array.length < count) {
+            return null;
+        }
+        if (count == 0) {
+            return new int[0];
+        }
 
-        int[] res = new int[count];
-        java.util.Arrays.fill(res, Integer.MIN_VALUE);
-        int[] tmp = array;
+        int[] res = Arrays.copyOf(array, count);
+        Arrays.sort(res);
+        int index = 0;
 
-        for (int i = 0; i < count; i++) {
-            int index = 0;
-            for (int j = 0; j < array.length; j++) {
-                if (tmp[j] > res[i]) {
-                    res[i] = tmp[j];
-                    index = j;
+        for (int i = count; i < array.length; i++) {
+            if (array[i] > res[0]) {
+                index = Arrays.binarySearch(res, array[i]);
+                if (index < 0) {
+                    index = -index - 1;
                 }
+                if (index != array.length) {
+                    System.arraycopy(res, 1, res, 0, index - 1);
+                }
+                res[index - 1] = array[i];
             }
-            tmp[index] = Integer.MIN_VALUE;
+        }
+        for (int j = 0; j < res.length / 2; j++) {
+            int tmp = res[j];
+            res[j] = res[count - j - 1];
+            res[count - j - 1] = tmp;
         }
         return res;
     }
-
 }

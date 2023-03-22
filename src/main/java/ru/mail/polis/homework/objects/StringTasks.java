@@ -16,34 +16,51 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        if (str == null || str.isEmpty()) return null;
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
         if (str.endsWith("-") || str.endsWith("e") || str.indexOf('.') != str.lastIndexOf('.') || str.indexOf('e') != str.lastIndexOf('e'))
             return null;
 
         StringBuilder res = new StringBuilder();
 
         for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == '-' || str.charAt(i) == '.' || str.charAt(i) == 'e' || Character.isDigit(str.charAt(i))) {
-                res.append(str.charAt(i));
+            char c = str.charAt(i);
+            if (Character.isDigit(c)) {
+                res.append(c);
+                continue;
             }
-        }
-
-        char c = '.';
-        for (int i = 0; i < res.length(); i++) {
-            if ((res.charAt(i) == '-' && (res.charAt(i) == res.charAt(i + 1) || res.charAt(i + 1) == 'e')) ||
-                    (Character.isDigit(c) && res.charAt(i) == '-') ||
-                    (res.charAt(res.length() - 1) == 'e')) {
+            if (c == '-') {
+                if (res.length() == 0 || res.charAt(res.length() - 1) == 'e') {
+                    res.append(c);
+                    continue;
+                }
                 return null;
             }
-            c = res.charAt(i);
+            if (c == '.') {
+                if (res.length() > 0) {
+                    res.append(c);
+                    continue;
+                }
+                return null;
+            }
+            if (c == 'e') {
+                if (res.length() > 0) {
+                    res.append(c);
+                    continue;
+                }
+                return null;
+            }
         }
 
         if (res.indexOf("e") >= 0 || res.indexOf(".") >= 0) {
             return Double.valueOf(res.toString());
-        } else if (Long.parseLong(res.toString()) <= Integer.MAX_VALUE
-                && Long.parseLong(res.toString()) >= Integer.MIN_VALUE) {
-            return Integer.valueOf(res.toString());
         }
-        return Long.valueOf(res.toString());
+        String toStr = res.toString();
+        if (Long.parseLong(toStr) <= Integer.MAX_VALUE
+                && Long.parseLong(toStr) >= Integer.MIN_VALUE) {
+            return Integer.valueOf(toStr);
+        }
+        return Long.valueOf(toStr);
     }
 }

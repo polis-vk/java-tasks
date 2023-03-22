@@ -14,7 +14,9 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if (str == "" || str == null) return null;
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
 
         char[] chArr = str.toCharArray();
         int count = 1;
@@ -26,11 +28,16 @@ public class RepeatingCharacters {
             } else {
                 count = 1;
             }
+            if ((maxEl >= str.length() - i && str.charAt(i - 1) != str.charAt(i))
+                    || maxEl >= str.length() - i + count) {
+                break;
+            }
 
             if (count > maxEl) {
                 maxEl = count;
                 maxCh = chArr[i];
             }
+
         }
         return new Pair<>(maxCh, maxEl);
     }
