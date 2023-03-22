@@ -5,32 +5,6 @@ import com.sun.tools.javac.util.StringUtils;
 import java.util.Objects;
 
 public class StringTasks {
-
-
-    private static int[] symbolsCounts(StringBuilder str) {
-        int[] counts = new int[3];
-        for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == '-') {
-                counts[0] += 1;
-            } else if (str.charAt(i) == 'e') {
-                counts[1] += 1;
-            } else if (str.charAt(i) == '.') {
-                counts[2] += 1;
-            }
-        }
-        return counts;
-    }
-
-    private static int inDex(StringBuilder str, char s) {
-
-        for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == s) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     /**
      * Убрать все лишние символы из строки и вернуть получившееся число.
      * Разрешенные символы: цифры, '-', '.', 'e'
@@ -56,38 +30,37 @@ public class StringTasks {
                 number.append(str.charAt(i));
             }
         }
+        int indexDot = -1;
+        int indexE = -1;
 
-
-        int indexDot = inDex(number, '.');
-        int indexE = inDex(number, 'e');
-        int[] specialSymbolCounts = symbolsCounts(number);
-        int dashCounts = specialSymbolCounts[0];
-        int eCounts = specialSymbolCounts[1];
-        int dotCounts = specialSymbolCounts[2];
-        if (eCounts > 1 || dotCounts > 1 || dashCounts > 2
-                || indexDot == 0 || indexDot == number.length()) {
-            return null;
-        }
+        int dashCounts = 0;
+        int eCounts = 0;
+        int dotCounts = 0;
 
 
         int lenChislo = number.length();
         number.insert(0, '?');
         number.insert(number.length(), '?');
         for (int i = 1; i < lenChislo + 1; i++) {
+            if (number.charAt(i) == 'e') {
+                eCounts += 1;
+                indexE = i - 1;
+            }
+            if (number.charAt(i) == '.') {
+                dotCounts += 1;
+                indexDot = i - 1;
+            }
+            if (number.charAt(i) == '-') {
+                dashCounts += 1;
+            }
             if (number.charAt(i) == '-' && (number.charAt(i - 1) == '.' || Character.isDigit(number.charAt(i - 1)) ||
-                    !Character.isDigit(number.charAt(i + 1)))) {
+                    !Character.isDigit(number.charAt(i + 1))) || (eCounts > 1 || dotCounts > 1 || dashCounts > 2
+                    || indexDot == 0 || indexDot == number.length())) {
                 return null;
             }
-            if (number.charAt(i) == 'e') {
-                if (!Character.isDigit(number.charAt(i - 1)) || number.charAt(i + 1) == '?' || number.charAt(i + 1) == '.') {
-                    return null;
-                }
-            }
-
-            if (number.charAt(i) == '.') {
-                if (!Character.isDigit(number.charAt(i - 1)) || !Character.isDigit(number.charAt(i + 1))) {
-                    return null;
-                }
+            if (number.charAt(i) == 'e' && (!Character.isDigit(number.charAt(i - 1)) || number.charAt(i + 1) == '?' || number.charAt(i + 1) == '.') ||
+                    (number.charAt(i) == '.' && (!Character.isDigit(number.charAt(i - 1)) || !Character.isDigit(number.charAt(i + 1))))) {
+                return null;
             }
         }
 

@@ -21,15 +21,21 @@ public class RepeatingCharacters {
         if (str == null || str.length() == 0) {
             return null;
         }
+        if (str.length() == 1) {
+            return new Pair<>(str.charAt(0), 1);
+        }
         int lenOfString = str.length();
-        str += '?';
         int lenRepeat = 1;
         int max = 0;
         char maxChar = 0;
 
-        for (int i = 0; i < lenOfString; i++) {
+        for (int i = 0; i < lenOfString - 1; i++) {
             if (str.charAt(i) == str.charAt(i + 1)) {
                 lenRepeat += 1;
+                if (i == lenOfString - 2 && lenRepeat > max) {
+                    max = lenRepeat;
+                    maxChar = str.charAt(i);
+                }
             } else {
                 if (lenRepeat > max) {
                     max = lenRepeat;
