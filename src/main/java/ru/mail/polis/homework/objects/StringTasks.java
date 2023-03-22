@@ -15,7 +15,7 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        if (str == null || str.equals("")) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
 
@@ -36,7 +36,8 @@ public class StringTasks {
         }
 
         if (clearStr.charAt(clearStr.length() - 1) == '-'
-                || clearStr.charAt(clearStr.length() - 1) == 'e') {
+                || clearStr.charAt(clearStr.length() - 1) == 'e'
+                || clearStr.charAt(0) == 'e') {
             return null;
         }
 
@@ -84,9 +85,10 @@ public class StringTasks {
         if (exps != 0 || points != 0) {
             return Double.parseDouble(String.valueOf(clearStr));
         }
-        if (Long.parseLong(String.valueOf(clearStr)) > Integer.MAX_VALUE
-                || Long.parseLong(String.valueOf(clearStr)) < Integer.MIN_VALUE) {
-            return Long.parseLong(String.valueOf(clearStr));
+        long currentNum = Long.parseLong(String.valueOf(clearStr));
+        if (currentNum > Integer.MAX_VALUE
+                || currentNum < Integer.MIN_VALUE) {
+            return currentNum;
         }
         return Integer.parseInt(String.valueOf(clearStr));
     }

@@ -13,7 +13,7 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if (str == null || str.equals("")) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
 
@@ -25,13 +25,19 @@ public class RepeatingCharacters {
         for (int i = 0; i < str.length(); i++) {
             if (str.charAt(i) == prevSymbol) {
                 counter++;
-                if (maxCounter < counter) {
-                    maxCounter = counter;
-                    maxSymbol = str.charAt(i);
-                }
             } else {
                 counter = 1;
             }
+
+            if (maxCounter < counter) {
+                maxCounter = counter;
+                maxSymbol = str.charAt(i);
+            }
+
+            if ((str.length() - i + 1 < maxCounter) && (prevSymbol != str.charAt(i))) {
+                break;
+            }
+
             prevSymbol = str.charAt(i);
         }
 
