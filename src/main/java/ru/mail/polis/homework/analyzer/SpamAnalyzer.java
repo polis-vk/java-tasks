@@ -3,8 +3,8 @@ package ru.mail.polis.homework.analyzer;
 import java.util.Arrays;
 
 public class SpamAnalyzer implements TextAnalyzer {
-    String[] spam;
-    private static final byte priority = 1;
+    private final String[] spam;
+    private static final FilterType filterType = FilterType.SPAM;
 
     SpamAnalyzer(String[] spam) {
         this.spam = Arrays.copyOf(spam, spam.length);
@@ -22,11 +22,6 @@ public class SpamAnalyzer implements TextAnalyzer {
 
     @Override
     public FilterType getFilterType() {
-        return FilterType.SPAM;
-    }
-
-    @Override
-    public byte getPriority() {
-        return priority;
+        return filterType;
     }
 }

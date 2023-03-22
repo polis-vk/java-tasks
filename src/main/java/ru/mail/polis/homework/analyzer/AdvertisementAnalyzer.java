@@ -2,7 +2,7 @@ package ru.mail.polis.homework.analyzer;
 
 public class AdvertisementAnalyzer implements TextAnalyzer {
     String[] links = new String[]{"http:", "https:", "www.", ".com", ".ru"};
-    private static final byte priority = 4;
+    private static final FilterType filterType = FilterType.ADVERTISEMENT;
 
     @Override
     public boolean isTextCorrect(String text) {
@@ -16,11 +16,6 @@ public class AdvertisementAnalyzer implements TextAnalyzer {
 
     @Override
     public FilterType getFilterType() {
-        return FilterType.ADVERTISEMENT;
-    }
-
-    @Override
-    public byte getPriority() {
-        return priority;
+        return filterType;
     }
 }

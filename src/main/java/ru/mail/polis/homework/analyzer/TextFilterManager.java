@@ -33,7 +33,7 @@ import java.util.Arrays;
  * Итого 20 тугриков за все задание
  */
 public class TextFilterManager {
-    TextAnalyzer[] filters;
+    private final TextAnalyzer[] filters;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -43,9 +43,9 @@ public class TextFilterManager {
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filters = Arrays.copyOf(filters, filters.length);
         Arrays.sort(this.filters, (filter1, filter2) -> {
-            if (filter1.getPriority() < filter2.getPriority()) {
+            if (filter1.getFilterType().getPriority() < filter2.getFilterType().getPriority()) {
                 return -1;
-            } else if (filter1.getPriority() == filter2.getPriority()) {
+            } else if (filter1.getFilterType().getPriority() == filter2.getFilterType().getPriority()) {
                 return 0;
             }
             return 1;

@@ -37,6 +37,4 @@ public interface TextAnalyzer {
     boolean isTextCorrect(String text);
 
     FilterType getFilterType();
-
-    byte getPriority();
 }
