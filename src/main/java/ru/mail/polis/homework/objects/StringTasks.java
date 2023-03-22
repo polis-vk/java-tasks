@@ -31,13 +31,7 @@ public class StringTasks {
 
             switch (symbol) {
                 case '-':
-                    if (countMinus == 2) {
-                        return null;
-                    }
-                    if (countMinus == 1 && result.charAt(result.length() - 1) != 'e') {
-                        return null;
-                    }
-                    if (countMinus == 0 && (result.length() != 0 && result.charAt(result.length() - 1) != 'e')) {
+                    if (!checkMinus(countMinus, String.valueOf(result))) {
                         return null;
                     }
                     countMinus++;
@@ -70,12 +64,23 @@ public class StringTasks {
         }
 
         if (havePoint || haveExp) {
-            return (Number) Double.valueOf(result.toString());
+            return Double.valueOf(result.toString());
         }
         long number = Long.parseLong(result.toString());
         if (number > Integer.MAX_VALUE || number < Integer.MIN_VALUE) {
             return number;
         }
         return (int) number;
+    }
+
+    private static boolean checkMinus(int countMinus, String result) {
+        switch (countMinus) {
+            case 0:
+                return result.length() == 0 || result.charAt(result.length() - 1) == 'e';
+            case 1:
+                return result.charAt(result.length() - 1) == 'e';
+            default:
+                return false;
+        }
     }
 }
