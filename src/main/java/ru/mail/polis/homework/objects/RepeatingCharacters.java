@@ -19,17 +19,25 @@ public class RepeatingCharacters {
         }
         char symbolMaxRepeat = str.charAt(0);
         int countMaxRepeat = 1;
-        int countCurrentRepeat = 1;
+        int countCurrRepeat = 1;
         for (int i = 0; i < str.length() - 1; i++) {
             if (str.charAt(i) == str.charAt(i + 1)) {
-                countCurrentRepeat++;
-                if (countMaxRepeat < countCurrentRepeat) {
-                    symbolMaxRepeat = str.charAt(i);
-                    countMaxRepeat = countCurrentRepeat;
-                }
+                countCurrRepeat++;
             } else {
-                countCurrentRepeat = 1;
+                if (countMaxRepeat < countCurrRepeat) {
+                    symbolMaxRepeat = str.charAt(i);
+                    countMaxRepeat = countCurrRepeat;
+                }
+                countCurrRepeat = 1;
+                int remainLengthStr = str.length() - i - 1;
+                if (countMaxRepeat >= remainLengthStr) {
+                    break;
+                }
             }
+        }
+        if (countCurrRepeat > countMaxRepeat) {
+            symbolMaxRepeat = str.charAt(str.length() - 1);
+            countMaxRepeat = countCurrRepeat;
         }
         return new Pair<>(symbolMaxRepeat, countMaxRepeat);
     }
