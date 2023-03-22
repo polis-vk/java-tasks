@@ -17,29 +17,33 @@ public class MaxTask {
         if (array == null || array.length < count) {
             return null;
         }
-        int[] result = new int[count];
-        Arrays.fill(result, Integer.MIN_VALUE);
-        for (int el : array) {
-            for (int k = 0; k < result.length; k++) {
-                if (el > result[k]) {
-                    insert(result, k, el);
-                    break;
-                }
-            }
+        if (count == 0) {
+            return new int[count];
         }
+        int[] result = Arrays.copyOf(array, count);
+        Arrays.sort(result);
+        int min = result[0];
+        int pos;
+        for (int i = count; i < array.length; i++) {
+            if (array[i] < min) {
+                continue;
+            }//{1, 3, 10, 11, 22, 0}//3, 1
+            pos = Arrays.binarySearch(result, array[i]);
+            if (pos < 0) {
+                pos = - pos - 1;
+                System.arraycopy(result, pos - 1, result, pos - 2, result.length - pos + 1);
+                result[pos - 1] = array[i];
+            } else {
+                System.arraycopy(result, pos - 1, result, pos - 2, result.length - pos + 1);
+            }
+            min = array[0];
+        }
+        for (int i = 0; i < result.length / 2; i++) {
+            int temp = result[i];
+            result[i] = result[result.length - (i + 1)];
+            result[result.length - (i + 1)] = temp;
+        }
+
         return result;
     }
-
-    static void insert(int[] arr, int pos, int value) {
-        if (pos != arr.length - 1) {
-            for (int i = arr.length - 1; i > pos; i--) {
-                if (arr[i - 1] == Integer.MIN_VALUE){
-                    continue;
-                }
-                arr[i] = arr[i - 1];
-            }
-        }
-        arr[pos] = value;
-    }
-
 }
