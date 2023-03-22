@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
-import java.util.Arrays;
-
-public class NegativeTextAnalyzer implements TextAnalyzer{
+public class NegativeTextAnalyzer implements TextAnalyzer {
     private static final String[] negativeEmotions = new String[]{"=(", ":(", ":|"};
     private static final byte priority = 3;
 
@@ -15,10 +13,12 @@ public class NegativeTextAnalyzer implements TextAnalyzer{
         }
         return true;
     }
+
     @Override
     public FilterType getFilterType() {
         return FilterType.NEGATIVE_TEXT;
     }
+
     @Override
     public byte getPriority() {
         return priority;

@@ -13,10 +13,12 @@ public class AdvertisementAnalyzer implements TextAnalyzer {
         }
         return true;
     }
+
     @Override
     public FilterType getFilterType() {
         return FilterType.ADVERTISEMENT;
     }
+
     @Override
     public byte getPriority() {
         return priority;

@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.analyzer;
 
-import org.w3c.dom.Text;
-
 import java.util.Arrays;
 
 /**

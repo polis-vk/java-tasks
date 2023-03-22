@@ -12,10 +12,12 @@ public class TooLongAnalyzer implements TextAnalyzer {
     public boolean isTextCorrect(String text) {
         return text.length() <= maxLength;
     }
+
     @Override
     public FilterType getFilterType() {
         return FilterType.TOO_LONG;
     }
+
     @Override
     public byte getPriority() {
         return priority;

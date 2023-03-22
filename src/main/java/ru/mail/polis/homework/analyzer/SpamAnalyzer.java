@@ -19,10 +19,12 @@ public class SpamAnalyzer implements TextAnalyzer {
         }
         return true;
     }
+
     @Override
     public FilterType getFilterType() {
         return FilterType.SPAM;
     }
+
     @Override
     public byte getPriority() {
         return priority;
