@@ -15,22 +15,22 @@ public class MaxTask {
         if (array == null || count > array.length){
             return null;
         }
-        int[] finalArray = new int[count];
+        int[] maxArray = new int[count];
         int indexMaxNum = 0;
         int newMaxNum = Integer.MIN_VALUE;
         for (int i = 0; i < count; i++) {
-            finalArray[i] = Integer.MIN_VALUE;
+            maxArray[i] = Integer.MIN_VALUE;
             for (int j = 0; j < array.length; j++){
                 if (newMaxNum < array[j]){
                     newMaxNum = array[j];
                     indexMaxNum = j;
                 }
             }
-            finalArray[i] = newMaxNum;
+            maxArray[i] = newMaxNum;
             newMaxNum = Integer.MIN_VALUE;
             array[indexMaxNum] = Integer.MIN_VALUE;
         }
-        return finalArray;
+        return maxArray;
     }
 
 }

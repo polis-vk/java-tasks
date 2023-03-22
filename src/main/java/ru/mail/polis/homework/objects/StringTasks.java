@@ -15,49 +15,52 @@ public class StringTasks {
      * У класса Character есть полезные методы, например Character.isDigit()
      */
     public static Number valueOf(String str) {
-        if (str == null || str.equals("")) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
-        StringBuilder futureNum = new StringBuilder();
+        StringBuilder number = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
             if (str.charAt(i) == 'e' || str.charAt(i) == '.' || str.charAt(i) == '-'
                     || Character.isDigit(str.charAt(i))) {
-                futureNum.append(str.charAt(i));
+                number.append(str.charAt(i));
             }
         }
         int exponentQtt = 0;
         int dotQtt = 0;
         char prevCharacter = 'a';
         char prevPrevCharacter = 'e';
-        if (futureNum.charAt(futureNum.length() - 1) == 'e'
-                || futureNum.charAt(futureNum.length() - 1) == '-'
-                || futureNum.charAt(futureNum.length() - 1) == '.') {
+        if (number.charAt(number.length() - 1) == 'e'
+                || number.charAt(number.length() - 1) == '-'
+                || number.charAt(number.length() - 1) == '.') {
             return null;
         }
-        for (int j = 0; j < futureNum.length(); j++) {
-            char futureNumChar = futureNum.charAt(j);
+        if (number.charAt(0) == 'e' || number.charAt(0) == '.'){
+            return null;
+        }
+        for (int j = 0; j < number.length(); j++) {
+            char currentNumChar = number.charAt(j);
             if (j > 0) {
-                prevCharacter = futureNum.charAt(j - 1);
+                prevCharacter = number.charAt(j - 1);
             }
             if (j > 1) {
-                prevPrevCharacter = futureNum.charAt(j - 2);
+                prevPrevCharacter = number.charAt(j - 2);
             }
-            if (prevPrevCharacter != 'e' & prevCharacter == '-' & Character.isDigit(futureNumChar)) {
+            if (prevPrevCharacter != 'e' && prevCharacter == '-' && Character.isDigit(currentNumChar)) {
                 return null;
             }
-            if (prevCharacter == '-' && futureNumChar == prevCharacter) {
+            if (prevCharacter == '-' && currentNumChar == prevCharacter) {
                 return null;
             }
-            if (prevCharacter == '-' && futureNumChar == 'e') {
+            if (prevCharacter == '-' && currentNumChar == 'e') {
                 return null;
             }
-            if (futureNumChar == 'e') {
+            if (currentNumChar == 'e') {
                 exponentQtt += 1;
                 if (exponentQtt > 1) {
                     return null;
                 }
             }
-            if (futureNumChar == '.') {
+            if (currentNumChar == '.') {
                 dotQtt += 1;
                 if (dotQtt > 1) {
                     return null;
@@ -65,11 +68,14 @@ public class StringTasks {
             }
         }
         if (exponentQtt != 0 || dotQtt != 0) {
-            return Double.parseDouble(String.valueOf(futureNum));
-        } else if (Integer.MAX_VALUE < Long.parseLong(String.valueOf(futureNum))
-                || Integer.MIN_VALUE > Long.parseLong(String.valueOf(futureNum))) {
-            return Long.parseLong(String.valueOf(futureNum));
+            return Double.parseDouble(String.valueOf(number));
+        } else {
+            long futureNumLong = Long.parseLong(String.valueOf(number));
+            if (Integer.MAX_VALUE < futureNumLong
+                    || Integer.MIN_VALUE > futureNumLong) {
+                return futureNumLong;
+            }
         }
-        return Integer.parseInt(String.valueOf(futureNum));
+        return Integer.parseInt(String.valueOf(number));
     }
 }

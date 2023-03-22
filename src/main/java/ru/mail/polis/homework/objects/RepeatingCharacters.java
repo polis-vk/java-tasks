@@ -13,7 +13,7 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if (str == null || str.equals("")) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
         char prevSymbol = str.charAt(0);
@@ -28,43 +28,41 @@ public class RepeatingCharacters {
                     counterOfMax = counter;
                     max = symbol;
                 }
-            }else {
+            } else {
                 counter = 1;
+
+            }
+            if ((str.length() - i + 1 < counterOfMax) && (prevSymbol != str.charAt(i))) {
+                break;
             }
             prevSymbol = symbol;
         }
-
         return new Pair<>(max, counterOfMax);
     }
 
-    public static class Pair<T, V> {
-        private final T first;
-        private final V second;
-
-        public Pair(T first, V second) {
-            this.first = first;
-            this.second = second;
-        }
-
-        public T getFirst() {
-            return first;
-        }
-
-        public V getSecond() {
-            return second;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
+        public static class Pair<T, V> {
+            private final T first;
+            private final V second;
+            public Pair(T first, V second) {
+                this.first = first;
+                this.second = second;
             }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
+            public T getFirst() {
+                return first;
             }
-            Pair<?, ?> pair = (Pair<?, ?>) o;
-            return Objects.equals(first, pair.first) && Objects.equals(second, pair.second);
+            public V getSecond() {
+                return second;
+            }
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) {
+                    return true;
+                }
+                if (o == null || getClass() != o.getClass()) {
+                    return false;
+                }
+                Pair<?, ?> pair = (Pair<?, ?>) o;
+                return Objects.equals(first, pair.first) && Objects.equals(second, pair.second);
+            }
         }
-
     }
-}
