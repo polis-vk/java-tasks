@@ -66,11 +66,8 @@ public class MaxTask {
     }
 
     private static void insertWithShift(int[] array, int pos, int key) {
-        int prev = array[pos];
-        for (int i = pos + 1; i < array.length; i++) {
-            int temp = array[i];
-            array[i] = prev;
-            prev = temp;
+        if (pos != array.length - 1) {
+            System.arraycopy(array, pos, array, pos + 1, array.length - 1 - pos);
         }
         array[pos] = key;
     }
