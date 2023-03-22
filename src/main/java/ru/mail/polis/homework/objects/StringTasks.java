@@ -17,7 +17,7 @@ public class StringTasks {
      */
 
     public static Number valueOf(String str) {
-        if (str == null || str.equals("")) {
+        if (str == null || str.equals("") || str.charAt(0) == 'e') {
             return null;
         }
         StringBuilder builder = new StringBuilder();
