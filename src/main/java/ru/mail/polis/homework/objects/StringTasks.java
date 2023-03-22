@@ -43,7 +43,7 @@ public class StringTasks {
                     havePoint = true;
                     break;
                 case 'e':
-                    if (haveExp) {
+                    if (haveExp || result.length() == 0) {
                         return null;
                     }
                     haveExp = true;
