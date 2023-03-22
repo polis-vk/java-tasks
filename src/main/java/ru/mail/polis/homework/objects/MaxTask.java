@@ -29,7 +29,9 @@ public class MaxTask {
                 index = Arrays.binarySearch(maxNumbersArray, array[i]);
                 index = index < 0 ? -(index + 1) : index;
 
-                System.arraycopy(maxNumbersArray, 1, maxNumbersArray, 0, index - 1);
+                if (index != array.length){
+                    System.arraycopy(maxNumbersArray, 1, maxNumbersArray, 0, index - 1);
+                }
                 maxNumbersArray[index - 1] = array[i];
             }
         }
