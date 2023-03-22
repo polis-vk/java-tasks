@@ -29,8 +29,8 @@ public class StringTasks {
                 tmpStr.append(ch[i]);
                 lastCharacter = tmpStr.charAt(tmpStr.length() - 1);
             }
-            if (ch[i] == 'e' && Character.isDigit(lastCharacter)) {
-                if (haveE) {
+            if (ch[i] == 'e') {
+                if (haveE | tmpStr.length() == 0) {
                     return null;
                 }
                 tmpStr.append(ch[i]);
