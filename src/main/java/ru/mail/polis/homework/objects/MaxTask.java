@@ -17,19 +17,48 @@ public class MaxTask {
         if (array == null || array.length < count) {
             return null;
         }
-        int[] arrMaxElements = new int[count];
-        Arrays.fill(arrMaxElements, Integer.MIN_VALUE);
-        int[] copyArray = array.clone();
-        int indexMaxElem = 0;
-        for (int i = 0; i < count; i++) {
-            for (int j = 0; j < copyArray.length; j++) {
-                if (arrMaxElements[i] < copyArray[j]) {
-                    arrMaxElements[i] = copyArray[j];
-                    indexMaxElem = j;
-                }
+        if (count == 0) {
+            return new int[count];
+        }
+        int[] arrMaxElements = Arrays.copyOf(array, count);
+        Arrays.sort(arrMaxElements);
+        for (int i = count; i < array.length; i++) {
+            if (array[i] <= arrMaxElements[0]) {
+                continue;
             }
-            copyArray[indexMaxElem] = Integer.MIN_VALUE;
+            int indexNewNumber = searchBinaryForIndex(arrMaxElements, array[i]);
+            System.arraycopy(arrMaxElements, 1, arrMaxElements, 0, indexNewNumber);
+            arrMaxElements[indexNewNumber] = array[i];
+        }
+        int temp = 0;
+        for (int i = 0; i < count / 2; i++) {
+            temp = arrMaxElements[i];
+            arrMaxElements[i] = arrMaxElements[count - i - 1];
+            arrMaxElements[count - i - 1] = temp;
         }
         return arrMaxElements;
+    }
+
+    private static int searchBinaryForIndex(int[] array, int number) {
+        int left = 0;
+        int right = array.length - 1;
+        int middle = 0;
+        int indexInsert = -1;
+        while (left <= right) {
+            middle = (left + right) / 2;
+            if (array[middle] == number) {
+                break;
+            } else if (array[middle] < number) {
+                left = middle + 1;
+            } else if (array[middle] > number) {
+                right = middle - 1;
+            }
+        }
+        if (array[middle] >= number) {
+            indexInsert = middle - 1;
+        } else {
+            indexInsert = middle;
+        }
+        return indexInsert;
     }
 }

@@ -16,46 +16,57 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        if (str == null || str.isEmpty() || str.charAt(str.length() - 1) == '-'
-                || str.charAt(str.length() - 1) == 'e' || str.charAt(str.length() - 1) == '.') {
+        if (str == null || str.isEmpty()) {
             return null;
         }
-        StringBuilder strBuilder = new StringBuilder(str);
-        for (int i = 0; Character.isLetter(strBuilder.charAt(i)) && strBuilder.charAt(i) != 'e'; ) {
-            strBuilder.deleteCharAt(i);
-        }
-        for (int i = 1; i < strBuilder.length() - 1; i++) {
-            char previousElem = strBuilder.charAt(i - 1);
-            char currentElem = strBuilder.charAt(i);
-            char nextElem = strBuilder.charAt(i + 1);
-            boolean previousElemIsDigit = Character.isDigit(previousElem);
-            if (Character.isLetter(currentElem) && currentElem != 'e') {
-                strBuilder.deleteCharAt(i);
-                i--;
-                continue;
+        boolean containsE = false;
+        boolean containsDot = false;
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < str.length(); i++) {
+            char currSymbol = str.charAt(i);
+            switch (currSymbol) {
+                case '-':
+                    if (i == str.length() - 1 || str.charAt(i + 1) == '-') {
+                        return null;
+                    }
+                    if (result.length() != 0 && result.charAt(result.length() - 1) != 'e') {
+                        return null;
+                    }
+                    result.append(currSymbol);
+                    break;
+                case '.':
+                    if (containsDot) {
+                        return null;
+                    }
+                    containsDot = true;
+                    result.append(currSymbol);
+                    break;
+                case 'e':
+                    if (containsE) {
+                        return null;
+                    }
+                    if (result.length() != 0 && !Character.isDigit(result.charAt(result.length() - 1))) {
+                        return null;
+                    }
+                    if (result.length() == 0 || i == str.length() - 1) {
+                        return null;
+                    }
+                    containsE = true;
+                    result.append(currSymbol);
+                    break;
+                default:
+                    if (Character.isDigit(currSymbol)) {
+                        result.append(currSymbol);
+                    }
             }
-            if (Character.isLetter(nextElem) && nextElem != 'e') {
-                strBuilder.deleteCharAt(i + 1);
-                i--;
-                continue;
-            }
-            boolean nextElemIsDigit = Character.isDigit(nextElem);
-            if ((currentElem == '-') && (previousElem != 'e') && nextElemIsDigit) {
-                return null;
-            } else if ((currentElem == '.') && !previousElemIsDigit && !nextElemIsDigit) {
-                return null;
-            } else if ((currentElem == 'e') && !previousElemIsDigit
-                    && (!nextElemIsDigit || (nextElem != '-'))) {
-                return null;
-            }
         }
-        if (strBuilder.indexOf("e") != -1 || strBuilder.indexOf(".") != -1) {
-            return Double.parseDouble(strBuilder.toString());
+        if (containsE || containsDot) {
+            return Double.parseDouble(result.toString());
         }
-        long resultLong = Long.parseLong(strBuilder.toString());
+        long resultLong = Long.parseLong(result.toString());
         if (resultLong < Integer.MIN_VALUE || resultLong > Integer.MAX_VALUE) {
             return resultLong;
         }
-        return Integer.parseInt(strBuilder.toString());
+        return Integer.parseInt(result.toString());
     }
 }
