@@ -16,6 +16,71 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        return null;
+
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+
+        StringBuilder result = new StringBuilder();
+        byte countMinus = 0;
+        boolean havePoint = false;
+        boolean haveExp = false;
+
+        for (int i = 0; i < str.length(); ++i) {
+            char symbol = str.charAt(i);
+
+            switch (symbol) {
+                case '-':
+                    if (!checkMinus(countMinus, String.valueOf(result))) {
+                        return null;
+                    }
+                    countMinus++;
+                    break;
+                case '.':
+                    if (havePoint) {
+                        return null;
+                    }
+                    havePoint = true;
+                    break;
+                case 'e':
+                    if (haveExp) {
+                        return null;
+                    }
+                    haveExp = true;
+                    break;
+                default:
+                    if (!Character.isDigit(symbol)) {
+                        continue;
+                    }
+            }
+            result.append(symbol);
+        }
+
+        if (result.charAt(result.length() - 1) == '-') {
+            return null;
+        }
+        if (haveExp && result.charAt(result.length() - 1) == 'e') {
+            return null;
+        }
+
+        if (havePoint || haveExp) {
+            return Double.valueOf(result.toString());
+        }
+        long number = Long.parseLong(result.toString());
+        if (number > Integer.MAX_VALUE || number < Integer.MIN_VALUE) {
+            return number;
+        }
+        return (int) number;
+    }
+
+    private static boolean checkMinus(int countMinus, String result) {
+        switch (countMinus) {
+            case 0:
+                return result.length() == 0 || result.charAt(result.length() - 1) == 'e';
+            case 1:
+                return result.charAt(result.length() - 1) == 'e';
+            default:
+                return false;
+        }
     }
 }
