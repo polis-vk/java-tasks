@@ -16,26 +16,50 @@ public class MaxTask {
     public static int[] getMaxArray(int[] array, int count) {
         int[] arrayMax = null;
         if (array != null && count <= array.length) {
-            int[] copyArray = array.clone();
-            int maximum = Integer.MIN_VALUE;
-            arrayMax = Arrays.copyOf(copyArray, count);
-            for (int arrayMaxCounter = 0; arrayMaxCounter < arrayMax.length; arrayMaxCounter++) {
-                for (int copyArrayCounter = 0; copyArrayCounter < copyArray.length; copyArrayCounter++) {
-                    if (copyArray[copyArrayCounter] > maximum) {
-                        maximum = copyArray[copyArrayCounter];
-                    }
+            arrayMax = Arrays.copyOf(array, count);
+            if (count == 0) {
+                return arrayMax;
+            }
+            Arrays.sort(arrayMax);
+            arrayMax = reverse(arrayMax);
+            int position;
+            for (int arrayCounter = count; arrayCounter < array.length; arrayCounter++) {
+                if (array[arrayCounter] >= arrayMax[count - 1]) {
+                    position = binarySearchIndex(arrayMax, array[arrayCounter]);
+                    System.arraycopy(arrayMax, position, arrayMax, position + 1, count - (position + 1));
+                    arrayMax[position] = array[arrayCounter];
                 }
-                arrayMax[arrayMaxCounter] = maximum;
-                for (int copyArrayCounter = 0; copyArrayCounter < copyArray.length; copyArrayCounter++) {
-                    if (copyArray[copyArrayCounter] == arrayMax[arrayMaxCounter]) {
-                        copyArray[copyArrayCounter] = Integer.MIN_VALUE;
-                        break;
-                    }
-                }
-                maximum = Integer.MIN_VALUE;
             }
         }
         return arrayMax;
     }
 
+    private static int[] reverse(int[] array) {
+        int[] reverseArray = new int[array.length];
+        for (int counter = 0; counter < array.length; counter++) {
+            reverseArray[array.length - 1 - counter] = array[counter];
+        }
+        return reverseArray;
+    }
+
+    private static int binarySearchIndex(int[] array, int value) {
+        int left = 0;
+        int right = array.length - 1;
+        int middle;
+        while (left <= right) {
+            middle = (left + right) / 2;
+            if (value == array[middle]) {
+                return middle;
+            }
+            if (value < array[middle] && value >= array[middle + 1]) {
+                return middle + 1;
+            }
+            if (value > array[middle]) {
+                right = middle - 1;
+                continue;
+            }
+            left = middle + 1;
+        }
+        return 0;
+    }
 }

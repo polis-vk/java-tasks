@@ -19,56 +19,61 @@ public class StringTasks {
         if (str == null || str.isEmpty()) {
             return null;
         }
-        StringBuilder copiedStr = new StringBuilder(str);
+        StringBuilder copiedStr = new StringBuilder();
         int counterPoint = 0;
         int counterE = 0;
+        int counterCopiedStr = 0;
         boolean isPoint = false;
         boolean isE = false;
-        for (int counter = 0; counter < copiedStr.length(); counter++) {
-            while (counter != copiedStr.length() && Character.isLetter(copiedStr.charAt(counter)) && copiedStr.charAt(counter) != 'e') {
-                copiedStr.deleteCharAt(counter);
+        for (int counter = 0; counter < str.length(); counter++) {
+            if (Character.isDigit(str.charAt(counter))) {
+                copiedStr.append(str.charAt(counter));
+                counterCopiedStr++;
             }
-            if (counter == copiedStr.length()) {
-                if (copiedStr.charAt(counter - 1) == 'e' || copiedStr.charAt(counter - 1) == '.' || copiedStr.charAt(counter - 1) == '-') {
-                    return null;
-                }
-                break;
-            }
-            if (copiedStr.charAt(counter) == '.') {
+            if (str.charAt(counter) == '.') {
                 isPoint = true;
                 counterPoint++;
-                if (counter == 0) {
+                if (counterCopiedStr == 0) {
                     return null;
                 }
                 if (counterPoint >= 2) {
                     return null;
                 }
-                if (counter == copiedStr.length() - 1) {
+                if (counter == str.length() - 1) {
                     return null;
                 }
+                if (!Character.isDigit(copiedStr.charAt(counterCopiedStr - 1))) {
+                    return null;
+                }
+                copiedStr.append(str.charAt(counter));
+                counterCopiedStr++;
             }
-            if (copiedStr.charAt(counter) == 'e') {
+            if (str.charAt(counter) == 'e') {
                 isE = true;
                 counterE++;
-                if (counter == 0) {
+                if (counterCopiedStr == 0) {
                     return null;
                 }
-                if (!Character.isDigit(copiedStr.charAt(counter - 1)) || counterE >= 2) {
+                if (!Character.isDigit(copiedStr.charAt(counterCopiedStr - 1)) || counterE >= 2) {
                     return null;
                 }
-                if (counter == copiedStr.length() - 1) {
+                if (counter == str.length() - 1) {
                     return null;
                 }
+                copiedStr.append(str.charAt(counter));
+                counterCopiedStr++;
             }
-            if (copiedStr.charAt(counter) == '-') {
-                if (counter != 0) {
-                    if (copiedStr.charAt(counter - 1) != 'e') {
+            if (str.charAt(counter) == '-') {
+                if (counterCopiedStr != 0) {
+                    if (copiedStr.charAt(counterCopiedStr - 1) != 'e') {
                         return null;
                     }
-                    if (counter == copiedStr.length() - 1) {
+                    if (counter == str.length() - 1) {
                         return null;
                     }
                 }
+                copiedStr.append(str.charAt(counter));
+                counterCopiedStr++;
             }
         }
         String result = copiedStr.toString();
