@@ -33,7 +33,7 @@ public class StringTasks {
             }
 
             if (arrayOfStr[i] == 'e') {
-                if (isE || i == str.length() - 1) {
+                if (isE || i == str.length() - 1 || i == 0) {
                     return null;
                 }
                 sb.append(str.charAt(i));
