@@ -16,6 +16,7 @@ public class StringTasksTest {
         assertEquals(-1, StringTasks.valueOf("-a1"));
         assertEquals(null, StringTasks.valueOf("--a1"));
         assertEquals(null, StringTasks.valueOf("-1-1"));
+        assertEquals(null, StringTasks.valueOf("e10"));
         assertEquals(null, StringTasks.valueOf("1.23-a1"));
         assertEquals(-12, StringTasks.valueOf("-a1bsc2"));
         assertEquals(-132, StringTasks.valueOf("a-132a"));
