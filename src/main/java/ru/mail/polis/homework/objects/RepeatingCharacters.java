@@ -22,7 +22,7 @@ public class RepeatingCharacters {
         for (int i = 0; i < str.length() - 1; i++) {
             if (str.charAt(i) != str.charAt(i + 1)) {
                 currentCount = 0;
-                if(maxLetterCount > (str.length()-1)/2){
+                if (maxLetterCount > (str.length() - 1) / 2) {
                     return new Pair<>(letter, maxLetterCount);
                 }
             }

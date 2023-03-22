@@ -55,7 +55,7 @@ public class StringTasks {
                 lastCharWasE = false;
             }
         }
-        if(lastCharWasE){
+        if (lastCharWasE) {
             return null;
         }
         double result = Double.parseDouble(sb.toString());
@@ -63,7 +63,7 @@ public class StringTasks {
             return result;
         }
         if (result > Integer.MAX_VALUE || result < Integer.MIN_VALUE) {
-            return (long)result;
+            return (long) result;
         }
         return (int) result;
 
