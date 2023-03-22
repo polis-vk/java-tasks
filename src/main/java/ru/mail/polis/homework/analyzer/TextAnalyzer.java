@@ -37,4 +37,13 @@ public interface TextAnalyzer {
     boolean isTextCorrect(String text);
 
     FilterType getFilterType();
+
+    static boolean find (String text, String[] toFind) {
+        for (String word : toFind) {
+            if (text.contains(word)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

@@ -12,12 +12,7 @@ public class SpamAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean isTextCorrect(String text) {
-        for (String word : spam) {
-            if (text.contains(word)) {
-                return false;
-            }
-        }
-        return true;
+        return TextAnalyzer.find(text, spam);
     }
 
     @Override

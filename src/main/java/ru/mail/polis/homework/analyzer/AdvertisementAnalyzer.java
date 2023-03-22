@@ -6,12 +6,7 @@ public class AdvertisementAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean isTextCorrect(String text) {
-        for (String link : links) {
-            if (text.contains(link)) {
-                return false;
-            }
-        }
-        return true;
+        return TextAnalyzer.find(text, links);
     }
 
     @Override

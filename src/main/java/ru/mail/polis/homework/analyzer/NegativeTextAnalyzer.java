@@ -6,12 +6,7 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean isTextCorrect(String text) {
-        for (String emotion : negativeEmotions) {
-            if (text.contains(emotion)) {
-                return false;
-            }
-        }
-        return true;
+        return TextAnalyzer.find(text, negativeEmotions);
     }
 
     @Override
