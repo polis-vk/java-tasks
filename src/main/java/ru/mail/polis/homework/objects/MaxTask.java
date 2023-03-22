@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.objects;
 
 
+import java.util.Arrays;
+
 public class MaxTask {
 
     /**
@@ -17,40 +19,14 @@ public class MaxTask {
             return null;
         }
         int[] maxNums = new int[count];
-        for (int i = 0; i < array.length; i++) {
-            if (i < count) {
-                if (i == 0) {
-                    maxNums[i] = array[i];
-                } else {
-                    int insertPosition = -1;
-                    for (int j = i - 1; j >= 0; j--) {
-                        if (array[i] < maxNums[j]) {
-                            break;
-                        } else {
-                            insertPosition = j;
-                        }
-                    }
-                    if (insertPosition == -1) {
-                        maxNums[i] = array[i];
-                    } else {
-                        shift(maxNums, insertPosition, i);
-                        maxNums[insertPosition] = array[i];
-                    }
-                }
-            } else {
-                int insertPosition = -1;
-                for (int j = count - 1; j >= 0; j--) {
-                    if (array[i] < maxNums[j]) {
-                        break;
-                    } else {
-                        insertPosition = j;
-                    }
-                }
-                if (insertPosition != -1) {
-                    shift(maxNums, insertPosition, count - 1);
-                    maxNums[insertPosition] = array[i];
-                }
+        Arrays.fill(maxNums, Integer.MIN_VALUE);
+        for (int j : array) {
+            int insertPosition = binarySearch(maxNums, 0, count - 1, j);
+            if (insertPosition == -1) {
+                continue;
             }
+            shift(maxNums, insertPosition, count - 1);
+            maxNums[insertPosition] = j;
         }
         return maxNums;
     }
@@ -59,7 +35,20 @@ public class MaxTask {
         for (int i = length; i > num; i--) {
             arr[i] = arr[i - 1];
         }
+    }
 
+    public static int binarySearch(int[] arr, int low, int high, int num) {
+        if (high >= low) {
+            int middle = low + (high - low) / 2;
+            if (middle == 0 && arr[middle] <= num || middle != 0 && arr[middle] <= num && arr[middle - 1] >= num) {
+                return middle;
+            }
+            if (arr[middle] < num) {
+                return binarySearch(arr, low, middle - 1, num);
+            }
+            return binarySearch(arr, middle + 1, high, num);
+        }
+        return -1;
     }
 
 }
