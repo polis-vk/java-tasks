@@ -1,13 +1,19 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyzer implements TextAnalyzer {
-    int priority = 3;
-    static String[] badSmiles = {"=(", ":(", ":|"};
+    private static final int priority = 3;
+    private static final FilterType filterType = FilterType.NEGATIVE_TEXT;
+    private static final String[] badSmiles = {"=(", ":(", ":|"};
 
 
     @Override
     public int getPriority() {
         return priority;
+    }
+
+    @Override
+    public FilterType getFilterType() {
+        return filterType;
     }
 
     @Override

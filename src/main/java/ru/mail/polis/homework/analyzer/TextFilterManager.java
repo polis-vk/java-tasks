@@ -44,8 +44,8 @@ public class TextFilterManager {
     TextAnalyzer[] filters;
 
     public TextFilterManager(TextAnalyzer[] filters) {
-        Arrays.sort(filters, Comparator.comparingInt(TextAnalyzer::getPriority));
-        this.filters = filters.clone();
+        this.filters = Arrays.copyOf(filters, filters.length);
+        Arrays.sort(this.filters, Comparator.comparingInt(TextAnalyzer::getPriority));
     }
 
     /**
@@ -55,11 +55,7 @@ public class TextFilterManager {
         if (text == null || text.isEmpty()) return FilterType.GOOD;
         for (TextAnalyzer ta : filters) {
             if (!ta.analyze(text)) {
-                for (FilterType ft : FilterType.values()) {
-                    if (ft.getNum() == ta.getPriority()) {
-                        return ft;
-                    }
-                }
+                return ta.getFilterType();
             }
         }
         return FilterType.GOOD;

@@ -38,6 +38,7 @@ public interface TextAnalyzer {
 
     int getPriority();
 
+    FilterType getFilterType();
 
     boolean analyze(String commentary);
 }

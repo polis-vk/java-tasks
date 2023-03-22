@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
 public class ExcessiveSpacesAnalyzer implements TextAnalyzer {
-    int priority = 4;
-
+    private static final int priority = 4;
+    private static final FilterType filterType = FilterType.EXCESSIVE_SPACES;
 
     @Override
     public int getPriority() {
@@ -10,16 +10,12 @@ public class ExcessiveSpacesAnalyzer implements TextAnalyzer {
     }
 
     @Override
+    public FilterType getFilterType() {
+        return filterType;
+    }
+
+    @Override
     public boolean analyze(String commentary) {
-        for (int i = 0; i < commentary.length(); i++) {
-            char symbol = commentary.charAt(i);
-            if (symbol != ' ') {
-                continue;
-            }
-            if (i == 0 || i == commentary.length() - 1 || commentary.charAt(i - 1) == ' ') {
-                return false;
-            }
-        }
-        return true;
+        return commentary.charAt(0) != ' ' && commentary.charAt(commentary.length() - 1) != ' ' && !commentary.contains("  ");
     }
 }

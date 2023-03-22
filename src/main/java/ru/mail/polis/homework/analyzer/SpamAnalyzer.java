@@ -1,18 +1,26 @@
 package ru.mail.polis.homework.analyzer;
 
 
+import java.util.Arrays;
+
 public class SpamAnalyzer implements TextAnalyzer {
-    int priority = 1;
-    String[] badWords;
+    private static final int priority = 1;
+    private static final FilterType filterType = FilterType.SPAM;
+    private final String[] badWords;
 
     SpamAnalyzer(String[] badWords) {
-        this.badWords = badWords.clone();
+        this.badWords = Arrays.copyOf(badWords, badWords.length);
     }
 
 
     @Override
     public int getPriority() {
         return priority;
+    }
+
+    @Override
+    public FilterType getFilterType() {
+        return filterType;
     }
 
     @Override
