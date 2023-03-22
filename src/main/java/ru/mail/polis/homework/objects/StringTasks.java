@@ -21,8 +21,8 @@ public class StringTasks {
         }
 
         StringBuilder sb = new StringBuilder();
-        int dotCount = 0;
-        int eCount = 0;
+        boolean dotCount = false;
+        boolean eCount = false;
         boolean lastCharWasE = false;
 
         for (int i = 0; i < str.length(); i++) {
@@ -32,17 +32,19 @@ public class StringTasks {
                 sb.append(c);
                 lastCharWasE = false;
             } else if (c == '.') {
-                dotCount++;
-                if (dotCount > 1) {
+
+                if (dotCount) {
                     return null;
                 }
+                dotCount = true;
                 sb.append(c);
                 lastCharWasE = false;
             } else if (c == 'e' || c == 'E') {
-                eCount++;
-                if (eCount > 1) {
+
+                if (eCount) {
                     return null;
                 }
+                eCount = true;
                 sb.append('e');
                 lastCharWasE = true;
             } else if (c == '-') {
@@ -53,20 +55,17 @@ public class StringTasks {
                 lastCharWasE = false;
             }
         }
-        try {
-            Double result = Double.valueOf(sb.toString());
-            if (eCount != 0) {
-                return result;
-            }
-            if (result == result.intValue()) {
-                return result.intValue();
-            }
-            if (result > Integer.MAX_VALUE || result < Integer.MIN_VALUE) {
-                return result.longValue();
-            }
-            return result;
-        } catch (NumberFormatException e) {
+        if(lastCharWasE){
             return null;
         }
+        double result = Double.parseDouble(sb.toString());
+        if (eCount || dotCount) {
+            return result;
+        }
+        if (result > Integer.MAX_VALUE || result < Integer.MIN_VALUE) {
+            return (long)result;
+        }
+        return (int) result;
+
     }
 }
