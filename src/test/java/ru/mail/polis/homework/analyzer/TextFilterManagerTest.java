@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
-import org.junit.Test;
-
 import java.util.Arrays;
+
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -141,5 +141,11 @@ public class TextFilterManagerTest {
         }
     }
 
+    @Test
+    public void analyzeOnlyUpperCaseFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createUpperCaseTextAnalyzer()});
+        assertEquals("UPPER_CASE_TEXT", manager.analyze("Привет, я Петя :(").toString());
+        assertEquals("GOOD", manager.analyze("привет, я петя :(").toString());
+    }
 
 }
