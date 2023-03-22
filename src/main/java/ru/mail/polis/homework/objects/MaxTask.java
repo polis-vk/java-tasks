@@ -29,7 +29,9 @@ public class MaxTask {
             }
             insertIndex = Arrays.binarySearch(newArray, array[i]);
             insertIndex = insertIndex < 0 ? -(insertIndex + 1) : insertIndex;
-            System.arraycopy(newArray, 1, newArray, 0, insertIndex - 1);
+            if (insertIndex != array.length) {
+                System.arraycopy(newArray, 1, newArray, 0, insertIndex - 1);
+            }
             newArray[insertIndex - 1] = array[i];
             currentMin = array[0];
         }
