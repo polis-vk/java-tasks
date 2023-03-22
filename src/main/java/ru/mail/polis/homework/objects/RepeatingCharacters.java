@@ -8,6 +8,7 @@ import java.util.*;
  * который первый встречается в строчке
  * Если строка пустая или null, то вернуть null
  * Пример abbasbdlbdbfklsssbb -> (s, 3)
+ * 4 тугрика
  */
 public class RepeatingCharacters {
 
