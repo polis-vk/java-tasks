@@ -36,7 +36,7 @@ public class StringTasks {
             if (Character.isDigit(ch)) {
                 number.append(ch);
             } else if (ch == 'e') {
-                if (metExp) {
+                if (metExp || number.length() == 0 || !Character.isDigit(number.charAt(number.length() - 1))) {
                     return null;
                 }
                 number.append(ch);
