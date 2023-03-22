@@ -15,8 +15,23 @@ public class StringTasks {
      * БЕЗ РЕГУЛЯРОК!
      * 6 тугриков
      */
+    public static boolean isEmpty(String str) {
+        return str.isEmpty() || str.length() == 0;
+    }
+
+    public static Number convertToNumber(String str, int dotAmount, int eAmount) {
+        if (eAmount == 1 || dotAmount == 1) {
+            return Double.valueOf(str);
+        }
+        long longResult = Long.valueOf(str);
+        if (longResult > Integer.MAX_VALUE || longResult < Integer.MIN_VALUE) {
+            return longResult;
+        }
+        return Integer.valueOf(str);
+    }
+
     public static Number valueOf(String str) {
-        if (str.isEmpty() || str.length() == 0 || str.endsWith("-") || str.endsWith("e")) {
+        if (isEmpty(str) || str.endsWith("-") || str.endsWith("e")) {
             return null;
         }
         StringBuilder result = new StringBuilder();
@@ -45,14 +60,6 @@ public class StringTasks {
                 return null;
             }
         }
-        if (eAmount == 1 || dotAmount == 1) {
-            return Double.valueOf(result.toString());
-        }
-        long longResult = Long.valueOf(result.toString());
-        if (longResult > Integer.MAX_VALUE
-                || longResult < Integer.MIN_VALUE) {
-            return longResult;
-        }
-        return Integer.valueOf(result.toString());
+        return convertToNumber(result.toString(), dotAmount, eAmount);
     }
 }
