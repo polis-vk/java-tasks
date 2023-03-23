@@ -14,10 +14,8 @@ public class StringTasks {
      * Работайте со строкой, НЕ надо ее переводить в массив байт (это можно использовать только для цикла)
      * У класса Character есть полезные методы, например Character.isDigit()
      */
-
-
     public static Number valueOf(String str) {
-        if (str == null || str.length() == 0) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
         boolean dotIsExist = false;
@@ -27,7 +25,9 @@ public class StringTasks {
         for (int i = 0; i < strTemp.length(); ++i) {
             if (Character.isDigit(strTemp.charAt(i))) {
                 result.append(strTemp.charAt(i));
-            } else switch (strTemp.charAt(i)) {
+                continue;
+            }
+            switch (strTemp.charAt(i)) {
                 case '.':
                     if (dotIsExist) {
                         return null;
@@ -41,10 +41,9 @@ public class StringTasks {
                 case '-':
                     if (result.length() == 0 || result.charAt(result.length() - 1) == 'e') {
                         result.append('-');
-                    } else {
-                        return null;
+                        break;
                     }
-                    break;
+                    return null;
                 case 'e':
                     if (eIsExist) {
                         return null;
@@ -52,10 +51,9 @@ public class StringTasks {
                     eIsExist = true;
                     if (Character.isDigit(result.charAt(result.length() - 1))) {
                         result.append('e');
-                    } else {
-                        return null;
+                        break;
                     }
-                    break;
+                    return null;
             }
         }
         String strResult = result.toString();
@@ -65,32 +63,10 @@ public class StringTasks {
         if (dotIsExist || eIsExist) {
             return Double.valueOf(strResult);
         }
-        if (Double.parseDouble(strResult) > Integer.MAX_VALUE || Double.parseDouble(strResult) < Integer.MIN_VALUE) {
+        double doubleResult = Double.parseDouble(strResult);
+        if (doubleResult > Integer.MAX_VALUE || doubleResult < Integer.MIN_VALUE) {
             return Long.valueOf(result.toString());
         }
         return Integer.valueOf(strResult);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

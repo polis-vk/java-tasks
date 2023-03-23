@@ -21,21 +21,19 @@ public class MaxTask {
         int maxDigit = Integer.MIN_VALUE;
         int indexOfMax = -1;
         int[] arrayCopy = Arrays.copyOf(array, array.length);
+        int activeLength = arrayCopy.length;
         for (int i = 0; i < count; ++i) {
-            for (int j = 0; j < arrayCopy.length; ++j) {
+            for (int j = 0; j < activeLength; ++j) {
                 if (arrayCopy[j] > maxDigit) {
                     maxDigit = arrayCopy[j];
                     indexOfMax = j;
                 }
             }
             result[i] = maxDigit;
+            arrayCopy[indexOfMax] = arrayCopy[activeLength - 1];
             maxDigit = Integer.MIN_VALUE;
-            for (int k = indexOfMax; k < arrayCopy.length - 1; ++k) {
-                arrayCopy[k] = arrayCopy[k + 1];
-            }
-            arrayCopy[arrayCopy.length - 1] = Integer.MIN_VALUE;
+            --activeLength;
         }
-
         return result;
     }
 }
