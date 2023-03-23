@@ -33,17 +33,17 @@ public class StringTasks {
                         hasDigit = true;
                     } else if ((currSymbol == '-') && (prevSymbol != 'e')) {
                         if (isNegative || (numberBuilder.length() != 0)) {
-                            return result;
+                            return null;
                         }
                         isNegative = true;
                     } else if (currSymbol == '.') {
                         if (hasDot || hasEpsilon) {
-                            return result;
+                            return null;
                         }
                         hasDot = true;
                     } else if (currSymbol == 'e') {
-                        if (hasEpsilon) {
-                            return result;
+                        if (hasEpsilon || (numberBuilder.length() == 0)) {
+                            return null;
                         }
                         hasEpsilon = true;
                     }
