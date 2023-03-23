@@ -14,7 +14,7 @@ import java.util.Objects;
 public class RepeatingCharacters {
 
     public static Pair<Character, Integer> getMaxRepeatingCharacters(String str) {
-        if (str == null || "".equals(str)) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
         int repetitionNumber = 1;
@@ -30,6 +30,9 @@ public class RepeatingCharacters {
                 if (maxRepetition < repetitionNumber) {
                     maxRepetition = repetitionNumber;
                     maxRepeatingCharacter = repeatingCharacter;
+                }
+                if (maxRepetition >= strLength - i) {
+                    break;
                 }
                 repetitionNumber = 1;
                 repeatingCharacter = currentCharacter;
