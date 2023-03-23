@@ -141,5 +141,30 @@ public class TextFilterManagerTest {
         }
     }
 
+    @Test
+    public void analyzeOnlyCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createTooMuchWordsAnalyzer(3)});
+        assertEquals("TOO_MUSH_WORDS", manager.analyze("Привет, я Петя :(").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("TOO_MUSH_WORDS", manager.analyze("Скажите код из смс  ").toString());
+        assertEquals("GOOD", manager.analyze("Ооооооочень длиннннннаааааяяяя стрроооооооккккаааааа").toString());
 
+        manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createTooMuchWordsAnalyzer(0)});
+        assertEquals("TOO_MUSH_WORDS", manager.analyze("Привет, я Петя").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("TOO_MUSH_WORDS", manager.analyze("Скажите код из смс  ").toString());
+        assertEquals("TOO_MUSH_WORDS", manager.analyze("Ооооооочень длиннннннаааааяяяя стрроооооооккккаааааа").toString());
+
+        manager = new TextFilterManager(new TextAnalyzer[]{
+                TextAnalyzer.createTooMuchWordsAnalyzer(2),
+                TextAnalyzer.createTooMuchWordsAnalyzer(5)});
+        assertEquals("TOO_MUSH_WORDS", manager.analyze("Привет, я Петя :(").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("TOO_MUSH_WORDS", manager.analyze("Скажите код из смс  ").toString());
+        assertEquals("GOOD", manager.analyze("стрроооооооккккаааааа").toString());
+
+    }
 }
