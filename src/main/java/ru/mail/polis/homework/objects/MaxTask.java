@@ -56,13 +56,13 @@ public class MaxTask {
         }
         int[] result = new int[count];
         Arrays.fill(result, -10);
-        for (int i = 0; i < array.length; i++) {
+        for (int element : array) {
             // если элемент больше максимального - можно сразу вставлять в начало
             // если же элемент меньше минимального - то вообще не пытаемся вставлять
-            if (array[i] > result[0]) {
-                enterToArray(result, 0, array[i]);
-            } else if (array[i] > result[result.length - 1]) {
-                enterToArray(result, binarySearch(result, array[i], result.length), array[i]);
+            if (element > result[0]) {
+                enterToArray(result, 0, element);
+            } else if (element > result[result.length - 1]) {
+                enterToArray(result, binarySearch(result, element, result.length), element);
             }
         }
         return result;

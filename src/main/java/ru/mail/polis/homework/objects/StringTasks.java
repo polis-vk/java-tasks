@@ -26,24 +26,38 @@ public class StringTasks {
         int minusAppearanceAfterE = 0;
         int digitCount = 0;
         boolean minusAfterE = true;
-        //
+        boolean validMinus = true;
+        boolean validE = true;
         int length = str.length();
         boolean flagCastToDouble = false;
         StringBuilder tempStr = new StringBuilder();
         for (int i = 0; i < length; i++) {
+            // считаем количество 'e' в строке
             if (str.charAt(i) == 'e') {
                 eAppearance++;
+                // проверяем чтобы e не стояло в начале/конце
+                if (i == 0 || i == str.length() - 1) {
+                    validE = false;
+                }
             }
+            // считаем количество '.' в строке
             if (str.charAt(i) == '.') {
                 dotAppearance++;
             }
             if (str.charAt(i) == '-') {
+                // проверяем, что минус не стоит в конце
+                if (i == str.length() - 1) {
+                    validMinus = false;
+                }
+                // считаем количество '-' которые не после 'e'
                 if (eAppearance == 0) {
                     minusAppearance++;
                 }
+                // считаем количество '-' которые после 'e'
                 if (eAppearance > 0) {
                     minusAppearanceAfterE++;
                 }
+                // проверяем стоит ли минус после 'e', если он встречается после цифр
                 if (eAppearance == 0 && digitCount > 0) {
                     minusAfterE = false;
                 }
@@ -52,15 +66,19 @@ public class StringTasks {
             if (str.charAt(i) == '.' || str.charAt(i) == 'e') {
                 flagCastToDouble = true;
             }
+            // считаем число цифр
             if (Character.isDigit(str.charAt(i))) {
                 digitCount++;
             }
+            // добавляем в SB валидный элемент
             if (Character.isDigit(str.charAt(i)) || str.charAt(i) == '-' || str.charAt(i) == '.' || str.charAt(i) == 'e') {
                 tempStr.append(str.charAt(i));
             }
         }
         String resultStr = tempStr.toString();
-        if (eAppearance <= 1 && minusAfterE && dotAppearance <= 1 && minusAppearance <= 1 && str.charAt(length - 1) != '-' && str.charAt(length - 1) != 'e' && minusAppearanceAfterE < 2) {
+        // проверяем полученную строку, используя все переменные для проверок
+        if (eAppearance <= 1 && minusAfterE && dotAppearance <= 1 && minusAppearance <= 1 && minusAppearanceAfterE < 2 && validE && validMinus) {
+            // если проверки пройдены выбираем числовой тип, к которому нужно привести строку
             if (flagCastToDouble) {
                 return Double.parseDouble(resultStr);
             } else {
