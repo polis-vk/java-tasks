@@ -43,7 +43,7 @@ public class TextFilterManager {
      */
     public TextFilterManager(TextAnalyzer[] analyzers) {
         filters = Arrays.copyOf(analyzers, analyzers.length);
-        Arrays.sort(filters, Comparator.comparingInt(TextAnalyzer::getPriority));
+        Arrays.sort(filters, Comparator.comparingInt(filter -> filter.getFilterType().priority));
     }
 
     /**

@@ -34,7 +34,5 @@ public interface TextAnalyzer {
 
     boolean detected(String expression);
 
-    int getPriority();
-
     FilterType getFilterType();
 }

@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
 public class CatFriendlyTextAnalyzer extends SpamAnalyzer implements TextAnalyzer {
-    static final int priority = 4;
     static final FilterType analyzerType = FilterType.CAT_FRIENDLY;
 
     public CatFriendlyTextAnalyzer() {
@@ -11,11 +10,6 @@ public class CatFriendlyTextAnalyzer extends SpamAnalyzer implements TextAnalyze
     @Override
     public boolean detected(String expression) {
         return super.detected(expression) || expression.equals(expression.toUpperCase()); // Cats don't like loud scream
-    }
-
-    @Override
-    public int getPriority() {
-        return priority;
     }
 
     @Override
