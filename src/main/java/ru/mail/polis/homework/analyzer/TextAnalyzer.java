@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
 
+import org.w3c.dom.Text;
+
 /**
  * Базовый интерфейс фильтра, наследники этого интерфейса должны инкапсулировать в себе всю логику
  * анализа текста.
@@ -15,23 +17,28 @@ package ru.mail.polis.homework.analyzer;
  * 2 тугрика + (2 тугрика за каждый фильтр + 1 тугрик за тест на свой фильтр) ИТОГО 11
  */
 public interface TextAnalyzer {
-
+    public boolean analyzeText(String text);
+    public FilterType getType();
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return null;
+        TextAnalyzer tooLongAnalyzer = new TooLongTextAnalyzer(maxLength);
+        return tooLongAnalyzer;
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return null;
+        TextAnalyzer spamTextAnalyzer = new SpamTextAnalyzer(spam);
+        return spamTextAnalyzer;
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return null;
+        TextAnalyzer negativeTextAnalyzer = new NegativeTextAnalyzer();
+        return negativeTextAnalyzer;
     }
 
     /**
      * придумать свой фильтр
      */
-    static <T> TextAnalyzer createCustomAnalyzer(T something) {
-        return null;
+    static TextAnalyzer createRepeatedWordsTextFilter(int maxRepeatCount) {
+        TextAnalyzer repeatedWordsTextFilter = new RepeatedWordsTextFilter(maxRepeatCount);
+        return repeatedWordsTextFilter;
     }
 }
