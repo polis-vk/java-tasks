@@ -45,7 +45,7 @@ public class StringTasks {
             }
 
             if (currentChar == 'e') {
-                if (hasE || (i == str.length() - 1)) {
+                if (hasE || (i == str.length() - 1) || i == 0) {
                     return null;
                 }
                 hasE = true;
