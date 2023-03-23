@@ -16,7 +16,7 @@ public class StringTasks {
      * 6 тугриков
      */
     public static boolean isEmpty(String str) {
-        return str.isEmpty() || str.length() == 0;
+        return str == null || str.length() == 0;
     }
 
     public static Number convertToNumber(String str, int dotAmount, int eAmount) {
@@ -31,7 +31,7 @@ public class StringTasks {
     }
 
     public static Number valueOf(String str) {
-        if (isEmpty(str) || str.endsWith("-") || str.endsWith("e")) {
+        if (isEmpty(str) || str.endsWith("-") || str.startsWith("e") || str.endsWith("e")) {
             return null;
         }
         StringBuilder result = new StringBuilder();
