@@ -122,6 +122,16 @@ public class TextFilterManagerTest {
         manyFilters(true);
     }
 
+    @Test
+    public void analyzeOnlySoftFilter() {
+        TextFilterManager manager = new TextFilterManager(
+                new TextAnalyzer[]{TextAnalyzer.createSoftTextAnalyzer()});
+        assertEquals("SOFT_TEXT", manager.analyze("смс котик").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("SOFT_TEXT", manager.analyze("смс котик зайка").toString());
+        assertEquals("GOOD", manager.analyze("смс или звонок").toString());
+    }
+
     private void manyFilters(boolean withPriority) {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
