@@ -23,42 +23,44 @@ public class StringTasks {
         int eAppearance = 0;
         int dotAppearance = 0;
         int minusAppearance = 0;
+        int minusAppearanceAfterE = 0;
+        int digitCount = 0;
         boolean minusAfterE = true;
-        boolean validEnding = true;
         //
         int length = str.length();
         boolean flagCastToDouble = false;
-        StringBuilder tempStr = new StringBuilder(str);
+        StringBuilder tempStr = new StringBuilder();
         for (int i = 0; i < length; i++) {
-            if (tempStr.charAt(i) == 'e') {
+            if (str.charAt(i) == 'e') {
                 eAppearance++;
             }
-            if (tempStr.charAt(i) == '.') {
+            if (str.charAt(i) == '.') {
                 dotAppearance++;
             }
-            if (tempStr.charAt(i) == '-' && i != 0) {
-                minusAppearance++;
+            if (str.charAt(i) == '-') {
                 if (eAppearance == 0) {
+                    minusAppearance++;
+                }
+                if (eAppearance > 0) {
+                    minusAppearanceAfterE++;
+                }
+                if (eAppearance == 0 && digitCount > 0) {
                     minusAfterE = false;
                 }
             }
-            if (i == length - 1 && (tempStr.charAt(i) == '-' || tempStr.charAt(i) == 'e')) {
-                validEnding = false;
-            }
             // флаг для проверки - кастить ли к Double (если . или 'e' - ДА)
-            if (tempStr.charAt(i) == '.' || tempStr.charAt(i) == 'e') {
+            if (str.charAt(i) == '.' || str.charAt(i) == 'e') {
                 flagCastToDouble = true;
             }
-            if (!(Character.isDigit(tempStr.charAt(i)) || tempStr.charAt(i) == '-' || tempStr.charAt(i) == '.' || tempStr.charAt(i) == 'e')) {
-                tempStr.delete(i, i + 1);
-                i--;
-                length--;
+            if (Character.isDigit(str.charAt(i))) {
+                digitCount++;
+            }
+            if (Character.isDigit(str.charAt(i)) || str.charAt(i) == '-' || str.charAt(i) == '.' || str.charAt(i) == 'e') {
+                tempStr.append(str.charAt(i));
             }
         }
         String resultStr = tempStr.toString();
-        if (eAppearance > 1 || !minusAfterE || dotAppearance > 1 || minusAppearance > 1 || !validEnding) {
-            return null;
-        } else {
+        if (eAppearance <= 1 && minusAfterE && dotAppearance <= 1 && minusAppearance <= 1 && str.charAt(length - 1) != '-' && str.charAt(length - 1) != 'e' && minusAppearanceAfterE < 2) {
             if (flagCastToDouble) {
                 return Double.parseDouble(resultStr);
             } else {
@@ -70,5 +72,6 @@ public class StringTasks {
                 }
             }
         }
+        return null;
     }
 }
