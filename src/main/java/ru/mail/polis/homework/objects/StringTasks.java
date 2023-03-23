@@ -48,7 +48,7 @@ public class StringTasks {
                     number.append(str.charAt(i));
                     break;
                 case 'e':
-                    if (e) {
+                    if (e || !firstSymbol) {
                         return null;
                     }
                     e = true;
