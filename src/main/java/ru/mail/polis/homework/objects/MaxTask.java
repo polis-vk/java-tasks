@@ -22,14 +22,20 @@ public class MaxTask {
         for (int i = 0; i < count; i++) {
             maxArray[i] = array[i];
         }
-        minSort(maxArray, count);
+        maxSort(maxArray, count);
         for (int i = count; i < array.length; i++) {
-            if (maxArray[0] < array[i]) {
-                maxArray[0] = array[i];
-                minSort(maxArray, count);
+            if (maxArray[count - 1] < array[i]) {
+                int index = binarySorting(maxArray, array[i]);
+                if (index != count - 1) {
+                    int j = count - 1;
+                    while (j > index) {
+                        maxArray[j] = maxArray[j - 1];
+                        j--;
+                    }
+                }
+                maxArray[index] = array[i];
             }
         }
-        maxSort(maxArray, count);
         return maxArray;
     }
 
@@ -46,17 +52,21 @@ public class MaxTask {
         return maxArray;
     }
 
-    public static int[] minSort(int[] maxArray, int count) {
-        for (int i = maxArray.length - 1; i > 0; i--) {
-            for (int j = 0; j < i; j++) {
-                if (maxArray[j] > maxArray[j + 1]) {
-                    int tmp = maxArray[j];
-                    maxArray[j] = maxArray[j + 1];
-                    maxArray[j + 1] = tmp;
+    public static int binarySorting(int[] maxArray, int key) {
+        int first = 0;
+        int last = maxArray.length - 1;
+        while (first <= last) {
+            int mid = (first + last) / 2;
+            if (maxArray[mid] == key) {
+                return mid;
+            } else {
+                if (maxArray[mid] > key) {
+                    first = mid + 1;
+                } else {
+                    last = mid - 1;
                 }
             }
         }
-        return maxArray;
+        return first;
     }
-
 }

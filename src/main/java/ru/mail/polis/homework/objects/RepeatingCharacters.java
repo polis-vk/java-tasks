@@ -29,7 +29,9 @@ public class RepeatingCharacters {
                         return new Pair<>(maxCharacter, maxCount);
                     }
                 }
-            } else count = 1;
+            } else {
+                count = 1;
+            }
         }
         return new Pair<>(maxCharacter, maxCount);
     }

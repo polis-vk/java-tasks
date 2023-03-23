@@ -46,6 +46,9 @@ public class StringTasks {
                         }
                         break;
                     case 'e':
+                        if (digetCount == 0) {
+                            return null;
+                        }
                         digetCount = 0;
                         eCount++;
                         break;
@@ -64,8 +67,9 @@ public class StringTasks {
         if (newStr.contains(".") || newStr.contains("e")) {
             return Double.valueOf(newStr);
         }
-        if (Long.parseLong(newStr) > Integer.MAX_VALUE || Long.parseLong(newStr) < Integer.MIN_VALUE) {
-            return Long.valueOf(newStr);
+        long newStrLongParse = Long.parseLong(newStr);
+        if (newStrLongParse > Integer.MAX_VALUE || newStrLongParse < Integer.MIN_VALUE) {
+            return newStrLongParse;
         }
         return Integer.valueOf(newStr);
     }
