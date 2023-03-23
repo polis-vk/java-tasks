@@ -31,8 +31,8 @@ public interface TextAnalyzer {
     /**
      * придумать свой фильтр
      */
-    static <T> TextAnalyzer createCustomAnalyzer(T something) {
-        return null;
+    static TextAnalyzer createCustomAnalyzer(int maxRepeatings) {
+        return new RepeatingTextAnalyzer(maxRepeatings);
     }
 
     FilterType analyze(String text);

@@ -2,6 +2,7 @@ package ru.mail.polis.homework.analyzer;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
@@ -85,6 +86,25 @@ public class TextFilterManagerTest {
         assertEquals("GOOD", manager.analyze("Скажите код из смс :-( ").toString());
         assertEquals("NEGATIVE_TEXT", manager.analyze("Скажите код из смс пожалуйста :|").toString());
         assertEquals("GOOD", manager.analyze("Ооооооочень длиннннннаааааяяяя стрроооооооккккаааааа").toString());
+    }
+
+    @Test
+    public void analyzeOnlyCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer(3)});
+        assertEquals("REPEATING_TEXT", manager.analyze("привет привет привет привет").toString());
+        assertEquals("GOOD", manager.analyze("Комментарий с уникальными словами )").toString());
+        assertEquals("GOOD", manager.analyze("слово слово слово").toString());
+        assertEquals("REPEATING_TEXT", manager.analyze(" Разработка ведётся сообществом, организованным через Java Community Process; язык и основные реализующие его технологии распространяются по лицензии GPL. Права на торговую марку марку марку марку принадлежат корпорации Oracle.").toString());
+        assertEquals("GOOD", manager.analyze(" Разработка ведётся сообществом, организованным через Java Community Process; язык и основные реализующие его технологии распространяются по лицензии GPL. Права на торговую марку принадлежат корпорации Oracle.").toString());
+        assertEquals("REPEATING_TEXT", manager.analyze(" ужас!ужас!ужас!ужас! ").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze("   !  :  : ??? ? , ...").toString());
+
+        manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer(0)});
+        assertEquals("REPEATING_TEXT", manager.analyze("привет").toString());
+        assertEquals("REPEATING_TEXT", manager.analyze(" привет ").toString());
+        assertEquals("REPEATING_TEXT", manager.analyze(" привет превед медвед ").toString());
+        assertEquals("GOOD", manager.analyze("?").toString());
     }
 
     @Test
