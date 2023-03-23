@@ -19,10 +19,6 @@ public class RepeatingCharacters {
             return null;
         }
 
-        if (str.length() == 1) {
-            return new Pair<>(str.charAt(0), 1);
-        }
-
         char maxSymb = str.charAt(0);
         int maxLength = 1;
 
