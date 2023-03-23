@@ -16,7 +16,7 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        if (str == null || str.length() == 0) {
+        if (str == null || str.length() == 0 || str.charAt(0) == 'e') {
             return null;
         }
         int expCounter = 0;
@@ -56,7 +56,7 @@ public class StringTasks {
         if (minusCounter == 1 && firstMinusIndex != 0 && expIndex + 1 != firstMinusIndex) {
             return null;
         }
-        if (minusCounter == 2 && firstMinusIndex + 1 == secondMinusIndex) {
+        if (minusCounter == 2 && expIndex + 1 != secondMinusIndex) {
             return null;
         }
         if (expIndex == result.length() - 1) {

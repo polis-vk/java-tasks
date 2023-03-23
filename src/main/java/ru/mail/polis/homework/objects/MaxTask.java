@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.objects;
 
-import java.util.Arrays;
 
 public class MaxTask {
 
@@ -19,20 +18,27 @@ public class MaxTask {
         } else if (array.length == 0 || count == 0) {
             return new int[0];
         }
-        int[] maxArray = new int[count];
-        int[] copyArray = Arrays.copyOf(array, array.length);
-        for (int i = 0; i < count; i++) {
-            int max = Integer.MIN_VALUE;
-            int indexMax = 0;
-            for (int j = 0; j < copyArray.length; j++) {
-                if (copyArray[j] > max) {
-                    max = copyArray[j];
-                    indexMax = j;
+        int[] arrayOfMaxima = new int[count];
+        arrayOfMaxima[0] = array[0];
+        int numberOfFilledElements = 1; //Количество заполненных элементов в результирующем массиве
+        for (int i = 1; i < array.length; i++) {
+            for (int j = 0; j < numberOfFilledElements; j++) {
+                if (array[i] >= arrayOfMaxima[j]) {
+                    if (numberOfFilledElements < count) {
+                        numberOfFilledElements++;
+                    }
+                    for (int k = numberOfFilledElements - 1; k > j; k--) {
+                        arrayOfMaxima[k] = arrayOfMaxima[k - 1];
+                    }
+                    arrayOfMaxima[j] = array[i];
+                    break;
                 }
             }
-            maxArray[i] = max;
-            copyArray[indexMax] = Integer.MIN_VALUE;
+            if (numberOfFilledElements < count) {
+                arrayOfMaxima[numberOfFilledElements] = array[i];
+                numberOfFilledElements++;
+            }
         }
-        return maxArray;
+        return arrayOfMaxima;
     }
 }

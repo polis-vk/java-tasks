@@ -21,6 +21,9 @@ public class RepeatingCharacters {
         char symbol = str.charAt(0);
         int maxNumberOfRepetitions = 1;
         for (int i = 1; i < str.length(); i++) {
+            if (str.length() - i + numberOfRepetitions <= maxNumberOfRepetitions) {
+                break;
+            }
             if (str.charAt(i) == str.charAt(i - 1)) {
                 numberOfRepetitions++;
             } else if (numberOfRepetitions > maxNumberOfRepetitions) {
