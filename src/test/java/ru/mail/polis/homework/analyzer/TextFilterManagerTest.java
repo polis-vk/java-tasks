@@ -140,6 +140,17 @@ public class TextFilterManagerTest {
                     manager.analyze("смс пожалуйста           =(").toString()));
         }
     }
+    @Test
+    public void analyzeArtemFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomFilter()});
+        assertEquals("CUSTOM", manager.analyze("Hello, im Pete :(").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("Скажите код из смс :-( ").toString());
+        assertEquals("CUSTOM", manager.analyze("Скажите код из смс пожалуйста PLS :|").toString());
+        assertEquals("CUSTOM", manager.analyze("Привеt").toString());
+    }
+
 
 
 }
