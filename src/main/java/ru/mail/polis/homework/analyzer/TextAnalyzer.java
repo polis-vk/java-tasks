@@ -1,6 +1,11 @@
 package ru.mail.polis.homework.analyzer;
 
 
+import ru.mail.polis.homework.analyzer.filter.ForeignLanguagesFilter;
+import ru.mail.polis.homework.analyzer.filter.NegativeTextFilter;
+import ru.mail.polis.homework.analyzer.filter.SpamFilter;
+import ru.mail.polis.homework.analyzer.filter.TooLongFilter;
+
 /**
  * Базовый интерфейс фильтра, наследники этого интерфейса должны инкапсулировать в себе всю логику
  * анализа текста.
@@ -14,24 +19,28 @@ package ru.mail.polis.homework.analyzer;
  *
  * 2 тугрика + (2 тугрика за каждый фильтр + 1 тугрик за тест на свой фильтр) ИТОГО 11
  */
-public interface TextAnalyzer {
+public interface TextAnalyzer extends Comparable<TextAnalyzer> {
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return null;
+        return new TooLongFilter(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return null;
+        return new SpamFilter(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return null;
+        return new NegativeTextFilter();
     }
 
     /**
      * придумать свой фильтр
      */
-    static <T> TextAnalyzer createCustomAnalyzer(T something) {
-        return null;
+    static TextAnalyzer createForeignLanguagesAnalyzer() {
+        return new ForeignLanguagesFilter();
     }
+
+    boolean applies(String text);
+
+    FilterType getFilterType();
 }
