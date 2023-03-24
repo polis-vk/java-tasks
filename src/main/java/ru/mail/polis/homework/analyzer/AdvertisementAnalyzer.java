@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 public class AdvertisementAnalyzer implements TextAnalyzer {
-    String[] links = new String[]{"http:", "https:", "www.", ".com", ".ru"};
+    private static final String[] links = new String[]{"http:", "https:", "www.", ".com", ".ru"};
     private static final FilterType filterType = FilterType.ADVERTISEMENT;
 
     @Override
