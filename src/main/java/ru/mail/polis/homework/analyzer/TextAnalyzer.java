@@ -8,10 +8,10 @@ package ru.mail.polis.homework.analyzer;
  * прием ООП, где нам не важна конкретная реализация, а важен только контракт, что результат статических методов
  * умеет как-то анализировать текст). Сами статические методы мне нужны для создания тестов,
  * что бы без реальных классов (которые вы напишите) я смог "сэмулировать" их создание.
- *
+ * <p>
  * Так же необходимо создать все необходимы методы, которые будут вам нужны для прогона текста
  * по всем фильтрам в классе TextFilterManager
- *
+ * <p>
  * 2 тугрика + (2 тугрика за каждый фильтр + 1 тугрик за тест на свой фильтр) ИТОГО 11
  */
 public interface TextAnalyzer {
@@ -34,8 +34,22 @@ public interface TextAnalyzer {
         return new NotConciseTextAnalyzer();
     }
 
+    static char getPriority(TextAnalyzer analyzer) {
+        FilterType type = analyzer.getReturnType();
+        switch (type) {
+            case SPAM:
+                return 0;
+            case TOO_LONG:
+                return 1;
+            case NEGATIVE_TEXT:
+                return 2;
+            default:
+                return 3;
+        }
+    }
+
     FilterType filtering(String text);
 
-    char getPriority();
+    FilterType getReturnType();
 }
 

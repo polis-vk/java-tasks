@@ -1,13 +1,12 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyzer implements TextAnalyzer {
-    final String[] negative = new String[]{"=(", ":(", ":|"};
-    final static char priority = 2;
+    private static final String[] negative = new String[]{"=(", ":(", ":|"};
 
     @Override
     public FilterType filtering(String text) {
-        for (String negativeSymbol : negative) {
-            if (text.contains(negativeSymbol)) {
+        for (String negativeSmile : negative) {
+            if (text.contains(negativeSmile)) {
                 return FilterType.NEGATIVE_TEXT;
             }
         }
@@ -15,7 +14,7 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public char getPriority() {
-        return NegativeTextAnalyzer.priority;
+    public FilterType getReturnType() {
+        return FilterType.NEGATIVE_TEXT;
     }
 }

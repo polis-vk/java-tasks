@@ -1,8 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 public class TooLongAnalyzer implements TextAnalyzer {
-    long maxLength;
-    final static char priority = 1;
+    private final long maxLength;
 
     public TooLongAnalyzer(long length) {
         maxLength = length;
@@ -17,8 +16,8 @@ public class TooLongAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public char getPriority() {
-        return TooLongAnalyzer.priority;
+    public FilterType getReturnType() {
+        return FilterType.TOO_LONG;
     }
 }
 

@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.analyzer;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -34,29 +33,30 @@ import java.util.Arrays;
  * Итого 20 тугриков за все задание
  */
 public class TextFilterManager {
-    TextAnalyzer[] analyzers;
+    private final TextAnalyzer[] analyzers;
+
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        TextAnalyzer[] filtersCopy = Arrays.copyOf(filters,filters.length);
-        Arrays.sort(filtersCopy, (TextAnalyzer a, TextAnalyzer b) -> {
-            if (a.getPriority() < b.getPriority()) {
+        analyzers = Arrays.copyOf(filters, filters.length);
+        Arrays.sort(analyzers, (TextAnalyzer a, TextAnalyzer b) -> {
+            if (TextAnalyzer.getPriority(a) < TextAnalyzer.getPriority(b)) {
                 return -1;
-            } else if (a.getPriority() == b.getPriority()) {
+            } else if (TextAnalyzer.getPriority(a) == TextAnalyzer.getPriority(b)) {
                 return 0;
             }
             return 1;
         });
-        analyzers = Arrays.copyOf(filtersCopy,filtersCopy.length);
     }
+
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-        if (text == null || text.equals("")) {
+        if (text == null || text.isEmpty()) {
             return FilterType.GOOD;
         }
         for (TextAnalyzer currentAnalyzer : analyzers) {

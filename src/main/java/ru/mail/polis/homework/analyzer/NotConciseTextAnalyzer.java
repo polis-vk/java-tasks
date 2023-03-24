@@ -1,8 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NotConciseTextAnalyzer implements TextAnalyzer {
-    final String[] parasiticWords = {"В общем,", "Короче,", "Значит,"};
-    final static char priority = 3;
+    private static final String[] parasiticWords = {"В общем,", "Короче,", "Значит,"};
 
     @Override
     public FilterType filtering(String text) {
@@ -20,7 +19,7 @@ public class NotConciseTextAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public char getPriority() {
-        return NotConciseTextAnalyzer.priority;
+    public FilterType getReturnType() {
+        return FilterType.NOT_CONCISE_TEXT;
     }
 }
