@@ -88,6 +88,20 @@ public class TextFilterManagerTest {
     }
 
     @Test
+    public void analyzeCapsLockFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCapsLockAnalyzer()});
+        assertEquals("CAPS_LOCK", manager.analyze("ТЕКСТЫ, НАПИСАННЫЕ В ВЕРХНЕМ РЕГИСТРЕ ВЫГЛЯДЯТ УГРОЖАЮЩЕ").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("   ").toString());
+        assertEquals("GOOD", manager.analyze(" ,./():/ ").toString());
+        assertEquals("CAPS_LOCK", manager.analyze("F").toString());
+        assertEquals("GOOD", manager.analyze("Совершенно спокойное сообщение").toString());
+        assertEquals("CAPS_LOCK", manager.analyze("СОВЕРШЕННО НЕСПОКОЙНОЕ СООБЩЕНИЕ").toString());
+        assertEquals("GOOD", manager.analyze("Ооооооочень длиннннннаааааяяяя стрроооооооккккаааааа").toString());
+    }
+
+    @Test
     public void analyzeAllFiltersGood() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
@@ -140,6 +154,5 @@ public class TextFilterManagerTest {
                     manager.analyze("смс пожалуйста           =(").toString()));
         }
     }
-
 
 }
