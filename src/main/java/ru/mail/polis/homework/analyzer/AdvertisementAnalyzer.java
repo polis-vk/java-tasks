@@ -2,7 +2,6 @@ package ru.mail.polis.homework.analyzer;
 
 public class AdvertisementAnalyzer extends SpamAnalyzer implements TextAnalyzer {
     private static final String[] LINKS = new String[]{"http:", "https:", "www.", ".com", ".ru"};
-    private static final FilterType FILTER_TYPE = FilterType.ADVERTISEMENT;
 
     public AdvertisementAnalyzer() {
         super(LINKS);
@@ -10,6 +9,6 @@ public class AdvertisementAnalyzer extends SpamAnalyzer implements TextAnalyzer 
 
     @Override
     public FilterType getFilterType() {
-        return FILTER_TYPE;
+        return FilterType.ADVERTISEMENT;
     }
 }
