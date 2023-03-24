@@ -59,8 +59,8 @@ public class TextFilterManager {
         if (text == null || text.isEmpty()) {
             return FilterType.GOOD;
         }
-        for (TextAnalyzer currentAnalyzer : analyzers) {
-            FilterType type = currentAnalyzer.filtering(text);
+        for (TextAnalyzer analyzer : analyzers) {
+            FilterType type = analyzer.filtering(text);
             if (type != FilterType.GOOD) {
                 return type;
             }

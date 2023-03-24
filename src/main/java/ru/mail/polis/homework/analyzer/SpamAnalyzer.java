@@ -3,18 +3,18 @@ package ru.mail.polis.homework.analyzer;
 import java.util.Arrays;
 
 public class SpamAnalyzer implements TextAnalyzer {
-    private String[] spam;
+    private String[] spamMessages;
 
     public SpamAnalyzer(String[] spamMessages) {
         if (spamMessages != null) {
-            spam = Arrays.copyOf(spamMessages, spamMessages.length);
+            this.spamMessages = Arrays.copyOf(spamMessages, spamMessages.length);
         }
     }
 
     @Override
     public FilterType filtering(String text) {
-        for (String message : spam) {
-            if (text.contains(message)) {
+        for (String spamMessage : spamMessages) {
+            if (text.contains(spamMessage)) {
                 return FilterType.SPAM;
             }
         }

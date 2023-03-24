@@ -1,11 +1,11 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyzer implements TextAnalyzer {
-    private static final String[] negative = new String[]{"=(", ":(", ":|"};
+    private static final String[] negativeSmiles = new String[]{"=(", ":(", ":|"};
 
     @Override
     public FilterType filtering(String text) {
-        for (String negativeSmile : negative) {
+        for (String negativeSmile : negativeSmiles) {
             if (text.contains(negativeSmile)) {
                 return FilterType.NEGATIVE_TEXT;
             }
