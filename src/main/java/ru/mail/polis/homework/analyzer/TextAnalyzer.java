@@ -16,26 +16,26 @@ package ru.mail.polis.homework.analyzer;
  */
 public interface TextAnalyzer {
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return new Analyzers.TooLongAnalyzer(maxLength);
+        return new TooLongAnalyzer(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return new Analyzers.SpamAnalyzer(spam);
+        return new SpamAnalyzer(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return new Analyzers.NegativeTextAnalyzer();
+        return new NegativeTextAnalyzer();
     }
 
     /**
      * придумать свой фильтр
      */
     static TextAnalyzer createNotConciseTextAnalyzer() {
-        return new Analyzers.NotConciseTextAnalyzer();
+        return new NotConciseTextAnalyzer();
     }
 
     FilterType filtering(String text);
 
-    byte getPriority();
+    char getPriority();
 }
 

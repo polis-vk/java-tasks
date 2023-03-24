@@ -3,7 +3,6 @@ package ru.mail.polis.homework.analyzer;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-
 /**
  * Задание написать систему фильтрации комментариев.
  * Надо реализовать три типа обязательных фильтров
@@ -35,15 +34,15 @@ import java.util.Arrays;
  * Итого 20 тугриков за все задание
  */
 public class TextFilterManager {
-    ArrayList<TextAnalyzer> filters_ = new ArrayList<>();
-
+    TextAnalyzer[] analyzers;
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        Arrays.sort(filters, (TextAnalyzer a, TextAnalyzer b) -> {
+        TextAnalyzer[] filtersCopy = Arrays.copyOf(filters,filters.length);
+        Arrays.sort(filtersCopy, (TextAnalyzer a, TextAnalyzer b) -> {
             if (a.getPriority() < b.getPriority()) {
                 return -1;
             } else if (a.getPriority() == b.getPriority()) {
@@ -51,11 +50,8 @@ public class TextFilterManager {
             }
             return 1;
         });
-        for (TextAnalyzer i : filters) {
-            this.filters_.add(i);
-        }
+        analyzers = Arrays.copyOf(filtersCopy,filtersCopy.length);
     }
-
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
@@ -63,8 +59,8 @@ public class TextFilterManager {
         if (text == null || text.equals("")) {
             return FilterType.GOOD;
         }
-        for (TextAnalyzer i : this.filters_) {
-            FilterType type = i.filtering(text);
+        for (TextAnalyzer currentAnalyzer : analyzers) {
+            FilterType type = currentAnalyzer.filtering(text);
             if (type != FilterType.GOOD) {
                 return type;
             }
@@ -72,4 +68,3 @@ public class TextFilterManager {
         return FilterType.GOOD;
     }
 }
-
