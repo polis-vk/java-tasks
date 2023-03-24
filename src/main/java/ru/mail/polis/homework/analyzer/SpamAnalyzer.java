@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class SpamAnalyzer implements TextAnalyzer {
     private final String[] spam;
-    private static final FilterType filterType = FilterType.SPAM;
+    private static final FilterType FILTER_TYPE = FilterType.SPAM;
 
     SpamAnalyzer(String[] spam) {
         this.spam = Arrays.copyOf(spam, spam.length);
@@ -17,6 +17,6 @@ public class SpamAnalyzer implements TextAnalyzer {
 
     @Override
     public FilterType getFilterType() {
-        return filterType;
+        return FILTER_TYPE;
     }
 }
