@@ -4,7 +4,7 @@ public class TooLongAnalyzer implements TextAnalyzer {
     private final long maxLength;
     private static final FilterType FILTER_TYPE = FilterType.TOO_LONG;
 
-    TooLongAnalyzer(long maxLength) {
+    public TooLongAnalyzer(long maxLength) {
         this.maxLength = maxLength;
     }
 

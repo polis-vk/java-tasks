@@ -6,13 +6,18 @@ public class SpamAnalyzer implements TextAnalyzer {
     private final String[] spam;
     private static final FilterType FILTER_TYPE = FilterType.SPAM;
 
-    SpamAnalyzer(String[] spam) {
+    public SpamAnalyzer(String[] spam) {
         this.spam = Arrays.copyOf(spam, spam.length);
     }
 
     @Override
     public boolean isTextCorrect(String text) {
-        return TextAnalyzer.find(text, spam);
+        for (String str : this.spam) {
+            if (text.contains(str)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
