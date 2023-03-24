@@ -16,32 +16,36 @@ public class StringTasks {
      * 6 тугриков
      */
     public static Number valueOf(String str) {
-        if (str == null || str.equals(""))
+        if (str == null || str.equals("")) {
             return null;
+        }
         Character value;
 
         for (int i = 0; i < str.length(); i++) {
             value = str.charAt(i);
-            if (value != '-' && value != '.' && (value > '9' || value < '0') && value != 'e') {
+            if (value != '-' && value != '.' && !Character.isDigit(value) && value != 'e') {
                 str = str.replace(value.toString(), "");
                 i = 0;
             }
         }
         for (int i = 0; i < str.length() - 1; i++) {
             value = str.charAt(i);
-            if (value == '-' && str.charAt(i + 1) == '-')
+            if (value == '-' && str.charAt(i + 1) == '-') {
                 return null;
+            }
+            if (value != 'e' && str.charAt(i + 1) == '-') {
+                return null;
+            }
+            if (str.charAt(str.length() - 1) == 'e') {
+                return null;
+            }
 
-            if (value != 'e' && str.charAt(i + 1) == '-')
-                return null;
-            if (str.charAt(str.length() - 1) == 'e')
-                return null;
         }
 
-        return turn_into_number(str);
+        return turnIntoNumber(str);
     }
 
-    private static Number turn_into_number(String str) {
+    private static Number turnIntoNumber(String str) {
         if (str.contains("e")) {
             return Double.valueOf(str);
         }
@@ -67,12 +71,14 @@ public class StringTasks {
                 number += (str.charAt(i) - '0') * Math.pow(10, length - i - 1);
 
         }
-        if (is_negative)
+        if (is_negative) {
             number = -1 * number;
+        }
 
         if (!str.contains(".") && !str.contains("e")) {
-            if ((number >= -2147483648 && number <= 0) || (number > 0 && number <= 2147483647))
+            if ((number >= Integer.MIN_VALUE && number <= Integer.MAX_VALUE)) {
                 return (int) number;
+            }
             return (long) number;
         }
         return number;

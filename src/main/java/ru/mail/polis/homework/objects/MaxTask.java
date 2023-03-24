@@ -12,8 +12,9 @@ public class MaxTask {
      * 4 тугрика
      */
     public static int[] getMaxArray(int[] array, int count) {
-        if (array == null || array.length < count)
+        if (array == null || array.length < count) {
             return null;
+        }
         int max;
         int maxIndex = 0;
         int arrayLength = array.length;
