@@ -10,9 +10,13 @@ public enum FilterType {
     NEGATIVE_TEXT(3),
     CAT_FRIENDLY(4);
 
-    public final int priority;
+    private final int priority;
 
     FilterType(int priority) {
         this.priority = priority;
+    }
+
+    public int getPriority() {
+        return priority;
     }
 }

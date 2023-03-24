@@ -1,10 +1,10 @@
 package ru.mail.polis.homework.analyzer;
 
 public class CatFriendlyTextAnalyzer extends SpamAnalyzer implements TextAnalyzer {
-    static final FilterType analyzerType = FilterType.CAT_FRIENDLY;
+    private static final String[] catTriggers = new String[]{"валерьянка", "фейерверк", "собака", "ребёнок", "огурец", "пылесос"};
 
     public CatFriendlyTextAnalyzer() {
-        super(new String[]{"валерьянка", "фейерверк", "собака", "ребёнок", "огурец", "пылесос"});
+        super(catTriggers);
     }
 
     @Override
@@ -14,6 +14,6 @@ public class CatFriendlyTextAnalyzer extends SpamAnalyzer implements TextAnalyze
 
     @Override
     public FilterType getFilterType() {
-        return analyzerType;
+        return FilterType.CAT_FRIENDLY;
     }
 }

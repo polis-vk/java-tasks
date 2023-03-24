@@ -1,14 +1,14 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyzer extends SpamAnalyzer implements TextAnalyzer {
-    static final FilterType analyzerType = FilterType.NEGATIVE_TEXT;
+    private static final String[] negativeWords = new String[]{"=(", ":(", ":|"};
 
     public NegativeTextAnalyzer() {
-        super(new String[]{"=(", ":(", ":|"});
+        super(negativeWords);
     }
 
     @Override
     public FilterType getFilterType() {
-        return analyzerType;
+        return FilterType.NEGATIVE_TEXT;
     }
 }

@@ -41,9 +41,9 @@ public class TextFilterManager {
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
      * что в них реализован интерфейс TextAnalyzer
      */
-    public TextFilterManager(TextAnalyzer[] analyzers) {
-        filters = Arrays.copyOf(analyzers, analyzers.length);
-        Arrays.sort(filters, Comparator.comparingInt(filter -> filter.getFilterType().priority));
+    public TextFilterManager(TextAnalyzer[] filters) {
+        this.filters = Arrays.copyOf(filters, filters.length);
+        Arrays.sort(this.filters, Comparator.comparingInt(filter -> filter.getFilterType().getPriority()));
     }
 
     /**
