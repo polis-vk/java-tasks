@@ -142,4 +142,19 @@ public class TextFilterManagerTest {
     }
 
 
+    @Test
+    public void analyzeOnlyCustomFilter (){
+        TextFilterManager manager = new TextFilterManager(
+                new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer()});
+        assertEquals("GOOD", manager.analyze("Привет, я Петя :(").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("Скажите код из смс  :(").toString());
+        assertEquals("CAPS", manager.analyze("Я не кричу, А ТУТ УЖЕ КРИЧУ").toString());
+        assertEquals("CAPS", manager.analyze("Я ЛЮБЛЮ КРИЧАТЬ, НО НЕ ЛЮБЛЮ КОГДА КРИЧАТ ДРУГИЕ").toString());
+        assertEquals("GOOD", manager.analyze("Я. Ты. Он. Она. А как? А так! ").toString());
+        assertEquals("GOOD", manager.analyze("Длинная строка, в которой никто не кричит.").toString());
+        assertEquals("GOOD", manager.analyze("Мне. Нужен. Еще. Тест. ").toString());
+        assertEquals("CAPS", manager.analyze("ХВАТИТ").toString());
+    }
 }
