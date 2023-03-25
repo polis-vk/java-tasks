@@ -17,23 +17,21 @@ package ru.mail.polis.homework.analyzer;
 public interface TextAnalyzer {
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return new TooLongAnalyzer(maxLength);
+        return null;
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return new SpamAnalyzer(spam);
+        return null;
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return new NegativeTextAnalyzer();
+        return null;
     }
 
     /**
      * придумать свой фильтр
      */
-    static TextAnalyzer createTooMuchUpper() {
-        return new TooMuchUpper();
+    static <T> TextAnalyzer createCustomAnalyzer(T something) {
+        return null;
     }
-
-    public FilterType analyzeText();
 }
