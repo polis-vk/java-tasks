@@ -20,8 +20,8 @@ public interface TextAnalyzer {
         return new TooLongAnalyzer(maxLength);
     }
 
-    static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return new SpamAnalyzer(spam);
+    static TextAnalyzer createSpamAnalyzer(String[] spamWords) {
+        return new SpamAnalyzer(spamWords);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
