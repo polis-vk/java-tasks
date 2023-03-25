@@ -48,57 +48,24 @@ public class TextFilterManager implements TextAnalyzer {
         this.myFilters = filters;
     }
 
-    @Override
-    public FilterType longTextFilter(String str) {
-        return null;
-    }
-
-    @Override
-    public FilterType spamFilter(String str) {
-        return null;
-    }
-
-    @Override
-    public FilterType negativeFilter(String str) {
-        return null;
-    }
-
-    @Override
-    public FilterType levenshteinFilter(String str) {
-        return null;
-    }
-
-    @Override
-    public long point() {
-        return -1000;
-    }
-
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
-    long point;
 
+
+    @Override
     public FilterType analyze(String text) {
         if (text == null) {
             return FilterType.GOOD;
         }
-
         for (TextAnalyzer filters : this.myFilters) {
-            point = filters.point();
-            if (point == 1 && filters.longTextFilter(text) != FilterType.GOOD) {
-                return FilterType.TOO_LONG;
-            }
-            if (point == 2 && filters.spamFilter(text) != FilterType.GOOD) {
-                return FilterType.SPAM;
-            }
-            if (point == 3 && filters.negativeFilter(text) != FilterType.GOOD) {
-                return FilterType.NEGATIVE_TEXT;
-            }
-            if (point == 4 && filters.levenshteinFilter(text) != FilterType.GOOD) {
-                return FilterType.NO_SIMILAR_STRING;
+            FilterType result = filters.analyze(text);
+            if (result != FilterType.GOOD) {
+                return result;
             }
         }
         return FilterType.GOOD;
     }
+
 
 }

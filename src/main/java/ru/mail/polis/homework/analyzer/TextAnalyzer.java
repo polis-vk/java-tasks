@@ -17,31 +17,23 @@ package ru.mail.polis.homework.analyzer;
 public interface TextAnalyzer {
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return new FilterClass(maxLength);
+        return new LongTextAnalyze(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return new FilterClass(spam);
+        return new SpamTextAnalyzer(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return new FilterClass();
+        return new NegativeTextAnalyzer();
     }
 
     static TextAnalyzer createLevenshteinAnalyzer(String str) {
-        return new FilterClass(str);
+        return new LevenshteinAnalyze(str);
     }
 
 
-    public FilterType longTextFilter(String str);
-
-    public long point();
-
-    public FilterType spamFilter(String str);
-
-    public FilterType negativeFilter(String str);
-
-    public FilterType levenshteinFilter(String str);
+    public FilterType analyze(String str);
 
     /**
      * придумать свой фильтр
