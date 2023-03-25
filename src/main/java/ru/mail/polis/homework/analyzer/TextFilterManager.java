@@ -34,7 +34,7 @@ import java.util.Arrays;
  * Итого 20 тугриков за все задание
  */
 public class TextFilterManager {
-    private TextAnalyzer[] filters;
+    private final TextAnalyzer[] filters;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -57,9 +57,6 @@ public class TextFilterManager {
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-        if (text == null || text.equals("")) {
-            return FilterType.GOOD;
-        }
         for (TextAnalyzer filter : filters) {
             FilterType filterType = filter.analyze(text);
             if (filterType != FilterType.GOOD) {

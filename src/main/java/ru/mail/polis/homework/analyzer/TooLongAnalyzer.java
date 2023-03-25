@@ -1,7 +1,7 @@
 ﻿package ru.mail.polis.homework.analyzer;
 
 public class TooLongAnalyzer implements TextAnalyzer {
-    private final int SIGNIFICANCE = 2;
+    private final static int SIGNIFICANCE = 2;
     private final long maxLength;
 
     public TooLongAnalyzer(long maxLength) {

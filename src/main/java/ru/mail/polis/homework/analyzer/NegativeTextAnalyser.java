@@ -1,7 +1,8 @@
 ﻿package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyser implements TextAnalyzer {
-    private final int SIGNIFICANCE = 3;
+    private final static int SIGNIFICANCE = 3;
+    private final static String[] NEGATIVE_ELEMENTS = {":(", "=(", ":|"};
 
     @Override
     public int getSignificance() {
@@ -10,11 +11,8 @@ public class NegativeTextAnalyser implements TextAnalyzer {
 
     @Override
     public FilterType analyze(String text) {
-        for (int i = 1; i < text.length(); i++) {
-            if (text.charAt(i - 1) == '=' && text.charAt(i) == '(') {
-                return FilterType.NEGATIVE_TEXT;
-            }
-            if (text.charAt(i - 1) == ':' && (text.charAt(i) == '(' || text.charAt(i) == '|')) {
+        for (String negativeElement : NEGATIVE_ELEMENTS) {
+            if (text.contains(negativeElement)) {
                 return FilterType.NEGATIVE_TEXT;
             }
         }

@@ -147,6 +147,7 @@ public class TextFilterManagerTest {
         assertEquals("GOOD", manager.analyze("DRUGS IS A DEVIL").toString());
         assertEquals("GOOD", manager.analyze("ITS JUST A JOKE, OKAY?").toString());
         assertEquals("COOK", manager.analyze("Flask, Phenylacetone, burner, lab, Walter White").toString());
+        assertEquals("COOK", manager.analyze("qqqFlaskkkkPhenylacetoneyerburnerhklabsdfffffff").toString());
         assertEquals("BETTER_CALL_SAUL", manager.analyze("dfgldfnlghnlsdhlsdflSaul Goodmansdgsdgsgd").toString());
     }
 

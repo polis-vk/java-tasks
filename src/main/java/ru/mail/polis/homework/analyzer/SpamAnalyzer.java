@@ -3,7 +3,7 @@
 import java.util.Arrays;
 
 public class SpamAnalyzer implements TextAnalyzer {
-    private final int SIGNIFICANCE = 1;
+    private final static int SIGNIFICANCE = 1;
     private final String[] spam;
 
     public SpamAnalyzer(String[] spam) {
