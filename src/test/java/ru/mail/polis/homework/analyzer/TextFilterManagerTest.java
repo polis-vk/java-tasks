@@ -141,5 +141,12 @@ public class TextFilterManagerTest {
         }
     }
 
-
+    // My Test of too short word
+    @Test
+    public void analyzeOnlyShortFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer(5)});
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("CUSTOM", manager.analyze("Привет, я Петя :(").toString());
+    }
 }
