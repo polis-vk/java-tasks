@@ -3,8 +3,8 @@ package ru.mail.polis.homework.analyzer;
 public class SpamAnalyzer implements TextAnalyzer {
     private final String[] spamWords;
 
-    public SpamAnalyzer(String[] spam) {
-        spamWords = spam;
+    public SpamAnalyzer(String[] spamWords) {
+        this.spamWords = spamWords;
     }
 
     @Override
