@@ -34,7 +34,7 @@ import java.util.Comparator;
  * Итого 20 тугриков за все задание
  */
 public class TextFilterManager {
-    TextAnalyzer[] filters;
+    private final TextAnalyzer[] filters;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
