@@ -88,6 +88,17 @@ public class TextFilterManagerTest {
     }
 
     @Test
+    public void analyzeOnlyManyWordsFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createManyWordsAnalyzer(5)});
+        assertEquals("GOOD", manager.analyze("Привет, я Петя :(").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("Скажите    код из смс :-( ").toString());
+        assertEquals("TOO_MANY_WORDS", manager.analyze("Скажите код из  смс пожалуйста :|").toString());
+        assertEquals("TOO_MANY_WORDS", manager.analyze("Ооооооочень длинн ннн   нааа  ааяяяя стр  роооооооккккаааааа").toString());
+    }
+
+    @Test
     public void analyzeAllFiltersGood() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
