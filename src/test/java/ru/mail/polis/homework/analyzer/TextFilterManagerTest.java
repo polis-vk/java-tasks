@@ -141,5 +141,16 @@ public class TextFilterManagerTest {
         }
     }
 
+    @Test
+    public void analyzeOnlyCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(
+                new TextAnalyzer[]{TextAnalyzer.createBadWordsAnalyzer(new String[]{"война", "убийство" ,"убийства", "смерть"})});
+        assertEquals("CUSTOM", manager.analyze("Мне нравится война").toString());
+        assertEquals("GOOD", manager.analyze("Жизнь прекрасна!").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("CUSTOM", manager.analyze("Я поощряю убийства").toString());
+        assertEquals("CUSTOM", manager.analyze("Я недавно совершил убийство").toString());
+        assertEquals("GOOD", manager.analyze("Я обожаю учиться").toString());
 
+    }
 }
