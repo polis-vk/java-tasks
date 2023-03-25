@@ -17,6 +17,9 @@ public class TooLongFilter extends AbstractFilter {
 
     @Override
     public boolean applies(String text) {
+        if (text == null) {
+            return false;
+        }
         return (text.length() > maxLength);
     }
 }

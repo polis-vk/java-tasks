@@ -17,6 +17,9 @@ public class SpamFilter extends AbstractFilter {
 
     @Override
     public boolean applies(String text) {
+        if ((text == null) || text.isEmpty()) {
+            return false;
+        }
         for (String spamString : spam) {
             if (text.contains(spamString)) {
                 return true;

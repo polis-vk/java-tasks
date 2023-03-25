@@ -10,6 +10,9 @@ public class ForeignLanguagesFilter extends AbstractFilter {
 
     @Override
     public boolean applies(String text) {
+        if (text == null) {
+            return false;
+        }
         for (int i = 0; i < text.length(); i++) {
             char currSymbol = text.charAt(i);
             if (Character.isLetter(currSymbol) && notCyrillicLetter(currSymbol)) {
