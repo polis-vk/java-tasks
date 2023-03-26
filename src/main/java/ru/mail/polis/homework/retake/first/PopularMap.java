@@ -34,7 +34,6 @@ public class PopularMap<K, V> implements Map<K, V> {
     private final Map<K, Integer> keyCounters;
     private final Map<V, Integer> valueCounters;
 
-
     public PopularMap() {
         this.map = new HashMap<>();
         this.keyCounters = new HashMap<>();
