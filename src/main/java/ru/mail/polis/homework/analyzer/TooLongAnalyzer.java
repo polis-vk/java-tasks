@@ -13,4 +13,9 @@ public class TooLongAnalyzer implements TextAnalyzer {
         }
         return FilterType.GOOD;
     }
+
+    @Override
+    public int getPriority() {
+        return FilterType.TOO_LONG.getPriority();
+    }
 }

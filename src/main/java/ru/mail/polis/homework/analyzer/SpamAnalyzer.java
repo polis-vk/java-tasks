@@ -15,4 +15,9 @@ public class SpamAnalyzer implements TextAnalyzer {
         }
         return FilterType.GOOD;
     }
+
+    @Override
+    public int getPriority() {
+        return FilterType.SPAM.getPriority();
+    }
 }

@@ -12,4 +12,9 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
         }
         return FilterType.GOOD;
     }
+
+    @Override
+    public int getPriority() {
+        return FilterType.NEGATIVE_TEXT.getPriority();
+    }
 }

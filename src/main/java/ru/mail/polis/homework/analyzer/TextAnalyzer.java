@@ -36,4 +36,6 @@ public interface TextAnalyzer {
     }
 
     FilterType analyze(String text);
+
+    int getPriority();
 }
