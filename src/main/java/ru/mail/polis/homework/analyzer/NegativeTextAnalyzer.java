@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyzer implements TextAnalyzer {
-    String[] negativeEmotions = new String[]{"=(", ":(", ":|"};
+    private final String[] negativeEmotions = new String[]{"=(", ":(", ":|"};
 
     public FilterType analyze(String text) {
         for (String smile :

@@ -2,7 +2,6 @@ package ru.mail.polis.homework.analyzer;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
@@ -10,6 +9,14 @@ import static org.junit.Assert.assertTrue;
 
 public class TextFilterManagerTest {
 
+    @Test
+    public void test(){
+        String text = "привет привет привет привет";
+        for (String word : text.split(" ")) {
+            System.out.println(word);
+        }
+
+    }
     @Test
     public void analyzeEmptyFilters() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[0]);

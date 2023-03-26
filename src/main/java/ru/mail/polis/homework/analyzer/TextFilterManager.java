@@ -32,7 +32,8 @@ package ru.mail.polis.homework.analyzer;
  * Итого 20 тугриков за все задание
  */
 public class TextFilterManager {
-    TextAnalyzer[] filters;
+    private final TextAnalyzer[] FILTERS;
+    private FilterType filterType;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -40,23 +41,24 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = filters;
+        FILTERS = filters;
     }
 
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-        FilterType filterType = FilterType.GOOD;
-        if (text == null) return FilterType.GOOD;
-        for (TextAnalyzer filter :
-                filters) {
+        filterType = FilterType.GOOD;
+        if (text == null || text.equals("")) {
+            return FilterType.GOOD;
+        }
+
+        for (TextAnalyzer filter : FILTERS) {
             filterType = filter.analyze(text);
             if (filterType != FilterType.GOOD) {
                 return filterType;
             }
         }
-
         return filterType;
     }
 }

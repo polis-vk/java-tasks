@@ -3,53 +3,45 @@ package ru.mail.polis.homework.analyzer;
 import java.util.*;
 
 public class RepeatingTextAnalyzer implements TextAnalyzer {
-    int maxRepeatings;
+    private final int MAX_REPEATINGS;
+    private TreeMap<String, Integer> wordsSorted;
+    private FilterType filterType;
 
     RepeatingTextAnalyzer(int maxRepeatings) {
-        this.maxRepeatings = maxRepeatings;
+        wordsSorted = new TreeMap<>();
+        MAX_REPEATINGS = maxRepeatings;
     }
 
     public FilterType analyze(String text) {
-        TreeMap<String, Integer> words = toStringList(text);
+        wordsSorted.clear();
+        filterType = FilterType.GOOD;
+        return toStringList(text);
+    }
 
-        for (Map.Entry<String, Integer> word : words.entrySet()) {
-            if (word.getValue() > maxRepeatings) {
+    public FilterType toStringList(String text) {
+        for (String word: text.split("[ ,.\"!:;?+=«»\\]\\[]")) {
+            if (appendMap(word) == FilterType.REPEATING_TEXT) {
                 return FilterType.REPEATING_TEXT;
             }
         }
-        return FilterType.GOOD;
+        return filterType;
     }
 
-    public static TreeMap<String, Integer> toStringList(String text) {
-        TreeMap<String, Integer> wordsSorted = new TreeMap<>();
-        String separators = " ,.\"()!:;?+=«»[]";
-        int wordStartIndex = -1;
-
-        for (int i = 0; i < text.length(); i++) {
-            char currentChar = text.charAt(i);
-            if (separators.indexOf(currentChar) != -1) {
-                if (wordStartIndex != -1) {
-                    appendMap(wordsSorted, text.substring(wordStartIndex, i));
-                    wordStartIndex = -1;
-                }
-            } else {
-                if (wordStartIndex == -1) {
-                    wordStartIndex = i;
-                }
-                if (i == text.length() - 1) {
-                    appendMap(wordsSorted, text.substring(wordStartIndex, i + 1));
-                }
-            }
+    private FilterType appendMap(String word) {
+        if(word.equals("")){
+            return FilterType.GOOD;
         }
-        return wordsSorted;
-    }
-
-    private static void appendMap(TreeMap<String, Integer> wordsSorted, String word) {
+        int wordCount;
         if (wordsSorted.containsKey(word)) {
-            int wordCount = wordsSorted.get(word);
+            wordCount = wordsSorted.get(word);
             wordsSorted.replace(word, wordCount, wordCount + 1);
         } else {
             wordsSorted.put(word, 1);
         }
+        wordCount = wordsSorted.get(word);
+        if(wordCount > MAX_REPEATINGS) {
+            return FilterType.REPEATING_TEXT;
+        }
+        return FilterType.GOOD;
     }
 }
