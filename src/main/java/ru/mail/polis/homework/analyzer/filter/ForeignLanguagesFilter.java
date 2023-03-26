@@ -23,6 +23,6 @@ public class ForeignLanguagesFilter extends AbstractFilter {
     }
 
     private boolean notCyrillicLetter(char letter) {
-        return (Character.UnicodeBlock.of(letter) != Character.UnicodeBlock.CYRILLIC);
+        return Character.UnicodeBlock.of(letter) != Character.UnicodeBlock.CYRILLIC;
     }
 }

@@ -20,6 +20,6 @@ public class TooLongFilter extends AbstractFilter {
         if (text == null) {
             return false;
         }
-        return (text.length() > maxLength);
+        return text.length() > maxLength;
     }
 }
