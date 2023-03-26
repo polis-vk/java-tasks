@@ -7,7 +7,7 @@ public class CapsLockAnalyzer implements TextAnalyzer{
     private final FilterType type = FilterType.CAPS_LOCK;
 
     @Override
-    public boolean analyze(String text) {
+    public boolean checkTextIsCorrect(String text) {
         return !Objects.equals(text, text.toUpperCase()) || text.toUpperCase().equals(text.toLowerCase());
     }
 

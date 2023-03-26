@@ -34,8 +34,16 @@ public interface TextAnalyzer {
         return new CapsLockAnalyzer();
     }
 
-    boolean analyze(String text);
+    boolean checkTextIsCorrect(String text);
 
+    static boolean checkInclusion(String text, String[] words) {
+        for (String word : words) {
+            if (text.contains(word)) {
+                return false;
+            }
+        }
+        return true;
+    }
     FilterType getType();
 
     /**
