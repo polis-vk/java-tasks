@@ -17,21 +17,36 @@ package ru.mail.polis.homework.analyzer;
 public interface TextAnalyzer {
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        return null;
+        return new TooLongAnalyzer(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        return null;
+        return new SpamAnalyzer(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return null;
+        return new NegativeTextAnalyzer();
     }
 
     /**
      * придумать свой фильтр
      */
-    static <T> TextAnalyzer createCustomAnalyzer(T something) {
-        return null;
+    static TextAnalyzer createEmailAnalyzer() {
+        return new EmailAnalyzer();
     }
+
+    boolean checkCorrection(String text);
+    static boolean checkInclusion(String string, String[] subString) {
+        if (string == null) {
+            return true;
+        }
+        for (String subStr : subString) {
+            if (string.contains(subStr)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    FilterType getFilterType();
 }

@@ -126,11 +126,14 @@ public class TextFilterManagerTest {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
                 TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
-                TextAnalyzer.createTooLongAnalyzer(20)});
+                TextAnalyzer.createTooLongAnalyzer(20),
+                TextAnalyzer.createEmailAnalyzer()});
         if (withPriority) {
             assertEquals("SPAM", manager.analyze("Привет, я Петя вот мой cvv").toString());
             assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :(").toString());
             assertEquals("SPAM", manager.analyze("смс пожалуйста           :|").toString());
+            assertEquals("NEGATIVE_TEXT", manager.analyze("sad:(email@mail.ru").toString());
+            assertEquals("INCORRECT_EMAIL", manager.analyze("email<(@mail.ru").toString());
         } else {
             assertTrue(Arrays.asList("SPAM", "TOO_LONG").contains(
                     manager.analyze("Привет, я Петя вот мой cvv").toString()));
@@ -141,5 +144,22 @@ public class TextFilterManagerTest {
         }
     }
 
-
+    @Test
+    public void analyzeOnlyEmailFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createEmailAnalyzer()});
+        assertEquals("INCORRECT_EMAIL", manager.analyze("RealyVeryLongLocalNameeeeeeeeeeeeeeeeeeeeeeeeeeeee@mail.ru").toString());
+        assertEquals("INCORRECT_EMAIL", manager.analyze("local@name@gmail.com").toString());
+        assertEquals("INCORRECT_EMAIL", manager.analyze("@localNamegmail.com").toString());
+        assertEquals("INCORRECT_EMAIL", manager.analyze("localName@gmail.com@").toString());
+        assertEquals("INCORRECT_EMAIL", manager.analyze("localNamegmail.com").toString());
+        assertEquals("INCORRECT_EMAIL", manager.analyze("localName@outlook.ru").toString());
+        assertEquals("INCORRECT_EMAIL", manager.analyze("yandex.ru@gmail.com").toString());
+        assertEquals("INCORRECT_EMAIL", manager.analyze("local name@gmail.com").toString());
+        assertEquals("INCORRECT_EMAIL", manager.analyze("lo*cal&name;@gmail.com").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze("correctLocalName@outlook.com").toString());
+        assertEquals("GOOD", manager.analyze("correctLocalNameWith50Symbolssssssssss@outlook.com").toString());
+        assertEquals("GOOD", manager.analyze("correct-Local_Name!@icloud.com").toString());
+    }
 }
