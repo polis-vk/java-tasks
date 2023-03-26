@@ -12,10 +12,10 @@ public class SpamAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean analyze(String text) {
-        boolean result = true;
+        boolean result = false;
         for (String word : spamWords) {
             if (text.contains(word)) {
-                result = false;
+                result = true;
                 break;
             }
         }
