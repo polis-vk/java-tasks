@@ -15,14 +15,12 @@ public class CyrillicTextAnalyzer implements TextAnalyzer {
         if (text.isEmpty()){
             return false;
         }
-        boolean result = true;
         for (char c: text.toCharArray()){
             if (!isValidSymbol(c)){
-                result = false;
-                break;
+                return false;
             }
         }
-        return result;
+        return true;
     }
     @Override
     public FilterType getFilterType() {

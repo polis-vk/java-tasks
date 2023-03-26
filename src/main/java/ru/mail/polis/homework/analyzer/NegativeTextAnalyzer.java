@@ -9,14 +9,12 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean analyze(String text) {
-        boolean result = false;
-        for (String negative_emotion: NEGATIVE_EMOTIONS){
-            if (text.contains(negative_emotion)){
-                result = true;
-                break;
+        for (String emotion: NEGATIVE_EMOTIONS){
+            if (text.contains(emotion)){
+                return true;
             }
         }
-        return result;
+        return false;
     }
 
     @Override

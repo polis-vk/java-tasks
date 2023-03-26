@@ -35,7 +35,6 @@ public interface TextAnalyzer {
         return new CyrillicTextAnalyzer();
     }
 
-
     boolean analyze(String text);
 
     FilterType getFilterType();
