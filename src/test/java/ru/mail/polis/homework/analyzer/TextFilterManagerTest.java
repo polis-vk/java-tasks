@@ -141,5 +141,25 @@ public class TextFilterManagerTest {
         }
     }
 
+    // тесты для CustomFilter
+    @Test
+    public void analyzeOnlyCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer(2)});
+        assertEquals("CUSTOM", manager.analyze("1234 это строка с > 2 числами").toString());
+        assertEquals("GOOD", manager.analyze("1 это строка с = 2 числами").toString());
+        assertEquals("GOOD", manager.analyze("это строка c < 2 числами").toString());
+    }
 
+    @Test
+    public void analyzeAllFiltersManyWithPriorityWithCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
+                TextAnalyzer.createNegativeTextAnalyzer(),
+                TextAnalyzer.createSpamAnalyzer(new String[]{"число"}),
+                TextAnalyzer.createTooLongAnalyzer(39),
+                TextAnalyzer.createCustomAnalyzer(2)});
+        assertEquals("SPAM", manager.analyze("число, но строка явно длиннее 15 символов").toString());
+        assertEquals("TOO_LONG", manager.analyze("без спама, зато явно длиннее 15 символов").toString());
+        assertEquals("NEGATIVE_TEXT", manager.analyze("коротко :(").toString());
+        assertEquals("CUSTOM", manager.analyze("коротко, без спама, без негатива, 333").toString());
+    }
 }

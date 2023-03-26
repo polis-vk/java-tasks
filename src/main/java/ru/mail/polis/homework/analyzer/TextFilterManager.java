@@ -1,6 +1,9 @@
 package ru.mail.polis.homework.analyzer;
 
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 /**
  * Задание написать систему фильтрации комментариев.
  * Надо реализовать три типа обязательных фильтров
@@ -13,25 +16,26 @@ package ru.mail.polis.homework.analyzer;
  * Класс TextFilterManager должен содержать все фильтры, которые передаются ему в конструкторе,
  * и при анализе текста через метод analyze должен выдавать первый "успешный" фильтр,
  * если ни один не прошел, то возвращать тип GOOD.
- *
+ * <p>
  * Усложненное задание на полный балл: нужно всем типам фильтров задать приоритет
  * (SPAM, TOO_LONG, NEGATIVE_TEXT, CUSTOM - в таком порядке) и возвращать тип с максимальным приоритетом.
  * Отсортировать фильтра можно с помощью функции
  * Arrays.sort(filter, (filter1, filter2) -> {
- *     if (filter1 < filter2) {
- *         return -1;
- *     } else if (filter1 == filter2) {
- *         return 0;
- *     }
- *     return 1;
+ * if (filter1 < filter2) {
+ * return -1;
+ * } else if (filter1 == filter2) {
+ * return 0;
+ * }
+ * return 1;
  * }
  * где вместо сравнения самих фильтров должно быть сравнение каких-то количественных параметров фильтра
- *
+ * <p>
  * 2 тугрика за класс
  * 5 тугриков за приоритет
  * Итого 20 тугриков за все задание
  */
 public class TextFilterManager {
+    private final TextAnalyzer[] myFilters;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -39,13 +43,27 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
+        this.myFilters = filters;
+    }
 
+    private void sortFilters(TextAnalyzer[] filters) {
+        Arrays.sort(filters, Comparator.comparingInt(filter -> filter.getType().getRate()));
     }
 
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-        return null;
+        if (text == null || text.isEmpty()) {
+            return FilterType.GOOD;
+        }
+        sortFilters(this.myFilters);
+        for (TextAnalyzer analyzer : myFilters) {
+            FilterType resultType = analyzer.makeAnalysis(text);
+            if (resultType != FilterType.GOOD) {
+                return resultType;
+            }
+        }
+        return FilterType.GOOD;
     }
 }
