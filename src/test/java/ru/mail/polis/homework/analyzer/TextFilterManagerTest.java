@@ -88,6 +88,17 @@ public class TextFilterManagerTest {
     }
 
     @Test
+    public void analyzeOnlySpaceFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createSpaceAnalyzer()});
+        assertEquals("GOOD", manager.analyze("Весенний ветер шелестел листвой на деревьях.").toString());
+        assertEquals("GOOD", manager.analyze(" ").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("WRONG_SPACE", manager.analyze("На зеленом лугу паслись  толстые коровы.").toString());
+        assertEquals("WRONG_SPACE", manager.analyze("Морской бриз нес свежий запах соленой воды !").toString());
+        assertEquals("WRONG_SPACE", manager.analyze("Солнце садилось за горизонт , оставляя за собой яркий закат.").toString());
+    }
+
+    @Test
     public void analyzeAllFiltersGood() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),

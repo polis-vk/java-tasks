@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyzer implements TextAnalyzer {
+    private final String[] smilies = {"=(", ":(", ":|"};
 
     @Override
     public int getPriority() {
@@ -9,8 +10,10 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
 
     @Override
     public FilterType getFilterType(String str) {
-        if (str.contains("=(") || str.contains(":(") || str.contains(":|")) {
-            return FilterType.NEGATIVE_TEXT;
+        for (String smile : smilies) {
+            if (str.contains(smile)) {
+                return FilterType.NEGATIVE_TEXT;
+            }
         }
         return FilterType.GOOD;
     }
