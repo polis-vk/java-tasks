@@ -112,8 +112,11 @@ public class TextFilterManagerTest {
     }
 
     @Test
-    public void analyzeAllFiltersMany() {
-        manyFilters(false);
+    public void analyzeOnlyCyrillicTestFilter(){
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCyrillicTextAnalyzer()});
+        assertEquals("CYRILLIC_TEXT", manager.analyze("болтать не будем, ронять будем").toString());
+        assertEquals("GOOD", manager.analyze("Скажите Код Из Смс :-(").toString());
+        assertEquals("SPAM", manager.analyze("смс пожалуйста ;|").toString());
     }
 
 

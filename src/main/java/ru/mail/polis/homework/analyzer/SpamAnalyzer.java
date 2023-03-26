@@ -5,29 +5,25 @@ import java.util.Arrays;
 public class SpamAnalyzer implements TextAnalyzer {
 
     private final String[] spamWords;
-    private final FilterType filterType;
 
     public SpamAnalyzer(String[] spamWords) {
-        this(spamWords, FilterType.SPAM);
-    }
-
-    protected SpamAnalyzer(String[] spamWords, FilterType filterType) {
-        this.spamWords = Arrays.copyOf(spamWords, spamWords.length);
-        this.filterType = filterType;
+        this.spamWords = spamWords;
     }
 
     @Override
     public boolean analyze(String text) {
+        boolean result = true;
         for (String word : spamWords) {
             if (text.contains(word)) {
-                return true;
+                result = false;
+                break;
             }
         }
-        return false;
+        return result;
     }
 
     @Override
     public FilterType getFilterType() {
-        return filterType;
+        return FilterType.SPAM;
     }
 }

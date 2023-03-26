@@ -31,9 +31,10 @@ public interface TextAnalyzer {
     /**
      * придумать свой фильтр
      */
-    static <T> TextAnalyzer createCustomAnalyzer(T something) {
-        return null;
+    static TextAnalyzer createCyrillicTextAnalyzer() {
+        return new CyrillicTextAnalyzer();
     }
+
 
     boolean analyze(String text);
 

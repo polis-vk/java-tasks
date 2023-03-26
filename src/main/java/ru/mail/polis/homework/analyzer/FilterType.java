@@ -7,8 +7,8 @@ public enum FilterType {
     TOO_LONG(1),
     SPAM(2),
     NEGATIVE_TEXT(3),
-    VALID_EMAIL(4),
-    GOOD(Integer.MAX_VALUE);
+    CYRILLIC_TEXT(4),
+    GOOD(5);
 
     private final int priority;
 

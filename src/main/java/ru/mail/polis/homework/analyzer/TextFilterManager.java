@@ -36,17 +36,15 @@ import java.util.Arrays;
  */
 public class TextFilterManager {
 
-    private final TextAnalyzer[] filters;
-
+    private final TextAnalyzer[] analyzers;
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-
-        this.filters = Arrays.copyOf(filters, filters.length);
-        Arrays.sort(this.filters, (filter1, filter2) -> {
+        this.analyzers = Arrays.copyOf(filters, filters.length);
+        Arrays.sort(this.analyzers, (filter1, filter2) -> {
             if (filter1.getFilterType().getPriority() < filter2.getFilterType().getPriority()) {
                 return -1;
             } else if (filter1.getFilterType().getPriority() == filter2.getFilterType().getPriority()) {
@@ -63,11 +61,10 @@ public class TextFilterManager {
         if (text == null) {
             return FilterType.GOOD;
         }
-        for (TextAnalyzer filter : filters) {
-            if (filter.analyze(text)) {
-                return filter.getFilterType();
+        for (TextAnalyzer analyzer : analyzers) {
+            if (analyzer.analyze(text)) {
+                return analyzer.getFilterType();
             }
-
         }
         return FilterType.GOOD;
     }
