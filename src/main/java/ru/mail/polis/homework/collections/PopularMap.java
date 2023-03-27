@@ -9,20 +9,21 @@ import java.util.*;
  * Популярность - это количество раз, который этот ключ/значение учавствовал/ло в других методах мапы, такие как
  * containsKey, get, put, remove (в качестве параметра и возвращаемого значения).
  * Считаем, что null я вам не передаю ни в качестве ключа, ни в качестве значения
- *
+ * <p>
  * Так же надо сделать итератор (подробности ниже).
- *
+ * <p>
  * Важный момент, вам не надо реализовывать мапу, вы должны использовать композицию.
  * Вы можете использовать любые коллекции, которые есть в java.
- *
+ * <p>
  * Помните, что по мапе тоже можно итерироваться
- *
- *         for (Map.Entry<K, V> entry : map.entrySet()) {
- *             entry.getKey();
- *             entry.getValue();
- *         }
- *
+ * <p>
+ * for (Map.Entry<K, V> entry : map.entrySet()) {
+ * entry.getKey();
+ * entry.getValue();
+ * }
+ * <p>
  * Всего 10 тугриков (3 тугрика за общие методы, 2 тугрика за итератор, 5 тугриков за логику популярности)
+ *
  * @param <K> - тип ключа
  * @param <V> - тип значения
  */
@@ -134,6 +135,7 @@ public class PopularMap<K, V> implements Map<K, V> {
             mostPopularKey = key;
         }
     }
+
     private void increaseValuePopularity(V value) {
         if (!valuesPopularity.containsKey(value)) {
             valuesPopularity.put(value, 0);
@@ -186,20 +188,16 @@ public class PopularMap<K, V> implements Map<K, V> {
     public Iterator<V> popularIterator() {
         List<V> mapValues = new ArrayList<>();
         for (Map.Entry<V, Integer> entry : valuesPopularity.entrySet()) {
-               if (entry.getKey() != null) {
-                   mapValues.add(entry.getKey());
-               }
+            if (entry.getKey() != null) {
+                mapValues.add(entry.getKey());
+            }
         }
-        Collections.sort(mapValues, (v1, v2) -> {
-            if (getValuePopularity(v1) < getValuePopularity(v2)) {
-                return -1;
-            }
-            if (getValuePopularity(v1) == getValuePopularity(v2)) {
-                return 0;
-            }
-            return 1;
-        });
+        mapValues.sort(this::compare);
 
         return mapValues.iterator();
+    }
+
+    private int compare(V v1, V v2) {
+        return Integer.compare(getValuePopularity(v1), getValuePopularity(v2));
     }
 }
