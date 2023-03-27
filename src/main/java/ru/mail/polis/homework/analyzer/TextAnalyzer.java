@@ -36,8 +36,6 @@ public interface TextAnalyzer {
         return new ExcessiveSpacesAnalyzer();
     }
 
-    int getPriority();
-
     FilterType getFilterType();
 
     boolean analyze(String commentary);

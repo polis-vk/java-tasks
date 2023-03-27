@@ -6,17 +6,10 @@ import java.util.Arrays;
 import static ru.mail.polis.homework.analyzer.Search.search;
 
 public class SpamAnalyzer implements TextAnalyzer {
-    private static final int PRIORITY = 1;
     private final String[] BAD_WORDS;
 
     public SpamAnalyzer(String[] badWords) {
         this.BAD_WORDS = Arrays.copyOf(badWords, badWords.length);
-    }
-
-
-    @Override
-    public int getPriority() {
-        return PRIORITY;
     }
 
     @Override
