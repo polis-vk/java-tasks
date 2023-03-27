@@ -13,11 +13,12 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public boolean analyze(String text) {
-        boolean result = false;
-        for (int i = 0; i < negativeStrings.length && !result; i++) {
-            result = text.contains(negativeStrings[i]);
+    public boolean haveProblem(String text) {
+        for (String negativeString : negativeStrings) {
+            if (text.contains(negativeString)) {
+                return true;
+            }
         }
-        return result;
+        return false;
     }
 }

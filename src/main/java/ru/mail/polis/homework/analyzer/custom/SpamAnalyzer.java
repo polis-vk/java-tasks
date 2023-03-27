@@ -17,11 +17,12 @@ public class SpamAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public boolean analyze(String text) {
-        boolean result = false;
-        for (int i = 0; i < spamMessages.length && !result; i++) {
-            result = text.contains(spamMessages[i]);
+    public boolean haveProblem(String text) {
+        for (String spamMessage : spamMessages) {
+            if (text.contains(spamMessage)) {
+                return true;
+            }
         }
-        return result;
+        return false;
     }
 }

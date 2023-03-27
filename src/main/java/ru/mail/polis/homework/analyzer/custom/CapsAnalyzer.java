@@ -14,13 +14,14 @@ public class CapsAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public boolean analyze(String text) {
-        boolean result = false;
+    public boolean haveProblem(String text) {
         StringTokenizer st = new StringTokenizer(text, " ");
-        while (st.hasMoreTokens() && !result) {
+        while (st.hasMoreTokens()) {
             String current = st.nextToken().replaceAll("[^А-я]", "");
-            result = current.contains(current.toUpperCase()) && current.length() > 1;
+            if (current.contains(current.toUpperCase()) && current.length() > 1){
+                return true;
+            }
         }
-        return result;
+        return false;
     }
 }

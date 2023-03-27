@@ -44,7 +44,7 @@ public class TextFilterManager {
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filters = Arrays.copyOf(filters, filters.length);
         Arrays.sort(this.filters, (filter1, filter2) -> {
-            if (filter1.getType().getType() < filter2.getType().getType()) {
+            if (filter1.getType().getPriority() < filter2.getType().getPriority()) {
                 return -1;
             } else if (filter1 == filter2) {
                 return 0;
@@ -61,11 +61,11 @@ public class TextFilterManager {
             return FilterType.GOOD;
         }
 
-        FilterType result = null;
-        for (int i = 0; i < filters.length && (result == null || result == FilterType.GOOD); i++) {
-            TextAnalyzer current = filters[i];
-            result = current.analyze(text) ? current.getType() : FilterType.GOOD;
+        for (TextAnalyzer current : filters) {
+            if (current.haveProblem(text)) {
+                return current.getType();
+            }
         }
-        return result == null ? FilterType.GOOD : result;
+        return FilterType.GOOD;
     }
 }

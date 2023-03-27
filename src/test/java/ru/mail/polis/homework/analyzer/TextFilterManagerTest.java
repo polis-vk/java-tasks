@@ -157,4 +157,16 @@ public class TextFilterManagerTest {
         assertEquals("CAPS", manager.analyze("ХВАТИТ").toString());
     }
 
+    @Test
+    public void analyzeAllFiltersOneWithSpam() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
+                TextAnalyzer.createNegativeTextAnalyzer(),
+                TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
+                TextAnalyzer.createTooLongAnalyzer(20),
+                TextAnalyzer.createCustomAnalyzer()});
+        assertEquals("NEGATIVE_TEXT", manager.analyze("Привет, я Петя :(").toString());
+        assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :-(").toString());
+        assertEquals("SPAM", manager.analyze("смс пожалуйста ;|").toString());
+        assertEquals("CAPS", manager.analyze("КРИК").toString());
+    }
 }

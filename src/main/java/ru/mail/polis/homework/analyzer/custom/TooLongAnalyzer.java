@@ -17,7 +17,7 @@ public class TooLongAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public boolean analyze(String text) {
-        return text.length() >= size;
+    public boolean haveProblem(String text) {
+        return text.length() > size;
     }
 }

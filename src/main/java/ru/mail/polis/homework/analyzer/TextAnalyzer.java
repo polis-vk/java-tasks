@@ -42,5 +42,5 @@ public interface TextAnalyzer {
 
     FilterType getType();
 
-    boolean analyze(String text);
+    boolean haveProblem(String text);
 }
