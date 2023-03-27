@@ -25,7 +25,7 @@ public interface TextAnalyzer {
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        String[] negativeText = new String[]{"=(", ":(", ":|"};
+        String[] negativeText = {"=(", ":(", ":|"};
         return new NegativeTextAnalyzer(negativeText);
     }
 
