@@ -142,15 +142,15 @@ public class TextFilterManagerTest {
     }
 
     @Test
-    public void analyzeOnlyCommercialFilter() {
+    public void analyzeOnlyGrammarFilter() {
         TextFilterManager manager = new TextFilterManager(
-                new TextAnalyzer[]{TextAnalyzer.createCommercialTextAnalyzer(new String[]{"куплю", "продам", "недорого"})});
-        assertEquals("GOOD", manager.analyze("Хочу отдать гараж в чужую собственность за деньги").toString());
-        assertEquals("COMMERCIAL_TEXT", manager.analyze("куплю cvv код").toString());
+                new TextAnalyzer[]{TextAnalyzer.createGrammarAnalyzer()});
+        assertEquals("GOOD", manager.analyze("Хочу отдать гараж в чужую собственность за деньги.").toString());
+        assertEquals("NOT_GRAMMAR", manager.analyze("куплю cvv код").toString());
         assertEquals("GOOD", manager.analyze(null).toString());
-        assertEquals("COMMERCIAL_TEXT", manager.analyze("продам гараж").toString());
-        assertEquals("GOOD", manager.analyze("Скажите код из смс пожалуйста ").toString());
-        assertEquals("COMMERCIAL_TEXT", manager.analyze("недорого приобрету Ваш гараж за деньги").toString());
+        assertEquals("NOT_GRAMMAR", manager.analyze("продам гараж").toString());
+        assertEquals("GOOD", manager.analyze("Скажите код из смс пожалуйста!").toString());
+        assertEquals("NOT_GRAMMAR", manager.analyze("недорого приобрету Ваш гараж за деньги???").toString());
     }
 
 }

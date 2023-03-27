@@ -31,12 +31,12 @@ public interface TextAnalyzer {
     /**
      * придумать свой фильтр
      */
-    // фильтр отслеживает слова "продам", "куплю", "недорого" и тд
-    static TextAnalyzer createCommercialTextAnalyzer(String[] commercials) {
-        return new CommercialTextAnalyzer(commercials);
+    // фильтр отслеживает правильность предложений: они начинаются с большой буквы и заканчиваются "!", "?" или "."
+    static TextAnalyzer createGrammarAnalyzer() {
+        return new GrammarAnalyzer();
     }
 
-    boolean resultResearch(String str);
+    boolean FilterWorked(String str);
 
     FilterType getType();
 }
