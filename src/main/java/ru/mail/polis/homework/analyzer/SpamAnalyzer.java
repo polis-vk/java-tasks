@@ -3,33 +3,29 @@ package ru.mail.polis.homework.analyzer;
 
 import java.util.Arrays;
 
-public class SpamAnalyzer implements TextAnalyzer {
-    private static final int priority = 1;
-    private static final FilterType filterType = FilterType.SPAM;
-    private final String[] badWords;
+import static ru.mail.polis.homework.analyzer.Search.search;
 
-    SpamAnalyzer(String[] badWords) {
-        this.badWords = Arrays.copyOf(badWords, badWords.length);
+public class SpamAnalyzer implements TextAnalyzer {
+    private static final int PRIORITY = 1;
+    private final String[] BAD_WORDS;
+
+    public SpamAnalyzer(String[] badWords) {
+        this.BAD_WORDS = Arrays.copyOf(badWords, badWords.length);
     }
 
 
     @Override
     public int getPriority() {
-        return priority;
+        return PRIORITY;
     }
 
     @Override
     public FilterType getFilterType() {
-        return filterType;
+        return FilterType.SPAM;
     }
 
     @Override
     public boolean analyze(String commentary) {
-        for (String word : badWords) {
-            if (commentary.contains(word)) {
-                return false;
-            }
-        }
-        return true;
+        return search(commentary, BAD_WORDS);
     }
 }

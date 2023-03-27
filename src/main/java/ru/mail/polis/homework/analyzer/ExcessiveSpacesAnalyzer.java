@@ -1,17 +1,16 @@
 package ru.mail.polis.homework.analyzer;
 
 public class ExcessiveSpacesAnalyzer implements TextAnalyzer {
-    private static final int priority = 4;
-    private static final FilterType filterType = FilterType.EXCESSIVE_SPACES;
+    private static final int PRIORITY = 4;
 
     @Override
     public int getPriority() {
-        return priority;
+        return PRIORITY;
     }
 
     @Override
     public FilterType getFilterType() {
-        return filterType;
+        return FilterType.EXCESSIVE_SPACES;
     }
 
     @Override
