@@ -25,7 +25,7 @@ public interface TextAnalyzer {
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        return new NegativeTextAnalyser();
+        return new NegativeTextAnalyzer();
     }
 
     /**
@@ -36,7 +36,7 @@ public interface TextAnalyzer {
         return new BreakingBadAnalyzer();
     }
 
-    int getSignificance();
+    FilterType getType();
 
     FilterType analyze(String text);
 }

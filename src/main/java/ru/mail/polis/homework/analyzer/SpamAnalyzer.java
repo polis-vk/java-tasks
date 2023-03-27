@@ -3,21 +3,20 @@
 import java.util.Arrays;
 
 public class SpamAnalyzer implements TextAnalyzer {
-    private final static int SIGNIFICANCE = 1;
-    private final String[] spam;
+    private final String[] spamElements;
 
     public SpamAnalyzer(String[] spam) {
-        this.spam = Arrays.copyOf(spam, spam.length);
+        this.spamElements = Arrays.copyOf(spam, spam.length);
     }
 
     @Override
-    public int getSignificance() {
-        return SIGNIFICANCE;
+    public FilterType getType() {
+        return FilterType.SPAM;
     }
 
     @Override
     public FilterType analyze(String text) {
-        for (String elementSpam : spam) {
+        for (String elementSpam : spamElements) {
             if (text.contains(elementSpam)) {
                 return FilterType.SPAM;
             }
