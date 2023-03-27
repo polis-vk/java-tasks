@@ -14,7 +14,7 @@ public class NegativeTextFilter extends AbstractFilter {
 
     @Override
     public boolean applies(String text) {
-        if ((text == null) || text.isEmpty()) {
+        if (text == null || text.isEmpty()) {
             return false;
         }
 
