@@ -11,10 +11,6 @@ public class TooLongFilter extends AbstractFilter {
         this.maxLength = maxLength;
     }
 
-    public long getMaxLength() {
-        return maxLength;
-    }
-
     @Override
     public boolean applies(String text) {
         if (text == null) {

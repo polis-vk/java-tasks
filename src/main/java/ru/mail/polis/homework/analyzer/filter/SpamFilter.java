@@ -11,10 +11,6 @@ public class SpamFilter extends AbstractFilter {
         this.spam = spam;
     }
 
-    public String[] getSpam() {
-        return spam;
-    }
-
     @Override
     public boolean applies(String text) {
         if (text.isEmpty()) {
