@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
-public class AdvertisementAnalyzer extends SpamAnalyzer implements TextAnalyzer {
+public class AdvertisementAnalyzer extends SpamAnalyzer {
     private static final String[] LINKS = new String[]{"http:", "https:", "www.", ".com", ".ru"};
 
     public AdvertisementAnalyzer() {
