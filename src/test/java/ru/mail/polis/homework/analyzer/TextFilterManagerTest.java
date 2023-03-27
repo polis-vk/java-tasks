@@ -96,6 +96,8 @@ public class TextFilterManagerTest {
         assertEquals("GOOD", manager.analyze("Скажите код из смс :-( ").toString());
         assertEquals("FOREIGN_LANGUAGES", manager.analyze("Tell me the code from the sms please :|").toString());
         assertEquals("GOOD", manager.analyze("Ооооооочень длиннннннаааааяяяя стрроооооооккккаааааа").toString());
+        assertEquals("FOREIGN_LANGUAGES", manager.analyze("搏击俱乐部的第一条规则：不要谈论搏击俱乐部。").toString());
+        assertEquals("FOREIGN_LANGUAGES", manager.analyze("Привет! ¿Hola? สวัสดี! Cześć? Hello!").toString());
     }
 
     @Test
@@ -119,7 +121,7 @@ public class TextFilterManagerTest {
                 TextAnalyzer.createForeignLanguagesAnalyzer(),
                 TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
                 TextAnalyzer.createTooLongAnalyzer(20)});
-        assertEquals("FOREIGN_LANGUAGES", manager.analyze("I proud Indian army").toString());
+        assertEquals("FOREIGN_LANGUAGES", manager.analyze("Я proud Indian army").toString());
         assertEquals("NEGATIVE_TEXT", manager.analyze("Привет, я Петя :(").toString());
         assertEquals("TOO_LONG", manager.analyze("Скажите Код Из Смс :-(").toString());
         assertEquals("SPAM", manager.analyze("смс пожалуйста ;|").toString());
