@@ -4,12 +4,12 @@ public class BadWordsAnalyzer implements TextAnalyzer {
     private final FilterType type = FilterType.CUSTOM;
     private final String[] badWords;
 
-    BadWordsAnalyzer(String[] badWords){
+    BadWordsAnalyzer(String[] badWords) {
         this.badWords = badWords;
     }
 
     @Override
-    public boolean textAnalysis(String str) {
+    public boolean filterWorked(String str) {
         for (String subStr : badWords) {
             if (str.contains(subStr)) {
                 return true;

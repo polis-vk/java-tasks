@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 import java.util.Arrays;
+
 /**
  * Задание написать систему фильтрации комментариев.
  * Надо реализовать три типа обязательных фильтров
@@ -13,20 +14,20 @@ import java.util.Arrays;
  * Класс TextFilterManager должен содержать все фильтры, которые передаются ему в конструкторе,
  * и при анализе текста через метод analyze должен выдавать первый "успешный" фильтр,
  * если ни один не прошел, то возвращать тип GOOD.
- *
+ * <p>
  * Усложненное задание на полный балл: нужно всем типам фильтров задать приоритет
  * (SPAM, TOO_LONG, NEGATIVE_TEXT, CUSTOM - в таком порядке) и возвращать тип с максимальным приоритетом.
  * Отсортировать фильтра можно с помощью функции
  * Arrays.sort(filter, (filter1, filter2) -> {
- *     if (filter1 < filter2) {
- *         return -1;
- *     } else if (filter1 == filter2) {
- *         return 0;
- *     }
- *     return 1;
+ * if (filter1 < filter2) {
+ * return -1;
+ * } else if (filter1 == filter2) {
+ * return 0;
+ * }
+ * return 1;
  * }
  * где вместо сравнения самих фильтров должно быть сравнение каких-то количественных параметров фильтра
- *
+ * <p>
  * 2 тугрика за класс
  * 5 тугриков за приоритет
  * Итого 20 тугриков за все задание
@@ -39,8 +40,10 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     private final TextAnalyzer[] filters;
+
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = filters;
+        TextAnalyzer[] gotFilters = filters; // Создал новую переменную, чтобы не менять входные данные
+        this.filters = gotFilters;
         Arrays.sort(this.filters, (filter1, filter2) -> {
             if (filter1.getType().priority < filter2.getType().priority) {
                 return -1;
@@ -60,7 +63,7 @@ public class TextFilterManager {
             return FilterType.GOOD;
         }
         for (TextAnalyzer filtTypo : filters) {
-            if (filtTypo.textAnalysis(text)) {
+            if (filtTypo.filterWorked(text)) {
                 return filtTypo.getType();
             }
         }

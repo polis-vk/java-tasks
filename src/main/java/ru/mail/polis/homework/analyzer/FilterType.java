@@ -11,6 +11,7 @@ public enum FilterType {
     GOOD(4);
 
     final int priority;
+
     FilterType(int priority) {
         this.priority = priority;
     }
