@@ -33,6 +33,8 @@ public class PopularMap<K, V> implements Map<K, V> {
     private final Map<K, V> map;
     private final Map<K, Integer> keyCounters;
     private final Map<V, Integer> valueCounters;
+    private K popularKey;
+    private V popularValue;
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -58,38 +60,39 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        checkUsage(keyCounters, (K) key);
+        popularKey = checkUsage(keyCounters, popularKey, (K) key);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        checkUsage(valueCounters, (V) value);
+        popularValue = checkUsage(valueCounters, popularValue, (V) value);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        checkUsage(keyCounters, (K) key);
+        popularKey = checkUsage(keyCounters, popularKey, (K) key);
         V value = map.get(key);
-        checkUsage(valueCounters, value);
+        popularValue = checkUsage(valueCounters, popularValue, value);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
-        checkUsage(keyCounters, key);
-        checkUsage(valueCounters, value);
+        popularKey = checkUsage(keyCounters, popularKey, key);
+        popularValue = checkUsage(valueCounters, popularValue, value);
         V previousValue = map.put(key, value);
-        checkUsage(valueCounters, previousValue);
+        popularValue = checkUsage(valueCounters, popularValue, previousValue);
         return previousValue;
     }
 
     @Override
     public V remove(Object key) {
-        checkUsage(keyCounters, (K) key);
-        checkUsage(valueCounters, map.get(key));
-        return map.remove(key);
+        popularKey = checkUsage(keyCounters, popularKey, (K) key);
+        V value = map.remove(key);
+        popularValue = checkUsage(valueCounters, popularValue, value);
+        return value;
     }
 
     @Override
@@ -121,25 +124,21 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return getPopularElement(keyCounters);
+        return popularKey;
     }
-
 
     /**
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        if (keyCounters.containsKey(key)) {
-            return keyCounters.get(key);
-        }
-        return 0;
+        return keyCounters.getOrDefault(key, 0);
     }
 
     /**
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        return getPopularElement(valueCounters);
+        return popularValue;
     }
 
     /**
@@ -147,10 +146,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        if (valueCounters.containsKey(value)) {
-            return valueCounters.get(value);
-        }
-        return 0;
+        return valueCounters.getOrDefault(value, 0);
     }
 
     /**
@@ -166,26 +162,16 @@ public class PopularMap<K, V> implements Map<K, V> {
         return valuesList.iterator();
     }
 
-    private <T> T getPopularElement(Map<T, Integer> countersMap) {
-        int max = 0;
-        T element = null;
-        for (Map.Entry<T, Integer> pair : countersMap.entrySet()) {
-            if (pair.getValue() >= max) {
-                element = pair.getKey();
-                max = pair.getValue();
-            }
-        }
-        return element;
-    }
-
-    private <T> void checkUsage(Map<T, Integer> countersMap, T element) {
+    private <T> T checkUsage(Map<T, Integer> countersMap, T popularElement, T element) {
         if (element == null) {
-            return;
+            return popularElement;
         }
-        if (countersMap.containsKey(element)) {
-            countersMap.put(element, countersMap.get(element) + 1);
-        } else {
-            countersMap.put(element, 1);
+        countersMap.put(element, countersMap.getOrDefault(element, 0) + 1);
+        if (popularElement == null) {
+            popularElement = element;
+        } else if (countersMap.get(element) > countersMap.get(popularElement)) {
+            popularElement = element;
         }
+        return popularElement;
     }
 }
