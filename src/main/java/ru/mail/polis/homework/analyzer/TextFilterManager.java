@@ -41,11 +41,11 @@ public class TextFilterManager {
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
      * что в них реализован интерфейс TextAnalyzer
      */
-    TextAnalyzer[] filters;
+    public final TextAnalyzer[] filters;
 
     public TextFilterManager(TextAnalyzer[] filters) {
         this.filters = Arrays.copyOf(filters, filters.length);
-        Arrays.sort(this.filters, Comparator.comparingInt(ft -> ft.getFilterType().getPRIORITY()));
+        Arrays.sort(this.filters, Comparator.comparingInt(ft -> ft.getFilterType().getPriority()));
     }
 
     /**

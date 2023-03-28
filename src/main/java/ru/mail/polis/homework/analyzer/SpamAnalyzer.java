@@ -6,10 +6,10 @@ import java.util.Arrays;
 import static ru.mail.polis.homework.analyzer.Search.search;
 
 public class SpamAnalyzer implements TextAnalyzer {
-    private final String[] BAD_WORDS;
+    private final String[] badWords;
 
     public SpamAnalyzer(String[] badWords) {
-        this.BAD_WORDS = Arrays.copyOf(badWords, badWords.length);
+        this.badWords = Arrays.copyOf(badWords, badWords.length);
     }
 
     @Override
@@ -19,6 +19,6 @@ public class SpamAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean analyze(String commentary) {
-        return search(commentary, BAD_WORDS);
+        return search(commentary, badWords);
     }
 }

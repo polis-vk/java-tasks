@@ -9,13 +9,13 @@ public enum FilterType {
     TOO_LONG(2),
     NEGATIVE_TEXT(3),
     EXCESSIVE_SPACES(4);
-    private final int PRIORITY;
+    private final int priority;
 
     FilterType(int priority) {
-        PRIORITY = priority;
+        this.priority = priority;
     }
 
-    public int getPRIORITY() {
-        return PRIORITY;
+    public int getPriority() {
+        return priority;
     }
 }
