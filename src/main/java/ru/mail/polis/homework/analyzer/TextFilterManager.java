@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
 
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Задание написать систему фильтрации комментариев.
@@ -35,8 +35,7 @@ import java.util.Comparator;
  * Итого 20 тугриков за все задание
  */
 public class TextFilterManager {
-    private final TextAnalyzer[] FILTERS;
-    private FilterType filterType;
+    private final TextAnalyzer[] filters;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -44,37 +43,24 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        FILTERS = filters;
+        this.filters = filters;
     }
 
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-        filterType = FilterType.GOOD;
-        if (text == null || text.equals("")) {
+        ArrayList<FilterType> analysisResults = new ArrayList<>();
+
+        if (text == null || text.equals("") || filters.length == 0) {
             return FilterType.GOOD;
         }
 
-        Arrays.sort(FILTERS, new Comparator<TextAnalyzer>() {
-            @Override
-            public int compare(TextAnalyzer filter1, TextAnalyzer filter2) {
-                if (filter1.getPriority() > filter2.getPriority()) {
-                    return -1;
-                } else if (filter1.getPriority() < filter2.getPriority()) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            }
-        });
-
-        for (TextAnalyzer filter : FILTERS) {
-            filterType = filter.analyze(text);
-            if (filterType != FilterType.GOOD) {
-                return filterType;
-            }
+        for (TextAnalyzer filter : filters) {
+            analysisResults.add(filter.analyze(text));
         }
-        return filterType;
+
+        Collections.sort(analysisResults);
+        return analysisResults.get(0);
     }
 }

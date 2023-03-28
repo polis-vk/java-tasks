@@ -15,6 +15,7 @@ package ru.mail.polis.homework.analyzer;
  * 2 тугрика + (2 тугрика за каждый фильтр + 1 тугрик за тест на свой фильтр) ИТОГО 11
  */
 public interface TextAnalyzer {
+    String[] NEGATIVE_EMOTIONS = new String[]{"=(", ":(", ":|"}; //IDEA сама мне посоветовала убрать public static final (если что)
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
         return new TooLongAnalyzer(maxLength);
@@ -37,5 +38,12 @@ public interface TextAnalyzer {
 
     FilterType analyze(String text);
 
-    int getPriority();
+    default FilterType analyze(String text, String[] wordsToCheck, FilterType filterType) {
+        for (String smile : wordsToCheck) {
+            if (text.contains(smile)) {
+                return filterType;
+            }
+        }
+        return FilterType.GOOD;
+    }
 }
