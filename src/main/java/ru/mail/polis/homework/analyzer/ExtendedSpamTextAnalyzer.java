@@ -24,7 +24,7 @@ public class ExtendedSpamTextAnalyzer implements TextAnalyzer {
         String[] cleanWordsInText = beautify(wordsInText);
         for (String wordInText : cleanWordsInText) {
             if (badWords.contains(wordInText)) {
-                return FilterType.SPAM;
+                return FilterType.E_SPAM;
             }
         }
         return FilterType.GOOD;

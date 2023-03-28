@@ -18,6 +18,7 @@ public class TooLongTextAnalyzer implements TextAnalyzer {
     public FilterType analyze(String text) {
         if (text.length() > maxStringLength) {
             return FilterType.TOO_LONG;
-        } else return FilterType.GOOD;
+        }
+        return FilterType.GOOD;
     }
 }
