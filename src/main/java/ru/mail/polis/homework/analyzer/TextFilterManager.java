@@ -44,10 +44,11 @@ public class TextFilterManager {
      */
     public TextFilterManager(TextAnalyzer[] filters) {
         this.myFilters = filters;
+        sortFilters(this.myFilters);
     }
 
     private void sortFilters(TextAnalyzer[] filters) {
-        Arrays.sort(filters, Comparator.comparingInt(filter -> filter.getType().getRate()));
+        Arrays.sort(filters, Comparator.comparingInt(filter -> filter.getType().getPriority()));
     }
 
     /**
@@ -57,11 +58,9 @@ public class TextFilterManager {
         if (text == null || text.isEmpty()) {
             return FilterType.GOOD;
         }
-        sortFilters(this.myFilters);
         for (TextAnalyzer analyzer : myFilters) {
-            FilterType resultType = analyzer.makeAnalysis(text);
-            if (resultType != FilterType.GOOD) {
-                return resultType;
+            if (!analyzer.makeAnalysis(text)) {
+                return analyzer.getType();
             }
         }
         return FilterType.GOOD;

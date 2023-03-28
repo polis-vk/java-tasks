@@ -1,27 +1,24 @@
 package ru.mail.polis.homework.analyzer;
 
 public class SpamAnalyzer implements TextAnalyzer {
-    private final FilterType filterType;
-    private final String[] badWords;
+    private final String[] restrictedWords;
 
-    public SpamAnalyzer(String[] badWords) {
-        this.badWords = badWords;
-        this.filterType = FilterType.SPAM;
+    public SpamAnalyzer(String[] restrictedWords) {
+        this.restrictedWords = restrictedWords;
     }
 
     @Override
     public FilterType getType() {
-        return this.filterType;
+        return FilterType.SPAM;
     }
 
     @Override
-    public FilterType makeAnalysis(String text) {
-        for (String badWord : badWords) {
+    public boolean makeAnalysis(String text) {
+        for (String badWord : restrictedWords) {
             if (text.contains(badWord)) {
-                return this.filterType;
+                return false;
             }
         }
-        return FilterType.GOOD;
+        return true;
     }
-
 }

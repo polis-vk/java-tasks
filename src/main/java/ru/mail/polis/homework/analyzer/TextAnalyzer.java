@@ -18,7 +18,7 @@ public interface TextAnalyzer {
     FilterType getType();
 
     // метод для проведения анализа для всех фильтров
-    FilterType makeAnalysis(String text);
+    boolean makeAnalysis(String text);
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
         return new TooLongAnalyzer(maxLength);
