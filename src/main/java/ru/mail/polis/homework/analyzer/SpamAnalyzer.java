@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.analyzer;
 
-import java.util.Arrays;
-
 public class SpamAnalyzer implements TextAnalyzer {
 
     private final String[] spamWords;

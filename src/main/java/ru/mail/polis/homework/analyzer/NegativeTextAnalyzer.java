@@ -1,8 +1,5 @@
 package ru.mail.polis.homework.analyzer;
 
-
-import java.util.Arrays;
-
 public class NegativeTextAnalyzer implements TextAnalyzer {
 
     private static final String[] NEGATIVE_EMOTIONS = {"=(", ":(", ":|"};

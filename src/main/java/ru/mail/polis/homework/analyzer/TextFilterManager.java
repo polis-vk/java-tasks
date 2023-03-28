@@ -1,7 +1,5 @@
 package ru.mail.polis.homework.analyzer;
 
-
-import java.lang.reflect.Array;
 import java.util.Arrays;
 /**
  * Задание написать систему фильтрации комментариев.
