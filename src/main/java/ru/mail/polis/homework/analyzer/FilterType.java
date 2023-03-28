@@ -10,9 +10,13 @@ public enum FilterType {
     CORRECT_STRUCTURE(3),
     GOOD(5);
 
-    final int priority;
+    private final int priority;
 
     FilterType(int priority) {
         this.priority = priority;
+    }
+
+    public int getPriority() {
+        return priority;
     }
 }
