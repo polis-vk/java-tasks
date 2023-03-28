@@ -3,8 +3,6 @@ package ru.mail.polis.homework.analyzer;
 
 import java.util.Arrays;
 
-import static ru.mail.polis.homework.analyzer.Search.search;
-
 public class SpamAnalyzer implements TextAnalyzer {
     private final String[] badWords;
 
@@ -19,6 +17,11 @@ public class SpamAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean analyze(String commentary) {
-        return search(commentary, badWords);
+        for (String word : badWords) {
+            if (commentary.contains(word)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
