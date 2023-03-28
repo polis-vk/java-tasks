@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 public class TooLongAnalyzer implements TextAnalyzer {
-    final private long maxLength;
+    private final long maxLength;
     static final private FilterType filterType = FilterType.TOO_LONG;
 
     public TooLongAnalyzer(long maxLength) {

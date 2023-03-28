@@ -10,7 +10,7 @@ public enum FilterType {
     NEGATIVE_TEXT(3),
     SNAKE_CASE(4);
 
-    final private int priority;
+    private final int priority;
 
     FilterType(int priority) {
         this.priority = priority;

@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 public class SnakeCaseAnalyzer implements TextAnalyzer {
-    static final private FilterType filterType = FilterType.SNAKE_CASE;
+    private static final FilterType filterType = FilterType.SNAKE_CASE;
 
     @Override
     public boolean filterWorked(String inputString) {

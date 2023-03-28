@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyzer implements TextAnalyzer {
-    final private String[] negativeWords = {"=(", ":(", ":|"};
-    static final private FilterType filterType = FilterType.NEGATIVE_TEXT;
+    private final String[] negativeWords = {"=(", ":(", ":|"};
+    private static final FilterType filterType = FilterType.NEGATIVE_TEXT;
 
     @Override
     public boolean filterWorked(String inputString) {

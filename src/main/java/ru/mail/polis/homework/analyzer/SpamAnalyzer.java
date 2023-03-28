@@ -1,8 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
 public class SpamAnalyzer implements TextAnalyzer {
-    final private String[] spamWords;
-    static final private FilterType filterType = FilterType.SPAM;
+    private final String[] spamWords;
+    private static final FilterType filterType = FilterType.SPAM;
 
     public SpamAnalyzer(String[] spamWords) {
         this.spamWords = spamWords;
