@@ -8,12 +8,12 @@ public class LongFilterAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public int getTypeOrder() {
-        return FilterType.TOO_LONG.order;
+    public FilterType getType() {
+        return FilterType.TOO_LONG;
     }
 
     @Override
-    public FilterType analyze(String text) {
-        return text.length() > maxLength ? FilterType.TOO_LONG : FilterType.GOOD;
+    public boolean isFilterPassed(String text) {
+        return text.length() > maxLength;
     }
 }

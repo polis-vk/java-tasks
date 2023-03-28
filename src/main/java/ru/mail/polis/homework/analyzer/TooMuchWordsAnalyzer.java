@@ -8,12 +8,12 @@ public class TooMuchWordsAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public int getTypeOrder() {
-        return FilterType.TOO_MUSH_WORDS.order;
+    public FilterType getType() {
+        return FilterType.TOO_MUSH_WORDS;
     }
 
     @Override
-    public FilterType analyze(String text) {
-        return text.isEmpty() ? FilterType.GOOD : text.split(" ").length > wordCounter ? FilterType.TOO_MUSH_WORDS : FilterType.GOOD;
+    public boolean isFilterPassed(String text) {
+        return !text.isEmpty() && text.split(" ").length > wordCounter;
     }
 }

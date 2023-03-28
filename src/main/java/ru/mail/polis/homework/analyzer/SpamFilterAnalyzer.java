@@ -8,18 +8,13 @@ public class SpamFilterAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public int getTypeOrder() {
-        return FilterType.SPAM.order;
+    public FilterType getType() {
+        return FilterType.SPAM;
     }
 
     @Override
-    public FilterType analyze(String text) {
-        for (String spamWord : spam) {
-            if (text.contains(spamWord)) {
-                return FilterType.SPAM;
-            }
-        }
-        return FilterType.GOOD;
+    public boolean isFilterPassed(String text) {
+        return Finder.find(spam, text);
     }
 
 }

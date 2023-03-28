@@ -4,17 +4,12 @@ public class BadEmojiFilterAnalyzer implements TextAnalyzer {
     private final String[] emoji = new String[]{"=(", ":(", ":|"};
 
     @Override
-    public int getTypeOrder() {
-        return FilterType.NEGATIVE_TEXT.order;
+    public FilterType getType() {
+        return FilterType.NEGATIVE_TEXT;
     }
 
     @Override
-    public FilterType analyze(String text) {
-        for (String spamWord : emoji) {
-            if (text.contains(spamWord)) {
-                return FilterType.NEGATIVE_TEXT;
-            }
-        }
-        return FilterType.GOOD;
+    public boolean isFilterPassed(String text) {
+        return Finder.find(emoji, text);
     }
 }

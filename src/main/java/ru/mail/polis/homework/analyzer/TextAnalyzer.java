@@ -32,7 +32,7 @@ public interface TextAnalyzer {
         return new TooMuchWordsAnalyzer(something);
     }
 
-    int getTypeOrder();
+    FilterType getType();
 
-    FilterType analyze(String text);
+    boolean isFilterPassed(String text);
 }
