@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
-public class TooLongWordAnalyzer implements TextAnalyzer{
+public class TooLongWordAnalyzer implements TextAnalyzer {
     private final long maxLength;
 
     public TooLongWordAnalyzer(long maxLength) {
@@ -8,7 +8,7 @@ public class TooLongWordAnalyzer implements TextAnalyzer{
     }
 
     @Override
-    public boolean analyze(String text) {
+    public boolean isAnalyzeTrue(String text) {
         return text.length() > maxLength;
     }
 

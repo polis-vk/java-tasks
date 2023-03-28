@@ -1,11 +1,11 @@
 package ru.mail.polis.homework.analyzer;
 
-public class ForbiddenTextAnalyzer implements TextAnalyzer{
+public class ForbiddenTextAnalyzer implements TextAnalyzer {
     protected String[] forbiddenText;
     protected FilterType filterType;
 
     @Override
-    public boolean analyze(String text) {
+    public boolean isAnalyzeTrue(String text) {
         for (String word : forbiddenText) {
             if (text.contains(word)) {
                 return true;

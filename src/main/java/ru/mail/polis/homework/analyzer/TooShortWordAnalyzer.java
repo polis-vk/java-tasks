@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
-public class TooShortWordAnalyzer implements TextAnalyzer{
+public class TooShortWordAnalyzer implements TextAnalyzer {
     private final int minLengthWord;
 
     public TooShortWordAnalyzer(int minLengthWord) {
@@ -8,7 +8,7 @@ public class TooShortWordAnalyzer implements TextAnalyzer{
     }
 
     @Override
-    public boolean analyze(String text) {
+    public boolean isAnalyzeTrue(String text) {
         String[] wordsArr = text.split("[ ,.\"/;:)=(|!<>]+");
         for (String word : wordsArr) {
             if (word.length() < minLengthWord && word.length() != 0) {
