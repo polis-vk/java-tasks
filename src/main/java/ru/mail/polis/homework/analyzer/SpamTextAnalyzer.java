@@ -8,7 +8,7 @@ public class SpamTextAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public boolean analyze(String text) {
+    public boolean analyzeFilterStatus(String text) {
         for (String word : spam) {
             if (text.contains(word)) {
                 return true;

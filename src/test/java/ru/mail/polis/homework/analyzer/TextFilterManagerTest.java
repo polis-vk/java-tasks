@@ -148,5 +148,11 @@ public class TextFilterManagerTest {
         assertEquals("GOOD", manager.analyze("").toString());
         assertEquals("GOOD", manager.analyze(null).toString());
         assertEquals("CUSTOM", manager.analyze("Привет, я Петя :(").toString());
+        assertEquals("CUSTOM", manager.analyze("/.'; Petya Петров").toString());
+        assertEquals("CUSTOM", manager.analyze("Петя").toString());
+        assertEquals("GOOD", manager.analyze("Петров").toString());
+        assertEquals("GOOD", manager.analyze("Иииииииииииггггггрррррраааааа :(").toString());
+        assertEquals("GOOD", manager.analyze("///////// Petyaa Петров").toString());
+
     }
 }
