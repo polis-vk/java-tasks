@@ -15,6 +15,7 @@ public class CyrillicTextAnalyzer implements TextAnalyzer {
         if (text.isEmpty()){
             return false;
         }
+
         for (char c: text.toCharArray()){
             if (!isValidSymbol(c)){
                 return false;
