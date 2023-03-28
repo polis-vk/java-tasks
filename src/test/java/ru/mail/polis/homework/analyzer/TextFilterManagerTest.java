@@ -122,6 +122,17 @@ public class TextFilterManagerTest {
         manyFilters(true);
     }
 
+    @Test
+    public void analyzeCustomFilter() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createSpaceAnalyzer()});
+        assertEquals("SPACE", manager.analyze("Привет, я Петя :-(").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze("СкажитеКодИзСмс:-(").toString());
+        assertEquals("SPACE", manager.analyze("сМс пожалуйста ;|").toString());
+        assertEquals("GOOD", manager.analyze("АААААААААААААААААААААА").toString());
+        assertEquals("SPACE", manager.analyze(" ").toString());
+    }
+
     private void manyFilters(boolean withPriority) {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
