@@ -158,7 +158,6 @@ public class PopularMap<K, V> implements Map<K, V> {
     public Iterator<V> popularIterator() {
         List<V> mapValues = new ArrayList<>(valuesPopularity.keySet());
         mapValues.sort(this::compare);
-
         return mapValues.iterator();
     }
 
