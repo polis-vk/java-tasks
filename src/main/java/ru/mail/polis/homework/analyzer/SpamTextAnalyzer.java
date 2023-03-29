@@ -27,4 +27,4 @@ public class SpamTextAnalyzer implements TextAnalyzer {
 
 }
 
-// test push 3
+// test push 4
