@@ -12,7 +12,8 @@ public class CapsLockAnalyzer implements TextAnalyzer {
         for (int i = 0; i < text.length(); i++) {
             if (Character.isLowerCase(text.charAt(i))) {
                 return true;
-            } else if (Character.isUpperCase(text.charAt(i))) {
+            }
+            if (Character.isUpperCase(text.charAt(i))) {
                 includesUpperCase = true;
             }
         }
