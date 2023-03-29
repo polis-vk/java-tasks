@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,14 +46,14 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     public PopularMap() {
         this.map = new HashMap<>();
-        this.keyPopularMap = new HashMap<>();
-        this.valuePopularMap = new HashMap<>();
+        this.keyPopularMap = new LinkedHashMap<>();
+        this.valuePopularMap = new LinkedHashMap<>();
     }
 
     public PopularMap(Map<K, V> map) {
         this.map = map;
-        this.keyPopularMap = new HashMap<>();
-        this.valuePopularMap = new HashMap<>();
+        this.keyPopularMap = new LinkedHashMap<>();
+        this.valuePopularMap = new LinkedHashMap<>();
     }
 
     @Override
@@ -181,10 +182,13 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        List<V> result = new ArrayList<>();
-        for (Entry<V, Integer> entry : valuePopularMap.entrySet()) {
-            result.add(entry.getKey());
+        List<Entry<V, Integer>> list = new ArrayList<>(valuePopularMap.entrySet());
+        list.sort(Entry.comparingByValue());
+
+        List<V> sortedValues = new ArrayList<>();
+        for (Entry<V, Integer> entry : list) {
+            sortedValues.add(entry.getKey());
         }
-        return result.iterator();
+        return sortedValues.iterator();
     }
 }
