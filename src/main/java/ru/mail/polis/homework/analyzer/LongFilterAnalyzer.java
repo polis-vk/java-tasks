@@ -13,7 +13,7 @@ public class LongFilterAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public boolean isFilterPassed(String text) {
+    public boolean isFilterFailed(String text) {
         return text.length() > maxLength;
     }
 }

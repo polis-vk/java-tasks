@@ -13,7 +13,7 @@ public class TooMuchWordsAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public boolean isFilterPassed(String text) {
+    public boolean isFilterFailed(String text) {
         return !text.isEmpty() && text.split(" ").length > wordCounter;
     }
 }

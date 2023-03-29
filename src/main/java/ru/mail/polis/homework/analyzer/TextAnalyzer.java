@@ -34,5 +34,5 @@ public interface TextAnalyzer {
 
     FilterType getType();
 
-    boolean isFilterPassed(String text);
+    boolean isFilterFailed(String text);
 }

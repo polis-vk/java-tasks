@@ -13,7 +13,7 @@ public class SpamFilterAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public boolean isFilterPassed(String text) {
+    public boolean isFilterFailed(String text) {
         return Finder.find(spam, text);
     }
 
