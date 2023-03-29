@@ -61,7 +61,7 @@ public class TextFilterManager {
             return FilterType.GOOD;
         }
         for (TextAnalyzer filter : filters) {
-            if (!filter.checkTextIsCorrect(text)) {
+            if (!filter.isCorrect(text)) {
                 return filter.getType();
             }
         }

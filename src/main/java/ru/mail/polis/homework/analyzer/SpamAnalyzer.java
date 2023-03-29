@@ -11,8 +11,8 @@ public class SpamAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public boolean checkTextIsCorrect(String text) {
-        return TextAnalyzer.checkInclusion(text, spam);
+    public boolean isCorrect(String text) {
+        return TextAnalyzer.hasInclusion(text, spam);
     }
 
     @Override

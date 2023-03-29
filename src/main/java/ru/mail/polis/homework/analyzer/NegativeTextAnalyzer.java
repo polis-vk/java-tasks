@@ -6,8 +6,8 @@ public class NegativeTextAnalyzer implements TextAnalyzer{
     private final FilterType type = FilterType.NEGATIVE_TEXT;
 
     @Override
-    public boolean checkTextIsCorrect(String text){
-        return TextAnalyzer.checkInclusion(text, negativeWords);
+    public boolean isCorrect(String text){
+        return TextAnalyzer.hasInclusion(text, negativeWords);
     }
     @Override
     public FilterType getType(){

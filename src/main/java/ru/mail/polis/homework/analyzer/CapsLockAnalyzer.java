@@ -3,12 +3,21 @@ package ru.mail.polis.homework.analyzer;
 import java.util.Locale;
 import java.util.Objects;
 
-public class CapsLockAnalyzer implements TextAnalyzer{
+public class CapsLockAnalyzer implements TextAnalyzer {
     private final FilterType type = FilterType.CAPS_LOCK;
 
     @Override
-    public boolean checkTextIsCorrect(String text) {
-        return !Objects.equals(text, text.toUpperCase()) || text.toUpperCase().equals(text.toLowerCase());
+    public boolean isCorrect(String text) {
+        boolean includesUpperCase = false;
+        for (int i = 0; i < text.length(); i++) {
+            if (Character.isLowerCase(text.charAt(i))) {
+                return true;
+            } else if (Character.isUpperCase(text.charAt(i))) {
+                includesUpperCase = true;
+            }
+        }
+        return (!includesUpperCase);
+//        return !Objects.equals(text, text.toUpperCase()) || text.toUpperCase().equals(text.toLowerCase());
     }
 
     @Override
