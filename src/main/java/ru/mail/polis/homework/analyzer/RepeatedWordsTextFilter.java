@@ -5,10 +5,12 @@ import java.util.Map;
 
 public class RepeatedWordsTextFilter implements TextAnalyzer {
 
-    int maxRepeatCount;
+    private int maxRepeatCount;
+
     public RepeatedWordsTextFilter(int maxRepeatCount) {
         this.maxRepeatCount = maxRepeatCount;
     }
+
     @Override
     public boolean analyzeText(String text) {
         if (text == null || text.isEmpty()) {

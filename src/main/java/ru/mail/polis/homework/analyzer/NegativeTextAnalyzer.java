@@ -1,20 +1,15 @@
 package ru.mail.polis.homework.analyzer;
 
-public class NegativeTextAnalyzer implements TextAnalyzer{
+public class NegativeTextAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean analyzeText(String text) {
         if (text == null || text.isEmpty()) {
             return false;
         }
-        for (int i=0; i<text.length()-1; i++) {
-            if (text.charAt(i) == '=' && text.charAt(i+1) == '(') {
-                return true;
-            }
-            if (text.charAt(i) == ':' && text.charAt(i+1) == '(') {
-                return true;
-            }
-            if (text.charAt(i) == ':' && text.charAt(i+1) == '|') {
+        String[] banWords = new String[]{"=(", ":(", ":|"};
+        for (String banWord : banWords) {
+            if (text.contains(banWord)) {
                 return true;
             }
         }
