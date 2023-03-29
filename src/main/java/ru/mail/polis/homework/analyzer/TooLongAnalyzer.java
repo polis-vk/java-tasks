@@ -8,12 +8,16 @@ public class TooLongAnalyzer implements TextAnalyzer {
         this.maxLength = maxLength;
     }
 
+    public long getMaxLength() {
+        return maxLength;
+    }
+
     @Override
     public boolean checkCorrection(String text) {
         if (text == null) {
             return true;
         }
-        return text.length() <= maxLength;
+        return text.length() <= getMaxLength();
     }
 
     @Override
