@@ -10,7 +10,7 @@ public enum FilterType {
     CUSTOM(4),
     GOOD(0);
 
-    final private int priority;
+    private final int priority;
 
     FilterType(int priority) {
         this.priority = priority;

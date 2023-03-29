@@ -4,20 +4,14 @@ import java.util.Arrays;
 
 public class SpamAnalyzer implements TextAnalyzer {
 
-    final private String[] spam;
+    private final String[] spam;
 
     public SpamAnalyzer(String[] spam) {
         this.spam = Arrays.copyOf(spam, spam.length);
     }
 
     public boolean analyzer(String text) {
-        for (String itSpam : spam) {
-            int indexSpam = text.indexOf(itSpam);
-            if (indexSpam != -1) {
-                return true;
-            }
-        }
-        return false;
+        return checkWord(text, spam);
     }
 
     public FilterType getType() {

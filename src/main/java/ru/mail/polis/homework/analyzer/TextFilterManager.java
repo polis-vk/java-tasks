@@ -15,20 +15,20 @@ import java.util.Arrays;
  * Класс TextFilterManager должен содержать все фильтры, которые передаются ему в конструкторе,
  * и при анализе текста через метод analyze должен выдавать первый "успешный" фильтр,
  * если ни один не прошел, то возвращать тип GOOD.
- *
+ * <p>
  * Усложненное задание на полный балл: нужно всем типам фильтров задать приоритет
  * (SPAM, TOO_LONG, NEGATIVE_TEXT, CUSTOM - в таком порядке) и возвращать тип с максимальным приоритетом.
  * Отсортировать фильтра можно с помощью функции
  * Arrays.sort(filter, (filter1, filter2) -> {
- *     if (filter1 < filter2) {
- *         return -1;
- *     } else if (filter1 == filter2) {
- *         return 0;
- *     }
- *     return 1;
+ * if (filter1 < filter2) {
+ * return -1;
+ * } else if (filter1 == filter2) {
+ * return 0;
+ * }
+ * return 1;
  * }
  * где вместо сравнения самих фильтров должно быть сравнение каких-то количественных параметров фильтра
- *
+ * <p>
  * 2 тугрика за класс
  * 5 тугриков за приоритет
  * Итого 20 тугриков за все задание
@@ -41,11 +41,11 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
 
-    final private TextAnalyzer[] filters;
+    private final TextAnalyzer[] analyzers;
 
-    public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = Arrays.copyOf(filters, filters.length);
-        Arrays.sort(this.filters, (filter1, filter2) -> {
+    public TextFilterManager(TextAnalyzer[] analyzers) {
+        this.analyzers = Arrays.copyOf(analyzers, analyzers.length);
+        Arrays.sort(this.analyzers, (filter1, filter2) -> {
             if (filter1.getType().getPriority() < filter2.getType().getPriority()) {
                 return -1;
             } else if (filter1 == filter2) {
@@ -62,9 +62,9 @@ public class TextFilterManager {
         if (text == null || text.isEmpty()) {
             return FilterType.GOOD;
         }
-        for (TextAnalyzer itFilter : filters) {
-            if (itFilter.analyzer(text)) {
-                return itFilter.getType();
+        for (TextAnalyzer analyzer : analyzers) {
+            if (analyzer.analyzer(text)) {
+                return analyzer.getType();
             }
         }
         return FilterType.GOOD;

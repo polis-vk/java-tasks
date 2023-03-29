@@ -2,7 +2,7 @@ package ru.mail.polis.homework.analyzer;
 
 public class TooManySlashAnalyzer extends TooLongAnalyzer implements TextAnalyzer {
 
-    final private long maxCountSlash;
+    private final long maxCountSlash;
 
     public TooManySlashAnalyzer(long length, long count) {
         super(length);
@@ -12,8 +12,8 @@ public class TooManySlashAnalyzer extends TooLongAnalyzer implements TextAnalyze
     @Override
     public boolean analyzer(String text) {
         long count = 0;
-        for (char itText : text.toCharArray()) {
-            if (itText == '/') {
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == '/') {
                 count++;
             }
         }
