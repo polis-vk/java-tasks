@@ -156,12 +156,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        List<V> mapValues = new ArrayList<>();
-        for (Map.Entry<V, Integer> entry : valuesPopularity.entrySet()) {
-            if (entry.getKey() != null) {
-                mapValues.add(entry.getKey());
-            }
-        }
+        List<V> mapValues = new ArrayList<>(valuesPopularity.keySet());
         mapValues.sort(this::compare);
 
         return mapValues.iterator();
