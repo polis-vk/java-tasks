@@ -15,7 +15,6 @@ package ru.mail.polis.homework.analyzer;
  * 2 тугрика + (2 тугрика за каждый фильтр + 1 тугрик за тест на свой фильтр) ИТОГО 11
  */
 public interface TextAnalyzer {
-
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
         return new TooLongFilter(maxLength);
     }
@@ -29,11 +28,12 @@ public interface TextAnalyzer {
     }
 
     static TextAnalyzer createCustomFilter() {
-        return new LayoutFillter();
+        return new LayoutFilter();
     }
 
-    FilterType analyze(String str);
+    int getPriority();
 
+    FilterType analyze(String str);
 
     /**
      * придумать свой фильтр
@@ -41,4 +41,5 @@ public interface TextAnalyzer {
     static <T> TextAnalyzer createCustomAnalyzer(T something) {
         return null;
     }
+
 }

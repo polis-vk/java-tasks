@@ -43,7 +43,7 @@ public class TextFilterManager {
     TextAnalyzer[] filters;
     public TextFilterManager(TextAnalyzer[] filters) {
         if (filters != null) {
-            this.filters = filters.clone();
+            this.filters = Arrays.copyOf(filters, filters.length);
         }
 
     }
@@ -52,27 +52,22 @@ public class TextFilterManager {
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-        FilterType[] resultsOfAnalyze = new FilterType[filters.length];
         FilterType result = FilterType.GOOD;
-        int i = 0;
-        for (TextAnalyzer x : filters) {
-            result = x.analyze(text);
-            resultsOfAnalyze[i] = result;
-            i++;
-        }
-        if (filters.length != 0) {
-            Arrays.sort(resultsOfAnalyze, (x, y) -> {
-                if (x.getType() == y.getType()) {
-                    return 0;
-                }
-                if (x.getType() < y.getType()) {
-                    return -1;
-                }
-                return 1;
+        Arrays.sort(filters, (x, y) -> {
+            if (x.getPriority() == y.getPriority()) {
+                return 0;
+            }
+            if (x.getPriority() > y.getPriority()) {
+                return -1;
+            }
+            return 1;
 
-            });
-
-            result = resultsOfAnalyze[resultsOfAnalyze.length - 1];
+        });
+        for (TextAnalyzer filter : filters) {
+            result = filter.analyze(text);
+            if (result != FilterType.GOOD) {
+                return result;
+            }
         }
         return result;
     }

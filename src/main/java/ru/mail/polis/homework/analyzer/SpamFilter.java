@@ -1,13 +1,14 @@
 package ru.mail.polis.homework.analyzer;
 
 
+import java.util.Arrays;
 
 public class SpamFilter implements TextAnalyzer {
-    String[] SpamList;
+    private String[] spamList;
 
-    SpamFilter(String[] SpamArray) {
-        if (SpamArray != null) {
-            this.SpamList = SpamArray.clone();
+    SpamFilter(String[] spamArray) {
+        if (spamArray != null) {
+            this.spamList = Arrays.copyOf(spamArray, spamArray.length);
         }
     }
 
@@ -16,13 +17,17 @@ public class SpamFilter implements TextAnalyzer {
         if (str == null || str.isEmpty()) {
             return FilterType.GOOD;
         }
-        String subst = String.valueOf(str);
-        subst.toLowerCase();
-        for (String x : SpamList) {
-            if (subst.contains(x)) {
+
+        for (String x : spamList) {
+            if (str.contains(x)) {
                 return FilterType.SPAM;
             }
         }
         return FilterType.GOOD;
+    }
+
+    @Override
+    public int getPriority() {
+        return FilterType.SPAM.getType();
     }
 }
