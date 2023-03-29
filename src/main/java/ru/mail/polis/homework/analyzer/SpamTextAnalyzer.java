@@ -17,4 +17,9 @@ public class SpamTextAnalyzer implements TextAnalyzer {
         }
         return FilterType.GOOD;
     }
+
+    @Override
+    public int priorityNumber() {
+        return FilterType.SPAM.mass;
+    }
 }

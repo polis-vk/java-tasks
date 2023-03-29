@@ -35,6 +35,8 @@ public interface TextAnalyzer {
 
     public FilterType analyze(String str);
 
+    public int priorityNumber();
+
     /**
      * придумать свой фильтр
      */

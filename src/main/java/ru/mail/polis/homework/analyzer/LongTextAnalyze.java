@@ -17,4 +17,9 @@ public class LongTextAnalyze implements TextAnalyzer {
         return FilterType.GOOD;
     }
 
+    @Override
+    public int priorityNumber() {
+        return FilterType.TOO_LONG.mass;
+    }
+
 }

@@ -36,5 +36,10 @@ public class LevenshteinAnalyze implements TextAnalyzer {
         return FilterType.GOOD;
     }
 
+    @Override
+    public int priorityNumber() {
+        return FilterType.NO_SIMILAR_STRING.mass;
+    }
+
 
 }

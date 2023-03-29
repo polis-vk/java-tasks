@@ -48,13 +48,32 @@ public class TextFilterManager implements TextAnalyzer {
         this.myFilters = filters;
     }
 
+    public void prioritySort() {
+        Arrays.sort(myFilters, (filter1, filter2) -> {
+            int priorityNumber1 = filter1.priorityNumber();
+            int priorityNumber2 = filter2.priorityNumber();
+            if (priorityNumber1 > priorityNumber2) {
+                return -1;
+            } else if (priorityNumber1 == priorityNumber2) {
+                return 0;
+            }
+            return 1;
+        });
+    }
+
+
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
 
+    @Override
+    public int priorityNumber() {
+        return 0;
+    }
 
     @Override
     public FilterType analyze(String text) {
+        prioritySort();
         if (text == null) {
             return FilterType.GOOD;
         }
