@@ -1,9 +1,11 @@
 package ru.mail.polis.homework.analyzer;
 
 
-public class NegativeTextAnalyzer extends SpamTextAnalyzer implements TextAnalyzer {
+public class NegativeTextAnalyzer implements TextAnalyzer {
+    private final String[] negativeWords = new String[]{"=(", ":(", ":|"};
+
     public NegativeTextAnalyzer() {
-        super(new String[]{"=(", ":(", ":|"});
+        super();
     }
 
     @Override
@@ -12,7 +14,12 @@ public class NegativeTextAnalyzer extends SpamTextAnalyzer implements TextAnalyz
     }
 
     @Override
-    public boolean check(String text) {
-        return super.check(text);
+    public boolean isMatchFilter(String text) {
+        for (String word : negativeWords) {
+            if (text.contains(word)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

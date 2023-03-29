@@ -1,7 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 public class SpamTextAnalyzer implements TextAnalyzer {
-    String[] spamWords;
+    private final String[] spamWords;
 
     public SpamTextAnalyzer(String[] spam) {
         spamWords = spam;
@@ -13,7 +13,7 @@ public class SpamTextAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public boolean check(String text) {
+    public boolean isMatchFilter(String text) {
         for (String word : spamWords) {
             if (text.contains(word)) {
                 return true;

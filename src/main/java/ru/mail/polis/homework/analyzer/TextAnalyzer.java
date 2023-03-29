@@ -37,5 +37,6 @@ public interface TextAnalyzer {
 
     FilterType getFilterType();
 
-    boolean check(String text);
+    boolean isMatchFilter(String text);
 }
+

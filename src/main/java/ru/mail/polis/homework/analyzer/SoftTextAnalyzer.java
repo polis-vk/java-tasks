@@ -1,8 +1,10 @@
 package ru.mail.polis.homework.analyzer;
 
-public class SoftTextAnalyzer extends SpamTextAnalyzer implements TextAnalyzer {
+public class SoftTextAnalyzer implements TextAnalyzer {
+    private final String[] softWords = new String[]{"милый", "добрый", "котик", "зайка", "красивый"};
+
     public SoftTextAnalyzer() {
-        super(new String[]{"милый", "добрый", "котик", "зайка", "красивый"});
+        super();
     }
 
     @Override
@@ -11,7 +13,12 @@ public class SoftTextAnalyzer extends SpamTextAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public boolean check(String text) {
-        return super.check(text);
+    public boolean isMatchFilter(String text) {
+        for (String word : softWords) {
+            if (text.contains(word)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
