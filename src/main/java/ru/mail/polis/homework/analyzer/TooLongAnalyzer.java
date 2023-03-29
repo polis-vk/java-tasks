@@ -17,7 +17,7 @@ public class TooLongAnalyzer implements TextAnalyzer {
         if (text == null) {
             return true;
         }
-        return text.length() <= getMaxLength();
+        return text.length() <= maxLength;
     }
 
     @Override
