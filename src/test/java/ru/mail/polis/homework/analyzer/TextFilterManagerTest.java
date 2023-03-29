@@ -141,5 +141,16 @@ public class TextFilterManagerTest {
         }
     }
 
+    @Test
+    public void analyzePositiveText() {
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createTooPositiveTextAnalyzer()});
+        assertEquals("GOOD", manager.analyze("Привет, как дела =)").toString());
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze("Скажите код из смс  :(").toString());
+        assertEquals("TOO_POSITIVE_TEXT", manager.analyze("Скажите код из смс  :))").toString());
+        assertEquals("TOO_POSITIVE_TEXT", manager.analyze("привет =))))").toString());
+        assertEquals("TOO_POSITIVE_TEXT", manager.analyze("Добрый =))) вечер").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+    }
 
 }
