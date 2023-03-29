@@ -5,7 +5,7 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
     private final String[] sadSmiles = {"=(", ":(", ":|"};
 
     @Override
-    public boolean filterWorked(String str) {  // переработал цикл проверки на смайлики
+    public boolean filterWorked(String str) {
         for (String elem : sadSmiles) {
             if (str.contains(elem)) {
                 return true;

@@ -39,12 +39,11 @@ public class TextFilterManager {
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
      * что в них реализован интерфейс TextAnalyzer
      */
-    private final TextAnalyzer[] filters;
+    private final TextAnalyzer[] gotFilters;
 
     public TextFilterManager(TextAnalyzer[] filters) {
-        TextAnalyzer[] gotFilters = filters; // Создал новую переменную, чтобы не менять входные данные
-        this.filters = gotFilters;
-        Arrays.sort(this.filters, (filter1, filter2) -> {
+        this.gotFilters = Arrays.copyOf(filters, filters.length);
+        Arrays.sort(this.gotFilters, (filter1, filter2) -> {
             if (filter1.getType().priority < filter2.getType().priority) {
                 return -1;
             } else if (filter1.getType().priority == filter2.getType().priority) {
@@ -62,7 +61,7 @@ public class TextFilterManager {
         if (text == null || text.isEmpty()) {
             return FilterType.GOOD;
         }
-        for (TextAnalyzer filtTypo : filters) {
+        for (TextAnalyzer filtTypo : gotFilters) {
             if (filtTypo.filterWorked(text)) {
                 return filtTypo.getType();
             }
