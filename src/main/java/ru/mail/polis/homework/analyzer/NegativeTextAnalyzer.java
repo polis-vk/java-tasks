@@ -1,12 +1,12 @@
 package ru.mail.polis.homework.analyzer;
 
-public class NegativeTextAnalyzer implements TextAnalyzer {
+public class NegativeTextAnalyzer extends InclusionFinder implements TextAnalyzer {
 
     private final static String[] NEGATIVE_TEXT = {"=(", ":(", ":|"};
 
     @Override
     public boolean checkCorrection(String text) {
-        return TextAnalyzer.checkInclusion(text, NEGATIVE_TEXT);
+        return checkInclusion(text, NEGATIVE_TEXT);
     }
 
     @Override

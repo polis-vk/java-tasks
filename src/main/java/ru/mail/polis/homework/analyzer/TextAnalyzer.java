@@ -37,17 +37,5 @@ public interface TextAnalyzer {
 
     boolean checkCorrection(String text);
 
-    static boolean checkInclusion(String string, String[] subString) {
-        if (string == null) {
-            return true;
-        }
-        for (String subStr : subString) {
-            if (string.contains(subStr)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     FilterType getFilterType();
 }

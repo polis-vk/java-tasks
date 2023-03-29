@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.analyzer;
 
-public class SpamAnalyzer implements TextAnalyzer {
+public class SpamAnalyzer extends InclusionFinder implements TextAnalyzer {
 
     private final String[] spam;
 
@@ -10,7 +10,7 @@ public class SpamAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean checkCorrection(String text) {
-        return TextAnalyzer.checkInclusion(text, spam);
+        return checkInclusion(text, spam);
     }
 
     @Override
