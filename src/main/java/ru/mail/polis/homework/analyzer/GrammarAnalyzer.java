@@ -1,14 +1,20 @@
 package ru.mail.polis.homework.analyzer;
 
-public class GrammarAnalyzer extends Analyzer implements TextAnalyzer {
+public class GrammarAnalyzer implements TextAnalyzer {
+    private FilterType type;
 
-    GrammarAnalyzer() {
+    public void setType() {
         this.type = FilterType.NOT_GRAMMAR;
     }
 
     @Override
-    public boolean FilterWorked(String str) {
+    public FilterType getType() {
+        return this.type;
+    }
+
+    @Override
+    public boolean filterWorked(String str) {
         char last = str.charAt(str.length() - 1);
-        return !Character.isUpperCase(str.charAt(0)) || (last != '!' && last != '.' && last != '?');
+        return !Character.isUpperCase(str.charAt(0)) || last != '!' && last != '.' && last != '?';
     }
 }

@@ -55,7 +55,7 @@ public class TextFilterManager {
             return FilterType.GOOD;
         }
         for (TextAnalyzer elem : filters) {
-            if (elem.FilterWorked(text)) {
+            if (elem.filterWorked(text)) {
                 return elem.getType();
             }
         }
