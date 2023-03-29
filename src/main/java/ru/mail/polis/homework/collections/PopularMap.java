@@ -31,8 +31,8 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
 
-    private Map<K, Integer> keysPopularity;
-    private Map<V, Integer> valuesPopularity;
+    private final Map<K, Integer> keysPopularity;
+    private final Map<V, Integer> valuesPopularity;
 
     private K mostPopularKey;
     private V mostPopularValue;
@@ -83,17 +83,17 @@ public class PopularMap<K, V> implements Map<K, V> {
     public V put(K key, V value) {
         increaseKeyPopularity(key);
         increaseValuePopularity(value);
-        if (map.containsKey(key)) {
-            increaseValuePopularity(map.get(key));
-        }
-        return map.put(key, value);
+        V currentValue = map.put(key, value);
+        increaseValuePopularity(currentValue);
+        return currentValue;
     }
 
     @Override
     public V remove(Object key) {
         increaseKeyPopularity((K) key);
-        increaseValuePopularity(map.get(key));
-        return map.remove(key);
+        V currentValue = map.remove(key);
+        increaseValuePopularity(currentValue);
+        return currentValue;
     }
 
     @Override
@@ -119,36 +119,6 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public Set<Entry<K, V>> entrySet() {
         return map.entrySet();
-    }
-
-    private void increaseKeyPopularity(K key) {
-        if (!keysPopularity.containsKey(key)) {
-            keysPopularity.put(key, 0);
-        }
-        int popularity = keysPopularity.get(key) + 1;
-        keysPopularity.put(key, popularity);
-        if (mostPopularKey == null) {
-            mostPopularKey = key;
-            return;
-        }
-        if (keysPopularity.get(mostPopularKey) < popularity) {
-            mostPopularKey = key;
-        }
-    }
-
-    private void increaseValuePopularity(V value) {
-        if (!valuesPopularity.containsKey(value)) {
-            valuesPopularity.put(value, 0);
-        }
-        int popularity = valuesPopularity.get(value) + 1;
-        valuesPopularity.put(value, popularity);
-        if (mostPopularValue == null) {
-            mostPopularValue = value;
-            return;
-        }
-        if (valuesPopularity.get(mostPopularValue) < popularity) {
-            mostPopularValue = value;
-        }
     }
 
     /**
@@ -199,5 +169,24 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     private int compare(V v1, V v2) {
         return Integer.compare(getValuePopularity(v1), getValuePopularity(v2));
+    }
+
+    private void increaseKeyPopularity(K key) {
+        int popularity = keysPopularity.getOrDefault(key, 0) + 1;
+        keysPopularity.put(key, popularity);
+        if (mostPopularKey == null || keysPopularity.get(mostPopularKey) < popularity) {
+            mostPopularKey = key;
+        }
+    }
+
+    private void increaseValuePopularity(V value) {
+        if (value == null) {
+            return;
+        }
+        int popularity = valuesPopularity.getOrDefault(value, 0) + 1;
+        valuesPopularity.put(value, popularity);
+        if (mostPopularValue == null || valuesPopularity.get(mostPopularValue) < popularity) {
+            mostPopularValue = value;
+        }
     }
 }
