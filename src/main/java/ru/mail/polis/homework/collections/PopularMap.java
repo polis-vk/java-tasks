@@ -155,7 +155,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         for (Entry<V, Integer> value : popularity) {
             valuesSortedByPopularity.add(value.getKey());
         }
-        return valuesSortedByPopularity.iterator();
+        return valuesSortedByPopularity.listIterator();
     }
 
     private void keysPopularityIncrease(K key) {
