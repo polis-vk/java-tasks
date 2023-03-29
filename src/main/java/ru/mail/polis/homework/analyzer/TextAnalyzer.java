@@ -34,22 +34,8 @@ public interface TextAnalyzer {
         return new NotConciseTextAnalyzer();
     }
 
-    static char getPriority(TextAnalyzer analyzer) {
-        FilterType type = analyzer.getReturnType();
-        switch (type) {
-            case SPAM:
-                return 0;
-            case TOO_LONG:
-                return 1;
-            case NEGATIVE_TEXT:
-                return 2;
-            default:
-                return 3;
-        }
-    }
-
     FilterType filtering(String text);
 
-    FilterType getReturnType();
+    FilterType getFilterType();
 }
 

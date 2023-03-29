@@ -40,12 +40,26 @@ public class TextFilterManager {
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
      * что в них реализован интерфейс TextAnalyzer
      */
+
+    private char assignPriority(TextAnalyzer analyzer) {
+        switch (analyzer.getFilterType()) {
+            case SPAM:
+                return 0;
+            case TOO_LONG:
+                return 1;
+            case NEGATIVE_TEXT:
+                return 2;
+            default:
+                return 3;
+        }
+    }
+
     public TextFilterManager(TextAnalyzer[] filters) {
         analyzers = Arrays.copyOf(filters, filters.length);
         Arrays.sort(analyzers, (TextAnalyzer a, TextAnalyzer b) -> {
-            if (TextAnalyzer.getPriority(a) < TextAnalyzer.getPriority(b)) {
+            if (assignPriority(a) < assignPriority(b)) {
                 return -1;
-            } else if (TextAnalyzer.getPriority(a) == TextAnalyzer.getPriority(b)) {
+            } else if (assignPriority(a) == assignPriority(b)) {
                 return 0;
             }
             return 1;
