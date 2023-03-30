@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.retake.first;
 
 
-import jdk.internal.net.http.common.Pair;
-import ru.mail.polis.homework.objects.RepeatingCharacters;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,7 +42,6 @@ public class PopularMap<K, V> implements Map<K, V> {
     private int mostPopularityAmongKeys = 0;
     private V mostPopularValue;
     private int mostPopularityAmongValues = 0;
-
 
     private void increaseKeyPopularity(K key) {
         int newKeyPopularity = keysPopularity.getOrDefault(key, 0) + 1;
