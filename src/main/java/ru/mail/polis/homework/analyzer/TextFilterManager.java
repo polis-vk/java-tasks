@@ -40,18 +40,20 @@ public class TextFilterManager {
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,
      * что в них реализован интерфейс TextAnalyzer
      */
-    TextAnalyzer[] filters;
+    TextAnalyzer[] filters = null;
     public TextFilterManager(TextAnalyzer[] filters) {
         if (filters != null) {
             this.filters = Arrays.copyOf(filters, filters.length);
         }
-
     }
 
     /**
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
+        if (filters == null || text == null) {
+            return FilterType.GOOD;
+        }
         FilterType result = FilterType.GOOD;
         Arrays.sort(filters, (x, y) -> {
             if (x.getPriority() == y.getPriority()) {
