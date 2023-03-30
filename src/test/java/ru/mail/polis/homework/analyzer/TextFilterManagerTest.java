@@ -2,6 +2,7 @@ package ru.mail.polis.homework.analyzer;
 
 import org.junit.Test;
 
+import javax.swing.plaf.PanelUI;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
@@ -79,12 +80,11 @@ public class TextFilterManagerTest {
     @Test
     public void analyzeOnlyNegativeFilter() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
-                TextAnalyzer.createNegativeTextAnalyzer(),
-                TextAnalyzer.createTooShortWordAnalyzer(3)});
+                TextAnalyzer.createNegativeTextAnalyzer()});
         assertEquals("NEGATIVE_TEXT", manager.analyze("Привет, я Петя :(").toString());
         assertEquals("GOOD", manager.analyze("").toString());
         assertEquals("GOOD", manager.analyze(null).toString());
-        assertEquals("TOO_SHORT_WORD", manager.analyze("Скажите код из смс :-( ").toString());
+        assertEquals("GOOD", manager.analyze("Скажите код из смс :-( ").toString());
         assertEquals("NEGATIVE_TEXT", manager.analyze("Скажите код из смс пожалуйста :|").toString());
         assertEquals("GOOD", manager.analyze("Ооооооочень длиннннннаааааяяяя стрроооооооккккаааааа").toString());
     }
@@ -103,17 +103,25 @@ public class TextFilterManagerTest {
     }
 
     @Test
+    public void analyzeFilterTooShortWord(){
+        TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
+                TextAnalyzer.createTooShortWordAnalyzer(3)});
+        assertEquals("GOOD", manager.analyze("Привет, меня зовут Петя").toString());
+        assertEquals("TOO_SHORT_WORD", manager.analyze("ля ля ля").toString());
+        assertEquals("TOO_SHORT_WORD", manager.analyze("z").toString());
+        assertEquals("GOOD",manager.analyze("").toString());
+    }
+
+    @Test
     public void analyzeAllFiltersOne() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{
                 TextAnalyzer.createNegativeTextAnalyzer(),
                 TextAnalyzer.createSpamAnalyzer(new String[]{"пинкод", "смс", "cvv"}),
-                TextAnalyzer.createTooLongAnalyzer(20),
-                TextAnalyzer.createTooShortWordAnalyzer(3)});
+                TextAnalyzer.createTooLongAnalyzer(20)});
         assertEquals("NEGATIVE_TEXT", manager.analyze("Привет, я Петя :(").toString());
         assertEquals("TOO_LONG", manager.analyze("Скажите Код Nз Смс :-(").toString());
-        assertEquals("SPAM", manager.analyze("смс пожалуйста ;|").toString());
-        assertEquals("TOO_SHORT_WORD", manager.analyze("ля ля ля").toString());
-    }
+        assertEquals("SPAM", manager.analyze("смс пожалуйста ;|").toString());}
+
 
     @Test
     public void analyzeAllFiltersMany() {

@@ -8,7 +8,7 @@ public class TooLongWordAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public boolean isAnalyzeTrue(String text) {
+    public boolean isTextInStr(String text) {
         return text.length() > maxLength;
     }
 

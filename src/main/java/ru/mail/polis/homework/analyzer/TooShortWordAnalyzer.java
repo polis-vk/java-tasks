@@ -8,7 +8,7 @@ public class TooShortWordAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public boolean isAnalyzeTrue(String text) {
+    public boolean isTextInStr(String text) {
         String[] wordsArr = text.split("[ ,.\"/;:)=(|!<>]+");
         for (String word : wordsArr) {
             if (word.length() < minLengthWord && word.length() != 0) {

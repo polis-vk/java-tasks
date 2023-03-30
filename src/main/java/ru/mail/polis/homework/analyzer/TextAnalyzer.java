@@ -35,7 +35,7 @@ public interface TextAnalyzer {
         return new TooShortWordAnalyzer(minLengthWord);
     }
 
-    boolean isAnalyzeTrue(String text);
+    boolean isTextInStr(String text);
 
     FilterType getFilterType();
 }

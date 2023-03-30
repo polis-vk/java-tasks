@@ -5,7 +5,7 @@ public class ForbiddenTextAnalyzer implements TextAnalyzer {
     protected FilterType filterType;
 
     @Override
-    public boolean isAnalyzeTrue(String text) {
+    public boolean isTextInStr(String text) {
         for (String word : forbiddenText) {
             if (text.contains(word)) {
                 return true;
