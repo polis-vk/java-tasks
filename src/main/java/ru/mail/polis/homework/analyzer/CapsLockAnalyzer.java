@@ -17,8 +17,7 @@ public class CapsLockAnalyzer implements TextAnalyzer {
                 includesUpperCase = true;
             }
         }
-        return (!includesUpperCase);
-//        return !Objects.equals(text, text.toUpperCase()) || text.toUpperCase().equals(text.toLowerCase());
+        return !includesUpperCase;
     }
 
     @Override
