@@ -1,7 +1,8 @@
 package ru.mail.polis.homework.analyzer;
 
-import static ru.mail.polis.homework.analyzer.FilterType.GOOD;
-import static ru.mail.polis.homework.analyzer.FilterType.NEGATIVE_TEXT;
+import java.util.Arrays;
+
+import static ru.mail.polis.homework.analyzer.FilterType.*;
 
 public class NegativeTextAnalyzer implements TextAnalyzer {
 
@@ -15,7 +16,7 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
 
     @Override
     public FilterType analyze(String text) {
-        FilterType result = new SpamTextAnalyzer(negativeText).analyze(text);
-        return result == GOOD ? GOOD : NEGATIVE_TEXT;
+        boolean anyMatch = Arrays.stream(negativeText).anyMatch(text::contains);
+        return anyMatch ? NEGATIVE_TEXT : GOOD;
     }
 }
