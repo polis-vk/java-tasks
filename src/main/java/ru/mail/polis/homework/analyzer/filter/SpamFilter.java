@@ -16,11 +16,6 @@ public class SpamFilter extends AbstractFilter {
         if (text.isEmpty()) {
             return false;
         }
-        for (String spamString : spam) {
-            if (text.contains(spamString)) {
-                return true;
-            }
-        }
-        return false;
+        return super.textContains(text, spam);
     }
 }

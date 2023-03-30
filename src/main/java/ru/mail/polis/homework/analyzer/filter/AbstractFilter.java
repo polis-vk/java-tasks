@@ -19,4 +19,13 @@ public abstract class AbstractFilter implements TextAnalyzer {
     public int compareTo(TextAnalyzer o) {
         return this.filterType.getPriority() - o.getFilterType().getPriority();
     }
+
+    protected boolean textContains(String text, String[] charSequences) {
+        for (String charSequence : charSequences) {
+            if (text.contains(charSequence)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

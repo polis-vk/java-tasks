@@ -17,11 +17,6 @@ public class NegativeTextFilter extends AbstractFilter {
         if (text.isEmpty()) {
             return false;
         }
-        for (String negativeString : getNegativeStrings()) {
-            if (text.contains(negativeString)) {
-                return true;
-            }
-        }
-        return false;
+        return super.textContains(text, getNegativeStrings());
     }
 }
