@@ -2,7 +2,7 @@ package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyzer implements TextAnalyzer {
 
-    String[] negativeTexts = {"=(", ":(", ":|"};
+    private final String[] negativeTexts = {"=(", ":(", ":|"};
 
     @Override
     public FilterType getType() {

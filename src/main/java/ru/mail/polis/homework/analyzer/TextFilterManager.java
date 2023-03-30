@@ -37,7 +37,7 @@ import java.util.Comparator;
 public class TextFilterManager {
 
 
-    TextAnalyzer[] filters;
+    private TextAnalyzer[] filters;
 
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
@@ -47,8 +47,8 @@ public class TextFilterManager {
     public TextFilterManager(TextAnalyzer[] filters) {
         if (filters != null && filters.length != 0) {
             this.filters = new TextAnalyzer[filters.length];
-            Arrays.sort(filters, Comparator.comparing(filter -> filter.getType().priority));
             System.arraycopy(filters, 0, this.filters, 0, filters.length);
+            Arrays.sort(this.filters, Comparator.comparing(filter -> filter.getType().priority));
         }
     }
 
