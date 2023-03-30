@@ -41,8 +41,15 @@ public class TextFilterManager {
      * что в них реализован интерфейс TextAnalyzer
      */
     public TextFilterManager(TextAnalyzer[] filters) {
-        this.filters = filters.clone();
-        Arrays.sort(this.filters, Comparator.comparing(TextAnalyzer::getFilterType));
+        this.filters = Arrays.copyOf(filters, filters.length);
+        Arrays.sort(this.filters, (filter1, filter2) -> {
+            if (filter1.getFilterType().getPriority() < filter2.getFilterType().getPriority()) {
+                return -1;
+            } else if (filter1.getFilterType().getPriority() == filter2.getFilterType().getPriority()) {
+                return 0;
+            }
+            return 1;
+        });
     }
 
     /**
