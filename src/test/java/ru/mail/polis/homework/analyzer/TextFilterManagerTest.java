@@ -121,6 +121,7 @@ public class TextFilterManagerTest {
         assertEquals("GOOD", manager.analyze("думаl сделать, не сдеlаtь, сделаtь, не сд3лать, взял сделал короче.").toString());
         assertEquals("CYRILLIC_TEXT", manager.analyze("что за тяги такие, бархатные тяги, ребята, фууф, КЭФТЕМЕ.").toString());
         assertEquals("CYRILLIC_TEXT", manager.analyze("Самолет взлетает против ветра.").toString());
+        assertEquals("GOOD", manager.analyze("May the force be with you.").toString());
     }
 
 
