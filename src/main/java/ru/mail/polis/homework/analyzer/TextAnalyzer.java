@@ -35,7 +35,7 @@ public interface TextAnalyzer {
         return new CapsAnalyzer();
     }
 
-    boolean filterSuccess(String text);
+    boolean analyze(String text);
 
     FilterType filterType();
 }

@@ -43,10 +43,11 @@ public class TextFilterManager {
     private final TextAnalyzer[] filters;
 
     public TextFilterManager(TextAnalyzer[] filters) {
+        prioritySortingFilters(filters);
         this.filters = filters;
     }
 
-    public void prioritySortingFilters() {
+    private void prioritySortingFilters(TextAnalyzer[] filters) {
         Arrays.sort(filters, (filter1, filter2) -> {
             int priority1 = filter1.filterType().getPriority();
             int priority2 = filter2.filterType().getPriority();
@@ -63,12 +64,11 @@ public class TextFilterManager {
      * Если переменная текст никуда не ссылается, то это означает, что не один фильтр не сработал
      */
     public FilterType analyze(String text) {
-        prioritySortingFilters();
         if (text == null) {
             return FilterType.GOOD;
         }
         for (TextAnalyzer currentFilter : filters) {
-            if (currentFilter.filterSuccess(text)) {
+            if (currentFilter.analyze(text)) {
                 return currentFilter.filterType();
             }
         }

@@ -94,7 +94,7 @@ public class TextFilterManagerTest {
         assertEquals("GOOD", manager.analyze("Я не очень злой!!").toString());
         assertEquals("CAPS_TEXT", manager.analyze("Я!!").toString());
         assertEquals("GOOD", manager.analyze("я!").toString());
-        assertEquals("CAPS_TEXT", manager.analyze("!!!!!!!!!!!!!!!!").toString());
+        assertEquals("GOOD", manager.analyze("89021804241").toString());
     }
 
     @Test

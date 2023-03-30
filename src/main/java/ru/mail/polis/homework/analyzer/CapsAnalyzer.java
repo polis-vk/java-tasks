@@ -2,8 +2,11 @@ package ru.mail.polis.homework.analyzer;
 
 public class CapsAnalyzer implements TextAnalyzer {
     @Override
-    public boolean filterSuccess(String text) {
-        return text.equals(text.toUpperCase());
+    public boolean analyze(String text) {
+        if (text.equals(text.toUpperCase())) {
+            return !text.equals(text.toLowerCase());
+        }
+        return false;
     }
 
     @Override

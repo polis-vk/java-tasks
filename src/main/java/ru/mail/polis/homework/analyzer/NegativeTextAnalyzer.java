@@ -1,9 +1,17 @@
 package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyzer implements TextAnalyzer {
+
+    private final String[] negativeEmojis = {":|", ":(", "=("};
+
     @Override
-    public boolean filterSuccess(String text) {
-        return text.contains("=(") || text.contains(":(") || text.contains(":|");
+    public boolean analyze(String text) {
+        for (String emoji : negativeEmojis) {
+            if (text.contains(emoji)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
