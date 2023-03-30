@@ -18,7 +18,7 @@ public class CapsAnalyzer implements TextAnalyzer {
         StringTokenizer st = new StringTokenizer(text, " ");
         while (st.hasMoreTokens()) {
             String current = st.nextToken().replaceAll("[^А-я]", "");
-            if (current.contains(current.toUpperCase()) && current.length() > 1){
+            if (current.contains(current.toUpperCase()) && current.length() > 1) {
                 return true;
             }
         }
