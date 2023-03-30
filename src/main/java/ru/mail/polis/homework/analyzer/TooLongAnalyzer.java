@@ -16,4 +16,8 @@ public class TooLongAnalyzer implements TextAnalyzer {
     public FilterType getFilterType() {
         return FilterType.TOO_LONG;
     }
+
+    public long getMaxLength() {
+        return maxLength;
+    }
 }

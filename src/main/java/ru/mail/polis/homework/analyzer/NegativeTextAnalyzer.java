@@ -1,10 +1,10 @@
 package ru.mail.polis.homework.analyzer;
 
-public class NegativeTextAnalyzer extends SpamAnalyzer implements TextAnalyzer {
-    private static final String[] negativeWords = new String[]{"=(", ":(", ":|"};
+public class NegativeTextAnalyzer extends SpamAnalyzer {
+    private static final String[] NEGATIVE_WORDS = new String[]{"=(", ":(", ":|"};
 
     public NegativeTextAnalyzer() {
-        super(negativeWords);
+        super(NEGATIVE_WORDS);
     }
 
     @Override

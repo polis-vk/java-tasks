@@ -1,10 +1,10 @@
 package ru.mail.polis.homework.analyzer;
 
-public class CatFriendlyTextAnalyzer extends SpamAnalyzer implements TextAnalyzer {
-    private static final String[] catTriggers = new String[]{"валерьянка", "фейерверк", "собака", "ребёнок", "огурец", "пылесос"};
+public class CatFriendlyTextAnalyzer extends SpamAnalyzer {
+    private static final String[] CAT_TRIGGERS = new String[]{"валерьянка", "фейерверк", "собака", "ребёнок", "огурец", "пылесос"};
 
     public CatFriendlyTextAnalyzer() {
-        super(catTriggers);
+        super(CAT_TRIGGERS);
     }
 
     @Override
