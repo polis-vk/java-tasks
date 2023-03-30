@@ -191,10 +191,6 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private void updateMostPopularValue(V value) {
-        if (mostPopularValue == null) {
-            mostPopularValue = value;
-            return;
-        }
         int popularity = getValuePopularity(value);
         if (popularity > getValuePopularity(mostPopularValue)) {
             mostPopularValue = value;
@@ -202,10 +198,6 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private void updateMostPopularKey(K key) {
-        if (mostPopularKey == null) {
-            mostPopularKey = key;
-            return;
-        }
         int popularity = getKeyPopularity(key);
         if (popularity > getKeyPopularity(mostPopularKey)) {
             mostPopularKey = key;
