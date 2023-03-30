@@ -4,8 +4,6 @@ public abstract class Analyzer implements TextAnalyzer {
     protected String[] arrayStrings;
     protected FilterType type;
 
-    protected abstract void setType();
-
     Analyzer(String[] arrayStrings) {
         this.arrayStrings = arrayStrings;
     }
@@ -20,8 +18,5 @@ public abstract class Analyzer implements TextAnalyzer {
         return false;
     }
 
-    @Override
-    public FilterType getType() {
-        return type;
-    }
+    public abstract FilterType getType();
 }

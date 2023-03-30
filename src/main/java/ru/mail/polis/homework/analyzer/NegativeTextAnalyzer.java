@@ -5,8 +5,8 @@ public class NegativeTextAnalyzer extends Analyzer implements TextAnalyzer {
         super(new String[]{"=(", ":(", ":|"});
     }
 
-    public void setType() {
-        this.type = FilterType.NEGATIVE_TEXT;
+    public FilterType getType() {
+        return FilterType.NEGATIVE_TEXT;
     }
 }
 

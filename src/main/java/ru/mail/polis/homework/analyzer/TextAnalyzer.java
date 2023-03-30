@@ -17,21 +17,15 @@ package ru.mail.polis.homework.analyzer;
 public interface TextAnalyzer {
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
-        TooLongAnalyzer tooLongAnalyzer = new TooLongAnalyzer(maxLength);
-        tooLongAnalyzer.setType();
-        return tooLongAnalyzer;
+        return new TooLongAnalyzer(maxLength);
     }
 
     static TextAnalyzer createSpamAnalyzer(String[] spam) {
-        SpamAnalyzer spamAnalyzer = new SpamAnalyzer(spam);
-        spamAnalyzer.setType();
-        return spamAnalyzer;
+        return new SpamAnalyzer(spam);
     }
 
     static TextAnalyzer createNegativeTextAnalyzer() {
-        NegativeTextAnalyzer negativeTextAnalyzer = new NegativeTextAnalyzer();
-        negativeTextAnalyzer.setType();
-        return negativeTextAnalyzer;
+        return new NegativeTextAnalyzer();
     }
 
     /**
@@ -39,9 +33,7 @@ public interface TextAnalyzer {
      */
     // фильтр отслеживает правильность предложений: они начинаются с большой буквы и заканчиваются "!", "?" или "."
     static TextAnalyzer createGrammarAnalyzer() {
-        GrammarAnalyzer grammarAnalyzer = new GrammarAnalyzer();
-        grammarAnalyzer.setType();
-        return grammarAnalyzer;
+        return new GrammarAnalyzer();
     }
 
     boolean filterWorked(String str);

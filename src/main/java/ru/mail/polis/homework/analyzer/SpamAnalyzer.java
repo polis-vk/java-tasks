@@ -6,8 +6,8 @@ public class SpamAnalyzer extends Analyzer implements TextAnalyzer {
         super(spamStrings);
     }
 
-    public void setType() {
-        this.type = FilterType.SPAM;
+    public FilterType getType() {
+        return FilterType.SPAM;
     }
 }
 
