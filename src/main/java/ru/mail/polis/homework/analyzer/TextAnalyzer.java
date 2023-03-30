@@ -35,7 +35,7 @@ public interface TextAnalyzer {
         return new TooShortTextAnalyzer(minLength);
     }
 
-    boolean analyzeFilterStatus(String text);
+    boolean isFilterWorked(String text);
 
     FilterType getFilterType();
 }

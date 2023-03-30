@@ -152,7 +152,27 @@ public class TextFilterManagerTest {
         assertEquals("CUSTOM", manager.analyze("Петя").toString());
         assertEquals("GOOD", manager.analyze("Петров").toString());
         assertEquals("GOOD", manager.analyze("Иииииииииииггггггрррррраааааа :(").toString());
-        assertEquals("GOOD", manager.analyze("///////// Petyaa Петров").toString());
+
+        manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createCustomAnalyzer(0)});
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("GOOD", manager.analyze("Привет, я Петя :(").toString());
+        assertEquals("GOOD", manager.analyze("/.'; Petya Петров").toString());
+        assertEquals("GOOD", manager.analyze("Петя").toString());
+        assertEquals("GOOD", manager.analyze("Петров").toString());
+        assertEquals("GOOD", manager.analyze("Иииииииииииггггггрррррраааааа :(").toString());
+
+        manager = new TextFilterManager(new TextAnalyzer[]{
+                TextAnalyzer.createCustomAnalyzer(8),
+                TextAnalyzer.createCustomAnalyzer(3)});
+        assertEquals("GOOD", manager.analyze("").toString());
+        assertEquals("GOOD", manager.analyze(null).toString());
+        assertEquals("CUSTOM", manager.analyze("Привет, я Петя :(").toString());
+        assertEquals("CUSTOM", manager.analyze("/.'; Petya Петров").toString());
+        assertEquals("CUSTOM", manager.analyze("Петя").toString());
+        assertEquals("CUSTOM", manager.analyze("Петров").toString());
+        assertEquals("GOOD", manager.analyze("Иииииииииииггггггрррррраааааа :(").toString());
+        assertEquals("GOOD", manager.analyze("12345678").toString());
 
     }
 }

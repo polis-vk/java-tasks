@@ -4,7 +4,7 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
     private final String[] negative = {"=(", ":(", ":|"};
 
     @Override
-    public boolean analyzeFilterStatus(String text) {
+    public boolean isFilterWorked(String text) {
         for (String negatives : negative) {
             int indexSpam = text.indexOf(negatives);
             if (indexSpam != -1) {

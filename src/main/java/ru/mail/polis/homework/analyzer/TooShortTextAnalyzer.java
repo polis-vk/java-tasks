@@ -8,7 +8,7 @@ public class TooShortTextAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public boolean analyzeFilterStatus(String text) {
+    public boolean isFilterWorked(String text) {
         String[] word = text.split("[ ,.\"/;:)=(|!<>]+");
         for (String words : word) {
             if (words.length() < minLength) {

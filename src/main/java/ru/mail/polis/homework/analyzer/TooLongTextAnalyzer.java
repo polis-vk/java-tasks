@@ -8,7 +8,7 @@ public class TooLongTextAnalyzer implements TextAnalyzer {
     }
 
     @Override
-    public boolean analyzeFilterStatus(String text) {
+    public boolean isFilterWorked(String text) {
         return maxLength < text.length();
     }
 
