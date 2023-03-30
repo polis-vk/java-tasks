@@ -14,10 +14,9 @@ public class NegativeTextFilter extends AbstractFilter {
 
     @Override
     public boolean applies(String text) {
-        if (text == null || text.isEmpty()) {
+        if (text.isEmpty()) {
             return false;
         }
-
         for (String negativeString : getNegativeStrings()) {
             if (text.contains(negativeString)) {
                 return true;
