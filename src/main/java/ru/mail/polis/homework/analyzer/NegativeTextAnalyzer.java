@@ -5,17 +5,12 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
 
     @Override
     public FilterType analyzeText(String text) {
-        FilterType resultType = FilterType.GOOD;
-        if (text == null) {
-            return resultType;
-        }
-        for (String badSmile :
-                badSmiles) {
+        for (String badSmile : badSmiles) {
             if (text.contains(badSmile)) {
                 return FilterType.NEGATIVE_TEXT;
             }
         }
-        return resultType;
+        return FilterType.GOOD;
     }
 
     @Override

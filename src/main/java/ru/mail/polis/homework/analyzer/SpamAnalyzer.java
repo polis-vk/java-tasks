@@ -9,17 +9,12 @@ public class SpamAnalyzer implements TextAnalyzer {
 
     @Override
     public FilterType analyzeText(String text) {
-        FilterType resultType = FilterType.GOOD;
-        if (text == null) {
-            return resultType;
-        }
-        for (String badWord :
-                badWords) {
+        for (String badWord : badWords) {
             if (text.contains(badWord)) {
                 return FilterType.SPAM;
             }
         }
-        return resultType;
+        return FilterType.GOOD;
     }
 
     @Override
