@@ -13,3 +13,5 @@ out/
 build/
 target/
 gradle
+
+*.DS_Store
