@@ -163,8 +163,8 @@ public class TextFilterManagerTest {
         assertEquals("GOOD", manager.analyze("Иииииииииииггггггрррррраааааа :(").toString());
 
         manager = new TextFilterManager(new TextAnalyzer[]{
-                TextAnalyzer.createCustomAnalyzer(8),
-                TextAnalyzer.createCustomAnalyzer(3)});
+                TextAnalyzer.createCustomAnalyzer(3),
+                TextAnalyzer.createCustomAnalyzer(8)});
         assertEquals("GOOD", manager.analyze("").toString());
         assertEquals("GOOD", manager.analyze(null).toString());
         assertEquals("CUSTOM", manager.analyze("Привет, я Петя :(").toString());
