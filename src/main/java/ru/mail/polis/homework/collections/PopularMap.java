@@ -31,9 +31,32 @@ import java.util.Set;
  * @param <K> - тип ключа
  * @param <V> - тип значения
  */
-public class PopularMap<K, V> implements Map<K, V> {
 
+public class PopularMap<K, V> implements Map<K, V> {
+    public static void main(String[] args) {
+        PopularMap<String, String> popularMap1 = new PopularMap<>();
+        String key = "key";
+        String value = "value";
+        popularMap1.get(key);
+        popularMap1.remove(key);
+        popularMap1.put(key, value);
+        popularMap1.put(key, value);
+        popularMap1.get(key);
+        popularMap1.remove(key);
+        popularMap1.remove(key);
+        popularMap1.put(key, value);
+        popularMap1.remove(key);
+    }
     private final Map<K, V> map;
+    private final Map<K, Integer> popularKeys = new HashMap<>();
+    private final Map<V, Integer> popularValues = new HashMap<>();
+    private <T> void addPopularMap(Map<T, Integer> popularMap, Object key){
+        if(popularMap.containsKey(key)){
+            popularMap.put((T) key, popularMap.get(key) + 1);
+        } else {
+            popularMap.put((T) key, 1);
+        }
+    }
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -45,37 +68,43 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public int size() {
-        return 0;
+        return this.map.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return this.map.isEmpty();
     }
 
     @Override
     public boolean containsKey(Object key) {
-        return false;
+        addPopularMap(popularKeys, key);
+        return this.map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        return false;
+        addPopularMap(popularValues, value);
+        return this.map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        return null;
+        addPopularMap(popularKeys, key);
+        return this.map.get(key);
     }
 
     @Override
     public V put(K key, V value) {
-        return null;
+        addPopularMap(popularKeys, key);
+        addPopularMap(popularValues, value);
+        return this.map.put(key, value);
     }
 
     @Override
     public V remove(Object key) {
-        return null;
+        addPopularMap(popularKeys, key);
+        return this.map.remove(key);
     }
 
     @Override
@@ -85,29 +114,37 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public void clear() {
-
+        this.map.clear();
     }
 
     @Override
     public Set<K> keySet() {
-        return null;
+        return this.map.keySet();
     }
 
     @Override
     public Collection<V> values() {
-        return null;
+        return this.map.values();
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return null;
+        return this.map.entrySet();
     }
 
     /**
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return null;
+        K popularKey = null;
+        int maxAppearances = 0;
+        for(K key : popularKeys.keySet()){
+            if(popularKeys.get(key) > maxAppearances){
+                maxAppearances = popularKeys.get(key);
+                popularKey = key;
+            }
+        }
+        return popularKey;
     }
 
 
@@ -115,7 +152,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        return 0;
+        return popularKeys.get(key);
     }
 
     /**
@@ -130,7 +167,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        return 0;
+        return popularValues.get(value);
     }
 
     /**
