@@ -43,23 +43,6 @@ public class PopularMap<K, V> implements Map<K, V> {
     private V mostPopularValue;
     private int mostPopularityAmongValues = 0;
 
-    private void increaseKeyPopularity(K key) {
-        int newKeyPopularity = keysPopularity.getOrDefault(key, 0) + 1;
-        keysPopularity.put(key, newKeyPopularity);
-        if (newKeyPopularity > mostPopularityAmongKeys) {
-            mostPopularityAmongKeys = newKeyPopularity;
-            mostPopularKey = key;
-        }
-    }
-
-    private void increaseValuePopularity(V value) {
-        int newValuePopularity = valuesPopularity.getOrDefault(value, 0) + 1;
-        valuesPopularity.put(value, newValuePopularity);
-        if (newValuePopularity > mostPopularityAmongValues) {
-            mostPopularityAmongValues = newValuePopularity;
-            mostPopularValue = value;
-        }
-    }
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -184,7 +167,25 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        Set <V> valuesSet = valuesPopularity.keySet();
+        Set<V> valuesSet = valuesPopularity.keySet();
         return valuesSet.iterator();
+    }
+
+    private void increaseKeyPopularity(K key) {
+        int newKeyPopularity = keysPopularity.getOrDefault(key, 0) + 1;
+        keysPopularity.put(key, newKeyPopularity);
+        if (newKeyPopularity > mostPopularityAmongKeys) {
+            mostPopularityAmongKeys = newKeyPopularity;
+            mostPopularKey = key;
+        }
+    }
+
+    private void increaseValuePopularity(V value) {
+        int newValuePopularity = valuesPopularity.getOrDefault(value, 0) + 1;
+        valuesPopularity.put(value, newValuePopularity);
+        if (newValuePopularity > mostPopularityAmongValues) {
+            mostPopularityAmongValues = newValuePopularity;
+            mostPopularValue = value;
+        }
     }
 }
