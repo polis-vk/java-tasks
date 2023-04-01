@@ -6,8 +6,8 @@ public class NegativeTextAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean analyze(String text) {
-        for (String emotion: NEGATIVE_EMOTIONS){
-            if (text.contains(emotion)){
+        for (String emotion : NEGATIVE_EMOTIONS) {
+            if (text.contains(emotion)) {
                 return true;
             }
         }

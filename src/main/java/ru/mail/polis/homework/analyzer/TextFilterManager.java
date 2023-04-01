@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.analyzer;
 
 import java.util.Arrays;
+
 /**
  * Задание написать систему фильтрации комментариев.
  * Надо реализовать три типа обязательных фильтров
@@ -34,6 +35,7 @@ import java.util.Arrays;
 public class TextFilterManager {
 
     private final TextAnalyzer[] analyzers;
+
     /**
      * Для работы с каждым элементом массива, нужно использовать цикл for-each
      * Хочется заметить, что тут мы ничего не знаем, какие конкретно нам объекты переданы, знаем только то,

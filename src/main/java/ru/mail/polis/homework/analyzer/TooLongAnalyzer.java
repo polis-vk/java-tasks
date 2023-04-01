@@ -10,7 +10,7 @@ public class TooLongAnalyzer implements TextAnalyzer {
 
     @Override
     public boolean analyze(String text) {
-        if (text.isEmpty()){
+        if (text.isEmpty()) {
             return false;
         }
         return text.length() > maxLength;
