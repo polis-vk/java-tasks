@@ -82,7 +82,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     public V get(Object key) {
         V result = map.get(key);
         if (result != null) {
-            increaseValuePopularity((V) result);
+            increaseValuePopularity(result);
         }
         increaseKeyPopularity((K) key);
         return result;
@@ -92,7 +92,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     public V put(K key, V value) {
         V result = map.put(key, value);
         if (result != null) {
-            increaseValuePopularity((V) result);
+            increaseValuePopularity(result);
         }
         increaseKeyPopularity(key);
         increaseValuePopularity(value);
@@ -103,7 +103,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     public V remove(Object key) {
         V result = map.remove(key);
         if (result != null) {
-            increaseValuePopularity((V) result);
+            increaseValuePopularity(result);
         }
         increaseKeyPopularity((K) key);
         return result;
