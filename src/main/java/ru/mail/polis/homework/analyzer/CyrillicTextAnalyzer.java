@@ -8,8 +8,8 @@ public class CyrillicTextAnalyzer implements TextAnalyzer {
             return false;
         }
 
-        for (char c : text.toCharArray()) {
-            if (!isValidSymbol(c)) {
+        for (int i = 0; i != text.length(); ++i) {
+            if (!isValidSymbol(text.charAt(i))) {
                 return false;
             }
         }
