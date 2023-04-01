@@ -2,13 +2,13 @@ package ru.mail.polis.homework.analyzer;
 
 public class NegativeTextAnalyzer implements TextAnalyzer {
 
-    private final String[] SMILE = {"=(", ":(", ":|"};
+    private final String[] SMILES = {"=(", ":(", ":|"};
 
     public boolean analyzer(String text) {
         if (text == null || text.isEmpty()) {
             return false;
         }
-        return checkWord(text, SMILE);
+        return checkWord(text, SMILES);
     }
 
     public FilterType getType() {
