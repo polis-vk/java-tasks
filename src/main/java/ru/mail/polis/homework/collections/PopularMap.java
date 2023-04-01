@@ -38,6 +38,8 @@ public class PopularMap<K, V> implements Map<K, V> {
     private int maxPopularityForKey;
     private V mostPopularValue;
     private int maxPopularityForValue;
+    private final List<V> valuesArray = new ArrayList<>();
+    private boolean valuesArrayIsSorted = false;
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -79,6 +81,9 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
+        if (!valuesArray.contains(value)) {
+            valuesArray.add(value);
+        }
         V prevValue = map.put(key, value);
         incrementKeyPopularity(key);
         incrementValuePopularity(value);
@@ -148,6 +153,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         if (value == null) {
             return;
         }
+        valuesArrayIsSorted = false;
         int valuePopularity = this.valuePopularity.merge(value, 1, Integer::sum);
         if (valuePopularity > maxPopularityForValue) {
             maxPopularityForValue = valuePopularity;
@@ -175,8 +181,10 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        List<V> valuesArray = new ArrayList<>(valuePopularity.keySet());
-        valuesArray.sort((v1, v2) -> Integer.compare(getValuePopularity(v1), getValuePopularity(v2)));
+        if (!valuesArrayIsSorted) {
+            valuesArray.sort((v1, v2) -> Integer.compare(getValuePopularity(v1), getValuePopularity(v2)));
+            valuesArrayIsSorted = true;
+        }
         return valuesArray.iterator();
     }
 }
