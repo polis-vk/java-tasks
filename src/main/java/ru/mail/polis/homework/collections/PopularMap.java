@@ -31,29 +31,32 @@ import java.util.*;
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
-    private Map<K, Integer> keys; //мапа с ключами и их популярностью
-    private Map<K, Integer> keysSorted; //мапа с ключами, отсортированная по их популярности
-    private Map<V, Integer> values; //мапа со значениями и их популярностью
-    private Map<V, Integer> valuesSorted; //мапа со значениями, отсортированная по их популярности
+    private Map<K, Integer> keysPopularity;
+    private Map<K, Integer> keysSorted;
+    private Map<V, Integer> valuesPopularity;
+    private Map<V, Integer> valuesSorted;
 
 
     public PopularMap() {
         this.map = new HashMap<>();
-        keys = new HashMap<>();
-        values = new HashMap<>();
+        keysPopularity = new HashMap<>();
+        valuesPopularity = new HashMap<>();
 
         sortedMapsInit();
     }
+
     private void sortedMapsInit() { //инициализация компараторов и мап для отсортированных ключей/значений по популярности
-        ValueComparator keysComparator = new ValueComparator((Map<Object, Integer>) keys);
+        ValueComparator keysComparator = new ValueComparator((Map<Object, Integer>) keysPopularity);
         keysSorted = new TreeMap<>(keysComparator);
 
-        ValueComparator valuesComparator = new ValueComparator((Map<Object, Integer>) values);
+        ValueComparator valuesComparator = new ValueComparator((Map<Object, Integer>) valuesPopularity);
         valuesSorted = new TreeMap<>(valuesComparator);
     }
 
     public PopularMap(Map<K, V> map) {
         this.map = map;
+        keysPopularity = new HashMap<>();
+        valuesPopularity = new HashMap<>();
 
         sortedMapsInit();
     }
@@ -70,38 +73,38 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        increaseKeyPopularity(key);
+        keyIncrement(key);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        increaseValuePopularity((V) value);
+        valueIncrement((V) value);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
         V value = map.get(key);
-        increaseKeyPopularity(key);
-        increaseValuePopularity(value);
+        keyIncrement(key);
+        valueIncrement(value);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
-        increaseKeyPopularity(key);
-        if(map.containsKey(key) ){                  //популярность значения, которе лежало в мапе на момент вызова метода увеличивается
-            increaseValuePopularity(map.get(key));
+        keyIncrement(key);
+        if (map.containsKey(key)) {                  //популярность значения, которе лежало в мапе на момент вызова метода увеличивается
+            valueIncrement(map.get(key));
         }
-        increaseValuePopularity(value);
+        valueIncrement(value);
         return map.put(key, value);
     }
 
     @Override
     public V remove(Object key) {
-        increaseKeyPopularity(key);
-        increaseValuePopularity(map.get(key));
+        keyIncrement(key);
+        valueIncrement(map.get(key));
 
         return map.remove(key);
     }
@@ -135,24 +138,24 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        return getSortedKeys().keySet().iterator().next(); //возвращается первый ключ из отсортированного (по убыванию популярности) списка ключей
+        return getSortedKeys().lastKey();
     }
 
     /**
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        if(keys.isEmpty() || !keys.containsKey(key)) {
+        if (keysPopularity.isEmpty() || !keysPopularity.containsKey(key)) {
             return 0;
         }
-        return keys.get(key);
+        return keysPopularity.get(key);
     }
 
     /**
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-            return getSortedValues().keySet().iterator().next();
+        return getSortedValues().lastKey();
     }
 
     /**
@@ -160,10 +163,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        if(keys.isEmpty() || !values.containsKey(value)) {
-            return 0;
-        }
-        return values.get(value);
+        return valuesPopularity.get(value);
     }
 
     /**
@@ -171,42 +171,30 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        return values.keySet().iterator();
+
+        return getSortedValues().keySet().iterator();
     }
 
-    private void increaseKeyPopularity(Object key) {
-        if(keys != null) {
-            if (keys.containsKey(key)) {
-                keys.put((K) key, keys.get(key) + 1);
-            } else {
-                keys.put((K) key, 1);
-            }
-        }
+    private void keyIncrement(Object key) {
+        keysPopularity.merge((K) key, 1, Integer::sum);
     }
 
-    private void increaseValuePopularity(V value) {
-        if(values != null) {
-            if (values.containsKey(value)) {
-                values.put(value, values.get(value) + 1);
-            } else if(value != null) {
-                values.put(value, 1);
-            }
-        }
+    private void valueIncrement(V value) {
+        valuesPopularity.merge((V) value, 1, Integer::sum);
     }
 
-    private Map<K, Integer> getSortedKeys() {
-        if(keys.isEmpty()) {
-            return null;
+    private TreeMap<K, Integer> getSortedKeys() {
+        if (keysSorted.isEmpty()) {
+            keysSorted.putAll(keysPopularity);
         }
-        keysSorted.putAll(keys);
-        return keysSorted;
+        return (TreeMap<K, Integer>) keysSorted;
     }
 
-    private Map<V, Integer> getSortedValues() {
-        if(values.isEmpty()) {
-            return null;
+
+    private TreeMap<V, Integer> getSortedValues() {
+        if (valuesSorted.isEmpty()) {
+            valuesSorted.putAll(valuesPopularity);
         }
-        valuesSorted.putAll(values);
-        return valuesSorted;
+        return (TreeMap<V, Integer>) valuesSorted;
     }
 }
