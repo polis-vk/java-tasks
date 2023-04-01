@@ -26,7 +26,7 @@ public class CyrillicTextAnalyzer implements TextAnalyzer {
     }
 
     private boolean isPunctuationMark(char c) {
-        return c == '.' || c == ',' || c == ' ';
+        return Character.UnicodeBlock.of(c).equals(Character.UnicodeBlock.GENERAL_PUNCTUATION);
     }
 
     private boolean isCyrillicLetter(char c) {
