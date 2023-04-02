@@ -167,8 +167,8 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        Set<V> valuesSet = valuesPopularity.keySet();
-        return valuesSet.iterator();
+        return valuesPopularity.entrySet().stream().sorted(Map.Entry.<V, Integer>comparingByValue()).map(Map.Entry::getKey).iterator();
+
     }
 
     private void increaseKeyPopularity(K key) {
