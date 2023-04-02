@@ -32,7 +32,11 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
     private final Map<K, Integer> keyPopularityMap = new HashMap<>();
-    private final Map<V, Integer> valuePopularityMap = new HashMap<>();
+    private Pair<K, Integer> mostPopularKey;
+    public final Map<V, Integer> valuePopularityMap = new HashMap<>();
+    private Pair<V, Integer> mostPopularValue;
+    private final MapValueIncreaser<K> keyIncreaser = new MapValueIncreaser<>();
+    private final MapValueIncreaser<V> valueIncreaser = new MapValueIncreaser<>();
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -54,36 +58,41 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        keyMapIncrease((K) key);
+        mostPopularKey = increaseKeyPopularity(key);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        valueMapIncrease((V) value);
+        mostPopularValue = increaseValuePopularity(value);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
         V result = map.get(key);
-        keyMapIncrease((K) key);
-        valueMapIncrease(result);
+        mostPopularKey = increaseKeyPopularity(key);
+        mostPopularValue = increaseValuePopularity(result);
         return result;
     }
 
     @Override
     public V put(K key, V value) {
-        keyMapIncrease(key);
-        valueMapIncrease(value);
+        mostPopularKey = increaseKeyPopularity(key);
+        if (map.get(key) != null) {
+            mostPopularValue = increaseValuePopularity(map.get(key));
+        }
+        mostPopularValue = increaseValuePopularity(value);
         return map.put(key, value);
     }
 
     @Override
     public V remove(Object key) {
         V result = map.remove(key);
-        keyMapIncrease((K) key);
-        valueMapIncrease(result);
+        mostPopularKey = increaseKeyPopularity(key);
+        if (result != null) {
+            mostPopularValue = increaseValuePopularity(result);
+        }
         return result;
     }
 
@@ -116,17 +125,8 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        int maxPopularityValue = 0;
-        K popularKey = null;
-        for (Entry<K, Integer> e : keyPopularityMap.entrySet()) {
-            if (maxPopularityValue < e.getValue()) {
-                maxPopularityValue = e.getValue();
-                popularKey = e.getKey();
-            }
-        }
-        return (K) popularKey;
+        return mostPopularKey.getFirst().orElse(null);
     }
-
 
     /**
      * Возвращает количество использование ключа
@@ -139,46 +139,30 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значений может быть более одного
      */
     public V getPopularValue() {
-        int maxPopularityValue = 0;
-        V popularKeyVal = null;
-        for (Entry<V, Integer> e : valuePopularityMap.entrySet()) {
-            if (maxPopularityValue <= e.getValue()) {
-                maxPopularityValue = e.getValue();
-                popularKeyVal = e.getKey();
-            }
-        }
-        return popularKeyVal;
+        return mostPopularValue.getFirst().orElse(null);
     }
 
     /**
-     * Возвращает количество использований значений в методах: containsValue, get, put (учитывается 2 раза, если
-     * старое значение и новое - одно и тоже), remove (считаем по старому значению).
+     * Возвращает количество использований значений в методах: containsValue, get, put (учитывается 2 раза, если старое
+     * значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        return 0;
+        return valuePopularityMap.getOrDefault(value, 0);
     }
 
     /**
-     * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
-     * 2 тугрика
+     * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным) 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        return null;
+        return valuePopularityMap.entrySet().stream().sorted(Entry.comparingByValue()).map(Entry::getKey)
+                .iterator();
     }
 
-    private void keyMapIncrease(K key) {
-        if (keyPopularityMap.containsKey(key)) {
-            keyPopularityMap.replace(key, keyPopularityMap.get(key) + 1);
-        } else {
-            keyPopularityMap.put(key, 1);
-        }
+    private Pair<K, Integer> increaseKeyPopularity(Object key) {
+        return keyIncreaser.mapIncrease((K) key, keyPopularityMap, mostPopularKey);
     }
 
-    private void valueMapIncrease(V keyVal) {
-        if (valuePopularityMap.containsKey(keyVal)) {
-            valuePopularityMap.replace(keyVal, valuePopularityMap.get(keyVal) + 1);
-        } else {
-            valuePopularityMap.put(keyVal, 1);
-        }
+    private Pair<V, Integer> increaseValuePopularity(Object value) {
+        return valueIncreaser.mapIncrease((V) value, valuePopularityMap, mostPopularValue);
     }
 }
