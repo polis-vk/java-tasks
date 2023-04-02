@@ -36,20 +36,6 @@ public class PopularMap<K, V> implements Map<K, V> {
     private K mostPopularKey;
     private V mostPopularValue;
 
-    private void addPopularityForKey(K key) {
-        int popularity = keyPopularity.merge(key, 1, Integer::sum);
-        if (popularity > keyPopularity.getOrDefault(mostPopularKey, 0)) {
-            mostPopularKey = key;
-        }
-    }
-
-    private void addPopularityForValue(V value) {
-        int popularity = valuePopularity.merge(value, 1, Integer::sum);
-        if (popularity > valuePopularity.getOrDefault(mostPopularValue, 0)) {
-            mostPopularValue = value;
-        }
-    }
-
     public PopularMap() {
         this.map = new HashMap<>();
     }
@@ -169,12 +155,19 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        List<Entry<V, Integer>> valuesList = new ArrayList<>(valuePopularity.entrySet());
-        valuesList.sort(Entry.comparingByValue());
-        List<V> result = new ArrayList<>();
-        for (Entry<V, Integer> entry : valuePopularity.entrySet()) {
-            result.add(entry.getKey());
-        }
-        return result.iterator();
+        return valuePopularity.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(Entry::getKey).iterator();
+    }
+
+    private void addPopularityForValue(V value) {
+        mostPopularValue = addPopularity(valuePopularity, value, mostPopularValue);
+    }
+
+    private void addPopularityForKey(K key) {
+        mostPopularKey = addPopularity(keyPopularity, key, mostPopularKey);
+    }
+
+    private <T> T addPopularity(Map<T, Integer> map, T element, T popular) {
+        int popularity = map.merge(element, 1, Integer::sum);
+        return popularity > map.getOrDefault(popular, 0) ? element : popular;
     }
 }
