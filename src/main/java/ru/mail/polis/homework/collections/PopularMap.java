@@ -31,8 +31,8 @@ import java.util.*;
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
-    private Map<K, Integer> numbersOfUsesKeys;
-    private Map<V, Integer> numbersOfUsesValues;
+    private final Map<K, Integer> numbersOfUsesKeys;
+    private final Map<V, Integer> numbersOfUsesValues;
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -44,50 +44,6 @@ public class PopularMap<K, V> implements Map<K, V> {
         this.map = map;
         numbersOfUsesKeys = new HashMap<>();
         numbersOfUsesValues = new HashMap<>();
-    }
-
-    private void setNumberOfUsesKeys(K key) {
-        if (checkingElForAbsenceWithKey(key)) {
-            for (Map.Entry<K, Integer> entry : numbersOfUsesKeys.entrySet()) {
-                if (key.equals(entry.getKey())) {
-                    numbersOfUsesKeys.put(key, entry.getValue() + 1);
-                }
-            }
-            return;
-        }
-        numbersOfUsesKeys.put(key, 1);
-    }
-
-    private void setNumbersOfUsesValues(V key) {
-        if (key != null) {
-            if (checkingElForAbsenceWithValue(key)) {
-                for (Map.Entry<V, Integer> entry : numbersOfUsesValues.entrySet()) {
-                    if (key.equals(entry.getKey())) {
-                        numbersOfUsesValues.put(key, entry.getValue() + 1);
-                    }
-                }
-                return;
-            }
-            numbersOfUsesValues.put(key, 1);
-        }
-    }
-
-    private boolean checkingElForAbsenceWithKey(K key) {
-        for (Map.Entry<K, Integer> entry : numbersOfUsesKeys.entrySet()) {
-            if (key.equals(entry.getKey())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean checkingElForAbsenceWithValue(V key) {
-        for (Map.Entry<V, Integer> entry : numbersOfUsesValues.entrySet()) {
-            if (key.equals(entry.getKey())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -124,8 +80,9 @@ public class PopularMap<K, V> implements Map<K, V> {
     public V put(K key, V value) {
         setNumberOfUsesKeys(key);
         setNumbersOfUsesValues(value);
-        setNumbersOfUsesValues(map.get(key));
-        return map.put(key, value);
+        V oldValue = map.put(key, value);
+        setNumbersOfUsesValues(oldValue);
+        return oldValue;
     }
 
     @Override
@@ -165,15 +122,14 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        int maxNumberOfUses = 0;
-        K mostPopKey = null;
+        List<Integer> valuesOfPopularity = new ArrayList<Integer>(numbersOfUsesKeys.values());
+        Collections.sort(valuesOfPopularity, Collections.reverseOrder());
         for (Map.Entry<K, Integer> entry : numbersOfUsesKeys.entrySet()) {
-            if (maxNumberOfUses < entry.getValue()) {
-                maxNumberOfUses = entry.getValue();
-                mostPopKey = entry.getKey();
+            if (entry.getValue().equals(valuesOfPopularity.get(0))) {
+                return entry.getKey();
             }
         }
-        return mostPopKey;
+        return null;
     }
 
 
@@ -181,10 +137,8 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        for (Map.Entry<K, Integer> entry : numbersOfUsesKeys.entrySet()) {
-            if (key.equals(entry.getKey())) {
-                return entry.getValue();
-            }
+        if (numbersOfUsesKeys.get(key) != null) {
+            return numbersOfUsesKeys.get(key);
         }
         return 0;
     }
@@ -193,15 +147,14 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        int maxNumberOfUses = 0;
-        V mostPopValue = null;
+        List<Integer> valuesOfPopularity = new ArrayList<Integer>(numbersOfUsesValues.values());
+        Collections.sort(valuesOfPopularity, Collections.reverseOrder());
         for (Map.Entry<V, Integer> entry : numbersOfUsesValues.entrySet()) {
-            if (maxNumberOfUses < entry.getValue()) {
-                maxNumberOfUses = entry.getValue();
-                mostPopValue = entry.getKey();
+            if (entry.getValue().equals(valuesOfPopularity.get(0))) {
+                return entry.getKey();
             }
         }
-        return mostPopValue;
+        return null;
     }
 
     /**
@@ -209,10 +162,8 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        for (Map.Entry<V, Integer> entry : numbersOfUsesValues.entrySet()) {
-            if (value.equals(entry.getKey())) {
-                return entry.getValue();
-            }
+        if (numbersOfUsesValues.get(value) != null) {
+            return numbersOfUsesValues.get(value);
         }
         return 0;
     }
@@ -222,6 +173,34 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        return null;
+        List<Integer> valuesOfPopularity = new ArrayList<Integer>(numbersOfUsesValues.values());
+        Collections.sort(valuesOfPopularity);
+        List<V> sortedValuesOfMap = new ArrayList<V>();
+        for (Integer element : valuesOfPopularity) {
+            for (Entry<V, Integer> entry : numbersOfUsesValues.entrySet()) {
+                if (entry.getValue().equals(element)) {
+                    sortedValuesOfMap.add(entry.getKey());
+                }
+            }
+        }
+        return sortedValuesOfMap.iterator();
+    }
+
+    private void setNumberOfUsesKeys(K key) {
+        if (numbersOfUsesKeys.get(key) != null) {
+            numbersOfUsesKeys.put(key, numbersOfUsesKeys.get(key) + 1);
+            return;
+        }
+        numbersOfUsesKeys.put(key, 1);
+    }
+
+    private void setNumbersOfUsesValues(V key) {
+        if (key != null) {
+            if (numbersOfUsesValues.get(key) != null) {
+                numbersOfUsesValues.put(key, numbersOfUsesValues.get(key) + 1);
+                return;
+            }
+            numbersOfUsesValues.put(key, 1);
+        }
     }
 }
