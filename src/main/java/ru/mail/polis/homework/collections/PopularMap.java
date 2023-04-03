@@ -74,7 +74,6 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public V get(Object key) {
         increaseKeyPopularity((K) key);
-        //increasePopularity(key, keysPopularity, mostPopularKey);
         V value = map.get(key);
         increaseValuePopularity(value);
         return value;
@@ -181,14 +180,4 @@ public class PopularMap<K, V> implements Map<K, V> {
             mostPopularValue = value;
         }
     }
-
-//    private void increasePopularity(Object value, Map<?, Integer> popularityMap, Object mostPopular) {
-//        if (value == null) {
-//            return;
-//        }
-//        int popularity = popularityMap.merge(value, 1, Integer::sum);
-//        if (mostPopular == null || popularityMap.get(mostPopular) < popularity) {
-//            mostPopular = value;
-//        }
-//    }
 }
