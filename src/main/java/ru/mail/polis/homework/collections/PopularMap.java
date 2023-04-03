@@ -56,38 +56,38 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        keysPopularityIncrease((K) key);
+        mostPopularKey = objectPopularityIncrease(popularKeys, (K) key, mostPopularKey);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        valuesPopularityIncrease((V) value);
+        mostPopularValue = objectPopularityIncrease(popularValues, (V) value, mostPopularValue);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
         V value = map.get(key);
-        keysPopularityIncrease((K) key);
-        valuesPopularityIncrease(value);
+        mostPopularKey = objectPopularityIncrease(popularKeys, (K) key, mostPopularKey);
+        mostPopularValue = objectPopularityIncrease(popularValues, value, mostPopularValue);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
         V tempValue = map.put(key, value);
-        keysPopularityIncrease(key);
-        valuesPopularityIncrease(value);
-        valuesPopularityIncrease(tempValue);
+        mostPopularKey = objectPopularityIncrease(popularKeys, key, mostPopularKey);
+        mostPopularValue = objectPopularityIncrease(popularValues, value, mostPopularValue);
+        mostPopularValue = objectPopularityIncrease(popularValues, tempValue, mostPopularValue);
         return tempValue;
     }
 
     @Override
     public V remove(Object key) {
         V tempValue = map.remove(key);
-        keysPopularityIncrease((K) key);
-        valuesPopularityIncrease(tempValue);
+        mostPopularKey = objectPopularityIncrease(popularKeys, (K) key, mostPopularKey);
+        mostPopularValue = objectPopularityIncrease(popularValues, tempValue, mostPopularValue);
         return tempValue;
     }
 
@@ -151,21 +151,19 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        return popularValues.entrySet().stream().sorted(Comparator.comparingInt(Entry::getValue)).map(Entry::getKey).iterator();
+        return popularValues
+                .entrySet()
+                .stream()
+                .sorted(Comparator.comparingInt(Entry::getValue))
+                .map(Entry::getKey)
+                .iterator();
     }
 
-    private void keysPopularityIncrease(K key) {
-        if (popularKeys.merge(key, 1, Integer::sum) > popularKeys.getOrDefault(mostPopularKey, 0)) {
-            mostPopularKey = key;
+    private <T> T objectPopularityIncrease(Map<T, Integer> popularObjects, T popularObject, T mostPopularObject) {
+        if (popularObject != null
+                && popularObjects.merge(popularObject, 1, Integer::sum) > popularObjects.getOrDefault(mostPopularObject, 0)) {
+            mostPopularObject = popularObject;
         }
-    }
-
-    private void valuesPopularityIncrease(V value) {
-        if (value == null) {
-            return;
-        }
-        if (popularValues.merge(value, 1, Integer::sum) > popularValues.getOrDefault(mostPopularValue, 0)) {
-            mostPopularValue = value;
-        }
+        return mostPopularObject;
     }
 }
