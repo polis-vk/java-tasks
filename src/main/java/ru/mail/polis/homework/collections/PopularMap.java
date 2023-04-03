@@ -156,9 +156,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        List<V> mapValues = new ArrayList<>(valuesPopularity.keySet());
-        mapValues.sort(this::compare);
-        return mapValues.iterator();
+        return valuesPopularity.keySet().stream().sorted(this::compare).iterator();
     }
 
     private int compare(V v1, V v2) {
@@ -166,8 +164,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private void increaseKeyPopularity(K key) {
-        int popularity = keysPopularity.getOrDefault(key, 0) + 1;
-        keysPopularity.put(key, popularity);
+        int popularity = keysPopularity.merge(key, 1, Integer::sum);
         if (mostPopularKey == null || keysPopularity.get(mostPopularKey) < popularity) {
             mostPopularKey = key;
         }
@@ -177,8 +174,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         if (value == null) {
             return;
         }
-        int popularity = valuesPopularity.getOrDefault(value, 0) + 1;
-        valuesPopularity.put(value, popularity);
+        int popularity = valuesPopularity.merge(value, 1, Integer::sum);
         if (mostPopularValue == null || valuesPopularity.get(mostPopularValue) < popularity) {
             mostPopularValue = value;
         }
