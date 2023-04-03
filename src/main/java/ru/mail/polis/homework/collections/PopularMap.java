@@ -76,17 +76,19 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
-        keysPopularityIncrease((K) key);
-        valuesPopularityIncrease((V) value);
-        valuesPopularityIncrease(map.get(key));
-        return map.put(key, value);
+        V tempValue = map.put(key, value);
+        keysPopularityIncrease(key);
+        valuesPopularityIncrease(value);
+        valuesPopularityIncrease(tempValue);
+        return tempValue;
     }
 
     @Override
     public V remove(Object key) {
+        V tempValue = map.remove(key);
         keysPopularityIncrease((K) key);
-        valuesPopularityIncrease(map.get(key));
-        return map.remove(key);
+        valuesPopularityIncrease(tempValue);
+        return tempValue;
     }
 
     @Override
