@@ -1,11 +1,8 @@
 package ru.mail.polis.homework.collections;
 
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -35,11 +32,13 @@ import java.util.Set;
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
-    private Map<K, V> mapCopy = new HashMap<>();
-    private final Map<K, Integer> mapPopularKeys = new HashMap<>();  //ключ - популярность
-    private final Map<V, Integer> mapPopularValues = new HashMap<>();  //значение - популярность
-    private Map.Entry<K, Integer> popularKey = null;
-    private Map.Entry<V, Integer> popularValue = null;
+    private final Map<K, Integer> keyPopularity = new HashMap<>();  //ключ - популярность
+    private final Map<V, Integer> valuePopularity = new HashMap<>();  //значение - популярность
+    private int amountOfPopularKey;
+    private K popularKey;
+
+    private V popularValue;
+    private int amountOfPopularValue;
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -61,40 +60,46 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        countKeys((K) key);
+        incrementKeyPopularity((K) key);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        countValues((V) value);
+        incrementValuePopularity((V) value);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        if (map.containsKey(key)) {
-            countValues(map.get(key));
-            countKeys((K) key);
-            return map.get(key);
+        V returnedResult = map.get(key);
+        if (returnedResult != null) {
+            incrementValuePopularity(returnedResult);
         }
-        countKeys((K) key);
-        return map.get(key);
+        incrementKeyPopularity((K) key);
+        return returnedResult;
     }
 
     @Override
     public V put(K key, V value) {
-        countValues(value);
-        countKeys(key);
-        mapCopy.put(key, value);
-        return map.put(key, value);
+        incrementValuePopularity(value);
+        incrementKeyPopularity(key);
+
+        V returnedValue = map.put(key, value);
+        if (returnedValue != null) {
+            incrementValuePopularity(returnedValue);
+        }
+        return returnedValue;
     }
 
     @Override
     public V remove(Object key) {
-        countValues(mapCopy.get(key));
-        countKeys((K) key);
-        return map.remove(key);
+        V returnedResult = map.remove(key);
+        if (returnedResult != null) {
+            incrementValuePopularity(returnedResult);
+        }
+        incrementKeyPopularity((K) key);
+        return returnedResult;
     }
 
     @Override
@@ -126,12 +131,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        for (Map.Entry<K, Integer> key : mapPopularKeys.entrySet()) {
-            if (popularKey == null || key.getValue().compareTo(popularKey.getValue()) > 0) {
-                popularKey = key;
-            }
-        }
-        return popularKey.getKey();
+        return popularKey;
     }
 
 
@@ -139,22 +139,14 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        if (!mapPopularKeys.containsKey(key)) {
-            return 0;
-        }
-        return popularKey.getValue();
+        return keyPopularity.getOrDefault(key, 0);
     }
 
     /**
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        for (Map.Entry<V, Integer> key : mapPopularValues.entrySet()) {
-            if (popularValue == null || key.getValue().compareTo(popularValue.getValue()) > 0) {
-                popularValue = key;
-            }
-        }
-        return popularValue.getKey();
+        return popularValue;
     }
 
     /**
@@ -162,10 +154,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        if (!mapPopularValues.containsKey(value)) {
-            return 0;
-        }
-        return mapPopularValues.get(value);
+        return valuePopularity.getOrDefault(value, 0);
     }
 
     /**
@@ -173,26 +162,27 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        return mapPopularValues.keySet().iterator();
+        return valuePopularity.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (e1, e2) -> e1, LinkedHashMap::new)).keySet().iterator();
     }
 
     //считает популярность ключей
-    private void countKeys(K key) {
-        if (mapPopularKeys != null && mapPopularKeys.containsKey(key)) {
-            int temp = mapPopularKeys.get(key) + 1;
-            mapPopularKeys.put(key, temp);
-        } else {
-            mapPopularKeys.put(key, 1);
+    private void incrementKeyPopularity(K key) {
+        int returnedResult = keyPopularity.merge(key, 1, Integer::sum);
+        if (returnedResult > amountOfPopularKey) {
+            amountOfPopularKey = returnedResult;
+            popularKey = key;
         }
     }
 
     //считает популярность значений
-    private void countValues(V value) {
-        if (mapPopularValues != null && mapPopularValues.containsKey(value)) {
-            int temp = mapPopularValues.get(value) + 1;
-            mapPopularValues.put(value, temp);
-        } else {
-            mapPopularValues.put(value, 1);
+    private void incrementValuePopularity(V value) {
+        int returnedResult = valuePopularity.merge(value, 1, Integer::sum);
+        if (returnedResult > amountOfPopularValue) {
+            amountOfPopularValue = returnedResult;
+            popularValue = value;
         }
     }
 }
