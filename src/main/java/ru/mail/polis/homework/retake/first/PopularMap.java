@@ -2,6 +2,7 @@ package ru.mail.polis.homework.retake.first;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -153,23 +154,23 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        List<Map.Entry<V, Integer>> pairs = new ArrayList<>(valueCounters.entrySet());
-        pairs.sort(Entry.comparingByValue());
-        List<V> valuesList = new ArrayList<>();
-        for (Map.Entry<V, Integer> pair : pairs) {
-            valuesList.add(pair.getKey());
-        }
-        return valuesList.iterator();
+        return valueCounters
+                .entrySet()
+                .stream()
+                .sorted(Entry.comparingByValue())
+                .map(Entry::getKey)
+                .collect(Collectors.toList())
+                .iterator();
     }
 
     private <T> T checkUsage(Map<T, Integer> countersMap, T popularElement, T element) {
         if (element == null) {
             return popularElement;
         }
-        countersMap.put(element, countersMap.getOrDefault(element, 0) + 1);
+        int elementValue = countersMap.merge(element, 1, Integer::sum);
         if (popularElement == null) {
             popularElement = element;
-        } else if (countersMap.get(element) > countersMap.get(popularElement)) {
+        } else if (elementValue > countersMap.get(popularElement)) {
             popularElement = element;
         }
         return popularElement;
