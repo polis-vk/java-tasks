@@ -18,16 +18,6 @@ public interface TextAnalyzer {
 
     boolean analyzer(String text);
 
-    default boolean checkWord(String text, String[] wrongWords) {
-        for (String word : wrongWords) {
-            int indexSpam = text.indexOf(word);
-            if (indexSpam != -1) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     FilterType getType();
 
     static TextAnalyzer createTooLongAnalyzer(long maxLength) {
@@ -47,7 +37,7 @@ public interface TextAnalyzer {
      */
 
     static TextAnalyzer createTooManySlashAnalyzer(long maxLength, long maxCount) {
-        return new TooManySlashAnalyzer(maxLength, maxCount);
+        return new TooManySlashInGivenRangeAnalyzer(maxLength, maxCount);
     }
 
 }

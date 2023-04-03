@@ -47,12 +47,12 @@ public class TextFilterManagerTest {
     }
 
     @Test
-    public void analyzeOnlyManySlashFilter() {
+    public void analyzeOnlyManySlashInGivenRangeFilter() {
         TextFilterManager manager = new TextFilterManager(new TextAnalyzer[]{TextAnalyzer.createTooManySlashAnalyzer(19, 5)});
         assertEquals("GOOD", manager.analyze("//Привет, //я //Петя //:(").toString());
-        assertEquals("CUSTOM", manager.analyze("//Привет, //я //").toString());
+        assertEquals("TOO_MANY_SLASH", manager.analyze("//Привет, //я //").toString());
         assertEquals("GOOD", manager.analyze("////").toString());
-        assertEquals("CUSTOM", manager.analyze("//йорк//нью//").toString());
+        assertEquals("TOO_MANY_SLASH", manager.analyze("//йорк//нью//").toString());
         assertEquals("GOOD", manager.analyze("////////////////////").toString());
         assertEquals("GOOD", manager.analyze("").toString());
         assertEquals("GOOD", manager.analyze(null).toString());

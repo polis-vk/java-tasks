@@ -1,10 +1,10 @@
 package ru.mail.polis.homework.analyzer;
 
-public class TooManySlashAnalyzer extends TooLongAnalyzer implements TextAnalyzer {
+public class TooManySlashInGivenRangeAnalyzer extends TooLongAnalyzer implements TextAnalyzer {
 
     private final long maxCountSlash;
 
-    public TooManySlashAnalyzer(long length, long count) {
+    public TooManySlashInGivenRangeAnalyzer(long length, long count) {
         super(length);
         this.maxCountSlash = count;
     }
@@ -21,6 +21,6 @@ public class TooManySlashAnalyzer extends TooLongAnalyzer implements TextAnalyze
     }
 
     public FilterType getType() {
-        return FilterType.CUSTOM;
+        return FilterType.TOO_MANY_SLASH;
     }
 }

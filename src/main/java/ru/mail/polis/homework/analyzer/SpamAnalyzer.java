@@ -2,7 +2,7 @@ package ru.mail.polis.homework.analyzer;
 
 import java.util.Arrays;
 
-public class SpamAnalyzer implements TextAnalyzer {
+public class SpamAnalyzer implements TextAnalyzer, CheckWord {
 
     private final String[] spam;
 
