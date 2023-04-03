@@ -1,12 +1,10 @@
 package ru.mail.polis.homework.collections;
 
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,8 +38,8 @@ public class PopularMap<K, V> implements Map<K, V> {
     private final Map<K, V> map;
     private Map<K, Integer> keysPopularityMap;
     private Map<V, Integer> valuesPopularityMap;
-    K mostPopularKey;
-    V mostPopularValue;
+    private K mostPopularKey;
+    private V mostPopularValue;
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -162,14 +160,14 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        List<V> values = new ArrayList(valuesPopularityMap.keySet());
-        values.sort(Comparator.comparingInt(this::getValuePopularity));
-        return values.iterator();
+        return valuesPopularityMap.keySet()
+                .stream()
+                .sorted(Comparator.comparingInt(this::getValuePopularity))
+                .iterator();
     }
 
     private void incrementKeyPopularity(K key) {
-        int popularity = keysPopularityMap.getOrDefault(key, 0) + 1;
-        keysPopularityMap.put(key, popularity);
+        int popularity = keysPopularityMap.merge(key, 1, Integer::sum);
         if (mostPopularKey == null || popularity > keysPopularityMap.get(mostPopularKey)) {
             mostPopularKey = key;
         }
@@ -179,8 +177,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         if (value == null) {
             return;
         }
-        int popularity = valuesPopularityMap.getOrDefault(value, 0) + 1;
-        valuesPopularityMap.put(value, popularity);
+        int popularity = valuesPopularityMap.merge(value, 1, Integer::sum);
         if (mostPopularValue == null || popularity > valuesPopularityMap.get(mostPopularValue)) {
             mostPopularValue = value;
         }
