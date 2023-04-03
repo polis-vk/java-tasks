@@ -79,9 +79,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         V lastValue = map.put(key, value);
         addPopularityForKey(key);
         addPopularityForValue(value);
-        if (lastValue != null) {
-            addPopularityForValue(lastValue);
-        }
+        addPopularityForValue(lastValue);
         return lastValue;
     }
 
@@ -89,9 +87,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     public V remove(Object key) {
         V lastValue = map.remove(key);
         addPopularityForKey((K) key);
-        if (lastValue != null) {
-            addPopularityForValue(lastValue);
-        }
+        addPopularityForValue(lastValue);
         return lastValue;
     }
 
@@ -155,7 +151,10 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        return valuePopularity.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(Entry::getKey).iterator();
+        return valuePopularity.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .map(Entry::getKey)
+                .iterator();
     }
 
     private void addPopularityForValue(V value) {
@@ -167,6 +166,9 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private <T> T addPopularity(Map<T, Integer> map, T element, T popular) {
+        if (element == null) {
+            return popular;
+        }
         int popularity = map.merge(element, 1, Integer::sum);
         return popularity > map.getOrDefault(popular, 0) ? element : popular;
     }
