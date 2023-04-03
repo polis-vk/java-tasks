@@ -28,7 +28,7 @@ public class WordFrequency {
         Map<String, Integer> freqMap = new HashMap<>();
         lines.forEach(line -> Arrays.stream(line.toLowerCase()
                         .split("\\P{L}+"))
-                .forEach(word -> freqMap.put(word, freqMap.getOrDefault(word, 0) + 1)));
+                .forEach(word -> freqMap.merge(word, 1, Integer::sum)));
         return freqMap.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByKey())
