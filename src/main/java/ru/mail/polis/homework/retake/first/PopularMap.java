@@ -154,9 +154,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным)
      */
     public Iterator<V> popularIterator() {
-        return valueCounters
-                .entrySet()
-                .stream()
+        return valueCounters.entrySet().stream()
                 .sorted(Entry.comparingByValue())
                 .map(Entry::getKey)
                 .collect(Collectors.toList())
@@ -168,11 +166,6 @@ public class PopularMap<K, V> implements Map<K, V> {
             return popularElement;
         }
         int elementValue = countersMap.merge(element, 1, Integer::sum);
-        if (popularElement == null) {
-            popularElement = element;
-        } else if (elementValue > countersMap.get(popularElement)) {
-            popularElement = element;
-        }
-        return popularElement;
+        return elementValue > countersMap.getOrDefault(popularElement, 0) ? element : popularElement;
     }
 }
