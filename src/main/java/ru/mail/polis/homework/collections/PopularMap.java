@@ -35,6 +35,11 @@ public class PopularMap<K, V> implements Map<K, V> {
     private final Map<K, Integer> countUseKey = new HashMap<>();
     private final Map<V, Integer> countUseValue = new HashMap<>();
 
+    private K popularKey;
+    private V popularValue;
+    private int countUsagePopularKey;
+    private int countUsagePopularValue;
+
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -69,29 +74,31 @@ public class PopularMap<K, V> implements Map<K, V> {
     @Override
     public V get(Object key) {
         keyUsage((K) key);
-        V getValue = map.get(key);
-        valueUsage(getValue);
-        return getValue;
+        V value = map.get(key);
+        if (value != null) {
+            valueUsage(value);
+        }
+        return value;
     }
 
     @Override
     public V put(K key, V value) {
         keyUsage(key);
         valueUsage(value);
-
-        V returnValue = map.put(key, value);
-        if (returnValue != null) {
-            valueUsage(returnValue);
+        V oldValue = map.put(key, value);
+        if (oldValue != null) {
+            valueUsage(oldValue);
         }
-        return returnValue;
+        return oldValue;
     }
 
     @Override
     public V remove(Object key) {
         keyUsage((K) key);
-
         V currentValue = map.remove(key);
-        valueUsage(currentValue);
+        if (currentValue != null) {
+            valueUsage(currentValue);
+        }
         return currentValue;
     }
 
@@ -124,13 +131,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        int max = getMaxCountUse(countUseKey.values());
-        for (Map.Entry<K, Integer> entry : countUseKey.entrySet()) {
-            if (entry.getValue() == max) {
-                return entry.getKey();
-            }
-        }
-        return null;
+        return popularKey;
     }
 
     /**
@@ -145,13 +146,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        int max = getMaxCountUse(countUseValue.values());
-        for (Map.Entry<V, Integer> entry : countUseValue.entrySet()) {
-            if (entry.getValue() == max) {
-                return entry.getKey();
-            }
-        }
-        return null;
+        return popularValue;
     }
 
     /**
@@ -168,43 +163,40 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        return new Iterator<V>() {
 
-            private final List<Entry<V, Integer>> sortedValues = countUseValue
-                    .entrySet()
-                    .stream()
-                    .sorted(Map.Entry.comparingByValue())
-                    .collect(Collectors.toList());
+        List<V> sortedValues = countUseValue
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .map(Entry::getKey)
+                .collect(Collectors.toList());
 
-            private int index = 0;
-
-            @Override
-            public boolean hasNext() {
-                return index < sortedValues.size();
-            }
-
-            @Override
-            public V next() {
-                return sortedValues.get(index++).getKey();
-            }
-        };
+        return sortedValues.iterator();
     }
 
     private void keyUsage(K key) {
-        if (key == null) {
-            return;
+        Integer currentUsageCount = use(countUseKey, key);
+        if (currentUsageCount > countUsagePopularKey) {
+            countUsagePopularKey = currentUsageCount;
+            popularKey = key;
         }
-        countUseKey.put(key, countUseKey.getOrDefault(key, 0) + 1);
     }
 
     private void valueUsage(V value) {
-        if (value == null) {
-            return;
+        Integer currentUsageCount = use(countUseValue, value);
+        if (currentUsageCount > countUsagePopularValue) {
+            countUsagePopularValue = currentUsageCount;
+            popularValue = value;
         }
-        countUseValue.put(value, countUseValue.getOrDefault(value, 0) + 1);
     }
 
-    private int getMaxCountUse(Collection<Integer> countSet) {
-        return countSet.stream().max(Integer::compareTo).orElse(-1);
+    private <T> Integer use (Map <T, Integer> map, T key){
+        Integer currentUsageCount = map.computeIfPresent(key, (k, v) -> v + 1);
+        if (currentUsageCount == null) {
+            map.put(key, 1);
+            currentUsageCount = 1;
+        }
+        return currentUsageCount;
     }
+
 }
