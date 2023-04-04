@@ -1,11 +1,7 @@
 package ru.mail.polis.homework.collections;
 
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -35,16 +31,20 @@ import java.util.Set;
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
-    private final Map<K, Integer> keys = new HashMap<>();
-    private final Map<V, Integer> values = new HashMap<>();
+    private final HashMap<K, Integer> keys;
+    private final HashMap<V, Integer> values;
 
 
     public PopularMap() {
         this.map = new HashMap<>();
+        this.keys = new HashMap<>();
+        this.values = new HashMap<>();
     }
 
     public PopularMap(Map<K, V> map) {
         this.map = map;
+        this.keys = new HashMap<>();
+        this.values = new HashMap<>();
     }
 
     @Override
@@ -59,39 +59,43 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        addKey((K) key);
+        addObject(key, (Map<Object, Integer>) keys);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        addValue((V) value);
+        addObject(value, (Map<Object, Integer>) values);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        addKey((K) key);
+        addObject(key, (Map<Object, Integer>) keys);
         V res = map.get(key);
-        addValue(res);
+        addObject(res, (Map<Object, Integer>) values);
         return res;
     }
 
     @Override
     public V put(K key, V value) {
-        addKey(key);
-        addValue(value);
-        if (map.containsKey(key)) {
-            addValue(map.get(key));
+        addObject(key, (Map<Object, Integer>) keys);
+        addObject(value, (Map<Object, Integer>) values);
+        V res = map.put(key, value);
+        if (res != null) {
+            addObject(res, (Map<Object, Integer>) values);
         }
-        return map.put(key, value);
+        return res;
     }
 
     @Override
     public V remove(Object key) {
-        addKey((K) key);
-        addValue(map.get(key));
-        return map.remove(key);
+        addObject(key, (Map<Object, Integer>) keys);
+        V res = map.remove(key);
+        if (res != null) {
+            addObject(res, (Map<Object, Integer>) values);
+        }
+        return res;
     }
 
     @Override
@@ -176,24 +180,15 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        return null;
+        return values.keySet()
+                .stream()
+                .sorted(Comparator.comparingInt(this::getValuePopularity))
+                .iterator();
     }
 
-    private void addKey(K key) {
-        if (keys.containsKey(key)) {
-            int value = keys.get(key);
-            keys.put(key, value + 1);
-        } else {
-            keys.put(key, 1);
-        }
-    }
-
-    private void addValue(V value) {
-        if (values.containsKey(value)) {
-            int val = values.get(value);
-            values.put(value, val + 1);
-        } else {
-            values.put(value, 1);
-        }
+    private void addObject(Object obj, Map<Object, Integer> map) {
+        map.put(obj, map.containsKey(obj) ? map.get(obj) + 1 : 1);
     }
 }
+
+
