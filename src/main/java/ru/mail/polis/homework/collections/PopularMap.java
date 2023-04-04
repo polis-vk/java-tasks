@@ -61,38 +61,38 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        increaseKeyPopularity((K) key);
+        mostPopularKey = increasePopularity((K) key, keysPopularity, mostPopularKey);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        increaseValuePopularity((V) value);
+        mostPopularValue = increasePopularity((V) value, valuesPopularity, mostPopularValue);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        increaseKeyPopularity((K) key);
+        mostPopularKey = increasePopularity((K) key, keysPopularity, mostPopularKey);
         V value = map.get(key);
-        increaseValuePopularity(value);
+        mostPopularValue = increasePopularity(value, valuesPopularity, mostPopularValue);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
-        increaseKeyPopularity(key);
-        increaseValuePopularity(value);
+        mostPopularKey = increasePopularity(key, keysPopularity, mostPopularKey);
+        mostPopularValue = increasePopularity(value, valuesPopularity, mostPopularValue);
         V currentValue = map.put(key, value);
-        increaseValuePopularity(currentValue);
+        mostPopularValue = increasePopularity(currentValue, valuesPopularity, mostPopularValue);
         return currentValue;
     }
 
     @Override
     public V remove(Object key) {
-        increaseKeyPopularity((K) key);
+        mostPopularKey = increasePopularity((K) key, keysPopularity, mostPopularKey);
         V currentValue = map.remove(key);
-        increaseValuePopularity(currentValue);
+        mostPopularValue = increasePopularity(currentValue, valuesPopularity, mostPopularValue);
         return currentValue;
     }
 
@@ -157,27 +157,19 @@ public class PopularMap<K, V> implements Map<K, V> {
      */
     public Iterator<V> popularIterator() {
         return valuesPopularity.keySet().stream()
-                .sorted(this::compare).iterator();
+                .sorted(this::compare)
+                .iterator();
     }
 
     private int compare(V v1, V v2) {
         return Integer.compare(getValuePopularity(v1), getValuePopularity(v2));
     }
 
-    private void increaseKeyPopularity(K key) {
-        int popularity = keysPopularity.merge(key, 1, Integer::sum);
-        if (keysPopularity.getOrDefault(mostPopularKey, 0) < popularity) {
-            mostPopularKey = key;
-        }
-    }
-
-    private void increaseValuePopularity(V value) {
+    private <T> T increasePopularity(T value, Map<T, Integer> popularityMap, T mostPopular) {
         if (value == null) {
-            return;
+            return mostPopular;
         }
-        int popularity = valuesPopularity.merge(value, 1, Integer::sum);
-        if (valuesPopularity.getOrDefault(mostPopularValue, 0) < popularity) {
-            mostPopularValue = value;
-        }
+        int popularity = popularityMap.merge(value, 1, Integer::sum);
+        return popularityMap.getOrDefault(mostPopular, 0) < popularity ? value : mostPopular;
     }
 }
