@@ -172,15 +172,6 @@ public class PopularMap<K, V> implements Map<K, V> {
         }
     }
 
-    public <K> K getKey(Map<K, Integer> map, Integer value) {
-        for (Entry<K, Integer> entry : map.entrySet()) {
-            if (entry.getValue().equals(value)) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
-
     private <K> Optional<K> getMostPopular(Map<K, Integer> map) {
         if (map.isEmpty()) {
             return Optional.empty();
