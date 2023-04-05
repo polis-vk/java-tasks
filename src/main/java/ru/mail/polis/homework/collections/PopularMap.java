@@ -34,17 +34,23 @@ public class PopularMap<K, V> implements Map<K, V> {
     private final HashMap<K, Integer> keys;
     private final HashMap<V, Integer> values;
 
+    private final Container<K> popularKey;
+    private final Container<V> popularValue;
 
     public PopularMap() {
         this.map = new HashMap<>();
         this.keys = new HashMap<>();
         this.values = new HashMap<>();
+        this.popularValue = new Container<>();
+        this.popularKey = new Container<>();
     }
 
     public PopularMap(Map<K, V> map) {
         this.map = map;
         this.keys = new HashMap<>();
         this.values = new HashMap<>();
+        this.popularValue = new Container<>();
+        this.popularKey = new Container<>();
     }
 
     @Override
@@ -59,41 +65,41 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        addObject(key, (Map<Object, Integer>) keys);
+        addObject(key, (Map<Object, Integer>) keys, (Container<Object>) popularKey);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        addObject(value, (Map<Object, Integer>) values);
+        addObject(value, (Map<Object, Integer>) values, (Container<Object>) popularValue);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        addObject(key, (Map<Object, Integer>) keys);
+        addObject(key, (Map<Object, Integer>) keys, (Container<Object>) popularKey);
         V res = map.get(key);
-        addObject(res, (Map<Object, Integer>) values);
+        addObject(res, (Map<Object, Integer>) values, (Container<Object>) popularValue);
         return res;
     }
 
     @Override
     public V put(K key, V value) {
-        addObject(key, (Map<Object, Integer>) keys);
-        addObject(value, (Map<Object, Integer>) values);
+        addObject(key, (Map<Object, Integer>) keys, (Container<Object>) popularKey);
+        addObject(value, (Map<Object, Integer>) values, (Container<Object>) popularValue);
         V res = map.put(key, value);
         if (res != null) {
-            addObject(res, (Map<Object, Integer>) values);
+            addObject(res, (Map<Object, Integer>) values, (Container<Object>) popularValue);
         }
         return res;
     }
 
     @Override
     public V remove(Object key) {
-        addObject(key, (Map<Object, Integer>) keys);
+        addObject(key, (Map<Object, Integer>) keys, (Container<Object>) popularKey);
         V res = map.remove(key);
         if (res != null) {
-            addObject(res, (Map<Object, Integer>) values);
+            addObject(res, (Map<Object, Integer>) values, (Container<Object>) popularValue);
         }
         return res;
     }
@@ -127,15 +133,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        int max = 0;
-        K res = null;
-        for (Map.Entry<K, Integer> entry : keys.entrySet()) {
-            if (entry.getValue() > max) {
-                max = entry.getValue();
-                res = entry.getKey();
-            }
-        }
-        return res;
+        return popularKey.get();
     }
 
 
@@ -153,15 +151,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        int max = 0;
-        V res = null;
-        for (Map.Entry<V, Integer> entry : values.entrySet()) {
-            if (entry.getValue() > max) {
-                max = entry.getValue();
-                res = entry.getKey();
-            }
-        }
-        return res;
+        return popularValue.get();
     }
 
     /**
@@ -186,9 +176,13 @@ public class PopularMap<K, V> implements Map<K, V> {
                 .iterator();
     }
 
-    private void addObject(Object obj, Map<Object, Integer> map) {
+    private void addObject(Object obj, Map<Object, Integer> map, Container<Object> popularObj) {
         map.put(obj, map.containsKey(obj) ? map.get(obj) + 1 : 1);
+        if (popularObj.get() == null || map.get(obj) >= map.get(popularObj.get())) {
+            popularObj.set(obj);
+        }
     }
 }
+
 
 
