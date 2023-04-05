@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.collections;
 
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -82,13 +81,12 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
-        incrementValuePopularity(value);
-        incrementKeyPopularity(key);
-
         V returnedValue = map.put(key, value);
         if (returnedValue != null) {
             incrementValuePopularity(returnedValue);
         }
+        incrementValuePopularity(value);
+        incrementKeyPopularity(key);
         return returnedValue;
     }
 
