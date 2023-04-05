@@ -1,7 +1,9 @@
 package ru.mail.polis.homework.collections;
 
+import com.sun.org.apache.xpath.internal.compiler.OpMap;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 
 /**
@@ -30,32 +32,9 @@ import java.util.*;
  */
 public class PopularMap<K, V> implements Map<K, V> {
 
-
-    private void refreshPopularKey(Object key) {
-
-        if (popularKey.isEmpty()) {
-            popularKey.put(key, 1);
-            return;
-        }
-        if (!popularKey.containsKey(key)) {
-            popularKey.put(key, 1);
-        } else {
-            popularKey.put(key, popularKey.get(key) + 1);
-        }
-    }
-
-    private void refreshPopularValue(Object value) {
-        if (popularValue.isEmpty()) {
-            popularValue.put(value, 1);
-            return;
-        }
-        if (!popularValue.containsKey(value)) {
-            popularValue.put(value, 1);
-        } else {
-            popularValue.put(value, popularValue.get(value) + 1);
-        }
-
-    }
+    private final Map<Object, Integer> popularKey = new HashMap<Object, Integer>();
+    private final Map<Object, Integer> popularValue = new HashMap<Object, Integer>();
+    private final Map<Object, V> oldMap = new HashMap<>();
 
     private final Map<K, V> map;
 
@@ -79,26 +58,26 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        refreshPopularKey(key);
+        refreshPopular((K) key, popularKey);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        refreshPopularValue(value);
+        refreshPopular((K) value, popularValue);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        refreshPopularKey(key);
+        refreshPopular((K) key, popularKey);
         V value = map.get(key);
         if (value != null) {
-            refreshPopularValue(value);
+            refreshPopular((K) value, popularValue);
         } else {
             V oldValue = oldMap.get(key);
             if (oldValue != null) {
-                refreshPopularValue(oldValue);
+                refreshPopular((K) oldValue, popularValue);
             }
         }
         return value;
@@ -106,20 +85,20 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
-        refreshPopularKey(key);
-        refreshPopularValue(value);
+        refreshPopular(key, popularKey);
+        refreshPopular((K) value, popularValue);
         return map.put(key, value);
     }
 
     @Override
     public V remove(Object key) {
-        refreshPopularKey(key);
+        refreshPopular((K) key, popularKey);
         V value = map.get(key);
         if (value != null) {
-            refreshPopularValue(value);
+            refreshPopular((K) value, popularValue);
             oldMap.put(key, value);
         } else {
-            refreshPopularValue(oldMap.get(key));
+            refreshPopular((K) oldMap.get(key), popularValue);
         }
         return map.remove(key);
     }
@@ -142,13 +121,11 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public Collection<V> values() {
-
         return map.values();
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-
         return map.entrySet();
     }
 
@@ -164,10 +141,11 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        if (!popularKey.containsKey(key)) {
+        K countKey = (K) popularKey.get(key);
+        if (countKey == null) {
             return 0;
         }
-        return popularKey.get(key);
+        return (int) countKey;
     }
 
     /**
@@ -182,26 +160,11 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        if (!popularValue.containsKey(value)) {
+        K countValue = (K) popularValue.get(value);
+        if (countValue == null) {
             return 0;
         }
-        return popularValue.get(value);
-    }
-
-    private K popular(Map<Object, Integer> popularMap) {
-        int maxValue = -1;
-        Object maxKey = null;
-        int value;
-        Object key;
-        for (Map.Entry<Object, Integer> item : popularMap.entrySet()) {
-            key = item.getKey();
-            value = popularMap.get(key);
-            if (value > maxValue) {
-                maxValue = value;
-                maxKey = key;
-            }
-        }
-        return (K) maxKey;
+        return (int) countValue;
     }
 
     /**
@@ -209,10 +172,25 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        return (Iterator<V>) popularValue.keySet().iterator();
+        Map<Object, Integer> sortedMap = new LinkedHashMap<>();
+        popularValue.entrySet()
+                .stream()
+                .sorted(Map.Entry.<Object, Integer>comparingByValue())
+                .forEach(entry -> sortedMap.put(entry.getKey(), entry.getValue()));
+
+        return (Iterator<V>) sortedMap.keySet().iterator();
     }
 
-    private final Map<Object, Integer> popularKey = new HashMap<Object, Integer>();
-    private final Map<Object, Integer> popularValue = new HashMap<Object, Integer>();
-    private final Map<Object, V> oldMap = new HashMap<>();
+    private void refreshPopular(K key, Map<Object, Integer> popularDict) {
+        K value = (K) popularDict.get(key);
+        if (value == null) {
+            popularDict.put(key, 1);
+        } else {
+            popularDict.put(key, (int) value + 1);
+        }
+    }
+
+    private K popular(Map<Object, Integer> popularMap) {
+        return (K) Collections.max(popularMap.entrySet(), Comparator.comparingInt(Entry::getValue)).getKey();
+    }
 }
