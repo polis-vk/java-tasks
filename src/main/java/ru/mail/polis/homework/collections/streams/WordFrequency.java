@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.streams;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -16,13 +17,21 @@ import java.util.stream.Stream;
  * 5 тугриков
  */
 public class WordFrequency {
-
     /**
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-        return null;
+        return lines
+                .map(line -> line.split("[ .,!:?;-]"))
+                .flatMap(Arrays::stream)
+                .map(String::toLowerCase)
+                .filter(word -> !word.isEmpty())
+                .collect(Collectors.groupingBy(word -> word, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .sorted((o1, o2) -> o2.getValue() == o1.getValue() ? o1.getKey().compareTo(o2.getKey()) : (int) (o2.getValue() - o1.getValue()))
+                .map(Map.Entry::getKey)
+                .limit(10)
+                .collect(Collectors.toList());
     }
-
-
 }
