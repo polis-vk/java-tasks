@@ -34,12 +34,8 @@ public class PopularMap<K, V> implements Map<K, V> {
     private final Map<K, V> map;
     private final Map<K, Integer> countUseKey = new HashMap<>();
     private final Map<V, Integer> countUseValue = new HashMap<>();
-
     private K popularKey;
     private V popularValue;
-    private int countUsagePopularKey;
-    private int countUsagePopularValue;
-
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -175,28 +171,26 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private void keyUsage(K key) {
-        Integer currentUsageCount = use(countUseKey, key);
-        if (currentUsageCount > countUsagePopularKey) {
-            countUsagePopularKey = currentUsageCount;
-            popularKey = key;
-        }
+        this.popularKey = use(countUseKey, key, popularKey);
     }
 
     private void valueUsage(V value) {
-        Integer currentUsageCount = use(countUseValue, value);
-        if (currentUsageCount > countUsagePopularValue) {
-            countUsagePopularValue = currentUsageCount;
-            popularValue = value;
-        }
+        this.popularValue = use(countUseValue, value, popularValue);
     }
 
-    private <T> Integer use (Map <T, Integer> map, T key){
+    private <T> T use(Map<T, Integer> map, T key, T currentPopular) {
         Integer currentUsageCount = map.computeIfPresent(key, (k, v) -> v + 1);
         if (currentUsageCount == null) {
             map.put(key, 1);
             currentUsageCount = 1;
         }
-        return currentUsageCount;
+        if (currentPopular == null) {
+            return key;
+        }
+        if (currentUsageCount > map.get(currentPopular)) {
+            return key;
+        }
+        return currentPopular;
     }
 
 }
