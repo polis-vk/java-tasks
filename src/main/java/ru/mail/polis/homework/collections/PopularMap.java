@@ -1,6 +1,11 @@
 package ru.mail.polis.homework.collections;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 
 /**
@@ -30,30 +35,11 @@ import java.util.*;
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
-    private final Map<K, Integer> keyUsageCounter = new HashMap<>();
+    private final Map<K, Integer> keyUsageCounterMap = new HashMap<>();
     private K maxUsableKey;
-    private final Map<V, Integer> valueUsageCounter = new HashMap<>();
+    private final Map<V, Integer> valueUsageCounterMap = new HashMap<>();
+    private final Set<V> sortedValuesSet = new TreeSet<>((a, b) -> getValuePopularity(a) - getValuePopularity(b));
     private V maxUsableValue;
-
-    private void increaseKeyUsageCounter(K key) {
-        if (key == null) {
-            return;
-        }
-        Integer usageCounter = keyUsageCounter.merge(key, 1, Integer::sum);
-        if (usageCounter > keyUsageCounter.getOrDefault(maxUsableKey, 0)) {
-            maxUsableKey = key;
-        }
-    }
-
-    private void increaseValueUsageCounter(V value) {
-        if (value == null) {
-            return;
-        }
-        Integer usageCounter = valueUsageCounter.merge(value, 1, Integer::sum);
-        if (usageCounter > valueUsageCounter.getOrDefault(maxUsableValue, 0)) {
-            maxUsableValue = value;
-        }
-    }
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -96,7 +82,7 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
-        increaseKeyUsageCounter((K) key);
+        increaseKeyUsageCounter(key);
         increaseValueUsageCounter(value);
 
         V previousValue = map.put(key, value);
@@ -111,7 +97,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         increaseKeyUsageCounter((K) key);
         V deletedValue = map.remove(key);
         increaseValueUsageCounter(deletedValue);
-        return map.remove(deletedValue);
+        return deletedValue;
     }
 
     @Override
@@ -151,7 +137,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        return keyUsageCounter.getOrDefault(key, 0);
+        return keyUsageCounterMap.getOrDefault(key, 0);
     }
 
     /**
@@ -166,7 +152,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        return valueUsageCounter.getOrDefault(value, 0);
+        return valueUsageCounterMap.getOrDefault(value, 0);
     }
 
     /**
@@ -174,9 +160,28 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        System.out.println(valueUsageCounter.keySet());
-        List<V> Values = new ArrayList<>(valueUsageCounter.keySet());
-        Values.sort((a, b) -> getValuePopularity(a) - getValuePopularity(b));
-        return Values.iterator();
+        return sortedValuesSet.iterator();
+    }
+
+    private void increaseKeyUsageCounter(K key) {
+        if (key == null) {
+            return;
+        }
+        Integer usageCounter = keyUsageCounterMap.merge(key, 1, Integer::sum);
+        if (usageCounter > keyUsageCounterMap.getOrDefault(maxUsableKey, 0)) {
+            maxUsableKey = key;
+        }
+    }
+
+    private void increaseValueUsageCounter(V value) {
+        if (value == null) {
+            return;
+        }
+        Integer usageCounter = valueUsageCounterMap.merge(value, 1, Integer::sum);
+        if (usageCounter > valueUsageCounterMap.getOrDefault(maxUsableValue, 0)) {
+            maxUsableValue = value;
+        }
+        sortedValuesSet.remove(value);
+        sortedValuesSet.add(value);
     }
 }
