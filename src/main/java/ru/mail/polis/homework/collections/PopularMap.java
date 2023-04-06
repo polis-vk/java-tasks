@@ -194,4 +194,3 @@ public class PopularMap<K, V> implements Map<K, V> {
         return maxPopularity < currentPopularity ? data : mostPopularData;
     }
 }
-
