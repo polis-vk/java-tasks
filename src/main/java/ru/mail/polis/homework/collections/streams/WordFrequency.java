@@ -27,10 +27,10 @@ public class WordFrequency {
      */
     public static List<String> wordFrequency(Stream<String> lines) {
         Map<String, Integer> mapFreq = new HashMap<>();
-        lines.forEach(line -> Arrays.stream(line.toLowerCase().split(",!:-?;."))
+        lines.forEach(sentence -> Arrays.stream(sentence.toLowerCase().split("\\s*(\\s|,|!|\\.)\\s*"))
                 .forEach(word -> mapFreq.merge(word, 1, Integer::sum)));
         return mapFreq.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
+                .sorted(Map.Entry.comparingByKey())
                 .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
                 .limit(10).map(Map.Entry::getKey).collect(Collectors.toList());
     }
