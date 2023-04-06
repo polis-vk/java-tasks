@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.stream.Collectors;
 
 
 /**
@@ -46,14 +46,14 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     public PopularMap() {
         this.map = new HashMap<>();
-        this.keyPopularMap = new LinkedHashMap<>();
-        this.valuePopularMap = new LinkedHashMap<>();
+        this.keyPopularMap = new HashMap<>();
+        this.valuePopularMap = new HashMap<>();
     }
 
     public PopularMap(Map<K, V> map) {
         this.map = map;
-        this.keyPopularMap = new LinkedHashMap<>();
-        this.valuePopularMap = new LinkedHashMap<>();
+        this.keyPopularMap = new HashMap<>();
+        this.valuePopularMap = new HashMap<>();
     }
 
     @Override
@@ -143,7 +143,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     /**
      * Возвращает количество использование ключа
      */
-    public int getKeyPopularity(Object key) {
+    public int getKeyPopularity(K key) {
         return keyPopularMap.getOrDefault(key, 0);
     }
 
@@ -158,7 +158,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использований значений в методах: containsValue, get, put (учитывается 2 раза, если
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
-    public int getValuePopularity(Object value) {
+    public int getValuePopularity(V value) {
 
         return valuePopularMap.getOrDefault(value, 0);
     }
@@ -182,13 +182,11 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        List<Entry<V, Integer>> list = new ArrayList<>(valuePopularMap.entrySet());
-        list.sort(Entry.comparingByValue());
+        List<V> sortedValues = valuePopularMap.entrySet().stream()
+                .sorted(Entry.comparingByValue())
+                .map(Entry::getKey)
+                .collect(Collectors.toList());
 
-        List<V> sortedValues = new ArrayList<>();
-        for (Entry<V, Integer> entry : list) {
-            sortedValues.add(entry.getKey());
-        }
         return sortedValues.iterator();
     }
 }
