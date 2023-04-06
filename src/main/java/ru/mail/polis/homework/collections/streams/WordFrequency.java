@@ -1,7 +1,12 @@
 package ru.mail.polis.homework.collections.streams;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 
 /**
  * Написать программу, которая из текста (стрим строк), возвращает 10 самых популярных слов (В порядке убывания частоты).
@@ -21,7 +26,13 @@ public class WordFrequency {
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-        return null;
+        Map<String, Integer> mapFreq = new HashMap<>();
+        lines.forEach(line -> Arrays.stream(line.toLowerCase().split(",!:-?;."))
+                .forEach(word -> mapFreq.merge(word, 1, Integer::sum)));
+        return mapFreq.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(10).map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
 
