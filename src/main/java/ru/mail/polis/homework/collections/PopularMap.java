@@ -40,14 +40,13 @@ public class PopularMap<K, V> implements Map<K, V> {
     private final Map<V, Integer> popularValues;
 
     public PopularMap() {
-        this.map = new HashMap<>();
-        this.popularKeys = new HashMap<>();
-        this.popularValues = new HashMap<>();
+        this(new HashMap<>());
     }
 
     public PopularMap(Map<K, V> map) {
-        this();
         this.map = map;
+        this.popularKeys = new HashMap<>();
+        this.popularValues = new HashMap<>();
     }
 
     @Override
@@ -62,38 +61,39 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        increaseKeyPopularity((K) key);
+        increaseItemPopularity((Object) key, (Map<Object, Integer>) popularKeys);
         return map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        increaseValuePopularity((V) value);
+        increaseItemPopularity((Object) value, (Map<Object, Integer>) popularValues);
         return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
         V value = map.get(key);
-        increaseKeyPopularity((K) key);
-        increaseValuePopularity(value);
+        increaseItemPopularity((Object) key, (Map<Object, Integer>) popularKeys);
+        increaseItemPopularity((Object) value, (Map<Object, Integer>) popularValues);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
         V prevValue = map.put(key, value);
-        increaseKeyPopularity((K) key);
-        increaseValuePopularity(prevValue);
-        increaseValuePopularity(value);
+        increaseItemPopularity((Object) key, (Map<Object, Integer>) popularKeys);
+        increaseItemPopularity((Object) prevValue, (Map<Object, Integer>) popularValues);
+        increaseItemPopularity((Object) value, (Map<Object, Integer>) popularValues);
         return prevValue;
     }
 
     @Override
     public V remove(Object key) {
-        increaseKeyPopularity((K) key);
-        increaseValuePopularity(map.get(key));
-        return map.remove(key);
+        increaseItemPopularity((Object) key, (Map<Object, Integer>) popularKeys);
+        V value = map.remove(key);
+        increaseItemPopularity((Object) value, (Map<Object, Integer>) popularValues);
+        return value;
     }
 
     @Override
@@ -118,7 +118,8 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return map.entrySet();
+        return map.entrySet(); //Почитал в интернете,
+        // все что смог найти это то что entryset работает за O(1) если это не так то я не знаю как это исправить
     }
 
     /**
@@ -136,15 +137,11 @@ public class PopularMap<K, V> implements Map<K, V> {
         return popularKey;
     }
 
-    private void increaseValuePopularity(V value) {
-        if (value == null) {
+    private void increaseItemPopularity(Object item, Map<Object, Integer> map) {
+        if (item == null) {
             return;
         }
-        popularValues.put((V) value, popularValues.getOrDefault(value, 0) + 1);
-    }
-
-    private void increaseKeyPopularity(K key) {
-        popularKeys.put((K) key, popularKeys.getOrDefault(key, 0) + 1);
+        map.compute(item, (k, v) -> (v == null) ? 1 : v + 1);
     }
 
     /**
