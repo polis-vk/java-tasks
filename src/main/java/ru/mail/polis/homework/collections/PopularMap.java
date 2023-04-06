@@ -37,7 +37,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     private K mostPopularKey;
     private int maxPopularityForKey;
     private V mostPopularValue;
-    private int maxPopularityForValue;
+    //    private int maxPopularityForValue;
     private final List<V> valuesArray = new ArrayList<>();
     private boolean valuesArrayIsSorted = false;
 
@@ -125,14 +125,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private void incrementKeyPopularity(K key) {
-        if (key == null) {
-            return;
-        }
-        int keyPopularity = this.keyPopularity.merge(key, 1, Integer::sum);
-        if (keyPopularity > maxPopularityForKey) {
-            maxPopularityForKey = keyPopularity;
-            mostPopularKey = key;
-        }
+        mostPopularKey = incrementPopularity(keyPopularity, key, mostPopularKey);
     }
 
     /**
@@ -150,15 +143,16 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private void incrementValuePopularity(V value) {
-        if (value == null) {
-            return;
-        }
+        mostPopularValue = incrementPopularity(valuePopularity, value, mostPopularValue);
         valuesArrayIsSorted = false;
-        int valuePopularity = this.valuePopularity.merge(value, 1, Integer::sum);
-        if (valuePopularity > maxPopularityForValue) {
-            maxPopularityForValue = valuePopularity;
-            mostPopularValue = value;
+    }
+
+    private <T> T incrementPopularity(Map<T, Integer> map, T data, T popular) {
+        if (data == null) {
+            return popular;
         }
+        int popularity = map.merge(data, 1, Integer::sum);
+        return popularity > map.getOrDefault(popular, 0) ? data : popular;
     }
 
     /**
