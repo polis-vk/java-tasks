@@ -1,7 +1,10 @@
 package ru.mail.polis.homework.collections;
 
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.Iterator;
+import java.util.Collection;
 
 
 /**
@@ -28,21 +31,22 @@ import java.util.*;
  * @param <V> - тип значения
  */
 public class PopularMap<K, V> implements Map<K, V> {
-    private Map<K, V> map;
-    private Map<K, Integer> keyPopularity;
-    private Map<V, Integer> valuePopularity;
+    private final Map<K, V> map;
+    private final Map<K, Integer> keyPopularity;
+    private final Map<V, Integer> valuePopularity;
+    private K mostPopularKey;
+    private V mostPopularValue;
 
     public PopularMap() {
         this.map = new HashMap<>();
-        this.keyPopularity = new LinkedHashMap<>();
-        this.valuePopularity = new LinkedHashMap<>();
+        this.keyPopularity = new HashMap<>();
+        this.valuePopularity = new HashMap<>();
     }
 
     public PopularMap(Map<K, V> map) {
         this.map = map;
-
-        this.keyPopularity = new LinkedHashMap<>();
-        this.valuePopularity = new LinkedHashMap<>();
+        this.keyPopularity = new HashMap<>();
+        this.valuePopularity = new HashMap<>();
 
     }
 
@@ -58,27 +62,22 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        boolean flag = map.containsKey(key);
         increaseKeyPopularity((K) key);
-        return flag;
+        return map.containsKey(key);
 
     }
 
     @Override
     public boolean containsValue(Object value) {
-        boolean flag = false;
-        flag = map.containsValue(value);
         increaseValuePopularity((V) value);
-        return flag;
+        return map.containsValue(value);
     }
 
     @Override
     public V get(Object key) {
         V result = map.get(key);
         increaseKeyPopularity((K) key);
-        if (result != null) {
-            valuePopularity.put(result, valuePopularity.get(result) + 1);
-        }
+        increaseValuePopularity(result);
         return result;
     }
 
@@ -87,10 +86,7 @@ public class PopularMap<K, V> implements Map<K, V> {
         V result = map.put(key, value);
         increaseKeyPopularity(key);
         increaseValuePopularity(value);
-        if (result != null) {
-            valuePopularity.put(result, valuePopularity.get(result) + 1);
-        }
-
+        increaseValuePopularity(result);
         return result;
     }
 
@@ -98,9 +94,7 @@ public class PopularMap<K, V> implements Map<K, V> {
     public V remove(Object key) {
         increaseKeyPopularity((K) key);
         V result = map.remove(key);
-        if (result != null) {
-            valuePopularity.put(result, valuePopularity.get(result) + 1);
-        }
+        increaseValuePopularity(result);
         return result;
     }
 
@@ -141,15 +135,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает самый популярный, на данный момент, ключ
      */
     public K getPopularKey() {
-        int max = Integer.MIN_VALUE;
-        K popularKey = null;
-        for (Map.Entry<K, Integer> x : keyPopularity.entrySet()) {
-            if (max < x.getValue()) {
-                max = x.getValue();
-                popularKey = x.getKey();
-            }
-        }
-        return popularKey;
+        return mostPopularKey;
     }
 
 
@@ -157,26 +143,15 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        if (keyPopularity.containsKey(key)) {
-            return keyPopularity.get(key);
-        }
-        return 0;
+        return keyPopularity.getOrDefault(key, 0);
     }
 
     /**
      * Возвращает самое популярное, на данный момент, значение. Надо учесть что значени может быть более одного
      */
     public V getPopularValue() {
-        int max = Integer.MIN_VALUE;
-        V popularValue = null;
-        for (Map.Entry<V, Integer> x : valuePopularity.entrySet()) {
-            if (max < x.getValue()) {
-                max = x.getValue();
-                popularValue = x.getKey();
-            }
-        }
 
-        return popularValue;
+        return mostPopularValue;
     }
 
     /**
@@ -184,10 +159,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        if (valuePopularity.containsKey(value)) {
-            return valuePopularity.get(value);
-        }
-        return 0;
+        return valuePopularity.getOrDefault(value, 0);
     }
 
     /**
@@ -195,24 +167,43 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        List<V> values = new ArrayList<>(valuePopularity.keySet());
-        values.sort((first, second) -> valuePopularity.get(first) - valuePopularity.get(second));
-        return values.iterator();
+        return valuePopularity.keySet()
+                .stream()
+                .sorted((first, second) -> valuePopularity.get(first) - valuePopularity.get(second))
+                .iterator();
     }
 
     private void increaseKeyPopularity(K key) {
+        int popularity = 1;
+        if (key == null) {
+            return;
+        }
+
         if (keyPopularity.containsKey(key)) {
-            keyPopularity.put(key, keyPopularity.get(key) + 1);
+            popularity = keyPopularity.get(key) + 1;
+            keyPopularity.put(key, popularity);
         } else {
-            keyPopularity.put(key, 1);
+            keyPopularity.put(key, popularity);
+        }
+        if (mostPopularKey == null || popularity > keyPopularity.get(mostPopularKey)) {
+            mostPopularKey = key;
         }
     }
 
     private void increaseValuePopularity(V value) {
+        int popularity = 1;
+        if (value == null) {
+            return;
+        }
+
         if (valuePopularity.containsKey(value)) {
-            valuePopularity.put(value, valuePopularity.get(value) + 1);
+            popularity = valuePopularity.get(value) + 1;
+            valuePopularity.put(value, popularity);
         } else {
-            valuePopularity.put(value, 1);
+            valuePopularity.put(value, popularity);
+        }
+        if (mostPopularValue == null || popularity > valuePopularity.get(mostPopularValue)) {
+            mostPopularValue = value;
         }
     }
 
