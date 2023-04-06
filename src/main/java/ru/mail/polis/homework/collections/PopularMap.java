@@ -143,10 +143,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Возвращает количество использование ключа
      */
     public int getKeyPopularity(K key) {
-        if (keyPopularity.containsKey(key)) {
-            return keyPopularity.get(key).intValue();
-        }
-        return 0;
+        return keyPopularity.getOrDefault(key, 0);
     }
 
     /**
@@ -161,10 +158,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      * старое значение и новое - одно и тоже), remove (считаем по старому значению).
      */
     public int getValuePopularity(V value) {
-        if (valuePopularity.containsKey(value)) {
-            return valuePopularity.get(value).intValue();
-        }
-        return 0;
+        return valuePopularity.getOrDefault(value, 0);
     }
 
     /**
@@ -178,17 +172,14 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     public int compare(V firstValue, V secondValue) {
-        return valuePopularity.get(firstValue).intValue() - valuePopularity.get(secondValue).intValue();
+        return Integer.compare(valuePopularity.get(firstValue).intValue(), valuePopularity.get(secondValue).intValue());
     }
 
     private void increaseKeyPopularity(K key) {
-        if (keyPopularity.containsKey(key)) {
-            keyPopularity.put(key, keyPopularity.get(key) + 1);
-        } else {
-            if (keyPopularity.size() == 0) {
-                popularKey = key;
-            }
-            keyPopularity.put(key, 1);
+        keyPopularity.merge(key, 1, (oldValue, newValue) -> oldValue + newValue);
+        if(keyPopularity.size() == 1) {
+            popularKey = key;
+            return;
         }
         if (keyPopularity.get(key).intValue() > keyPopularity.get(popularKey).intValue()) {
             popularKey = key;
@@ -196,13 +187,10 @@ public class PopularMap<K, V> implements Map<K, V> {
     }
 
     private void increaseValuePopularity(V value) {
-        if (valuePopularity.containsKey(value)) {
-            valuePopularity.put(value, valuePopularity.get(value) + 1);
-        } else {
-            if (valuePopularity.size() == 0) {
-                popularValue = value;
-            }
-            valuePopularity.put(value, 1);
+        valuePopularity.merge(value, 1, (oldValue, newValue) -> oldValue + newValue);
+        if(valuePopularity.size() == 1) {
+            popularValue = value;
+            return;
         }
         if (valuePopularity.get(value).intValue() > valuePopularity.get(popularValue).intValue()) {
             popularValue = value;
