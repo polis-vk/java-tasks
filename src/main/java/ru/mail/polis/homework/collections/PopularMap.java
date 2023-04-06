@@ -33,7 +33,6 @@ public class PopularMap<K, V> implements Map<K, V> {
     private final Map<K, V> map;
     private final Map<K, Integer> keyPopularity = new HashMap<>();
     private final Map<V, Integer> valuePopularity = new HashMap<>();
-
     private K mostPopularKey;
     private V mostPopularValue;
     private final List<V> valuesArray = new ArrayList<>();
