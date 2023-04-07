@@ -168,7 +168,7 @@ public class PopularMap<K, V> implements Map<K, V> {
      */
     public Iterator<V> popularIterator() {
         return valuesPopularity.entrySet().stream()
-                .sorted(Map.Entry.<V, Integer>comparingByValue())
+                .sorted(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
                 .iterator();
     }
