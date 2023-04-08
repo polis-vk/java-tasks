@@ -159,13 +159,11 @@ public class PopularMap<K, V> implements Map<K, V> {
      * 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        List<V> list = new ArrayList<>();
-        List<Map.Entry<V, Integer>> entryMap = new ArrayList<>(popularValue.entrySet());
-        entryMap.sort(Entry.comparingByValue());
-        for (Map.Entry<V, Integer> entry : entryMap) {
-            list.add(entry.getKey());
-        }
-        return list.iterator();
+        return popularValue.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .map(Entry::getKey)
+                .iterator();
     }
 
     private <T> T addPopularityKeyOrValue(Map<T, Integer> countersMap, T popularEl, T element) {
