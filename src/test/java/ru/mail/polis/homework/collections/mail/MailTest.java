@@ -28,18 +28,26 @@ public class MailTest {
 
         MailService.process(mailService, mailList);
 
-        Map<String, List<Mail>> mailBox = new HashMap<>();
-        List<Mail> recipient1MailBox = new ArrayList<>();
-        recipient1MailBox.add(message1);
-        mailBox.put(recipient1, recipient1MailBox);
-        List<Mail> recipient2MailBox = new ArrayList<>();
-        recipient2MailBox.add(message2);
-        recipient2MailBox.add(message3);
-        recipient2MailBox.add(salary1);
-        mailBox.put(recipient2, recipient2MailBox);
+        Map<String, List<Mail>> expectedMailBox = new HashMap<>();
+
+        List<Mail> expectedRecipient1MailBox = new ArrayList<>();
+        expectedRecipient1MailBox.add(message1);
+        expectedMailBox.put(recipient1, expectedRecipient1MailBox);
+
+        List<Mail> expectedRecipient2MailBox = new ArrayList<>();
+        expectedRecipient2MailBox.add(message2);
+        expectedRecipient2MailBox.add(message3);
+        expectedRecipient2MailBox.add(salary1);
+        expectedMailBox.put(recipient2, expectedRecipient2MailBox);
+
 
         assertEquals(sender1, mailService.getPopularSender());
         assertEquals(recipient2, mailService.getPopularRecipient());
-        assertEquals(mailBox, mailService.getMailBox());
+        assertEquals(expectedMailBox, mailService.getMailBox());
+
+        assertEquals(expectedRecipient1MailBox, mailService.getMailBox().get(recipient1));
+        assertEquals("text of first message", mailService.getMailBox().get(recipient1).get(0).getContent());
+        assertEquals("300", mailService.getMailBox().get(recipient2).get(2).getContent());
+        assertEquals(sender1, mailService.getMailBox().get(recipient2).get(2).getSender());
     }
 }

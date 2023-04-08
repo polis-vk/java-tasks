@@ -3,7 +3,7 @@ package ru.mail.polis.homework.collections.mail;
 /**
  * 1 тугрик
  */
-public class Mail {
+public abstract class Mail {
     private final String sender;
     private final String recipient;
 
@@ -18,6 +18,9 @@ public class Mail {
 
     public String getRecipient() {
         return recipient;
+    }
+    public String getContent() {
+        return "";
     }
 
     @Override

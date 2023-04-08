@@ -12,6 +12,11 @@ public class MailMessage extends Mail {
     }
 
     @Override
+    public String getContent() {
+        return message;
+    }
+
+    @Override
     public String toString() {
         return super.toString() + "Message - \"" + message + ".\"";
     }

@@ -12,6 +12,11 @@ public class Salary extends Mail {
     }
 
     @Override
+    public String getContent() {
+        return String.valueOf(sum);
+    }
+
+    @Override
     public String toString() {
         return super.toString() + "Salary of " + sum + ".";
     }
