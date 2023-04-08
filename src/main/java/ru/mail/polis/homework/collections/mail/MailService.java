@@ -1,6 +1,8 @@
 package ru.mail.polis.homework.collections.mail;
 
 
+import ru.mail.polis.homework.collections.PopularMap;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -16,8 +18,7 @@ import java.util.stream.Stream;
  */
 public class MailService<M extends Mail> implements Consumer<M> {
     private final Map<String, List<M>> mailBox = new HashMap<>();
-    private final Map<String, Integer> sendersByPopularity = new HashMap<>();
-    private final Map<String, Integer> recipientsByPopularity = new HashMap<>();
+    private final PopularMap<String, String> sendersAndRecipients = new PopularMap<>();
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
@@ -25,8 +26,7 @@ public class MailService<M extends Mail> implements Consumer<M> {
      */
     @Override
     public void accept(M mail) {
-        sendersByPopularity.merge(mail.getSender(), 1, Integer::sum);
-        recipientsByPopularity.merge(mail.getRecipient(), 1, Integer::sum);
+        sendersAndRecipients.put(mail.getSender(), mail.getRecipient());
 
         List<M> newMail = new ArrayList<>();
         newMail.add(mail);
@@ -47,10 +47,7 @@ public class MailService<M extends Mail> implements Consumer<M> {
      * 1 тугрик
      */
     public String getPopularSender() {
-        return sendersByPopularity.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .map(Map.Entry::getKey)
-                .findFirst().orElseGet(null);
+        return sendersAndRecipients.getPopularKey();
     }
 
     /**
@@ -58,10 +55,7 @@ public class MailService<M extends Mail> implements Consumer<M> {
      * 1 тугрик
      */
     public String getPopularRecipient() {
-        return recipientsByPopularity.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .map(Map.Entry::getKey)
-                .findFirst().orElseGet(null);
+        return sendersAndRecipients.getPopularValue();
     }
 
     /**
