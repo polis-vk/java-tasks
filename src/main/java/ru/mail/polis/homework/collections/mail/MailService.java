@@ -28,9 +28,9 @@ public class MailService<T extends Mail<?>> implements Consumer<T> {
      */
     @Override
     public void accept(T mail) {
-        mailUsers.put(mail.getSender(), mail.getAddressee());
-        BoxOfEmails.putIfAbsent(mail.getAddressee(), new ArrayList<>());
-        BoxOfEmails.get(mail.getAddressee()).add(mail);
+        mailUsers.put(mail.getSender(), mail.getReceiver());
+        BoxOfEmails.putIfAbsent(mail.getReceiver(), new ArrayList<>());
+        BoxOfEmails.get(mail.getReceiver()).add(mail);
     }
 
     /**
