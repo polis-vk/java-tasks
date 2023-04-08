@@ -28,13 +28,8 @@ public class MailService<T extends Mail<?>> implements Consumer<T> {
     @Override
     public void accept(T mail) {
         mailMap.put(mail.getSender(), mail.getRecipient());
-        if (userMessagesMap.containsKey(mail.getSender())) {
-            userMessagesMap.get(mail.getSender()).add(mail);
-        } else {
-            ArrayList<T> messageList = new ArrayList<>();
-            messageList.add(mail);
-            userMessagesMap.put(mail.getSender(), messageList);
-        }
+        userMessagesMap.computeIfAbsent(mail.getRecipient(),
+                receivedMessages -> new ArrayList<>()).add(mail);
     }
 
     /**
