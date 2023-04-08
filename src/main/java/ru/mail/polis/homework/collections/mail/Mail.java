@@ -4,9 +4,9 @@ package ru.mail.polis.homework.collections.mail;
  * 1 тугрик
  */
 public class Mail<T> {
-    public final String recipient;
-    public final String sender;
-    public final T message;
+    private final String recipient;
+    private final String sender;
+    private final T message;
 
     public Mail(String recipient, String sender, T message) {
         this.recipient = recipient;

@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 тугриков за пакет mail
  */
-public class MailService<T extends Mail<T>> implements Consumer<T> {
+public class MailService<T extends Mail<?>> implements Consumer<T> {
     private final PopularMap<String, String> senders = new PopularMap<>();
     private final Map<String, List<T>> inbox = new HashMap<>();
     /**
