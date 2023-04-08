@@ -1,32 +1,28 @@
 package ru.mail.polis.homework.collections.mail;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 1 тугрик
  */
-public class Mail<M extends MailMessage<?>> {
-    private final String mailbox;
-    private final List<M> receivedMessages;
-    private final List<M> sentMessages;
+public class Mail<I> {
+    private final String sender;
+    private final String participant;
+    private final I information;
 
-
-    public Mail(String mailbox) {
-        this.mailbox = mailbox;
-        receivedMessages = new ArrayList<>();
-        sentMessages = new ArrayList<>();
+    public Mail(String sender, String participant, I information) {
+        this.sender = sender;
+        this.participant = participant;
+        this.information = information;
     }
 
-    public String getMailbox() {
-        return mailbox;
+    public String getSender() {
+        return sender;
     }
 
-    public List<M> getReceivedMessages() {
-        return receivedMessages;
+    public String getParticipant() {
+        return participant;
     }
 
-    public List<M> getSentMessages() {
-        return sentMessages;
+    public I getInformation() {
+        return information;
     }
 }

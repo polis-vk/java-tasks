@@ -3,10 +3,11 @@ package ru.mail.polis.homework.collections.mail;
 
 import ru.mail.polis.homework.collections.PopularMap;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * Нужно создать сервис, который умеет обрабатывать письма и зарплату.
@@ -16,8 +17,9 @@ import java.util.stream.Collectors;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 тугриков за пакет mail
  */
-public class MailService<M extends MailMessage<?>> implements Consumer<M> {
-    private final PopularMap<Mail<M>, Mail<M>> messages = new PopularMap<>(); //словарь сообщений, где ключи - отправители, а значения - получатели
+public class MailService<M extends Mail<?>> implements Consumer<M> {
+    private final Map<String, List<M>> senderList = new HashMap<>();
+    private final PopularMap<String, String> mail = new PopularMap<>();
 
 
     /**
@@ -25,8 +27,9 @@ public class MailService<M extends MailMessage<?>> implements Consumer<M> {
      * 1 тугрик
      */
 
-    public void accept(M message) {
-        messages.put(message.getSender(), message.getRecipient());
+    public void accept(M mail) {
+        senderList.computeIfAbsent(mail.getSender(), recipient -> new ArrayList<>()).add(mail);
+        this.mail.put(mail.getSender(), mail.getSender());
     }
 
     /**
@@ -34,8 +37,7 @@ public class MailService<M extends MailMessage<?>> implements Consumer<M> {
      * 1 тугрик
      */
     public Map<String, List<M>> getMailBox() {
-        return messages.values().stream()
-                .collect(Collectors.toMap(Mail::getMailbox, Mail<M>::getReceivedMessages));
+        return senderList;
     }
 
     /**
@@ -43,7 +45,7 @@ public class MailService<M extends MailMessage<?>> implements Consumer<M> {
      * 1 тугрик
      */
     public String getPopularSender() {
-        return messages.getPopularKey().getMailbox();
+        return mail.getPopularKey();
     }
 
     /**
@@ -51,14 +53,14 @@ public class MailService<M extends MailMessage<?>> implements Consumer<M> {
      * 1 тугрик
      */
     public String getPopularRecipient() {
-        return messages.getPopularValue().getMailbox();
+        return mail.getPopularValue();
     }
 
     /**
      * Метод должен заставить обработать service все mails.
      * 1 тугрик
      */
-    public static <M extends MailMessage<?>> void process(MailService<M> service, List<M> mails) {
+    public static <M extends Mail<?>> void process(MailService<M> service, List<M> mails) {
         mails.forEach(service);
     }
 }
