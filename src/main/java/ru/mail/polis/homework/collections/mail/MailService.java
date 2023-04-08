@@ -28,8 +28,7 @@ public class MailService<T extends Mail<?>> implements Consumer<T> {
     @Override
     public void accept(T mail) {
         mailMap.put(mail.getSender(), mail.getRecipient());
-        userMessagesMap.computeIfAbsent(mail.getRecipient(),
-                receivedMessages -> new ArrayList<>()).add(mail);
+        userMessagesMap.computeIfAbsent(mail.getRecipient(), receivedMessages -> new ArrayList<>()).add(mail);
     }
 
     /**
