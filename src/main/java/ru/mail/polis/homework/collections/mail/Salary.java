@@ -7,5 +7,4 @@ public class Salary extends Mail<Integer> {
     public Salary(String sender, String recipient, Integer salary) {
         super(sender, recipient, salary);
     }
-
 }
