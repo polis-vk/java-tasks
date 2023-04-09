@@ -35,8 +35,6 @@ public class PopularMap<K, V> implements Map<K, V> {
     private Pair<K, Integer> mostPopularKey;
     public final Map<V, Integer> valuePopularityMap = new HashMap<>();
     private Pair<V, Integer> mostPopularValue;
-    private final MapValueIncreaser<K> keyIncreaser = new MapValueIncreaser<>();
-    private final MapValueIncreaser<V> valueIncreaser = new MapValueIncreaser<>();
 
     public PopularMap() {
         this.map = new HashMap<>();
@@ -78,12 +76,14 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
+        V tempVal = map.get(key);
         mostPopularKey = increaseKeyPopularity(key);
-        if (map.get(key) != null) {
-            mostPopularValue = increaseValuePopularity(map.get(key));
+        if (tempVal != null) {
+            mostPopularValue = increaseValuePopularity(tempVal);
         }
         mostPopularValue = increaseValuePopularity(value);
-        return map.put(key, value);
+        map.put(key, value);
+        return tempVal;
     }
 
     @Override
@@ -154,15 +154,17 @@ public class PopularMap<K, V> implements Map<K, V> {
      * Вернуть итератор, который итерируется по значениям (от самых НЕ популярных, к самым популярным) 2 тугрика
      */
     public Iterator<V> popularIterator() {
-        return valuePopularityMap.entrySet().stream().sorted(Entry.comparingByValue()).map(Entry::getKey)
+        return valuePopularityMap.entrySet().stream()
+                .sorted(Entry.comparingByValue())
+                .map(Entry::getKey)
                 .iterator();
     }
 
     private Pair<K, Integer> increaseKeyPopularity(Object key) {
-        return keyIncreaser.mapIncrease((K) key, keyPopularityMap, mostPopularKey);
+        return MapValueIncreaser.mapIncrease((K) key, keyPopularityMap, mostPopularKey);
     }
 
     private Pair<V, Integer> increaseValuePopularity(Object value) {
-        return valueIncreaser.mapIncrease((V) value, valuePopularityMap, mostPopularValue);
+        return MapValueIncreaser.mapIncrease((V) value, valuePopularityMap, mostPopularValue);
     }
 }
