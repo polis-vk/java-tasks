@@ -3,6 +3,7 @@ package ru.mail.polis.homework.collections.streams;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,7 +30,9 @@ public class WordFrequency {
                 .map(String::toLowerCase)
                 .flatMap(line -> Arrays.stream(line.split("[!:-?,;\\s.]")))
                 .filter(line -> !line.isEmpty())
-                .collect(Collectors.groupingBy(str -> str, Collectors.counting()))
+                .collect(Collectors.groupingBy(
+                        Function.identity(),
+                        Collectors.counting()))
                 .entrySet().stream()
                 .sorted(Map.Entry.<String, Long>comparingByValue()
                         .reversed()
