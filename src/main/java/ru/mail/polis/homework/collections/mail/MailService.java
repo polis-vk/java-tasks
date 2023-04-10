@@ -3,9 +3,7 @@ package ru.mail.polis.homework.collections.mail;
 
 import ru.mail.polis.homework.collections.PopularMap;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -18,8 +16,9 @@ import java.util.function.Consumer;
  */
 public class MailService<E extends Mail> implements Consumer<E> {
 
-    private final Map<String, List<E>> receiverLog = new HashMap<>();
+    private final Map<String, List<E>> receiverMailBox = new HashMap<>();
     private final PopularMap<String, String> popularReceiverSender = new PopularMap<>();
+
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
      * 1 тугрик
@@ -27,6 +26,12 @@ public class MailService<E extends Mail> implements Consumer<E> {
     @Override
     public void accept(E mail) {
         popularReceiverSender.put(mail.getReceiver(), mail.getSender());
+        List<E> receiverMails = new ArrayList<>(Collections.singletonList(mail));
+        if (receiverMailBox.containsKey(mail.getReceiver())) {
+            receiverMailBox.get(mail.getReceiver()).add(mail);
+        } else {
+            receiverMailBox.put(mail.getReceiver(), receiverMails);
+        }
     }
 
     /**
@@ -34,7 +39,7 @@ public class MailService<E extends Mail> implements Consumer<E> {
      * 1 тугрик
      */
     public Map<String, List<E>> getMailBox() {
-        return receiverLog;
+        return receiverMailBox;
     }
 
     /**
