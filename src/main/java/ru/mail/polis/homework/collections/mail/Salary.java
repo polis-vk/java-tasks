@@ -3,7 +3,7 @@ package ru.mail.polis.homework.collections.mail;
 /**
  * 1 тугрик
  */
-public class Salary extends Mail {
+public class Salary extends Mail<Integer> {
     private final int sum;
 
     public Salary(String sender, String recipient, int sum) {
@@ -12,8 +12,8 @@ public class Salary extends Mail {
     }
 
     @Override
-    public String getContent() {
-        return String.valueOf(sum);
+    public Integer getContent() {
+        return sum;
     }
 
     @Override

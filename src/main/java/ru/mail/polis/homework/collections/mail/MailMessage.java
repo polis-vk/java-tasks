@@ -3,7 +3,7 @@ package ru.mail.polis.homework.collections.mail;
 /**
  * 1 тугрик
  */
-public class MailMessage extends Mail {
+public class MailMessage extends Mail<String> {
     private final String message;
 
     public MailMessage(String sender, String recipient, String message) {

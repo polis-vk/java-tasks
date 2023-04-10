@@ -3,9 +3,10 @@ package ru.mail.polis.homework.collections.mail;
 /**
  * 1 тугрик
  */
-public abstract class Mail {
+public abstract class Mail<C> {
     private final String sender;
     private final String recipient;
+    private C content;
 
     public Mail(String sender, String recipient) {
         this.sender = sender;
@@ -19,12 +20,14 @@ public abstract class Mail {
     public String getRecipient() {
         return recipient;
     }
-    public String getContent() {
-        return "";
-    }
+
 
     @Override
     public String toString() {
         return "From " + sender + " to " + recipient + " : ";
+    }
+
+    public C getContent() {
+        return content;
     }
 }

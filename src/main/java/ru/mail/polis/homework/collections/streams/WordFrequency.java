@@ -24,8 +24,8 @@ public class WordFrequency {
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-        return lines.
-                flatMap(s -> Arrays.stream(s.split("[ .,!:-?;]")))
+        return lines
+                .flatMap(s -> Arrays.stream(s.split("[ .,!:-?;]")))
                 .filter(s -> !s.isEmpty())
                 .map(String::toLowerCase)
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))

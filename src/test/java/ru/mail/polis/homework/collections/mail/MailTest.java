@@ -47,7 +47,7 @@ public class MailTest {
 
         assertEquals(expectedRecipient1MailBox, mailService.getMailBox().get(recipient1));
         assertEquals("text of first message", mailService.getMailBox().get(recipient1).get(0).getContent());
-        assertEquals("300", mailService.getMailBox().get(recipient2).get(2).getContent());
+        assertEquals(300, mailService.getMailBox().get(recipient2).get(2).getContent());
         assertEquals(sender1, mailService.getMailBox().get(recipient2).get(2).getSender());
     }
 }
