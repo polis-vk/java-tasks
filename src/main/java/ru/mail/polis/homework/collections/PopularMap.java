@@ -36,8 +36,8 @@ import java.util.Set;
 public class PopularMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
-    private Map<K, Integer> keysPopularityMap;
-    private Map<V, Integer> valuesPopularityMap;
+    private final Map<K, Integer> keysPopularityMap;
+    private final Map<V, Integer> valuesPopularityMap;
     private K mostPopularKey;
     private V mostPopularValue;
 
