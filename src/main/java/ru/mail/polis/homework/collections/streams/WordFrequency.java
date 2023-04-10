@@ -27,7 +27,7 @@ public class WordFrequency {
                 .flatMap(Arrays::stream)
                 .map(String::toLowerCase)
                 .filter(word -> !word.isEmpty())
-                .collect(Collectors.groupingByConcurrent(Function.identity(), Collectors.counting()))
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet().stream()
                 .sorted(Map.Entry.<String, Long>comparingByValue(Comparator.reverseOrder()).thenComparing(Map.Entry::getKey))
                 .map(Map.Entry::getKey)

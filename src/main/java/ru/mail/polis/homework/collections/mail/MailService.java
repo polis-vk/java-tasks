@@ -19,7 +19,7 @@ import java.util.function.Consumer;
  */
 public class MailService<M extends Mail<?>> implements Consumer<M> {
     private final Map<String, List<M>> senderList = new HashMap<>();
-    private final PopularMap<String, String> mail = new PopularMap<>();
+    private final PopularMap<String, String> mailBox = new PopularMap<>();
 
 
     /**
@@ -29,7 +29,7 @@ public class MailService<M extends Mail<?>> implements Consumer<M> {
 
     public void accept(M mail) {
         senderList.computeIfAbsent(mail.getSender(), recipient -> new ArrayList<>()).add(mail);
-        this.mail.put(mail.getSender(), mail.getSender());
+        mailBox.put(mail.getSender(), mail.getSender());
     }
 
     /**
@@ -45,7 +45,7 @@ public class MailService<M extends Mail<?>> implements Consumer<M> {
      * 1 тугрик
      */
     public String getPopularSender() {
-        return mail.getPopularKey();
+        return mailBox.getPopularKey();
     }
 
     /**
@@ -53,7 +53,7 @@ public class MailService<M extends Mail<?>> implements Consumer<M> {
      * 1 тугрик
      */
     public String getPopularRecipient() {
-        return mail.getPopularValue();
+        return mailBox.getPopularValue();
     }
 
     /**
