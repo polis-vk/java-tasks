@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.collections.streams;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -21,7 +25,23 @@ public class WordFrequency {
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-        return null;
+        Comparator<Map.Entry<String, Long>> wordComparator = new Comparator<Map.Entry<String, Long>>() {
+            @Override
+            public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
+                return (int) (o2.getValue() - o1.getValue());
+            }
+        };
+        return lines.flatMap(line -> Stream.of(line.split("[.,?!:-; ]")))
+                .filter(word -> !word.isEmpty())
+                .map(String::toLowerCase)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .stream()
+                .sorted(((Comparator<Map.Entry<String, Long>>) (o1, o2) -> (int) (o2.getValue() - o1.getValue())).thenComparing(Map.Entry::getKey))
+                .map(Map.Entry::getKey)
+                .limit(10)
+                .collect(Collectors.toList());
+
     }
 
 
