@@ -65,38 +65,38 @@ public class PopularMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        incrementKeyPopularity((K) key);
+        mostPopularKey = incrementPopularity((K) key, keysPopularityMap, mostPopularKey);
         return map.containsKey((K) key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        incrementValuePopularity((V) value);
+        mostPopularValue = incrementPopularity((V) value, valuesPopularityMap, mostPopularValue);
         return map.containsValue((V) value);
     }
 
     @Override
     public V get(Object key) {
         V value = map.get(key);
-        incrementKeyPopularity((K) key);
-        incrementValuePopularity(value);
+        mostPopularKey = incrementPopularity((K) key, keysPopularityMap, mostPopularKey);
+        mostPopularValue = incrementPopularity(value, valuesPopularityMap, mostPopularValue);
         return value;
     }
 
     @Override
     public V put(K key, V value) {
-        incrementKeyPopularity(key);
-        incrementValuePopularity(value);
+        mostPopularKey = incrementPopularity((K) key, keysPopularityMap, mostPopularKey);
+        mostPopularValue = incrementPopularity(value, valuesPopularityMap, mostPopularValue);
         V newValue = map.put(key, value);
-        incrementValuePopularity(newValue);
+        mostPopularValue = incrementPopularity(newValue, valuesPopularityMap, mostPopularValue);
         return newValue;
     }
 
     @Override
     public V remove(Object key) {
         V value = map.remove(key);
-        incrementKeyPopularity((K) key);
-        incrementValuePopularity(value);
+        mostPopularKey = incrementPopularity((K) key, keysPopularityMap, mostPopularKey);
+        mostPopularValue = incrementPopularity(value, valuesPopularityMap, mostPopularValue);
         return value;
     }
 
@@ -166,21 +166,12 @@ public class PopularMap<K, V> implements Map<K, V> {
                 .iterator();
     }
 
-    private void incrementKeyPopularity(K key) {
-        int popularity = keysPopularityMap.merge(key, 1, Integer::sum);
-        if (mostPopularKey == null || popularity > keysPopularityMap.get(mostPopularKey)) {
-            mostPopularKey = key;
+    private <T> T incrementPopularity(T key, Map<T, Integer> map, T mostPopular) {
+        if (key == null) {
+            return mostPopular;
         }
-    }
-
-    private void incrementValuePopularity(V value) {
-        if (value == null) {
-            return;
-        }
-        int popularity = valuesPopularityMap.merge(value, 1, Integer::sum);
-        if (mostPopularValue == null || popularity > valuesPopularityMap.get(mostPopularValue)) {
-            mostPopularValue = value;
-        }
+        int popularity = map.merge(key, 1, Integer::sum);
+        return map.getOrDefault(mostPopular, 0) > popularity ? mostPopular : key;
     }
 
 }
