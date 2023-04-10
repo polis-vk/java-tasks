@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.streams;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,26 +23,16 @@ public class WordFrequency {
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-        List<String> sortedList = lines
+        return lines
                 .map(e -> e.split("[ .,?!;:-]"))
                 .flatMap(Arrays::stream)
-                .filter(element -> !element.equals(""))
+                .filter(element -> !element.isEmpty())
                 .map(String::toLowerCase)
-                .collect(Collectors.groupingBy(element -> element, Collectors.counting()))
-                .entrySet()
-                .stream()
-                .sorted(new Comparator<Map.Entry<String, Long>>() {
-                    @Override
-                    public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
-                        if(o1.getValue().compareTo(o2.getValue()) == 0) {
-                            return o1.getKey().compareTo(o2.getKey());
-                        }
-                        return o2.getValue().compareTo(o1.getValue());
-                    }
-                })
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue((el1, el2) -> -Long.compare(el1, el2)).thenComparing(Map.Entry.comparingByKey()))
                 .map(Map.Entry::getKey)
                 .limit(10)
                 .collect(Collectors.toList());
-        return sortedList;
     }
 };
