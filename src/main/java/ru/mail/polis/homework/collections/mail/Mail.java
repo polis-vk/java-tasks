@@ -8,7 +8,7 @@ public class Mail<T> {
     private final String recipient;
     private final T content;
 
-    Mail(String sender, String recipient, T content) {
+    public Mail(String sender, String recipient, T content) {
         this.sender = sender;
         this.recipient = recipient;
         this.content = content;
