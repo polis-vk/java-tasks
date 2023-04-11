@@ -1,16 +1,11 @@
 package ru.mail.polis.homework.collections.streams;
 
-import javax.print.DocFlavor;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import static java.util.Comparator.comparingLong;
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
-import java.util.*;
 
 /**
  * Написать программу, которая из текста (стрим строк), возвращает 10 самых популярных слов (В порядке убывания частоты).
