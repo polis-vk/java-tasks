@@ -29,14 +29,12 @@ public class WordFrequency {
 
         allWords.forEach(s -> wordAndFrequency.merge(s, 1, Integer::sum));
 
-
         return wordAndFrequency
                 .entrySet()
                 .stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .sorted((x, y) -> x.getValue().equals(y.getValue())
                         ? x.getKey().compareTo(y.getKey())
-                        : 0)
+                        : y.getValue() - x.getValue())
                 .map(Map.Entry::getKey)
                 .limit(10)
                 .collect(Collectors.toList());
