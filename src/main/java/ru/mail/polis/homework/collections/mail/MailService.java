@@ -12,9 +12,12 @@ import java.util.function.Consumer;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 тугриков за пакет mail
  */
-public class MailService<T extends Sending> implements Consumer {
+public class MailService<T extends Mail> implements Consumer {
 
     private List<T> mails;
+    private Map<String, List<T>> mailBox;
+    private Map<String, Integer> senderAndFrequency;
+    private Map<String, Integer> recipientAndFrequency;
 
     /**
      * С помощью этого метода почтовый сервис обрабатывает письма и зарплаты
@@ -22,8 +25,13 @@ public class MailService<T extends Sending> implements Consumer {
      */
     @Override
     public void accept(Object o) {
-        T current = (T) o;
-        mails.add(current);
+        T currentMail = (T) o;
+        mailBox.merge(currentMail.getRecipient(), Collections.singletonList(currentMail), (oldList, newValue) -> {
+            oldList.addAll(newValue);
+            return oldList;
+        });
+        senderAndFrequency.merge(currentMail.getSender(), 1, Integer::sum);
+        recipientAndFrequency.merge(currentMail.getRecipient(), 1, Integer::sum);
     }
 
     /**
@@ -31,12 +39,7 @@ public class MailService<T extends Sending> implements Consumer {
      * 1 тугрик
      */
     public Map<String, List<T>> getMailBox() {
-        Map<String, List<T>> result = new HashMap<>();
-        mails.forEach(mail -> result.merge(mail.getRecipient(), Collections.singletonList(mail), (oldList, newValue) -> {
-            oldList.addAll(newValue);
-            return oldList;
-        }));
-        return result;
+        return mailBox;
     }
 
     /**
@@ -54,8 +57,6 @@ public class MailService<T extends Sending> implements Consumer {
      * 1 тугрик
      */
     public String getPopularRecipient() {
-        Map<String, Integer> recipientAndFrequency = new HashMap<>();
-        mails.forEach(mail -> recipientAndFrequency.merge(mail.getRecipient(), 1, Integer::sum));
         return recipientAndFrequency.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
     }
 
@@ -63,7 +64,7 @@ public class MailService<T extends Sending> implements Consumer {
      * Метод должен заставить обработать service все mails.
      * 1 тугрик
      */
-    public static <T> void process(MailService<? extends Sending> service, List<T> mails) {
+    public static <T> void process(MailService<? extends Mail> service, List<T> mails) {
         for (T mail : mails) {
             service.accept(mail);
         }

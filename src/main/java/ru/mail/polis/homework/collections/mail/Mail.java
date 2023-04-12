@@ -3,15 +3,20 @@ package ru.mail.polis.homework.collections.mail;
 /**
  * 1 тугрик
  */
-public class Mail extends Sending {
-    private final MailMessage mailMessage;
+public class Mail  {
+    private final String sender;
+    private final String recipient;
 
-    public Mail(String sender, String recipient, MailMessage mailMessage) {
-        super(sender, recipient);
-        this.mailMessage = mailMessage;
+    public Mail(String sender, String recipient) {
+        this.sender = sender;
+        this.recipient = recipient;
     }
 
-    public MailMessage getMailMessage() {
-        return mailMessage;
+    public String getSender() {
+        return sender;
+    }
+
+    public String getRecipient() {
+        return recipient;
     }
 }
