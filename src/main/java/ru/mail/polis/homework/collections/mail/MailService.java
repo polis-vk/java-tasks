@@ -62,11 +62,9 @@ public class MailService<T extends Mail> implements Consumer<T> {
      * 1 тугрик
      */
     public static <T extends Mail> void process(MailService<T> service, List<T> mails) {
-        for (T x : mails) {
-            if (x == null) {
-                return;
-            }
-            service.accept(x);
+        if (mails == null || service == null) {
+            return;
         }
+        mails.stream().filter(x -> x != null).forEach(service::accept);
     }
 }
