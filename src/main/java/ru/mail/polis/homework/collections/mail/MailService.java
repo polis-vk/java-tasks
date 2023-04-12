@@ -5,8 +5,6 @@ import ru.mail.polis.homework.collections.PopularMap;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Нужно создать сервис, который умеет обрабатывать письма и зарплату.
@@ -30,8 +28,9 @@ public class MailService<M extends Mail> implements Consumer<M> {
 
         List<M> newMail = new ArrayList<>();
         newMail.add(mail);
-        mailBox.merge(mail.getRecipient(), newMail, (currentList, additionalPart) -> Stream.concat(currentList.stream(), additionalPart.stream())
-                .collect(Collectors.toList()));
+        mailBox.merge(mail.getRecipient(), newMail, (currentList, additionalPart) -> {
+            currentList.addAll(additionalPart);
+            return currentList;} );
     }
 
     /**
