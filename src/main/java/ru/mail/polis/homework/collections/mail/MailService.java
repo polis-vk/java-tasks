@@ -17,7 +17,7 @@ import java.util.function.Consumer;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 тугриков за пакет mail
  */
-public class MailService<T extends Mail> implements Consumer<T> {
+public class MailService<T extends Mail<?>> implements Consumer<T> {
 
     private final Map<String, List<T>> mailBox = new HashMap<>();
     private final PopularMap<String, String> mails = new PopularMap<>();
@@ -61,7 +61,7 @@ public class MailService<T extends Mail> implements Consumer<T> {
      * Метод должен заставить обработать service все mails.
      * 1 тугрик
      */
-    public static void process(MailService service, List mails) {
+    public static <T extends Mail<?>> void process(MailService<T> service, List<T> mails) {
         mails.forEach(service);
     }
 }
