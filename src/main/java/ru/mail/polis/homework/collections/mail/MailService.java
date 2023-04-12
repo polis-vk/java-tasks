@@ -17,7 +17,7 @@ import ru.mail.polis.homework.collections.PopularMap;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 тугриков за пакет mail
  */
-public class MailService<T extends Mail> implements Consumer<T> {
+public class MailService<T extends Mail<?>> implements Consumer<T> {
     private PopularMap<String, String> senderRecipientMap;
     private Map<String, List<T>> mailBox;
 
