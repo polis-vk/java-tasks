@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
 import ru.mail.polis.homework.collections.PopularMap;
 
 /**
@@ -16,7 +17,7 @@ import ru.mail.polis.homework.collections.PopularMap;
  * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 тугриков за пакет mail
  */
-public class MailService<M extends Mail> implements Consumer<M> {
+public class MailService<M extends Mail<?>> implements Consumer<M> {
 
     private final PopularMap<String, String> recipientSender = new PopularMap<>();
     private final Map<String, List<M>> mailBox = new HashMap<>();
@@ -59,7 +60,7 @@ public class MailService<M extends Mail> implements Consumer<M> {
      * Метод должен заставить обработать service все mails.
      * 1 тугрик
      */
-    public static <M extends Mail> void process(MailService<M> service, List<M> mails) {
+    public static <M extends Mail<?>> void process(MailService<M> service, List<M> mails) {
         mails.forEach(service);
     }
 }
