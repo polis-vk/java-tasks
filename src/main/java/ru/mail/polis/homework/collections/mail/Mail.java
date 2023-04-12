@@ -3,22 +3,19 @@ package ru.mail.polis.homework.collections.mail;
 /**
  * 1 тугрик
  */
-public class Mail<V> {
-    private String senderName;
-    private String receiverName;
-    private V data;
-
-    Mail(String senderName, String receiverName, V data) {
+public class Mail<T> {
+    private final String senderName;
+    private final String receiverName;
+    private final T data;
+    public Mail(String senderName, String receiverName, T data) {
         this.receiverName = receiverName;
         this.senderName = senderName;
         this.data = data;
     }
-
-    String getSenderName() {
+    public String getSenderName() {
         return senderName;
     }
-
-    String getReceiverName() {
+    public String getReceiverName() {
         return receiverName;
     }
 }
