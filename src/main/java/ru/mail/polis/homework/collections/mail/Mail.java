@@ -4,20 +4,19 @@ package ru.mail.polis.homework.collections.mail;
  * 1 тугрик
  */
 public class Mail<T> {
-    String recipient;
-    String sender;
-    String textMessage;
-    int salary;
+    private final String recipient;
+    private final String sender;
 
-    Mail(String sender, String recipient, String textMessage) {
+    Mail(String sender, String recipient) {
         this.recipient = recipient;
         this.sender = sender;
-        this.textMessage = textMessage;
     }
 
-    Mail(String sender, String recipient, int salary) {
-        this.recipient = recipient;
-        this.sender = sender;
-        this.salary = salary;
+    public String getRecipient() {
+        return this.recipient;
+    }
+
+    public String getSender() {
+        return this.sender;
     }
 }

@@ -25,10 +25,10 @@ public class MailService<T extends Mail<T>> implements Consumer<T> {
 
     @Override
     public void accept(T mailObject) {
-        String recipient = mailObject.recipient;
-        String sender = mailObject.sender;
-        processing(recipient, recipientDict, mailObject);
-        processing(sender, sendertDict, mailObject);
+        String recipient = mailObject.getRecipient();
+        String sender = mailObject.getSender();
+        recipientDict.computeIfAbsent(recipient, k -> new ArrayList<>()).add(mailObject);
+        sendertDict.computeIfAbsent(sender, k -> new ArrayList<>()).add(mailObject);
     }
 
     /**
@@ -66,16 +66,5 @@ public class MailService<T extends Mail<T>> implements Consumer<T> {
         }
     }
 
-    private void processing(String key, Map<String, List<T>> mailMap, T mailObject) {
-        List<T> value = mailMap.get(key);
-        if (value != null) {
-            value.add(mailObject);
-            mailMap.put(key, value);
-        } else {
-            List<T> newValue = new ArrayList<>();
-            newValue.add(mailObject);
-            mailMap.put(key, newValue);
-        }
-    }
 }
 
