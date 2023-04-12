@@ -14,11 +14,11 @@ import java.util.function.Consumer;
  * Письма состоят из получателя, отправителя, текста сообщения
  * Зарплата состоит из получателя, отправителя и суммы.
  * <p>
- * В реализации нигде не должно быть классов Object и коллекций без типа. Nспользуйте дженерики.
+ * В реализации нигде не должно быть классов Object и коллекций без типа. Используйте дженерики.
  * Всего 7 тугриков за пакет mail
  */
 public class MailService<T extends Mail<T>> implements Consumer<T> {
-    private final PopularMap<String, String> Persons = new PopularMap<>();
+    private final PopularMap<String, String> persons = new PopularMap<>();
     private final Map<String, List<T>> personMail = new HashMap<>();
 
     /**
@@ -27,13 +27,10 @@ public class MailService<T extends Mail<T>> implements Consumer<T> {
      */
     @Override
     public void accept(T mail) {
-        String sender = mail.getSender();
-        String addressee = mail.getAddressee();
-        if (sender != null) {
-            Persons.put(sender, mail.getAddressee());
+        if (mail.getSender() != null) {
+            persons.put(mail.getSender(), mail.getAddressee());
         }
-        personMail.putIfAbsent(addressee, new ArrayList<>());
-        personMail.get(addressee).add(mail);
+        personMail.computeIfAbsent(mail.getSender(), recipient -> new ArrayList<>()).add(mail);
     }
 
     /**
@@ -49,7 +46,7 @@ public class MailService<T extends Mail<T>> implements Consumer<T> {
      * 1 тугрик
      */
     public String getPopularSender() {
-        return Persons.getPopularKey();
+        return persons.getPopularKey();
     }
 
     /**
@@ -57,14 +54,14 @@ public class MailService<T extends Mail<T>> implements Consumer<T> {
      * 1 тугрик
      */
     public String getPopularRecipient() {
-        return Persons.getPopularValue();
+        return persons.getPopularValue();
     }
 
     /**
      * Метод должен заставить обработать service все mails.
      * 1 тугрик
      */
-    public static <T extends Mail<T>> void process(MailService service, List mails) {
+    public static <T extends Mail<?>> void process(MailService service, List mails) {
         mails.forEach(service);
     }
 
