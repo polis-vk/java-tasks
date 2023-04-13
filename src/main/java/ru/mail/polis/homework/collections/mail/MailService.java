@@ -18,7 +18,7 @@ import java.util.HashMap;
  */
 public class MailService<T extends Mail<?>> implements Consumer<T> {
 
-    private final PopularMap<String, String> sendersAndRecipientsMap = new PopularMap<>();
+    private final PopularMap<String, String> sendersToRecipients = new PopularMap<>();
     private final Map<String, List<T>> mailBox = new HashMap<>();
 
     /**
@@ -28,7 +28,7 @@ public class MailService<T extends Mail<?>> implements Consumer<T> {
     @Override
     public void accept(T mail) {
         String sender = mail.getSender();
-        sendersAndRecipientsMap.put(sender, mail.getRecipient());
+        sendersToRecipients.put(sender, mail.getRecipient());
         mailBox.computeIfAbsent(sender, recipient -> new ArrayList<>())
                 .add(mail);
     }
@@ -46,7 +46,7 @@ public class MailService<T extends Mail<?>> implements Consumer<T> {
      * 1 тугрик
      */
     public String getPopularSender() {
-        return sendersAndRecipientsMap.getPopularKey();
+        return sendersToRecipients.getPopularKey();
     }
 
     /**
@@ -54,7 +54,7 @@ public class MailService<T extends Mail<?>> implements Consumer<T> {
      * 1 тугрик
      */
     public String getPopularRecipient() {
-        return sendersAndRecipientsMap.getPopularValue();
+        return sendersToRecipients.getPopularValue();
     }
 
     /**
