@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.collections.streams;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,21 +23,19 @@ public class WordFrequency {
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-        List<String> allWords = new ArrayList<>();
-        HashMap<String, Integer> wordAndFrequency = new HashMap<>();
 
-        lines.forEach(s -> allWords.addAll(Arrays.asList(s.toLowerCase().replaceAll("[^a-zа-я]", " ").split("\\s+"))));
-
-        allWords.forEach(s -> wordAndFrequency.merge(s, 1, Integer::sum));
-
-        return wordAndFrequency
+        return lines
+                .flatMap(s -> Arrays.stream(s.toLowerCase().replaceAll("\\d|\\p{Punct}", " ").split("\\s+")))
+                .collect(Collectors.groupingBy(
+                        Function.identity(),
+                        HashMap::new,
+                        Collectors.counting()
+                ))
                 .entrySet()
                 .stream()
-                .sorted((x, y) -> x.getValue().equals(y.getValue())
-                        ? x.getKey().compareTo(y.getKey())
-                        : y.getValue() - x.getValue())
-                .map(Map.Entry::getKey)
+                .sorted(Comparator.comparing(Map.Entry<String, Long>::getValue).reversed().thenComparing(Map.Entry::getKey))
                 .limit(10)
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
 
