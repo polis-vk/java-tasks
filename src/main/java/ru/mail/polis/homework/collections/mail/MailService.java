@@ -63,7 +63,7 @@ public class MailService<Ty extends Mail<?>> implements Consumer<Ty> {
      * Метод должен заставить обработать service все mails.
      * 1 тугрик
      */
-    public static <Ty extends Mail<Ty>> void process(MailService<Ty> service, List<Ty> mails) {
+    public static <Ty extends Mail<?>> void process(MailService<Ty> service, List<Ty> mails) {
         mails.forEach(service);
     }
 }
