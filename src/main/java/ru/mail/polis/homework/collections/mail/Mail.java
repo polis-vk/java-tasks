@@ -3,14 +3,16 @@ package ru.mail.polis.homework.collections.mail;
 /**
  * 1 тугрик
  */
-public class Mail {
+public class Mail<T> {
 
     private final String receiver;
     private final String sender;
+    private final T artifact;
 
-    public Mail(String receiver, String sender) {
+    public Mail(String receiver, String sender, T artifact) {
         this.receiver = receiver;
         this.sender = sender;
+        this.artifact = artifact;
     }
 
     public String getReceiver() {
@@ -21,8 +23,7 @@ public class Mail {
         return sender;
     }
 
-    @Override
-    public String toString() {
-        return "\nReceiver: " + receiver + "\nSender: " + sender;
+    public T getArtifact() {
+        return artifact;
     }
 }
