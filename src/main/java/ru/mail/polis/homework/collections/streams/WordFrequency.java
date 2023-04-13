@@ -1,10 +1,11 @@
 package ru.mail.polis.homework.collections.streams;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
-import static java.util.Comparator.comparingLong;
+
 import static java.util.stream.Collectors.*;
 
 /**
@@ -27,12 +28,12 @@ public class WordFrequency {
     public static List<String> wordFrequency(Stream<String> lines) {
         return lines.flatMap(line -> Arrays.stream(line
                         .toLowerCase()
-                        .split("[^а-яА-ЯёЁ\\w]+")))
+                        .split("\\P{L}+")))
                 .collect(groupingBy(String::valueOf, counting()))
                 .entrySet()
                 .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .sorted(comparingLong(entry -> -entry.getValue()))
+                .sorted(Map.Entry.<String, Long>comparingByValue(Comparator.reverseOrder())
+                        .thenComparing(Map.Entry.comparingByKey()))
                 .limit(10)
                 .map(Map.Entry::getKey)
                 .collect(toList());
