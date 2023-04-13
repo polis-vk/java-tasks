@@ -4,24 +4,25 @@ package ru.mail.polis.homework.collections.mail;
  * 1 тугрик
  */
 public class Mail<T> {
-    private final String consumer;
-    private final String producer;
+    private final String recipient;
+    private final String sender;
     private final T message;
 
-    public Mail(String consumer, String producer, T message) {
-        this.consumer = consumer;
-        this.producer = producer;
+    public Mail(String recipient, String sender, T message) {
+        this.recipient = recipient;
+        this.sender = sender;
         this.message = message;
     }
+
     public String getConsumer() {
-        return consumer;
+        return recipient;
     }
 
     public String getProducer() {
-        return producer;
+        return sender;
     }
 
-    public T getMessage()  {
+    public T getMessage() {
         return message;
     }
 }
