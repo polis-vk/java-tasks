@@ -23,13 +23,6 @@ public class WordFrequency {
      * Задачу можно решить без единого условного оператора, только с помощью стримов.
      */
     public static List<String> wordFrequency(Stream<String> lines) {
-//        Map<String, Integer> mapFreq = new HashMap<>();
-//        lines.forEach(sentence -> Arrays.stream(sentence.toLowerCase().split("\\s*(\\s|,|!|\\.)\\s*"))
-//                .forEach(word -> mapFreq.merge(word, 1, Integer::sum)));
-//        return mapFreq.entrySet().stream()
-//                .sorted(Map.Entry.comparingByKey())
-//                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-//                .limit(10).map(Map.Entry::getKey).collect(Collectors.toList());
         return lines.flatMap(sentence -> Arrays.stream(sentence.toLowerCase().split("\\s*(\\s|,|!|\\.)\\s*")))
                 .collect(Collectors.groupingBy(String::valueOf, Collectors.counting()))
                 .entrySet()
