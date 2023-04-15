@@ -26,10 +26,10 @@ public class MailService<T extends Mail> implements Consumer<T> {
      * 1 тугрик
      */
     @Override
-    public void accept(T o) {
-        if (o != null) {
-            mailBox.getOrDefault(o.getRecipient(), new ArrayList<>()).add((T) o.getMessage());
-            senderRecipientPopularity.put(o.getSender(), o.getRecipient());
+    public void accept(T mail) {
+        if (mail != null) {
+            mailBox.getOrDefault(mail.getRecipient(), new ArrayList<>()).add((T) mail.getMessage());
+            senderRecipientPopularity.put(mail.getSender(), mail.getRecipient());
         }
     }
 
@@ -65,6 +65,7 @@ public class MailService<T extends Mail> implements Consumer<T> {
         if (mails == null || service == null) {
             return;
         }
-        mails.stream().filter(x -> x != null).forEach(service::accept);
+        mails.stream().filter(mail -> mail != null).
+                forEach(service::accept);
     }
 }
