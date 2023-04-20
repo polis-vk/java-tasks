@@ -1,6 +1,11 @@
 package ru.mail.polis.homework.io;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
 
 public class Directories {
 
@@ -13,7 +18,21 @@ public class Directories {
      * 2 тугрика
      */
     public static int removeWithFile(String path) {
-        return 0;
+        File file = new File(path);
+        if (!file.exists()) {
+            return 0;
+        }
+        if (file.isFile()) {
+            file.delete();
+            return 1;
+        }
+        int count = 0;
+        for (File tempFile : file.listFiles()) {
+            count += removeWithFile(tempFile.getPath());
+        }
+        file.delete();
+        count ++;
+        return count;
     }
 
     /**
@@ -21,6 +40,20 @@ public class Directories {
      * 2 тугрика
      */
     public static int removeWithPath(String path) throws IOException {
-        return 0;
+        Path dir = Paths.get(path);
+        if (!Files.exists(dir)) {
+            return 0;
+        }
+        return Files.walk(dir)
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .mapToInt(f -> {
+                    if (!f.exists()) {
+                        return 0;
+                    }
+                    f.delete();
+                    return 1;
+                })
+                .sum();
     }
 }
