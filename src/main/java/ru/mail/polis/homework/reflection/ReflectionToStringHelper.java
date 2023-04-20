@@ -1,14 +1,9 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,7 +48,29 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        StringBuilder returnString = new StringBuilder("{");
+        Class<?> clazz = object.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+        Arrays.sort(fields, Comparator.comparing(Field::getName));
+        for (Field field : fields) {
+            try {
+                field.setAccessible(true);
+                if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
+                    continue;
+                }
+                returnString.append(field.getName()).append(": ");
+                Object obj = field.get(object);
+                returnString.append(obj == null ? "null" : obj.toString()).append(", ");
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        if (returnString.length() > 1) {
+            returnString.setLength(returnString.length() - 2);
+        }
+        return String.valueOf(returnString.append("}"));
     }
 }
