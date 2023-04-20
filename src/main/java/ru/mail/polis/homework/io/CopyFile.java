@@ -23,7 +23,9 @@ public class CopyFile {
         Files.walkFileTree(copyFrom, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                Files.createDirectories(copyTo.resolve(copyFrom.relativize(dir)));
+                if (Files.notExists(copyTo.resolve(copyFrom.relativize(dir)))) {
+                    Files.createDirectories(copyTo.resolve(copyFrom.relativize(dir)));
+                }
                 return FileVisitResult.CONTINUE;
             }
 
@@ -36,11 +38,13 @@ public class CopyFile {
     }
 
     private static void copyOneFile(Path copyFrom, Path copyTo) throws IOException {
-        try (BufferedInputStream inStream = new BufferedInputStream(Files.newInputStream(copyFrom)); BufferedOutputStream outStream = new BufferedOutputStream(Files.newOutputStream(copyTo))) {
-            byte[] bytes = new byte[inStream.available()];
-            int length;
-            while ((length = inStream.read(bytes)) != -1) {
-                outStream.write(bytes, 0, length);
+        try (BufferedInputStream inStream = new BufferedInputStream(Files.newInputStream(copyFrom))) {
+            try (BufferedOutputStream outStream = new BufferedOutputStream(Files.newOutputStream(copyTo))) {
+                byte[] bytes = new byte[inStream.available()];
+                int length;
+                while ((length = inStream.read(bytes)) != -1) {
+                    outStream.write(bytes, 0, length);
+                }
             }
         }
     }
