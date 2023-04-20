@@ -31,7 +31,7 @@ public class Directories {
             count += removeWithFile(tempFile.getPath());
         }
         file.delete();
-        count ++;
+        count++;
         return count;
     }
 
