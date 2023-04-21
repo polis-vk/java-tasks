@@ -3,9 +3,9 @@ package ru.mail.polis.homework.exception;
 /**
  * Задание: Нужно создать свою мини библиотеку, с удаленным роботом и пультом управления.
  * Каждый класс оценивается отдельно
- *
+ * <p>
  * Пункт управления роботами. Через него управляются все роботы
- *
+ * <p>
  * 4 тугрика
  */
 public class RobotRemoteControl {
@@ -18,7 +18,20 @@ public class RobotRemoteControl {
      * Попытка считается успешной, если соединение открылось и вызвался метод moveRobotTo без исключений.
      */
     public void moveTo(int robotId, int toX, int toY) {
+        RobotConnection connection = null;
+        for (int i = 0; i < 3; i++) {
+            try {
+                connection = connectionManager.getConnection(robotId);
+                connection.moveRobotTo(toX, toY);
+                return;
+            } catch (RobotConnectionException exception) {
+            } finally {
+                if (connection != null) {
+                    connection.close();
+                }
+            }
+        }
 
+        throw new RobotConnectionException("Connection error");
     }
-
 }
