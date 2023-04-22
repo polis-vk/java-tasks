@@ -52,12 +52,13 @@ public class CopyFile {
     }
 
     private static void copyFileContent(Path fromFile, Path toFile) throws IOException {
-        try (InputStream inputStream = Files.newInputStream(fromFile);
-             OutputStream outputStream = Files.newOutputStream(toFile)) {
-            byte[] buffer = new byte[1000];
-            while (inputStream.available() > 0) {
-                int left = inputStream.read(buffer);
-                outputStream.write(buffer, 0, left);
+        try (InputStream inputStream = Files.newInputStream(fromFile)) {
+            try (OutputStream outputStream = Files.newOutputStream(toFile)) {
+                byte[] buffer = new byte[1000];
+                while (inputStream.available() > 0) {
+                    int left = inputStream.read(buffer);
+                    outputStream.write(buffer, 0, left);
+                }
             }
         }
     }
