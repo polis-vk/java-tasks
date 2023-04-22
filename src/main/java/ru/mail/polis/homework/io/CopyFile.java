@@ -19,31 +19,39 @@ public class CopyFile {
      * В тесте для создания нужных файлов для первого запуска надо раскомментировать код в setUp()
      * 3 тугрика
      */
-    public static void copyFiles(String pathFrom, String pathTo) throws IOException {
+    public static void copyFiles(String pathFrom, String pathTo) {
         Path srcDir = Paths.get(pathFrom).getParent();
         Path destDir = Paths.get(pathTo).getParent();
         if (Files.notExists(destDir)) {
-            Files.createDirectories(destDir);
+            try {
+                Files.createDirectories(destDir);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
-        Files.walkFileTree(srcDir, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                try {
-                    Files.createDirectory(destDir.resolve(srcDir.relativize(dir)));
-                } catch (FileAlreadyExistsException ignored) {}
-                return FileVisitResult.CONTINUE;
-            }
+        try {
+            Files.walkFileTree(srcDir, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    try {
+                        Files.createDirectory(destDir.resolve(srcDir.relativize(dir)));
+                    } catch (FileAlreadyExistsException ignored) {}
+                    return FileVisitResult.CONTINUE;
+                }
 
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Path newFile = Files.createFile(destDir.resolve(srcDir.relativize(file)));
-                copyFileContent(file, newFile);
-                return FileVisitResult.CONTINUE;
-            }
-        });
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Path newFile = Files.createFile(destDir.resolve(srcDir.relativize(file)));
+                    copyFileContent(file, newFile);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            System.out.println("Error: " + e);
+        }
     }
 
-    private static void copyFileContent(Path fromFile, Path toFile) {
+    private static void copyFileContent(Path fromFile, Path toFile) throws IOException {
         try (InputStream inputStream = Files.newInputStream(fromFile);
              OutputStream outputStream = Files.newOutputStream(toFile)) {
             byte[] buffer = new byte[1000];
@@ -51,8 +59,6 @@ public class CopyFile {
                 int left = inputStream.read(buffer);
                 outputStream.write(buffer, 0, left);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }
