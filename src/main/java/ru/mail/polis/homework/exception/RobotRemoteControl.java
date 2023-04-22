@@ -13,7 +13,7 @@ import java.util.List;
  * 4 тугрика
  */
 public class RobotRemoteControl {
-    private RobotConnectionManager connectionManager;
+    private final RobotConnectionManager connectionManager;
 
     public RobotRemoteControl(Robot... robots) {
         List<Robot> allRobots = new ArrayList<>(Arrays.asList(robots));
