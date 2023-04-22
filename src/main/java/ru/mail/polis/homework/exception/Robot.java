@@ -7,8 +7,15 @@ package ru.mail.polis.homework.exception;
  * 2 тугрика
  */
 public class Robot {
+    private final int ID;
     private int x;
     private int y;
+
+    public Robot(int id, int x, int y) {
+        ID = id;
+        this.x = x;
+        this.y = y;
+    }
 
     public int getX() {
         return x;
@@ -24,5 +31,9 @@ public class Robot {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public int getID() {
+        return ID;
     }
 }

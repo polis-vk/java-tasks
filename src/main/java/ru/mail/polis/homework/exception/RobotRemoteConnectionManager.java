@@ -12,8 +12,9 @@ public class RobotRemoteConnectionManager implements RobotConnectionManager {
     @Override
     public RobotConnection getConnection(int robotId) throws RobotConnectionException {
         Robot robot = robots.get(robotId);
-        try (RobotConnection connection = new RobotRemoteConnection(robot)) {
-            return connection;
+        if (robot == null) {
+            throw new RobotConnectionException("Connection didn't succeed.");
         }
+        return new RobotRemoteConnection(robot);
     }
 }
