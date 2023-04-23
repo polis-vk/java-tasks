@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.exception;
 
+import ru.mail.polis.homework.exception.exception.ConnectionException;
+
 /**
  * Подключение к роботу, которое позволяет его перемещать в заданную точку. Подключение в любой момент может
  * потерять связь с роботом и тогда любой из методов кидает исключение.
@@ -12,8 +14,11 @@ public interface RobotConnection extends AutoCloseable {
     /**
      * Перемещает робота в заданную точку.
      */
-    void moveRobotTo(int x, int y);
+    void moveRobotTo(int x, int y) throws ConnectionException;
+
+    Robot getRobot() throws ConnectionException;
 
     @Override
     void close();
+
 }
