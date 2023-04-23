@@ -5,7 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class Directories {
 
@@ -31,8 +32,7 @@ public class Directories {
             count += removeWithFile(tempFile.getPath());
         }
         file.delete();
-        count++;
-        return count;
+        return ++count;
     }
 
     /**
@@ -44,16 +44,19 @@ public class Directories {
         if (!Files.exists(dir)) {
             return 0;
         }
-        return Files.walk(dir)
-                .sorted(Comparator.reverseOrder())
-                .map(Path::toFile)
-                .mapToInt(f -> {
-                    if (!f.exists()) {
-                        return 0;
-                    }
-                    f.delete();
-                    return 1;
-                })
-                .sum();
+        AtomicInteger count = new AtomicInteger();
+        if (Files.isDirectory(dir)) {
+            Files.list(dir)
+                    .collect(Collectors.toList())
+                    .forEach(f -> {
+                        try {
+                            count.addAndGet(removeWithPath(f.toString()));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+        }
+        Files.delete(dir);
+        return count.addAndGet(1);
     }
 }
