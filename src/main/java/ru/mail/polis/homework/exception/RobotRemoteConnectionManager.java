@@ -13,7 +13,7 @@ public class RobotRemoteConnectionManager implements RobotConnectionManager {
     public RobotConnection getConnection(int robotId) throws RobotConnectionException {
         Robot robot = robots.get(robotId);
         if (robot == null) {
-            throw new RobotConnectionException("Connection didn't succeed.");
+            throw new RobotConnectionException("Connection wasn't successful.");
         }
         return new RobotRemoteConnection(robot);
     }
