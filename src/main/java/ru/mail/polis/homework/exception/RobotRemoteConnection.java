@@ -13,7 +13,9 @@ public class RobotRemoteConnection implements RobotConnection {
 
     @Override
     public void moveRobotTo(int x, int y) throws RobotException {
-        if (!isConnected) throw new RobotException();
+        if (!isConnected) {
+            throw new RobotException();
+        }
         robot.setX(x);
         robot.setY(y);
     }
