@@ -4,9 +4,9 @@ public class Connection implements RobotConnection {
 
     private final Robot robot;
     private boolean isOpened;
-    Connection(Robot robot) {
+    public Connection(Robot robot) {
         this.robot = robot;
-        this.isOpened = true;
+        isOpened = true;
     }
 
     @Override
@@ -14,12 +14,12 @@ public class Connection implements RobotConnection {
         if (!isOpened) {
             throw new RobotConnectionException("Connection was closed");
         }
-        this.robot.setY(y);
-        this.robot.setX(x);
+        robot.setY(y);
+        robot.setX(x);
     }
 
     @Override
     public void close() {
-        this.isOpened = false;
+        isOpened = false;
     }
 }

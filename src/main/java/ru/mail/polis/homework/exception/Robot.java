@@ -10,7 +10,7 @@ public class Robot {
     private final int id;
     private int x;
     private int y;
-    Robot(int id) {
+    public Robot(int id) {
         this.id = id;
     }
     public int getId() {

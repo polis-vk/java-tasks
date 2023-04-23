@@ -40,29 +40,28 @@ public class CopyFile {
     }
 
     public static void copyDir(Path pathFrom, Path pathTo) throws IOException {
-        if (Files.isDirectory(pathFrom)) {
-            if (Files.notExists(pathTo)) {
-                Files.createDirectory(pathTo);
-            }
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(pathFrom)) {
-                for (Path path : stream) {
-                    copyDir(path, pathTo.resolve(path.getFileName()));
-                }
-            }
-        } else {
+        if (!Files.isDirectory(pathFrom)) {
             copyFile(pathFrom, pathTo);
+            return;
+        }
+        if (Files.notExists(pathTo)) {
+            Files.createDirectory(pathTo);
+        }
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(pathFrom)) {
+            for (Path path : stream) {
+                copyDir(path, pathTo.resolve(path.getFileName()));
+            }
         }
     }
 
     public static void copyFile(Path pathFrom, Path pathTo) throws IOException {
-        try (
-                InputStream in = Files.newInputStream(pathFrom);
-                OutputStream out = Files.newOutputStream(pathTo)
-        ) {
+        try (InputStream in = Files.newInputStream(pathFrom)) {
             byte[] buffer = new byte[BUFF_SIZE];
             int length;
-            while ((length = in.read(buffer)) > 0) {
-                out.write(buffer, 0, length);
+            try (OutputStream out = Files.newOutputStream(pathTo)) {
+                while ((length = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, length);
+                }
             }
         }
     }

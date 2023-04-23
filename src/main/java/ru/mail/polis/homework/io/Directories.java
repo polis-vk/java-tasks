@@ -26,16 +26,15 @@ public class Directories {
             return 0;
         } else if (file.isFile()) {
             return file.delete() ? 1 : 0;
-        } else {
-            int count = 0;
-            File[] files = file.listFiles();
-            if (files != null) {
-                for (File fileToDelete : files) {
-                    count += removeWithFile(fileToDelete.getPath());
-                }
-            }
-            return file.delete() ? count + 1 : 1;
         }
+        int count = 0;
+        File[] files = file.listFiles();
+        if (files != null) {
+            for (File fileToDelete : files) {
+                count += removeWithFile(fileToDelete.getPath());
+            }
+        }
+        return file.delete() ? count + 1 : count;
     }
 
     /**
@@ -47,15 +46,15 @@ public class Directories {
         if (!Files.exists(myPath)) {
             return 0;
         }
-        int count = 0;
+        int count;
         try (Stream<Path> walk = Files.walk(myPath)) {
             List<Path> list = walk
                     .sorted(Comparator.reverseOrder())
                     .collect(Collectors.toList());
             for (Path p : list) {
                 Files.delete(p);
-                count++;
             }
+            count = list.size();
         }
         return count;
     }

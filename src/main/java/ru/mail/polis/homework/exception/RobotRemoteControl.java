@@ -5,14 +5,18 @@ import java.util.ArrayList;
 /**
  * Задание: Нужно создать свою мини библиотеку, с удаленным роботом и пультом управления.
  * Каждый класс оценивается отдельно
- *
+ * <p>
  * Пункт управления роботами. Через него управляются все роботы
- *
+ * <p>
  * 4 тугрика
  */
 public class RobotRemoteControl {
 
-    private final RobotConnectionManager connectionManager = new ConnectionManager(new ArrayList<>());
+    private final RobotConnectionManager connectionManager;
+
+    public RobotRemoteControl(ArrayList<Robot> existingRobots) {
+        connectionManager = new ConnectionManager(existingRobots);
+    }
 
     /**
      * Метод должен открыть соединение и отправить робота в указанную точку. При неудаче - повторить действие еще 2 раза,
@@ -21,12 +25,12 @@ public class RobotRemoteControl {
      */
     public void moveTo(int robotId, int toX, int toY) throws RobotConnectionException {
         int numOfTDisconnects = 0;
-        for (; numOfTDisconnects < 3; numOfTDisconnects++) {
-            try(
-                    RobotConnection connection = connectionManager.getConnection(robotId)
-            ) {
-                    connection.moveRobotTo(toX, toY);
+        while (numOfTDisconnects < 3) {
+            try (RobotConnection connection = connectionManager.getConnection(robotId)) {
+                connection.moveRobotTo(toX, toY);
+                break;
             } catch (RobotConnectionException e) {
+                numOfTDisconnects++;
                 if (numOfTDisconnects == 2) {
                     throw e;
                 }
