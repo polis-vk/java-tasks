@@ -8,7 +8,7 @@ public class ConnectionManager implements RobotConnectionManager {
     private final Map<Integer, Robot> robots = new HashMap<>();
 
     public ConnectionManager(List<Robot> robots) {
-        for(Robot robot : robots){
+        for (Robot robot : robots) {
             this.robots.putIfAbsent(robot.getID(), robot);
         }
     }

@@ -21,7 +21,7 @@ public class RobotRemoteControl {
         this.connectionManager = new ConnectionManager(robotList);
     }
 
-    public RobotRemoteControl(RobotConnectionManager connectionManager){
+    public RobotRemoteControl(RobotConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
     }
 
