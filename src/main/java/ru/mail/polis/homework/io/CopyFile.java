@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.io;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -29,11 +32,24 @@ public class CopyFile {
                     }
                 } else {
                     Files.createDirectories(dest.getParent());
-                    Files.copy(source, dest);
+                    copy(source, dest);
                 }
             } catch (IOException e) {
                 System.out.println("IOException");
             }
+        }
+    }
+
+    private static void copy(Path source, Path dest) {
+        try (BufferedReader br = Files.newBufferedReader(source);
+             BufferedWriter bw = Files.newBufferedWriter(dest)) {
+            String line = br.readLine();
+            while (line != null) {
+                bw.write(line + "\n");
+                line = br.readLine();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
