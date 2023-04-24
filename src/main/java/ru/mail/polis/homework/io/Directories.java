@@ -2,6 +2,7 @@ package ru.mail.polis.homework.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -52,13 +53,15 @@ public class Directories {
             Files.delete(rootDir);
             return counterPath;
         }
-        for (Path currentFile : Files.newDirectoryStream(rootDir)) {
-            if (Files.isDirectory(currentFile)) {
-                counterPath += removeWithPath(currentFile.toString());
-            }
-            if (Files.exists(currentFile)) {
-                Files.delete(currentFile);
-                counterPath++;
+        try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(rootDir)) {
+            for (Path currentFile : dirStream) {
+                if (Files.isDirectory(currentFile)) {
+                    counterPath += removeWithPath(currentFile.toString());
+                }
+                if (Files.exists(currentFile)) {
+                    Files.delete(currentFile);
+                    counterPath++;
+                }
             }
         }
         Files.delete(rootDir);
