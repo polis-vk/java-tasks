@@ -2,6 +2,7 @@ package ru.mail.polis.homework.exception;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,8 +17,12 @@ public class RobotRemoteControl {
 
     private final RobotConnectionManager connectionManager;
 
-    public RobotRemoteControl() {
-        this.connectionManager = new ConnectionManager(new HashMap<>());
+    public RobotRemoteControl(List<Robot> robotList) {
+        this.connectionManager = new ConnectionManager(robotList);
+    }
+
+    public RobotRemoteControl(RobotConnectionManager connectionManager){
+        this.connectionManager = connectionManager;
     }
 
     /**
@@ -29,7 +34,6 @@ public class RobotRemoteControl {
         for (int numberOfAttemps = 0; true; numberOfAttemps++) {
             try (RobotConnection robotConnection = connectionManager.getConnection(robotId)) {
                 robotConnection.moveRobotTo(toX, toY);
-                robotConnection.close();
                 break;
             } catch (RobotConnectionException e) {
                 if (numberOfAttemps == 2) {

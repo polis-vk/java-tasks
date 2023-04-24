@@ -8,14 +8,14 @@ package ru.mail.polis.homework.exception;
  */
 public class Robot {
 
-    private final int ID;
+    private final int id;
     private int x;
     private int y;
     private boolean isConnected;
     private boolean isDepressed;
 
     public Robot(int id, int x, int y) {
-        ID = id;
+        this.id = id;
         this.x = x;
         this.y = y;
         this.isConnected = false;
@@ -32,7 +32,7 @@ public class Robot {
 
 
     public int getID() {
-        return ID;
+        return id;
     }
 
     public boolean isConnected() {
