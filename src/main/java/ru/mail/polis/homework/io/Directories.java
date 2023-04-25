@@ -28,7 +28,7 @@ public class Directories {
 
         int count = 0;
         if (dir.isDirectory()) {
-            for (File file: Objects.requireNonNull(dir.listFiles(Objects::nonNull))) {
+            for (File file: dir.listFiles(Objects::nonNull)) {
                 count += removeWithFile(file.toString());
             }
         }
@@ -53,7 +53,7 @@ public class Directories {
                 paths = stream.collect(Collectors.toList());
             }
             for (Path file: paths) {
-                count += removeWithFile(file.toString());
+                count += removeWithPath(file.toString());
             }
         }
         Files.delete(dir);

@@ -26,7 +26,7 @@ public class CopyFile {
             try {
                 Files.createDirectories(destDir);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.out.println("Error: " + e);
             }
         }
         try {
@@ -35,7 +35,9 @@ public class CopyFile {
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     try {
                         Files.createDirectory(destDir.resolve(srcDir.relativize(dir)));
-                    } catch (FileAlreadyExistsException ignored) {}
+                    } catch (FileAlreadyExistsException e) {
+                        System.out.println("Error: " + e);
+                    }
                     return FileVisitResult.CONTINUE;
                 }
 
