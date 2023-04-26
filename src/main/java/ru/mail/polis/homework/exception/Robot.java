@@ -14,20 +14,17 @@ public class Robot {
         this.x = x;
         this.y = y;
     }
+    public int getX() {
+        return x;
+    }
+    public void setX(int x) {
+        this.x = x;
+    }
+    public int getY() {
+        return y;
+    }
 
-    public boolean moveTo(int toX, int toY) {  // делает шаг к цели
-        if (x > toX) {
-            x--;
-        } else {
-            x++;
-        }
-
-        if (y > toY) {
-            y--;
-        } else {
-            y++;
-        }
-        System.out.println("Moved to (" + x + ", " + y + ") position.");
-        return x == toX && y == toY;
+    public void setY(int y) {
+        this.y = y;
     }
 }

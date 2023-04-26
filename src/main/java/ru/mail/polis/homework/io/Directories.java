@@ -22,16 +22,16 @@ public class Directories {
     public static int removeWithFile(String path) {
         AtomicInteger deletedAmount = new AtomicInteger();
         File fileForDeleting = new File(path);
-        if (fileForDeleting.exists()) {
-            if (fileForDeleting.isDirectory()) {
-                File[] content = fileForDeleting.listFiles();
-                Arrays.stream(content).forEach(file -> deletedAmount.addAndGet(removeWithFile(file.getPath())));
-            }
-
-            deletedAmount.getAndIncrement();
-            fileForDeleting.delete();
+        if (!fileForDeleting.exists()) {
+            return deletedAmount.get();
+        }
+        if (fileForDeleting.isDirectory()) {
+            File[] content = fileForDeleting.listFiles();
+            Arrays.stream(content).forEach(file -> deletedAmount.addAndGet(removeWithFile(file.getPath())));
         }
 
+        deletedAmount.getAndIncrement();
+        fileForDeleting.delete();
         return deletedAmount.get();
     }
 
@@ -49,7 +49,7 @@ public class Directories {
                 {
                     try {
                         deletedAmount.addAndGet(removeWithPath(filePath.toString()));
-                    } catch (IOException e) {
+                    } catch (IOException e) {                                           //приходится отлавливать ошибку, хотя она есть в сигнатуре метода, так как стрим не дает ее выбросить просто так
                         System.out.println("Input|Output exception");
                     }
                 });

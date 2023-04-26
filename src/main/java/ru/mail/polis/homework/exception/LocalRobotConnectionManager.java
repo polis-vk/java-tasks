@@ -10,12 +10,10 @@ public class LocalRobotConnectionManager implements RobotConnectionManager {
     }
 
     @Override
-    public RobotConnection getConnection(int robotId) throws Exception {
+    public RobotConnection getConnection(int robotId) throws ConnectionException {
         if (robots.containsKey(robotId)) {
-            return new LocalRobotConnection(robots.get(robotId));
-        } else {
-            System.out.println("No such robot available");
-            throw new Exception();
+            return new LocalRobotConnection(robots.get(robotId), 5);
         }
+        throw new ConnectionException("No such robot available");
     }
 }

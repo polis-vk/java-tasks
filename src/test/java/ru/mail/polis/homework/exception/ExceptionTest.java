@@ -1,10 +1,7 @@
-package ru.mail.polis.homework;
+package ru.mail.polis.homework.exception;
 
 import org.junit.Before;
 import org.junit.Test;
-import ru.mail.polis.homework.exception.LocalRobotConnectionManager;
-import ru.mail.polis.homework.exception.Robot;
-import ru.mail.polis.homework.exception.RobotRemoteControl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +30,7 @@ public class ExceptionTest {
             assertEquals(1, controller.moveTo(1, 11, 11));
             assertEquals(1, controller.moveTo(1, 0, 0));
 
-        } catch (Exception e) {
+        } catch (ConnectionException e) {
             throw new AssertionError();
         }
     }
@@ -43,14 +40,14 @@ public class ExceptionTest {
         try {
             controller.moveTo(2, 3, 3);
             throw new AssertionError();
-        } catch (Exception e) {
+        } catch (ConnectionException e) {
             assertTrue(true); // failed connection
         }
 
         try {
             controller.moveTo(0, 16, 16);
             throw new AssertionError();
-        } catch (Exception e) {
+        } catch (ConnectionException e) {
             assertTrue(true); // failed connection
         }
     }

@@ -2,7 +2,6 @@ package ru.mail.polis.homework.io;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -21,35 +20,37 @@ public class CopyFile {
         Path dest = Paths.get(pathTo);
         Path source = Paths.get(pathFrom);
 
-        if (Files.exists(source)) {
-            try {
-                if (Files.isDirectory(source)) {
-                    Files.createDirectories(dest);
-                    try (Stream<Path> contentInStream = Files.list(source)) {
-                        contentInStream.forEach(path -> {
-                            copyFiles(path.toString(), dest.resolve(source.relativize(path)).toString()); //копирование файлов из источника в целевую папку по составному пути
-                        });
-                    }
-                } else {
-                    Files.createDirectories(dest.getParent());
-                    copy(source, dest);
+        if (Files.notExists(source)) {
+            return;
+        }
+        try {
+            if (Files.isDirectory(source)) {
+                Files.createDirectories(dest);
+                try (Stream<Path> contentInStream = Files.list(source)) {
+                    contentInStream.forEach(path -> {
+                        copyFiles(path.toString(), dest.resolve(source.relativize(path)).toString()); //копирование файлов из источника в целевую папку по составному пути
+                    });
                 }
-            } catch (IOException e) {
-                System.out.println("IOException");
+            } else {
+                Files.createDirectories(dest.getParent());
+                copy(source, dest);
             }
+        } catch (IOException e) {
+            System.out.println("IOException");
         }
     }
 
-    private static void copy(Path source, Path dest) {
-        try (BufferedReader br = Files.newBufferedReader(source);
-             BufferedWriter bw = Files.newBufferedWriter(dest)) {
-            String line = br.readLine();
-            while (line != null) {
-                bw.write(line + "\n");
-                line = br.readLine();
+    private static void copy(Path source, Path dest) throws IOException {
+        try (BufferedReader br = Files.newBufferedReader(source)) {
+            try (BufferedWriter bw = Files.newBufferedWriter(dest)) {
+                br.lines().forEach(str -> {
+                    try {
+                        bw.write(str);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);  // прокидывать выше IOExeption не дает стрим(
+                    }
+                });
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }
