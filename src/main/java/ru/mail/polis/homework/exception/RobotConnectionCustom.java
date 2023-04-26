@@ -1,23 +1,23 @@
 package ru.mail.polis.homework.exception;
 
-public class RobotConnectionCustom implements RobotConnection {
+class RobotConnectionCustom implements RobotConnection {
     private final Robot robot;
     private boolean connection;
 
-    public RobotConnectionCustom(Robot robot) {
+    protected RobotConnectionCustom(Robot robot) {
         this.robot = robot;
     }
 
     @Override
     public void moveRobotTo(int x, int y) throws RobotConnectionException {
         if (!connection) {
-            throw new RobotConnectionException("Connection exception", robot.getId());
+            throw new RobotConnectionException("Error connection to Robot with id = " + robot.getId(), robot.getId());
         }
         robot.moveTo(x, y);
     }
 
     @Override
-    public boolean connection() {
+    public boolean isConnectionAlive() {
         return this.connection;
     }
 

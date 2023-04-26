@@ -29,9 +29,10 @@ public class RobotRemoteControl {
         RobotConnection robotConnection = connectionManager.getConnection(robotId);
 
         int tryConnection = 0;
-        boolean isConnection = false;
-        while (tryConnection < 3 || !isConnection) {
-            isConnection = robotConnection.connection();
+        while (tryConnection < 3 ) {
+            if (robotConnection.isConnectionAlive()){
+                break;
+            }
             tryConnection++;
         }
 
@@ -40,11 +41,8 @@ public class RobotRemoteControl {
             throw new RobotConnectionException("Unsuccessful connection", robotId);
         }
 
-        try {
-            robotConnection.moveRobotTo(toX, toY);
-        } catch (RobotConnectionException ex) {
-            robotConnection.close();
-        }
+        robotConnection.moveRobotTo(toX, toY);
+        robotConnection.close();
 
     }
 

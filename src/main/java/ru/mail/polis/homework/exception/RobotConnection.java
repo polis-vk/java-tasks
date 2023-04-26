@@ -14,7 +14,7 @@ public interface RobotConnection extends AutoCloseable {
      */
     void moveRobotTo(int x, int y) throws RobotConnectionException;
 
-    boolean connection();
+    boolean isConnectionAlive();
 
     @Override
     void close();

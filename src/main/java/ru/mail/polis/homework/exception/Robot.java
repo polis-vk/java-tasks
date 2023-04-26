@@ -27,15 +27,8 @@ public class Robot {
         return y;
     }
 
-    public int[] moveTo(int x, int y) {
+    public void moveTo(int x, int y) {
         this.x = x;
         this.y = y;
-        return new int[]{this.x, this.y};
-    }
-
-    public int[] move(int x, int y) {
-        this.x += x;
-        this.y += y;
-        return new int[]{this.x, this.y};
     }
 }
