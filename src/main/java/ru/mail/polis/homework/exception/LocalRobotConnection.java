@@ -5,7 +5,7 @@ public class LocalRobotConnection implements RobotConnection {
     private boolean isConnected;
     private final Robot robot;
 
-    public LocalRobotConnection(Robot connectedRobot, int connectionResources) {
+    LocalRobotConnection(Robot connectedRobot, int connectionResources) {
         this.robot = connectedRobot;
         this.connectionResources = connectionResources;
         isConnected = true;

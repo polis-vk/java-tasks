@@ -49,18 +49,17 @@ public class Directories {
                 {
                     try {
                         deletedAmount.addAndGet(removeWithPath(filePath.toString()));
-                    } catch (IOException e) {                                           //приходится отлавливать ошибку, хотя она есть в сигнатуре метода, так как стрим не дает ее выбросить просто так
+                    } catch (
+                            IOException e) {                                           //приходится отлавливать ошибку, хотя она есть в сигнатуре метода, так как стрим не дает ее выбросить просто так
                         System.out.println("Input|Output exception");
                     }
                 });
             }
         }
 
-        try {
+        if (Files.exists(pathForDeleting)) {
             Files.delete(pathForDeleting);
             deletedAmount.getAndIncrement();
-        } catch (NoSuchFileException exception) {
-            System.out.println("No such file");
         }
         return deletedAmount.get();
     }
