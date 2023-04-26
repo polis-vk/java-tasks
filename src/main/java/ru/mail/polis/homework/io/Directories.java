@@ -43,7 +43,6 @@ public class Directories {
 
         FileVisitorWithDelete visitor = new FileVisitorWithDelete();
         Files.walkFileTree(file, visitor);
-
         return visitor.getCountOfDeletedFilesAndDirectories();
     }
 }
