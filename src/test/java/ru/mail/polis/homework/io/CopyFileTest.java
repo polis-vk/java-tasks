@@ -23,7 +23,7 @@ public class CopyFileTest {
 
     @Before
     public void setUp() throws Exception {
-//        // --------------------------------------- create source for copyOnlyFile --------------------------------------
+        // --------------------------------------- create source for copyOnlyFile --------------------------------------
 //        Path dir = Paths.get("src", "test", "resources", "directories", "copy", "first");
 //        Path file = Paths.get("src", "test", "resources", "directories", "copy", "first", "file.txt");
 //        Files.createDirectories(dir);
@@ -86,7 +86,7 @@ public class CopyFileTest {
 //            createFile(Paths.get("src", "test", "resources", "directories", "copy", "fifth", "dir2", "dir2dir1", "dirdir",
 //                    "file" + i + ".txt"));
 //        }
-//        // --------------------------------------- create source for copyDirHard ---------------------------------------
+        // --------------------------------------- create source for copyDirHard ---------------------------------------
 
     }
 
