@@ -5,10 +5,8 @@ import ru.mail.polis.homework.reflection.objects.easy.Easy;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -52,8 +50,83 @@ import java.util.stream.Stream;
  */
 public class ReflectionToStringHelper {
 
+    private static final String NULL_RESULT = "null";
+
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return NULL_RESULT;
+        }
+
+        StringBuilder result = new StringBuilder("{");
+
+        Class<?> objectClass = object.getClass();
+        List<Field> orderedClassFields = getProcessedFields(objectClass);
+
+        boolean hadFirst = false;
+        for (Field objectClassField : orderedClassFields) {
+            if (nonIgnoredField(objectClassField)) {
+                try {
+                    result.append(proceedObjectField(objectClassField, object, hadFirst));
+                } catch (IllegalAccessException ignored) {}
+                if (!hadFirst) {
+                    hadFirst = true;
+                }
+            }
+        }
+        return result.append('}').toString();
     }
+
+    private static String proceedObjectField(Field field, Object object, boolean isComma) throws IllegalAccessException {
+        StringBuilder fieldString = new StringBuilder();
+        if (isComma) {
+            fieldString.append(", ");
+        }
+
+        fieldString.append(field.getName());
+        fieldString.append(": ");
+        field.setAccessible(true);
+
+        Object fieldValue = field.get(object);
+        if (fieldValue == null) {
+            fieldString.append(NULL_RESULT);
+        } else if (field.getType().isArray()) {
+            fieldString.append(proceedArrayField(field, object));
+        } else {
+            fieldString.append(fieldValue);
+        }
+        return fieldString.toString();
+    }
+
+    private static String proceedArrayField(Field field, Object object) throws IllegalAccessException {
+        StringBuilder fieldString = new StringBuilder();
+
+        Object fieldArray = field.get(object);
+        Object[] fieldValues = new Object[Array.getLength(fieldArray)];
+        fieldString.append('[');
+        for (int i = 0; i < fieldValues.length; i++) {
+            if (i > 0) {
+                fieldString.append(", ");
+            }
+            fieldString.append(Array.get(fieldArray, i));
+        }
+        fieldString.append(']');
+        return fieldString.toString();
+    }
+
+    private static List<Field> getProcessedFields(Class<?> objectClass) {
+        List<Field> result = new ArrayList<>();
+        while (objectClass != Object.class) {
+            result.addAll(Arrays.stream(objectClass.getDeclaredFields())
+                    .filter(ReflectionToStringHelper::nonIgnoredField)
+                    .sorted(Comparator.comparing(Field::getName))
+                    .collect(Collectors.toList()));
+            objectClass = objectClass.getSuperclass();
+        }
+        return result;
+    }
+
+    private static boolean nonIgnoredField(Field field) {
+        return !Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class);
+    }
+
 }
