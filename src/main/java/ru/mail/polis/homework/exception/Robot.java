@@ -17,10 +17,6 @@ public class Robot {
 
     public Robot(int id) {
         this.id = id;
-        x = 0;
-        y = 0;
-        isTurnedOn = false;
-        isConnected = false;
     }
 
     public Robot(int id, int x, int y, boolean isTurnedOn, boolean isConnected) {

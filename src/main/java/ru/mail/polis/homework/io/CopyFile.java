@@ -24,7 +24,7 @@ public class CopyFile {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                 if (Files.notExists(copyTo.resolve(copyFrom.relativize(dir)))) {
-                    Files.createDirectories(copyTo.resolve(copyFrom.relativize(dir)));
+                    Files.createDirectory(copyTo.resolve(copyFrom.relativize(dir)));
                 }
                 return FileVisitResult.CONTINUE;
             }
