@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class ConnectionManager implements RobotConnectionManager {
 
-    Map<Integer, Robot> robotsMap;
+    private final Map<Integer, Robot> robotsMap;
 
     public ConnectionManager(List<Robot> robotsList) {
         robotsMap = new HashMap<>();
@@ -17,7 +17,7 @@ public class ConnectionManager implements RobotConnectionManager {
     public RobotConnection getConnection(int robotId) throws RobotConnectionFailedException {
         Robot robot = robotsMap.get(robotId);
         if (robot == null) {
-            throw new RobotConnectionFailedException("No robot with such id");
+            throw new RobotConnectionFailedException("No robot with such id found");
         }
         return new Connection(robot);
     }
