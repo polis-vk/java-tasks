@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ConnectionManager implements RobotConnectionManager {
-    Map<Integer, Robot> robots = new HashMap<>();
+    public final Map<Integer, Robot> robots = new HashMap<>();
 
     ConnectionManager(List<Robot> robots) {
         for (Robot robot : robots) {

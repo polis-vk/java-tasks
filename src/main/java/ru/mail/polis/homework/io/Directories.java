@@ -2,11 +2,9 @@ package ru.mail.polis.homework.io;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class Directories {
 
@@ -45,18 +43,21 @@ public class Directories {
             return 0;
         }
         AtomicInteger count = new AtomicInteger();
-        if (Files.isDirectory(dir)) {
-            Files.list(dir)
-                    .collect(Collectors.toList())
-                    .forEach(f -> {
-                        try {
-                            count.addAndGet(removeWithPath(f.toString()));
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
-        }
-        Files.delete(dir);
-        return count.addAndGet(1);
+        Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                count.incrementAndGet();
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.delete(dir);
+                count.incrementAndGet();
+                return FileVisitResult.CONTINUE;
+            }
+        });
+        return count.get();
     }
 }
