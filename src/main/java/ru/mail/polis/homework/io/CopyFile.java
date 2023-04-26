@@ -24,13 +24,13 @@ public class CopyFile {
             Files.walkFileTree(dirFrom, new SimpleFileVisitor<Path>() {
 
                 @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException{
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     Files.createDirectory(dirTo.resolve(dirFrom.relativize(dir)));
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException{
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     Path copiedFile = Files.createFile(dirTo.resolve(dirFrom.relativize(file)));
                     copyFileContent(file, copiedFile);
                     return FileVisitResult.CONTINUE;
