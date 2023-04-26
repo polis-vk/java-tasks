@@ -1,14 +1,7 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,7 +46,17 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        AtomicReference<String> string = new AtomicReference<>();
+        string.set("");
+        Arrays.stream(object.getClass().getDeclaredFields()).forEach(field -> {
+            field.setAccessible(true);
+            try {
+                string.getAndAccumulate(field.getName() + ": " + field.get(object) + ", ", String::concat);
+            } catch (IllegalAccessException e) {
+                string.getAndAccumulate(field.getName() + ": null, ", String::concat);
+            }
+        });
+
+        return "{" + string.toString().substring(0, string.toString().length() - 2) + "}";
     }
 }
