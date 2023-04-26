@@ -2,10 +2,10 @@ package ru.mail.polis.homework.exception;
 
 import java.util.Map;
 
-public class ConnectionManager implements RobotConnectionManager {
+public class RobotConnectionManagerImpl implements RobotConnectionManager {
     private final Map<Integer, Robot> robots;
 
-    public ConnectionManager(Map<Integer, Robot> connections) {
+    public RobotConnectionManagerImpl(Map<Integer, Robot> connections) {
         this.robots = connections;
     }
 
@@ -14,6 +14,10 @@ public class ConnectionManager implements RobotConnectionManager {
         if (!robots.containsKey(robotId)) {
             throw new RobotException("robot with such Id doesn't exist");
         }
-        return new Connection(robots.get(robotId));
+        Robot robot = robots.get(robotId);
+        if (robot.isBroken()) {
+            throw new RobotException("robot with such Id is broken");
+        }
+        return new RobotConnectionImpl(robot);
     }
 }

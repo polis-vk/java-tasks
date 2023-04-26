@@ -12,10 +12,10 @@ import java.util.HashMap;
  */
 public class RobotRemoteControl {
 
-    private RobotConnectionManager connectionManager;
+    private final RobotConnectionManager connectionManager;
 
     public RobotRemoteControl() {
-        this.connectionManager = new ConnectionManager(new HashMap<>());
+        this.connectionManager = new RobotConnectionManagerImpl(new HashMap<>());
     }
 
     /**
@@ -25,11 +25,9 @@ public class RobotRemoteControl {
      */
     public void moveTo(int robotId, int toX, int toY) throws RobotException {
         RobotConnection connection = connectionManager.getConnection(robotId);
-
         for (int fixCount = 0; fixCount < 3; fixCount++) {
-            try {
+            try (connection) {
                 connection.moveRobotTo(toX, toY);
-                connection.close();
                 return;
             } catch (RobotException e) {
                 if (fixCount == 2) {

@@ -7,34 +7,49 @@ package ru.mail.polis.homework.exception;
  * 2 тугрика
  */
 public class Robot {
-    private int x;
-    private int y;
-    boolean broken;
+    enum RobotMoveDirections {
+        NORTH {
+            public void move(Robot robot) {
+                robot.y++;
+            }
+        },
+        SOUTH {
+            public void move(Robot robot) {
+                robot.y--;
+            }
+        },
+        WEST {
+            public void move(Robot robot) {
+                robot.x--;
+            }
+        },
+        EAST {
+            public void move(Robot robot) {
+                robot.x++;
+            }
+        };
 
-    public Robot() {
-        this.x = 0;
-        this.y = 0;
-        this.broken = false;
+        public abstract void move(Robot robot);
     }
 
-    public void move(String direction) throws RobotException {
+    private int x;
+    private int y;
+    private boolean broken;
+
+    private final int id;
+
+    public Robot(int x, int y, int id) {
+        this.x = x;
+        this.y = y;
+        this.broken = false;
+        this.id = id;
+    }
+
+    public void move(RobotMoveDirections direction) throws RobotException {
         if (broken) {
             throw new RobotException("Can't move: robot is broken!");
         }
-        switch (direction) {
-            case "south":
-                y--;
-                break;
-            case "north":
-                y++;
-                break;
-            case "east":
-                x++;
-                break;
-            case "west":
-                x--;
-                break;
-        }
+        direction.move(this);
         int chance = (int) (Math.random() * 10);
         if (chance == 1) {
             broken = true;
@@ -48,12 +63,19 @@ public class Robot {
         }
     }
 
-
     public int getX() {
         return x;
     }
 
     public int getY() {
         return y;
+    }
+
+    public boolean isBroken() {
+        return broken;
+    }
+
+    public int getId() {
+        return id;
     }
 }

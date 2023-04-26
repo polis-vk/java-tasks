@@ -1,26 +1,26 @@
 package ru.mail.polis.homework.exception;
 
-import java.net.ConnectException;
-
-public class Connection implements RobotConnection {
+public class RobotConnectionImpl implements RobotConnection {
 
     private Robot robot;
 
-    public Connection(Robot robot) {
+    public RobotConnectionImpl(Robot robot) {
         this.robot = robot;
     }
 
     @Override
     public void moveRobotTo(int x, int y) throws RobotException {
         if (robot.getX() != x) {
-            String directionX = (x > robot.getX() ? "east" : "west");
+            Robot.RobotMoveDirections directionX = (x > robot.getX() ?
+                    Robot.RobotMoveDirections.EAST : Robot.RobotMoveDirections.WEST);
             while (robot.getX() != x) {
                 robot.move(directionX);
             }
         }
 
         if (robot.getY() != y) {
-            String directionY = (y > robot.getY() ? "south" : "north");
+            Robot.RobotMoveDirections directionY = (y > robot.getY() ?
+                    Robot.RobotMoveDirections.SOUTH : Robot.RobotMoveDirections.NORTH);
             while (robot.getY() != y) {
                 robot.move(directionY);
             }
