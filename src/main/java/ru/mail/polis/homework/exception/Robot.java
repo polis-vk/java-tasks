@@ -7,7 +7,7 @@ package ru.mail.polis.homework.exception;
  * 2 тугрика
  */
 public class Robot {
-    private int id;
+    private final int id;
     private int x;
     private int y;
 
