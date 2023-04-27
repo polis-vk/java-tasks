@@ -9,15 +9,15 @@ public class ConnectionManager implements RobotConnectionManager {
 
     public ConnectionManager(List<Robot> robots) {
         this.robots = new HashMap<>();
-        for (Robot robot: robots){
+        for (Robot robot : robots) {
             this.robots.put(robot.getId(), robot);
         }
     }
 
-    public RobotConnection getConnection(int robotId) throws ConnectionException {
+    public RobotConnection getConnection(int robotId) throws RobotConnectionException {
         Robot robot = robots.get(robotId);
         if (robot == null) {
-            throw new ConnectionException("Error: robot does not exist.");
+            throw new RobotConnectionException("Error: robot does not exist.");
         }
         return new Connection(robot);
     }

@@ -9,9 +9,9 @@ public class Connection implements RobotConnection {
         this.isConnected = true;
     }
 
-    public void moveRobotTo(int x, int y) throws ConnectionException {
+    public void moveRobotTo(int x, int y) throws RobotConnectionException {
         if (!isConnected) {
-            throw new ConnectionException("Error: robot is not connected.");
+            throw new RobotConnectionException("Error: robot is not connected.");
         }
         robot.moveTo(x, y);
     }
