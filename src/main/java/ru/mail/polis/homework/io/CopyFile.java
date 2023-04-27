@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.io;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,17 +14,53 @@ public class CopyFile {
      * В тесте для создания нужных файлов для первого запуска надо раскомментировать код в setUp()
      * 3 тугрика
      */
-    public static void copyFiles(String pathFrom, String pathTo) throws IOException {
-        Files.walk(Paths.get(pathFrom))
-                .forEach(source -> {
-                    Path destination = Paths.get(pathTo, source.toString()
-                            .substring(pathFrom.length()));
-                    try {
-                        Files.copy(source, destination);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
+    public static void copyFiles(String pathFrom, String pathTo) {
+        if (pathTo == null || pathFrom == null) {
+            return;
+        }
+
+        Path source = Paths.get(pathFrom);
+        Path dest = Paths.get(pathTo);
+
+        if (Files.notExists(source)) {
+            return;
+        }
+
+        try {
+            Files.createDirectories(dest.getParent());
+            copyDirectory(source, dest);
+        } catch (IOException err) {
+            err.printStackTrace();
+        }
     }
 
+    private static void copyDirectory(Path source, Path dest) throws IOException {
+        if (Files.isRegularFile(source)) {
+            Files.createFile(dest);
+            copyFile(source, dest);
+        }
+
+        if (Files.notExists(dest)) {
+            Files.createDirectory(dest);
+        }
+
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(source)) {
+            for (Path directory : directoryStream) {
+                copyDirectory(directory, dest.resolve(directory.getFileName()));
+            }
+        }
+    }
+
+    private static void copyFile(Path source, Path dest) throws IOException {
+        try (InputStream inputStream = Files.newInputStream(source)) {
+            try (OutputStream outputStream = Files.newOutputStream(dest)) {
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, len);
+                }
+            }
+        }
+    }
 }
+
