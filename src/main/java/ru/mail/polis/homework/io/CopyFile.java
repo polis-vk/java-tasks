@@ -27,7 +27,14 @@ public class CopyFile {
         }
 
         try {
-            Files.createDirectories(dest.getParent());
+            if (Files.notExists(dest)){
+                if (Files.isRegularFile(source)){
+                    Files.createDirectories(dest.getParent());
+                }
+                else{
+                    Files.createDirectories(dest);
+                }
+            }
             copyDirectory(source, dest);
         } catch (IOException err) {
             err.printStackTrace();
