@@ -3,7 +3,10 @@ package ru.mail.polis.homework.reflection;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -56,24 +59,24 @@ public class ReflectionToStringHelper {
         Class<?> c = object.getClass();
         List<Class<?>> classes = new ArrayList<>();
         classes.add(c);
-        getAncestors(c, classes);
+        fillAncestors(c, classes);
 
         List<Field> fields = new ArrayList<>();
         for (Class<?> clazz : classes) {
-            fields.addAll(getClassFields(clazz));
+            fields.addAll(extractClassFields(clazz));
         }
-        return parseListFieldsToString(fields, object);
+        return getStringOfFieldsList(fields, object);
     }
 
-    public static void getAncestors(Class<?> c, List<Class<?>> classes) {
+    private static void fillAncestors(Class<?> c, List<Class<?>> classes) {
         Class<?> ancestor = c.getSuperclass();
         if (ancestor != null) {
             classes.add(ancestor);
-            getAncestors(ancestor, classes);
+            fillAncestors(ancestor, classes);
         }
     }
 
-    public static List<Field> getClassFields(Class<?> c) {
+    private static List<Field> extractClassFields(Class<?> c) {
         return Arrays
                 .stream(c.getDeclaredFields())
                 .filter(field -> !Modifier.isStatic(field.getModifiers())
@@ -82,21 +85,21 @@ public class ReflectionToStringHelper {
                 .collect(Collectors.toList());
     }
 
-    public static String parseListFieldsToString(List<Field> fields, Object object) {
+    private static String getStringOfFieldsList(List<Field> fields, Object object) {
         if (fields.isEmpty()) {
             return "{}";
         }
         StringBuilder data = new StringBuilder("{");
         for (int i = 0; i < fields.size() - 1; i++) {
-            data.append(parseFieldToString(fields.get(i), object));
+            getStringOfFieldData(data, fields.get(i), object);
             data.append(", ");
         }
-        data.append(parseFieldToString(fields.get(fields.size() - 1), object));
+        getStringOfFieldData(data, fields.get(fields.size() - 1), object);
         data.append("}");
         return data.toString();
     }
 
-    private static String parseFieldToString(Field field, Object object) {
+    private static void getStringOfFieldData(StringBuilder data, Field field, Object object) {
         field.setAccessible(true);
         Object value;
         try {
@@ -104,26 +107,22 @@ public class ReflectionToStringHelper {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        StringBuilder data = new StringBuilder(field.getName()).append(": ");
+        data.append(field.getName()).append(": ");
         if (value == null) {
             data.append("null");
+            return;
         } else if (!field.getType().isArray()) {
             data.append(value);
-        } else {
-            data.append("[");
-            for (int i = 0; i < Array.getLength(value); i++) {
-                if (Array.get(value, i) == null) {
-                    data.append("null");
-                } else {
-                    data.append(Array.get(value, i).toString());
-                }
-                if (i + 1 != Array.getLength(value)) {
-                    data.append(", ");
-                }
-            }
-            data.append("]");
+            return;
         }
-        return data.toString();
+        data.append("[");
+        for (int i = 0; i < Array.getLength(value); i++) {
+            data.append(Array.get(value, i));
+            if (i + 1 != Array.getLength(value)) {
+                data.append(", ");
+            }
+        }
+        data.append("]");
     }
 }
 
