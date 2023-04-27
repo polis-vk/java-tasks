@@ -4,6 +4,7 @@ public class Connection implements RobotConnection {
 
     private final Robot robot;
     private boolean isOpened;
+
     public Connection(Robot robot) {
         this.robot = robot;
         isOpened = true;

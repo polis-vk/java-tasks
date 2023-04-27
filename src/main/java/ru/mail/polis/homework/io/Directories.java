@@ -2,13 +2,13 @@ package ru.mail.polis.homework.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Directories {
 
@@ -24,7 +24,8 @@ public class Directories {
         File file = new File(path);
         if (!file.exists()) {
             return 0;
-        } else if (file.isFile()) {
+        }
+        if (file.isFile()) {
             return file.delete() ? 1 : 0;
         }
         int count = 0;
@@ -46,16 +47,26 @@ public class Directories {
         if (!Files.exists(myPath)) {
             return 0;
         }
-        int count;
-        try (Stream<Path> walk = Files.walk(myPath)) {
-            List<Path> list = walk
-                    .sorted(Comparator.reverseOrder())
-                    .collect(Collectors.toList());
-            for (Path p : list) {
-                Files.delete(p);
-            }
-            count = list.size();
+        if (Files.isRegularFile(myPath)) {
+            Files.delete(myPath);
+            return 1;
         }
-        return count;
+        AtomicInteger count = new AtomicInteger();
+        Files.walkFileTree(myPath, new SimpleFileVisitor<>(){
+            @Override
+            public FileVisitResult visitFile(Path myPath, BasicFileAttributes attrs) throws IOException {
+                Files.delete(myPath);
+                count.incrementAndGet();
+                return FileVisitResult.CONTINUE;
+            }
+            @Override
+            public FileVisitResult postVisitDirectory(Path myPath, IOException exc) throws IOException {
+                Files.delete(myPath);
+                count.incrementAndGet();
+                return FileVisitResult.CONTINUE;
+            }
+
+        });
+        return count.get();
     }
 }

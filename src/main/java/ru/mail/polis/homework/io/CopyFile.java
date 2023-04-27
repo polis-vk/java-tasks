@@ -56,9 +56,9 @@ public class CopyFile {
 
     public static void copyFile(Path pathFrom, Path pathTo) throws IOException {
         try (InputStream in = Files.newInputStream(pathFrom)) {
-            byte[] buffer = new byte[BUFF_SIZE];
-            int length;
             try (OutputStream out = Files.newOutputStream(pathTo)) {
+                byte[] buffer = new byte[BUFF_SIZE];
+                int length;
                 while ((length = in.read(buffer)) > 0) {
                     out.write(buffer, 0, length);
                 }

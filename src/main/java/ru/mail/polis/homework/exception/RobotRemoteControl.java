@@ -1,6 +1,5 @@
 package ru.mail.polis.homework.exception;
 
-import java.util.ArrayList;
 
 /**
  * Задание: Нужно создать свою мини библиотеку, с удаленным роботом и пультом управления.
@@ -14,7 +13,7 @@ public class RobotRemoteControl {
 
     private final RobotConnectionManager connectionManager;
 
-    public RobotRemoteControl(ArrayList<Robot> existingRobots) {
+    public RobotRemoteControl(Robot[] existingRobots) {
         connectionManager = new ConnectionManager(existingRobots);
     }
 
@@ -28,7 +27,7 @@ public class RobotRemoteControl {
         while (numOfTDisconnects < 3) {
             try (RobotConnection connection = connectionManager.getConnection(robotId)) {
                 connection.moveRobotTo(toX, toY);
-                break;
+                return;
             } catch (RobotConnectionException e) {
                 numOfTDisconnects++;
                 if (numOfTDisconnects == 2) {
