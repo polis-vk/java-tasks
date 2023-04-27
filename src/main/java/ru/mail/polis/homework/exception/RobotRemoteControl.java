@@ -32,7 +32,7 @@ public class RobotRemoteControl {
         for (int numberOfAttemps = 0; ; numberOfAttemps++) {
             try (RobotConnection robotConnection = connectionManager.getConnection(robotId)) {
                 robotConnection.moveRobotTo(toX, toY);
-                break;
+                return;
             } catch (RobotConnectionException e) {
                 if (numberOfAttemps == 2) {
                     throw e;
