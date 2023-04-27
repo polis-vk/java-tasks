@@ -9,6 +9,10 @@ public class Connection implements RobotConnection {
         isConnected = true;
     }
 
+    public Robot getRobot() {
+        return robot;
+    }
+
     @Override
     public void moveRobotTo(int x, int y) throws RobotConnectionException {
         if (!isConnected) {

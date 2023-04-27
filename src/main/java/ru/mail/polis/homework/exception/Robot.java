@@ -23,6 +23,14 @@ public class Robot {
         return robotId;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
     public void setX(int x) {
         this.x = x;
     }

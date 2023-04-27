@@ -18,9 +18,9 @@ public class RobotRemoteControl {
         Robot robot_1 = new Robot(5, 5);
         Robot robot_2 = new Robot(10, 10);
         Robot robot_3 = new Robot(15, 15);
-        connectionManager.addRobotConnection(robot_1);
-        connectionManager.addRobotConnection(robot_2);
-        connectionManager.addRobotConnection(robot_3);
+        ((ConnectionManager)connectionManager).addRobotConnection(robot_1);
+        ((ConnectionManager)connectionManager).addRobotConnection(robot_2);
+        ((ConnectionManager)connectionManager).addRobotConnection(robot_3);
     }
 
     /**
@@ -44,5 +44,9 @@ public class RobotRemoteControl {
             }
         }
         throw new RobotConnectionException("Failed connection!");
+    }
+
+    public RobotConnectionManager getConnectionManager() {
+        return connectionManager;
     }
 }
