@@ -5,10 +5,7 @@ import ru.mail.polis.homework.reflection.objects.easy.Easy;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.*;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,7 +50,50 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        StringBuilder res = new StringBuilder();
+        res.append('{');
+        Class<?> clazz = object.getClass();
+        while (clazz != null) {
+            Arrays.stream(clazz.getDeclaredFields())
+                    .filter(field -> !Modifier.isStatic(field.getModifiers()) && field.getAnnotation(SkipField.class) == null)
+                    .sorted(Comparator.comparing(Field::getName))
+                    .forEach(field -> {
+                        field.setAccessible(true);
+                        String value;
+                        try {
+                            if (field.get(object).getClass().isArray()) {
+                                value = getValue(field.get(object));
+                            } else {
+                                value = field.get(object).toString();
+                            }
+                        } catch (Exception e) {
+                            value = "null";
+                        }
+                        res.append(field.getName()).append(": ").append(value).append(", ");
+                    });
+            clazz = clazz.getSuperclass();
+        }
+        if (res.length() != 1) {
+            res.delete(res.length() - 2, res.length());
+        }
+        res.append('}');
+        return res.toString();
+    }
+
+    private static String getValue(Object field) {
+        StringBuilder res = new StringBuilder();
+        res.append('[');
+        int length = Array.getLength(field);
+        for (int i = 0; i < length; i++) {
+            res.append(Array.get(field, i)).append(", ");
+        }
+        if (res.length() != 1) {
+            res.delete(res.length() - 2, res.length());
+        }
+        res.append(']');
+        return res.toString();
     }
 }
