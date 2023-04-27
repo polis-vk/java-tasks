@@ -5,9 +5,9 @@ import ru.mail.polis.homework.reflection.objects.easy.Easy;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -53,7 +53,76 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+
+        List<Class<?>> classes = new ArrayList<>();
+        addClassAndSuperClasses(object.getClass(), classes);
+        classes.forEach(clazz -> extractClassFields(object, clazz, sb));
+
+        if (sb.length() > 1) {
+            sb.delete(sb.length() - 2, sb.length());
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+    public static void addClassAndSuperClasses(Class<?> clazz, List<Class<?>> classes) {
+        classes.add(clazz);
+        Class<?> superClazz = clazz.getSuperclass();
+        if (superClazz != null && superClazz != Object.class) {
+            addClassAndSuperClasses(superClazz, classes);
+        }
+    }
+
+    public static void extractClassFields(Object object, Class<?> clazz, StringBuilder sb) {
+        List<Field> fields = Arrays.stream(clazz.getDeclaredFields())
+                .filter(field -> !Modifier.isStatic(field.getModifiers()) &&
+                        !field.isAnnotationPresent(SkipField.class))
+                .sorted(Comparator.comparing(Field::getName))
+                .collect(Collectors.toList());
+        if (fields.isEmpty()) {
+            return;
+        }
+        for (Field field : fields) {
+            sb.append(field.getName()).append(": ");
+            sb.append(convertFieldValueToString(field, object)).append(", ");
+        }
+    }
+
+    public static String convertFieldValueToString(Field field, Object object) {
+        field.setAccessible(true);
+
+        Object value;
+        try {
+            value = field.get(object);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (value == null) {
+            return "null";
+        }
+
+        if (!value.getClass().isArray()) {
+            return value.toString();
+        }
+
+        StringBuilder arraySb = new StringBuilder();
+        arraySb.append("[");
+
+        for (int i = 0; i < Array.getLength(value); i++) {
+            arraySb.append(Array.get(value, i) == null ? "null" : Array.get(value, i).toString());
+            if (i != Array.getLength(value) - 1) {
+                arraySb.append(", ");
+            }
+        }
+
+        arraySb.append("]");
+        return arraySb.toString();
     }
 }
