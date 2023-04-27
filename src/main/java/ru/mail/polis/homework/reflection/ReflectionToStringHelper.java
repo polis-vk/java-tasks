@@ -1,7 +1,9 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Comparator;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -44,19 +46,21 @@ import java.util.concurrent.atomic.AtomicReference;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
-
     public static String reflectiveToString(Object object) {
-        AtomicReference<String> string = new AtomicReference<>();
-        string.set("");
-        Arrays.stream(object.getClass().getDeclaredFields()).forEach(field -> {
-            field.setAccessible(true);
-            try {
-                string.getAndAccumulate(field.getName() + ": " + field.get(object) + ", ", String::concat);
-            } catch (IllegalAccessException e) {
-                string.getAndAccumulate(field.getName() + ": null, ", String::concat);
-            }
-        });
+        StringBuilder result = new StringBuilder();
+        Arrays.stream(object.getClass().getDeclaredFields())
+                .sorted(Comparator.comparing(Field::getName))
+                .forEach(field -> {
+                    field.setAccessible(true);
+                    try {
+                        if (!Modifier.isStatic(field.getModifiers()) && field.getAnnotation(SkipField.class) == null) { //проверка поля на статичность и на присутствие аннотации SkipField
+                            result.append(field.getName()).append(": ").append(field.get(object)).append(", ");
+                        }
+                    } catch (IllegalAccessException e) {
+                        result.append(field.getName()).append(": null, ");
+                    }
+                });
 
-        return "{" + string.toString().substring(0, string.toString().length() - 2) + "}";
+        return "{" + result.substring(0, result.length() - 2) + "}";
     }
 }
