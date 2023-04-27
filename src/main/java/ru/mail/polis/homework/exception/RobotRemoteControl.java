@@ -14,8 +14,8 @@ public class RobotRemoteControl {
 
     private RobotConnectionManager connectionManager;
 
-    public RobotRemoteControl() {
-        connectionManager = new ConnectionManager(new HashMap<>());
+    public RobotRemoteControl(RobotConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
     }
 
     /**
@@ -28,7 +28,8 @@ public class RobotRemoteControl {
         while (true) {
             try (RobotConnection robotConnection = connectionManager.getConnection(robotId)) {
                 robotConnection.moveRobotTo(toX, toY);
-                break;
+                robotConnection.close();
+                return;
             } catch (RobotConnectionException e) {
                 if (connectionAttempts == 2) {
                     throw e;

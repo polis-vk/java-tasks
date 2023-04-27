@@ -1,7 +1,7 @@
 ﻿package ru.mail.polis.homework.exception;
 
 public class RobotConnector implements RobotConnection {
-    private Robot robot;
+    private final Robot robot;
     private boolean connection;
 
     public RobotConnector(Robot robot) {

@@ -11,9 +11,10 @@ public class ConnectionManager implements RobotConnectionManager {
 
     @Override
     public RobotConnection getConnection(int robotId) throws RobotConnectionException {
-        if (robotsMap.containsKey(robotId)) {
-            return new RobotConnector(robotsMap.get(robotId));
+        Robot robot = robotsMap.get(robotId);
+        if (robot == null) {
+            throw new RobotConnectionException("Incorrect id");
         }
-        throw new RobotConnectionException("Incorrect id");
+        return new RobotConnector(robotsMap.get(robotId));
     }
 }
