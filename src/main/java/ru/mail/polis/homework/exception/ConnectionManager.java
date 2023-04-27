@@ -1,12 +1,17 @@
 package ru.mail.polis.homework.exception;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class ConnectionManager {
+public class ConnectionManager implements RobotConnectionManager {
     private final Map<Integer, Robot> robots;
 
-    public ConnectionManager(Map<Integer, Robot> robots) {
-        this.robots = robots;
+    public ConnectionManager(List<Robot> robots) {
+        this.robots = new HashMap<>();
+        for (Robot robot: robots){
+            this.robots.put(robot.getId(), robot);
+        }
     }
 
     public RobotConnection getConnection(int robotId) throws ConnectionException {

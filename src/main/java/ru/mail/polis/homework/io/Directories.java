@@ -23,8 +23,8 @@ public class Directories {
     }
 
     private static int recursiveFileDeletion(File file) {
-        if (file.isFile() && file.delete()) {
-            return 1;
+        if (!file.exists()) {
+            return 0;
         }
 
         int result = 0;

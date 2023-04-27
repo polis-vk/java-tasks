@@ -1,5 +1,9 @@
 package ru.mail.polis.homework.exception;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * Задание: Нужно создать свою мини библиотеку, с удаленным роботом и пультом управления.
  * Каждый класс оценивается отдельно
@@ -10,7 +14,11 @@ package ru.mail.polis.homework.exception;
  */
 public class RobotRemoteControl {
 
-    private RobotConnectionManager connectionManager;
+    private final RobotConnectionManager connectionManager;
+
+    RobotRemoteControl(List<Robot> robots) {
+        connectionManager = new ConnectionManager(robots);
+    }
 
     /**
      * Метод должен открыть соединение и отправить робота в указанную точку. При неудаче - повторить действие еще 2 раза,
