@@ -19,7 +19,7 @@ public class Directories {
      */
     public static int removeWithFile(String path) throws IOException {
         File newFile = new File(path);
-        if (newFile.exists()) {
+        if (!newFile.exists()) {
             return 0;
         }
         if (newFile.isFile()) {

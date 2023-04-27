@@ -3,7 +3,7 @@ package ru.mail.polis.homework.exception;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ConnectionManager implements RobotConnectionManager{
+public class ConnectionManager implements RobotConnectionManager {
 
     private final Map<Integer, Connection> robotConnections;
 
@@ -11,8 +11,7 @@ public class ConnectionManager implements RobotConnectionManager{
         robotConnections = new HashMap<>();
     }
 
-    @Override
-    public void addRobotConnection(Robot robot){
+    public void addRobotConnection(Robot robot) {
         robotConnections.put(robot.getRobotId(), new Connection(robot));
     }
 

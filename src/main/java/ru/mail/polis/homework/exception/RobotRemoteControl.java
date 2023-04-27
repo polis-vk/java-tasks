@@ -12,15 +12,15 @@ public class RobotRemoteControl {
 
     private final RobotConnectionManager connectionManager;
 
-    public RobotRemoteControl(){
-        // создаём 3 подключения в контрукторе для примера
+    public RobotRemoteControl() {
+        // создаём 3 подключения в конструкторе для примера
         connectionManager = new ConnectionManager();
         Robot robot_1 = new Robot(5, 5);
         Robot robot_2 = new Robot(10, 10);
         Robot robot_3 = new Robot(15, 15);
-        ((ConnectionManager)connectionManager).addRobotConnection(robot_1);
-        ((ConnectionManager)connectionManager).addRobotConnection(robot_2);
-        ((ConnectionManager)connectionManager).addRobotConnection(robot_3);
+        ((ConnectionManager) connectionManager).addRobotConnection(robot_1);
+        ((ConnectionManager) connectionManager).addRobotConnection(robot_2);
+        ((ConnectionManager) connectionManager).addRobotConnection(robot_3);
     }
 
     /**
