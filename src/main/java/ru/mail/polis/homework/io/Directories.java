@@ -1,7 +1,10 @@
 package ru.mail.polis.homework.io;
 
 import java.io.File;
+import java.nio.file.*;
 import java.io.IOException;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Directories {
 
@@ -33,6 +36,26 @@ public class Directories {
      * 2 тугрика
      */
     public static int removeWithPath(String path) throws IOException {
-        return 0;
+        Path dir = Paths.get(path);
+        if (!Files.exists(dir)) {
+            return 0;
+        }
+        AtomicInteger atomicCount = new AtomicInteger();
+        Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException attr) throws IOException {
+                Files.delete(dir);
+                atomicCount.incrementAndGet();
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attr) throws IOException {
+                Files.delete(file);
+                atomicCount.incrementAndGet();
+                return FileVisitResult.CONTINUE;
+            }
+        });
+        return atomicCount.get();
     }
 }
