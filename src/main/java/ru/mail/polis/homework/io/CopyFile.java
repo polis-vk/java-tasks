@@ -34,7 +34,7 @@ public class CopyFile {
                     try {
                         Files.createDirectory(destDirectory.resolve(srcDirectory.relativize(dir)));
                     } catch (FileAlreadyExistsException e) {
-                        System.out.println("Error: " + e);
+                        System.err.println("ERROR : " + e.getMessage());
                     }
                     return FileVisitResult.CONTINUE;
                 }
