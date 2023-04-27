@@ -2,11 +2,10 @@ package ru.mail.polis.homework.io;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Directories {
 
@@ -25,12 +24,14 @@ public class Directories {
         }
 
         if (file.isFile()) {
-            file.delete();
-            return 1;
+            if (file.delete()) {
+                return 1;
+            }
+            return 0;
         }
 
         int countDeletedFiles = 0;
-        for (File f : Objects.requireNonNull(file.listFiles())) {
+        for (File f : file.listFiles()) {
             countDeletedFiles += removeWithFile(f.getAbsolutePath());
         }
 
@@ -43,25 +44,32 @@ public class Directories {
      * 2 тугрика
      */
     public static int removeWithPath(String path) throws IOException {
-        Path dir = Paths.get(path);
+        Path directory = Paths.get(path);
 
-        if (!Files.exists(dir)) {
+        if (!Files.exists(directory)) {
             return 0;
         }
 
-        if (Files.isRegularFile(dir)) {
-            Files.delete(dir);
-            return 1;
-        }
-
-        int countDeletedFiles = 0;
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
-            for (Path file : stream) {
-                countDeletedFiles += removeWithPath(file.toString());
+        final AtomicInteger count = new AtomicInteger();
+        Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                count.incrementAndGet();
+                return FileVisitResult.CONTINUE;
             }
-        }
 
-        Files.delete(dir);
-        return countDeletedFiles + 1;
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                if (exc == null) {
+                    Files.delete(dir);
+                    count.incrementAndGet();
+                    return FileVisitResult.CONTINUE;
+                } else {
+                    throw exc;
+                }
+            }
+        });
+        return count.get();
     }
 }

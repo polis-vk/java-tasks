@@ -28,8 +28,6 @@ public class CopyFile {
         try {
             if (Files.isRegularFile(source)) {
                 Files.createDirectories(dest.getParent());
-            } else if (Files.exists(source)) {
-                Files.createDirectory(dest.getParent());
             }
             copyDirectory(source, dest);
         } catch (IOException e) {
@@ -38,26 +36,29 @@ public class CopyFile {
     }
 
     private static void copyDirectory(Path source, Path dest) throws IOException {
-        if (Files.isRegularFile(source)) {
-            Files.createFile(dest);
-            copyFile(source, dest);
-        }
-
-        if (Files.notExists(dest)) {
-            Files.createDirectory(dest);
-        }
-
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(source)) {
-            for (Path dir : directoryStream) {
-                copyDirectory(dir, dest.resolve(dir.getFileName()));
+        try {
+            if (Files.isRegularFile(source)) {
+                Files.createFile(dest);
+                copyFile(source, dest);
+            } else {
+                if (Files.notExists(dest)) {
+                    Files.createDirectories(dest);
+                }
+                try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(source)) {
+                    for (Path dir : directoryStream) {
+                        copyDirectory(dir, dest.resolve(dir.getFileName()));
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
-    private static void copyFile(Path source, Path dest) throws IOException {
+    private static void copyFile(Path source, Path dest) {
         try (InputStream inputStream = Files.newInputStream(source)) {
             try (OutputStream outputStream = Files.newOutputStream(dest)) {
                 byte[] buffer = new byte[1024];

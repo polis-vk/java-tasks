@@ -6,10 +6,10 @@ package ru.mail.polis.homework.exception;
  * <p>
  * 2 тугрика
  */
-public class Robot{
+public class Robot {
+    private final int id;
     private int x;
     private int y;
-    private int id;
 
     public Robot(int id, int x, int y) {
         this.id = id;

@@ -3,9 +3,9 @@ package ru.mail.polis.homework.exception;
 import java.util.Map;
 
 public class ConnectionManager implements RobotConnectionManager {
-    private Map<Integer, Robot> robotMap;
+    private final Map<Integer, Robot> robotMap;
 
-    public ConnectionManager(Map<Integer, Robot> robotMap) {
+    private ConnectionManager(Map<Integer, Robot> robotMap) {
         this.robotMap = robotMap;
     }
 
