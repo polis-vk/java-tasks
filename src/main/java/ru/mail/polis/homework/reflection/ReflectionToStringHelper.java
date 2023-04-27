@@ -63,66 +63,53 @@ public class ReflectionToStringHelper {
         StringBuilder result = new StringBuilder("{");
 
         Class<?> objectClass = object.getClass();
-        List<Field> orderedClassFields = getProcessedFields(objectClass);
-
         boolean hadFirst = false;
-        for (Field objectClassField : orderedClassFields) {
-            if (nonIgnoredField(objectClassField)) {
-                try {
-                    result.append(proceedObjectField(objectClassField, object, hadFirst));
-                } catch (IllegalAccessException ignored) {}
-                if (!hadFirst) {
-                    hadFirst = true;
-                }
+        for (Field objectClassField : getRelevantFields(objectClass)) {
+            if (hadFirst) {
+                result.append(", ");
+            }
+            result.append(objectClassField.getName());
+            result.append(": ");
+
+            try {
+                result.append(getObjectFieldString(objectClassField, object));
+            } catch (IllegalAccessException ignored) {
+            }
+            if (!hadFirst) {
+                hadFirst = true;
             }
         }
         return result.append('}').toString();
     }
 
-    private static String proceedObjectField(Field field, Object object, boolean isComma) throws IllegalAccessException {
-        StringBuilder fieldString = new StringBuilder();
-        if (isComma) {
-            fieldString.append(", ");
-        }
-
-        fieldString.append(field.getName());
-        fieldString.append(": ");
+    private static String getObjectFieldString(Field field, Object object) throws IllegalAccessException {
         field.setAccessible(true);
 
         Object fieldValue = field.get(object);
         if (fieldValue == null) {
-            fieldString.append(NULL_RESULT);
+            return NULL_RESULT;
         } else if (field.getType().isArray()) {
-            fieldString.append(proceedArrayField(field, object));
-        } else {
-            fieldString.append(fieldValue);
+            return getArrayFieldString(field, object);
         }
-        return fieldString.toString();
+        return fieldValue.toString();
     }
 
-    private static String proceedArrayField(Field field, Object object) throws IllegalAccessException {
-        StringBuilder fieldString = new StringBuilder();
-
+    private static String getArrayFieldString(Field field, Object object) throws IllegalAccessException {
         Object fieldArray = field.get(object);
         Object[] fieldValues = new Object[Array.getLength(fieldArray)];
-        fieldString.append('[');
         for (int i = 0; i < fieldValues.length; i++) {
-            if (i > 0) {
-                fieldString.append(", ");
-            }
-            fieldString.append(Array.get(fieldArray, i));
+            fieldValues[i] = Array.get(fieldArray, i);
         }
-        fieldString.append(']');
-        return fieldString.toString();
+        return Arrays.toString(fieldValues);
     }
 
-    private static List<Field> getProcessedFields(Class<?> objectClass) {
+    private static List<Field> getRelevantFields(Class<?> objectClass) {
         List<Field> result = new ArrayList<>();
         while (objectClass != Object.class) {
             result.addAll(Arrays.stream(objectClass.getDeclaredFields())
-                    .filter(ReflectionToStringHelper::nonIgnoredField)
-                    .sorted(Comparator.comparing(Field::getName))
-                    .collect(Collectors.toList()));
+                            .filter(ReflectionToStringHelper::nonIgnoredField)
+                            .sorted(Comparator.comparing(Field::getName))
+                            .collect(Collectors.toList()));
             objectClass = objectClass.getSuperclass();
         }
         return result;
