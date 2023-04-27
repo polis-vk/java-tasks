@@ -3,33 +3,33 @@ package ru.mail.polis.homework.exception;
 public class RobotConnectionImpl implements RobotConnection {
 
     private final Robot robot;
-    private boolean isConnected;
+    private boolean connected;
 
     public RobotConnectionImpl(Robot robot) {
         this.robot = robot;
-        this.isConnected = true;
+        this.connected = true;
     }
 
     @Override
-    public void moveRobotTo(int x, int y) throws ConnectionException {
+    public void moveRobotTo(int x, int y) throws RobotConnectionException {
         checkConnection();
-        robot.setCoords(x, y);
+        robot.move(x, y);
     }
 
     @Override
-    public Robot getRobot() throws ConnectionException {
+    public Robot getRobot() throws RobotConnectionException {
         checkConnection();
         return robot;
     }
 
     @Override
     public void close() {
-        isConnected = false;
+        connected = false;
     }
 
-    private void checkConnection() throws ConnectionException {
-        if (!isConnected) {
-            throw new ConnectionException("Robot connection lost!");
+    private void checkConnection() throws RobotConnectionException {
+        if (!connected) {
+            throw new RobotConnectionException("Robot connection lost!");
         }
     }
 }

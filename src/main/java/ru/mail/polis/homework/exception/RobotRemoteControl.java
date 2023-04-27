@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.exception;
 
+import java.util.Map;
+
 /**
  * Задание: Нужно создать свою мини библиотеку, с удаленным роботом и пультом управления.
  * Каждый класс оценивается отдельно
@@ -10,10 +12,10 @@ package ru.mail.polis.homework.exception;
  */
 public class RobotRemoteControl {
     private static final int MAX_CONNECTION_ATTEMPTS = 3;
-    private RobotConnectionManager connectionManager;
+    private final RobotConnectionManager connectionManager;
 
-    public RobotRemoteControl() {
-        connectionManager = new RobotConnectionManagerImpl();
+    public RobotRemoteControl(Map<Integer, Robot> connections) {
+        connectionManager = new RobotConnectionManagerImpl(connections);
     }
 
     /**
@@ -21,12 +23,12 @@ public class RobotRemoteControl {
      * Если это не удалось, то прокинуть эту ошибку на уровень выше.
      * Попытка считается успешной, если соединение открылось и вызвался метод moveRobotTo без исключений.
      */
-    public void moveTo(int robotId, int toX, int toY) throws ConnectionException {
+    public void moveTo(int robotId, int toX, int toY) throws RobotConnectionException {
         for (int tryCount = 1; tryCount <= MAX_CONNECTION_ATTEMPTS; ++tryCount) {
             try (RobotConnection connection = connectionManager.getConnection(robotId)) {
                 connection.moveRobotTo(toX, toY);
                 return;
-            } catch (ConnectionException e) {
+            } catch (RobotConnectionException e) {
                 if (tryCount == MAX_CONNECTION_ATTEMPTS) {
                     throw e;
                 }
