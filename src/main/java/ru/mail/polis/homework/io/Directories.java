@@ -21,19 +21,19 @@ public class Directories {
      * 2 тугрика
      */
     public static int removeWithFile(String path) {
-        int deletionCounter = 0;
-
-        File directory = new File(path);
-        if (!directory.exists()) {
-            return deletionCounter;
+        File source = new File(path);
+        if (!source.exists()) {
+            return 0;
         }
 
-        if (directory.isDirectory()) {
-            for (File file : Objects.requireNonNull(directory.listFiles())) {
+        int deletionCounter = 0;
+
+        if (source.isDirectory()) {
+            for (File file : Objects.requireNonNull(source.listFiles())) {
                 deletionCounter += removeWithFile(file.toString());
             }
         }
-        if (directory.delete()) {
+        if (source.delete()) {
             deletionCounter++;
         }
         return deletionCounter;
@@ -44,22 +44,22 @@ public class Directories {
      * 2 тугрика
      */
     public static int removeWithPath(String path) throws IOException {
-        int deletionCounter = 0;
-
-        Path directory = Paths.get(path);
-        if (Files.notExists(directory)) {
-            return deletionCounter;
+        Path source = Paths.get(path);
+        if (Files.notExists(source)) {
+            return 0;
         }
 
-        if (Files.isDirectory(directory)) {
-            try (Stream<Path> pathStream = Files.list(directory)) {
+        int deletionCounter = 0;
+
+        if (Files.isDirectory(source)) {
+            try (Stream<Path> pathStream = Files.list(source)) {
                 List<Path> directoryPaths = pathStream.collect(Collectors.toList());
                 for (Path directoryPath : directoryPaths) {
                     deletionCounter += removeWithPath(directoryPath.toString());
                 }
             }
         }
-        Files.delete(directory);
+        Files.delete(source);
         deletionCounter++;
         return deletionCounter;
     }

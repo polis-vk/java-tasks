@@ -14,6 +14,4 @@ public interface RobotConnectionManager {
      */
     RobotConnection getConnection(int robotId);
 
-    void createConnection(int robotId);
-
 }

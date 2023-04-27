@@ -8,22 +8,31 @@ package ru.mail.polis.homework.exception;
  */
 public class Robot {
 
+    private final int id;
     private int x;
     private int y;
 
-    public Robot() {
-        x = 0;
-        y = 0;
-    }
-
-    public Robot(int x, int y) {
+    public Robot(int id, int x, int y) {
+        this.id = id;
         this.x = x;
         this.y = y;
     }
 
-    public void setCoordinates(int x, int y) {
+    public void setXY(int x, int y) {
         setX(x);
         setY(y);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     public void setX(int x) {
