@@ -1,10 +1,10 @@
 package ru.mail.polis.homework.exception;
 
-public class MyRobotConnection implements RobotConnection{
+public class RobotConnectionImpl implements RobotConnection {
 
     private Robot robot;
 
-    public MyRobotConnection(Robot robot) {
+    public RobotConnectionImpl(Robot robot) {
         this.robot = robot;
     }
 

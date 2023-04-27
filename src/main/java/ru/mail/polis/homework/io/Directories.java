@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class Directories {
@@ -27,7 +28,7 @@ public class Directories {
             return 1;
         }
         int count = 0;
-        for (File subFile : file.listFiles()) {
+        for (File subFile : Objects.requireNonNull(file.listFiles())) {
             count += removeWithFile(subFile.getPath());
         }
         file.delete();
@@ -37,21 +38,29 @@ public class Directories {
 
     public static int removeWithPath(String path) throws IOException {
         Path rootPath = Paths.get(path);
-        if (!Files.exists(rootPath)) {
+        if (Files.notExists(rootPath)) {
             return 0;
         }
+        if (Files.isRegularFile(rootPath)) {
+            Files.delete(rootPath);
+            return 1;
+        }
         final int[] count = {0};
-        try (Stream<Path> stream = Files.walk(rootPath)) {
+        try (Stream<Path> stream = Files.list(rootPath)) {
             stream.sorted((p1, p2) -> p2.getNameCount() - p1.getNameCount())
                     .forEach(p -> {
                         try {
+                            if (Files.isDirectory(p)) {
+                                count[0] += removeWithPath(p.toString());
+                            }
                             Files.delete(p);
                             count[0]++;
-                        } catch (IOException e) {
-                            // do nothing, file or directory not deleted
+                        } catch (IOException ignored) {
                         }
                     });
         }
+        Files.delete(rootPath);
+        ++count[0];
         return count[0];
     }
 }

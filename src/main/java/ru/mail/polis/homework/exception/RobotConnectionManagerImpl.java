@@ -1,18 +1,26 @@
 package ru.mail.polis.homework.exception;
+
+import java.util.HashMap;
 import java.util.Map;
-public class MyRobotConnectionManager implements RobotConnectionManager{
+
+public class RobotConnectionManagerImpl implements RobotConnectionManager {
     private final Map<Integer, Robot> robotMap;
 
-    public MyRobotConnectionManager() {
-        robotMap = null;
+    public RobotConnectionManagerImpl() {
+        robotMap = new HashMap<Integer, Robot>();
     }
+
+    public RobotConnectionManagerImpl(Map<Integer, Robot> map) {
+        robotMap = map;
+    }
+
     @Override
     public RobotConnection getConnection(int robotId) throws ConnectException {
         Robot robot = robotMap.get(robotId);
         if (robot == null) {
-            throw new ConnectException();
+            throw new ConnectException("No robot with this Id");
         }
-        return new MyRobotConnection(robot);
+        return new RobotConnectionImpl(robot);
     }
 
     @Override
