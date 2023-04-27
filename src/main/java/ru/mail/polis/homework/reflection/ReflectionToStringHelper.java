@@ -108,23 +108,10 @@ public class ReflectionToStringHelper {
 
                 Arrays.stream(array).forEach(element -> result.append((element)).append(", "));
             }
-            //result.append(arrayToString(object, field));
 
             return "[" + result.substring(0, result.length() - 2) + "]";
         }
 
         return String.valueOf(field.get(object));
-    }
-
-    private static <T> String arrayToString(Object object, Field field) throws IllegalAccessException {
-        StringBuilder result = new StringBuilder();
-
-        T[] array = (T[]) field.get(object);
-        if (array.length == 0) {
-            return "[]";
-        }
-
-        Arrays.stream(array).forEach(element -> result.append((element)).append(", "));
-        return result.toString();
     }
 }
