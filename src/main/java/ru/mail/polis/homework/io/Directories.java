@@ -55,7 +55,7 @@ public class Directories {
     private static int recursiveFileDeletion(Path file) throws IOException {
         if (Files.isRegularFile(file)) {
             Files.delete(file);
-            return Files.notExists(file) ? 1 : 0;
+            return 1;
         }
 
         int result = 0;
@@ -71,6 +71,6 @@ public class Directories {
         }
 
         Files.delete(file);
-        return Files.notExists(file) ? result + 1 : result;
+        return ++result;
     }
 }
