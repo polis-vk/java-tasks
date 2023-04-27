@@ -56,11 +56,10 @@ public class CopyFile {
             try (OutputStream outputStream = Files.newOutputStream(dest)) {
                 byte[] buffer = new byte[1024];
                 int len;
-                while ((len = inputStream.read(buffer)) != -1) {
+                while ((len = inputStream.read(buffer)) > 0) {
                     outputStream.write(buffer, 0, len);
                 }
             }
         }
     }
 }
-
