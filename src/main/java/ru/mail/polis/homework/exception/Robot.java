@@ -10,7 +10,7 @@ public class Robot {
     private double x;
     private double y;
     private static int id = 1;
-    private boolean isConnected = false;
+    private boolean connected = false;
 
     public Robot() {
         id++;
@@ -43,10 +43,10 @@ public class Robot {
     }
 
     public boolean isConnected() {
-        return isConnected;
+        return connected;
     }
 
     public void setConnected(boolean connected) {
-        isConnected = connected;
+        this.connected = connected;
     }
 }
