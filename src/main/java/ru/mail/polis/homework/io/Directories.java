@@ -1,6 +1,7 @@
 package ru.mail.polis.homework.io;
 
 import java.io.IOException;
+import java.io.File;
 
 public class Directories {
 
@@ -13,7 +14,24 @@ public class Directories {
      * 2 тугрика
      */
     public static int removeWithFile(String path) {
-        return 0;
+        int numberDeletedFiles = 0;
+        File file = new File(path);
+        if (!file.exists()) {
+            return 0;
+        }
+        if (file.isFile()) {
+            file.delete();
+            return 1;
+        }
+        File[] files = file.listFiles();
+        if (files != null) {
+            for (File descendant : files) {
+                numberDeletedFiles += removeWithFile(descendant.getPath());
+            }
+        }
+        file.delete();
+        numberDeletedFiles++;
+        return numberDeletedFiles;
     }
 
     /**
