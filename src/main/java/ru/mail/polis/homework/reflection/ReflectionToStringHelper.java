@@ -48,19 +48,83 @@ import java.util.Comparator;
 public class ReflectionToStringHelper {
     public static String reflectiveToString(Object object) {
         StringBuilder result = new StringBuilder();
-        Arrays.stream(object.getClass().getDeclaredFields())
+        Class<?> givenClass = object.getClass();
+        result.append(getFieldsInfo(object, givenClass));
+
+        Class<?> superClass = givenClass.getSuperclass();
+
+        while (superClass != null) {
+            result.append(getFieldsInfo(object, superClass));
+            superClass = superClass.getSuperclass();
+        }
+
+        return "{" + result.substring(0, result.length() - 2) + "}";
+    }
+
+    private static StringBuilder getFieldsInfo(Object object, Class<?> givenClass) {
+        StringBuilder result = new StringBuilder();
+
+        Arrays.stream(givenClass.getDeclaredFields())
                 .sorted(Comparator.comparing(Field::getName))
                 .forEach(field -> {
                     field.setAccessible(true);
+
+                    String fieldName = field.getName();
                     try {
                         if (!Modifier.isStatic(field.getModifiers()) && field.getAnnotation(SkipField.class) == null) { //проверка поля на статичность и на присутствие аннотации SkipField
-                            result.append(field.getName()).append(": ").append(field.get(object)).append(", ");
+                            result.append(fieldName).append(": ").append(getValue(object, field)).append(", ");
                         }
                     } catch (IllegalAccessException e) {
-                        result.append(field.getName()).append(": null, ");
+                        result.append(fieldName).append(": null, ");
                     }
+
+                    field.setAccessible(false);
                 });
 
-        return "{" + result.substring(0, result.length() - 2) + "}";
+        return result;
+    }
+
+    private static String getValue(Object object, Field field) throws IllegalAccessException {
+        if (field.get(object) == null) {
+            return "null";
+        }
+
+        StringBuilder result = new StringBuilder();
+        Class<?> fieldType = field.getType();
+
+        if (fieldType.isArray()) {
+            if (fieldType.equals(int[].class)) {
+                int[] array = (int[]) field.get(object);
+                if (array.length == 0) {
+                    return "[]";
+                }
+
+                Arrays.stream(array).forEach(element -> result.append((element)).append(", "));
+            } else {
+                Object[] array = (Object[]) field.get(object);
+                if (array.length == 0) {
+                    return "[]";
+                }
+
+                Arrays.stream(array).forEach(element -> result.append((element)).append(", "));
+            }
+            //result.append(arrayToString(object, field));
+
+            return "[" + result.substring(0, result.length() - 2) + "]";
+        }
+
+        return String.valueOf(field.get(object));
+    }
+
+    private static <T> String arrayToString(Object object, Field field) throws IllegalAccessException {
+        StringBuilder result = new StringBuilder();
+
+        T[] array = (T[]) field.get(object);
+        if (array.length == 0) {
+            return "[]";
+        }
+
+        Arrays.stream(array).forEach(element -> result.append((element)).append(", "));
+        return result.toString();
     }
 }
