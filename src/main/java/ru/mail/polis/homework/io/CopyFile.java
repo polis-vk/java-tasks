@@ -27,11 +27,10 @@ public class CopyFile {
         }
 
         try {
-            if (Files.notExists(dest)){
-                if (Files.isRegularFile(source)){
+            if (Files.notExists(dest)) {
+                if (Files.isRegularFile(source)) {
                     Files.createDirectories(dest.getParent());
-                }
-                else{
+                } else {
                     Files.createDirectories(dest);
                 }
             }
@@ -43,17 +42,16 @@ public class CopyFile {
 
     private static void copyDirectory(Path source, Path dest) throws IOException {
         if (Files.isRegularFile(source)) {
-            Files.createFile(dest);
             copyFile(source, dest);
-        }
+        } else {
+            if (Files.notExists(dest)) {
+                Files.createDirectory(dest);
+            }
 
-        if (Files.notExists(dest)) {
-            Files.createDirectory(dest);
-        }
-
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(source)) {
-            for (Path directory : directoryStream) {
-                copyDirectory(directory, dest.resolve(directory.getFileName()));
+            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(source)) {
+                for (Path directory : directoryStream) {
+                    copyDirectory(directory, dest.resolve(directory.getFileName()));
+                }
             }
         }
     }
@@ -63,7 +61,7 @@ public class CopyFile {
             try (OutputStream outputStream = Files.newOutputStream(dest)) {
                 byte[] buffer = new byte[1024];
                 int len;
-                while ((len = inputStream.read(buffer)) > 0) {
+                while ((len = inputStream.read(buffer)) != -1) {
                     outputStream.write(buffer, 0, len);
                 }
             }
