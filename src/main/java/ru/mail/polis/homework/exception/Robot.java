@@ -9,17 +9,19 @@ package ru.mail.polis.homework.exception;
 public class Robot {
     private double x;
     private double y;
-    private static int id = 1;
-    private boolean connected = false;
+    private static int counterRobots = 1;
+    private final int id;
 
     public Robot() {
-        id++;
+        id = counterRobots;
+        counterRobots++;
     }
 
     public Robot(double x, double y) {
         this.x = x;
         this.y = y;
-        id++;
+        id = counterRobots;
+        counterRobots++;
     }
 
     public double getX() {
@@ -42,11 +44,4 @@ public class Robot {
         return id;
     }
 
-    public boolean isConnected() {
-        return connected;
-    }
-
-    public void setConnected(boolean connected) {
-        this.connected = connected;
-    }
 }

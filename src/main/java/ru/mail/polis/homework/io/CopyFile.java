@@ -16,6 +16,9 @@ public class CopyFile {
      * 3 тугрика
      */
     public static void copyFiles(String pathFrom, String pathTo) {
+        if (pathFrom == null || pathTo == null || pathFrom.isEmpty() || pathTo.isEmpty()) {
+            return;
+        }
         Path from = Paths.get(pathFrom);
         if (Files.notExists(from)) {
             return;

@@ -2,10 +2,10 @@ package ru.mail.polis.homework.exception;
 
 import java.util.Map;
 
-public class RemoteRobotConnectionManager implements RobotConnectionManager {
+public class RobotRemoteConnectionManager implements RobotConnectionManager {
     private final Map<Integer, Robot> robots;
 
-    public RemoteRobotConnectionManager(Map<Integer, Robot> robots) {
+    public RobotRemoteConnectionManager(Map<Integer, Robot> robots) {
         this.robots = robots;
     }
 
@@ -15,9 +15,6 @@ public class RemoteRobotConnectionManager implements RobotConnectionManager {
         if (robot == null) {
             throw new RobotConnectionException("Connection already not established");
         }
-        if (robot.isConnected()) {
-            throw new RobotConnectionException("The connection to the robot has already been established");
-        }
-        return new RemoteConnectionRobot(robot);
+        return new RobotRemoteConnection(robot);
     }
 }

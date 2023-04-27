@@ -12,7 +12,7 @@ import java.util.HashMap;
  */
 public class RobotRemoteControl {
 
-    private final RobotConnectionManager connectionManager = new RemoteRobotConnectionManager(new HashMap<>());
+    private final RobotConnectionManager connectionManager = new RobotRemoteConnectionManager(new HashMap<>());
 
     /**
      * Метод должен открыть соединение и отправить робота в указанную точку. При неудаче - повторить действие еще 2 раза,
@@ -24,6 +24,7 @@ public class RobotRemoteControl {
         while (true) {
             try (RobotConnection connection = connectionManager.getConnection(robotId)) {
                 connection.moveRobotTo(toX, toY);
+                return;
             } catch (RobotConnectionException e) {
                 if (tries == 2) {
                     throw e;

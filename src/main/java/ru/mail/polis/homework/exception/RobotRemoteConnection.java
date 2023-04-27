@@ -1,16 +1,17 @@
 package ru.mail.polis.homework.exception;
 
-public class RemoteConnectionRobot implements RobotConnection {
+public class RobotRemoteConnection implements RobotConnection {
     private final Robot robot;
+    private boolean connected;
 
-    public RemoteConnectionRobot(Robot robot) {
+    public RobotRemoteConnection(Robot robot) {
         this.robot = robot;
-        this.robot.setConnected(true);
+        connected = true;
     }
 
     @Override
     public void moveRobotTo(int x, int y) throws RobotConnectionException {
-        if (!robot.isConnected()) {
+        if (!connected) {
             throw new RobotConnectionException("Connection is not established");
         }
         robot.setX(x);
@@ -19,10 +20,10 @@ public class RemoteConnectionRobot implements RobotConnection {
 
     @Override
     public void close() throws RobotConnectionException {
-        if (!robot.isConnected()) {
+        if (!connected) {
             throw new RobotConnectionException("Connection is not established");
         } else {
-            robot.setConnected(false);
+            connected = false;
         }
     }
 }

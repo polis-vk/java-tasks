@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.File;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.concurrent.atomic.AtomicInteger;
+
 
 public class Directories {
 
@@ -17,17 +17,20 @@ public class Directories {
      * 2 тугрика
      */
     public static int removeWithFile(String path) {
-        File dir = new File(path);
-        if (!dir.exists()) {
+        File file = new File(path);
+        if (!file.exists()) {
             return 0;
         }
         int count = 0;
-        if (dir.isDirectory()) {
-            for (File files : dir.listFiles()) {
-                count += removeWithFile(files.toString());
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File currentFile : files) {
+                    count += removeWithFile(currentFile.toString());
+                }
             }
         }
-        dir.delete();
+        file.delete();
         return ++count;
     }
 
@@ -40,22 +43,22 @@ public class Directories {
         if (!Files.exists(dir)) {
             return 0;
         }
-        AtomicInteger count = new AtomicInteger();
+        MutableInt count = new MutableInt();
         Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 Files.delete(file);
-                count.incrementAndGet();
+                count.increment();
                 return FileVisitResult.CONTINUE;
             }
 
             @Override
             public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
                 Files.delete(dir);
-                count.incrementAndGet();
+                count.increment();
                 return FileVisitResult.CONTINUE;
             }
         });
-        return count.get();
+        return count.getValue();
     }
 }
