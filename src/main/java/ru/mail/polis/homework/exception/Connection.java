@@ -11,7 +11,7 @@ public class Connection implements RobotConnection {
 
     public void moveRobotTo(int x, int y) throws ConnectionException {
         if (!isConnected) {
-            throw new ConnectionException("Robot moving error");
+            throw new ConnectionException("Error: robot is not connected.");
         }
         robot.moveTo(x, y);
     }

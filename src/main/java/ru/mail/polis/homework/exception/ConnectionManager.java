@@ -17,7 +17,7 @@ public class ConnectionManager implements RobotConnectionManager {
     public RobotConnection getConnection(int robotId) throws ConnectionException {
         Robot robot = robots.get(robotId);
         if (robot == null) {
-            throw new ConnectionException("Getting connection error");
+            throw new ConnectionException("Error: robot does not exist.");
         }
         return new Connection(robot);
     }
