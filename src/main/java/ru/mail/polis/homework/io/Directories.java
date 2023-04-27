@@ -65,8 +65,6 @@ public class Directories {
                 for (Path pathFile : directoryStream) {
                     result += recursiveFileDeletion(pathFile);
                 }
-            } catch (Exception err) {
-                err.printStackTrace();
             }
         }
 
