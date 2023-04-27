@@ -1,9 +1,6 @@
 package ru.mail.polis.homework.exception;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
 /**
  * Задание: Нужно создать свою мини библиотеку, с удаленным роботом и пультом управления.
  * Каждый класс оценивается отдельно
