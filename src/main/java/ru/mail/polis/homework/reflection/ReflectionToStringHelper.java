@@ -85,7 +85,7 @@ public class ReflectionToStringHelper {
                         !field.isAnnotationPresent(SkipField.class))
                 .sorted(Comparator.comparing(Field::getName))
                 .collect(Collectors.toList());
-        
+
         for (Field field : fields) {
             sb.append(field.getName()).append(": ");
             sb.append(convertFieldValueToString(field, object)).append(", ");
