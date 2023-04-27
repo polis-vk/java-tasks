@@ -15,13 +15,6 @@ public class Connection implements RobotConnection {
         robot.move(x, y);
     }
     @Override
-    public void visitRobotParty() throws RobotConnectionException {
-        if (!isConnected) {
-            throw new RobotConnectionException("No connection with robot!");
-        }
-        robot.dance();
-    }
-    @Override
     public void close() {
         robot = null;
         isConnected = false;

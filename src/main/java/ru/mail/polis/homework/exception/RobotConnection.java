@@ -12,7 +12,6 @@ public interface RobotConnection extends AutoCloseable {
      * Перемещает робота в заданную точку.
      */
     void moveRobotTo(int x, int y) throws RobotConnectionException;
-    void visitRobotParty() throws RobotConnectionException;
     @Override
     void close();
 }

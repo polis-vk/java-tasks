@@ -11,14 +11,12 @@ public class Robot {
     private int x;
     private int y;
     private boolean isConnected;
-    private boolean isHappy;
 
     public Robot(int id, int x, int y) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.isConnected = false;
-        this.isHappy = false;
     }
     public int getX() {
         return x;
@@ -32,9 +30,6 @@ public class Robot {
     public boolean isConnected() {
         return isConnected;
     }
-    public boolean isHappy() {
-        return isHappy;
-    }
     public void connect() {
         isConnected = true;
     }
@@ -44,8 +39,5 @@ public class Robot {
     public void move(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-    public void dance() {
-        this.isHappy = true;
     }
 }
