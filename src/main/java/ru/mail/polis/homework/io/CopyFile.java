@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.io;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
@@ -36,8 +34,10 @@ public class CopyFile {
 
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                try (FileInputStream input = new FileInputStream(file.toFile());
-                     FileOutputStream output = new FileOutputStream(destination.resolve(source.relativize(file)).toFile())) {
+                try (BufferedInputStream input
+                             = new BufferedInputStream(Files.newInputStream(file));
+                     BufferedOutputStream output = new BufferedOutputStream(
+                             Files.newOutputStream(destination.resolve(source.relativize(file))))) {
                     int str;
                     while ((str = input.read()) != -1) {
                         output.write(str);
