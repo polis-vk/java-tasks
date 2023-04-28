@@ -53,7 +53,55 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+
+        StringBuilder sb = new StringBuilder("{");
+        Class<?> c = object.getClass();
+        while (!Object.class.equals(c)) {
+            Field[] fields = c.getDeclaredFields();
+            Arrays.sort(fields, Comparator.comparing(Field::getName));
+            try {
+                for (Field field : fields) {
+                    if ((field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers()))) {
+                        continue;
+                    }
+                    sb.append(field.getName()).append(": ");
+                    field.setAccessible(true);
+                    Object content = field.get(object);
+                    if (content != null && field.getType().isArray()) {
+                        addArrayToString(content,sb);
+                    } else {
+                        sb.append(content);
+                    }
+                    sb.append(", ");
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            c = c.getSuperclass();
+        }
+        if (sb.length() > 1) {
+            sb.setLength(sb.length() - 2);
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+    private static void addArrayToString(Object array, StringBuilder sb) {
+        if (array == null) {
+            sb.append("null");
+            return;
+        }
+        sb.append("[");
+        for (int i = 0; i < Array.getLength(array)  ; i++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+            sb.append(Array.get(array, i));
+        }
+
+        sb.append("]");
     }
 }
