@@ -43,25 +43,25 @@ public class Directories {
         if (!Files.exists(directory)) {
             return 0;
         }
-        final int[] counter = new int[]{0};
-        SimpleFileVisitor<Path> fileVisitor = new SimpleFileVisitor<Path>() {
+        AtomicInteger atomicCounter = new AtomicInteger(0);
+        Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                if (attrs.isRegularFile()) {
-                    Files.delete(file);
-                    counter[0]++;
-                }
+                int counter = atomicCounter.getValue();
+                Files.delete(file);
+                atomicCounter.setValue(++counter);
                 return FileVisitResult.CONTINUE;
             }
+
             @Override
             public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                int counter = atomicCounter.getValue();
                 Files.delete(dir);
-                counter[0]++;
+                atomicCounter.setValue(++counter);
                 return FileVisitResult.CONTINUE;
             }
-        };
-        Files.walkFileTree(directory, fileVisitor);
-        return counter[0];
+        });
+        return atomicCounter.getValue();
     }
 }
 

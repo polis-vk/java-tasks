@@ -4,21 +4,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ConnectionManager implements RobotConnectionManager {
-    final private Map<Integer, Robot> robotMap;
-    final private Map<Integer, RobotConnection> connectionMap;
-
+     private final Map<Integer, Robot> robotMap;
     ConnectionManager(Map<Integer, Robot> robotMap) {
-        this.robotMap = robotMap;
-        connectionMap = new HashMap<>();
+        this.robotMap = new HashMap<>(robotMap);
     }
 
     @Override
-    public RobotConnection getConnection(int id) {
-        if (!robotMap.containsKey(id)) {
-            throw new RuntimeException("RobotNotFound");
+    public RobotConnection getConnection(int id) throws RobotConnectionException {
+        Robot robot = robotMap.get(id);
+        if (robot == null) {
+            throw new RobotConnectionException("Cant find robot with id: " + id);
         }
-        connectionMap.putIfAbsent(id, new RobotStream(robotMap.get(id)));
-        return connectionMap.get(id);
+        return new RobotStream(robot);
     }
 
     //Добавляем нового робота в менеджер соединений;
