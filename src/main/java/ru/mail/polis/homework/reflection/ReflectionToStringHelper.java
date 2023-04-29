@@ -1,13 +1,10 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -53,7 +50,19 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        StringBuilder stringNamesValues = new StringBuilder("{");
+        Arrays.stream(object.getClass().getDeclaredFields())
+                .sorted(Comparator.comparing(Field::getName))
+                .map(fieldElement -> {
+                    fieldElement.setAccessible(true);
+                    try {
+                        return fieldElement.getName() + ": " + fieldElement.get(object) + ", ";
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .forEach(stringNamesValues::append);
+        stringNamesValues.delete(stringNamesValues.length() - 2, stringNamesValues.length()).append("}");
+        return stringNamesValues.toString();
     }
 }
