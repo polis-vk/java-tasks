@@ -5,10 +5,12 @@ import ru.mail.polis.homework.reflection.objects.easy.Easy;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,7 +55,52 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+
+        StringJoiner result = new StringJoiner(", ", "{", "}");
+        for (Field field : getAllFields(object)) {
+            result.add(getFieldDescription(field, object));
+        }
+        return result.toString();
+    }
+
+    private static String getFieldDescription(Field field, Object object) {
+        field.setAccessible(true);
+        return field.getName() + ": " + getFieldValueString(field, object);
+    }
+
+    private static String getFieldValueString(Field field, Object object) {
+        Object fieldData = null;
+        try {
+            fieldData = field.get(object);
+        } catch (IllegalAccessException ignore) {
+        }
+
+        if (fieldData == null) {
+            return "null";
+        }
+
+        if (!fieldData.getClass().isArray()) {
+            return String.valueOf(fieldData);
+        }
+        StringJoiner arr = new StringJoiner(", ", "[", "]");
+        for (int i = 0; i < Array.getLength(fieldData); i++) {
+            Object temp = Array.get(fieldData, i);
+            arr.add(temp == null ? "null" : String.valueOf(temp));
+        }
+        return arr.toString();
+    }
+
+    private static List<Field> getAllFields(Object object) {
+        List<Field> fields = new ArrayList<>();
+        for (Class<?> objectsClass = object.getClass(); objectsClass != null; objectsClass = objectsClass.getSuperclass()) {
+            fields.addAll(Arrays.stream(objectsClass.getDeclaredFields())
+                    .filter(field -> !Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class))
+                    .sorted(Comparator.comparing(Field::getName))
+                    .collect(Collectors.toList()));
+        }
+        return fields;
     }
 }
