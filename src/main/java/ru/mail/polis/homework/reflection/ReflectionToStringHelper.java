@@ -2,11 +2,13 @@ package ru.mail.polis.homework.reflection;
 
 import ru.mail.polis.homework.reflection.objects.easy.Easy;
 
+import javax.swing.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -54,6 +56,58 @@ public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
         // TODO: implement
+        if (object == null) {
+            return "null";
+        }
+        StringBuilder str = new StringBuilder();
+        str.append('{');
+        try {
+            Class<?> objecClass = object.getClass().getSuperclass();
+            while (objecClass != Object.class) {
+                str.append(", ");
+                str.append(fieldToStr(objecClass.getSuperclass(), object));
+                objecClass = objecClass.getSuperclass();
+            }
+            str.append('}');
+        } catch (Exception ignore) {
+        }
+        return str.toString();
+    }
+
+    private static StringBuilder fieldToStr(Class<?> c, Object obj) throws IllegalAccessException {
+        Field[] fields = Arrays.stream(c.getDeclaredFields())
+                .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                .filter(field -> !field.isAnnotationPresent(SkipField.class))
+                .toArray(Field[]::new);
+        if (fields.length == 0) {
+            return new StringBuilder();
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Field currentField : fields) {
+            stringBuilder.append(currentField.getName()).append(": ");
+            if (currentField.getType().isArray()) {
+                arrayToStr(currentField.get(obj));
+                stringBuilder.append(", ");
+            } else {
+                stringBuilder.append(currentField.get(obj));
+            }
+        }
         return null;
+    }
+
+    private static StringBuilder arrayToStr(Object array) {
+        if (array == null) {
+            return new StringBuilder("null");
+        }
+        StringBuilder str = new StringBuilder();
+        str.append("[");
+        for (int i = 0; i < Array.getLength(array); i++) {
+            if (i != 0) {
+                str.append(", ");
+            }
+            str.append(Array.get(array, i));
+        }
+        str.append("]");
+        return str;
     }
 }
