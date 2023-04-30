@@ -1,9 +1,13 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -52,25 +56,62 @@ public class ReflectionToStringHelper {
             return "null";
         }
         StringBuilder returnString = new StringBuilder("{");
-        Class<?> clazz = object.getClass();
-        Field[] fields = clazz.getDeclaredFields();
-        Arrays.sort(fields, Comparator.comparing(Field::getName));
+        List<Field> fields = getAllFields(object.getClass());
         for (Field field : fields) {
             try {
                 field.setAccessible(true);
-                if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
-                    continue;
-                }
                 returnString.append(field.getName()).append(": ");
-                Object obj = field.get(object);
-                returnString.append(obj == null ? "null" : obj.toString()).append(", ");
+                createDescription(returnString, field, object);
+                returnString.append(", ");
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
+        deleteEndComma(returnString);
+        return String.valueOf(returnString.append("}"));
+    }
+
+    private static void createDescription(StringBuilder returnString, Field field, Object object) throws IllegalAccessException {
+        Object obj = field.get(object);
+        if (field.get(object) == null) {
+            returnString.append(obj);
+            return;
+        }
+        if (!field.getType().isArray()) {
+            returnString.append(obj.toString());
+            return;
+        }
+        returnString.append("[");
+        int length = Array.getLength(obj);
+        if (length != 0) {
+            for (int i = 0; i < length; i++) {
+                Object toStringValue = Array.get(obj, i);
+                returnString.append(toStringValue == null ? null : toStringValue.toString()).append(", ");
+            }
+            deleteEndComma(returnString);
+        }
+        returnString.append("]");
+    }
+
+    private static boolean shouldAddField(Field field) {
+        return !(Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class));
+    }
+
+    private static void deleteEndComma(StringBuilder returnString) {
         if (returnString.length() > 1) {
             returnString.setLength(returnString.length() - 2);
         }
-        return String.valueOf(returnString.append("}"));
+    }
+
+    private static List<Field> getAllFields(Class<?> clazz) {
+        List<Field> fields = new ArrayList<>();
+        while (clazz != Object.class) {
+            fields.addAll(Arrays.stream(clazz.getDeclaredFields())
+                    .filter(ReflectionToStringHelper::shouldAddField)
+                    .sorted(Comparator.comparing(Field::getName))
+                    .collect(Collectors.toList()));
+            clazz = clazz.getSuperclass();
+        }
+        return fields;
     }
 }
