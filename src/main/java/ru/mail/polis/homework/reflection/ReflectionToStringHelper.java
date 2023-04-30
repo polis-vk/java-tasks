@@ -1,14 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,7 +50,53 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+
+        Class<?> clazz = object.getClass();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append('{');
+
+        while (clazz != null) {
+            Arrays.stream(clazz.getDeclaredFields())
+                    .filter(field -> field.getAnnotation(SkipField.class) == null &&
+                            !Modifier.isStatic(field.getModifiers()))
+                    .sorted(Comparator.comparing(Field::getName))
+                    .forEach(field -> {
+                        field.setAccessible(true);
+                        String str;
+                        try {
+                            if (field.get(object).getClass().isArray()) {
+                                StringBuilder temporaryStringBuilder = new StringBuilder();
+                                temporaryStringBuilder.append("[");
+                                int size = Array.getLength(field.get(object));
+                                for (int i = 0; i < size; i++) {
+                                    temporaryStringBuilder.append(Array.get(field.get(object), i));
+                                    if (i != size - 1) {
+                                        temporaryStringBuilder.append(", ");
+                                    }
+                                }
+                                temporaryStringBuilder.append("]");
+                                str = temporaryStringBuilder.toString();
+                            } else {
+                                str = field.get(object).toString();
+                            }
+                        } catch (Exception e) {
+                            str = "null";
+                        }
+                        stringBuilder.append(field.getName()).append(": ").append(str).append(", ");
+                    });
+            clazz = clazz.getSuperclass();
+        }
+
+        if (stringBuilder.length() > 1) {
+            stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+        }
+
+        stringBuilder.append('}');
+
+        return stringBuilder.toString();
     }
 }
