@@ -1,14 +1,13 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -52,8 +51,71 @@ import java.util.stream.Stream;
  */
 public class ReflectionToStringHelper {
 
+    private static final String NULL_VALUE = "null";
+
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return NULL_VALUE;
+        }
+
+        StringBuilder builder = new StringBuilder("{");
+        Class<?> objectClass = object.getClass();
+        boolean hadFirst = false;
+        for (Field objectClassField : extractsClassFields(objectClass)) {
+            if (hadFirst) {
+                builder.append(", ");
+            }
+            builder.append(objectClassField.getName());
+            builder.append(": ");
+
+            try {
+                builder.append(getFieldAsString(objectClassField, object));
+            } catch (IllegalAccessException ignored) {
+            }
+            if (!hadFirst) {
+                hadFirst = true;
+            }
+        }
+        return builder.append('}').toString();
     }
+
+    private static String getFieldAsString(Field field, Object object) throws IllegalAccessException {
+        field.setAccessible(true);
+
+        Object fieldValue = field.get(object);
+        if (fieldValue == null) {
+            return NULL_VALUE;
+        } else if (field.getType()
+                .isArray()) {
+            return getArrayAsString(field, object);
+        }
+        return fieldValue.toString();
+    }
+
+    private static String getArrayAsString(Field field, Object object) throws IllegalAccessException {
+        Object arrayField = field.get(object);
+        Object[] values = new Object[Array.getLength(arrayField)];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = Array.get(arrayField, i);
+        }
+
+        return Arrays.toString(values);
+    }
+
+    private static boolean isFieldIgnored(Field field) {
+        return !field.isAnnotationPresent(SkipField.class) && !Modifier.isStatic(field.getModifiers());
+    }
+
+    private static List<Field> extractsClassFields(Class<?> objectClass) {
+        List<Field> fields = new ArrayList<>();
+        while (objectClass != Object.class) {
+            fields.addAll(Arrays.stream(objectClass.getDeclaredFields())
+                    .filter(ReflectionToStringHelper::isFieldIgnored)
+                    .sorted(Comparator.comparing(Field::getName))
+                    .collect(Collectors.toList()));
+            objectClass = objectClass.getSuperclass();
+        }
+        return fields;
+    }
+
 }
