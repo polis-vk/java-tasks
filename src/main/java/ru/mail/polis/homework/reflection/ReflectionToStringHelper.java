@@ -54,6 +54,65 @@ public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
         // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        Class<?> objectClass = object.getClass();
+        StringBuilder result = new StringBuilder();
+        result.append("{");
+        while (objectClass != null) {
+            Field[] fields = objectClass.getDeclaredFields();
+            Arrays.sort(fields, Comparator.comparing(Field::getName));
+            for (Field field : fields) {
+                buildFieldString(field, result, object);
+            }
+            objectClass = objectClass.getSuperclass();
+        }
+        if (result.length() > 1) {
+            result.delete(result.length() - 2, result.length());
+        }
+        result.append("}");
+        return result.toString();
+    }
+
+    private static void buildFieldString(Field field, StringBuilder result, Object object) {
+        Object value;
+        if (Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(SkipField.class)) {
+            return;
+        }
+        if (!field.isAccessible()) {
+            field.setAccessible(true);
+        }
+        result.append(field.getName());
+        result.append(": ");
+        try {
+            value = field.get(object);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        if (field.getType().isArray()) {
+            buildArrayString(value, result);
+        } else {
+            result.append(value);
+        }
+        result.append(", ");
+        if (!field.isAccessible()) {
+            field.setAccessible(false);
+        }
+    }
+    private static void buildArrayString(Object value, StringBuilder result) {
+        if (value == null) {
+            result.append("null");
+            return;
+        }
+        result.append("[");
+        int arrayLength = Array.getLength(value);
+        for (int i = 0; i < arrayLength; i++) {
+            result.append(Array.get(value, i));
+            if (i != arrayLength - 1) {
+                result.append(", ");
+            }
+        }
+        result.append("]");
     }
 }
