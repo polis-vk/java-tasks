@@ -1,16 +1,14 @@
 package ru.mail.polis.homework.reflection;
 
-import com.sun.tools.javac.comp.Annotate;
+import ru.mail.polis.homework.reflection.objects.hard.Hard;
 
-import java.lang.reflect.AnnotatedType;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.text.Annotation;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -58,23 +56,43 @@ public class ReflectionToStringHelper {
         if (object == null) {
             return "null";
         }
+        Class objClass = object.getClass();
         StringBuilder stringNamesValues = new StringBuilder("{");
-        Arrays.stream(object.getClass().getDeclaredFields())
-                .filter(field -> !Modifier.isStatic(field.getModifiers()))
-                .filter(field -> field.getAnnotation(SkipField.class) == null)
-                .sorted(Comparator.comparing(Field::getName))
-                .map(fieldElement -> {
-                    fieldElement.setAccessible(true);
-                    try {
-                        return fieldElement.getName() + ": " + fieldElement.get(object) + ", ";
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .forEach(stringNamesValues::append);
+        while (objClass != null) {
+            Arrays.stream(objClass.getDeclaredFields())
+                    .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                    .filter(field -> field.getAnnotation(SkipField.class) == null)
+                    .sorted(Comparator.comparing(Field::getName))
+                    .map(fieldElement -> {
+                        fieldElement.setAccessible(true);
+                        try {
+                            if (fieldElement.getType().isArray()) {
+                                return fieldElement.getName() + ": " + getValuesArray(fieldElement.get(object)) + ", ";
+                            }
+                            return fieldElement.getName() + ": " + fieldElement.get(object) + ", ";
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .forEach(stringNamesValues::append);
+            objClass = objClass.getSuperclass();
+        }
         if (stringNamesValues.length() > 2) {
             stringNamesValues.delete(stringNamesValues.length() - 2, stringNamesValues.length());
         }
         return stringNamesValues.append("}").toString();
+    }
+    private static String getValuesArray(Object value) {
+        if (value == null) {
+            return "null";
+        }
+        StringBuilder arrayValues = new StringBuilder("[");
+        for (int fieldArrayCounter = 0; fieldArrayCounter < Array.getLength(value); fieldArrayCounter++) {
+            arrayValues.append(Array.get(value, fieldArrayCounter));
+            if (fieldArrayCounter != Array.getLength(value) - 1) {
+                arrayValues.append(", ");
+            }
+        }
+        return arrayValues.append("]").toString();
     }
 }
