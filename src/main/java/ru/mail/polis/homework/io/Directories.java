@@ -29,10 +29,11 @@ public class Directories {
         int count = 0;
         if (file.isDirectory()) {
             for (File f : Objects.requireNonNull(file.listFiles())) {
-                count += removeWithFile(f.getPath());
+                count += removeWithFile(f.toString());
             }
         }
-        return file.delete() ? ++count : count;
+        file.delete();
+        return ++count;
     }
 
     /**
@@ -45,15 +46,17 @@ public class Directories {
             return 0;
         }
         int count = 0;
-        try (Stream<Path> pathStream = Files.walk(filePath)) {
-            List<Path> paths = pathStream
-                    .sorted(Comparator.reverseOrder())
-                    .collect(Collectors.toList());
-            for (Path currentPath : paths) {
-                Files.delete(currentPath);
-                count++;
+        if (Files.isDirectory(filePath)) {
+            try (Stream<Path> pathStream = Files.list(filePath)) {
+                List<Path> paths = pathStream
+                        .sorted(Comparator.reverseOrder())
+                        .collect(Collectors.toList());
+                for (Path currentPath : paths) {
+                    count += removeWithPath(currentPath.toString());
+                }
             }
         }
-        return count;
+        Files.delete(filePath);
+        return ++count;
     }
 }

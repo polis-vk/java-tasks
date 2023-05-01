@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ConnectionManager implements RobotConnectionManager {
+public class RobotConnectionManagerImpl implements RobotConnectionManager {
     private final Map<Integer, Robot> robots;
 
-    public ConnectionManager(List<Robot> robots) {
+    public RobotConnectionManagerImpl(List<Robot> robots) {
         this.robots = new HashMap<>();
         for (Robot robot : robots) {
             this.robots.put(robot.getRobotId(), robot);
@@ -15,11 +15,11 @@ public class ConnectionManager implements RobotConnectionManager {
     }
 
     @Override
-    public RobotConnection getConnection(int robotId) throws ConnectionException {
+    public RobotConnection getConnection(int robotId) throws RobotConnectionException {
         Robot robot = robots.get(robotId);
         if (robot == null) {
-            throw new ConnectionException("Connection failed");
+            throw new RobotConnectionException("No such robot exists");
         }
-        return new Connection(robot);
+        return new RobotConnectionImpl(robot);
     }
 }
