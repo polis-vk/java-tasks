@@ -1,14 +1,15 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,7 +54,54 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        StringBuilder sb = new StringBuilder("{");
+        Class<?> clazz = object.getClass();
+        for (Field f : getDeclaredFieldsInCorrectOrder(clazz)) {
+            if (Modifier.isStatic(f.getModifiers()) || f.isAnnotationPresent(SkipField.class)) {
+                continue;
+            }
+            String fieldName = f.getName();
+            f.setAccessible(true);
+            String value;
+            try {
+                if (f.getType().isArray()) {
+                    value = getValuesForArrayField(object, f);
+                } else {
+                    value = f.get(object).toString();
+                }
+            } catch (NullPointerException | IllegalAccessException e) {
+                value = "null";
+            }
+            sb.append(fieldName)
+                    .append(": ")
+                    .append(value)
+                    .append(", ");
+        }
+        if (sb.length() > 1) {
+            return sb.substring(0, sb.length() - 2) + "}";
+        }
+        return sb.append("}").toString();
+    }
+
+    private static List<Field> getDeclaredFieldsInCorrectOrder(Class<?> clazz) {
+        List<Field> fields = new ArrayList<>();
+        do {
+            fields.addAll(Arrays.stream(clazz.getDeclaredFields())
+                    .sorted(Comparator.comparing(Field::getName))
+                    .collect(Collectors.toList()));
+            clazz = clazz.getSuperclass();
+        } while (clazz != Object.class);
+        return fields;
+    }
+
+    private static String getValuesForArrayField(Object object, Field f) throws IllegalAccessException {
+        Object arrayField = f.get(object);
+        Object[] fieldsValues = new Object[Array.getLength(arrayField)];
+        for (int i = 0; i < fieldsValues.length; i++)
+            fieldsValues[i] = Array.get(arrayField, i);
+        return Arrays.toString(fieldsValues);
     }
 }
