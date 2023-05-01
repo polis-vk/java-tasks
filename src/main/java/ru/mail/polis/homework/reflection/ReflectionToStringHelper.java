@@ -9,8 +9,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -70,9 +68,9 @@ public class ReflectionToStringHelper {
                 .collect(Collectors.toList());
 
         for (Field field : fields) {
-            stringBuilder.append(field.getName()).append(": ");
+            stringBuilder.append(field.getName()).append(":").append(" ");
             addFieldValueToStringBuilder(field, object, stringBuilder);
-            stringBuilder.append(", ");
+            stringBuilder.append(",").append(" ");
         }
 
         if (stringBuilder.length() != 1) {
@@ -106,8 +104,8 @@ public class ReflectionToStringHelper {
         stringBuilder.append("[");
 
         for (int i = 0; i < Array.getLength(value); i++) {
-            stringBuilder.append(Array.get(value, i) == null ? "null" : Array.get(value, i).toString());
-            stringBuilder.append(", ");
+            stringBuilder.append(Array.get(value, i) == null ? "null" : Array.get(value, i));
+            stringBuilder.append(",").append(" ");
         }
 
         stringBuilder.setLength(stringBuilder.length() - 2);
