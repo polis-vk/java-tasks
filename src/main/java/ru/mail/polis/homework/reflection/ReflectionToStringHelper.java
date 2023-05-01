@@ -1,14 +1,9 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -54,6 +49,41 @@ public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
         // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        StringBuilder result = new StringBuilder("{");
+        Class<?> clasz = object.getClass();
+        Field[] fields = clasz.getDeclaredFields();
+        result.append(createFieldStringBuilder(fields, object));
+        Class<?> SuperClasz = clasz.getSuperclass();
+        while (SuperClasz.getSuperclass() != null) {
+            result.append(createFieldStringBuilder(SuperClasz.getDeclaredFields(), object));
+            SuperClasz = SuperClasz.getSuperclass();
+        }
+        if (result.length() > 3) {
+            result.delete(result.length() - 2, result.length());
+        }
+        result.append("}");
+        return result.toString();
+    }
+
+    public static StringBuilder createFieldStringBuilder(Field[] fields, Object object) {
+        StringBuilder result = new StringBuilder();
+        Arrays.sort(fields, Comparator.comparing(Field::getName));
+        for (int i = 0; i < fields.length; i++) {
+            if (fields[i].getAnnotation(SkipField.class) != null || Modifier.isStatic(fields[i].getModifiers())) {
+                continue;
+            }
+            fields[i].setAccessible(true);
+            result.append(fields[i].getName()).append(": ");
+            try {
+                result.append(fields[i].get(object) == null ? "null" : fields[i].get(object));
+                result.append(", ");
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return result;
     }
 }
