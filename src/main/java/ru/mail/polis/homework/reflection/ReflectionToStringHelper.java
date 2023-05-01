@@ -7,6 +7,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -53,7 +55,62 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+
+        if (object == null) {
+            return "null";
+        }
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("{");
+
+        List<Field> fields = Arrays.stream(object.getClass().getDeclaredFields())
+                .filter(field -> !Modifier.isStatic(field.getModifiers()) &&
+                        !field.isAnnotationPresent(SkipField.class))
+                .sorted(Comparator.comparing(Field::getName))
+                .collect(Collectors.toList());
+
+        for (Field field : fields) {
+            stringBuilder.append(field.getName()).append(": ");
+            addFieldValueToStringBuilder(field, object, stringBuilder);
+            stringBuilder.append(", ");
+        }
+
+        if (stringBuilder.length() != 1) {
+            stringBuilder.setLength(stringBuilder.length() - 2);
+        }
+
+        stringBuilder.append("}");
+        return stringBuilder.toString();
+    }
+
+    public static void addFieldValueToStringBuilder(Field field, Object object, StringBuilder stringBuilder) {
+        field.setAccessible(true);
+        Object value;
+
+        try {
+            value = field.get(object);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (value == null) {
+            stringBuilder.append("null");
+            return;
+        }
+
+        if (!value.getClass().isArray()) {
+            stringBuilder.append(value);
+            return;
+        }
+
+        stringBuilder.append("[");
+
+        for (int i = 0; i < Array.getLength(value); i++) {
+            stringBuilder.append(Array.get(value, i) == null ? "null" : Array.get(value, i).toString());
+            stringBuilder.append(", ");
+        }
+
+        stringBuilder.setLength(stringBuilder.length() - 2);
+        stringBuilder.append("]");
     }
 }
