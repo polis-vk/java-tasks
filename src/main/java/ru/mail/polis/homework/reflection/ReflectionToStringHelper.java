@@ -60,39 +60,42 @@ public class ReflectionToStringHelper {
         StringBuilder stringNamesValues = new StringBuilder("{");
         while (objClass != null) {
             Arrays.stream(objClass.getDeclaredFields())
-                    .filter(field -> !Modifier.isStatic(field.getModifiers()))
-                    .filter(field -> field.getAnnotation(SkipField.class) == null)
+                    .filter(field -> !Modifier.isStatic(field.getModifiers())
+                            && field.getAnnotation(SkipField.class) == null)
                     .sorted(Comparator.comparing(Field::getName))
-                    .map(fieldElement -> {
+                    .forEach(fieldElement -> {
                         fieldElement.setAccessible(true);
+                        stringNamesValues.append(fieldElement.getName()).append(':').append(' ');
                         try {
                             if (fieldElement.getType().isArray()) {
-                                return fieldElement.getName() + ": " + getValuesArray(fieldElement.get(object)) + ", ";
+                                stringNamesValues.append(getValuesArray(fieldElement.get(object)));
+                            } else {
+                                stringNamesValues.append(fieldElement.get(object));
                             }
-                            return fieldElement.getName() + ": " + fieldElement.get(object) + ", ";
+                            stringNamesValues.append(',').append(' ');
                         } catch (IllegalAccessException e) {
                             throw new RuntimeException(e);
                         }
-                    })
-                    .forEach(stringNamesValues::append);
+                    });
             objClass = objClass.getSuperclass();
         }
         if (stringNamesValues.length() > 2) {
             stringNamesValues.delete(stringNamesValues.length() - 2, stringNamesValues.length());
         }
-        return stringNamesValues.append("}").toString();
+        return stringNamesValues.append('}').toString();
     }
-    private static String getValuesArray(Object value) {
+
+    private static StringBuilder getValuesArray(Object value) {
         if (value == null) {
-            return "null";
+            return new StringBuilder("null");
         }
         StringBuilder arrayValues = new StringBuilder("[");
         for (int fieldArrayCounter = 0; fieldArrayCounter < Array.getLength(value); fieldArrayCounter++) {
-            arrayValues.append(Array.get(value, fieldArrayCounter));
-            if (fieldArrayCounter != Array.getLength(value) - 1) {
-                arrayValues.append(", ");
-            }
+            arrayValues.append(Array.get(value, fieldArrayCounter)).append(',').append(' ');
         }
-        return arrayValues.append("]").toString();
+        if (arrayValues.length() > 2) {
+            arrayValues.delete(arrayValues.length() - 2, arrayValues.length());
+        }
+        return arrayValues.append(']');
     }
 }
