@@ -1,6 +1,11 @@
 package ru.mail.polis.homework.reflection;
 
+import com.sun.tools.javac.comp.Annotate;
+
+import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.text.Annotation;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -50,8 +55,13 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
+        if (object == null) {
+            return "null";
+        }
         StringBuilder stringNamesValues = new StringBuilder("{");
         Arrays.stream(object.getClass().getDeclaredFields())
+                .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                .filter(field -> field.getAnnotation(SkipField.class) == null)
                 .sorted(Comparator.comparing(Field::getName))
                 .map(fieldElement -> {
                     fieldElement.setAccessible(true);
@@ -62,7 +72,9 @@ public class ReflectionToStringHelper {
                     }
                 })
                 .forEach(stringNamesValues::append);
-        stringNamesValues.delete(stringNamesValues.length() - 2, stringNamesValues.length()).append("}");
-        return stringNamesValues.toString();
+        if (stringNamesValues.length() > 2) {
+            stringNamesValues.delete(stringNamesValues.length() - 2, stringNamesValues.length());
+        }
+        return stringNamesValues.append("}").toString();
     }
 }
