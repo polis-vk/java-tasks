@@ -1,12 +1,18 @@
 package ru.mail.polis.homework.io;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,19 +55,33 @@ public class Directories {
             return 0;
         }
 
-        int deletionCounter = 0;
+        AtomicInteger deletionCounter = new AtomicInteger(0);
+        Files.walkFileTree(source, new PathSimpleFileVisitor(deletionCounter));
+        return deletionCounter.get();
+    }
 
-        if (Files.isDirectory(source)) {
-            try (Stream<Path> pathStream = Files.list(source)) {
-                List<Path> directoryPaths = pathStream.collect(Collectors.toList());
-                for (Path directoryPath : directoryPaths) {
-                    deletionCounter += removeWithPath(directoryPath.toString());
-                }
-            }
+    static class PathSimpleFileVisitor extends SimpleFileVisitor<Path> {
+
+        private final AtomicInteger deletionCounter;
+
+        public PathSimpleFileVisitor(AtomicInteger deletionCounter) {
+            this.deletionCounter = deletionCounter;
         }
-        Files.delete(source);
-        deletionCounter++;
-        return deletionCounter;
+
+        @Override
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+            Files.delete(dir);
+            deletionCounter.incrementAndGet();
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            Files.delete(file);
+            deletionCounter.incrementAndGet();
+            return FileVisitResult.CONTINUE;
+        }
+
     }
 
 }
