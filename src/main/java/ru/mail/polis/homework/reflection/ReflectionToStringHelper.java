@@ -47,23 +47,27 @@ import java.util.Comparator;
  */
 public class ReflectionToStringHelper {
     public static String reflectiveToString(Object object) {
+        if (object == null) {
+            return "null";
+        }
         StringBuilder result = new StringBuilder();
         Class<?> givenClass = object.getClass();
-        result.append(getFieldsInfo(object, givenClass));
+        addFieldsInfo(object, givenClass, result);
 
         Class<?> superClass = givenClass.getSuperclass();
 
         while (superClass != null) {
-            result.append(getFieldsInfo(object, superClass));
+            addFieldsInfo(object, superClass, result);
             superClass = superClass.getSuperclass();
         }
 
-        return "{" + result.substring(0, result.length() - 2) + "}";
+        if (result.toString().isEmpty()) {
+            return "{}";
+        }
+        return result.insert(0, "{").insert(result.length() - 2, "}").substring(0, result.length() - 2);
     }
 
-    private static StringBuilder getFieldsInfo(Object object, Class<?> givenClass) {
-        StringBuilder result = new StringBuilder();
-
+    private static void addFieldsInfo(Object object, Class<?> givenClass, StringBuilder currentResult) {
         Arrays.stream(givenClass.getDeclaredFields())
                 .sorted(Comparator.comparing(Field::getName))
                 .forEach(field -> {
@@ -72,46 +76,46 @@ public class ReflectionToStringHelper {
                     String fieldName = field.getName();
                     try {
                         if (!Modifier.isStatic(field.getModifiers()) && field.getAnnotation(SkipField.class) == null) { //проверка поля на статичность и на присутствие аннотации SkipField
-                            result.append(fieldName).append(": ").append(getValue(object, field)).append(", ");
+                            currentResult.append(fieldName).append(": ");
+                            appendFiledToStringBuilder(object, field, currentResult);
+                            currentResult.append(", ");
                         }
                     } catch (IllegalAccessException e) {
-                        result.append(fieldName).append(": null, ");
+                        currentResult.append(fieldName).append(": null, ");
                     }
 
                     field.setAccessible(false);
                 });
-
-        return result;
     }
 
-    private static String getValue(Object object, Field field) throws IllegalAccessException {
+    private static void appendFiledToStringBuilder(Object object, Field field, StringBuilder currentResult) throws IllegalAccessException {
         if (field.get(object) == null) {
-            return "null";
+            currentResult.append("null");
+            return;
         }
-
-        StringBuilder result = new StringBuilder();
         Class<?> fieldType = field.getType();
-
-        if (fieldType.isArray()) {
-            if (fieldType.equals(int[].class)) {
-                int[] array = (int[]) field.get(object);
-                if (array.length == 0) {
-                    return "[]";
-                }
-
-                Arrays.stream(array).forEach(element -> result.append((element)).append(", "));
-            } else {
-                Object[] array = (Object[]) field.get(object);
-                if (array.length == 0) {
-                    return "[]";
-                }
-
-                Arrays.stream(array).forEach(element -> result.append((element)).append(", "));
+        int startIndex = currentResult.length();
+        if (!fieldType.isArray()) {
+            currentResult.append(field.get(object));
+            return;
+        }
+        if (fieldType.equals(int[].class)) {
+            int[] array = (int[]) field.get(object);
+            if (array.length == 0) {
+                currentResult.append("[]");
+                return;
             }
 
-            return "[" + result.substring(0, result.length() - 2) + "]";
+            Arrays.stream(array).forEach(element -> currentResult.append((element)).append(", "));
+        } else {
+            Object[] array = (Object[]) field.get(object);
+            if (array.length == 0) {
+                currentResult.append("[]");
+                return;
+            }
+            Arrays.stream(array).forEach(element -> currentResult.append((element)).append(", "));
         }
 
-        return String.valueOf(field.get(object));
+        currentResult.insert(startIndex, "[").insert(currentResult.length() - 2, "]").delete(currentResult.length() - 2, currentResult.length());
     }
 }
