@@ -51,9 +51,82 @@ import java.util.stream.Stream;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
-
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+
+        Class<?> clazz = object.getClass();
+        StringBuilder result = new StringBuilder("{");
+
+        while (clazz != null) {
+            for (Field field : getSortedFields(clazz)) {
+                if (isSkipField(field)) {
+                    continue;
+                }
+
+                appendFieldToBuilder(field, object, result);
+                result.append(", ");
+            }
+            clazz = clazz.getSuperclass();
+        }
+
+        if (result.length() > 1) {
+            result.setLength(result.length() - 2);
+        }
+
+        result.append("}");
+        return result.toString();
+    }
+
+    private static void appendFieldToBuilder(Field field, Object object, StringBuilder stringBuilder) {
+        field.setAccessible(true);
+        stringBuilder.append(field.getName());
+        stringBuilder.append(": ");
+        Object value = null;
+
+        try {
+            value = field.get(object);
+        } catch (IllegalAccessException err) {
+            err.printStackTrace();
+        }
+
+        if (field.getType().isArray()) {
+            appendArrayToBuilder(value, stringBuilder);
+        } else {
+            stringBuilder.append(value);
+        }
+    }
+
+    private static Field[] getSortedFields(Class<?> clazz) {
+        Field[] fields = clazz.getDeclaredFields();
+        Arrays.sort(fields, Comparator.comparing(Field::getName));
+
+        return fields;
+    }
+
+    private static void appendArrayToBuilder(Object array, StringBuilder result) {
+        if (array == null) {
+            result.append("null");
+            return;
+        }
+
+        int arrayLength = Array.getLength(array);
+        if (arrayLength == 0) {
+            result.append("[]");
+            return;
+        }
+
+        result.append("[");
+        result.append(Array.get(array, 0));
+        for (int i = 1; i < arrayLength; i++) {
+            result.append(", ");
+            result.append(Array.get(array, i));
+        }
+        result.append("]");
+    }
+
+    private static boolean isSkipField(Field field) {
+        return field.isAnnotationPresent(SkipField.class) || Modifier.isStatic(field.getModifiers());
     }
 }
