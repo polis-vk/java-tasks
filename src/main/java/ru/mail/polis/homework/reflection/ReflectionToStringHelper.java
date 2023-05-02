@@ -111,15 +111,15 @@ public class ReflectionToStringHelper {
             return;
         }
 
-        int arrayLength = Array.getLength(array);
-        if (arrayLength == 0) {
+        int length = Array.getLength(array);
+        if (length == 0) {
             result.append("[]");
             return;
         }
 
         result.append("[");
         result.append(Array.get(array, 0));
-        for (int i = 1; i < arrayLength; i++) {
+        for (int i = 1; i < length; i++) {
             result.append(", ");
             result.append(Array.get(array, i));
         }
