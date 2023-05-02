@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -54,12 +55,9 @@ public class ReflectionToStringHelper {
         }
         StringBuilder result = new StringBuilder("{");
         Class<?> clasz = object.getClass();
-        Field[] fields = clasz.getDeclaredFields();
-        result.append(createFieldStringBuilder(fields, object));
-        Class<?> SuperClasz = clasz.getSuperclass();
-        while (SuperClasz.getSuperclass() != null) {
-            result.append(createFieldStringBuilder(SuperClasz.getDeclaredFields(), object));
-            SuperClasz = SuperClasz.getSuperclass();
+        while (clasz.getSuperclass() != null) {
+            result.append(createFieldStringBuilder(clasz.getDeclaredFields(), object));
+            clasz = clasz.getSuperclass();
         }
         if (result.length() > 3) {
             result.delete(result.length() - 2, result.length());
@@ -71,14 +69,34 @@ public class ReflectionToStringHelper {
     public static StringBuilder createFieldStringBuilder(Field[] fields, Object object) {
         StringBuilder result = new StringBuilder();
         Arrays.sort(fields, Comparator.comparing(Field::getName));
-        for (int i = 0; i < fields.length; i++) {
-            if (fields[i].getAnnotation(SkipField.class) != null || Modifier.isStatic(fields[i].getModifiers())) {
+        for (Field field : fields) {
+            if (field == null) {
+                result.append("null");
                 continue;
             }
-            fields[i].setAccessible(true);
-            result.append(fields[i].getName()).append(": ");
+            if (field.getAnnotation(SkipField.class) != null || Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+            field.setAccessible(true);
+            result.append(field.getName()).append(": ");
             try {
-                result.append(fields[i].get(object) == null ? "null" : fields[i].get(object));
+                if (field.get(object) != null && field.getType().isArray()) { // если поле является массивом
+                    Object array = field.get(object);
+                    result.append("[");
+                    for (int j = 0; j < Array.getLength(array); j++) {
+                        if (Array.get(array, j) == null) {
+                            result.append("null").append(", ");
+                            continue;
+                        }
+                        result.append(Array.get(array, j).toString());
+                        if (j != Array.getLength(array) - 1) {
+                            result.append(", ");
+                        }
+                    }
+                    result.append("]");
+                } else {
+                    result.append(field.get(object) == null ? "null" : field.get(object));
+                }
                 result.append(", ");
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
