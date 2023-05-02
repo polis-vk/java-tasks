@@ -23,14 +23,6 @@ public class RobotConnectionImpl implements RobotConnection {
     }
 
     @Override
-    public Robot getRobot() throws RobotConnectionException {
-        if (!connection) {
-            throw new RobotConnectionException("Connection with robot is lost!");
-        }
-        return robot;
-    }
-
-    @Override
     public void close() {
         connection = false;
     }

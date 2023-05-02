@@ -19,8 +19,8 @@ public class Robot {
     }
 
     public void setXY(int x, int y) {
-        setX(x);
-        setY(y);
+        this.x = x;
+        this.y = y;
     }
 
     public int getId() {

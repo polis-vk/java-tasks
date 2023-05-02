@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.io;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,14 +19,14 @@ public class CopyFile {
     public static void copyFiles(String pathFrom, String pathTo) {
         Path srcDirectory = Paths.get(pathFrom).getParent();
         Path destDirectory = Paths.get(pathTo).getParent();
-        if (Files.notExists(srcDirectory)) {
-            return;
-        } else if (Files.notExists(destDirectory)) {
+        if (Files.exists(srcDirectory) && Files.notExists(destDirectory)) {
             try {
                 destDirectory = Files.createDirectories(destDirectory);
             } catch (IOException e) {
                 throw new RuntimeException(e.getMessage());
             }
+        } else if (Files.notExists(srcDirectory)) {
+            return;
         }
         try {
             Files.walkFileTree(srcDirectory, new PathSimpleFileVisitor(srcDirectory, destDirectory));
@@ -33,7 +35,7 @@ public class CopyFile {
         }
     }
 
-    static class PathSimpleFileVisitor implements FileVisitor<Path> {
+    static class PathSimpleFileVisitor extends SimpleFileVisitor<Path> {
 
         private final Path srcDirectory;
         private final Path destDirectory;
@@ -59,29 +61,16 @@ public class CopyFile {
             return FileVisitResult.CONTINUE;
         }
 
-        @Override
-        public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-            throw exc;
-        }
-
-        @Override
-        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-            if (exc != null)
-                throw exc;
-            return FileVisitResult.CONTINUE;
-        }
-
         private Path getNewDirPath(Path dir) {
             return destDirectory.resolve(srcDirectory.relativize(dir));
         }
 
         private void copyFile(Path pathFrom, Path pathTo) throws IOException {
-            try (InputStream inputStream = Files.newInputStream(pathFrom)) {
-                try (OutputStream outputStream = Files.newOutputStream(pathTo)) {
-                    byte[] buffer = new byte[1024];
-                    int bytesLength = 0;
-                    while ((bytesLength = inputStream.read()) > 0) {
-                        outputStream.write(buffer, 0, bytesLength);
+            try (BufferedReader reader = Files.newBufferedReader(pathFrom)) {
+                try (BufferedWriter writer = Files.newBufferedWriter(pathTo)) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        writer.write(line);
                     }
                 }
             }

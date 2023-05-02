@@ -29,15 +29,17 @@ public class RobotRemoteControl {
      * Попытка считается успешной, если соединение открылось и вызвался метод moveRobotTo без исключений.
      */
     public void moveTo(int robotId, int toX, int toY) throws RobotConnectionException {
-        for (int tryNumber = 0; tryNumber < CONNECTION_ATTEMPTS; tryNumber++) {
+        int tryNumber = 1;
+        while (true) {
             try (RobotConnection connection = connectionManager.getConnection(robotId)) {
                 connection.moveRobotTo(toX, toY);
                 return;
             } catch (RobotConnectionException e) {
-                if (tryNumber == CONNECTION_ATTEMPTS - 1) {
+                if (tryNumber == CONNECTION_ATTEMPTS) {
                     throw e;
                 }
                 System.out.println("Connection with robot by id [" + robotId + "] was lost. Retry..");
+                tryNumber++;
             }
         }
     }
