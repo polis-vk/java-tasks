@@ -6,6 +6,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -54,6 +55,70 @@ public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
         // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        StringBuilder result = new StringBuilder("{");
+        Class<?> clazz = object.getClass();
+
+        while (clazz != null) {
+            Field[] fields = clazz.getDeclaredFields();
+            sortFieldsByName(fields);
+            for (int i = 0; i < fields.length; i++) {
+                try {
+                    fields[i].setAccessible(true);
+                    if (Modifier.isStatic(fields[i].getModifiers())) {
+                        continue;
+                    }
+                    if (fields[i].isAnnotationPresent(SkipField.class)) {
+                        continue;
+                    }
+
+                    Object fieldValue = fields[i].get(object);
+                    if (fieldValue == null) {
+                        fieldValue = "null";
+                    }
+
+                    result.append(fields[i].getName()).append(": ");
+
+                    if (fields[i].getType().isArray() && fieldValue != "null") {
+
+                        result.append("[");
+                        int length = Array.getLength(fieldValue);
+                        for (int j = 0; j < length; j++) {
+                            result.append(Array.get(fieldValue, j));
+                            if (j < length - 1) {
+                                result.append(", ");
+                            }
+                        }
+                        result.append("]");
+                    } else {
+                        result.append(fieldValue.toString());
+                    }
+
+                    result.append(", ");
+
+                } catch (IllegalAccessException e) {
+                    System.err.printf("Error accessing field: %s%n", fields[i].getName());
+                }
+
+
+            }
+            clazz = clazz.getSuperclass();
+        }
+
+        if (result.length() > 1) {
+            result.setLength(result.length() - 2);
+        }
+        result.append("}");
+        return result.toString();
     }
+
+
+    public static Field[] sortFieldsByName(Field[] fields) {
+        Arrays.sort(fields, Comparator.comparing(Field::getName));
+        return fields;
+    }
+
+
 }
