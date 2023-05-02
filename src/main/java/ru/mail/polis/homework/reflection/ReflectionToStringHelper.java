@@ -66,13 +66,13 @@ public class ReflectionToStringHelper {
         boolean hadFirst = false;
         for (Field objectClassField : getRelevantFields(objectClass)) {
             if (hadFirst) {
-                result.append(", ");
+                appendValueDelimiterToStringBuilder(result);
             }
             result.append(objectClassField.getName());
             result.append(": ");
 
             try {
-                result.append(getObjectFieldString(objectClassField, object));
+                appendFieldToStringBuilder(result, objectClassField, object);
             } catch (IllegalAccessException ignored) {
             }
             if (!hadFirst) {
@@ -82,35 +82,44 @@ public class ReflectionToStringHelper {
         return result.append('}').toString();
     }
 
-    private static String getObjectFieldString(Field field, Object object) throws IllegalAccessException {
+    private static void appendFieldToStringBuilder(StringBuilder stringBuilder, Field field, Object object) throws IllegalAccessException {
         field.setAccessible(true);
 
         Object fieldValue = field.get(object);
         if (fieldValue == null) {
-            return NULL_RESULT;
+            stringBuilder.append(NULL_RESULT);
         } else if (field.getType().isArray()) {
-            return getArrayFieldString(field, object);
+            appendArrayFieldToStringBuilder(stringBuilder, field, object);
+        } else {
+            stringBuilder.append(fieldValue);
         }
-        return fieldValue.toString();
     }
 
-    private static String getArrayFieldString(Field field, Object object) throws IllegalAccessException {
+    private static void appendArrayFieldToStringBuilder(StringBuilder stringBuilder, Field field, Object object) throws IllegalAccessException {
         Object fieldArray = field.get(object);
-        Object[] fieldValues = new Object[Array.getLength(fieldArray)];
-        for (int i = 0; i < fieldValues.length; i++) {
-            fieldValues[i] = Array.get(fieldArray, i);
+        stringBuilder.append('[');
+        for (int i = 0; i < Array.getLength(fieldArray); i++) {
+            if (i > 0) {
+                appendValueDelimiterToStringBuilder(stringBuilder);
+            }
+            stringBuilder.append(Array.get(fieldArray, i));
         }
-        return Arrays.toString(fieldValues);
+        stringBuilder.append(']');
+    }
+
+    private static void appendValueDelimiterToStringBuilder(StringBuilder stringBuilder) {
+        stringBuilder.append(", ");
     }
 
     private static List<Field> getRelevantFields(Class<?> objectClass) {
         List<Field> result = new ArrayList<>();
-        while (objectClass != Object.class) {
-            result.addAll(Arrays.stream(objectClass.getDeclaredFields())
+        Class<?> tempObjectClass = objectClass;
+        while (tempObjectClass != Object.class) {
+            result.addAll(Arrays.stream(tempObjectClass.getDeclaredFields())
                             .filter(ReflectionToStringHelper::nonIgnoredField)
                             .sorted(Comparator.comparing(Field::getName))
                             .collect(Collectors.toList()));
-            objectClass = objectClass.getSuperclass();
+            tempObjectClass = tempObjectClass.getSuperclass();
         }
         return result;
     }
