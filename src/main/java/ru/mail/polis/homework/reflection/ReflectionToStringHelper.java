@@ -58,21 +58,22 @@ public class ReflectionToStringHelper {
         Class<?> clazz = object.getClass();
         while (clazz != null) {
             Arrays.stream(clazz.getDeclaredFields())
-                    .filter(field -> !Modifier.isStatic(field.getModifiers()) && field.getAnnotation(SkipField.class) == null)
+                    .filter(field -> !Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class))
                     .sorted(Comparator.comparing(Field::getName))
                     .forEach(field -> {
                         field.setAccessible(true);
-                        String value;
+                        res.append(field.getName()).append(':').append(' ');
                         try {
                             if (field.get(object).getClass().isArray()) {
-                                value = getValue(field.get(object));
+                                writeArrayToResultStringBuilder(field.get(object), res);
                             } else {
-                                value = field.get(object).toString();
+                                res.append(field.get(object).toString());
                             }
+                        } catch (NullPointerException e) {
+                            res.append('n').append('u').append('l').append('l');
                         } catch (Exception e) {
-                            value = "null";
                         }
-                        res.append(field.getName()).append(": ").append(value).append(", ");
+                        res.append(',').append(' ');
                     });
             clazz = clazz.getSuperclass();
         }
@@ -83,17 +84,16 @@ public class ReflectionToStringHelper {
         return res.toString();
     }
 
-    private static String getValue(Object field) {
-        StringBuilder res = new StringBuilder();
+    private static void writeArrayToResultStringBuilder(Object field, StringBuilder res) {
+        int count = res.length();
         res.append('[');
         int length = Array.getLength(field);
         for (int i = 0; i < length; i++) {
-            res.append(Array.get(field, i)).append(", ");
+            res.append(Array.get(field, i)).append(',').append(' ');
         }
-        if (res.length() != 1) {
+        if (res.length() - count != 1) {
             res.delete(res.length() - 2, res.length());
         }
         res.append(']');
-        return res.toString();
     }
 }
