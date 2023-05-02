@@ -68,17 +68,17 @@ public class ReflectionToStringHelper {
         return getStringOfFieldsList(fields, object);
     }
 
-    private static void fillAncestors(Class<?> c, List<Class<?>> classes) {
-        Class<?> ancestor = c.getSuperclass();
+    private static void fillAncestors(Class<?> clazz, List<Class<?>> classes) {
+        Class<?> ancestor = clazz.getSuperclass();
         if (ancestor != null) {
             classes.add(ancestor);
             fillAncestors(ancestor, classes);
         }
     }
 
-    private static List<Field> extractClassFields(Class<?> c) {
+    private static List<Field> extractClassFields(Class<?> clazz) {
         return Arrays
-                .stream(c.getDeclaredFields())
+                .stream(clazz.getDeclaredFields())
                 .filter(field -> !Modifier.isStatic(field.getModifiers())
                         && !field.isAnnotationPresent(SkipField.class))
                 .sorted(Comparator.comparing(Field::getName))
@@ -91,15 +91,15 @@ public class ReflectionToStringHelper {
         }
         StringBuilder data = new StringBuilder("{");
         for (int i = 0; i < fields.size() - 1; i++) {
-            getStringOfFieldData(data, fields.get(i), object);
+            appendFieldToStringBuilder(data, fields.get(i), object);
             data.append(", ");
         }
-        getStringOfFieldData(data, fields.get(fields.size() - 1), object);
+        appendFieldToStringBuilder(data, fields.get(fields.size() - 1), object);
         data.append("}");
         return data.toString();
     }
 
-    private static void getStringOfFieldData(StringBuilder data, Field field, Object object) {
+    private static void appendFieldToStringBuilder(StringBuilder data, Field field, Object object) {
         field.setAccessible(true);
         Object value;
         try {
@@ -111,7 +111,8 @@ public class ReflectionToStringHelper {
         if (value == null) {
             data.append("null");
             return;
-        } else if (!field.getType().isArray()) {
+        }
+        if (!field.getType().isArray()) {
             data.append(value);
             return;
         }
