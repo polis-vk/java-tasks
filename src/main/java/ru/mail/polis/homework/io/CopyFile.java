@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.io;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -53,13 +55,12 @@ public class CopyFile {
     }
 
     private static void copyFileContent(Path fromFile, Path toFile) throws IOException {
-        try (InputStream inputStream = Files.newInputStream(fromFile)) {
-            try (OutputStream outputStream = Files.newOutputStream(toFile)) {
-                byte[] buffer = new byte[1000];
-                while (inputStream.available() > 0) {
-                    int left = inputStream.read(buffer);
-                    outputStream.write(buffer, 0, left);
-                }
+        try (BufferedReader reader = Files.newBufferedReader(fromFile);
+             BufferedWriter writer = Files.newBufferedWriter(toFile)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                writer.write(line);
+                writer.newLine();
             }
         }
     }
