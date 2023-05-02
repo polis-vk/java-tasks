@@ -67,16 +67,19 @@ public class ReflectionToStringHelper {
     }
 
     private static String getFieldDescription(Field field, Object object) {
-        if (!Modifier.isPublic(field.getModifiers())) {
+        boolean isPublic = Modifier.isPublic(field.getModifiers());
+        if (!isPublic) {
             field.setAccessible(true);
         }
         String result = field.getName() + ": " + getFieldValueString(field, object);
-        field.setAccessible(false);
+        if (!isPublic) {
+            field.setAccessible(false);
+        }
         return result;
     }
 
     private static String getFieldValueString(Field field, Object object) {
-        Object fieldData = null;
+        Object fieldData;
         try {
             fieldData = field.get(object);
         } catch (IllegalAccessException e) {
