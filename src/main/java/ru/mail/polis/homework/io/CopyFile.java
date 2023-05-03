@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.io;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,14 +17,11 @@ public class CopyFile {
      * 3 тугрика
      */
     public static void copyFiles(String pathFrom, String pathTo) {
-        if (pathFrom == null || pathFrom.isBlank()) {
+        if (pathFrom == null || pathFrom.isBlank() || pathTo == null || pathTo.isBlank()) {
             return;
         }
         Path source = Paths.get(pathFrom);
         if (!Files.exists(source)) {
-            return;
-        }
-        if (pathTo == null || pathTo.isBlank()) {
             return;
         }
         Path dest = Paths.get(pathTo);
@@ -55,13 +50,11 @@ public class CopyFile {
     }
 
     public static void copyFileContent(Path fileFrom, Path fileTo) throws IOException {
-        try (BufferedInputStream inputStream = new BufferedInputStream(Files.newInputStream(fileFrom))) {
-            try (BufferedOutputStream outputStream = new BufferedOutputStream(Files.newOutputStream(fileTo))) {
-                byte[] buffer = new byte[inputStream.available()];
-                int length;
-                while ((length = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, length);
-                    outputStream.flush();
+        try (BufferedReader reader = Files.newBufferedReader(fileFrom)) {
+            try (BufferedWriter writer = Files.newBufferedWriter(fileTo)) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    writer.write(line);
                 }
             }
         }
