@@ -61,9 +61,7 @@ public class ReflectionToStringHelper {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
 
-        List<Class<?>> classes = new ArrayList<>();
-        addClassAndSuperClasses(object.getClass(), classes);
-        classes.forEach(clazz -> concatenateClassFields(object, clazz, sb));
+        goThroughClasses(object, sb);
 
         if (sb.length() > 1) {
             sb.delete(sb.length() - 2, sb.length());
@@ -72,27 +70,27 @@ public class ReflectionToStringHelper {
         return sb.toString();
     }
 
-    public static void addClassAndSuperClasses(Class<?> clazz, List<Class<?>> classes) {
-        classes.add(clazz);
-        Class<?> superClazz = clazz.getSuperclass();
-        if (superClazz != null && superClazz != Object.class) {
-            addClassAndSuperClasses(superClazz, classes);
+    public static void goThroughClasses(Object object, StringBuilder sb) {
+        Class<?> clazz = object.getClass();
+        while (clazz != null && clazz != Object.class) {
+            writeClassFieldsToResult(object, clazz, sb);
+            clazz = clazz.getSuperclass();
         }
     }
 
-    public static void concatenateClassFields(Object object, Class<?> clazz, StringBuilder sb) {
+    public static void writeClassFieldsToResult(Object object, Class<?> clazz, StringBuilder sb) {
         Arrays.stream(clazz.getDeclaredFields())
                 .filter(field -> !Modifier.isStatic(field.getModifiers()) &&
                         !field.isAnnotationPresent(SkipField.class))
                 .sorted(Comparator.comparing(Field::getName))
                 .forEach(field -> {
-                    sb.append(field.getName()).append(": ");
-                    concatenateFieldValue(field, object, sb);
-                    sb.append(", ");
+                    sb.append(field.getName()).append(":").append(" ");
+                    writeFieldValueToResult(field, object, sb);
+                    sb.append(",").append(" ");
                 });
     }
 
-    public static void concatenateFieldValue(Field field, Object object, StringBuilder sb) {
+    public static void writeFieldValueToResult(Field field, Object object, StringBuilder sb) {
         field.setAccessible(true);
 
         Object value;
@@ -115,7 +113,7 @@ public class ReflectionToStringHelper {
         sb.append("[");
         for (int i = 0; i < Array.getLength(value); i++) {
             sb.append(Array.get(value, i) == null ? "null" : Array.get(value, i).toString());
-            sb.append(", ");
+            sb.append(",").append(" ");
         }
         if(sb.lastIndexOf("[") != sb.length() - 1) {
             sb.delete(sb.length() - 2, sb.length());
