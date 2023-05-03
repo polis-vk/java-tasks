@@ -34,10 +34,10 @@ public class CopyFile {
 
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                try (BufferedInputStream input
-                             = new BufferedInputStream(Files.newInputStream(file));
-                     BufferedOutputStream output = new BufferedOutputStream(
-                             Files.newOutputStream(destination.resolve(source.relativize(file))))) {
+                try (BufferedReader input
+                             = Files.newBufferedReader(file);
+                     BufferedWriter output =
+                             Files.newBufferedWriter(destination.resolve(source.relativize(file)))) {
                     int str;
                     while ((str = input.read()) != -1) {
                         output.write(str);
