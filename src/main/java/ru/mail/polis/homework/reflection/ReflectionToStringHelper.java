@@ -73,7 +73,8 @@ public class ReflectionToStringHelper {
 
             try {
                 appendFieldToStringBuilder(result, objectClassField, object);
-            } catch (IllegalAccessException ignored) {
+            } catch (IllegalAccessException e) {
+                System.out.println(e.getMessage());
             }
             if (!hadFirst) {
                 hadFirst = true;
@@ -83,20 +84,27 @@ public class ReflectionToStringHelper {
     }
 
     private static void appendFieldToStringBuilder(StringBuilder stringBuilder, Field field, Object object) throws IllegalAccessException {
-        field.setAccessible(true);
+        boolean wasAccessibleField = true;
+        if (!field.isAccessible()) {
+            wasAccessibleField = false;
+            field.setAccessible(true);
+        }
 
         Object fieldValue = field.get(object);
         if (fieldValue == null) {
             stringBuilder.append(NULL_RESULT);
         } else if (field.getType().isArray()) {
-            appendArrayFieldToStringBuilder(stringBuilder, field, object);
+            appendArrayFieldToStringBuilder(stringBuilder, fieldValue);
         } else {
             stringBuilder.append(fieldValue);
         }
+
+        if (!wasAccessibleField) {
+            field.setAccessible(false);
+        }
     }
 
-    private static void appendArrayFieldToStringBuilder(StringBuilder stringBuilder, Field field, Object object) throws IllegalAccessException {
-        Object fieldArray = field.get(object);
+    private static void appendArrayFieldToStringBuilder(StringBuilder stringBuilder, Object fieldArray) throws IllegalAccessException {
         stringBuilder.append('[');
         for (int i = 0; i < Array.getLength(fieldArray); i++) {
             if (i > 0) {
@@ -115,13 +123,17 @@ public class ReflectionToStringHelper {
         List<Field> result = new ArrayList<>();
         Class<?> tempObjectClass = objectClass;
         while (tempObjectClass != Object.class) {
-            result.addAll(Arrays.stream(tempObjectClass.getDeclaredFields())
-                            .filter(ReflectionToStringHelper::nonIgnoredField)
-                            .sorted(Comparator.comparing(Field::getName))
-                            .collect(Collectors.toList()));
+            result.addAll(getObjectClassRelevantFields(tempObjectClass));
             tempObjectClass = tempObjectClass.getSuperclass();
         }
         return result;
+    }
+
+    private static List<Field> getObjectClassRelevantFields(Class<?> objectClass) {
+        return Arrays.stream(objectClass.getDeclaredFields())
+                .filter(ReflectionToStringHelper::nonIgnoredField)
+                .sorted(Comparator.comparing(Field::getName))
+                .collect(Collectors.toList());
     }
 
     private static boolean nonIgnoredField(Field field) {
