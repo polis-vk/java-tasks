@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 
-/*
+/**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
  * возвращает его строковое описание в формате:
  * <p>
