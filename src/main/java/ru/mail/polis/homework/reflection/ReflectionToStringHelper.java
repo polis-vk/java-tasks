@@ -1,14 +1,10 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -51,9 +47,61 @@ import java.util.stream.Stream;
  * Баллы могут снижаться за неэффективный или неаккуратный код
  */
 public class ReflectionToStringHelper {
-
     public static String reflectiveToString(Object object) {
         // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        StringBuilder result = new StringBuilder().append("{");
+        Class<?> claSS = object.getClass();
+        while (claSS != null) {
+            Field[] fields = Arrays.stream(claSS.getDeclaredFields())
+                    .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                    .filter(field -> !field.isAnnotationPresent(SkipField.class)).toArray(Field[]::new);
+
+            Arrays.sort(fields, Comparator.comparing(Field::getName));
+
+            reflectObjectToString(object, result, fields);
+
+            claSS = claSS.getSuperclass();
+        }
+        if (result.length() > 3) {
+            result.delete(result.length() - 2, result.length());
+        }
+        result.append("}");
+        return result.toString();
+    }
+
+    private static void reflectObjectToString(Object object, StringBuilder result, Field[] fields) {
+        for (Field field : fields) {
+            try {
+                field.setAccessible(true);
+                Object fieldValue = field.get(object);
+                result.append(field.getName())
+                        .append(": ");
+                if (fieldValue == null) {
+                    result.append("null")
+                            .append(",").append(" ");
+                    continue;
+                }
+                if (field.getType().isArray()) {
+                    int length = Array.getLength(fieldValue);
+                    result.append("[");
+                    for (int i = 0; i < length; i++) {
+                        result.append(Array.get(fieldValue, i));
+                        if (i < length - 1) {
+                            result.append(",").append(" ");
+                        }
+                    }
+                    result.append("]");
+                } else {
+                    result.append(fieldValue);
+                }
+                result.append(",").append(" ");
+
+            } catch (IllegalAccessException e) {
+                System.out.println("Error of access");
+            }
+        }
     }
 }
