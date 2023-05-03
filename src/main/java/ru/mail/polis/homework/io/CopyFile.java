@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.io;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
@@ -42,12 +40,11 @@ public class CopyFile {
     }
 
     public static void copyFileContent(Path fileFrom, Path fileTo) throws IOException {
-        try (InputStream is = Files.newInputStream(fileFrom)) {
-            try (OutputStream os = Files.newOutputStream(fileTo)) {
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = is.read(buffer)) > 0) {
-                    os.write(buffer, 0, length);
+        try (BufferedReader br = Files.newBufferedReader(fileFrom)) {
+            try (BufferedWriter bw = Files.newBufferedWriter(fileTo)) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    bw.write(line);
                 }
             }
         }
