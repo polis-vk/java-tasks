@@ -32,7 +32,7 @@ public class Directories {
             }
         }
         file.delete();
-        return ++result;
+        return result + 1;
     }
 
     /**
