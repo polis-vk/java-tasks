@@ -63,7 +63,7 @@ public class ReflectionToStringHelper {
 
         List<Class<?>> classes = new ArrayList<>();
         addClassAndSuperClasses(object.getClass(), classes);
-        classes.forEach(clazz -> extractClassFields(object, clazz, sb));
+        classes.forEach(clazz -> concatenateClassFields(object, clazz, sb));
 
         if (sb.length() > 1) {
             sb.delete(sb.length() - 2, sb.length());
@@ -80,20 +80,19 @@ public class ReflectionToStringHelper {
         }
     }
 
-    public static void extractClassFields(Object object, Class<?> clazz, StringBuilder sb) {
-        List<Field> fields = Arrays.stream(clazz.getDeclaredFields())
+    public static void concatenateClassFields(Object object, Class<?> clazz, StringBuilder sb) {
+        Arrays.stream(clazz.getDeclaredFields())
                 .filter(field -> !Modifier.isStatic(field.getModifiers()) &&
                         !field.isAnnotationPresent(SkipField.class))
                 .sorted(Comparator.comparing(Field::getName))
-                .collect(Collectors.toList());
-
-        for (Field field : fields) {
-            sb.append(field.getName()).append(": ");
-            sb.append(convertFieldValueToString(field, object)).append(", ");
-        }
+                .forEach(field -> {
+                    sb.append(field.getName()).append(": ");
+                    concatenateFieldValue(field, object, sb);
+                    sb.append(", ");
+                });
     }
 
-    public static String convertFieldValueToString(Field field, Object object) {
+    public static void concatenateFieldValue(Field field, Object object, StringBuilder sb) {
         field.setAccessible(true);
 
         Object value;
@@ -104,24 +103,23 @@ public class ReflectionToStringHelper {
         }
 
         if (value == null) {
-            return "null";
+            sb.append("null");
+            return;
         }
 
         if (!value.getClass().isArray()) {
-            return value.toString();
+            sb.append(value);
+            return;
         }
 
-        StringBuilder arraySb = new StringBuilder();
-        arraySb.append("[");
-
+        sb.append("[");
         for (int i = 0; i < Array.getLength(value); i++) {
-            arraySb.append(Array.get(value, i) == null ? "null" : Array.get(value, i).toString());
-            if (i != Array.getLength(value) - 1) {
-                arraySb.append(", ");
-            }
+            sb.append(Array.get(value, i) == null ? "null" : Array.get(value, i).toString());
+            sb.append(", ");
         }
-
-        arraySb.append("]");
-        return arraySb.toString();
+        if(sb.lastIndexOf("[") != sb.length() - 1) {
+            sb.delete(sb.length() - 2, sb.length());
+        }
+        sb.append("]");
     }
 }
