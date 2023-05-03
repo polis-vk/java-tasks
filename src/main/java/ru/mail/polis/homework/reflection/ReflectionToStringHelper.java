@@ -1,5 +1,6 @@
 package ru.mail.polis.homework.reflection;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -94,27 +95,27 @@ public class ReflectionToStringHelper {
             return;
         }
         Class<?> fieldType = field.getType();
-        int startIndex = currentResult.length();
+        int startIndex = currentResult.length(); //индекс в возвращаемой строке, куда надо вставить строковое представление элемента
+
         if (!fieldType.isArray()) {
             currentResult.append(field.get(object));
             return;
         }
-        if (fieldType.equals(int[].class)) {
-            int[] array = (int[]) field.get(object);
-            if (array.length == 0) {
-                currentResult.append("[]");
-                return;
-            }
 
-            Arrays.stream(array).forEach(element -> currentResult.append((element)).append(", "));
-        } else {
-            Object[] array = (Object[]) field.get(object);
-            if (array.length == 0) {
+        Object array  = field.get(object);
+        int arrLength = Array.getLength(array);
+
+        if (arrLength == 0) {
                 currentResult.append("[]");
                 return;
-            }
-            Arrays.stream(array).forEach(element -> currentResult.append((element)).append(", "));
         }
+
+        Object[] wrappedArray = new Object[arrLength];
+        for(int i = 0; i < arrLength; i++) {
+            wrappedArray[i] = Array.get(field.get(object), i);          //заполняем новый массив содержимым массива объекта, но для примитивов оборачиваем в их обертку
+        }
+
+        Arrays.stream(wrappedArray).forEach(element -> currentResult.append((element)).append(", "));
 
         currentResult.insert(startIndex, "[").insert(currentResult.length() - 2, "]").delete(currentResult.length() - 2, currentResult.length());
     }
