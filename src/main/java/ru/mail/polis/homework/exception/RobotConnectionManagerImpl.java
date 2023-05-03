@@ -16,9 +16,6 @@ public class RobotConnectionManagerImpl implements RobotConnectionManager {
         if (robotId < 0 || robot == null) {
             throw new RobotIdException("Invalid robot id");
         }
-        if (robot.isConnected()) {
-            throw new RobotConnectionException("Robot is connected to another device");
-        }
         return new RobotConnectionImpl(robot);
     }
 }

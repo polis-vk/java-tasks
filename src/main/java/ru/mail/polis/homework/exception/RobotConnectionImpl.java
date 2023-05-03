@@ -8,7 +8,6 @@ public class RobotConnectionImpl implements RobotConnection {
     public RobotConnectionImpl(Robot robot) {
         this.robot = robot;
         isConnection = true;
-        this.robot.setConnection(true);
     }
 
     @Override
@@ -21,7 +20,6 @@ public class RobotConnectionImpl implements RobotConnection {
 
     @Override
     public void close() {
-        robot.setConnection(false);
         robot = null;
         isConnection = false;
     }

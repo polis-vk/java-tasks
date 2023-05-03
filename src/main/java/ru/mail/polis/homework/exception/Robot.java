@@ -10,7 +10,6 @@ public class Robot {
 
     private final int robotId;
     private boolean isServiceable = true;
-    private boolean isConnected = false;
     private int x = 0;
     private int y = 0;
 
@@ -34,14 +33,6 @@ public class Robot {
 
     public void setServiceable(boolean serviceability) {
         isServiceable = serviceability;
-    }
-
-    public boolean isConnected() {
-        return isConnected;
-    }
-
-    public void setConnection(boolean connection) {
-        this.isConnected = connection;
     }
 
     public int getX() {
