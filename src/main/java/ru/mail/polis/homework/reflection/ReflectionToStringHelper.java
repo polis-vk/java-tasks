@@ -8,9 +8,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
+
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -59,55 +57,59 @@ public class ReflectionToStringHelper {
         if (object == null) {
             return "null";
         }
-        StringBuilder str = new StringBuilder();
-        str.append('{');
-        try {
-            Class<?> objecClass = object.getClass().getSuperclass();
-            while (objecClass != Object.class) {
-                str.append(", ");
-                str.append(fieldToStr(objecClass.getSuperclass(), object));
-                objecClass = objecClass.getSuperclass();
-            }
-            str.append('}');
-        } catch (Exception ignore) {
-        }
-        return str.toString();
-    }
-
-    private static StringBuilder fieldToStr(Class<?> c, Object obj) throws IllegalAccessException {
-        Field[] fields = Arrays.stream(c.getDeclaredFields())
-                .filter(field -> !Modifier.isStatic(field.getModifiers()))
-                .filter(field -> !field.isAnnotationPresent(SkipField.class))
-                .toArray(Field[]::new);
-        if (fields.length == 0) {
-            return new StringBuilder();
-        }
         StringBuilder stringBuilder = new StringBuilder();
-        for (Field currentField : fields) {
-            stringBuilder.append(currentField.getName()).append(": ");
-            if (currentField.getType().isArray()) {
-                arrayToStr(currentField.get(obj));
-                stringBuilder.append(", ");
-            } else {
-                stringBuilder.append(currentField.get(obj));
-            }
+        stringBuilder.append("{");
+        Class<?> objecClass = object.getClass();
+        while (objecClass != null && objecClass != Object.class) {
+            fieldToStr(objecClass, object, stringBuilder);
+            objecClass = objecClass.getSuperclass();
         }
-        return null;
+        if (stringBuilder.lastIndexOf(",") >= 0) {
+            stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+        }
+        stringBuilder.append('}');
+        return stringBuilder.toString();
     }
 
-    private static StringBuilder arrayToStr(Object array) {
-        if (array == null) {
-            return new StringBuilder("null");
+    private static void fieldToStr(Class<?> c, Object object, StringBuilder stringBuilder) {
+        Arrays.stream(c.getDeclaredFields())
+                .filter(field -> !Modifier.isStatic(field.getModifiers()) &&
+                        !field.isAnnotationPresent(SkipField.class))
+                .sorted(Comparator.comparing(Field::getName))
+                .forEach(field -> {
+                    Object current;
+                    field.setAccessible(true);
+                    try {
+                        current = field.get(object);
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                    stringBuilder.append(field.getName()).append(":").append(" ");
+                    if (current != null && field.getType().isArray()) {
+                        arrayToStr(current, stringBuilder);
+                    } else {
+                        stringBuilder.append(current);
+                    }
+                    stringBuilder.append(",").append(" ");
+                });
+
+    }
+
+    private static void arrayToStr(Object object, StringBuilder stringBuilder) {
+        if (object == null) {
+            stringBuilder.append("null");
+            return;
         }
-        StringBuilder str = new StringBuilder();
-        str.append("[");
-        for (int i = 0; i < Array.getLength(array); i++) {
-            if (i != 0) {
-                str.append(", ");
-            }
-            str.append(Array.get(array, i));
+        if (Array.getLength(object) == 0) {
+            stringBuilder.append("[]");
+            return;
         }
-        str.append("]");
-        return str;
+        stringBuilder.append("[");
+        for (int i = 0; i < Array.getLength(object); i++) {
+            stringBuilder.append(Array.get(object, i)).append(",").append(" ");
+        }
+        stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+        stringBuilder.append("]");
     }
 }
+
