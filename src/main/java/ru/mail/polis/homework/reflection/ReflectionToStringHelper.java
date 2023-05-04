@@ -53,7 +53,51 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+
+        Field[] fields = getAllFields(object.getClass());
+        TreeMap<String, Object> fieldMap = new TreeMap<>();
+
+        for (Field field : fields) {
+            if (!field.isAnnotationPresent(SkipField.class) && !java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+                try {
+                    field.setAccessible(true);
+                    Object value = field.get(object);
+                    if (value instanceof Object[]) {
+                        Object[] arrValue = (Object[]) value;
+                        Object[] strValue = new String[arrValue.length];
+                        for (int i = 0; i < arrValue.length; i++) {
+                            strValue[i] = String.valueOf(arrValue[i]);
+                        }
+                        value = Arrays.toString(strValue);
+                    } else {
+                        value = String.valueOf(value);
+                    }
+                    fieldMap.put(field.getName(), (value.equals("null")) ? null : value);
+                } catch (IllegalAccessException ignore) {
+                }
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        fieldMap.forEach((name, value) -> sb.append(name).append(": ").append(value).append(", "));
+        if (sb.length() > 1) {
+            sb.delete(sb.length() - 2, sb.length());
+        }
+        sb.append("}");
+
+        return sb.toString();
+    }
+
+    private static Field[] getAllFields(Class clazz) {
+        List<Field> fields = new ArrayList<>();
+        while (!clazz.equals(Object.class)) {
+            fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+            clazz = clazz.getSuperclass();
+        }
+        return fields.toArray(new Field[0]);
     }
 }
