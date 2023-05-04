@@ -86,12 +86,12 @@ public class ReflectionToStringHelper {
         }
     }
 
-    private static void addArray(StringBuilder objectInfoBuilder, Object field) {
+    private static void addArray(StringBuilder objectInfoBuilder, Object objectField) {
         objectInfoBuilder.append("[");
         int length = objectInfoBuilder.length();
-        int arrayLength = Array.getLength(field);
+        int arrayLength = Array.getLength(objectField);
         for (int i = 0; i < arrayLength; i++) {
-            objectInfoBuilder.append(Array.get(field, i)).append(", ");
+            objectInfoBuilder.append(Array.get(objectField, i)).append(", ");
         }
         if (objectInfoBuilder.length() - length > 1) {
             objectInfoBuilder.delete(objectInfoBuilder.length() - 2, objectInfoBuilder.length());
