@@ -49,6 +49,10 @@ import java.util.*;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
+        if (object == null) {
+            return "null";
+        }
+
         StringBuilder result = new StringBuilder();
         Class<?> c = object.getClass();
         boolean haveComma = false;
