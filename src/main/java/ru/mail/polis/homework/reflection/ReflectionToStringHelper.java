@@ -56,8 +56,7 @@ public class ReflectionToStringHelper {
         StringBuilder result = new StringBuilder("{");
 
         for (Field field : getAllFields(object)) {
-
-            result.append(field.getName()).append(": ");
+            result.append(field.getName()).append(":").append(" ");
 
             boolean isPublic = Modifier.isPublic(field.getModifiers());
             if (!isPublic) {
@@ -67,7 +66,8 @@ public class ReflectionToStringHelper {
             if (!isPublic) {
                 field.setAccessible(false);
             }
-            result.append(", ");
+
+            result.append(",").append(" ");
         }
         if (result.length() > 1) {
             result.setLength(result.length() - 2);
@@ -90,18 +90,23 @@ public class ReflectionToStringHelper {
         }
 
         if (field.getType().isArray()) {
-            stringBuilder.append('[');
-            if (Array.getLength(fieldData) > 0) {
-                stringBuilder.append(Array.get(fieldData, 0));
-            }
-            for (int i = 1; i < Array.getLength(fieldData); i++) {
-                stringBuilder.append(", ").append(Array.get(fieldData, i));
-            }
-            stringBuilder.append(']');
+            appendArrayFieldToStringBuilder(stringBuilder, fieldData);
             return;
         }
 
         stringBuilder.append(fieldData);
+    }
+
+    private static void appendArrayFieldToStringBuilder(StringBuilder stringBuilder, Object fieldData) {
+        stringBuilder.append('[');
+        if (Array.getLength(fieldData) > 0) {
+            stringBuilder.append(Array.get(fieldData, 0));
+
+            for (int i = 1; i < Array.getLength(fieldData); i++) {
+                stringBuilder.append(",").append(" ").append(Array.get(fieldData, i));
+            }
+        }
+        stringBuilder.append(']');
     }
 
     private static List<Field> getAllFields(Object object) {
