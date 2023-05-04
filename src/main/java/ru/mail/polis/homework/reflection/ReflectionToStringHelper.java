@@ -61,24 +61,30 @@ public class ReflectionToStringHelper {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("{");
 
-        List<Field> fields = Arrays.stream(object.getClass().getDeclaredFields())
-                .filter(field -> !Modifier.isStatic(field.getModifiers()) &&
-                        !field.isAnnotationPresent(SkipField.class))
-                .sorted(Comparator.comparing(Field::getName))
-                .collect(Collectors.toList());
-
-        for (Field field : fields) {
-            stringBuilder.append(field.getName()).append(":").append(" ");
-            addFieldValueToStringBuilder(field, object, stringBuilder);
-            stringBuilder.append(",").append(" ");
+        Class<?> className = object.getClass();
+        while (className != null && className != Object.class) {
+            addClassInformToStringBuilder(object, className, stringBuilder);
+            className = className.getSuperclass();
         }
 
         if (stringBuilder.length() != 1) {
             stringBuilder.setLength(stringBuilder.length() - 2);
         }
-
         stringBuilder.append("}");
         return stringBuilder.toString();
+    }
+
+    public static void addClassInformToStringBuilder(Object object, Class<?> className, StringBuilder stringBuilder) {
+        List<Field> fields = Arrays.stream(className.getDeclaredFields())
+                .filter(field -> !Modifier.isStatic(field.getModifiers()) &&
+                        !field.isAnnotationPresent(SkipField.class))
+                .sorted(Comparator.comparing(Field::getName))
+                .collect(Collectors.toList());
+        for (Field field : fields) {
+            stringBuilder.append(field.getName()).append(":").append(" ");
+            addFieldValueToStringBuilder(field, object, stringBuilder);
+            stringBuilder.append(",").append(" ");
+        }
     }
 
     public static void addFieldValueToStringBuilder(Field field, Object object, StringBuilder stringBuilder) {
@@ -102,13 +108,14 @@ public class ReflectionToStringHelper {
         }
 
         stringBuilder.append("[");
-
+        int startLength = stringBuilder.length();
         for (int i = 0; i < Array.getLength(value); i++) {
             stringBuilder.append(Array.get(value, i) == null ? "null" : Array.get(value, i));
             stringBuilder.append(",").append(" ");
         }
-
-        stringBuilder.setLength(stringBuilder.length() - 2);
+        if (stringBuilder.length() != startLength) {
+            stringBuilder.setLength(stringBuilder.length() - 2);
+        }
         stringBuilder.append("]");
     }
 }
