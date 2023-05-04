@@ -1,14 +1,10 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.*;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,7 +49,94 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        StringBuilder result = new StringBuilder();
+        Class<?> c = object.getClass();
+        boolean haveComma = false;
+
+        while (c != Object.class) {
+
+            Field[] fields = c.getDeclaredFields();
+            Field[] goodFields = new Field[fields.length];
+            int indexGoodFields = 0;
+
+            for (Field field : fields) {
+                if (checkHaveAnnotationSkipField(field)) {
+                    continue;
+                }
+                if (checkHaveModifierStatic(field)) {
+                    continue;
+                }
+
+                goodFields[indexGoodFields] = field;
+                indexGoodFields++;
+            }
+
+            Arrays.sort(goodFields, 0, indexGoodFields, Comparator.comparing(Field::getName));
+
+            for (int i = 0; i < indexGoodFields; i++) {
+                result.append(goodFields[i].getName()).append(": ");
+                goodFields[i].setAccessible(true);
+
+                try {
+                    Object value = goodFields[i].get(object);
+                    if (value == null) {
+                        result.append("null");
+                    } else {
+                        if (goodFields[i].getType().isArray()) {
+                            result.append(getArrayValues(value));
+                        } else {
+                            result.append(value);
+                        }
+                    }
+                } catch (IllegalAccessException e) {
+                    result.append("null");
+                } finally {
+                    result.append(", ");
+                    haveComma = true;
+                }
+
+            }
+            c = c.getSuperclass();
+        }
+        if (haveComma) {
+            result.delete(result.length() - 2, result.length());
+        }
+        result = addBrackets(result);
+        return result.toString();
+    }
+
+    public static boolean checkHaveAnnotationSkipField(Field field) {
+        for (Annotation a : field.getAnnotations()) {
+            if (a.annotationType().getSimpleName().equals("SkipField")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean checkHaveModifierStatic(Field field) {
+        return (field.getModifiers() & Modifier.STATIC) > 0;
+    }
+
+    public static String getArrayValues(Object field) {
+        StringBuilder arrayToString = new StringBuilder();
+
+        for (int i = 0; i < Array.getLength(field); i++) {
+            arrayToString.append(Array.get(field, i));
+            if (i != Array.getLength(field) - 1) {
+                arrayToString.append(", ");
+            }
+        }
+
+        arrayToString = addSquareBrackets(arrayToString);
+        return arrayToString.toString();
+    }
+
+    public static StringBuilder addSquareBrackets(StringBuilder string) {
+        return new StringBuilder("[").append(string).append("]");
+    }
+
+    public static StringBuilder addBrackets(StringBuilder string) {
+        return new StringBuilder("{").append(string).append("}");
     }
 }
