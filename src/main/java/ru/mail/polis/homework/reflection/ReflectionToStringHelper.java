@@ -1,8 +1,5 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
-import javax.swing.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -61,7 +58,7 @@ public class ReflectionToStringHelper {
         stringBuilder.append("{");
         Class<?> objecClass = object.getClass();
         while (objecClass != null && objecClass != Object.class) {
-            fieldToStr(objecClass, object, stringBuilder);
+            addFieldsToStringBuilder(objecClass, object, stringBuilder);
             objecClass = objecClass.getSuperclass();
         }
         if (stringBuilder.lastIndexOf(",") >= 0) {
@@ -71,7 +68,7 @@ public class ReflectionToStringHelper {
         return stringBuilder.toString();
     }
 
-    private static void fieldToStr(Class<?> c, Object object, StringBuilder stringBuilder) {
+    private static void addFieldsToStringBuilder(Class<?> c, Object object, StringBuilder stringBuilder) {
         Arrays.stream(c.getDeclaredFields())
                 .filter(field -> !Modifier.isStatic(field.getModifiers()) &&
                         !field.isAnnotationPresent(SkipField.class))
@@ -86,7 +83,7 @@ public class ReflectionToStringHelper {
                     }
                     stringBuilder.append(field.getName()).append(":").append(" ");
                     if (current != null && field.getType().isArray()) {
-                        arrayToStr(current, stringBuilder);
+                        addArrayToStringBuilder(current, stringBuilder);
                     } else {
                         stringBuilder.append(current);
                     }
@@ -95,7 +92,7 @@ public class ReflectionToStringHelper {
 
     }
 
-    private static void arrayToStr(Object object, StringBuilder stringBuilder) {
+    private static void addArrayToStringBuilder(Object object, StringBuilder stringBuilder) {
         if (object == null) {
             stringBuilder.append("null");
             return;
