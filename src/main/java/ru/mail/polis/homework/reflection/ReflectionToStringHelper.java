@@ -61,33 +61,10 @@ public class ReflectionToStringHelper {
 
         while (clazz != null) {
             Arrays.stream(clazz.getDeclaredFields())
-                    .filter(field -> field.getAnnotation(SkipField.class) == null &&
+                    .filter(field -> !field.isAnnotationPresent(SkipField.class) &&
                             !Modifier.isStatic(field.getModifiers()))
                     .sorted(Comparator.comparing(Field::getName))
-                    .forEach(field -> {
-                        field.setAccessible(true);
-                        String str;
-                        try {
-                            if (field.get(object).getClass().isArray()) {
-                                StringBuilder temporaryStringBuilder = new StringBuilder();
-                                temporaryStringBuilder.append("[");
-                                int size = Array.getLength(field.get(object));
-                                for (int i = 0; i < size; i++) {
-                                    temporaryStringBuilder.append(Array.get(field.get(object), i));
-                                    if (i != size - 1) {
-                                        temporaryStringBuilder.append(", ");
-                                    }
-                                }
-                                temporaryStringBuilder.append("]");
-                                str = temporaryStringBuilder.toString();
-                            } else {
-                                str = field.get(object).toString();
-                            }
-                        } catch (Exception e) {
-                            str = "null";
-                        }
-                        stringBuilder.append(field.getName()).append(": ").append(str).append(", ");
-                    });
+                    .forEach(field -> addField(field, object, stringBuilder));
             clazz = clazz.getSuperclass();
         }
 
@@ -98,5 +75,38 @@ public class ReflectionToStringHelper {
         stringBuilder.append('}');
 
         return stringBuilder.toString();
+    }
+
+    private static void addArray(Object field, StringBuilder stringBuilder) {
+        int length = stringBuilder.length();
+        stringBuilder.append("[");
+        int arrayLength = Array.getLength(field);
+        for (int i = 0; i < arrayLength; i++) {
+            stringBuilder.append(Array.get(field, i)).append(',').append(' ');
+        }
+        if (stringBuilder.length() - length != 1) {
+            stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+        }
+        stringBuilder.append("]");
+    }
+
+    private static void addField(Field field, Object object, StringBuilder stringBuilder) {
+        boolean isPublic = Modifier.isPublic(field.getModifiers());
+        if (!isPublic) {
+            field.setAccessible(true);
+        }
+        stringBuilder.append(field.getName()).append(':').append(' ');
+        try {
+            if (field.get(object).getClass().isArray()) {
+                addArray(field.get(object), stringBuilder);
+            } else {
+                stringBuilder.append(field.get(object).toString());
+            }
+        } catch (NullPointerException e) {
+            stringBuilder.append("null");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        stringBuilder.append(',').append(' ');
     }
 }
