@@ -1,14 +1,10 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,7 +49,70 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+
+        StringBuilder result = new StringBuilder("{");
+
+        for (Field field : getAllFields(object)) {
+
+            result.append(field.getName()).append(": ");
+
+            boolean isPublic = Modifier.isPublic(field.getModifiers());
+            if (!isPublic) {
+                field.setAccessible(true);
+            }
+            appendFieldToStringBuilder(result, field, object);
+            if (!isPublic) {
+                field.setAccessible(false);
+            }
+            result.append(", ");
+        }
+        if (result.length() > 1) {
+            result.setLength(result.length() - 2);
+        }
+        return result.append('}').toString();
+    }
+
+    private static void appendFieldToStringBuilder(StringBuilder stringBuilder, Field field, Object object) {
+        Object fieldData;
+
+        try {
+            fieldData = field.get(object);
+        } catch (IllegalAccessException error) {
+            throw new RuntimeException("ACCESS ERROR : " + error);
+        }
+
+        if (fieldData == null) {
+            stringBuilder.append("null");
+            return;
+        }
+
+        if (field.getType().isArray()) {
+            stringBuilder.append('[');
+            if (Array.getLength(fieldData) > 0) {
+                stringBuilder.append(Array.get(fieldData, 0));
+            }
+            for (int i = 1; i < Array.getLength(fieldData); i++) {
+                stringBuilder.append(", ").append(Array.get(fieldData, i));
+            }
+            stringBuilder.append(']');
+            return;
+        }
+
+        stringBuilder.append(fieldData);
+    }
+
+    private static List<Field> getAllFields(Object object) {
+        List<Field> result = new ArrayList<>();
+
+        for (Class<?> objectClass = object.getClass(); objectClass != Object.class; objectClass = objectClass.getSuperclass()) {
+            result.addAll(Arrays.stream(objectClass.getDeclaredFields())
+                    .filter(field -> !Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class))
+                    .sorted(Comparator.comparing(Field::getName))
+                    .collect(Collectors.toList()));
+        }
+        return result;
     }
 }
