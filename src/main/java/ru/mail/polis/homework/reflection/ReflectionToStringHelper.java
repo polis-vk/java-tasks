@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Stream;
+import java.util.*;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,7 +54,52 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+       if (object == null) {
+            return "null";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        Class<?> clazz = object.getClass();
+        while (clazz != null) {
+            Field[] fields = clazz.getDeclaredFields();
+            Arrays.sort(fields, Comparator.comparing(Field::getName));
+            for (Field field : fields) {
+                if (!Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class)) {
+                    field.setAccessible(true);
+                    try {
+                        Object value = field.get(object);
+                        sb.append(field.getName()).append(": ");
+                        if (value == null) {
+                            sb.append("null");
+                        } else if (value.getClass().isArray()) {
+                            sb.append("[");
+                            int length = Array.getLength(value);
+                            for (int i = 0; i < length; i++) {
+                                Object element = Array.get(value, i);
+                                if (element == null) {
+                                    sb.append("null");
+                                } else {
+                                    sb.append(element);
+                                }
+                                if (i != length - 1) {
+                                    sb.append(", ");
+                                }
+                            }
+                            sb.append("]");
+                        } else {
+                            sb.append(value);
+                        }
+                        sb.append(", ");
+                    } catch (IllegalAccessException e) {
+                    }
+                }
+            }
+            clazz = clazz.getSuperclass();
+        }
+        if (sb.length() > 1) {
+            sb.setLength(sb.length() - 2);
+        }
+        sb.append("}");
+        return sb.toString();
     }
 }
