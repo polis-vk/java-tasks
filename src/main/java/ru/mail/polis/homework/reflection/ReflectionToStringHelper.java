@@ -102,20 +102,17 @@ public class ReflectionToStringHelper {
             return;
         }
 
-        Object array  = field.get(object);
+        Object array = field.get(object);
         int arrLength = Array.getLength(array);
 
         if (arrLength == 0) {
-                currentResult.append("[]");
-                return;
+            currentResult.append("[]");
+            return;
         }
 
-        Object[] wrappedArray = new Object[arrLength];
-        for(int i = 0; i < arrLength; i++) {
-            wrappedArray[i] = Array.get(field.get(object), i);          //заполняем новый массив содержимым массива объекта, но для примитивов оборачиваем в их обертку
+        for (int i = 0; i < arrLength; i++) {
+            currentResult.append((Array.get(field.get(object), i))).append(", ");
         }
-
-        Arrays.stream(wrappedArray).forEach(element -> currentResult.append((element)).append(", "));
 
         currentResult.insert(startIndex, "[").insert(currentResult.length() - 2, "]").delete(currentResult.length() - 2, currentResult.length());
     }
