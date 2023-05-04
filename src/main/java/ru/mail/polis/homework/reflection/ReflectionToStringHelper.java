@@ -54,6 +54,59 @@ public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
         // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        Class clazz = object.getClass();
+        StringBuilder result = new StringBuilder("{");
+        boolean accesible;
+        while (clazz != Object.class) {
+            Field[] fields = clazz.getDeclaredFields();
+            Arrays.sort(fields, Comparator.comparing(Field::getName));
+            for (Field field : fields) {
+                accesible = field.isAccessible();
+                if (!accesible) {
+                    field.setAccessible(true);
+                }
+                if (!Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class)) {
+                    try {
+                        result.append(field.getName()).append(": ");
+                        if (field.getType().isArray()) {
+                            createArray(field.get(object), result);
+                        } else {
+                            result.append(field.get(object));
+                        }
+                        result.append(", ");
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } finally {
+                        field.setAccessible(accesible);
+                    }
+                }
+            }
+            clazz = clazz.getSuperclass();
+        }
+        if (result.length() > 1) {
+            result.delete(result.lastIndexOf(","), result.lastIndexOf(" ") + 1);
+        }
+        return result.append("}").toString();
+    }
+
+    private static void createArray(Object array, StringBuilder result) {
+        if (array == null) {
+            result.append("null");
+            return;
+        }
+        int length = Array.getLength(array);
+        if (length == 0) {
+            result.append("[]");
+            return;
+        }
+        result.append("[").append(Array.get(array, 0));
+        for (int i = 1; i < length; i++) {
+            result.append(", ");
+            result.append(Array.get(array, i));
+        }
+        result.append("]");
     }
 }
