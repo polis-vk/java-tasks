@@ -1,14 +1,10 @@
 package ru.mail.polis.homework.reflection;
 
-import ru.mail.polis.homework.reflection.objects.easy.Easy;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,7 +49,53 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        StringBuilder objectInfoBuilder = new StringBuilder("{");
+        Class<?> objectClass = object.getClass();
+        while (objectClass != null) {
+            Arrays.stream(objectClass.getDeclaredFields())
+                    .filter(field -> !Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class))
+                    .sorted(Comparator.comparing(Field::getName))
+                    .forEach(field -> addField(objectInfoBuilder, object, field));
+            objectClass = objectClass.getSuperclass();
+        }
+        if (!objectInfoBuilder.toString().equals("{")) {
+            objectInfoBuilder.delete(objectInfoBuilder.length() - 2, objectInfoBuilder.length());
+        }
+        objectInfoBuilder.append('}');
+        return objectInfoBuilder.toString();
+    }
+
+    private static void addField(StringBuilder objectInfoBuilder, Object object, Field field) {
+        objectInfoBuilder.append(field.getName()).append(": ");
+        if (!Modifier.isPublic(field.getModifiers())) {
+            field.setAccessible(true);
+        }
+        try {
+            if (field.get(object).getClass().isArray()) {
+                addArray(objectInfoBuilder, field.get(object));
+            } else {
+                objectInfoBuilder.append(field.get(object).toString());
+            }
+        } catch (Exception exception) {
+            objectInfoBuilder.append("null");
+        } finally {
+            objectInfoBuilder.append(", ");
+        }
+    }
+
+    private static void addArray(StringBuilder objectInfoBuilder, Object field) {
+        objectInfoBuilder.append("[");
+        int length = objectInfoBuilder.length();
+        int arrayLength = Array.getLength(field);
+        for (int i = 0; i < arrayLength; i++) {
+            objectInfoBuilder.append(Array.get(field, i)).append(", ");
+        }
+        if (objectInfoBuilder.length() - length > 1) {
+            objectInfoBuilder.delete(objectInfoBuilder.length() - 2, objectInfoBuilder.length());
+        }
+        objectInfoBuilder.append("]");
     }
 }
