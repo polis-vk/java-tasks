@@ -2,13 +2,14 @@ package ru.mail.polis.homework.reflection;
 
 import ru.mail.polis.homework.reflection.objects.easy.Easy;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  * Необходимо реализовать метод reflectiveToString, который для произвольного объекта
@@ -53,7 +54,27 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+        Class<?> clazz = object.getClass();
+        List<Field> fields = getFields(clazz);
+        StringJoiner result = new StringJoiner(", ", "{", "}");
+        for (Field field : fields) {
+            field.setAccessible(true);
+            try {
+                result.add(String.format("%s: %s", field.getName(), field.get(object)));
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return result.toString();
+    }
+
+    private static List<Field> getFields(Class clazz) {
+        return new ArrayList<>(Arrays.stream(clazz.getDeclaredFields())
+                .filter(field -> !Modifier.isStatic(field.getModifiers()) && !field.isAnnotationPresent(SkipField.class))
+                .sorted(Comparator.comparing(Field::getName))
+                .collect(Collectors.toList()));
     }
 }
