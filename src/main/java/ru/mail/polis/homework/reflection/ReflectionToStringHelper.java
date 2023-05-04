@@ -53,7 +53,58 @@ import java.util.stream.Stream;
 public class ReflectionToStringHelper {
 
     public static String reflectiveToString(Object object) {
-        // TODO: implement
-        return null;
+        if (object == null) {
+            return "null";
+        }
+
+        StringBuilder builder = new StringBuilder("{");
+        Class<?> objClass = object.getClass();
+
+        while (objClass != null) {
+            Arrays.stream(objClass.getDeclaredFields())
+                    .filter(field -> !field.isAnnotationPresent(SkipField.class) && !Modifier.isStatic(field.getModifiers()))
+                    .sorted(Comparator.comparing(Field::getName))
+                    .forEach(field -> addField(field, object, builder));
+            objClass = objClass.getSuperclass();
+        }
+
+        if (builder.length() > 1) {
+            builder.delete(builder.length() - 2, builder.length());
+        }
+
+        builder.append('}');
+
+        return builder.toString();
+    }
+
+    private static void addField(Field field, Object object, StringBuilder stringBuilder) {
+        if (!Modifier.isPublic(field.getModifiers())) {
+            field.setAccessible(true);
+        }
+        stringBuilder.append(field.getName()).append(':').append(' ');
+        try {
+            if (field.get(object).getClass().isArray()) {
+                addArray(field.get(object), stringBuilder);
+            } else {
+                stringBuilder.append(field.get(object).toString());
+            }
+        } catch (NullPointerException exception) {
+            stringBuilder.append("null");
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        stringBuilder.append(',').append(' ');
+    }
+
+    private static void addArray(Object field, StringBuilder stringBuilder) {
+        int oldLength = stringBuilder.length();
+        stringBuilder.append("[");
+        for (int i = 0; i < Array.getLength(field); i++) {
+            stringBuilder.append(Array.get(field, i)).append(',').append(' ');
+        }
+        if (stringBuilder.length() - oldLength != 1) {
+            stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+        }
+        stringBuilder.append("]");
     }
 }
