@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.retake.first.collection;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -21,40 +19,66 @@ import java.util.function.Predicate;
  * Надо найти баланс, память важнее, но за временем тоже надо следить
  */
 public class Library implements Iterable<Book> {
+    private final Map<String, List<Book>> authorBookMap;
+    private final Map<Integer, List<Book>> yearBookMap;
+    private final List<Book> bookList;
+
+    Library() {
+        authorBookMap = new HashMap<>();
+        yearBookMap = new HashMap<>();
+        bookList = new ArrayList<>();
+    }
 
     /**
      * Добавляем книгу в библиотеку
      */
     public boolean addBook(Book book) {
-        return false;
+        String author = book.getAuthor();
+        int year = book.getYear();
+        if (!authorBookMap.containsKey(book.getAuthor())) {//o(1)
+            authorBookMap.put(author, new ArrayList<>());//o(1)
+        }
+        if (!yearBookMap.containsKey(year)) {//o(1)
+            yearBookMap.put(year, new ArrayList<>());//o(1)
+        }
+        authorBookMap.get(author).add(book);//o(1)
+        yearBookMap.get(year).add(book);//o(1)
+        return bookList.add(book);//o(1)
     }
 
     /**
      * Удаляем книгу из библиотеки
      */
     public boolean removeBook(Book book) {
-        return false;
+        authorBookMap.get(book.getAuthor()).remove(book);//o(книги автора)
+        yearBookMap.get(book.getYear()).remove(book);//o(книги этого же года)
+        return bookList.remove(book);//o(все книги) = o(все книги)
     }
 
     /**
      * Получаем список книг заданного автора
      */
     public List<Book> getBooksByAuthor(String author) {
-        return Collections.emptyList();
+
+        return authorBookMap.getOrDefault(author, new ArrayList<>());//o(1)
     }
 
     /**
      * Получаем список книг написанных в определенный год
      */
     public List<Book> getBooksByDate(int year) {
-        return Collections.emptyList();
+
+        return yearBookMap.getOrDefault(year, new ArrayList<>());//o(1)
     }
 
     /**
      * Получаем книгу, которую последней добавили в библиотеку
      */
     public Book getLastBook() {
-        return null;
+        if (bookList.size() > 0) {//o(1)
+            return bookList.get(bookList.size() - 1);//o(1)
+        }
+        return null;//o(1)
     }
 
     /**
@@ -63,7 +87,9 @@ public class Library implements Iterable<Book> {
      * Возвращается итератор, который бегает по всем книгам, удовлетворяющим предикату
      */
     public Iterator<Book> iterator(Predicate<Book> predicate) {
-        return null;
+        return bookList.stream()
+                .filter(predicate)
+                .iterator();//o(n)
     }
 
     /**
@@ -72,7 +98,7 @@ public class Library implements Iterable<Book> {
      */
     @Override
     public Iterator<Book> iterator() {
-        return null;
+        return bookList.listIterator();//o(1)
     }
 
     /**
