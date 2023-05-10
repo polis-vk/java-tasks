@@ -3,6 +3,7 @@ package ru.mail.polis.homework.retake.first.collection;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -20,7 +21,7 @@ import java.util.stream.Stream;
  * Надо найти баланс, память важнее, но за временем тоже надо следить
  */
 public class Library implements Iterable<Book> {
-    ArrayList<Book> books;
+    private final ArrayList<Book> books = new ArrayList<>();
 
     /**
      * Добавляем книгу в библиотеку
@@ -40,28 +41,17 @@ public class Library implements Iterable<Book> {
      * Получаем список книг заданного автора
      */
     public List<Book> getBooksByAuthor(String author) {
-        ArrayList<Book> result = new ArrayList<>();
-
-        for (Book book : books) {
-            if (Objects.equals(book.getAuthor(), author)) {
-                result.add(book);
-            }
-        }
-        return result;
+        return books.stream()
+                .filter(book -> Objects.equals(book.getAuthor(), author))
+                .collect(Collectors.toList());
     }
-
     /**
      * Получаем список книг написанных в определенный год
      */
     public List<Book> getBooksByDate(int year) {
-        ArrayList<Book> result = new ArrayList<>();
-
-        for (Book book : books) {
-            if (Objects.equals(book.getYear(), year)) {
-                result.add(book);
-            }
-        }
-        return result;
+        return books.stream()
+                .filter(book -> (book.getYear() == year))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -70,16 +60,16 @@ public class Library implements Iterable<Book> {
     public Book getLastBook() {
         return books.get(books.size() - 1);
     }
-
     /**
      * ЗАДАНИЕ ТОЛЬКО ДЛЯ ТЕХ, КТО ХОЧЕТ ПОЛУЧИТЬ 3 или 4
      * <p>
      * Возвращается итератор, который бегает по всем книгам, удовлетворяющим предикату
      */
     public Iterator<Book> iterator(Predicate<Book> predicate) {
-        return books.stream().filter(predicate).iterator();
+        return books.stream()
+                .filter(predicate)
+                .iterator();
     }
-
     /**
      * Возвращается итератор, который бегает по всем книгам в порядке добавления
      */
@@ -87,13 +77,14 @@ public class Library implements Iterable<Book> {
     public Iterator<Book> iterator() {
         return books.iterator();
     }
-
     /**
      * ЗАДАНИЕ ТОЛЬКО ДЛЯ ТЕХ, КТО ХОЧЕТ ПОЛУЧИТЬ 5
      * <p>
      * Возвращается итератор, который бегает по всем парам (индекс, книга), удовлетворяющим предикату
      */
     public Iterator<Book> iterator(BiPredicate<Integer, Book> predicate) {
-        return books.stream().filter(book -> predicate.test(books.indexOf(book), book)).iterator();
+        return books.stream()
+                .filter(book -> predicate.test(books.indexOf(book), book))
+                .iterator();
     }
 }
