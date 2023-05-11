@@ -143,6 +143,11 @@ public class PopularMapTest {
         assertEquals(3, popularMap1.getValuePopularity(value2));
         assertEquals(4, popularMap1.getValuePopularity(value3));
         assertEquals(0, popularMap1.getValuePopularity(value4));
+        Iterator<TestObjectValue> iterator = popularMap1.popularIterator();
+        assertEquals(value2, iterator.next());
+        assertEquals(value3, iterator.next());
+        assertEquals(value1, iterator.next());
+        assertFalse(iterator.hasNext());
     }
 
     @Test
