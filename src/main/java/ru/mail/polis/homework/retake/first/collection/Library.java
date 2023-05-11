@@ -1,10 +1,12 @@
 package ru.mail.polis.homework.retake.first.collection;
 
-import java.util.Collections;
 import java.util.Iterator;
+import java.util.Objects;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Реализовать класс библиотеки, которая в себе хранит книги.
@@ -21,40 +23,45 @@ import java.util.function.Predicate;
  * Надо найти баланс, память важнее, но за временем тоже надо следить
  */
 public class Library implements Iterable<Book> {
+    private final List<Book> books = new ArrayList<>();
 
     /**
      * Добавляем книгу в библиотеку
      */
     public boolean addBook(Book book) {
-        return false;
+        return books.add(book);
     }
 
     /**
      * Удаляем книгу из библиотеки
      */
     public boolean removeBook(Book book) {
-        return false;
+        return books.remove(book);
     }
 
     /**
      * Получаем список книг заданного автора
      */
     public List<Book> getBooksByAuthor(String author) {
-        return Collections.emptyList();
+        return books.stream()
+                .filter(book -> Objects.equals(book.getAuthor(), author))
+                .collect(Collectors.toList());
     }
 
     /**
      * Получаем список книг написанных в определенный год
      */
     public List<Book> getBooksByDate(int year) {
-        return Collections.emptyList();
+        return books.stream()
+                .filter(book -> Objects.equals(book.getYear(), year))
+                .collect(Collectors.toList());
     }
 
     /**
      * Получаем книгу, которую последней добавили в библиотеку
      */
     public Book getLastBook() {
-        return null;
+        return books.get(books.size() - 1);
     }
 
     /**
@@ -67,12 +74,11 @@ public class Library implements Iterable<Book> {
     }
 
     /**
-     *
      * Возвращается итератор, который бегает по всем книгам в порядке добавления
      */
     @Override
     public Iterator<Book> iterator() {
-        return null;
+        return books.iterator();
     }
 
     /**
@@ -81,6 +87,8 @@ public class Library implements Iterable<Book> {
      * Возвращается итератор, который бегает по всем парам (индекс, книга), удовлетворяющим предикату
      */
     public Iterator<Book> iterator(BiPredicate<Integer, Book> predicate) {
-        return null;
+        return books.stream()
+                .filter(book -> predicate.test(books.indexOf(book), book))
+                .iterator();
     }
 }
