@@ -33,6 +33,9 @@ public class Library implements Iterable<Book> {
      * Добавляем книгу в библиотеку
      */
     public boolean addBook(Book book) {
+        if (book == null) {
+            return false;
+        }
         String author = book.getAuthor();
         int year = book.getYear();
         if (!authorBookMap.containsKey(book.getAuthor())) {//o(1)
@@ -50,6 +53,9 @@ public class Library implements Iterable<Book> {
      * Удаляем книгу из библиотеки
      */
     public boolean removeBook(Book book) {
+        if (book == null) {
+            return false;
+        }
         authorBookMap.get(book.getAuthor()).remove(book);//o(книги автора)
         yearBookMap.get(book.getYear()).remove(book);//o(книги этого же года)
         return bookList.remove(book);//o(все книги) = o(все книги)
