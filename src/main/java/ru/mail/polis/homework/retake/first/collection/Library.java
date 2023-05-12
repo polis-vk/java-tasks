@@ -66,9 +66,7 @@ public class Library implements Iterable<Book> {
      * Возвращается итератор, который бегает по всем книгам, удовлетворяющим предикату
      */
     public Iterator<Book> iterator(Predicate<Book> predicate) {
-        return books.stream()
-                .filter(predicate)
-                .iterator();
+        return null;
     }
     /**
      * Возвращается итератор, который бегает по всем книгам в порядке добавления
