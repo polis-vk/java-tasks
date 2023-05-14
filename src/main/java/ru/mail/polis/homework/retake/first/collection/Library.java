@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * Надо найти баланс, память важнее, но за временем тоже надо следить
  */
 public class Library implements Iterable<Book> {
-    private Vector<Book> storage_;
+    private ArrayList<Book> storage_;
     /**
      * Добавляем книгу в библиотеку
      */
@@ -60,7 +60,10 @@ public class Library implements Iterable<Book> {
      * Получаем книгу, которую последней добавили в библиотеку
      */
     public Book getLastBook() {
-        return storage_.lastElement();
+        if (!storage_.isEmpty()) {
+            return storage_.get(storage_.size() - 1);
+        }
+        return new Book();
     }
 
     /**
@@ -69,13 +72,9 @@ public class Library implements Iterable<Book> {
      * Возвращается итератор, который бегает по всем книгам, удовлетворяющим предикату
      */
     public Iterator<Book> iterator(Predicate<Book> predicate) {
-        Vector<Book> filteredBooks = new Vector<>();
-        for (Book book : storage_) {
-            if (predicate.test(book)) {
-                filteredBooks.add(book);
-            }
-        }
-        return filteredBooks.iterator();
+        return storage_.stream()
+                .filter(predicate)
+                .iterator();
     }
 
     /**
