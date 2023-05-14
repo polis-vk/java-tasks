@@ -58,7 +58,10 @@ public class Library implements Iterable<Book> {
      * Получаем книгу, которую последней добавили в библиотеку
      */
     public Book getLastBook() {
-        return bookList.get(bookList.size() - 1);
+        if (bookList.size() > 0) {
+            return bookList.get(bookList.size() - 1);
+        }
+        return null;
     }
 
     /**
