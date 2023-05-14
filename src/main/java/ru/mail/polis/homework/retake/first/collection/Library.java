@@ -1,11 +1,8 @@
 package ru.mail.polis.homework.retake.first.collection;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
-import java.util.ArrayList;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -93,7 +90,9 @@ public class Library implements Iterable<Book> {
      */
     public Iterator<Book> iterator(BiPredicate<Integer, Book> predicate) {
         return storage_.stream()
-                .filter(book -> predicate.test(storage_.indexOf(book), book))
+                .map(book -> new AbstractMap.SimpleEntry<>(storage_.indexOf(book), book))
+                .filter(entry -> predicate.test(entry.getKey(), entry.getValue()))
+                .map(AbstractMap.SimpleEntry::getValue)
                 .iterator();
     }
 }
