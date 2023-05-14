@@ -34,6 +34,9 @@ public class Book {
     public int getPages() {
         return pages;
     }
+    public boolean isEmpty() {
+        return this.title.equals("") && this.author.equals("") && this.pages == 0 && this.year == 0;
+    }
     public String printBook() {
         return "Title: " + title + ", Author: " + author + ", Pages: " + pages;
     }

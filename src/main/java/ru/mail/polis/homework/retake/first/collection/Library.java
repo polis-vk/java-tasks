@@ -25,6 +25,9 @@ public class Library implements Iterable<Book> {
      * Добавляем книгу в библиотеку
      */
     public boolean addBook(Book book) {
+        if (!book.isEmpty()) {
+            return false;
+        }
         return storage_.add(book);
     }
 
