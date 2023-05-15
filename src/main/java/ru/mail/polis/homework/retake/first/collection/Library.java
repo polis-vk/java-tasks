@@ -21,12 +21,20 @@ import java.util.stream.Stream;
  * Надо найти баланс, память важнее, но за временем тоже надо следить
  */
 public class Library implements Iterable<Book> {
-    private final ArrayList<Book> books = new ArrayList<>();
+
+    private final ArrayList<Book> books;
+
+    public Library(){
+        books = new ArrayList<>();
+    }
 
     /**
      * Добавляем книгу в библиотеку
      */
     public boolean addBook(Book book) {
+        if (book == null){
+            return false;
+        }
         return books.add(book);
     }
 
@@ -58,6 +66,9 @@ public class Library implements Iterable<Book> {
      * Получаем книгу, которую последней добавили в библиотеку
      */
     public Book getLastBook() {
+        if (books.isEmpty()){
+            return null;
+        }
         return books.get(books.size() - 1);
     }
     /**
