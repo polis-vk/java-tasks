@@ -23,7 +23,7 @@ public class Library implements Iterable<Book> {
     private final Map<Integer, List<Book>> yearBookMap;
     private final List<Book> bookList;
 
-    Library() {
+    public Library() {
         authorBookMap = new HashMap<>();
         yearBookMap = new HashMap<>();
         bookList = new ArrayList<>();
@@ -38,14 +38,8 @@ public class Library implements Iterable<Book> {
         }
         String author = book.getAuthor();
         int year = book.getYear();
-        if (!authorBookMap.containsKey(book.getAuthor())) {//o(1)
-            authorBookMap.put(author, new ArrayList<>());//o(1)
-        }
-        if (!yearBookMap.containsKey(year)) {//o(1)
-            yearBookMap.put(year, new ArrayList<>());//o(1)
-        }
-        authorBookMap.get(author).add(book);//o(1)
-        yearBookMap.get(year).add(book);//o(1)
+        authorBookMap.computeIfAbsent(author, list -> new ArrayList<>()).add(book);//o(1)
+        yearBookMap.computeIfAbsent(year, list -> new ArrayList<>()).add(book);//o(1)
         return bookList.add(book);//o(1)
     }
 
@@ -65,7 +59,6 @@ public class Library implements Iterable<Book> {
      * Получаем список книг заданного автора
      */
     public List<Book> getBooksByAuthor(String author) {
-
         return authorBookMap.getOrDefault(author, new ArrayList<>());//o(1)
     }
 
@@ -73,7 +66,6 @@ public class Library implements Iterable<Book> {
      * Получаем список книг написанных в определенный год
      */
     public List<Book> getBooksByDate(int year) {
-
         return yearBookMap.getOrDefault(year, new ArrayList<>());//o(1)
     }
 
