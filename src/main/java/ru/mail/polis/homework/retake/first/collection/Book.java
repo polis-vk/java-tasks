@@ -8,7 +8,7 @@ public class Book {
     private final String author;
     private final int year;
 
-    Book(String title, String author, int year) {
+    public Book(String title, String author, int year) {
         this.title = title;
         this.author = author;
         this.year = year;
@@ -24,5 +24,19 @@ public class Book {
 
     public int getYear() {
         return year;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Book book = (Book) o;
+        return year == book.year && author.equals(book.author) && title.equals(book.title);
     }
 }
