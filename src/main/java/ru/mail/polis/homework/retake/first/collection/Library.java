@@ -26,8 +26,8 @@ public class Library implements Iterable<Book> {
     private final ArrayList<Pair<Integer, ArrayList<Book>>> yearsBooks;
 
     //Для оценки сложности
-    //k = authorsBooksIndex.size() либо yearsBooksIndex.size()
     //n = books.size()
+    //k = authorsBooksIndex.size() либо yearsBooksIndex.size()
     //m = authorsBooksIndex.getSecond().size() либо yearsBooksIndex.getSecond().size()
 
     public Library() {
@@ -47,13 +47,13 @@ public class Library implements Iterable<Book> {
         books.add(book);
 
         int authorsBooksIndex = binarySearch(authorsBooks, book.getAuthor());
-        if (authorsBooksIndex != -1) {
+        if (authorsBooksIndex == -1) {
             authorsBooks.add(authorsBooksIndex, new Pair<>(book.getAuthor(), new ArrayList<>()));
         }
         authorsBooks.get(authorsBooksIndex).getSecond().add(book);
 
         int yearsBooksIndex = binarySearch(yearsBooks, book.getYear());
-        if (yearsBooksIndex != -1) {
+        if (yearsBooksIndex == -1) {
             yearsBooks.add(yearsBooksIndex, new Pair<>(book.getYear(), new ArrayList<>()));
         }
         yearsBooks.get(yearsBooksIndex).getSecond().add(book);
