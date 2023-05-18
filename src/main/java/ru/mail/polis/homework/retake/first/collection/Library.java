@@ -1,6 +1,10 @@
 package ru.mail.polis.homework.retake.first.collection;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Comparator;
+import java.util.Collections;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -147,7 +151,7 @@ public class Library implements Iterable<Book> {
                 .iterator();
     }
 
-    public static <T> int binarySearch(List<? extends T> list, T key, Comparator<? super T> c) {
+    public static <T> int binarySearch(List<T> list, T key, Comparator<T> c) {
         int indexForAdd = Collections.binarySearch(list, key, c);
         return indexForAdd < 0 ? -indexForAdd - 1 : indexForAdd;
     }
