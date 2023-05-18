@@ -1,6 +1,6 @@
 package ru.mail.polis.homework.retake.first.collection;
 
-class Pair<F, S> {
+public class Pair<F, S> {
     public final F first;
     public final S second;
 
