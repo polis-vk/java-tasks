@@ -138,25 +138,22 @@ public class Library implements Iterable<Book> {
 
     private <T extends Comparable<T>> int search(ArrayList<Pair<T, ArrayList<Book>>> arr, T key) {
         int left = 0;
-        int right = arr.size() - 1;
+        int right = arr.size();
         int mid;
         int cmp;
-        while (left <= right) {
+        while (left < right) {
             mid = (right + left) / 2;
             cmp = key.compareTo(arr.get(mid).getFirst());
-            if (cmp == 0) {
-                return mid;
-            }
             if (cmp < 0) {
                 right = mid - 1;
             } else {
-                left = mid + 1;
+                left = mid;
             }
         }
-        return right;
+        return left;
     }
 
     private <T extends Comparable<T>> boolean isInvalidIndex(ArrayList<Pair<T, ArrayList<Book>>> arr, T val, int index){
-        return arr.get(index).getFirst().equals(val);
+        return index < 0 || index >= arr.size() || !arr.get(index).getFirst().equals(val);
     }
 }
