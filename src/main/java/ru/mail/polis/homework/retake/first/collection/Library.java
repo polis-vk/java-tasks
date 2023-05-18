@@ -137,6 +137,9 @@ public class Library implements Iterable<Book> {
     }
 
     private <T extends Comparable<T>> int search(ArrayList<Pair<T, ArrayList<Book>>> arr, T key) {
+        if (arr.isEmpty()){
+            return 0;
+        }
         int left = 0;
         int right = arr.size() - 1;
         int mid;
@@ -144,6 +147,9 @@ public class Library implements Iterable<Book> {
         while (left <= right) {
             mid = (right + left) / 2;
             cmp = key.compareTo(arr.get(mid).getFirst());
+            if (cmp == 0){
+                return mid;
+            }
             if (cmp < 0) {
                 right = mid - 1;
             } else {
