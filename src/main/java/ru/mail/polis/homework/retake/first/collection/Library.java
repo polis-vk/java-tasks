@@ -88,7 +88,7 @@ public class Library implements Iterable<Book> {
      */
     public List<Book> getBooksByAuthor(String author) {
         int i = search(authorsBooks, author);
-        return (isInvalidIndex(authorsBooks, author, i)) ? null: authorsBooks.get(i).getSecond(); //O(log k)
+        return (isInvalidIndex(authorsBooks, author, i)) ? null : authorsBooks.get(i).getSecond(); //O(log k)
     }
 
     /**
@@ -96,14 +96,14 @@ public class Library implements Iterable<Book> {
      */
     public List<Book> getBooksByDate(int year) {
         int i = search(yearsBooks, year);
-        return (isInvalidIndex(yearsBooks, year, i)) ? null: yearsBooks.get(i).getSecond(); //O(log k)
+        return (isInvalidIndex(yearsBooks, year, i)) ? null : yearsBooks.get(i).getSecond(); //O(log k)
     }
 
     /**
      * Получаем книгу, которую последней добавили в библиотеку
      */
     public Book getLastBook() {
-        return !books.isEmpty() ? books.get(books.size() - 1) : null; //O(1)
+        return books.isEmpty() ? null : books.get(books.size() - 1); //O(1)
     }
 
     /**
@@ -137,7 +137,7 @@ public class Library implements Iterable<Book> {
     }
 
     private <T extends Comparable<T>> int search(ArrayList<Pair<T, ArrayList<Book>>> arr, T key) {
-        if (arr.isEmpty()){
+        if (arr.isEmpty()) {
             return 0;
         }
         int left = 0;
@@ -147,7 +147,7 @@ public class Library implements Iterable<Book> {
         while (left <= right) {
             mid = (right + left) / 2;
             cmp = key.compareTo(arr.get(mid).getFirst());
-            if (cmp == 0){
+            if (cmp == 0) {
                 return mid;
             }
             if (cmp < 0) {
