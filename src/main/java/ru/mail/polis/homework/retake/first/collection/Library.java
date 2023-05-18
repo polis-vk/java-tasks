@@ -36,10 +36,8 @@ public class Library implements Iterable<Book> {
         if (book == null) {
             return false;
         }
-        String author = book.getAuthor();
-        int year = book.getYear();
-        authorBookMap.computeIfAbsent(author, list -> new ArrayList<>()).add(book);//o(1)
-        yearBookMap.computeIfAbsent(year, list -> new ArrayList<>()).add(book);//o(1)
+        authorBookMap.computeIfAbsent(book.getAuthor(), list -> new ArrayList<>()).add(book);//o(1)
+        yearBookMap.computeIfAbsent(book.getYear(), list -> new ArrayList<>()).add(book);//o(1)
         return bookList.add(book);//o(1)
     }
 
