@@ -152,8 +152,8 @@ public class Library implements Iterable<Book> {
     }
 
     public static <T> int binarySearch(List<T> list, T key, Comparator<T> c) {
-        int indexForAdd = Collections.binarySearch(list, key, c);
-        return indexForAdd < 0 ? -indexForAdd - 1 : indexForAdd;
+        int index = Collections.binarySearch(list, key, c);
+        return index < 0 ? -index - 1 : index;
     }
 
     private <T extends Comparable<T>> int binarySearchInPairList(List<Pair<T, List<Book>>> list, T element) {
