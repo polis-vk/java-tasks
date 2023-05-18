@@ -1,8 +1,5 @@
 package ru.mail.polis.homework.retake.first.collection;
 
-import com.sun.tools.javac.util.Pair;
-import ru.mail.polis.homework.objects.RepeatingCharacters;
-
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
@@ -24,22 +21,21 @@ import java.util.stream.IntStream;
  * Надо найти баланс, память важнее, но за временем тоже надо следить
  */
 public class Library implements Iterable<Book> {
-
     private final ArrayList<Book> books;
-    private final ArrayList<Pair<String, ArrayList<Book>>> authorBooks;
-    private final ArrayList<Pair<Integer, ArrayList<Book>>> yearBooks;
+    private final ArrayList<Pair<String, ArrayList<Book>>> authorsAndBooks;
+    private final ArrayList<Pair<Integer, ArrayList<Book>>> yearsAndBooks;
 
-    public Library(){
+    public Library() {
         books = new ArrayList<>();
-        authorBooks = new ArrayList<>();
-        yearBooks = new ArrayList<>();
+        authorsAndBooks = new ArrayList<>();
+        yearsAndBooks = new ArrayList<>();
     }
 
     /**
      * Добавляем книгу в библиотеку
      */
     public boolean addBook(Book book) {
-        if (book == null){
+        if (book == null) {
             return false;
         }
         return books.add(book);
@@ -56,28 +52,28 @@ public class Library implements Iterable<Book> {
      * Получаем список книг заданного автора
      */
     public List<Book> getBooksByAuthor(String author) {
-        return books.stream()
-                .filter(book -> Objects.equals(book.getAuthor(), author))
-                .collect(Collectors.toList());
+        int i = binarySearch(authorsAndBooks, author);
+        return (i != -1) ? authorsAndBooks.get(i).getSecond() : null; //O(log k)
     }
+
     /**
      * Получаем список книг написанных в определенный год
      */
     public List<Book> getBooksByDate(int year) {
-        return books.stream()
-                .filter(book -> (book.getYear() == year))
-                .collect(Collectors.toList());
+        int i = binarySearch(yearsAndBooks, year);
+        return (i != -1) ? yearsAndBooks.get(i).getSecond() : null; //O(log k)
     }
 
     /**
      * Получаем книгу, которую последней добавили в библиотеку
      */
     public Book getLastBook() {
-        if (books.isEmpty()){
+        if (books.isEmpty()) {
             return null;
         }
         return books.get(books.size() - 1);
     }
+
     /**
      * ЗАДАНИЕ ТОЛЬКО ДЛЯ ТЕХ, КТО ХОЧЕТ ПОЛУЧИТЬ 3 или 4
      * <p>
@@ -86,6 +82,7 @@ public class Library implements Iterable<Book> {
     public Iterator<Book> iterator(Predicate<Book> predicate) {
         return null;
     }
+
     /**
      * Возвращается итератор, который бегает по всем книгам в порядке добавления
      */
@@ -93,6 +90,7 @@ public class Library implements Iterable<Book> {
     public Iterator<Book> iterator() {
         return books.iterator();
     }
+
     /**
      * ЗАДАНИЕ ТОЛЬКО ДЛЯ ТЕХ, КТО ХОЧЕТ ПОЛУЧИТЬ 5
      * <p>
@@ -104,5 +102,25 @@ public class Library implements Iterable<Book> {
                 .mapToObj(books::get)
                 .collect(Collectors.toList())
                 .iterator(); //O(n)
+    }
+
+    private <T extends Comparable<T>> int binarySearch(ArrayList<Pair<T, ArrayList<Book>>> arr, T key) {
+        int left = 0;
+        int right = arr.size() - 1;
+        int mid;
+        int cmp;
+        while (left <= right) {
+            mid = (right + left) / 2;
+            cmp = key.compareTo(arr.get(mid).getFirst());
+            if (cmp == 0) {
+                return mid;
+            }
+            if (cmp < 0) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return -1;
     }
 }
