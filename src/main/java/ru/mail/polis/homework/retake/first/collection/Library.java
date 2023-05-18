@@ -1,10 +1,13 @@
 package ru.mail.polis.homework.retake.first.collection;
 
+import com.sun.tools.javac.util.Pair;
+import ru.mail.polis.homework.objects.RepeatingCharacters;
+
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 
 /**
  * Реализовать класс библиотеки, которая в себе хранит книги.
@@ -23,9 +26,13 @@ import java.util.stream.Stream;
 public class Library implements Iterable<Book> {
 
     private final ArrayList<Book> books;
+    private final ArrayList<Pair<String, ArrayList<Book>>> authorBooks;
+    private final ArrayList<Pair<Integer, ArrayList<Book>>> yearBooks;
 
     public Library(){
         books = new ArrayList<>();
+        authorBooks = new ArrayList<>();
+        yearBooks = new ArrayList<>();
     }
 
     /**
@@ -92,8 +99,10 @@ public class Library implements Iterable<Book> {
      * Возвращается итератор, который бегает по всем парам (индекс, книга), удовлетворяющим предикату
      */
     public Iterator<Book> iterator(BiPredicate<Integer, Book> predicate) {
-        return books.stream()
-                .filter(book -> predicate.test(books.indexOf(book), book))
-                .iterator();
+        return IntStream.range(0, books.size())
+                .filter(i -> predicate.test(i, books.get(i)))
+                .mapToObj(books::get)
+                .collect(Collectors.toList())
+                .iterator(); //O(n)
     }
 }
