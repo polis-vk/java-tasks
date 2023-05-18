@@ -46,19 +46,19 @@ public class Library implements Iterable<Book> {
 
         books.add(book);
 
-        int authorsBooksIndex = binarySearch(authorsBooks, book.getAuthor());
-        if (authorsBooksIndex == -1) {
+        int authorsBooksIndex = search(authorsBooks, book.getAuthor());
+        if (isInvalidIndex(authorsBooks, book.getAuthor(), authorsBooksIndex)) {
             authorsBooks.add(authorsBooksIndex, new Pair<>(book.getAuthor(), new ArrayList<>()));
         }
         authorsBooks.get(authorsBooksIndex).getSecond().add(book);
 
-        int yearsBooksIndex = binarySearch(yearsBooks, book.getYear());
-        if (yearsBooksIndex == -1) {
+        int yearsBooksIndex = search(yearsBooks, book.getYear());
+        if (isInvalidIndex(yearsBooks, book.getYear(), yearsBooksIndex)) {
             yearsBooks.add(yearsBooksIndex, new Pair<>(book.getYear(), new ArrayList<>()));
         }
         yearsBooks.get(yearsBooksIndex).getSecond().add(book);
 
-        return true; //O(2 log k)
+        return true; //O(2log k + 2k)
     }
 
     /**
@@ -69,25 +69,25 @@ public class Library implements Iterable<Book> {
             return false;
         }
 
-        int authorsBooksIndex = binarySearch(authorsBooks, book.getAuthor());
+        int authorsBooksIndex = search(authorsBooks, book.getAuthor());
         authorsBooks.get(authorsBooksIndex).getSecond().remove(book);
         if (authorsBooks.get(authorsBooksIndex).getSecond().isEmpty()) {
             authorsBooks.remove(authorsBooksIndex);
         }
 
-        int yearsBooksIndex = binarySearch(yearsBooks, book.getYear());
+        int yearsBooksIndex = search(yearsBooks, book.getYear());
         yearsBooks.get(yearsBooksIndex).getSecond().remove(book);
         if (yearsBooks.get(yearsBooksIndex).getSecond().isEmpty()) {
             yearsBooks.remove(yearsBooksIndex);
         }
-        return true; //O(2 log(k) + 2 * k + 2 * m)
+        return true; //O(2log(k) + 2k + 2m)
     }
 
     /**
      * Получаем список книг заданного автора
      */
     public List<Book> getBooksByAuthor(String author) {
-        int i = binarySearch(authorsBooks, author);
+        int i = search(authorsBooks, author);
         return (i != -1) ? authorsBooks.get(i).getSecond() : null; //O(log k)
     }
 
@@ -95,7 +95,7 @@ public class Library implements Iterable<Book> {
      * Получаем список книг написанных в определенный год
      */
     public List<Book> getBooksByDate(int year) {
-        int i = binarySearch(yearsBooks, year);
+        int i = search(yearsBooks, year);
         return (i != -1) ? yearsBooks.get(i).getSecond() : null; //O(log k)
     }
 
@@ -136,7 +136,7 @@ public class Library implements Iterable<Book> {
                 .iterator(); //O(n)
     }
 
-    private <T extends Comparable<T>> int binarySearch(ArrayList<Pair<T, ArrayList<Book>>> arr, T key) {
+    private <T extends Comparable<T>> int search(ArrayList<Pair<T, ArrayList<Book>>> arr, T key) {
         int left = 0;
         int right = arr.size() - 1;
         int mid;
@@ -153,6 +153,10 @@ public class Library implements Iterable<Book> {
                 left = mid + 1;
             }
         }
-        return -1;
+        return right;
+    }
+
+    private <T extends Comparable<T>> boolean isInvalidIndex(ArrayList<Pair<T, ArrayList<Book>>> arr, T val, int index){
+        return arr.get(index).getFirst().equals(val);
     }
 }
