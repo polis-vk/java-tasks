@@ -88,7 +88,7 @@ public class Library implements Iterable<Book> {
      */
     public List<Book> getBooksByAuthor(String author) {
         int i = search(authorsBooks, author);
-        return (i != -1) ? authorsBooks.get(i).getSecond() : null; //O(log k)
+        return (isInvalidIndex(authorsBooks, author, i)) ? null: authorsBooks.get(i).getSecond(); //O(log k)
     }
 
     /**
@@ -96,7 +96,7 @@ public class Library implements Iterable<Book> {
      */
     public List<Book> getBooksByDate(int year) {
         int i = search(yearsBooks, year);
-        return (i != -1) ? yearsBooks.get(i).getSecond() : null; //O(log k)
+        return (isInvalidIndex(yearsBooks, year, i)) ? null: yearsBooks.get(i).getSecond(); //O(log k)
     }
 
     /**
