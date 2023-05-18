@@ -1,8 +1,6 @@
 package ru.mail.polis.homework.retake.first.collection;
 
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -43,17 +41,19 @@ public class Library implements Iterable<Book> {
 
         books.add(book);
 
-        int addIndexByAuthor = binarySearchInPairList(booksSortedByAuthor, book.getAuthor());
-        if (!checkForEqualityByIndex(booksSortedByAuthor, book.getAuthor(), addIndexByAuthor)) {
-            booksSortedByAuthor.add(addIndexByAuthor, new Pair<>(book.getAuthor(), new ArrayList<>()));
+        int indexForAddList = binarySearchInPairList(booksSortedByAuthor, book.getAuthor());
+        if (!checkForEqualityByIndex(booksSortedByAuthor, book.getAuthor(), indexForAddList)) {
+            booksSortedByAuthor.add(indexForAddList, new Pair<>(book.getAuthor(), new ArrayList<>()));
         }
-        booksSortedByAuthor.get(addIndexByAuthor).second.add(book);
+        int indexForAddBook = binarySearch(booksSortedByAuthor.get(indexForAddList).second, book, Comparator.comparing(Book::getYear));
+        booksSortedByAuthor.get(indexForAddList).second.add(indexForAddBook, book);
 
-        int addIndexByYear = binarySearchInPairList(booksSortedByYear, book.getYear());
-        if (!checkForEqualityByIndex(booksSortedByYear, book.getYear(), addIndexByYear)) {
-            booksSortedByYear.add(addIndexByYear, new Pair<>(book.getYear(), new ArrayList<>()));
+        indexForAddList = binarySearchInPairList(booksSortedByYear, book.getYear());
+        if (!checkForEqualityByIndex(booksSortedByYear, book.getYear(), indexForAddList)) {
+            booksSortedByYear.add(indexForAddList, new Pair<>(book.getYear(), new ArrayList<>()));
         }
-        booksSortedByYear.get(addIndexByYear).second.add(book);
+        indexForAddBook = binarySearch(booksSortedByYear.get(indexForAddList).second, book, Comparator.comparing(Book::getAuthor));
+        booksSortedByYear.get(indexForAddList).second.add(indexForAddBook, book);
 
         return true;
     }
@@ -69,16 +69,18 @@ public class Library implements Iterable<Book> {
             return false;
         }
 
-        int indexOfAuthorsBooks = binarySearchInPairList(booksSortedByAuthor, book.getAuthor());
-        booksSortedByAuthor.get(indexOfAuthorsBooks).second.remove(book);
-        if (booksSortedByAuthor.get(indexOfAuthorsBooks).second.isEmpty()) {
-            booksSortedByAuthor.remove(indexOfAuthorsBooks);
+        int indexForRemoveList = binarySearchInPairList(booksSortedByAuthor, book.getAuthor());
+        int indexForRemoveBook = binarySearch(booksSortedByAuthor.get(indexForRemoveList).second, book, Comparator.comparing(Book::getYear));
+        booksSortedByAuthor.get(indexForRemoveList).second.remove(indexForRemoveBook);
+        if (booksSortedByAuthor.get(indexForRemoveList).second.isEmpty()) {
+            booksSortedByAuthor.remove(indexForRemoveList);
         }
 
-        int indexOfYearsBooks = binarySearchInPairList(booksSortedByYear, book.getYear());
-        booksSortedByYear.get(indexOfYearsBooks).second.remove(book);
-        if (booksSortedByYear.get(indexOfYearsBooks).second.isEmpty()) {
-            booksSortedByYear.remove(indexOfYearsBooks);
+        indexForRemoveList = binarySearchInPairList(booksSortedByYear, book.getYear());
+        indexForRemoveBook = binarySearch(booksSortedByYear.get(indexForRemoveList).second, book, Comparator.comparing(Book::getAuthor));
+        booksSortedByYear.get(indexForRemoveList).second.remove(indexForRemoveBook);
+        if (booksSortedByYear.get(indexForRemoveList).second.isEmpty()) {
+            booksSortedByYear.remove(indexForRemoveList);
         }
 
         return true;
@@ -143,6 +145,11 @@ public class Library implements Iterable<Book> {
                 .filter(index -> predicate.test(index, books.get(index)))
                 .mapToObj(books::get)
                 .iterator();
+    }
+
+    public static <T> int binarySearch(List<? extends T> list, T key, Comparator<? super T> c) {
+        int indexForAdd = Collections.binarySearch(list, key, c);
+        return indexForAdd < 0 ? -indexForAdd - 1 : indexForAdd;
     }
 
     private <T extends Comparable<T>> int binarySearchInPairList(List<Pair<T, List<Book>>> list, T element) {
