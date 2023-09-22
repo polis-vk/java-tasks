@@ -1,7 +1,6 @@
 package ru.mail.polis.homework.collections.structure;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Задание оценивается в 4 тугрика.
@@ -10,6 +9,20 @@ import java.util.List;
  * Напишите какая сложность операций у вас получилась для каждого метода.
  */
 public class CustomDictionary {
+    Set<List<Character>> set;
+    CustomDictionary()
+    {
+        set = new HashSet<>();
+    }
+
+    public List<Character> modification(String value)
+    {
+        value = value.toLowerCase();
+        LinkedList<Character> list = new LinkedList<>();
+        for(int i = 0; i < value.length(); ++i)  list.add(value.charAt(i));
+        Collections.sort(list);
+        return list;
+    }
 
     /**
      * Сохранить строку в структуру данных
@@ -19,6 +32,12 @@ public class CustomDictionary {
      * Сложность - []
      */
     public boolean add(String value) {
+        if(value == null || value.isEmpty()) throw new IllegalArgumentException();
+        int curr = set.size();
+        List<Character> list = new LinkedList<>();
+        for(int i = 0; i < value.length(); ++i)  list.add(value.charAt(i));
+        set.add(list);
+        if(curr != set.size()) return true;
         return false;
     }
 
@@ -30,6 +49,10 @@ public class CustomDictionary {
      * Сложность - []
      */
     public boolean contains(String value) {
+        if(value == null || value.equals("")) return false;
+        List<Character> list = new LinkedList<>();
+        for(int i = 0; i < value.length(); ++i)  list.add(value.charAt(i));
+        if(set.contains(list)) return true;
         return false;
     }
 
@@ -41,6 +64,12 @@ public class CustomDictionary {
      * Сложность - []
      */
     public boolean remove(String value) {
+        if(value == null || value.equals("")) return false;
+        int curr = set.size();
+        List<Character> list = new LinkedList<>();
+        for(int i = 0; i < value.length(); ++i)  list.add(value.charAt(i));
+        if(set.contains(list)) set.remove(list);
+        if(set.size() < curr) return true;
         return false;
     }
 
@@ -63,8 +92,25 @@ public class CustomDictionary {
      *
      * Сложность - []
      */
+
+    public static String toString(List<?> list)
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        for(var a : list) stringBuilder.append(a);
+        return stringBuilder.toString();
+    }
+
     public List<String> getSimilarWords(String value) {
-        return Collections.emptyList();
+        List<String> ans = new LinkedList<>();
+        String temp = value;
+        String match = toString(modification(temp));
+        for(var a : set)
+        {
+            String original = toString(a);
+            String tmp = toString(modification(original));
+            if(tmp.equals(match))  ans.add(original);
+        }
+        return ans;
     }
 
     /**
@@ -74,7 +120,7 @@ public class CustomDictionary {
      * Сложность - []
      */
     public int size() {
-        return 0;
+        return set.size();
     }
 
 

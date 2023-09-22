@@ -8,10 +8,10 @@ import java.util.Stack;
  * Этот метод должен возвращать какое максимальное значение сейчас
  * храниться в Stack. Отрабатывать метод должен за О(1).
  */
-public class MaxStack extends Stack<Integer> {
+public class MaxStack extends CustomStack<Integer>{
 
     public Integer getMaxValue() {
-        return 0;
+        return getMax();
     }
 
 }
