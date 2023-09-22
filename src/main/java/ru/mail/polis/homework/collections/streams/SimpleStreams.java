@@ -1,9 +1,9 @@
 package ru.mail.polis.homework.collections.streams;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.DoubleUnaryOperator;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class SimpleStreams {
 
@@ -12,8 +12,17 @@ public class SimpleStreams {
      * Никаких циклов.
      * 1 балл
      */
+
     public static boolean isPrime(int n) {
-        return false;
+        List<Integer> list = List.of(n);
+        boolean bool = false;
+        boolean b = Stream.iterate(2, t -> t+1)
+                .filter(t -> n%t == 0)
+                .limit(1)
+                .anyMatch(x -> { if(x == n) return true;
+                    return false;});
+        //b.forEach(System.out::println);
+        return b;
     }
 
     /**
@@ -22,7 +31,24 @@ public class SimpleStreams {
      * 1 балл
      */
     public static Map<String, Integer> createBadWordsDetectingStream(String text, List<String> badWords) {
-        return Collections.emptyMap();
+        List<String> words = new LinkedList<>();
+        Map<String, Integer> map = new HashMap<>();
+        StringBuilder empty = new StringBuilder();
+        for(int i = 0; i < text.length(); ++i)
+        {
+            if(Character.isLetter(text.charAt(i)))
+                empty.append(text.charAt(i));
+            else {
+                if(!empty.toString().isEmpty()) {
+                    words.add(empty.toString());
+                    empty = new StringBuilder();
+                }
+            }
+        }
+        Stream<String> mapStream = words.stream()
+                .filter(badWords::contains);
+        mapStream.forEach(System.out::println);
+        return map;
     }
 
 

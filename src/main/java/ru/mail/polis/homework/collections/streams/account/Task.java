@@ -1,17 +1,21 @@
 package ru.mail.polis.homework.collections.streams.account;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Task {
-
     /**
      * Метод должен вернуть сумму всех исходящих транзакций с аккаунта
      * 2 балла
      */
     public static Map<String, Long> paymentsSumByAccount(List<Transaction> transactions) {
-        return Collections.emptyMap();
+        Map<String, Long> map = new HashMap<>();
+        for(var a : transactions)
+        {
+            Account curr = a.getAccount();
+            for(var b : curr.getTransactions())
+                if(b.getAccount().getId().equals(curr.getId())) map.merge(curr.getId(), b.getSum(),Long::sum);
+        }
+        return map;
     }
 
     /**
@@ -37,6 +41,6 @@ public class Task {
      * 3 балла
      */
     public static List<String> paymentsSumByAccount(List<Account> accounts, long t, int n) {
-        return Collections.emptyList();
+
     }
 }
