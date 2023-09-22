@@ -1,5 +1,7 @@
 package ru.mail.polis.homework.objects;
 
+import javax.swing.*;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
@@ -48,7 +50,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      */
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        return new CustomIterator(0,1);
     }
 
     /**
@@ -58,7 +60,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for EVEN elements
      */
     public Iterator<Integer> evenIterator() {
-        return null;
+        return new CustomIterator(1,2);
     }
 
     /**
@@ -68,7 +70,7 @@ public class CustomArrayWrapper implements Iterable<Integer> {
      * @return Iterator for ODD elements
      */
     public Iterator<Integer> oddIterator() {
-        return null;
+        return new CustomIterator(0,2);
     }
 
     private void checkIndex(int index) {
@@ -76,5 +78,27 @@ public class CustomArrayWrapper implements Iterable<Integer> {
             throw new IndexOutOfBoundsException();
         }
     }
+    class CustomIterator implements Iterator<Integer>
+    {
+        private int curr_pos;
+        private int step;
+        private int temp = position;
+        CustomIterator(int start_pos, int step)
+        {
+            this.curr_pos = start_pos;
+            this.step = step;
+        }
+        @Override
+        public boolean hasNext() {
+            return curr_pos < array.length;
+        }
 
+        @Override
+        public Integer next() {
+            if(temp != position) throw new ConcurrentModificationException();
+            Integer ans = array[curr_pos];
+            curr_pos += step;
+            return ans;
+        }
+    }
 }
