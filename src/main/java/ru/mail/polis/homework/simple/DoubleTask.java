@@ -1,5 +1,8 @@
 package ru.mail.polis.homework.simple;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+
 /**
  * Возможно вам понадобится класс Math с его методами. Например, чтобы вычислить квадратный корень, достаточно написать
  * Math.sqrt(1.44)
@@ -16,7 +19,27 @@ public class DoubleTask {
     public static String equation(int a, int b, int c) {
         double x1 = 0;
         double x2 = 0;
-        return x1 + ", " + x2;
+
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setDecimalSeparator('.');
+        DecimalFormat decimalFormat = new DecimalFormat("#.##############", symbols);
+
+        double d = b * b - 4 * a * c;
+
+        if (d > 0) {
+            x1 = (-b + Math.sqrt(d)) / (2 * a);
+            x2 = (-b - Math.sqrt(d)) / (2 * a);
+        } else if (d == 0) {
+            x1 = (-b + Math.sqrt(d)) / (2 * a);
+            x2 = x1;
+        }
+
+        double min = Math.min(x1, x2);
+        x1 = x1 + x2 - min;
+        x2 = min;
+
+        String solution = decimalFormat.format(x1) + ", " + decimalFormat.format(x2);
+        return solution;
     }
 
     /**
@@ -24,6 +47,8 @@ public class DoubleTask {
      * Пример: (0, 0, 3, 4) -> 5.0
      */
     public static float length(double x1, double y1, double x2, double y2) {
-        return 0;
+
+        float lenght = (float) Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+        return lenght;
     }
 }

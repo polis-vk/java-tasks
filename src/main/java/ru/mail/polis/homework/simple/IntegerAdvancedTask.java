@@ -9,7 +9,7 @@ package ru.mail.polis.homework.simple;
  */
 public class IntegerAdvancedTask {
 
-    private static final double EPS = 1e-10;
+//    private static final double EPS = 1e-10;
 
     /**
      * Сумма первых n-членов геометрической прогрессии с первым элементом a и множителем r
@@ -18,7 +18,12 @@ public class IntegerAdvancedTask {
      * Пример: (1, 2, 3) -> 7
      */
     public static long progression(int a, double q, int n) {
-        return 0;
+        if (q == 1) {
+            return (long) n * a;
+        } else {
+            long s = (long) ((a * (Math.pow(q, n) - 1)) / (q - 1));
+            return s;
+        }
     }
 
     /**
@@ -30,7 +35,22 @@ public class IntegerAdvancedTask {
      * Пример: (10, 3, 5, 5, 20, 11) -> 2
      */
     public static int snake(int up, int right, int down, int left, int grassX, int grassY) {
-        return 0;
+        int x = 0;
+        int y = 0;
+        if (right >= grassX || up >= grassY
+                || right - left > 0 || up - down > 0) {
+            for (int i = 1; ; i++) {
+                x = x + right;
+                y = y + up;
+                if (x >= grassX || y >= grassY) {
+                    return i;
+                }
+                x = x - left;
+                y = y - down;
+            }
+        } else {
+            return Integer.MAX_VALUE;
+        }
     }
 
     /**
@@ -40,7 +60,33 @@ public class IntegerAdvancedTask {
      * Пример: (454355, 2) -> D
      */
     public static char kDecimal(int n, int order) {
-        return 0;
+        int hexadecimal;
+        for (int i = 1; n % 16 != 0; i++) {
+            hexadecimal = n % 16;
+            if (i == order) {
+                return toHex(hexadecimal);
+            }
+            n = n / 16;
+        }
+        return toHex(n / 16);
+    }
+
+    private static char toHex(int hexadecimal) {
+        if (hexadecimal == 10) {
+            return 'A';
+        } else if (hexadecimal == 11) {
+            return 'B';
+        } else if (hexadecimal == 12) {
+            return 'C';
+        } else if (hexadecimal == 13) {
+            return 'D';
+        } else if (hexadecimal == 14) {
+            return 'E';
+        } else if (hexadecimal == 15) {
+            return 'F';
+        } else {
+            return (char) (hexadecimal + '0');
+        }
     }
 
     /**
@@ -51,7 +97,23 @@ public class IntegerAdvancedTask {
      * (6726455) -> 2
      */
     public static byte minNumber(long a) {
-        return 0;
+        byte count = 1;
+        long min = a % 16;
+        a = a / 16;
+        byte i = 2;
+        for (; a / 16 != 0; i++) {
+            if (min == 0) break;
+            if (a % 16 < min) {
+                min = a % 16;
+                count = i;
+            }
+            a = a / 16;
+        }
+        if (a % 16 < min && a % 16 != 0) {
+            count = i;
+        }
+
+        return count;
     }
 
 }
